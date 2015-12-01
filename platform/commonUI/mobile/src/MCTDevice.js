@@ -85,7 +85,7 @@ define(
             function link(scope, element, attrs, ctrl, transclude) {
                 if (deviceMatches(attrs.mctDevice)) {
                     transclude(function (clone) {
-                        element.parent().append(clone);
+                        element.replaceWith(clone);
                     });
                 }
             }

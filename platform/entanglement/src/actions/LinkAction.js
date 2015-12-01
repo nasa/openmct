@@ -34,14 +34,15 @@ define(
          * @constructor
          * @memberof platform/entanglement
          */
-        function LinkAction(locationService, linkService, context) {
-            return new AbstractComposeAction(
-                locationService,
-                linkService,
-                context,
-                "Link"
+        function LinkAction(policyService, locationService, linkService, context) {
+            AbstractComposeAction.apply(
+                this,
+                [policyService, locationService, linkService, context, "Link"]
             );
         }
+
+        LinkAction.prototype = Object.create(AbstractComposeAction.prototype);
+        LinkAction.appliesTo = AbstractComposeAction.appliesTo;
 
         return LinkAction;
     }

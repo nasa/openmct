@@ -32,10 +32,11 @@ define(
                 mockPlainDocument,
                 mockHead,
                 mockElement,
+                testBundle,
                 loader;
 
             beforeEach(function () {
-                var testBundle = {
+                testBundle = {
                     path: "a/b",
                     resources: "c"
                 };
@@ -72,6 +73,40 @@ define(
                 expect(mockElement.setAttribute)
                     .toHaveBeenCalledWith('href', "a/b/c/d.css");
             });
+
+            describe("for themed stylesheets", function () {
+                var testTheme = "test-theme";
+
+                beforeEach(function () {
+                    testStyleSheets = [{
+                        stylesheetUrl: "themed.css",
+                        bundle: testBundle,
+                        theme: testTheme
+                    }, {
+                        stylesheetUrl: "bad-theme.css",
+                        bundle: testBundle,
+                        theme: 'bad-theme'
+                    }];
+
+                    loader = new StyleSheetLoader(
+                        testStyleSheets,
+                        mockDocument,
+                        testTheme
+                    );
+                });
+
+                it("includes matching themes", function () {
+                    expect(mockElement.setAttribute)
+                        .toHaveBeenCalledWith('href', "a/b/c/themed.css");
+                });
+
+                it("excludes mismatching themes", function () {
+                    expect(mockElement.setAttribute)
+                        .not.toHaveBeenCalledWith('href', "a/b/c/bad-theme.css");
+                });
+            });
+
+
         });
     }
 );

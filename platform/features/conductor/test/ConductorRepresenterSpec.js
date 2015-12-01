@@ -129,7 +129,7 @@ define(
             it("exposes conductor state in scope", function () {
                 mockConductor.displayStart.andReturn(1977);
                 mockConductor.displayEnd.andReturn(1984);
-                mockConductor.domain.andReturn('d');
+                mockConductor.domain.andReturn({ key: 'd' });
                 representer.represent(testViews[0], {});
 
                 expect(mockNewScope.ngModel.conductor).toEqual({
@@ -219,7 +219,7 @@ define(
                 representer.represent(testViews[0], null);
 
                 expect(mockNewScope.ngModel.domain)
-                    .toEqual(mockConductor.domain());
+                    .toEqual(mockConductor.domain().key);
             });
 
             it("exposes domain options in scope", function () {

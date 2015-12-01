@@ -34,14 +34,15 @@ define(
          * @constructor
          * @memberof platform/entanglement
          */
-        function MoveAction(locationService, moveService, context) {
-            return new AbstractComposeAction(
-                locationService,
-                moveService,
-                context,
-                "Move"
+        function MoveAction(policyService, locationService, moveService, context) {
+            AbstractComposeAction.apply(
+                this,
+                [policyService, locationService, moveService, context, "Move"]
             );
         }
+
+        MoveAction.prototype = Object.create(AbstractComposeAction.prototype);
+        MoveAction.appliesTo = AbstractComposeAction.appliesTo;
 
         return MoveAction;
     }

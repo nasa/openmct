@@ -159,7 +159,9 @@ define(
 
         // Update dimensions and origin based on extrema of plots
         PlotUpdater.prototype.updateBounds = function () {
-            var bufferArray = this.bufferArray,
+            var bufferArray = this.bufferArray.filter(function (lineBuffer) {
+                    return lineBuffer.getLength() > 0; // Ignore empty lines
+                }),
                 priorDomainOrigin = this.origin[0],
                 priorDomainDimensions = this.dimensions[0];
 

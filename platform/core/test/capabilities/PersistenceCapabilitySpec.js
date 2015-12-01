@@ -31,7 +31,9 @@ define(
 
         describe("The persistence capability", function () {
             var mockPersistenceService,
+                mockIdentifierService,
                 mockDomainObject,
+                mockIdentifier,
                 id = "object id",
                 model = { someKey: "some value"},
                 SPACE = "some space",
@@ -50,6 +52,14 @@ define(
                     "persistenceService",
                     [ "updateObject", "readObject", "createObject", "deleteObject" ]
                 );
+                mockIdentifierService = jasmine.createSpyObj(
+                    'identifierService',
+                    [ 'parse', 'generate' ]
+                );
+                mockIdentifier = jasmine.createSpyObj(
+                    'identifier',
+                    [ 'getSpace', 'getKey', 'getDefinedSpace' ]
+                );
                 mockDomainObject = {
                     getId: function () { return id; },
                     getModel: function () { return model; },
@@ -61,9 +71,11 @@ define(
                         model = mutator(model) || model;
                     }
                 });
+                mockIdentifierService.parse.andReturn(mockIdentifier);
+                mockIdentifier.getSpace.andReturn(SPACE);
                 persistence = new PersistenceCapability(
                     mockPersistenceService,
-                    SPACE,
+                    mockIdentifierService,
                     mockDomainObject
                 );
             });

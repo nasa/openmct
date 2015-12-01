@@ -20,11 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 $yBarW: 60px;
-$yLabelW: auto;
+$yLabelW: 10px;
 $xBarH: 32px;
 $legendH: 20px;
-//$colorHash: rgba(white, 0.3); // MOVED INTO CONSTANTS
-//$styleHash: dashed; // MOVED INTO CONSTANTS
 $swatchD: 8px;
 $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBarW); // Top, right, bottom, left
 
@@ -36,7 +34,6 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 	height: 100%;
 
 	.gl-plot-axis-area {
-		//		@include test(green);
 		position: absolute;
 		&.gl-plot-x {
 			top: auto;
@@ -59,7 +56,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 	.gl-plot-coords {
 		@include box-sizing(border-box);
 		@include border-radius($controlCr);
-		background: black; //rgba($colorKey, 0.5);
+		background: black;
 		color: lighten($colorBodyFg, 30%);
 		padding: 2px 5px;
 		position: absolute;
@@ -88,11 +85,9 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 
 	.gl-plot-label,
 	.l-plot-label {
-		//		@include test(yellow);
 		color: $colorPlotLabelFg;
 		position: absolute;
 		text-align: center;
-//		text-transform: uppercase;
 
 		&.gl-plot-x-label,
 		&.l-plot-x-label {
@@ -117,19 +112,25 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 		}
 	}
 
-	.gl-plot-y-options {
+	.gl-plot-x-options,
+    .gl-plot-y-options {
 		$h: 32px;
-//		@include test();
 		position: absolute;
-		top: 50%;
-		right: auto;
-		bottom: auto;
-		left: $yLabelW + $interiorMargin;
-		margin-top: $h / -2;
 		height: auto;
 		min-height: $h;
-		width: $h;
+        z-index: 2;
 	}
+
+    .gl-plot-x-options {
+        top: $interiorMargin;
+    }
+
+    .gl-plot-y-options {
+        @include transform(translateY(-50%));
+        min-width: 150px; // Need this due to enclosure of .select
+        top: 50%;
+        left: $yLabelW + $interiorMargin * 2;
+    }
 
 	.gl-plot-hash {
 		position: absolute;
@@ -214,21 +215,13 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 			display: inline-block;
 			height: $swatchD;
 			width: $swatchD;
-			//margin-right: $interiorMarginSm;
-		}
-		&[class*='s-limit'] {
-			.title-label {
-				//color: #fff;
-			}
 		}
 	}
 }
 
 .gl-plot-legend {
 	.plot-legend-item {
-		//@include test();
 		@include border-radius($smallCr);
-		//color: #fff;
 		line-height: 1.5em;
 		padding: 0px $itemPadLR;
 		.plot-color-swatch {
@@ -250,7 +243,6 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 
 .gl-plot-tick,
 .tick-label {
-	//			@include test(red);
 	font-size: 0.7rem;
 	position: absolute;
 	overflow: hidden;
@@ -277,7 +269,6 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 }
 
 .gl-plot-tick {
-	//			@include test(red);
 	&.gl-plot-x-tick-label {
 		top: $interiorMargin;
 	}

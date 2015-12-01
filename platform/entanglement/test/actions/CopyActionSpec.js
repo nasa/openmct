@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect */
+/*global define,describe,beforeEach,it,jasmine,expect,spyOn */
 
 define(
     [
@@ -34,6 +34,7 @@ define(
         describe("Copy Action", function () {
 
             var copyAction,
+                policyService,
                 locationService,
                 locationServicePromise,
                 copyService,
@@ -41,9 +42,21 @@ define(
                 selectedObject,
                 selectedObjectContextCapability,
                 currentParent,
-                newParent;
+                newParent,
+                notificationService,
+                notification,
+                dialogService,
+                mockLog,
+                abstractComposePromise,
+                progress = {phase: "copying", totalObjects: 10, processed: 1};
 
             beforeEach(function () {
+                policyService = jasmine.createSpyObj(
+                    'policyService',
+                    [ 'allow' ]
+                );
+                policyService.allow.andReturn(true);
+
                 selectedObjectContextCapability = jasmine.createSpyObj(
                     'selectedObjectContextCapability',
                     [
@@ -87,9 +100,42 @@ define(
                     ]
                 );
 
+                abstractComposePromise = jasmine.createSpyObj(
+                    'abstractComposePromise',
+                    [
+                        'then'
+                    ]
+                );
+
+                abstractComposePromise.then.andCallFake(function(success, error, notify){
+                    notify(progress);
+                    success();
+                });
+
+                locationServicePromise.then.andCallFake(function(callback){
+                    callback(newParent);
+                    return abstractComposePromise;
+                });
+
                 locationService
                     .getLocationFromUser
                     .andReturn(locationServicePromise);
+
+                dialogService = jasmine.createSpyObj('dialogService',
+                    ['showBlockingMessage', 'dismiss']
+                );
+
+                notification = jasmine.createSpyObj('notification',
+                    ['dismiss', 'model']
+                );
+
+                notificationService = jasmine.createSpyObj('notificationService',
+                    ['notify', 'info']
+                );
+
+                notificationService.notify.andReturn(notification);
+
+                mockLog = jasmine.createSpyObj('log', ['error']);
 
                 copyService = new MockCopyService();
             });
@@ -102,8 +148,12 @@ define(
                     };
 
                     copyAction = new CopyAction(
+                        mockLog,
+                        policyService,
                         locationService,
                         copyService,
+                        dialogService,
+                        notificationService,
                         context
                     );
                 });
@@ -114,6 +164,7 @@ define(
 
                 describe("when performed it", function () {
                     beforeEach(function () {
+                        spyOn(copyAction, 'progress').andCallThrough();
                         copyAction.perform();
                     });
 
@@ -132,7 +183,7 @@ define(
                             .toHaveBeenCalledWith(jasmine.any(Function));
                     });
 
-                    it("copys object to selected location", function () {
+                    it("copies object to selected location", function () {
                         locationServicePromise
                             .then
                             .mostRecentCall
@@ -141,6 +192,11 @@ define(
                         expect(copyService.perform)
                             .toHaveBeenCalledWith(selectedObject, newParent);
                     });
+
+                    it("notifies the user of progress", function(){
+                        expect(notificationService.info).toHaveBeenCalled();
+                    });
+
                 });
             });
 
@@ -152,8 +208,12 @@ define(
                     };
 
                     copyAction = new CopyAction(
+                        mockLog,
+                        policyService,
                         locationService,
                         copyService,
+                        dialogService,
+                        notificationService,
                         context
                     );
                 });

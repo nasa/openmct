@@ -45,43 +45,8 @@ define(
          * @param {Scope} $scope the controller's Angular scope
          */
         function LayoutController($scope) {
-            var self = this;
-
-            // Utility function to copy raw positions from configuration,
-            // without writing directly to configuration (to avoid triggering
-            // persistence from watchers during drags).
-            function shallowCopy(obj, keys) {
-                var copy = {};
-                keys.forEach(function (k) {
-                    copy[k] = obj[k];
-                });
-                return copy;
-            }
-
-            // Compute panel positions based on the layout's object model
-            function lookupPanels(ids) {
-                var configuration = $scope.configuration || {};
-
-                // ids is read from model.composition and may be undefined;
-                // fall back to an array if that occurs
-                ids = ids || [];
-
-                // Pull panel positions from configuration
-                self.rawPositions =
-                    shallowCopy(configuration.panels || {}, ids);
-
-                // Clear prior computed positions
-                self.positions = {};
-
-                // Update width/height that we are tracking
-                self.gridSize =
-                    ($scope.model || {}).layoutGrid || DEFAULT_GRID_SIZE;
-
-                // Compute positions and add defaults where needed
-                ids.forEach(function (id, index) {
-                    self.populatePosition(id, index);
-                });
-            }
+            var self = this,
+                callbackCount = 0;
 
             // Update grid size when it changed
             function updateGridSize(layoutGrid) {
@@ -92,7 +57,7 @@ define(
                 // Only update panel positions if this actually changed things
                 if (self.gridSize[0] !== oldSize[0] ||
                         self.gridSize[1] !== oldSize[1]) {
-                    lookupPanels(Object.keys(self.positions));
+                    self.layoutPanels(Object.keys(self.positions));
                 }
             }
 
@@ -113,7 +78,7 @@ define(
                         Math.floor(position.x / self.gridSize[0]),
                         Math.floor(position.y / self.gridSize[1])
                     ],
-                    dimensions: DEFAULT_DIMENSIONS
+                    dimensions: self.defaultDimensions()
                 };
                 // Mark change as persistable
                 if ($scope.commit) {
@@ -125,6 +90,28 @@ define(
                 // listen for drops, so call preventDefault() so
                 // that they can recognize that this event is handled.
                 e.preventDefault();
+            }
+
+            //Will fetch fully contextualized composed objects, and populate
+            // scope with them.
+            function refreshComposition() {
+                //Keep a track of how many composition callbacks have been made
+                var thisCount = ++callbackCount;
+
+                $scope.domainObject.useCapability('composition').then(function(composition){
+                    var ids;
+
+                    //Is this callback for the most recent composition
+                    // request? If not, discard it. Prevents race condition
+                    if (thisCount === callbackCount){
+                        ids = composition.map(function (object) {
+                                return object.getId();
+                            }) || [];
+
+                        $scope.composition = composition;
+                        self.layoutPanels(ids);
+                    }
+                });
             }
 
             // End drag; we don't want to put $scope into this
@@ -156,8 +143,8 @@ define(
             // Watch for changes to the grid size in the model
             $scope.$watch("model.layoutGrid", updateGridSize);
 
-            // Position panes when the model field changes
-            $scope.$watch("model.composition", lookupPanels);
+            // Update composed objects on screen, and position panes
+            $scope.$watchCollection("model.composition", refreshComposition);
 
             // Position panes where they are dropped
             $scope.$on("mctDrop", handleDrop);
@@ -261,6 +248,43 @@ define(
                     this.activeDrag.getAdjustedPosition(delta);
                 this.populatePosition(this.activeDragId);
             }
+        };
+
+        // Utility function to copy raw positions from configuration,
+        // without writing directly to configuration (to avoid triggering
+        // persistence from watchers during drags).
+        function shallowCopy(obj, keys) {
+            var copy = {};
+            keys.forEach(function (k) {
+                copy[k] = obj[k];
+            });
+            return copy;
+        }
+
+        /**
+         * Compute panel positions based on the layout's object model.
+         * Defined as member function to facilitate testing.
+         * @private
+         */
+        LayoutController.prototype.layoutPanels = function (ids) {
+            var configuration = this.$scope.configuration || {},
+                self = this;
+
+            // Pull panel positions from configuration
+            this.rawPositions =
+                shallowCopy(configuration.panels || {}, ids);
+
+            // Clear prior computed positions
+            this.positions = {};
+
+            // Update width/height that we are tracking
+            this.gridSize =
+                (this.$scope.model || {}).layoutGrid || DEFAULT_GRID_SIZE;
+
+            // Compute positions and add defaults where needed
+            ids.forEach(function (id, index) {
+                self.populatePosition(id, index);
+            });
         };
 
         /**

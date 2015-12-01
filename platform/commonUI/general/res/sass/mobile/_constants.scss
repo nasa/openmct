@@ -20,10 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/* REQUIRES /platform/commonUI/general/res/sass/_constants.scss */
+
 /************************** MOBILE REPRESENTATION ITEMS DIMENSIONS */
 $mobileListIconSize: 30px;
 $mobileTitleDescH: 35px;
-$mobileOverlayMargin: 10px;
+$mobileOverlayMargin: 20px;
 $phoneItemH: floor($ueBrowseGridItemLg/4);
 $tabletItemH: floor($ueBrowseGridItemLg/3);
 
@@ -32,51 +34,31 @@ $mobileTreeItemH: 35px;
 $mobileTreeItemIndent: 20px;
 $mobileTreeRightArrowW: 30px;
 
-/************************** WINDOW DIMENSIONS FOR RWD */
+/************************** DEVICE WIDTHS */
+// IMPORTANT! Usage assumes that ranges are mutually exclusive and have no gaps
 $phoMaxW: 514px;
-$phoMaxH: 740px;
-
 $tabMinW: 515px;
-$tabMaxW: 799px;
-
-$tabMinH: 741px;
-$tabMaxH: 1024px;
-
-$compMinW: 800px;
-$compMinH: 1025px;
+$tabMaxW: 1280px;
+$desktopMinW: 1281px;
 
 /************************** MEDIA QUERIES: WINDOW CHECKS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
 $screenPortrait: "screen and (orientation: portrait)";
 $screenLandscape: "screen and (orientation: landscape)";
 
-$mobileDevice: "(max-device-width: #{$tabMaxW}) and (max-device-height: #{$tabMaxH})";
-$mobileDeviceEmu: "(max-device-width: #{$tabMaxH}) and (max-device-height: #{$tabMaxW})";
+$mobileDevice: "(max-device-width: #{$tabMaxW})";
 
-$phonePortraitCheck: "(max-width: #{$phoMaxW}) and (max-height: #{$phoMaxH})";
-$phoneLandscapeCheck: "(max-height: #{$phoMaxW}) and (max-width: #{$phoMaxH})";
-
-$tabWidPorCheck: "(min-width: #{$tabMinW}) and (max-width: #{$tabMaxW})";
-$tabHeiPorCheck: "(min-height: #{$tabMinH}) and (max-height: #{$tabMaxH})";
-$tabletPortraitCheck: "#{$tabWidPorCheck} and #{$tabHeiPorCheck}";
-
-$tabWidLanCheck: "(min-height: #{$tabMinW}) and (max-height: #{$tabMaxW})";
-$tabHeiLanCheck: "(min-width: #{$tabMinH}) and (max-width: #{$tabMaxH})";
-$tabletLandscapeCheck: "#{$tabWidLanCheck} and #{$tabHeiLanCheck}";
-
-$desktopPortraitCheck: "(min-device-width: #{$compMinW}) and (min-device-height: #{$compMinH})";
-$desktopLandscapeCheck: "(min-device-width: #{$compMinH}) and (min-device-height: #{$compMinW})";
+$phoneCheck: "(max-device-width: #{$phoMaxW})";
+$tabletCheck: $mobileDevice;
+$desktopCheck: "(min-device-width: #{$desktopMinW})";
 
 /************************** MEDIA QUERIES: WINDOWS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
-$phonePortrait: "#{$screenPortrait} and #{$phonePortraitCheck} and #{$mobileDevice}";
-$phoneLandscape: "#{$screenLandscape} and #{$phoneLandscapeCheck} and #{$mobileDevice}";
-$phoneLandscapeEmu: "#{$screenLandscape} and #{$phoneLandscapeCheck} and #{$mobileDeviceEmu}";
+$phonePortrait: "#{$screenPortrait} and #{$phoneCheck} and #{$mobileDevice}";
+$phoneLandscape: "#{$screenLandscape} and #{$phoneCheck} and #{$mobileDevice}";
 
-$tabletPortrait: "#{$screenPortrait} and #{$tabletPortraitCheck} and #{$mobileDevice}";
-$tabletLandscape: "#{$screenLandscape} and #{$tabletLandscapeCheck} and #{$mobileDevice}";
-$tabletLandscapeEmu: "#{$screenLandscape} and #{$tabletLandscapeCheck} and #{$mobileDeviceEmu}";
+$tabletPortrait: "#{$screenPortrait} and #{$tabletCheck} and #{$mobileDevice}";
+$tabletLandscape: "#{$screenLandscape} and #{$tabletCheck} and #{$mobileDevice}";
 
-$desktopPortrait: "screen and #{$desktopPortraitCheck}";
-$desktopLandscape: "screen and #{$desktopLandscapeCheck}";
+$desktop: "screen and #{$desktopCheck}";
 
 /************************** DEVICE PARAMETERS FOR MENUS/REPRESENTATIONS */
 $proporMenuOnly: 90%;

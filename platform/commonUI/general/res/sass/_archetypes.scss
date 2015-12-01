@@ -1,0 +1,147 @@
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+/********************************************* COLUMN LAYOUTS STYLES */
+@mixin cols($totalCols, $span) {
+    $cw: 100% / $totalCols;
+    min-width: (500px / $totalCols) * $span;
+    @if ($totalCols != $span) {
+        width: ($cw * $span) - $ueColMargin;
+    } @else {
+        width: $cw;
+    }
+}
+
+.cols {
+    @include clearfix;
+    .col {
+        @include box-sizing(border-box);
+        @include clearfix;
+        float: left;
+        margin-left: $ueColMargin;
+        padding-left: $interiorMargin;
+        position: relative;
+        &:first-child {
+            margin-left: 0;
+            padding-left: 0;
+        }
+    }
+    &.cols-2 {
+        $nc: 2;
+        .col-1 {
+            @include cols($nc, 1);
+        }
+    }
+    &.cols-2-ff {
+        // 2 columns, first column is fixed, second is fluid
+        .col-100px {
+            width: 100px;
+        }
+    }
+
+    &.cols-6 {
+        $nc: 6;
+        .col-1 {
+            @include cols($nc, 1);
+        }
+    }
+    &.cols-16 {
+        $nc: 16;
+        .col-1 {
+            @include cols($nc, 1);
+        }
+        .col-2 {
+            @include cols($nc, 2);
+        }
+        .col-7 {
+            @include cols($nc, 7);
+        }
+    }
+    &.cols-32 {
+        $nc: 32;
+        .col-2 {
+            @include cols($nc, 2);
+        }
+        .col-15 {
+            @include cols($nc, 15);
+        }
+    }
+    .l-row {
+        @include clearfix;
+        padding: $interiorMargin 0;
+    }
+}
+
+/********************************************* FLEX STYLES */
+.l-flex-row,
+.l-flex-col {
+    @include display-flex;
+    @include flex-wrap(nowrap);
+    .flex-elem {
+        min-height: 0; // Needed to allow element to shrink within parent
+        position: relative;
+        &:not(.grows) {
+            @include flex(0 0 auto);
+            &.flex-can-shrink {
+                @include flex(0 1 auto);
+            }
+        }
+        &.grows {
+            @include flex(1 1 auto);
+        }
+    }
+    .flex-container {
+        // Apply to wrapping elements, mct-includes, etc.
+        @include display-flex;
+        @include flex-wrap(nowrap);
+        @include flex(1 1 auto);
+        min-height:0;
+    }
+}
+
+.l-flex-row {
+    @include flex-direction(row);
+    &.flex-elem { @include flex(1 1 auto); }
+    .flex-elem {
+        height: inherit;
+        line-height: inherit;
+        min-width: 0;
+    }
+    .flex-container { @include flex-direction(row); }
+}
+
+.l-flex-col {
+    @include flex-direction(column);
+    .flex-elem {
+        min-height: 0;
+        &.holder:not(:last-child) { margin-bottom: $interiorMarginLg; }
+    }
+    .flex-container { @include flex-direction(column); }
+}
+
+.flex-fixed {
+    @include flex(0 0 auto);
+}
+
+.flex-justify-end {
+    @include justify-content(flex-end);
+}

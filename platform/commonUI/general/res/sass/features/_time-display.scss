@@ -1,46 +1,32 @@
 .l-time-display {
 	$transTime: 200ms;
-	// Layout
+    line-height: 140%;
 	&:hover {
 		.l-btn.control {
 			opacity: 1;
 		}
 	}
-	.l-elem-wrapper {
-		position: relative;
-	}
-	.l-elem {
-		display: inline-block;
-	}
 
 	&.l-timer {
-		.l-elem.l-value {
-			@include trans-prop-nice(left, $transTime);
-			position: absolute;
-			left: 0;
-			z-index: 1;
-			.ui-symbol.direction {
-				font-size: 0.8em;
-			}
-		}
-		&:hover .l-elem.l-value {
-			left: 20px;
+        .control {
+            @include trans-prop-nice((width, opacity), $transTime);
+            line-height: inherit;
+            margin-right: 0;
+            opacity: 0;
+            width: 0;
+        }
+		&:hover .control {
+            margin-right: $interiorMargin;
+            opacity: 1;
+			width: 1em;
 		}
 	}
 
-	// Look-and-feel
-	.l-elem {
-		.value.active,
-		&.value.active {
-			color: $colorKeyFg;
-		}
-	}
-	.l-btn.control {
-		@include trans-prop-nice-fade($transTime);
-		opacity: 0;
-		font-size: 0.65em;
-		vertical-align: top;
-		//line-height: 1em;
-	}
-
+    .value {
+        color: pullForward($colorBodyFg, 50%);
+        font-weight: 400;
+        .direction {
+            font-size: 0.8em;
+        }
+    }
 }

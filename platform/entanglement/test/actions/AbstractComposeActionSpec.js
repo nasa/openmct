@@ -34,6 +34,7 @@ define(
         describe("Move/copy/link Actions", function () {
 
             var action,
+                policyService,
                 locationService,
                 locationServicePromise,
                 composeService,
@@ -44,6 +45,11 @@ define(
                 newParent;
 
             beforeEach(function () {
+                policyService = jasmine.createSpyObj(
+                    'policyService',
+                    [ 'allow' ]
+                );
+
                 selectedObjectContextCapability = jasmine.createSpyObj(
                     'selectedObjectContextCapability',
                     [
@@ -87,11 +93,35 @@ define(
                     ]
                 );
 
+                policyService.allow.andReturn(true);
+
                 locationService
                     .getLocationFromUser
                     .andReturn(locationServicePromise);
 
                 composeService = new MockCopyService();
+            });
+
+            it("are only applicable to domain objects with a context", function () {
+                var noContextObject = domainObjectFactory({
+                    name: 'selectedObject',
+                    model: { name: 'selectedObject' },
+                    capabilities: {}
+                });
+
+                expect(AbstractComposeAction.appliesTo({
+                    selectedObject: selectedObject
+                })).toBe(true);
+                expect(AbstractComposeAction.appliesTo({
+                    domainObject: selectedObject
+                })).toBe(true);
+
+                expect(AbstractComposeAction.appliesTo({
+                    selectedObject: noContextObject
+                })).toBe(false);
+                expect(AbstractComposeAction.appliesTo({
+                    domainObject: noContextObject
+                })).toBe(false);
             });
 
 
@@ -102,6 +132,7 @@ define(
                     };
 
                     action = new AbstractComposeAction(
+                        policyService,
                         locationService,
                         composeService,
                         context,
@@ -142,6 +173,30 @@ define(
                         expect(composeService.perform)
                             .toHaveBeenCalledWith(selectedObject, newParent);
                     });
+
+                    describe("provides a validator which", function () {
+                        var validator;
+
+                        beforeEach(function () {
+                            validator = locationService.getLocationFromUser
+                                .mostRecentCall.args[2];
+                            composeService.validate.andReturn(true);
+                            policyService.allow.andReturn(true);
+                        });
+
+                        it("is sensitive to policy", function () {
+                            expect(validator()).toBe(true);
+                            policyService.allow.andReturn(false);
+                            expect(validator()).toBe(false);
+                        });
+
+                        it("is sensitive to service-specific validation", function () {
+                            expect(validator()).toBe(true);
+                            composeService.validate.andReturn(false);
+                            expect(validator()).toBe(false);
+                        });
+
+                    });
                 });
             });
 
@@ -153,6 +208,7 @@ define(
                     };
 
                     action = new AbstractComposeAction(
+                        policyService,
                         locationService,
                         composeService,
                         context,

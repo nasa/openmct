@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
+/*global define,describe,it,expect,beforeEach,jasmine,spyOn*/
 
 define(
     ["../src/LayoutController"],
@@ -31,21 +31,44 @@ define(
                 mockEvent,
                 testModel,
                 testConfiguration,
-                controller;
+                controller,
+                mockCompositionCapability,
+                mockComposition,
+                mockCompositionObjects;
+
+            function mockPromise(value){
+                return {
+                    then: function (thenFunc) {
+                        return mockPromise(thenFunc(value));
+                    }
+                };
+            }
+
+            function mockDomainObject(id){
+                return {
+                    getId: function() {
+                        return id;
+                    },
+                    useCapability: function() {
+                        return mockCompositionCapability;
+                    }
+                };
+            }
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$watch", "$on", "commit" ]
+                    [ "$watch", "$watchCollection", "$on", "commit" ]
                 );
                 mockEvent = jasmine.createSpyObj(
                     'event',
                     [ 'preventDefault' ]
                 );
 
-                testModel = {
-                    composition: [ "a", "b", "c" ]
-                };
+                testModel = {};
+
+                mockComposition = ["a", "b", "c"];
+                mockCompositionObjects = mockComposition.map(mockDomainObject);
 
                 testConfiguration = {
                     panels: {
@@ -56,23 +79,62 @@ define(
                     }
                 };
 
+                mockCompositionCapability = mockPromise(mockCompositionObjects);
+
+                mockScope.domainObject = mockDomainObject("mockDomainObject");
                 mockScope.model = testModel;
                 mockScope.configuration = testConfiguration;
+                spyOn(mockScope.domainObject, "useCapability").andCallThrough();
 
                 controller = new LayoutController(mockScope);
+                spyOn(controller, "layoutPanels").andCallThrough();
             });
 
             // Model changes will indicate that panel positions
             // may have changed, for instance.
             it("watches for changes to composition", function () {
-                expect(mockScope.$watch).toHaveBeenCalledWith(
+                expect(mockScope.$watchCollection).toHaveBeenCalledWith(
                     "model.composition",
                     jasmine.any(Function)
                 );
             });
 
+            it("Retrieves updated composition from composition capability", function () {
+                mockScope.$watchCollection.mostRecentCall.args[1]();
+                expect(mockScope.domainObject.useCapability).toHaveBeenCalledWith(
+                    "composition"
+                );
+                expect(controller.layoutPanels).toHaveBeenCalledWith(
+                    mockComposition
+                );
+            });
+
+            it("Is robust to concurrent changes to composition", function () {
+                var secondMockComposition = ["a", "b", "c", "d"],
+                    secondMockCompositionObjects = secondMockComposition.map(mockDomainObject),
+                    firstCompositionCB,
+                    secondCompositionCB;
+
+                spyOn(mockCompositionCapability, "then");
+                mockScope.$watchCollection.mostRecentCall.args[1]();
+                mockScope.$watchCollection.mostRecentCall.args[1]();
+
+                firstCompositionCB = mockCompositionCapability.then.calls[0].args[0];
+                secondCompositionCB = mockCompositionCapability.then.calls[1].args[0];
+
+                //Resolve promises in reverse order
+                secondCompositionCB(secondMockCompositionObjects);
+                firstCompositionCB(mockCompositionObjects);
+
+                //Expect the promise call that was initiated most recently to
+                // be the one used to populate scope, irrespective of order that
+                // it was eventually resolved
+                expect(mockScope.composition).toBe(secondMockCompositionObjects);
+            });
+
+
             it("provides styles for frames, from configuration", function () {
-                mockScope.$watch.mostRecentCall.args[1](testModel.composition);
+                mockScope.$watchCollection.mostRecentCall.args[1]();
                 expect(controller.getFrameStyle("a")).toEqual({
                     top: "320px",
                     left: "640px",
@@ -85,7 +147,7 @@ define(
                 var styleB, styleC;
 
                 // b and c do not have configured positions
-                mockScope.$watch.mostRecentCall.args[1](testModel.composition);
+                mockScope.$watchCollection.mostRecentCall.args[1]();
 
                 styleB = controller.getFrameStyle("b");
                 styleC = controller.getFrameStyle("c");
@@ -102,7 +164,7 @@ define(
 
             it("allows panels to be dragged", function () {
                 // Populate scope
-                mockScope.$watch.mostRecentCall.args[1](testModel.composition);
+                mockScope.$watchCollection.mostRecentCall.args[1]();
 
                 // Verify precondtion
                 expect(testConfiguration.panels.b).not.toBeDefined();
@@ -121,7 +183,7 @@ define(
 
             it("invokes commit after drag", function () {
                 // Populate scope
-                mockScope.$watch.mostRecentCall.args[1](testModel.composition);
+                mockScope.$watchCollection.mostRecentCall.args[1]();
 
                 // Do a drag
                 controller.startDrag("b", [1, 1], [0, 0]);
@@ -147,7 +209,6 @@ define(
                 expect(testConfiguration.panels.d).not.toBeDefined();
 
                 // Notify that a drop occurred
-                testModel.composition.push('d');
                 mockScope.$on.mostRecentCall.args[1](
                     mockEvent,
                     'd',
@@ -167,7 +228,6 @@ define(
                 mockEvent.defaultPrevented = true;
 
                 // Notify that a drop occurred
-                testModel.composition.push('d');
                 mockScope.$on.mostRecentCall.args[1](
                     mockEvent,
                     'd',
@@ -184,13 +244,35 @@ define(
 
                 // White-boxy; we know which watch is which
                 mockScope.$watch.calls[0].args[1](testModel.layoutGrid);
-                mockScope.$watch.calls[1].args[1](testModel.composition);
+                mockScope.$watchCollection.calls[0].args[1](testModel.composition);
 
                 styleB = controller.getFrameStyle("b");
 
                 // Resulting size should still be reasonably large pixel-size
                 expect(parseInt(styleB.width, 10)).toBeGreaterThan(63);
                 expect(parseInt(styleB.width, 10)).toBeGreaterThan(31);
+            });
+
+            it("ensures a minimum frame size on drop", function () {
+                var style;
+
+                // Start with a very small frame size
+                testModel.layoutGrid = [ 1, 1 ];
+                mockScope.$watch.calls[0].args[1](testModel.layoutGrid);
+
+                // Notify that a drop occurred
+                mockScope.$on.mostRecentCall.args[1](
+                    mockEvent,
+                    'd',
+                    { x: 300, y: 100 }
+                );
+                mockScope.$watch.calls[0].args[1](['d']);
+
+                style = controller.getFrameStyle("d");
+
+                // Resulting size should still be reasonably large pixel-size
+                expect(parseInt(style.width, 10)).toBeGreaterThan(63);
+                expect(parseInt(style.height, 10)).toBeGreaterThan(31);
             });
         });
     }

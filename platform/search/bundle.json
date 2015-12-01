@@ -28,16 +28,18 @@
         ],
         "representations": [
             {
+                "key": "search-item",
+                "templateUrl": "templates/search-item.html"
+            }
+        ],
+        "templates": [
+            {
                 "key": "search",
                 "templateUrl": "templates/search.html"
             },
             {
                 "key": "search-menu",
                 "templateUrl": "templates/search-menu.html"
-            },
-            {
-                "key": "search-item",
-                "templateUrl": "templates/search-item.html"
             }
         ],
         "components": [
@@ -48,8 +50,7 @@
                 "depends": [
                     "$q",
                     "$log",
-                    "throttle",
-                    "objectService",
+                    "modelService",
                     "workerService",
                     "topic",
                     "GENERIC_SEARCH_ROOTS"
@@ -59,7 +60,7 @@
                 "provides": "searchService",
                 "type": "aggregator",
                 "implementation": "services/SearchAggregator.js",
-                "depends": [ "$q" ]
+                "depends": [ "$q", "objectService" ]
             }
         ],
         "workers": [

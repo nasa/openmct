@@ -33,6 +33,15 @@ define(
          * A model service which reads domain object models from an external
          * persistence service.
          *
+         * Identifiers will be interpreted as follows:
+         * * If no colon is present, the model will be read from the default
+         *   persistence space.
+         * * If a colon is present, everything before the first colon will be
+         *   taken to refer to the persistence space, and everything after
+         *   will be taken to be that model's key within this space. (If
+         *   no such space exists within the `persistenceService`, that
+         *   identifier will simply be ignored.)
+         *
          * @memberof platform/core
          * @constructor
          * @implements {ModelService}
@@ -41,39 +50,26 @@ define(
          * @param $q Angular's $q service, for working with promises
          * @param {function} now a function which provides the current time
          * @param {string} space the name of the persistence space(s)
-         *        from which models should be retrieved.
-         * @param {string} spaces additional persistence spaces to use
+         *        from which models should be retrieved by default
          */
-        function PersistedModelProvider(persistenceService, $q, now, space, spaces) {
+        function PersistedModelProvider(persistenceService, $q, now, space) {
             this.persistenceService = persistenceService;
             this.$q = $q;
-            this.spaces = [space].concat(spaces || []);
             this.now = now;
-        }
-
-        // Take the most recently modified model, for cases where
-        // multiple persistence spaces return models.
-        function takeMostRecent(modelA, modelB) {
-            return (!modelB || modelB.modified === undefined) ? modelA :
-                    (!modelA || modelA.modified === undefined) ? modelB :
-                            modelB.modified > modelA.modified ? modelB :
-                                    modelA;
+            this.defaultSpace = space;
         }
 
         PersistedModelProvider.prototype.getModels = function (ids) {
             var persistenceService = this.persistenceService,
                 $q = this.$q,
-                spaces = this.spaces,
-                space = this.space,
-                now = this.now;
+                now = this.now,
+                defaultSpace = this.defaultSpace,
+                parsedIds;
 
             // Load a single object model from any persistence spaces
-            function loadModel(id) {
-                return $q.all(spaces.map(function (space) {
-                    return persistenceService.readObject(space, id);
-                })).then(function (models) {
-                    return models.reduce(takeMostRecent);
-                });
+            function loadModel(parsedId) {
+                return persistenceService
+                        .readObject(parsedId.space, parsedId.key);
             }
 
             // Ensure that models read from persistence have some
@@ -88,24 +84,43 @@ define(
             }
 
             // Package the result as id->model
-            function packageResult(models) {
+            function packageResult(parsedIds, models) {
                 var result = {};
-                ids.forEach(function (id, index) {
+                parsedIds.forEach(function (parsedId, index) {
+                    var id = parsedId.id;
                     if (models[index]) {
-                        result[id] = addPersistedTimestamp(models[index]);
+                        result[id] = models[index];
                     }
                 });
                 return result;
             }
 
-            // Filter out "namespaced" identifiers; these are
-            // not expected to be found in database. See WTD-659.
-            ids = ids.filter(function (id) {
-                return id.indexOf(":") === -1;
+            function loadModels(parsedIds) {
+                return $q.all(parsedIds.map(loadModel))
+                    .then(function (models) {
+                        return packageResult(
+                            parsedIds,
+                            models.map(addPersistedTimestamp)
+                        );
+                    });
+            }
+
+            function restrictToSpaces(spaces) {
+                return parsedIds.filter(function (parsedId) {
+                    return spaces.indexOf(parsedId.space) !== -1;
+                });
+            }
+
+            parsedIds = ids.map(function (id) {
+                var parts = id.split(":");
+                return (parts.length > 1) ?
+                        { id: id, space: parts[0], key: parts.slice(1).join(":") } :
+                        { id: id, space: defaultSpace, key: id };
             });
 
-            // Give a promise for all persistence lookups...
-            return $q.all(ids.map(loadModel)).then(packageResult);
+            return persistenceService.listSpaces()
+                .then(restrictToSpaces)
+                .then(loadModels);
         };
 
         return PersistedModelProvider;

@@ -1,0 +1,218 @@
+<!--
+ Open MCT Web, Copyright (c) 2009-2015, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT Web includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<div class="s-timeline l-timeline-holder split-layout vertical"
+     ng-controller="TimelineController as timelineController">
+
+<mct-split-pane anchor="left" class="abs" position="pane.x">
+    <!-- LEFT PANE: TABULAR AND RESOURCE LEGEND AREAS -->
+    <mct-split-pane anchor="bottom"
+                    position="pane.y"
+                    class="abs horizontal split-pane-component l-timeline-pane l-pane-l t-pane-v"
+                    >
+        <!-- TOP PANE TABULAR AREA. ADD CLASS "hidden" FOR INTERIM NO-TABULAR DELIVERY -->
+        <div class="split-pane-component s-timeline-tabular l-timeline-pane t-pane-h l-pane-top">
+            <!-- TABULAR LEFT FIXED AREA -->
+            <div
+                class="t-pane-v l-pane-l l-tabular-l"
+                ng-if="true"
+                >
+
+                    <div class="t-header l-header s-header">
+                        <div class="l-cols">
+                            <span class="l-col l-col-icon l-plot-resource ui-symbol">&#x00e9;</span>
+                            <span class="l-col  l-col-icon l-col-link ui-symbol">&#x00e8;</span>
+                            <span class="l-col l-title">Title</span>
+                        </div>
+                    </div>
+                    <div class="t-swimlanes-holder l-swimlanes-holder"
+                         mct-scroll-y="scroll.y">
+                        <mct-include key="'timeline-tabular-swimlane-cols-tree'"
+                                     ng-repeat="swimlane in timelineController.swimlanes()"
+                                     ng-model="swimlane">
+                        </mct-include>
+                    </div>
+
+            </div>
+
+            <!-- TABULAR RIGHT HORZ SCROLLING AREA -->
+            <div
+                class="t-pane-v l-pane-r l-tabular-r"
+                >
+                <div class="l-width">
+                    <div class="t-header l-header s-header">
+                        <div class="l-cols">
+                            <span class="l-col l-start">Start</span>
+                            <span class="l-col l-end">End</span>
+                            <span class="l-col l-duration">Duration</span>
+                            <span class="l-col l-activity-modes">Activity Modes</span>
+                        </div>
+                    </div>
+                    <div class="t-swimlanes-holder l-swimlanes-holder"
+                         mct-scroll-y="scroll.y">
+                        <mct-include key="'timeline-tabular-swimlane-cols-data'"
+                                     ng-repeat="swimlane in timelineController.swimlanes()"
+                                     ng-model="swimlane">
+                        </mct-include>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HORZ SPLITTER -->
+        <mct-splitter></mct-splitter>
+
+        <!-- BOTTOM PANE RESOURCE LEGEND -->
+        <div class="split-pane-component abs l-timeline-pane t-pane-h l-pane-btm s-timeline-resource-legend l-timeline-resource-legend">
+            <div class="l-title s-title">{{ngModel.title}}Resource Graph Legend</div>
+            <div class="l-legend-items legend">
+                <mct-include key="'timeline-legend-item'"
+                             ng-repeat="swimlane in timelineController.swimlanes()"
+                             ng-model="swimlane"
+                             ng-show="swimlane.graph()">
+                </mct-include>
+            </div>
+        </div>
+    </mct-split-pane>
+
+
+    <!-- MAIN VERTICAL SPLITTER -->
+    <mct-splitter></mct-splitter>
+
+
+    <!-- RIGHT PANE: GANTT AND RESOURCE PLOTS -->
+    <span ng-controller="TimelineZoomController as zoomController" class="abs">
+    <mct-split-pane anchor="bottom"
+                    position="pane.y"
+                    class="abs split-pane-component l-timeline-pane l-pane-r t-pane-v"
+                    >
+
+        <!-- TOP PANE GANTT BARS -->
+        <div class="split-pane-component l-timeline-pane t-pane-h l-pane-top t-timeline-gantt l-timeline-gantt s-timeline-gantt"
+             >
+            <div class="l-hover-btns-holder s-hover-btns-holder t-btns-zoom">
+                <a class="t-btn l-btn s-btn"
+                   ng-click="zoomController.zoom(-1)"
+                   ng-show="true"
+                   title="Zoom in">
+                    <span class="ui-symbol icon zoom-in">X</span>
+                </a>
+
+                <a class="t-btn l-btn s-btn"
+                   ng-click="zoomController.zoom(1)"
+                   ng-show="true"
+                   title="Zoom out">
+                    <span class="ui-symbol icon zoom-out">Y</span>
+                </a>
+            </div>
+
+            <div style="overflow: hidden; position: absolute; left: 0; top: 0; right: 0; height: 30px;"
+                 mct-scroll-x="scroll.x">
+                <mct-include key="'timeline-ticks'"
+                             parameters="{
+                                         fullWidth: zoomController.toPixels(zoomController.duration()),
+                                         start: scroll.x,
+                                         width: scroll.width,
+                                         step: zoomController.toPixels(zoomController.zoom()),
+                                         toMillis: zoomController.toMillis
+                                         }">
+                </mct-include>
+            </div>
+
+            <!-- TO-DO:
+                Make this control y-scroll of both .t-swimlanes-holder elements in TOP PANE TABULAR AREA
+            -->
+            <div class="t-swimlanes-holder l-swimlanes-holder"
+                 mct-scroll-x="scroll.x"
+                 mct-scroll-y="scroll.y">
+                <div class="l-width-control"
+                     ng-style="{ width: timelineController.width(zoomController) + 'px' }">
+                    <div class="t-swimlane s-swimlane l-swimlane"
+                         ng-repeat="swimlane in timelineController.swimlanes()"
+                         ng-class="{
+                                   exceeded: swimlane.exceeded(),
+                                   selected: selection.selected(swimlane),
+                                   'drop-into': swimlane.highlight(),
+                                   'drop-after': swimlane.highlightBottom()
+                                   }"
+                         ng-click="selection.select(swimlane)"
+                         mct-swimlane-drop="swimlane">
+
+                        <mct-representation key="'gantt'"
+                                            mct-object="swimlane.domainObject"
+                                            parameters="{
+                                                        scroll: scroll,
+                                                        toPixels: zoomController.toPixels
+                                                        }">
+                        </mct-representation>
+
+                        <span ng-if="selection.selected(swimlane)">
+                            <span ng-repeat="handle in timelineController.handles()"
+                                  ng-style="handle.style(zoomController)"
+                                  style="position: absolute; top: 0px; bottom: 0px;"
+                                  class="handle"
+                                  ng-class="{ start: $index === 0, mid: $index === 1, end: $index > 1 }"
+                                  mct-drag-down="handle.begin()"
+                                  mct-drag="handle.drag(delta[0], zoomController); timelineController.refresh()"
+                                  mct-drag-up="handle.finish()">
+                            </span>
+                        </span>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <!-- HORZ SPLITTER -->
+        <mct-splitter></mct-splitter>
+
+        <!-- BOTTOM PANE RESOURCE GRAPHS AND RIGHT PANE HORIZONTAL SCROLL CONTROL -->
+        <div class="split-pane-component l-timeline-resource-graph l-timeline-pane t-pane-h l-pane-btm">
+
+            <div class="l-graphs-holder"
+                 mct-resize="scroll.width = bounds.width">
+
+                <!-- TO-DO: Make this control y-scroll of .t-graph-labels-holder -->
+                <div class="t-graphs l-graphs">
+                    <mct-include key="'timeline-resource-graphs'"
+                                 parameters="{
+                                             origin: zoomController.toMillis(scroll.x),
+                                             duration: zoomController.toMillis(scroll.width),
+                                             graphs: timelineController.graphs()
+                                             }">
+                    </mct-include>
+                </div>
+
+            </div>
+            <!-- TO-DO:  Make this control x-scroll of .t-timeline-gantt -->
+            <div mct-scroll-x="scroll.x"
+                 class="t-pane-r-scroll-h-control l-scroll-control s-scroll-control">
+                <div class="l-width-control"
+                     ng-style="{ width: timelineController.width(zoomController) + 'px' }">
+                </div>
+            </div>
+        </div>
+    </mct-split-pane>
+    </span>
+</mct-split-pane>
+</div>

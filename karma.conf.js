@@ -34,7 +34,6 @@ module.exports = function(config) {
         // List of files / patterns to load in the browser.
         // By default, files are also included in a script tag.
         files: [
-            '**/moment*',
             {pattern: 'example/**/*.js', included: false},
             {pattern: 'platform/**/*.js', included: false},
             {pattern: 'warp/**/*.js', included: false},

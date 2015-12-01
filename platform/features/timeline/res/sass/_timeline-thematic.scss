@@ -1,0 +1,154 @@
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+.l-timeline-holder {
+    .l-timeline-pane {
+        &.t-pane-h {
+            &.l-timeline-resource-legend {
+                .l-legend-items {
+                    color: $timelineResourceGraphLegendFg;
+                }
+            }
+        }
+    }
+}
+
+.s-timeline-gantt {
+    $br: $controlCr;
+    .bar {
+        color: $colorGanttBarFg;
+        @include activityBg($colorGanttBarBg);
+        @include border-radius($br);
+        @include box-shadow($shdwGanttBar);
+        &.expanded {
+            @include border-top-radius($br);
+            @include border-bottom-radius(0);
+        }
+        &.leaf {
+            @include border-top-radius(0);
+            @include border-bottom-radius($br);
+        }
+        .s-toggle {
+            color: $colorGanttToggle;
+        }
+    }
+}
+
+.s-timeline-tabular {
+    .l-header .l-cols {
+        .l-col {
+            border-left: 1px solid pullForward($timelineHeaderColorBg, 15%);
+        }
+    }
+
+    .l-pane-l {
+        // Left pane of the tabular area
+        .l-cols {
+            .s-label .ui-symbol.icon {
+                color: $colorGanttBarTabularFgIcon;
+            }
+        }
+    }
+}
+
+.edit-mode .s-timeline-gantt {
+    .bar {
+        &:hover {
+            @include background-image(linear-gradient(lighten($colorGanttBarBg, 20), lighten($colorGanttBarBg, 10)));
+        }
+    }
+}
+
+//*************************************************************** STYLING
+.s-timeline {
+    font-size: 0.75rem;
+    .s-header {
+        background-color: $timelineHeaderColorBg;
+    }
+    .s-swimlane {
+        border-bottom: 1px solid pullForward($colorBodyBg, 10%);
+        line-height: $activityBarH + 2 + 1;
+        &.exceeded {
+            @include bgDiagonalStripes(#fff, 0.05, $timelineSwimlaneH + 1);
+        }
+
+        &.selected {
+            background-color: $colorSwimlaneSelectedBg;
+            color: $colorSwimlaneSelectedFg;
+
+            .s-timeline-gantt .bar {
+                @include activityBg($colorGanttBarSelectedBg, 10);
+                color: $colorGanttBarSelectedFg;
+            }
+        }
+
+        &.drop-into {
+            background-color: rgba($colorDropTarg, 0.7);
+            .s-timeline-gantt {
+                opacity: 0.7;
+            }
+        }
+        &.drop-after {
+            background-color: rgba(#000, 0.2);
+            border-bottom-color: rgba($colorDropTarg, 1.0);
+        }
+    }
+
+    .s-ticks {
+        @include bgTicks($timelineColorAlt1);
+    }
+    .s-hover-btns-holder {
+        $bg: $timelineHeaderColorBg;
+        $bga: 1;
+        $l: 5%;
+        @include user-select(none);
+        @include background-image(linear-gradient(-90deg, rgba($bg, $bga), rgba($bg, $bga) 70%, rgba($bg, 0) 100%));
+        .s-btn {
+            height: 16px;
+            line-height: 16px;
+            .icon {
+                font-size: 0.7rem !important;
+            }
+        }
+    }
+
+    .l-timeline-resource-graph {
+        .l-graph {
+            background: $timelineResourceGraphBg;
+        }
+        .l-title {
+            color: $timelineResourceGraphFg;
+        }
+    }
+}
+
+.edit-mode .s-swimlane {
+    cursor: pointer;
+    .t-object-label {
+        @include border-radius($controlCr);
+        cursor: move;
+        padding: 2px 5px;
+        &:hover {
+            background: rgba($colorBodyFg, 0.3);
+            color: pullForward($colorBodyFg, 20%);
+        }
+    }
+}

@@ -1,0 +1,83 @@
+<!--
+ Open MCT Web, Copyright (c) 2009-2015, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT Web includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<div class='form-control complex datetime'>
+
+    <div class='field-hints'>
+        <span class='hint time sm'>Days</span>
+        <span class='hint time sm'>Hours</span>
+        <span class='hint time sm'>Minutes</span>
+        <span class='hint time sm'>Seconds</span>
+        <span class='hint' ng-if="structure.options.length > 0">Time System</span>
+    </div>
+
+    <ng-form name="mctControl">
+        <div class='fields' ng-controller="TimelineDateTimeController">
+            <span class='field control time sm'>
+                <input type='text'
+                       name='days'
+                       min='0'
+                       max='9999'
+                       integer
+                       ng-pattern="/\d+/"
+                       ng-model='datetime.days'/>
+            </span>
+            <span class='field control time sm'>
+                <input type='text'
+                       name='hour'
+                       maxlength='2'
+                       min='0'
+                       max='23'
+                       integer
+                       ng-pattern='/\d+/'
+                       ng-model="datetime.hours"/>
+            </span>
+            <span class='field control time sm'>
+                <input type='text'
+                       name='min'
+                       maxlength='2'
+                       min='0'
+                       max='59'
+                       integer
+                       ng-pattern='/\d+/'
+                       ng-model="datetime.minutes"
+                       ng-required='true'/>
+            </span>
+            <span class='field control time sm'>
+                <input type='text'
+                       name='sec'
+                       maxlength='2'
+                       min='0'
+                       max='59'
+                       integer
+                       ng-pattern='/\d+/'
+                       ng-model="datetime.seconds"
+                       ng-required='true'/>
+            </span>
+            <span ng-if="structure.options.length > 0"
+                  class='field control'>
+                SET
+            </span>
+        </div>
+    </ng-form>
+
+
+</div>

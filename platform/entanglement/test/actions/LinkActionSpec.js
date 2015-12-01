@@ -34,6 +34,7 @@ define(
         describe("Link Action", function () {
 
             var linkAction,
+                policyService,
                 locationService,
                 locationServicePromise,
                 linkService,
@@ -44,6 +45,12 @@ define(
                 newParent;
 
             beforeEach(function () {
+                policyService = jasmine.createSpyObj(
+                    'policyService',
+                    [ 'allow' ]
+                );
+                policyService.allow.andReturn(true);
+
                 selectedObjectContextCapability = jasmine.createSpyObj(
                     'selectedObjectContextCapability',
                     [
@@ -102,6 +109,7 @@ define(
                     };
 
                     linkAction = new LinkAction(
+                        policyService,
                         locationService,
                         linkService,
                         context
@@ -152,6 +160,7 @@ define(
                     };
 
                     linkAction = new LinkAction(
+                        policyService,
                         locationService,
                         linkService,
                         context

@@ -34,6 +34,7 @@ define(
         describe("Move Action", function () {
 
             var moveAction,
+                policyService,
                 locationService,
                 locationServicePromise,
                 moveService,
@@ -44,6 +45,12 @@ define(
                 newParent;
 
             beforeEach(function () {
+                policyService = jasmine.createSpyObj(
+                    'policyService',
+                    [ 'allow' ]
+                );
+                policyService.allow.andReturn(true);
+
                 selectedObjectContextCapability = jasmine.createSpyObj(
                     'selectedObjectContextCapability',
                     [
@@ -102,6 +109,7 @@ define(
                     };
 
                     moveAction = new MoveAction(
+                        policyService,
                         locationService,
                         moveService,
                         context
@@ -152,6 +160,7 @@ define(
                     };
 
                     moveAction = new MoveAction(
+                        policyService,
                         locationService,
                         moveService,
                         context

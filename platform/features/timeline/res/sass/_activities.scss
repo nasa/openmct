@@ -1,0 +1,64 @@
+.l-timeline-gantt {
+	position: absolute;
+	top: $timelineSwimlaneGanttVM; bottom: $timelineSwimlaneGanttVM;
+
+	.bar {
+		@include ellipsize();
+		height: $activityBarH;
+		line-height: $activityBarH + 2;
+		padding: 0 $interiorMargin;
+
+		span {
+			display: inline;
+			&.s-activity-type {
+				&.timeline {
+					&:before {
+						content:"S";
+					}
+				}
+				&.activity {
+					&:before {
+						content:"A";
+					}
+				}
+			}
+			&.s-title {
+				@include text-shadow(rgba(black, 0.1) 0 1px 2px);
+			}
+			&.duration {
+				left: auto;
+				opacity: 0.75;
+				right: 0;
+				text-align: right;
+				width: 60px;
+			}
+			&.handle {
+				top: 0;
+				bottom: 0;
+				height: auto;
+				width: 15px;
+				&.left {
+					right: auto;
+				}
+				&.middle {
+					right: 15px;
+					left: 15px;
+					width: auto;
+				}
+				&.right {
+					right: 0;
+					left: auto;
+				}
+			}
+		}
+	}
+}
+
+.edit-mode .s-timeline-gantt {
+	.handle {
+		cursor: col-resize;
+		&.mid {
+			cursor: ew-resize;
+		}
+	}
+}

@@ -19,68 +19,105 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
+.splitter {
+    // Redo the splitter.
+    // New look is a simple line.
+    // Main width is used to provide a good click area, and is always transparent
+    // :after will be a positioned and colored element that is the handle
+
+    //@include test(red);
+    display: block;
+    position: absolute;
+    z-index: 3;
+    &:after {
+        // The handle
+        content:"";
+        pointer-events: none;
+        @include absPosDefault(0);
+        background: $colorSplitterBg;
+        display: block;
+
+        @if $splitterEndCr != 'none' {
+            @include border-radius($splitterEndCr);
+        }
+    }
+    &:active {
+        &:after {
+            background-color: $colorSplitterActive !important;
+        }
+    }
+
+    @if $colorSplitterHover != 'none' {
+        &:not(:active) {
+            &:hover {
+                &:after {
+                    background-color: $colorSplitterHover !important;
+                    @include trans-prop-nice(background-color, 150ms);
+                }
+            }
+        }
+    }
+}
+
 .split-layout {
-	$b: pullForward($colorBodyBg, $contrastRatioPercent);
-
-	.splitter {
-		background-color: $b;
-		@include border-radius($splitterEndCr);
-		@include boxShdw($splitterShdw);
-		overflow: hidden;
-		position: absolute;
-		z-index: 1;
-		//@if $colorSplitterHover != 'none' {
-			&:hover {
-				background-color: $colorSplitterHover;
-			}
-		//}
-	}
-	&.horizontal {
-		// Slides vertically up and down, splitting the element horizontally
+    $inset: splitterHandleInset($splitterD,$splitterHandleD);
+    &.horizontal {
+        // Slides vertically up and down, splitting the element horizontally
         overflow: hidden; // Suppress overall scroll; each internal pane handles its own overflow
-		.pane {
-			left: 0;
-			right: 0;
-			&.top {
-				bottom: auto;
-			}
-			&.bottom {
-				top: auto;
-			}
-		}
-		>.splitter {
-			@include controlGrippy($colorSplitterInterior, horizontal);
-			cursor: row-resize;
-			left: 0; right: 0;
-			width: auto;
-			height: $splitterW;
-		}
-	}
-	&.vertical {
-		// Slides horizontally left to right, splitting the element vertically
-		.pane {
-			top: 0;
-			bottom: 0;
-			&.left {
-				right: auto;
-			}
-			&.right {
-				left: auto;
-			}
-		}
-		>.splitter {
-			@include controlGrippy($colorBodyBg, vertical);
-			bottom: 0;
-			cursor: col-resize;
-			width: $splitterW;
-		}
-	}
-}
+        .pane {
+            left: 0;
+            right: 0;
+            &.top {
+                bottom: auto;
+            }
+            &.bottom {
+                top: auto;
+            }
+        }
+        >.splitter {
+            cursor: row-resize;
+            left: 0;
+            right: 0;
+            height: $splitterD;
+            &:after {
+                top: $inset; bottom: $inset;
+            }
+        }
+    }
 
-.browse-area .splitter {
-	top: $ueTopBarH + $interiorMarginLg;
-}
-
-.edit-area .splitter {
-	top: 0;
+    &.vertical {
+        // Slides horizontally left to right, splitting the element vertically
+        .pane {
+            top: 0;
+            bottom: 0;
+            &.left {
+                right: auto;
+            }
+            &.right {
+                left: auto;
+            }
+        }
+        >.splitter {
+            cursor: col-resize;
+            top: 0;
+            bottom: 0;
+            &:not(.flush-right) {
+                width: $splitterD;
+                &:after {
+                    left: $inset; right: $inset;
+                }
+            }
+            &.flush-right {
+                width: ceil($splitterD / 2);
+                &:after {
+                    background-color: transparent;
+                    left: auto; right: 0; width: $splitterHandleD;
+                }
+                &.edge-shdw {
+                    @include background-image(linear-gradient(90deg, rgba(black, 0) 40%, rgba(black, 0.05) 70%, rgba(black, 0.2) 100%));
+                }
+            }
+        }
+    }
 }

@@ -11,7 +11,7 @@
                 "glyph": "f",
                 "category": "contextual",
                 "implementation": "actions/MoveAction.js",
-                "depends": ["locationService", "moveService"]
+                "depends": ["policyService", "locationService", "moveService"]
             },
             {
                 "key": "copy",
@@ -20,7 +20,8 @@
                 "glyph": "+",
                 "category": "contextual",
                 "implementation": "actions/CopyAction.js",
-                "depends": ["locationService", "copyService"]
+                "depends": ["$log", "policyService", "locationService", "copyService",
+                    "dialogService", "notificationService"]
             },
             {
                 "key": "link",
@@ -29,7 +30,15 @@
                 "glyph": "\u00E8",
                 "category": "contextual",
                 "implementation": "actions/LinkAction.js",
-                "depends": ["locationService", "linkService"]
+                "depends": ["policyService", "locationService", "linkService"]
+            },
+            {
+                "key": "follow",
+                "name": "Go To Original",
+                "description": "Go to the original, un-linked instance of this object.",
+                "glyph": "\u00F4",
+                "category": "contextual",
+                "implementation": "actions/GoToOriginalAction.js"
             }
         ],
         "components": [
@@ -45,14 +54,19 @@
                 "depends": ["contextualize", "$q", "$log"]
             }
         ],
-        "controllers": [
+        "policies": [
+            {
+                "category": "action",
+                "implementation": "policies/CrossSpacePolicy.js"
+            }
         ],
         "capabilities": [
             {
                 "key": "location",
                 "name": "Location Capability",
                 "description": "Provides a capability for retrieving the location of an object based upon it's context.",
-                "implementation": "capabilities/LocationCapability"
+                "implementation": "capabilities/LocationCapability",
+                "depends": [ "$q", "$injector" ]
             }
         ],
         "services": [
@@ -75,7 +89,8 @@
                 "name": "Copy Service",
                 "description": "Provides a service for copying objects",
                 "implementation": "services/CopyService.js",
-                "depends": ["$q", "creationService", "policyService"]
+                "depends": ["$q", "creationService", "policyService",
+                    "persistenceService", "now"]
             },
             {
                 "key": "locationService",
