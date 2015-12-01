@@ -134,8 +134,7 @@ define(
             function drop(e) {
                 var event = (e || {}).originalEvent || e,
                     id = event.dataTransfer.getData(GestureConstants.MCT_DRAG_TYPE),
-                    domainObjectType = editableDomainObject.getModel().type,
-                    virtualPanel;
+                    domainObjectType = editableDomainObject.getModel().type;
 
                 // If currently in edit mode allow drag and drop gestures to the
                 // domain object. An exception to this is folders which have drop
@@ -147,10 +146,10 @@ define(
                     // the change.
                     if (id) {
                         if (shouldCreateVirtualPanel(domainObject)){
-                            navigationService.setNavigation(createVirtualPanel(domainObject, id));
+                            editableDomainObject = createVirtualPanel(domainObject, id)
+                            navigationService.setNavigation(editableDomainObject);
                             broadcastDrop(id, event);
                         } else {
-                            editableDomainObject.getCapability('status').set('editing', true);
                             $q.when(action && action.perform()).then(function (result) {
                                 //Don't go into edit mode for folders
                                 if (domainObjectType!=='folder') {
@@ -159,6 +158,7 @@ define(
                                 broadcastDrop(id, event);
                             });
                         }
+                        editableDomainObject.getCapability('status').set('editing', true);
                     }
                 //}
                 // TODO: Alert user if drag and drop is not allowed
