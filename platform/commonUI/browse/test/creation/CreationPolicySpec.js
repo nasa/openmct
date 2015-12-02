@@ -27,8 +27,7 @@ define(
         "use strict";
 
         describe("The creation policy", function () {
-            var mockDomainObject,
-                mockType,
+            var mockType,
                 policy;
 
             beforeEach(function () {
@@ -42,12 +41,12 @@ define(
 
             it("allows creation of types with the creation feature", function () {
                 mockType.hasFeature.andReturn(true);
-                expect(policy.allow({}, mockType)).toBeTruthy();
+                expect(policy.allow(mockType)).toBeTruthy();
             });
 
             it("disallows creation of types without the creation feature", function () {
                 mockType.hasFeature.andReturn(false);
-                expect(policy.allow({}, mockType)).toBeFalsy();
+                expect(policy.allow(mockType)).toBeFalsy();
             });
         });
     }

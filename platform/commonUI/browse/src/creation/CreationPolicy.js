@@ -38,7 +38,7 @@ define(
                  * Only allow creation of object types that have the
                  * Creation capability
                  */
-                allow: function (action, type) {
+                allow: function (type) {
                     return type.hasFeature("creation");
                 }
             };
