@@ -22,8 +22,8 @@
 
 /*global define*/
 define(
-    [],
-    function () {
+    ['angular'],
+    function (angular) {
         'use strict';
 
         /**
@@ -74,7 +74,7 @@ define(
                     { callback: recreateContents }
                 );
 
-                if (unlisten) {
+                if (angular.isFunction(unlisten)) {
                     scope.$on("$destroy", unlisten);
                 }
             }
