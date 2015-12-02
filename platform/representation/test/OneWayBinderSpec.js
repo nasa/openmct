@@ -74,6 +74,93 @@ define(
                 binder = new OneWayBinder(mockScope, testAttrs);
             });
 
+            describe("bind", function () {
+                var attrNames;
+
+                beforeEach(function () {
+                    attrNames = Object.keys(testAttrs);
+                    attrNames.forEach(function (attr) {
+                        binder.bind(attr);
+                    });
+                });
+
+                it("exposes values from the parent in scope", function () {
+                    attrNames.forEach(function (attr) {
+                        expect(mockScope[attr])
+                            .toEqual(testValues[testAttrs[attr]]);
+                    });
+                });
+
+                it("updates values from the parent in scope", function () {
+                    var oldValues = testValues,
+                        newValues = {};
+                    Object.keys(oldValues).forEach(function (key) {
+                        newValues[key] = oldValues[key] + " a change";
+                    });
+
+                    testValues = newValues;
+
+                    attrNames.forEach(function (attr) {
+                        expect(mockScope[attr])
+                            .toEqual(oldValues[testAttrs[attr]]);
+                        fireParentWatch(testAttrs[attr]);
+                        expect(mockScope[attr])
+                            .toEqual(newValues[testAttrs[attr]]);
+                    });
+                });
+
+                it("attaches one watch per attribute", function () {
+                    expect(mockUnwatches.length).toEqual(3);
+                });
+            });
+
+            describe("alias", function () {
+                var attrNames;
+
+                beforeEach(function () {
+                    binder.alias('a', 'someAlias');
+                });
+
+                it("exposes values under a different name", function () {
+                    expect(mockScope.someAlias).toEqual(testValues.attrA);
+                });
+
+                it("updates values under a different name", function () {
+                    var newValue = "some new value";
+                    testValues.attrA = newValue;
+                    expect(mockScope.someAlias).not.toEqual(newValue);
+                    fireParentWatch(testAttrs.a);
+                    expect(mockScope.someAlias).toEqual(newValue);
+                });
+            });
+
+            describe("watch", function () {
+                var mockCallback = jasmine.createSpy();
+                beforeEach(function () {
+                    binder.watch('b', mockCallback);
+                });
+
+                it("invokes callbacks when values change", function () {
+                    var newValue = "some new value";
+                    testValues.attrB = newValue;
+                    expect(mockCallback).not.toHaveBeenCalled();
+                    fireParentWatch(testAttrs.b);
+                    expect(mockCallback).toHaveBeenCalledWith(newValue);
+                });
+
+                it("generally watches for reference equality", function () {
+                    expect(mockScope.$parent.$watch.mostRecentCall.args[2])
+                        .toBeFalsy();
+                });
+
+                it("watches for equivalence when expressions are anonymous objects", function () {
+                    testAttrs.d = "{ a: 'foo' }";
+                    binder.watch('d', mockCallback);
+                    expect(mockScope.$parent.$watch.mostRecentCall.args[2])
+                        .toBeTruthy();
+                });
+            });
+
             it("releases watches from parent when scope is destroyed", function () {
                 binder.bind('a');
                 binder.alias('b', 'xyz');
