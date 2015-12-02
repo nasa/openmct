@@ -44,6 +44,7 @@ define(
             this.$q = $q;
             this.deferred = undefined;
             this.persistenceService = persistenceService;
+            this.persistenceSpace = parent.getCapability("persistence") && parent.getCapability("persistence").getSpace();
             this.persisted = 0;
             this.now = now;
             this.clones = [];
@@ -52,6 +53,10 @@ define(
         function composeChild(child, parent) {
             //Once copied, associate each cloned
             // composee with its parent clone
+
+            //Could check islink here, and not set the location if it is a
+            // link? Object should have been contextualized during
+            // composition, so isLink should work.
             child.model.location = parent.id;
             parent.model.composition = parent.model.composition || [];
             return parent.model.composition.push(child.id);
@@ -76,7 +81,7 @@ define(
 
             return self.$q.all(self.clones.map(function(clone){
                 clone.model.persisted = self.now();
-                return self.persistenceService.createObject(clone.persistenceSpace, clone.id, clone.model)
+                return self.persistenceService.createObject(self.persistenceSpace, clone.id, clone.model)
                     .then(function(){
                         self.deferred.notify({phase: "copying", totalObjects: self.clones.length, processed: ++self.persisted});
                     });
@@ -96,7 +101,7 @@ define(
             }
 
             return self.persistenceService
-                .updateObject(parentClone.persistenceSpace, parentClone.id, parentClone.model)
+                .updateObject(self.persistenceSpace, parentClone.id, parentClone.model)
                 .then(function(){return self.parent.getCapability("composition").add(parentClone.id);})
                 .then(function(){return self.parent.getCapability("persistence").persist();})
                 .then(function(){return parentClone;});
@@ -138,15 +143,16 @@ define(
         CopyTask.prototype.copy = function(originalObject, originalParent) {
             var self = this,
                 modelClone = {
-                id: uuid(),
-                model: cloneObjectModel(originalObject.getModel()),
-                persistenceSpace: originalParent.hasCapability('persistence') && originalParent.getCapability('persistence').getSpace()
-            };
+                    id: uuid(),
+                    model: cloneObjectModel(originalObject.getModel())
+                },
+                clone;
 
             return this.$q.when(originalObject.useCapability('composition')).then(function(composees){
                 self.deferred.notify({phase: "preparing"});
                 //Duplicate the object's children, and their children, and
                 // so on down to the leaf nodes of the tree.
+                //If it is a link, don't both with children
                 return self.copyComposees(composees, modelClone, originalObject).then(function (){
                     //Add the clone to the list of clones that will
                     //be returned by this function
