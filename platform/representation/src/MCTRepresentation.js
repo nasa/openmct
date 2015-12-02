@@ -57,6 +57,11 @@ define(
          * used to pass in objects whose properties will (or may) be
          * modified by the included representation.
          *
+         * (For backwards compatibility, `ng-model` is treated identically
+         * to `mct-model`, and the property `ngModel` will be provided
+         * in scope with the same value as `mctModel`. This usage is
+         * deprecated and should be avoided.)
+         *
          * @memberof platform/representation
          * @constructor
          * @param {RepresentationDefinition[]} representations an array of
