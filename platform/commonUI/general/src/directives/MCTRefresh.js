@@ -80,6 +80,7 @@ define(
             }
 
             return {
+                restrict: "A",
                 transclude: true,
                 link: link
             };
