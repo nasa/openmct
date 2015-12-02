@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /*global define*/
+/*jslint es5: true */
 
 
 define(
@@ -111,7 +112,6 @@ define(
          *          if persistence is successful, and rejected
          *          if not.
          */
-        /*jslint es5: true */
         PersistenceCapability.prototype.persist = function () {
             var self = this,
                 domainObject = this.domainObject,
