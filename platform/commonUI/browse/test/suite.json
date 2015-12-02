@@ -8,6 +8,7 @@
     "creation/CreateMenuController",
     "creation/CreateWizard",
     "creation/CreationService",
+    "creation/CreationPolicy",
     "creation/LocatorController",
     "navigation/NavigateAction",
     "navigation/NavigationService",
