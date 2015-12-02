@@ -104,7 +104,7 @@
         ],
         "policies": [
             {
-                "implementation": "CreationPolicy.js",
+                "implementation": "creation/CreationPolicy.js",
                 "category": "creation"
             }
         ],
