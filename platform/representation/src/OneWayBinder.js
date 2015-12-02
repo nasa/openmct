@@ -62,9 +62,11 @@ define(
         };
 
         OneWayBinder.prototype.watch = function (attr, callback) {
+            var expr = this.attrs[attr];
             this.unwatches.push(this.parent.$watch(
-                this.attrs[attr],
-                callback
+                expr,
+                callback,
+                expr && expr[0] === '{'
             ));
         };
 
