@@ -100,7 +100,10 @@ define(
                 link: link,
 
                 // May hide the element, so let other directives act first
-                priority: -1000
+                priority: -1000,
+
+                // Isolate this scope; do not inherit properties from parent
+                scope: {}
             };
         }
 
