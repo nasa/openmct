@@ -24,7 +24,7 @@
 
 define(
     [
-        '../../src/actions/SetPrimaryLocation',
+        '../../src/actions/SetPrimaryLocationAction',
         '../DomainObjectFactory'
     ],
     function (SetPrimaryLocation, domainObjectFactory) {
@@ -61,7 +61,10 @@ define(
             it("is applicable to objects with no location specified", function () {
                 expect(SetPrimaryLocation.appliesTo(testContext))
                     .toBe(true);
-                testModel.location = "something";
+                testContext.domainObject.getModel.andReturn({
+                    location: "something",
+                    name: "some name"
+                });
                 expect(SetPrimaryLocation.appliesTo(testContext))
                     .toBe(false);
             });
