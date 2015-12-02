@@ -82,7 +82,7 @@ define(
          */
         function rejectIfFalsey(value, $q){
             if (!value){
-                return $q.reject("Error persisting object")
+                return $q.reject("Error persisting object");
             } else {
                 return value;
             }
@@ -133,7 +133,9 @@ define(
                 domainObject.getModel()
             ]).then(function(result){
                 return rejectIfFalsey(result, self.$q);
+            /*jshint es5: true */
             }).catch(function(error){
+            /*jshint es5: false */
                 return notifyOnError(error, domainObject, self.alertService, self.$q);
             });
         };
