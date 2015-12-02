@@ -111,6 +111,7 @@ define(
          *          if persistence is successful, and rejected
          *          if not.
          */
+        /*jslint es5: true */
         PersistenceCapability.prototype.persist = function () {
             var self = this,
                 domainObject = this.domainObject,
@@ -133,9 +134,7 @@ define(
                 domainObject.getModel()
             ]).then(function(result){
                 return rejectIfFalsey(result, self.$q);
-            /*jslint es5: true */
             }).catch(function(error){
-            /*jslint es5: false */
                 return notifyOnError(error, domainObject, self.alertService, self.$q);
             });
         };
