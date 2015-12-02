@@ -232,6 +232,7 @@ define(
                 }
 
                 binder.bind('parameters');
+                binder.bind('mctModel');
                 binder.bind('ngModel');
 
                 binder.alias('ngModel', 'mctModel');

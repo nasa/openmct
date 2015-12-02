@@ -70,6 +70,7 @@ define(
                     binder = new OneWayBinder(scope, attrs);
 
                 binder.bind('ngModel');
+                binder.bind('mctModel');
                 binder.bind('parameters');
 
                 binder.alias('ngModel', 'mctModel');
