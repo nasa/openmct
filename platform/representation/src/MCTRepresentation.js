@@ -227,13 +227,11 @@ define(
 
                 // Update the representation when the key changes (e.g. if a
                 // different representation has been selected)
-                binder.bind('key');
-                binder.watch('key', refresh);
+                binder.bind('key', refresh);
 
                 // Also update when the represented domain object changes
                 // (to a different object)
-                binder.alias('mctObject', 'domainObject');
-                binder.watch('mctObject', refresh);
+                binder.alias('mctObject', 'domainObject', refresh);
 
                 // Finally, also update when there is a new version of that
                 // same domain object; these changes should be tracked in the

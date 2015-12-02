@@ -42,25 +42,29 @@ define(
             });
         }
 
-        OneWayBinder.prototype.bind = function (attr) {
-            this.alias(attr, attr);
+        OneWayBinder.prototype.bind = function (attr, callback) {
+            this.alias(attr, attr, callback);
         };
 
-        OneWayBinder.prototype.alias = function (attr, property) {
+        OneWayBinder.prototype.alias = function (attr, property, callback) {
             var scope = this.scope;
 
             this.watch(attr, function expose(value) {
                 scope[property] = value;
+                if (callback) {
+                    callback(value);
+                }
             });
 
+            // Expose in scope immediately, similar to scope: { attr: "=" }
+            // in a directive definition object.
             scope[property] = this.parent.$eval(this.attrs[attr]);
         };
 
         OneWayBinder.prototype.watch = function (attr, callback) {
             this.unwatches.push(this.parent.$watch(
                 this.attrs[attr],
-                callback,
-                true
+                callback
             ));
         };
 
