@@ -157,6 +157,9 @@ define(
                     if (!domainObject) {
                         return [];
                     }
+                    if (!domainObject.hasCapability('context')) {
+                        return [domainObject.getId()];
+                    }
                     return domainObject.getCapability('context')
                         .getPath().map(function (pathObject) {
                             return pathObject.getId();
