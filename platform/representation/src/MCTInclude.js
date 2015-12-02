@@ -25,8 +25,8 @@
  * Module defining MCTInclude. Created by vwoeltje on 11/7/14.
  */
 define(
-    [],
-    function () {
+    ["./OneWayBinder"],
+    function (OneWayBinder) {
         "use strict";
 
         /**
@@ -65,22 +65,13 @@ define(
                         element,
                         key && templateMap[key]
                     ),
-                    unwatches = [];
+                    binder = new OneWayBinder(scope, attrs);
 
-                unwatches = ["ngModel", "parameters"].map(function (attr) {
-                    return parent.$watch(attrs[attr], function (value) {
-                        scope[attr] = value;
-                    }, true);
-                });
+                binder.bind('ngModel');
+                binder.bind('parameters');
 
-                unwatches.push(parent.$watch(attrs.key, function (key) {
+                binder.watch('key', function (key) {
                     changeTemplate(key && templateMap[key]);
-                }));
-
-                scope.$on("$destroy", function () {
-                    unwatches.forEach(function (unwatch) {
-                        unwatch();
-                    });
                 });
             }
 

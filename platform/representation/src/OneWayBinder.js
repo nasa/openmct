@@ -52,12 +52,15 @@ define(
             this.watch(attr, function expose(value) {
                 scope[property] = value;
             });
+
+            scope[property] = this.parent.$eval(this.attrs[attr]);
         };
 
         OneWayBinder.prototype.watch = function (attr, callback) {
             this.unwatches.push(this.parent.$watch(
                 this.attrs[attr],
-                callback
+                callback,
+                true
             ));
         };
 
