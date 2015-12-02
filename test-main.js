@@ -43,6 +43,7 @@ require.config({
     baseUrl: '/base',
 
     paths: {
+        'angular': 'platform/framework/lib/angular.min',
         'es6-promise': 'platform/framework/lib/es6-promise-2.0.0.min',
         'moment': 'platform/telemetry/lib/moment.min',
         'moment-duration-format': 'platform/features/clock/lib/moment-duration-format',
@@ -52,6 +53,9 @@ require.config({
     shim: {
         'moment-duration-format': {
             deps: [ 'moment' ]
+        },
+        'angular': {
+            exports: 'angular'
         }
     },
 
