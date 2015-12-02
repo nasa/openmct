@@ -225,6 +225,9 @@ define(
                 binder.bind('parameters');
                 binder.bind('ngModel');
 
+                binder.alias('ngModel', 'mctModel');
+                binder.alias('mctModel', 'ngModel');
+
                 // Update the representation when the key changes (e.g. if a
                 // different representation has been selected)
                 binder.bind('key', refresh);

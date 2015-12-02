@@ -70,6 +70,9 @@ define(
                 binder.bind('ngModel');
                 binder.bind('parameters');
 
+                binder.alias('ngModel', 'mctModel');
+                binder.alias('mctModel', 'ngModel');
+
                 binder.watch('key', function (key) {
                     changeTemplate(key && templateMap[key]);
                 });
