@@ -188,7 +188,8 @@
             {
                 "key": "persistence",
                 "implementation": "capabilities/PersistenceCapability.js",
-                "depends": [ "persistenceService", "identifierService" ]
+                "depends": [ "persistenceService", "identifierService",
+                    "notificationService", "$q" ]
             },
             {
                 "key": "metadata",
