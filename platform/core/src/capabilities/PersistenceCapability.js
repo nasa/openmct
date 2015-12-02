@@ -133,9 +133,9 @@ define(
                 domainObject.getModel()
             ]).then(function(result){
                 return rejectIfFalsey(result, self.$q);
-            /*jshint es5: true */
+            /*jslint es5: true */
             }).catch(function(error){
-            /*jshint es5: false */
+            /*jslint es5: false */
                 return notifyOnError(error, domainObject, self.alertService, self.$q);
             });
         };
