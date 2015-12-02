@@ -44,6 +44,7 @@ define(
                 mockChangeTemplate,
                 mockScope,
                 mockElement,
+                testAttrs,
                 mockDomainObject,
                 testModel,
                 mctRepresentation;
@@ -57,7 +58,7 @@ define(
             }
 
             function fireWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$parent.$watch.calls.forEach(function (call) {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
@@ -102,6 +103,11 @@ define(
                     testUrls[t.key] = "some URL " + String(i);
                 });
 
+                testAttrs = {
+                    "mctObject": "someExpr",
+                    "key": "someOtherExpr"
+                };
+
                 mockRepresenters = ["A", "B"].map(function (name) {
                     var constructor = jasmine.createSpy("Representer" + name),
                         representer = jasmine.createSpyObj(
@@ -121,6 +127,8 @@ define(
                 mockLog = jasmine.createSpyObj("$log", LOG_FUNCTIONS);
 
                 mockScope = jasmine.createSpyObj("scope", [ "$watch", "$on" ]);
+                mockScope.$parent =
+                    jasmine.createSpyObj('parent', ['$watch', '$eval']);
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
 
@@ -138,7 +146,7 @@ define(
                     mockLinker,
                     mockLog
                 );
-                mctRepresentation.link(mockScope, mockElement);
+                mctRepresentation.link(mockScope, mockElement, testAttrs);
             });
 
             it("is restricted to elements", function () {
@@ -150,15 +158,7 @@ define(
                     .toHaveBeenCalledWith(mockScope, mockElement);
             });
 
-            it("watches scope when linked", function () {
-                expect(mockScope.$watch).toHaveBeenCalledWith(
-                    "key",
-                    jasmine.any(Function)
-                );
-                expect(mockScope.$watch).toHaveBeenCalledWith(
-                    "domainObject",
-                    jasmine.any(Function)
-                );
+            it("watches for model changes when linked", function () {
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "domainObject.getModel().modified",
                     jasmine.any(Function)
@@ -166,24 +166,16 @@ define(
             });
 
             it("recognizes keys for representations", function () {
-                mockScope.key = "abc";
-                mockScope.domainObject = mockDomainObject;
-
-                // Trigger the watch
-                fireWatch('key', mockScope.key);
-                fireWatch('domainObject', mockDomainObject);
+                fireWatch(testAttrs.key, "abc");
+                fireWatch(testAttrs.mctObject, mockDomainObject);
 
                 expect(mockChangeTemplate)
                     .toHaveBeenCalledWith(testUrls.abc);
             });
 
             it("recognizes keys for views", function () {
-                mockScope.key = "xyz";
-                mockScope.domainObject = mockDomainObject;
-
-                // Trigger the watches
-                fireWatch('key', mockScope.key);
-                fireWatch('domainObject', mockDomainObject);
+                fireWatch(testAttrs.key, "xyz");
+                fireWatch(testAttrs.mctObject, mockDomainObject);
 
                 expect(mockChangeTemplate)
                     .toHaveBeenCalledWith(testUrls.xyz);
@@ -192,25 +184,20 @@ define(
             it("does not load templates until there is an object", function () {
                 mockScope.key = "xyz";
 
-                // Trigger the watch
-                fireWatch('key', mockScope.key);
+                fireWatch(testAttrs.key, "xyz");
 
                 expect(mockChangeTemplate)
                     .not.toHaveBeenCalledWith(jasmine.any(String));
 
-                mockScope.domainObject = mockDomainObject;
-                fireWatch('domainObject', mockDomainObject);
+                fireWatch(testAttrs.mctObject, mockDomainObject);
 
                 expect(mockChangeTemplate)
                     .toHaveBeenCalledWith(jasmine.any(String));
             });
 
             it("loads declared capabilities", function () {
-                mockScope.key = "def";
-                mockScope.domainObject = mockDomainObject;
-
-                // Trigger the watch
-                mockScope.$watch.calls[0].args[1]();
+                fireWatch(testAttrs.key, "def");
+                fireWatch(testAttrs.mctObject, mockDomainObject);
 
                 expect(mockDomainObject.useCapability)
                     .toHaveBeenCalledWith("testCapability");
@@ -219,32 +206,27 @@ define(
             });
 
             it("logs when no representation is available for a key", function () {
-                mockScope.key = "someUnknownThing";
-
                 // Verify precondition
                 expect(mockLog.warn).not.toHaveBeenCalled();
 
                 // Trigger the watch
-                mockScope.$watch.calls[0].args[1]();
+                fireWatch(testAttrs.key, "someUnkownThing");
 
                 // Should have gotten a warning - that's an unknown key
                 expect(mockLog.warn).toHaveBeenCalled();
             });
 
             it("clears out obsolete peroperties from scope", function () {
-                mockScope.key = "def";
-                mockScope.domainObject = mockDomainObject;
                 mockDomainObject.useCapability.andReturn("some value");
 
                 // Trigger the watch
-                mockScope.$watch.calls[0].args[1]();
+                fireWatch(testAttrs.key, "def");
+                fireWatch(testAttrs.mctObject, mockDomainObject);
                 expect(mockScope.testCapability).toBeDefined();
 
-                // Change the view
-                mockScope.key = "xyz";
+                // Change the view; should clear capabilities from scope
+                fireWatch(testAttrs.key, "xyz");
 
-                // Trigger the watch again; should clear capability from scope
-                mockScope.$watch.calls[0].args[1]();
                 expect(mockScope.testCapability).toBeUndefined();
             });
         });
