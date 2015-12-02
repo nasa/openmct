@@ -8,5 +8,6 @@
     "services/DndService",
     "MCTInclude",
     "MCTRepresentation",
+    "OneWayBinder",
     "TemplateLinker"
 ]
