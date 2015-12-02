@@ -149,6 +149,10 @@
                 "depends": [ "$document" ]
             },
             {
+                "key": "mctRefresh",
+                "implementation": "directives/MCTRefresh.js"
+            },
+            {
                 "key": "mctResize",
                 "implementation": "directives/MCTResize.js",
                 "depends": [ "$timeout" ]
