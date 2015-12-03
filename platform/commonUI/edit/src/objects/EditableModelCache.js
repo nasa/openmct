@@ -44,6 +44,12 @@ define(
             return JSON.parse(JSON.stringify(model));
         }
 
+        function isEditable(domainObject) {
+            // Presently, creatability is synonymous with editability
+            return domainObject.hasCapability('type') &&
+                domainObject.getCapability('type').hasFeature('creation');
+        }
+
         /**
          * Get this domain object's model from the cache (or
          * place it in the cache if it isn't in the cache yet)
@@ -53,8 +59,14 @@ define(
             var id = domainObject.getId(),
                 cache = this.cache;
 
-            return (cache[id] =
-                cache[id] || clone(domainObject.getModel()));
+            if (!cache[id]) {
+                // Only need to clone models for editable objects.
+                cache[id] = isEditable(domainObject) ?
+                        clone(domainObject.getModel()) :
+                        domainObject.getModel();
+            }
+
+            return cache[id];
         };
 
         return EditableModelCache;
