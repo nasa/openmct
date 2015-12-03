@@ -39,6 +39,7 @@ define(
         function CopyTask (domainObject, parent, policyService, $q){
             this.domainObject = domainObject;
             this.parent = parent;
+            this.firstClone = undefined;
             this.$q = $q;
             this.deferred = undefined;
             this.policyService = policyService;
@@ -97,12 +98,10 @@ define(
          * Will add a list of clones to the specified parent's composition
          */
         function addClonesToParent(self) {
-            var parentClone = self.clones[self.clones.length-1];
-
-            return parentClone.getCapability("persistence").persist()
-                .then(function(){self.parent.getCapability("composition").add(parentClone.getId())})
+            return self.firstClone.getCapability("persistence").persist()
+                .then(function(){self.parent.getCapability("composition").add(self.firstClone.getId())})
                 .then(function(){return self.parent.getCapability("persistence").persist();})
-                .then(function(){return parentClone;});
+                .then(function(){return self.firstClone;});
         }
 
         /**
@@ -188,7 +187,10 @@ define(
             var self = this;
 
             return this.copy(self.domainObject, self.parent).then(function(domainObjectClone){
-                domainObjectClone.getModel().location = self.parent.getId();
+                if (domainObjectClone !== self.domainObject) {
+                    domainObjectClone.getModel().location = self.parent.getId();
+                }
+                self.firstClone = domainObjectClone;
                 return self;
             });
         };
