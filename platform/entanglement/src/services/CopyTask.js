@@ -33,21 +33,16 @@ define(
          *
          * @param domainObject The object to copy
          * @param parent The new location of the cloned object tree
-         * @param persistenceService
          * @param $q
-         * @param now
          * @constructor
          */
-        function CopyTask (domainObject, parent, persistenceService, policyService, $q, now){
+        function CopyTask (domainObject, parent, policyService, $q){
             this.domainObject = domainObject;
             this.parent = parent;
             this.$q = $q;
             this.deferred = undefined;
-            this.persistenceService = persistenceService;
             this.policyService = policyService;
-            this.persistenceSpace = parent.getCapability("persistence") && parent.getCapability("persistence").getSpace();
             this.persisted = 0;
-            this.now = now;
             this.clones = [];
         }
 
@@ -154,7 +149,7 @@ define(
                 // creation capability of the targetParent to create the
                 // new clone. This will ensure that the correct persistence
                 // space is used.
-                clone = this.parent.hasCapability("instantiation") && originalParent.useCapability("instantiation", cloneObjectModel(originalObject.getModel()));
+                clone = this.parent.hasCapability("instantiation") && this.parent.useCapability("instantiation", cloneObjectModel(originalObject.getModel()));
 
                 //Iterate through child tree
                 return this.$q.when(originalObject.useCapability('composition')).then(function(composees){
@@ -193,7 +188,7 @@ define(
             var self = this;
 
             return this.copy(self.domainObject, self.parent).then(function(domainObjectClone){
-                domainObjectClone.model.location = self.parent.getId();
+                domainObjectClone.getModel().location = self.parent.getId();
                 return self;
             });
         };
@@ -207,7 +202,7 @@ define(
             this.deferred = this.$q.defer();
 
             if (!this.parent.hasCapability('composition')){
-                return self.$q.reject();
+                return this.$q.reject();
             }
 
             this.buildCopyPlan()

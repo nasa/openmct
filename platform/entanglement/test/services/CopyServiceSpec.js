@@ -64,7 +64,6 @@ define(
                 beforeEach(function () {
                     copyService = new CopyService(
                         null,
-                        null,
                         policyService
                     );
                     object = domainObjectFactory({
@@ -130,48 +129,52 @@ define(
                     creationService,
                     createObjectPromise,
                     copyService,
-                    mockPersistenceService,
                     mockNow,
                     object,
                     newParent,
                     copyResult,
                     copyFinished,
                     persistObjectPromise,
-                    parentPersistenceCapability,
+                    persistenceCapability,
+                    instantiationCapability,
+                    compositionCapability,
+                    locationCapability,
                     resolvedValue;
 
                 beforeEach(function () {
-                    creationService = jasmine.createSpyObj(
-                        'creationService',
-                        ['createObject']
-                    );
                     createObjectPromise = synchronousPromise(undefined);
-                    creationService.createObject.andReturn(createObjectPromise);
                     policyService.allow.andReturn(true);
-                    
-                    mockPersistenceService = jasmine.createSpyObj(
-                        'persistenceService',
-                        ['createObject', 'updateObject']
-                    );
+
                     persistObjectPromise = synchronousPromise(undefined);
-                    mockPersistenceService.createObject.andReturn(persistObjectPromise);
-                    mockPersistenceService.updateObject.andReturn(persistObjectPromise);
-                    
-                    parentPersistenceCapability = jasmine.createSpyObj(
-                        "persistence",
+
+                    instantiationCapability = jasmine.createSpyObj(
+                        "instantiation",
+                        [ "invoke" ]
+                    );
+
+                    persistenceCapability = jasmine.createSpyObj(
+                        "persistenceCapability",
                         [ "persist", "getSpace" ]
                     );
+                    persistenceCapability.persist.andReturn(persistObjectPromise);
 
-                    parentPersistenceCapability.persist.andReturn(persistObjectPromise);
-                    parentPersistenceCapability.getSpace.andReturn("testSpace");
+                    compositionCapability = jasmine.createSpyObj(
+                        'compositionCapability',
+                        ['invoke', 'add']
+                    );
 
-                    mockNow = jasmine.createSpyObj("mockNow", ["now"]);
-                    mockNow.now.andCallFake(function(){
-                        return 1234;
-                    });
+                    locationCapability = jasmine.createSpyObj(
+                        'locationCapability',
+                        ['isLink']
+                    );
+                    locationCapability.isLink.andReturn(false);
 
-                    mockDeferred = jasmine.createSpyObj('mockDeferred', ['notify', 'resolve']);
+                    mockDeferred = jasmine.createSpyObj(
+                        'mockDeferred',
+                        ['notify', 'resolve', 'reject']
+                    );
                     mockDeferred.notify.andCallFake(function(notification){});
+                    mockDeferred.reject.andCallFake(function(){});
                     mockDeferred.resolve.andCallFake(function(value){resolvedValue = value;});
                     mockDeferred.promise = {
                         then: function(callback){
@@ -179,7 +182,11 @@ define(
                         }
                     };
 
-                    mockQ = jasmine.createSpyObj('mockQ', ['when', 'all', 'reject', 'defer']);
+                    mockQ = jasmine.createSpyObj(
+                        'mockQ',
+                        ['when', 'all', 'reject', 'defer']
+                    );
+                    mockQ.reject.andReturn(synchronousPromise(undefined));
                     mockQ.when.andCallFake(synchronousPromise);
                     mockQ.all.andCallFake(function (promises) {
                         var result = {};
@@ -194,6 +201,8 @@ define(
 
                 describe("on domain object without composition", function () {
                     beforeEach(function () {
+                        var objectCopy;
+
                         newParent = domainObjectFactory({
                             name: 'newParent',
                             id: '456',
@@ -201,7 +210,9 @@ define(
                                 composition: []
                             },
                             capabilities: {
-                                persistence: parentPersistenceCapability
+                                instantiation: instantiationCapability,
+                                persistence: persistenceCapability,
+                                composition: compositionCapability
                             }
                         });
 
@@ -210,31 +221,46 @@ define(
                             id: 'abc',
                             model: {
                                 name: 'some object',
-                                location: newParent.id,
-                                persisted: mockNow.now()
+                                location: '456',
+                                someOtherAttribute: 'some other value',
+                                embeddedObjectAttribute: {
+                                    name: 'Some embedded object'
+                                }
+                            },
+                            capabilities: {
+                                persistence: persistenceCapability
                             }
                         });
-                        
-                        copyService = new CopyService(mockQ, creationService, policyService, mockPersistenceService, mockNow.now);
+
+                        objectCopy = domainObjectFactory({
+                            name: 'object',
+                            id: 'abc.copy.fdgdfgdf',
+                            capabilities: {
+                                persistence: persistenceCapability,
+                                location: locationCapability
+                            }
+                        });
+
+                        instantiationCapability.invoke.andCallFake(
+                            function(model){
+                                objectCopy.model = model;
+                                return objectCopy;
+                            }
+                        );
+
+                        copyService = new CopyService(mockQ, policyService);
                         copyResult = copyService.perform(object, newParent);
                         copyFinished = jasmine.createSpy('copyFinished');
                         copyResult.then(copyFinished);
                     });
 
-                    it("uses persistence service", function () {
-                     expect(mockPersistenceService.createObject)
-                     .toHaveBeenCalledWith(parentPersistenceCapability.getSpace(), jasmine.any(String), object.getModel());
-
-                     expect(persistObjectPromise.then)
-                     .toHaveBeenCalledWith(jasmine.any(Function));
-                     });
+                    it("uses persistence capability", function () {
+                        expect(persistenceCapability.persist)
+                            .toHaveBeenCalled();
+                    });
                     
                     it("deep clones object model", function () {
-                        //var newModel = creationService
-                        var newModel = mockPersistenceService
-                            .createObject
-                            .mostRecentCall
-                            .args[2];
+                        var newModel = copyFinished.calls[0].args[0].getModel();
                         expect(newModel).toEqual(object.model);
                         expect(newModel).not.toBe(object.model);
                     });
@@ -249,27 +275,57 @@ define(
                 describe("on domainObject with composition", function () {
                     var newObject,
                         childObject,
-                        compositionCapability,
-                        locationCapability,
+                        objectClone,
+                        childObjectClone,
                         compositionPromise;
 
                     beforeEach(function () {
+                        var invocationCount = 0,
+                            objectClones;
 
+                        instantiationCapability.invoke.andCallFake(
+                            function(model){
+                                var cloneToReturn = objectClones[invocationCount++];
+                                cloneToReturn.model = model;
+                                return cloneToReturn;
+                            }
+                        );
 
-                        locationCapability = jasmine.createSpyObj('locationCapability', ['isLink']);
-                        locationCapability.isLink.andReturn(true);
+                        newParent = domainObjectFactory({
+                            name: 'newParent',
+                            id: '456',
+                            model: {
+                                composition: []
+                            },
+                            capabilities: {
+                                instantiation: instantiationCapability,
+                                persistence: persistenceCapability,
+                                composition: compositionCapability
+                            }
+                        });
 
                         childObject = domainObjectFactory({
                             name: 'childObject',
                             id: 'def',
                             model: {
-                                name: 'a child object'
+                                name: 'a child object',
+                                location: 'abc'
+                            },
+                            capabilities: {
+                                persistence: persistenceCapability,
+                                location: locationCapability
                             }
                         });
-                        compositionCapability = jasmine.createSpyObj(
-                            'compositionCapability',
-                            ['invoke', 'add']
-                        );
+
+                        childObjectClone = domainObjectFactory({
+                            name: 'childObject',
+                            id: 'def.clone',
+                            capabilities: {
+                                persistence: persistenceCapability,
+                                location: locationCapability
+                            }
+                        });
+
                         compositionPromise = jasmine.createSpyObj(
                             'compositionPromise',
                             ['then']
@@ -280,7 +336,7 @@ define(
                             .andReturn(synchronousPromise([childObject]));
 
                         object = domainObjectFactory({
-                            name: 'object',
+                            name: 'some object',
                             id: 'abc',
                             model: {
                                 name: 'some object',
@@ -288,36 +344,27 @@ define(
                                 location: 'testLocation'
                             },
                             capabilities: {
+                                instantiation: instantiationCapability,
                                 composition: compositionCapability,
-                                location: locationCapability
-                            }
-                        });
-                        newObject = domainObjectFactory({
-                            name: 'object',
-                            id: 'abc2',
-                            model: {
-                                name: 'some object',
-                                composition: []
-                            },
-                            capabilities: {
-                                composition: compositionCapability
-                            }
-                        });
-                        newParent = domainObjectFactory({
-                            name: 'newParent',
-                            id: '456',
-                            model: {
-                                composition: []
-                            },
-                            capabilities: {
-                                composition: compositionCapability,
-                                persistence: parentPersistenceCapability
+                                location: locationCapability,
+                                persistence: persistenceCapability
                             }
                         });
 
-                        createObjectPromise = synchronousPromise(newObject);
-                        creationService.createObject.andReturn(createObjectPromise);
-                        copyService = new CopyService(mockQ, creationService, policyService, mockPersistenceService, mockNow.now);
+                        objectClone = domainObjectFactory({
+                            name: 'some object',
+                            id: 'abc.clone',
+                            capabilities: {
+                                instantiation: instantiationCapability,
+                                composition: compositionCapability,
+                                location: locationCapability,
+                                persistence: persistenceCapability
+                            }
+                        });
+
+                        objectClones = [objectClone, childObjectClone];
+
+                        copyService = new CopyService(mockQ, policyService);
                     });
 
                     describe("the cloning process", function(){
@@ -327,24 +374,13 @@ define(
                             copyResult.then(copyFinished);
                         });
 
-                        it("copies object and children in a bottom-up" +
-                            " fashion", function () {
-                            expect(mockPersistenceService.createObject.calls[0].args[2].name).toEqual(childObject.model.name);
-                            expect(mockPersistenceService.createObject.calls[1].args[2].name).toEqual(object.model.name);
-                        });
-
                         it("returns a promise", function () {
                             expect(copyResult.then).toBeDefined();
                             expect(copyFinished).toHaveBeenCalled();
                         });
 
-                        it("clears modified and sets persisted", function () {
-                            expect(copyFinished.mostRecentCall.args[0].model.modified).toBeUndefined();
-                            expect(copyFinished.mostRecentCall.args[0].model.persisted).toBe(mockNow.now());
-                        });
-
                         it ("correctly locates cloned objects", function() {
-                            expect(mockPersistenceService.createObject.calls[0].args[2].location).toEqual(mockPersistenceService.createObject.calls[1].args[1]);
+                            expect(childObjectClone.getModel().location).toEqual(objectClone.getId());
                         });
 
                     });
@@ -368,7 +404,7 @@ define(
 
                     it("throws an error", function () {
                         var copyService =
-                            new CopyService(mockQ, creationService, policyService, mockPersistenceService, mockNow.now);
+                            new CopyService(mockQ, policyService);
 
                         function perform() {
                             copyService.perform(object, newParent);
