@@ -390,16 +390,20 @@ define(
                     });
                     describe("when cloning non-creatable objects", function() {
                         beforeEach(function () {
-                            policyService.allow.callFake(function(category, object){
-                               return category === 'creation';
+                            policyService.allow.andCallFake(function(category){
+                                //Return false for 'creation' policy
+                               return category !== 'creation';
                             });
 
                             copyResult = copyService.perform(object, newParent);
                             copyFinished = jasmine.createSpy('copyFinished');
                             copyResult.then(copyFinished);
                         });
-                        it ("creates links", function() {
-                            expect(childObjectClone.getModel().location).toEqual(objectClone.getId());
+                        it ("creates link instead of clone", function() {
+                            var copiedObject = copyFinished.calls[0].args[0];
+                            expect(copiedObject).toBe(object);
+                            expect(compositionCapability.add).toHaveBeenCalledWith(copiedObject.getId());
+                            //expect(newParent.getModel().composition).toContain(copiedObject.getId());
                         });
                     });
                 });
