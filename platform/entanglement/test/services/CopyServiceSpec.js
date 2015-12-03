@@ -174,7 +174,6 @@ define(
                         ['notify', 'resolve', 'reject']
                     );
                     mockDeferred.notify.andCallFake(function(notification){});
-                    mockDeferred.reject.andCallFake(function(){});
                     mockDeferred.resolve.andCallFake(function(value){resolvedValue = value;});
                     mockDeferred.promise = {
                         then: function(callback){
