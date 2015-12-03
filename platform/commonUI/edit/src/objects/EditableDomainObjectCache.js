@@ -80,11 +80,6 @@ define(
                 return domainObject;
             }
 
-            // Don't bother wrapping non-editable objects
-            if (!type || !type.hasFeature('creation')) {
-                return domainObject;
-            }
-
             // Provide an editable form of the object
             return new EditableDomainObject(
                 domainObject,
