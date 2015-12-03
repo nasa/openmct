@@ -25,8 +25,8 @@
  * Module defining MCTInclude. Created by vwoeltje on 11/7/14.
  */
 define(
-    [],
-    function () {
+    ["./OneWayBinder"],
+    function (OneWayBinder) {
         "use strict";
 
         /**
@@ -57,14 +57,20 @@ define(
         function MCTInclude(templates, templateLinker) {
             var templateMap = {};
 
-            function link(scope, element) {
-                var changeTemplate = templateLinker.link(
-                    scope,
-                    element,
-                    scope.key && templateMap[scope.key]
-                );
+            function link(scope, element, attrs) {
+                var parent = scope.$parent,
+                    key = parent.$eval(attrs.key),
+                    changeTemplate = templateLinker.link(
+                        scope,
+                        element,
+                        key && templateMap[key]
+                    ),
+                    binder = new OneWayBinder(scope, attrs);
 
-                scope.$watch('key', function (key) {
+                binder.bind('ngModel');
+                binder.bind('parameters');
+
+                binder.watch('key', function (key) {
                     changeTemplate(key && templateMap[key]);
                 });
             }
@@ -87,8 +93,8 @@ define(
                 // May hide the element, so let other directives act first
                 priority: -1000,
 
-                // Two-way bind key, ngModel, and parameters
-                scope: { key: "=", ngModel: "=", parameters: "=" }
+                // Isolate this scope; do not inherit properties from parent
+                scope: {}
             };
         }
 

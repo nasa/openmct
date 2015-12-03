@@ -27,8 +27,8 @@
  * @namespace platform/representation
  */
 define(
-    [],
-    function () {
+    ["./OneWayBinder"],
+    function (OneWayBinder) {
         "use strict";
 
         /**
@@ -98,7 +98,8 @@ define(
                     couldRepresent = false,
                     lastIdPath = [],
                     lastKey,
-                    changeTemplate = templateLinker.link($scope, element);
+                    changeTemplate = templateLinker.link($scope, element),
+                    binder = new OneWayBinder($scope, attrs);
 
                 // Populate scope with any capabilities indicated by the
                 // representation's extension definition
@@ -237,13 +238,16 @@ define(
                     }
                 }
 
+                binder.bind('parameters');
+                binder.bind('ngModel');
+
                 // Update the representation when the key changes (e.g. if a
                 // different representation has been selected)
-                $scope.$watch("key", refresh);
+                binder.bind('key', refresh);
 
                 // Also update when the represented domain object changes
                 // (to a different object)
-                $scope.$watch("domainObject", refresh);
+                binder.alias('mctObject', 'domainObject', refresh);
 
                 // Finally, also update when there is a new version of that
                 // same domain object; these changes should be tracked in the
@@ -271,14 +275,8 @@ define(
                 // May hide the element, so let other directives act first
                 priority: -1000,
 
-                // Two-way bind key and parameters, get the represented domain
-                // object as "mct-object"
-                scope: {
-                    key: "=",
-                    domainObject: "=mctObject",
-                    ngModel: "=",
-                    parameters: "="
-                }
+                // Isolate this scope
+                scope: {}
             };
         }
 

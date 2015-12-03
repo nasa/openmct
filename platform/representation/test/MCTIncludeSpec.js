@@ -35,11 +35,12 @@ define(
                 mockLinker,
                 mockScope,
                 mockElement,
+                testAttrs,
                 mockChangeTemplate,
                 mctInclude;
 
             function fireWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$parent.$watch.calls.forEach(function (call) {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
@@ -68,6 +69,8 @@ define(
                     ['link', 'getPath']
                 );
                 mockScope = jasmine.createSpyObj('$scope', ['$watch', '$on']);
+                mockScope.$parent =
+                    jasmine.createSpyObj('parent', ['$watch', '$eval']);
                 mockElement = jasmine.createSpyObj('element', ['empty']);
                 mockChangeTemplate = jasmine.createSpy('changeTemplate');
                 mockLinker.link.andReturn(mockChangeTemplate);
@@ -75,7 +78,8 @@ define(
                     return testUrls[template.key];
                 });
                 mctInclude = new MCTInclude(testTemplates, mockLinker);
-                mctInclude.link(mockScope, mockElement, {});
+                testAttrs = { key: "parentKey" };
+                mctInclude.link(mockScope, mockElement, testAttrs);
             });
 
             it("is restricted to elements", function () {
@@ -88,13 +92,11 @@ define(
             });
 
             it("reads a template location from a scope's key variable", function () {
-                mockScope.key = 'abc';
-                fireWatch('key', mockScope.key);
+                fireWatch(testAttrs.key, 'abc');
                 expect(mockChangeTemplate)
                     .toHaveBeenCalledWith(testUrls.abc);
 
-                mockScope.key = 'xyz';
-                fireWatch('key', mockScope.key);
+                fireWatch(testAttrs.key, 'xyz');
                 expect(mockChangeTemplate)
                     .toHaveBeenCalledWith(testUrls.xyz);
             });
