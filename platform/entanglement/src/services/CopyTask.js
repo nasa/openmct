@@ -99,7 +99,7 @@ define(
          */
         function addClonesToParent(self) {
             return self.firstClone.getCapability("persistence").persist()
-                .then(function(){self.parent.getCapability("composition").add(self.firstClone.getId())})
+                .then(function(){self.parent.getCapability("composition").add(self.firstClone.getId());})
                 .then(function(){return self.parent.getCapability("persistence").persist();})
                 .then(function(){return self.firstClone;});
         }
