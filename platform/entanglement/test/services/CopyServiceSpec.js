@@ -379,10 +379,28 @@ define(
                             expect(copyFinished).toHaveBeenCalled();
                         });
 
+                        it("returns a promise", function () {
+                            expect(copyResult.then).toBeDefined();
+                            expect(copyFinished).toHaveBeenCalled();
+                        });
+
                         it ("correctly locates cloned objects", function() {
                             expect(childObjectClone.getModel().location).toEqual(objectClone.getId());
                         });
+                    });
+                    describe("when cloning non-creatable objects", function() {
+                        beforeEach(function () {
+                            policyService.allow.callFake(function(category, object){
+                               return category === 'creation';
+                            });
 
+                            copyResult = copyService.perform(object, newParent);
+                            copyFinished = jasmine.createSpy('copyFinished');
+                            copyResult.then(copyFinished);
+                        });
+                        it ("creates links", function() {
+                            expect(childObjectClone.getModel().location).toEqual(objectClone.getId());
+                        });
                     });
                 });
 
