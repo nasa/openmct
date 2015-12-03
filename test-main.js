@@ -59,6 +59,8 @@ require.config({
         }
     },
 
+    waitSeconds: 30,
+
     // dynamically load all test files
     deps: allTestFiles,
 
