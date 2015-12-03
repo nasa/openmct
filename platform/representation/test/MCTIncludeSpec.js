@@ -78,7 +78,11 @@ define(
                     return testUrls[template.key];
                 });
                 mctInclude = new MCTInclude(testTemplates, mockLinker);
-                testAttrs = { key: "parentKey" };
+                testAttrs = {
+                    key: "parentKey",
+                    mctModel: "someExpr",
+                    ngModel: "someOtherExpr"
+                };
                 mctInclude.link(mockScope, mockElement, testAttrs);
             });
 
@@ -99,6 +103,19 @@ define(
                 fireWatch(testAttrs.key, 'xyz');
                 expect(mockChangeTemplate)
                     .toHaveBeenCalledWith(testUrls.xyz);
+            });
+
+            it("watches for changes on both ng-model and mct-model", function () {
+                expect(mockScope.$parent.$watch).toHaveBeenCalledWith(
+                    testAttrs.ngModel,
+                    jasmine.any(Function),
+                    false
+                );
+                expect(mockScope.$parent.$watch).toHaveBeenCalledWith(
+                    testAttrs.mctModel,
+                    jasmine.any(Function),
+                    false
+                );
             });
 
         });

@@ -35,18 +35,32 @@ define(
          * Defines the mct-representation directive. This may be used to
          * present domain objects as HTML (with event wiring), with the
          * specific representation being mapped to a defined extension
-         * (as defined in either the `representation` category-of-extension,
+         * (as defined in either the `representations` category-of-extension,
          * or the `views` category-of-extension.)
          *
          * This directive uses two-way binding for three attributes:
          *
-         * * `key`, matched against the key of a defined template extension
-         *   in order to determine which actual template to include.
          * * `mct-object`, populated as `domainObject` in the loaded
          *   template's scope. This is the domain object being
          *   represented as HTML by this directive.
-         * * `parameters`, used to communicate display parameters to
-         *   the included template (e.g. title.)
+         * * `key`: An Angular expression, matched against the key of a
+         *   defined representation or view extension in order to determine
+         *   which actual template to include.
+         * * `mct-model`: An Angular expression; its value is watched
+         *   and passed into the template's scope as property `mctModel`.
+         * * `parameters`: An Angular expression; its value is watched
+         *   and passed into the template's scope as property `parameters`.
+         *
+         * The difference between `parameters` and `mct-model` is intent;
+         * `parameters` should be used for display-time parameters which
+         * are not meant to be changed, whereas `mct-model` should be
+         * used to pass in objects whose properties will (or may) be
+         * modified by the included representation.
+         *
+         * (For backwards compatibility, `ng-model` is treated identically
+         * to `mct-model`, and the property `ngModel` will be provided
+         * in scope with the same value as `mctModel`. This usage is
+         * deprecated and should be avoided.)
          *
          * @memberof platform/representation
          * @constructor
@@ -239,7 +253,11 @@ define(
                 }
 
                 binder.bind('parameters');
+                binder.bind('mctModel');
                 binder.bind('ngModel');
+
+                binder.alias('ngModel', 'mctModel');
+                binder.alias('mctModel', 'ngModel');
 
                 // Update the representation when the key changes (e.g. if a
                 // different representation has been selected)

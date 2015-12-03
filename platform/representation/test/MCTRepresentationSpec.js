@@ -105,7 +105,9 @@ define(
 
                 testAttrs = {
                     "mctObject": "someExpr",
-                    "key": "someOtherExpr"
+                    "key": "someOtherExpr",
+                    "ngModel": "yetAnotherExpr",
+                    "mctModel": "theExprsKeepOnComing"
                 };
 
                 mockRepresenters = ["A", "B"].map(function (name) {
@@ -276,6 +278,19 @@ define(
 
                 expect(mockChangeTemplate.calls.length)
                     .toEqual(callCount + 1);
+            });
+
+            it("watches for changes on both ng-model and mct-model", function () {
+                expect(mockScope.$parent.$watch).toHaveBeenCalledWith(
+                    testAttrs.ngModel,
+                    jasmine.any(Function),
+                    false
+                );
+                expect(mockScope.$parent.$watch).toHaveBeenCalledWith(
+                    testAttrs.mctModel,
+                    jasmine.any(Function),
+                    false
+                );
             });
         });
     }
