@@ -104,14 +104,10 @@ define(
         function addClonesToParent(self) {
             var parentClone = self.clones[self.clones.length-1];
 
-            //self.persistenceService
-            //    .updateObject(self.persistenceSpace,
-            // parentClone.id, parentClone.model)
-                return parentClone.getCapability("persistence").persist()
-                    .then(function(){self.parent.getCapability("composition").add(parentClone.getId())})
-                    .then(function(){return self.parent.getCapability("persistence").persist();})
-                    .then(function(){return parentClone;});
-            // Ensure the clone of the original domainObject is returned
+            return parentClone.getCapability("persistence").persist()
+                .then(function(){self.parent.getCapability("composition").add(parentClone.getId())})
+                .then(function(){return self.parent.getCapability("persistence").persist();})
+                .then(function(){return parentClone;});
         }
 
         /**
@@ -175,7 +171,7 @@ define(
                 });
             } else {
                 //Creating a link, no need to iterate children
-                return $q.when(originalObject);
+                return self.$q.when(originalObject);
             }
 
 
