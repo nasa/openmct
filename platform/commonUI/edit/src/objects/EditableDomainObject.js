@@ -35,6 +35,7 @@ define(
         '../capabilities/EditablePersistenceCapability',
         '../capabilities/EditableContextCapability',
         '../capabilities/EditableCompositionCapability',
+        '../capabilities/EditableInstantiationCapability',
         '../capabilities/EditableRelationshipCapability',
         '../capabilities/EditorCapability',
         './EditableDomainObjectCache'
@@ -43,6 +44,7 @@ define(
         EditablePersistenceCapability,
         EditableContextCapability,
         EditableCompositionCapability,
+        EditableInstantiationCapability,
         EditableRelationshipCapability,
         EditorCapability,
         EditableDomainObjectCache
@@ -53,6 +55,7 @@ define(
             persistence: EditablePersistenceCapability,
             context: EditableContextCapability,
             composition: EditableCompositionCapability,
+            instantiation: EditableInstantiationCapability,
             relationship: EditableRelationshipCapability,
             editor: EditorCapability
         };
