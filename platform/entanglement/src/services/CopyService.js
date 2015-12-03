@@ -71,7 +71,7 @@ define(
          */
         CopyService.prototype.perform = function (domainObject, parent) {
             var $q = this.$q,
-                copyTask = new CopyTask(domainObject, parent, this.persistenceService, this.$q, this.now);
+                copyTask = new CopyTask(domainObject, parent, this.persistenceService, this.policyService, this.$q, this.now);
             if (this.validate(domainObject, parent)) {
                 return copyTask.perform();
             } else {
