@@ -39,13 +39,14 @@ define(
          * @memberof platform/commonUI/edit
          */
         return function EditableLookupCapability(
-            contextCapability,
+            capabilityToWrap,
+            methods,
             editableObject,
             domainObject,
             cache,
             idempotent
         ) {
-            var capability = Object.create(contextCapability);
+            var capability = Object.create(capabilityToWrap);
 
             // Check for domain object interface. If something has these
             // three methods, we assume it's a domain object.
@@ -87,7 +88,7 @@ define(
             // all results are editable domain objects.
             function wrapFunction(fn) {
                 return function () {
-                    return wrapResult(contextCapability[fn].apply(
+                    return wrapResult(capabilityToWrap[fn].apply(
                         capability,
                         arguments
                     ));
@@ -114,7 +115,7 @@ define(
             }
 
             // Wrap all methods; return only editable domain objects.
-            Object.keys(contextCapability).forEach(wrapMethod);
+            methods.forEach(wrapMethod);
 
             return capability;
         };

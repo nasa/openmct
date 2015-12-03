@@ -50,6 +50,7 @@ define(
             // specific value every time (composition may change)
             return new EditableLookupCapability(
                 relationshipCapability,
+                [ "getRelatedObjects" ],
                 editableObject,
                 domainObject,
                 cache,

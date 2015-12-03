@@ -40,7 +40,7 @@ define(
          * @implements {CompositionCapability}
          */
         return function EditableCompositionCapability(
-            contextCapability,
+            compositionCapability,
             editableObject,
             domainObject,
             cache
@@ -49,7 +49,8 @@ define(
             // domain objects), but we do not want to return the same
             // specific value every time (composition may change)
             return new EditableLookupCapability(
-                contextCapability,
+                compositionCapability,
+                [ "invoke", "add" ],
                 editableObject,
                 domainObject,
                 cache,

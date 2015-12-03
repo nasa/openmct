@@ -49,6 +49,7 @@ define(
             // domain objects), and it should be idempotent
             var capability = new EditableLookupCapability(
                     contextCapability,
+                    [ "getRoot", "getPath", "getParent" ],
                     editableObject,
                     domainObject,
                     cache,
