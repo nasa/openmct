@@ -146,6 +146,7 @@ define(
                     if (canvas.width !== canvas.offsetWidth ||
                             canvas.height !== canvas.offsetHeight) {
                         doDraw(scope.draw);
+                        scope.$apply();
                     }
                 }
 
@@ -181,7 +182,7 @@ define(
                 canvas.addEventListener("webglcontextlost", fallbackFromWebGL);
 
                 // Check for resize, on a timer
-                activeInterval = $interval(drawIfResized, 1000);
+                activeInterval = $interval(drawIfResized, 1000, 0, false);
 
                 // Watch "draw" for external changes to the set of
                 // things to be drawn.
