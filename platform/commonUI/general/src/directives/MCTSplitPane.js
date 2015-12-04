@@ -204,7 +204,7 @@ define(
                 // And poll for position changes enforced by styles
                 activeInterval = $interval(function () {
                     getSetPosition(getSetPosition());
-                }, POLLING_INTERVAL, false);
+                }, POLLING_INTERVAL, 0, false);
 
                 // ...and stop polling when we're destroyed.
                 $scope.$on('$destroy', function () {
