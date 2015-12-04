@@ -23,8 +23,8 @@
 /*global define */
 
 define(
-    ["uuid"],
-    function (uuid) {
+    [],
+    function () {
         "use strict";
 
         /**
@@ -148,7 +148,7 @@ define(
                 // creation capability of the targetParent to create the
                 // new clone. This will ensure that the correct persistence
                 // space is used.
-                clone = this.parent.hasCapability("instantiation") && this.parent.useCapability("instantiation", cloneObjectModel(originalObject.getModel()));
+                clone = this.parent.useCapability("instantiation", cloneObjectModel(originalObject.getModel()));
 
                 //Iterate through child tree
                 return this.$q.when(originalObject.useCapability('composition')).then(function(composees){
