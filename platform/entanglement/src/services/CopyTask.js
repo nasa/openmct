@@ -53,8 +53,8 @@ define(
 
             parent.getModel().composition.push(child.getId());
 
-            //Check if the object being composed is a link
-            if (!child.getCapability("location").isLink()) {
+            //If a location is not specified, set it.
+            if (!child.getModel().location) {
                 child.getModel().location = parent.getId();
             }
         }
