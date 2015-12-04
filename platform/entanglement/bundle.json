@@ -39,6 +39,15 @@
                 "glyph": "\u00F4",
                 "category": "contextual",
                 "implementation": "actions/GoToOriginalAction.js"
+            },
+            {
+                "key": "locate",
+                "name": "Set Primary Location",
+                "description": "Set a domain object's primary location.",
+                "glyph": "",
+                "category": "contextual",
+                "implementation": "actions/SetPrimaryLocationAction.js"
+
             }
         ],
         "components": [

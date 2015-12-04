@@ -4,6 +4,7 @@
     "actions/GoToOriginalAction",
     "actions/LinkAction",
     "actions/MoveAction",
+    "actions/SetPrimaryLocationAction",
     "policies/CrossSpacePolicy",
     "services/CopyService",
     "services/LinkService",
