@@ -139,15 +139,52 @@ define(
                 checkSelection();
             }
 
+            this.isExpandedFlag = false;
             this.isSelectedFlag = false;
             this.hasBeenExpandedFlag = false;
             this.$timeout = $timeout;
             this.$scope = $scope;
 
+            checkSelection($scope.domainObject);
+
             // Listen for changes which will effect display parameters
             $scope.$watch("ngModel.selectedObject", setSelection);
-            $scope.$watch("domainObject", checkSelection);
         }
+
+        TreeNodeController.prototype.fireListener = function () {
+            if (this.listener) {
+                this.listener();
+            }
+        };
+
+        TreeNodeController.prototype.isExpanded = function () {
+            return this.isExpandedFlag;
+        };
+
+        TreeNodeController.prototype.toggle = function () {
+            this.isExpandedFlag = !this.isExpandedFlag;
+            if (this.isExpanded() && !this.hasBeenExpanded()) {
+                this.trackExpansion();
+            }
+        };
+
+        TreeNodeController.prototype.listen = function (callback) {
+            var self = this,
+                domainObject = this.$scope.domainObject,
+                unlistenToMutation;
+
+
+            this.listener = callback;
+            unlistenToMutation = domainObject.getCapability('mutation')
+                .listen(callback);
+
+            return function () {
+                unlistenToMutation();
+                if (self.listener === callback) {
+                    delete self.listener;
+                }
+            };
+        };
 
         /**
          * Select the domain object represented by this node in the tree.

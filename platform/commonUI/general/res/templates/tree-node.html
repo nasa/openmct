@@ -19,26 +19,27 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<span ng-controller="ToggleController as toggle">
-    <span ng-controller="TreeNodeController as treeNode">
+
+    <span ng-controller="TreeNodeController as treeNode"
+          mct-refresh="treeNode.listen(callback)">
         <span
             class="tree-item menus-to-left"
-            ng-class="{selected: treeNode.isSelected()}"
+            ng-class="::{selected: treeNode.isSelected()}"
             >
             <span
                 mct-device="desktop"
                 class='ui-symbol view-control'
-                ng-click="toggle.toggle(); treeNode.trackExpansion()"
-                ng-if="model.composition !== undefined"
+                ng-click="treeNode.toggle()"
+                ng-if="::(model.composition !== undefined)"
                 >
-                {{toggle.isActive() ? "v" : ">"}}
+                {{::(treeNode.isActive() ? "v" : ">")}}
             </span>
 
             <mct-representation
                 mct-device="desktop"
                 class="mobile-hide"
                 key="'label'"
-                mct-object="domainObject"
+                mct-object="::domainObject"
                 ng-click="treeNode.select()"
                 >
             </mct-representation>
@@ -46,17 +47,15 @@
                 mct-device="mobile"
                 class="desktop-hide"
                 key="'label'"
-                mct-object="domainObject"
+                mct-object="::domainObject"
                 ng-click="(model.composition === undefined) && treeNode.select();
-                          toggle.toggle();
-                          treeNode.trackExpansion();"
+                          treeNode.toggle();"
                 >
             </mct-representation>
 
             <span
                 mct-device="mobile"
                 class='ui-symbol view-control'
-                ng-model="ngModel"
                 ng-click="treeNode.select()"
                 >
                 }
@@ -64,16 +63,15 @@
         </span>
         <span
             class="tree-item-subtree"
-            ng-show="toggle.isActive()"
-            ng-if="model.composition !== undefined"
+            ng-if="::treeNode.isExpanded()"
             >
 
             <mct-representation key="'subtree'"
-                                ng-model="ngModel"
-                                parameters="parameters"
-                                mct-object="treeNode.hasBeenExpanded() && domainObject">
+                                mct-model="::mctModel"
+                                parameters="::parameters"
+                                mct-object="::(treeNode.hasBeenExpanded() && domainObject)"
+                                >
             </mct-representation>
 
         </span>
     </span>
-</span>
