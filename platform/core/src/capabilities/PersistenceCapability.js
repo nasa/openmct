@@ -48,7 +48,7 @@ define(
         function PersistenceCapability(
             persistenceService,
             identifierService,
-            alertService,
+            notificationService,
             $q,
             domainObject
         ) {
@@ -58,7 +58,7 @@ define(
             this.domainObject = domainObject;
             this.identifierService = identifierService;
             this.persistenceService = persistenceService;
-            this.alertService = alertService;
+            this.notificationService = notificationService;
             this.$q = $q;
         }
 
@@ -147,7 +147,7 @@ define(
             ]).then(function(result){
                 return rejectIfFalsey(result, self.$q);
             }).catch(function(error){
-                return notifyOnError(error, domainObject, self.alertService, self.$q);
+                return notifyOnError(error, domainObject, self.notificationService, self.$q);
             });
         };
 

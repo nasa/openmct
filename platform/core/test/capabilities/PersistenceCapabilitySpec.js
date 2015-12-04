@@ -35,7 +35,7 @@ define(
                 mockIdentifierService,
                 mockDomainObject,
                 mockIdentifier,
-                mockAlertService,
+                mockNofificationService,
                 mockQ,
                 id = "object id",
                 model,
@@ -77,7 +77,7 @@ define(
                     "$q",
                     ["reject"]
                 );
-                mockAlertService = jasmine.createSpyObj(
+                mockNofificationService = jasmine.createSpyObj(
                     "notificationService",
                     ["error"]
                 );
@@ -98,7 +98,7 @@ define(
                 persistence = new PersistenceCapability(
                     mockPersistenceService,
                     mockIdentifierService,
-                    mockAlertService,
+                    mockNofificationService,
                     mockQ,
                     mockDomainObject
                 );
@@ -168,7 +168,7 @@ define(
                     " persistence", function () {
                     persistence.persist();
                     expect(mockQ.reject).not.toHaveBeenCalled();
-                    expect(mockAlertService.error).not.toHaveBeenCalled();
+                    expect(mockNofificationService.error).not.toHaveBeenCalled();
                 });
             });
             describe("unsuccessful persistence", function() {
@@ -188,7 +188,7 @@ define(
                 it("notifies user on persistence failure", function () {
                     persistence.persist();
                     expect(mockQ.reject).toHaveBeenCalled();
-                    expect(mockAlertService.error).toHaveBeenCalled();
+                    expect(mockNofificationService.error).toHaveBeenCalled();
                 });
             });
         });
