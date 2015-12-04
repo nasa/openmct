@@ -100,9 +100,10 @@ by the [Author Checklist](https://github.com/nasa/openmctweb/blob/master/CONTRIB
 Before a sprint is closed, the development team must additionally
 perform:
 
-* _User testing_ (both generally, and for areas which interact with
-  changes made during the sprint.)
-* _Long-duration testing_ (specifically, for 24 hours.)
+* A relevant subset of [_user testing_](procedures.md#user-test-procedures)
+  identified by the acting [project manager](../cycle.md#roles).
+* [_Long-duration testing_](procedures.md#long-duration-testng)
+  (specifically, for 24 hours.)
 
 Issues are reported as a product of both forms of testing.
 
@@ -114,7 +115,7 @@ remain open.
 ### Per-release Testing
 
 As [per-sprint testing](#per-sprint-testing), except that _user testing_
-should be comprehensive, with less focus on changes from the specific
+should cover all test cases, with less focus on changes from the specific
 sprint or release.
 
 Per-release testing should also include any acceptance testing steps
