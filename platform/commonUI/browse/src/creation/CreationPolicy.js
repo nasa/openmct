@@ -27,22 +27,18 @@ define(
         "use strict";
 
         /**
-         * A policy for determining whether objects of a certain type can be
+         * A policy for determining whether objects of a given type can be
          * created.
-         * @returns {{allow: Function}}
          * @constructor
+         * @implements {Policy}
+         * @memberof platform/commonUI/browse
          */
         function CreationPolicy() {
-            return {
-                /**
-                 * Only allow creation of object types that have the
-                 * Creation capability
-                 */
-                allow: function (type) {
-                    return type.hasFeature("creation");
-                }
-            };
         }
+
+        CreationPolicy.prototype.allow = function (type) {
+            return type.hasFeature("creation");
+        };
 
         return CreationPolicy;
     }
