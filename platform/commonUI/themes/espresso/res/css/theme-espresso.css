@@ -20,7 +20,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 5, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -41,38 +41,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block; }
 
@@ -308,7 +308,7 @@ a.disabled {
  *****************************************************************************/
 /************************** FONTS */
 @font-face {
-      /*
+  	/*
       * Use https://icomoon.io/app with /platform/commonUI/general/res/fonts/symbols/icomoon.io-WTD-symbols-project.json
       */
   font-family: 'symbolsfont';
@@ -990,7 +990,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     /* line 76, ../../../../general/res/sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-left .l-infobubble::before {
       right: 100%; }
-      @media screen and (orientation: portrait) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (min-device-width: 1281px) {
+      @media only screen and (orientation: portrait) and (min-device-width: 768px) and (max-device-width: 1024px), only screen and (orientation: landscape) and (min-device-width: 768px) and (max-device-width: 1024px), only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
         /* line 76, ../../../../general/res/sass/helpers/_bubbles.scss */
         .l-infobubble-wrapper.arw-left .l-infobubble::before {
           width: 0;
@@ -998,14 +998,14 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
           border-top: 6.66667px solid transparent;
           border-bottom: 6.66667px solid transparent;
           border-right: 10px solid #ddd; } }
-  @media screen and (orientation: portrait) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (min-device-width: 1281px) {
+  @media only screen and (orientation: portrait) and (min-device-width: 768px) and (max-device-width: 1024px), only screen and (orientation: landscape) and (min-device-width: 768px) and (max-device-width: 1024px), only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
     /* line 88, ../../../../general/res/sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-right {
       margin-right: 20px; } }
   /* line 95, ../../../../general/res/sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-right .l-infobubble::before {
     left: 100%; }
-    @media screen and (orientation: portrait) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (min-device-width: 1281px) {
+    @media only screen and (orientation: portrait) and (min-device-width: 768px) and (max-device-width: 1024px), only screen and (orientation: landscape) and (min-device-width: 768px) and (max-device-width: 1024px), only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
       /* line 95, ../../../../general/res/sass/helpers/_bubbles.scss */
       .l-infobubble-wrapper.arw-right .l-infobubble::before {
         width: 0;
@@ -1647,7 +1647,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     /* line 297, ../../../../general/res/sass/_mixins.scss */
     .s-btn.major .icon, .major.s-menu-btn .icon, .s-btn.major .t-item-icon, .major.s-menu-btn .t-item-icon {
       color: #fff; }
-    @media screen and (min-device-width: 1281px) {
+    @media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
       /* line 302, ../../../../general/res/sass/_mixins.scss */
       .s-btn.major:not(.disabled):hover, .major.s-menu-btn:not(.disabled):hover {
         background: linear-gradient(#1ac6ff, #00bfff); }
@@ -1686,7 +1686,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     /* line 297, ../../../../general/res/sass/_mixins.scss */
     .s-btn:not(.major) .icon, .s-menu-btn:not(.major) .icon, .s-btn:not(.major) .t-item-icon, .s-menu-btn:not(.major) .t-item-icon {
       color: #0099cc; }
-    @media screen and (min-device-width: 1281px) {
+    @media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
       /* line 302, ../../../../general/res/sass/_mixins.scss */
       .s-btn:not(.major):not(.disabled):hover, .s-menu-btn:not(.major):not(.disabled):hover {
         background: linear-gradient(#6b6b6b, #5e5e5e); }
@@ -1728,7 +1728,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     /* line 297, ../../../../general/res/sass/_mixins.scss */
     .s-btn.pause-play.paused .icon, .pause-play.paused.s-menu-btn .icon, .s-btn.pause-play.paused .t-item-icon, .pause-play.paused.s-menu-btn .t-item-icon {
       color: #fff; }
-    @media screen and (min-device-width: 1281px) {
+    @media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
       /* line 302, ../../../../general/res/sass/_mixins.scss */
       .s-btn.pause-play.paused:not(.disabled):hover, .pause-play.paused.s-menu-btn:not(.disabled):hover {
         background: linear-gradient(#fe9815, #f88c01); }
@@ -1759,8 +1759,8 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
   .s-btn.show-thumbs .icon:before, .show-thumbs.s-menu-btn .icon:before, .s-btn.show-thumbs .t-item-icon:before, .show-thumbs.s-menu-btn .t-item-icon:before {
     content: "\000039"; }
 
-@media screen and (min-device-width: 1281px) {
-  /* line 104, ../../../../general/res/sass/controls/_buttons.scss */
+@media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
+  /* line 101, ../../../../general/res/sass/controls/_buttons.scss */
   .mini-tab {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -1829,15 +1829,15 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
       /* line 297, ../../../../general/res/sass/_mixins.scss */
       .mini-tab.collapsed .icon, .mini-tab.collapsed .t-item-icon {
         color: #0099cc; } }
-    @media screen and (min-device-width: 1281px) and (min-device-width: 1281px) {
+    @media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
       /* line 302, ../../../../general/res/sass/_mixins.scss */
       .mini-tab.collapsed:not(.disabled):hover {
         background: linear-gradient(#6b6b6b, #5e5e5e); }
         /* line 304, ../../../../general/res/sass/_mixins.scss */
         .mini-tab.collapsed:not(.disabled):hover > .icon, .mini-tab.collapsed:not(.disabled):hover > .t-item-icon {
           color: #33ccff; } }
-@media screen and (min-device-width: 1281px) {
-      /* line 141, ../../../../general/res/sass/controls/_buttons.scss */
+@media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
+      /* line 138, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.collapsed:before {
         opacity: 0; }
       /* line 139, ../../../../general/res/sass/controls/_buttons.scss */
@@ -1925,8 +1925,8 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
         .mini-tab.anchor-right.collapsed:hover:before {
           right: 2px; } }
 
-@media screen and (min-device-width: 1281px) {
-  /* line 211, ../../../../general/res/sass/controls/_buttons.scss */
+@media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
+  /* line 208, ../../../../general/res/sass/controls/_buttons.scss */
   .mini-tab-icon {
     color: #595959;
     cursor: pointer;
@@ -2314,8 +2314,8 @@ label.checkbox.custom {
     font-size: 0.7em;
     flex: 0 0 1;
     -webkit-flex: 0 0 1; }
-  @media screen and (min-device-width: 1281px) {
-    /* line 239, ../../../../general/res/sass/controls/_controls.scss */
+  @media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
+    /* line 240, ../../../../general/res/sass/controls/_controls.scss */
     .object-header .context-available {
       -moz-transition-property: opacity;
       -o-transition-property: opacity;
@@ -2657,7 +2657,8 @@ label.checkbox.custom {
         color: inherit; }
 
 /******************************************************** BROWSER ELEMENTS */
-@media screen and (min-device-width: 1281px) {
+@media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
+  /* line 485, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -3358,7 +3359,7 @@ label.checkbox.custom {
   /* line 213, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .message-severity-error .type-icon.message-type:before {
     content: "\21"; }
-@media screen and (min-device-width: 1281px) {
+@media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
   /* line 259, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .l-message,
   .t-message-single .bottom-bar {
@@ -3429,7 +3430,7 @@ label.checkbox.custom {
   .t-message-list .message-contents .l-message .top-bar,
   .t-message-list .message-contents .l-message .message-body {
     margin-bottom: 10px; }
-@media screen and (min-device-width: 1281px) {
+@media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
   /* line 304, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-contents .l-message {
     margin-right: 10px; } }
@@ -3681,7 +3682,7 @@ mct-include.l-time-controller {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: portrait) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 1280px) and (max-device-width: 1280px) {
+@media only screen and (orientation: portrait) and (max-device-width: 767px), only screen and (orientation: landscape) and (max-device-width: 767px), only screen and (orientation: portrait) and (min-device-width: 768px) and (max-device-width: 1024px), only screen and (orientation: landscape) and (min-device-width: 768px) and (max-device-width: 1024px) {
   /* line 25, ../../../../general/res/sass/mobile/controls/_menus.scss */
   .super-menu {
     width: 250px;
@@ -3960,7 +3961,7 @@ textarea {
   /* line 297, ../../../../general/res/sass/_mixins.scss */
   .select .icon, .select .t-item-icon {
     color: #0099cc; }
-  @media screen and (min-device-width: 1281px) {
+  @media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
     /* line 302, ../../../../general/res/sass/_mixins.scss */
     .select:not(.disabled):hover {
       background: linear-gradient(#6b6b6b, #5e5e5e); }
@@ -4082,15 +4083,15 @@ textarea {
 /* line 29, ../../../../general/res/sass/forms/_datetime.scss */
 .complex.datetime {
   /*
-      .field-hints,
-      .fields {
-      }
-
-
-      .field-hints {
-
-      }
-      */ }
+  	.field-hints,
+  	.fields {
+  	}
+  
+  	
+  	.field-hints {
+  
+  	}
+  	*/ }
   /* line 30, ../../../../general/res/sass/forms/_datetime.scss */
   .complex.datetime span {
     display: inline-block;
@@ -4471,7 +4472,7 @@ span.req {
   /* line 138, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane .mini-tab-icon.toggle-pane {
     z-index: 5; }
-    @media screen and (min-device-width: 1281px) {
+    @media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
       /* line 138, ../../../../general/res/sass/user-environ/_layout.scss */
       .pane .mini-tab-icon.toggle-pane {
         top: 10px;
@@ -4697,7 +4698,7 @@ span.req {
 .pane-inspect-hidden .l-object-and-inspector .splitter-inspect {
   opacity: 0; }
 
-@media screen and (min-device-width: 1281px) {
+@media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
   /* line 312, ../../../../general/res/sass/user-environ/_layout.scss */
   .holder-all {
     min-width: 600px; }
@@ -4769,7 +4770,7 @@ span.req {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: portrait) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 1280px) and (max-device-width: 1280px) {
+@media only screen and (orientation: portrait) and (max-device-width: 767px), only screen and (orientation: landscape) and (max-device-width: 767px), only screen and (orientation: portrait) and (min-device-width: 768px) and (max-device-width: 1024px), only screen and (orientation: landscape) and (min-device-width: 768px) and (max-device-width: 1024px) {
   /* line 26, ../../../../general/res/sass/mobile/_layout.scss */
   .browse-wrapper,
   .pane {
@@ -4945,7 +4946,7 @@ span.req {
     -webkit-transition-delay: 0;
     transition-delay: 0;
     opacity: 1; } }
-@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px) {
+@media only screen and (orientation: portrait) and (max-device-width: 767px) {
   /* line 146, ../../../../general/res/sass/mobile/_layout.scss */
   .pane-tree-showing .pane.left.treeview {
     width: 90% !important; }
@@ -4959,7 +4960,7 @@ span.req {
     /* line 152, ../../../../general/res/sass/mobile/_layout.scss */
     .pane-tree-showing .pane.right.items .holder-object-and-inspector {
       opacity: 0; } }
-@media screen and (min-device-width: 1281px) {
+@media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
   /* line 160, ../../../../general/res/sass/mobile/_layout.scss */
   .desktop-hide {
     display: none; } }
@@ -5274,7 +5275,7 @@ span.req {
     margin-left: 50%;
     white-space: nowrap; }
 
-@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 514px) and (max-device-width: 1280px) {
+@media only screen and (orientation: portrait) and (max-device-width: 767px), only screen and (orientation: landscape) and (max-device-width: 767px) {
   /* line 5, ../../../../general/res/sass/mobile/search/_search.scss */
   .search .search-bar .menu-icon {
     display: none; }
@@ -5451,7 +5452,7 @@ span.req {
         /* line 297, ../../../../general/res/sass/_mixins.scss */
         .overlay .bottom-bar .s-btn:not(.major) .icon, .overlay .bottom-bar .s-menu-btn:not(.major) .icon, .overlay .bottom-bar .s-btn:not(.major) .t-item-icon, .overlay .bottom-bar .s-menu-btn:not(.major) .t-item-icon {
           color: #fff; }
-        @media screen and (min-device-width: 1281px) {
+        @media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
           /* line 302, ../../../../general/res/sass/_mixins.scss */
           .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover, .overlay .bottom-bar .s-menu-btn:not(.major):not(.disabled):hover {
             background: linear-gradient(#a6a6a6, #999999); }
@@ -5484,7 +5485,7 @@ span.req {
   min-height: 225px;
   height: 225px; }
 
-@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: portrait) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 1280px) and (max-device-width: 1280px) {
+@media only screen and (orientation: portrait) and (max-device-width: 767px), only screen and (orientation: landscape) and (max-device-width: 767px), only screen and (orientation: portrait) and (min-device-width: 768px) and (max-device-width: 1024px), only screen and (orientation: landscape) and (min-device-width: 768px) and (max-device-width: 1024px) {
   /* line 3, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
   .overlay .clk-icon.close {
     top: 20px;
@@ -5502,7 +5503,7 @@ span.req {
       /* line 17, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
       .overlay > .holder > .contents .top-bar > .title {
         margin-right: 1.2em; } }
-@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 514px) and (max-device-width: 1280px) {
+@media only screen and (orientation: portrait) and (max-device-width: 767px), only screen and (orientation: landscape) and (max-device-width: 767px) {
   /* line 27, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
   .overlay > .holder {
     -moz-border-radius: 0;
@@ -5573,7 +5574,7 @@ span.req {
   .t-dialog-sm .overlay > .holder {
     height: auto;
     max-height: 100%; } }
-@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px) {
+@media only screen and (orientation: portrait) and (max-device-width: 767px) {
   /* line 77, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
   .overlay > .holder .contents .bottom-bar {
     text-align: center; } }
@@ -5646,7 +5647,7 @@ ul.tree {
     margin-left: 5px;
     font-size: 0.75em;
     width: 10px; }
-    @media screen and (min-device-width: 1281px) {
+    @media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
       /* line 56, ../../../../general/res/sass/tree/_tree.scss */
       .tree-item .view-control:hover,
       .search-result-item .view-control:hover {
@@ -5779,7 +5780,7 @@ ul.tree {
     .tree-item.selected .t-object-label .t-item-icon,
     .search-result-item.selected .t-object-label .t-item-icon {
       color: #cccccc; }
-  @media screen and (min-device-width: 1281px) {
+  @media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
     /* line 136, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item:not(.selected):hover,
     .search-result-item:not(.selected):hover {
@@ -5831,7 +5832,7 @@ ul.tree {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: portrait) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 1280px) and (max-device-width: 1280px) {
+@media only screen and (orientation: portrait) and (max-device-width: 767px), only screen and (orientation: landscape) and (max-device-width: 767px), only screen and (orientation: portrait) and (min-device-width: 768px) and (max-device-width: 1024px), only screen and (orientation: landscape) and (min-device-width: 768px) and (max-device-width: 1024px) {
   /* line 27, ../../../../general/res/sass/mobile/_tree.scss */
   ul.tree ul.tree {
     margin-left: 20px; }
@@ -5922,7 +5923,7 @@ ul.tree {
 /* line 65, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame.frame-template .view-switcher {
   z-index: 10; }
-@media screen and (min-device-width: 1281px) {
+@media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
   /* line 71, ../../../../general/res/sass/user-environ/_frame.scss */
   .frame.frame-template .view-switcher {
     opacity: 0; }
@@ -5956,9 +5957,9 @@ ul.tree {
  *****************************************************************************/
 /* line 22, ../../../../general/res/sass/user-environ/_top-bar.scss */
 .top-bar {
-  /*    .title {
-          color: #fff;
-      }*/ }
+  /*	.title {
+  		color: #fff;
+  	}*/ }
   /* line 23, ../../../../general/res/sass/user-environ/_top-bar.scss */
   .top-bar.browse, .top-bar.edit {
     border-bottom: 1px solid rgba(153, 153, 153, 0.1);
@@ -6822,7 +6823,7 @@ table {
     /* line 297, ../../../../general/res/sass/_mixins.scss */
     .items-holder .item.grid-item .icon, .items-holder .item.grid-item .t-item-icon {
       color: #0099cc; }
-    @media screen and (min-device-width: 1281px) {
+    @media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
       /* line 302, ../../../../general/res/sass/_mixins.scss */
       .items-holder .item.grid-item:not(.disabled):hover {
         background: linear-gradient(#666666, #595959); }
@@ -6953,7 +6954,7 @@ table {
       /* line 297, ../../../../general/res/sass/_mixins.scss */
       .items-holder .item.grid-item.selected .icon, .items-holder .item.grid-item.selected .t-item-icon {
         color: #0099cc; }
-      @media screen and (min-device-width: 1281px) {
+      @media only screen and (min-device-width: 1280px) and (-webkit-min-device-pixel-ratio: 1) {
         /* line 302, ../../../../general/res/sass/_mixins.scss */
         .items-holder .item.grid-item.selected:not(.disabled):hover {
           background: linear-gradient(#1ac6ff, #00bfff); }
@@ -6994,7 +6995,7 @@ table {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: portrait) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 1280px) and (max-device-width: 1280px) {
+@media only screen and (orientation: portrait) and (max-device-width: 767px), only screen and (orientation: landscape) and (max-device-width: 767px), only screen and (orientation: portrait) and (min-device-width: 768px) and (max-device-width: 1024px), only screen and (orientation: landscape) and (min-device-width: 768px) and (max-device-width: 1024px) {
   /* line 29, ../../../../general/res/sass/mobile/_item.scss */
   .items-holder .item.grid-item {
     width: 100%; }
@@ -7028,7 +7029,7 @@ table {
       opacity: 1;
       font-size: 1em;
       width: auto; } }
-@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 514px) and (max-device-width: 1280px) {
+@media only screen and (orientation: portrait) and (max-device-width: 767px), only screen and (orientation: landscape) and (max-device-width: 767px) {
   /* line 29, ../../../../general/res/sass/mobile/_item.scss */
   .items-holder .item.grid-item {
     height: 50px; }
@@ -7048,7 +7049,7 @@ table {
     /* line 83, ../../../../general/res/sass/mobile/_item.scss */
     .items-holder .item.grid-item .item-main .item-open {
       line-height: 50px; } }
-@media screen and (orientation: portrait) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 1280px) and (max-device-width: 1280px) {
+@media only screen and (orientation: portrait) and (min-device-width: 768px) and (max-device-width: 1024px), only screen and (orientation: landscape) and (min-device-width: 768px) and (max-device-width: 1024px) {
   /* line 29, ../../../../general/res/sass/mobile/_item.scss */
   .items-holder .item.grid-item {
     height: 66px; }
