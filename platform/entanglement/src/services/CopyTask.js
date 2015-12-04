@@ -47,14 +47,14 @@ define(
             this.clones = [];
         }
 
-        function composeChild(child, parent) {
+        function composeChild(child, parent, setLocation) {
             //Once copied, associate each cloned
             // composee with its parent clone
 
             parent.getModel().composition.push(child.getId());
 
             //If a location is not specified, set it.
-            if (!child.getModel().location) {
+            if (setLocation && child.getModel().location === undefined) {
                 child.getModel().location = parent.getId();
             }
         }
@@ -113,13 +113,16 @@ define(
         CopyTask.prototype.copyComposees = function(composees, clonedParent, originalParent){
             var self = this;
 
-            return (composees || []).reduce(function(promise, composee){
+            return (composees || []).reduce(function(promise, originalComposee){
                 //If the composee is composed of other
                 // objects, chain a promise..
                 return promise.then(function(){
                     // ...to recursively copy it (and its children)
-                    return self.copy(composee, originalParent).then(function(composee){
-                        return composeChild(composee, clonedParent);
+                    return self.copy(originalComposee, originalParent).then(function(clonedComposee){
+                        //Compose the child within its parent. Cloned
+                        // objects will need to also have their location
+                        // set, however linked objects will not.
+                        return composeChild(clonedComposee, clonedParent, clonedComposee !== originalComposee);
                     });
                 });}, self.$q.when(undefined)
             );
@@ -132,6 +135,9 @@ define(
          * cloning objects, and composing them with their child clones
          * as it goes
          * @private
+         * @returns {DomainObject} If the type of the original object allows for
+         * duplication, then a duplicate of the object, otherwise the object
+         * itself (to allow linking to non duplicatable objects).
          */
         CopyTask.prototype.copy = function(originalObject) {
             var self = this,
