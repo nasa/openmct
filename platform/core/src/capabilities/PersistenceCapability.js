@@ -89,16 +89,28 @@ define(
             }
         }
 
+        function formatError(error){
+            if (error && error.message) {
+                return error.message;
+            } else if (error && typeof error === "string"){
+                return error;
+            } else {
+                return "unknown error";
+            }
+        }
+
         /**
          * Display a notification message if an error has occurred during
          * persistence.
          */
         function notifyOnError(error, domainObject, notificationService, $q){
-            var errorMessage = "Unable to persist " + domainObject.model.name + ": ";
-            errorMessage += typeof error === "string" ? error : error.message;
+            var errorMessage = "Unable to persist " + domainObject.getModel().name;
+            if (error) {
+                errorMessage += ": " + formatError(error);
+            }
 
             notificationService.error({
-                title: "Error persisting " + domainObject.model.name,
+                title: "Error persisting " + domainObject.getModel().name,
                 hint: errorMessage || "Unknown error"
             });
 
