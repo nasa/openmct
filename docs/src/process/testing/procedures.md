@@ -156,7 +156,7 @@ Eval. criteria | Visual inspection
    application (again, particularly responsiveness.)
 9. Check logs for any unexpected warnings or errors.
 
-&daggers; Expectations:
+&dagger; Expectations:
 
 * At the end of the test, CPU usage and memory usage should both be similar
   to their levels at the start of the test.
