@@ -22,7 +22,7 @@
             },
             {
                 "implementation": "UnsupportedBrowserWarning.js",
-                "depends": [ "notificationService" ]
+                "depends": [ "notificationService", "agentService" ]
             }
         ],
         "stylesheets": [

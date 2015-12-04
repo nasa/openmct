@@ -36,7 +36,9 @@ define(
                 "This software has been developed and tested",
                 "using the latest Google Chrome,",
                 "and may be unstable in other browsers."
-            ].join(" ");
+            ].join(" "),
+            MOBILE_BROWSER = "Safari",
+            DESKTOP_BROWSER = "Chrome";
 
         /**
          * Shows a warning if a user's browser is unsupported.
@@ -45,11 +47,16 @@ define(
          * @param {NotificationService} notificationService the notification
          *        service
          */
-        function UnsupportedBrowserWarning(notificationService) {
-            notificationService.alert({
-                title: WARNING_TITLE,
-                actionText: WARNING_DESCRIPTION
-            });
+        function UnsupportedBrowserWarning(notificationService, agentService) {
+            var testToBrowser = agentService.isMobile() ?
+                    MOBILE_BROWSER : DESKTOP_BROWSER;
+
+            if (!agentService.isBrowser(testToBrowser)) {
+                notificationService.alert({
+                    title: WARNING_TITLE,
+                    actionText: WARNING_DESCRIPTION
+                });
+            }
         }
 
         return UnsupportedBrowserWarning;
