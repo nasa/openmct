@@ -23,8 +23,8 @@
 /*global define */
 
 define(
-    ["uuid"],
-    function (uuid) {
+    [],
+    function () {
         "use strict";
 
         /**
@@ -33,36 +33,48 @@ define(
          *
          * @param domainObject The object to copy
          * @param parent The new location of the cloned object tree
-         * @param persistenceService
          * @param $q
-         * @param now
          * @constructor
          */
-        function CopyTask (domainObject, parent, persistenceService, $q, now){
+        function CopyTask (domainObject, parent, policyService, $q){
             this.domainObject = domainObject;
             this.parent = parent;
+            this.firstClone = undefined;
             this.$q = $q;
             this.deferred = undefined;
-            this.persistenceService = persistenceService;
+            this.policyService = policyService;
             this.persisted = 0;
-            this.now = now;
             this.clones = [];
         }
 
-        function composeChild(child, parent) {
+        function composeChild(child, parent, setLocation) {
             //Once copied, associate each cloned
             // composee with its parent clone
-            child.model.location = parent.id;
-            parent.model.composition = parent.model.composition || [];
-            return parent.model.composition.push(child.id);
+
+            parent.getModel().composition.push(child.getId());
+
+            //If a location is not specified, set it.
+            if (setLocation && child.getModel().location === undefined) {
+                child.getModel().location = parent.getId();
+            }
         }
 
         function cloneObjectModel(objectModel) {
             var clone = JSON.parse(JSON.stringify(objectModel));
 
-            delete clone.composition;
+            /**
+             * Reset certain fields.
+             */
+            //If has a composition, set it to an empty array. Will be
+            // recomposed later with the ids of its cloned children.
+            if (clone.composition) {
+                //Important to set it to an empty array here, otherwise
+                // hasCapability("composition") returns false;
+                clone.composition = [];
+            }
             delete clone.persisted;
             delete clone.modified;
+            delete clone.location;
 
             return clone;
         }
@@ -73,13 +85,10 @@ define(
          * result in automatic request batching by the browser.
          */
         function persistObjects(self) {
-
             return self.$q.all(self.clones.map(function(clone){
-                clone.model.persisted = self.now();
-                return self.persistenceService.createObject(clone.persistenceSpace, clone.id, clone.model)
-                    .then(function(){
-                        self.deferred.notify({phase: "copying", totalObjects: self.clones.length, processed: ++self.persisted});
-                    });
+                return clone.getCapability("persistence").persist().then(function(){
+                    self.deferred.notify({phase: "copying", totalObjects: self.clones.length, processed: ++self.persisted});
+                });
             })).then(function(){
                 return self;
             });
@@ -89,18 +98,10 @@ define(
          * Will add a list of clones to the specified parent's composition
          */
         function addClonesToParent(self) {
-            var parentClone = self.clones[self.clones.length-1];
-
-            if (!self.parent.hasCapability('composition')){
-                return self.$q.reject();
-            }
-
-            return self.persistenceService
-                .updateObject(parentClone.persistenceSpace, parentClone.id, parentClone.model)
-                .then(function(){return self.parent.getCapability("composition").add(parentClone.id);})
+            return self.firstClone.getCapability("persistence").persist()
+                .then(function(){self.parent.getCapability("composition").add(self.firstClone.getId());})
                 .then(function(){return self.parent.getCapability("persistence").persist();})
-                .then(function(){return parentClone;});
-            // Ensure the clone of the original domainObject is returned
+                .then(function(){return self.firstClone;});
         }
 
         /**
@@ -112,13 +113,16 @@ define(
         CopyTask.prototype.copyComposees = function(composees, clonedParent, originalParent){
             var self = this;
 
-            return (composees || []).reduce(function(promise, composee){
+            return (composees || []).reduce(function(promise, originalComposee){
                 //If the composee is composed of other
                 // objects, chain a promise..
                 return promise.then(function(){
                     // ...to recursively copy it (and its children)
-                    return self.copy(composee, originalParent).then(function(composee){
-                        composeChild(composee, clonedParent);
+                    return self.copy(originalComposee, originalParent).then(function(clonedComposee){
+                        //Compose the child within its parent. Cloned
+                        // objects will need to also have their location
+                        // set, however linked objects will not.
+                        return composeChild(clonedComposee, clonedParent, clonedComposee !== originalComposee);
                     });
                 });}, self.$q.when(undefined)
             );
@@ -131,29 +135,43 @@ define(
          * cloning objects, and composing them with their child clones
          * as it goes
          * @private
-         * @param originalObject
-         * @param originalParent
-         * @returns {*}
+         * @returns {DomainObject} If the type of the original object allows for
+         * duplication, then a duplicate of the object, otherwise the object
+         * itself (to allow linking to non duplicatable objects).
          */
-        CopyTask.prototype.copy = function(originalObject, originalParent) {
+        CopyTask.prototype.copy = function(originalObject) {
             var self = this,
-                modelClone = {
-                id: uuid(),
-                model: cloneObjectModel(originalObject.getModel()),
-                persistenceSpace: originalParent.hasCapability('persistence') && originalParent.getCapability('persistence').getSpace()
-            };
+                clone;
 
-            return this.$q.when(originalObject.useCapability('composition')).then(function(composees){
-                self.deferred.notify({phase: "preparing"});
-                //Duplicate the object's children, and their children, and
-                // so on down to the leaf nodes of the tree.
-                return self.copyComposees(composees, modelClone, originalObject).then(function (){
-                    //Add the clone to the list of clones that will
-                    //be returned by this function
-                    self.clones.push(modelClone);
-                    return modelClone;
+            //Check if the type of the object being copied allows for
+            // creation of new instances. If it does not, then a link to the
+            // original will be created instead.
+            if (this.policyService.allow("creation", originalObject.getCapability("type"))){
+                //create a new clone of the original object. Use the
+                // creation capability of the targetParent to create the
+                // new clone. This will ensure that the correct persistence
+                // space is used.
+                clone = this.parent.useCapability("instantiation", cloneObjectModel(originalObject.getModel()));
+
+                //Iterate through child tree
+                return this.$q.when(originalObject.useCapability('composition')).then(function(composees){
+                    self.deferred.notify({phase: "preparing"});
+                    //Duplicate the object's children, and their children, and
+                    // so on down to the leaf nodes of the tree.
+                    //If it is a link, don't both with children
+                    return self.copyComposees(composees, clone, originalObject).then(function (){
+                        //Add the clone to the list of clones that will
+                        //be returned by this function
+                        self.clones.push(clone);
+                        return clone;
+                    });
                 });
-            });
+            } else {
+                //Creating a link, no need to iterate children
+                return self.$q.when(originalObject);
+            }
+
+
         };
 
         /**
@@ -172,7 +190,10 @@ define(
             var self = this;
 
             return this.copy(self.domainObject, self.parent).then(function(domainObjectClone){
-                domainObjectClone.model.location = self.parent.getId();
+                if (domainObjectClone !== self.domainObject) {
+                    domainObjectClone.getModel().location = self.parent.getId();
+                }
+                self.firstClone = domainObjectClone;
                 return self;
             });
         };
