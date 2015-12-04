@@ -23,8 +23,8 @@
 /*global define */
 
 define(
-    ["uuid"],
-    function (uuid) {
+    [],
+    function () {
         "use strict";
 
         /**
@@ -53,8 +53,8 @@ define(
 
             parent.getModel().composition.push(child.getId());
 
-            //Check if the object being composed is a link
-            if (!child.getCapability("location").isLink()) {
+            //If a location is not specified, set it.
+            if (!child.getModel().location) {
                 child.getModel().location = parent.getId();
             }
         }
@@ -99,7 +99,7 @@ define(
          */
         function addClonesToParent(self) {
             return self.firstClone.getCapability("persistence").persist()
-                .then(function(){self.parent.getCapability("composition").add(self.firstClone.getId())})
+                .then(function(){self.parent.getCapability("composition").add(self.firstClone.getId());})
                 .then(function(){return self.parent.getCapability("persistence").persist();})
                 .then(function(){return self.firstClone;});
         }
@@ -132,11 +132,8 @@ define(
          * cloning objects, and composing them with their child clones
          * as it goes
          * @private
-         * @param originalObject
-         * @param originalParent
-         * @returns {*}
          */
-        CopyTask.prototype.copy = function(originalObject, originalParent) {
+        CopyTask.prototype.copy = function(originalObject) {
             var self = this,
                 clone;
 
@@ -148,7 +145,7 @@ define(
                 // creation capability of the targetParent to create the
                 // new clone. This will ensure that the correct persistence
                 // space is used.
-                clone = this.parent.hasCapability("instantiation") && this.parent.useCapability("instantiation", cloneObjectModel(originalObject.getModel()));
+                clone = this.parent.useCapability("instantiation", cloneObjectModel(originalObject.getModel()));
 
                 //Iterate through child tree
                 return this.$q.when(originalObject.useCapability('composition')).then(function(composees){
@@ -202,10 +199,6 @@ define(
          */
         CopyTask.prototype.perform = function(){
             this.deferred = this.$q.defer();
-
-            if (!this.parent.hasCapability('composition')){
-                return this.$q.reject();
-            }
 
             this.buildCopyPlan()
                 .then(persistObjects)
