@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /*global define*/
+/*jslint es5: true */
 
 
 define(
@@ -47,6 +48,8 @@ define(
         function PersistenceCapability(
             persistenceService,
             identifierService,
+            notificationService,
+            $q,
             domainObject
         ) {
             // Cache modified timestamp
@@ -55,6 +58,8 @@ define(
             this.domainObject = domainObject;
             this.identifierService = identifierService;
             this.persistenceService = persistenceService;
+            this.notificationService = notificationService;
+            this.$q = $q;
         }
 
         // Utility function for creating promise-like objects which
@@ -73,6 +78,46 @@ define(
         }
 
         /**
+         * Checks if the value returned is falsey, and if so returns a
+         * rejected promise
+         */
+        function rejectIfFalsey(value, $q){
+            if (!value){
+                return $q.reject("Error persisting object");
+            } else {
+                return value;
+            }
+        }
+
+        function formatError(error){
+            if (error && error.message) {
+                return error.message;
+            } else if (error && typeof error === "string"){
+                return error;
+            } else {
+                return "unknown error";
+            }
+        }
+
+        /**
+         * Display a notification message if an error has occurred during
+         * persistence.
+         */
+        function notifyOnError(error, domainObject, notificationService, $q){
+            var errorMessage = "Unable to persist " + domainObject.getModel().name;
+            if (error) {
+                errorMessage += ": " + formatError(error);
+            }
+
+            notificationService.error({
+                title: "Error persisting " + domainObject.getModel().name,
+                hint: errorMessage || "Unknown error"
+            });
+
+            return $q.reject(error);
+        }
+
+        /**
          * Persist any changes which have been made to this
          * domain object's model.
          * @returns {Promise} a promise which will be resolved
@@ -80,7 +125,8 @@ define(
          *          if not.
          */
         PersistenceCapability.prototype.persist = function () {
-            var domainObject = this.domainObject,
+            var self = this,
+                domainObject = this.domainObject,
                 model = domainObject.getModel(),
                 modified = model.modified,
                 persistenceService = this.persistenceService,
@@ -98,7 +144,11 @@ define(
                 this.getSpace(),
                 getKey(domainObject.getId()),
                 domainObject.getModel()
-            ]);
+            ]).then(function(result){
+                return rejectIfFalsey(result, self.$q);
+            }).catch(function(error){
+                return notifyOnError(error, domainObject, self.notificationService, self.$q);
+            });
         };
 
         /**
