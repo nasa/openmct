@@ -97,6 +97,7 @@ define(
                     navContext = navObject &&
                             navObject.getCapability('context'),
                     nodePath,
+                    wasSelected = self.isSelected(),
                     navPath;
 
                 // Deselect; we will reselect below, iff we are
@@ -128,6 +129,10 @@ define(
 
                     }
                 }
+
+                if (self.isSelected() !== wasSelected) {
+                    self.notifyListener();
+                }
             }
 
             // Callback for the selection updates; track the currently
@@ -143,7 +148,7 @@ define(
             this.$timeout = $timeout;
             this.$scope = $scope;
 
-            checkSelection($scope.domainObject);
+            checkSelection();
 
             // Listen for changes which will effect display parameters
             $scope.$watch("ngModel.selectedObject", setSelection);
