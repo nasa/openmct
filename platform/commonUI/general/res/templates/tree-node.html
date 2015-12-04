@@ -20,19 +20,18 @@
  at runtime from the About dialog for additional information.
 -->
 
-    <span ng-controller="TreeNodeController as treeNode"
-          mct-refresh="treeNode.listen(callback)">
+<span ng-controller="TreeNodeController as treeNode">
+    <span mct-refresh="treeNode.listen(callback)">
         <span
             class="tree-item menus-to-left"
-            ng-class="::{selected: treeNode.isSelected()}"
-            >
+            ng-class="::{selected: treeNode.isSelected()}">
             <span
                 mct-device="desktop"
                 class='ui-symbol view-control'
                 ng-click="treeNode.toggle()"
                 ng-if="::(model.composition !== undefined)"
                 >
-                {{::(treeNode.isActive() ? "v" : ">")}}
+                {{::(treeNode.isExpanded() ? "v" : ">")}}
             </span>
 
             <mct-representation
@@ -75,3 +74,4 @@
 
         </span>
     </span>
+</span>

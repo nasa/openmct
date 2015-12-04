@@ -121,11 +121,9 @@ define(
                         // otherwise, expand.
                         if (nodePath.length === navPath.length) {
                             self.isSelectedFlag = true;
-                        } else { // node path is shorter: Expand!
-                            if ($scope.toggle) {
-                                $scope.toggle.setState(true);
-                            }
-                            self.trackExpansion();
+                        } else if (!self.isExpanded()) {
+                            // node path is shorter: Expand!
+                            self.toggle();
                         }
 
                     }
@@ -151,7 +149,7 @@ define(
             $scope.$watch("ngModel.selectedObject", setSelection);
         }
 
-        TreeNodeController.prototype.fireListener = function () {
+        TreeNodeController.prototype.notifyListener = function () {
             if (this.listener) {
                 this.listener();
             }
@@ -166,13 +164,13 @@ define(
             if (this.isExpanded() && !this.hasBeenExpanded()) {
                 this.trackExpansion();
             }
+            this.notifyListener();
         };
 
         TreeNodeController.prototype.listen = function (callback) {
             var self = this,
                 domainObject = this.$scope.domainObject,
                 unlistenToMutation;
-
 
             this.listener = callback;
             unlistenToMutation = domainObject.getCapability('mutation')
@@ -215,6 +213,7 @@ define(
                 // want this to be spread across multiple digest cycles.
                 self.$timeout(function () {
                     self.hasBeenExpandedFlag = true;
+                    self.notifyListener();
                 }, 0);
             }
         };
