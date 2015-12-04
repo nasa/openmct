@@ -50,7 +50,7 @@ define(
             // Simply trigger refresh of in-view objects; do not
             // write anything to database.
             persistence.persist = function () {
-                cache.markDirty(editableObject);
+                return cache.markDirty(editableObject);
             };
 
             // Delegate refresh to the original object; this avoids refreshing
