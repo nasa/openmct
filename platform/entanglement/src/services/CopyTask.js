@@ -132,11 +132,8 @@ define(
          * cloning objects, and composing them with their child clones
          * as it goes
          * @private
-         * @param originalObject
-         * @param originalParent
-         * @returns {*}
          */
-        CopyTask.prototype.copy = function(originalObject, originalParent) {
+        CopyTask.prototype.copy = function(originalObject) {
             var self = this,
                 clone;
 
