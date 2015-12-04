@@ -22,5 +22,6 @@
     "services/Popup",
     "services/PopupService",
     "services/UrlService",
-    "StyleSheetLoader"
+    "StyleSheetLoader",
+    "UnsupportedBrowserWarning"
 ]
