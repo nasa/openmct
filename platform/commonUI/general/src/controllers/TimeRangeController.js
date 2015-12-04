@@ -175,6 +175,13 @@ define(
                 updateViewFromModel($scope.ngModel);
             }
 
+            function updateFormModel() {
+                $scope.formModel = {
+                    start: (($scope.ngModel || {}).outer || {}).start,
+                    end: (($scope.ngModel || {}).outer || {}).end
+                };
+            }
+
             function updateOuterStart(t) {
                 var ngModel = $scope.ngModel;
 
@@ -192,6 +199,7 @@ define(
                     ngModel.inner.end
                 );
 
+                updateFormModel();
                 updateViewForInnerSpanFromModel(ngModel);
                 updateTicks();
             }
@@ -213,6 +221,7 @@ define(
                     ngModel.inner.start
                 );
 
+                updateFormModel();
                 updateViewForInnerSpanFromModel(ngModel);
                 updateTicks();
             }
@@ -223,6 +232,14 @@ define(
                 updateTicks();
             }
 
+            function updateBoundsFromForm() {
+                $scope.ngModel = $scope.ngModel || {};
+                $scope.ngModel.outer = {
+                    start: $scope.formModel.start,
+                    end: $scope.formModel.end
+                };
+            }
+
             $scope.startLeftDrag = startLeftDrag;
             $scope.startRightDrag = startRightDrag;
             $scope.startMiddleDrag = startMiddleDrag;
@@ -230,10 +247,13 @@ define(
             $scope.rightDrag = rightDrag;
             $scope.middleDrag = middleDrag;
 
+            $scope.updateBoundsFromForm = updateBoundsFromForm;
+
             $scope.ticks = [];
 
             // Initialize scope to defaults
             updateViewFromModel($scope.ngModel);
+            updateFormModel();
 
             $scope.$watchCollection("ngModel", updateViewFromModel);
             $scope.$watch("spanWidth", updateSpanWidth);
