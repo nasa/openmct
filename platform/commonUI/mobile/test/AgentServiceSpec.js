@@ -81,6 +81,13 @@ define(
                 expect(agentService.isPortrait()).toBeTruthy();
                 expect(agentService.isLandscape()).toBeFalsy();
             });
+
+            it("allows for checking browser type", function () {
+                testWindow.navigator.userAgent = "Chromezilla Safarifox";
+                agentService = new AgentService(testWindow);
+                expect(agentService.isBrowser("Chrome")).toBe(true);
+                expect(agentService.isBrowser("Firefox")).toBe(false);
+            });
         });
     }
 );

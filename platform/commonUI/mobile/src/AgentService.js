@@ -43,6 +43,7 @@ define(
             var userAgent = $window.navigator.userAgent,
                 matches = userAgent.match(/iPad|iPhone|Android/i) || [];
 
+            this.userAgent = userAgent;
             this.mobileName = matches[0];
             this.$window = $window;
         }
@@ -89,6 +90,18 @@ define(
          */
         AgentService.prototype.isLandscape = function () {
             return !this.isPortrait();
+        };
+
+        /**
+         * Check if the user agent matches a certain named device,
+         * as indicated by checking for a case-insensitive substring
+         * match.
+         * @param {string} name the name to check for
+         * @returns {boolean} true if the user agent includes that name
+         */
+        AgentService.prototype.isBrowser = function (name) {
+            name = name.toLowerCase();
+            return this.userAgent.toLowerCase().indexOf(name) !== -1;
         };
 
         return AgentService;
