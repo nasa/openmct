@@ -412,15 +412,23 @@ define(
                         object = domainObjectFactory({
                             name: 'object',
                             capabilities: {
-                                type: { type: 'object' }
+                                type: { type: 'object' },
+                                location: locationCapability,
+                                persistence: persistenceCapability
                             }
                         });
+
                         newParent = domainObjectFactory({
                             name: 'parentCandidate',
                             capabilities: {
-                                type: { type: 'parentCandidate' }
+                                type: { type: 'parentCandidate' },
+                                instantiation: instantiationCapability,
+                                composition: compositionCapability,
+                                persistence: persistenceCapability
                             }
                         });
+
+                        instantiationCapability.invoke.andReturn(object);
                     });
 
                     it("throws an error", function () {

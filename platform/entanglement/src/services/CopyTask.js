@@ -203,10 +203,6 @@ define(
         CopyTask.prototype.perform = function(){
             this.deferred = this.$q.defer();
 
-            if (!this.parent.hasCapability('composition')){
-                return this.$q.reject();
-            }
-
             this.buildCopyPlan()
                 .then(persistObjects)
                 .then(addClonesToParent)
