@@ -19,6 +19,10 @@
             {
                 "implementation": "StyleSheetLoader.js",
                 "depends": [ "stylesheets[]", "$document", "THEME" ]
+            },
+            {
+                "implementation": "UnsupportedBrowserWarning.js",
+                "depends": [ "notificationService" ]
             }
         ],
         "stylesheets": [
