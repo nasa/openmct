@@ -36,29 +36,29 @@ $mobileTreeRightArrowW: 30px;
 
 /************************** DEVICE WIDTHS */
 // IMPORTANT! Usage assumes that ranges are mutually exclusive and have no gaps
-$phoMaxW: 514px;
-$tabMinW: 515px;
-$tabMaxW: 1280px;
-$desktopMinW: 1281px;
+$phoMaxW: 767px;
+$tabMinW: 768px;
+$tabMaxW: 1024px;
+$desktopMinW: 1025px;
 
 /************************** MEDIA QUERIES: WINDOW CHECKS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
-$screenPortrait: "screen and (orientation: portrait)";
-$screenLandscape: "screen and (orientation: landscape)";
+$screenPortrait: "(orientation: portrait)";
+$screenLandscape: "(orientation: landscape)";
 
-$mobileDevice: "(max-device-width: #{$tabMaxW})";
+//$mobileDevice: "(max-device-width: #{$tabMaxW})";
 
 $phoneCheck: "(max-device-width: #{$phoMaxW})";
-$tabletCheck: $mobileDevice;
-$desktopCheck: "(min-device-width: #{$desktopMinW})";
+$tabletCheck: "(min-device-width: #{$tabMinW}) and (max-device-width: #{$tabMaxW})";
+$desktopCheck: "(min-device-width: #{$desktopMinW}) and (-webkit-min-device-pixel-ratio: 1)";
 
 /************************** MEDIA QUERIES: WINDOWS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
-$phonePortrait: "#{$screenPortrait} and #{$phoneCheck} and #{$mobileDevice}";
-$phoneLandscape: "#{$screenLandscape} and #{$phoneCheck} and #{$mobileDevice}";
+$phonePortrait: "only screen and #{$screenPortrait} and #{$phoneCheck}";
+$phoneLandscape: "only screen and #{$screenLandscape} and #{$phoneCheck}";
 
-$tabletPortrait: "#{$screenPortrait} and #{$tabletCheck} and #{$mobileDevice}";
-$tabletLandscape: "#{$screenLandscape} and #{$tabletCheck} and #{$mobileDevice}";
+$tabletPortrait: "only screen and #{$screenPortrait} and #{$tabletCheck}";
+$tabletLandscape: "only screen and #{$screenLandscape} and #{$tabletCheck}";
 
-$desktop: "screen and #{$desktopCheck}";
+$desktop: "only screen and #{$desktopCheck}";
 
 /************************** DEVICE PARAMETERS FOR MENUS/REPRESENTATIONS */
 $proporMenuOnly: 90%;
