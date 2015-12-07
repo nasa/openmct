@@ -285,6 +285,33 @@ define(
                 fireWatch("axes[1].active.key", 'someNewKey');
                 expect(mockHandle.request.calls.length).toEqual(2);
             });
+
+            it("provides classes for legends based on limit state", function () {
+                var mockTelemetryObjects = mockHandle.getTelemetryObjects();
+
+                mockHandle.getDatum.andReturn({});
+                mockTelemetryObjects.forEach(function (mockObject, i) {
+                    var id = 'object-' + i,
+                        mockLimitCapability =
+                            jasmine.createSpyObj('limit-' + id, ['evaluate']);
+
+                    mockObject.getId.andReturn(id);
+                    mockObject.getCapability.andCallFake(function (key) {
+                        return (key === 'limit') && mockLimitCapability;
+                    });
+
+                    mockLimitCapability.evaluate
+                        .andReturn({ cssClass: 'alarm-' + id });
+                });
+
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockHandler.handle.mostRecentCall.args[1]();
+
+                mockTelemetryObjects.forEach(function (mockTelemetryObject) {
+                    expect(controller.getLegendClass(mockTelemetryObject))
+                        .toEqual('alarm-' + mockTelemetryObject.getId());
+                });
+            });
         });
     }
 );
