@@ -68,6 +68,19 @@
                     "agentService"
                 ]
             }
+        ],
+        "runs": [
+            {
+                "priority": "mandatory",
+                "implementation": "TemplatePrefetcher.js",
+                "depends": [
+                    "templateLinker",
+                    "templates[]",
+                    "views[]",
+                    "representations[]",
+                    "controls[]"
+                ]
+            }
         ]
     }
 }
