@@ -72,7 +72,7 @@ define(
             
             function shouldCreateVirtualPanel(domainObject){
                 return domainObject.useCapability('view').filter(function (view){
-                    return view.key==='plot' && domainObject.getModel().type!== 'telemetry.panel'
+                    return view.key==='plot' && domainObject.getModel().type!== 'telemetry.panel';
                 }).length > 0;
             }
 
@@ -112,13 +112,13 @@ define(
                     type = typeService.getType(typeKey),
                     model = type.getInitialModel(),
                     id = uuid(),
-                    newPanel = undefined;
+                    newPanel;
 
                 model.type = typeKey;
                 newPanel = new EditableDomainObject(instantiate(model, id), $q);
 
                 [base.getId(), overlayId].forEach(function(id){
-                    newPanel.getCapability('composition').add(id)
+                    newPanel.getCapability('composition').add(id);
                 });
 
                 newPanel.getCapability('location').setPrimaryLocation(base.getCapability('location').getContextualLocation());
@@ -146,7 +146,7 @@ define(
                     // the change.
                     if (id) {
                         if (shouldCreateVirtualPanel(domainObject)){
-                            editableDomainObject = createVirtualPanel(domainObject, id)
+                            editableDomainObject = createVirtualPanel(domainObject, id);
                             navigationService.setNavigation(editableDomainObject);
                             broadcastDrop(id, event);
                         } else {

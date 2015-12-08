@@ -44,7 +44,7 @@ define(
         function ContextMenuGesture($timeout, $parse, agentService, navigationService, element, domainObject) {
             var isPressing,
                 longTouchTime = 500,
-                parameters = element && element.attr('parameters') && $parse(element.attr('parameters'))()
+                parameters = element && element.attr('parameters') && $parse(element.attr('parameters'))();
 
             function suppressMenu(){
                 return parameters

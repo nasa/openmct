@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
+/*global define,Promise, confirm*/
 
 /**
  * This bundle implements Browse mode.
@@ -52,6 +52,13 @@ define(
                 ($route.current.params.ids || DEFAULT_PATH).split("/")
             );
 
+            function isDirty(){
+                var editorCapability = $scope.navigatedObject &&
+                        $scope.navigatedObject.getCapability("editor"),
+                    hasChanges = editorCapability && editorCapability.dirty();
+                return hasChanges;
+            }
+
             function updateRoute(domainObject) {
                 var priorRoute = $route.current,
                     // Act as if params HADN'T changed to avoid page reload
@@ -72,6 +79,15 @@ define(
 
             }
 
+            // Callback for updating the in-scope reference to the object
+            // that is currently navigated-to.
+            function setNavigation(domainObject) {
+                $scope.navigatedObject = domainObject;
+                $scope.treeModel.selectedObject = domainObject;
+                navigationService.setNavigation(domainObject);
+                updateRoute(domainObject);
+            }
+
             function setSelectedObject(domainObject) {
                 if (domainObject !== $scope.navigatedObject && isDirty() && !confirm(CONFIRM_MSG)) {
                         $scope.treeModel.selectedObject = $scope.navigatedObject;
@@ -81,15 +97,6 @@ define(
                     }
                     setNavigation(domainObject);
                 }
-            }
-
-            // Callback for updating the in-scope reference to the object
-            // that is currently navigated-to.
-            function setNavigation(domainObject) {
-                $scope.navigatedObject = domainObject;
-                $scope.treeModel.selectedObject = domainObject;
-                navigationService.setNavigation(domainObject);
-                updateRoute(domainObject);
             }
 
             function navigateTo(domainObject) {
@@ -159,18 +166,11 @@ define(
                 selectedObject: navigationService.getNavigation()
             };
 
-            function isDirty(){
-                var editorCapability = $scope.navigatedObject &&
-                        $scope.navigatedObject.getCapability("editor"),
-                    hasChanges = editorCapability && editorCapability.dirty();
-                return hasChanges;
-            }
-
             $scope.beforeUnloadWarning = function() {
                 return isDirty() ?
                     "Unsaved changes will be lost if you leave this page." :
                     undefined;
-            }
+            };
 
             // Listen for changes in navigation state.
             navigationService.addListener(setNavigation);

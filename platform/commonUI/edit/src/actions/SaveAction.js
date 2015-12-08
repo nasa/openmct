@@ -40,7 +40,7 @@ define(
             this.$location = $location;
             this.injectObjectService = function(){
                 this.objectService = $injector.get("objectService");
-            }
+            };
             this.urlService = urlService;
             this.navigationService = navigationService;
             this.policyService = policyService;
@@ -55,7 +55,7 @@ define(
                 this.injectObjectService();
             }
             return this.objectService;
-        }
+        };
 
         /**
          * Save changes and conclude editing.
@@ -71,12 +71,14 @@ define(
                 self = this;
 
             function resolveWith(object){
-                return function() {return object};
+                return function() {
+                    return object;
+                };
             }
 
             function doWizardSave(parent) {
-                var context = domainObject.getCapability("context");
-                var wizard = new CreateWizard(domainObject.useCapability('type'), parent, self.policyService, domainObject.getModel());
+                var context = domainObject.getCapability("context"),
+                    wizard = new CreateWizard(domainObject.useCapability('type'), parent, self.policyService, domainObject.getModel());
 
                 function mergeObjects(fromObject, toObject){
                     Object.keys(fromObject).forEach(function(key) {
@@ -114,7 +116,7 @@ define(
                         return self.$q.all(composees.map(function (composee) {
                             return object.getCapability('composition').add(composee);
                         })).then(resolveWith(object));
-                    }
+                    };
                 }
 
                 /**
@@ -126,35 +128,26 @@ define(
                 function composeNewObject(object){
                     if (self.$q.when(object.hasCapability('composition') && domainObject.hasCapability('composition'))) {
                         return getAllComposees(domainObject)
-                            .then(addComposeesToObject(object))
+                            .then(addComposeesToObject(object));
                     }
                 }
 
                 return self.dialogService
                     .getUserInput(wizard.getFormStructure(), wizard.getInitialFormValue())
-                    .then(buildObjectFromInput, doNothing)
-                    //.then(composeNewObject)
-                    //.then(object.getCapability("persistence"));
+                    .then(buildObjectFromInput, doNothing);
             }
 
 
             function persistObject(object){
-
-                return (object.hasCapability('editor') && object.getCapability('editor').save(true) || object.getCapability('persistence').persist())
-                    .then(resolveWith(object));
-                /*
-                if (object.hasCapability('editor')){
-                    return object.getCapability('editor').save(true)
+                return ((object.hasCapability('editor') && object.getCapability('editor').save(true)) ||
+                        object.getCapability('persistence').persist())
                         .then(resolveWith(object));
-                } else {
-                    return object.useCapability(persistence);
-                }*/
             }
 
             function fetchObject(objectId){
                 return self.getObjectService().getObjects([objectId]).then(function(objects){
                     return objects[objectId];
-                })
+                });
             }
 
             function getParent(object){
@@ -182,7 +175,9 @@ define(
                                             // on user selection
                             .then(locateObjectInParent)
                             .then(persistObject)
-                            .then(function(){return fetchObject(domainObject.getId());})
+                            .then(function(){
+                                return fetchObject(domainObject.getId());
+                            });
                 } else {
                     return domainObject.getCapability("editor").save()
                         .then(resolveWith(domainObject.getOriginalObject()));

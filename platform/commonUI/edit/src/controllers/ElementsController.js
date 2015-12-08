@@ -33,10 +33,11 @@ define(
          */
         function ElementsController($scope) {
             function filterBy(text){
-                if (typeof text === 'undefined')
+                if (typeof text === 'undefined') {
                     return $scope.searchText;
-                else
+                } else {
                     $scope.searchText = text;
+                }
             }
             $scope.filterBy = filterBy;
         }

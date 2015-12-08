@@ -78,11 +78,11 @@ define(
 
             $scope.cancelEditing = function() {
                 navigationService.setNavigation($scope.domainObject.getDomainObject());
-            }
+            };
 
             $scope.doAction = function (action){
-                $scope[action] && $scope[action]();
-            }
+                return $scope[action] && $scope[action]();
+            };
 
         }
 
