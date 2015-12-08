@@ -24,9 +24,7 @@
                  class="flex-elem holder"
                  ng-model="filterBy">
     </mct-include>
-    <div>{{searchText}}</div>
     <div class="current-elements abs" style="height: 100%;">
-        <!--p class="hint">Drop objects here to add them...</p-->
         <ul class="tree">
             <li ng-repeat="containedObject in composition | filter:searchText">
                 <span class="tree-item">
