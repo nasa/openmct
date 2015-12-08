@@ -19,55 +19,27 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global define*/
 
-/*global define */
 define(
     [],
     function () {
-        'use strict';
-
-        var DISALLOWED_ACTIONS = [
-            "move",
-            "copy"
-        ];
+        "use strict";
 
         /**
-         * This policy prevents performing move/copy/link actions across
-         * different persistence spaces (e.g. linking to an object in
-         * a private space from an object in a public space.)
-         * @memberof {platform/entanglement}
+         * A policy for determining whether objects of a given type can be
+         * created.
          * @constructor
          * @implements {Policy}
+         * @memberof platform/commonUI/browse
          */
-        function CrossSpacePolicy() {
+        function CreationPolicy() {
         }
 
-        function lookupSpace(domainObject) {
-            var persistence = domainObject &&
-                domainObject.getCapability("persistence");
-            return persistence && persistence.getSpace();
-        }
-
-        function isCrossSpace(context) {
-            var domainObject = context.domainObject,
-                selectedObject = context.selectedObject,
-                spaces = [ domainObject, selectedObject ].map(lookupSpace);
-            return selectedObject !== undefined &&
-                domainObject !== undefined &&
-                lookupSpace(domainObject) !== lookupSpace(selectedObject);
-        }
-
-        CrossSpacePolicy.prototype.allow = function (action, context) {
-            var key = action.getMetadata().key;
-
-            if (DISALLOWED_ACTIONS.indexOf(key) !== -1) {
-                return !isCrossSpace(context);
-            }
-
-            return true;
+        CreationPolicy.prototype.allow = function (type) {
+            return type.hasFeature("creation");
         };
 
-        return CrossSpacePolicy;
-
+        return CreationPolicy;
     }
 );

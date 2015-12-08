@@ -105,6 +105,12 @@
                 "implementation": "navigation/NavigationService.js"
             }
         ],
+        "policies": [
+            {
+                "implementation": "creation/CreationPolicy.js",
+                "category": "creation"
+            }
+        ],
         "actions": [
             {
                 "key": "navigate",

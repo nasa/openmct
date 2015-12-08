@@ -68,7 +68,7 @@ define(
 
             // Introduce one create action per type
             return this.typeService.listTypes().filter(function (type) {
-                return type.hasFeature("creation");
+                return self.policyService.allow("creation", type);
             }).map(function (type) {
                 return new CreateAction(
                     type,

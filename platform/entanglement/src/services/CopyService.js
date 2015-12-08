@@ -38,12 +38,9 @@ define(
          * @memberof platform/entanglement
          * @implements {platform/entanglement.AbstractComposeService}
          */
-        function CopyService($q, creationService, policyService, persistenceService, now) {
+        function CopyService($q, policyService) {
             this.$q = $q;
-            this.creationService = creationService;
             this.policyService = policyService;
-            this.persistenceService = persistenceService;
-            this.now = now;
         }
 
         CopyService.prototype.validate = function (object, parentCandidate) {
@@ -71,7 +68,7 @@ define(
          */
         CopyService.prototype.perform = function (domainObject, parent) {
             var $q = this.$q,
-                copyTask = new CopyTask(domainObject, parent, this.persistenceService, this.$q, this.now);
+                copyTask = new CopyTask(domainObject, parent, this.policyService, this.$q);
             if (this.validate(domainObject, parent)) {
                 return copyTask.perform();
             } else {

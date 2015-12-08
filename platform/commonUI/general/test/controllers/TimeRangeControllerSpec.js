@@ -91,6 +91,39 @@ define(
                     .toHaveBeenCalledWith("ngModel", jasmine.any(Function));
             });
 
+            describe("when changes are made via form entry", function () {
+                beforeEach(function () {
+                    mockScope.ngModel = {
+                        outer: { start: DAY * 2, end: DAY * 3 },
+                        inner: { start: DAY * 2.25, end: DAY * 2.75 }
+                    };
+                    mockScope.formModel = {
+                        start: DAY * 10000,
+                        end: DAY * 11000
+                    };
+                    // These watches may not exist, but Angular would fire
+                    // them if they did.
+                    fireWatchCollection("formModel", mockScope.formModel);
+                    fireWatch("formModel.start", mockScope.formModel.start);
+                    fireWatch("formModel.end", mockScope.formModel.end);
+                });
+
+                it("does not immediately make changes to the model", function () {
+                    expect(mockScope.ngModel.outer.start)
+                        .not.toEqual(mockScope.formModel.start);
+                    expect(mockScope.ngModel.outer.end)
+                        .not.toEqual(mockScope.formModel.end);
+                });
+
+                it("updates model bounds on request", function () {
+                    mockScope.updateBoundsFromForm();
+                    expect(mockScope.ngModel.outer.start)
+                        .toEqual(mockScope.formModel.start);
+                    expect(mockScope.ngModel.outer.end)
+                        .toEqual(mockScope.formModel.end);
+                });
+            });
+
             describe("when dragged", function () {
                 beforeEach(function () {
                     mockScope.ngModel = {

@@ -97,7 +97,7 @@ define(
                     counter = 0,
                     couldRepresent = false,
                     couldEdit = false,
-                    lastId,
+                    lastIdPath = [],
                     lastKey,
                     changeTemplate = templateLinker.link($scope, element);
 
@@ -144,13 +144,29 @@ define(
                     });
                 }
 
-                function unchanged(canRepresent, canEdit, id, key) {
+                function unchanged(canRepresent, canEdit, idPath, key) {
                     return canRepresent &&
                         couldRepresent &&
-                        id === lastId &&
                         key === lastKey &&
+                        idPath.length === lastIdPath.length &&
+                        idPath.every(function (id, i) {
+                            return id === lastIdPath[i];
+                        }) &&
                         canEdit &&
                         couldEdit;
+                }
+
+                function getIdPath(domainObject) {
+                    if (!domainObject) {
+                        return [];
+                    }
+                    if (!domainObject.hasCapability('context')) {
+                        return [domainObject.getId()];
+                    }
+                    return domainObject.getCapability('context')
+                        .getPath().map(function (pathObject) {
+                            return pathObject.getId();
+                        });
                 }
 
                 // General-purpose refresh mechanism; should set up the scope
@@ -163,10 +179,10 @@ define(
                         uses = ((representation || {}).uses || []),
                         canRepresent = !!(path && domainObject),
                         canEdit = !!(domainObject && domainObject.hasCapability('editor')),
-                        id = domainObject && domainObject.getId(),
+                        idPath = getIdPath(domainObject),
                         key = $scope.key;
 
-                    if (unchanged(canRepresent, canEdit, id, key)) {
+                    if (unchanged(canRepresent, canEdit, idPath, key)) {
                         return;
                     }
 
@@ -194,8 +210,8 @@ define(
 
                     // To allow simplified change detection next time around
                     couldRepresent = canRepresent;
+                    lastIdPath = idPath;
                     couldEdit = canEdit;
-                    lastId = id;
                     lastKey = key;
 
                     // Populate scope with fields associated with the current

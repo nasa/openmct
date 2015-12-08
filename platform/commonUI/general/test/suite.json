@@ -19,8 +19,10 @@
     "directives/MCTPopup",
     "directives/MCTResize",
     "directives/MCTScroll",
+    "directives/MCTSplitPane",
     "services/Popup",
     "services/PopupService",
     "services/UrlService",
-    "StyleSheetLoader"
+    "StyleSheetLoader",
+    "UnsupportedBrowserWarning"
 ]

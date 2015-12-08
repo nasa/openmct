@@ -45,43 +45,8 @@ define(
          * @param {Scope} $scope the controller's Angular scope
          */
         function LayoutController($scope) {
-            var self = this;
-
-            // Utility function to copy raw positions from configuration,
-            // without writing directly to configuration (to avoid triggering
-            // persistence from watchers during drags).
-            function shallowCopy(obj, keys) {
-                var copy = {};
-                keys.forEach(function (k) {
-                    copy[k] = obj[k];
-                });
-                return copy;
-            }
-
-            /**
-             * Compute panel positions based on the layout's object model.
-             * Defined as member function to facilitate testing.
-             * @private
-             */
-            LayoutController.prototype.layoutPanels = function layoutPanels (ids) {
-                var configuration = $scope.configuration || {};
-
-                // Pull panel positions from configuration
-                self.rawPositions =
-                    shallowCopy(configuration.panels || {}, ids);
-
-                // Clear prior computed positions
-                self.positions = {};
-
-                // Update width/height that we are tracking
-                self.gridSize =
-                    ($scope.model || {}).layoutGrid || DEFAULT_GRID_SIZE;
-
-                // Compute positions and add defaults where needed
-                ids.forEach(function (id, index) {
-                    self.populatePosition(id, index);
-                });
-            };
+            var self = this,
+                callbackCount = 0;
 
             // Update grid size when it changed
             function updateGridSize(layoutGrid) {
@@ -127,23 +92,26 @@ define(
                 e.preventDefault();
             }
 
-            function getComposition(domainObject){
-                return domainObject.useCapability('composition');
-            }
-
-            function composeView (composition){
-                $scope.composition = composition;
-                return composition.map(function (object) {
-                        return object.getId();
-                    }) || [];
-            }
-
             //Will fetch fully contextualized composed objects, and populate
             // scope with them.
             function refreshComposition() {
-                return getComposition($scope.domainObject)
-                    .then(composeView)
-                    .then(self.layoutPanels);
+                //Keep a track of how many composition callbacks have been made
+                var thisCount = ++callbackCount;
+
+                $scope.domainObject.useCapability('composition').then(function(composition){
+                    var ids;
+
+                    //Is this callback for the most recent composition
+                    // request? If not, discard it. Prevents race condition
+                    if (thisCount === callbackCount){
+                        ids = composition.map(function (object) {
+                                return object.getId();
+                            }) || [];
+
+                        $scope.composition = composition;
+                        self.layoutPanels(ids);
+                    }
+                });
             }
 
             // End drag; we don't want to put $scope into this
@@ -176,7 +144,7 @@ define(
             $scope.$watch("model.layoutGrid", updateGridSize);
 
             // Update composed objects on screen, and position panes
-            $scope.$watch("model.composition", refreshComposition);
+            $scope.$watchCollection("model.composition", refreshComposition);
 
             // Position panes where they are dropped
             $scope.$on("mctDrop", handleDrop);
@@ -280,6 +248,43 @@ define(
                     this.activeDrag.getAdjustedPosition(delta);
                 this.populatePosition(this.activeDragId);
             }
+        };
+
+        // Utility function to copy raw positions from configuration,
+        // without writing directly to configuration (to avoid triggering
+        // persistence from watchers during drags).
+        function shallowCopy(obj, keys) {
+            var copy = {};
+            keys.forEach(function (k) {
+                copy[k] = obj[k];
+            });
+            return copy;
+        }
+
+        /**
+         * Compute panel positions based on the layout's object model.
+         * Defined as member function to facilitate testing.
+         * @private
+         */
+        LayoutController.prototype.layoutPanels = function (ids) {
+            var configuration = this.$scope.configuration || {},
+                self = this;
+
+            // Pull panel positions from configuration
+            this.rawPositions =
+                shallowCopy(configuration.panels || {}, ids);
+
+            // Clear prior computed positions
+            this.positions = {};
+
+            // Update width/height that we are tracking
+            this.gridSize =
+                (this.$scope.model || {}).layoutGrid || DEFAULT_GRID_SIZE;
+
+            // Compute positions and add defaults where needed
+            ids.forEach(function (id, index) {
+                self.populatePosition(id, index);
+            });
         };
 
         /**

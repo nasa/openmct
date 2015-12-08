@@ -941,6 +941,12 @@ look at field  (see below) to determine which field in the model should be
 modified. 
 * `ngRequired`: True if input is required.
 * `ngPattern`: The pattern to match against (for text entry)
+* `ngBlur`: A function that may be invoked to evaluate the expression
+  associated with the `ng-blur` attribute associated with the control.
+  * This should be called when the control has lost focus; for controls
+    which simply wrap or augment `input` elements, this should be fired
+    on `blur` events associated with those elements, while more complex
+    custom controls may fire this at the end of more specific interactions.
 * `options`: The options for this control, as passed from the `options` property 
 of an individual row definition. 
 * `field`: Name of the field in `ngModel` which will hold the value for this 

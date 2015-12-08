@@ -115,6 +115,7 @@ define(
          */
         EditableDomainObjectCache.prototype.markDirty = function (domainObject) {
             this.dirtyObjects[domainObject.getId()] = domainObject;
+            return this.$q.when(true);
         };
 
         /**

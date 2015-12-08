@@ -21,60 +21,44 @@
  *****************************************************************************/
 /*global define*/
 
+/**
+ * This bundle provides various general-purpose UI elements, including
+ * platform styling.
+ * @namespace platform/commonUI/general
+ */
 define(
     [],
     function () {
         "use strict";
 
+        var WARNING_TITLE = "Unsupported browser",
+            WARNING_DESCRIPTION = [
+                "This software has been developed and tested",
+                "using the latest Google Chrome,",
+                "and may be unstable in other browsers."
+            ].join(" "),
+            MOBILE_BROWSER = "Safari",
+            DESKTOP_BROWSER = "Chrome";
+
         /**
-         * Displays the number of digests that have occurred since the
-         * indicator was first instantiated.
+         * Shows a warning if a user's browser is unsupported.
+         * @memberof platform/commonUI/general
          * @constructor
-         * @param $interval Angular's $interval
-         * @implements {Indicator}
+         * @param {NotificationService} notificationService the notification
+         *        service
          */
-        function DigestIndicator($interval, $rootScope) {
-            var digests = 0,
-                displayed = 0,
-                start = Date.now();
+        function UnsupportedBrowserWarning(notificationService, agentService) {
+            var testToBrowser = agentService.isMobile() ?
+                    MOBILE_BROWSER : DESKTOP_BROWSER;
 
-            function update() {
-                var now = Date.now(),
-                    secs = (now - start) / 1000;
-                displayed = Math.round(digests / secs);
-                start = now;
-                digests = 0;
+            if (!agentService.isBrowser(testToBrowser)) {
+                notificationService.alert({
+                    title: WARNING_TITLE,
+                    actionText: WARNING_DESCRIPTION
+                });
             }
-
-            function increment() {
-                digests += 1;
-            }
-
-            $rootScope.$watch(increment);
-
-            // Update state every second
-            $interval(update, 1000);
-
-            // Provide initial state, too
-            update();
-
-            return {
-                getGlyph: function () {
-                    return ".";
-                },
-                getGlyphClass: function () {
-                    return undefined;
-                },
-                getText: function () {
-                    return displayed + " digests/sec";
-                },
-                getDescription: function () {
-                    return "";
-                }
-            };
         }
 
-        return DigestIndicator;
-
+        return UnsupportedBrowserWarning;
     }
 );

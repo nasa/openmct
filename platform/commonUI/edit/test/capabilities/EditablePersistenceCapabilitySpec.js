@@ -31,6 +31,7 @@ define(
                 mockEditableObject,
                 mockDomainObject,
                 mockCache,
+                mockPromise,
                 capability;
 
             beforeEach(function () {
@@ -50,7 +51,9 @@ define(
                     "cache",
                     [ "markDirty" ]
                 );
+                mockPromise = jasmine.createSpyObj("promise", ["then"]);
 
+                mockCache.markDirty.andReturn(mockPromise);
                 mockDomainObject.getCapability.andReturn(mockPersistence);
 
                 capability = new EditablePersistenceCapability(
@@ -82,6 +85,10 @@ define(
                 capability.refresh();
                 expect(mockDomainObject.getCapability).toHaveBeenCalledWith('persistence');
                 expect(mockPersistence.refresh).toHaveBeenCalled();
+            });
+
+            it("returns a promise from persist", function () {
+                expect(capability.persist().then).toEqual(jasmine.any(Function));
             });
 
         });
