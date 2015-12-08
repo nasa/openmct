@@ -157,7 +157,7 @@
                 "type": "provider",
                 "implementation": "creation/CreateActionProvider.js",
                 "depends": ["$q", "typeService",
-                    "navigationService"]
+                    "navigationService", "policyService"]
             },
             {
                 "key": "CreationService",
