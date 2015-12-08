@@ -295,7 +295,7 @@
 
     .left {
         padding-right: $interiorMarginLg;
-        .l-back {
+        .l-back:not(.s-status-editing) {
             margin-right: $interiorMarginLg;
         }
     }

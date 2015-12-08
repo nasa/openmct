@@ -143,9 +143,36 @@ ul.tree {
 		}
 	}
 
-    &.active {
-        // The item is being edited
-        background: $colorItemTreeEditingBg; //rgba($colorItemTreeSelectedBg, 0.2) !important;
+	&:not(.loading) {
+		cursor: pointer;
+	}
+
+	.context-trigger {
+		$h: 0.9rem;
+		top: -1px;
+		position: absolute;
+		right: $interiorMarginSm;
+		.invoke-menu {
+			font-size: 0.75em;
+			height: $h;
+			line-height: $h;
+		}
+	}
+}
+
+.tree .tree-item,
+.search-results .s-status-editing .search-result-item {
+    .t-object-label {
+        left: $interiorMargin + $treeVCW;
+    }
+}
+
+.tree .s-status-editing,
+.search-results .s-status-editing {
+    // Item is being edited
+    .tree-item,
+    .search-result-item {
+        background: $colorItemTreeEditingBg;
         pointer-events: none;
         &:before {
             // Pencil icon
@@ -167,27 +194,4 @@ ul.tree {
         }
         .view-control, + .tree-item-subtree { display: none; }
     }
-
-	&:not(.loading) {
-		cursor: pointer;
-	}
-
-	.context-trigger {
-		$h: 0.9rem;
-		top: -1px;
-		position: absolute;
-		right: $interiorMarginSm;
-		.invoke-menu {
-			font-size: 0.75em;
-			height: $h;
-			line-height: $h;
-		}
-	}
-}
-
-.tree-item,
-.search-result-item.active {
-	.t-object-label {
-		left: $interiorMargin + $treeVCW;
-	}
 }
