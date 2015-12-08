@@ -85,6 +85,8 @@ define(
                     $scope.commit("Dropped a frame.");
                 }
                 // Populate template-facing position for this id
+                self.rawPositions[id] =
+                    $scope.configuration.panels[id];
                 self.populatePosition(id);
                 // Layout may contain embedded views which will
                 // listen for drops, so call preventDefault() so
