@@ -78,7 +78,8 @@
                     "templates[]",
                     "views[]",
                     "representations[]",
-                    "controls[]"
+                    "controls[]",
+                    "containers[]"
                 ]
             }
         ]
