@@ -25,10 +25,6 @@ define(
     function () {
         'use strict';
 
-        function concat(a, b) {
-            return a.concat(b);
-        }
-
         /**
          * Loads all templates when the application is started.
          * @param {platform/representation.TemplateLinker} templateLinker
@@ -39,9 +35,15 @@ define(
          */
         function TemplatePrefetcher(templateLinker, extensions) {
             Array.prototype.slice.apply(arguments, [1])
-                .reduce(concat, [])
-                .map(templateLinker.getPath.bind(templateLinker))
-                .forEach(templateLinker.load.bind(templateLinker));
+                .reduce(function (a, b) {
+                    return a.concat(b);
+                }, [])
+                .map(function (ext) {
+                    return templateLinker.getPath(ext);
+                })
+                .forEach(function (path) {
+                    templateLinker.load(path);
+                });
         }
 
         return TemplatePrefetcher;
