@@ -8,5 +8,6 @@
     "services/DndService",
     "MCTInclude",
     "MCTRepresentation",
-    "TemplateLinker"
+    "TemplateLinker",
+    "TemplatePrefetcher"
 ]

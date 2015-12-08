@@ -230,10 +230,6 @@
                 "uses": [ "composition" ]
             },
             {
-                "key": "test",
-                "templateUrl": "templates/test.html"
-            },
-            {
                 "key": "tree-node",
                 "templateUrl": "templates/tree-node.html",
                 "uses": [ "action" ]
