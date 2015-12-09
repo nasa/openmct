@@ -88,6 +88,7 @@ define(
                 }
 
                 if (isDirty() && !confirm(CONFIRM_MSG)) {
+                    $scope.treeModel.selectedObject = $scope.navigatedObject;
                     navigationService.setNavigation($scope.navigatedObject);
                 } else {
                     if ($scope.navigatedObject && $scope.navigatedObject.hasCapability("editor")){
@@ -97,17 +98,6 @@ define(
                     $scope.treeModel.selectedObject = domainObject;
                     navigationService.setNavigation(domainObject);
                     updateRoute(domainObject);
-                }
-            }
-
-            function setSelectedObject(domainObject) {
-                if (domainObject !== $scope.navigatedObject && isDirty() && !confirm(CONFIRM_MSG)) {
-                        $scope.treeModel.selectedObject = $scope.navigatedObject;
-                } else {
-                    if (domainObject !== $scope.navigatedObject && $scope.navigatedObject.hasCapability('editor')){
-                        $scope.navigatedObject.getCapability('action').perform('cancel');
-                    }
-                    setNavigation(domainObject);
                 }
             }
 
@@ -188,7 +178,7 @@ define(
             navigationService.addListener(setNavigation);
 
             // Also listen for changes which come from the tree
-            $scope.$watch("treeModel.selectedObject", setSelectedObject);
+            $scope.$watch("treeModel.selectedObject", setNavigation);
             
             // Clean up when the scope is destroyed
             $scope.$on("$destroy", function () {
