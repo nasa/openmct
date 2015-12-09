@@ -198,11 +198,8 @@
         bottom: $bodyMargin;
         left: $bodyMargin;
         .create-btn-holder {
-            height: auto;
-            overflow: hidden;
             &.s-status-editing {
-                height: 0;
-                margin:0;
+                display: none;
                 & + .search-holder .search-bar {
                     // .search-holder is adjacent sibling to .create-btn-holder
                     // Add right margin when create button is hidden, to make room for the collapse pane 'x' button
