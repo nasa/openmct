@@ -45,12 +45,12 @@ define(
         function DropGesture(dndService, $q, navigationService, objectService, instantiate, typeService, element, domainObject) {
             var actionCapability = domainObject.getCapability('action'),
                 editableDomainObject,
+                scope = element && element.scope && element.scope(),
                 action; // Action for the drop, when it occurs
             
             function broadcastDrop(id, event) {
                 // Find the relevant scope...
-                var scope = element && element.scope && element.scope(),
-                    rect;
+                var rect;
                 if (scope && scope.$broadcast) {
                     // Get the representation's bounds, to convert
                     // drop position
@@ -65,7 +65,8 @@ define(
                         {
                             x: event.pageX - rect.left,
                             y: event.pageY - rect.top
-                        }
+                        },
+                        editableDomainObject
                     );
                 }
             }
@@ -148,6 +149,9 @@ define(
                         if (shouldCreateVirtualPanel(domainObject)){
                             editableDomainObject = createVirtualPanel(domainObject, id);
                             navigationService.setNavigation(editableDomainObject);
+                            //Also broadcast the editableDomainObject to
+                            // avoid race condition against non-editable
+                            // version in EditRepresenter
                             broadcastDrop(id, event);
                         } else {
                             $q.when(action && action.perform()).then(function (result) {

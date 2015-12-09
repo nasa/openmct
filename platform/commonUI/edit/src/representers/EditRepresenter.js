@@ -92,8 +92,14 @@ define(
                 }
             }
 
+            function setEditable(editableDomainObject) {
+                self.domainObject = editableDomainObject;
+                scope.model = editableDomainObject.getModel();
+            }
+
             // Place the "commit" method in the scope
             scope.commit = commit;
+            scope.setEditable = setEditable;
         }
 
         // Handle a specific representation of a specific domain object
