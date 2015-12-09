@@ -122,6 +122,7 @@ define(
                 active = false;
             });
 
+            this.$scope = $scope;
             this.signValue = '';
             this.textValue = '';
             this.updateObject = updateObject;
