@@ -82,10 +82,22 @@ define(
             // Callback for updating the in-scope reference to the object
             // that is currently navigated-to.
             function setNavigation(domainObject) {
-                $scope.navigatedObject = domainObject;
-                $scope.treeModel.selectedObject = domainObject;
-                navigationService.setNavigation(domainObject);
-                updateRoute(domainObject);
+                if (domainObject === $scope.navigatedObject){
+                    //do nothing;
+                    return;
+                }
+
+                if (isDirty() && !confirm(CONFIRM_MSG)) {
+                    navigationService.setNavigation($scope.navigatedObject);
+                } else {
+                    if ($scope.navigatedObject && $scope.navigatedObject.hasCapability("editor")){
+                        $scope.navigatedObject.getCapability("editor").cancel();
+                    }
+                    $scope.navigatedObject = domainObject;
+                    $scope.treeModel.selectedObject = domainObject;
+                    navigationService.setNavigation(domainObject);
+                    updateRoute(domainObject);
+                }
             }
 
             function setSelectedObject(domainObject) {
