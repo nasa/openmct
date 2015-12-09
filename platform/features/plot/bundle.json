@@ -9,7 +9,8 @@
                 "templateUrl": "templates/plot.html",
                 "needs": [ "telemetry" ],
                 "priority": "preferred",
-                "delegation": true
+                "delegation": true,
+                "editable": false
             }
         ],
         "directives": [

@@ -10,6 +10,7 @@
                 "description": "Scrolling list of real time messages.",
                 "templateUrl": "templates/rtmessages.html",
                 "needs": [ "telemetry" ],
+                "editable": false,
                 "delegation": true
             }
         ],
