@@ -64,7 +64,6 @@
             {
                 "key": "browse-object",
                 "templateUrl": "templates/browse-object.html",
-                "gestures": ["drop"],
                 "uses": [ "view" ]
             },
             {
