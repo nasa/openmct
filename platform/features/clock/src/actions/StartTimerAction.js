@@ -41,10 +41,7 @@ define(
          * @param {ActionContext} context the context for this action
          */
         function StartTimerAction(now, context) {
-            AbstractStartTimerAction.prototype.apply(
-                this,
-                [ now, context ]
-            );
+            AbstractStartTimerAction.apply(this, [ now, context ]);
         }
 
         StartTimerAction.prototype =
