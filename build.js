@@ -31,7 +31,7 @@ contents = templates.map(function (template) {
 }).join('\n');
 
 fs.writeFileSync(
-    'tmp.html',
+    'target/index.html',
     index.replace("</body>", contents + "</body>"),
     'utf8'
 );
