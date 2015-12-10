@@ -171,6 +171,7 @@
                         <exclude>app.js</exclude>
                         <exclude>node_modules/**/*</exclude>
                         <exclude>protractor/**/*</exclude>
+                        <exclude>target/**/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
