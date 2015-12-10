@@ -6,7 +6,7 @@ deployment:
     branch: master
     commands:
       - ./build-docs.sh
-      - git push git@heroku.com:openmctweb-demo.git $CIRCLE_SHA1:refs/heads/master
+      - git push --force git@heroku.com:openmctweb-demo.git $CIRCLE_SHA1:refs/heads/master
   openmctweb-staging-un:
     branch: open199
     heroku:
