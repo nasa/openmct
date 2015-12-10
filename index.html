@@ -26,13 +26,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
     <script type="text/javascript"
-            src="platform/framework/lib/require.js"
-            data-main="platform/framework/src/Main.js">
+            src="platform/framework/lib/require.js">
     </script>
-	<link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-32x32.png" sizes="32x32">
-	<link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-96x96.png" sizes="96x96">
-	<link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-16x16.png" sizes="16x16">
-	<link rel="shortcut icon" href="platform/commonUI/general/res/images/favicons/favicon.ico">
+    <script type="text/javascript">
+        (function (require, options) {
+            require.config({
+                paths: options.built ? {
+                    "platform/framework/src/Main": "main.built"
+                } : {},
+                shim: {
+                    "platform/framework/lib/angular.min": {
+                        exports: "angular"
+                    },
+                    "platform/framework/lib/angular-route.min": {
+                        deps: ["platform/framework/lib/angular.min"]
+                    }
+                }
+            });
+            require(["platform/framework/src/Main"]);
+        }(require, { /* OPTIONS */ }));
+    </script>
+    <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-16x16.png" sizes="16x16">
+    <link rel="shortcut icon" href="platform/commonUI/general/res/images/favicons/favicon.ico">
 </head>
 <body class="user-environ" ng-view>
 
