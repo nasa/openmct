@@ -176,6 +176,32 @@
                 </executions>
             </plugin>
 
+            <!-- Run NPM build steps -->
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>0.0.26</version>
+                <configuration>
+                    <installDirectory>target</installDirectory>
+                    <nodeVersion>v0.12.2</nodeVersion>
+                    <npmVersion>2.7.6</npmVersion>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- To start this WAR in an embedded Tomcat Servlet Container -->
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
