@@ -67,6 +67,19 @@ define(
             this.$q = $q;
         }
 
+        // Get a count of views which are not flagged as non-editable.
+        function countEditableViews(domainObject) {
+            var views = domainObject && domainObject.useCapability('view'),
+                count = 0;
+
+            // A view is editable unless explicitly flagged as not
+            (views || []).forEach(function (view) {
+                count += (view.editable !== false) ? 1 : 0;
+            });
+
+            return count;
+        }
+
         /**
          * Create a new object of the given type.
          * This will prompt for user input first.
@@ -85,7 +98,7 @@ define(
                 model.location = parentObject.getId();
             });
 
-            if (newObject.hasCapability('composition') && this.type.getKey()!=='folder') {
+            if (countEditableViews(editableObject) > 0) {
                 this.navigationService.setNavigation(editableObject);
             } else {
                 return editableObject.getCapability('action').perform('save');
