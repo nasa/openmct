@@ -13,11 +13,10 @@ JSON.parse(bundles).forEach(function (bundle) {
     files = files.concat(globby.sync(bundle + "/src/**/*.js"));
 });
 
-
 requirejs.optimize({
     baseUrl: ".",
-    name: "platform/framework/src/Main",
-    out: "main.built.js",
+    name: "main",
+    out: "target/main.js",
     paths: {
         'es6-promise': 'platform/framework/lib/es6-promise-2.0.0.min',
         'moment': 'platform/telemetry/lib/moment.min',
