@@ -199,6 +199,15 @@
                             <goal>npm</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>requirejs build/minify</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run build</arguments>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 

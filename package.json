@@ -33,7 +33,8 @@
     "watch": "karma start",
     "jsdoc": "jsdoc -c jsdoc.json -r -d target/docs/api",
     "otherdoc": "node docs/gendocs.js --in docs/src --out target/docs",
-    "docs": "npm run jsdoc ; npm run otherdoc"
+    "docs": "npm run jsdoc ; npm run otherdoc",
+    "build": "node build.js"
   },
   "repository": {
     "type": "git",
