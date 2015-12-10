@@ -102,11 +102,6 @@ define(
                         return domainObject;
                 }
 
-                function doNothing() {
-                    // Create cancelled, do nothing
-                    return false;
-                }
-
                 function getAllComposees(domainObject){
                     return domainObject.useCapability('composition');
                 }
@@ -134,12 +129,12 @@ define(
 
                 return self.dialogService
                     .getUserInput(wizard.getFormStructure(), wizard.getInitialFormValue())
-                    .then(buildObjectFromInput, doNothing);
+                    .then(buildObjectFromInput);
             }
 
 
             function persistObject(object){
-                return ((object.hasCapability('editor') && object.getCapability('editor').save(true)) ||
+                return  ((object.hasCapability('editor') && object.getCapability('editor').save(true)) ||
                         object.getCapability('persistence').persist())
                         .then(resolveWith(object));
             }
@@ -157,6 +152,11 @@ define(
             function locateObjectInParent(parent){
                 parent.getCapability('composition').add(domainObject.getId());
                 return parent;
+            }
+
+            function doNothing() {
+                // Create cancelled, do nothing
+                return false;
             }
 
             // Invoke any save behavior introduced by the editor capability;
@@ -177,7 +177,8 @@ define(
                             .then(persistObject)
                             .then(function(){
                                 return fetchObject(domainObject.getId());
-                            });
+                            })
+                        .catch(doNothing)
                 } else {
                     return domainObject.getCapability("editor").save()
                         .then(resolveWith(domainObject.getOriginalObject()));

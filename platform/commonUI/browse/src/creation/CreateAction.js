@@ -94,6 +94,7 @@ define(
             newObject = parentObject.useCapability('instantiation', newModel);
             editableObject = new EditableDomainObject(newObject, this.$q);
             editableObject.setOriginalObject(parentObject);
+            editableObject.getCapability('status').set('editing', true);
             editableObject.useCapability('mutation', function(model){
                 model.location = parentObject.getId();
             });
