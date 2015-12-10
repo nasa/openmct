@@ -25,7 +25,7 @@
 define(
     function () {
         'use strict';
-        var DISALLOWED_ACTIONS = ["move", "copy", "link"];
+        var DISALLOWED_ACTIONS = ["move", "copy", "link", "window", "follow"];
         /**
          * Editable Action Capability. Overrides the action capability
          * normally exhibited by a domain object and filters out certain
