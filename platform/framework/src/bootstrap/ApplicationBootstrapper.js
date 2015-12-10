@@ -59,7 +59,7 @@ define(
                 $log = this.$log;
             $log.info("Bootstrapping application " + (app || {}).name);
             angular.element(document).ready(function () {
-                angular.bootstrap(document, [app.name]);
+                angular.bootstrap(document, [app.name], { strictDi: true });
             });
         };
 

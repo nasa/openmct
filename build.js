@@ -30,6 +30,5 @@ requirejs.optimize({
         }
     },
     include: files.map(trimJsExtension),
-    exclude: globby.sync("platform/framework/lib/**/*.js").map(trimJsExtension),
-    optimize: "none"
+    exclude: globby.sync("platform/framework/lib/**/*.js").map(trimJsExtension)
 });

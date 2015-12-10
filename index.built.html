@@ -26,9 +26,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
     <script type="text/javascript"
-            src="platform/framework/lib/angular.min.js">
-    </script>
-    <script type="text/javascript"
             src="platform/framework/lib/require.js">
     </script>
     <script type="text/javascript">
@@ -39,6 +36,12 @@
             shim: {
                 "platform/framework/lib/angular.min": {
                     exports: "angular"
+                },
+                "platform/framework/lib/angular-route.min": {
+                    deps: [ "platform/framework/lib/angular.min" ]
+                },
+                "platform/framework/src/Main": {
+                    deps: [ "platform/framework/lib/angular-route.min" ]
                 }
             }
         });
