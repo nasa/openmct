@@ -37,6 +37,7 @@ define(
         '../capabilities/EditableCompositionCapability',
         '../capabilities/EditableRelationshipCapability',
         '../capabilities/EditorCapability',
+        '../capabilities/EditableActionCapability',
         './EditableDomainObjectCache'
     ],
     function (
@@ -45,6 +46,7 @@ define(
         EditableCompositionCapability,
         EditableRelationshipCapability,
         EditorCapability,
+        EditableActionCapability,
         EditableDomainObjectCache
     ) {
         "use strict";
@@ -54,6 +56,7 @@ define(
             context: EditableContextCapability,
             composition: EditableCompositionCapability,
             relationship: EditableRelationshipCapability,
+            action: EditableActionCapability,
             editor: EditorCapability
         };
 

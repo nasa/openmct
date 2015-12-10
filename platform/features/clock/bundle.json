@@ -54,11 +54,13 @@
             {
                 "key": "clock",
                 "type": "clock",
+                "editable": false,
                 "templateUrl": "templates/clock.html"
             },
             {
                 "key": "timer",
                 "type": "timer",
+                "editable": false,
                 "templateUrl": "templates/timer.html"
             }
         ],

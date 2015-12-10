@@ -59,6 +59,9 @@ define(
                     // ...and broadcast the event. This allows specific
                     // views to have post-drop behavior which depends on
                     // drop position.
+                    // Also broadcast the editableDomainObject to
+                    // avoid race condition against non-editable
+                    // version in EditRepresenter
                     scope.$broadcast(
                         GestureConstants.MCT_DROP_EVENT,
                         id,
@@ -70,11 +73,18 @@ define(
                     );
                 }
             }
-            
+
+            function canCompose(domainObject, selectedObject){
+                return domainObject.getCapability("action").getActions({
+                    key: 'compose',
+                    selectedObject: selectedObject
+                }).length > 0;
+            }
+
             function shouldCreateVirtualPanel(domainObject){
                 return domainObject.useCapability('view').filter(function (view){
-                    return view.key==='plot' && domainObject.getModel().type!== 'telemetry.panel';
-                }).length > 0;
+                        return (view.key==='plot' || view.key==='scrolling') && domainObject.getModel().type!== 'telemetry.panel';
+                    }).length > 0;
             }
 
             function dragOver(e) {
@@ -97,7 +107,7 @@ define(
                     })[0];
                     //TODO: Fix this. Define an action for creating new
                     // virtual panel
-                    if (action || shouldCreateVirtualPanel(domainObject)) {
+                    if (action || shouldCreateVirtualPanel(domainObject, selectedObject)) {
                         event.dataTransfer.dropEffect = 'move';
 
                         // Indicate that we will accept the drag
@@ -107,18 +117,21 @@ define(
                 }
             }
 
-            function createVirtualPanel(base, overlayId){
+            function createVirtualPanel(base, selectedObject){
 
                 var typeKey = 'telemetry.panel',
                     type = typeService.getType(typeKey),
                     model = type.getInitialModel(),
                     id = uuid(),
-                    newPanel;
+                    newPanel,
+                    composeAction;
 
                 model.type = typeKey;
                 newPanel = new EditableDomainObject(instantiate(model, id), $q);
+                if (!canCompose(newPanel, selectedObject))
+                    return undefined;
 
-                [base.getId(), overlayId].forEach(function(id){
+                [base.getId(), selectedObject.getId()].forEach(function(id){
                     newPanel.getCapability('composition').add(id);
                 });
 
@@ -135,7 +148,10 @@ define(
             function drop(e) {
                 var event = (e || {}).originalEvent || e,
                     id = event.dataTransfer.getData(GestureConstants.MCT_DRAG_TYPE),
-                    domainObjectType = editableDomainObject.getModel().type;
+                    domainObjectType = editableDomainObject.getModel().type,
+                    selectedObject = dndService.getData(
+                        GestureConstants.MCT_EXTENDED_DRAG_TYPE
+                    );;
 
                 // If currently in edit mode allow drag and drop gestures to the
                 // domain object. An exception to this is folders which have drop
@@ -146,13 +162,12 @@ define(
                     // destination domain object's composition, and persist
                     // the change.
                     if (id) {
-                        if (shouldCreateVirtualPanel(domainObject)){
-                            editableDomainObject = createVirtualPanel(domainObject, id);
-                            navigationService.setNavigation(editableDomainObject);
-                            //Also broadcast the editableDomainObject to
-                            // avoid race condition against non-editable
-                            // version in EditRepresenter
-                            broadcastDrop(id, event);
+                        if (shouldCreateVirtualPanel(domainObject, selectedObject)){
+                            if (editableDomainObject = createVirtualPanel(domainObject, selectedObject)) {
+                                navigationService.setNavigation(editableDomainObject);
+                                broadcastDrop(id, event);
+                                editableDomainObject.getCapability('status').set('editing', true);
+                            }
                         } else {
                             $q.when(action && action.perform()).then(function (result) {
                                 //Don't go into edit mode for folders
@@ -160,9 +175,9 @@ define(
                                     navigationService.setNavigation(editableDomainObject);
                                 }
                                 broadcastDrop(id, event);
+                                editableDomainObject.getCapability('status').set('editing', true);
                             });
                         }
-                        editableDomainObject.getCapability('status').set('editing', true);
                     }
                 //}
                 // TODO: Alert user if drag and drop is not allowed

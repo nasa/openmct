@@ -23,7 +23,8 @@
                 "templateUrl": "iframe.html",
                 "name": "Page",
                 "type": "example.page",
-                "key": "example.page"
+                "key": "example.page",
+                "editable": false
             }
         ],
         "controllers": [
