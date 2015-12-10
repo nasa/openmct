@@ -87,6 +87,10 @@
             {
                 "category": "view",
                 "implementation": "policies/EditableViewPolicy.js"
+            },
+            {
+                "category": "view",
+                "implementation": "policies/EditablePanelPolicy.js"
             }
         ],
         "templates": [

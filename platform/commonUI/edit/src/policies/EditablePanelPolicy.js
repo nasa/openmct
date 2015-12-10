@@ -32,21 +32,32 @@ define(
          * @constructor
          * @implements {Policy.<View, DomainObject>}
          */
-        function EditableViewPolicy() {
+        function EditablePanelPolicy() {
         }
 
-        EditableViewPolicy.prototype.allow = function (view, domainObject) {
-            // If a view is flagged as non-editable, allow it if the object
-            // itself is not being edited. For example if we are in browse
-            // mode, or edit mode and the object is within a layout.
-            if ((view || {}).editable === false) {
-                return !domainObject.getCapability('status').get('editing');
+        function applicableView(key){
+            return ['plot', 'scrolling'].indexOf(key) >= 0;
+        }
+
+        function editableType(key){
+            return key === 'telemetry.panel';
+        }
+
+        EditablePanelPolicy.prototype.allow = function (view, domainObject) {
+            // If a view is flagged as non-editable, only allow it
+            // while we're not in Edit mode.
+            if (view && view.editable != false) {
+                //But show the view if the domain object is in edit mode,
+                // but is not the object being edited.
+                if (applicableView(view.key) && !editableType(domainObject.getCapability('type').getKey())){
+                    return false;
+                }
             }
 
             // Like all policies, allow by default.
             return true;
         };
 
-        return EditableViewPolicy;
+        return EditablePanelPolicy;
     }
 );
