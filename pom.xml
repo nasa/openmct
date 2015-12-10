@@ -90,7 +90,7 @@
             <plugin>
                 <groupId>com.github.klieber</groupId>
                 <artifactId>phantomjs-maven-plugin</artifactId>
-                <version>0.2.1</version>
+                <version>0.7</version>
                 <executions>
                     <execution>
                         <goals>
