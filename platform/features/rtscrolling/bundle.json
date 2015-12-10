@@ -10,7 +10,6 @@
                 "description": "Scrolling list of data values.",
                 "templateUrl": "templates/rtscrolling.html",
                 "needs": [ "telemetry" ],
-                "editable": false,
                 "delegation": true
             }
         ],

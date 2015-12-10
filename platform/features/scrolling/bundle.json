@@ -10,8 +10,7 @@
                 "description": "Scrolling list of data values.",
                 "templateUrl": "templates/scrolling.html",
                 "needs": [ "telemetry" ],
-                "delegation": true,
-                "editable": false
+                "delegation": true
             }
         ],
         "controllers": [
