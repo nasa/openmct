@@ -9,8 +9,8 @@ deployment:
       - git push git@heroku.com:openmctweb-demo.git $CIRCLE_SHA1:refs/heads/master
   openmctweb-staging-un:
     branch: open199
-    commands:
-      - git push --force "git@heroku.com:openmctweb-staging-un.git" "3b22c6ed107e79f0d88e6f2f5b6b42e7f8ce8980:refs/heads/master"
+    heroku:
+      appname: openmctweb-staging-un
   openmctweb-staging-deux:
     branch: mobile
     heroku:
