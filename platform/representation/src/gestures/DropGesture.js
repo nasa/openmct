@@ -128,8 +128,9 @@ define(
 
                 model.type = typeKey;
                 newPanel = new EditableDomainObject(instantiate(model, id), $q);
-                if (!canCompose(newPanel, selectedObject))
+                if (!canCompose(newPanel, selectedObject)) {
                     return undefined;
+                }
 
                 [base.getId(), selectedObject.getId()].forEach(function(id){
                     newPanel.getCapability('composition').add(id);
@@ -151,35 +152,30 @@ define(
                     domainObjectType = editableDomainObject.getModel().type,
                     selectedObject = dndService.getData(
                         GestureConstants.MCT_EXTENDED_DRAG_TYPE
-                    );;
-
-                // If currently in edit mode allow drag and drop gestures to the
-                // domain object. An exception to this is folders which have drop
-                // gestures in browse mode.
-                //if (domainObjectType === 'folder' || domainObject.hasCapability('editor')) {
+                    );
                 
-                    // Handle the drop; add the dropped identifier to the
-                    // destination domain object's composition, and persist
-                    // the change.
-                    if (id) {
-                        if (shouldCreateVirtualPanel(domainObject, selectedObject)){
-                            if (editableDomainObject = createVirtualPanel(domainObject, selectedObject)) {
-                                navigationService.setNavigation(editableDomainObject);
-                                broadcastDrop(id, event);
-                                editableDomainObject.getCapability('status').set('editing', true);
-                            }
-                        } else {
-                            $q.when(action && action.perform()).then(function (result) {
-                                //Don't go into edit mode for folders
-                                if (domainObjectType!=='folder') {
-                                    navigationService.setNavigation(editableDomainObject);
-                                }
-                                broadcastDrop(id, event);
-                                editableDomainObject.getCapability('status').set('editing', true);
-                            });
+                // Handle the drop; add the dropped identifier to the
+                // destination domain object's composition, and persist
+                // the change.
+                if (id) {
+                    if (shouldCreateVirtualPanel(domainObject, selectedObject)){
+                        editableDomainObject = createVirtualPanel(domainObject, selectedObject);
+                        if (editableDomainObject) {
+                            navigationService.setNavigation(editableDomainObject);
+                            broadcastDrop(id, event);
+                            editableDomainObject.getCapability('status').set('editing', true);
                         }
+                    } else {
+                        $q.when(action && action.perform()).then(function (result) {
+                            //Don't go into edit mode for folders
+                            if (domainObjectType!=='folder') {
+                                navigationService.setNavigation(editableDomainObject);
+                            }
+                            broadcastDrop(id, event);
+                            editableDomainObject.getCapability('status').set('editing', true);
+                        });
                     }
-                //}
+                }
                 // TODO: Alert user if drag and drop is not allowed
             }
 

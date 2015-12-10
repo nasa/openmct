@@ -48,7 +48,7 @@ define(
 
             action.getActions = function(domainObject) {
                 return actionCapability.getActions(domainObject).filter(function(action){
-                   return !(DISALLOWED_ACTIONS.indexOf(action.getMetadata().key) >= 0);
+                   return DISALLOWED_ACTIONS.indexOf(action.getMetadata().key) >= 0 ? false : true;
                 });
             };
 
