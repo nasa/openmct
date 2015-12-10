@@ -54,6 +54,12 @@
                             </includes>
                             <filtering>true</filtering>
                         </resource>
+                        <resource>
+                            <directory>target</directory>
+                            <includes>
+                                <include>main.js</include>
+                            </includes>
+                        </resource>
                     </webResources>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
