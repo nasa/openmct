@@ -21,6 +21,11 @@
                 "key": "EditPanesController",
                 "implementation": "controllers/EditPanesController.js",
                 "depends": [ "$scope" ]
+            },
+            {
+                "key": "ElementsController",
+                "implementation": "controllers/ElementsController.js",
+                "depends": [ "$scope" ]
             }
         ],
         "directives": [
@@ -38,7 +43,7 @@
             {
                 "key": "edit",
                 "implementation": "actions/EditAction.js",
-                "depends": [ "$location", "navigationService", "$log" ],
+                "depends": [ "$location", "navigationService", "$log", "$q" ],
                 "description": "Edit this object.",
                 "category": "view-control",
                 "glyph": "p"
@@ -67,7 +72,9 @@
                 "implementation": "actions/SaveAction.js",
                 "name": "Save",
                 "description": "Save changes made to these objects.",
-                "depends": [ "$location", "urlService" ],
+                "depends": [ "$q", "$location", "$injector",  "urlService",
+                    "navigationService", "policyService", "dialogService",
+                    "creationService" ],
                 "priority": "mandatory"
             },
             {
@@ -76,7 +83,7 @@
                 "implementation": "actions/CancelAction.js",
                 "name": "Cancel",
                 "description": "Discard changes made to these objects.",
-                "depends": [ "$location", "urlService" ]
+                "depends": ["$injector", "navigationService"]
             }
         ],
         "policies": [

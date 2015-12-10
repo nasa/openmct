@@ -8,7 +8,8 @@
                 "glyph": "\u00E3",
                 "templateUrl": "templates/imagery.html",
                 "priority": "preferred",
-                "needs": [ "telemetry" ]
+                "needs": [ "telemetry" ],
+                "editable": false
             }
         ],
         "policies": [

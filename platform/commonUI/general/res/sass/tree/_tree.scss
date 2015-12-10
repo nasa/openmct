@@ -160,8 +160,38 @@ ul.tree {
 	}
 }
 
-.tree-item {
-	.t-object-label {
-		left: $interiorMargin + $treeVCW;
-	}
+.tree .tree-item,
+.search-results .s-status-editing .search-result-item {
+    .t-object-label {
+        left: $interiorMargin + $treeVCW;
+    }
+}
+
+.tree .s-status-editing,
+.search-results .s-status-editing {
+    // Item is being edited
+    .tree-item,
+    .search-result-item {
+        background: $colorItemTreeEditingBg;
+        pointer-events: none;
+        &:before {
+            // Pencil icon
+            @extend .ui-symbol;
+            @include pulse($dur: 1s, $opacity0: 0.25);
+            color: $colorItemTreeEditingFg;
+            content: '\70';
+            margin-left: $interiorMarginSm;
+        }
+        .t-object-label {
+            .t-item-icon,
+            .t-title-label {
+                color: $colorItemTreeEditingFg;
+                @include text-shadow(none);
+            }
+            .t-title-label {
+                font-style: italic;
+            }
+        }
+        .view-control, + .tree-item-subtree { display: none; }
+    }
 }

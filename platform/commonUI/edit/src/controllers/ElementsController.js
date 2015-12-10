@@ -19,24 +19,29 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-.tool-bar {
-    &.btn-bar {
-        white-space: nowrap;
+/*global define,Promise*/
+
+define(
+    [],
+    function () {
+        "use strict";
+
+        /**
+         * The ElementsController prepares the elements view for display
+         *
+         * @constructor
+         */
+        function ElementsController($scope) {
+            function filterBy(text){
+                if (typeof text === 'undefined') {
+                    return $scope.searchText;
+                } else {
+                    $scope.searchText = text;
+                }
+            }
+            $scope.filterBy = filterBy;
+        }
+
+        return ElementsController;
     }
-	.l-control-group {
-		height: $btnToolbarH;
-	}
-	input[type="text"] {
-		@include box-sizing(border-box);
-		font-size: .9em;
-		height: $btnToolbarH;
-		margin-bottom: 1px;
-		position: relative;
-		&.sm {
-			width: $btnToolbarH;
-		}
-	}
-	.input-labeled label {
-		font-size: $btnToolbarH * $btnFontSizeToH;
-	}
-}
+);

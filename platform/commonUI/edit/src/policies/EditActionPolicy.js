@@ -51,6 +51,19 @@ define(
             return count;
         }
 
+        /**
+         * Checks whether the domain object is currently being edited. If
+         * so, the edit action is not applicable.
+         * @param context
+         * @returns {*|boolean}
+         */
+        function isEditing(context) {
+            var domainObject = (context || {}).domainObject;
+            return domainObject
+                && domainObject.hasCapability('status')
+                && domainObject.getCapability('status').get('editing');
+        }
+
         EditActionPolicy.prototype.allow = function (action, context) {
             var key = action.getMetadata().key,
                 category = (context || {}).category;
@@ -59,11 +72,12 @@ define(
             if (category === 'view-control') {
                 // Restrict 'edit' to cases where there are editable
                 // views (similarly, restrict 'properties' to when
-                // the converse is true)
+                // the converse is true), and where the domain object is not
+                // already being edited.
                 if (key === 'edit') {
-                    return countEditableViews(context) > 0;
+                    return countEditableViews(context) > 0 && !isEditing(context);
                 } else if (key === 'properties') {
-                    return countEditableViews(context) < 1;
+                    return countEditableViews(context) < 1 && !isEditing(context);
                 }
             }
 

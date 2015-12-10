@@ -96,6 +96,7 @@ define(
                     toClear = [], // Properties to clear out of scope on change
                     counter = 0,
                     couldRepresent = false,
+                    couldEdit = false,
                     lastIdPath = [],
                     lastKey,
                     changeTemplate = templateLinker.link($scope, element);
@@ -143,14 +144,16 @@ define(
                     });
                 }
 
-                function unchanged(canRepresent, idPath, key) {
+                function unchanged(canRepresent, canEdit, idPath, key) {
                     return canRepresent &&
                         couldRepresent &&
                         key === lastKey &&
                         idPath.length === lastIdPath.length &&
                         idPath.every(function (id, i) {
                             return id === lastIdPath[i];
-                        });
+                        }) &&
+                        canEdit &&
+                        couldEdit;
                 }
 
                 function getIdPath(domainObject) {
@@ -175,10 +178,11 @@ define(
                         path = representation && getPath(representation),
                         uses = ((representation || {}).uses || []),
                         canRepresent = !!(path && domainObject),
+                        canEdit = !!(domainObject && domainObject.hasCapability('editor')),
                         idPath = getIdPath(domainObject),
                         key = $scope.key;
 
-                    if (unchanged(canRepresent, idPath, key)) {
+                    if (unchanged(canRepresent, canEdit, idPath, key)) {
                         return;
                     }
 
@@ -207,6 +211,7 @@ define(
                     // To allow simplified change detection next time around
                     couldRepresent = canRepresent;
                     lastIdPath = idPath;
+                    couldEdit = canEdit;
                     lastKey = key;
 
                     // Populate scope with fields associated with the current

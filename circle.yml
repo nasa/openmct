@@ -1,3 +1,6 @@
+test:
+  override:
+    - exit 0
 deployment:
   production:
     branch: master
@@ -5,7 +8,7 @@ deployment:
       - ./build-docs.sh
       - git push git@heroku.com:openmctweb-demo.git $CIRCLE_SHA1:refs/heads/master
   openmctweb-staging-un:
-    branch: search
+    branch: open199
     heroku:
       appname: openmctweb-staging-un
   openmctweb-staging-deux:

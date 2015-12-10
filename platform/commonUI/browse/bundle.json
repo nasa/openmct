@@ -20,6 +20,7 @@
                     "$scope",
                     "$route",
                     "$location",
+                    "$q",
                     "objectService",
                     "navigationService",
                     "urlService"
@@ -34,7 +35,8 @@
             {
                 "key": "BrowseObjectController",
                 "implementation": "BrowseObjectController.js",
-                "depends": [ "$scope", "$location", "$route" ]
+                "depends": [ "$scope", "$location", "$route", "$q",
+                    "navigationService" ]
             },
             {
                 "key": "CreateMenuController",
@@ -153,7 +155,8 @@
                 "provides": "actionService",
                 "type": "provider",
                 "implementation": "creation/CreateActionProvider.js",
-                "depends": [ "typeService", "dialogService", "creationService", "policyService" ]
+                "depends": ["$q", "typeService",
+                    "navigationService", "policyService"]
             },
             {
                 "key": "CreationService",

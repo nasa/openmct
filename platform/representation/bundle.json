@@ -21,12 +21,14 @@
             {
                 "key": "drop",
                 "implementation": "gestures/DropGesture.js",
-                "depends": [ "dndService", "$q" ]
+                "depends": [ "dndService", "$q", "navigationService",
+                    "objectService", "instantiate", "typeService" ]
             },
             {
                 "key": "menu",
                 "implementation": "gestures/ContextMenuGesture.js",
-                "depends": ["$timeout", "agentService"]
+                "depends": ["$timeout", "$parse", "agentService",
+                    "navigationService"]
             }
         ],
         "components": [
