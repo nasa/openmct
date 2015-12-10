@@ -70,12 +70,16 @@ define(
                     mockDelegate[m].andCallFake(mockMethods[m]);
                 });
 
-                mockApp.config.andCallFake(function (callback) {
+                mockApp.config.andCallFake(function (arr) {
+                    var callback = arr[1];
+                    expect(arr[0]).toEqual('$provide');
                     callback(mockProvide);
                 });
 
-                mockProvide.decorator.andCallFake(function (key, callback) {
+                mockProvide.decorator.andCallFake(function (key, arr) {
                     // Only $log should be configured in any case
+                    var callback = arr[1];
+                    expect(arr[0]).toEqual('$delegate');
                     expect(key).toEqual('$log');
                     callback(mockDelegate);
                 });
