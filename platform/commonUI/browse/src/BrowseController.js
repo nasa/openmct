@@ -123,6 +123,12 @@ define(
                             } else {
                                 doNavigate(nextObject, index + 1);
                             }
+                        } else if (index === 1 && c.length > 0) {
+                            // Roots are in a top-level container that we don't
+                            // want to be selected, so if we couldn't find an
+                            // object at the path we wanted, at least select
+                            // one of its children.
+                            navigateTo(c[c.length - 1]);
                         } else {
                             // Couldn't find the next element of the path
                             // so navigate to the last path object we did find
