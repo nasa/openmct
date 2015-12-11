@@ -126,6 +126,14 @@ define(
                     .toHaveBeenCalledWith(mockDomainObject);
             });
 
+            it("navigates to a root-level object, even when default path is not found", function () {
+                mockDomainObject.getId
+                    .andReturn("something-other-than-the-" + testDefaultRoot);
+                instantiateController();
+                expect(mockNavigationService.setNavigation)
+                    .toHaveBeenCalledWith(mockDomainObject);
+            });
+
             it("does not try to override navigation", function () {
                 mockNavigationService.getNavigation.andReturn(mockDomainObject);
                 instantiateController();
