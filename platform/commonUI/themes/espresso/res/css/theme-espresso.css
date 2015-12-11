@@ -6284,52 +6284,53 @@ ul.tree {
 /* line 25, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame.child-frame.panel {
   background: #333;
-  border: 1px solid rgba(153, 153, 153, 0.1); }
-  /* line 28, ../../../../general/res/sass/user-environ/_frame.scss */
+  border: 1px solid rgba(153, 153, 153, 0.1);
+  z-index: 0; }
+  /* line 29, ../../../../general/res/sass/user-environ/_frame.scss */
   .frame.child-frame.panel:hover {
     border-color: rgba(179, 179, 179, 0.1); }
-/* line 32, ../../../../general/res/sass/user-environ/_frame.scss */
+/* line 33, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame .object-top-bar {
   font-size: 0.75em;
   height: 16px;
   line-height: 16px; }
-  /* line 36, ../../../../general/res/sass/user-environ/_frame.scss */
+  /* line 37, ../../../../general/res/sass/user-environ/_frame.scss */
   .frame .object-top-bar .left {
     padding-right: 10px; }
-/* line 40, ../../../../general/res/sass/user-environ/_frame.scss */
+/* line 41, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame > .object-holder.abs, .frame > .object-holder.l-inspect, .l-datetime-picker .l-month-year-pager .frame > .object-holder.pager,
 .l-datetime-picker .l-month-year-pager .frame > .object-holder.val, .s-menu-btn .frame > span.object-holder.l-click-area, .frame > .object-holder.l-object-wrapper, .l-object-wrapper .frame > .object-holder.object-holder-main {
   top: 21px; }
-/* line 43, ../../../../general/res/sass/user-environ/_frame.scss */
+/* line 44, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame .contents {
   top: 5px;
   right: 5px;
   bottom: 5px;
   left: 5px; }
-/* line 51, ../../../../general/res/sass/user-environ/_frame.scss */
+/* line 52, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame.frame-template .s-btn, .frame.frame-template .s-menu-btn,
 .frame.frame-template .s-menu-btn {
   height: 16px;
   line-height: 16px;
   padding: 0 5px; }
-  /* line 56, ../../../../general/res/sass/user-environ/_frame.scss */
+  /* line 57, ../../../../general/res/sass/user-environ/_frame.scss */
   .frame.frame-template .s-btn > span, .frame.frame-template .s-menu-btn > span,
   .frame.frame-template .s-menu-btn > span {
     font-size: 0.65rem; }
-/* line 61, ../../../../general/res/sass/user-environ/_frame.scss */
+/* line 62, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame.frame-template .s-menu-btn:after {
   font-size: 8px; }
-/* line 65, ../../../../general/res/sass/user-environ/_frame.scss */
+/* line 66, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame.frame-template .view-switcher {
   z-index: 10; }
 @media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-  /* line 71, ../../../../general/res/sass/user-environ/_frame.scss */
+  /* line 72, ../../../../general/res/sass/user-environ/_frame.scss */
   .frame.frame-template .view-switcher {
     opacity: 0; }
-  /* line 74, ../../../../general/res/sass/user-environ/_frame.scss */
+  /* line 75, ../../../../general/res/sass/user-environ/_frame.scss */
   .frame.frame-template:hover .view-switcher {
     opacity: 1; } }
-/* line 82, ../../../../general/res/sass/user-environ/_frame.scss */
+/* line 83, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame .view-switcher .title-label {
   display: none; }
 
