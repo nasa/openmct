@@ -65,7 +65,7 @@
 	}
 	.label {
 		// Max-width silliness is necessary for width transition
-		@include trans-prop-nice(max-width, .25s);
+		@include trans-prop-nice(max-width, .25s, 1.5s);
 		overflow: hidden;
 		max-width: 0px;
 	}
@@ -76,6 +76,7 @@
 	}
 	&:hover {
 		.label {
+            @include trans-prop-nice(max-width, .25s, 0s);
 			max-width: 450px;
 			width: auto;
 		}
