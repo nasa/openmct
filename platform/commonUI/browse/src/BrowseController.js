@@ -30,8 +30,7 @@ define(
     function () {
         "use strict";
 
-        var ROOT_ID = "ROOT",
-            DEFAULT_PATH = "mine";
+        var ROOT_ID = "ROOT";
 
         /**
          * The BrowseController is used to populate the initial scope in Browse
@@ -43,9 +42,17 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function BrowseController($scope, $route, $location, objectService, navigationService, urlService) {
+        function BrowseController(
+            $scope,
+            $route,
+            $location,
+            objectService,
+            navigationService,
+            urlService,
+            defaultPath
+        ) {
             var path = [ROOT_ID].concat(
-                ($route.current.params.ids || DEFAULT_PATH).split("/")
+                ($route.current.params.ids || defaultPath).split("/")
             );
 
             function updateRoute(domainObject) {
