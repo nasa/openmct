@@ -148,10 +148,6 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
         return customRenderer;
     }
 
-    function matchesPattern(pattern, candidate){
-        return candidate.match(pattern);
-    }
-
     options['in'] = options['in'] || options.i;
     options.out = options.out || options.o;
 
