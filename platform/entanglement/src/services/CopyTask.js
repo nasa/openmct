@@ -45,6 +45,7 @@ define(
             this.policyService = policyService;
             this.persisted = 0;
             this.clones = [];
+            this.idMap = {};
         }
 
         function composeChild(child, parent, setLocation) {
@@ -105,6 +106,40 @@ define(
         }
 
         /**
+         * Update identifiers in a cloned object model (or part of
+         * a cloned object model) to reflect new identifiers after
+         * copying.
+         * @private
+         */
+        CopyTask.prototype.rewriteIdentifiers = function (obj) {
+            var idMap = this.idMap;
+
+            if (Array.isArray(obj)) {
+                obj.forEach(function (value, index) {
+                    obj[index] = idMap[value] || value;
+                    this.rewriteIdentifiers(obj[index]);
+                }, this);
+            } else if (obj && typeof obj === 'object') {
+                Object.keys(obj).forEach(function (key) {
+                    var value = obj[key];
+                    obj[key] = idMap[value] || value;
+                    if (idMap[key]) {
+                        delete obj[key];
+                        obj[idMap[key]] = value;
+                    }
+                    this.rewriteIdentifiers(value);
+                }, this);
+            }
+        };
+
+        function rewriteIdentifiersInClones(self) {
+            self.clones.forEach(function (clone) {
+                self.rewriteIdentifiers(clone.getModel());
+            });
+            return self;
+        }
+
+        /**
          * Given an array of objects composed by a parent, clone them, then
          * add them to the parent.
          * @private
@@ -152,6 +187,9 @@ define(
                 // new clone. This will ensure that the correct persistence
                 // space is used.
                 clone = this.parent.useCapability("instantiation", cloneObjectModel(originalObject.getModel()));
+
+                // Record ID mappings so we can rewrite properties later
+                self.idMap[originalObject.getId()] = clone.getId();
 
                 //Iterate through child tree
                 return this.$q.when(originalObject.useCapability('composition')).then(function(composees){
@@ -207,6 +245,7 @@ define(
             this.deferred = this.$q.defer();
 
             this.buildCopyPlan()
+                .then(rewriteIdentifiersInClones)
                 .then(persistObjects)
                 .then(addClonesToParent)
                 .then(this.deferred.resolve, this.deferred.reject);
