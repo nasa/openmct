@@ -106,7 +106,7 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
     }
 
     // Convert from Github-flavored Markdown to HTML
-    function gfmifier() {
+    function gfmifier(renderTOC) {
         var transform = new stream.Transform({ objectMode: true }),
             markdown = "";
         transform._transform = function (chunk, encoding, done) {
@@ -114,9 +114,11 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
             done();
         };
         transform._flush = function (done) {
-            // Prepend table of contents
-            markdown =
-                [ TOC_HEAD, toc(markdown).content, "", markdown ].join("\n");
+            if (renderTOC){
+                // Prepend table of contents
+                markdown =
+                    [ TOC_HEAD, toc(markdown).content, "", markdown ].join("\n");
+            }
             this.push(header);
             this.push(marked(markdown));
             this.push(footer);
@@ -146,6 +148,10 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
         return customRenderer;
     }
 
+    function matchesPattern(pattern, candidate){
+        return candidate.match(pattern);
+    }
+
     options['in'] = options['in'] || options.i;
     options.out = options.out || options.o;
 
@@ -168,13 +174,14 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
             var destination = file.replace(options['in'], options.out)
                 .replace(/md$/, "html"),
                 destPath = path.dirname(destination),
-                prefix = path.basename(destination).replace(/\.html$/, "");
+                prefix = path.basename(destination).replace(/\.html$/, ""),
+                renderTOC = file.match(options['suppress-toc'] || "") === null;
 
             mkdirp(destPath, function (err) {
                 fs.createReadStream(file, { encoding: 'utf8' })
                     .pipe(split())
                     .pipe(nomnomlifier(destPath, prefix))
-                    .pipe(gfmifier())
+                    .pipe(gfmifier(renderTOC))
                     .pipe(fs.createWriteStream(destination, {
                         encoding: 'utf8'
                     }));
