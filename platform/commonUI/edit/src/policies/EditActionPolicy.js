@@ -34,18 +34,42 @@ define(
          * @constructor
          * @implements {Policy.<Action, ActionContext>}
          */
-        function EditActionPolicy() {
+        function EditActionPolicy(policyService) {
+            this.policyService = policyService;
         }
 
-        // Get a count of views which are not flagged as non-editable.
-        function countEditableViews(context) {
-            var domainObject = (context || {}).domainObject,
-                views = domainObject && domainObject.useCapability('view'),
-                count = 0;
+        function applicableView(key){
+            return ['plot', 'scrolling'].indexOf(key) >= 0;
+        }
+
+        function editableType(key){
+            return key === 'telemetry.panel';
+        }
+
+        /**
+         * Get a count of views which are not flagged as non-editable.
+         * @private
+         */
+        EditActionPolicy.prototype.countEditableViews = function (context) {
+            var domainObject = context.domainObject,
+                count = 0,
+                type, views;
+
+            if (!domainObject){
+                return count;
+            }
+
+            type = domainObject.getCapability('type');
+            views = domainObject.useCapability('view');
+
 
             // A view is editable unless explicitly flagged as not
             (views || []).forEach(function (view) {
-                count += (view.editable !== false) ? 1 : 0;
+                if (view.editable===false || (applicableView(view.key) && !editableType(type.getKey()))){
+                    // Do nothing
+                } else {
+                    count++;
+                }
             });
 
             return count;
@@ -75,9 +99,9 @@ define(
                 // the converse is true), and where the domain object is not
                 // already being edited.
                 if (key === 'edit') {
-                    return countEditableViews(context) > 0 && !isEditing(context);
+                    return this.countEditableViews(context) > 0 && !isEditing(context);
                 } else if (key === 'properties') {
-                    return countEditableViews(context) < 1 && !isEditing(context);
+                    return this.countEditableViews(context) < 1 && !isEditing(context);
                 }
             }
 

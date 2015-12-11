@@ -36,11 +36,10 @@ define(
         }
 
         EditableViewPolicy.prototype.allow = function (view, domainObject) {
-            // If a view is flagged as non-editable, allow it if the object
-            // itself is not being edited. For example if we are in browse
-            // mode, or edit mode and the object is within a layout.
+            // If a view is flagged as non-editable, only allow it
+            // while we're not in Edit mode.
             if ((view || {}).editable === false) {
-                return !domainObject.getCapability('status').get('editing');
+                return !domainObject.hasCapability('editor');
             }
 
             // Like all policies, allow by default.
