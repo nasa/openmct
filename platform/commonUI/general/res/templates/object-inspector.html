@@ -19,7 +19,11 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-
+<style>
+    .s-status-editing .location-item{
+        pointer-events: none;
+    }
+</style>
 <span class="l-inspect" ng-controller="ObjectInspectorController as controller">
     <div ng-controller="PaneController as modelPaneEdit">
         <mct-split-pane class='abs contents split-layout' anchor='bottom'>

@@ -28,7 +28,7 @@ define(
     [],
     function () {
         "use strict";
-
+        var DISALLOWED_ACTIONS = ["move", "copy", "link", "window", "follow"];
         /**
          * The ActionCapability allows applicable Actions to be retrieved and
          * performed for specific domain objects, e.g.:
@@ -54,6 +54,18 @@ define(
             this.domainObject = domainObject;
         }
 
+        function isEditable(domainObject){
+            return domainObject.getCapability('status').get('editing');
+        }
+
+        function hasEditableParent(domainObject){
+            return domainObject.hasCapability('context') &&
+                domainObject.getCapability('context').getPath().reduce(
+                    function(previous, domainObject){
+                        return domainObject.getCapability('status').get('editing') || previous;
+                    }, false);
+        }
+
         /**
          * Perform an action. This will find and perform the
          * first matching action available for the specified
@@ -67,9 +79,6 @@ define(
          *       this capability. If given as a string, this will
          *       be taken as the "key" field to match against
          *       specific actions.
-         * @returns {Promise} the result of the action that was
-         *       performed, or undefined if no matching action
-         *       was found.
          * @memberof platform/core.ActionCapability#
          */
         ActionCapability.prototype.getActions = function (context) {
@@ -78,11 +87,19 @@ define(
             // but additionally adds a domainObject field.
             var baseContext = typeof context === 'string' ?
                         { key: context } : (context || {}),
-                actionContext = Object.create(baseContext);
+                actionContext = Object.create(baseContext),
+                actions;
 
             actionContext.domainObject = this.domainObject;
 
-            return this.actionService.getActions(actionContext);
+            actions = this.actionService.getActions(actionContext) || [];
+            if (isEditable(this.domainObject) || hasEditableParent(this.domainObject)){
+                return actions.filter(function(action){
+                    return DISALLOWED_ACTIONS.indexOf(action.getMetadata().key) === -1;
+                });
+            } else {
+                return actions;
+            }
         };
 
         /**

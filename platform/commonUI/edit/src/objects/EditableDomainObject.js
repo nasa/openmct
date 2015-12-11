@@ -56,7 +56,6 @@ define(
             context: EditableContextCapability,
             composition: EditableCompositionCapability,
             relationship: EditableRelationshipCapability,
-            action: EditableActionCapability,
             editor: EditorCapability
         };
 
