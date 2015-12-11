@@ -22,74 +22,76 @@
 /*global define*/
 
 define(
-    ["./RemsDataDictionary"],
-    function (RemsDataDictionary) {
+    ["./MSLDataDictionary"],
+    function (MSLDataDictionary) {
         "use strict";
         
-        var TERRESTRIAL_DATE = "terrestrial_date", 
-            NO_DATA = "--";
-        
+        var TERRESTRIAL_DATE = "terrestrial_date";
+
         /**
-         * For now just returns a hard-coded data dictionary, but in future
-         * could be adapted to provide data from remote source.
+         * Fetches historical data from the REMS instrument on the Curiosity
+         * Rover. Exposes two services to client code, one
+         * @param $q
+         * @param $http
+         * @param REMS_WS_URL
+         * @returns {{dictionary: exports, history: Function}}
          * @constructor
          */
-        function RemsTelemetryServerAdapter($q, $http, REMS_WS_URL){
-            var histories = {},
-                deferreds = {};
-            
-            function statisticalRejection(values){
-                //First, calculate mean
-                var mean = values.reduce(function(accumulator, value){
-                    return accumulator += parseInt(value.value);
-                }, 0) / values.length;
-                var variance = values.reduce(function(accumulator, value){
-                    return accumulator+= Math.pow(parseInt(value.value) - mean, 2);
-                }, 0) / values.length;
-                var stddev = Math.sqrt(variance);
-                return values.filter(function(value){
-                    return mean - stddev  < parseInt(value.value) && parseInt(value.value) < mean + stddev;
-                })
-            }
-            
-            function requestHistory (id) {
-                $http.get(REMS_WS_URL).then(
-                    function(response){
-                        histories = {};
-                        /**
-                         * All history is fetched in one go, cache it all to save round trips to the server on subsequent requests
-                         */
-                        response.data.soles.forEach(function(solData){
-                           for (var prop in solData){
-                               histories[prop] = histories[prop] || [];
-                               if (!isNaN(solData[prop])) {
-                                   //var value = isNaN(solData[prop]) ? lastGoodValue : (lastGoodValue = solData[prop]);
-                                   histories[prop].unshift({
-                                       date: Date.parse(solData[TERRESTRIAL_DATE]),
-                                       value: solData[prop]
-                                   });
-                               }
-                           } 
-                        });
-                        //deferreds[id].resolve({id: id, values: statisticalRejection(histories[id])});
-                        deferreds[id].resolve({id: id, values: histories[id]});
-                    }, function (error){
-                        deferreds[id].reject(error);
-                    });
-            }
-            return {
-                dictionary: RemsDataDictionary,
-                history: function(id) {
-                    deferreds[id] = deferreds[id] || $q.defer();
-                    if (histories[id]) {
-                        deferreds[id].resolve({id: id, values: histories[id]});
-                    } else {
-                        histories = {};
-                        requestHistory(id);
-                    }
-                    return deferreds[id].promise;
-                }
-            };
+        function RemsTelemetryServerAdapter($q, $http, REMS_WS_URL) {
+            this.histories = {},
+            this.deferreds = {};
+            this.REMS_WS_URL = REMS_WS_URL;
+            this.$q = $q;
+            this.$http = $http;
         }
+
+        /**
+         * @private
+         */
+        RemsTelemetryServerAdapter.prototype.requestHistory = function(id) {
+            var self = this;
+
+            return this.$http.get(this.REMS_WS_URL).then(function(response){
+                self.histories = {};
+                /**
+                 * All history is fetched in one go, cache it all to save round trips to the server on subsequent requests
+                 */
+                response.data.soles.forEach(function(solData){
+                   for (var prop in solData){
+                       self.histories[prop] = self.histories[prop] || [];
+                       if (!isNaN(solData[prop])) {
+                           self.histories[prop].unshift({
+                               date: Date.parse(solData[TERRESTRIAL_DATE]),
+                               value: solData[prop]
+                           });
+                       }
+                   }
+                });
+                self.deferreds[id].resolve({id: id, values: self.histories[id]});
+            });
+        };
+
+        /**
+         *
+         * @type {exports}
+         */
+        RemsTelemetryServerAdapter.prototype.dictionary = MSLDataDictionary;
+
+        /**
+         *
+         * @param id
+         * @returns {p.promise|{then, fail, end}|performPromise|deferred.promise|{}|*}
+         */
+        RemsTelemetryServerAdapter.prototype.history = function(id) {
+            this.deferreds[id] = this.deferreds[id] || this.$q.defer();
+            if (this.histories[id]) {
+                this.deferreds[id].resolve({id: id, values: this.histories[id]});
+            } else {
+                this.histories = {};
+                this.requestHistory(id);
+            }
+            return this.deferreds[id].promise;
+        };
+
         return RemsTelemetryServerAdapter;
     });

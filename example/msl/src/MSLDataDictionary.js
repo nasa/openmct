@@ -23,6 +23,12 @@
 
 define(
     [],
+    /**
+     * A data dictionary describes the telemetry available from a data
+     * source and its data types. The data dictionary will be parsed by a custom
+     * server provider for this data source (in this case
+     * {@link RemsTelemetryServerAdapter}).
+     */
     function () {
         return {
             "name": "Mars Science Laboratory",
