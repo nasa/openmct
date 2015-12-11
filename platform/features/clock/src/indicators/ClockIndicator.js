@@ -42,7 +42,7 @@ define(
                     return "C";
                 },
                 getGlyphClass: function () {
-                    return "";
+                    return "no-icon no-collapse float-right subtle";
                 },
                 getText: function () {
                     return text;

@@ -37,6 +37,8 @@
 }
 
 .status.block {
+    $transDelay: 1.5s;
+    $transSpeed: .25s;
 	color: $colorStatusDefault;
 	cursor: default;
 	display: inline-block;
@@ -44,13 +46,47 @@
 	.status-indicator,
 	.label,
 	.count {
-		//@include test(#00ff00);
 		display: inline-block;
 		vertical-align: top;
 	}
+
+    &.no-icon {
+        .status-indicator {
+            display: none;
+        }
+    }
+
+    &.float-right {
+        float: right;
+    }
+
+    &.subtle {
+        opacity: 0.5;
+    }
 	.status-indicator {
 		margin-right: $interiorMarginSm;
 	}
+
+    &:not(.no-collapse) {
+        .label {
+            // Max-width silliness is necessary for width transition
+            @include trans-prop-nice(max-width, $transSpeed, $transDelay);
+            overflow: hidden;
+            max-width: 0px;
+        }
+        &:hover {
+            .label {
+                @include trans-prop-nice(max-width, $transSpeed, 0s);
+                max-width: 450px;
+                width: auto;
+            }
+            .count {
+                @include trans-prop-nice(max-width, $transSpeed, 0s);
+                opacity: 0;
+            }
+        }
+    }
+
 	&.ok .status-indicator,
     &.info .status-indicator {
 		color: $colorStatusInfo;
@@ -63,26 +99,10 @@
 	&.error .status-indicator {
 		color: $colorStatusError;
 	}
-	.label {
-		// Max-width silliness is necessary for width transition
-		@include trans-prop-nice(max-width, .25s, 1.5s);
-		overflow: hidden;
-		max-width: 0px;
-	}
 	.count {
-		@include trans-prop-nice(opacity, .25s);
+		@include trans-prop-nice(opacity, $transSpeed, $transDelay);
 		font-weight: bold;
 		opacity: 1;
-	}
-	&:hover {
-		.label {
-            @include trans-prop-nice(max-width, .25s, 0s);
-			max-width: 450px;
-			width: auto;
-		}
-		.count {
-			opacity: 0;
-		}
 	}
 }
 
