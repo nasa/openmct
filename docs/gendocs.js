@@ -175,6 +175,8 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
                 .replace(/md$/, "html"),
                 destPath = path.dirname(destination),
                 prefix = path.basename(destination).replace(/\.html$/, ""),
+                //Determine whether TOC should be rendered for this file based
+                //on regex provided as command line option
                 renderTOC = file.match(options['suppress-toc'] || "") === null;
 
             mkdirp(destPath, function (err) {
