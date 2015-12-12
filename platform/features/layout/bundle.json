@@ -9,8 +9,7 @@
                 "glyph": "L",
                 "type": "layout",
                 "templateUrl": "templates/layout.html",
-                "uses": [],
-                "gestures": [ "drop" ]
+                "uses": []
             },
             {
                 "key": "fixed",

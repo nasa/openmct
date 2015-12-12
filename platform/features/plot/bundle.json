@@ -8,7 +8,6 @@
                 "glyph": "6",
                 "templateUrl": "templates/plot.html",
                 "needs": [ "telemetry" ],
-                "gestures": [ "drop" ],
                 "priority": "preferred",
                 "delegation": true
             }
