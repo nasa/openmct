@@ -170,9 +170,9 @@ define(
                             //Don't go into edit mode for folders
                             if (domainObjectType!=='folder') {
                                 navigationService.setNavigation(editableDomainObject);
+                                editableDomainObject.getCapability('status').set('editing', true);
                             }
                             broadcastDrop(id, event);
-                            editableDomainObject.getCapability('status').set('editing', true);
                         });
                     }
                 }
