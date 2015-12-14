@@ -35,24 +35,23 @@
 		}
 	}
 
-
-
 	.l-autoflow-header {
 		bottom: auto;
 		height: $headerH;
 		line-height: $headerH;
-		min-width: $colW;
-		span {
-			vertical-align: middle;
-		}
+        min-width: $colW;
+        .t-last-update {
+            overflow: hidden;
+        }
 		.s-btn.change-column-width {
 			@include trans-prop-nice-fade(500ms);
 			opacity: 0;
 		}
 		.l-filter {
-			margin-left: $interiorMargin;
+            display: block;
+			margin-right: $interiorMargin;
 			input.t-filter-input {
-				width: 100px;
+				width: 150px;
 			}
 		}
 	}
