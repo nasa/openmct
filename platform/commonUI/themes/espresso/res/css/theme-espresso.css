@@ -4220,35 +4220,11 @@ span.req {
 .t-filter input.t-filter-input {
   height: 22px;
   width: 200px; }
-  /* line 61, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
-  .filter input.t-filter-input:-moz-placeholder,
-  .t-filter input.t-filter-input:-moz-placeholder {
-    color: rgba(204, 204, 204, 0.5);
-    font-style: italic;
-    font-weight: 200; }
-  /* line 64, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
-  .filter input.t-filter-input::-moz-placeholder,
-  .t-filter input.t-filter-input::-moz-placeholder {
-    color: rgba(204, 204, 204, 0.5);
-    font-style: italic;
-    font-weight: 200; }
-  /* line 67, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
-  .filter input.t-filter-input:-ms-input-placeholder,
-  .t-filter input.t-filter-input:-ms-input-placeholder {
-    color: rgba(204, 204, 204, 0.5);
-    font-style: italic;
-    font-weight: 200; }
-  /* line 56, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
-  .filter input.t-filter-input::-webkit-input-placeholder,
-  .t-filter input.t-filter-input::-webkit-input-placeholder {
-    color: rgba(204, 204, 204, 0.5);
-    font-style: italic;
-    font-weight: 200; }
-  /* line 36, ../../../../general/res/sass/forms/_filter.scss */
+  /* line 38, ../../../../general/res/sass/forms/_filter.scss */
   .filter input.t-filter-input:not(.ng-dirty) + .t-a-clear,
   .t-filter input.t-filter-input:not(.ng-dirty) + .t-a-clear {
     display: none; }
-/* line 40, ../../../../general/res/sass/forms/_filter.scss */
+/* line 42, ../../../../general/res/sass/forms/_filter.scss */
 .filter .icon.ui-symbol, .filter .t-item-icon, .filter .icon.s-icon-btn, .filter .s-icon-btn.t-item-icon, .filter .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .filter .icon.pager, .filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon, .l-datetime-picker .l-month-year-pager .filter .pager.t-item-icon,
 .t-filter .icon.ui-symbol,
 .t-filter .t-item-icon,
@@ -4267,7 +4243,7 @@ span.req {
   line-height: 22px;
   padding: 0px 5px;
   vertical-align: middle; }
-  /* line 48, ../../../../general/res/sass/forms/_filter.scss */
+  /* line 50, ../../../../general/res/sass/forms/_filter.scss */
   .filter .icon.ui-symbol:hover, .filter .t-item-icon:hover, .filter .icon.s-icon-btn:hover, .filter .s-icon-btn.t-item-icon:hover, .filter .l-datetime-picker .l-month-year-pager .icon.pager:hover, .l-datetime-picker .l-month-year-pager .filter .icon.pager:hover, .filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon:hover, .l-datetime-picker .l-month-year-pager .filter .pager.t-item-icon:hover,
   .t-filter .icon.ui-symbol:hover,
   .t-filter .t-item-icon:hover,
@@ -4278,7 +4254,7 @@ span.req {
   .t-filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon:hover,
   .l-datetime-picker .l-month-year-pager .t-filter .pager.t-item-icon:hover {
     background: rgba(255, 255, 255, 0.1); }
-/* line 52, ../../../../general/res/sass/forms/_filter.scss */
+/* line 54, ../../../../general/res/sass/forms/_filter.scss */
 .filter .s-a-clear.ui-symbol, .filter .s-a-clear.t-item-icon, .filter .s-a-clear.s-icon-btn, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager,
 .t-filter .s-a-clear.ui-symbol,
 .t-filter .s-a-clear.t-item-icon,
@@ -4307,7 +4283,7 @@ span.req {
   top: 50%;
   text-align: center;
   z-index: 5; }
-  /* line 72, ../../../../general/res/sass/forms/_filter.scss */
+  /* line 74, ../../../../general/res/sass/forms/_filter.scss */
   .filter .s-a-clear.ui-symbol:hover, .filter .s-a-clear.t-item-icon:hover, .filter .s-a-clear.s-icon-btn:hover, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager:hover, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager:hover,
   .t-filter .s-a-clear.ui-symbol:hover,
   .t-filter .s-a-clear.t-item-icon:hover,
@@ -4318,12 +4294,12 @@ span.req {
     opacity: 0.6;
     background-color: #0099cc; }
 
-/* line 80, ../../../../general/res/sass/forms/_filter.scss */
+/* line 82, ../../../../general/res/sass/forms/_filter.scss */
 .l-filter {
   display: inline-block;
   position: relative; }
 
-/* line 87, ../../../../general/res/sass/forms/_filter.scss */
+/* line 89, ../../../../general/res/sass/forms/_filter.scss */
 .top-bar input.filter {
   font-size: .9em;
   height: 24px;
@@ -4332,7 +4308,7 @@ span.req {
   padding-left: 10px;
   padding-right: 10px;
   vertical-align: top; }
-/* line 98, ../../../../general/res/sass/forms/_filter.scss */
+/* line 100, ../../../../general/res/sass/forms/_filter.scss */
 .top-bar .icon-filter {
   font-size: 1.4em; }
 
