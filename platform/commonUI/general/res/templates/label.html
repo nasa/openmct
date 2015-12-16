@@ -20,6 +20,8 @@
  at runtime from the About dialog for additional information.
 -->
 <span class="t-object-label">
-<span class="t-item-icon" ng-class="{ 'l-icon-link':location.isLink() }">{{type.getGlyph()}}</span>
-<span class='t-title-label'>{{model.name}}</span>
+    <span class="t-item-icon" ng-class="{ 'l-icon-link':location.isLink() }">
+        <span class="t-item-icon-glyph">{{type.getGlyph()}}</span>
+    </span>
+    <span class='t-title-label'>{{model.name}}</span>
 </span>

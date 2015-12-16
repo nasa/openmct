@@ -59,7 +59,6 @@ ul.tree {
 		}
 	}
 
-	.label,
 	.t-object-label {
 		display: block;
 		@include absPosDefault();
@@ -76,38 +75,6 @@ ul.tree {
             @include transform(translateY(-50%));
         }
 
-		.type-icon {
-			//@include absPosDefault(0, false);
-			$d: $treeTypeIconH;
-			@include txtShdwSubtle($shdwItemTreeIcon);
-			font-size: $treeTypeIconH;
-			color: $colorItemTreeIcon;
-			left: $interiorMargin;
-			position: absolute;
-			@include verticalCenterBlock($menuLineHPx, $treeTypeIconHPx);
-			line-height: 100%;
-			right: auto; width: $treeTypeIconH;
-
-			.icon {
-				&.l-icon-link,
-				&.l-icon-alert {
-					position: absolute;
-					z-index: 2;
-				}
-				&.l-icon-alert {
-					$d: 8px;
-					@include ancillaryIcon($d, $colorAlert);
-					top: 1px;
-					right: -2px;
-				}
-				&.l-icon-link {
-					$d: 8px;
-					@include ancillaryIcon($d, $colorIconLink);
-					left: -3px;
-					bottom: 0px;
-				}
-			}
-		}
 		.title-label,
         .t-title-label {
 			@include absPosDefault();
@@ -161,7 +128,21 @@ ul.tree {
 }
 
 .tree-item {
-	.t-object-label {
-		left: $interiorMargin + $treeVCW;
-	}
+    mct-representation {
+        .t-object-label {
+            left: $interiorMargin + $treeVCW;
+        }
+        &.s-status-pending {
+            .t-object-label {
+                &:before {
+                    @include tItemIcon();
+                    @include spinner(0.25em, $colorItemTreeIcon);
+                    content: "";
+                }
+                .t-item-icon .t-item-icon-glyph {
+                    display: none;
+                }
+            }
+        }
+    }
 }

@@ -1232,7 +1232,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     transform: rotate(0deg); }
   100% {
     transform: rotate(359deg); } }
-/* line 63, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+/* line 68, ../../../../general/res/sass/helpers/_wait-spinner.scss */
 .t-wait-spinner,
 .wait-spinner {
   display: block;
@@ -1257,7 +1257,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
   margin-top: -5%;
   margin-left: -5%;
   z-index: 2; }
-  /* line 74, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  /* line 79, ../../../../general/res/sass/helpers/_wait-spinner.scss */
   .t-wait-spinner.inline,
   .wait-spinner.inline {
     display: inline-block !important;
@@ -1265,26 +1265,26 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     position: relative !important;
     vertical-align: middle; }
 
-/* line 82, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+/* line 87, ../../../../general/res/sass/helpers/_wait-spinner.scss */
 .l-wait-spinner-holder {
   pointer-events: none;
   position: absolute; }
-  /* line 86, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  /* line 91, ../../../../general/res/sass/helpers/_wait-spinner.scss */
   .l-wait-spinner-holder.align-left .t-wait-spinner {
     left: 0;
     margin-left: 0; }
-  /* line 91, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  /* line 96, ../../../../general/res/sass/helpers/_wait-spinner.scss */
   .l-wait-spinner-holder.full-size {
     display: inline-block;
     height: 100%;
     width: 100%; }
-    /* line 94, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+    /* line 99, ../../../../general/res/sass/helpers/_wait-spinner.scss */
     .l-wait-spinner-holder.full-size .t-wait-spinner {
       top: 0;
       margin-top: 0;
       padding: 30%; }
 
-/* line 103, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+/* line 108, ../../../../general/res/sass/helpers/_wait-spinner.scss */
 .treeview .wait-spinner {
   display: block;
   position: absolute;
@@ -1306,7 +1306,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
   top: 2px;
   left: 0; }
 
-/* line 112, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+/* line 117, ../../../../general/res/sass/helpers/_wait-spinner.scss */
 .wait-spinner.sm {
   display: block;
   position: absolute;
@@ -1329,13 +1329,13 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
   top: 0;
   left: 0; }
 
-/* line 122, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+/* line 127, ../../../../general/res/sass/helpers/_wait-spinner.scss */
 .loading {
   pointer-events: none; }
-  /* line 125, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  /* line 130, ../../../../general/res/sass/helpers/_wait-spinner.scss */
   .loading:before, .loading:after {
     content: ''; }
-  /* line 129, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  /* line 134, ../../../../general/res/sass/helpers/_wait-spinner.scss */
   .loading:before {
     -moz-animation-name: rotateCentered;
     -webkit-animation-name: rotateCentered;
@@ -1382,7 +1382,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     transform: translateX(-50%) translateY(-50%) rotate(0deg); }
   100% {
     transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
-  /* line 133, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  /* line 138, ../../../../general/res/sass/helpers/_wait-spinner.scss */
   .loading:after {
     overflow: hidden;
     position: absolute;
@@ -1395,7 +1395,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     background: rgba(119, 107, 162, 0.1);
     display: block;
     z-index: 9; }
-  /* line 139, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  /* line 144, ../../../../general/res/sass/helpers/_wait-spinner.scss */
   .loading.tree-item:before {
     padding: 0.375rem;
     border-width: 2px; }
@@ -5503,7 +5503,7 @@ span.req {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 23, ../../../../general/res/sass/tree/_tree.scss */
+/* line 35, ../../../../general/res/sass/tree/_tree.scss */
 ul.tree {
   margin: 0;
   padding: 0;
@@ -5516,15 +5516,15 @@ ul.tree {
     list-style-type: none;
     margin: 0;
     padding: 0; }
-  /* line 26, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 38, ../../../../general/res/sass/tree/_tree.scss */
   ul.tree li {
     display: block;
     position: relative; }
-  /* line 30, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 42, ../../../../general/res/sass/tree/_tree.scss */
   ul.tree ul.tree {
     margin-left: 15px; }
 
-/* line 35, ../../../../general/res/sass/tree/_tree.scss */
+/* line 47, ../../../../general/res/sass/tree/_tree.scss */
 .tree-item,
 .search-result-item {
   -moz-box-sizing: border-box;
@@ -5543,7 +5543,7 @@ ul.tree {
   line-height: 1.5rem;
   margin-bottom: 3px;
   position: relative; }
-  /* line 48, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 60, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .view-control,
   .search-result-item .view-control {
     color: #666;
@@ -5552,14 +5552,12 @@ ul.tree {
     font-size: 0.75em;
     width: 10px; }
     @media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-      /* line 56, ../../../../general/res/sass/tree/_tree.scss */
+      /* line 68, ../../../../general/res/sass/tree/_tree.scss */
       .tree-item .view-control:hover,
       .search-result-item .view-control:hover {
         color: #0099cc !important; } }
-  /* line 62, ../../../../general/res/sass/tree/_tree.scss */
-  .tree-item .label,
+  /* line 74, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .t-object-label,
-  .search-result-item .label,
   .search-result-item .t-object-label {
     display: block;
     overflow: hidden;
@@ -5571,10 +5569,8 @@ ul.tree {
     width: auto;
     height: auto;
     line-height: 1.5rem; }
-    /* line 68, ../../../../general/res/sass/tree/_tree.scss */
-    .tree-item .label .t-item-icon,
+    /* line 79, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .t-object-label .t-item-icon,
-    .search-result-item .label .t-item-icon,
     .search-result-item .t-object-label .t-item-icon {
       font-size: 1.4em;
       color: #0099cc;
@@ -5586,74 +5582,9 @@ ul.tree {
       -ms-transform: translateY(-50%);
       -webkit-transform: translateY(-50%);
       transform: translateY(-50%); }
-    /* line 79, ../../../../general/res/sass/tree/_tree.scss */
-    .tree-item .label .type-icon,
-    .tree-item .t-object-label .type-icon,
-    .search-result-item .label .type-icon,
-    .search-result-item .t-object-label .type-icon {
-      font-size: 1.4em;
-      color: #0099cc;
-      left: 5px;
-      position: absolute;
-      top: 4px;
-      bottom: auto;
-      height: 16px;
-      line-height: 100%;
-      right: auto;
-      width: 1.4em; }
-      /* line 92, ../../../../general/res/sass/tree/_tree.scss */
-      .tree-item .label .type-icon .icon.l-icon-link, .tree-item .label .type-icon .l-icon-link.t-item-icon, .tree-item .label .type-icon .icon.l-icon-alert, .tree-item .label .type-icon .l-icon-alert.t-item-icon,
-      .tree-item .t-object-label .type-icon .icon.l-icon-link,
-      .tree-item .t-object-label .type-icon .l-icon-link.t-item-icon,
-      .tree-item .t-object-label .type-icon .icon.l-icon-alert,
-      .tree-item .t-object-label .type-icon .l-icon-alert.t-item-icon,
-      .search-result-item .label .type-icon .icon.l-icon-link,
-      .search-result-item .label .type-icon .l-icon-link.t-item-icon,
-      .search-result-item .label .type-icon .icon.l-icon-alert,
-      .search-result-item .label .type-icon .l-icon-alert.t-item-icon,
-      .search-result-item .t-object-label .type-icon .icon.l-icon-link,
-      .search-result-item .t-object-label .type-icon .l-icon-link.t-item-icon,
-      .search-result-item .t-object-label .type-icon .icon.l-icon-alert,
-      .search-result-item .t-object-label .type-icon .l-icon-alert.t-item-icon {
-        position: absolute;
-        z-index: 2; }
-      /* line 97, ../../../../general/res/sass/tree/_tree.scss */
-      .tree-item .label .type-icon .icon.l-icon-alert, .tree-item .label .type-icon .l-icon-alert.t-item-icon,
-      .tree-item .t-object-label .type-icon .icon.l-icon-alert,
-      .tree-item .t-object-label .type-icon .l-icon-alert.t-item-icon,
-      .search-result-item .label .type-icon .icon.l-icon-alert,
-      .search-result-item .label .type-icon .l-icon-alert.t-item-icon,
-      .search-result-item .t-object-label .type-icon .icon.l-icon-alert,
-      .search-result-item .t-object-label .type-icon .l-icon-alert.t-item-icon {
-        color: #ff3c00;
-        font-size: 8px;
-        line-height: 8px;
-        height: 8px;
-        width: 8px;
-        top: 1px;
-        right: -2px; }
-      /* line 103, ../../../../general/res/sass/tree/_tree.scss */
-      .tree-item .label .type-icon .icon.l-icon-link, .tree-item .label .type-icon .l-icon-link.t-item-icon,
-      .tree-item .t-object-label .type-icon .icon.l-icon-link,
-      .tree-item .t-object-label .type-icon .l-icon-link.t-item-icon,
-      .search-result-item .label .type-icon .icon.l-icon-link,
-      .search-result-item .label .type-icon .l-icon-link.t-item-icon,
-      .search-result-item .t-object-label .type-icon .icon.l-icon-link,
-      .search-result-item .t-object-label .type-icon .l-icon-link.t-item-icon {
-        color: #49dedb;
-        font-size: 8px;
-        line-height: 8px;
-        height: 8px;
-        width: 8px;
-        left: -3px;
-        bottom: 0px; }
-    /* line 111, ../../../../general/res/sass/tree/_tree.scss */
-    .tree-item .label .title-label,
-    .tree-item .label .t-title-label,
+    /* line 83, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .t-object-label .title-label,
     .tree-item .t-object-label .t-title-label,
-    .search-result-item .label .title-label,
-    .search-result-item .label .t-title-label,
     .search-result-item .t-object-label .title-label,
     .search-result-item .t-object-label .t-title-label {
       overflow: hidden;
@@ -5669,49 +5600,99 @@ ul.tree {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap; }
-  /* line 122, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 94, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item.selected,
   .search-result-item.selected {
     background: #1ac6ff;
     color: #fcfcfc; }
-    /* line 125, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 97, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .view-control,
     .search-result-item.selected .view-control {
       color: #fcfcfc; }
-    /* line 128, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 100, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .t-object-label .t-item-icon,
     .search-result-item.selected .t-object-label .t-item-icon {
       color: #fcfcfc; }
   @media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-    /* line 136, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 108, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item:not(.selected):hover,
     .search-result-item:not(.selected):hover {
       background: rgba(102, 102, 102, 0.1);
       color: #333333; }
-      /* line 139, ../../../../general/res/sass/tree/_tree.scss */
+      /* line 111, ../../../../general/res/sass/tree/_tree.scss */
       .tree-item:not(.selected):hover .t-item-icon,
       .search-result-item:not(.selected):hover .t-item-icon {
         color: #0099cc; } }
-  /* line 146, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 118, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item:not(.loading),
   .search-result-item:not(.loading) {
     cursor: pointer; }
-  /* line 150, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 122, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .context-trigger,
   .search-result-item .context-trigger {
     top: -1px;
     position: absolute;
     right: 3px; }
-    /* line 155, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 127, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .context-trigger .invoke-menu,
     .search-result-item .context-trigger .invoke-menu {
       font-size: 0.75em;
       height: 0.9rem;
       line-height: 0.9rem; }
 
-/* line 164, ../../../../general/res/sass/tree/_tree.scss */
-.tree-item .t-object-label {
+/* line 137, ../../../../general/res/sass/tree/_tree.scss */
+.tree-item mct-representation .t-object-label {
   left: 15px; }
+/* line 142, ../../../../general/res/sass/tree/_tree.scss */
+.tree-item mct-representation.s-status-pending .t-object-label:before {
+  font-size: 1.4em;
+  color: #0099cc;
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  width: 1.4em;
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  -moz-animation-name: rotateCentered;
+  -webkit-animation-name: rotateCentered;
+  animation-name: rotateCentered;
+  -moz-animation-duration: 0.5s;
+  -webkit-animation-duration: 0.5s;
+  animation-duration: 0.5s;
+  -moz-animation-iteration-count: infinite;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -moz-animation-timing-function: linear;
+  -webkit-animation-timing-function: linear;
+  animation-timing-function: linear;
+  border-color: rgba(0, 0, 255, 0.25);
+  border-top-color: blue;
+  border-style: solid;
+  border-width: 2px;
+  -moz-border-radius: 100%;
+  -webkit-border-radius: 100%;
+  border-radius: 100%;
+  content: ""; }
+@-moz-keyframes rotateCentered {
+  0% {
+    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+  100% {
+    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
+@-webkit-keyframes rotateCentered {
+  0% {
+    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+  100% {
+    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
+@keyframes rotateCentered {
+  0% {
+    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+  100% {
+    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
+/* line 147, ../../../../general/res/sass/tree/_tree.scss */
+.tree-item mct-representation.s-status-pending .t-object-label .t-item-icon .t-item-icon-glyph {
+  display: none; }
 
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
