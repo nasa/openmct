@@ -34,6 +34,8 @@
 		line-height: $mobileTreeItemH;
 		margin-bottom: 0px;
 		.view-control {
+            font-size: 1.2em;
+            margin-right: 0;
             order: 2;
             width: $mobileTreeItemH;
             &.has-children {
@@ -49,6 +51,9 @@
 		}
 		.t-object-label {
 			line-height: inherit;
+            .t-item-icon.l-icon-link:before {
+                bottom: 20%; // Shift up due to height of mobile menu items
+            }
 		}
 	}
 }
