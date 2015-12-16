@@ -31,19 +31,23 @@
 # Reducing interface depth (the bundle.json version)
 
 ## Imperitive component registries 
+
 Transition component registries to javascript, get rid of bundle.json and bundles.json.  Prescribe a method for application configuration, but allow flexibility in how application configuration is defined.
 
 Register components in an imperitive fashion, see angularApp.factory, angularApp.controller, etc.  Alternatively, implement our own application object with new registries and it's own form of registering objects.
 
 ## Get rid of "extension category" concept.
+
 The concept of an "extension category" is itself an extraneous concept-- an extra layer of interface depth, an extra thing to learn before you can say "hello world".  Extension points should be clearly supported and documented with whatever interfaces make sense.  Developers who wish to add something that is conceptually equivalent to an extension category can do so directly, in the manner that suites their needs, without us forcing a common method on them.
 
 ## Reduce number and depth of extension points
+
 Clearly specify supported extension points (e.g. persistence, model providers, telemetry providers, routes, time systems), but don't claim that the system has a clear and perfect repeatable solution for unknown extension types.  New extension categories can be implemented in whatever way makes sense, without prescribing "the one and only system for managing extensions".
 
 The underlying problem here is we are predicting needs for extension points where none exist-- if we try and design the extension system before we know how it is used, we design the wrong thing and have to rewrite it later.
 
 ## Composite services should not be the default
+
 Understanding composite services, and describing services as composite services can confuse developers.  Aggregators are implemented once and forgotten, while decorators tend to be hacky, brittle solutions that are generally needed to avoid circular imports.  While composite services are a useful construct, it reduces interface depth to implement them as registries + typed providers.
 
 You can write a provider (provides "thing x" for "inputs y") with a simple interface.  A provider has two or more methods:
@@ -53,6 +57,7 @@ You can write a provider (provides "thing x" for "inputs y") with a simple inter
 Actually checking whether a provider can respond to a request before asking it to do work allows for faster failure and clearer errors when no providers match the request.
 
 ## Get rid of views, representations, and templates.
+
 Templates are an implementation detail that should be handled by module loaders.  Views and representations become "components," and a new concept, "routes", is used to exposing specific views to end users.
 
 `components` - building blocks for views, have clear inputs and outputs, and can be coupled to other components when it makes sense.  (e.g. parent-child components such as menu and menu item), but should have ZERO knowledge of our data models or telemetry apis.  They should define data models that enable them to do their job well while still being easy to test.
@@ -83,6 +88,7 @@ Components are not always reusable, and we shouldn't be overly concerned with ma
 
 
 # Reducing interface depth (The angular discussion)
+
 Two options here: use more angular, use less angular.  Wrapping angular methods does not reduce interface depth and must be avoided.
 
 The primary issue with angular is duplications of concerns-- both angular and the openmctweb platform implement the same tools side by side and it can be hard to comprehend-- it increases interface depth.  For other concerns, see footnotes[1].
@@ -106,8 +112,6 @@ mct.config(['modelProvider', function (modelProvider) {
 ```
 
 ## Less angular: only for views
-
-The other reason to move away from angular DI is angular DI makes it impossible to take one of our common services (say the persistence service) and start running it in a worker without loading the entire angular framework.  Webworkers should not have module loading functionality than the rest of the platform.
 
 If we wish to use less angular, I would recommend discontinuing use of all angular components that are not view related-- services, factories, $http, etc, and implementing them in our own paradigm.  Otherwise, we end up with layered interfaces-- one of the goals we would like to avoid.
 
@@ -189,6 +193,7 @@ View state (say, the expanded tree nodes) should not be tied to caching of data-
 Simple: reject on fail, resolve on success.
 
 ## Remove bulk requests from providers
+
 Aggregators can request multiple things at once, but individual providers should only have to implement handling at the level of a single request.  Each provider can implement it's own internal batching, but it should support making requests at a finer level of detail.  
 
 Excessive wrapping of code with $q.all causes additional digest cycles and decreased performance.
