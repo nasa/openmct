@@ -46,23 +46,21 @@ ul.tree {
 	position: relative;
 
 	.view-control {
-        @extend .flex-elem;
 		color: $colorItemTreeVC;
-		//display: inline-block;
+        font-size: 0.75em;
 		margin-right: $interiorMargin;
-		font-size: 0.75em;
+        height: 100%; //$menuLineH;
+        line-height: inherit;
 		width: $treeVCW;
         &.has-children {
             &:before {
-                //@include trans-prop-nice(rotate);
-                content: ">";
-                //position: absolute;
-                //top: 50%;
-                //left: 50%;
+                position: absolute;
+                @include trans-prop-nice(transform, 100ms);
+                content: "\3e";
+                @include transform-origin(center);
             }
             &.expanded:before {
-                //@include transform(translateX(-50%) translateY(-50%) rotate(90deg));
-                content: "v";
+                @include transform(rotate(90deg));
             }
         }
 		@include desktop {
@@ -73,27 +71,17 @@ ul.tree {
 	}
 
 	.t-object-label {
-		//display: block;
-		//@include absPosDefault();
 		line-height: $menuLineH;
 
         .t-item-icon {
             @include txtShdwSubtle($shdwItemTreeIcon);
             font-size: $treeTypeIconH;
             color: $colorItemTreeIcon;
-            //position: absolute;
-            //left: $interiorMargin;
-            //top: 50%;
             width: $treeTypeIconH;
-            //@include transform(translateY(-50%));
         }
-
 		.title-label,
         .t-title-label {
             @include ellipsize();
-			//@include absPosDefault();
-			//display: block;
-			//left: $runningItemW + ($interiorMargin * 3);
 		}
 	}
 

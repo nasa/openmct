@@ -527,47 +527,23 @@ mct-container {
   -webkit-flex-wrap: nowrap;
   flex-wrap: nowrap; }
   /* line 99, ../../../../general/res/sass/_archetypes.scss */
-  .l-flex-row .flex-elem, .l-flex-row .tree-item .view-control, .tree-item .l-flex-row .view-control,
-  .l-flex-row .search-result-item .view-control,
-  .search-result-item .l-flex-row .view-control,
-  .l-flex-col .flex-elem,
-  .l-flex-col .tree-item .view-control,
-  .tree-item .l-flex-col .view-control,
-  .l-flex-col .search-result-item .view-control,
-  .search-result-item .l-flex-col .view-control {
+  .l-flex-row .flex-elem,
+  .l-flex-col .flex-elem {
     min-height: 0;
     position: relative; }
     /* line 102, ../../../../general/res/sass/_archetypes.scss */
-    .l-flex-row .flex-elem:not(.grows), .l-flex-row .tree-item .view-control:not(.grows), .tree-item .l-flex-row .view-control:not(.grows),
-    .l-flex-row .search-result-item .view-control:not(.grows),
-    .search-result-item .l-flex-row .view-control:not(.grows),
-    .l-flex-col .flex-elem:not(.grows),
-    .l-flex-col .tree-item .view-control:not(.grows),
-    .tree-item .l-flex-col .view-control:not(.grows),
-    .l-flex-col .search-result-item .view-control:not(.grows),
-    .search-result-item .l-flex-col .view-control:not(.grows) {
+    .l-flex-row .flex-elem:not(.grows),
+    .l-flex-col .flex-elem:not(.grows) {
       -webkit-flex: 0 0 auto;
       flex: 0 0 auto; }
       /* line 104, ../../../../general/res/sass/_archetypes.scss */
-      .l-flex-row .flex-elem:not(.grows).flex-can-shrink, .l-flex-row .tree-item .view-control:not(.grows).flex-can-shrink, .tree-item .l-flex-row .view-control:not(.grows).flex-can-shrink,
-      .l-flex-row .search-result-item .view-control:not(.grows).flex-can-shrink,
-      .search-result-item .l-flex-row .view-control:not(.grows).flex-can-shrink,
-      .l-flex-col .flex-elem:not(.grows).flex-can-shrink,
-      .l-flex-col .tree-item .view-control:not(.grows).flex-can-shrink,
-      .tree-item .l-flex-col .view-control:not(.grows).flex-can-shrink,
-      .l-flex-col .search-result-item .view-control:not(.grows).flex-can-shrink,
-      .search-result-item .l-flex-col .view-control:not(.grows).flex-can-shrink {
+      .l-flex-row .flex-elem:not(.grows).flex-can-shrink,
+      .l-flex-col .flex-elem:not(.grows).flex-can-shrink {
         -webkit-flex: 0 1 auto;
         flex: 0 1 auto; }
     /* line 108, ../../../../general/res/sass/_archetypes.scss */
-    .l-flex-row .flex-elem.grows, .l-flex-row .tree-item .grows.view-control, .tree-item .l-flex-row .grows.view-control,
-    .l-flex-row .search-result-item .grows.view-control,
-    .search-result-item .l-flex-row .grows.view-control,
-    .l-flex-col .flex-elem.grows,
-    .l-flex-col .tree-item .grows.view-control,
-    .tree-item .l-flex-col .grows.view-control,
-    .l-flex-col .search-result-item .grows.view-control,
-    .search-result-item .l-flex-col .grows.view-control {
+    .l-flex-row .flex-elem.grows,
+    .l-flex-col .flex-elem.grows {
       -webkit-flex: 1 1 auto;
       flex: 1 1 auto; }
   /* line 112, ../../../../general/res/sass/_archetypes.scss */
@@ -586,14 +562,11 @@ mct-container {
   -webkit-flex-direction: row;
   flex-direction: row; }
   /* line 123, ../../../../general/res/sass/_archetypes.scss */
-  .l-flex-row.flex-elem, .tree-item .l-flex-row.view-control,
-  .search-result-item .l-flex-row.view-control {
+  .l-flex-row.flex-elem {
     -webkit-flex: 1 1 auto;
     flex: 1 1 auto; }
   /* line 124, ../../../../general/res/sass/_archetypes.scss */
-  .l-flex-row .flex-elem, .l-flex-row .tree-item .view-control, .tree-item .l-flex-row .view-control,
-  .l-flex-row .search-result-item .view-control,
-  .search-result-item .l-flex-row .view-control {
+  .l-flex-row .flex-elem {
     height: inherit;
     line-height: inherit;
     min-width: 0; }
@@ -607,14 +580,10 @@ mct-container {
   -webkit-flex-direction: column;
   flex-direction: column; }
   /* line 134, ../../../../general/res/sass/_archetypes.scss */
-  .l-flex-col .flex-elem, .l-flex-col .tree-item .view-control, .tree-item .l-flex-col .view-control,
-  .l-flex-col .search-result-item .view-control,
-  .search-result-item .l-flex-col .view-control {
+  .l-flex-col .flex-elem {
     min-height: 0; }
     /* line 136, ../../../../general/res/sass/_archetypes.scss */
-    .l-flex-col .flex-elem.holder:not(:last-child), .l-flex-col .tree-item .holder.view-control:not(:last-child), .tree-item .l-flex-col .holder.view-control:not(:last-child),
-    .l-flex-col .search-result-item .holder.view-control:not(:last-child),
-    .search-result-item .l-flex-col .holder.view-control:not(:last-child) {
+    .l-flex-col .flex-elem.holder:not(:last-child) {
       margin-bottom: 10px; }
   /* line 138, ../../../../general/res/sass/_archetypes.scss */
   .l-flex-col .flex-container {
@@ -5588,33 +5557,59 @@ ul.tree {
   .tree-item .view-control,
   .search-result-item .view-control {
     color: #666;
-    margin-right: 5px;
     font-size: 0.75em;
+    margin-right: 5px;
+    height: 100%;
+    line-height: inherit;
     width: 10px; }
     /* line 56, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .view-control.has-children:before,
     .search-result-item .view-control.has-children:before {
-      content: ">"; }
-    /* line 63, ../../../../general/res/sass/tree/_tree.scss */
+      position: absolute;
+      -moz-transition-property: -moz-transform;
+      -o-transition-property: -o-transform;
+      -webkit-transition-property: -webkit-transform;
+      transition-property: transform;
+      -moz-transition-duration: 100ms;
+      -o-transition-duration: 100ms;
+      -webkit-transition-duration: 100ms;
+      transition-duration: 100ms;
+      -moz-transition-timing-function: ease-in-out;
+      -o-transition-timing-function: ease-in-out;
+      -webkit-transition-timing-function: ease-in-out;
+      transition-timing-function: ease-in-out;
+      -moz-transition-delay: 0;
+      -o-transition-delay: 0;
+      -webkit-transition-delay: 0;
+      transition-delay: 0;
+      content: "\3e";
+      -moz-transform-origin: center 50%;
+      -ms-transform-origin: center 50%;
+      -webkit-transform-origin: center 50%;
+      transform-origin: center 50%; }
+    /* line 62, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .view-control.has-children.expanded:before,
     .search-result-item .view-control.has-children.expanded:before {
-      content: "v"; }
+      -moz-transform: rotate(90deg);
+      -ms-transform: rotate(90deg);
+      -webkit-transform: rotate(90deg);
+      transform: rotate(90deg); }
     @media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-      /* line 69, ../../../../general/res/sass/tree/_tree.scss */
+      /* line 67, ../../../../general/res/sass/tree/_tree.scss */
       .tree-item .view-control:hover,
       .search-result-item .view-control:hover {
         color: #0099cc !important; } }
-  /* line 75, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 73, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .t-object-label,
   .search-result-item .t-object-label {
     line-height: 1.5rem; }
-    /* line 80, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 76, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .t-object-label .t-item-icon,
     .search-result-item .t-object-label .t-item-icon {
       font-size: 1.4em;
       color: #0099cc;
       width: 1.4em; }
-    /* line 91, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 82, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .t-object-label .title-label,
     .tree-item .t-object-label .t-title-label,
     .search-result-item .t-object-label .title-label,
@@ -5622,47 +5617,47 @@ ul.tree {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap; }
-  /* line 100, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 88, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item.selected,
   .search-result-item.selected {
     background: #1ac6ff;
     color: #fcfcfc; }
-    /* line 103, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 91, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .view-control,
     .search-result-item.selected .view-control {
       color: #fcfcfc; }
-    /* line 106, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 94, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .t-object-label .t-item-icon,
     .search-result-item.selected .t-object-label .t-item-icon {
       color: #fcfcfc; }
   @media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-    /* line 114, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 102, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item:not(.selected):hover,
     .search-result-item:not(.selected):hover {
       background: rgba(102, 102, 102, 0.1);
       color: #333333; }
-      /* line 117, ../../../../general/res/sass/tree/_tree.scss */
+      /* line 105, ../../../../general/res/sass/tree/_tree.scss */
       .tree-item:not(.selected):hover .t-item-icon,
       .search-result-item:not(.selected):hover .t-item-icon {
         color: #0099cc; } }
-  /* line 124, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 112, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item:not(.loading),
   .search-result-item:not(.loading) {
     cursor: pointer; }
-  /* line 128, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 116, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .context-trigger,
   .search-result-item .context-trigger {
     top: -1px;
     position: absolute;
     right: 3px; }
-    /* line 133, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 121, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .context-trigger .invoke-menu,
     .search-result-item .context-trigger .invoke-menu {
       font-size: 0.75em;
       height: 0.9rem;
       line-height: 0.9rem; }
 
-/* line 148, ../../../../general/res/sass/tree/_tree.scss */
+/* line 136, ../../../../general/res/sass/tree/_tree.scss */
 .tree-item mct-representation.s-status-pending .t-object-label:before {
   -moz-animation-name: rotateCentered;
   -webkit-animation-name: rotateCentered;
@@ -5709,7 +5704,7 @@ ul.tree {
     -ms-transform: translateX(-50%) translateY(-50%) rotate(359deg);
     -webkit-transform: translateX(-50%) translateY(-50%) rotate(359deg);
     transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
-/* line 152, ../../../../general/res/sass/tree/_tree.scss */
+/* line 140, ../../../../general/res/sass/tree/_tree.scss */
 .tree-item mct-representation.s-status-pending .t-object-label .t-item-icon .t-item-icon-glyph {
   display: none; }
 
@@ -5737,7 +5732,7 @@ ul.tree {
 @media only screen and (orientation: portrait) and (max-device-width: 767px), only screen and (orientation: landscape) and (max-device-width: 767px), only screen and (orientation: portrait) and (min-device-width: 768px) and (max-device-width: 1024px), only screen and (orientation: landscape) and (min-device-width: 768px) and (max-device-width: 1024px) {
   /* line 27, ../../../../general/res/sass/mobile/_tree.scss */
   ul.tree ul.tree {
-    margin-left: 20px; }
+    margin-left: 15px; }
 
   /* line 31, ../../../../general/res/sass/mobile/_tree.scss */
   .tree-item,
@@ -5748,20 +5743,27 @@ ul.tree {
     /* line 36, ../../../../general/res/sass/mobile/_tree.scss */
     .tree-item .view-control,
     .search-result-item .view-control {
-      position: absolute;
-      font-size: 1.1em;
-      height: 35px;
-      line-height: inherit;
-      right: 0px;
-      width: 30px;
-      text-align: center; }
-    /* line 47, ../../../../general/res/sass/mobile/_tree.scss */
-    .tree-item .label,
+      order: 2;
+      width: 35px; }
+      /* line 40, ../../../../general/res/sass/mobile/_tree.scss */
+      .tree-item .view-control.has-children:before,
+      .search-result-item .view-control.has-children:before {
+        content: "\7d";
+        left: 50%;
+        -moz-transform: translateX(-50%) rotate(90deg);
+        -ms-transform: translateX(-50%) rotate(90deg);
+        -webkit-transform: translateX(-50%) rotate(90deg);
+        transform: translateX(-50%) rotate(90deg); }
+      /* line 45, ../../../../general/res/sass/mobile/_tree.scss */
+      .tree-item .view-control.has-children.expanded:before,
+      .search-result-item .view-control.has-children.expanded:before {
+        -moz-transform: translateX(-50%) rotate(270deg);
+        -ms-transform: translateX(-50%) rotate(270deg);
+        -webkit-transform: translateX(-50%) rotate(270deg);
+        transform: translateX(-50%) rotate(270deg); }
+    /* line 50, ../../../../general/res/sass/mobile/_tree.scss */
     .tree-item .t-object-label,
-    .search-result-item .label,
     .search-result-item .t-object-label {
-      left: 0;
-      right: 35px;
       line-height: inherit; } }
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
