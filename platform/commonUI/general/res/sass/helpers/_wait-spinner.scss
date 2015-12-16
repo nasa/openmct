@@ -26,8 +26,8 @@
 
 @mixin spinner($b: 5px, $c: $colorAlt1) {
     @include keyframes(rotateCentered) {
-        0%   { transform: translateX(-50%) translateY(-50%) rotate(0deg); }
-        100% { transform: translateX(-50%) translateY(-50%) rotate(359deg); }
+        0%   { @include transform(translateX(-50%) translateY(-50%) rotate(0deg)); }
+        100% { @include transform(translateX(-50%) translateY(-50%) rotate(359deg)); }
     }
     @include animation-name(rotateCentered);
     @include animation-duration(0.5s);

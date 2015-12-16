@@ -38,20 +38,33 @@ ul.tree {
 	@include box-sizing(border-box);
 	@include border-radius($basicCr);
 	@include single-transition(background-color, 0.25s);
-	display: block;
 	font-size: 0.8rem;
 	height: $menuLineH;
 	line-height: $menuLineH;
 	margin-bottom: $interiorMarginSm;
+    padding: 0 $interiorMarginSm;
 	position: relative;
 
 	.view-control {
+        @extend .flex-elem;
 		color: $colorItemTreeVC;
-		display: inline-block;
-		margin-left: $interiorMargin;
+		//display: inline-block;
+		margin-right: $interiorMargin;
 		font-size: 0.75em;
 		width: $treeVCW;
-		$runningItemW: $interiorMargin + $treeVCW;
+        &.has-children {
+            &:before {
+                //@include trans-prop-nice(rotate);
+                content: ">";
+                //position: absolute;
+                //top: 50%;
+                //left: 50%;
+            }
+            &.expanded:before {
+                //@include transform(translateX(-50%) translateY(-50%) rotate(90deg));
+                content: "v";
+            }
+        }
 		@include desktop {
 			&:hover {
 				color: $colorItemTreeVCHover !important;
@@ -60,29 +73,27 @@ ul.tree {
 	}
 
 	.t-object-label {
-		display: block;
-		@include absPosDefault();
+		//display: block;
+		//@include absPosDefault();
 		line-height: $menuLineH;
 
         .t-item-icon {
             @include txtShdwSubtle($shdwItemTreeIcon);
             font-size: $treeTypeIconH;
             color: $colorItemTreeIcon;
-            position: absolute;
-            left: $interiorMargin;
-            top: 50%;
+            //position: absolute;
+            //left: $interiorMargin;
+            //top: 50%;
             width: $treeTypeIconH;
-            @include transform(translateY(-50%));
+            //@include transform(translateY(-50%));
         }
 
 		.title-label,
         .t-title-label {
-			@include absPosDefault();
-			display: block;
-			left: $runningItemW + ($interiorMargin * 3);
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
+            @include ellipsize();
+			//@include absPosDefault();
+			//display: block;
+			//left: $runningItemW + ($interiorMargin * 3);
 		}
 	}
 
@@ -129,13 +140,12 @@ ul.tree {
 
 .tree-item {
     mct-representation {
-        .t-object-label {
-            left: $interiorMargin + $treeVCW;
-        }
+        //.t-object-label {
+        //    left: $interiorMargin + $treeVCW;
+        //}
         &.s-status-pending {
             .t-object-label {
                 &:before {
-                    @include tItemIcon();
                     @include spinner(0.25em, $colorItemTreeIcon);
                     content: "";
                 }

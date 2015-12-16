@@ -48,7 +48,8 @@
         <mct-representation key="'search-item'"
                             ng-repeat="result in results"
                             mct-object="result.object"
-                            ng-model="ngModel">
+                            ng-model="ngModel"
+                            class="l-flex-row flex-elem grows">
         </mct-representation>
         <a class="load-more-button s-btn vsm" ng-if="controller.areMore()" ng-click="controller.loadMore()">More Results</a>
     </div>

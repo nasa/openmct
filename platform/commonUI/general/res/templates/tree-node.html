@@ -22,21 +22,20 @@
 <span ng-controller="ToggleController as toggle">
     <span ng-controller="TreeNodeController as treeNode">
         <span
-            class="tree-item menus-to-left"
+            class="tree-item l-flex-row menus-to-left"
             ng-class="{selected: treeNode.isSelected()}"
             >
             <span
                 mct-device="desktop"
-                class='ui-symbol view-control'
+                class='ui-symbol view-control flex-elem'
+                ng-class="{ 'has-children': model.composition !== undefined, expanded: toggle.isActive() }"
                 ng-click="toggle.toggle(); treeNode.trackExpansion()"
-                ng-if="model.composition !== undefined"
                 >
-                {{toggle.isActive() ? "v" : ">"}}
             </span>
 
             <mct-representation
                 mct-device="desktop"
-                class="mobile-hide"
+                class="mobile-hide l-flex-row flex-elem grows"
                 key="'label'"
                 mct-object="domainObject"
                 ng-click="treeNode.select()"
