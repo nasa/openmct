@@ -33,6 +33,7 @@
     @include animation-duration(0.5s);
     @include animation-iteration-count(infinite);
     @include animation-timing-function(linear);
+    @include transform-origin(center);
     border-style: solid;
     border-width: $b;
     @include border-radius(100%);

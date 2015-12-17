@@ -130,17 +130,9 @@ mct-representation {
             .t-item-icon {
                 &:before {
                     $spinBW: 4px;
-                    $spinD: $treeTypeIconW - ($spinBW * 2);
                     @include spinner($spinBW);
                     border-color: rgba($colorItemTreeIcon, 0.25);
                     border-top-color: rgba($colorItemTreeIcon, 1.0);
-                    //content: "";
-                    //display: block;
-                    //position: absolute;
-                    //left: 50%;
-                    //top: 50%;
-                    width: $spinD;
-                    height: $spinD;
                 }
                 .t-item-icon-glyph {
                     display: none;

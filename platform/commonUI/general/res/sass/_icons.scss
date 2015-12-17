@@ -73,23 +73,21 @@
 }
 
 .l-icon-alert {
-	display: none !important; // Remove this when alerts are enabled
+	display: none !important;
 	&:before {
 		color: $colorAlert;
 		content: "!";
 	}
 }
 
-// NEW!!
 .t-item-icon {
 	// Used in grid-item.html, tree-item, inspector location, more?
 	@extend .ui-symbol;
     @extend .icon;
-    //display: inline-block;
     line-height: normal; // This is Ok for the symbolsfont
     position: relative;
     .t-item-icon-glyph {
-        position: relative;
+        position: absolute;
     }
     &.l-icon-link {
         .t-item-icon-glyph {
