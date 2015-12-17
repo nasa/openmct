@@ -20,7 +20,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 5, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -41,38 +41,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block; }
 
@@ -833,8 +833,8 @@ mct-container {
   display: inline-block;
   line-height: normal;
   position: relative; }
-  /* line 92, ../../../../general/res/sass/_icons.scss */
-  .t-item-icon.l-icon-link:before {
+  /* line 93, ../../../../general/res/sass/_icons.scss */
+  .t-item-icon.l-icon-link .t-item-icon-glyph:before {
     color: #49dedb;
     content: "\f4";
     height: auto;
@@ -2788,7 +2788,7 @@ label.checkbox.custom {
       border-top: 1px solid #e6e6e6;
       color: #666666;
       line-height: 1.5rem;
-      padding: 3px 10px 3px 30px;
+      padding: 3px 10px 3px 28px;
       position: relative;
       white-space: nowrap; }
       /* line 97, ../../../../general/res/sass/controls/_menus.scss */
@@ -5608,8 +5608,9 @@ ul.tree {
     .search-result-item .t-object-label .t-item-icon {
       font-size: 1.4em;
       color: #0099cc;
-      width: 1.4em; }
-    /* line 82, ../../../../general/res/sass/tree/_tree.scss */
+      margin-right: 5px;
+      width: 18px; }
+    /* line 83, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .t-object-label .title-label,
     .tree-item .t-object-label .t-title-label,
     .search-result-item .t-object-label .title-label,
@@ -5617,48 +5618,48 @@ ul.tree {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap; }
-  /* line 88, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 89, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item.selected,
   .search-result-item.selected {
     background: #1ac6ff;
     color: #fcfcfc; }
-    /* line 91, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 92, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .view-control,
     .search-result-item.selected .view-control {
       color: #fcfcfc; }
-    /* line 94, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 95, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .t-object-label .t-item-icon,
     .search-result-item.selected .t-object-label .t-item-icon {
       color: #fcfcfc; }
   @media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-    /* line 102, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 103, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item:not(.selected):hover,
     .search-result-item:not(.selected):hover {
       background: rgba(102, 102, 102, 0.1);
       color: #333333; }
-      /* line 105, ../../../../general/res/sass/tree/_tree.scss */
+      /* line 106, ../../../../general/res/sass/tree/_tree.scss */
       .tree-item:not(.selected):hover .t-item-icon,
       .search-result-item:not(.selected):hover .t-item-icon {
         color: #0099cc; } }
-  /* line 112, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 113, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item:not(.loading),
   .search-result-item:not(.loading) {
     cursor: pointer; }
-  /* line 116, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 117, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .context-trigger,
   .search-result-item .context-trigger {
     top: -1px;
     position: absolute;
     right: 3px; }
-    /* line 121, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 122, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .context-trigger .invoke-menu,
     .search-result-item .context-trigger .invoke-menu {
       font-size: 0.75em;
       height: 0.9rem;
       line-height: 0.9rem; }
 
-/* line 136, ../../../../general/res/sass/tree/_tree.scss */
-.tree-item mct-representation.s-status-pending .t-object-label:before {
+/* line 135, ../../../../general/res/sass/tree/_tree.scss */
+.tree-item mct-representation.s-status-pending .t-object-label .t-item-icon:before {
   -moz-animation-name: rotateCentered;
   -webkit-animation-name: rotateCentered;
   animation-name: rotateCentered;
@@ -5674,11 +5675,17 @@ ul.tree {
   border-color: rgba(0, 153, 204, 0.25);
   border-top-color: #0099cc;
   border-style: solid;
-  border-width: 0.25em;
+  border-width: 4px;
   -moz-border-radius: 100%;
   -webkit-border-radius: 100%;
   border-radius: 100%;
-  content: ""; }
+  content: "";
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 10px; }
 @-moz-keyframes rotateCentered {
   0% {
     -moz-transform: translateX(-50%) translateY(-50%) rotate(0deg);
@@ -5704,7 +5711,7 @@ ul.tree {
     -ms-transform: translateX(-50%) translateY(-50%) rotate(359deg);
     -webkit-transform: translateX(-50%) translateY(-50%) rotate(359deg);
     transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
-/* line 140, ../../../../general/res/sass/tree/_tree.scss */
+/* line 147, ../../../../general/res/sass/tree/_tree.scss */
 .tree-item mct-representation.s-status-pending .t-object-label .t-item-icon .t-item-icon-glyph {
   display: none; }
 
@@ -5743,9 +5750,11 @@ ul.tree {
     /* line 36, ../../../../general/res/sass/mobile/_tree.scss */
     .tree-item .view-control,
     .search-result-item .view-control {
+      font-size: 1.2em;
+      margin-right: 0;
       order: 2;
       width: 35px; }
-      /* line 40, ../../../../general/res/sass/mobile/_tree.scss */
+      /* line 42, ../../../../general/res/sass/mobile/_tree.scss */
       .tree-item .view-control.has-children:before,
       .search-result-item .view-control.has-children:before {
         content: "\7d";
@@ -5754,17 +5763,21 @@ ul.tree {
         -ms-transform: translateX(-50%) rotate(90deg);
         -webkit-transform: translateX(-50%) rotate(90deg);
         transform: translateX(-50%) rotate(90deg); }
-      /* line 45, ../../../../general/res/sass/mobile/_tree.scss */
+      /* line 47, ../../../../general/res/sass/mobile/_tree.scss */
       .tree-item .view-control.has-children.expanded:before,
       .search-result-item .view-control.has-children.expanded:before {
         -moz-transform: translateX(-50%) rotate(270deg);
         -ms-transform: translateX(-50%) rotate(270deg);
         -webkit-transform: translateX(-50%) rotate(270deg);
         transform: translateX(-50%) rotate(270deg); }
-    /* line 50, ../../../../general/res/sass/mobile/_tree.scss */
+    /* line 52, ../../../../general/res/sass/mobile/_tree.scss */
     .tree-item .t-object-label,
     .search-result-item .t-object-label {
-      line-height: inherit; } }
+      line-height: inherit; }
+      /* line 54, ../../../../general/res/sass/mobile/_tree.scss */
+      .tree-item .t-object-label .t-item-icon.l-icon-link .t-item-icon-glyph:before,
+      .search-result-item .t-object-label .t-item-icon.l-icon-link .t-item-icon-glyph:before {
+        bottom: 20%; } }
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
