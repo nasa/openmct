@@ -143,12 +143,7 @@ define(
                     mockDeferred.promise = synchronousPromise(value);
                 });
 
-                task = new CopyTask(
-                    mockDomainObject,
-                    mockParentObject,
-                    mockPolicyService,
-                    mockQ
-                );
+
             });
 
 
@@ -156,6 +151,13 @@ define(
                 var model;
 
                 beforeEach(function () {
+                    task = new CopyTask(
+                        mockDomainObject,
+                        mockParentObject,
+                        mockPolicyService,
+                        mockQ
+                    );
+
                     task.perform().then(function (clone) {
                         model = clone.getModel();
                     });
@@ -177,6 +179,68 @@ define(
                 it("contain rewritten identifiers in property names", function () {
                     expect(model.someObj[cloneIds[ID_A]])
                         .toEqual(testModel.someObj[ID_A]);
+                });
+            });
+
+            describe("copies object trees with multiple references to the" +
+                " same object", function () {
+                var model,
+                    mockDomainObjectB,
+                    mockComposingObject,
+                    composingObjectModel,
+                    domainObjectClone,
+                    domainObjectBClone;
+
+                beforeEach(function () {
+                    mockDomainObjectB = domainObjectFactory({
+                        capabilities: makeMockCapabilities(testModel.composition),
+                        model: testModel
+                    });
+                    composingObjectModel = {
+                        name: 'mockComposingObject',
+                        composition: [mockDomainObject.getId(), mockDomainObjectB.getId()]
+                    };
+                    mockComposingObject = domainObjectFactory({
+                        capabilities: makeMockCapabilities(composingObjectModel.composition),
+                        model: composingObjectModel
+                    });
+
+                    mockComposingObject.capabilities.composition.invoke.andReturn([mockDomainObject, mockDomainObjectB]);
+                    task = new CopyTask(
+                        mockComposingObject,
+                        mockParentObject,
+                        mockPolicyService,
+                        mockQ
+                    );
+
+                    task.perform();
+                    domainObjectClone = task.clones[2];
+                    domainObjectBClone = task.clones[5];
+                });
+
+                /**
+                 * mockDomainObject and mockDomainObjectB have the same
+                 * model with references to children ID_A and ID_B. Expect
+                 * that after duplication the references should differ
+                 * because they are each now referencing different child
+                 * objects. This tests the issue reported in #428
+                 */
+                it(" and correctly updates child identifiers in models ", function () {
+                    var childA_ID = task.clones[0].getId(),
+                        childB_ID = task.clones[1].getId(),
+                        childC_ID = task.clones[3].getId(),
+                        childD_ID = task.clones[4].getId();
+
+                    expect(domainObjectClone.model.someArr[0]).toNotBe(domainObjectBClone.model.someArr[0]);
+                    expect(domainObjectClone.model.someArr[0]).toBe(childA_ID);
+                    expect(domainObjectBClone.model.someArr[0]).toBe(childC_ID);
+                    expect(domainObjectClone.model.someArr[1]).toNotBe(domainObjectBClone.model.someArr[1]);
+                    expect(domainObjectClone.model.someArr[1]).toBe(childB_ID);
+                    expect(domainObjectBClone.model.someArr[1]).toBe(childD_ID);
+                    expect(domainObjectClone.model.someObj.someProperty).toNotBe(domainObjectBClone.model.someObj.someProperty);
+                    expect(domainObjectClone.model.someObj.someProperty).toBe(childB_ID);
+                    expect(domainObjectBClone.model.someObj.someProperty).toBe(childD_ID);
+
                 });
             });
 
