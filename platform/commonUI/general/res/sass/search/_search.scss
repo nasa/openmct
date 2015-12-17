@@ -82,6 +82,7 @@
             left: $interiorMarginSm;
             @include trans-prop-nice(color, 250ms);
             pointer-events: none;
+            z-index: 1;
         }
 
 		// Make icon lighten when hovering over search bar

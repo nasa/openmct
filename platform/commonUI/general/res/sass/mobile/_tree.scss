@@ -30,9 +30,9 @@
     }
 	.tree-item,
 	.search-result-item {
-		height: $mobileTreeItemH;
-		line-height: $mobileTreeItemH;
-		margin-bottom: 0px;
+		height: $mobileTreeItemH !important;
+		line-height: $mobileTreeItemH !important;
+		margin-bottom: 0px !important;
 		.view-control {
             font-size: 1.2em;
             margin-right: 0;
