@@ -106,7 +106,8 @@ define(
                     composition: [ ID_A, ID_B ],
                     someObj: {},
                     someArr: [ ID_A, ID_B ],
-                    objArr: [{"id": ID_A}, {"id": ID_B}]
+                    objArr: [{"id": ID_A}, {"id": ID_B}],
+                    singleElementArr: [ ID_A ]
                 };
                 testModel.someObj[ID_A] = "some value";
                 testModel.someObj.someProperty = ID_B;
@@ -180,6 +181,13 @@ define(
                 it("contain rewritten identifiers in property names", function () {
                     expect(model.someObj[cloneIds[ID_A]])
                         .toEqual(testModel.someObj[ID_A]);
+                });
+
+                it("contain rewritten identifiers in single-element arrays", function () {
+                    expect(model.singleElementArr)
+                        .toEqual(testModel.singleElementArr.map(function (id) {
+                            return cloneIds[id];
+                        }));
                 });
             });
 
