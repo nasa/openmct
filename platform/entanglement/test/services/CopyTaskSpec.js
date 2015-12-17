@@ -105,7 +105,8 @@ define(
                 testModel = {
                     composition: [ ID_A, ID_B ],
                     someObj: {},
-                    someArr: [ ID_A, ID_B ]
+                    someArr: [ ID_A, ID_B ],
+                    objArr: [{"id": ID_A}, {"id": ID_B}]
                 };
                 testModel.someObj[ID_A] = "some value";
                 testModel.someObj.someProperty = ID_B;
@@ -240,6 +241,23 @@ define(
                     expect(domainObjectClone.model.someObj.someProperty).toNotBe(domainObjectBClone.model.someObj.someProperty);
                     expect(domainObjectClone.model.someObj.someProperty).toBe(childB_ID);
                     expect(domainObjectBClone.model.someObj.someProperty).toBe(childD_ID);
+
+                });
+
+                /**
+                 * This a bug found in testathon when testing issue #428
+                 */
+                it(" and correctly updates child identifiers in object" +
+                    " arrays within models ", function () {
+                    var childA_ID = task.clones[0].getId(),
+                        childB_ID = task.clones[1].getId(),
+                        childC_ID = task.clones[3].getId(),
+                        childD_ID = task.clones[4].getId();
+
+                    expect(domainObjectClone.model.objArr[0].id).not.toBe(ID_A);
+                    expect(domainObjectClone.model.objArr[0].id).toBe(childA_ID);
+                    expect(domainObjectClone.model.objArr[1].id).not.toBe(ID_B);
+                    expect(domainObjectClone.model.objArr[1].id).toBe(childB_ID);
 
                 });
             });
