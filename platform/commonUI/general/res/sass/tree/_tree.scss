@@ -79,6 +79,9 @@ ul.tree {
             color: $colorItemTreeIcon;
             width: $treeTypeIconW;
         }
+        .t-title-label {
+            @include ellipsize();
+        }
 	}
 
 	&.selected {

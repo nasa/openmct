@@ -5621,47 +5621,53 @@ ul.tree {
       font-size: 1.4em;
       color: #0099cc;
       width: 18px; }
-  /* line 84, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 82, ../../../../general/res/sass/tree/_tree.scss */
+    .tree-item .t-object-label .t-title-label,
+    .search-result-item .t-object-label .t-title-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap; }
+  /* line 87, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item.selected,
   .search-result-item.selected {
     background: #1ac6ff;
     color: #fcfcfc; }
-    /* line 87, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 90, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .view-control,
     .search-result-item.selected .view-control {
       color: #fcfcfc; }
-    /* line 90, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 93, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .t-object-label .t-item-icon,
     .search-result-item.selected .t-object-label .t-item-icon {
       color: #fcfcfc; }
   @media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-    /* line 97, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 100, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item:not(.selected):hover,
     .search-result-item:not(.selected):hover {
       background: rgba(102, 102, 102, 0.1);
       color: #333333; }
-      /* line 100, ../../../../general/res/sass/tree/_tree.scss */
+      /* line 103, ../../../../general/res/sass/tree/_tree.scss */
       .tree-item:not(.selected):hover .t-item-icon,
       .search-result-item:not(.selected):hover .t-item-icon {
         color: #0099cc; } }
-  /* line 107, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 110, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item:not(.loading),
   .search-result-item:not(.loading) {
     cursor: pointer; }
-  /* line 111, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 114, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .context-trigger,
   .search-result-item .context-trigger {
     top: -1px;
     position: absolute;
     right: 3px; }
-    /* line 116, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 119, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .context-trigger .invoke-menu,
     .search-result-item .context-trigger .invoke-menu {
       font-size: 0.75em;
       height: 0.9rem;
       line-height: 0.9rem; }
 
-/* line 128, ../../../../general/res/sass/tree/_tree.scss */
+/* line 131, ../../../../general/res/sass/tree/_tree.scss */
 mct-representation.s-status-pending .t-object-label .t-item-icon:before {
   -moz-animation-name: rotateCentered;
   -webkit-animation-name: rotateCentered;
@@ -5709,15 +5715,15 @@ mct-representation.s-status-pending .t-object-label .t-item-icon:before {
     -ms-transform: translateX(-50%) translateY(-50%) rotate(359deg);
     -webkit-transform: translateX(-50%) translateY(-50%) rotate(359deg);
     transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
-/* line 142, ../../../../general/res/sass/tree/_tree.scss */
+/* line 145, ../../../../general/res/sass/tree/_tree.scss */
 mct-representation.s-status-pending .t-object-label .t-item-icon .t-item-icon-glyph {
   display: none; }
-/* line 146, ../../../../general/res/sass/tree/_tree.scss */
+/* line 149, ../../../../general/res/sass/tree/_tree.scss */
 mct-representation.s-status-pending .t-object-label .t-title-label {
   font-style: italic;
   opacity: 0.6; }
 
-/* line 153, ../../../../general/res/sass/tree/_tree.scss */
+/* line 156, ../../../../general/res/sass/tree/_tree.scss */
 .selected mct-representation.s-status-pending .t-object-label .t-item-icon:before {
   border-color: rgba(252, 252, 252, 0.25);
   border-top-color: #fcfcfc; }
@@ -5756,13 +5762,8 @@ mct-representation.s-status-pending .t-object-label .t-title-label {
 /* line 33, ../../../../general/res/sass/_object-label.scss */
 .t-object-label .t-item-icon {
   margin-right: 5px; }
-/* line 36, ../../../../general/res/sass/_object-label.scss */
-.t-object-label .t-title-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap; }
 
-/* line 45, ../../../../general/res/sass/_object-label.scss */
+/* line 42, ../../../../general/res/sass/_object-label.scss */
 mct-representation.s-status-pending .t-object-label .t-item-icon:before {
   -moz-animation-name: rotateCentered;
   -webkit-animation-name: rotateCentered;
@@ -5814,15 +5815,15 @@ mct-representation.s-status-pending .t-object-label .t-item-icon:before {
     -ms-transform: translateX(-50%) translateY(-50%) rotate(359deg);
     -webkit-transform: translateX(-50%) translateY(-50%) rotate(359deg);
     transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
-/* line 58, ../../../../general/res/sass/_object-label.scss */
+/* line 55, ../../../../general/res/sass/_object-label.scss */
 mct-representation.s-status-pending .t-object-label .t-item-icon .t-item-icon-glyph {
   display: none; }
-/* line 62, ../../../../general/res/sass/_object-label.scss */
+/* line 59, ../../../../general/res/sass/_object-label.scss */
 mct-representation.s-status-pending .t-object-label .t-title-label {
   font-style: italic;
   opacity: 0.6; }
 
-/* line 69, ../../../../general/res/sass/_object-label.scss */
+/* line 66, ../../../../general/res/sass/_object-label.scss */
 .selected mct-representation.s-status-pending .t-object-label .t-item-icon:before {
   border-color: rgba(252, 252, 252, 0.25);
   border-top-color: #fcfcfc; }

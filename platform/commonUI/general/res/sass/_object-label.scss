@@ -33,9 +33,6 @@
     .t-item-icon {
         margin-right: $interiorMargin;
     }
-    .t-title-label {
-        @include ellipsize();
-    }
 }
 
 mct-representation {
