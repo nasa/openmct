@@ -127,3 +127,11 @@
 		}
 	}
 }
+
+.frame {
+    &.child-frame.panel {
+        .autoflow .l-autoflow-header .l-filter {
+            display: none;
+        }
+    }
+}
