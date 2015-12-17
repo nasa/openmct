@@ -72,7 +72,6 @@ ul.tree {
 
 	.t-object-label {
 		line-height: $menuLineH;
-
         .t-item-icon {
             @include txtShdwSubtle($shdwItemTreeIcon);
             font-size: $treeTypeIconH;
@@ -80,7 +79,6 @@ ul.tree {
             margin-right: $interiorMargin;
             width: $treeTypeIconW;
         }
-		.title-label,
         .t-title-label {
             @include ellipsize();
 		}

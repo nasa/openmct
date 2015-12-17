@@ -85,9 +85,12 @@
 	// Used in grid-item.html, tree-item, inspector location, more?
 	@extend .ui-symbol;
     @extend .icon;
-    display: inline-block;
+    //display: inline-block;
     line-height: normal; // This is Ok for the symbolsfont
     position: relative;
+    .t-item-icon-glyph {
+        position: relative;
+    }
     &.l-icon-link {
         .t-item-icon-glyph {
             &:before {

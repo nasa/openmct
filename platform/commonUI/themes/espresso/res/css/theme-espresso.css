@@ -830,10 +830,12 @@ mct-container {
 
 /* line 84, ../../../../general/res/sass/_icons.scss */
 .t-item-icon {
-  display: inline-block;
   line-height: normal;
   position: relative; }
-  /* line 93, ../../../../general/res/sass/_icons.scss */
+  /* line 91, ../../../../general/res/sass/_icons.scss */
+  .t-item-icon .t-item-icon-glyph {
+    position: relative; }
+  /* line 96, ../../../../general/res/sass/_icons.scss */
   .t-item-icon.l-icon-link .t-item-icon-glyph:before {
     color: #49dedb;
     content: "\f4";
