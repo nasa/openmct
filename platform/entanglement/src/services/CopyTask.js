@@ -117,7 +117,7 @@ define(
             if (Array.isArray(obj)) {
                 obj.forEach(function (value, index) {
                     obj[index] = idMap[value] || value;
-                    this.rewriteIdentifiers(obj[index]);
+                    this.rewriteIdentifiers(obj[index], idMap);
                 }, this);
             } else if (obj && typeof obj === 'object') {
                 Object.keys(obj).forEach(function (key) {
