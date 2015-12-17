@@ -7221,6 +7221,10 @@ table {
         border-left: none;
         padding-left: 0; }
 
+/* line 133, ../../../../general/res/sass/_autoflow.scss */
+.frame.child-frame.panel .autoflow .l-autoflow-header .l-filter {
+  display: none; }
+
 /* line 1, ../../../../general/res/sass/features/_imagery.scss */
 .l-image-main-wrapper,
 .l-image-main,
