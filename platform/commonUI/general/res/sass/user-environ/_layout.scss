@@ -270,6 +270,7 @@
     .splitter-treeview,
     .holder-treeview-elements {
         opacity: 0;
+        pointer-events: none;
     }
 }
 
@@ -304,6 +305,7 @@
         .l-inspect,
         .splitter-inspect {
             opacity: 0;
+            pointer-events: none;
         }
     }
 }

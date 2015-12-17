@@ -4624,9 +4624,10 @@ span.req {
 .pane-tree-hidden .tree-holder,
 .pane-tree-hidden .splitter-treeview,
 .pane-tree-hidden .holder-treeview-elements {
-  opacity: 0; }
+  opacity: 0;
+  pointer-events: none; }
 
-/* line 278, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 279, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-showing .tree-holder,
 .pane-tree-showing .splitter-treeview {
   -moz-transition-property: opacity;
@@ -4646,7 +4647,7 @@ span.req {
   -webkit-transition-delay: 250ms;
   transition-delay: 250ms;
   opacity: 1; }
-/* line 284, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 285, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-showing .holder-treeview-elements {
   -moz-transition-property: opacity;
   -o-transition-property: opacity;
@@ -4665,7 +4666,7 @@ span.req {
   -webkit-transition-delay: 200ms;
   transition-delay: 200ms; }
 
-/* line 291, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 292, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-showing .l-object-and-inspector .l-inspect,
 .pane-inspect-showing .l-object-and-inspector .splitter-inspect {
   -moz-transition-property: opacity;
@@ -4686,44 +4687,45 @@ span.req {
   transition-delay: 250ms;
   opacity: 1; }
 
-/* line 301, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 302, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-hidden .l-object-and-inspector .t-inspect {
   z-index: 1 !important; }
-/* line 304, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 305, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-hidden .l-object-and-inspector .l-inspect,
 .pane-inspect-hidden .l-object-and-inspector .splitter-inspect {
-  opacity: 0; }
+  opacity: 0;
+  pointer-events: none; }
 
 @media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-  /* line 312, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 314, ../../../../general/res/sass/user-environ/_layout.scss */
   .holder-all {
     min-width: 600px; }
 
-  /* line 317, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 319, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout .split-pane-component.pane.treeview.left {
     min-width: 150px;
     max-width: 35%;
     width: 25%; }
-  /* line 322, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 324, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout .split-pane-component.pane.t-inspect.right {
     min-width: 200px;
     max-width: 35%;
     width: 20%;
     z-index: 3; }
 
-  /* line 330, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 332, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.treeview.left .tree-holder {
     padding-right: 5px; }
 
-  /* line 334, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 336, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane-tree-hidden .pane.right.primary-pane {
     left: 22px !important; }
 
-  /* line 337, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 339, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane-inspect-hidden .l-object-and-inspector .pane.left {
     right: 22px !important; }
 
-  /* line 339, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 341, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane:not(.resizing) {
     -moz-transition-property: width, left, right;
     -o-transition-property: width, left, right;
@@ -4742,7 +4744,7 @@ span.req {
     -webkit-transition-delay: 0;
     transition-delay: 0; }
 
-  /* line 342, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 344, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.primary-pane .object-browse-bar {
     min-width: 200px; } }
 /*****************************************************************************
