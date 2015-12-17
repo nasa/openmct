@@ -49,7 +49,7 @@ ul.tree {
 		color: $colorItemTreeVC;
         font-size: 0.75em;
 		margin-right: $interiorMargin;
-        height: 100%; //$menuLineH;
+        height: 100%;
         line-height: inherit;
 		width: $treeVCW;
         &.has-children {
@@ -93,12 +93,11 @@ ul.tree {
 			color: $colorItemTreeSelectedVC;
 		}
 		.t-object-label .t-item-icon {
-			color: $colorItemTreeSelectedFg; //$colorItemTreeIconHover;
+			color: $colorItemTreeSelectedFg;
 		}
 	}
 
 	&:not(.selected) {
-		// NOTE: [Mobile] Removed Hover on Mobile
 		@include desktop {
 			&:hover {
 				background: $colorItemTreeHoverBg;
@@ -148,7 +147,15 @@ ul.tree {
                         display: none;
                     }
                 }
+                .t-title-label {
+                    font-style: italic;
+                    opacity: 0.6;
+                }
             }
         }
+    }
+    &.selected mct-representation.s-status-pending .t-object-label .t-item-icon:before {
+        border-color: rgba($colorItemTreeSelectedFg, 0.25);
+        border-top-color: rgba($colorItemTreeSelectedFg, 1.0);
     }
 }
