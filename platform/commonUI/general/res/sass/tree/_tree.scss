@@ -35,6 +35,7 @@ ul.tree {
 .tree-item,
 .search-result-item {
 	$runningItemW: 0;
+    @extend .l-flex-row;
 	@include box-sizing(border-box);
 	@include border-radius($basicCr);
 	@include single-transition(background-color, 0.25s);
@@ -76,12 +77,8 @@ ul.tree {
             @include txtShdwSubtle($shdwItemTreeIcon);
             font-size: $treeTypeIconH;
             color: $colorItemTreeIcon;
-            margin-right: $interiorMargin;
             width: $treeTypeIconW;
         }
-        .t-title-label {
-            @include ellipsize();
-		}
 	}
 
 	&.selected {
@@ -124,36 +121,36 @@ ul.tree {
 	}
 }
 
-.tree-item {
-    mct-representation {
-        &.s-status-pending {
-            .t-object-label {
-                .t-item-icon {
-                    &:before {
-                        $spinBW: 4px;
-                        $spinD: $treeTypeIconW - ($spinBW * 2);
-                        @include spinner($spinBW, $colorItemTreeIcon);
-                        content: "";
-                        display: block;
-                        position: absolute;
-                        left: 50%;
-                        top: 50%;
-                        width: $spinD;
-                        height: $spinD;
-                    }
-                    .t-item-icon-glyph {
-                        display: none;
-                    }
+mct-representation {
+    &.s-status-pending {
+        .t-object-label {
+            .t-item-icon {
+                &:before {
+                    $spinBW: 4px;
+                    $spinD: $treeTypeIconW - ($spinBW * 2);
+                    @include spinner($spinBW);
+                    border-color: rgba($colorItemTreeIcon, 0.25);
+                    border-top-color: rgba($colorItemTreeIcon, 1.0);
+                    //content: "";
+                    //display: block;
+                    //position: absolute;
+                    //left: 50%;
+                    //top: 50%;
+                    width: $spinD;
+                    height: $spinD;
                 }
-                .t-title-label {
-                    font-style: italic;
-                    opacity: 0.6;
+                .t-item-icon-glyph {
+                    display: none;
                 }
+            }
+            .t-title-label {
+                font-style: italic;
+                opacity: 0.6;
             }
         }
     }
-    &.selected mct-representation.s-status-pending .t-object-label .t-item-icon:before {
-        border-color: rgba($colorItemTreeSelectedFg, 0.25);
-        border-top-color: rgba($colorItemTreeSelectedFg, 1.0);
-    }
+}
+.selected mct-representation.s-status-pending .t-object-label .t-item-icon:before {
+    border-color: rgba($colorItemTreeSelectedFg, 0.25);
+    border-top-color: rgba($colorItemTreeSelectedFg, 1.0);
 }

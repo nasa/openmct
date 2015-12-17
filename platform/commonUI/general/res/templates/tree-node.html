@@ -22,7 +22,7 @@
 <span ng-controller="ToggleController as toggle">
     <span ng-controller="TreeNodeController as treeNode">
         <span
-            class="tree-item l-flex-row menus-to-left"
+            class="tree-item menus-to-left"
             ng-class="{selected: treeNode.isSelected()}"
             >
             <span
@@ -32,7 +32,7 @@
                 >
             </span>
             <mct-representation
-                class="l-flex-row flex-elem grows"
+                class="rep-object-label"
                 key="'label'"
                 mct-object="domainObject"
                 ng-click="treeNode.select()"

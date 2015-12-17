@@ -520,34 +520,40 @@ mct-container {
 
 /********************************************* FLEX STYLES */
 /* line 95, ../../../../general/res/sass/_archetypes.scss */
-.l-flex-row,
+.l-flex-row, .tree-item,
+.search-result-item,
 .l-flex-col {
   display: -webkit-flex;
   display: flex;
   -webkit-flex-wrap: nowrap;
   flex-wrap: nowrap; }
   /* line 99, ../../../../general/res/sass/_archetypes.scss */
-  .l-flex-row .flex-elem,
+  .l-flex-row .flex-elem, .tree-item .flex-elem,
+  .search-result-item .flex-elem,
   .l-flex-col .flex-elem {
     min-height: 0;
     position: relative; }
     /* line 102, ../../../../general/res/sass/_archetypes.scss */
-    .l-flex-row .flex-elem:not(.grows),
+    .l-flex-row .flex-elem:not(.grows), .tree-item .flex-elem:not(.grows),
+    .search-result-item .flex-elem:not(.grows),
     .l-flex-col .flex-elem:not(.grows) {
       -webkit-flex: 0 0 auto;
       flex: 0 0 auto; }
       /* line 104, ../../../../general/res/sass/_archetypes.scss */
-      .l-flex-row .flex-elem:not(.grows).flex-can-shrink,
+      .l-flex-row .flex-elem:not(.grows).flex-can-shrink, .tree-item .flex-elem:not(.grows).flex-can-shrink,
+      .search-result-item .flex-elem:not(.grows).flex-can-shrink,
       .l-flex-col .flex-elem:not(.grows).flex-can-shrink {
         -webkit-flex: 0 1 auto;
         flex: 0 1 auto; }
     /* line 108, ../../../../general/res/sass/_archetypes.scss */
-    .l-flex-row .flex-elem.grows,
+    .l-flex-row .flex-elem.grows, .tree-item .flex-elem.grows,
+    .search-result-item .flex-elem.grows,
     .l-flex-col .flex-elem.grows {
       -webkit-flex: 1 1 auto;
       flex: 1 1 auto; }
   /* line 112, ../../../../general/res/sass/_archetypes.scss */
-  .l-flex-row .flex-container,
+  .l-flex-row .flex-container, .tree-item .flex-container,
+  .search-result-item .flex-container,
   .l-flex-col .flex-container {
     display: -webkit-flex;
     display: flex;
@@ -558,20 +564,24 @@ mct-container {
     min-height: 0; }
 
 /* line 121, ../../../../general/res/sass/_archetypes.scss */
-.l-flex-row {
+.l-flex-row, .tree-item,
+.search-result-item {
   -webkit-flex-direction: row;
   flex-direction: row; }
   /* line 123, ../../../../general/res/sass/_archetypes.scss */
-  .l-flex-row.flex-elem {
+  .l-flex-row.flex-elem, .flex-elem.tree-item,
+  .flex-elem.search-result-item {
     -webkit-flex: 1 1 auto;
     flex: 1 1 auto; }
   /* line 124, ../../../../general/res/sass/_archetypes.scss */
-  .l-flex-row .flex-elem {
+  .l-flex-row .flex-elem, .tree-item .flex-elem,
+  .search-result-item .flex-elem {
     height: inherit;
     line-height: inherit;
     min-width: 0; }
   /* line 129, ../../../../general/res/sass/_archetypes.scss */
-  .l-flex-row .flex-container {
+  .l-flex-row .flex-container, .tree-item .flex-container,
+  .search-result-item .flex-container {
     -webkit-flex-direction: row;
     flex-direction: row; }
 
@@ -1351,8 +1361,6 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     -moz-animation-timing-function: linear;
     -webkit-animation-timing-function: linear;
     animation-timing-function: linear;
-    border-color: rgba(119, 107, 162, 0.25);
-    border-top-color: #776ba2;
     border-style: solid;
     border-width: 5px;
     -moz-border-radius: 100%;
@@ -1361,6 +1369,8 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
+    border-color: rgba(119, 107, 162, 0.25);
+    border-top-color: #776ba2;
     display: block;
     position: absolute;
     height: 0;
@@ -5555,7 +5565,7 @@ ul.tree {
   margin-bottom: 3px;
   padding: 0 3px;
   position: relative; }
-  /* line 48, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 49, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .view-control,
   .search-result-item .view-control {
     color: #666;
@@ -5564,7 +5574,7 @@ ul.tree {
     height: 100%;
     line-height: inherit;
     width: 10px; }
-    /* line 56, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 57, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .view-control.has-children:before,
     .search-result-item .view-control.has-children:before {
       position: absolute;
@@ -5589,7 +5599,7 @@ ul.tree {
       -ms-transform-origin: center 50%;
       -webkit-transform-origin: center 50%;
       transform-origin: center 50%; }
-    /* line 62, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 63, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .view-control.has-children.expanded:before,
     .search-result-item .view-control.has-children.expanded:before {
       -moz-transform: rotate(90deg);
@@ -5597,11 +5607,11 @@ ul.tree {
       -webkit-transform: rotate(90deg);
       transform: rotate(90deg); }
     @media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-      /* line 67, ../../../../general/res/sass/tree/_tree.scss */
+      /* line 68, ../../../../general/res/sass/tree/_tree.scss */
       .tree-item .view-control:hover,
       .search-result-item .view-control:hover {
         color: #0099cc !important; } }
-  /* line 73, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 74, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .t-object-label,
   .search-result-item .t-object-label {
     line-height: 1.5rem; }
@@ -5610,58 +5620,49 @@ ul.tree {
     .search-result-item .t-object-label .t-item-icon {
       font-size: 1.4em;
       color: #0099cc;
-      margin-right: 5px;
       width: 18px; }
-    /* line 83, ../../../../general/res/sass/tree/_tree.scss */
-    .tree-item .t-object-label .title-label,
-    .tree-item .t-object-label .t-title-label,
-    .search-result-item .t-object-label .title-label,
-    .search-result-item .t-object-label .t-title-label {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap; }
-  /* line 89, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 84, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item.selected,
   .search-result-item.selected {
     background: #1ac6ff;
     color: #fcfcfc; }
-    /* line 92, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 87, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .view-control,
     .search-result-item.selected .view-control {
       color: #fcfcfc; }
-    /* line 95, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 90, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .t-object-label .t-item-icon,
     .search-result-item.selected .t-object-label .t-item-icon {
       color: #fcfcfc; }
   @media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-    /* line 102, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 97, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item:not(.selected):hover,
     .search-result-item:not(.selected):hover {
       background: rgba(102, 102, 102, 0.1);
       color: #333333; }
-      /* line 105, ../../../../general/res/sass/tree/_tree.scss */
+      /* line 100, ../../../../general/res/sass/tree/_tree.scss */
       .tree-item:not(.selected):hover .t-item-icon,
       .search-result-item:not(.selected):hover .t-item-icon {
         color: #0099cc; } }
-  /* line 112, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 107, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item:not(.loading),
   .search-result-item:not(.loading) {
     cursor: pointer; }
-  /* line 116, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 111, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .context-trigger,
   .search-result-item .context-trigger {
     top: -1px;
     position: absolute;
     right: 3px; }
-    /* line 121, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 116, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .context-trigger .invoke-menu,
     .search-result-item .context-trigger .invoke-menu {
       font-size: 0.75em;
       height: 0.9rem;
       line-height: 0.9rem; }
 
-/* line 134, ../../../../general/res/sass/tree/_tree.scss */
-.tree-item mct-representation.s-status-pending .t-object-label .t-item-icon:before {
+/* line 128, ../../../../general/res/sass/tree/_tree.scss */
+mct-representation.s-status-pending .t-object-label .t-item-icon:before {
   -moz-animation-name: rotateCentered;
   -webkit-animation-name: rotateCentered;
   animation-name: rotateCentered;
@@ -5674,18 +5675,13 @@ ul.tree {
   -moz-animation-timing-function: linear;
   -webkit-animation-timing-function: linear;
   animation-timing-function: linear;
-  border-color: rgba(0, 153, 204, 0.25);
-  border-top-color: #0099cc;
   border-style: solid;
   border-width: 4px;
   -moz-border-radius: 100%;
   -webkit-border-radius: 100%;
   border-radius: 100%;
-  content: "";
-  display: block;
-  position: absolute;
-  left: 50%;
-  top: 50%;
+  border-color: rgba(0, 153, 204, 0.25);
+  border-top-color: #0099cc;
   width: 10px;
   height: 10px; }
 @-moz-keyframes rotateCentered {
@@ -5713,15 +5709,121 @@ ul.tree {
     -ms-transform: translateX(-50%) translateY(-50%) rotate(359deg);
     -webkit-transform: translateX(-50%) translateY(-50%) rotate(359deg);
     transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
-/* line 146, ../../../../general/res/sass/tree/_tree.scss */
-.tree-item mct-representation.s-status-pending .t-object-label .t-item-icon .t-item-icon-glyph {
+/* line 142, ../../../../general/res/sass/tree/_tree.scss */
+mct-representation.s-status-pending .t-object-label .t-item-icon .t-item-icon-glyph {
   display: none; }
-/* line 150, ../../../../general/res/sass/tree/_tree.scss */
-.tree-item mct-representation.s-status-pending .t-object-label .t-title-label {
+/* line 146, ../../../../general/res/sass/tree/_tree.scss */
+mct-representation.s-status-pending .t-object-label .t-title-label {
   font-style: italic;
   opacity: 0.6; }
-/* line 157, ../../../../general/res/sass/tree/_tree.scss */
-.tree-item.selected mct-representation.s-status-pending .t-object-label .t-item-icon:before {
+
+/* line 153, ../../../../general/res/sass/tree/_tree.scss */
+.selected mct-representation.s-status-pending .t-object-label .t-item-icon:before {
+  border-color: rgba(252, 252, 252, 0.25);
+  border-top-color: #fcfcfc; }
+
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* line 24, ../../../../general/res/sass/_object-label.scss */
+.rep-object-label {
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex: 1 1 auto;
+  flex: 1 1 auto;
+  height: inherit;
+  line-height: inherit;
+  min-width: 0; }
+
+/* line 33, ../../../../general/res/sass/_object-label.scss */
+.t-object-label .t-item-icon {
+  margin-right: 5px; }
+/* line 36, ../../../../general/res/sass/_object-label.scss */
+.t-object-label .t-title-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; }
+
+/* line 45, ../../../../general/res/sass/_object-label.scss */
+mct-representation.s-status-pending .t-object-label .t-item-icon:before {
+  -moz-animation-name: rotateCentered;
+  -webkit-animation-name: rotateCentered;
+  animation-name: rotateCentered;
+  -moz-animation-duration: 0.5s;
+  -webkit-animation-duration: 0.5s;
+  animation-duration: 0.5s;
+  -moz-animation-iteration-count: infinite;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -moz-animation-timing-function: linear;
+  -webkit-animation-timing-function: linear;
+  animation-timing-function: linear;
+  border-style: solid;
+  border-width: 4px;
+  -moz-border-radius: 100%;
+  -webkit-border-radius: 100%;
+  border-radius: 100%;
+  content: "";
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  padding: 35%;
+  width: 0;
+  height: 0; }
+@-moz-keyframes rotateCentered {
+  0% {
+    -moz-transform: translateX(-50%) translateY(-50%) rotate(0deg);
+    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+  100% {
+    -moz-transform: translateX(-50%) translateY(-50%) rotate(359deg);
+    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
+@-webkit-keyframes rotateCentered {
+  0% {
+    -webkit-transform: translateX(-50%) translateY(-50%) rotate(0deg);
+    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+  100% {
+    -webkit-transform: translateX(-50%) translateY(-50%) rotate(359deg);
+    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
+@keyframes rotateCentered {
+  0% {
+    -moz-transform: translateX(-50%) translateY(-50%) rotate(0deg);
+    -ms-transform: translateX(-50%) translateY(-50%) rotate(0deg);
+    -webkit-transform: translateX(-50%) translateY(-50%) rotate(0deg);
+    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+  100% {
+    -moz-transform: translateX(-50%) translateY(-50%) rotate(359deg);
+    -ms-transform: translateX(-50%) translateY(-50%) rotate(359deg);
+    -webkit-transform: translateX(-50%) translateY(-50%) rotate(359deg);
+    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
+/* line 58, ../../../../general/res/sass/_object-label.scss */
+mct-representation.s-status-pending .t-object-label .t-item-icon .t-item-icon-glyph {
+  display: none; }
+/* line 62, ../../../../general/res/sass/_object-label.scss */
+mct-representation.s-status-pending .t-object-label .t-title-label {
+  font-style: italic;
+  opacity: 0.6; }
+
+/* line 69, ../../../../general/res/sass/_object-label.scss */
+.selected mct-representation.s-status-pending .t-object-label .t-item-icon:before {
   border-color: rgba(252, 252, 252, 0.25);
   border-top-color: #fcfcfc; }
 
