@@ -77,7 +77,8 @@ ul.tree {
             @include txtShdwSubtle($shdwItemTreeIcon);
             font-size: $treeTypeIconH;
             color: $colorItemTreeIcon;
-            width: $treeTypeIconH;
+            margin-right: $interiorMargin;
+            width: $treeTypeIconW;
         }
 		.title-label,
         .t-title-label {
@@ -128,17 +129,24 @@ ul.tree {
 
 .tree-item {
     mct-representation {
-        //.t-object-label {
-        //    left: $interiorMargin + $treeVCW;
-        //}
         &.s-status-pending {
             .t-object-label {
-                &:before {
-                    @include spinner(0.25em, $colorItemTreeIcon);
-                    content: "";
-                }
-                .t-item-icon .t-item-icon-glyph {
-                    display: none;
+                .t-item-icon {
+                    &:before {
+                        $spinBW: 4px;
+                        $spinD: $treeTypeIconW - ($spinBW * 2);
+                        @include spinner($spinBW, $colorItemTreeIcon);
+                        content: "";
+                        display: block;
+                        position: absolute;
+                        left: 50%;
+                        top: 50%;
+                        width: $spinD;
+                        height: $spinD;
+                    }
+                    .t-item-icon-glyph {
+                        display: none;
+                    }
                 }
             }
         }

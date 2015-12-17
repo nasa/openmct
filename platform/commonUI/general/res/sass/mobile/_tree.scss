@@ -51,7 +51,7 @@
 		}
 		.t-object-label {
 			line-height: inherit;
-            .t-item-icon.l-icon-link:before {
+            .t-item-icon.l-icon-link .t-item-icon-glyph:before {
                 bottom: 20%; // Shift up due to height of mobile menu items
             }
 		}
