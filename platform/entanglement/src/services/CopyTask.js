@@ -114,15 +114,19 @@ define(
          * @private
          */
         CopyTask.prototype.rewriteIdentifiers = function (obj, idMap) {
+            function lookupValue(value) {
+                return (typeof value === 'string' && idMap[value]) || value;
+            }
+
             if (Array.isArray(obj)) {
                 obj.forEach(function (value, index) {
-                    obj[index] = idMap[value] || value;
+                    obj[index] = lookupValue(value);
                     this.rewriteIdentifiers(obj[index], idMap);
                 }, this);
             } else if (obj && typeof obj === 'object') {
                 Object.keys(obj).forEach(function (key) {
                     var value = obj[key];
-                    obj[key] = idMap[value] || value;
+                    obj[key] = lookupValue(value);
                     if (idMap[key]) {
                         delete obj[key];
                         obj[idMap[key]] = value;
