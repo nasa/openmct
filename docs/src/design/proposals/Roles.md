@@ -34,10 +34,13 @@ services which can be applied to domain objects.
 
 [RegistrationOptions |
   + priority : number or string
+]<:-[RoleOptions |
+  + validate : function (DomainObject) : boolean
 ]
 
 [Role.<T> |
   + validate(domainObject : DomainObject) : boolean
+  + decorate(decoratorFn : function (T, V) : T, options? : RoleOptions)
 ]-:>[Factory.<T, DomainObject>]
 [Factory.<T, DomainObject>]-:>[Factory.<T, V>]
 ```
@@ -90,6 +93,10 @@ mct.roles.persistenceRole.decorate(function (persistence, domainObject) {
     return domainObject.getModel().type === 'someType' ?
             new DifferentPersistence(domainObject) :
             persistence;
+}, {
+    validate: function (domainObject, next) {
+        return domainObject.getModel().type === 'someType' || next();
+    }
 });
 ```
 
