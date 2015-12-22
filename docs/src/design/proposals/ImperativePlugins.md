@@ -34,14 +34,12 @@ Note that additional developer use cases may be supported by using the
 more general-purpose `Registry`
 
 ```nomnoml
-[Function.<T, V>]
-
 [Factory.<T, V>
   |
-  - factoryFn : Function.<T, V>
+  - factoryFn : function (V) : T
   |
-  + decorate(decoratorFn : Function.<T, T>, options? : RegistrationOptions)
-]-:>[Function.<T, V>]
+  + decorate(decoratorFn : function (T, V) : T, options? : RegistrationOptions)
+]-:>[function (V) : T]
 
 [RegistrationOptions |
   + priority : number or string
@@ -49,10 +47,10 @@ more general-purpose `Registry`
 
 [Registry.<T, V>
   |
-  - compositorFn : Function.<V, Array.<T>>
+  - compositorFn : function (Array.<T>) : V
   |
   + register(item : T, options? : RegistrationOptions)
-  + composite(compositorFn : Function.<V, Array.<T>>, options? : RegistrationOptions)
+  + composite(compositorFn : function (Array.<T>) : V, options? : RegistrationOptions)
 ]-:>[Factory.<V, Void>]
 [Factory.<V, Void>]-:>[Factory.<T, V>]
 
@@ -162,3 +160,5 @@ myModule.hamburgers = new mct.ExtensionRegistry();
   to an extension or service. But, passing these in as constructor
   arguments is preferred (to separate implementation from architecture.)
 * Adds (negligible?) boilerplate relative to declarative syntax.
+* Relies on factories, increasing number of interfaces to be concerned
+  with.
