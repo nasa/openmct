@@ -4,6 +4,8 @@
   "description": "The OpenMCTWeb core platform",
   "dependencies": {
     "express": "^4.13.1",
+    "globby": "^4.0.0",
+    "requirejs": "^2.1.17",
     "minimist": "^1.1.1"
   },
   "devDependencies": {
@@ -16,10 +18,8 @@
     "karma-jasmine": "^0.1.5",
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-requirejs": "^0.2.2",
-    "requirejs": "^2.1.17",
     "marked": "^0.3.5",
     "glob": ">= 3.0.0",
-    "globby": "^4.0.0",
     "split": "^1.0.0",
     "mkdirp": "^0.5.1",
     "nomnoml": "^0.0.3",
