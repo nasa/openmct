@@ -4,7 +4,7 @@ This document summarizes a path toward implementing API changes
 from the [API Redesign](../proposals/APIRedesign.md) for Open MCT Web
 v1.0.0.
 
-# Goals and Priorities
+# Goals
 
 These plans are intended to minimize:
 
@@ -17,6 +17,10 @@ These plans are intended to minimize:
 # Plan
 
 ```nomnoml
+#comment: This diagram is in nomnoml syntax and should be rendered.
+#comment: See https://github.com/nasa/openmctweb/issues/264#issuecomment-167166471
+
+
 [<start> Start]->[<state> Imperative bundle registration]
 
 [<state> Imperative bundle registration]->[<state> Build and packaging]
@@ -133,9 +137,10 @@ Benefits:
   written here to defer the task of making changes ubiquitously
   throughout bundles, allowing for earlier validation and
   verification of those changes, and avoiding ubiquitous changes
-  which might require us to go dark. (Avoids a
-  ["greenfield paradox"](http://stepaheadsoftware.blogspot.com/2012/09/greenfield-or-refactor-legacy-code-base.html).
-
+  which might require us to go dark. (Mitigates
+  ["greenfield paradox"](http://stepaheadsoftware.blogspot.com/2012/09/greenfield-or-refactor-legacy-code-base.html);
+  want to add value with new API but don't want to discard value
+  of tested/proven legacy codebase.)
 
 Detriments:
 
