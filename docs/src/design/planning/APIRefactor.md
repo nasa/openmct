@@ -122,6 +122,13 @@ Refactor existing applications built on Open MCT Web such that they
 are no longer forks, but instead separate projects with a dependency
 on the built artifacts from Step 2.
 
+Note that this is achievable already using `bower` (see `warp-bower`
+branch at http://developer.nasa.gov/mct/warp for an example.)
+However, changes involved in switching to an imperative API and
+introducing a build process may change (and should simplify) the
+approach used to utilize Open MCT Web as a dependency, so these
+changes should be introduced first.
+
 ## Step 4. Design registration API
 
 Design the registration API that will replace declarative extension
@@ -166,3 +173,57 @@ as some specific component will be responsible for creating any registries.
 As such, "bundles" which _use_ specific registries will need to have an
 enforceable dependency (e.g. require) upon those "bundles" which
 _declare_ those registries.
+
+## Step 6. Refactor individual extensions
+
+Refactor individual extension categories and/or services that have
+been identified as needing changes. This includes, but is not
+necessarily limited to:
+
+* Views/Representations/Templates (refactored into "components.")
+* Capabilities (refactored into "roles", potentially.)
+* Telemetry (from `TelemetrySeries` to `TelemetryService`.)
+
+Changes should be made one category at a time (either serially
+or separately in parallel) and should involve a tight cycle of:
+
+1. Prioritization/reprioritization; highest-value API improvements
+   should be done first.
+2. Design.
+3. Review. Refactoring individual extensions will require significant
+   effort (likely the most significant effort in the process) so changes
+   should be validated early to minimize risk/waste.
+4. Implementation.
+
+By necessity, these changes may break functionality in applications
+built using Open MCT Web. On a case-by-case basis, should consider
+providing temporary "legacy support" to allow downstream updates
+to occur as a separate task; the relevant trade here is between
+waste/effort required to maintain legacy support, versus the
+downtime which may be introduced by making these changes simultaneously
+across several repositories.
+
+## Step 7. Release candidacy
+
+Once API changes are complete, Open MCT Web should enter a release
+candidacy cycle. Important things to look at here:
+
+* Are changes really complete?
+  * Are they sufficiently documented?
+  * Are they sufficiently tested?
+* Are changes really sufficient?
+  * Do reviewers think they are usable?
+  * Does the development team find them useful in practice? This
+    will require calendar time to ascertain; should allocate time
+    for this, particularly in alignment with the sprint/release
+    cycle.
+  * Has learning curve been measurably decreased? Comparing a to-do
+    list tutorial to [other examples(http://todomvc.com/) could
+    provide an empirical basis to this. How much code is required?
+    How much explanation is required? How many dependencies must
+    be installed before initial setup?
+  * Does the API offer sufficient power to implement the extensions we
+    anticipate?
+
+Any problems identified during release candidacy will require
+subsequent design changes and planning.
