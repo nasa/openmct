@@ -19,23 +19,24 @@ These plans are intended to minimize:
 ```nomnoml
 [<start> Start]->[<state> Imperative bundle registration]
 
+[<state> Imperative bundle registration]->[<state> Build and packaging]
+[<state> Imperative bundle registration]->[<state> Refactor API]
 
-[<state> Imperative bundle registration]->[<state> Incorporate a build step]
+[<state> Build and packaging |
+    [<start> Start]->[<state> Incorporate a build step]
+    [<state> Incorporate a build step |
+        [<start> Start]->[<state> Choose package manager]
+        [<start> Start]->[<state> Choose build system]
+        [<state> Choose build system]<->[<state> Choose package manager]
+        [<state> Choose package manager]->[<state> Implement]
+        [<state> Choose build system]->[<state> Implement]
+        [<state> Implement]->[<end> End]
+    ]->[<state> Separate repositories]
+    [<state> Separate repositories]->[<end> End]
+]->[<state> Release candidacy]
 
-[<state> Incorporate a build step |
-    [<start> Start]->[<state> Choose package manager]
-    [<start> Start]->[<state> Choose build system]
-    [<state> Choose build system]<->[<state> Choose package manager]
-    [<state> Choose package manager]->[<state> Implement]
-    [<state> Choose build system]->[<state> Implement]
-    [<state> Implement]->[<end> End]
-]->[<state> Separate repositories]
-
-[<state> Separate repositories]->[<state> Release candidacy]
 
 [<start> Start]->[<state> Design registration API]
-
-[<state> Imperative bundle registration]->[<state> Imperative extension registration]
 
 [<state> Design registration API |
      [<start> Start]->[<state> Decide on role of Angular]
@@ -43,22 +44,25 @@ These plans are intended to minimize:
      [<state> Design API]->[<choice> Passes review?]
      [<choice> Passes review?] no ->[<state> Design API]
      [<choice> Passes review?]-> yes [<end> End]
-]->[<state> Imperative extension registration]
+]->[<state> Refactor API]
 
-[<state> Imperative extension registration]->[<state> Refactor individual extensions]
+[<state> Refactor API |
+    [<start> Start]->[<state> Imperative extension registration]
+    [<state> Imperative extension registration]->[<state> Refactor individual extensions]
 
-[<state> Refactor individual extensions |
-    [<start> Start]->[<state> Prioritize]
-    [<state> Prioritize]->[<choice> Sufficient value added?]
-    [<choice> Sufficient value added?] no ->[<end> End]
-    [<choice> Sufficient value added?] yes ->[<state> Design]
-    [<state> Design]->[<choice> Passes review?]
-    [<choice> Passes review?] no ->[<state> Design]
-    [<choice> Passes review?]-> yes [<state> Implement]
-    [<state> Implement]->[<end> End]
-]->[<state> Remove legacy bundle support]
+    [<state> Refactor individual extensions |
+        [<start> Start]->[<state> Prioritize]
+        [<state> Prioritize]->[<choice> Sufficient value added?]
+        [<choice> Sufficient value added?] no ->[<end> End]
+        [<choice> Sufficient value added?] yes ->[<state> Design]
+        [<state> Design]->[<choice> Passes review?]
+        [<choice> Passes review?] no ->[<state> Design]
+        [<choice> Passes review?]-> yes [<state> Implement]
+        [<state> Implement]->[<end> End]
+    ]->[<state> Remove legacy bundle support]
 
-[<state> Remove legacy bundle support]->[<state> Release candidacy]
+    [<state> Remove legacy bundle support]->[<end> End]
+]->[<state> Release candidacy]
 
 [<state> Release candidacy |
     [<start> Start]->[<state> Verify |
@@ -84,7 +88,9 @@ These plans are intended to minimize:
     ]
     [<state> Validate]->[<end> End]
     [<state> Verify]->[<end> End]
-]->[<end> End]
+]->[<state> Release]
+
+[<state> Release]->[<end> End]
 ```
 
 ## Step 1. Imperative bundle registration
@@ -311,6 +317,17 @@ candidacy cycle. Important things to look at here:
     be installed before initial setup?
   * Does the API offer sufficient power to implement the extensions we
     anticipate?
+  * Any open API-related issues which should block a 1.0.0 release?
 
 Any problems identified during release candidacy will require
 subsequent design changes and planning.
+
+## Step 9. Release
+
+Once API changes have been verified and validated, proceed
+with release, including:
+
+* Tagging as version 1.0.0 (at an appropriate time in the
+  sprint/release cycle.)
+* Close any open issues which have been resolved (or made obsolete)
+  by API changes.
