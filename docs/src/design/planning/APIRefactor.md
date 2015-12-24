@@ -16,6 +16,77 @@ These plans are intended to minimize:
 
 # Plan
 
+```nomnoml
+[<start> Start]->[<state> Imperative bundle registration]
+
+
+[<state> Imperative bundle registration]->[<state> Incorporate a build step]
+
+[<state> Incorporate a build step |
+    [<start> Start]->[<state> Choose package manager]
+    [<start> Start]->[<state> Choose build system]
+    [<state> Choose build system]<->[<state> Choose package manager]
+    [<state> Choose package manager]->[<state> Implement]
+    [<state> Choose build system]->[<state> Implement]
+    [<state> Implement]->[<end> End]
+]->[<state> Separate repositories]
+
+[<state> Separate repositories]->[<state> Release candidacy]
+
+[<start> Start]->[<state> Design registration API]
+
+[<state> Imperative bundle registration]->[<state> Imperative extension registration]
+
+[<state> Design registration API |
+     [<start> Start]->[<state> Decide on role of Angular]
+     [<state> Decide on role of Angular]->[<state> Design API]
+     [<state> Design API]->[<choice> Passes review?]
+     [<choice> Passes review?] no ->[<state> Design API]
+     [<choice> Passes review?]-> yes [<end> End]
+]->[<state> Imperative extension registration]
+
+[<state> Imperative extension registration]->[<state> Refactor individual extensions]
+
+[<state> Refactor individual extensions |
+    [<start> Start]->[<state> Prioritize]
+    [<state> Prioritize]->[<choice> Sufficient value added?]
+    [<choice> Sufficient value added?] no ->[<end> End]
+    [<choice> Sufficient value added?] yes ->[<state> Design]
+    [<state> Design]->[<choice> Passes review?]
+    [<choice> Passes review?] no ->[<state> Design]
+    [<choice> Passes review?]-> yes [<state> Implement]
+    [<state> Implement]->[<end> End]
+]->[<state> Remove legacy bundle support]
+
+[<state> Remove legacy bundle support]->[<state> Release candidacy]
+
+[<state> Release candidacy |
+    [<start> Start]->[<state> Verify |
+        [<start> Start]->[<choice> API well-documented?]
+        [<start> Start]->[<choice> API well-tested?]
+        [<choice> API well-documented?]-> no [<state> Write documentation]
+        [<choice> API well-documented?] yes ->[<end> End]
+        [<state> Write documentation]->[<choice> API well-documented?]
+        [<choice> API well-tested?]-> no [<state> Write test cases]
+        [<choice> API well-tested?]-> yes [<end> End]
+        [<state> Write test cases]->[<choice> API well-tested?]
+    ]
+    [<start> Start]->[<state> Validate |
+        [<start> Start]->[<choice> Passes review?]
+        [<start> Start]->[<state> Use internally]
+        [<state> Use internally]->[<choice> Proves useful?]
+        [<choice> Passes review?]-> no [<state> Address feedback]
+        [<state> Address feedback]->[<choice> Passes review?]
+        [<choice> Passes review?] yes -> [<end> End]
+        [<choice> Proves useful?] yes -> [<end> End]
+        [<choice> Proves useful?] no -> [<state> Fix problems]
+        [<state> Fix problems]->[<state> Use internally]
+    ]
+    [<state> Validate]->[<end> End]
+    [<state> Verify]->[<end> End]
+]->[<end> End]
+```
+
 ## Step 1. Imperative bundle registration
 
 Register whole bundles imperatively, using their current format.
@@ -32,10 +103,11 @@ define([
 ```
 
 Where `mctRegistry.install` is placeholder API that wires into the
-existing bundle registration mechanisms. The framework layer and
-main point of entry would need to be adapted to (a) clearly depend
-on these bundles, in the require sense of a dependency, and
-(b)
+existing bundle registration mechanisms. The main point of entry
+would need to be adapted to clearly depend on these bundles
+(in the require sense of a dependency), and the framework layer
+would need to implement and integrate with this transitional
+API.
 
 Benefits:
 
@@ -55,7 +127,9 @@ Benefits:
   written here to defer the task of making changes ubiquitously
   throughout bundles, allowing for earlier validation and
   verification of those changes, and avoiding ubiquitous changes
-  which might require us to go dark.
+  which might require us to go dark. (Avoids a
+  ["greenfield paradox"](http://stepaheadsoftware.blogspot.com/2012/09/greenfield-or-refactor-legacy-code-base.html).
+
 
 Detriments:
 
@@ -164,9 +238,11 @@ general case.
 
 Register individual extensions imperatively, implementing API changes
 from the previous step. At this stage, _usage_ of the API may be confined
-to a transitional adapter in the framework layer
+to a transitional adapter in the framework layer; bundles may continue
+to utilize the transitional API for registering extensions in the
+legacy format.
 
-An important sub-task here will be to discover and define dependencies
+An important, ongoing sub-task here will be to discover and define dependencies
 among bundles. Composite services and extension categories are presently
 "implicit"; after the API redesign, these will become "explicit", insofar
 as some specific component will be responsible for creating any registries.
@@ -193,7 +269,11 @@ or separately in parallel) and should involve a tight cycle of:
 3. Review. Refactoring individual extensions will require significant
    effort (likely the most significant effort in the process) so changes
    should be validated early to minimize risk/waste.
-4. Implementation.
+4. Implementation. These changes will not have a one-to-one relationship
+   with existing extensions, so changes cannot be centralized; usages
+   will need to be updated across all "bundles" instead of centralized
+   in a legacy adapter. If changes are of sufficient complexity, some
+   planning should be done to spread out the changes incrementally.
 
 By necessity, these changes may break functionality in applications
 built using Open MCT Web. On a case-by-case basis, should consider
@@ -203,7 +283,14 @@ waste/effort required to maintain legacy support, versus the
 downtime which may be introduced by making these changes simultaneously
 across several repositories.
 
-## Step 7. Release candidacy
+
+## Step 7. Remove legacy bundle support
+
+Update bundles to remove any usages of legacy support for bundles
+(including that used by dependent projects.) Then, remove legacy
+support from Open MCT Web.
+
+## Step 8. Release candidacy
 
 Once API changes are complete, Open MCT Web should enter a release
 candidacy cycle. Important things to look at here:
