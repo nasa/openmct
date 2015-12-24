@@ -48,7 +48,7 @@ define(
 
             it("passes script names to require", function () {
                 loader.load("xyz.js");
-                expect(required.names).toEqual(["xyz.js"]);
+                expect(required.names).toEqual(["xyz"]);
             });
 
             it("wraps require results in a Promise that can resolve", function () {

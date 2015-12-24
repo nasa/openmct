@@ -44,7 +44,7 @@ define(
                 // mct-form needs to watch for the form by name
                 // in order to convey changes in $valid, $dirty, etc
                 // up to the parent scope.
-                mctToolbar.controller(mockScope);
+                mctToolbar.controller[1](mockScope);
 
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "mctForm",
@@ -56,7 +56,7 @@ define(
                 var someState = { someKey: "some value" };
                 mockScope.name = "someName";
 
-                mctToolbar.controller(mockScope);
+                mctToolbar.controller[1](mockScope);
 
                 mockScope.$watch.mostRecentCall.args[1](someState);
 
@@ -65,7 +65,7 @@ define(
 
             it("allows strings to be converted to RegExps", function () {
                 // This is needed to support ng-pattern in the template
-                mctToolbar.controller(mockScope);
+                mctToolbar.controller[1](mockScope);
 
                 // Should have added getRegExp to the scope,
                 // to convert strings to regular expressions
@@ -78,7 +78,7 @@ define(
                     regExp;
 
                 // Add getRegExp to scope
-                mctToolbar.controller(mockScope);
+                mctToolbar.controller[1](mockScope);
                 regExp = mockScope.getRegExp(strRegExp);
 
                 // Same object instance each time...
@@ -91,7 +91,7 @@ define(
                 var regExp = /^\d+[a-d]$/;
 
                 // Add getRegExp to scope
-                mctToolbar.controller(mockScope);
+                mctToolbar.controller[1](mockScope);
 
                 // Should have added getRegExp to the scope,
                 // to convert strings to regular expressions
@@ -100,9 +100,13 @@ define(
 
             it("passes a non-whitespace regexp when no pattern is defined", function () {
                 // If no pattern is supplied, ng-pattern should match anything
-                mctToolbar.controller(mockScope);
+                mctToolbar.controller[1](mockScope);
                 expect(mockScope.getRegExp()).toEqual(/\S/);
                 expect(mockScope.getRegExp(undefined)).toEqual(/\S/);
+            });
+
+            it("explicitly declares its controller's dependency", function () {
+                expect(mctToolbar.controller[0]).toEqual('$scope');
             });
 
 

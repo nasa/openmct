@@ -32,7 +32,6 @@
                         <resource>
                             <directory>.</directory>
                             <includes>
-                                <include>index.html</include>
                                 <include>*.json</include>
                                 <include>**/src/**/*</include>
                                 <include>**/res/**/*</include>
@@ -53,6 +52,13 @@
                                 <include>platform/core/bundle.json</include>
                             </includes>
                             <filtering>true</filtering>
+                        </resource>
+                        <resource>
+                            <directory>target</directory>
+                            <includes>
+                                <include>index.html</include>
+                                <include>main.js</include>
+                            </includes>
                         </resource>
                     </webResources>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
@@ -84,7 +90,7 @@
             <plugin>
                 <groupId>com.github.klieber</groupId>
                 <artifactId>phantomjs-maven-plugin</artifactId>
-                <version>0.2.1</version>
+                <version>0.7</version>
                 <executions>
                     <execution>
                         <goals>
@@ -165,6 +171,7 @@
                         <exclude>app.js</exclude>
                         <exclude>node_modules/**/*</exclude>
                         <exclude>protractor/**/*</exclude>
+                        <exclude>target/**/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -172,6 +179,41 @@
                         <goals>
                             <goal>jslint</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Run NPM build steps -->
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>0.0.26</version>
+                <configuration>
+                    <installDirectory>target</installDirectory>
+                    <nodeVersion>v0.12.2</nodeVersion>
+                    <npmVersion>2.7.6</npmVersion>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>requirejs build/minify</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>run build</arguments>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
