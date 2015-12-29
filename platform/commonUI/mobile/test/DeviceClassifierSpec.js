@@ -87,7 +87,7 @@ define(
                             mockDocument
                         );
                     });
-                    
+
                     it("adds classes for matching, detected characteristics", function () {
                         Object.keys(DeviceMatchers).filter(function (m) {
                             return DeviceMatchers[m](mockAgentService);
