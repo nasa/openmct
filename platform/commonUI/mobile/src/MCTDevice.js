@@ -47,6 +47,7 @@ define(
          * * `desktop`: Non-mobile devices.
          * * `portrait`: Devices in a portrait-style orientation.
          * * `landscape`: Devices in a landscape-style orientation.
+         * * `touch`: Device supports touch events.
          *
          * @param {AgentService} agentService used to detect device type
          *        based on information about the user agent

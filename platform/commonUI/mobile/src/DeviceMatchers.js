@@ -52,6 +52,9 @@ define(function () {
         },
         landscape: function (agentService) {
             return agentService.isLandscape();
+        },
+        touch: function (agentService) {
+            return agentService.isTouch();
         }
     };
 });
