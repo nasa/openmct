@@ -22,8 +22,8 @@
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
-    ["../../src/controllers/DateTimePickerController"],
-    function (DateTimePickerController) {
+    ["../../src/controllers/DateTimePickerController", "moment"],
+    function (DateTimePickerController, moment) {
         "use strict";
 
         describe("The DateTimePickerController", function () {
@@ -33,6 +33,14 @@ define(
 
             function fireWatch(expr, value) {
                 mockScope.$watch.calls.forEach(function (call) {
+                    if (call.args[0] === expr) {
+                        call.args[1](value);
+                    }
+                });
+            }
+
+            function fireWatchCollection(expr, value) {
+                mockScope.$watchCollection.calls.forEach(function (call) {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
@@ -57,6 +65,34 @@ define(
                 );
             });
 
+            it("updates date/time state in scope when model changes", function () {
+                fireWatch(
+                    "ngModel[field]",
+                    moment.utc("1998-01-06 12:34:56").valueOf()
+                );
+                expect(mockScope.date.year).toEqual(1998);
+                expect(mockScope.date.month).toEqual(0); // Months are zero-indexed
+                expect(mockScope.date.day).toEqual(6);
+                expect(mockScope.time.hours).toEqual(12);
+                expect(mockScope.time.minutes).toEqual(34);
+                expect(mockScope.time.seconds).toEqual(56);
+            });
+
+            it("updates value in model when values in scope change", function () {
+                mockScope.date = {
+                    year: 1998,
+                    month: 0,
+                    day: 6
+                };
+                mockScope.time = {
+                    hours: 12,
+                    minutes: 34,
+                    seconds: 56
+                };
+                fireWatchCollection("date", mockScope.date);
+                expect(mockScope.ngModel[mockScope.field])
+                    .toEqual(moment.utc("1998-01-06 12:34:56").valueOf());
+            });
 
         });
     }
