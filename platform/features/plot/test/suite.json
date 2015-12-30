@@ -6,6 +6,7 @@
     "SubPlot",
     "SubPlotFactory",
     "elements/PlotAxis",
+    "elements/PlotLimitTracker",
     "elements/PlotLine",
     "elements/PlotLineBuffer",
     "elements/PlotPalette",
