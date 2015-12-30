@@ -300,7 +300,7 @@
 	@include desktop {
 		@if $bgHov != none {
 			&:not(.disabled):hover {
-				background: $bgHov;
+				@include background-image($bgHov);
 				>.icon {
 					color: lighten($ic, $ltGamma);
 				}
