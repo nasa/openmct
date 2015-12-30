@@ -285,6 +285,33 @@ define(
                 fireWatch("axes[1].active.key", 'someNewKey');
                 expect(mockHandle.request.calls.length).toEqual(2);
             });
+
+            it("maintains externally-provided domain axis bounds after data is received", function () {
+                mockSeries.getPointCount.andReturn(3);
+                mockSeries.getRangeValue.andReturn(42);
+                mockSeries.getDomainValue.andCallFake(function (i) {
+                    return 2500 + i * 2500;
+                });
+
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                fireEvent("telemetry:display:bounds", [
+                    {},
+                    { start: 0, end: 10000 }
+                ]);
+                mockHandle.request.mostRecentCall.args[1](
+                    mockDomainObject,
+                    mockSeries
+                );
+
+                // Pan-zoom state should reflect bounds set externally;
+                // domain axis should not have shrunk to fit data.
+                expect(
+                    controller.getSubPlots()[0].panZoomStack.getOrigin()[0]
+                ).toEqual(0);
+                expect(
+                    controller.getSubPlots()[0].panZoomStack.getDimensions()[0]
+                ).toEqual(10000);
+            });
         });
     }
 );
