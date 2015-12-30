@@ -476,6 +476,42 @@ define(
 
             });
 
+            it("reflects limit status", function () {
+                var elements;
+
+                mockHandle.getDatum.andReturn({});
+                mockHandle.getTelemetryObjects().forEach(function (mockObject) {
+                    var id = mockObject.getId(),
+                        mockLimitCapability =
+                            jasmine.createSpyObj('limit-' + id, ['evaluate']);
+
+                    mockObject.getCapability.andCallFake(function (key) {
+                        return (key === 'limit') && mockLimitCapability;
+                    });
+
+                    mockLimitCapability.evaluate
+                        .andReturn({ cssClass: 'alarm-' + id });
+                });
+
+                // Initialize
+                mockScope.domainObject = mockDomainObject;
+                mockScope.model = testModel;
+                findWatch("domainObject")(mockDomainObject);
+                findWatch("model.modified")(1);
+                findWatch("model.composition")(mockScope.model.composition);
+
+                // Invoke the subscription callback
+                mockHandler.handle.mostRecentCall.args[1]();
+
+                // Get elements that controller is now exposing
+                elements = controller.getElements();
+
+                // Limit-based CSS classes should be available
+                expect(elements[0].cssClass).toEqual("alarm-a");
+                expect(elements[1].cssClass).toEqual("alarm-b");
+                expect(elements[2].cssClass).toEqual("alarm-c");
+            });
+
         });
     }
 );

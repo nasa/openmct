@@ -46,6 +46,7 @@ define(
             this.userAgent = userAgent;
             this.mobileName = matches[0];
             this.$window = $window;
+            this.touchEnabled = ($window.ontouchstart !== undefined);
         }
 
         /**
@@ -90,6 +91,14 @@ define(
          */
         AgentService.prototype.isLandscape = function () {
             return !this.isPortrait();
+        };
+
+        /**
+         * Check if the user's device supports a touch interface.
+         * @returns {boolean} true if touch is supported
+         */
+        AgentService.prototype.isTouch = function () {
+            return this.touchEnabled;
         };
 
         /**

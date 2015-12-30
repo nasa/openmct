@@ -84,12 +84,20 @@
     }
 
     .inspector-location {
-        //line-height: 180%;
         .location-item {
+            $h: 1.2em;
+            @include box-sizing(border-box);
             cursor: pointer;
             display: inline-block;
+            line-height: $h;
             position: relative;
             padding: 2px 4px;
+            .t-object-label {
+                .t-item-icon {
+                    height: $h;
+                    width: 0.7rem;
+                }
+            }
             &:hover {
                 background: $colorItemTreeHoverBg;
                 color: $colorItemTreeHoverFg;
@@ -104,6 +112,7 @@
             display: inline-block;
             font-family: symbolsfont;
             font-size: 8px;
+            font-style: normal !important;
             line-height: inherit;
             margin-left: $interiorMarginSm;
             width: 4px;

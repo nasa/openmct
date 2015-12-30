@@ -13,6 +13,12 @@
                 "implementation": "AgentService.js",
                 "depends": [ "$window" ]
             }
+        ],
+        "runs": [
+            {
+                "implementation": "DeviceClassifier.js",
+                "depends": [ "agentService", "$document" ]
+            }
         ]
     }
 }
