@@ -19,6 +19,7 @@
     "directives/MCTResize",
     "directives/MCTScroll",
     "directives/MCTSplitPane",
+    "directives/MCTSplitter",
     "services/Popup",
     "services/PopupService",
     "services/UrlService",
