@@ -117,10 +117,6 @@
                 "depends": [ "$scope" ]
             },
             {
-                "key": "SplitPaneController",
-                "implementation": "controllers/SplitPaneController.js"
-            },
-            {
                 "key": "SelectorController",
                 "implementation": "controllers/SelectorController.js",
                 "depends": [ "objectService", "$scope" ]
