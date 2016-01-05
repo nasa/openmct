@@ -74,6 +74,39 @@ define(
                     expect(mockElement.addClass)
                         .toHaveBeenCalledWith('splitter');
                 });
+
+                describe("and then manipulated", function () {
+                    var testPosition;
+
+                    beforeEach(function () {
+                        testPosition = 12321;
+                        mockSplitPane.position.andReturn(testPosition);
+                        mockSplitPane.anchor.andReturn({
+                            orientation: 'vertical',
+                            reversed: false
+                        });
+                        mockScope.splitter.startMove();
+                    });
+
+                    it("adds a 'resizing' class", function () {
+                        expect(mockSplitPane.toggleClass)
+                            .toHaveBeenCalledWith('resizing');
+                    });
+
+                    it("repositions during drag", function () {
+                        mockScope.splitter.move([ 10, 0 ]);
+                        expect(mockSplitPane.position)
+                            .toHaveBeenCalledWith(testPosition + 10);
+                    });
+
+                    it("removes the 'resizing' class when finished", function () {
+                        mockSplitPane.toggleClass.reset();
+                        mockScope.splitter.endMove();
+                        expect(mockSplitPane.toggleClass)
+                            .toHaveBeenCalledWith('resizing');
+                    });
+
+                });
             });
         });
     }
