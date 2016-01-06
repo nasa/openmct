@@ -51,7 +51,7 @@ define(
         };
 
         ClockIndicator.prototype.getGlyphClass = function () {
-            return "";
+            return "no-icon no-collapse float-right subtle";
         };
 
         ClockIndicator.prototype.getText = function () {
