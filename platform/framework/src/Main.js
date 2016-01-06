@@ -41,36 +41,41 @@ define(
     [
         'require',
         '../lib/es6-promise-2.0.0.min',
-        '../lib/angular.min',
-        '../lib/angular-route.min',
         './FrameworkLayer'
     ],
     function (
         require,
         es6promise,
-        angular,
-        angularRoute,
         FrameworkLayer
     ) {
         "use strict";
 
-        // Get a reference to Angular's injector, so we can get $http and $log
-        // services, which are useful to the framework layer.
-        var injector = angular.injector(['ng']);
-
-        // Look up log level from query string
-        function logLevel() {
-            var match = /[?&]log=([a-z]+)/.exec(window.location.search);
-            return match ? match[1] : "";
+        function Main(angular) {
+            this.angular = angular;
         }
 
-        // Polyfill Promise, in case browser does not natively provide Promise
-        window.Promise = window.Promise || es6promise.Promise;
+        Main.prototype.run = function () {
+            // Get a reference to Angular's injector, so we can get $http and $log
+            // services, which are useful to the framework layer.
+            var angular = this.angular,
+                injector = angular.injector(['ng']);
 
-        // Reconfigure base url, since bundle paths will all be relative
-        // to the root now.
-        requirejs.config({ "baseUrl": "" });
-        injector.instantiate(['$http', '$log', FrameworkLayer])
-            .initializeApplication(angular, logLevel());
+            // Look up log level from query string
+            function logLevel() {
+                var match = /[?&]log=([a-z]+)/.exec(window.location.search);
+                return match ? match[1] : "";
+            }
+
+            // Polyfill Promise, in case browser does not natively provide Promise
+            window.Promise = window.Promise || es6promise.Promise;
+
+            // Reconfigure base url, since bundle paths will all be relative
+            // to the root now.
+            requirejs.config({"baseUrl": ""});
+            injector.instantiate(['$http', '$log', FrameworkLayer])
+                .initializeApplication(angular, logLevel());
+        };
+
+        return Main;
     }
 );
