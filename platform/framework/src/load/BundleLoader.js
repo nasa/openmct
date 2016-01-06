@@ -44,9 +44,10 @@ define(
          * @param $http Angular's HTTP requester
          * @param $log Angular's logging service
          */
-        function BundleLoader($http, $log) {
+        function BundleLoader($http, $log, legacyRegistry) {
             this.$http = $http;
             this.$log = $log;
+            this.legacyRegistry = legacyRegistry;
         }
 
         /**
@@ -96,6 +97,13 @@ define(
             // Load an individual bundle, as a Bundle object.
             // Returns undefined if the definition could not be loaded.
             function loadBundle(bundlePath) {
+                if (this.legacyRegistry.contains(bundlePath)) {
+                    return Promise.resolve(new Bundle(
+                        bundlePath,
+                        this.legacyRegistry.get(bundlePath)
+                    ));
+                }
+
                 return loadBundleDefinition(bundlePath).then(function (definition) {
                     return definition && (new Bundle(bundlePath, definition));
                 });
@@ -104,7 +112,9 @@ define(
             // Load all named bundles from the array, returned as an array
             // of Bundle objects.
             function loadBundlesFromArray(bundleArray) {
-                var bundlePromises = bundleArray.map(loadBundle);
+                var bundlePromises = this.legacyRegistry.list()
+                    .concat(bundleArray)
+                    .map(loadBundle);
 
                 return Promise.all(bundlePromises)
                     .then(filterBundles);
@@ -117,8 +127,8 @@ define(
             }
 
             return Array.isArray(bundles) ? loadBundlesFromArray(bundles) :
-                (typeof bundles === 'string') ? loadBundlesFromFile(bundles) :
-                    Promise.reject(new Error(INVALID_ARGUMENT_MESSAGE));
+                    (typeof bundles === 'string') ? loadBundlesFromFile(bundles) :
+                            Promise.reject(new Error(INVALID_ARGUMENT_MESSAGE));
         };
 
         return BundleLoader;

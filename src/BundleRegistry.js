@@ -22,6 +22,8 @@
 /*global define*/
 
 define(function () {
+    'use strict';
+
     function BundleRegistry() {
         this.bundles = {};
     }
@@ -36,6 +38,10 @@ define(function () {
 
     BundleRegistry.prototype.get = function (path) {
         return this.bundles[path];
+    };
+
+    BundleRegistry.prototype.list = function () {
+        return Object.keys(this.bundles);
     };
 
     return BundleRegistry;

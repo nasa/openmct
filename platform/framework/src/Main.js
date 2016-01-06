@@ -56,7 +56,7 @@ define(
         function Main() {
         }
 
-        Main.prototype.run = function () {
+        Main.prototype.run = function (legacyRegistry) {
             // Get a reference to Angular's injector, so we can get $http and $log
             // services, which are useful to the framework layer.
             var injector = angular.injector(['ng']);
@@ -74,7 +74,7 @@ define(
             // to the root now.
             requirejs.config({"baseUrl": ""});
             injector.instantiate(['$http', '$log', FrameworkLayer])
-                .initializeApplication(angular, logLevel());
+                .initializeApplication(angular, legacyRegistry, logLevel());
         };
 
         return Main;

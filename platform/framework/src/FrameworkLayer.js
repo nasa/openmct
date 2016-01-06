@@ -55,11 +55,15 @@ define([
         this.$log = $log;
     }
 
-    FrameworkLayer.prototype.initializeApplication = function (angular, logLevel) {
+    FrameworkLayer.prototype.initializeApplication = function (
+        angular,
+        legacyRegistry,
+        logLevel
+    ) {
         var $http = this.$http,
             $log = this.$log,
             app = angular.module(Constants.MODULE_NAME, ["ngRoute"]),
-            loader = new BundleLoader($http, $log),
+            loader = new BundleLoader($http, $log, legacyRegistry),
             resolver = new BundleResolver(
                 new ExtensionResolver(
                     new ImplementationLoader(require),
