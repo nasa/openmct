@@ -43,36 +43,14 @@ define(
         '../lib/es6-promise-2.0.0.min',
         '../lib/angular.min',
         '../lib/angular-route.min',
-        './Constants',
-        './FrameworkInitializer',
-        './LogLevel',
-        './load/BundleLoader',
-        './resolve/ImplementationLoader',
-        './resolve/ExtensionResolver',
-        './resolve/BundleResolver',
-        './resolve/RequireConfigurator',
-        './register/CustomRegistrars',
-        './register/ExtensionRegistrar',
-        './register/ExtensionSorter',
-        './bootstrap/ApplicationBootstrapper'
+        './FrameworkLayer'
     ],
     function (
         require,
         es6promise,
         angular,
         angularRoute,
-        Constants,
-        FrameworkInitializer,
-        LogLevel,
-        BundleLoader,
-        ImplementationLoader,
-        ExtensionResolver,
-        BundleResolver,
-        RequireConfigurator,
-        CustomRegistrars,
-        ExtensionRegistrar,
-        ExtensionSorter,
-        ApplicationBootstrapper
+        FrameworkLayer
     ) {
         "use strict";
 
@@ -89,49 +67,10 @@ define(
         // Polyfill Promise, in case browser does not natively provide Promise
         window.Promise = window.Promise || es6promise.Promise;
 
-        // Wire up framework layer components necessary to complete framework
-        // initialization phases.
-        function initializeApplication($http, $log) {
-            var app = angular.module(Constants.MODULE_NAME, ["ngRoute"]),
-                loader = new BundleLoader($http, $log),
-                resolver = new BundleResolver(
-                    new ExtensionResolver(
-                        new ImplementationLoader(require),
-                        $log
-                    ),
-                    new RequireConfigurator(requirejs),
-                    $log
-                ),
-                registrar = new ExtensionRegistrar(
-                    app,
-                    new CustomRegistrars(app, $log),
-                    new ExtensionSorter($log),
-                    $log
-                ),
-                bootstrapper = new ApplicationBootstrapper(
-                    angular,
-                    window.document,
-                    $log
-                ),
-                initializer = new FrameworkInitializer(
-                    loader,
-                    resolver,
-                    registrar,
-                    bootstrapper
-                );
-
-            // Apply logging levels; this must be done now, before the
-            // first log statement.
-            new LogLevel(logLevel()).configure(app, $log);
-
-            // Initialize the application
-            $log.info("Initializing application.");
-            initializer.runApplication(Constants.BUNDLE_LISTING_FILE);
-        }
-
         // Reconfigure base url, since bundle paths will all be relative
         // to the root now.
         requirejs.config({ "baseUrl": "" });
-        injector.invoke(['$http', '$log', initializeApplication]);
+        injector.instantiate(['$http', '$log', FrameworkLayer])
+            .initializeApplication(angular, logLevel());
     }
 );

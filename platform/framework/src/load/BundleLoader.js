@@ -47,7 +47,6 @@ define(
         function BundleLoader($http, $log) {
             this.$http = $http;
             this.$log = $log;
-
         }
 
         /**
