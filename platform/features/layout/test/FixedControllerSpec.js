@@ -423,6 +423,95 @@ define(
                 // Style should have been updated
                 expect(controller.selected().style).not.toEqual(oldStyle);
             });
+
+            describe("on display bounds changes", function () {
+                var testBounds;
+
+                beforeEach(function () {
+                    testBounds = { start: 123, end: 321 };
+                    mockScope.domainObject = mockDomainObject;
+                    mockScope.model = testModel;
+                    findWatch("domainObject")(mockDomainObject);
+                    findWatch("model.modified")(testModel.modified);
+                    findWatch("model.composition")(mockScope.model.composition);
+                    findOn('telemetry:display:bounds')({}, testBounds);
+                });
+
+                it("issues new requests", function () {
+                    expect(mockHandle.request).toHaveBeenCalled();
+                });
+
+                it("requests only a single point", function () {
+                    expect(mockHandle.request.mostRecentCall.args[0].size)
+                        .toEqual(1);
+                });
+
+                describe("and after data has been received", function () {
+                    var mockSeries,
+                        testValue;
+
+                    beforeEach(function () {
+                        testValue = 12321;
+
+                        mockSeries = jasmine.createSpyObj('series', [
+                            'getPointCount',
+                            'getDomainValue',
+                            'getRangeValue'
+                        ]);
+                        mockSeries.getPointCount.andReturn(1);
+                        mockSeries.getRangeValue.andReturn(testValue);
+
+                        // Fire the callback associated with the request
+                        mockHandle.request.mostRecentCall.args[1](
+                            mockHandle.getTelemetryObjects()[0],
+                            mockSeries
+                        );
+                    });
+
+                    it("updates displayed values", function () {
+                        expect(controller.getElements()[0].value)
+                            .toEqual("Formatted " + testValue);
+                    });
+                });
+
+            });
+
+            it("reflects limit status", function () {
+                var elements;
+
+                mockHandle.getDatum.andReturn({});
+                mockHandle.getTelemetryObjects().forEach(function (mockObject) {
+                    var id = mockObject.getId(),
+                        mockLimitCapability =
+                            jasmine.createSpyObj('limit-' + id, ['evaluate']);
+
+                    mockObject.getCapability.andCallFake(function (key) {
+                        return (key === 'limit') && mockLimitCapability;
+                    });
+
+                    mockLimitCapability.evaluate
+                        .andReturn({ cssClass: 'alarm-' + id });
+                });
+
+                // Initialize
+                mockScope.domainObject = mockDomainObject;
+                mockScope.model = testModel;
+                findWatch("domainObject")(mockDomainObject);
+                findWatch("model.modified")(1);
+                findWatch("model.composition")(mockScope.model.composition);
+
+                // Invoke the subscription callback
+                mockHandler.handle.mostRecentCall.args[1]();
+
+                // Get elements that controller is now exposing
+                elements = controller.getElements();
+
+                // Limit-based CSS classes should be available
+                expect(elements[0].cssClass).toEqual("alarm-a");
+                expect(elements[1].cssClass).toEqual("alarm-b");
+                expect(elements[2].cssClass).toEqual("alarm-c");
+            });
+
         });
     }
 );
