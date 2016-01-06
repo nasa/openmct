@@ -39,10 +39,8 @@ requirejs.config({
 
 define([
     './platform/framework/src/Main',
-    'legacyRegistry',
-    "angular",
-    "angular-route"
-], function (Main, legacyRegistry, angular) {
+    'legacyRegistry'
+], function (Main, legacyRegistry) {
     'use strict';
-    new Main(angular).run(legacyRegistry);
+    new Main().run(legacyRegistry);
 });

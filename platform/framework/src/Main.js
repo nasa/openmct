@@ -41,24 +41,25 @@ define(
     [
         'require',
         '../lib/es6-promise-2.0.0.min',
-        './FrameworkLayer'
+        './FrameworkLayer',
+        'angular',
+        'angular-route'
     ],
     function (
         require,
         es6promise,
-        FrameworkLayer
+        FrameworkLayer,
+        angular
     ) {
         "use strict";
 
-        function Main(angular) {
-            this.angular = angular;
+        function Main() {
         }
 
         Main.prototype.run = function () {
             // Get a reference to Angular's injector, so we can get $http and $log
             // services, which are useful to the framework layer.
-            var angular = this.angular,
-                injector = angular.injector(['ng']);
+            var injector = angular.injector(['ng']);
 
             // Look up log level from query string
             function logLevel() {
