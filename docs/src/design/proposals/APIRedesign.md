@@ -1179,3 +1179,104 @@ changing mappings in a mobile context.
 ### Detriments
 
 * Increases number of interfaces.
+
+# Decisions
+
+After review on Dec. 8, 2015, team consensus on these proposals is
+as follows:
+
+Proposal | @VWoeltjen | @larkin | @akhenry | Consensus
+----|:---:|:---:|:---:|:---:
+RequireJS as dependency injector | :-1: | :neutral_face: :question:  | [:-1:](https://github.com/nasa/openmctweb/pull/69#discussion_r44349731) | :question:
+Arbitrary HTML Views | :+1: | :+1: | | :+1: <sup>1</sup>
+Wrap Angular Services | :-1: | [:-1:](https://github.com/nasa/openmctweb/pull/69#discussion_r43801221) | [:-1:](https://github.com/nasa/openmctweb/pull/69#discussion_r44355057) | :no_entry_sign:
+Bundle Declarations in JavaScript | :+1: | :neutral_face: :question:  | | :+1:
+Pass around a dependency injector | :-1: | :-1:  | | :-1:
+Remove partial constructors | :+1: | :+1:  | | :+1:
+Rename Views to ~~Applications~~ | :+1: | :neutral_face: :question: | | :+1: <sup>2</sup>
+Provide Classes for Extensions | :+1: | :+1: | | :+1:
+Normalize naming conventions | :+1: | :+1: | | :+1:
+Expose no third-party APIs | :+1: &ast; | [:-1:](https://github.com/nasa/openmctweb/pull/69#discussion_r43801221) | [:+1:](https://github.com/nasa/openmctweb/pull/69#discussion_r43801221) &dagger; | :+1: <sup>3</sup>
+Register Extensions as Instances instead of Constructors | :+1: | :-1: | | :+1:
+Remove capability delegation | :+1: | :+1: | | :+1:
+Nomenclature Change | :+1: | [:+1:](https://github.com/nasa/openmctweb/issues/229#issuecomment-153453035) | | :white_check_mark: &Dagger;
+Capabilities as Mixins | | :+1: | [:+1:](https://github.com/nasa/openmctweb/pull/69#discussion_r44355473) | :question: <sup>4</sup>
+Remove Applies-To Methods | | :-1: | | :-1:
+Revise Telemetry API | :+1: | :+1: | | :+1: <sup>5</sup>
+Allow Composite Services to Fail Gracefully | :+1: | :-1: | | :+1: <sup>6</sup>
+Plugins as Angular Modules | :+1: | :neutral_face: :question:  | | :question:
+Contextual Injection | | :-1: | | :question:
+Add new abstractions for actions | [:-1:](https://github.com/nasa/openmctweb/pull/69#issuecomment-158172485) :question:  | :+1: | | :-1:
+Add gesture handlers | :+1: | :+1: :question:  | | :+1:
+
+&ast; Excepting Angular APIs. Internally, continue to use code style
+where classes are declared separately from their registration, such
+that ubiquity of Angular dependency is minimized.
+
+&dagger; "I think we should limit the third party APIs we expose to
+one or two, but I worry it might be counterproductive to
+completely hide them."
+
+&Dagger; Some ambiguity about what to call ourselves if not a platform,
+but general agreement that "platform" is not a good term.
+More Detail on Pete's Opinions Here:
+https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign_PeteRichards.md#notes-on-current-api-proposals
+
+<sup>1</sup> Needs to be designed carefully; don't want to do this with
+a complicated interface, needs to be significantly simpler than wrapping
+with an Angular directive would be.
+
+<sup>2</sup> Agree that we need a new name, but it should not be "application"
+
+<sup>3</sup> Don't want to expose (or require usage of) third-party
+APIs generally. Angular may be an exception in the sense that it is an
+API we presume to be present. Can use third-party APIs internally, but
+don't want to support them or be tied to them.
+
+<sup>4</sup> Want to have a separate spin-off discussion about
+capabilities. Want to consider several alternatives here.
+At minimum, though, mixins would be an improvement relative
+to how these are currently handled.
+
+<sup>5</sup> Agree we want to revise APIs, but this should
+be a larger spin-off.
+
+<sup>6</sup> Not necessarily as described, but expected to be a
+property of composite services in whatever formulation they
+take. Should not be default behavior.
+
+
+[Additional proposals](APIRedesign_PeteRichards.md) considered:
+
+Proposal | Consensus
+------|------
+Imperative component registries | :+1:
+Get rid of "extension category" concept. | :+1:
+Reduce number and depth of extension points | :+1:
+Composite services should not be the default | :question:
+Get rid of views, representations, and templates. | :+1: <sup>1</sup>
+More angular: for all services | :question:
+Less angular: only for views | :question:
+Use systemjs for module loading | :+1: <sup>2</sup>
+Use gulp or grunt for standard tooling | :+1:
+Package openmctweb as single versioned file. | :+1:
+Refresh on navigation | :+1: <sup>3</sup>
+Move persistence adapter to promise rejection. | :+1:
+Remove bulk requests from providers | :+1: <sup>4</sup>
+
+<sup>1</sup> Need to agree upon details at design-time, but
+basic premise is agreed-upon - want to replace
+views/representations/templates with a common abstraction
+(and hoist out the non-commonalities to other places as appropriate)
+
+<sup>2</sup> Beneficial but not strictly necessary (may be
+lower-effort alternatives); should prioritize accordingly during planning
+
+<sup>3</sup> Some effort will be required to make all of the state
+that needs to persist among route changes actually be persistent.
+Will want to address this at design-time (will want to look at
+libraries to simplify this, for instance)
+
+<sup>4</sup> Maybe not all providers, but anywhere there is not a
+strong case for building batching into the API we should prefer
+simplicity. (Want to pay specific attention to telemetry here.)
