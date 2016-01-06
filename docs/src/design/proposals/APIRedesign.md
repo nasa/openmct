@@ -1187,27 +1187,27 @@ as follows:
 
 Proposal | @VWoeltjen | @larkin | @akhenry | Consensus
 ----|:---:|:---:|:---:|:---:
-RequireJS as dependency injector | :-1: | :neutral_face: :question:  | [:-1:](https://github.com/nasa/openmctweb/pull/69#discussion_r44349731) | :question:
-Arbitrary HTML Views | :+1: | :+1: | | :+1: <sup>1</sup>
+RequireJS as dependency injector | :-1: | :neutral_face: :question:  | [:-1:](https://github.com/nasa/openmctweb/pull/69#discussion_r44349731) | [:question:](https://github.com/nasa/openmctweb/issues/461)
+Arbitrary HTML Views | :+1: | :+1: | | [:+1: <sup>1</sup>](https://github.com/nasa/openmctweb/issues/463)
 Wrap Angular Services | :-1: | [:-1:](https://github.com/nasa/openmctweb/pull/69#discussion_r43801221) | [:-1:](https://github.com/nasa/openmctweb/pull/69#discussion_r44355057) | :no_entry_sign:
-Bundle Declarations in JavaScript | :+1: | :neutral_face: :question:  | | :+1:
+Bundle Declarations in JavaScript | :+1: | :neutral_face: :question:  | | [:+1:](https://github.com/nasa/openmctweb/issues/450)
 Pass around a dependency injector | :-1: | :-1:  | | :-1:
-Remove partial constructors | :+1: | :+1:  | | :+1:
-Rename Views to ~~Applications~~ | :+1: | :neutral_face: :question: | | :+1: <sup>2</sup>
-Provide Classes for Extensions | :+1: | :+1: | | :+1:
+Remove partial constructors | :+1: | :+1:  | | [:+1:](https://github.com/nasa/openmctweb/issues/462)
+Rename Views to ~~Applications~~ | :+1: | :neutral_face: :question: | | [:+1: <sup>2</sup>](https://github.com/nasa/openmctweb/issues/463)
+Provide Classes for Extensions | :+1: | :+1: | | [:+1:](https://github.com/nasa/openmctweb/issues/462)
 Normalize naming conventions | :+1: | :+1: | | :+1:
 Expose no third-party APIs | :+1: &ast; | [:-1:](https://github.com/nasa/openmctweb/pull/69#discussion_r43801221) | [:+1:](https://github.com/nasa/openmctweb/pull/69#discussion_r43801221) &dagger; | :+1: <sup>3</sup>
-Register Extensions as Instances instead of Constructors | :+1: | :-1: | | :+1:
-Remove capability delegation | :+1: | :+1: | | :+1:
+Register Extensions as Instances instead of Constructors | :+1: | :-1: | | [:+1:](https://github.com/nasa/openmctweb/issues/462)
+Remove capability delegation | :+1: | :+1: | | [:+1:](https://github.com/nasa/openmctweb/issues/463)
 Nomenclature Change | :+1: | [:+1:](https://github.com/nasa/openmctweb/issues/229#issuecomment-153453035) | | :white_check_mark: &Dagger;
-Capabilities as Mixins | | :+1: | [:+1:](https://github.com/nasa/openmctweb/pull/69#discussion_r44355473) | :question: <sup>4</sup>
+Capabilities as Mixins | | :+1: | [:+1:](https://github.com/nasa/openmctweb/pull/69#discussion_r44355473) | [:question: <sup>4</sup>](https://github.com/nasa/openmctweb/issues/463)
 Remove Applies-To Methods | | :-1: | | :-1:
-Revise Telemetry API | :+1: | :+1: | | :+1: <sup>5</sup>
-Allow Composite Services to Fail Gracefully | :+1: | :-1: | | :+1: <sup>6</sup>
-Plugins as Angular Modules | :+1: | :neutral_face: :question:  | | :question:
-Contextual Injection | | :-1: | | :question:
+Revise Telemetry API | :+1: | :+1: | | [:+1: <sup>5</sup>](https://github.com/nasa/openmctweb/issues/463)
+Allow Composite Services to Fail Gracefully | :+1: | :-1: | | [:+1: <sup>6</sup>](https://github.com/nasa/openmctweb/issues/463)
+Plugins as Angular Modules | :+1: | :neutral_face: :question:  | | [:question:](https://github.com/nasa/openmctweb/issues/461)
+Contextual Injection | | :-1: | | [:question:](https://github.com/nasa/openmctweb/issues/461)
 Add new abstractions for actions | [:-1:](https://github.com/nasa/openmctweb/pull/69#issuecomment-158172485) :question:  | :+1: | | :-1:
-Add gesture handlers | :+1: | :+1: :question:  | | :+1:
+Add gesture handlers | :+1: | :+1: :question:  | | [:+1:](https://github.com/nasa/openmctweb/issues/463)
 
 &ast; Excepting Angular APIs. Internally, continue to use code style
 where classes are declared separately from their registration, such
@@ -1250,19 +1250,19 @@ take. Should not be default behavior.
 
 Proposal | Consensus
 ------|------
-Imperative component registries | :+1:
-Get rid of "extension category" concept. | :+1:
+Imperitive component registries | [:+1:](https://github.com/nasa/openmctweb/issues/462)
+Get rid of "extension category" concept. | [:+1:](https://github.com/nasa/openmctweb/issues/462)
 Reduce number and depth of extension points | :+1:
-Composite services should not be the default | :question:
-Get rid of views, representations, and templates. | :+1: <sup>1</sup>
-More angular: for all services | :question:
-Less angular: only for views | :question:
-Use systemjs for module loading | :+1: <sup>2</sup>
-Use gulp or grunt for standard tooling | :+1:
-Package openmctweb as single versioned file. | :+1:
-Refresh on navigation | :+1: <sup>3</sup>
-Move persistence adapter to promise rejection. | :+1:
-Remove bulk requests from providers | :+1: <sup>4</sup>
+Composite services should not be the default | [:question:](https://github.com/nasa/openmctweb/issues/463)
+Get rid of views, representations, and templates. | [:+1: <sup>1</sup>](https://github.com/nasa/openmctweb/issues/463)
+More angular: for all services | [:question:](https://github.com/nasa/openmctweb/issues/461)
+Less angular: only for views | [:question:](https://github.com/nasa/openmctweb/issues/461)
+Use systemjs for module loading | [:+1: <sup>2</sup>](https://github.com/nasa/openmctweb/issues/459)
+Use gulp or grunt for standard tooling | [:+1:](https://github.com/nasa/openmctweb/issues/459)
+Package openmctweb as single versioned file. | [:+1:](https://github.com/nasa/openmctweb/issues/458)
+Refresh on navigation | [:+1: <sup>3</sup>](https://github.com/nasa/openmctweb/issues/463)
+Move persistence adapter to promise rejection. | [:+1:](https://github.com/nasa/openmctweb/issues/463)
+Remove bulk requests from providers | [:+1: <sup>4</sup>](https://github.com/nasa/openmctweb/issues/463)
 
 <sup>1</sup> Need to agree upon details at design-time, but
 basic premise is agreed-upon - want to replace
