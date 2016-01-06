@@ -34,14 +34,14 @@ define(
                 mockElement,
                 testAttrs,
                 mockBody,
-                mockParentEl,
+                mockPlainEl,
                 testRect,
                 mctClickElsewhere;
 
             function testEvent(x, y) {
                 return {
-                    pageX: x,
-                    pageY: y,
+                    clientX: x,
+                    clientY: y,
                     preventDefault: jasmine.createSpy("preventDefault")
                 };
             }
@@ -55,8 +55,8 @@ define(
                     jasmine.createSpyObj("element", JQLITE_METHODS);
                 mockBody =
                     jasmine.createSpyObj("body", JQLITE_METHODS);
-                mockParentEl =
-                    jasmine.createSpyObj("parent", ["getBoundingClientRect"]);
+                mockPlainEl =
+                    jasmine.createSpyObj("htmlElement", ["getBoundingClientRect"]);
 
                 testAttrs = {
                     mctClickElsewhere: "some Angular expression"
@@ -67,6 +67,8 @@ define(
                     width: 60,
                     height: 75
                 };
+                mockElement[0] = mockPlainEl;
+                mockPlainEl.getBoundingClientRect.andReturn(testRect);
 
                 mockDocument.find.andReturn(mockBody);
 
@@ -78,6 +80,49 @@ define(
                 expect(mctClickElsewhere.restrict).toEqual("A");
             });
 
+            it("detaches listeners when destroyed", function () {
+                expect(mockBody.off).not.toHaveBeenCalled();
+                mockScope.$on.calls.forEach(function (call) {
+                    if (call.args[0] === '$destroy') {
+                        call.args[1]();
+                    }
+                });
+                expect(mockBody.off).toHaveBeenCalled();
+                expect(mockBody.off.mostRecentCall.args)
+                    .toEqual(mockBody.on.mostRecentCall.args);
+            });
+
+            it("listens for mousedown on the document's body", function () {
+                expect(mockBody.on)
+                    .toHaveBeenCalledWith('mousedown', jasmine.any(Function));
+            });
+
+            describe("when a click occurs outside the element's bounds", function () {
+                beforeEach(function () {
+                    mockBody.on.mostRecentCall.args[1](testEvent(
+                        testRect.left + testRect.width + 10,
+                        testRect.top + testRect.height + 10
+                    ));
+                });
+
+                it("triggers an evaluation of its related Angular expression", function () {
+                    expect(mockScope.$eval)
+                        .toHaveBeenCalledWith(testAttrs.mctClickElsewhere);
+                });
+            });
+
+            describe("when a click occurs within the element's bounds", function () {
+                beforeEach(function () {
+                    mockBody.on.mostRecentCall.args[1](testEvent(
+                        testRect.left + testRect.width / 2,
+                        testRect.top + testRect.height / 2
+                    ));
+                });
+
+                it("triggers no evaluation", function () {
+                    expect(mockScope.$eval).not.toHaveBeenCalled();
+                });
+            });
 
         });
     }
