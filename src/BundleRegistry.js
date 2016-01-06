@@ -19,8 +19,24 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define, window, requirejs*/
+/*global define*/
 
 define(function () {
-    return {};
+    function BundleRegistry() {
+        this.bundles = {};
+    }
+
+    BundleRegistry.prototype.registry = function (path, definition) {
+        this.bundles[path] = definition;
+    };
+
+    BundleRegistry.prototype.contains = function (path) {
+        return !!this.bundles[path];
+    };
+
+    BundleRegistry.prototype.get = function (path) {
+        return this.bundles[path];
+    };
+
+    return BundleRegistry;
 });

@@ -21,28 +21,7 @@
  *****************************************************************************/
 /*global define, window, requirejs*/
 
-requirejs.config({
-    "paths": {
-        "legacyRegistry": "./src/legacyRegistry",
-        "angular": "./platform/framework/lib/angular.min",
-        "angular-route": "./platform/framework/lib/angular-route.min"
-    },
-    "shim": {
-        "angular": {
-            "exports": "angular"
-        },
-        "angular-route": {
-            "deps": [ "angular" ]
-        }
-    }
-});
-
-define([
-    './platform/framework/src/Main',
-    'legacyRegistry',
-    "angular",
-    "angular-route"
-], function (Main, legacyRegistry, angular) {
+define(['./BundleRegistry'], function (BundleRegistry) {
     'use strict';
-    new Main(angular).run(legacyRegistry);
+    return new BundleRegistry();
 });
