@@ -112,6 +112,18 @@ define(
                 });
 
                 it("exposes times to populate calendar as a table", function () {
+                    // Verify that data structure is as expected by template
+                    expect(mockScope.table).toEqual(jasmine.any(Array));
+                    expect(mockScope.table[0]).toEqual(jasmine.any(Array));
+                    expect(mockScope.table[0][0]).toEqual({
+                        year: jasmine.any(Number),
+                        month: jasmine.any(Number),
+                        day: jasmine.any(Number),
+                        dayOfYear: jasmine.any(Number)
+                    });
+                });
+
+                it("contains the current date in its initial table", function () {
                     var matchingCell;
                     // Should be able to find the selected date
                     mockScope.table.forEach(function (row) {
