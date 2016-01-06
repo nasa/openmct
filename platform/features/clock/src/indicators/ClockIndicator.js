@@ -28,31 +28,39 @@ define(
 
         /**
          * Indicator that displays the current UTC time in the status area.
-         * @implements Indicator
+         * @implements {Indicator}
+         * @memberof platform/features/clock
+         * @param {platform/features/clock.TickerService} tickerService
+         *        a service used to align behavior with clock ticks
+         * @param {string} indicatorFormat format string for timestamps
+         *        shown in this indicator
          */
-        function ClockIndicator(tickerService, CLOCK_INDICATOR_FORMAT) {
-            var text = "";
+        function ClockIndicator(tickerService, indicatorFormat) {
+            var self = this;
+
+            this.text = "";
 
             tickerService.listen(function (timestamp) {
-                text = moment.utc(timestamp).format(CLOCK_INDICATOR_FORMAT) + " UTC";
+                self.text = moment.utc(timestamp)
+                    .format(indicatorFormat) + " UTC";
             });
-
-            return {
-                getGlyph: function () {
-                    return "C";
-                },
-                getGlyphClass: function () {
-                    return "no-icon no-collapse float-right subtle";
-                },
-                getText: function () {
-                    return text;
-                },
-                getDescription: function () {
-                    return "";
-                }
-            };
-
         }
+
+        ClockIndicator.prototype.getGlyph = function () {
+            return "C";
+        };
+
+        ClockIndicator.prototype.getGlyphClass = function () {
+            return "no-icon no-collapse float-right subtle";
+        };
+
+        ClockIndicator.prototype.getText = function () {
+            return this.text;
+        };
+
+        ClockIndicator.prototype.getDescription = function () {
+            return "";
+        };
 
         return ClockIndicator;
     }
