@@ -21,5 +21,14 @@
  *****************************************************************************/
 /*global define*/
 
-define(['legacyRegistry'], function (legacyRegistry) {
+define([
+    <%= implPaths %>
+    'legacyRegistry'
+], function (
+    <%= implNames %>
+    legacyRegistry
+) {
     "use strict";
+
+    legacyRegistry.register("<%= bundleName %>", <%= bundleContents %>);
+});
