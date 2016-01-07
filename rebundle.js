@@ -7,7 +7,9 @@ var glob = require('glob'),
 
 function indent(str) {
     return str.split('\n').map(function (line, index) {
-        return index === 0 ? line : ('        ' + line);
+        return index === 0 ? line : ('    ' + line);
+    }).filter(function (line) {
+        return line.trim().length > 0;
     }).join('\n');
 }
 
@@ -17,7 +19,7 @@ function rebundle(file) {
         outputFile = file.replace(".json", ".js"),
         contents = [
             header,
-            "legacyRegistry.register(\"",
+            "    legacyRegistry.register(\"",
             bundleName,
             "\", ",
             indent(plainJson),
