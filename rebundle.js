@@ -16,7 +16,12 @@ function indent(str, depth) {
 
 function findImpls(bundleContents) {
     return _(bundleContents.extensions || {})
-        .map().flatten().pluck('implementation').filter().value();
+        .map()
+        .flatten()
+        .pluck('implementation')
+        .filter()
+        .uniq()
+        .value();
 }
 
 function toIdentifier(impl) {
