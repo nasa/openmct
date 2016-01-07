@@ -19,12 +19,41 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
+/*global define*/
 
 define([
-    'legacyRegistry',
-    './src/BrowseController'
-], function (legacyRegistry, BrowseController) {
+    "./src/BrowseController",
+    "./src/PaneController",
+    "./src/BrowseObjectController",
+    "./src/creation/CreateMenuController",
+    "./src/creation/LocatorController",
+    "./src/MenuArrowController",
+    "./src/navigation/NavigationService",
+    "./src/creation/CreationPolicy",
+    "./src/navigation/NavigateAction",
+    "./src/windowing/NewTabAction",
+    "./src/windowing/FullscreenAction",
+    "./src/creation/CreateActionProvider",
+    "./src/creation/CreationService",
+    "./src/windowing/WindowTitler",
+    'legacyRegistry'
+], function (
+    BrowseController,
+    PaneController,
+    BrowseObjectController,
+    CreateMenuController,
+    LocatorController,
+    MenuArrowController,
+    NavigationService,
+    CreationPolicy,
+    NavigateAction,
+    NewTabAction,
+    FullscreenAction,
+    CreateActionProvider,
+    CreationService,
+    WindowTitler,
+    legacyRegistry
+) {
     "use strict";
 
     legacyRegistry.register("platform/commonUI/browse", {
@@ -56,29 +85,44 @@ define([
                 },
                 {
                     "key": "PaneController",
-                    "implementation": "PaneController.js",
+                    "implementation": PaneController,
                     "priority": "preferred",
-                    "depends": [ "$scope", "agentService", "$window" ]
+                    "depends": [
+                        "$scope",
+                        "agentService",
+                        "$window"
+                    ]
                 },
                 {
                     "key": "BrowseObjectController",
-                    "implementation": "BrowseObjectController.js",
-                    "depends": [ "$scope", "$location", "$route" ]
+                    "implementation": BrowseObjectController,
+                    "depends": [
+                        "$scope",
+                        "$location",
+                        "$route"
+                    ]
                 },
                 {
                     "key": "CreateMenuController",
-                    "implementation": "creation/CreateMenuController.js",
-                    "depends": [ "$scope" ]
+                    "implementation": CreateMenuController,
+                    "depends": [
+                        "$scope"
+                    ]
                 },
                 {
                     "key": "LocatorController",
-                    "implementation": "creation/LocatorController.js",
-                    "depends": [ "$scope", "$timeout" ]
+                    "implementation": LocatorController,
+                    "depends": [
+                        "$scope",
+                        "$timeout"
+                    ]
                 },
                 {
                     "key": "MenuArrowController",
-                    "implementation": "MenuArrowController.js",
-                    "depends": [ "$scope" ]
+                    "implementation": MenuArrowController,
+                    "depends": [
+                        "$scope"
+                    ]
                 }
             ],
             "controls": [
@@ -91,7 +135,9 @@ define([
                 {
                     "key": "browse-object",
                     "templateUrl": "templates/browse-object.html",
-                    "uses": [ "view" ]
+                    "uses": [
+                        "view"
+                    ]
                 },
                 {
                     "key": "create-button",
@@ -100,63 +146,89 @@ define([
                 {
                     "key": "create-menu",
                     "templateUrl": "templates/create/create-menu.html",
-                    "uses": [ "action" ]
+                    "uses": [
+                        "action"
+                    ]
                 },
                 {
                     "key": "grid-item",
                     "templateUrl": "templates/items/grid-item.html",
-                    "uses": [ "type", "action", "location" ],
-                    "gestures": [ "info", "menu" ]
+                    "uses": [
+                        "type",
+                        "action",
+                        "location"
+                    ],
+                    "gestures": [
+                        "info",
+                        "menu"
+                    ]
                 },
                 {
                     "key": "object-header",
                     "templateUrl": "templates/browse/object-header.html",
-                    "uses": [ "type" ]
+                    "uses": [
+                        "type"
+                    ]
                 },
                 {
                     "key": "menu-arrow",
                     "templateUrl": "templates/menu-arrow.html",
-                    "uses": [ "action" ],
-                    "gestures": [ "menu" ]
+                    "uses": [
+                        "action"
+                    ],
+                    "gestures": [
+                        "menu"
+                    ]
                 },
                 {
                     "key": "back-arrow",
-                    "uses": [ "context" ],
+                    "uses": [
+                        "context"
+                    ],
                     "templateUrl": "templates/back-arrow.html"
                 }
             ],
             "services": [
                 {
                     "key": "navigationService",
-                    "implementation": "navigation/NavigationService.js"
+                    "implementation": NavigationService
                 }
             ],
             "policies": [
                 {
-                    "implementation": "creation/CreationPolicy.js",
+                    "implementation": CreationPolicy,
                     "category": "creation"
                 }
             ],
             "actions": [
                 {
                     "key": "navigate",
-                    "implementation": "navigation/NavigateAction.js",
-                    "depends": [ "navigationService", "$q" ]
+                    "implementation": NavigateAction,
+                    "depends": [
+                        "navigationService",
+                        "$q"
+                    ]
                 },
                 {
                     "key": "window",
                     "name": "Open In New Tab",
-                    "implementation": "windowing/NewTabAction.js",
+                    "implementation": NewTabAction,
                     "description": "Open in a new browser tab",
-                    "category": ["view-control", "contextual"],
-                    "depends": [ "urlService", "$window" ],
+                    "category": [
+                        "view-control",
+                        "contextual"
+                    ],
+                    "depends": [
+                        "urlService",
+                        "$window"
+                    ],
                     "group": "windowing",
                     "glyph": "y",
                     "priority": "preferred"
                 },
                 {
                     "key": "fullscreen",
-                    "implementation": "windowing/FullscreenAction.js",
+                    "implementation": FullscreenAction,
                     "category": "view-control",
                     "group": "windowing",
                     "glyph": "z",
@@ -170,8 +242,12 @@ define([
                     "glyph": "9",
                     "description": "Grid of available items",
                     "templateUrl": "templates/items/items.html",
-                    "uses": [ "composition" ],
-                    "gestures": [ "drop" ],
+                    "uses": [
+                        "composition"
+                    ],
+                    "gestures": [
+                        "drop"
+                    ],
                     "type": "folder",
                     "editable": false
                 }
@@ -181,21 +257,33 @@ define([
                     "key": "CreateActionProvider",
                     "provides": "actionService",
                     "type": "provider",
-                    "implementation": "creation/CreateActionProvider.js",
-                    "depends": [ "typeService", "dialogService", "creationService", "policyService" ]
+                    "implementation": CreateActionProvider,
+                    "depends": [
+                        "typeService",
+                        "dialogService",
+                        "creationService",
+                        "policyService"
+                    ]
                 },
                 {
                     "key": "CreationService",
                     "provides": "creationService",
                     "type": "provider",
-                    "implementation": "creation/CreationService.js",
-                    "depends": [ "$q", "$log" ]
+                    "implementation": CreationService,
+                    "depends": [
+                        "$q",
+                        "$log"
+                    ]
                 }
             ],
             "runs": [
                 {
-                    "implementation": "windowing/WindowTitler.js",
-                    "depends": [ "navigationService", "$rootScope", "$document" ]
+                    "implementation": WindowTitler,
+                    "depends": [
+                        "navigationService",
+                        "$rootScope",
+                        "$document"
+                    ]
                 }
             ],
             "licenses": [
