@@ -21,17 +21,6 @@
  *****************************************************************************/
 /*global define, window, requirejs*/
 
-requirejs.config({
-    "shim": {
-        "../lib/angular.min": {
-            "exports": "angular"
-        },
-        "../lib/angular-route.min": {
-            "deps": [ "../lib/angular.min" ]
-        }
-    }
-});
-
 /**
  * Implements the framework layer, which handles the loading of bundles
  * and the wiring-together of the extensions they expose.
