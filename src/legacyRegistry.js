@@ -21,7 +21,7 @@
  *****************************************************************************/
 /*global define, window, requirejs*/
 
-define(['./BundleRegistry'], function (BundleRegistry) {
+define(['src/BundleRegistry'], function (BundleRegistry) {
     'use strict';
     return new BundleRegistry();
 });

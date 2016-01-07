@@ -60,7 +60,8 @@ define(
          */
         BundleLoader.prototype.loadBundles = function (bundles) {
             var $http = this.$http,
-                $log = this.$log;
+                $log = this.$log,
+                legacyRegistry = this.legacyRegistry;
 
             // Utility function; load contents of JSON file using $http
             function getJSON(file) {
@@ -97,10 +98,10 @@ define(
             // Load an individual bundle, as a Bundle object.
             // Returns undefined if the definition could not be loaded.
             function loadBundle(bundlePath) {
-                if (this.legacyRegistry.contains(bundlePath)) {
+                if (legacyRegistry.contains(bundlePath)) {
                     return Promise.resolve(new Bundle(
                         bundlePath,
-                        this.legacyRegistry.get(bundlePath)
+                        legacyRegistry.get(bundlePath)
                     ));
                 }
 
@@ -109,11 +110,17 @@ define(
                 });
             }
 
+            // Used to filter out redundant bundles
+            function unique(element, index, array) {
+                return array.indexOf(element) === index;
+            }
+
             // Load all named bundles from the array, returned as an array
             // of Bundle objects.
             function loadBundlesFromArray(bundleArray) {
-                var bundlePromises = this.legacyRegistry.list()
+                var bundlePromises = legacyRegistry.list()
                     .concat(bundleArray)
+                    .filter(unique)
                     .map(loadBundle);
 
                 return Promise.all(bundlePromises)
