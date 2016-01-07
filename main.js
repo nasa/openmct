@@ -39,7 +39,8 @@ requirejs.config({
 
 define([
     './platform/framework/src/Main',
-    'legacyRegistry'
+    'legacyRegistry',
+    './platform/commonUI/browse/bundle'
 ], function (Main, legacyRegistry) {
     'use strict';
     new Main().run(legacyRegistry);

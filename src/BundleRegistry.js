@@ -28,7 +28,7 @@ define(function () {
         this.bundles = {};
     }
 
-    BundleRegistry.prototype.registry = function (path, definition) {
+    BundleRegistry.prototype.register = function (path, definition) {
         this.bundles[path] = definition;
     };
 
