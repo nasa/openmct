@@ -40,7 +40,44 @@ requirejs.config({
 define([
     './platform/framework/src/Main',
     'legacyRegistry',
-    './platform/commonUI/browse/bundle'
+
+    './platform/framework/bundle',
+    './platform/core/bundle',
+    './platform/representation/bundle',
+    './platform/commonUI/about/bundle',
+    './platform/commonUI/browse/bundle',
+    './platform/commonUI/edit/bundle',
+    './platform/commonUI/dialog/bundle',
+    './platform/commonUI/formats/bundle',
+    './platform/commonUI/general/bundle',
+    './platform/commonUI/inspect/bundle',
+    './platform/commonUI/mobile/bundle',
+    './platform/commonUI/themes/espresso/bundle',
+    './platform/commonUI/notification/bundle',
+    './platform/containment/bundle',
+    './platform/execution/bundle',
+    './platform/telemetry/bundle',
+    './platform/features/clock/bundle',
+    './platform/features/events/bundle',
+    './platform/features/imagery/bundle',
+    './platform/features/layout/bundle',
+    './platform/features/pages/bundle',
+    './platform/features/plot/bundle',
+    './platform/features/scrolling/bundle',
+    './platform/features/timeline/bundle',
+    './platform/forms/bundle',
+    './platform/identity/bundle',
+    './platform/persistence/aggregator/bundle',
+    './platform/persistence/local/bundle',
+    './platform/persistence/queue/bundle',
+    './platform/policy/bundle',
+    './platform/entanglement/bundle',
+    './platform/search/bundle',
+    './platform/status/bundle',
+
+    './example/imagery/bundle',
+    './example/eventGenerator/bundle',
+    './example/generator/bundle'
 ], function (Main, legacyRegistry) {
     'use strict';
     new Main().run(legacyRegistry);
