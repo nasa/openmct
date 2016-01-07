@@ -61,10 +61,10 @@ define(
                 $log = this.$log;
 
             function loadImplementation(extension) {
-                var implValue = extension.getImplementationPath(),
-                    implPromise = (typeof implValue === 'string') ?
-                            loader.load(implValue) :
-                            Promise.resolve(implValue),
+                var implPath = extension.getImplementationPath(),
+                    implPromise = extension.hasImplementationValue() ?
+                            Promise.resolve(extension.getImplementationValue()) :
+                            loader.load(implPath),
                     definition = extension.getDefinition();
 
                 // Wrap a constructor function (to avoid modifying the original)
@@ -122,7 +122,7 @@ define(
                 // Log that loading has begun
                 $log.info([
                     "Loading implementation ",
-                    implValue,
+                    implPath,
                     " for extension ",
                     extension.getLogName()
                 ].join(""));

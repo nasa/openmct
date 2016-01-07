@@ -21,7 +21,10 @@
  *****************************************************************************/
 /*global define,Promise*/
 
-define(['legacyRegistry'], function (legacyRegistry) {
+define([
+    'legacyRegistry',
+    './src/BrowseController'
+], function (legacyRegistry, BrowseController) {
     "use strict";
 
     legacyRegistry.register("platform/commonUI/browse", {
@@ -41,7 +44,7 @@ define(['legacyRegistry'], function (legacyRegistry) {
             "controllers": [
                 {
                     "key": "BrowseController",
-                    "implementation": "BrowseController.js",
+                    "implementation": BrowseController,
                     "depends": [
                         "$scope",
                         "$route",
@@ -55,7 +58,7 @@ define(['legacyRegistry'], function (legacyRegistry) {
                     "key": "PaneController",
                     "implementation": "PaneController.js",
                     "priority": "preferred",
-                    "depends": [ "$scope", "agentService","$window" ]
+                    "depends": [ "$scope", "agentService", "$window" ]
                 },
                 {
                     "key": "BrowseObjectController",

@@ -134,8 +134,28 @@ define(
          */
         Extension.prototype.getImplementationPath = function () {
             return this.definition.implementation ?
-                this.bundle.getSourcePath(this.definition.implementation) :
-                undefined;
+                    this.bundle.getSourcePath(this.definition.implementation) :
+                    undefined;
+        };
+
+        /**
+         * Check if an extension has an actual implementation value
+         * (and not just a path to an implementation) defined.
+         * @returns {function} the constructor for this extension instance
+         */
+        Extension.prototype.getImplementationValue = function () {
+            return typeof this.definition.implementation === 'function' ?
+                    this.definition.implementation :
+                    undefined;
+        };
+
+        /**
+         * Check if an extension has an actual implementation value
+         * (and not just a path to an implementation) defined.
+         * @returns {boolean} true if a value is available
+         */
+        Extension.prototype.hasImplementationValue = function () {
+            return typeof this.definition.implementation === 'function';
         };
 
         /**
