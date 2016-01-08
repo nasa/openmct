@@ -22,6 +22,7 @@
 /*global define, window, requirejs*/
 
 define([
+    'require',
     './Constants',
     './FrameworkInitializer',
     './LogLevel',
@@ -35,6 +36,7 @@ define([
     './register/ExtensionSorter',
     './bootstrap/ApplicationBootstrapper'
 ], function (
+    require,
     Constants,
     FrameworkInitializer,
     LogLevel,

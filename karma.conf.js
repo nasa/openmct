@@ -81,6 +81,6 @@ module.exports = function(config) {
 
         // Continuous Integration mode.
         // If true, Karma captures browsers, runs the tests and exits.
-        singleRun: false
+        singleRun: true
     });
 };

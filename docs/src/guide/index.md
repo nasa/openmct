@@ -2245,7 +2245,7 @@ options. The sources can be deployed in the same directory structure used during
 development. A few utilities are included to support development processes.
 
 ## Command-line Build
-Open MCT Web includes a script for building via command line using Maven 3.0.4 
+Open MCT Web includes a script for building via command line using Maven 3.3.9 
 https://maven.apache.org/ .
         
 Invoking mvn clean install will:

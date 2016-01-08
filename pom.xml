@@ -146,7 +146,7 @@
                     <sourceJsFolder>${basedir}</sourceJsFolder>
                     <excludes>
                         <exclude>**/lib/**</exclude>
-                        <exclude>app.js</exclude>
+                        <exclude>*.js</exclude>
                         <exclude>node_modules/**/*</exclude>
                         <exclude>protractor/**/*</exclude>
                     </excludes>
