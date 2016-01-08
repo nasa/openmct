@@ -37,7 +37,6 @@ define([
     "./src/controllers/ViewSwitcherController",
     "./src/controllers/BottomBarController",
     "./src/controllers/GetterSetterController",
-    "./src/controllers/SplitPaneController",
     "./src/controllers/SelectorController",
     "./src/controllers/ObjectInspectorController",
     "./src/controllers/BannerController",
@@ -66,7 +65,6 @@ define([
     ViewSwitcherController,
     BottomBarController,
     GetterSetterController,
-    SplitPaneController,
     SelectorController,
     ObjectInspectorController,
     BannerController,
@@ -240,10 +238,6 @@ define([
                     "depends": [
                         "$scope"
                     ]
-                },
-                {
-                    "key": "SplitPaneController",
-                    "implementation": SplitPaneController
                 },
                 {
                     "key": "SelectorController",
