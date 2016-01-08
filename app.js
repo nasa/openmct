@@ -40,26 +40,26 @@
     }
 
     // Override bundles.json for HTTP requests
-    //app.use('/' + BUNDLE_FILE, function (req, res) {
-    //    var bundles;
-    //
-    //    try {
-    //        bundles = JSON.parse(fs.readFileSync(BUNDLE_FILE, 'utf8'));
-    //    } catch (e) {
-    //        bundles = [];
-    //    }
-    //
-    //    // Handle command line inclusions/exclusions
-    //    bundles = bundles.concat(options.include);
-    //    bundles = bundles.filter(function (bundle) {
-    //        return options.exclude.indexOf(bundle) === -1;
-    //    });
-    //    bundles = bundles.filter(function (bundle, index) { // Uniquify
-    //        return bundles.indexOf(bundle) === index;
-    //    });
-    //
-    //    res.send(JSON.stringify(bundles));
-    //});
+    app.use('/' + BUNDLE_FILE, function (req, res) {
+        var bundles;
+
+        try {
+            bundles = JSON.parse(fs.readFileSync(BUNDLE_FILE, 'utf8'));
+        } catch (e) {
+            bundles = [];
+        }
+
+        // Handle command line inclusions/exclusions
+        bundles = bundles.concat(options.include);
+        bundles = bundles.filter(function (bundle) {
+            return options.exclude.indexOf(bundle) === -1;
+        });
+        bundles = bundles.filter(function (bundle, index) { // Uniquify
+            return bundles.indexOf(bundle) === index;
+        });
+
+        res.send(JSON.stringify(bundles));
+    });
 
     // Expose everything else as static files
     app.use(express['static']('.'));
