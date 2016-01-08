@@ -34,6 +34,7 @@ module.exports = function(config) {
         // List of files / patterns to load in the browser.
         // By default, files are also included in a script tag.
         files: [
+            {pattern: 'src/**/*.js', included: false},
             {pattern: 'example/**/*.js', included: false},
             {pattern: 'platform/**/*.js', included: false},
             {pattern: 'warp/**/*.js', included: false},
@@ -47,12 +48,14 @@ module.exports = function(config) {
 
         // Preprocess matching files before serving them to the browser.
         // https://npmjs.org/browse/keyword/karma-preprocessor
-        preprocessors: {},
+        preprocessors: {
+            '**/src/**/!(*Spec).js': [ 'coverage' ]
+        },
 
         // Test results reporter to use
         // Possible values: 'dots', 'progress'
         // Available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['progress'],
+        reporters: ['progress', 'coverage'],
 
         // Web server port.
         port: 9876,
@@ -70,6 +73,11 @@ module.exports = function(config) {
         browsers: [
             'Chrome'
         ],
+
+        // Code coverage reporting.
+        coverageReporter: {
+            dir: "target/coverage"
+        },
 
         // Continuous Integration mode.
         // If true, Karma captures browsers, runs the tests and exits.
