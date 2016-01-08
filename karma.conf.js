@@ -55,7 +55,7 @@ module.exports = function(config) {
         // Test results reporter to use
         // Possible values: 'dots', 'progress'
         // Available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['progress', 'coverage'],
+        reporters: ['progress', 'coverage', 'html'],
 
         // Web server port.
         port: 9876,
@@ -77,6 +77,11 @@ module.exports = function(config) {
         // Code coverage reporting.
         coverageReporter: {
             dir: "target/coverage"
+        },
+
+        // HTML test reporting.
+        htmlReporter: {
+            outputDir: "target/tests"
         },
 
         // Continuous Integration mode.
