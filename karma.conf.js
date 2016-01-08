@@ -81,7 +81,9 @@ module.exports = function(config) {
 
         // HTML test reporting.
         htmlReporter: {
-            outputDir: "target/tests"
+            outputDir: "target/tests",
+            preserveDescribeNesting: true,
+            foldAll: false
         },
 
         // Continuous Integration mode.
