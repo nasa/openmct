@@ -3,8 +3,11 @@
 
 var glob = require('glob'),
     fs = require('fs'),
+    path = require('path'),
     _ = require('lodash'),
-    template = _.template(fs.readFileSync('template.txt', 'utf8'));
+    template = _.template(
+        fs.readFileSync(path.resolve(__dirname, 'template.txt'), 'utf8')
+    );
 
 function indent(str, depth) {
     return _.trimLeft(str.split('\n').map(function (line) {

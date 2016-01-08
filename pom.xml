@@ -150,6 +150,7 @@
                         <exclude>node_modules/**/*</exclude>
                         <exclude>protractor/**/*</exclude>
                         <exclude>target/**/*</exclude>
+                        <exclude>scripts/**/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
