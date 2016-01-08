@@ -133,7 +133,7 @@ define(
          * @returns {string} path to implementation, or undefined
          */
         Extension.prototype.getImplementationPath = function () {
-            return this.definition.implementation ?
+            return (this.hasImplementation() && !this.hasImplementationValue()) ?
                     this.bundle.getSourcePath(this.definition.implementation) :
                     undefined;
         };
