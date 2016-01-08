@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 
-<div class="abs holder-all browse-mode" ng-controller="BrowseController">
+<div class="abs holder-all" ng-controller="BrowseController">
     <mct-include key="'topbar-browse'"></mct-include>
     <div class="abs holder holder-main browse-area s-browse-area browse-wrapper"
          ng-controller="PaneController as modelPaneTree"
@@ -72,7 +72,7 @@
 
                         <div class="split-pane-component t-inspect pane right mobile-hide">
                             <mct-representation key="'object-inspector'"
-                                                mct-object="domainObject"
+                                                mct-object="navigatedObject"
                                                 ng-model="treeModel">
                             </mct-representation>
                             <a class="mini-tab-icon anchor-right mobile-hide toggle-pane toggle-inspect"

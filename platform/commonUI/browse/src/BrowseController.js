@@ -71,10 +71,14 @@ define(
             // Callback for updating the in-scope reference to the object
             // that is currently navigated-to.
             function setNavigation(domainObject) {
+                //If the domain object has editor capability, retrieve the
+                // original uneditable domain object
+                var nonEditableObject = domainObject.hasCapability("editor") ? domainObject.getCapability("editor").getDomainObject() : domainObject;
+
                 $scope.navigatedObject = domainObject;
-                $scope.treeModel.selectedObject = domainObject;
+                $scope.treeModel.selectedObject = nonEditableObject;
                 navigationService.setNavigation(domainObject);
-                updateRoute(domainObject);
+                updateRoute(nonEditableObject);
             }
 
             function navigateTo(domainObject) {

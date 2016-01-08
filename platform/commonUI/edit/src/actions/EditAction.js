@@ -25,8 +25,8 @@
  * Module defining EditAction. Created by vwoeltje on 11/14/14.
  */
 define(
-    [],
-    function () {
+    ['../objects/EditableDomainObject'],
+    function (EditableDomainObject) {
         "use strict";
 
         // A no-op action to return in the event that the action cannot
@@ -46,7 +46,7 @@ define(
          * @constructor
          * @implements {Action}
          */
-        function EditAction($location, navigationService, $log, context) {
+        function EditAction($location, $q, navigationService, $log, context) {
             var domainObject = (context || {}).domainObject;
 
             // We cannot enter Edit mode if we have no domain object to
@@ -65,14 +65,15 @@ define(
             this.domainObject = domainObject;
             this.$location = $location;
             this.navigationService = navigationService;
+            this.$q = $q;
         }
 
         /**
          * Enter edit mode.
          */
         EditAction.prototype.perform = function () {
-            this.navigationService.setNavigation(this.domainObject);
-            this.$location.path("/edit");
+            this.domainObject.getCapability('status').set('editing', true);
+            this.navigationService.setNavigation(new EditableDomainObject(this.domainObject, this.$q));
         };
 
         /**
@@ -85,8 +86,11 @@ define(
             var domainObject = (context || {}).domainObject,
                 type = domainObject && domainObject.getCapability('type');
 
-            // Only allow creatable types to be edited
-            return type && type.hasFeature('creation');
+            // Only allow creatable types to be edited, and objects that are
+            // not already being edited
+            return type
+                && type.hasFeature('creation')
+                && !domainObject.getCapability('status').get('editing');
         };
 
         return EditAction;

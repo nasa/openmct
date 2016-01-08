@@ -95,9 +95,16 @@ define(
                 return domainObject.getCapability('persistence').persist();
             }
 
-            return nonrecursive ?
-                resolvePromise(doMutate()).then(doPersist) :
-                resolvePromise(cache.saveAll());
+            function saveChanges() {
+                return nonrecursive ?
+                    resolvePromise(doMutate()).then(doPersist) :
+                    resolvePromise(cache.saveAll());
+            }
+
+            return saveChanges().then(function(){
+                domainObject.getCapability('status').set('editing', false);
+                return domainObject;
+            })
         };
 
         /**
@@ -109,7 +116,8 @@ define(
          * @memberof platform/commonUI/edit.EditorCapability#
          */
         EditorCapability.prototype.cancel = function () {
-            return resolvePromise(undefined);
+            this.domainObject.getCapability('status').set('editing', false);
+            return resolvePromise(this.domainObject);
         };
 
         /**
@@ -120,6 +128,10 @@ define(
         EditorCapability.prototype.dirty = function () {
             return this.cache.dirty();
         };
+
+        EditorCapability.prototype.getDomainObject = function () {
+            return this.domainObject;
+        }
 
         return EditorCapability;
     }

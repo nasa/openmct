@@ -47,6 +47,7 @@ define(
          */
         function EditRepresenter($q, $log, scope) {
             var self = this;
+            this.scope = scope;
 
             // Mutate and persist a new version of a domain object's model.
             function doPersist(model) {
@@ -100,6 +101,7 @@ define(
             this.key = (representation || {}).key;
             // Track the represented object
             this.domainObject = representedObject;
+            this.scope.editMode = representedObject.hasCapability("status") && representedObject.getCapability("status").get("editing");
             // Ensure existing watches are released
             this.destroy();
         };

@@ -33,10 +33,10 @@ define(
          * @memberof platform/commonUI/edit
          * @implements {Action}
          */
-        function CancelAction($location, urlService, context) {
+        function CancelAction($location, navigationService, context) {
             this.domainObject = context.domainObject;
             this.$location = $location;
-            this.urlService = urlService;
+            this.navigationService = navigationService;
         }
 
         /**
@@ -48,7 +48,7 @@ define(
         CancelAction.prototype.perform = function () {
             var domainObject = this.domainObject,
                 $location = this.$location,
-                urlService = this.urlService;
+                navigationService = this.navigationService;
 
             // Look up the object's "editor.completion" capability;
             // this is introduced by EditableDomainObject which is
@@ -64,13 +64,9 @@ define(
                 return editor.cancel();
             }
 
-            // Discard the current root view (which will be the editing
-            // UI, which will have been pushed atop the Browise UI.)
-            function returnToBrowse() {
-                $location.path($location.path(urlService.urlForLocation(
-                    "browse",
-                    domainObject
-                )));
+            //Return navigation state to the non-editable version of the object.
+            function returnToBrowse(nonEditableDomainObject) {
+                navigationService.setNavigation(nonEditableDomainObject);
             }
 
             return doCancel(getEditorCapability())
