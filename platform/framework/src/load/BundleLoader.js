@@ -130,7 +130,20 @@ define(
             // Load all bundles named in the referenced file. The file is
             // presumed to be a JSON file
             function loadBundlesFromFile(listFile) {
-                return getJSON(listFile).then(loadBundlesFromArray);
+                function handleError(err) {
+                    $log.info([
+                        "No external bundles loaded;",
+                        "could not load bundle listing in",
+                        listFile,
+                        "due to error",
+                        err.status,
+                        err.statusText
+                    ].join(' '));
+                    return loadBundlesFromArray([]);
+                }
+
+                return getJSON(listFile)
+                    .then(loadBundlesFromArray, handleError);
             }
 
             return Array.isArray(bundles) ? loadBundlesFromArray(bundles) :
