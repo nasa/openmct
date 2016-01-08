@@ -33,6 +33,7 @@
                             <directory>.</directory>
                             <includes>
                                 <include>index.html</include>
+                                <include>main.js</include>
                                 <include>*.json</include>
                                 <include>**/src/**/*</include>
                                 <include>**/res/**/*</include>
