@@ -19,11 +19,6 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<style>
-    .s-status-editing .location-item{
-        pointer-events: none;
-    }
-</style>
 <span class="l-inspect" ng-controller="ObjectInspectorController as controller">
     <div ng-controller="PaneController as modelPaneEdit">
         <mct-split-pane class='abs contents split-layout' anchor='bottom'>
@@ -69,8 +64,8 @@
                     </ul>
                 </div><!--/ holder-inspector -->
             </div><!--/ split-pane-component -->
-            <mct-splitter class="splitter-inspect mobile-hide" ng-show="editMode"></mct-splitter>
-            <div class="split-pane-component pane bottom" ng-show="editMode">
+            <mct-splitter class="splitter-inspect-panel mobile-hide"></mct-splitter>
+            <div class="split-pane-component pane bottom">
                 <div class="abs holder holder-elements l-flex-col">
                     <em class="flex-elem">Elements</em>
                     <mct-representation

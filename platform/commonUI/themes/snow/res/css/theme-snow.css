@@ -1532,20 +1532,20 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     .l-inspect .inspector-properties .value {
       color: #404040;
       word-break: break-all; }
-  /* line 101, ../../../../general/res/sass/_inspector.scss */
+  /* line 100, ../../../../general/res/sass/_inspector.scss */
   .l-inspect .inspector-location .location-item {
     cursor: pointer;
     display: inline-block;
     position: relative;
     padding: 2px 4px; }
-    /* line 106, ../../../../general/res/sass/_inspector.scss */
+    /* line 105, ../../../../general/res/sass/_inspector.scss */
     .l-inspect .inspector-location .location-item:hover {
       background: rgba(102, 102, 102, 0.1);
       color: #333333; }
-      /* line 109, ../../../../general/res/sass/_inspector.scss */
+      /* line 108, ../../../../general/res/sass/_inspector.scss */
       .l-inspect .inspector-location .location-item:hover .icon, .l-inspect .inspector-location .location-item:hover .t-item-icon {
         color: #0099cc; }
-  /* line 114, ../../../../general/res/sass/_inspector.scss */
+  /* line 113, ../../../../general/res/sass/_inspector.scss */
   .l-inspect .inspector-location:not(.last) .t-object-label .t-title-label:after {
     color: #8c8c8c;
     content: '\3e';
@@ -1555,19 +1555,50 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     line-height: inherit;
     margin-left: 3px;
     width: 4px; }
-  /* line 126, ../../../../general/res/sass/_inspector.scss */
+  /* line 125, ../../../../general/res/sass/_inspector.scss */
   .l-inspect .holder-elements .current-elements {
     position: relative; }
-    /* line 129, ../../../../general/res/sass/_inspector.scss */
+    /* line 128, ../../../../general/res/sass/_inspector.scss */
     .l-inspect .holder-elements .current-elements .tree-item .t-object-label {
       left: 0; }
-      /* line 132, ../../../../general/res/sass/_inspector.scss */
+      /* line 131, ../../../../general/res/sass/_inspector.scss */
       .l-inspect .holder-elements .current-elements .tree-item .t-object-label .t-item-icon {
         font-size: 1em;
         width: 1em; }
-      /* line 136, ../../../../general/res/sass/_inspector.scss */
+      /* line 135, ../../../../general/res/sass/_inspector.scss */
       .l-inspect .holder-elements .current-elements .tree-item .t-object-label .t-title-label {
         left: 25px; }
+
+/* line 145, ../../../../general/res/sass/_inspector.scss */
+.l-inspect .splitter-inspect-panel,
+.l-inspect .split-pane-component.pane.bottom {
+  -moz-transition-property: opacity;
+  -o-transition-property: opacity;
+  -webkit-transition-property: opacity;
+  transition-property: opacity;
+  -moz-transition-duration: 250ms;
+  -o-transition-duration: 250ms;
+  -webkit-transition-duration: 250ms;
+  transition-duration: 250ms;
+  -moz-transition-timing-function: ease-in-out;
+  -o-transition-timing-function: ease-in-out;
+  -webkit-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  -moz-transition-delay: 0;
+  -o-transition-delay: 0;
+  -webkit-transition-delay: 0;
+  transition-delay: 0;
+  opacity: 0;
+  pointer-events: none; }
+
+/* line 154, ../../../../general/res/sass/_inspector.scss */
+.s-status-editing .l-inspect .location-item {
+  pointer-events: none; }
+/* line 155, ../../../../general/res/sass/_inspector.scss */
+.s-status-editing .l-inspect .splitter-inspect-panel,
+.s-status-editing .l-inspect .split-pane-component.pane.bottom {
+  opacity: 1;
+  pointer-events: inherit; }
 
 /********************************* CONTROLS */
 /* line 1, ../../../../general/res/sass/controls/_breadcrumb.scss */
@@ -4858,20 +4889,20 @@ span.req {
   height: 24px;
   line-height: 24px;
   white-space: nowrap; }
-  /* line 291, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 290, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-browse-bar .left {
     padding-right: 10px; }
-    /* line 293, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 292, ../../../../general/res/sass/user-environ/_layout.scss */
     .object-browse-bar .left .l-back:not(.s-status-editing) {
       margin-right: 10px; }
 
-/* line 302, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 301, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-hidden .tree-holder,
 .pane-tree-hidden .splitter-treeview,
 .pane-tree-hidden .holder-treeview-elements {
   opacity: 0; }
 
-/* line 311, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 310, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-showing .tree-holder,
 .pane-tree-showing .splitter-treeview {
   -moz-transition-property: opacity;
@@ -4891,7 +4922,7 @@ span.req {
   -webkit-transition-delay: 250ms;
   transition-delay: 250ms;
   opacity: 1; }
-/* line 317, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 316, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-showing .holder-treeview-elements {
   -moz-transition-property: opacity;
   -o-transition-property: opacity;
@@ -4910,7 +4941,7 @@ span.req {
   -webkit-transition-delay: 200ms;
   transition-delay: 200ms; }
 
-/* line 324, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 323, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-showing .l-object-and-inspector .l-inspect,
 .pane-inspect-showing .l-object-and-inspector .splitter-inspect {
   -moz-transition-property: opacity;
@@ -4931,41 +4962,41 @@ span.req {
   transition-delay: 250ms;
   opacity: 1; }
 
-/* line 334, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 333, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-hidden .l-object-and-inspector .l-inspect,
 .pane-inspect-hidden .l-object-and-inspector .splitter-inspect {
   opacity: 0; }
 
 @media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-  /* line 342, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 341, ../../../../general/res/sass/user-environ/_layout.scss */
   .holder-all {
     min-width: 600px; }
 
-  /* line 347, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 346, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout .split-pane-component.pane.treeview.left {
     min-width: 150px;
     max-width: 35%;
     width: 25%; }
-  /* line 352, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 351, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout .split-pane-component.pane.t-inspect.right {
     min-width: 200px;
     max-width: 35%;
     width: 20%;
     z-index: 3; }
 
-  /* line 360, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 359, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.treeview.left .tree-holder {
     padding-right: 5px; }
 
-  /* line 364, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 363, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane-tree-hidden .pane.right.primary-pane {
     left: 22px !important; }
 
-  /* line 367, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 366, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane-inspect-hidden .l-object-and-inspector .pane.left {
     right: 22px !important; }
 
-  /* line 369, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 368, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane:not(.resizing) {
     -moz-transition-property: width, left, right;
     -o-transition-property: width, left, right;
@@ -4984,10 +5015,10 @@ span.req {
     -webkit-transition-delay: 0;
     transition-delay: 0; }
 
-  /* line 372, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 371, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.primary-pane .object-browse-bar {
     min-width: 200px; } }
-/* line 378, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 377, ../../../../general/res/sass/user-environ/_layout.scss */
 .s-status-editing .l-object-wrapper {
   -moz-animation-name: pulseBorder;
   -webkit-animation-name: pulseBorder;
@@ -5029,7 +5060,7 @@ span.req {
     border-color: rgba(75, 177, 199, 0.3); }
   100% {
     border-color: #4bb1c7; } }
-  /* line 385, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 384, ../../../../general/res/sass/user-environ/_layout.scss */
   .s-status-editing .l-object-wrapper .l-object-wrapper-inner {
     overflow: hidden;
     position: absolute;
@@ -5039,7 +5070,7 @@ span.req {
     left: 3px;
     width: auto;
     height: auto; }
-  /* line 388, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 387, ../../../../general/res/sass/user-environ/_layout.scss */
   .s-status-editing .l-object-wrapper .l-edit-controls {
     height: 30px;
     margin-bottom: 5px;

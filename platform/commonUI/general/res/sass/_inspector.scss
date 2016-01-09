@@ -97,7 +97,6 @@
     }
 
     .inspector-location {
-        //line-height: 180%;
         .location-item {
             cursor: pointer;
             display: inline-block;
@@ -142,3 +141,20 @@
     }
 }
 
+.l-inspect {
+    .splitter-inspect-panel,
+    .split-pane-component.pane.bottom {
+        @include trans-prop-nice(opacity, 250ms); // Not working as desired currently; entire inspector seems to be destroyed and recreated when switching into and out of edit mode.
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+.s-status-editing .l-inspect {
+    .location-item { pointer-events: none; }
+    .splitter-inspect-panel,
+    .split-pane-component.pane.bottom {
+        opacity: 1;
+        pointer-events: inherit;
+    }
+}
