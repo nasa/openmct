@@ -172,7 +172,7 @@
             &.toggle-inspect.anchor-right {
                 right: $bodyMargin;
                 &:after {
-                    content: '\e615';  // e615: Crosshair icon; was e608: Info "i" icon
+                    content: '\e615'; // Eye icon
                 }
                 &.collapsed {
                     right: $interiorMargin;
@@ -244,16 +244,14 @@
     .object-holder-main {
         @extend .abs;
     }
-
-    &.active {
-        @include pulseBorder($colorEditAreaFg, $dur: 1s, $opacity0: 0.3);
-        @include border-radius($controlCr);
-        background-color: $colorEditAreaBg;
-        border-color: $colorEditAreaFg;
-        border-width: 2px;
-        border-style: dotted;
-        .l-object-wrapper-inner {
-            @include absPosDefault(3px, hidden);
+    .l-edit-controls {
+        //@include trans-prop-nice((opacity, height), 0.25s);
+        border-bottom: 1px solid $colorInteriorBorder;
+        line-height: $ueEditToolBarH;
+        height: 0px;
+        opacity: 0;
+        .tool-bar {
+            right: $interiorMargin;
         }
     }
 }
@@ -262,21 +260,7 @@
     @include trans-prop-nice-resize(0.25s);
 }
 
-.l-edit-controls {
-    @include trans-prop-nice((opacity, height), 0.25s);
-    border-bottom: 1px solid $colorInteriorBorder;
-    line-height: $ueEditToolBarH;
-    height: 0px;
-    opacity: 0;
-    &.active {
-        height: $ueEditToolBarH + $interiorMargin;
-        margin-bottom: $interiorMargin;
-        opacity: 1;
-    }
-    .tool-bar {
-        right: $interiorMargin;
-    }
-}
+
 
 .object-browse-bar .s-btn,
 .top-bar .buttons-main .s-btn,
@@ -298,7 +282,6 @@
 
 /***************************************************** OBJECT BROWSE BAR */
 .object-browse-bar {
-    // Converting to use flexbox layout
     @include box-sizing(border-box);
     height: $ueTopBarH;
     line-height: $ueTopBarH;
@@ -387,5 +370,24 @@
     }
     .pane.primary-pane .object-browse-bar {
         min-width: 200px; // Needed for nice display when primary pane is constrained severely via splitters
+    }
+}
+
+.s-status-editing {
+    .l-object-wrapper {
+        @include pulseBorder($colorEditAreaFg, $dur: 1s, $opacity0: 0.3);
+        @include border-radius($controlCr);
+        background-color: $colorEditAreaBg;
+        border-color: $colorEditAreaFg;
+        border-width: 2px;
+        border-style: dotted;
+        .l-object-wrapper-inner {
+            @include absPosDefault(3px, hidden);
+        }
+        .l-edit-controls {
+            height: $ueEditToolBarH + $interiorMargin;
+            margin-bottom: $interiorMargin;
+            opacity: 1;
+        }
     }
 }

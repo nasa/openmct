@@ -4807,8 +4807,188 @@ span.req {
   height: auto;
   top: 34px; }
 
-/* line 248, ../../../../general/res/sass/user-environ/_layout.scss */
-.l-object-wrapper.active {
+/* line 247, ../../../../general/res/sass/user-environ/_layout.scss */
+.l-object-wrapper .l-edit-controls {
+  border-bottom: 1px solid rgba(102, 102, 102, 0.2);
+  line-height: 25px;
+  height: 0px;
+  opacity: 0; }
+  /* line 253, ../../../../general/res/sass/user-environ/_layout.scss */
+  .l-object-wrapper .l-edit-controls .tool-bar {
+    right: 5px; }
+
+/* line 259, ../../../../general/res/sass/user-environ/_layout.scss */
+.l-object-wrapper-inner {
+  -moz-transition-property: height, width, top, right, bottom, left, opacity;
+  -o-transition-property: height, width, top, right, bottom, left, opacity;
+  -webkit-transition-property: height, width, top, right, bottom, left, opacity;
+  transition-property: height, width, top, right, bottom, left, opacity;
+  -moz-transition-duration: 0.25s;
+  -o-transition-duration: 0.25s;
+  -webkit-transition-duration: 0.25s;
+  transition-duration: 0.25s;
+  -moz-transition-timing-function: ease-in-out;
+  -o-transition-timing-function: ease-in-out;
+  -webkit-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out; }
+
+/* line 265, ../../../../general/res/sass/user-environ/_layout.scss */
+.object-browse-bar .s-btn, .object-browse-bar .s-menu-btn,
+.top-bar .buttons-main .s-btn,
+.top-bar .buttons-main .s-menu-btn,
+.top-bar .s-menu-btn,
+.tool-bar .s-btn,
+.tool-bar .s-menu-btn,
+.tool-bar .s-menu-btn {
+  height: 25px;
+  line-height: 25px;
+  vertical-align: top; }
+
+/* line 278, ../../../../general/res/sass/user-environ/_layout.scss */
+.object-browse-bar .view-switcher,
+.top-bar .view-switcher {
+  margin-right: 20px; }
+
+/***************************************************** OBJECT BROWSE BAR */
+/* line 284, ../../../../general/res/sass/user-environ/_layout.scss */
+.object-browse-bar {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  height: 24px;
+  line-height: 24px;
+  white-space: nowrap; }
+  /* line 291, ../../../../general/res/sass/user-environ/_layout.scss */
+  .object-browse-bar .left {
+    padding-right: 10px; }
+    /* line 293, ../../../../general/res/sass/user-environ/_layout.scss */
+    .object-browse-bar .left .l-back:not(.s-status-editing) {
+      margin-right: 10px; }
+
+/* line 302, ../../../../general/res/sass/user-environ/_layout.scss */
+.pane-tree-hidden .tree-holder,
+.pane-tree-hidden .splitter-treeview,
+.pane-tree-hidden .holder-treeview-elements {
+  opacity: 0; }
+
+/* line 311, ../../../../general/res/sass/user-environ/_layout.scss */
+.pane-tree-showing .tree-holder,
+.pane-tree-showing .splitter-treeview {
+  -moz-transition-property: opacity;
+  -o-transition-property: opacity;
+  -webkit-transition-property: opacity;
+  transition-property: opacity;
+  -moz-transition-duration: 250ms;
+  -o-transition-duration: 250ms;
+  -webkit-transition-duration: 250ms;
+  transition-duration: 250ms;
+  -moz-transition-timing-function: ease-in-out;
+  -o-transition-timing-function: ease-in-out;
+  -webkit-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  -moz-transition-delay: 250ms;
+  -o-transition-delay: 250ms;
+  -webkit-transition-delay: 250ms;
+  transition-delay: 250ms;
+  opacity: 1; }
+/* line 317, ../../../../general/res/sass/user-environ/_layout.scss */
+.pane-tree-showing .holder-treeview-elements {
+  -moz-transition-property: opacity;
+  -o-transition-property: opacity;
+  -webkit-transition-property: opacity;
+  transition-property: opacity;
+  -moz-transition-duration: 250ms;
+  -o-transition-duration: 250ms;
+  -webkit-transition-duration: 250ms;
+  transition-duration: 250ms;
+  -moz-transition-timing-function: ease-in-out;
+  -o-transition-timing-function: ease-in-out;
+  -webkit-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  -moz-transition-delay: 200ms;
+  -o-transition-delay: 200ms;
+  -webkit-transition-delay: 200ms;
+  transition-delay: 200ms; }
+
+/* line 324, ../../../../general/res/sass/user-environ/_layout.scss */
+.pane-inspect-showing .l-object-and-inspector .l-inspect,
+.pane-inspect-showing .l-object-and-inspector .splitter-inspect {
+  -moz-transition-property: opacity;
+  -o-transition-property: opacity;
+  -webkit-transition-property: opacity;
+  transition-property: opacity;
+  -moz-transition-duration: 250ms;
+  -o-transition-duration: 250ms;
+  -webkit-transition-duration: 250ms;
+  transition-duration: 250ms;
+  -moz-transition-timing-function: ease-in-out;
+  -o-transition-timing-function: ease-in-out;
+  -webkit-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  -moz-transition-delay: 250ms;
+  -o-transition-delay: 250ms;
+  -webkit-transition-delay: 250ms;
+  transition-delay: 250ms;
+  opacity: 1; }
+
+/* line 334, ../../../../general/res/sass/user-environ/_layout.scss */
+.pane-inspect-hidden .l-object-and-inspector .l-inspect,
+.pane-inspect-hidden .l-object-and-inspector .splitter-inspect {
+  opacity: 0; }
+
+@media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
+  /* line 342, ../../../../general/res/sass/user-environ/_layout.scss */
+  .holder-all {
+    min-width: 600px; }
+
+  /* line 347, ../../../../general/res/sass/user-environ/_layout.scss */
+  .split-layout .split-pane-component.pane.treeview.left {
+    min-width: 150px;
+    max-width: 35%;
+    width: 25%; }
+  /* line 352, ../../../../general/res/sass/user-environ/_layout.scss */
+  .split-layout .split-pane-component.pane.t-inspect.right {
+    min-width: 200px;
+    max-width: 35%;
+    width: 20%;
+    z-index: 3; }
+
+  /* line 360, ../../../../general/res/sass/user-environ/_layout.scss */
+  .pane.treeview.left .tree-holder {
+    padding-right: 5px; }
+
+  /* line 364, ../../../../general/res/sass/user-environ/_layout.scss */
+  .pane-tree-hidden .pane.right.primary-pane {
+    left: 22px !important; }
+
+  /* line 367, ../../../../general/res/sass/user-environ/_layout.scss */
+  .pane-inspect-hidden .l-object-and-inspector .pane.left {
+    right: 22px !important; }
+
+  /* line 369, ../../../../general/res/sass/user-environ/_layout.scss */
+  .pane:not(.resizing) {
+    -moz-transition-property: width, left, right;
+    -o-transition-property: width, left, right;
+    -webkit-transition-property: width, left, right;
+    transition-property: width, left, right;
+    -moz-transition-duration: 250ms;
+    -o-transition-duration: 250ms;
+    -webkit-transition-duration: 250ms;
+    transition-duration: 250ms;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    -moz-transition-delay: 0;
+    -o-transition-delay: 0;
+    -webkit-transition-delay: 0;
+    transition-delay: 0; }
+
+  /* line 372, ../../../../general/res/sass/user-environ/_layout.scss */
+  .pane.primary-pane .object-browse-bar {
+    min-width: 200px; } }
+/* line 378, ../../../../general/res/sass/user-environ/_layout.scss */
+.s-status-editing .l-object-wrapper {
   -moz-animation-name: pulseBorder;
   -webkit-animation-name: pulseBorder;
   animation-name: pulseBorder;
@@ -4849,8 +5029,8 @@ span.req {
     border-color: rgba(75, 177, 199, 0.3); }
   100% {
     border-color: #4bb1c7; } }
-  /* line 255, ../../../../general/res/sass/user-environ/_layout.scss */
-  .l-object-wrapper.active .l-object-wrapper-inner {
+  /* line 385, ../../../../general/res/sass/user-environ/_layout.scss */
+  .s-status-editing .l-object-wrapper .l-object-wrapper-inner {
     overflow: hidden;
     position: absolute;
     top: 3px;
@@ -4859,208 +5039,12 @@ span.req {
     left: 3px;
     width: auto;
     height: auto; }
-
-/* line 261, ../../../../general/res/sass/user-environ/_layout.scss */
-.l-object-wrapper-inner {
-  -moz-transition-property: height, width, top, right, bottom, left, opacity;
-  -o-transition-property: height, width, top, right, bottom, left, opacity;
-  -webkit-transition-property: height, width, top, right, bottom, left, opacity;
-  transition-property: height, width, top, right, bottom, left, opacity;
-  -moz-transition-duration: 0.25s;
-  -o-transition-duration: 0.25s;
-  -webkit-transition-duration: 0.25s;
-  transition-duration: 0.25s;
-  -moz-transition-timing-function: ease-in-out;
-  -o-transition-timing-function: ease-in-out;
-  -webkit-transition-timing-function: ease-in-out;
-  transition-timing-function: ease-in-out; }
-
-/* line 265, ../../../../general/res/sass/user-environ/_layout.scss */
-.l-edit-controls {
-  -moz-transition-property: opacity, height;
-  -o-transition-property: opacity, height;
-  -webkit-transition-property: opacity, height;
-  transition-property: opacity, height;
-  -moz-transition-duration: 0.25s;
-  -o-transition-duration: 0.25s;
-  -webkit-transition-duration: 0.25s;
-  transition-duration: 0.25s;
-  -moz-transition-timing-function: ease-in-out;
-  -o-transition-timing-function: ease-in-out;
-  -webkit-transition-timing-function: ease-in-out;
-  transition-timing-function: ease-in-out;
-  -moz-transition-delay: 0;
-  -o-transition-delay: 0;
-  -webkit-transition-delay: 0;
-  transition-delay: 0;
-  border-bottom: 1px solid rgba(102, 102, 102, 0.2);
-  line-height: 25px;
-  height: 0px;
-  opacity: 0; }
-  /* line 271, ../../../../general/res/sass/user-environ/_layout.scss */
-  .l-edit-controls.active {
+  /* line 388, ../../../../general/res/sass/user-environ/_layout.scss */
+  .s-status-editing .l-object-wrapper .l-edit-controls {
     height: 30px;
     margin-bottom: 5px;
     opacity: 1; }
-  /* line 276, ../../../../general/res/sass/user-environ/_layout.scss */
-  .l-edit-controls .tool-bar {
-    right: 5px; }
 
-/* line 281, ../../../../general/res/sass/user-environ/_layout.scss */
-.object-browse-bar .s-btn, .object-browse-bar .s-menu-btn,
-.top-bar .buttons-main .s-btn,
-.top-bar .buttons-main .s-menu-btn,
-.top-bar .s-menu-btn,
-.tool-bar .s-btn,
-.tool-bar .s-menu-btn,
-.tool-bar .s-menu-btn {
-  height: 25px;
-  line-height: 25px;
-  vertical-align: top; }
-
-/* line 294, ../../../../general/res/sass/user-environ/_layout.scss */
-.object-browse-bar .view-switcher,
-.top-bar .view-switcher {
-  margin-right: 20px; }
-
-/***************************************************** OBJECT BROWSE BAR */
-/* line 300, ../../../../general/res/sass/user-environ/_layout.scss */
-.object-browse-bar {
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  height: 24px;
-  line-height: 24px;
-  white-space: nowrap; }
-  /* line 307, ../../../../general/res/sass/user-environ/_layout.scss */
-  .object-browse-bar .left {
-    padding-right: 10px; }
-    /* line 309, ../../../../general/res/sass/user-environ/_layout.scss */
-    .object-browse-bar .left .l-back:not(.s-status-editing) {
-      margin-right: 10px; }
-
-/* line 318, ../../../../general/res/sass/user-environ/_layout.scss */
-.pane-tree-hidden .tree-holder,
-.pane-tree-hidden .splitter-treeview,
-.pane-tree-hidden .holder-treeview-elements {
-  opacity: 0; }
-
-/* line 327, ../../../../general/res/sass/user-environ/_layout.scss */
-.pane-tree-showing .tree-holder,
-.pane-tree-showing .splitter-treeview {
-  -moz-transition-property: opacity;
-  -o-transition-property: opacity;
-  -webkit-transition-property: opacity;
-  transition-property: opacity;
-  -moz-transition-duration: 250ms;
-  -o-transition-duration: 250ms;
-  -webkit-transition-duration: 250ms;
-  transition-duration: 250ms;
-  -moz-transition-timing-function: ease-in-out;
-  -o-transition-timing-function: ease-in-out;
-  -webkit-transition-timing-function: ease-in-out;
-  transition-timing-function: ease-in-out;
-  -moz-transition-delay: 250ms;
-  -o-transition-delay: 250ms;
-  -webkit-transition-delay: 250ms;
-  transition-delay: 250ms;
-  opacity: 1; }
-/* line 333, ../../../../general/res/sass/user-environ/_layout.scss */
-.pane-tree-showing .holder-treeview-elements {
-  -moz-transition-property: opacity;
-  -o-transition-property: opacity;
-  -webkit-transition-property: opacity;
-  transition-property: opacity;
-  -moz-transition-duration: 250ms;
-  -o-transition-duration: 250ms;
-  -webkit-transition-duration: 250ms;
-  transition-duration: 250ms;
-  -moz-transition-timing-function: ease-in-out;
-  -o-transition-timing-function: ease-in-out;
-  -webkit-transition-timing-function: ease-in-out;
-  transition-timing-function: ease-in-out;
-  -moz-transition-delay: 200ms;
-  -o-transition-delay: 200ms;
-  -webkit-transition-delay: 200ms;
-  transition-delay: 200ms; }
-
-/* line 340, ../../../../general/res/sass/user-environ/_layout.scss */
-.pane-inspect-showing .l-object-and-inspector .l-inspect,
-.pane-inspect-showing .l-object-and-inspector .splitter-inspect {
-  -moz-transition-property: opacity;
-  -o-transition-property: opacity;
-  -webkit-transition-property: opacity;
-  transition-property: opacity;
-  -moz-transition-duration: 250ms;
-  -o-transition-duration: 250ms;
-  -webkit-transition-duration: 250ms;
-  transition-duration: 250ms;
-  -moz-transition-timing-function: ease-in-out;
-  -o-transition-timing-function: ease-in-out;
-  -webkit-transition-timing-function: ease-in-out;
-  transition-timing-function: ease-in-out;
-  -moz-transition-delay: 250ms;
-  -o-transition-delay: 250ms;
-  -webkit-transition-delay: 250ms;
-  transition-delay: 250ms;
-  opacity: 1; }
-
-/* line 350, ../../../../general/res/sass/user-environ/_layout.scss */
-.pane-inspect-hidden .l-object-and-inspector .l-inspect,
-.pane-inspect-hidden .l-object-and-inspector .splitter-inspect {
-  opacity: 0; }
-
-@media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-  /* line 358, ../../../../general/res/sass/user-environ/_layout.scss */
-  .holder-all {
-    min-width: 600px; }
-
-  /* line 363, ../../../../general/res/sass/user-environ/_layout.scss */
-  .split-layout .split-pane-component.pane.treeview.left {
-    min-width: 150px;
-    max-width: 35%;
-    width: 25%; }
-  /* line 368, ../../../../general/res/sass/user-environ/_layout.scss */
-  .split-layout .split-pane-component.pane.t-inspect.right {
-    min-width: 200px;
-    max-width: 35%;
-    width: 20%;
-    z-index: 3; }
-
-  /* line 376, ../../../../general/res/sass/user-environ/_layout.scss */
-  .pane.treeview.left .tree-holder {
-    padding-right: 5px; }
-
-  /* line 380, ../../../../general/res/sass/user-environ/_layout.scss */
-  .pane-tree-hidden .pane.right.primary-pane {
-    left: 22px !important; }
-
-  /* line 383, ../../../../general/res/sass/user-environ/_layout.scss */
-  .pane-inspect-hidden .l-object-and-inspector .pane.left {
-    right: 22px !important; }
-
-  /* line 385, ../../../../general/res/sass/user-environ/_layout.scss */
-  .pane:not(.resizing) {
-    -moz-transition-property: width, left, right;
-    -o-transition-property: width, left, right;
-    -webkit-transition-property: width, left, right;
-    transition-property: width, left, right;
-    -moz-transition-duration: 250ms;
-    -o-transition-duration: 250ms;
-    -webkit-transition-duration: 250ms;
-    transition-duration: 250ms;
-    -moz-transition-timing-function: ease-in-out;
-    -o-transition-timing-function: ease-in-out;
-    -webkit-transition-timing-function: ease-in-out;
-    transition-timing-function: ease-in-out;
-    -moz-transition-delay: 0;
-    -o-transition-delay: 0;
-    -webkit-transition-delay: 0;
-    transition-delay: 0; }
-
-  /* line 388, ../../../../general/res/sass/user-environ/_layout.scss */
-  .pane.primary-pane .object-browse-bar {
-    min-width: 200px; } }
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -5297,19 +5281,24 @@ span.req {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 26, ../../../../general/res/sass/edit/_editor.scss */
+/* line 28, ../../../../general/res/sass/edit/_editor.scss */
+.s-status-editing .l-object-wrapper .edit-corner,
+.s-status-editing .l-object-wrapper .edit-handle,
 .edit-main .edit-corner,
 .edit-main .edit-handle {
   position: absolute;
   z-index: 2; }
-/* line 32, ../../../../general/res/sass/edit/_editor.scss */
+/* line 34, ../../../../general/res/sass/edit/_editor.scss */
+.s-status-editing .l-object-wrapper .edit-corner,
 .edit-main .edit-corner {
   width: 15px;
   height: 15px; }
-  /* line 35, ../../../../general/res/sass/edit/_editor.scss */
+  /* line 37, ../../../../general/res/sass/edit/_editor.scss */
+  .s-status-editing .l-object-wrapper .edit-corner:hover,
   .edit-main .edit-corner:hover {
     z-index: 11; }
-  /* line 38, ../../../../general/res/sass/edit/_editor.scss */
+  /* line 40, ../../../../general/res/sass/edit/_editor.scss */
+  .s-status-editing .l-object-wrapper .edit-corner.edit-resize-nw,
   .edit-main .edit-corner.edit-resize-nw {
     -moz-border-radius-bottomright: 5px;
     -webkit-border-bottom-right-radius: 5px;
@@ -5317,7 +5306,8 @@ span.req {
     cursor: nw-resize;
     top: 0;
     left: 0; }
-  /* line 43, ../../../../general/res/sass/edit/_editor.scss */
+  /* line 45, ../../../../general/res/sass/edit/_editor.scss */
+  .s-status-editing .l-object-wrapper .edit-corner.edit-resize-ne,
   .edit-main .edit-corner.edit-resize-ne {
     -moz-border-radius-bottomleft: 5px;
     -webkit-border-bottom-left-radius: 5px;
@@ -5325,7 +5315,8 @@ span.req {
     cursor: ne-resize;
     top: 0;
     right: 0; }
-  /* line 48, ../../../../general/res/sass/edit/_editor.scss */
+  /* line 50, ../../../../general/res/sass/edit/_editor.scss */
+  .s-status-editing .l-object-wrapper .edit-corner.edit-resize-se,
   .edit-main .edit-corner.edit-resize-se {
     -moz-border-radius-topleft: 5px;
     -webkit-border-top-left-radius: 5px;
@@ -5333,7 +5324,8 @@ span.req {
     cursor: se-resize;
     bottom: 0;
     right: 0; }
-  /* line 53, ../../../../general/res/sass/edit/_editor.scss */
+  /* line 55, ../../../../general/res/sass/edit/_editor.scss */
+  .s-status-editing .l-object-wrapper .edit-corner.edit-resize-sw,
   .edit-main .edit-corner.edit-resize-sw {
     -moz-border-radius-topright: 5px;
     -webkit-border-top-right-radius: 5px;
@@ -5341,13 +5333,15 @@ span.req {
     cursor: sw-resize;
     bottom: 0;
     left: 0; }
-/* line 61, ../../../../general/res/sass/edit/_editor.scss */
+/* line 63, ../../../../general/res/sass/edit/_editor.scss */
+.s-status-editing .l-object-wrapper .edit-handle,
 .edit-main .edit-handle {
   top: 15px;
   right: 15px;
   bottom: 15px;
   left: 15px; }
-  /* line 63, ../../../../general/res/sass/edit/_editor.scss */
+  /* line 65, ../../../../general/res/sass/edit/_editor.scss */
+  .s-status-editing .l-object-wrapper .edit-handle.edit-move,
   .edit-main .edit-handle.edit-move {
     cursor: move;
     left: 0;
@@ -5355,43 +5349,51 @@ span.req {
     top: 0;
     bottom: 0;
     z-index: 1; }
-  /* line 73, ../../../../general/res/sass/edit/_editor.scss */
+  /* line 75, ../../../../general/res/sass/edit/_editor.scss */
+  .s-status-editing .l-object-wrapper .edit-handle.edit-resize-n,
   .edit-main .edit-handle.edit-resize-n {
     top: 0px;
     bottom: auto;
     height: 15px;
     cursor: n-resize; }
-  /* line 78, ../../../../general/res/sass/edit/_editor.scss */
+  /* line 80, ../../../../general/res/sass/edit/_editor.scss */
+  .s-status-editing .l-object-wrapper .edit-handle.edit-resize-e,
   .edit-main .edit-handle.edit-resize-e {
     right: 0px;
     left: auto;
     width: 15px;
     cursor: e-resize; }
-  /* line 83, ../../../../general/res/sass/edit/_editor.scss */
+  /* line 85, ../../../../general/res/sass/edit/_editor.scss */
+  .s-status-editing .l-object-wrapper .edit-handle.edit-resize-s,
   .edit-main .edit-handle.edit-resize-s {
     bottom: 0px;
     top: auto;
     height: 15px;
     cursor: s-resize; }
-  /* line 88, ../../../../general/res/sass/edit/_editor.scss */
+  /* line 90, ../../../../general/res/sass/edit/_editor.scss */
+  .s-status-editing .l-object-wrapper .edit-handle.edit-resize-w,
   .edit-main .edit-handle.edit-resize-w {
     left: 0px;
     right: auto;
     width: 15px;
     cursor: w-resize; }
-/* line 97, ../../../../general/res/sass/edit/_editor.scss */
+/* line 98, ../../../../general/res/sass/edit/_editor.scss */
+.s-status-editing .l-object-wrapper .frame.child-frame.panel:hover,
 .edit-main .frame.child-frame.panel:hover {
   -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
   box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
   border-color: #0099cc; }
   /* line 101, ../../../../general/res/sass/edit/_editor.scss */
+  .s-status-editing .l-object-wrapper .frame.child-frame.panel:hover .view-switcher,
   .edit-main .frame.child-frame.panel:hover .view-switcher {
     opacity: 1; }
   /* line 104, ../../../../general/res/sass/edit/_editor.scss */
+  .s-status-editing .l-object-wrapper .frame.child-frame.panel:hover .edit-corner,
   .edit-main .frame.child-frame.panel:hover .edit-corner {
     background-color: rgba(0, 153, 204, 0.8); }
     /* line 106, ../../../../general/res/sass/edit/_editor.scss */
+    .s-status-editing .l-object-wrapper .frame.child-frame.panel:hover .edit-corner:hover,
     .edit-main .frame.child-frame.panel:hover .edit-corner:hover {
       background-color: #0099cc; }
 
@@ -6280,7 +6282,7 @@ ul.tree {
 /* line 48, ../../../../general/res/sass/user-environ/_top-bar.scss */
 .edit-mode .top-bar .buttons-main {
   white-space: nowrap; }
-  /* line 52, ../../../../general/res/sass/user-environ/_top-bar.scss */
+  /* line 51, ../../../../general/res/sass/user-environ/_top-bar.scss */
   .edit-mode .top-bar .buttons-main.abs, .edit-mode .top-bar .buttons-main.l-inspect, .edit-mode .top-bar .l-datetime-picker .l-month-year-pager .buttons-main.pager, .l-datetime-picker .l-month-year-pager .edit-mode .top-bar .buttons-main.pager,
   .edit-mode .top-bar .l-datetime-picker .l-month-year-pager .buttons-main.val,
   .l-datetime-picker .l-month-year-pager .edit-mode .top-bar .buttons-main.val, .edit-mode .top-bar .s-menu-btn span.buttons-main.l-click-area, .s-menu-btn .edit-mode .top-bar span.buttons-main.l-click-area, .edit-mode .top-bar .buttons-main.l-object-wrapper, .edit-mode .top-bar .l-object-wrapper .buttons-main.object-holder-main, .l-object-wrapper .edit-mode .top-bar .buttons-main.object-holder-main {

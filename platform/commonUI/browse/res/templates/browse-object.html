@@ -19,8 +19,7 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div ng-controller="BrowseObjectController" class="abs l-flex-col"
-     ng-class="editMode ? 'edit-mode' : 'browse-mode'">
+<div ng-controller="BrowseObjectController" class="abs l-flex-col">
     <div class="holder flex-elem l-flex-row object-browse-bar ">
         <div class="items-select left flex-elem l-flex-row grows">
             <mct-representation key="'back-arrow'"
@@ -44,11 +43,10 @@
             </mct-representation>
         </div>
     </div>
-    <div class="holder l-flex-col flex-elem grows l-object-wrapper" ng-class="{ active:editMode, 'edit-main':editMode}">
+    <div class="holder l-flex-col flex-elem grows l-object-wrapper">
         <div class="holder l-flex-col flex-elem grows l-object-wrapper-inner">
             <!-- Toolbar and Save/Cancel buttons -->
-            <div class="l-edit-controls flex-elem l-flex-row flex-align-end"
-                 ng-class="{ active:editMode }">
+            <div class="l-edit-controls flex-elem l-flex-row flex-align-end">
                 <mct-toolbar name="mctToolbar"
                              structure="toolbar.structure"
                              ng-model="toolbar.state"
