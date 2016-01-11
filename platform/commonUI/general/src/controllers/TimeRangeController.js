@@ -240,6 +240,14 @@ define(
                 };
             }
 
+            function validateStart(startValue) {
+                return startValue <= $scope.ngModel.outer.end - outerMinimumSpan;
+            }
+
+            function validateEnd(endValue) {
+                return endValue >= $scope.ngModel.outer.start + outerMinimumSpan;
+            }
+
             $scope.startLeftDrag = startLeftDrag;
             $scope.startRightDrag = startRightDrag;
             $scope.startMiddleDrag = startMiddleDrag;
@@ -248,6 +256,9 @@ define(
             $scope.middleDrag = middleDrag;
 
             $scope.updateBoundsFromForm = updateBoundsFromForm;
+
+            $scope.validateStart = validateStart;
+            $scope.validateEnd = validateEnd;
 
             $scope.ticks = [];
 
