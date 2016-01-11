@@ -149,12 +149,6 @@ mct-representation {
     border-color: rgba($colorItemTreeSelectedFg, 0.25);
     border-top-color: rgba($colorItemTreeSelectedFg, 1.0);
 }
-.tree .tree-item,
-.search-results .s-status-editing .search-result-item {
-    .t-object-label {
-        left: $interiorMargin + $treeVCW;
-    }
-}
 
 .tree .s-status-editing,
 .search-results .s-status-editing {
@@ -169,7 +163,7 @@ mct-representation {
             @include pulse($dur: 1s, $opacity0: 0.25);
             color: $colorItemTreeEditingFg;
             content: '\70';
-            margin-left: $interiorMarginSm;
+            margin-right: $interiorMarginSm;
         }
         .t-object-label {
             .t-item-icon,

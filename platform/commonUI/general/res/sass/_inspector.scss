@@ -137,14 +137,8 @@
             .tree-item {
                 .t-object-label {
                     // Elements pool is a flat list, so don't indent items.
+                    font-size: 0.75rem;
                     left: 0;
-                    .t-item-icon {
-                        font-size: 1em;
-                        width: 1em;
-                    }
-                    .t-title-label {
-                        left: 20px + $interiorMargin;
-                    }
                 }
             }
         }
