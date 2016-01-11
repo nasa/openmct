@@ -75,33 +75,6 @@
                     </mct-representation>
                 </div>
             </div>
-        </li>
-        <li ng-if="contextutalParents.length > 0">
-            <em title="The location of this linked object.">Location</em>
-            <span class="inspector-location"
-                  ng-repeat="parent in contextutalParents"
-                  ng-class="{ last:($index + 1) === contextualParents.length }">
-                <mct-representation key="'label'"
-                                    mct-object="parent"
-                                    ng-model="ngModel"
-                                    ng-click="ngModel.selectedObject = parent"
-                                    class="location-item rep-object-label">
-                </mct-representation>
-            </span>
-        </li>
-        <li ng-if="primaryParents.length > 0">
-            <em title="The location of the original object that this was linked from.">Original Location</em>
-            <span class="inspector-location"
-                  ng-repeat="parent in primaryParents"
-                  ng-class="{ last:($index + 1) === primaryParents.length }">
-                <mct-representation key="'label'"
-                                    mct-object="parent"
-                                    ng-model="ngModel"
-                                    ng-click="ngModel.selectedObject = parent"
-                                    class="location-item rep-object-label">
-                </mct-representation>
-            </span>
-        </li>
-    </ul>
-    </div>
+        </mct-split-pane>
+    </div><!--/ PaneController -->
 </span>
