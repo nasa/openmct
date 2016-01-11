@@ -26,10 +26,6 @@ define(
     function () {
         'use strict';
 
-        function ACCEPT() {
-            return true;
-        }
-
         /**
          * Controller to support the date-time entry field.
          *
@@ -48,8 +44,7 @@ define(
          *        format has been otherwise specified
          */
         function DateTimeFieldController($scope, formatService, defaultFormat) {
-            var formatter = formatService.getFormat(defaultFormat),
-                validate = ACCEPT;
+            var formatter = formatService.getFormat(defaultFormat);
 
             function updateFromModel(value) {
                 // Only reformat if the value is different from user
@@ -64,12 +59,10 @@ define(
             }
 
             function updateFromView(textValue) {
-                var newValue;
                 $scope.textInvalid = !formatter.validate(textValue);
                 if (!$scope.textInvalid) {
-                    newValue = formatter.parse(textValue);
-                    $scope.valueInvalid = !validate(newValue);
-                    $scope.ngModel[$scope.field] = newValue;
+                    $scope.ngModel[$scope.field] =
+                        formatter.parse(textValue);
                     $scope.lastValidValue = $scope.textValue;
                 }
             }
@@ -89,10 +82,6 @@ define(
                 updateFromModel($scope.ngModel[$scope.field]);
             }
 
-            function setValidator(newValidator) {
-                validate = newValidator || ACCEPT;
-            }
-
             function restoreTextValue() {
                 $scope.textValue = $scope.lastValidValue;
                 updateFromView($scope.textValue);
@@ -106,7 +95,7 @@ define(
             $scope.$watch('ngModel[field]', updateFromModel);
             $scope.$watch('pickerModel.value', updateFromPicker);
             $scope.$watch('textValue', updateFromView);
-            $scope.$watch('structure.validate', setValidator);
+
         }
 
         return DateTimeFieldController;
