@@ -54,6 +54,13 @@ define(
                     // Pass the template URL to ng-include via scope.
                     scope.inclusion = controlMap[key];
                 });
+                scope.$watch("structure.validate", function (validate) {
+                    if (typeof validate === 'function') {
+                        ngModelController.$validators.custom = validate;
+                    } else {
+                        delete ngModelController.$validators.custom;
+                    }
+                });
                 scope.ngModelController = ngModelController;
             }
 
