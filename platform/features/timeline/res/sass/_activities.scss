@@ -54,7 +54,8 @@
 	}
 }
 
-.edit-mode .s-timeline-gantt {
+.edit-mode .s-timeline-gantt,
+.s-status-editing .s-timeline-gantt {
 	.handle {
 		cursor: col-resize;
 		&.mid {

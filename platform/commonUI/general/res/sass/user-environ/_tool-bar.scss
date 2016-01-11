@@ -20,7 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .tool-bar {
-	border-bottom: 1px solid $colorInteriorBorder;
+    &.btn-bar {
+        white-space: nowrap;
+    }
 	.l-control-group {
 		height: $btnToolbarH;
 	}

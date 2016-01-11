@@ -23,7 +23,7 @@
 
 .l-inspect,
 .l-inspect table tr td {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
 }
 
 .l-inspect {
@@ -31,6 +31,9 @@
     background: $colorInspectorBg;
     color: $colorInspectorFg;
     line-height: 140%;
+
+    .flex-elem.holder:not(:last-child) { margin-bottom: $interiorMargin; }
+
     .pane-header {
         color: pushBack($colorInspectorFg, 20%);
         font-size: 0.8rem;
@@ -41,6 +44,16 @@
             font-family: symbolsfont;
             margin-right: $interiorMargin;
             vertical-align: bottom;
+        }
+    }
+
+    .split-layout {
+        .split-pane-component.pane {
+            &.bottom {
+                height: 30%;
+                min-height: 20%;
+                max-height: 80%;
+            }
         }
     }
     
@@ -117,5 +130,35 @@
             margin-left: $interiorMarginSm;
             width: 4px;
         }
+    }
+    .holder-elements {
+        .current-elements {
+            position: relative;
+            .tree-item {
+                .t-object-label {
+                    // Elements pool is a flat list, so don't indent items.
+                    font-size: 0.75rem;
+                    left: 0;
+                }
+            }
+        }
+    }
+}
+
+.l-inspect {
+    .splitter-inspect-panel,
+    .split-pane-component.pane.bottom {
+        @include trans-prop-nice(opacity, 250ms); // Not working as desired currently; entire inspector seems to be destroyed and recreated when switching into and out of edit mode.
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+.s-status-editing .l-inspect {
+    .location-item { pointer-events: none; }
+    .splitter-inspect-panel,
+    .split-pane-component.pane.bottom {
+        opacity: 1;
+        pointer-events: inherit;
     }
 }

@@ -19,13 +19,12 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<span ng-controller="BrowseObjectController" class="abs l-flex-col">
-    <div class="object-browse-bar l-flex-row">
+<div ng-controller="BrowseObjectController" class="abs l-flex-col">
+    <div class="holder flex-elem l-flex-row object-browse-bar ">
         <div class="items-select left flex-elem l-flex-row grows">
             <mct-representation key="'back-arrow'"
                                 mct-object="domainObject"
-                                class="flex-elem l-back">
-            </mct-representation>
+                                class="flex-elem l-back"></mct-representation>
             <mct-representation key="'object-header'"
                                 mct-object="domainObject"
                                 class="l-flex-row flex-elem grows object-header">
@@ -44,8 +43,7 @@
             </mct-representation>
         </div>
     </div>
-    <div class="holder l-flex-col flex-elem grows l-object-wrapper"
-         ng-class="{'edit-main':editMode}" style="margin-top: 50px;">
+    <div class="holder l-flex-col flex-elem grows l-object-wrapper">
         <div class="holder l-flex-col flex-elem grows l-object-wrapper-inner">
             <!-- Toolbar and Save/Cancel buttons -->
             <div class="l-edit-controls flex-elem l-flex-row flex-align-end">
@@ -58,6 +56,7 @@
                                     mct-object="domainObject"
                                     class='flex-elem conclude-editing'>
                 </mct-representation>
+
             </div>
             <mct-representation key="representation.selected.key"
                                 mct-object="representation.selected.key && domainObject"
@@ -65,4 +64,5 @@
                                 toolbar="toolbar">
             </mct-representation>
         </div><!--/ l-object-wrapper-inner -->
-</span>
+    </div>
+</div>

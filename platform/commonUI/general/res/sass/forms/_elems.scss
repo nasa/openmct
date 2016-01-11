@@ -31,7 +31,6 @@
 }
 
 .form {
-//	@include test(orange);
 	color: $colorFormText;
 	.form-section {
 		position: relative;
@@ -112,12 +111,8 @@
 
 		.selector-list {
 			// Used in create overlay to display tree view
-			@include nice-input($colorInputBg, $colorInputFg);
+			@include nice-input();
 			$h: 150px;
-			//@include border-radius($basicCr);
-			//@include box-sizing(border-box);
-			//background: rgba(black, 0.2);
-			//padding: $interiorMargin;
 			position: relative;
 			height: $h;
 //			max-width: 50%;
@@ -162,13 +157,9 @@ label.form-control.checkbox {
 	}
 }
 
-input[type="text"] {
-	@include nice-input($colorInputBg, $colorInputFg);
-	&.filter {
-		&.ng-dirty {
-			//            background: red;
-		}
-	}
+input[type="text"],
+input[type="search"] {
+	@include nice-input();
 	&.numeric {
 		text-align: right;
 	}
@@ -176,7 +167,6 @@ input[type="text"] {
 
 textarea {
 	@include nice-textarea($colorInputBg, $colorInputFg);
-	//	font-size: 0.9em;
 	position: absolute;
 	height: 100%;
 	width: 100%;

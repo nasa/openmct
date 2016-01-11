@@ -25,6 +25,7 @@
 	&.child-frame.panel {
 		background: $colorBodyBg;
 		border: 1px solid $bc;
+        z-index: 0; // Needed to prevent child-frame controls from showing through when another child-frame is above
 		&:hover {
 			border-color: lighten($bc, 10%);
 		}
