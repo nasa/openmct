@@ -20,32 +20,91 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-.holder-search {
-    // Moved a lot of stuff in here to _filter.scss
-    // to generalize approach to search input controls.
+.clear-icon,
+.menu-icon {
+    cursor: pointer;
+    font-family: symbolsfont;
+    @include trans-prop-nice((opacity, color), 150ms);
+}
 
+.clear-icon {
+    // 'x' in circle icon
+    &:before {
+        content: '\e607';
+    }
+}
+
+.holder-search {
 	$iconWidth: 20px;
-    $textInputHeight: 19px;
-    $iconEdgeM: 4px;
-    $iconD: $treeSearchInputBarH - ($iconEdgeM*2);
 
 	.search-bar {
+		$textInputHeight: 19px; // This is equal to the default value, 19px
+		$iconEdgeM: 4px;
+		$iconD: $treeSearchInputBarH - ($iconEdgeM*2);
 		font-size: 0.8em;
 		max-width: 250px;
 		position: relative;
 
-		input[type="search"] {
+		.search-input {
 			height: $treeSearchInputBarH;
 			line-height: $treeSearchInputBarH;
-            position: relative;
-            width: 100%;
-            padding-left: $iconD + $interiorMargin !important;
-            padding-right: ($iconD * 2) + ($interiorMargin * 2) !important;
 		}
 		
-        .clear-icon {
-            right: $iconD + $interiorMargin;
+		&:before,
+		.clear-icon,
+		.menu-icon {
+			@include box-sizing(border-box);
+			color: $colorInputIcon;
+			height: $iconD;
+            width: $iconD;
+			line-height: $iconD;
+			position: absolute;
+			text-align: center;
+			top: $iconEdgeM;
+		}
+
+		.search-input {
+			position: relative;
+			width: 100%;
+			padding-left: $iconD + $interiorMargin !important;
+			padding-right: ($iconD * 2) + ($interiorMargin * 2) !important;
+
+			// Make work for mct-control textfield
+			input {
+				width: inherit; // was 100%
+			}
+		}
+
+		&:before {
+            // Magnify glass icon
+            content:'\4d';
+            font-family: symbolsfont;
+            left: $interiorMarginSm;
+            @include trans-prop-nice(color, 250ms);
+            pointer-events: none;
+            z-index: 1;
         }
+
+		// Make icon lighten when hovering over search bar
+		&:hover:before {
+			color: pullForward($colorInputIcon, 10%);
+		}
+
+		.clear-icon {
+			right: $iconD + $interiorMargin;
+
+			// Icon is visible only when there is text input
+            visibility: hidden;
+			opacity: 0;
+			&.show {
+                visibility: visible;
+				opacity: 1;
+			}
+
+			&:hover {
+				color: pullForward($colorInputIcon, 10%);
+			}
+		}
 
 		.menu-icon {
             // 'v' invoke menu icon
@@ -69,7 +128,7 @@
 	}
 
 	.active-filter-display {
-		$s: 0.65em;
+		$s: 0.7em;
 		$p: $interiorMargin;
 		@include box-sizing(border-box);
 		line-height: 130%;
@@ -88,7 +147,6 @@
 
 	.search-results {
         @include trans-prop-nice((opacity, visibility), 250ms);
-        margin-top: $interiorMarginLg; // Always include margin here to fend off the search input
 		padding-right: $interiorMargin;
         .hint {
             margin-bottom: $interiorMarginLg;

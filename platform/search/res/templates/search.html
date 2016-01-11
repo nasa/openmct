@@ -20,10 +20,13 @@
  at runtime from the About dialog for additional information.
 -->
 <div class="l-flex-col flex-elem grows holder holder-search"  ng-controller="SearchController as controller">
-    <div class="search-bar search-input l-filter s-filter flex-elem" ng-controller="ClickAwayController as toggle">
-        <input type="search"
+    <div class="search-bar flex-elem"
+         ng-controller="ClickAwayController as toggle"
+         ng-class="{ holder: !(ngModel.input === '' || ngModel.input === undefined) }">
+        <input class="search-input"
+               type="text"
                ng-model="ngModel.input"
-               ng-keyup="controller.search()" />
+               ng-keyup="controller.search()"/>
         <a class="clear-icon"
            ng-class="{show: !(ngModel.input === '' || ngModel.input === undefined)}"
            ng-click="ngModel.input = ''; controller.search()"></a>
@@ -36,18 +39,19 @@
                      ng-click="toggle.setState(true)">
         </mct-include>
     </div>
-    <div class="active-filter-display flex-elem"
+    <div class="active-filter-display flex-elem holder"
          ng-class="{off: ngModel.filtersString === '' || ngModel.filtersString === undefined || !ngModel.search}"
          ng-controller="SearchMenuController as menuController">
         <a class="clear-icon clear-filters-icon"
            ng-click="ngModel.checkAll = true; menuController.checkAll()"></a>Filtered by: {{ ngModel.filtersString }}
     </div>
-    <div class="search-results flex-elem grows vscroll"
+    <div class="search-results flex-elem holder grows vscroll"
          ng-class="{ off: !(loading || results.length > 0), loading: loading }">
         <mct-representation key="'search-item'"
                             ng-repeat="result in results"
                             mct-object="result.object"
-                            ng-model="ngModel">
+                            ng-model="ngModel"
+                            class="l-flex-row flex-elem grows">
         </mct-representation>
         <a class="load-more-button s-btn vsm" ng-if="controller.areMore()" ng-click="controller.loadMore()">More Results</a>
     </div>

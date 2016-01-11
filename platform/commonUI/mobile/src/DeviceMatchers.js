@@ -19,41 +19,42 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global define*/
+define(function () {
+    "use strict";
 
-@include phoneandtablet {
-    ul.tree {
-        // Sets the margin on the left, which causes the
-        // running indentation after each folder is made
-        ul.tree {
-            margin-left: $mobileTreeItemIndent;
+    /**
+     * An object containing key-value pairs, where keys are symbolic of
+     * device attributes, and values are functions that take the
+     * `agentService` as inputs and return boolean values indicating
+     * whether or not the current device has these attributes.
+     *
+     * For internal use by the mobile support bundle.
+     *
+     * @memberof platform/commonUI/mobile
+     * @private
+     */
+    return {
+        mobile: function (agentService) {
+            return agentService.isMobile();
+        },
+        phone: function (agentService) {
+            return agentService.isPhone();
+        },
+        tablet: function (agentService) {
+            return agentService.isTablet();
+        },
+        desktop: function (agentService) {
+            return !agentService.isMobile();
+        },
+        portrait: function (agentService) {
+            return agentService.isPortrait();
+        },
+        landscape: function (agentService) {
+            return agentService.isLandscape();
+        },
+        touch: function (agentService) {
+            return agentService.isTouch();
         }
-    }
-	.tree-item,
-	.search-result-item {
-		height: $mobileTreeItemH !important;
-		line-height: $mobileTreeItemH !important;
-		margin-bottom: 0px !important;
-		.view-control {
-            font-size: 1.2em;
-            margin-right: 0;
-            order: 2;
-            width: $mobileTreeItemH;
-            &.has-children {
-                &:before {
-                    content: "\7d";
-                    left: 50%;
-                    @include transform(translateX(-50%) rotate(90deg));
-                }
-                &.expanded:before {
-                    @include transform(translateX(-50%) rotate(270deg));
-                }
-            }
-		}
-		.t-object-label {
-			line-height: inherit;
-            .t-item-icon.l-icon-link .t-item-icon-glyph:before {
-                bottom: 20%; // Shift up due to height of mobile menu items
-            }
-		}
-	}
-}
+    };
+});

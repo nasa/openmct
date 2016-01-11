@@ -32,16 +32,14 @@ define(
         var TEST_RANGE_VALUE = "some formatted range value";
 
         describe("A range column", function () {
-            var mockDataSet,
+            var testDatum,
                 testMetadata,
                 mockFormatter,
+                mockDomainObject,
                 column;
 
             beforeEach(function () {
-                mockDataSet = jasmine.createSpyObj(
-                    "data",
-                    [ "getRangeValue" ]
-                );
+                testDatum = { testKey: 123, otherKey: 456 };
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
                     [ "formatDomainValue", "formatRangeValue" ]
@@ -50,6 +48,10 @@ define(
                     key: "testKey",
                     name: "Test Name"
                 };
+                mockDomainObject = jasmine.createSpyObj(
+                    "domainObject",
+                    [ "getModel", "getCapability" ]
+                );
                 mockFormatter.formatRangeValue.andReturn(TEST_RANGE_VALUE);
 
                 column = new RangeColumn(testMetadata, mockFormatter);
@@ -59,20 +61,13 @@ define(
                 expect(column.getTitle()).toEqual("Test Name");
             });
 
-            xit("looks up data from a data set", function () {
-                column.getValue(undefined, mockDataSet, 42);
-                expect(mockDataSet.getRangeValue)
-                    .toHaveBeenCalledWith(42, "testKey");
-            });
-
-            xit("formats range values as numbers", function () {
-                mockDataSet.getRangeValue.andReturn(123.45678);
-                expect(column.getValue(undefined, mockDataSet, 42).text)
+            it("formats range values as numbers", function () {
+                expect(column.getValue(mockDomainObject, testDatum).text)
                     .toEqual(TEST_RANGE_VALUE);
 
                 // Make sure that service interactions were as expected
                 expect(mockFormatter.formatRangeValue)
-                    .toHaveBeenCalledWith(123.45678);
+                    .toHaveBeenCalledWith(testDatum.testKey);
                 expect(mockFormatter.formatDomainValue)
                     .not.toHaveBeenCalled();
             });

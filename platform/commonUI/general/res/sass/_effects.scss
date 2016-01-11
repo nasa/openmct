@@ -31,10 +31,6 @@ a.disabled {
     border-bottom: 1px solid rgba(#fff, 0.3);
 }
 
-.outline {
-    @include boxOutline();
-}
-
 .test-stripes {
 	@include bgDiagonalStripes();
 }

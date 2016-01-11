@@ -35,23 +35,35 @@ ul.tree {
 .tree-item,
 .search-result-item {
 	$runningItemW: 0;
+    @extend .l-flex-row;
 	@include box-sizing(border-box);
 	@include border-radius($basicCr);
 	@include single-transition(background-color, 0.25s);
-	display: block;
 	font-size: 0.8rem;
 	height: $menuLineH;
 	line-height: $menuLineH;
 	margin-bottom: $interiorMarginSm;
+    padding: 0 $interiorMarginSm;
 	position: relative;
 
 	.view-control {
 		color: $colorItemTreeVC;
-		display: inline-block;
-		margin-left: $interiorMargin;
-		font-size: 0.75em;
+        font-size: 0.75em;
+		margin-right: $interiorMargin;
+        height: 100%;
+        line-height: inherit;
 		width: $treeVCW;
-		$runningItemW: $interiorMargin + $treeVCW;
+        &.has-children {
+            &:before {
+                position: absolute;
+                @include trans-prop-nice(transform, 100ms);
+                content: "\3e";
+                @include transform-origin(center);
+            }
+            &.expanded:before {
+                @include transform(rotate(90deg));
+            }
+        }
 		@include desktop {
 			&:hover {
 				color: $colorItemTreeVCHover !important;
@@ -59,64 +71,17 @@ ul.tree {
 		}
 	}
 
-	.label,
 	.t-object-label {
-		display: block;
-		@include absPosDefault();
 		line-height: $menuLineH;
-
         .t-item-icon {
             @include txtShdwSubtle($shdwItemTreeIcon);
             font-size: $treeTypeIconH;
             color: $colorItemTreeIcon;
-            position: absolute;
-            left: $interiorMargin;
-            top: 50%;
-            width: $treeTypeIconH;
-            @include transform(translateY(-50%));
+            width: $treeTypeIconW;
         }
-
-		.type-icon {
-			//@include absPosDefault(0, false);
-			$d: $treeTypeIconH;
-			@include txtShdwSubtle($shdwItemTreeIcon);
-			font-size: $treeTypeIconH;
-			color: $colorItemTreeIcon;
-			left: $interiorMargin;
-			position: absolute;
-			@include verticalCenterBlock($menuLineHPx, $treeTypeIconHPx);
-			line-height: 100%;
-			right: auto; width: $treeTypeIconH;
-
-			.icon {
-				&.l-icon-link,
-				&.l-icon-alert {
-					position: absolute;
-					z-index: 2;
-				}
-				&.l-icon-alert {
-					$d: 8px;
-					@include ancillaryIcon($d, $colorAlert);
-					top: 1px;
-					right: -2px;
-				}
-				&.l-icon-link {
-					$d: 8px;
-					@include ancillaryIcon($d, $colorIconLink);
-					left: -3px;
-					bottom: 0px;
-				}
-			}
-		}
-		.title-label,
         .t-title-label {
-			@include absPosDefault();
-			display: block;
-			left: $runningItemW + ($interiorMargin * 3);
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-		}
+            @include ellipsize();
+        }
 	}
 
 	&.selected {
@@ -126,12 +91,11 @@ ul.tree {
 			color: $colorItemTreeSelectedVC;
 		}
 		.t-object-label .t-item-icon {
-			color: $colorItemTreeSelectedFg; //$colorItemTreeIconHover;
+			color: $colorItemTreeSelectedFg;
 		}
 	}
 
 	&:not(.selected) {
-		// NOTE: [Mobile] Removed Hover on Mobile
 		@include desktop {
 			&:hover {
 				background: $colorItemTreeHoverBg;
@@ -160,6 +124,31 @@ ul.tree {
 	}
 }
 
+mct-representation {
+    &.s-status-pending {
+        .t-object-label {
+            .t-item-icon {
+                &:before {
+                    $spinBW: 4px;
+                    @include spinner($spinBW);
+                    border-color: rgba($colorItemTreeIcon, 0.25);
+                    border-top-color: rgba($colorItemTreeIcon, 1.0);
+                }
+                .t-item-icon-glyph {
+                    display: none;
+                }
+            }
+            .t-title-label {
+                font-style: italic;
+                opacity: 0.6;
+            }
+        }
+    }
+}
+.selected mct-representation.s-status-pending .t-object-label .t-item-icon:before {
+    border-color: rgba($colorItemTreeSelectedFg, 0.25);
+    border-top-color: rgba($colorItemTreeSelectedFg, 1.0);
+}
 .tree .tree-item,
 .search-results .s-status-editing .search-result-item {
     .t-object-label {

@@ -20,40 +20,50 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-@include phoneandtablet {
-    ul.tree {
-        // Sets the margin on the left, which causes the
-        // running indentation after each folder is made
-        ul.tree {
-            margin-left: $mobileTreeItemIndent;
+// mct-representation surrounding an object-label key="'label'"
+.rep-object-label {
+    @include flex-direction(row);
+    @include flex(1 1 auto);
+    height: inherit;
+    line-height: inherit;
+    min-width: 0;
+}
+
+.t-object-label {
+    .t-item-icon {
+        margin-right: $interiorMargin;
+    }
+}
+
+mct-representation {
+    &.s-status-pending {
+        .t-object-label {
+            .t-item-icon {
+                &:before {
+                    $spinBW: 4px;
+                    $spinD: 0;
+                    @include spinner($spinBW);
+                    content: "";
+                    display: block;
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    padding: 30%;
+                    width: $spinD;
+                    height: $spinD;
+                }
+                .t-item-icon-glyph {
+                    display: none;
+                }
+            }
+            .t-title-label {
+                font-style: italic;
+                opacity: 0.6;
+            }
         }
     }
-	.tree-item,
-	.search-result-item {
-		height: $mobileTreeItemH !important;
-		line-height: $mobileTreeItemH !important;
-		margin-bottom: 0px !important;
-		.view-control {
-            font-size: 1.2em;
-            margin-right: 0;
-            order: 2;
-            width: $mobileTreeItemH;
-            &.has-children {
-                &:before {
-                    content: "\7d";
-                    left: 50%;
-                    @include transform(translateX(-50%) rotate(90deg));
-                }
-                &.expanded:before {
-                    @include transform(translateX(-50%) rotate(270deg));
-                }
-            }
-		}
-		.t-object-label {
-			line-height: inherit;
-            .t-item-icon.l-icon-link .t-item-icon-glyph:before {
-                bottom: 20%; // Shift up due to height of mobile menu items
-            }
-		}
-	}
+}
+.selected mct-representation.s-status-pending .t-object-label .t-item-icon:before {
+    border-color: rgba($colorItemTreeSelectedFg, 0.25);
+    border-top-color: rgba($colorItemTreeSelectedFg, 1.0);
 }

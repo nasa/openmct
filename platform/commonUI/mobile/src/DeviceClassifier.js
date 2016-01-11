@@ -22,30 +22,38 @@
 /*global define,Promise*/
 
 define(
-    function () {
+    ['./DeviceMatchers'],
+    function (DeviceMatchers) {
         'use strict';
 
         /**
-         * Loads all templates when the application is started.
-         * @param {platform/representation.TemplateLinker} templateLinker
-         *        the `templateLinker` service, used to load and cache
-         *        template extensions
-         * @param {...Array.<{templateUrl: string}>} extensions arrays
-         *        of template or template-like extensions
+         * Runs at application startup and adds a subset of the following
+         * CSS classes to the body of the document, depending on device
+         * attributes:
+         *
+         * * `mobile`: Phones or tablets.
+         * * `phone`: Phones specifically.
+         * * `tablet`: Tablets specifically.
+         * * `desktop`: Non-mobile devices.
+         * * `portrait`: Devices in a portrait-style orientation.
+         * * `landscape`: Devices in a landscape-style orientation.
+         * * `touch`: Device supports touch events.
+         *
+         * @param {platform/commonUI/mobile.AgentService} agentService
+         *        the service used to examine the user agent
+         * @param $document Angular's jqLite-wrapped document element
+         * @constructor
          */
-        function TemplatePrefetcher(templateLinker, extensions) {
-            Array.prototype.slice.apply(arguments, [1])
-                .reduce(function (a, b) {
-                    return a.concat(b);
-                }, [])
-                .map(function (ext) {
-                    return templateLinker.getPath(ext);
-                })
-                .forEach(function (path) {
-                    templateLinker.load(path);
-                });
+        function MobileClassifier(agentService, $document) {
+            var body = $document.find('body');
+            Object.keys(DeviceMatchers).forEach(function (key) {
+                if (DeviceMatchers[key](agentService)) {
+                    body.addClass(key);
+                }
+            });
         }
 
-        return TemplatePrefetcher;
+        return MobileClassifier;
+
     }
 );
