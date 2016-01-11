@@ -27,10 +27,11 @@ define(
         "use strict";
 
         describe("The Save action", function () {
-            var mockLocation,
-                mockDomainObject,
+            var mockDomainObject,
+                mockNavigationService,
+                mockStatusCapability,
                 mockEditorCapability,
-                mockUrlService,
+                mockCapabilities,
                 actionContext,
                 action;
 
@@ -43,10 +44,6 @@ define(
             }
 
             beforeEach(function () {
-                mockLocation = jasmine.createSpyObj(
-                    "$location",
-                    [ "path" ]
-                );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     [ "getCapability", "hasCapability" ]
@@ -55,30 +52,39 @@ define(
                     "editor",
                     [ "save", "cancel" ]
                 );
-                mockUrlService = jasmine.createSpyObj(
-                    "urlService",
-                    ["urlForLocation"]
+                mockStatusCapability = jasmine.createSpyObj(
+                    "statusCapability",
+                    ["get"]
                 );
-
+                mockNavigationService = jasmine.createSpyObj(
+                    "mockNavigationService",
+                    [ "setNavigation"]
+                );
+                mockCapabilities = {
+                    "editor": mockEditorCapability,
+                    "status": mockStatusCapability
+                };
 
                 actionContext = {
                     domainObject: mockDomainObject
                 };
 
                 mockDomainObject.hasCapability.andReturn(true);
-                mockDomainObject.getCapability.andReturn(mockEditorCapability);
-                mockEditorCapability.save.andReturn(mockPromise(true));
+                mockDomainObject.getCapability.andCallFake(function(capability){
+                    return mockCapabilities[capability];
+                });
 
-                action = new SaveAction(mockLocation, mockUrlService, actionContext);
+                mockEditorCapability.save.andReturn(mockPromise(mockDomainObject));
+                mockStatusCapability.get.andReturn(true);
+
+                action = new SaveAction(mockNavigationService, actionContext);
 
             });
 
-            it("only applies to domain object with an editor capability", function () {
+            it("only applies to domain object that is being edited", function () {
                 expect(SaveAction.appliesTo(actionContext)).toBeTruthy();
-                expect(mockDomainObject.hasCapability).toHaveBeenCalledWith("editor");
 
-                mockDomainObject.hasCapability.andReturn(false);
-                mockDomainObject.getCapability.andReturn(undefined);
+                mockStatusCapability.get.andReturn(false);
                 expect(SaveAction.appliesTo(actionContext)).toBeFalsy();
             });
 
@@ -96,8 +102,8 @@ define(
 
             it("returns to browse when performed", function () {
                 action.perform();
-                expect(mockLocation.path).toHaveBeenCalledWith(
-                    mockUrlService.urlForLocation("browse", mockDomainObject)
+                expect(mockNavigationService.setNavigation).toHaveBeenCalledWith(
+                    mockDomainObject
                 );
             });
         });

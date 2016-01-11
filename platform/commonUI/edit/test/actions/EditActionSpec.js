@@ -19,27 +19,41 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
+/*global define,describe,it,expect,beforeEach,jasmine,spyOn*/
 
 define(
-    ["../../src/actions/EditAction"],
+    [
+        "../../src/actions/EditAction"
+    ],
     function (EditAction) {
         "use strict";
 
         describe("The Edit action", function () {
-            var mockLocation,
-                mockNavigationService,
+            var mockNavigationService,
                 mockLog,
                 mockDomainObject,
+                mockStatusCapability,
                 mockType,
                 actionContext,
+                mockCapabilities,
+                mockQ,
                 action;
 
+            function mockPromise(value) {
+                return {
+                    then: function (callback) {
+                        return mockPromise(callback(value));
+                    }
+                };
+            }
+
             beforeEach(function () {
-                mockLocation = jasmine.createSpyObj(
-                    "$location",
-                    [ "path" ]
+
+                mockStatusCapability = jasmine.createSpyObj(
+                    "statusCapability",
+                    [ "get", "set" ]
                 );
+
                 mockNavigationService = jasmine.createSpyObj(
                     "navigationService",
                     [ "setNavigation", "getNavigation" ]
@@ -50,20 +64,41 @@ define(
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability" ]
+                    [ "getId", "getModel", "getCapability", "hasCapability" ]
                 );
                 mockType = jasmine.createSpyObj(
                     "type",
                     [ "hasFeature" ]
                 );
 
-                mockDomainObject.getCapability.andReturn(mockType);
+                mockQ = jasmine.createSpyObj(
+                    "q",
+                    [ "when", "all" ]
+                );
+
+                mockQ.when.andReturn(function(value){
+                    return mockPromise(value);
+                });
+
+                mockQ.all.andReturn(mockPromise(undefined));
+
+                mockDomainObject.getCapability.andCallFake(function(capability){
+                    return mockCapabilities[capability];
+                });
+                mockDomainObject.getModel.andReturn({});
+                mockDomainObject.getId.andReturn("testId");
+                mockStatusCapability.get.andReturn(false);
                 mockType.hasFeature.andReturn(true);
+
+                mockCapabilities = {
+                    "status": mockStatusCapability,
+                    "type": mockType
+                };
 
                 actionContext = { domainObject: mockDomainObject };
 
                 action = new EditAction(
-                    mockLocation,
+                    mockQ,
                     mockNavigationService,
                     mockLog,
                     actionContext
@@ -77,15 +112,30 @@ define(
                 expect(mockType.hasFeature).toHaveBeenCalledWith('creation');
             });
 
-            it("changes URL path to edit mode when performed", function () {
+            it("is only applicable when domain object is not in edit mode", function () {
+                // Indicates whether object is in edit mode
+                mockStatusCapability.get.andReturn(false);
+                expect(EditAction.appliesTo(actionContext)).toBeTruthy();
+                mockStatusCapability.get.andReturn(true);
+                expect(EditAction.appliesTo(actionContext)).toBeFalsy();
+            });
+
+            it("navigates to editable domain object", function () {
+                spyOn(action, 'createEditableObject');
+
                 action.perform();
-                expect(mockLocation.path).toHaveBeenCalledWith("/edit");
+
+                expect(mockNavigationService.setNavigation).toHaveBeenCalled();
+                expect(action.createEditableObject).toHaveBeenCalled();
             });
 
             it("ensures that the edited object is navigated-to", function () {
+                var navigatedObject;
                 action.perform();
-                expect(mockNavigationService.setNavigation)
-                    .toHaveBeenCalledWith(mockDomainObject);
+                navigatedObject = mockNavigationService.setNavigation.mostRecentCall.args[0];
+                expect(navigatedObject.getId())
+                    .toEqual(mockDomainObject.getId());
+                expect(navigatedObject).not.toBe(mockDomainObject);
             });
 
             it("logs a warning if constructed when inapplicable", function () {
@@ -94,7 +144,7 @@ define(
 
                 // Should not have hit an exception...
                 new EditAction(
-                    mockLocation,
+                    mockQ,
                     mockNavigationService,
                     mockLog,
                     {}
@@ -104,8 +154,6 @@ define(
                 expect(mockLog.warn).toHaveBeenCalled();
 
                 // And should not have had other interactions
-                expect(mockLocation.path)
-                    .not.toHaveBeenCalled();
                 expect(mockNavigationService.setNavigation)
                     .not.toHaveBeenCalled();
             });

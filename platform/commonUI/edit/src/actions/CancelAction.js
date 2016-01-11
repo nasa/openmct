@@ -33,9 +33,8 @@ define(
          * @memberof platform/commonUI/edit
          * @implements {Action}
          */
-        function CancelAction($location, navigationService, context) {
+        function CancelAction(navigationService, context) {
             this.domainObject = context.domainObject;
-            this.$location = $location;
             this.navigationService = navigationService;
         }
 
@@ -47,7 +46,6 @@ define(
          */
         CancelAction.prototype.perform = function () {
             var domainObject = this.domainObject,
-                $location = this.$location,
                 navigationService = this.navigationService;
 
             // Look up the object's "editor.completion" capability;
@@ -82,7 +80,7 @@ define(
         CancelAction.appliesTo = function (context) {
             var domainObject = (context || {}).domainObject;
             return domainObject !== undefined &&
-                domainObject.hasCapability("editor");
+                domainObject.getCapability('status').get('editing');
         };
 
         return CancelAction;

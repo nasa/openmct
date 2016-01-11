@@ -28,6 +28,8 @@ define(
 
         describe("The editor capability", function () {
             var mockPersistence,
+                mockStatusCapability,
+                mockCapabilities,
                 mockEditableObject,
                 mockDomainObject,
                 mockCache,
@@ -40,6 +42,14 @@ define(
                     "persistence",
                     [ "persist" ]
                 );
+                mockStatusCapability = jasmine.createSpyObj(
+                    "status",
+                    [ "set" ]
+                );
+                mockCapabilities = {
+                    "persistence":mockPersistence,
+                    "status": mockStatusCapability
+                };
                 mockEditableObject = {
                     getModel: function () { return model; }
                 };
@@ -53,7 +63,9 @@ define(
                 );
                 mockCallback = jasmine.createSpy("callback");
 
-                mockDomainObject.getCapability.andReturn(mockPersistence);
+                mockDomainObject.getCapability.andCallFake(function(capability){
+                    return mockCapabilities[capability];
+                });
 
                 model = { someKey: "some value", x: 42 };
 
@@ -96,6 +108,19 @@ define(
                 });
             });
 
+            it("resets the editing status on successful save", function () {
+                capability.save().then(mockCallback);
+
+                // Wait for promise to resolve
+                waitsFor(function () {
+                    return mockCallback.calls.length > 0;
+                }, 250);
+
+                runs(function () {
+                    expect(mockStatusCapability.set).toHaveBeenCalledWith('editing', false);
+                });
+            });
+
             it("has no interactions on cancel", function () {
                 capability.cancel().then(mockCallback);
 
@@ -108,6 +133,19 @@ define(
                     expect(mockDomainObject.useCapability).not.toHaveBeenCalled();
                     expect(mockCache.markClean).not.toHaveBeenCalled();
                     expect(mockCache.saveAll).not.toHaveBeenCalled();
+                });
+            });
+
+            it("resets editing status on cancel", function () {
+                capability.cancel().then(mockCallback);
+
+                // Wait for promise to resolve
+                waitsFor(function () {
+                    return mockCallback.calls.length > 0;
+                }, 250);
+
+                runs(function () {
+                    expect(mockStatusCapability.set).toHaveBeenCalledWith('editing', false);
                 });
             });
 

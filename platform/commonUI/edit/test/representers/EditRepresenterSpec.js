@@ -32,7 +32,9 @@ define(
                 mockScope,
                 testRepresentation,
                 mockDomainObject,
+                mockStatusCapability,
                 mockPersistence,
+                mockCapabilities,
                 representer;
 
             function mockPromise(value) {
@@ -57,11 +59,21 @@ define(
                 ]);
                 mockPersistence =
                     jasmine.createSpyObj("persistence", ["persist"]);
+                mockStatusCapability = jasmine.createSpyObj("domainObject", [
+                    "get"]);
+
+                mockCapabilities = {
+                    "persistence": mockPersistence,
+                    "status": mockStatusCapability
+                };
 
                 mockDomainObject.getModel.andReturn({});
                 mockDomainObject.hasCapability.andReturn(true);
                 mockDomainObject.useCapability.andReturn(true);
-                mockDomainObject.getCapability.andReturn(mockPersistence);
+                mockStatusCapability.get.andReturn(true);
+                mockDomainObject.getCapability.andCallFake(function(capability){
+                    return mockCapabilities[capability];
+                });
 
                 representer = new EditRepresenter(mockQ, mockLog, mockScope);
                 representer.represent(testRepresentation, mockDomainObject);
@@ -96,6 +108,14 @@ define(
                         test: { someConfiguration: "something" }
                     }
                 });
+            });
+
+            it("sets an 'editMode' flag on scope if the object is editable", function() {
+                expect(mockScope.editMode).toBe(true);
+
+                mockStatusCapability.get.andReturn(false);
+                representer.represent(testRepresentation, mockDomainObject);
+                expect(mockScope.editMode).toBeFalsy();
             });
 
 

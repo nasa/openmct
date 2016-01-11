@@ -50,6 +50,7 @@ define(
             }
 
             beforeEach(function () {
+
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     [ "$on", "$watch" ]
@@ -82,11 +83,11 @@ define(
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getCapability", "getModel", "useCapability" ]
+                    [ "getId", "hasCapability", "getCapability", "getModel", "useCapability" ]
                 );
                 mockNextObject = jasmine.createSpyObj(
                     "nextObject",
-                    [ "getId", "getCapability", "getModel", "useCapability" ]
+                    [ "getId", "hasCapability", "getCapability", "getModel", "useCapability" ]
                 );
 
                 mockObjectService.getObjects.andReturn(mockPromise({
@@ -98,9 +99,13 @@ define(
                 mockDomainObject.useCapability.andReturn(mockPromise([
                     mockNextObject
                 ]));
+
                 mockNextObject.useCapability.andReturn(undefined);
                 mockNextObject.getId.andReturn("next");
+                mockNextObject.hasCapability.andReturn(false);
+
                 mockDomainObject.getId.andReturn("mine");
+                mockDomainObject.hasCapability.andReturn(false);
 
                 controller = new BrowseController(
                     mockScope,

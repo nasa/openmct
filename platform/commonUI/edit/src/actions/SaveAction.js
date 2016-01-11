@@ -34,9 +34,8 @@ define(
          * @implements {Action}
          * @memberof platform/commonUI/edit
          */
-        function SaveAction($location, navigationService, context) {
+        function SaveAction(navigationService, context) {
             this.domainObject = (context || {}).domainObject;
-            this.$location = $location;
             this.navigationService = navigationService;
         }
 
@@ -49,8 +48,6 @@ define(
          */
         SaveAction.prototype.perform = function () {
             var domainObject = this.domainObject,
-                $location = this.$location,
-                urlService = this.urlService,
                 navigationService = this.navigationService;
 
             // Invoke any save behavior introduced by the editor capability;
@@ -65,10 +62,6 @@ define(
             // UI, which will have been pushed atop the Browise UI.)
             function returnToBrowse(nonEditableDomainObject) {
                 navigationService.setNavigation(nonEditableDomainObject);
-                /*return $location.path(urlService.urlForLocation(
-                    "browse",
-                    domainObject
-                ));*/
             }
 
             return doSave().then(returnToBrowse);
@@ -83,7 +76,7 @@ define(
         SaveAction.appliesTo = function (context) {
             var domainObject = (context || {}).domainObject;
             return domainObject !== undefined &&
-                domainObject.hasCapability("editor");
+                domainObject.getCapability("status").get("editing");
         };
 
         return SaveAction;

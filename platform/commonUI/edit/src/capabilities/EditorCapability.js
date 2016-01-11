@@ -104,7 +104,7 @@ define(
             return saveChanges().then(function(){
                 domainObject.getCapability('status').set('editing', false);
                 return domainObject;
-            })
+            });
         };
 
         /**
@@ -131,7 +131,7 @@ define(
 
         EditorCapability.prototype.getDomainObject = function () {
             return this.domainObject;
-        }
+        };
 
         return EditorCapability;
     }
