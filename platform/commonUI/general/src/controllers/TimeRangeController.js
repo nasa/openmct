@@ -43,7 +43,7 @@ define(
         function TimeRangeController($scope, formatService, defaultFormat, now) {
             var tickCount = 2,
                 innerMinimumSpan = 1000, // 1 second
-                outerMinimumSpan = 1000 * 60 * 60, // 1 hour
+                outerMinimumSpan = 1000, // 1 hour
                 initialDragValue,
                 formatter = formatService.getFormat(defaultFormat);
 
