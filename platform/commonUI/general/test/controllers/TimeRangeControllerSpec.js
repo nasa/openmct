@@ -91,6 +91,24 @@ define(
                     .toHaveBeenCalledWith("ngModel", jasmine.any(Function));
             });
 
+            it("exposes start time validator", function () {
+                var testValue = 42000000;
+                mockScope.ngModel.outer = { end: testValue };
+                expect(mockScope.validateStart(testValue + 1))
+                    .toBe(false);
+                expect(mockScope.validateStart(testValue - 60 * 60 * 1000 - 1))
+                    .toBe(true);
+            });
+
+            it("exposes end time validator", function () {
+                var testValue = 42000000;
+                mockScope.ngModel.outer = { start:  testValue };
+                expect(mockScope.validateEnd(testValue - 1))
+                    .toBe(false);
+                expect(mockScope.validateEnd(testValue + 60 * 60 * 1000 + 1))
+                    .toBe(true);
+            });
+
             describe("when changes are made via form entry", function () {
                 beforeEach(function () {
                     mockScope.ngModel = {
