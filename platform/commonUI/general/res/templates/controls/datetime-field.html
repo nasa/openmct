@@ -25,8 +25,7 @@
            ng-model="textValue"
            ng-blur="restoreTextValue(); ngBlur()"
            ng-class="{
-                     error: textInvalid,
-                     test: structure.validate && !structure.validate(ngModel[field])
+                     error: textInvalid || (structure.validate && !structure.validate(ngModel[field]))
                      }">
     </input>
     <a class="ui-symbol icon icon-calendar"
