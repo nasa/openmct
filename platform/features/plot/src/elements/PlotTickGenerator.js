@@ -67,7 +67,7 @@ define(
                 tickVal = tickVal.split('').reverse().join('');
                 result.push({
                     //If data to show, display label for each tick line, otherwise show lines but suppress labels.
-                    label: span > 0 ?  : ''
+                    label: span > 0 ? tickVal  : ''
                 });
             }
 
