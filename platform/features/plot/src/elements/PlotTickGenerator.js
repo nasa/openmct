@@ -62,7 +62,7 @@ define(
 
             for (i = 0; i < count; i += 1) {
                 tickVal = format(i * step + start);
-                if (tickVal != undefined) {
+                if (tickVal !== undefined) {
                     // Make the tick value have its ellipsis on the least significant left side by reversing it here,
                     // and then reversing it again via CSS.
                     tickVal = tickVal.toString().split('').reverse().join('');
