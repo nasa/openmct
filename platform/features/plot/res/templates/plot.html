@@ -73,7 +73,8 @@
 
         <div class="gl-plot-display-area"
              ng-mouseenter="subplot.isHovering(true); representation.showControls = true;"
-             ng-mouseleave="subplot.isHovering(false)">
+             ng-mouseleave="subplot.isHovering(false)"
+             ng-class="{ loading: plot.isRequestPending() }">
 
             <!-- Out-of-bounds data indicators -->
             <!-- ng-show is temporarily hard-coded in next element -->
@@ -143,9 +144,6 @@
                 </div>
 
             </div>
-
-            <span class="t-wait-spinner loading" ng-show="plot.isRequestPending()">
-            </span>
         </div>
         <div ng-if="$last" class="gl-plot-axis-area gl-plot-x">
 
