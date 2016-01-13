@@ -62,7 +62,9 @@ define(
             for (i = 0; i < count; i += 1) {
                 result.push({
                     //If data to show, display label for each tick line, otherwise show lines but suppress labels.
-                    label: span > 0 ? format(i * step + start) : ''
+                    // Make the tick value have its ellipsis on the least significant left side by reversing it here,
+                    // and then reversing it again via CSS. Relevant styling in _plots-main.scss.
+                    label: span > 0 ? format(i * step + start).split('').reverse().join('') : ''
                 });
             }
 
