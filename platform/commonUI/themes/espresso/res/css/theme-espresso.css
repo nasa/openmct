@@ -4880,7 +4880,7 @@ span.req {
     line-height: 24px; }
   /* line 133, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane .primary-pane {
-    z-index: 2; }
+    z-index: 4; }
   /* line 138, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane .mini-tab-icon.toggle-pane {
     z-index: 5; }

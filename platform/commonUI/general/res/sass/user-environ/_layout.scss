@@ -132,7 +132,7 @@
 
     .primary-pane {
         // Need to lift up this pane to ensure that 'collapsed' panes don't block user interactions
-        z-index: 2;
+        z-index: 4;
     }
 
     .mini-tab-icon.toggle-pane {
