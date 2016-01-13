@@ -27,8 +27,7 @@ requirejs.config({
         "angular": "platform/framework/lib/angular.min",
         "angular-route": "platform/framework/lib/angular-route.min",
         "moment": 'platform/telemetry/lib/moment.min',
-        "moment-duration-format": 'platform/features/clock/lib/moment-duration-format',
-        "uuid": 'platform/core/lib/uuid'
+        "moment-duration-format": 'platform/features/clock/lib/moment-duration-format'
     },
     "shim": {
         "angular": {
