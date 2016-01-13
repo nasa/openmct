@@ -61,10 +61,12 @@ define(
                 i;
 
             for (i = 0; i < count; i += 1) {
-                tickVal = format(i * step + start).toString();
-                // Make the tick value have its ellipsis on the least significant left side by reversing it here,
-                // and then reversing it again via CSS.
-                tickVal = tickVal.split('').reverse().join('');
+                tickVal = format(i * step + start);
+                if (tickVal != undefined) {
+                    // Make the tick value have its ellipsis on the least significant left side by reversing it here,
+                    // and then reversing it again via CSS.
+                    tickVal = tickVal.toString().split('').reverse().join('');
+                }
                 result.push({
                     //If data to show, display label for each tick line, otherwise show lines but suppress labels.
                     label: span > 0 ? tickVal  : ''
