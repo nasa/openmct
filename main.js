@@ -25,19 +25,11 @@ requirejs.config({
     "paths": {
         "legacyRegistry": "src/legacyRegistry",
         "angular": "platform/framework/lib/angular.min",
-        "angular-route": "platform/framework/lib/angular-route.min",
-        "moment": 'platform/telemetry/lib/moment.min',
-        "moment-duration-format": 'platform/features/clock/lib/moment-duration-format'
+        "moment": 'platform/telemetry/lib/moment.min'
     },
     "shim": {
         "angular": {
             "exports": "angular"
-        },
-        "angular-route": {
-            "deps": [ "angular" ]
-        },
-        "moment-duration-format": {
-            "deps": [ 'moment' ]
         }
     }
 });

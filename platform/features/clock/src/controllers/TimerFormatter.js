@@ -19,10 +19,18 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
+/*global define,requirejs*/
+
+requirejs.config({
+    shim: {
+        'platform/features/clock/lib/moment-duration-format': {
+            deps: [ 'moment' ]
+        }
+    }
+});
 
 define(
-    ['moment', 'moment-duration-format'],
+    ['moment', '../../lib/moment-duration-format'],
     function (moment) {
         "use strict";
 

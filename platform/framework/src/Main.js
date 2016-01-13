@@ -21,6 +21,14 @@
  *****************************************************************************/
 /*global define, window, requirejs*/
 
+requirejs.config({
+    shim: {
+        'platform/framework/lib/angular-route.min': {
+            deps: [ 'angular' ]
+        }
+    }
+});
+
 /**
  * Implements the framework layer, which handles the loading of bundles
  * and the wiring-together of the extensions they expose.
@@ -32,7 +40,7 @@ define(
         '../lib/es6-promise-2.0.0.min',
         './FrameworkLayer',
         'angular',
-        'angular-route'
+        '../lib/angular-route.min'
     ],
     function (
         require,
