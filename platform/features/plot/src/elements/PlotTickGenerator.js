@@ -57,14 +57,17 @@ define(
         PlotTickGenerator.prototype.generateTicks = function (start, span, count, format) {
             var step = span / (count - 1),
                 result = [],
+                tickVal = '',
                 i;
 
             for (i = 0; i < count; i += 1) {
+                tickVal = format(i * step + start).toString();
+                // Make the tick value have its ellipsis on the least significant left side by reversing it here,
+                // and then reversing it again via CSS.
+                tickVal = tickVal.split('').reverse().join('');
                 result.push({
                     //If data to show, display label for each tick line, otherwise show lines but suppress labels.
-                    // Make the tick value have its ellipsis on the least significant left side by reversing it here,
-                    // and then reversing it again via CSS. Relevant styling in _plots-main.scss.
-                    label: span > 0 ? format(i * step + start).split('').reverse().join('') : ''
+                    label: span > 0 ?  : ''
                 });
             }
 
