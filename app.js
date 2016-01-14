@@ -41,7 +41,13 @@
 
     // Override bundles.json for HTTP requests
     app.use('/' + BUNDLE_FILE, function (req, res) {
-        var bundles = JSON.parse(fs.readFileSync(BUNDLE_FILE, 'utf8'));
+        var bundles;
+
+        try {
+            bundles = JSON.parse(fs.readFileSync(BUNDLE_FILE, 'utf8'));
+        } catch (e) {
+            bundles = [];
+        }
 
         // Handle command line inclusions/exclusions
         bundles = bundles.concat(options.include);

@@ -90,12 +90,10 @@ define(
             }
 
             decorate($log);
-            app.config(function ($provide) {
-                $provide.decorator('$log', function ($delegate) {
-                    decorate($delegate);
-                    return $delegate;
-                });
-            });
+            app.decorator('$log', ['$delegate', function ($delegate) {
+                decorate($delegate);
+                return $delegate;
+            }]);
         };
 
         return LogLevel;

@@ -30,6 +30,12 @@ define(
             var mockScope,
                 mctForm;
 
+            function installController() {
+                var controllerProperty = mctForm.controller,
+                    Controller = mctForm.controller[1];
+                return new Controller(mockScope);
+            }
+
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj("$scope", [ "$watch" ]);
                 mockScope.$parent = {};
@@ -44,7 +50,7 @@ define(
                 // mct-form needs to watch for the form by name
                 // in order to convey changes in $valid, $dirty, etc
                 // up to the parent scope.
-                mctForm.controller(mockScope);
+                installController();
 
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "mctForm",
@@ -56,7 +62,7 @@ define(
                 var someState = { someKey: "some value" };
                 mockScope.name = "someName";
 
-                mctForm.controller(mockScope);
+                installController();
 
                 mockScope.$watch.mostRecentCall.args[1](someState);
 
@@ -65,7 +71,7 @@ define(
 
             it("allows strings to be converted to RegExps", function () {
                 // This is needed to support ng-pattern in the template
-                mctForm.controller(mockScope);
+                installController();
 
                 // Should have added getRegExp to the scope,
                 // to convert strings to regular expressions
@@ -78,7 +84,7 @@ define(
                     regExp;
 
                 // Add getRegExp to scope
-                mctForm.controller(mockScope);
+                installController();
                 regExp = mockScope.getRegExp(strRegExp);
 
                 // Same object instance each time...
@@ -91,7 +97,7 @@ define(
                 var regExp = /^\d+[a-d]$/;
 
                 // Add getRegExp to scope
-                mctForm.controller(mockScope);
+                installController();
 
                 // Should have added getRegExp to the scope,
                 // to convert strings to regular expressions
@@ -100,7 +106,7 @@ define(
 
             it("passes a non-whitespace regexp when no pattern is defined", function () {
                 // If no pattern is supplied, ng-pattern should match anything
-                mctForm.controller(mockScope);
+                installController();
                 expect(mockScope.getRegExp()).toEqual(/\S/);
                 expect(mockScope.getRegExp(undefined)).toEqual(/\S/);
             });
