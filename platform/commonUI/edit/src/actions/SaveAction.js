@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /*global define*/
+/*jshint es5: true */
 
 
 define(
@@ -163,7 +164,6 @@ define(
             // this is introduced by EditableDomainObject which is
             // used to insulate underlying objects from changes made
             // during editing.
-            /*jshint es5: true */
             function doSave() {
                 //This is a new 'virtual object' that has not been persisted
                 // yet.
