@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /*global define*/
-/*jshint es5: true */
+/*jslint es5: true */
 
 
 define(
