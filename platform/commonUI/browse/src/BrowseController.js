@@ -75,7 +75,9 @@ define(
                 // urlService.urlForLocation used to adjust current
                 // path to new, addressed, path based on
                 // domainObject
-                $location.path(urlService.urlForLocation("browse", domainObject.hasCapability('editor') ? domainObject.getOriginalObject() : domainObject));
+                $location.path(urlService.urlForLocation("browse",
+                    domainObject.hasCapability('editor') ?
+                        domainObject.getOriginalObject() : domainObject));
 
             }
 

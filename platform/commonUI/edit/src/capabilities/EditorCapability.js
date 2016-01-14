@@ -98,9 +98,15 @@ define(
 
             editableObject.getCapability("status").set("editing", false);
 
-            return nonrecursive ?
-                resolvePromise(doMutate()).then(doPersist).then(function(){self.cancel();}) :
-                resolvePromise(cache.saveAll());
+            if (nonrecursive) {
+                return resolvePromise(doMutate())
+                    .then(doPersist)
+                    .then(function(){
+                        self.cancel();
+                    });
+            } else {
+                return resolvePromise(cache.saveAll());
+            }
         };
 
         /**

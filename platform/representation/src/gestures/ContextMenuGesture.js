@@ -46,7 +46,7 @@ define(
                 longTouchTime = 500,
                 parameters = element && element.attr('parameters') && $parse(element.attr('parameters'))();
 
-            function suppressMenu(){
+            function suppressMenu() {
                 return parameters
                 && parameters.suppressMenuOnEdit
                 && navigationService.getNavigation()

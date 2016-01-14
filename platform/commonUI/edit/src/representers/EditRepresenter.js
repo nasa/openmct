@@ -108,7 +108,6 @@ define(
             this.key = (representation || {}).key;
             // Track the represented object
             this.domainObject = representedObject;
-            this.scope.editMode = representedObject.hasCapability("editor");
 
             // Ensure existing watches are released
             this.destroy();

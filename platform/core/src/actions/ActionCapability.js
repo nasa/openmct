@@ -58,27 +58,33 @@ define(
             return domainObject.getCapability('status').get('editing');
         }
 
-        function hasEditableParent(domainObject){
+        function hasEditableAncestor(domainObject){
             return domainObject.hasCapability('context') &&
-                domainObject.getCapability('context').getPath().reduce(
-                    function(previous, domainObject){
-                        return domainObject.getCapability('status').get('editing') || previous;
-                    }, false);
+                domainObject
+                    .getCapability('context')
+                    .getPath()
+                    .some(function isEditable (ancestor){
+                        return ancestor.getCapability('status').get('editing');
+                    });
         }
 
         /**
-         * Perform an action. This will find and perform the
-         * first matching action available for the specified
-         * context or key.
+         * Retrieve the actions applicable to the domain object in the given
+         * context.
          *
          * @param {ActionContext|string} context the context in which
-         *       to perform the action; this is passed along to
-         *       the action service to match against available
+         *       to assess the applicability of the available actions; this is
+         *       passed along to the action service to match against available
          *       actions. The "domainObject" field will automatically
          *       be populated with the domain object that exposed
          *       this capability. If given as a string, this will
          *       be taken as the "key" field to match against
          *       specific actions.
+         *
+         *       Additionally, this function will limit the actions
+         *       available for an object in Edit Mode
+         * @returns {Array<Action>} The actions applicable to this domain
+         * object in the given context
          * @memberof platform/core.ActionCapability#
          */
         ActionCapability.prototype.getActions = function (context) {
@@ -93,7 +99,7 @@ define(
             actionContext.domainObject = this.domainObject;
 
             actions = this.actionService.getActions(actionContext) || [];
-            if (isEditable(this.domainObject) || hasEditableParent(this.domainObject)){
+            if (isEditable(this.domainObject) || hasEditableAncestor(this.domainObject)){
                 return actions.filter(function(action){
                     return DISALLOWED_ACTIONS.indexOf(action.getMetadata().key) === -1;
                 });

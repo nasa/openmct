@@ -25,9 +25,11 @@
  * Module defining CreateAction. Created by vwoeltje on 11/10/14.
  */
 define(
-    ['./CreateWizard',
-    'uuid',
-    '../../../edit/src/objects/EditableDomainObject'],
+    [
+        './CreateWizard',
+        'uuid',
+        '../../../edit/src/objects/EditableDomainObject'
+    ],
     function (CreateWizard, uuid, EditableDomainObject) {
         "use strict";
 

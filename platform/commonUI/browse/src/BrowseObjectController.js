@@ -22,8 +22,10 @@
 /*global define,Promise*/
 
 define(
-    ['../../../representation/src/gestures/GestureConstants', 
-        '../../edit/src/objects/EditableDomainObject'],
+    [
+        '../../../representation/src/gestures/GestureConstants',
+        '../../edit/src/objects/EditableDomainObject'
+    ],
     function (GestureConstants, EditableDomainObject) {
         "use strict";
 
@@ -50,17 +52,15 @@ define(
                     ((domainObject && domainObject.useCapability('view')) || [])
                         .forEach(selectViewIfMatching);
                 }
-                //$scope.editMode = domainObject.hasCapability('editor') ?
-                // true : false;
                 navigatedObject = domainObject;
             }
 
             function updateQueryParam(viewKey) {
                 var unlisten,
                     priorRoute = $route.current,
-                    editMode = $scope.domainObject && $scope.domainObject.hasCapability('editor');
+                    isEditMode = $scope.domainObject && $scope.domainObject.hasCapability('editor');
 
-                if (viewKey && !editMode) {
+                if (viewKey && !isEditMode) {
                     $location.search('view', viewKey);
                     unlisten = $scope.$on('$locationChangeSuccess', function () {
                         // Checks path to make sure /browse/ is at front

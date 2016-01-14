@@ -45,7 +45,7 @@ define(
         function DropGesture(dndService, $q, navigationService, objectService, instantiate, typeService, element, domainObject) {
             var actionCapability = domainObject.getCapability('action'),
                 editableDomainObject,
-                scope = element && element.scope && element.scope(),
+                scope = element.scope && element.scope(),
                 action; // Action for the drop, when it occurs
             
             function broadcastDrop(id, event) {
@@ -83,7 +83,8 @@ define(
 
             function shouldCreateVirtualPanel(domainObject){
                 return domainObject.useCapability('view').filter(function (view){
-                        return (view.key==='plot' || view.key==='scrolling') && domainObject.getModel().type!== 'telemetry.panel';
+                        return (view.key === 'plot' || view.key === 'scrolling')
+                            && domainObject.getModel().type !== 'telemetry.panel';
                     }).length > 0;
             }
 
@@ -91,7 +92,13 @@ define(
                 //Refresh domain object on each dragOver to catch external
                 // updates to the model
                 //Don't use EditableDomainObject for folders, allow immediate persistence
-                editableDomainObject = domainObject.hasCapability('editor') || domainObject.getModel().type==='folder' ? domainObject : new EditableDomainObject(domainObject, $q);
+                if (domainObject.hasCapability('editor') ||
+                    domainObject.getModel().type==='folder') {
+                    editableDomainObject = domainObject;
+                } else {
+                    editableDomainObject = new EditableDomainObject(domainObject, $q);
+                }
+
                 actionCapability = editableDomainObject.getCapability('action');
 
                 var event = (e || {}).originalEvent || e,
@@ -136,12 +143,11 @@ define(
                     newPanel.getCapability('composition').add(id);
                 });
 
-                newPanel.getCapability('location').setPrimaryLocation(base.getCapability('location').getContextualLocation());
+                newPanel.getCapability('location')
+                    .setPrimaryLocation(base.getCapability('location')
+                        .getContextualLocation());
 
-                //var virtualPanel = new EditableDomainObject(newPanel, $q);
-                //virtualPanel.setOriginalObject(base);
                 newPanel.setOriginalObject(base);
-                //return virtualPanel;
                 return newPanel;
 
             }
