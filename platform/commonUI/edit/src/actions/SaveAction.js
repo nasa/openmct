@@ -163,8 +163,8 @@ define(
             // this is introduced by EditableDomainObject which is
             // used to insulate underlying objects from changes made
             // during editing.
+            /*jshint es5: true */
             function doSave() {
-                //WARNING: HACK
                 //This is a new 'virtual object' that has not been persisted
                 // yet.
                 if (!domainObject.getModel().persisted){
@@ -178,7 +178,7 @@ define(
                             .then(function(){
                                 return fetchObject(domainObject.getId());
                             })
-                        .catch(doNothing)
+                        .catch(doNothing);
                 } else {
                     return domainObject.getCapability("editor").save()
                         .then(resolveWith(domainObject.getOriginalObject()));

@@ -65,15 +65,13 @@ define(
 
             // A view is editable unless explicitly flagged as not
             (views || []).forEach(function (view) {
-                if (view.editable===false || (applicableView(view.key) && !editableType(type.getKey()))){
-                    // Do nothing
-                } else {
+                if (view.editable===true && !(applicableView(view.key) && !editableType(type.getKey()))){
                     count++;
                 }
             });
 
             return count;
-        }
+        };
 
         /**
          * Checks whether the domain object is currently being edited. If
