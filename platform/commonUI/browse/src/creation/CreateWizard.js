@@ -34,10 +34,11 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function CreateWizard(type, parent, policyService, initialModel) {
-            this.type = type;
-            this.model = initialModel || type.getInitialModel();
-            this.properties = type.getProperties();
+        function CreateWizard(parent, policyService, domainObject) {
+            this.type = domainObject.getCapability('type');
+            this.model = domainObject.getModel();
+            this.domainObject = domainObject;
+            this.properties = this.type.getProperties();
             this.parent = parent;
             this.policyService = policyService;
         }
@@ -116,6 +117,27 @@ define(
 
             return formValue;
         };
+
+        /**
+         * Given a form with values to populate in a model, populate the
+         * model in wrapped domain object and return it.
+         * @param formValue the form model (returned from the
+         * {@link DialogService})
+         * @returns {DomainObject}
+         */
+        CreateWizard.prototype.buildObjectFromInput = function(formValue) {
+            var parent = this.getLocation(formValue),
+                formModel = this.createModel(formValue);
+
+            formModel.location = parent.getId();
+            //Replace domain object model with model collected
+            // from user form.
+            this.domainObject.useCapability("mutation", function(){
+                //Replace object model with the model from the form
+                return formModel;
+            });
+            return this.domainObject;
+        }
 
         /**
          * Based on a populated form, get the domain object which

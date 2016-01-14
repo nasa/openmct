@@ -78,58 +78,13 @@ define(
 
             function doWizardSave(parent) {
                 var context = domainObject.getCapability("context"),
-                    wizard = new CreateWizard(domainObject.useCapability('type'), parent, self.policyService, domainObject.getModel());
-
-                function mergeObjects(fromObject, toObject){
-                    Object.keys(fromObject).forEach(function(key) {
-                        toObject[key] = fromObject[key];
-                    });
-                }
-
-                // Create and persist the new object, based on user
-                // input.
-                function buildObjectFromInput(formValue) {
-                    var parent = wizard.getLocation(formValue),
-                        formModel = wizard.createModel(formValue);
-
-                        formModel.location = parent.getId();
-                        //Replace domain object model with model collected
-                        // from user form.
-                        domainObject.useCapability("mutation", function(){
-                            //Replace object model with the model from the form
-                            return formModel;
-                        });
-                        return domainObject;
-                }
-
-                function getAllComposees(domainObject){
-                    return domainObject.useCapability('composition');
-                }
-
-                function addComposeesToObject(object){
-                    return function(composees){
-                        return self.$q.all(composees.map(function (composee) {
-                            return object.getCapability('composition').add(composee);
-                        })).then(resolveWith(object));
-                    };
-                }
-
-                /**
-                 * Add the composees of the 'virtual' object to the
-                 * persisted object
-                 * @param object
-                 * @returns {*}
-                 */
-                function composeNewObject(object){
-                    if (self.$q.when(object.hasCapability('composition') && domainObject.hasCapability('composition'))) {
-                        return getAllComposees(domainObject)
-                            .then(addComposeesToObject(object));
-                    }
-                }
+                    wizard = new CreateWizard(parent, self.policyService, domainObject);
 
                 return self.dialogService
                     .getUserInput(wizard.getFormStructure(), wizard.getInitialFormValue())
-                    .then(buildObjectFromInput);
+                    .then(function(formValue) {
+                        return wizard.buildObjectFromInput(formValue);
+                    });
             }
 
 
