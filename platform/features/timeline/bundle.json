@@ -139,6 +139,7 @@
                 "type": "timeline",
                 "description": "A timeline view of Timelines and Activities.",
                 "templateUrl": "templates/timeline.html",
+                "editable": true,
                 "toolbar": {
                     "sections": [
                         {

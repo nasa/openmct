@@ -9,6 +9,7 @@
                 "glyph": "L",
                 "type": "layout",
                 "templateUrl": "templates/layout.html",
+                "editable": true,
                 "uses": []
             },
             {
