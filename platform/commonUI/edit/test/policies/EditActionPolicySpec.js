@@ -86,7 +86,7 @@ define(
                 testViews = [ nonEditableView, nonEditableView ];
                 expect(policy.allow(mockEditAction, testContext)).toBeFalsy();
             });
-            
+
             //TODO: Disabled for NEM Beta
             xit("disallows the edit properties action when there are" +
                 " editable views", function () {
