@@ -383,7 +383,8 @@ define([
                     "key": "instantiate",
                     "implementation": Instantiate,
                     "depends": [
-                        "capabilityService"
+                        "capabilityService",
+                        "identifierService"
                     ]
                 }
             ],
