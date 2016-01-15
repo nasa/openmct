@@ -46,6 +46,7 @@
                                 <exclude>platform/core/bundle.json</exclude>
                                 <exclude>example/**/*</exclude>
                                 <exclude>**/test/lib/*</exclude>
+                                <exclude>target/**/*</exclude>
                             </excludes>
                         </resource>
                         <resource>
