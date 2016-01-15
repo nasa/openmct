@@ -41,7 +41,8 @@ define(
                 'removeClass',
                 'css',
                 'after',
-                'remove'
+                'remove',
+                'parent'
             ];
 
         xdescribe("ConductorRepresenter", function () {
@@ -75,6 +76,7 @@ define(
                 testViews = [ { someKey: "some value" } ];
                 mockScope = jasmine.createSpyObj('scope', SCOPE_METHODS);
                 mockElement = jasmine.createSpyObj('element', ELEMENT_METHODS);
+                mockElement.parent.andReturn(mockElement);
                 mockConductor = new TestTimeConductor();
                 mockCompiledTemplate = jasmine.createSpy('template');
                 mockNewScope = jasmine.createSpyObj('newScope', SCOPE_METHODS);
