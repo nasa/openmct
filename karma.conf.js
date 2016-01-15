@@ -71,7 +71,7 @@ module.exports = function(config) {
         // Specify browsers to run tests in.
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
-            'Chrome'
+            'PhantomJS'
         ],
 
         // Code coverage reporting.
