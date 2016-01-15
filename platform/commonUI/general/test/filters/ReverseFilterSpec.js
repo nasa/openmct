@@ -19,26 +19,27 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
+/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
-define(function () {
-    'use strict';
+define(
+    ['../../src/filters/ReverseFilter'],
+    function (ReverseFilter) {
+        'use strict';
 
-    /**
-     * Implements the `reverse` filter, which reverses text strings.
-     * Useful in cases where text should be reversed for presentational
-     * reasons (e.g. in conjunction with CSS tricks involing text direction),
-     * allowing such behavior to be handled independently from the controller
-     * layer.
-     *
-     * @constructor
-     * @memberof platform/commonUI/general
-     */
-    function ReverseFilter() {
-        return function reverse(value) {
-            return value && value.toString().split('').reverse().join('');
-        };
+        describe("The reverse filter", function () {
+            var reverse;
+
+            beforeEach(function () {
+                reverse = new ReverseFilter();
+            });
+
+            it("reverses text", function () {
+                expect(reverse('foo')).toEqual('oof');
+            });
+
+            it("returns undefined for undefined inputs", function () {
+                expect(reverse(undefined)).toBeUndefined();
+            });
+        });
     }
-
-    return ReverseFilter;
-});
+);
