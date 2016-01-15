@@ -26,9 +26,8 @@
  */
 define(
     ['./GestureConstants',
-     '../../../commonUI/edit/src/objects/EditableDomainObject',
-     'uuid'],
-    function (GestureConstants, EditableDomainObject, uuid) {
+     '../../../commonUI/edit/src/objects/EditableDomainObject'],
+    function (GestureConstants, EditableDomainObject) {
         "use strict";
 
         /**
@@ -42,7 +41,7 @@ define(
          * @param {DomainObject} domainObject the domain object whose
          *        composition should be modified as a result of the drop.
          */
-        function DropGesture(dndService, $q, navigationService, objectService, instantiate, typeService, element, domainObject) {
+        function DropGesture(dndService, $q, navigationService, instantiate, typeService, element, domainObject) {
             var actionCapability = domainObject.getCapability('action'),
                 editableDomainObject,
                 scope = element.scope && element.scope(),
@@ -129,12 +128,11 @@ define(
                 var typeKey = 'telemetry.panel',
                     type = typeService.getType(typeKey),
                     model = type.getInitialModel(),
-                    id = uuid(),
                     newPanel,
                     composeAction;
 
                 model.type = typeKey;
-                newPanel = new EditableDomainObject(instantiate(model, id), $q);
+                newPanel = new EditableDomainObject(instantiate(model), $q);
                 if (!canCompose(newPanel, selectedObject)) {
                     return undefined;
                 }

@@ -27,10 +27,9 @@
 define(
     [
         './CreateWizard',
-        'uuid',
         '../../../edit/src/objects/EditableDomainObject'
     ],
-    function (CreateWizard, uuid, EditableDomainObject) {
+    function (CreateWizard, EditableDomainObject) {
         "use strict";
 
         /**

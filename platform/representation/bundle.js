@@ -90,7 +90,6 @@ define([
                         "dndService",
                         "$q",
                         "navigationService",
-                        "objectService",
                         "instantiate",
                         "typeService"
                     ]
