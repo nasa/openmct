@@ -38,7 +38,7 @@
                                 <include>**/src/**/*</include>
                                 <include>**/res/**/*</include>
                                 <include>**/lib/**/*</include>
-                                <include>**/bundle.json</include>
+                                <include>**/bundle.js</include>
                             </includes>
                             <excludes>
                                 <exclude>protractor/**/*</exclude>
