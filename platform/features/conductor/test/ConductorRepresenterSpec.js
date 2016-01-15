@@ -19,7 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,afterEach,jasmine*/
+/*global define,describe,xdescribe,it,expect,beforeEach,
+ waitsFor,afterEach,jasmine*/
 
 define(
     ["../src/ConductorRepresenter", "./TestTimeConductor"],
@@ -43,7 +44,7 @@ define(
                 'remove'
             ];
 
-        describe("ConductorRepresenter", function () {
+        xdescribe("ConductorRepresenter", function () {
             var mockThrottle,
                 mockConductorService,
                 mockCompile,
