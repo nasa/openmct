@@ -19,37 +19,30 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global define*/
 
-/*global require,window*/
-var allTestFiles = [];
-var TEST_REGEXP = /(Spec)\.js$/;
+define(function () {
+    'use strict';
 
-var pathToModule = function(path) {
-    return path.replace(/^\/base\//, '').replace(/\.js$/, '');
-};
-
-Object.keys(window.__karma__.files).forEach(function(file) {
-    if (TEST_REGEXP.test(file)) {
-        // Normalize paths to RequireJS module names.
-        allTestFiles.push(pathToModule(file));
+    function BundleRegistry() {
+        this.bundles = {};
     }
-});
 
-// Force es6-promise to load.
-allTestFiles.unshift('es6-promise');
+    BundleRegistry.prototype.register = function (path, definition) {
+        this.bundles[path] = definition;
+    };
 
-require.config({
-    // Karma serves files from the basePath defined in karma.conf.js
-    baseUrl: '/base',
+    BundleRegistry.prototype.contains = function (path) {
+        return !!this.bundles[path];
+    };
 
-    paths: {
-        'es6-promise': 'platform/framework/lib/es6-promise-2.0.0.min',
-        'moment': 'platform/telemetry/lib/moment.min'
-    },
+    BundleRegistry.prototype.get = function (path) {
+        return this.bundles[path];
+    };
 
-    // dynamically load all test files
-    deps: allTestFiles,
+    BundleRegistry.prototype.list = function () {
+        return Object.keys(this.bundles);
+    };
 
-    // we have to kickoff jasmine, as it is asynchronous
-    callback: window.__karma__.start
+    return BundleRegistry;
 });
