@@ -7,23 +7,26 @@
     "minimist": "^1.1.1"
   },
   "devDependencies": {
+    "canvas": "^1.2.7",
+    "glob": ">= 3.0.0",
     "jasmine-core": "^2.3.0",
     "jsdoc": "^3.3.2",
     "jshint": "^2.7.0",
     "karma": "^0.12.31",
     "karma-chrome-launcher": "^0.1.8",
     "karma-cli": "0.0.4",
+    "karma-coverage": "^0.5.3",
+    "karma-html-reporter": "^0.2.7",
     "karma-jasmine": "^0.1.5",
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-requirejs": "^0.2.2",
-    "requirejs": "^2.1.17",
+    "lodash": "^3.10.1",
+    "markdown-toc": "^0.11.7",
     "marked": "^0.3.5",
-    "glob": ">= 3.0.0",
-    "split": "^1.0.0",
     "mkdirp": "^0.5.1",
     "nomnoml": "^0.0.3",
-    "canvas": "^1.2.7",
-    "markdown-toc": "^0.11.7"
+    "requirejs": "^2.1.17",
+    "split": "^1.0.0"
   },
   "scripts": {
     "start": "node app.js",
