@@ -55,7 +55,7 @@
             <div ng-repeat="tick in subplot.getRangeTicks()"
                  class="gl-plot-tick gl-plot-y-tick-label"
                  ng-style="{ bottom: (100 * $index / (subplot.getRangeTicks().length - 1)) + '%' }">
-                {{tick.label}}
+                {{tick.label | reverse}}
             </div>
 
             <div class="gl-plot-y-options gl-plot-local-controls"
@@ -153,7 +153,7 @@
                  class="gl-plot-tick gl-plot-x-tick-label"
                  ng-show="$index > 0 && $index < (subplot.getDomainTicks().length - 1)"
                  ng-style="{ left: (100 * $index / (subplot.getDomainTicks().length - 1)) + '%' }">
-                {{tick.label}}
+                {{tick.label | reverse}}
             </div>
 
             <div class="gl-plot-label gl-plot-x-label">
