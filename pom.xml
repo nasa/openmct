@@ -38,14 +38,14 @@
                                 <include>**/src/**/*</include>
                                 <include>**/res/**/*</include>
                                 <include>**/lib/**/*</include>
-                                <include>**/bundle.json</include>
+                                <include>**/bundle.js</include>
                             </includes>
                             <excludes>
                                 <exclude>protractor/**/*</exclude>
                                 <exclude>node_modules/**/*</exclude>
                                 <exclude>platform/core/bundle.json</exclude>
-                                <exclude>example/**/*</exclude>
                                 <exclude>**/test/lib/*</exclude>
+                                <exclude>target/**/*</exclude>
                             </excludes>
                         </resource>
                         <resource>
