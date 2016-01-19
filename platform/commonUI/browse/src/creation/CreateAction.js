@@ -99,7 +99,11 @@ define(
                 model.location = parentObject.getId();
             });
 
-            if (countEditableViews(editableObject) > 0 && editableObject.hasCapability('composition')) {
+            /* Navigate immediately to new object if it has an editable
+             view and is not a sub-object of the currently editing object  */
+            if (countEditableViews(editableObject) > 0
+                && editableObject.hasCapability('composition')
+                && !parentObject.getCapability('status').get('editing')) {
                 this.navigationService.setNavigation(editableObject);
             } else {
                 return editableObject.getCapability('action').perform('save');

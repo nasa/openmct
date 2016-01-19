@@ -101,6 +101,9 @@ define(
 
             // Recalculate swimlane state on changes
             $scope.$watch("domainObject", swimlanePopulator.populate);
+            $scope.$watchCollection("domainObject.model.composition", function(){
+                swimlanePopulator.populate($scope.domainObject);
+            });
 
             // Also recalculate whenever anything in view is modified
             $scope.$watch(modificationSum, repopulateSwimlanes);

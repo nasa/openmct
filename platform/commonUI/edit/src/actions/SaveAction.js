@@ -23,7 +23,9 @@
 
 
 define(
-    ['../../../browse/src/creation/CreateWizard'],
+    [
+        '../../../browse/src/creation/CreateWizard'
+    ],
     function (CreateWizard) {
         'use strict';
 
@@ -35,17 +37,14 @@ define(
          * @implements {Action}
          * @memberof platform/commonUI/edit
          */
-        function SaveAction($q, $location, $injector, urlService, navigationService, policyService, dialogService, creationService, context) {
+        function SaveAction($q, $injector,  navigationService, policyService, dialogService, context) {
             this.domainObject = (context || {}).domainObject;
-            this.$location = $location;
             this.injectObjectService = function(){
                 this.objectService = $injector.get("objectService");
             };
-            this.urlService = urlService;
             this.navigationService = navigationService;
             this.policyService = policyService;
             this.dialogService = dialogService;
-            this.creationService = creationService;
             this.$q = $q;
         }
 
@@ -66,8 +65,7 @@ define(
          */
         SaveAction.prototype.perform = function () {
             var domainObject = this.domainObject,
-                $location = this.$location,
-                urlService = this.urlService,
+                isNewObject = !(domainObject.getModel().persisted),
                 self = this;
 
             function resolveWith(object){
@@ -80,6 +78,7 @@ define(
                 var context = domainObject.getCapability("context"),
                     wizard = new CreateWizard(parent, self.policyService, domainObject);
 
+
                 return self.dialogService
                     .getUserInput(wizard.getFormStructure(), wizard.getInitialFormValue())
                     .then(function(formValue) {
@@ -89,9 +88,11 @@ define(
 
 
             function persistObject(object){
-                return  ((object.hasCapability('editor') && object.getCapability('editor').save(true)) ||
-                        object.getCapability('persistence').persist())
-                        .then(resolveWith(object));
+                if (object.hasCapability('editor')) {
+                    return object.getCapability('editor').save(true);
+                } else {
+                    return object.getCapability('persistence').persist();
+                }
             }
 
             function fetchObject(objectId){
@@ -101,11 +102,19 @@ define(
             }
 
             function getParent(object){
-                return fetchObject(object.getModel().location);
+                //Skip lookup if parent is the navigated object
+                if (object.getModel().location === self.navigationService.getNavigation().getId()){
+                    return self.$q.when(self.navigationService.getNavigation());
+                } else {
+                    return fetchObject(object.getModel().location);
+                }
             }
 
             function locateObjectInParent(parent){
                 parent.getCapability('composition').add(domainObject.getId());
+                if (!parent.getCapability('status').get('editing')){
+                    persistObject(parent);
+                }
                 return parent;
             }
 
@@ -119,21 +128,14 @@ define(
             // used to insulate underlying objects from changes made
             // during editing.
             function doSave() {
-                //WARNING: HACK
-                //This is a new 'virtual object' that has not been persisted
-                // yet.
-                if (!domainObject.getModel().persisted){
+                if (isNewObject){
                     return getParent(domainObject)
                             .then(doWizardSave)
                             .then(persistObject)
                             .then(getParent)//Parent may have changed based
                                             // on user selection
                             .then(locateObjectInParent)
-                            .then(persistObject)
-                            .then(function(){
-                                return fetchObject(domainObject.getId());
-                            })
-                        .catch(doNothing)
+                            .catch(doNothing)
                 } else {
                     return domainObject.getCapability("editor").save()
                         .then(resolveWith(domainObject.getOriginalObject()));
@@ -143,8 +145,11 @@ define(
             // Discard the current root view (which will be the editing
             // UI, which will have been pushed atop the Browse UI.)
             function returnToBrowse(object) {
-                if (object) {
-                    self.navigationService.setNavigation(object);
+                //Navigate to non-editable version of object. But first
+                // check if parent is being edited (ie. this was a
+                // sub-object creation)
+                if (object && !object.getCapability('status').get('editing')) {
+                    self.navigationService.setNavigation(object.hasCapability('editor') ? object.getOriginalObject() : object);
                 }
                 return object;
             }
