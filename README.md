@@ -105,7 +105,7 @@ npm install.  Ensure your system has [libcairo](http://cairographics.org/)
 installed and then run the following commands:
 
 * `npm install`
-* `npm install nomnoml`
+* `npm install canvas nomnoml`
 * `npm run docs`
 
 Documentation will be generated in `target/docs`.

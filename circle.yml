@@ -2,7 +2,7 @@ deployment:
   production:
     branch: master
     commands:
-      - npm install nomnoml
+      - npm install canvas nomnoml
       - ./build-docs.sh
       - git push git@heroku.com:openmctweb-demo.git $CIRCLE_SHA1:refs/heads/master
   openmctweb-staging-un:
