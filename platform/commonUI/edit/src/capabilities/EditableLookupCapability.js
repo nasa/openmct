@@ -45,7 +45,8 @@ define(
             cache,
             idempotent
         ) {
-            var capability = Object.create(contextCapability);
+            var capability = Object.create(contextCapability),
+                method;
 
             // Check for domain object interface. If something has these
             // three methods, we assume it's a domain object.
@@ -114,7 +115,7 @@ define(
             }
 
             // Wrap all methods; return only editable domain objects.
-            for (var method in contextCapability){
+            for (method in contextCapability) {
                 wrapMethod(method);
             }
 

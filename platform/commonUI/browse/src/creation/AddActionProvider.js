@@ -22,7 +22,7 @@
 /*global define,Promise*/
 
 /**
- * Module defining CreateActionProvider.js. Created by vwoeltje on 11/10/14.
+ * Module defining AddActionProvider.js. Created by ahenry on 01/21/16.
  */
 define(
     ["./AddAction"],

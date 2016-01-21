@@ -22,7 +22,7 @@
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine,xit,xdescribe*/
 
 /**
- * MCTRepresentationSpec. Created by vwoeltje on 11/6/14.
+ * MCTRepresentationSpec. Created by ahenry on 01/21/14.
  */
 define(
     ["../../src/creation/AddActionProvider"],

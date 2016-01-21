@@ -110,8 +110,8 @@ define(
             }
             //Return the original (non-editable) object
             return returnPromise.then(function() {
-                return domainObject;
-            })
+                return domainObject.getOriginalObject ? domainObject.getOriginalObject() : domainObject;
+            });
         };
 
         /**

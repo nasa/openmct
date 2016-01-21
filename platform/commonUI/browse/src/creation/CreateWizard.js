@@ -49,11 +49,14 @@ define(
          * Get the form model for this wizard; this is a description
          * that will be rendered to an HTML form. See the
          * platform/forms bundle
-         *
+         * @param {boolean} includeLocation if true, a 'location' section
+         * will be included that will allow the user to select the location
+         * of the newly created object, otherwise the .location property of
+         * the model will be used.
          * @return {FormModel} formModel the form model to
          *         show in the create dialog
          */
-        CreateWizard.prototype.getFormStructure = function () {
+        CreateWizard.prototype.getFormStructure = function (includeLocation) {
             var sections = [],
                 type = this.type,
                 policyService = this.policyService;
@@ -87,12 +90,16 @@ define(
             });
 
             // Ensure there is always a "save in" section
-            sections.push({ name: 'Location', rows: [{
-                name: "Save In",
-                control: "locator",
-                validate: validateLocation,
-                key: "createParent"
-            }]});
+            if (includeLocation) {
+                sections.push({
+                    name: 'Location', rows: [{
+                        name: "Save In",
+                        control: "locator",
+                        validate: validateLocation,
+                        key: "createParent"
+                    }]
+                });
+            }
 
             return {
                 sections: sections,
@@ -115,7 +122,7 @@ define(
                 return formModel;
             });
             return this.domainObject;
-        }
+        };
 
         /**
          * Get the initial value for the form being described.

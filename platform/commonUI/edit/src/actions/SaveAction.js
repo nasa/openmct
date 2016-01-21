@@ -82,17 +82,20 @@ define(
                     wizard = new CreateWizard(domainObject, parent, self.policyService);
 
                 return self.dialogService
-                    .getUserInput(wizard.getFormStructure(), wizard.getInitialFormValue())
+                    .getUserInput(wizard.getFormStructure(true), wizard.getInitialFormValue())
                     .then(function(formValue){
-                        wizard.populateObjectFromInput(formValue, domainObject)
+                        return wizard.populateObjectFromInput(formValue, domainObject);
                     });
             }
 
 
             function persistObject(object){
-                return  ((object.hasCapability('editor') && object.getCapability('editor').save()) ||
-                        object.getCapability('persistence').persist())
-                        .then(resolveWith(object));
+
+                //Persist first to mark dirty
+                return object.getCapability('persistence').persist().then(function(){
+                    //then save permanently
+                    return object.getCapability('editor').save();
+                });
             }
 
             function fetchObject(objectId){
@@ -107,7 +110,9 @@ define(
 
             function locateObjectInParent(parent){
                 parent.getCapability('composition').add(domainObject.getId());
-                return parent;
+                return parent.getCapability('persistence').persist().then(function() {
+                    return parent;
+                });
             }
 
             function doNothing() {
@@ -129,7 +134,6 @@ define(
                             .then(getParent)//Parent may have changed based
                                             // on user selection
                             .then(locateObjectInParent)
-                            .then(persistObject)
                             .then(function(){
                                 return fetchObject(domainObject.getId());
                             })

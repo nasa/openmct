@@ -22,7 +22,7 @@
 /*global define,Promise*/
 
 /**
- * Module defining CreateAction. Created by vwoeltje on 11/10/14.
+ * Module defining AddAction. Created by ahenry on 01/21/16.
  */
 define(
     [
@@ -66,9 +66,14 @@ define(
             this.dialogService = dialogService;
             this.policyService = policyService;
         }
+
         /**
+         *
          * Create a new object of the given type.
          * This will prompt for user input first.
+         *
+         * @returns {Promise} that will be resolved with the object that the
+         * action was originally invoked on (ie. the 'parent')
          */
         AddAction.prototype.perform = function () {
             var newModel = this.type.getInitialModel(),
@@ -106,10 +111,10 @@ define(
             }
 
             return this.dialogService
-                .getUserInput(wizard.getFormStructure(), wizard.getInitialFormValue())
+                .getUserInput(wizard.getFormStructure(false), wizard.getInitialFormValue())
                 .then(populateObjectFromInput)
                 .then(save)
-                .then(addToParent)
+                .then(addToParent);
 
         };
 
