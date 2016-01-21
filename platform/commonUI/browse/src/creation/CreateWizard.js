@@ -26,18 +26,21 @@ define(
         'use strict';
 
         /**
-         * Construct a new CreateWizard.
+         * A class for capturing user input data from an object creation
+         * dialog, and populating a domain object with that data.
          *
-         * @param {TypeImpl} type the type of domain object to be created
+         * @param {DomainObject} domainObject the newly created object to
+         * populate with user input
          * @param {DomainObject} parent the domain object to serve as
          *        the initial parent for the created object, in the dialog
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function CreateWizard(type, parent, policyService, initialModel) {
-            this.type = type;
-            this.model = initialModel || type.getInitialModel();
-            this.properties = type.getProperties();
+        function CreateWizard(domainObject, parent, policyService) {
+            this.type = domainObject.getCapability('type');
+            this.model = domainObject.getModel();
+            this.domainObject = domainObject;
+            this.properties = this.type.getProperties();
             this.parent = parent;
             this.policyService = policyService;
         }
@@ -98,6 +101,23 @@ define(
         };
 
         /**
+         * Given some form input values and a domain object, populate the
+         * domain object used to create this wizard from the given form values.
+         * @param formValue
+         * @returns {DomainObject}
+         */
+        CreateWizard.prototype.populateObjectFromInput = function(formValue) {
+            var parent = this.getLocation(formValue),
+                formModel = this.createModel(formValue);
+
+            formModel.location = parent.getId();
+            this.domainObject.useCapability("mutation", function(){
+                return formModel;
+            });
+            return this.domainObject;
+        }
+
+        /**
          * Get the initial value for the form being described.
          * This will include the values for all properties described
          * in the structure.
@@ -120,6 +140,7 @@ define(
         /**
          * Based on a populated form, get the domain object which
          * should be used as a parent for the newly-created object.
+         * @private
          * @return {DomainObject}
          */
         CreateWizard.prototype.getLocation = function (formValue) {
@@ -129,6 +150,7 @@ define(
         /**
          * Create the domain object model for a newly-created object,
          * based on user input read from a formModel.
+         * @private
          * @return {object} the domain object model
          */
         CreateWizard.prototype.createModel = function (formValue) {
