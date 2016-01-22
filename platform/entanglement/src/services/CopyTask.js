@@ -101,9 +101,8 @@ define(
          * Will add a list of clones to the specified parent's composition
          */
         function addClonesToParent(self) {
-            return self.firstClone.getCapability("persistence").persist()
-                .then(function(){self.parent.getCapability("composition").add(self.firstClone.getId());})
-                .then(function(){return self.parent.getCapability("persistence").persist();})
+            self.parent.getCapability("composition").add(self.firstClone.getId());
+            return self.parent.getCapability("persistence").persist()
                 .then(function(){return self.firstClone;});
         }
 
