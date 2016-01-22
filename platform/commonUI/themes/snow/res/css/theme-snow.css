@@ -1265,87 +1265,90 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 @-moz-keyframes rotation {
-  0% {
-    transform: rotate(0deg); }
   100% {
-    transform: rotate(359deg); } }
+    -moz-transform: rotate(360deg);
+    transform: rotate(360deg); } }
 @-webkit-keyframes rotation {
-  0% {
-    transform: rotate(0deg); }
   100% {
-    transform: rotate(359deg); } }
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg); } }
 @keyframes rotation {
-  0% {
-    transform: rotate(0deg); }
   100% {
-    transform: rotate(359deg); } }
-/* line 69, ../../../../general/res/sass/helpers/_wait-spinner.scss */
-.t-wait-spinner,
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg); } }
+@-moz-keyframes rotation-centered {
+  0% {
+    -moz-transform: translate(-50%, -50%) rotate(0deg);
+    transform: translate(-50%, -50%) rotate(0deg); }
+  100% {
+    -moz-transform: translate(-50%, -50%) rotate(360deg);
+    transform: translate(-50%, -50%) rotate(360deg); } }
+@-webkit-keyframes rotation-centered {
+  0% {
+    -webkit-transform: translate(-50%, -50%) rotate(0deg);
+    transform: translate(-50%, -50%) rotate(0deg); }
+  100% {
+    -webkit-transform: translate(-50%, -50%) rotate(360deg);
+    transform: translate(-50%, -50%) rotate(360deg); } }
+@keyframes rotation-centered {
+  0% {
+    -moz-transform: translate(-50%, -50%) rotate(0deg);
+    -ms-transform: translate(-50%, -50%) rotate(0deg);
+    -webkit-transform: translate(-50%, -50%) rotate(0deg);
+    transform: translate(-50%, -50%) rotate(0deg); }
+  100% {
+    -moz-transform: translate(-50%, -50%) rotate(360deg);
+    -ms-transform: translate(-50%, -50%) rotate(360deg);
+    -webkit-transform: translate(-50%, -50%) rotate(360deg);
+    transform: translate(-50%, -50%) rotate(360deg); } }
+/* line 48, ../../../../general/res/sass/helpers/_wait-spinner.scss */
 .wait-spinner {
-  display: block;
-  position: absolute;
-  -webkit-animation: rotation .6s infinite linear;
-  -moz-animation: rotation .6s infinite linear;
-  -o-animation: rotation .6s infinite linear;
-  animation: rotation .6s infinite linear;
+  -moz-transform-origin: center 50%;
+  -ms-transform-origin: center 50%;
+  -webkit-transform-origin: center 50%;
+  transform-origin: center 50%;
+  -moz-animation-name: rotation-centered;
+  -webkit-animation-name: rotation-centered;
+  animation-name: rotation-centered;
+  -moz-animation-duration: 0.5s;
+  -webkit-animation-duration: 0.5s;
+  animation-duration: 0.5s;
+  -moz-animation-iteration-count: infinite;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -moz-animation-timing-function: linear;
+  -webkit-animation-timing-function: linear;
+  animation-timing-function: linear;
+  -moz-border-radius: 100%;
+  -webkit-border-radius: 100%;
+  border-radius: 100%;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
   border-color: rgba(0, 153, 204, 0.25);
   border-top-color: #0099cc;
   border-style: solid;
   border-width: 0.5em;
-  -moz-border-radius: 100%;
-  -webkit-border-radius: 100%;
-  border-radius: 100%;
-  top: 50%;
+  display: block;
+  position: absolute;
   left: 50%;
+  top: 50%;
   height: auto;
   width: auto;
   padding: 5%;
   pointer-events: none;
-  margin-top: -5%;
-  margin-left: -5%;
   z-index: 2; }
-  /* line 80, ../../../../general/res/sass/helpers/_wait-spinner.scss */
-  .t-wait-spinner.inline,
+  /* line 55, ../../../../general/res/sass/helpers/_wait-spinner.scss */
   .wait-spinner.inline {
     display: inline-block !important;
     margin-right: 5px;
     position: relative !important;
     vertical-align: middle; }
 
-/* line 88, ../../../../general/res/sass/helpers/_wait-spinner.scss */
-.l-wait-spinner-holder {
-  pointer-events: none;
-  position: absolute; }
-  /* line 92, ../../../../general/res/sass/helpers/_wait-spinner.scss */
-  .l-wait-spinner-holder.align-left .t-wait-spinner {
-    left: 0;
-    margin-left: 0; }
-  /* line 97, ../../../../general/res/sass/helpers/_wait-spinner.scss */
-  .l-wait-spinner-holder.full-size {
-    display: inline-block;
-    height: 100%;
-    width: 100%; }
-    /* line 100, ../../../../general/res/sass/helpers/_wait-spinner.scss */
-    .l-wait-spinner-holder.full-size .t-wait-spinner {
-      top: 0;
-      margin-top: 0;
-      padding: 30%; }
-
-/* line 109, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+/* line 63, ../../../../general/res/sass/helpers/_wait-spinner.scss */
 .treeview .wait-spinner {
-  display: block;
-  position: absolute;
-  -webkit-animation: rotation .6s infinite linear;
-  -moz-animation: rotation .6s infinite linear;
-  -o-animation: rotation .6s infinite linear;
-  animation: rotation .6s infinite linear;
-  border-color: rgba(0, 153, 204, 0.25);
-  border-top-color: #0099cc;
-  border-style: solid;
-  border-width: 0.25em;
-  -moz-border-radius: 100%;
-  -webkit-border-radius: 100%;
-  border-radius: 100%;
   height: 10px;
   width: 10px;
   margin: 0 !important;
@@ -1353,40 +1356,21 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
   top: 2px;
   left: 0; }
 
-/* line 118, ../../../../general/res/sass/helpers/_wait-spinner.scss */
-.wait-spinner.sm {
-  display: block;
-  position: absolute;
-  -webkit-animation: rotation .6s infinite linear;
-  -moz-animation: rotation .6s infinite linear;
-  -o-animation: rotation .6s infinite linear;
-  animation: rotation .6s infinite linear;
-  border-color: rgba(0, 153, 204, 0.25);
-  border-top-color: #0099cc;
-  border-style: solid;
-  border-width: 0.25em;
-  -moz-border-radius: 100%;
-  -webkit-border-radius: 100%;
-  border-radius: 100%;
-  height: 13px;
-  width: 13px;
-  margin-left: 0 !important;
-  margin-top: 0 !important;
-  padding: 0 !important;
-  top: 0;
-  left: 0; }
-
-/* line 128, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+/* line 72, ../../../../general/res/sass/helpers/_wait-spinner.scss */
 .loading {
   pointer-events: none; }
-  /* line 131, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  /* line 75, ../../../../general/res/sass/helpers/_wait-spinner.scss */
   .loading:before, .loading:after {
     content: ''; }
-  /* line 135, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  /* line 79, ../../../../general/res/sass/helpers/_wait-spinner.scss */
   .loading:before {
-    -moz-animation-name: rotateCentered;
-    -webkit-animation-name: rotateCentered;
-    animation-name: rotateCentered;
+    -moz-transform-origin: center 50%;
+    -ms-transform-origin: center 50%;
+    -webkit-transform-origin: center 50%;
+    transform-origin: center 50%;
+    -moz-animation-name: rotation-centered;
+    -webkit-animation-name: rotation-centered;
+    animation-name: rotation-centered;
     -moz-animation-duration: 0.5s;
     -webkit-animation-duration: 0.5s;
     animation-duration: 0.5s;
@@ -1396,12 +1380,6 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     -moz-animation-timing-function: linear;
     -webkit-animation-timing-function: linear;
     animation-timing-function: linear;
-    -moz-transform-origin: center 50%;
-    -ms-transform-origin: center 50%;
-    -webkit-transform-origin: center 50%;
-    transform-origin: center 50%;
-    border-style: solid;
-    border-width: 5px;
     -moz-border-radius: 100%;
     -webkit-border-radius: 100%;
     border-radius: 100%;
@@ -1410,40 +1388,15 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     box-sizing: border-box;
     border-color: rgba(119, 107, 162, 0.25);
     border-top-color: #776ba2;
+    border-style: solid;
+    border-width: 5px;
     display: block;
     position: absolute;
-    height: 0;
-    width: 0;
-    padding: 7%;
     left: 50%;
     top: 50%;
+    padding: 5%;
     z-index: 10; }
-@-moz-keyframes rotateCentered {
-  0% {
-    -moz-transform: translateX(-50%) translateY(-50%) rotate(0deg);
-    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
-  100% {
-    -moz-transform: translateX(-50%) translateY(-50%) rotate(359deg);
-    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
-@-webkit-keyframes rotateCentered {
-  0% {
-    -webkit-transform: translateX(-50%) translateY(-50%) rotate(0deg);
-    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
-  100% {
-    -webkit-transform: translateX(-50%) translateY(-50%) rotate(359deg);
-    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
-@keyframes rotateCentered {
-  0% {
-    -moz-transform: translateX(-50%) translateY(-50%) rotate(0deg);
-    -ms-transform: translateX(-50%) translateY(-50%) rotate(0deg);
-    -webkit-transform: translateX(-50%) translateY(-50%) rotate(0deg);
-    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
-  100% {
-    -moz-transform: translateX(-50%) translateY(-50%) rotate(359deg);
-    -ms-transform: translateX(-50%) translateY(-50%) rotate(359deg);
-    -webkit-transform: translateX(-50%) translateY(-50%) rotate(359deg);
-    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
-  /* line 139, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  /* line 84, ../../../../general/res/sass/helpers/_wait-spinner.scss */
   .loading:after {
     overflow: hidden;
     position: absolute;
@@ -1456,7 +1409,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     background: rgba(119, 107, 162, 0.1);
     display: block;
     z-index: 9; }
-  /* line 145, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  /* line 90, ../../../../general/res/sass/helpers/_wait-spinner.scss */
   .loading.tree-item:before {
     padding: 0.375rem;
     border-width: 2px; }
@@ -6151,9 +6104,13 @@ ul.tree {
 
 /* line 131, ../../../../general/res/sass/tree/_tree.scss */
 mct-representation.s-status-pending .t-object-label .t-item-icon:before {
-  -moz-animation-name: rotateCentered;
-  -webkit-animation-name: rotateCentered;
-  animation-name: rotateCentered;
+  -moz-transform-origin: center 50%;
+  -ms-transform-origin: center 50%;
+  -webkit-transform-origin: center 50%;
+  transform-origin: center 50%;
+  -moz-animation-name: rotation-centered;
+  -webkit-animation-name: rotation-centered;
+  animation-name: rotation-centered;
   -moz-animation-duration: 0.5s;
   -webkit-animation-duration: 0.5s;
   animation-duration: 0.5s;
@@ -6163,42 +6120,22 @@ mct-representation.s-status-pending .t-object-label .t-item-icon:before {
   -moz-animation-timing-function: linear;
   -webkit-animation-timing-function: linear;
   animation-timing-function: linear;
-  -moz-transform-origin: center 50%;
-  -ms-transform-origin: center 50%;
-  -webkit-transform-origin: center 50%;
-  transform-origin: center 50%;
-  border-style: solid;
-  border-width: 4px;
   -moz-border-radius: 100%;
   -webkit-border-radius: 100%;
   border-radius: 100%;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  border-color: rgba(0, 153, 204, 0.25);
+  border-top-color: #0099cc;
+  border-style: solid;
+  border-width: 4px;
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
   border-color: rgba(0, 153, 204, 0.25);
   border-top-color: #0099cc; }
-@-moz-keyframes rotateCentered {
-  0% {
-    -moz-transform: translateX(-50%) translateY(-50%) rotate(0deg);
-    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
-  100% {
-    -moz-transform: translateX(-50%) translateY(-50%) rotate(359deg);
-    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
-@-webkit-keyframes rotateCentered {
-  0% {
-    -webkit-transform: translateX(-50%) translateY(-50%) rotate(0deg);
-    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
-  100% {
-    -webkit-transform: translateX(-50%) translateY(-50%) rotate(359deg);
-    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
-@keyframes rotateCentered {
-  0% {
-    -moz-transform: translateX(-50%) translateY(-50%) rotate(0deg);
-    -ms-transform: translateX(-50%) translateY(-50%) rotate(0deg);
-    -webkit-transform: translateX(-50%) translateY(-50%) rotate(0deg);
-    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
-  100% {
-    -moz-transform: translateX(-50%) translateY(-50%) rotate(359deg);
-    -ms-transform: translateX(-50%) translateY(-50%) rotate(359deg);
-    -webkit-transform: translateX(-50%) translateY(-50%) rotate(359deg);
-    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
 /* line 137, ../../../../general/res/sass/tree/_tree.scss */
 mct-representation.s-status-pending .t-object-label .t-item-icon .t-item-icon-glyph {
   display: none; }
@@ -6321,9 +6258,13 @@ mct-representation.s-status-pending .t-object-label .t-title-label {
 
 /* line 42, ../../../../general/res/sass/_object-label.scss */
 mct-representation.s-status-pending .t-object-label .t-item-icon:before {
-  -moz-animation-name: rotateCentered;
-  -webkit-animation-name: rotateCentered;
-  animation-name: rotateCentered;
+  -moz-transform-origin: center 50%;
+  -ms-transform-origin: center 50%;
+  -webkit-transform-origin: center 50%;
+  transform-origin: center 50%;
+  -moz-animation-name: rotation-centered;
+  -webkit-animation-name: rotation-centered;
+  animation-name: rotation-centered;
   -moz-animation-duration: 0.5s;
   -webkit-animation-duration: 0.5s;
   animation-duration: 0.5s;
@@ -6333,48 +6274,24 @@ mct-representation.s-status-pending .t-object-label .t-item-icon:before {
   -moz-animation-timing-function: linear;
   -webkit-animation-timing-function: linear;
   animation-timing-function: linear;
-  -moz-transform-origin: center 50%;
-  -ms-transform-origin: center 50%;
-  -webkit-transform-origin: center 50%;
-  transform-origin: center 50%;
-  border-style: solid;
-  border-width: 4px;
   -moz-border-radius: 100%;
   -webkit-border-radius: 100%;
   border-radius: 100%;
-  content: "";
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  border-color: rgba(0, 153, 204, 0.25);
+  border-top-color: #0099cc;
+  border-style: solid;
+  border-width: 4px;
   display: block;
   position: absolute;
   left: 50%;
   top: 50%;
+  content: "";
   padding: 30%;
   width: 0;
   height: 0; }
-@-moz-keyframes rotateCentered {
-  0% {
-    -moz-transform: translateX(-50%) translateY(-50%) rotate(0deg);
-    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
-  100% {
-    -moz-transform: translateX(-50%) translateY(-50%) rotate(359deg);
-    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
-@-webkit-keyframes rotateCentered {
-  0% {
-    -webkit-transform: translateX(-50%) translateY(-50%) rotate(0deg);
-    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
-  100% {
-    -webkit-transform: translateX(-50%) translateY(-50%) rotate(359deg);
-    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
-@keyframes rotateCentered {
-  0% {
-    -moz-transform: translateX(-50%) translateY(-50%) rotate(0deg);
-    -ms-transform: translateX(-50%) translateY(-50%) rotate(0deg);
-    -webkit-transform: translateX(-50%) translateY(-50%) rotate(0deg);
-    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
-  100% {
-    -moz-transform: translateX(-50%) translateY(-50%) rotate(359deg);
-    -ms-transform: translateX(-50%) translateY(-50%) rotate(359deg);
-    -webkit-transform: translateX(-50%) translateY(-50%) rotate(359deg);
-    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
 /* line 55, ../../../../general/res/sass/_object-label.scss */
 mct-representation.s-status-pending .t-object-label .t-item-icon .t-item-icon-glyph {
   display: none; }
