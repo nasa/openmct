@@ -43,7 +43,7 @@ define (
          */
         RemsTelemetryProvider.prototype.requestTelemetry = function (requests) {
             var packaged = {},
-                relevantReqs = requests.filter(matchesSource),
+                relevantReqs,
                 adapter = this.adapter;
 
             function matchesSource(request) {
@@ -56,25 +56,27 @@ define (
             }
 
             function handleRequest(request) {
-                var key = request.key;
-                return adapter.history(key).then(addToPackage);
+                return adapter.history(request).then(addToPackage);
             }
+
+            relevantReqs = requests.filter(matchesSource);
             packaged[SOURCE] = {};
+
             return this.$q.all(relevantReqs.map(handleRequest))
                 .then(function () {
                     return packaged;
                 });
-        }
+        };
 
         /**
          * This data source does not support real-time subscriptions
          */
         RemsTelemetryProvider.prototype.subscribe = function (callback, requests) {
             return function() {};
-        },
+        };
         RemsTelemetryProvider.prototype.unsubscribe = function (callback, requests) {
             return function() {};
-        }
+        };
 
         return RemsTelemetryProvider;
     }

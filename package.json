@@ -4,7 +4,8 @@
   "description": "The OpenMCTWeb core platform",
   "dependencies": {
     "express": "^4.13.1",
-    "minimist": "^1.1.1"
+    "minimist": "^1.1.1",
+    "request": "^2.69.0"
   },
   "devDependencies": {
     "glob": ">= 3.0.0",

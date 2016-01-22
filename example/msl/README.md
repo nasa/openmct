@@ -1,6 +1,15 @@
+To use this bundle, add the following paths to /main.js -
+'./platform/features/conductor/bundle',
+'./example/msl/bundle',
+
 An example plugin that integrates with public data from the Curiosity rover. 
 The data shown used by this plugin is published by the Centro de 
 Astrobiología (CSIC-INTA) at http://cab.inta-csic.es/rems/
+
+Fetching data from this source requires a cross-origin request which will 
+fail on most modern browsers due to restrictions on such requests. As such, 
+it is proxied through a local proxy defined in app.js. In order to use this 
+example you will need to run app.js locally.
 
 This example shows integration with an historical telemetry source, as 
 opposed to a real-time data source that is streaming back current information 

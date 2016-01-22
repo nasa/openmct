@@ -14,7 +14,8 @@
         options = require('minimist')(process.argv.slice(2)),
         express = require('express'),
         app = express(),
-        fs = require('fs');
+        fs = require('fs'),
+        request = require('request');
 
     // Defaults
     options.port = options.port || options.p || 8080;
@@ -59,6 +60,14 @@
         });
 
         res.send(JSON.stringify(bundles));
+    });
+
+    app.use('/proxyUrl', function proxyRequest(req, res, next) {
+        console.log('Proxying request to: ', req.query.url);
+        req.pipe(request({
+            url: req.query.url,
+            strictSSL: false
+        }).on('error', next)).pipe(res);
     });
 
     // Expose everything else as static files

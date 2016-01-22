@@ -20,13 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /*global define*/
+/*jslint es5: true */
 
 define(
-    ["./MSLDataDictionary"],
-    function (MSLDataDictionary) {
+    [
+        "./MSLDataDictionary",
+        "module"
+    ],
+    function (MSLDataDictionary, module) {
         "use strict";
 
-        var TERRESTRIAL_DATE = "terrestrial_date";
+        var TERRESTRIAL_DATE = "terrestrial_date",
+            LOCAL_DATA = "../data/rems.json";
 
         /**
          * Fetches historical data from the REMS instrument on the Curiosity
@@ -37,12 +42,14 @@ define(
          * @param REMS_WS_URL The location of the REMS telemetry data.
          * @constructor
          */
-        function RemsTelemetryServerAdapter($q, $http, REMS_WS_URL) {
-            this.historyData = {},
+        function RemsTelemetryServerAdapter($q, $http, $log, REMS_WS_URL) {
+            this.localDataURI = module.uri.substring(0, module.uri.lastIndexOf('/') + 1) + LOCAL_DATA;
             this.deferreds = {};
             this.REMS_WS_URL = REMS_WS_URL;
             this.$q = $q;
             this.$http = $http;
+            this.$log = $log;
+            this.cache = undefined;
         }
 
         /**
@@ -56,43 +63,64 @@ define(
          * given request ID.
          * @private
          */
-        RemsTelemetryServerAdapter.prototype.requestHistory = function(id) {
-            var self = this;
+        RemsTelemetryServerAdapter.prototype.requestHistory = function(request) {
+            var self = this,
+                id = request.key,
+                deferred = this.$q.defer();
 
-            return this.$http.get(this.REMS_WS_URL).then(function(response){
+            function processResponse(response){
+                var data = [];
                 /*
-                 * Refresh history data on each request so that it's always
-                 * current.
+                 * Currently all data is returned for entire history of the mission. Cache response to avoid unnecessary re-queries.
                  */
-                self.historyData = {};
+                self.cache = response;
                 /*
                  * History data is organised by Sol. Iterate over sols...
                  */
                 response.data.soles.forEach(function(solData){
                     /*
-                     * Each sol contains a number of properties for each
-                     * piece of data available, eg. min ground temperature,
-                     * avg air pressure, etc.
+                     * Check that valid data exists
                      */
-                    Object.keys(solData).forEach(function (prop) {
-                       self.historyData[prop] = self.historyData[prop] || [];
+                    if (!isNaN(solData[id])) {
                         /*
-                         * Check that valid data exists
+                         * Append each data point to the array of values
+                         * for this data point property (min. temp, etc).
                          */
-                       if (!isNaN(solData[prop])) {
-                           /*
-                            * Append each data point to the array of values
-                            * for this data point property (min. temp, etc).
-                            */
-                           self.historyData[prop].unshift({
-                               date: Date.parse(solData[TERRESTRIAL_DATE]),
-                               value: solData[prop]
-                           });
-                       }
-                   });
+                        data.unshift({
+                            date: Date.parse(solData[TERRESTRIAL_DATE]),
+                            value: solData[id]
+                        });
+                    }
                 });
-                self.deferreds[id].resolve({id: id, values: self.historyData[id]});
-            });
+                return data;
+            }
+
+            function fallbackToLocal() {
+                self.$log.warn("Loading REMS data failed, probably due to" +
+                    " cross origin policy. Falling back to local data");
+                return self.$http.get(self.localDataURI);
+            }
+
+            //Filter results to match request parameters
+            function filterResults(results) {
+                return results.filter(function(result){
+                    return result.date >= (request.start || Number.MIN_VALUE) &&
+                        result.date <= (request.end || Number.MAX_VALUE);
+                });
+            }
+
+            function packageAndResolve(results){
+                deferred.resolve({id: id, values: results});
+            }
+
+
+            this.$q.when(this.cache || this.$http.get(this.REMS_WS_URL))
+                .catch(fallbackToLocal)
+                .then(processResponse)
+                .then(filterResults)
+                .then(packageAndResolve);
+
+            return deferred.promise;
         };
 
         /**
@@ -103,16 +131,12 @@ define(
          * @param id The telemetry data point key to be queried.
          * @returns {Promise | Array<RemsTelemetryValue>} that resolves with an Array of {@link RemsTelemetryValue} objects for the request data key.
          */
-        RemsTelemetryServerAdapter.prototype.history = function(id) {
-            this.deferreds[id] = this.deferreds[id] || this.$q.defer();
-            if (this.historyData[id]) {
-                this.deferreds[id].resolve({id: id, values: this.historyData[id]});
-            } else {
-                this.historyData = {};
-                this.requestHistory(id);
-            }
-            return this.deferreds[id].promise;
+        RemsTelemetryServerAdapter.prototype.history = function(request) {
+            var id = request.key;
+            return this.requestHistory(request);
         };
 
         return RemsTelemetryServerAdapter;
-    });
+    }
+);
+

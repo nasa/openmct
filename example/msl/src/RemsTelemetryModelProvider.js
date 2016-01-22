@@ -30,7 +30,7 @@ define(
                 float: "number",
                 integer: "number",
                 string: "string"
-            }
+            };
 
         function RemsTelemetryModelProvider(adapter){
 
@@ -83,4 +83,5 @@ define(
             };
         }
         return RemsTelemetryModelProvider;
-    });
+    }
+);

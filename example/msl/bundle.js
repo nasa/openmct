@@ -26,7 +26,8 @@ define([
     "./src/RemsTelemetryInitializer",
     "./src/RemsTelemetryModelProvider",
     "./src/RemsTelemetryProvider",
-    'legacyRegistry'
+    'legacyRegistry',
+    "module"
 ], function (
     RemsTelemetryServerAdapter,
     RemsTelemetryInitializer,
@@ -35,7 +36,6 @@ define([
     legacyRegistry
 ) {
     "use strict";
-
     legacyRegistry.register("example/notifications", {
         "name" : "Mars Science Laboratory Data Adapter",
         "extensions" : {
@@ -61,19 +61,20 @@ define([
                     "domains": [
                         {
                             "name": "Time",
-                            "key": "timestamp"
+                            "key": "timestamp",
+                            "format": "utc"
                         }
                     ]
                 }
             }
         ],
-            "constants": [
+        "constants": [
             {
                 "key": "REMS_WS_URL",
-                "value": "http://cab.inta-csic.es/rems/wp-content/plugins/marsweather-widget/api.php"
+                "value": "/proxyUrl?url=http://cab.inta-csic.es/rems/wp-content/plugins/marsweather-widget/api.php"
             }
         ],
-            "roots": [
+        "roots": [
             {
                 "id": "msl:curiosity",
                 "priority" : "preferred",
@@ -84,20 +85,20 @@ define([
                 }
             }
         ],
-            "services": [
+        "services": [
             {
                 "key":"rems.adapter",
                 "implementation": RemsTelemetryServerAdapter,
-                "depends": ["$q", "$http", "REMS_WS_URL"]
+                "depends": ["$q", "$http", "$log", "REMS_WS_URL"]
             }
         ],
-            "runs": [
+        "runs": [
             {
                 "implementation": RemsTelemetryInitializer,
                 "depends": ["rems.adapter", "objectService"]
             }
         ],
-            "components": [
+        "components": [
             {
                 "provides": "modelService",
                 "type": "provider",
@@ -114,3 +115,4 @@ define([
     }
     });
 });
+

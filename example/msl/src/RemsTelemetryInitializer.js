@@ -57,7 +57,7 @@ define(
                             model.name = dictionary.name;
                             model.composition = dictionary.instruments.map(makeId);
                         }
-                    )
+                    );
                 }
 
                 objectService.getObjects([TAXONOMY_ID])
@@ -67,4 +67,5 @@ define(
             initializeTaxonomy(adapter.dictionary);
         }
         return RemsTelemetryInitializer;
-    });
+    }
+);

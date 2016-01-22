@@ -60,7 +60,6 @@ define([
     './platform/features/layout/bundle',
     './platform/features/pages/bundle',
     './platform/features/plot/bundle',
-    './platform/features/conductor/bundle',
     './platform/features/scrolling/bundle',
     './platform/features/timeline/bundle',
     './platform/forms/bundle',
@@ -75,7 +74,6 @@ define([
 
     './example/imagery/bundle',
     './example/eventGenerator/bundle',
-    './example/msl/bundle',
     './example/generator/bundle'
 ], function (Main, legacyRegistry) {
     'use strict';
