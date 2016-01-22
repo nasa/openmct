@@ -8,7 +8,6 @@
     "controllers/GetterSetterController",
     "controllers/ObjectInspectorController",
     "controllers/SelectorController",
-    "controllers/SplitPaneController",
     "controllers/TimeRangeController",
     "controllers/ToggleController",
     "controllers/TreeNodeController",
@@ -19,8 +18,11 @@
     "directives/MCTPopup",
     "directives/MCTResize",
     "directives/MCTScroll",
+    "directives/MCTSplitPane",
+    "directives/MCTSplitter",
     "services/Popup",
     "services/PopupService",
     "services/UrlService",
-    "StyleSheetLoader"
+    "StyleSheetLoader",
+    "UnsupportedBrowserWarning"
 ]

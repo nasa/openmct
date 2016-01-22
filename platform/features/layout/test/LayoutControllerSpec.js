@@ -274,6 +274,23 @@ define(
                 expect(parseInt(style.width, 10)).toBeGreaterThan(63);
                 expect(parseInt(style.height, 10)).toBeGreaterThan(31);
             });
+
+            it("updates positions of existing objects on a drop", function () {
+                var oldStyle;
+
+                mockScope.$watchCollection.mostRecentCall.args[1]();
+
+                oldStyle = controller.getFrameStyle("b");
+
+                expect(oldStyle).toBeDefined();
+
+                // ...drop event...
+                mockScope.$on.mostRecentCall
+                    .args[1](mockEvent, 'b', { x: 300, y: 100 });
+
+                expect(controller.getFrameStyle("b"))
+                    .not.toEqual(oldStyle);
+            });
         });
     }
 );

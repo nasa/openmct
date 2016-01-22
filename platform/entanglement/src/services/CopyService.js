@@ -23,11 +23,8 @@
 /*global define */
 
 define(
-    [
-        "uuid",
-        "./CopyTask"
-    ],
-    function (uuid, CopyTask) {
+    [ "./CopyTask" ],
+    function (CopyTask) {
         "use strict";
 
         /**

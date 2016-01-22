@@ -243,6 +243,26 @@ define(
                 subscription.unsubscribe();
                 expect(mockUnlisten).toHaveBeenCalled();
             });
+
+            it("provides telemetry as datum objects", function () {
+                var testDatum = { a: 1, b: 13, c: 42, d: -1977 };
+
+                function lookup(index, key) {
+                    return testDatum[key];
+                }
+
+                mockSeries.getDomainValue.andCallFake(lookup);
+                mockSeries.getRangeValue.andCallFake(lookup);
+
+                testMetadata.domains = [ { key: 'a' }, { key: 'b'} ];
+                testMetadata.ranges = [ { key: 'c' }, { key: 'd'} ];
+
+                mockTelemetry.subscribe.mostRecentCall.args[0](mockSeries);
+                mockTimeout.mostRecentCall.args[0]();
+
+                expect(subscription.getDatum(mockDomainObject))
+                    .toEqual(testDatum);
+            });
         });
     }
 );

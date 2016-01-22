@@ -407,7 +407,7 @@ In addition to the directories defined in the bundle definition, a bundle will
 typically contain other directories not used at run-time. Additionally, some 
 useful development scripts (such as the command line build and the test suite) 
 expect this directory structure to be in use, and may ignore options chosen by 
-`b undle.json`. It is recommended that the directory structure described below be 
+`bundle.json`. It is recommended that the directory structure described below be
 used for new bundles.
 
 * `src`: Contains JavaScript sources for this bundle. May contain additional 
@@ -941,6 +941,12 @@ look at field  (see below) to determine which field in the model should be
 modified. 
 * `ngRequired`: True if input is required.
 * `ngPattern`: The pattern to match against (for text entry)
+* `ngBlur`: A function that may be invoked to evaluate the expression
+  associated with the `ng-blur` attribute associated with the control.
+  * This should be called when the control has lost focus; for controls
+    which simply wrap or augment `input` elements, this should be fired
+    on `blur` events associated with those elements, while more complex
+    custom controls may fire this at the end of more specific interactions.
 * `options`: The options for this control, as passed from the `options` property 
 of an individual row definition. 
 * `field`: Name of the field in `ngModel` which will hold the value for this 
@@ -2239,7 +2245,7 @@ options. The sources can be deployed in the same directory structure used during
 development. A few utilities are included to support development processes.
 
 ## Command-line Build
-Open MCT Web includes a script for building via command line using Maven 3.0.4 
+Open MCT Web includes a script for building via command line using Maven 3.3.9 
 https://maven.apache.org/ .
         
 Invoking mvn clean install will:
@@ -2257,50 +2263,31 @@ download build dependencies.
 
 ## Test Suite
 
-Open MCT Web uses Jasmine http://jasmine.github.io/ for automated testing. 
-The file `test.html` included at the top level of the source repository, can be 
-run from the browser to perform tests for all active bundles, as defined in 
-`bundle.json`.
+Open MCT Web uses [Jasmine 1.3](http://jasmine.github.io/) and
+[Karma](http://karma-runner.github.io) for automated testing.
 
-To define tests for a bundle:
+The test suite is configured to load any scripts ending with `Spec.js` found
+in the `src` hierarchy. Full configuration details are found in
+`karma.conf.js`. By convention, unit test scripts should be located
+alongside the units that they test; for example, `src/foo/Bar.js` would be
+tested by `src/foo/BarSpec.js`. (For legacy reasons, some existing tests may
+be located in separate `test` folders near the units they test, but the
+naming convention is otherwise the same.)
 
-* Include a directory named `test` within that bundle.
-* In the `test` directory, include a file named `suite.json`. This will identify 
-which scripts will be tested.
-* The file `suite.json` must contain a JSON array of strings, where each string 
-is the name of a script to be tested. These names should include any directory 
-paths to the script after (but not including) the `src` folder, and should not 
-include the file's `.js` extension. (Note that while Open MCT Web's framework 
-allows a different name to be chosen for the src directory, the test runner 
-does not: This directory must be named `src` for the test runner to find it.)
-* For each script to be tested, a corresponding test script should be located in 
-the bundle's `test` directory. This should include the suffix Spec at the end of 
-the filename (but before the `.js` extension.) This test script should be an AMD 
-module which uses the Jasmine API to declare its test behavior. It should 
-declare an AMD dependency on the script to be tested, using a relative path.
-
-For example, if writing tests for a bundle at example/foo with two scripts:
-* `example/foo/src/controllers/FooController.js`
-* `example/foo/src/directives/FooDirective.js`
-
-First, these scripts should be identified in `example/foo/test/suite.json` e.g. 
-with contents:`[ "controllers/FooController", "directives/FooDirective" ]`
-
-Then, scripts which describe these tests should be written. For example, test 
-`example/foo/test/controllers/FooControllerSpec.js` could look like:
+Tests are written as AMD modules which depend (at minimum) upon the
+unit under test. For example, `src/foo/BarSpec.js` could look like:
 
     /*global define,Promise,describe,it,expect,beforeEach*/
 
     define(
-        ["../../src/controllers/FooController"],
-        function (FooController) {
+        ["./Bar"],
+        function (Bar) {
             "use strict";
-    
-    
-            describe("The foo controller", function () {
+
+            describe("Bar", function () {
                 it("does something", function () {
-                    var controller = new FooController();
-                    expect(controller.foo()).toEqual("foo");
+                    var bar = new Bar();
+                    expect(controller.baz()).toEqual("foo");
                 });
             });
         }

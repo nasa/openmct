@@ -54,7 +54,6 @@ define(
          * @param {string} the URL for the template
          * @returns {Promise.<string>} a promise for the HTML content of
          *          the template
-         * @private
          */
         TemplateLinker.prototype.load = function (templateUrl) {
             return this.$templateRequest(

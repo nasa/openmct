@@ -44,20 +44,20 @@ require.config({
 
     paths: {
         'es6-promise': 'platform/framework/lib/es6-promise-2.0.0.min',
-        'moment': 'platform/telemetry/lib/moment.min',
-        'moment-duration-format': 'platform/features/clock/lib/moment-duration-format',
-        'uuid': 'platform/core/lib/uuid'
-    },
-
-    shim: {
-        'moment-duration-format': {
-            deps: [ 'moment' ]
-        }
+        'moment': 'platform/telemetry/lib/moment.min'
     },
 
     // dynamically load all test files
     deps: allTestFiles,
 
     // we have to kickoff jasmine, as it is asynchronous
-    callback: window.__karma__.start
+    callback: function () {
+        var args = [].slice.apply(arguments);
+        require(['es6-promise'], function (es6Promise) {
+            if (!window.Promise) {
+                window.Promise = es6Promise.Promise;
+            }
+            window.__karma__.start.apply(window.__karma__, args);
+        });
+    }
 });

@@ -25,6 +25,7 @@
 	    margin: 0 0 2px 0; // Needed to avoid dropshadow from being clipped by parent containers
     }
 	padding: 0 $interiorMargin;
+    overflow: hidden;
 	position: relative;
     line-height: $formInputH;
 	select {
@@ -35,7 +36,7 @@
 		cursor: pointer;
 		border: none !important;
 		padding: 4px 25px 2px 0px;
-        width: 120%;
+        width: 130%;
         option {
             margin: $interiorMargin 0; // Firefox
         }

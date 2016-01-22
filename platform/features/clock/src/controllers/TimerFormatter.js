@@ -19,10 +19,18 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
+/*global define,requirejs*/
+
+requirejs.config({
+    shim: {
+        'platform/features/clock/lib/moment-duration-format': {
+            deps: [ 'moment' ]
+        }
+    }
+});
 
 define(
-    ['moment', 'moment-duration-format'],
+    ['moment', '../../lib/moment-duration-format'],
     function (moment) {
         "use strict";
 
@@ -37,44 +45,38 @@ define(
          * supports `TimerController`.
          *
          * @constructor
+         * @memberof platform/features/clock
          */
         function TimerFormatter() {
-
-            // Round this timestamp down to the second boundary
-            // (e.g. 1124ms goes down to 1000ms, -2400ms goes down to -3000ms)
-            function toWholeSeconds(duration) {
-                return Math.abs(Math.floor(duration / 1000) * 1000);
-            }
-
-            // Short-form format, e.g. 02:22:11
-            function short(duration) {
-                return moment.duration(toWholeSeconds(duration), 'ms')
-                    .format(SHORT_FORMAT, { trim: false });
-            }
-
-            // Long-form format, e.g. 3d 02:22:11
-            function long(duration) {
-                return moment.duration(toWholeSeconds(duration), 'ms')
-                    .format(LONG_FORMAT, { trim: false });
-            }
-
-            return {
-                /**
-                 * Format a duration for display, using the short form.
-                 * (e.g. 03:33:11)
-                 * @param {number} duration the duration, in milliseconds
-                 * @param {boolean} sign true if positive
-                 */
-                short: short,
-                /**
-                 * Format a duration for display, using the long form.
-                 * (e.g. 0d 03:33:11)
-                 * @param {number} duration the duration, in milliseconds
-                 * @param {boolean} sign true if positive
-                 */
-                long: long
-            };
         }
+
+        // Round this timestamp down to the second boundary
+        // (e.g. 1124ms goes down to 1000ms, -2400ms goes down to -3000ms)
+        function toWholeSeconds(duration) {
+            return Math.abs(Math.floor(duration / 1000) * 1000);
+        }
+
+        /**
+         * Format a duration for display, using the short form.
+         * (e.g. 03:33:11)
+         * @param {number} duration the duration, in milliseconds
+         * @param {boolean} sign true if positive
+         */
+        TimerFormatter.prototype.short = function (duration) {
+            return moment.duration(toWholeSeconds(duration), 'ms')
+                .format(SHORT_FORMAT, { trim: false });
+        };
+
+        /**
+         * Format a duration for display, using the long form.
+         * (e.g. 0d 03:33:11)
+         * @param {number} duration the duration, in milliseconds
+         * @param {boolean} sign true if positive
+         */
+        TimerFormatter.prototype.long = function (duration) {
+            return moment.duration(toWholeSeconds(duration), 'ms')
+                .format(LONG_FORMAT, { trim: false });
+        };
 
         return TimerFormatter;
     }

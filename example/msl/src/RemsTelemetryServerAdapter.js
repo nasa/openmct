@@ -25,20 +25,20 @@ define(
     ["./MSLDataDictionary"],
     function (MSLDataDictionary) {
         "use strict";
-        
+
         var TERRESTRIAL_DATE = "terrestrial_date";
 
         /**
          * Fetches historical data from the REMS instrument on the Curiosity
-         * Rover. Exposes two services to client code, one
+         * Rover.
+         * @memberOf example/msl
          * @param $q
          * @param $http
-         * @param REMS_WS_URL
-         * @returns {{dictionary: exports, history: Function}}
+         * @param REMS_WS_URL The location of the REMS telemetry data.
          * @constructor
          */
         function RemsTelemetryServerAdapter($q, $http, REMS_WS_URL) {
-            this.histories = {},
+            this.historyData = {},
             this.deferreds = {};
             this.REMS_WS_URL = REMS_WS_URL;
             this.$q = $q;
@@ -46,48 +46,69 @@ define(
         }
 
         /**
+         * The data dictionary for this data source.
+         * @type {MSLDataDictionary}
+         */
+        RemsTelemetryServerAdapter.prototype.dictionary = MSLDataDictionary;
+
+        /**
+         * Fetches historical data from source, and associates it with the
+         * given request ID.
          * @private
          */
         RemsTelemetryServerAdapter.prototype.requestHistory = function(id) {
             var self = this;
 
             return this.$http.get(this.REMS_WS_URL).then(function(response){
-                self.histories = {};
-                /**
-                 * All history is fetched in one go, cache it all to save round trips to the server on subsequent requests
+                /*
+                 * Refresh history data on each request so that it's always
+                 * current.
+                 */
+                self.historyData = {};
+                /*
+                 * History data is organised by Sol. Iterate over sols...
                  */
                 response.data.soles.forEach(function(solData){
-                   for (var prop in solData){
-                       self.histories[prop] = self.histories[prop] || [];
+                    /*
+                     * Each sol contains a number of properties for each
+                     * piece of data available, eg. min ground temperature,
+                     * avg air pressure, etc.
+                     */
+                    Object.keys(solData).forEach(function (prop) {
+                       self.historyData[prop] = self.historyData[prop] || [];
+                        /*
+                         * Check that valid data exists
+                         */
                        if (!isNaN(solData[prop])) {
-                           self.histories[prop].unshift({
+                           /*
+                            * Append each data point to the array of values
+                            * for this data point property (min. temp, etc).
+                            */
+                           self.historyData[prop].unshift({
                                date: Date.parse(solData[TERRESTRIAL_DATE]),
                                value: solData[prop]
                            });
                        }
-                   }
+                   });
                 });
-                self.deferreds[id].resolve({id: id, values: self.histories[id]});
+                self.deferreds[id].resolve({id: id, values: self.historyData[id]});
             });
         };
 
         /**
-         *
-         * @type {exports}
-         */
-        RemsTelemetryServerAdapter.prototype.dictionary = MSLDataDictionary;
-
-        /**
-         *
-         * @param id
-         * @returns {p.promise|{then, fail, end}|performPromise|deferred.promise|{}|*}
+         * Requests historical telemetry for the named data attribute. In
+         * the case of REMS, this data source exposes multiple different
+         * data variables from the REMS instrument, including temperature
+         * and others
+         * @param id The telemetry data point key to be queried.
+         * @returns {Promise | Array<RemsTelemetryValue>} that resolves with an Array of {@link RemsTelemetryValue} objects for the request data key.
          */
         RemsTelemetryServerAdapter.prototype.history = function(id) {
             this.deferreds[id] = this.deferreds[id] || this.$q.defer();
-            if (this.histories[id]) {
-                this.deferreds[id].resolve({id: id, values: this.histories[id]});
+            if (this.historyData[id]) {
+                this.deferreds[id].resolve({id: id, values: this.historyData[id]});
             } else {
-                this.histories = {};
+                this.historyData = {};
                 this.requestHistory(id);
             }
             return this.deferreds[id].promise;

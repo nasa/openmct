@@ -1,4 +1,6 @@
 [
     "AgentService",
+    "DeviceClassifier",
+    "DeviceMatchers",
     "MCTDevice"
 ]

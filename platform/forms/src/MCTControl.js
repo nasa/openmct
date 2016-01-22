@@ -79,6 +79,9 @@ define(
                     // Used to choose which form control to use
                     key: "=",
 
+                    // Allow controls to trigger blur-like events
+                    ngBlur: "&",
+
                     // The state of the form value itself
                     ngModel: "=",
 

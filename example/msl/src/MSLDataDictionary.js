@@ -28,6 +28,9 @@ define(
      * source and its data types. The data dictionary will be parsed by a custom
      * server provider for this data source (in this case
      * {@link RemsTelemetryServerAdapter}).
+     *
+     * Typically a data dictionary would be made available alongside the
+     * telemetry data source itself.
      */
     function () {
         return {

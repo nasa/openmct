@@ -34,9 +34,9 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function CreateWizard(type, parent, policyService) {
+        function CreateWizard(type, parent, policyService, initialModel) {
             this.type = type;
-            this.model = type.getInitialModel();
+            this.model = initialModel || type.getInitialModel();
             this.properties = type.getProperties();
             this.parent = parent;
             this.policyService = policyService;

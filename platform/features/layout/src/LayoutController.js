@@ -62,9 +62,14 @@ define(
             }
 
             // Position a panel after a drop event
-            function handleDrop(e, id, position) {
+            //An editableDomainObject is provided, as the drop may have
+            // triggered a transition to edit mode.
+            function handleDrop(e, id, position, editableDomainObject) {
                 if (e.defaultPrevented) {
                     return;
+                }
+                if (editableDomainObject){
+                    $scope.setEditable(editableDomainObject);
                 }
                 // Ensure that configuration field is populated
                 $scope.configuration = $scope.configuration || {};
@@ -85,6 +90,8 @@ define(
                     $scope.commit("Dropped a frame.");
                 }
                 // Populate template-facing position for this id
+                self.rawPositions[id] =
+                    $scope.configuration.panels[id];
                 self.populatePosition(id);
                 // Layout may contain embedded views which will
                 // listen for drops, so call preventDefault() so

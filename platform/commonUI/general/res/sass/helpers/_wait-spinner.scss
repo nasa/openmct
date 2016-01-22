@@ -24,21 +24,27 @@
     100% { transform: rotate(359deg); }
 }
 
-@mixin wait-spinner2($b: 5px, $c: $colorAlt1) {
+@mixin spinner($b: 5px) {
     @include keyframes(rotateCentered) {
-         0%   { transform: translateX(-50%) translateY(-50%) rotate(0deg); }
-         100% { transform: translateX(-50%) translateY(-50%) rotate(359deg); }
-     }
+        0%   { @include transform(translateX(-50%) translateY(-50%) rotate(0deg)); }
+        100% { @include transform(translateX(-50%) translateY(-50%) rotate(359deg)); }
+    }
     @include animation-name(rotateCentered);
     @include animation-duration(0.5s);
     @include animation-iteration-count(infinite);
     @include animation-timing-function(linear);
+    @include transform-origin(center);
+    border-style: solid;
+    border-width: $b;
+    @include border-radius(100%);
+}
+
+
+@mixin wait-spinner2($b: 5px, $c: $colorAlt1) {
+    @include spinner($b);
+    @include box-sizing(border-box);
     border-color: rgba($c, 0.25);
     border-top-color: rgba($c, 1.0);
-    border-style: solid;
-    border-width: 5px;
-    @include border-radius(100%);
-    @include box-sizing(border-box);
     display: block;
     position: absolute;
     height: 0; width: 0;

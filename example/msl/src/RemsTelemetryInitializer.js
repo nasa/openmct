@@ -28,6 +28,18 @@ define(
         var TAXONOMY_ID = "msl:curiosity",
             PREFIX = "msl_tlm:";
 
+        /**
+         * Function that is executed on application startup and populates
+         * the navigation tree with objects representing the MSL REMS
+         * telemetry points. The tree is populated based on the data
+         * dictionary on the provider.
+         *
+         * @param {RemsTelemetryServerAdapter} adapter The server adapter
+         * (necessary in order to retrieve data dictionary)
+         * @param objectService the ObjectService which allows for lookup of
+         * objects by ID
+         * @constructor
+         */
         function RemsTelemetryInitializer(adapter, objectService) {
             function makeId(element) {
                 return PREFIX + element.identifier;

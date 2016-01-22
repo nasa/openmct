@@ -20,12 +20,14 @@
  at runtime from the About dialog for additional information.
 -->
 <div ng-controller="TimeRangeController">
-    <div class="l-time-range-inputs-holder">
+    <form class="l-time-range-inputs-holder"
+          ng-submit="updateBoundsFromForm()">
         <span class="l-time-range-inputs-elem ui-symbol type-icon">&#x43;</span>
         <span class="l-time-range-input">
             <mct-control key="'datetime-field'"
                          structure="{ format: parameters.format }"
-                         ng-model="ngModel.outer"
+                         ng-model="formModel"
+                         ng-blur="updateBoundsFromForm()"
                          field="'start'"
                          class="time-range-start">
             </mct-control>
@@ -36,12 +38,15 @@
         <span class="l-time-range-input" ng-controller="ToggleController as t2">
             <mct-control key="'datetime-field'"
                          structure="{ format: parameters.format }"
-                         ng-model="ngModel.outer"
+                         ng-model="formModel"
+                         ng-blur="updateBoundsFromForm()"
                          field="'end'"
                          class="time-range-end">
             </mct-control>&nbsp;
         </span>
-    </div>
+
+        <input type="submit" class="hidden">
+    </form>
 
     <div class="l-time-range-slider-holder">
         <div class="l-time-range-slider">

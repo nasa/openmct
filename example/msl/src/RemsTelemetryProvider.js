@@ -27,43 +27,53 @@ define (
 
         var SOURCE = "rems.source";
 
-        function RemsTelemetryProvider(adapter, $q){
-            /*
-             Filters requests for telemetry so that it only handles requests for
-             this source
-             */
+        function RemsTelemetryProvider(adapter, $q) {
+            this.adapter = adapter;
+            this.$q = $q;
+        }
+
+        /**
+         * Retrieve telemetry from this telemetry source.
+         * @memberOf example/msl
+         * @param {Array<TelemetryRequest>} requests An array of all request
+         * objects (which needs to be filtered to only those relevant to this
+         * source)
+         * @returns {Promise} A {@link Promise} resolved with a {@link RemsTelemetrySeries}
+         * object that wraps the telemetry returned from the telemetry source.
+         */
+        RemsTelemetryProvider.prototype.requestTelemetry = function (requests) {
+            var packaged = {},
+                relevantReqs = requests.filter(matchesSource),
+                adapter = this.adapter;
+
             function matchesSource(request) {
                 return (request.source === SOURCE);
             }
 
-            return {
-                requestTelemetry: function(requests) {
-                    var packaged = {},
-                        relevantReqs = requests.filter(matchesSource);
-
-                    function addToPackage(history) {
-                        packaged[SOURCE][history.id] =
-                            new RemsTelemetrySeries(history.values);
-                    }
-
-                    function handleRequest(request) {
-                        var key = request.key;
-                        return adapter.history(key).then(addToPackage);
-                    }
-                    packaged[SOURCE] = {};
-                    return $q.all(relevantReqs.map(handleRequest))
-                        .then(function () {
-                            return packaged;
-                        });
-                },
-                subscribe: function (callback, requests) {
-                    return function() {};
-                },
-                unsubscribe: function (callback, requests) {
-                    return function() {};
-                }
+            function addToPackage(history) {
+                packaged[SOURCE][history.id] =
+                    new RemsTelemetrySeries(history.values);
             }
 
+            function handleRequest(request) {
+                var key = request.key;
+                return adapter.history(key).then(addToPackage);
+            }
+            packaged[SOURCE] = {};
+            return this.$q.all(relevantReqs.map(handleRequest))
+                .then(function () {
+                    return packaged;
+                });
+        }
+
+        /**
+         * This data source does not support real-time subscriptions
+         */
+        RemsTelemetryProvider.prototype.subscribe = function (callback, requests) {
+            return function() {};
+        },
+        RemsTelemetryProvider.prototype.unsubscribe = function (callback, requests) {
+            return function() {};
         }
 
         return RemsTelemetryProvider;

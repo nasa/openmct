@@ -27,7 +27,6 @@
 	}
     .item {
         &.grid-item {
-            //div { @include test() }
             $d: $ueBrowseGridItemLg;
             $iconMargin: 40px;
             $iconD: ($d - ($iconMargin * 2)) * 0.85;
@@ -53,7 +52,6 @@
 	            }
             }
 	        .contents {
-                //@include test(red);
                 $m: $interiorMarginLg;
 		        top: $m; right: $m; bottom: $m; left: $m;
 	        }
@@ -83,19 +81,21 @@
             .item-main {
 	            $h: $ueBrowseGridItemLg;
 	            $lh: $h * 0.8;
-                //top: $ueBrowseGridItemTopBarH; bottom: $ueBrowseGridItemBottomBarH; //
                 line-height: $lh;
 	            z-index: 1;
                 .item-type,
                 .t-item-icon {
-                    //@include test();
                     @include transform(translateX(-50%) translateY(-55%));
                     position: absolute;
                     top: 50%; left: 50%;
-                    //height: $iconD; width: $iconD;
-                    font-size: $iconD * 0.95; //6em;
-                    //line-height: normal;
-                    //text-align: center;
+                    font-size: $iconD * 0.95;
+                    &.l-icon-link {
+                        .t-item-icon-glyph {
+                            &:before {
+                                @include transform(scale(0.25));
+                            }
+                        }
+                    }
                 }
                 .item-open {
                     @include trans-prop-nice("opacity", $transTime);
