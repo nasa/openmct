@@ -38,6 +38,31 @@ define(
          */
         function EditObjectController($scope) {
             this.scope = $scope;
+
+            var navigatedObject;
+            function setViewForDomainObject(domainObject) {
+
+                var locationViewKey = $location.search().view;
+
+                function selectViewIfMatching(view) {
+                    if (view.key === locationViewKey) {
+                        $scope.representation = $scope.representation || {};
+                        $scope.representation.selected = view;
+                    }
+                }
+
+                if (locationViewKey) {
+                    ((domainObject && domainObject.useCapability('view')) || [])
+                        .forEach(selectViewIfMatching);
+                }
+                navigatedObject = domainObject;
+            }
+
+            $scope.$watch('domainObject', setViewForDomainObject);
+
+            $scope.doAction = function (action){
+                return $scope[action] && $scope[action]();
+            };
         }
 
         /**

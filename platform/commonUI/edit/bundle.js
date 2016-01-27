@@ -22,7 +22,6 @@
 /*global define*/
 
 define([
-    "./src/controllers/EditController",
     "./src/controllers/EditActionController",
     "./src/controllers/EditPanesController",
     "./src/controllers/ElementsController",
@@ -39,7 +38,6 @@ define([
     "./src/representers/EditToolbarRepresenter",
     'legacyRegistry'
 ], function (
-    EditController,
     EditActionController,
     EditPanesController,
     ElementsController,
@@ -60,22 +58,7 @@ define([
 
     legacyRegistry.register("platform/commonUI/edit", {
         "extensions": {
-            "routes": [
-                {
-                    "when": "/edit",
-                    "templateUrl": "templates/edit.html"
-                }
-            ],
             "controllers": [
-                {
-                    "key": "EditController",
-                    "implementation": EditController,
-                    "depends": [
-                        "$scope",
-                        "$q",
-                        "navigationService"
-                    ]
-                },
                 {
                     "key": "EditActionController",
                     "implementation": EditActionController,

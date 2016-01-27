@@ -27,10 +27,9 @@
  */
 define(
     [
-        '../../../representation/src/gestures/GestureConstants',
-        '../../edit/src/objects/EditableDomainObject'
+        '../../../representation/src/gestures/GestureConstants'
     ],
-    function (GestureConstants, EditableDomainObject) {
+    function (GestureConstants) {
         "use strict";
 
         var ROOT_ID = "ROOT",
