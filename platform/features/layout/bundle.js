@@ -25,14 +25,44 @@ define([
     "./src/LayoutController",
     "./src/FixedController",
     "./src/LayoutCompositionPolicy",
+    "../../commonUI/browse/src/InspectorRegion",
+    "./src/PlotOptionsController",
     'legacyRegistry'
 ], function (
     LayoutController,
     FixedController,
     LayoutCompositionPolicy,
+    InspectorRegion,
+    PlotOptionsController,
     legacyRegistry
 ) {
     "use strict";
+
+    /**
+     * Customize and extend the default 'Inspector' region for the panel
+     * type, to add display options for plots. This should be moved to a
+     * dedicated type.
+     * @type {InspectorRegion}
+     */
+    var plotInspector = new InspectorRegion(),
+        plotOptionsBrowsePart = {
+            name: "plot-options",
+            title: "Plot Options",
+            modes: ['browse'],
+            content: {
+                key: "plot-options-browse"
+            }
+        },
+        plotOptionsEditPart = {
+            name: "plot-options",
+            title: "Plot Options",
+            modes: ['edit'],
+            content: {
+                key: "plot-options-browse"
+            }
+        };
+    plotInspector.addPart(plotOptionsBrowsePart);
+    plotInspector.addPart(plotOptionsEditPart);
 
     legacyRegistry.register("platform/features/layout", {
         "name": "Layout components.",
@@ -192,6 +222,10 @@ define([
                 {
                     "key": "frame",
                     "templateUrl": "templates/frame.html"
+                },
+                {
+                    "key": "plot-options-browse",
+                    "templateUrl": "templates/plot-options-browse.html"
                 }
             ],
             "controllers": [
@@ -212,6 +246,13 @@ define([
                         "telemetryHandler",
                         "telemetryFormatter",
                         "throttle"
+                    ]
+                },
+                {
+                    "key": "PlotOptionsController",
+                    "implementation": PlotOptionsController,
+                    "depends": [
+                        "$scope"
                     ]
                 }
             ],
@@ -312,7 +353,12 @@ define([
                             "property": "layoutGrid",
                             "conversion": "number[]"
                         }
-                    ]
+                    ],
+                    "regions": {
+                        "inspector": plotInspector
+                    }
+
+
                 }
             ]
         }
