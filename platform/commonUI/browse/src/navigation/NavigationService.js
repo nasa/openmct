@@ -50,6 +50,8 @@ define(
 
         /**
          * Set the current navigation state. This will invoke listeners.
+         * Changing the navigation state will be blocked if any of the
+         * 'before' navigation state change listeners return 'false'.
          * @param {DomainObject} domainObject the domain object to navigate to
          */
         NavigationService.prototype.setNavigation = function (value) {
@@ -57,7 +59,11 @@ define(
             if (this.navigated !== value) {
                 canNavigate = (this.callbacks['before'] || [])
                     .reduce(function (previous, callback) {
-                        return callback(value) && previous;
+                        //Check whether the callback returned a value of
+                        // 'false' indicating that navigation should not
+                        // continue. All other return values will allow
+                        // navigation to continue
+                        return (callback(value)!==false) && previous;
                     }, true);
                 if (canNavigate) {
                     this.navigated = value;
@@ -72,7 +78,11 @@ define(
         /**
          * Listen for changes in navigation. The passed callback will
          * be invoked with the new domain object of navigation when
-         * this changes.
+         * this changes. Callbacks can be registered to listen to pre or
+         * post-navigation events. The event to listen to is specified using
+         * the event parameter. In the case of pre-navigation events
+         * returning a false value will prevent the navigation event from
+         * going ahead.
          * @param {function} callback the callback to invoke when
          *        navigation state changes
          * @param {string} [event=after] the navigation event to listen to.
@@ -89,7 +99,7 @@ define(
          * @param {function} callback the callback which should
          *        no longer be invoked when navigation state
          *        changes
-         * @param {string} [event=after] the navigation event to the
+         * @param {string} [event=after] the navigation event that the
          * callback is registered to. One of 'before' or 'after'.
          */
         NavigationService.prototype.removeListener = function (callback, event) {
