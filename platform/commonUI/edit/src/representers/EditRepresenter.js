@@ -118,6 +118,11 @@ define(
             // Ensure existing watches are released
             this.destroy();
 
+            function setEditing(){
+                scope.viewRegionTemplate = 'edit-object';
+                scope.inspectorRegionTemplate = 'inspector-edit'
+            }
+
             /**
              * Listen for changes in object state. If the object becomes
              * editable then change the view and inspector regions
@@ -125,12 +130,15 @@ define(
              */
             this.listenHandle = this.domainObject.getCapability('status').listen(function(statuses){
                 if (statuses.indexOf('editing')!=-1){
-                    scope.viewRegionTemplate = 'edit-object';
-                    scope.inspectorRegionTemplate = 'inspector-edit'
+                    setEditing();
                 } else {
                     delete scope.viewRegionTemplate;
                 }
             });
+
+            if (representedObject.getCapability('status').get('editing')){
+                setEditing();
+            }
         };
 
         // Respond to the destruction of the current representation.

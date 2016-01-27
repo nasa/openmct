@@ -22,11 +22,8 @@
 /*global define,Promise*/
 
 define(
-    [
-        '../../../representation/src/gestures/GestureConstants',
-        '../../edit/src/objects/EditableDomainObject'
-    ],
-    function (GestureConstants, EditableDomainObject) {
+    [],
+    function () {
         "use strict";
 
         /**
@@ -57,10 +54,9 @@ define(
 
             function updateQueryParam(viewKey) {
                 var unlisten,
-                    priorRoute = $route.current,
-                    isEditMode = $scope.domainObject && $scope.domainObject.hasCapability('editor');
+                    priorRoute = $route.current;
 
-                if (viewKey && !isEditMode) {
+                if (viewKey) {
                     $location.search('view', viewKey);
                     unlisten = $scope.$on('$locationChangeSuccess', function () {
                         // Checks path to make sure /browse/ is at front
@@ -75,10 +71,6 @@ define(
 
             $scope.$watch('domainObject', setViewForDomainObject);
             $scope.$watch('representation.selected.key', updateQueryParam);
-
-            $scope.cancelEditing = function() {
-                navigationService.setNavigation($scope.domainObject.getDomainObject());
-            };
 
             $scope.doAction = function (action){
                 return $scope[action] && $scope[action]();
