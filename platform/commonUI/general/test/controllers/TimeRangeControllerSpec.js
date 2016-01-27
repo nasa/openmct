@@ -91,6 +91,24 @@ define(
                     .toHaveBeenCalledWith("ngModel", jasmine.any(Function));
             });
 
+            it("exposes start time validator", function () {
+                var testValue = 42000000;
+                mockScope.formModel = { end: testValue };
+                expect(mockScope.validateStart(testValue + 1))
+                    .toBe(false);
+                expect(mockScope.validateStart(testValue - 60 * 60 * 1000 - 1))
+                    .toBe(true);
+            });
+
+            it("exposes end time validator", function () {
+                var testValue = 42000000;
+                mockScope.formModel = { start:  testValue };
+                expect(mockScope.validateEnd(testValue - 1))
+                    .toBe(false);
+                expect(mockScope.validateEnd(testValue + 60 * 60 * 1000 + 1))
+                    .toBe(true);
+            });
+
             describe("when changes are made via form entry", function () {
                 beforeEach(function () {
                     mockScope.ngModel = {
@@ -192,26 +210,6 @@ define(
                     mockScope.spanWidth = 1000;
                     fireWatch("spanWidth", mockScope.spanWidth);
                     fireWatchCollection("ngModel", mockScope.ngModel);
-                });
-
-                it("enforces a minimum outer span", function () {
-                    mockScope.ngModel.outer.end =
-                        mockScope.ngModel.outer.start - DAY * 100;
-                    fireWatch(
-                        "ngModel.outer.end",
-                        mockScope.ngModel.outer.end
-                    );
-                    expect(mockScope.ngModel.outer.end)
-                        .toBeGreaterThan(mockScope.ngModel.outer.start);
-
-                    mockScope.ngModel.outer.start =
-                        mockScope.ngModel.outer.end + DAY * 100;
-                    fireWatch(
-                        "ngModel.outer.start",
-                        mockScope.ngModel.outer.start
-                    );
-                    expect(mockScope.ngModel.outer.end)
-                        .toBeGreaterThan(mockScope.ngModel.outer.start);
                 });
 
                 it("enforces a minimum inner span when outer span changes", function () {

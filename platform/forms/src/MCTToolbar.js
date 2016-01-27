@@ -64,7 +64,7 @@ define(
                 templateUrl: templatePath,
 
                 // Use FormController to populate/respond to changes in scope
-                controller: FormController,
+                controller: [ '$scope', FormController ],
 
                 // Initial an isolate scope
                 scope: {

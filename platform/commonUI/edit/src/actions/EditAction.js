@@ -25,8 +25,8 @@
  * Module defining EditAction. Created by vwoeltje on 11/14/14.
  */
 define(
-    [],
-    function () {
+    ['../objects/EditableDomainObject'],
+    function (EditableDomainObject) {
         "use strict";
 
         // A no-op action to return in the event that the action cannot
@@ -46,7 +46,7 @@ define(
          * @constructor
          * @implements {Action}
          */
-        function EditAction($location, navigationService, $log, context) {
+        function EditAction($location, navigationService, $log, $q, context) {
             var domainObject = (context || {}).domainObject;
 
             // We cannot enter Edit mode if we have no domain object to
@@ -65,14 +65,20 @@ define(
             this.domainObject = domainObject;
             this.$location = $location;
             this.navigationService = navigationService;
+            this.$q = $q;
         }
 
         /**
          * Enter edit mode.
          */
         EditAction.prototype.perform = function () {
-            this.navigationService.setNavigation(this.domainObject);
-            this.$location.path("/edit");
+            var editableObject;
+            if (!this.domainObject.hasCapability("editor")) {
+                editableObject = new EditableDomainObject(this.domainObject, this.$q);
+                editableObject.getCapability('status').set('editing', true);
+                this.navigationService.setNavigation(editableObject);
+            }
+            //this.$location.path("/edit");
         };
 
         /**
@@ -83,10 +89,11 @@ define(
          */
         EditAction.appliesTo = function (context) {
             var domainObject = (context || {}).domainObject,
-                type = domainObject && domainObject.getCapability('type');
+                type = domainObject && domainObject.getCapability('type'),
+                isEditMode = domainObject && domainObject.getDomainObject ? true : false;
 
             // Only allow creatable types to be edited
-            return type && type.hasFeature('creation');
+            return type && type.hasFeature('creation') && !isEditMode;
         };
 
         return EditAction;

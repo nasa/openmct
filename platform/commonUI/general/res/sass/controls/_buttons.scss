@@ -35,6 +35,7 @@ $pad: $interiorMargin * $baseRatio;
     @include box-sizing(border-box);
     padding: 0 $pad;
     font-size: 0.7rem;
+    vertical-align: top;
 
     .icon {
         font-size: 0.8rem;
@@ -69,6 +70,18 @@ $pad: $interiorMargin * $baseRatio;
     }
     &.pause-play {
 
+    }
+    &.t-save:before {
+        content:'\e612';
+        font-family: symbolsfont;
+        margin-right: $interiorMarginSm;
+    }
+    &.t-cancel {
+        .title-label { display: none; }
+        &:before {
+            content:'\78';
+            font-family: symbolsfont;
+        }
     }
 
     &.pause-play {

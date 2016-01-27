@@ -33,18 +33,19 @@
                             <directory>.</directory>
                             <includes>
                                 <include>index.html</include>
+                                <include>main.js</include>
                                 <include>*.json</include>
                                 <include>**/src/**/*</include>
                                 <include>**/res/**/*</include>
                                 <include>**/lib/**/*</include>
-                                <include>**/bundle.json</include>
+                                <include>**/bundle.js</include>
                             </includes>
                             <excludes>
                                 <exclude>protractor/**/*</exclude>
                                 <exclude>node_modules/**/*</exclude>
                                 <exclude>platform/core/bundle.json</exclude>
-                                <exclude>example/**/*</exclude>
                                 <exclude>**/test/lib/*</exclude>
+                                <exclude>target/**/*</exclude>
                             </excludes>
                         </resource>
                         <resource>
@@ -80,52 +81,36 @@
                 </configuration>
             </plugin>
 
-            <!-- Get PhantomJS plugin -->
+            <!-- Run specs using npm -->
             <plugin>
-                <groupId>com.github.klieber</groupId>
-                <artifactId>phantomjs-maven-plugin</artifactId>
-                <version>0.2.1</version>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>0.0.26</version>
+                <configuration>
+                    <installDirectory>target</installDirectory>
+                    <nodeVersion>v0.12.2</nodeVersion>
+                    <npmVersion>2.7.6</npmVersion>
+                </configuration>
                 <executions>
                     <execution>
+                        <id>install node and npm</id>
                         <goals>
-                            <goal>install</goal>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>javascript tests</id>
+                        <goals>
+                            <goal>karma</goal>
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <version>1.9.2</version>
-                </configuration>
-            </plugin>
-
-            <!-- Run specs -->
-            <!-- https://github.com/detro/phantomjs-jasminexml-example -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.1</version>
-                <executions>
-
-                    <execution>
-                        <id>Jasmine Specs</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-
-                        <configuration>
-                            <workingDirectory>.</workingDirectory>
-                            <arguments>
-                                <argument>platform/framework/test/lib/run_jasmine_test.coffee</argument>
-                                <argument>test.html</argument>
-                                <argument>${project.build.directory}/platform-test-results.html</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-
-                </executions>
-                <configuration>
-                    <executable>${phantomjs.binary}</executable>
-                </configuration>
             </plugin>
 
 
@@ -162,9 +147,11 @@
                     <sourceJsFolder>${basedir}</sourceJsFolder>
                     <excludes>
                         <exclude>**/lib/**</exclude>
-                        <exclude>app.js</exclude>
+                        <exclude>*.js</exclude>
                         <exclude>node_modules/**/*</exclude>
                         <exclude>protractor/**/*</exclude>
+                        <exclude>target/**/*</exclude>
+                        <exclude>scripts/**/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>

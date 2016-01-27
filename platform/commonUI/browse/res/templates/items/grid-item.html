@@ -27,7 +27,9 @@
             <mct-representation class="desktop-hide" key="'info-button'" mct-object="domainObject"></mct-representation>
         </div>
         <div class='item-main abs lg'>
-            <span class="t-item-icon" ng-class="{ 'l-icon-link':location.isLink() }">{{type.getGlyph()}}</span>
+            <span class="t-item-icon" ng-class="{ 'l-icon-link':location.isLink() }">
+                <span class="t-item-icon-glyph ng-binding">{{type.getGlyph()}}</span>
+            </span>
             <div class='ui-symbol abs item-open'>}</div>
         </div>
         <div class='bottom-bar bar abs'>

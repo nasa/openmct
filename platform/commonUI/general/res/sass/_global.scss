@@ -121,7 +121,12 @@ mct-container {
 	text-align: center;
 }
 
-.scrolling {
+.ellipsis {
+    @include ellipsize();
+}
+
+.scrolling,
+.scroll {
 	overflow: auto;
 }
 

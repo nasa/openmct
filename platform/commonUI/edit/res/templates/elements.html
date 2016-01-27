@@ -19,16 +19,19 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="current-elements abs" style="height: 100%;">
-    <!--p class="hint">Drop objects here to add them...</p-->
-    <ul class="tree">
-        <li ng-repeat="containedObject in composition">
-            <span class="tree-item">
-                <mct-representation key="'label'"
-                                    mct-object="containedObject"
-                                    class="rep-object-label">
-                </mct-representation>
-            </span>
-        </li>
-    </ul>
+<div ng-controller="ElementsController">
+    <mct-include key="'input-filter'"
+                 class="flex-elem holder"
+                 ng-model="filterBy">
+    </mct-include>
+    <div class="current-elements abs" style="height: 100%;">
+        <ul class="tree">
+            <li ng-repeat="containedObject in composition | filter:searchText">
+                <span class="tree-item">
+                    <mct-representation key="'label'" mct-object="containedObject">
+                    </mct-representation>
+                </span>
+            </li>
+        </ul>
+    </div>
 </div>

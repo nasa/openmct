@@ -37,6 +37,7 @@ define(
         '../capabilities/EditableCompositionCapability',
         '../capabilities/EditableRelationshipCapability',
         '../capabilities/EditorCapability',
+        '../capabilities/EditableActionCapability',
         './EditableDomainObjectCache'
     ],
     function (
@@ -45,6 +46,7 @@ define(
         EditableCompositionCapability,
         EditableRelationshipCapability,
         EditorCapability,
+        EditableActionCapability,
         EditableDomainObjectCache
     ) {
         "use strict";
@@ -78,7 +80,9 @@ define(
             // different versions of the same editable domain object
             // are not shown in different sections of the same Edit
             // UI, which might thereby fall out of sync.
-            var cache;
+            var cache,
+                originalObject = domainObject,
+                cachedObject;
 
             // Constructor for EditableDomainObject, which adheres
             // to the same shared cache.
@@ -102,12 +106,22 @@ define(
                             capability;
                 };
 
+
+                editableObject.setOriginalObject = function(object) {
+                    originalObject = object;
+                };
+
+                editableObject.getOriginalObject = function() {
+                    return originalObject;
+                };
+
                 return editableObject;
             }
 
             cache = new EditableDomainObjectCache(EditableDomainObjectImpl, $q);
+            cachedObject = cache.getEditableObject(domainObject);
 
-            return cache.getEditableObject(domainObject);
+            return cachedObject;
         }
 
         return EditableDomainObject;

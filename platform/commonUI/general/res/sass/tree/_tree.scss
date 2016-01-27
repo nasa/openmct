@@ -149,3 +149,32 @@ mct-representation {
     border-color: rgba($colorItemTreeSelectedFg, 0.25);
     border-top-color: rgba($colorItemTreeSelectedFg, 1.0);
 }
+
+.tree .s-status-editing,
+.search-results .s-status-editing {
+    // Item is being edited
+    .tree-item,
+    .search-result-item {
+        background: $colorItemTreeEditingBg;
+        pointer-events: none;
+        &:before {
+            // Pencil icon
+            @extend .ui-symbol;
+            @include pulse($dur: 1s, $opacity0: 0.25);
+            color: $colorItemTreeEditingFg;
+            content: '\70';
+            margin-right: $interiorMarginSm;
+        }
+        .t-object-label {
+            .t-item-icon,
+            .t-title-label {
+                color: $colorItemTreeEditingFg;
+                @include text-shadow(none);
+            }
+            .t-title-label {
+                font-style: italic;
+            }
+        }
+        .view-control, + .tree-item-subtree { display: none; }
+    }
+}
