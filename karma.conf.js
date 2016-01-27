@@ -76,7 +76,7 @@ module.exports = function(config) {
 
         // Code coverage reporting.
         coverageReporter: {
-            dir: "target/coverage"
+            dir: "dist/coverage"
         },
 
         // HTML test reporting.
