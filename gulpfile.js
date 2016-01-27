@@ -20,10 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global require*/
+/*global require,__dirname*/
 var gulp = require('gulp'),
     requirejsOptimize = require('gulp-requirejs-optimize'),
     sourcemaps = require('gulp-sourcemaps'),
+    karma = require('karma'),
+    path = require('path'),
     paths = {
         main: 'main.js',
         dist: 'dist'
@@ -32,6 +34,10 @@ var gulp = require('gulp'),
         requirejsOptimize: {
             name: 'main',
             mainConfigFile: paths.main
+        },
+        karma: {
+            configFile: path.resolve(__dirname, 'karma.conf.js'),
+            singleRun: true
         }
     };
 
@@ -41,4 +47,8 @@ gulp.task('scripts', function () {
 		.pipe(requirejsOptimize(options.requirejsOptimize))
 		.pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest(paths.dist));
+});
+
+gulp.task('test', function (done) {
+    new karma.Server(options.karma, done).start();
 });

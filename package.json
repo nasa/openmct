@@ -14,7 +14,7 @@
     "jasmine-core": "^2.3.0",
     "jsdoc": "^3.3.2",
     "jshint": "^2.7.0",
-    "karma": "^0.12.31",
+    "karma": "^0.13.3",
     "karma-chrome-launcher": "^0.1.8",
     "karma-cli": "0.0.4",
     "karma-coverage": "^0.5.3",
