@@ -119,6 +119,12 @@ define([
                     ]
                 }
             ],
+            "filters": [
+                {
+                    "implementation": "filters/ReverseFilter.js",
+                    "key": "reverse"
+                }
+            ],
             "stylesheets": [
                 {
                     "stylesheetUrl": "css/normalize.min.css",

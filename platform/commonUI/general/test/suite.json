@@ -20,6 +20,7 @@
     "directives/MCTScroll",
     "directives/MCTSplitPane",
     "directives/MCTSplitter",
+    "filters/ReverseFilter",
     "services/Popup",
     "services/PopupService",
     "services/UrlService",
