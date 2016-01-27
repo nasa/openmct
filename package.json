@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "glob": ">= 3.0.0",
+    "gulp": "^3.9.0",
     "jasmine-core": "^2.3.0",
     "jsdoc": "^3.3.2",
     "jshint": "^2.7.0",
