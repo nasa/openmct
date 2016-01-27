@@ -43,7 +43,7 @@ define(
         function TimeRangeController($scope, formatService, defaultFormat, now) {
             var tickCount = 2,
                 innerMinimumSpan = 1000, // 1 second
-                outerMinimumSpan = 1000 * 60 * 60, // 1 hour
+                outerMinimumSpan = 1000, // 1 second
                 initialDragValue,
                 formatter = formatService.getFormat(defaultFormat);
 
@@ -185,13 +185,6 @@ define(
             function updateOuterStart(t) {
                 var ngModel = $scope.ngModel;
 
-                ngModel.outer.start = t;
-
-                ngModel.outer.end = Math.max(
-                    ngModel.outer.start + outerMinimumSpan,
-                    ngModel.outer.end
-                );
-
                 ngModel.inner.start =
                     Math.max(ngModel.outer.start, ngModel.inner.start);
                 ngModel.inner.end = Math.max(
@@ -206,13 +199,6 @@ define(
 
             function updateOuterEnd(t) {
                 var ngModel = $scope.ngModel;
-
-                ngModel.outer.end = t;
-
-                ngModel.outer.start = Math.min(
-                    ngModel.outer.end - outerMinimumSpan,
-                    ngModel.outer.start
-                );
 
                 ngModel.inner.end =
                     Math.min(ngModel.outer.end, ngModel.inner.end);
@@ -233,11 +219,20 @@ define(
             }
 
             function updateBoundsFromForm() {
-                $scope.ngModel = $scope.ngModel || {};
-                $scope.ngModel.outer = {
-                    start: $scope.formModel.start,
-                    end: $scope.formModel.end
-                };
+                var start = $scope.formModel.start,
+                    end = $scope.formModel.end;
+                if (end >= start + outerMinimumSpan) {
+                    $scope.ngModel = $scope.ngModel || {};
+                    $scope.ngModel.outer = { start: start, end: end };
+                }
+            }
+
+            function validateStart(startValue) {
+                return startValue <= $scope.formModel.end - outerMinimumSpan;
+            }
+
+            function validateEnd(endValue) {
+                return endValue >= $scope.formModel.start + outerMinimumSpan;
             }
 
             $scope.startLeftDrag = startLeftDrag;
@@ -248,6 +243,9 @@ define(
             $scope.middleDrag = middleDrag;
 
             $scope.updateBoundsFromForm = updateBoundsFromForm;
+
+            $scope.validateStart = validateStart;
+            $scope.validateEnd = validateEnd;
 
             $scope.ticks = [];
 
