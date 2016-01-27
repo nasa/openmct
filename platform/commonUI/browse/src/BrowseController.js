@@ -60,13 +60,6 @@ define(
                 ($route.current.params.ids || defaultPath).split("/")
             );
 
-            function isDirty(){
-                var editorCapability = $scope.navigatedObject &&
-                        $scope.navigatedObject.getCapability("editor"),
-                    hasChanges = editorCapability && editorCapability.dirty();
-                return hasChanges;
-            }
-
             function updateRoute(domainObject) {
                 var priorRoute = $route.current,
                     // Act as if params HADN'T changed to avoid page reload
@@ -83,9 +76,7 @@ define(
                 // urlService.urlForLocation used to adjust current
                 // path to new, addressed, path based on
                 // domainObject
-                $location.path(urlService.urlForLocation("browse",
-                    domainObject.hasCapability('editor') ?
-                        domainObject.getOriginalObject() : domainObject));
+                $location.path(urlService.urlForLocation("browse", domainObject));
 
             }
 
@@ -97,17 +88,15 @@ define(
                     return;
                 }
 
-                if (isDirty() && !confirm(CONFIRM_MSG)) {
-                    $scope.treeModel.selectedObject = $scope.navigatedObject;
-                    navigationService.setNavigation($scope.navigatedObject);
-                } else {
-                    if ($scope.navigatedObject && $scope.navigatedObject.hasCapability("editor")){
-                        $scope.navigatedObject.getCapability("editor").cancel();
-                    }
+                if (navigationService.setNavigation(domainObject)) {
                     $scope.navigatedObject = domainObject;
                     $scope.treeModel.selectedObject = domainObject;
-                    navigationService.setNavigation(domainObject);
                     updateRoute(domainObject);
+                } else {
+                    //If navigation was unsuccessful (ie. blocked), reset
+                    // the selected object in the tree to the currently
+                    // navigated object
+                    $scope.treeModel.selectedObject = $scope.navigatedObject ;
                 }
             }
 
@@ -184,18 +173,13 @@ define(
                 selectedObject: navigationService.getNavigation()
             };
 
-            $scope.beforeUnloadWarning = function() {
-                return isDirty() ?
-                    "Unsaved changes will be lost if you leave this page." :
-                    undefined;
-            };
-
             // Listen for changes in navigation state.
             navigationService.addListener(setNavigation);
 
-            // Also listen for changes which come from the tree
+            // Also listen for changes which come from the tree. Changes in
+            // the tree will trigger a change in browse navigation state.
             $scope.$watch("treeModel.selectedObject", setNavigation);
-            
+
             // Clean up when the scope is destroyed
             $scope.$on("$destroy", function () {
                 navigationService.removeListener(setNavigation);

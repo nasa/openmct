@@ -26,6 +26,7 @@ define([
     "./src/controllers/EditActionController",
     "./src/controllers/EditPanesController",
     "./src/controllers/ElementsController",
+    "./src/controllers/EditObjectController",
     "./src/directives/MCTBeforeUnload",
     "./src/actions/LinkAction",
     "./src/actions/EditAction",
@@ -48,6 +49,7 @@ define([
     EditActionController,
     EditPanesController,
     ElementsController,
+    EditObjectController,
     MCTBeforeUnload,
     LinkAction,
     EditAction,
@@ -103,6 +105,13 @@ define([
                 {
                     "key": "ElementsController",
                     "implementation": ElementsController,
+                    "depends": [
+                        "$scope"
+                    ]
+                },
+                {
+                    "key": "EditObjectController",
+                    "implementation": EditObjectController,
                     "depends": [
                         "$scope"
                     ]
@@ -206,6 +215,9 @@ define([
                     "template": editObjectTemplate,
                     "uses": [
                         "view"
+                    ],
+                    "gestures": [
+                        "drop"
                     ]
                 },
                 {

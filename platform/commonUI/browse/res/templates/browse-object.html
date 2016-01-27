@@ -47,11 +47,6 @@
         <div ng-if="isEditable" class="holder l-flex-col flex-elem grows l-object-wrapper-inner">
             <!-- Toolbar and Save/Cancel buttons -->
             <div class="l-edit-controls flex-elem l-flex-row flex-align-end">
-                <mct-toolbar name="mctToolbar"
-                             structure="toolbar.structure"
-                             ng-model="toolbar.state"
-                             class="flex-elem grows">
-                </mct-toolbar>
                 <mct-representation key="'edit-action-buttons'"
                                     mct-object="domainObject"
                                     class='flex-elem conclude-editing'>

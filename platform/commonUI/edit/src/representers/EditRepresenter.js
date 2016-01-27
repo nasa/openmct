@@ -49,6 +49,7 @@ define(
             var self = this;
 
             this.scope = scope;
+            this.listenHandle = undefined;
 
             // Mutate and persist a new version of a domain object's model.
             function doPersist(model) {
@@ -100,10 +101,13 @@ define(
             // Place the "commit" method in the scope
             scope.commit = commit;
             scope.setEditable = setEditable;
+
         }
 
         // Handle a specific representation of a specific domain object
         EditRepresenter.prototype.represent = function represent(representation, representedObject) {
+            var scope = this.scope,
+                self = this;
             // Track the key, to know which view configuration to save to.
             this.key = (representation || {}).key;
             // Track the represented object
@@ -113,11 +117,26 @@ define(
 
             // Ensure existing watches are released
             this.destroy();
+
+            /**
+             * Listen for changes in object state. If the object becomes
+             * editable then change the view and inspector regions
+             * object representation accordingly
+             */
+            this.listenHandle = this.domainObject.getCapability('status').listen(function(statuses){
+                if (statuses.indexOf('editing')!=-1){
+                    scope.viewRegionTemplate = 'edit-object';
+                    scope.inspectorRegionTemplate = 'inspector-edit'
+                } else {
+                    delete scope.viewRegionTemplate;
+                }
+            });
         };
 
         // Respond to the destruction of the current representation.
         EditRepresenter.prototype.destroy = function destroy() {
             // Nothing to clean up
+            this.listenHandle && this.listenHandle();
         };
 
         return EditRepresenter;

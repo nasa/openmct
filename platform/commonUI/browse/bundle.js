@@ -171,6 +171,10 @@ define([
             ],
             "representations": [
                 {
+                    "key": "view-region",
+                    "templateUrl": "templates/view-object.html"
+                },
+                {
                     "key": "browse-object",
                     "template": browseObjectTemplate,
                     "gestures": [
