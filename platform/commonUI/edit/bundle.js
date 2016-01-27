@@ -26,6 +26,7 @@ define([
     "./src/controllers/EditActionController",
     "./src/controllers/EditPanesController",
     "./src/controllers/ElementsController",
+    "./src/controllers/EditObjectController",
     "./src/directives/MCTBeforeUnload",
     "./src/actions/LinkAction",
     "./src/actions/EditAction",
@@ -42,6 +43,7 @@ define([
     EditActionController,
     EditPanesController,
     ElementsController,
+    EditObjectController,
     MCTBeforeUnload,
     LinkAction,
     EditAction,
@@ -94,6 +96,13 @@ define([
                     "depends": [
                         "$scope"
                     ]
+                },
+                {
+                    "key": "EditObjectController",
+                    "implementation": EditObjectController,
+                    "depends": [
+                        "$scope"
+                    ]
                 }
             ],
             "directives": [
@@ -101,7 +110,8 @@ define([
                     "key": "mctBeforeUnload",
                     "implementation": MCTBeforeUnload,
                     "depends": [
-                        "$window"
+                        "$window",
+                        "navigationService"
                     ]
                 }
             ],
@@ -197,6 +207,9 @@ define([
                     "templateUrl": "templates/edit-object.html",
                     "uses": [
                         "view"
+                    ],
+                    "gestures": [
+                        "drop"
                     ]
                 },
                 {
@@ -219,6 +232,10 @@ define([
                 {
                     "key": "topbar-edit",
                     "templateUrl": "templates/topbar-edit.html"
+                },
+                {
+                    "key": "inspector-edit",
+                    "templateUrl": "templates/inspector-edit.html"
                 }
             ],
             "representers": [

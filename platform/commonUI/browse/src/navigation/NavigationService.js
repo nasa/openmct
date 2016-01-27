@@ -37,7 +37,7 @@ define(
          */
         function NavigationService() {
             this.navigated = undefined;
-            this.callbacks = [];
+            this.callbacks = {};
         }
 
         /**
@@ -53,12 +53,20 @@ define(
          * @param {DomainObject} domainObject the domain object to navigate to
          */
         NavigationService.prototype.setNavigation = function (value) {
+            var canNavigate = true;
             if (this.navigated !== value) {
-                this.navigated = value;
-                this.callbacks.forEach(function (callback) {
-                    callback(value);
-                });
+                canNavigate = (this.callbacks['before'] || [])
+                    .reduce(function (previous, callback) {
+                        return callback(value) && previous;
+                    }, true);
+                if (canNavigate) {
+                    this.navigated = value;
+                    this.callbacks['after'].forEach(function (callback) {
+                        callback(value);
+                    });
+                }
             }
+            return canNavigate;
         };
 
         /**
@@ -67,9 +75,13 @@ define(
          * this changes.
          * @param {function} callback the callback to invoke when
          *        navigation state changes
+         * @param {string} [event=after] the navigation event to listen to.
+         * One of 'before' or 'after'.
          */
-        NavigationService.prototype.addListener = function (callback) {
-            this.callbacks.push(callback);
+        NavigationService.prototype.addListener = function (callback, event) {
+            event = event || 'after';
+            this.callbacks[event] = this.callbacks[event] || [];
+            this.callbacks[event].push(callback);
         };
 
         /**
@@ -77,9 +89,12 @@ define(
          * @param {function} callback the callback which should
          *        no longer be invoked when navigation state
          *        changes
+         * @param {string} [event=after] the navigation event to the
+         * callback is registered to. One of 'before' or 'after'.
          */
-        NavigationService.prototype.removeListener = function (callback) {
-            this.callbacks = this.callbacks.filter(function (cb) {
+        NavigationService.prototype.removeListener = function (callback, event) {
+            event = event || 'after';
+            this.callbacks[event] = this.callbacks[event].filter(function (cb) {
                 return cb !== callback;
             });
         };
