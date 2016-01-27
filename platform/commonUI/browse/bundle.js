@@ -36,6 +36,7 @@ define([
     "./src/creation/CreateActionProvider",
     "./src/creation/CreationService",
     "./src/windowing/WindowTitler",
+    "./src/TypeRegionDecorator",
     'legacyRegistry'
 ], function (
     BrowseController,
@@ -52,6 +53,7 @@ define([
     CreateActionProvider,
     CreationService,
     WindowTitler,
+    TypeRegionDecorator,
     legacyRegistry
 ) {
     "use strict";
@@ -192,6 +194,14 @@ define([
                         "context"
                     ],
                     "templateUrl": "templates/back-arrow.html"
+                },
+                {
+                    "key": "object-properties",
+                    "templateUrl": "templates/browse/object-properties.html"
+                },
+                {
+                    "key": "inspector-region",
+                    "templateUrl": "templates/browse/inspector-region.html"
                 }
             ],
             "services": [
@@ -280,7 +290,12 @@ define([
                         "$q",
                         "$log"
                     ]
-                }
+                },
+                {
+                    "provides": "typeService",
+                    "type": "decorator",
+                    "implementation": TypeRegionDecorator
+                },
             ],
             "runs": [
                 {
