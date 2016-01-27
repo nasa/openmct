@@ -42,11 +42,11 @@ var gulp = require('gulp'),
     };
 
 gulp.task('scripts', function () {
-	return gulp.src(paths.main)
-		.pipe(sourcemaps.init())
-		.pipe(requirejsOptimize(options.requirejsOptimize))
-		.pipe(sourcemaps.write('.'))
-		.pipe(gulp.dest(paths.dist));
+    return gulp.src(paths.main)
+        .pipe(sourcemaps.init())
+        .pipe(requirejsOptimize(options.requirejsOptimize))
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(paths.dist));
 });
 
 gulp.task('test', function (done) {
