@@ -76,7 +76,7 @@ gulp.task('lint', function () {
         .pipe(jshint.reporter('fail'));
 });
 
-gulp.task('codestyle', function () {
+gulp.task('checkstyle', function () {
     return gulp.src(paths.scripts)
         .pipe(jscs())
         .pipe(jscs.reporter())
