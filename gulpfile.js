@@ -25,13 +25,15 @@ var gulp = require('gulp'),
     requirejsOptimize = require('gulp-requirejs-optimize'),
     sourcemaps = require('gulp-sourcemaps'),
     compass = require('gulp-compass'),
+    jshint = require('gulp-jshint'),
     karma = require('karma'),
     path = require('path'),
     paths = {
         main: 'main.js',
         dist: 'dist',
         assets: 'dist/assets',
-        scss: 'platform/**/*.scss'
+        scss: 'platform/**/*.scss',
+        scripts: [ 'main.js', 'platform/**/*.js', 'src/**/*.js' ]
     },
     options = {
         requirejsOptimize: {
@@ -64,4 +66,11 @@ gulp.task('stylesheets', function () {
     return gulp.src(paths.scss)
         .pipe(compass(options.compass))
         .pipe(gulp.dest(paths.assets));
+});
+
+gulp.task('lint', function () {
+    return gulp.src(paths.scripts)
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'))
+        .pipe(jshint.reporter('fail'));
 });
