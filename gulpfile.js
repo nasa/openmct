@@ -24,20 +24,27 @@
 var gulp = require('gulp'),
     requirejsOptimize = require('gulp-requirejs-optimize'),
     sourcemaps = require('gulp-sourcemaps'),
+    compass = require('gulp-compass'),
     karma = require('karma'),
     path = require('path'),
     paths = {
         main: 'main.js',
-        dist: 'dist'
+        dist: 'dist',
+        assets: 'dist/assets',
+        scss: 'platform/**/*.scss'
     },
     options = {
         requirejsOptimize: {
-            name: 'main',
+            name: paths.main.replace(/\.js$/, ''),
             mainConfigFile: paths.main
         },
         karma: {
             configFile: path.resolve(__dirname, 'karma.conf.js'),
             singleRun: true
+        },
+        compass: {
+            sass: __dirname,
+            css: paths.assets
         }
     };
 
@@ -51,4 +58,10 @@ gulp.task('scripts', function () {
 
 gulp.task('test', function (done) {
     new karma.Server(options.karma, done).start();
+});
+
+gulp.task('stylesheets', function () {
+    return gulp.src(paths.scss)
+        .pipe(compass(options.compass))
+        .pipe(gulp.dest(paths.assets));
 });
