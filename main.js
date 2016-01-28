@@ -24,12 +24,21 @@
 requirejs.config({
     "paths": {
         "legacyRegistry": "src/legacyRegistry",
-        "angular": "platform/framework/lib/angular.min",
-        "moment": 'platform/telemetry/lib/moment.min'
+        "angular": "bower_components/angular/angular.min",
+        "angular-route": "bower_components/angular-route/angular-route.min",
+        "moment": "bower_components/moment/moment",
+        "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
+        "text": "bower_components/text/text.js"
     },
     "shim": {
         "angular": {
             "exports": "angular"
+        },
+        "angular-route": {
+            "deps": [ "angular" ]
+        },
+        "moment-duration-format": {
+            "deps": [ "moment" ]
         }
     }
 });
