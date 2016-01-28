@@ -26,6 +26,7 @@ var gulp = require('gulp'),
     sourcemaps = require('gulp-sourcemaps'),
     compass = require('gulp-compass'),
     jshint = require('gulp-jshint'),
+    jscs = require('gulp-jscs'),
     karma = require('karma'),
     path = require('path'),
     paths = {
@@ -73,4 +74,11 @@ gulp.task('lint', function () {
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
         .pipe(jshint.reporter('fail'));
+});
+
+gulp.task('codestyle', function () {
+    return gulp.src(paths.scripts)
+        .pipe(jscs())
+        .pipe(jscs.reporter())
+        .pipe(jscs.reporter('fail'));
 });
