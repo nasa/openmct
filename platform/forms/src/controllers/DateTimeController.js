@@ -22,7 +22,7 @@
 /*global define,moment*/
 
 define(
-    ["../../lib/moment.min"],
+    ["moment"],
     function () {
         "use strict";
 

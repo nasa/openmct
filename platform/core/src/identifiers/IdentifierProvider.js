@@ -22,7 +22,7 @@
 /*global define*/
 
 define(
-    ["../../lib/uuid", "./Identifier"],
+    ["uuid", "./Identifier"],
     function (uuid, Identifier) {
         'use strict';
 
