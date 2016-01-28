@@ -34,7 +34,13 @@ var gulp = require('gulp'),
         dist: 'dist',
         assets: 'dist/assets',
         scss: 'platform/**/*.scss',
-        scripts: [ 'main.js', 'platform/**/*.js', 'src/**/*.js' ]
+        scripts: [ 'main.js', 'platform/**/*.js', 'src/**/*.js' ],
+        static: [
+            'index.html',
+            'platform/**/*.html',
+            'example/**/*.html',
+            'bower_components/**/*'
+        ]
     },
     options = {
         requirejsOptimize: {
@@ -88,3 +94,10 @@ gulp.task('fixstyle', function () {
         .pipe(jscs({ fix: true }))
         .pipe(gulp.dest('.'));
 });
+
+gulp.task('static', function () {
+    return gulp.src(paths.static, { base: '.' })
+        .pipe(gulp.dest(paths.dist));
+});
+
+gulp.task('install', [ 'static', 'scripts', 'stylesheets' ]);
