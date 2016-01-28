@@ -37,8 +37,8 @@ var gulp = require('gulp'),
         scripts: [ 'main.js', 'platform/**/*.js', 'src/**/*.js' ],
         static: [
             'index.html',
-            'platform/**/*.html',
-            'example/**/*.html',
+            'platform/**/*',
+            'example/**/*',
             'bower_components/**/*'
         ]
     },
