@@ -45,7 +45,8 @@ var gulp = require('gulp'),
     options = {
         requirejsOptimize: {
             name: paths.main.replace(/\.js$/, ''),
-            mainConfigFile: paths.main
+            mainConfigFile: paths.main,
+            wrapShim: true
         },
         karma: {
             configFile: path.resolve(__dirname, 'karma.conf.js'),
