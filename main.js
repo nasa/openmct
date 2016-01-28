@@ -30,7 +30,7 @@ requirejs.config({
         "moment": "bower_components/moment/moment",
         "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
         "screenfull": "bower_components/screenfull/dist/screenfull.min",
-        "text": "bower_components/text/text.js",
+        "text": "bower_components/text/text",
         "uuid": "bower_components/node-uuid/uuid"
     },
     "shim": {

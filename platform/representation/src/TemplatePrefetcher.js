@@ -38,11 +38,10 @@ define(
                 .reduce(function (a, b) {
                     return a.concat(b);
                 }, [])
-                .map(function (ext) {
-                    return templateLinker.getPath(ext);
-                })
-                .forEach(function (path) {
-                    templateLinker.load(path);
+                .forEach(function (ext) {
+                    if (ext.templateUrl) {
+                        templateLinker.load(templateLinker.getPath(ext));
+                    }
                 });
         }
 

@@ -69,11 +69,6 @@ define(
                 representationMap[representation.key].push(representation);
             });
 
-            // Get a path to a representation
-            function getPath(representation) {
-                return templateLinker.getPath(representation);
-            }
-
             // Look up a matching representation for this domain object
             function lookup(key, domainObject) {
                 var candidates = representationMap[key] || [],
@@ -175,9 +170,8 @@ define(
                 function refresh() {
                     var domainObject = $scope.domainObject,
                         representation = lookup($scope.key, domainObject),
-                        path = representation && getPath(representation),
                         uses = ((representation || {}).uses || []),
-                        canRepresent = !!(path && domainObject),
+                        canRepresent = !!(representation && domainObject),
                         canEdit = !!(domainObject && domainObject.hasCapability('editor')),
                         idPath = getIdPath(domainObject),
                         key = $scope.key;
@@ -192,7 +186,7 @@ define(
 
                     // Change templates (passing in undefined to clear
                     // if we don't have enough info to show a template.)
-                    changeTemplate(canRepresent ? path : undefined);
+                    changeTemplate(canRepresent ? representation : undefined);
 
                     // Any existing representers are no longer valid; release them.
                     destroyRepresenters();

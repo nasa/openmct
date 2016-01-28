@@ -87,7 +87,7 @@ define(
          * @returns {Function} a function which can be called with a template
          *          URL to switch templates, or `undefined` to remove.
          */
-        TemplateLinker.prototype.link = function (scope, element, templateUrl) {
+        TemplateLinker.prototype.link = function (scope, element, ext) {
             var activeElement = element,
                 activeTemplateUrl,
                 comment = this.$compile('<!-- hidden mct element -->')(scope),
@@ -124,12 +124,18 @@ define(
                 self.$compile(element.contents())(activeScope);
             }
 
-            function badTemplate(templateUrl) {
+            function showTemplate(template) {
+                addElement();
+                populateElement(template);
+                activeTemplateUrl = undefined;
+            }
+
+            function badTemplateUrl(templateUrl) {
                 self.$log.warn("Couldn't load template at " + templateUrl);
                 removeElement();
             }
 
-            function changeTemplate(templateUrl) {
+            function changeTemplateUrl(templateUrl) {
                 if (templateUrl) {
                     destroyScope();
                     addElement();
@@ -139,7 +145,7 @@ define(
                             populateElement(template);
                         }
                     }, function () {
-                        badTemplate(templateUrl);
+                        badTemplateUrl(templateUrl);
                     });
                 } else {
                     removeElement();
@@ -147,11 +153,18 @@ define(
                 activeTemplateUrl = templateUrl;
             }
 
-            if (templateUrl) {
-                changeTemplate(templateUrl);
-            } else {
-                removeElement();
+            function changeTemplate(ext) {
+                ext = ext || {};
+                if (ext.templateUrl) {
+                    changeTemplateUrl(self.getPath(ext));
+                } else if (ext.template) {
+                    showTemplate(ext.template);
+                } else {
+                    removeElement();
+                }
             }
+
+            changeTemplate(ext);
 
             return changeTemplate;
         };
