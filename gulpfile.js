@@ -82,3 +82,9 @@ gulp.task('codestyle', function () {
         .pipe(jscs.reporter())
         .pipe(jscs.reporter('fail'));
 });
+
+gulp.task('fixstyle', function () {
+    return gulp.src(paths.scripts, { base: '.' })
+        .pipe(jscs({ fix: true }))
+        .pipe(gulp.dest('.'));
+});
