@@ -1,0 +1,17 @@
+{
+  "name": "openmctweb",
+  "description": "The OpenMCTWeb core platform",
+  "main": "",
+  "license": "Apache-2.0",
+  "moduleType": [],
+  "homepage": "http://nasa.github.io/openmctweb/",
+  "private": true,
+  "dependencies": {
+    "angular": "1.4.4",
+    "angular-route": "1.4.4",
+    "moment": "^2.11.1",
+    "moment-duration-format": "^1.3.0",
+    "requirejs": "~2.1.22",
+    "text": "requirejs-text#^2.0.14"
+  }
+}

@@ -23,8 +23,9 @@ dist
 # Closed source libraries
 closed-lib
 
-# Node dependencies
+# Node, Bower dependencies
 node_modules
+bower_components
 
 # Protractor logs
 protractor/logs
