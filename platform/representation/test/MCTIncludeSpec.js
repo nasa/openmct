@@ -91,12 +91,12 @@ define(
                 mockScope.key = 'abc';
                 fireWatch('key', mockScope.key);
                 expect(mockChangeTemplate)
-                    .toHaveBeenCalledWith(testUrls.abc);
+                    .toHaveBeenCalledWith(testTemplates[0]);
 
                 mockScope.key = 'xyz';
                 fireWatch('key', mockScope.key);
                 expect(mockChangeTemplate)
-                    .toHaveBeenCalledWith(testUrls.xyz);
+                    .toHaveBeenCalledWith(testTemplates[1]);
             });
 
         });
