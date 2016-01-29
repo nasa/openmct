@@ -34,6 +34,7 @@ module.exports = function(config) {
         // List of files / patterns to load in the browser.
         // By default, files are also included in a script tag.
         files: [
+            {pattern: 'bower_components/**/*.js', included: false},
             {pattern: 'src/**/*.js', included: false},
             {pattern: 'example/**/*.js', included: false},
             {pattern: 'platform/**/*.js', included: false},
@@ -49,7 +50,8 @@ module.exports = function(config) {
         // Preprocess matching files before serving them to the browser.
         // https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            '**/src/**/!(*Spec).js': [ 'coverage' ]
+            'src/**/src/**/!(*Spec).js': [ 'coverage' ],
+            'platform/**/src/**/!(*Spec).js': [ 'coverage' ]
         },
 
         // Test results reporter to use
