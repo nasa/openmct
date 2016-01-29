@@ -12,6 +12,7 @@
     "gulp-compass": "^2.1.0",
     "gulp-jscs": "^3.0.2",
     "gulp-jshint": "^2.0.0",
+    "gulp-replace-task": "^0.11.0",
     "gulp-requirejs-optimize": "^0.3.1",
     "gulp-sourcemaps": "^1.6.0",
     "jasmine-core": "^2.3.0",

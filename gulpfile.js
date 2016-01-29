@@ -27,6 +27,7 @@ var gulp = require('gulp'),
     compass = require('gulp-compass'),
     jshint = require('gulp-jshint'),
     jscs = require('gulp-jscs'),
+    replace = require('gulp-replace-task'),
     karma = require('karma'),
     path = require('path'),
     paths = {
@@ -55,6 +56,14 @@ var gulp = require('gulp'),
         compass: {
             sass: __dirname,
             css: paths.assets
+        },
+        replace: {
+            variables: {
+                version: "unknown version",
+                timestamp: "unknown timestamp",
+                revision: "unknown revision",
+                branch: "unknown branch"
+            }
         }
     };
 
@@ -63,6 +72,7 @@ gulp.task('scripts', function () {
         .pipe(sourcemaps.init())
         .pipe(requirejsOptimize(options.requirejsOptimize))
         .pipe(sourcemaps.write('.'))
+        .pipe(replace(options.replace))
         .pipe(gulp.dest(paths.dist));
 });
 

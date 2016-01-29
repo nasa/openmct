@@ -99,25 +99,25 @@ define([
             "versions": [
                 {
                     "name": "Version",
-                    "value": "${project.version}",
+                    "value": "@@version",
                     "priority": 999
                 },
                 {
                     "name": "Built",
-                    "value": "${timestamp}",
+                    "value": "@@timestamp",
                     "description": "The date on which this version of the client was built.",
                     "priority": 990
                 },
                 {
                     "name": "Revision",
-                    "value": "${buildNumber}",
+                    "value": "@@revision",
                     "description": "A unique revision identifier for the client sources.",
                     "priority": 995
                 },
                 {
                     "name": "Branch",
-                    "value": "${scmBranch}",
-                    "description": "The date on which this version of the client was built.",
+                    "value": "@@branch",
+                    "description": "The name of the branch that was used during the build.",
                     "priority": 994
                 }
             ],
