@@ -114,6 +114,8 @@ gulp.task('static', function () {
         .pipe(gulp.dest(paths.dist));
 });
 
-gulp.task('install', [ 'static', 'scripts', 'stylesheets' ]);
+gulp.task('install', [ 'static', 'scripts' ]);
 
 gulp.task('verify', [ 'lint', 'test' ]);
+
+gulp.task('build', [ 'verify', 'install' ]);
