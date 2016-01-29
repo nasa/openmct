@@ -30,6 +30,9 @@ var gulp = require('gulp'),
     replace = require('gulp-replace-task'),
     karma = require('karma'),
     path = require('path'),
+    git = require('git-rev-sync'),
+    moment = require('moment'),
+    project = require('./package.json'),
     paths = {
         main: 'main.js',
         dist: 'dist',
@@ -59,10 +62,10 @@ var gulp = require('gulp'),
         },
         replace: {
             variables: {
-                version: "unknown version",
-                timestamp: "unknown timestamp",
-                revision: "unknown revision",
-                branch: "unknown branch"
+                version: project.version,
+                timestamp: moment.utc(Date.now()).format(),
+                revision: git.long(),
+                branch: git.branch()
             }
         }
     };
