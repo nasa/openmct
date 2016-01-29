@@ -1,5 +1,5 @@
 {
-  "name": "open-mct-web",
+  "name": "openmctweb",
   "version": "0.9.1-SNAPSHOT",
   "description": "The OpenMCTWeb core platform",
   "dependencies": {
