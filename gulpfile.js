@@ -115,3 +115,5 @@ gulp.task('static', function () {
 });
 
 gulp.task('install', [ 'static', 'scripts', 'stylesheets' ]);
+
+gulp.task('verify', [ 'lint', 'test' ]);
