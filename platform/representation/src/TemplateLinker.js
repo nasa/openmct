@@ -84,8 +84,9 @@ define(
          *        templates
          * @param element the jqLite-wrapped element into which templates
          *        should be inserted
-         * @returns {Function} a function which can be called with a template
-         *          URL to switch templates, or `undefined` to remove.
+         * @returns {Function} a function which can be called with a template's
+         *          extension definition to switch templates, or `undefined`
+         *          to remove.
          */
         TemplateLinker.prototype.link = function (scope, element, ext) {
             var activeElement = element,
