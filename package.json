@@ -7,6 +7,7 @@
     "minimist": "^1.1.1"
   },
   "devDependencies": {
+    "bower": "^1.7.7",
     "git-rev-sync": "^1.4.0",
     "glob": ">= 3.0.0",
     "gulp": "^3.9.0",
@@ -43,7 +44,8 @@
     "watch": "karma start",
     "jsdoc": "jsdoc -c jsdoc.json -r -d target/docs/api",
     "otherdoc": "node docs/gendocs.js --in docs/src --out target/docs --suppress-toc 'docs/src/index.md|docs/src/process/index.md'",
-    "docs": "npm run jsdoc ; npm run otherdoc"
+    "docs": "npm run jsdoc ; npm run otherdoc",
+    "postinstall": "./node_modules/bower/bin/bower install"
   },
   "repository": {
     "type": "git",
