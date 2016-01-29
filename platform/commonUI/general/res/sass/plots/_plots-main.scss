@@ -266,6 +266,8 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 
 .gl-plot-tick,
 .tick-label {
+    direction: rtl;
+    unicode-bidi:bidi-override;
 	font-size: 0.7rem;
 	position: absolute;
 	overflow: hidden;

@@ -4196,10 +4196,10 @@ textarea {
   	.field-hints,
   	.fields {
   	}
-  
-  	
+
+
   	.field-hints {
-  
+
   	}
   	*/ }
   /* line 30, ../../../../general/res/sass/forms/_datetime.scss */
@@ -7202,6 +7202,8 @@ table {
 /* line 267, ../../../../general/res/sass/plots/_plots-main.scss */
 .gl-plot-tick,
 .tick-label {
+  direction: rtl;
+  unicode-bidi: bidi-override;
   font-size: 0.7rem;
   position: absolute;
   overflow: hidden;

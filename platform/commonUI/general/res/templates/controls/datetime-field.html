@@ -24,7 +24,11 @@
     <input type="text"
            ng-model="textValue"
            ng-blur="restoreTextValue(); ngBlur()"
-           ng-class="{ error: textInvalid }">
+           ng-class="{
+                        error: textInvalid ||
+                            (structure.validate &&
+                                !structure.validate(ngModel[field]))
+                     }">
     </input>
     <a class="ui-symbol icon icon-calendar"
        ng-if="structure.format === 'utc' || !structure.format"
