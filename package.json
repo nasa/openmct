@@ -45,8 +45,8 @@
     "jsdoc": "jsdoc -c jsdoc.json -r -d target/docs/api",
     "otherdoc": "node docs/gendocs.js --in docs/src --out target/docs --suppress-toc 'docs/src/index.md|docs/src/process/index.md'",
     "docs": "npm run jsdoc ; npm run otherdoc",
-    "postinstall": "./node_modules/bower/bin/bower install",
-    "prepublish": "./node_modules/gulp/bin/gulp.js build"
+    "postinstall": "./node_modules/bower/bin/bower install && ./node_modules/gulp/bin/gulp.js install",
+    "prepublish": "./node_modules/gulp/bin/gulp.js verify"
   },
   "repository": {
     "type": "git",
