@@ -30,6 +30,7 @@ var gulp = require('gulp'),
     replace = require('gulp-replace-task'),
     karma = require('karma'),
     path = require('path'),
+    fs = require('fs'),
     git = require('git-rev-sync'),
     moment = require('moment'),
     project = require('./package.json'),
@@ -64,8 +65,8 @@ var gulp = require('gulp'),
             variables: {
                 version: project.version,
                 timestamp: moment.utc(Date.now()).format(),
-                revision: git.long(),
-                branch: git.branch()
+                revision: fs.existsSync('.git') ? git.long() : 'Unknown',
+                branch: fs.existsSync('.git') ? git.branch() : 'Unknown'
             }
         }
     };
