@@ -1,28 +1,26 @@
-<!--<style>
-    .l-inspect .inspector-plot-options .plot-options-form .label {
-        text-transform: none;
-    }
-    .l-inspect .inspector-plot-options .plot-options-form .form .controls {
-        width: 50%;
-    }
-    .l-inspect .inspector-plot-options .plot-options-form .form .label {
-        width: 50%;
-        min-width: 50px;
-        color: #bfbfbf;
-    }
-    .l-inspect .inspector-plot-options .plot-options-form {
-        padding-left: 20px;
-    }
-    .l-inspect .inspector-plot-options .plot-options-form .form-row {
-        border-top: none;
-    }
-    .l-inspect .inspector-plot-options .plot-options-form .form .form-row.first {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-</style>-->
+<!--
+ Open MCT Web, Copyright (c) 2014-2015, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
 
+ Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT Web includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
 <div ng-controller="PlotOptionsController" class="flex-elem grows l-inspector-part">
-    <em title="Display properties for this object">Display</em>
+    <em class="t-inspector-part-header" title="Display properties for this object">Display</em>
     <ul class="first flex-elem grows vscroll">
         <ul class="tree">
             <li ng-repeat="child in children">
@@ -41,15 +39,13 @@
                             </mct-representation>
                         </span>
                     </span>
-                    <div class="plot-options-form no-validate l-controls-first">
-                        <mct-form
-                                ng-class="{hidden: !toggle.isActive()}"
-                                ng-model="plotOptionsModel"
-                                structure="plotOptionsStructure"
-                                name="plotOptionsState"
-                                class="flex-elem l-flex-row">
-                        </mct-form>
-                    </div>
+                    <mct-form
+                        ng-class="{hidden: !toggle.isActive()}"
+                        ng-model="plotOptionsModel"
+                        structure="plotOptionsStructure"
+                        name="plotOptionsState"
+                        class="flex-elem l-flex-row l-controls-first no-validate">
+                    </mct-form>
                 </span>
             </li>
         </ul>

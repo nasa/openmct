@@ -22,7 +22,7 @@
 <div ng-controller="ObjectInspectorController as controller">
     <ul class="flex-elem grows l-inspector-part">
         <li>
-            <em>Properties</em>
+            <em class="t-inspector-part-header">Properties</em>
             <div class="inspector-properties"
                  ng-repeat="data in metadata"
                  ng-class="{ first:$index === 0 }">
@@ -31,7 +31,7 @@
             </div>
         </li>
         <li ng-if="contextutalParents.length > 0">
-            <em title="The location of this linked object.">Location</em>
+            <em class="t-inspector-part-header" title="The location of this linked object.">Location</em>
             <span class="inspector-location"
                   ng-repeat="parent in contextutalParents"
                   ng-class="{ last:($index + 1) === contextualParents.length }">
@@ -44,7 +44,7 @@
             </span>
         </li>
         <li ng-if="primaryParents.length > 0">
-            <em title="The location of the original object that this was linked from.">Original Location</em>
+            <em class="t-inspector-part-header" title="The location of the original object that this was linked from.">Original Location</em>
             <span class="inspector-location"
                   ng-repeat="parent in primaryParents"
                   ng-class="{ last:($index + 1) === primaryParents.length }">

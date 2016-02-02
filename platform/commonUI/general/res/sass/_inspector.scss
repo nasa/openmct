@@ -60,10 +60,18 @@
     .l-inspector-part {
         @include box-sizing(border-box);
         padding-right: $interiorMargin;
+        .form {
+            margin-left: $treeVCW + $interiorMarginLg;
+            .form-row {
+                @include align-items(center);
+                border: none;
+                padding: 0;
+            }
+        }
     }
 
     ul li,
-    em {
+    em.t-inspector-part-header {
         display: block;
         position: relative;
     }
@@ -72,7 +80,7 @@
         margin-bottom: $interiorMarginLg;
     }
     
-    em {
+    em.t-inspector-part-header {
         @include border-radius($basicCr);
         background-color: $colorInspectorSectionHeaderBg;
         color: $colorInspectorSectionHeaderFg;

@@ -115,26 +115,25 @@ label.radio.custom {
     $d: $formRowCtrlsH;
     cursor: pointer;
     display: inline-block;
-    line-height: $d;
+    //line-height: $d;
     margin-right: $interiorMargin * 4;
     padding-left: $d + $interiorMargin;
     position: relative;
-    vertical-align: middle; // was top
+    //vertical-align: middle; // was top
     em {
         color: $colorBodyFg;
         display: inline-block;
         height: $d;
-        min-width: $d;
+        width: $d;
         &:before {
             @include border-radius($basicCr * .75);
             background: $bg;
             @include box-shadow(inset rgba(black, 0.4) 0 1px 2px);
             box-sizing: border-box;
-            content: " ";
+            content: "";
             font-family: 'symbolsfont';
             font-size: 0.8em;
             display: inline-block;
-            margin-right: $interiorMargin;
             height: $d;
             width: $d;
             left: 0;
@@ -336,7 +335,7 @@ label.radio.custom input:checked ~ em:before { content: "\e619"; }
 /******************************************************** SLIDERS */
 
 .slider {
-    $knobH: 100%; //14px;
+    $knobH: 100%;
     .slot {
         width: auto;
         position: absolute;
@@ -372,7 +371,7 @@ label.radio.custom input:checked ~ em:before { content: "\e619"; }
         background-color: $sliderColorRange;
         cursor: ew-resize;
         position: absolute;
-        top: 0; //$tbOffset;
+        top: 0;
         right: auto;
         bottom: 0;
         left: auto;
