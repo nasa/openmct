@@ -20,27 +20,6 @@ directory names) to include in a running instance of Open MCT Web. Adding or
 removing paths from this list will add or remove bundles from the running
 application.
 
-### Bundle Contents
-
-A bundle directory will contain:
-
-* `bundle.json`, the declaration of the bundles contents.
-* A source code directory, named `src` by convention. This contains all
-  JavaScript sources exposed by the bundle. These are declared as
-  AMD modules.
-* A directory for other resources, named `res` by convention. This
-  contains all HTML templates, CSS files, images, and so forth to be
-  used within a given bundle.
-* A library directory, named `lib` by convention. This contains all
-  external libraries used and/or exposed by the bundle.
-* A test directory, named `test` by convention. This contains all unit
-  tests declared for the bundle, as well as a `suite.json` that acts
-  as a listing of these dependencies. See the section on unit testing
-  below.
-
-Following these bundle conventions is required, at present, to ensure
-that Open MCT Web (and its build and tests) execute correctly.
-
 ## Tests
 
 Tests are written for [Jasmine 1.3](http://jasmine.github.io/1.3/introduction.html)
