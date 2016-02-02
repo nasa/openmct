@@ -26,8 +26,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
     <script type="text/javascript"
-            src="bower_components/requirejs/require.js"
-            data-main="main.js">
+            src="bower_components/requirejs/require.js">
+    </script>
+    <script type="text/javascript">
+        require(['main'], function (mct) {
+            mct.run();
+        });
     </script>
 	<link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-32x32.png" sizes="32x32">
 	<link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-96x96.png" sizes="96x96">

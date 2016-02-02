@@ -89,5 +89,11 @@ define([
     './example/generator/bundle'
 ], function (Main, legacyRegistry) {
     'use strict';
-    new Main().run(legacyRegistry);
+
+    return {
+        legacyRegistry: legacyRegistry,
+        run: function () {
+            return new Main().run(legacyRegistry);
+        }
+    };
 });
