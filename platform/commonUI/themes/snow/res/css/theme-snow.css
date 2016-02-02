@@ -810,7 +810,7 @@ mct-container {
   .search-results .s-status-editing .search-result-item.t-item-icon:before {
     color: #0099cc;
     font-size: inherit; }
-    /* line 40, ../../../../general/res/sass/_icons.scss */
+    /* line 39, ../../../../general/res/sass/_icons.scss */
     .ui-symbol.icon.alert, .alert.t-item-icon, .icon.alert.s-icon-btn, .l-datetime-picker .l-month-year-pager .icon.alert.pager, .l-datetime-picker .l-month-year-pager .alert.pager.t-item-icon, .tree .s-status-editing .icon.alert.tree-item:before, .tree .s-status-editing .alert.tree-item.t-item-icon:before,
     .tree .s-status-editing .icon.alert.search-result-item:before,
     .tree .s-status-editing .alert.search-result-item.t-item-icon:before,
@@ -819,7 +819,7 @@ mct-container {
     .search-results .s-status-editing .icon.alert.search-result-item:before,
     .search-results .s-status-editing .alert.search-result-item.t-item-icon:before {
       color: #ff3c00; }
-      /* line 42, ../../../../general/res/sass/_icons.scss */
+      /* line 41, ../../../../general/res/sass/_icons.scss */
       .ui-symbol.icon.alert:hover, .alert.t-item-icon:hover, .icon.alert.s-icon-btn:hover, .l-datetime-picker .l-month-year-pager .icon.alert.pager:hover, .tree .s-status-editing .icon.alert.tree-item:hover:before, .tree .s-status-editing .alert.tree-item.t-item-icon:hover:before,
       .tree .s-status-editing .icon.alert.search-result-item:hover:before,
       .tree .s-status-editing .alert.search-result-item.t-item-icon:hover:before,
@@ -828,7 +828,7 @@ mct-container {
       .search-results .s-status-editing .icon.alert.search-result-item:hover:before,
       .search-results .s-status-editing .alert.search-result-item.t-item-icon:hover:before {
         color: #ff8a66; }
-    /* line 46, ../../../../general/res/sass/_icons.scss */
+    /* line 45, ../../../../general/res/sass/_icons.scss */
     .ui-symbol.icon.major, .major.t-item-icon, .icon.major.s-icon-btn, .l-datetime-picker .l-month-year-pager .icon.major.pager, .l-datetime-picker .l-month-year-pager .major.pager.t-item-icon, .tree .s-status-editing .icon.major.tree-item:before, .tree .s-status-editing .major.tree-item.t-item-icon:before,
     .tree .s-status-editing .icon.major.search-result-item:before,
     .tree .s-status-editing .major.search-result-item.t-item-icon:before,
@@ -837,11 +837,11 @@ mct-container {
     .search-results .s-status-editing .icon.major.search-result-item:before,
     .search-results .s-status-editing .major.search-result-item.t-item-icon:before {
       font-size: 1.65em; }
-  /* line 50, ../../../../general/res/sass/_icons.scss */
+  /* line 49, ../../../../general/res/sass/_icons.scss */
   .ui-symbol.icon-calendar:after, .icon-calendar.t-item-icon:after, .icon-calendar.s-icon-btn:after, .l-datetime-picker .l-month-year-pager .icon-calendar.pager:after {
     content: "\e605"; }
 
-/* line 55, ../../../../general/res/sass/_icons.scss */
+/* line 54, ../../../../general/res/sass/_icons.scss */
 .bar .ui-symbol, .bar .t-item-icon, .bar .s-icon-btn, .bar .l-datetime-picker .l-month-year-pager .pager, .l-datetime-picker .l-month-year-pager .bar .pager, .bar .tree .s-status-editing .tree-item:before, .tree .s-status-editing .bar .tree-item:before,
 .bar .tree .s-status-editing .search-result-item:before,
 .tree .s-status-editing .bar .search-result-item:before,
@@ -851,36 +851,36 @@ mct-container {
 .search-results .s-status-editing .bar .search-result-item:before {
   display: inline-block; }
 
-/* line 59, ../../../../general/res/sass/_icons.scss */
+/* line 58, ../../../../general/res/sass/_icons.scss */
 .invoke-menu {
   text-shadow: none;
   display: inline-block; }
 
-/* line 64, ../../../../general/res/sass/_icons.scss */
+/* line 63, ../../../../general/res/sass/_icons.scss */
 .s-menu-btn .invoke-menu,
 .icon.major .invoke-menu,
 .major.t-item-icon .invoke-menu {
   margin-left: 3px; }
 
-/* line 69, ../../../../general/res/sass/_icons.scss */
+/* line 68, ../../../../general/res/sass/_icons.scss */
 .menu .type-icon,
 .tree-item .type-icon,
 .super-menu.menu .type-icon {
   position: absolute; }
 
-/* line 75, ../../../../general/res/sass/_icons.scss */
+/* line 74, ../../../../general/res/sass/_icons.scss */
 .l-icon-alert {
   display: none !important; }
-  /* line 77, ../../../../general/res/sass/_icons.scss */
+  /* line 76, ../../../../general/res/sass/_icons.scss */
   .l-icon-alert:before {
     color: #ff3c00;
     content: "!"; }
 
-/* line 83, ../../../../general/res/sass/_icons.scss */
+/* line 82, ../../../../general/res/sass/_icons.scss */
 .t-item-icon {
   line-height: normal;
   position: relative; }
-  /* line 94, ../../../../general/res/sass/_icons.scss */
+  /* line 90, ../../../../general/res/sass/_icons.scss */
   .t-item-icon.l-icon-link .t-item-icon-glyph:before {
     color: #49dedb;
     content: "\f4";
@@ -2219,7 +2219,8 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
   font-size: 0.7rem; }
 
 /* line 112, ../../../../general/res/sass/controls/_controls.scss */
-label.checkbox.custom {
+label.checkbox.custom,
+label.radio.custom {
   cursor: pointer;
   display: inline-block;
   line-height: 14px;
@@ -2227,14 +2228,16 @@ label.checkbox.custom {
   padding-left: 19px;
   position: relative;
   vertical-align: middle; }
-  /* line 122, ../../../../general/res/sass/controls/_controls.scss */
-  label.checkbox.custom em {
+  /* line 123, ../../../../general/res/sass/controls/_controls.scss */
+  label.checkbox.custom em,
+  label.radio.custom em {
     color: #666;
     display: inline-block;
     height: 14px;
     min-width: 14px; }
-    /* line 127, ../../../../general/res/sass/controls/_controls.scss */
-    label.checkbox.custom em:before {
+    /* line 128, ../../../../general/res/sass/controls/_controls.scss */
+    label.checkbox.custom em:before,
+    label.radio.custom em:before {
       -moz-border-radius: 3px;
       -webkit-border-radius: 3px;
       border-radius: 3px;
@@ -2254,60 +2257,71 @@ label.checkbox.custom {
       top: 0;
       position: absolute;
       text-align: center; }
-  /* line 145, ../../../../general/res/sass/controls/_controls.scss */
-  label.checkbox.custom.no-text {
+  /* line 146, ../../../../general/res/sass/controls/_controls.scss */
+  label.checkbox.custom.no-text,
+  label.radio.custom.no-text {
     overflow: hidden;
     margin-right: 0;
     padding-left: 0;
     height: 14px;
     width: 14px; }
-    /* line 151, ../../../../general/res/sass/controls/_controls.scss */
-    label.checkbox.custom.no-text em {
+    /* line 152, ../../../../general/res/sass/controls/_controls.scss */
+    label.checkbox.custom.no-text em,
+    label.radio.custom.no-text em {
       overflow: hidden; }
-  /* line 155, ../../../../general/res/sass/controls/_controls.scss */
-  label.checkbox.custom input {
+  /* line 156, ../../../../general/res/sass/controls/_controls.scss */
+  label.checkbox.custom input,
+  label.radio.custom input {
     display: none; }
-    /* line 157, ../../../../general/res/sass/controls/_controls.scss */
-    label.checkbox.custom input:checked ~ em:before {
+    /* line 158, ../../../../general/res/sass/controls/_controls.scss */
+    label.checkbox.custom input:checked ~ em:before,
+    label.radio.custom input:checked ~ em:before {
       background: #0099cc;
-      color: #ccf2ff;
-      content: "2"; }
+      color: #ccf2ff; }
 
 /* line 165, ../../../../general/res/sass/controls/_controls.scss */
+label.checkbox.custom input:checked ~ em:before {
+  content: "\32"; }
+
+/* line 166, ../../../../general/res/sass/controls/_controls.scss */
+label.radio.custom input:checked ~ em:before {
+  content: "\e607"; }
+
+/* line 168, ../../../../general/res/sass/controls/_controls.scss */
 .input-labeled {
   margin-left: 5px; }
-  /* line 167, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 170, ../../../../general/res/sass/controls/_controls.scss */
   .input-labeled label {
     display: inline-block;
     margin-right: 3px; }
-  /* line 171, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 174, ../../../../general/res/sass/controls/_controls.scss */
   .input-labeled.inline {
     display: inline-block; }
-  /* line 174, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 177, ../../../../general/res/sass/controls/_controls.scss */
   .input-labeled:first-child {
     margin-left: 0; }
 
-/* line 179, ../../../../general/res/sass/controls/_controls.scss */
+/* line 182, ../../../../general/res/sass/controls/_controls.scss */
 .s-menu-btn label.checkbox.custom {
   margin-left: 5px; }
 
-/* line 184, ../../../../general/res/sass/controls/_controls.scss */
+/* line 187, ../../../../general/res/sass/controls/_controls.scss */
 .item .checkbox.checked label {
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
   box-shadow: none;
   border-bottom: none; }
 
-/* line 190, ../../../../general/res/sass/controls/_controls.scss */
+/* line 193, ../../../../general/res/sass/controls/_controls.scss */
 .context-available,
 .s-icon-btn {
   color: #0099cc; }
-  /* line 194, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 197, ../../../../general/res/sass/controls/_controls.scss */
   .context-available:hover,
   .s-icon-btn:hover {
     color: deepskyblue; }
 
-/* line 199, ../../../../general/res/sass/controls/_controls.scss */
+/* line 202, ../../../../general/res/sass/controls/_controls.scss */
 .view-switcher {
   -moz-transition-property: opacity, background-color, border-color, color;
   -o-transition-property: opacity, background-color, border-color, color;
@@ -2327,22 +2341,22 @@ label.checkbox.custom {
   transition-delay: 0; }
 
 /******************************************************** OBJECT-HEADER */
-/* line 204, ../../../../general/res/sass/controls/_controls.scss */
+/* line 207, ../../../../general/res/sass/controls/_controls.scss */
 .object-header {
   font-size: 1em; }
-  /* line 207, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 210, ../../../../general/res/sass/controls/_controls.scss */
   .object-header > .type-icon {
     color: #b3b3b3;
     font-size: 120%;
     float: left;
     margin-right: 5px; }
-  /* line 215, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 218, ../../../../general/res/sass/controls/_controls.scss */
   .object-header .l-elem-wrapper mct-representation {
     min-width: 0.7em; }
-  /* line 223, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 226, ../../../../general/res/sass/controls/_controls.scss */
   .object-header .action {
     margin-right: 5px; }
-  /* line 227, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 230, ../../../../general/res/sass/controls/_controls.scss */
   .object-header .title-label {
     color: #666;
     overflow: hidden;
@@ -2351,13 +2365,13 @@ label.checkbox.custom {
     flex: 0 1 auto;
     -webkit-flex: 0 1 auto;
     padding-right: 0.35em; }
-  /* line 234, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 237, ../../../../general/res/sass/controls/_controls.scss */
   .object-header .context-available {
     font-size: 0.7em;
     flex: 0 0 1;
     -webkit-flex: 0 0 1; }
   @media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-    /* line 240, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 243, ../../../../general/res/sass/controls/_controls.scss */
     .object-header .context-available {
       -moz-transition-property: opacity;
       -o-transition-property: opacity;
@@ -2376,7 +2390,7 @@ label.checkbox.custom {
       -webkit-transition-delay: 0;
       transition-delay: 0;
       opacity: 0; }
-    /* line 245, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 248, ../../../../general/res/sass/controls/_controls.scss */
     .object-header:hover .context-available {
       opacity: 1; } }
 
@@ -2390,12 +2404,12 @@ label.checkbox.custom {
 @keyframes progress {
   100% {
     background-position: 20px center; } }
-/* line 267, ../../../../general/res/sass/controls/_controls.scss */
+/* line 270, ../../../../general/res/sass/controls/_controls.scss */
 .l-progress-bar {
   display: inline-block;
   overflow: hidden;
   position: relative; }
-  /* line 273, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 276, ../../../../general/res/sass/controls/_controls.scss */
   .l-progress-bar .progress-amt-holder {
     overflow: hidden;
     position: absolute;
@@ -2405,7 +2419,7 @@ label.checkbox.custom {
     left: 1px;
     width: auto;
     height: auto; }
-  /* line 276, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 279, ../../../../general/res/sass/controls/_controls.scss */
   .l-progress-bar .progress-amt,
   .l-progress-bar .progress-amt:before,
   .l-progress-bar .progress-amt:after {
@@ -2419,14 +2433,14 @@ label.checkbox.custom {
     height: auto;
     display: block;
     content: ''; }
-  /* line 284, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 287, ../../../../general/res/sass/controls/_controls.scss */
   .l-progress-bar .progress-amt {
     right: auto; }
-  /* line 289, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 292, ../../../../general/res/sass/controls/_controls.scss */
   .l-progress-bar.indeterminate .progress-amt {
     width: 100% !important; }
 
-/* line 295, ../../../../general/res/sass/controls/_controls.scss */
+/* line 298, ../../../../general/res/sass/controls/_controls.scss */
 .s-progress-bar {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -2435,7 +2449,7 @@ label.checkbox.custom {
   -webkit-box-shadow: inset rgba(0, 0, 0, 0.3) 0 1px 4px;
   box-shadow: inset rgba(0, 0, 0, 0.3) 0 1px 4px;
   background: rgba(0, 0, 0, 0.1); }
-  /* line 299, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 302, ../../../../general/res/sass/controls/_controls.scss */
   .s-progress-bar .progress-amt {
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
@@ -2462,10 +2476,10 @@ label.checkbox.custom {
     -o-transition-delay: 0;
     -webkit-transition-delay: 0;
     transition-delay: 0; }
-    /* line 304, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 307, ../../../../general/res/sass/controls/_controls.scss */
     .s-progress-bar .progress-amt:before {
       background-color: #0a0; }
-    /* line 307, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 310, ../../../../general/res/sass/controls/_controls.scss */
     .s-progress-bar .progress-amt:after {
       background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSI1JSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwLjAiLz48c3RvcCBvZmZzZXQ9IjMwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIwLjI1Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAuMCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
       background-size: 100%;
@@ -2473,7 +2487,7 @@ label.checkbox.custom {
       background-image: -moz-linear-gradient(rgba(0, 0, 0, 0) 5%, rgba(255, 255, 255, 0.25) 30%, rgba(0, 0, 0, 0) 100%);
       background-image: -webkit-linear-gradient(rgba(0, 0, 0, 0) 5%, rgba(255, 255, 255, 0.25) 30%, rgba(0, 0, 0, 0) 100%);
       background-image: linear-gradient(rgba(0, 0, 0, 0) 5%, rgba(255, 255, 255, 0.25) 30%, rgba(0, 0, 0, 0) 100%); }
-  /* line 316, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 319, ../../../../general/res/sass/controls/_controls.scss */
   .s-progress-bar:not(.indeterminate) .progress-amt:before {
     -moz-animation: progress 0.4s linear infinite;
     -webkit-animation: progress 0.4s linear infinite;
@@ -2486,7 +2500,7 @@ label.checkbox.custom {
     background-position: 0 center;
     background-repeat: repeat-x;
     background-size: 20px 40%; }
-  /* line 324, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 327, ../../../../general/res/sass/controls/_controls.scss */
   .s-progress-bar.indeterminate .progress-amt:before {
     -moz-animation: progress 0.6s linear infinite;
     -webkit-animation: progress 0.6s linear infinite;
@@ -2498,12 +2512,12 @@ label.checkbox.custom {
     background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.2) 25%, rgba(0, 0, 0, 0) 25%, rgba(0, 0, 0, 0) 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0) 100%);
     background-repeat: repeat;
     background-size: 20px 20px; }
-  /* line 329, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 332, ../../../../general/res/sass/controls/_controls.scss */
   .s-progress-bar.indeterminate .progress-amt:after {
     display: none; }
 
 /******************************************************** SLIDERS */
-/* line 337, ../../../../general/res/sass/controls/_controls.scss */
+/* line 340, ../../../../general/res/sass/controls/_controls.scss */
 .slider .slot {
   width: auto;
   position: absolute;
@@ -2511,7 +2525,7 @@ label.checkbox.custom {
   right: 0;
   bottom: 0;
   left: 0; }
-/* line 345, ../../../../general/res/sass/controls/_controls.scss */
+/* line 348, ../../../../general/res/sass/controls/_controls.scss */
 .slider .knob {
   -moz-transition-property: opacity, background-color, border-color, color;
   -o-transition-property: opacity, background-color, border-color, color;
@@ -2537,10 +2551,10 @@ label.checkbox.custom {
   auto: 0;
   bottom: auto;
   left: auto; }
-  /* line 348, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 351, ../../../../general/res/sass/controls/_controls.scss */
   .slider .knob:hover {
     background-color: rgba(0, 153, 204, 0.7); }
-/* line 359, ../../../../general/res/sass/controls/_controls.scss */
+/* line 362, ../../../../general/res/sass/controls/_controls.scss */
 .slider .knob-l {
   -moz-border-radius-topleft: 10px;
   -webkit-border-top-left-radius: 10px;
@@ -2549,7 +2563,7 @@ label.checkbox.custom {
   -webkit-border-bottom-left-radius: 10px;
   border-bottom-left-radius: 10px;
   cursor: w-resize; }
-/* line 363, ../../../../general/res/sass/controls/_controls.scss */
+/* line 366, ../../../../general/res/sass/controls/_controls.scss */
 .slider .knob-r {
   -moz-border-radius-topright: 10px;
   -webkit-border-top-right-radius: 10px;
@@ -2558,7 +2572,7 @@ label.checkbox.custom {
   -webkit-border-bottom-right-radius: 10px;
   border-bottom-right-radius: 10px;
   cursor: e-resize; }
-/* line 367, ../../../../general/res/sass/controls/_controls.scss */
+/* line 370, ../../../../general/res/sass/controls/_controls.scss */
 .slider .range {
   -moz-transition-property: opacity, background-color, border-color, color;
   -o-transition-property: opacity, background-color, border-color, color;
@@ -2585,12 +2599,12 @@ label.checkbox.custom {
   left: auto;
   height: auto;
   width: auto; }
-  /* line 378, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 381, ../../../../general/res/sass/controls/_controls.scss */
   .slider .range:hover {
     background-color: rgba(0, 153, 204, 0.4); }
 
 /******************************************************** DATETIME PICKER */
-/* line 385, ../../../../general/res/sass/controls/_controls.scss */
+/* line 388, ../../../../general/res/sass/controls/_controls.scss */
 .l-datetime-picker {
   -moz-user-select: -moz-none;
   -ms-user-select: none;
@@ -2599,65 +2613,65 @@ label.checkbox.custom {
   font-size: 0.8rem;
   padding: 10px !important;
   width: 230px; }
-  /* line 391, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 394, ../../../../general/res/sass/controls/_controls.scss */
   .l-datetime-picker .l-month-year-pager {
     height: 15px;
     margin-bottom: 5px;
     position: relative; }
-    /* line 400, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 403, ../../../../general/res/sass/controls/_controls.scss */
     .l-datetime-picker .l-month-year-pager .pager {
       width: 20px; }
-      /* line 403, ../../../../general/res/sass/controls/_controls.scss */
+      /* line 406, ../../../../general/res/sass/controls/_controls.scss */
       .l-datetime-picker .l-month-year-pager .pager.prev {
         right: auto; }
-        /* line 405, ../../../../general/res/sass/controls/_controls.scss */
+        /* line 408, ../../../../general/res/sass/controls/_controls.scss */
         .l-datetime-picker .l-month-year-pager .pager.prev:before {
           content: "\3c"; }
-      /* line 409, ../../../../general/res/sass/controls/_controls.scss */
+      /* line 412, ../../../../general/res/sass/controls/_controls.scss */
       .l-datetime-picker .l-month-year-pager .pager.next {
         left: auto;
         text-align: right; }
-        /* line 412, ../../../../general/res/sass/controls/_controls.scss */
+        /* line 415, ../../../../general/res/sass/controls/_controls.scss */
         .l-datetime-picker .l-month-year-pager .pager.next:before {
           content: "\3e"; }
-    /* line 417, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 420, ../../../../general/res/sass/controls/_controls.scss */
     .l-datetime-picker .l-month-year-pager .val {
       text-align: center;
       left: 25px;
       right: 25px; }
-  /* line 423, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 426, ../../../../general/res/sass/controls/_controls.scss */
   .l-datetime-picker .l-calendar,
   .l-datetime-picker .l-time-selects {
     border-top: 1px solid rgba(102, 102, 102, 0.2); }
-  /* line 427, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 430, ../../../../general/res/sass/controls/_controls.scss */
   .l-datetime-picker .l-time-selects {
     line-height: 22px; }
 
 /******************************************************** CALENDAR */
-/* line 435, ../../../../general/res/sass/controls/_controls.scss */
+/* line 438, ../../../../general/res/sass/controls/_controls.scss */
 .l-calendar ul.l-cal-row {
   display: -webkit-flex;
   display: flex;
   -webkit-flex-flow: row nowrap;
   flex-flow: row nowrap;
   margin-top: 1px; }
-  /* line 439, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 442, ../../../../general/res/sass/controls/_controls.scss */
   .l-calendar ul.l-cal-row:first-child {
     margin-top: 0; }
-  /* line 442, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 445, ../../../../general/res/sass/controls/_controls.scss */
   .l-calendar ul.l-cal-row li {
     -webkit-flex: 1 0;
     flex: 1 0;
     margin-left: 1px;
     padding: 5px;
     text-align: center; }
-    /* line 447, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 450, ../../../../general/res/sass/controls/_controls.scss */
     .l-calendar ul.l-cal-row li:first-child {
       margin-left: 0; }
-  /* line 451, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 454, ../../../../general/res/sass/controls/_controls.scss */
   .l-calendar ul.l-cal-row.l-header li {
     color: #999999; }
-  /* line 454, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 457, ../../../../general/res/sass/controls/_controls.scss */
   .l-calendar ul.l-cal-row.l-body li {
     -moz-transition-property: background-color;
     -o-transition-property: background-color;
@@ -2676,31 +2690,31 @@ label.checkbox.custom {
     -webkit-transition-delay: 0;
     transition-delay: 0;
     cursor: pointer; }
-    /* line 457, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 460, ../../../../general/res/sass/controls/_controls.scss */
     .l-calendar ul.l-cal-row.l-body li.in-month {
       background-color: #f2f2f2; }
-    /* line 460, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 463, ../../../../general/res/sass/controls/_controls.scss */
     .l-calendar ul.l-cal-row.l-body li .sub {
       color: #999999;
       font-size: 0.8em; }
-    /* line 464, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 467, ../../../../general/res/sass/controls/_controls.scss */
     .l-calendar ul.l-cal-row.l-body li.selected {
       background: #1ac6ff;
       color: #fcfcfc; }
-      /* line 467, ../../../../general/res/sass/controls/_controls.scss */
+      /* line 470, ../../../../general/res/sass/controls/_controls.scss */
       .l-calendar ul.l-cal-row.l-body li.selected .sub {
         color: inherit; }
-    /* line 471, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 474, ../../../../general/res/sass/controls/_controls.scss */
     .l-calendar ul.l-cal-row.l-body li:hover {
       background-color: #0099cc;
       color: #fff; }
-      /* line 474, ../../../../general/res/sass/controls/_controls.scss */
+      /* line 477, ../../../../general/res/sass/controls/_controls.scss */
       .l-calendar ul.l-cal-row.l-body li:hover .sub {
         color: inherit; }
 
 /******************************************************** BROWSER ELEMENTS */
 @media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-  /* line 485, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 488, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -2715,7 +2729,7 @@ label.checkbox.custom {
     height: 10px;
     width: 10px; }
 
-  /* line 494, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 497, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar-thumb {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzg5ODk4OSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzdkN2Q3ZCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -2729,7 +2743,7 @@ label.checkbox.custom {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box; }
-    /* line 501, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 504, ../../../../general/res/sass/controls/_controls.scss */
     ::-webkit-scrollbar-thumb:hover {
       background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwYWNlNiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwOTljYyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
       background-size: 100%;
@@ -2738,7 +2752,7 @@ label.checkbox.custom {
       background-image: -webkit-linear-gradient(#00ace6, #0099cc 20px);
       background-image: linear-gradient(#00ace6, #0099cc 20px); }
 
-  /* line 506, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 509, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar-corner {
     background: rgba(0, 0, 0, 0.1); } }
 /*****************************************************************************
@@ -4196,10 +4210,10 @@ textarea {
   	.field-hints,
   	.fields {
   	}
-
-
+  
+  	
   	.field-hints {
-
+  
   	}
   	*/ }
   /* line 30, ../../../../general/res/sass/forms/_datetime.scss */
@@ -6292,18 +6306,18 @@ mct-representation.s-status-pending .t-object-label .t-item-icon:before {
   padding: 30%;
   width: 0;
   height: 0; }
-/* line 55, ../../../../general/res/sass/_object-label.scss */
+/* line 51, ../../../../general/res/sass/_object-label.scss */
 mct-representation.s-status-pending .t-object-label .t-item-icon .t-item-icon-glyph {
   display: none; }
-/* line 59, ../../../../general/res/sass/_object-label.scss */
+/* line 55, ../../../../general/res/sass/_object-label.scss */
 mct-representation.s-status-pending .t-object-label .t-title-label {
   font-style: italic;
   opacity: 0.6; }
 
-/* line 66, ../../../../general/res/sass/_object-label.scss */
+/* line 62, ../../../../general/res/sass/_object-label.scss */
 .selected mct-representation.s-status-pending .t-object-label .t-item-icon:before {
-  border-color: rgba(252, 252, 252, 0.25);
-  border-top-color: #fcfcfc; }
+  border-color: rgba(252, 252, 252, 0.25) !important;
+  border-top-color: #fcfcfc !important; }
 
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
@@ -7209,7 +7223,7 @@ table {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis; }
-  /* line 274, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 276, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot-tick.gl-plot-x-tick-label, .gl-plot-tick.tick-label-x,
   .tick-label.gl-plot-x-tick-label,
   .tick-label.tick-label-x {
@@ -7220,7 +7234,7 @@ table {
     width: 20%;
     margin-left: -10%;
     text-align: center; }
-  /* line 284, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 286, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot-tick.gl-plot-y-tick-label, .gl-plot-tick.tick-label-y,
   .tick-label.gl-plot-y-tick-label,
   .tick-label.tick-label-y {
@@ -7230,18 +7244,18 @@ table {
     margin-bottom: -0.5em;
     text-align: right; }
 
-/* line 295, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 297, ../../../../general/res/sass/plots/_plots-main.scss */
 .gl-plot-tick.gl-plot-x-tick-label {
   top: 5px; }
-/* line 298, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 300, ../../../../general/res/sass/plots/_plots-main.scss */
 .gl-plot-tick.gl-plot-y-tick-label {
   right: 5px;
   left: 5px; }
 
-/* line 305, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 307, ../../../../general/res/sass/plots/_plots-main.scss */
 .tick-label.tick-label-x {
   top: 0; }
-/* line 308, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 310, ../../../../general/res/sass/plots/_plots-main.scss */
 .tick-label.tick-label-y {
   right: 0;
   left: 0; }
