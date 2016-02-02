@@ -109,7 +109,8 @@
     font-size: 0.7rem;
 }
 
-label.checkbox.custom {
+label.checkbox.custom,
+label.radio.custom {
     $bg: pullForward($colorBodyBg, 10%);
     $d: $formRowCtrlsH;
     cursor: pointer;
@@ -157,10 +158,12 @@ label.checkbox.custom {
         &:checked ~ em:before {
             background: $colorCheck;
             color: lighten($colorCheck, 50%);
-            content: "2";
         }
     }
 }
+
+label.checkbox.custom input:checked ~ em:before { content: "\32"; }
+label.radio.custom input:checked ~ em:before { content: "\e607"; }
 
 .input-labeled {
     margin-left: $interiorMargin;
