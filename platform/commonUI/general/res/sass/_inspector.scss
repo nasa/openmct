@@ -57,7 +57,7 @@
         }
     }
     
-    ul {
+    .l-inspector-part {
         @include box-sizing(border-box);
         padding-right: $interiorMargin;
     }

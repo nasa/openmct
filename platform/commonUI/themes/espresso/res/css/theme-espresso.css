@@ -1486,7 +1486,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     min-height: 20%;
     max-height: 80%; }
   /* line 60, ../../../../general/res/sass/_inspector.scss */
-  .l-inspect ul {
+  .l-inspect .l-inspector-part {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
