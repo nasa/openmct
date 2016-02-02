@@ -163,7 +163,7 @@ label.radio.custom {
 }
 
 label.checkbox.custom input:checked ~ em:before { content: "\32"; }
-label.radio.custom input:checked ~ em:before { content: "\e607"; }
+label.radio.custom input:checked ~ em:before { content: "\e619"; }
 
 .input-labeled {
     margin-left: $interiorMargin;
