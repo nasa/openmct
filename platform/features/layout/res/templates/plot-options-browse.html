@@ -22,7 +22,7 @@
 </style>-->
 
 <div ng-controller="PlotOptionsController" class="flex-elem grows l-inspector-part">
-    <em>Display</em>
+    <em title="Display properties for this object">Display</em>
     <ul class="first flex-elem grows vscroll">
         <ul class="tree">
             <li ng-repeat="child in children">
@@ -41,13 +41,13 @@
                             </mct-representation>
                         </span>
                     </span>
-                    <div class="plot-options-form">
+                    <div class="plot-options-form no-validate l-controls-first">
                         <mct-form
                                 ng-class="{hidden: !toggle.isActive()}"
                                 ng-model="plotOptionsModel"
                                 structure="plotOptionsStructure"
                                 name="plotOptionsState"
-                                class="flex-elem">
+                                class="flex-elem l-flex-row">
                         </mct-form>
                     </div>
                 </span>
