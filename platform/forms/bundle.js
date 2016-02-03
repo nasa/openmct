@@ -69,6 +69,10 @@ define([
                     "templateUrl": "templates/controls/checkbox.html"
                 },
                 {
+                    "key": "radio",
+                    "templateUrl": "templates/controls/radio.html"
+                },
+                {
                     "key": "datetime",
                     "templateUrl": "templates/controls/datetime.html"
                 },

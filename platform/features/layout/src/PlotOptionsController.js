@@ -109,34 +109,37 @@ define(
                     }]
                 },
                 plotSeriesForm = {
-                    // For correctness of the rendered markup, repeated forms
-                    // will probably need to have unique names.
-                    'name': 'plotSeries',
-                    'sections': [{
-                        'name': 'Plot Series',
-                        'rows': [
-                            {
-                                'name': 'Markers',
-                                'control': 'checkbox',
-                                'key': 'markers'
-                            },
-                            {
-                                'name': 'No Line',
-                                'control': 'radio',
-                                'key': 'noLine'
-                            },
-                            {
-                                'name': 'Step Line',
-                                'control': 'radio',
-                                'key': 'stepLine'
-                            },
-                            {
-                                'name': 'Linear Line',
-                                'control': 'radio',
-                                'key': 'linearLine'
-                            }
-                        ]
-                    }]
+                    'name':'Plot Options',
+                    'sections': [
+                        {
+                            'rows':[
+                                {
+                                    'name': 'Markers',
+                                    'control': 'checkbox',
+                                    'key': 'markers'
+                                }
+                            ]
+                        },
+                        {
+                            'rows':[
+                                {
+                                    'name': 'No Line',
+                                    'control': 'radio',
+                                    'key': 'noLine'
+                                },
+                                {
+                                    'name': 'Step Line',
+                                    'control': 'radio',
+                                    'key': 'stepLine'
+                                },
+                                {
+                                    'name': 'Linear Line',
+                                    'control': 'radio',
+                                    'key': 'linearLine'
+                                }
+                            ]
+                        }
+                    ]
                 },
                 plotOptionsModel = {};
 
