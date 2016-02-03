@@ -62,8 +62,10 @@
     .l-inspector-part {
         @include box-sizing(border-box);
         padding-right: $interiorMargin;
-        .form {
+        .tree .form {
             margin-left: $treeVCW + $interiorMarginLg;
+        }
+        .form {
             margin-bottom: $interiorMarginLg;
             .form-section {
                 margin-bottom: 0;

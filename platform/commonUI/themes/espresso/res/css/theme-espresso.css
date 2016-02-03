@@ -1492,30 +1492,32 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     box-sizing: border-box;
     padding-right: 5px; }
     /* line 65, ../../../../general/res/sass/_inspector.scss */
+    .l-inspect .l-inspector-part .tree .form {
+      margin-left: 20px; }
+    /* line 68, ../../../../general/res/sass/_inspector.scss */
     .l-inspect .l-inspector-part .form {
-      margin-left: 20px;
       margin-bottom: 10px; }
-      /* line 68, ../../../../general/res/sass/_inspector.scss */
+      /* line 70, ../../../../general/res/sass/_inspector.scss */
       .l-inspect .l-inspector-part .form .form-section {
         margin-bottom: 0; }
-        /* line 70, ../../../../general/res/sass/_inspector.scss */
+        /* line 72, ../../../../general/res/sass/_inspector.scss */
         .l-inspect .l-inspector-part .form .form-section:not(.first) {
           border-top: 1px solid rgba(255, 255, 255, 0.1); }
-        /* line 73, ../../../../general/res/sass/_inspector.scss */
+        /* line 75, ../../../../general/res/sass/_inspector.scss */
         .l-inspect .l-inspector-part .form .form-section .form-row {
           -webkit-align-items: center;
           align-items: center;
           border: none;
           padding: 0; }
-  /* line 82, ../../../../general/res/sass/_inspector.scss */
+  /* line 84, ../../../../general/res/sass/_inspector.scss */
   .l-inspect ul li,
   .l-inspect em.t-inspector-part-header {
     display: block;
     position: relative; }
-  /* line 88, ../../../../general/res/sass/_inspector.scss */
+  /* line 90, ../../../../general/res/sass/_inspector.scss */
   .l-inspect ul li {
     margin-bottom: 10px; }
-  /* line 92, ../../../../general/res/sass/_inspector.scss */
+  /* line 94, ../../../../general/res/sass/_inspector.scss */
   .l-inspect em.t-inspector-part-header {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -1525,21 +1527,21 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     margin-bottom: 5px;
     padding: 5px 5px;
     text-transform: uppercase; }
-  /* line 101, ../../../../general/res/sass/_inspector.scss */
+  /* line 103, ../../../../general/res/sass/_inspector.scss */
   .l-inspect .inspector-properties {
     padding: 3px 0; }
-    /* line 102, ../../../../general/res/sass/_inspector.scss */
+    /* line 104, ../../../../general/res/sass/_inspector.scss */
     .l-inspect .inspector-properties:not(.first) {
       border-top: 1px solid rgba(255, 255, 255, 0.1); }
-    /* line 106, ../../../../general/res/sass/_inspector.scss */
+    /* line 108, ../../../../general/res/sass/_inspector.scss */
     .l-inspect .inspector-properties .label {
       color: #737373;
       text-transform: uppercase; }
-    /* line 110, ../../../../general/res/sass/_inspector.scss */
+    /* line 112, ../../../../general/res/sass/_inspector.scss */
     .l-inspect .inspector-properties .value {
       color: #bfbfbf;
       word-break: break-all; }
-  /* line 117, ../../../../general/res/sass/_inspector.scss */
+  /* line 119, ../../../../general/res/sass/_inspector.scss */
   .l-inspect .inspector-location .location-item {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -1549,18 +1551,18 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     line-height: 1.2em;
     position: relative;
     padding: 2px 4px; }
-    /* line 126, ../../../../general/res/sass/_inspector.scss */
+    /* line 128, ../../../../general/res/sass/_inspector.scss */
     .l-inspect .inspector-location .location-item .t-object-label .t-item-icon {
       height: 1.2em;
       width: 0.7rem; }
-    /* line 131, ../../../../general/res/sass/_inspector.scss */
+    /* line 133, ../../../../general/res/sass/_inspector.scss */
     .l-inspect .inspector-location .location-item:hover {
       background: rgba(153, 153, 153, 0.1);
       color: #cccccc; }
-      /* line 134, ../../../../general/res/sass/_inspector.scss */
+      /* line 136, ../../../../general/res/sass/_inspector.scss */
       .l-inspect .inspector-location .location-item:hover .icon, .l-inspect .inspector-location .location-item:hover .t-item-icon {
         color: #33ccff; }
-  /* line 139, ../../../../general/res/sass/_inspector.scss */
+  /* line 141, ../../../../general/res/sass/_inspector.scss */
   .l-inspect .inspector-location:not(.last) .t-object-label .t-title-label:after {
     color: #737373;
     content: '\3e';
@@ -1571,15 +1573,15 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     line-height: inherit;
     margin-left: 3px;
     width: 4px; }
-  /* line 152, ../../../../general/res/sass/_inspector.scss */
+  /* line 154, ../../../../general/res/sass/_inspector.scss */
   .l-inspect .holder-elements .current-elements {
     position: relative; }
-    /* line 155, ../../../../general/res/sass/_inspector.scss */
+    /* line 157, ../../../../general/res/sass/_inspector.scss */
     .l-inspect .holder-elements .current-elements .tree-item .t-object-label {
       font-size: 0.75rem;
       left: 0; }
 
-/* line 166, ../../../../general/res/sass/_inspector.scss */
+/* line 168, ../../../../general/res/sass/_inspector.scss */
 .l-inspect .splitter-inspect-panel,
 .l-inspect .split-pane-component.pane.bottom {
   -moz-transition-property: opacity;
@@ -1601,14 +1603,14 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
   opacity: 0;
   pointer-events: none; }
 
-/* line 175, ../../../../general/res/sass/_inspector.scss */
+/* line 177, ../../../../general/res/sass/_inspector.scss */
 mct-representation:not(.s-status-editing) .l-inspect .split-pane-component.pane.top {
   bottom: 0 !important; }
 
-/* line 181, ../../../../general/res/sass/_inspector.scss */
+/* line 183, ../../../../general/res/sass/_inspector.scss */
 .s-status-editing .l-inspect .location-item {
   pointer-events: none; }
-/* line 184, ../../../../general/res/sass/_inspector.scss */
+/* line 186, ../../../../general/res/sass/_inspector.scss */
 .s-status-editing .l-inspect .splitter-inspect-panel,
 .s-status-editing .l-inspect .split-pane-component.pane.bottom {
   opacity: 1;
