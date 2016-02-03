@@ -83,7 +83,6 @@
 
 .l-control-group {
     // Buttons that have a conceptual grouping - internal space between, and a divider between groups.
-    //    @include test();
     @include box-sizing(border-box);
     border-left: 1px solid $colorInteriorBorder;
     display: inline-block;
@@ -115,11 +114,9 @@ label.radio.custom {
     $d: $formRowCtrlsH;
     cursor: pointer;
     display: inline-block;
-    //line-height: $d;
     margin-right: $interiorMargin * 4;
     padding-left: $d + $interiorMargin;
     position: relative;
-    //vertical-align: middle; // was top
     em {
         color: $colorBodyFg;
         display: inline-block;
@@ -132,7 +129,7 @@ label.radio.custom {
             box-sizing: border-box;
             content: "";
             font-family: 'symbolsfont';
-            font-size: 0.8em;
+            font-size: 0.7em;
             display: inline-block;
             height: $d;
             width: $d;

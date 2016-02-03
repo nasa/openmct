@@ -44,30 +44,37 @@ define(
             var self = this,
                 plotOptionsStructure = {
                     'name':'Plot Options',
-                    'sections': [{
-                        'rows':[
-                            {
-                                'name': 'Markers',
-                                'control': 'checkbox',
-                                'key': 'markers'
-                            },
-                            {
-                                'name': 'No Line',
-                                'control': 'checkbox',
-                                'key': 'noLine'
-                            },
-                            {
-                                'name': 'Step Line',
-                                'control': 'checkbox',
-                                'key': 'stepLine'
-                            },
-                            {
-                                'name': 'Linear Line',
-                                'control': 'checkbox',
-                                'key': 'linearLine'
-                            }
-                        ]
-                    }]},
+                    'sections': [
+                        {
+                            'rows':[
+                                {
+                                    'name': 'Markers',
+                                    'control': 'checkbox',
+                                    'key': 'markers'
+                                }
+                            ]
+                        },
+                        {
+                            'rows':[
+                                {
+                                    'name': 'No Line',
+                                    'control': 'radio',
+                                    'key': 'noLine'
+                                },
+                                {
+                                    'name': 'Step Line',
+                                    'control': 'radio',
+                                    'key': 'stepLine'
+                                },
+                                {
+                                    'name': 'Linear Line',
+                                    'control': 'radio',
+                                    'key': 'linearLine'
+                                }
+                            ]
+                        }
+                    ]
+                },
                 plotOptionsModel = {};
 
             $scope.plotOptionsStructure = plotOptionsStructure;

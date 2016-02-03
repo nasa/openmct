@@ -24,7 +24,7 @@
         <div class="section-header" ng-if="section.name">
             {{section.name}}
         </div>
-        <div class="form-section">
+        <div class="form-section" ng-class="{ first:$index < 1 }">
             <ng-form name="mctFormInner" ng-repeat="row in section.rows">
                 <div class="form-row validates l-flex-row"
                      ng-class="{
@@ -33,13 +33,8 @@
                                invalid: mctFormInner.$dirty && !mctFormInner.$valid,
                                first: $index < 1
                                }">
-
                     <div class='label flex-elem' title="{{row.description}}">
                         {{row.name}}
-                        <span ng-if="row.description"
-                              class="ui-symbol">
-                            i
-                        </span>
                     </div>
                     <div class='controls flex-elem'>
                         <div class="wrapper" ng-if="row.control">
