@@ -56,24 +56,14 @@ To run:
 
 ## Build
 
-Open MCT Web includes a Maven command line build. Although Open MCT Web
-can be run as-is using the repository contents (that is, by viewing
-`index.html` in a web browser), the command
-line build allows machine-driven verification and packaging.
+Open MCT Web is built using [`npm`](http://npmjs.com/)
+and [`gulp`](http://gulpjs.com/).
 
-This build will:
+To build:
 
-* Check all sources (excluding those in directories named `lib`) with
-  JSLint for code style compliance. The build will fail if any sources
-  do not satisfy JSLint.
-* Run the [unit test suite](#tests).
-* Package the application as a `war` (web archive) file. This is
-  convenient for deployment on Tomcat or similar. This archive will
-  include sources, resources, and libraries for bundles, as well
-  as the top-level files used to initiate running of the application
-  (`index.html` and `bundles.json`).
+`npm run prepublish`
 
-Run as `mvn clean install`.
+Additional `gulp` tasks are defined in [the gulpfile](gulpfile.js).
 
 ### Building Documentation
 
