@@ -32,6 +32,16 @@ define(
         "use strict";
 
         /**
+         * Notes on implementation of plot options
+         *
+         * Multiple y-axes will have to be handled with multiple forms as
+         * they will need to be stored on distinct model object
+         *
+         * Likewise plot series options per-child will need to be separate
+         * forms.
+         */
+
+        /**
          * The LayoutController is responsible for supporting the
          * Layout view. It arranges frames according to saved configuration
          * and provides methods for updating these based on mouse
@@ -42,10 +52,69 @@ define(
          */
         function PlotOptionsController($scope) {
             var self = this,
-                plotOptionsStructure = {
-                    'name':'Plot Options',
+                domainObject = $scope.domainObject,
+                xAxisForm = {
+                'name':'x-axis',
+                'sections': [{
+                    'name': 'x-axis',
+                    'rows': [
+                        {
+                            'name': 'Domain',
+                            'control': 'select',
+                            'key': 'key',
+                            //TODO fetch options from platform or object type configuration
+                            'options': [
+                                {'name':'scet', 'value': 'scet'},
+                                {'name':'sclk', 'value': 'sclk'},
+                                {'name':'lst', 'value': 'lst'}
+                            ]
+                        }
+                    ]
+                }]},
+                yAxisForm = {
+                    'name':'y-axis',
                     'sections': [{
-                        'rows':[
+                    // Will need to be repeated for each y-axis, with a
+                    // distinct name each. Ideally the name of the axis itself.
+                    'name': 'y-axis',
+                    'rows': [
+                        {
+                            'name': 'Autoscale',
+                            'control': 'checkbox',
+                            'key': 'autoscale',
+                        },
+                        {
+                            'name': 'Min',
+                            'control': 'textfield',
+                            'key': 'min',
+                            'pattern': '[0-9]'
+                        },
+                        {
+                            'name': 'Max',
+                            'control': 'textfield',
+                            'key': 'min',
+                            'pattern': '[0-9]'
+                        },
+                        {
+                            'name': 'Range',
+                            'control': 'select',
+                            'key': 'key',
+                            'options': [
+                                {'name':'eu', 'value': 'eu'},
+                                {'name':'dn', 'value': 'dn'},
+                                {'name':'status', 'value': 'status'}
+                            ]
+                        }
+                    ]
+                    }]
+                },
+                plotSeriesForm = {
+                    // For correctness of the rendered markup, repeated forms
+                    // will probably need to have unique names.
+                    'name': 'plotSeries',
+                    'sections': [{
+                        'name': 'Plot Series',
+                        'rows': [
                             {
                                 'name': 'Markers',
                                 'control': 'checkbox',
@@ -53,31 +122,63 @@ define(
                             },
                             {
                                 'name': 'No Line',
-                                'control': 'checkbox',
+                                'control': 'radio',
                                 'key': 'noLine'
                             },
                             {
                                 'name': 'Step Line',
-                                'control': 'checkbox',
+                                'control': 'radio',
                                 'key': 'stepLine'
                             },
                             {
                                 'name': 'Linear Line',
-                                'control': 'checkbox',
+                                'control': 'radio',
                                 'key': 'linearLine'
                             }
                         ]
-                    }]},
+                    }]
+                },
                 plotOptionsModel = {};
 
-            $scope.plotOptionsStructure = plotOptionsStructure;
+            /*domainObject.getModel().configuration.plot.xAxis= {
+                'key': 'scet'
+            };
+
+            domainObject.getModel().configuration.plot.yAxis = [{
+                    'autoscale': true,
+                    'min': 0,
+                    'max': 15,
+                    'key': 'eu'
+            }];
+
+            domainObject.getModel().configuration.plot.series = [
+                {
+                    'id': '',
+                    'lineStyle': '',
+                    'color': '#aaddaa',
+                    'interpolation': 'none'
+                },
+                //etc
+            ];*/
+
+            $scope.plotOptionsStructure = plotSeriesForm;
             $scope.plotOptionsModel = plotOptionsModel;
 
-            $scope.domainObject.useCapability('composition').then(function(children){
-                $scope.children = children;
+            function updateChildren() {
+                domainObject.useCapability('composition').then(function(children){
+                    $scope.children = children;
+                });
+            }
+
+            /*
+             Listen for changes to the domain object and update the object's
+             children.
+             */
+            domainObject.getCapability('mutation').listen(function(model) {
+                updateChildren();
             });
 
-
+            updateChildren();
 
         }
 
