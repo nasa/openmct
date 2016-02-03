@@ -63,6 +63,14 @@ To build:
 
 `npm run prepublish`
 
+This will compile and minify JavaScript sources, as well as copy over assets.
+The contents of the `dist` folder will contain a runnable Open MCT Web
+instance (e.g. by starting an HTTP server in that directory), including:
+
+* A `main.js` file containing Open MCT Web source code.
+* Various assets in the `example` and `platform` directories.
+* An `index.html` that runs Open MCT Web in its default configuration.
+
 Additional `gulp` tasks are defined in [the gulpfile](gulpfile.js).
 
 ### Building Documentation
