@@ -135,7 +135,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 * Link: http://requirejs.org/
 
-* Version: 2.1.9
+* Version: 2.1.22
 
 * Author: The Dojo Foundation
 
@@ -153,13 +153,49 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
+### requirejs-text
+
+#### Info
+
+* Link: https://github.com/requirejs/text
+
+* Version: 2.0.14
+
+* Author: The Dojo Foundation
+
+* Description: Text loading plugin for RequireJS
+
+#### License
+
+Copyright (c) 2010-2014, The Dojo Foundation
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+---
+
 ### AngularJS
 
 #### Info
 
 * Link: http://angularjs.org/
 
-* Version: 1.2.26
+* Version: 1.4.4
 
 * Author: Google
 
@@ -167,7 +203,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #### License
 
-Copyright (c) 2010-2014 Google, Inc. http://angularjs.org
+Copyright (c) 2010-2015 Google, Inc. http://angularjs.org
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -183,7 +219,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 * Link: http://angularjs.org/
 
-* Version: 1.2.26
+* Version: 1.4.4
 
 * Author: Google
 
@@ -191,7 +227,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #### License
 
-Copyright (c) 2010-2014 Google, Inc. http://angularjs.org
+Copyright (c) 2010-2015 Google, Inc. http://angularjs.org
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -207,7 +243,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 * Link: https://github.com/jakearchibald/es6-promise
 
-* Version: 2.0.0
+* Version: 3.0.2
 
 * Authors: Yehuda Katz, Tom Dale, Stefan Penner and contributors
 
@@ -231,7 +267,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 * Link: https://github.com/sindresorhus/screenfull.js/
 
-* Version: 1.2.0
+* Version: 3.0.0
 
 * Author: Sindre Sorhus
 
@@ -255,15 +291,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 * Link: https://github.com/broofa/node-uuid
 
-* Version: 1.4
+* Version: 1.4.7
 
 * Author: Robert Kieffer
 
-* Description: Unique identifer generation (code adapted.)
+* Description: Unique identifer generation.
 
 #### License
 
-Copyright (c) 2010 Robert Kieffer
+Copyright (c) 2010-2012 Robert Kieffer
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -327,7 +363,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 * Link: http://momentjs.com
 
-* Version: 2.7.0
+* Version: 2.11.1
 
 * Authors: Tim Wood, Iskren Chernev, Moment.js contributors
 
