@@ -19,11 +19,12 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<label class="checkbox custom no-text">
-    <input type="checkbox"
-           name="mctControl"
-           ng-model="ngModel[field]"
-           ng-change="structure.onchange(ngModel[field])"
-           ng-disabled="ngDisabled">
-    <em></em>
-</label>
+<div ng-controller="RegionController as regionController">
+    <div ng-repeat="part in regions.inspector.parts">
+        <mct-representation
+                key="part.content.key"
+                mct-object="domainObject"
+                ng-model="ngModel">
+        </mct-representation>
+    </div>
+</div><!--/ PaneController -->

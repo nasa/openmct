@@ -19,11 +19,12 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<label class="checkbox custom no-text">
-    <input type="checkbox"
+<label class="radio custom no-text">
+    <input type="radio"
            name="mctControl"
            ng-model="ngModel[field]"
+           ng-disabled="ngDisabled"
            ng-change="structure.onchange(ngModel[field])"
-           ng-disabled="ngDisabled">
+           ng-value="structure.value">
     <em></em>
 </label>
