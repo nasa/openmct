@@ -29,7 +29,7 @@ define(
         /**
          * A class for encapsulating structure and behaviour of the plot
          * options form
-         * @memberOf platform/features/layout
+         * @memberOf platform/features/plot
          * @param topic
          * @constructor
          */

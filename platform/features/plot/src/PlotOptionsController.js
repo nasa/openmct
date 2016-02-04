@@ -21,11 +21,6 @@
  *****************************************************************************/
 /*global define*/
 
-/**
- * This bundle implements object types and associated views for
- * display-building.
- * @namespace platform/features/layout
- */
 define(
     ['./PlotOptionsForm'],
     function (PlotOptionsForm) {
@@ -46,7 +41,7 @@ define(
          * Layout view. It arranges frames according to saved configuration
          * and provides methods for updating these based on mouse
          * movement.
-         * @memberof platform/features/layout
+         * @memberof platform/features/plot
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
