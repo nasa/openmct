@@ -407,11 +407,11 @@ define([
             "licenses": [
                 {
                     "name": "Math.uuid.js",
-                    "version": "1.4",
+                    "version": "1.4.7",
                     "description": "Unique identifer generation (code adapted.)",
                     "author": "Robert Kieffer",
                     "website": "https://github.com/broofa/node-uuid",
-                    "copyright": "Copyright (c) 2010 Robert Kieffer",
+                    "copyright": "Copyright (c) 2010-2012 Robert Kieffer",
                     "license": "license-mit",
                     "link": "http://opensource.org/licenses/MIT"
                 }

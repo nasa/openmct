@@ -68,7 +68,7 @@ define([
                 },
                 {
                     "name": "RequireJS",
-                    "version": "2.1.9",
+                    "version": "2.1.22",
                     "description": "Script loader",
                     "author": "The Dojo Foundation",
                     "website": "http://requirejs.org/",
@@ -78,27 +78,27 @@ define([
                 },
                 {
                     "name": "AngularJS",
-                    "version": "1.2.26",
+                    "version": "1.4.4",
                     "description": "Client-side web application framework",
                     "author": "Google",
                     "website": "http://angularjs.org/",
-                    "copyright": "Copyright (c) 2010-2014 Google, Inc. http://angularjs.org",
+                    "copyright": "Copyright (c) 2010-2015 Google, Inc. http://angularjs.org",
                     "license": "license-mit",
-                    "link": "https://github.com/angular/angular.js/blob/v1.2.26/LICENSE"
+                    "link": "https://github.com/angular/angular.js/blob/v1.4.4/LICENSE"
                 },
                 {
                     "name": "Angular-Route",
-                    "version": "1.2.26",
+                    "version": "1.4.4",
                     "description": "Client-side view routing",
                     "author": "Google",
                     "website": "http://angularjs.org/",
-                    "copyright": "Copyright (c) 2010-2014 Google, Inc. http://angularjs.org",
+                    "copyright": "Copyright (c) 2010-2015 Google, Inc. http://angularjs.org",
                     "license": "license-mit",
-                    "link": "https://github.com/angular/angular.js/blob/v1.2.26/LICENSE"
+                    "link": "https://github.com/angular/angular.js/blob/v1.4.4/LICENSE"
                 },
                 {
                     "name": "ES6-Promise",
-                    "version": "2.0.0",
+                    "version": "3.0.2",
                     "description": "Promise polyfill for pre-ECMAScript 6 browsers",
                     "author": "Yehuda Katz, Tom Dale, Stefan Penner and contributors",
                     "website": "https://github.com/jakearchibald/es6-promise",
