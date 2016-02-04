@@ -62,7 +62,7 @@ define(
                 }
             };
             this.addPart(metadataPart, 0);
-        }
+        };
 
         return InspectorRegion;
     }

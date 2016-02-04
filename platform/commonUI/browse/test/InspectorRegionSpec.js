@@ -33,11 +33,11 @@ define(
             var inspectorRegion;
 
             beforeEach(function () {
-                inspectorRegion = new InspectorRegion;
+                inspectorRegion = new InspectorRegion();
             });
 
             it("creates default region parts", function () {
-                expect(inspectorRegion.parts().length).toBe(2);
+                expect(inspectorRegion.parts.length).toBe(1);
             });
 
         });

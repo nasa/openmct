@@ -295,7 +295,7 @@ define([
                     "provides": "typeService",
                     "type": "decorator",
                     "implementation": TypeRegionDecorator
-                },
+                }
             ],
             "runs": [
                 {

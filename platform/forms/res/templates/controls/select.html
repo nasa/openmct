@@ -24,6 +24,7 @@
             ng-model="ngModel[field]"
             ng-options="opt.value as opt.name for opt in options"
             ng-required="ngRequired"
+            ng-change="structure.onchange(ngModel[field])"
             name="mctControl">
         <option value="" ng-show="!ngModel[field]">- Select One -</option>
     </select>

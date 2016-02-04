@@ -44,11 +44,11 @@ define(
             if (domainObject.getCapability('status').get('editing')){
                 //If the domain object is in edit mode, only include a part
                 // if it is marked editable
-                return regionPart.modes.indexOf('edit') != -1;
+                return regionPart.modes.indexOf('edit') !== -1;
             } else {
                 //If the domain object is not in edit mode, return any parts
                 // that are not explicitly marked editable
-                return regionPart.modes.indexOf('browse') != -1;
+                return regionPart.modes.indexOf('browse') !== -1;
             }
         };
 

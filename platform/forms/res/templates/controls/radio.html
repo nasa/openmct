@@ -23,6 +23,8 @@
     <input type="radio"
            name="mctControl"
            ng-model="ngModel[field]"
-           ng-disabled="ngDisabled">
+           ng-disabled="ngDisabled"
+           ng-change="structure.onchange(ngModel[field])"
+           ng-value="structure.value">
     <em></em>
 </label>

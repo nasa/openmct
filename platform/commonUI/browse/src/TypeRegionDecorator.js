@@ -29,16 +29,17 @@ define(
         "use strict";
 
         /**
-         * Adds default screen regions to Type definitions. Screen regions
-         * are sections of the browse and edit view of an object that can be
-         * customized on a per-type basis. Within {@link Region}s are {@link RegionPart}s.
-         * Policies can be used to decide which parts are visible or not based on object state.
+         * Adds default browse screen regions to Type definitions. Screen
+         * regions are sections of the browse and edit view of an object
+         * that can be customized on a per-type basis. Within
+         * {@link Region}s are {@link RegionPart}s. Policies can be used to
+         * decide which parts are visible or not based on object state.
          * @memberOf platform/commonUI/regions
          * @see {@link Region}, {@link RegionPart}, {@link EditableRegionPolicy}
          * @constructor
          */
         function TypeRegionDecorator(typeService) {
-            this.typeService = typeService
+            this.typeService = typeService;
         }
 
         /**

@@ -37,22 +37,19 @@ define(
                 typeCapability = domainObject.getCapability('type');
 
             /**
-             * TODO: Refactor this out, probably to a directive.
-             * Or, alternatively, could have a regionCapability that returns
-             * regions and parts filtered for applicability to current
-             * object state.
+             * Filters region parts to only those allowed by region policies
              * @param regions
-             * @returns {*}
+             * @returns {{}}
              */
             function filterParts(regions) {
                 //Dupe so we're not modifying the type definition.
                 var filteredRegions = {};
-                for (var regionName in regions) {
+                Object.keys(regions).forEach(function(regionName) {
                     filteredRegions[regionName] = Object.create(regions[regionName]);
-                    filteredRegions[regionName].parts = regions[regionName].parts.filter(function(part){
+                    filteredRegions[regionName].parts = (regions[regionName].parts || []).filter(function(part){
                        return policyService.allow('region', part, domainObject);
                     });
-                }
+                });
                 return filteredRegions;
             }
 
