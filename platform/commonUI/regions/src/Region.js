@@ -74,17 +74,19 @@ define(
 
         /**
          * Removes a part from this region.
-         * @param {RegionPart} part the part to add
-         * @param {number} [index] the position to insert the part. By default
-         * will add to the end
+         * @param {RegionPart | number | strnig} part The region part to
+         * remove. If a number, will remove the part at that index. If a
+         * string, will remove the part with the matching name. If an
+         * object, will attempt to remove that object from the Region
          */
         Region.prototype.removePart = function (part){
             if (typeof part === 'number') {
                 this.parts.splice(part, 1);
             } else if (typeof part === 'string'){
-                this.parts
-            }
-            else {
+                this.parts = this.parts.filter(function(thisPart) {
+                    return thisPart.name !== part;
+                });
+            } else {
                 this.parts.splice(this.parts.indexOf(part), 1);
             }
         };

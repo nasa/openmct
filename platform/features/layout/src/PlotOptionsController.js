@@ -27,8 +27,8 @@
  * @namespace platform/features/layout
  */
 define(
-    [],
-    function () {
+    ['./PlotOptionsForm'],
+    function (PlotOptionsForm) {
         "use strict";
 
         /**
@@ -50,135 +50,97 @@ define(
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
-        function PlotOptionsController($scope) {
+        function PlotOptionsController($scope, topic) {
+
             var self = this,
                 domainObject = $scope.domainObject,
-                xAxisForm = {
-                'name':'x-axis',
-                'sections': [{
-                    'name': 'x-axis',
-                    'rows': [
-                        {
-                            'name': 'Domain',
-                            'control': 'select',
-                            'key': 'key',
-                            //TODO fetch options from platform or object type configuration
-                            'options': [
-                                {'name':'scet', 'value': 'scet'},
-                                {'name':'sclk', 'value': 'sclk'},
-                                {'name':'lst', 'value': 'lst'}
-                            ]
-                        }
-                    ]
-                }]},
-                yAxisForm = {
-                    'name':'y-axis',
-                    'sections': [{
-                    // Will need to be repeated for each y-axis, with a
-                    // distinct name each. Ideally the name of the axis itself.
-                    'name': 'y-axis',
-                    'rows': [
-                        {
-                            'name': 'Autoscale',
-                            'control': 'checkbox',
-                            'key': 'autoscale',
-                        },
-                        {
-                            'name': 'Min',
-                            'control': 'textfield',
-                            'key': 'min',
-                            'pattern': '[0-9]'
-                        },
-                        {
-                            'name': 'Max',
-                            'control': 'textfield',
-                            'key': 'min',
-                            'pattern': '[0-9]'
-                        },
-                        {
-                            'name': 'Range',
-                            'control': 'select',
-                            'key': 'key',
-                            'options': [
-                                {'name':'eu', 'value': 'eu'},
-                                {'name':'dn', 'value': 'dn'},
-                                {'name':'status', 'value': 'status'}
-                            ]
-                        }
-                    ]
-                    }]
-                },
-                plotSeriesForm = {
-                    // For correctness of the rendered markup, repeated forms
-                    // will probably need to have unique names.
-                    'name': 'plotSeries',
-                    'sections': [{
-                        'name': 'Plot Series',
-                        'rows': [
-                            {
-                                'name': 'Markers',
-                                'control': 'checkbox',
-                                'key': 'markers'
-                            },
-                            {
-                                'name': 'No Line',
-                                'control': 'radio',
-                                'key': 'noLine'
-                            },
-                            {
-                                'name': 'Step Line',
-                                'control': 'radio',
-                                'key': 'stepLine'
-                            },
-                            {
-                                'name': 'Linear Line',
-                                'control': 'radio',
-                                'key': 'linearLine'
-                            }
-                        ]
-                    }]
-                },
-                plotOptionsModel = {};
+                composition,
+                mutationListener,
+                formListener,
+                configuration = domainObject.getModel().configuration || {};
 
-            /*domainObject.getModel().configuration.plot.xAxis= {
-                'key': 'scet'
-            };
+            this.plotOptionsForm = new PlotOptionsForm(topic);
 
-            domainObject.getModel().configuration.plot.yAxis = [{
-                    'autoscale': true,
-                    'min': 0,
-                    'max': 15,
-                    'key': 'eu'
-            }];
+            /*
+             * Determine whether the changes to the model that triggered a
+             * mutation event were purely compositional.
+             */
+            function hasCompositionChanged(oldComposition, newComposition){
+                // Framed slightly strangely, but the boolean logic is
+                // easier to follow for the unchanged case.
+                var isUnchanged = oldComposition === newComposition ||
+                        (
+                            oldComposition.length === newComposition.length &&
+                            oldComposition.every( function (currentValue, index) {
+                                return newComposition[index] && currentValue === newComposition[index];
+                            })
+                        );
+                return !isUnchanged;
+            }
 
-            domainObject.getModel().configuration.plot.series = [
-                {
-                    'id': '',
-                    'lineStyle': '',
-                    'color': '#aaddaa',
-                    'interpolation': 'none'
-                },
-                //etc
-            ];*/
+            /*
+             Default the plot options model
+             */
+            function defaultConfiguration() {
+                configuration.plot = configuration.plot || {};
+                configuration.plot.xAxis = configuration.plot.xAxis || {};
+                configuration.plot.yAxis = configuration.plot.yAxis || {}; // y-axes will be associative array keyed on axis key
+                configuration.plot.series = configuration.plot.series || {}; // series will be associative array keyed on sub-object id
+                $scope.configuration = configuration;
+            }
 
-            $scope.plotOptionsStructure = plotSeriesForm;
-            $scope.plotOptionsModel = plotOptionsModel;
-
+            /*
+             When a child is added to, or removed from a plot, update the
+             plot options model
+             */
             function updateChildren() {
                 domainObject.useCapability('composition').then(function(children){
                     $scope.children = children;
+                    composition = domainObject.getModel().composition;
+                    children.forEach(function(child){
+                        configuration.plot.series[child.getId()] = configuration.plot.series[child.getId()] || {};
+                    });
                 });
             }
+
+            /*
+             On changes to the form, update the configuration on the domain
+             object
+             */
+            function updateConfiguration() {
+                domainObject.useCapability('mutation', function(model){
+                    model.configuration = model.configuration || {};
+                    model.configuration.plot = configuration.plot;
+                });
+            }
+
+            /*
+             Set form structures on scope
+             */
+            $scope.plotSeriesForm = this.plotOptionsForm.plotSeriesForm;
+            $scope.xAxisForm = this.plotOptionsForm.xAxisForm;
+            $scope.yAxisForm = this.plotOptionsForm.yAxisForm;
 
             /*
              Listen for changes to the domain object and update the object's
              children.
              */
-            domainObject.getCapability('mutation').listen(function(model) {
-                updateChildren();
+            mutationListener = domainObject.getCapability('mutation').listen(function(model) {
+                if (hasCompositionChanged(composition, model.composition)) {
+                    updateChildren();
+                }
             });
 
+            formListener = this.plotOptionsForm.listen(updateConfiguration);
+
+            defaultConfiguration();
             updateChildren();
+
+            $scope.$on("$destroy", function() {
+                //Clean up any listeners on destruction of controller
+                mutationListener();
+                formListener();
+            });
 
         }
 
