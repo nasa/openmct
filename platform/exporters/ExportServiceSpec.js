@@ -119,6 +119,25 @@ define(
                 });
             });
 
+            describe("#exportCSV(rows, options.filename)", function () {
+                var testFilename;
+
+                beforeEach(function () {
+                    testFilename = "some-test-filename.csv";
+                    exportService
+                        .exportCSV(testRows, { filename: testFilename });
+                    waitsFor(finishedReadingCSV);
+                });
+
+                it("saves a file with the specified name", function () {
+                    expect(mockSaveAs).toHaveBeenCalledWith(
+                        jasmine.any(Blob),
+                        testFilename
+                    );
+                });
+            });
+
+
         });
 
     }
