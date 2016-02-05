@@ -84,6 +84,41 @@ define(
                 });
             });
 
+            describe("#exportCSV(rows, options.headers)", function () {
+                var testHeaders;
+
+                beforeEach(function () {
+                    testHeaders = [ 'a', 'b' ];
+                    exportService
+                        .exportCSV(testRows, { headers: testHeaders });
+                    waitsFor(finishedReadingCSV);
+                });
+
+                it("triggers saving of a file", function () {
+                    expect(mockSaveAs).toHaveBeenCalledWith(
+                        jasmine.any(Blob),
+                        jasmine.any(String)
+                    );
+                });
+
+                it("includes only the specified headers", function () {
+                    expect(csvContents[0])
+                        .toEqual(testHeaders);
+                    expect(csvContents[0])
+                        .not.toEqual(Object.keys(testRows[0]).sort());
+                });
+
+                it("includes a subset data from the data set", function () {
+                    var headers = testHeaders,
+                        expectedData = testRows.map(function (row) {
+                            return headers.map(function (key) {
+                                return String(row[key]);
+                            });
+                        });
+                    expect(csvContents.slice(1)).toEqual(expectedData);
+                });
+            });
+
         });
 
     }
