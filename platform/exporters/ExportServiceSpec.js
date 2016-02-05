@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine*/
+/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,Blob,FileReader*/
 
 define(
     ["./ExportService", "csv"],
@@ -29,21 +29,35 @@ define(
         describe("ExportService", function () {
             var mockSaveAs,
                 testRows,
+                csvContents,
                 exportService;
 
+            function finishedReadingCSV() {
+                return !!csvContents;
+            }
+
             beforeEach(function () {
+                csvContents = undefined;
                 testRows = [
                     { a: 1, b: 2, c: 3 },
                     { a: 4, b: 5, c: 6 },
                     { a: 7, b: 8, c: 9 }
                 ];
                 mockSaveAs = jasmine.createSpy('saveAs');
+                mockSaveAs.andCallFake(function (blob) {
+                    var reader = new FileReader();
+                    reader.onloadend = function () {
+                       csvContents = new CSV(reader.result).parse();
+                    };
+                    reader.readAsText(blob);
+                });
                 exportService = new ExportService(mockSaveAs);
             });
 
             describe("#exportCSV(rows)", function () {
                 beforeEach(function () {
                     exportService.exportCSV(testRows);
+                    waitsFor(finishedReadingCSV);
                 });
 
                 it("triggers saving of a file", function () {
@@ -51,6 +65,10 @@ define(
                         jasmine.any(Blob),
                         jasmine.any(String)
                     );
+                });
+
+                it("includes headers from the data set", function () {
+                    expect(csvContents[0]).toEqual([ 'a', 'b', 'c' ]);
                 });
             });
 
