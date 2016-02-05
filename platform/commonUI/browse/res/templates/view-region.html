@@ -19,15 +19,12 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<!--
- A representation that allows the 'View' region of an object view to change
- dynamically (eg. between browse and edit modes). Values correspond to a
- representation key, and currently defaults to 'browse-object'.
-
- In the case of edit, the EditRepresenter will change this to editable
- representation of the object as needed.
- -->
-<mct-representation mct-object="domainObject"
-                    key="viewRegionTemplate || 'browse-object'"
-                    class="abs holder holder-object">
-</mct-representation>
+<div ng-controller="RegionController as regionController">
+    <div ng-repeat="part in regions.view.parts">
+        <mct-representation
+                key="part.content.key"
+                mct-object="domainObject"
+                ng-model="ngModel">
+        </mct-representation>
+    </div>
+</div><!--/ PaneController -->

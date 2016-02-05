@@ -84,6 +84,24 @@ define(
                 expect(callback).not.toHaveBeenCalled();
             });
 
+            it("adds listeners to the 'after' state by default", function(){
+                expect(navigationService.callbacks.after).toBeUndefined();
+                navigationService.addListener(function(){});
+                expect(navigationService.callbacks.after).toBeDefined();
+                expect(navigationService.callbacks.after.length).toBe(1);
+            });
+
+            it("allows navigationService events to be prevented", function(){
+                var callback = jasmine.createSpy("callback"),
+                    navigationResult;
+                callback.andReturn(false);
+                navigationService.addListener(callback, "before");
+                navigationResult = navigationService.setNavigation({});
+                expect(callback).toHaveBeenCalled();
+                expect(navigationResult).toBe(false);
+
+            });
+
         });
     }
 );

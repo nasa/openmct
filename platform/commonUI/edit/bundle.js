@@ -84,7 +84,8 @@ define([
                     "key": "EditObjectController",
                     "implementation": EditObjectController,
                     "depends": [
-                        "$scope"
+                        "$scope",
+                        "$location"
                     ]
                 }
             ],
@@ -215,10 +216,6 @@ define([
                 {
                     "key": "topbar-edit",
                     "templateUrl": "templates/topbar-edit.html"
-                },
-                {
-                    "key": "inspector-edit",
-                    "templateUrl": "templates/inspector-edit.html"
                 }
             ],
             "representers": [

@@ -81,4 +81,3 @@ define(
         return BrowseObjectController;
     }
 );
-

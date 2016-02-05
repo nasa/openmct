@@ -23,9 +23,10 @@
 
 define(
     [
-        './InspectorRegion'
+        './InspectorRegion',
+        './ViewRegion'
     ],
-    function (InspectorRegion) {
+    function (InspectorRegion, ViewRegion) {
         "use strict";
 
         /**
@@ -53,6 +54,7 @@ define(
             var regions = type.getDefinition().regions || {};
 
             regions.inspector = regions.inspector || new InspectorRegion();
+            regions.view = regions.view || new ViewRegion();
 
             type.getDefinition().regions = regions;
 

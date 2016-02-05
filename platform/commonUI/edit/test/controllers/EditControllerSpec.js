@@ -22,89 +22,72 @@
 /*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
-    ["../../src/controllers/EditController"],
-    function (EditController) {
+    ["../../src/controllers/EditObjectController"],
+    function (EditObjectController) {
         "use strict";
 
         describe("The Edit mode controller", function () {
             var mockScope,
-                mockQ,
-                mockNavigationService,
                 mockObject,
                 mockType,
+                mockLocation,
+                mockStatusCapability,
+                mockCapabilities,
                 controller;
+
+            // Utility function; look for a $watch on scope and fire it
+            function fireWatch(expr, value) {
+                mockScope.$watch.calls.forEach(function (call) {
+                    if (call.args[0] === expr) {
+                        call.args[1](value);
+                    }
+                });
+            }
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$on" ]
-                );
-                mockQ = jasmine.createSpyObj('$q', ['when', 'all']);
-                mockNavigationService = jasmine.createSpyObj(
-                    "navigationService",
-                    [ "getNavigation", "addListener", "removeListener" ]
+                    [ "$on", "$watch" ]
                 );
                 mockObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability", "hasCapability" ]
+                    [ "getId", "getModel", "getCapability", "hasCapability", "useCapability" ]
                 );
                 mockType = jasmine.createSpyObj(
                     "type",
                     [ "hasFeature" ]
                 );
+                mockStatusCapability = jasmine.createSpyObj('statusCapability',
+                    ["get"]
+                );
 
-                mockNavigationService.getNavigation.andReturn(mockObject);
+                mockCapabilities = {
+                    "type" : mockType,
+                    "status": mockStatusCapability
+                };
+
+                mockLocation = jasmine.createSpyObj('$location',
+                    ["search"]
+                );
+                mockLocation.search.andReturn({"view": "fixed"});
+
                 mockObject.getId.andReturn("test");
                 mockObject.getModel.andReturn({ name: "Test object" });
                 mockObject.getCapability.andCallFake(function (key) {
-                    return key === 'type' && mockType;
+                    return mockCapabilities[key];
                 });
                 mockType.hasFeature.andReturn(true);
 
-                controller = new EditController(
+                mockScope.domainObject = mockObject;
+
+                controller = new EditObjectController(
                     mockScope,
-                    mockQ,
-                    mockNavigationService
+                    mockLocation
                 );
-            });
-
-            it("exposes the currently-navigated object", function () {
-                expect(controller.navigatedObject()).toBeDefined();
-                expect(controller.navigatedObject().getId()).toEqual("test");
-            });
-
-            it("adds an editor capability to the navigated object", function () {
-                // Should provide an editor capability...
-                expect(controller.navigatedObject().getCapability("editor"))
-                    .toBeDefined();
-                // Shouldn't have been the mock capability we provided
-                expect(controller.navigatedObject().getCapability("editor"))
-                    .not.toEqual(mockType);
-            });
-
-            it("detaches its navigation listener when destroyed", function () {
-                var navCallback = mockNavigationService
-                        .addListener.mostRecentCall.args[0];
-
-                expect(mockScope.$on).toHaveBeenCalledWith(
-                    "$destroy",
-                    jasmine.any(Function)
-                );
-
-                // Verify precondition
-                expect(mockNavigationService.removeListener)
-                    .not.toHaveBeenCalled();
-
-                // Trigger destroy
-                mockScope.$on.mostRecentCall.args[1]();
-
-                // Listener should have been removed
-                expect(mockNavigationService.removeListener)
-                    .toHaveBeenCalledWith(navCallback);
             });
 
             it("exposes a warning message for unload", function () {
-                var obj = controller.navigatedObject(),
+                var obj = mockObject,
                     mockEditor = jasmine.createSpyObj('editor', ['dirty']);
 
                 // Normally, should be undefined
@@ -112,12 +95,30 @@ define(
 
                 // Override the object's editor capability, make it look
                 // like there are unsaved changes.
-                obj.getCapability = jasmine.createSpy();
-                obj.getCapability.andReturn(mockEditor);
+                mockCapabilities.editor = mockEditor;
                 mockEditor.dirty.andReturn(true);
+                mockStatusCapability.get.andReturn(true);
 
                 // Should have some warning message here now
                 expect(controller.getUnloadWarning()).toEqual(jasmine.any(String));
+            });
+
+
+            it("sets the active view from query parameters", function () {
+                var testViews = [
+                        { key: 'abc' },
+                        { key: 'def', someKey: 'some value' },
+                        { key: 'xyz' }
+                    ];
+
+                mockObject.useCapability.andCallFake(function (c) {
+                    return (c === 'view') && testViews;
+                });
+                mockLocation.search.andReturn({ view: 'def' });
+
+                fireWatch('domainObject', mockObject);
+                expect(mockScope.representation.selected)
+                    .toEqual(testViews[1]);
             });
 
         });

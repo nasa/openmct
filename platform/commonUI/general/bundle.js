@@ -447,12 +447,8 @@ define([
                     ]
                 },
                 {
-                    "key": "inspector-region",
+                    "key": "object-inspector",
                     "templateUrl": "templates/object-inspector.html"
-                },
-                {
-                    "key": "inspector-browse",
-                    "templateUrl": "templates/inspector-browse.html"
                 }
             ],
             "controls": [

@@ -36,7 +36,7 @@ define(
          * @memberof platform/commonUI/edit
          * @constructor
          */
-        function EditObjectController($scope) {
+        function EditObjectController($scope, $location) {
             this.scope = $scope;
 
             var navigatedObject;

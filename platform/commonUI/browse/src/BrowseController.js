@@ -46,7 +46,7 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function BrowseController($scope, $route, $location, $q, objectService, navigationService, urlService) {
+        function BrowseController($scope, $route, $location, objectService, navigationService, urlService) {
             var path = [ROOT_ID].concat(
                 ($route.current.params.ids || DEFAULT_PATH).split("/")
             );
@@ -174,4 +174,3 @@ define(
         return BrowseController;
     }
 );
-

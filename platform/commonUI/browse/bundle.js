@@ -80,7 +80,6 @@ define([
                         "$scope",
                         "$route",
                         "$location",
-                        "$q",
                         "objectService",
                         "navigationService",
                         "urlService"
@@ -137,10 +136,6 @@ define([
                 }
             ],
             "representations": [
-                {
-                    "key": "view-region",
-                    "templateUrl": "templates/view-object.html"
-                },
                 {
                     "key": "browse-object",
                     "templateUrl": "templates/browse-object.html",
@@ -206,6 +201,10 @@ define([
                 {
                     "key": "inspector-region",
                     "templateUrl": "templates/browse/inspector-region.html"
+                },
+                {
+                    "key": "view-region",
+                    "templateUrl": "templates/view-region.html"
                 }
             ],
             "services": [

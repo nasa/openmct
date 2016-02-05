@@ -166,16 +166,12 @@ define(
                         editableDomainObject = createVirtualPanel(domainObject, selectedObject);
                         if (editableDomainObject) {
                             editableDomainObject.getCapability('action').perform('edit');
-                            //navigationService.setNavigation(editableDomainObject);
                             broadcastDrop(id, event);
-                            //editableDomainObject.getCapability('status').set('editing', true);
                         }
                     } else {
                         $q.when(action && action.perform()).then(function (result) {
                             //Don't go into edit mode for folders
                             if (domainObjectType!=='folder') {
-                               // navigationService.setNavigation(editableDomainObject);
-                                //editableDomainObject.getCapability('status').set('editing', true);
                                 editableDomainObject.getCapability('action').perform('edit');
                             }
                             broadcastDrop(id, event);
