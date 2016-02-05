@@ -23,10 +23,25 @@
 
 define(['csv'], function (CSV) {
 
+    /**
+     * The `exportService` provides
+     * @param {function} saveAs a function that takes a Blob and a file name
+     *        and triggers a file download as a consequence
+     * @constructor
+     */
     function ExportService(saveAs) {
         this.saveAs = saveAs;
     }
 
+    /**
+     * Export a set of data as comma-separated values. Triggers a download
+     * using the function provided when the ExportService was instantiated.
+     *
+     * @param {Object[]} rows an array of objects containing key-value pairs,
+     *        where keys are header names, and values are values
+     * @param {ExportOptions} [options] additional parameters for the file
+     *        export
+     */
     ExportService.prototype.exportCSV = function (rows, options) {
         var headers = (options && options.headers) ||
                 (Object.keys((rows[0] || {})).sort()),
@@ -35,6 +50,16 @@ define(['csv'], function (CSV) {
             blob = new Blob([ csvText ] , { type: "text/csv" });
         this.saveAs(blob, filename);
     };
+
+    /**
+     * Additional parameters for file export.
+     * @typedef ExportOptions
+     * @property {string} filename the name of the file to write
+     * @property {string[]} headers column header names, both as they
+     *           should appear in the output and as they should be
+     *           used to look up values from the data set. Defaults
+     *           to the keys in the first object in the data set.
+     */
 
     return ExportService;
 });
