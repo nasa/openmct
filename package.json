@@ -52,5 +52,6 @@
     "url": "https://github.com/nasa/openmctweb.git"
   },
   "author": "",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "private": true
 }
