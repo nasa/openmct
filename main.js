@@ -67,6 +67,7 @@ define([
     './platform/commonUI/notification/bundle',
     './platform/containment/bundle',
     './platform/execution/bundle',
+    './platform/exporters/bundle',
     './platform/telemetry/bundle',
     './platform/features/clock/bundle',
     './platform/features/events/bundle',
