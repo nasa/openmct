@@ -68,7 +68,19 @@ define(
                 });
 
                 it("includes headers from the data set", function () {
-                    expect(csvContents[0]).toEqual([ 'a', 'b', 'c' ]);
+                    expect(csvContents[0])
+                        .toEqual(Object.keys(testRows[0]).sort());
+                });
+
+                it("includes data from the data set", function () {
+                    var headers = csvContents[0],
+                        expectedData = testRows.map(function (row) {
+                            return headers.map(function (key) {
+                                return String(row[key]);
+                            });
+                        });
+                    // Everything after header should be data
+                    expect(csvContents.slice(1)).toEqual(expectedData);
                 });
             });
 
