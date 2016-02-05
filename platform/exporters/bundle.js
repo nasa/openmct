@@ -23,8 +23,9 @@
 
 define([
     "./ExportService",
+    "saveAs",
     "legacyRegistry"
-], function (ExportService, legacyRegistry) {
+], function (ExportService, saveAs, legacyRegistry) {
     'use strict';
 
     legacyRegistry.register("platform/exporters", {
@@ -33,10 +34,7 @@ define([
                 {
                     key: "exportService",
                     implementation: function () {
-                        return new ExportService(function (blob, name) {
-                            // TODO: Replace with FileSaver.js
-                            console.log(blob, name);
-                        });
+                        return new ExportService(saveAs);
                     }
                 }
             ]

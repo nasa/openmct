@@ -16,6 +16,7 @@
     "es6-promise": "^3.0.2",
     "screenfull": "^3.0.0",
     "node-uuid": "^1.4.7",
-    "comma-separated-values": "^3.6.4"
+    "comma-separated-values": "^3.6.4",
+    "FileSaver.js": "^0.0.2"
   }
 }

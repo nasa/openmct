@@ -50,6 +50,7 @@ requirejs.config({
         "es6-promise": "bower_components/es6-promise/promise.min",
         "moment": "bower_components/moment/moment",
         "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
+        "saveAs": "bower_components/FileSaver.js/FileSaver.min",
         "screenfull": "bower_components/screenfull/dist/screenfull.min",
         "text": "bower_components/text/text",
         "uuid": "bower_components/node-uuid/uuid"
