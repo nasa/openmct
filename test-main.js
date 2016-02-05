@@ -46,6 +46,7 @@ requirejs.config({
         "legacyRegistry": "src/legacyRegistry",
         "angular": "bower_components/angular/angular.min",
         "angular-route": "bower_components/angular-route/angular-route.min",
+        "csv": "bower_components/comma-separated-values/csv.min",
         "es6-promise": "bower_components/es6-promise/promise.min",
         "moment": "bower_components/moment/moment",
         "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",

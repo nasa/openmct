@@ -19,22 +19,42 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Blob*/
+/*global define,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
-define(['csv'], function (CSV) {
+define(
+    ["./ExportService", "csv"],
+    function (ExportService, CSV) {
+        'use strict';
 
-    function ExportService(saveAs) {
-        this.saveAs = saveAs;
+        describe("ExportService", function () {
+            var mockSaveAs,
+                testRows,
+                exportService;
+
+            beforeEach(function () {
+                testRows = [
+                    { a: 1, b: 2, c: 3 },
+                    { a: 4, b: 5, c: 6 },
+                    { a: 7, b: 8, c: 9 }
+                ];
+                mockSaveAs = jasmine.createSpy('saveAs');
+                exportService = new ExportService(mockSaveAs);
+            });
+
+            describe("#exportCSV(rows)", function () {
+                beforeEach(function () {
+                    exportService.exportCSV(testRows);
+                });
+
+                it("triggers saving of a file", function () {
+                    expect(mockSaveAs).toHaveBeenCalledWith(
+                        jasmine.any(Blob),
+                        jasmine.any(String)
+                    );
+                });
+            });
+
+        });
+
     }
-
-    ExportService.prototype.exportCSV = function (rows, options) {
-        var headers = (options && options.headers) ||
-                (Object.keys((rows[0] || {})).sort()),
-            filename = (options && options.filename) || "export.csv",
-            csvText = new CSV(rows, { header: headers }).encode(),
-            blob = new Blob([ csvText ] , { type: "text/csv" });
-        this.saveAs(blob, filename);
-    };
-
-    return ExportService;
-});
+);
