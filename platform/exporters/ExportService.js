@@ -19,8 +19,22 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
+/*global define,Blob*/
 
 define(['csv'], function (CSV) {
 
+    function ExportService(saveAs) {
+        this.saveAs = saveAs;
+    }
+
+    ExportService.prototype.exportCSV = function (rows, options) {
+        var headers = (options && options.headers) ||
+                (Object.keys((rows[0] || {}).sort())),
+            filename = (options && options.filename) || "export.csv",
+            csvText = new CSV(rows, { header: headers }).encode(),
+            blob = new Blob(csvText, { type: "text/csv" });
+        this.saveAs(blob, filename);
+    };
+
+    return ExportService;
 });
