@@ -72,13 +72,26 @@ define(
          * Enter edit mode.
          */
         EditAction.prototype.perform = function () {
-            var editableObject;
+            var self = this;
             if (!this.domainObject.hasCapability("editor")) {
-                editableObject = new EditableDomainObject(this.domainObject, this.$q);
-                editableObject.getCapability('status').set('editing', true);
-                this.navigationService.setNavigation(editableObject);
+                //TODO: This is only necessary because the drop gesture is
+                // wrapping the object itself, need to refactor this later.
+                // All responsibility for switching into edit mode should be
+                // in the edit action, and not duplicated in the gesture
+                this.domainObject = new EditableDomainObject(this.domainObject, this.$q);
             }
-            //this.$location.path("/edit");
+            this.navigationService.setNavigation(this.domainObject);
+            this.domainObject.getCapability('status').set('editing', true);
+
+            //Register a listener to automatically cancel this edit action
+            //if the user navigates away from this object.
+            function cancelEditing(navigatedTo){
+                if (!navigatedTo || navigatedTo.getId() !== self.domainObject.getId()) {
+                    self.domainObject.getCapability('editor').cancel();
+                    self.navigationService.removeListener(cancelEditing);
+                }
+            }
+            this.navigationService.addListener(cancelEditing);
         };
 
         /**

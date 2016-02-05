@@ -35,7 +35,7 @@ define(
          * @constructor
          * @param $window the window
          */
-        function MCTBeforeUnload($window) {
+        function MCTBeforeUnload($window, navigationService) {
             var unloads = [],
                 oldBeforeUnload = $window.onbeforeunload;
 
@@ -57,6 +57,7 @@ define(
 
                 // Stop using this unload expression
                 function removeUnload() {
+                    navigationService.removeListener(checkNavigationEvent, "before");
                     unloads = unloads.filter(function (callback) {
                         return callback !== unload;
                     });
@@ -65,15 +66,26 @@ define(
                     }
                 }
 
-                // Show a dialog before allowing a location change
-                function checkLocationChange(event) {
+                function shouldAllowNavigation(){
                     // Get an unload message (if any)
                     var warning = unload();
                     // Prompt the user if there's an unload message
-                    if (warning && !$window.confirm(warning)) {
-                        // ...and prevent the route change if it was confirmed
+                    return !warning || $window.confirm(warning);
+                }
+
+                // Show a dialog before allowing a location change
+                function checkLocationChange(event) {
+                    if (!shouldAllowNavigation()) {
+                        // Prevent the route change if it was confirmed
                         event.preventDefault();
                     }
+                }
+
+                // Show a dialog before allowing a location change
+                function checkNavigationEvent(event) {
+                    // Return a false value to the navigationService to
+                    // indicate that the navigation event should be prevented
+                    return shouldAllowNavigation();
                 }
 
                 // If this is the first active instance of this directive,
@@ -90,6 +102,8 @@ define(
 
                 // Also handle route changes
                 scope.$on("$locationChangeStart", checkLocationChange);
+
+                navigationService.addListener(checkNavigationEvent, "before");
             }
 
             return {
