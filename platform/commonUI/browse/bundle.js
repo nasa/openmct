@@ -117,7 +117,8 @@ define([
                     "implementation": LocatorController,
                     "depends": [
                         "$scope",
-                        "$timeout"
+                        "$timeout",
+                        "objectService"
                     ]
                 },
                 {
