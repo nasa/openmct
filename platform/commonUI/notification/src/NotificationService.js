@@ -58,21 +58,23 @@ define(
          * @property {string} title The title of the message
          * @property {string} severity The importance of the message (one of
          * 'info', 'alert', or 'error' where info < alert <error)
-         * @property {number} progress The completion status of a task
+         * @property {number} [progress] The completion status of a task
          * represented numerically
-         * @property {boolean} unknownProgress a boolean indicating that the
+         * @property {boolean} [unknownProgress] a boolean indicating that the
          * progress of the underlying task is unknown. This will result in a
          * visually distinct progress bar.
-         * @property {boolean | number} autoDismiss If truthy, dialog will
+         * @property {boolean | number} [autoDismiss] If truthy, dialog will
          * be automatically minimized or dismissed (depending on severity).
          * Additionally, if the provided value is a number, it will be used
          * as the delay period before being dismissed.
-         * @property {NotificationOption} primaryOption the default user
+         * @property {boolean} [dismissable=true] If truthy, notification will
+         * include an option to dismiss it completely.
+         * @property {NotificationOption} [primaryOption] the default user
          * response to
          * this message. Will be represented as a button with the provided
          * label and action. May be used by banner notifications to display
          * only the most important option to users.
-         * @property {NotificationOption[]} options any additional
+         * @property {NotificationOption[]} [options] any additional
          * actions the user can take. Will be represented as additional buttons
          * that may or may not be available from a banner.
          * @see DialogModel
@@ -99,6 +101,8 @@ define(
          * be used for dismissing a notification. If more control is
          * required, then the minimize or dismiss functions can be called
          * individually.
+         * @property {function} onDismiss Allows listening for on dismiss
+         * events. This allows cleanup etc. when the notification is dismissed.
          */
 
         /**
@@ -113,12 +117,13 @@ define(
          * animation is shown. This animation requires some time to execute,
          * so a timeout is required before the notification is hidden
          */
-        function NotificationService($timeout, DEFAULT_AUTO_DISMISS, MINIMIZE_TIMEOUT) {
+        function NotificationService($timeout, topic, DEFAULT_AUTO_DISMISS, MINIMIZE_TIMEOUT) {
             this.notifications = [];
             this.$timeout = $timeout;
             this.highest ={ severity: "info" };
             this.DEFAULT_AUTO_DISMISS = DEFAULT_AUTO_DISMISS;
             this.MINIMIZE_TIMEOUT = MINIMIZE_TIMEOUT;
+            this.topic = topic;
 
             /*
              * A context in which to hold the active notification and a
@@ -127,14 +132,16 @@ define(
             this.active = {};
         }
 
-        /*
+        /**
          * Minimize a notification. The notification will still be available
          * from the notification list. Typically notifications with a
          * severity of 'info' should not be minimized, but rather
          * dismissed. If you're not sure which is appropriate,
          * use {@link Notification#dismissOrMinimize}
+         *
+         * @private
          */
-        function minimize (service, notification) {
+        NotificationService.prototype.minimize = function (service, notification) {
             //Check this is a known notification
             var index = service.notifications.indexOf(notification);
 
@@ -159,17 +166,19 @@ define(
                     service.setActiveNotification(service.selectNextNotification());
                 }, service.MINIMIZE_TIMEOUT);
             }
-        }
+        };
 
-        /*
+        /**
          * Completely removes a notification. This will dismiss it from the
          * message banner and remove it from the list of notifications.
          * Typically only notifications with a severity of info should be
          * dismissed. If you're not sure whether to dismiss or minimize a
          * notification, use {@link Notification#dismissOrMinimize}.
          * dismiss
+         *
+         * @private
          */
-        function dismiss (service, notification) {
+        NotificationService.prototype.dismiss = function (service, notification) {
             //Check this is a known notification
             var index = service.notifications.indexOf(notification);
 
@@ -190,19 +199,23 @@ define(
                 service.notifications.splice(index, 1);
             }
             service.setActiveNotification(service.selectNextNotification());
-        }
 
-        /*
+            this.setHighestSeverity();
+        };
+
+        /**
          * Depending on the severity of the notification will selectively
          * dismiss or minimize where appropriate.
+         *
+         * @private
          */
-        function dismissOrMinimize (notification){
+        NotificationService.prototype.dismissOrMinimize = function (notification) {
 
             //For now minimize everything, and have discussion around which
             //kind of messages should or should not be in the minimized
             //notifications list
             notification.minimize();
-        }
+        };
 
         /**
          * Returns the notification that is currently visible in the banner area
@@ -262,6 +275,24 @@ define(
         };
 
         /**
+         * @private
+         */
+        NotificationService.prototype.setHighestSeverity = function () {
+            var severity = {
+                    "info": 1,
+                    "alert": 2,
+                    "error": 3
+                };
+            this.highest.severity = this.notifications.reduce(function(previous, notification){
+                if (severity[notification.model.severity] > severity[previous]){
+                    return notification.model.severity;
+                } else {
+                    return previous;
+                }
+            }, "info");
+        };
+
+        /**
          * Notifies the user of an event. If there is a banner notification
          * already active, then it will be dismissed or minimized automatically,
          * and the provided notification displayed in its place.
@@ -274,23 +305,23 @@ define(
         NotificationService.prototype.notify = function (notificationModel) {
             var self = this,
                 notification,
-                ordinality = {
-                    "info": 1,
-                    "alert": 2,
-                    "error": 3
-                },
-                activeNotification = self.active.notification;
+                activeNotification = self.active.notification,
+                topic = this.topic();
 
             notification = {
                 model: notificationModel,
                 minimize: function() {
-                    minimize(self, notification);
+                    self.minimize(self, notification);
                 },
                 dismiss: function(){
-                    dismiss(self, notification);
+                    self.dismiss(self, notification);
+                    topic.notify();
                 },
                 dismissOrMinimize: function(){
-                    dismissOrMinimize(notification);
+                    self.dismissOrMinimize(notification);
+                },
+                onDismiss: function(callback) {
+                    topic.listen(callback);
                 }
             };
 
@@ -299,11 +330,24 @@ define(
                 notificationModel.autoDismiss = this.DEFAULT_AUTO_DISMISS;
             }
 
-            if (ordinality[notificationModel.severity.toLowerCase()] > ordinality[this.highest.severity.toLowerCase()]){
-                this.highest.severity = notificationModel.severity;
+            //Notifications support a 'dismissable' attribute. This is a
+            // convenience to support adding a 'dismiss' option to the
+            // notification for the common case of dismissing a
+            // notification. Could also be done manually by specifying an
+            // option on the model
+            if (notificationModel.dismissable !== false) {
+                notificationModel.options = notificationModel.options || [];
+                notificationModel.options.unshift({
+                    label: "Dismiss",
+                    callback: function() {
+                        notification.dismiss();
+                    }
+                });
             }
 
             this.notifications.push(notification);
+
+            this.setHighestSeverity();
 
             /*
             Check if there is already an active (ie. visible) notification

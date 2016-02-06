@@ -104,14 +104,16 @@ define(
          * persistence.
          */
         function notifyOnError(error, domainObject, notificationService, $q){
-            var errorMessage = "Unable to persist " + domainObject.getModel().name;
+            var errorMessage = "Unable to persist " + domainObject.getModel().name,
+                notification;
             if (error) {
                 errorMessage += ": " + formatError(error);
             }
 
-            notificationService.error({
+            notification = notificationService.error({
                 title: "Error persisting " + domainObject.getModel().name,
-                hint: errorMessage || "Unknown error"
+                hint: errorMessage || "Unknown error",
+                dismissable: true
             });
 
             return $q.reject(error);
