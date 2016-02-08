@@ -36,7 +36,63 @@ define([], function () {
         this.domainObject = domainObject;
     }
 
+    /**
+     * @private
+     */
+    ExportTimelineAsCSVTask.prototype.buildObjectList = function () {
+        var idSet = {},
+            objects = [];
 
+        function addObject(domainObject) {
+            var id = domainObject.getId(),
+                subtasks = [];
+
+            function addCompositionObjects() {
+                return domainObject.useCapability('composition')
+                    .then(function (childObjects) {
+                        return Promise.all(childObjects.map(addObject));
+                    });
+            }
+
+            function addRelationships() {
+                var relationship = domainObject.getCapability('relationship');
+                relationship.getRelatedObjects('modes')
+                    .then(function (modeObjects) {
+                        return Promise.all(modeObjects.map(addObject));
+                    });
+            }
+
+            if (!idSet[id]) {
+                idSet[id] = true;
+                objects.push(domainObject);
+                if (domainObject.hasCapability('composition')) {
+                    subtasks.push(addCompositionObjects());
+                }
+                if (domainObject.hasCapability('relationship')) {
+                    subtasks.push(addRelationships());
+                }
+            }
+
+            return Promise.all(subtasks);
+        }
+
+        return addObject(this.domainObject).then(function () {
+            return objects;
+        });
+    };
+
+
+    ExportTimelineAsCSVTask.prototype.run = function (progressCallback) {
+        var name = this.domainObject.getModel().name;
+
+        progressCallback({
+            title: "Preparing to export " + name
+        });
+
+        this.buildObjectList().then(function (objects) {
+
+        });
+    };
 
     return ExportTimelineAsCSVTask;
 });
