@@ -79,65 +79,23 @@ define(
 
             function doWizardSave(parent) {
                 var context = domainObject.getCapability("context"),
-                    wizard = new CreateWizard(domainObject.useCapability('type'), parent, self.policyService, domainObject.getModel());
-
-                function mergeObjects(fromObject, toObject){
-                    Object.keys(fromObject).forEach(function(key) {
-                        toObject[key] = fromObject[key];
-                    });
-                }
-
-                // Create and persist the new object, based on user
-                // input.
-                function buildObjectFromInput(formValue) {
-                    var parent = wizard.getLocation(formValue),
-                        formModel = wizard.createModel(formValue);
-
-                        formModel.location = parent.getId();
-                        //Replace domain object model with model collected
-                        // from user form.
-                        domainObject.useCapability("mutation", function(){
-                            //Replace object model with the model from the form
-                            return formModel;
-                        });
-                        return domainObject;
-                }
-
-                function getAllComposees(domainObject){
-                    return domainObject.useCapability('composition');
-                }
-
-                function addComposeesToObject(object){
-                    return function(composees){
-                        return self.$q.all(composees.map(function (composee) {
-                            return object.getCapability('composition').add(composee);
-                        })).then(resolveWith(object));
-                    };
-                }
-
-                /**
-                 * Add the composees of the 'virtual' object to the
-                 * persisted object
-                 * @param object
-                 * @returns {*}
-                 */
-                function composeNewObject(object){
-                    if (self.$q.when(object.hasCapability('composition') && domainObject.hasCapability('composition'))) {
-                        return getAllComposees(domainObject)
-                            .then(addComposeesToObject(object));
-                    }
-                }
+                    wizard = new CreateWizard(domainObject, parent, self.policyService);
 
                 return self.dialogService
-                    .getUserInput(wizard.getFormStructure(), wizard.getInitialFormValue())
-                    .then(buildObjectFromInput);
+                    .getUserInput(wizard.getFormStructure(true), wizard.getInitialFormValue())
+                    .then(function(formValue){
+                        return wizard.populateObjectFromInput(formValue, domainObject);
+                    });
             }
 
 
             function persistObject(object){
-                return  ((object.hasCapability('editor') && object.getCapability('editor').save(true)) ||
-                        object.getCapability('persistence').persist())
-                        .then(resolveWith(object));
+
+                //Persist first to mark dirty
+                return object.getCapability('persistence').persist().then(function(){
+                    //then save permanently
+                    return object.getCapability('editor').save();
+                });
             }
 
             function fetchObject(objectId){
@@ -152,7 +110,9 @@ define(
 
             function locateObjectInParent(parent){
                 parent.getCapability('composition').add(domainObject.getId());
-                return parent;
+                return parent.getCapability('persistence').persist().then(function() {
+                    return parent;
+                });
             }
 
             function doNothing() {
@@ -174,7 +134,6 @@ define(
                             .then(getParent)//Parent may have changed based
                                             // on user selection
                             .then(locateObjectInParent)
-                            .then(persistObject)
                             .then(function(){
                                 return fetchObject(domainObject.getId());
                             })

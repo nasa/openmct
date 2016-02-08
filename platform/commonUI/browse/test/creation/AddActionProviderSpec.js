@@ -22,21 +22,22 @@
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine,xit,xdescribe*/
 
 /**
- * MCTRepresentationSpec. Created by vwoeltje on 11/6/14.
+ * MCTRepresentationSpec. Created by ahenry on 01/21/14.
  */
 define(
-    ["../../src/creation/CreateActionProvider"],
-    function (CreateActionProvider) {
+    ["../../src/creation/AddActionProvider"],
+    function (AddActionProvider) {
         "use strict";
 
-        describe("The create action provider", function () {
+        describe("The add action provider", function () {
             var mockTypeService,
                 mockDialogService,
-                mockNavigationService,
                 mockPolicyService,
                 mockCreationPolicy,
+                mockCompositionPolicy,
                 mockPolicyMap = {},
                 mockTypes,
+                mockDomainObject,
                 mockQ,
                 provider;
 
@@ -67,14 +68,19 @@ define(
                     "dialogService",
                     [ "getUserInput" ]
                 );
-                mockNavigationService = jasmine.createSpyObj(
-                    "navigationService",
-                    [ "setNavigation" ]
-                );
                 mockPolicyService = jasmine.createSpyObj(
                     "policyService",
                     [ "allow" ]
                 );
+
+                mockDomainObject = jasmine.createSpyObj(
+                    "domainObject",
+                    [ "getCapability" ]
+                );
+
+                //Mocking getCapability because AddActionProvider uses the
+                // type capability of the destination object.
+                mockDomainObject.getCapability.andReturn({});
 
                 mockTypes = [ "A", "B", "C" ].map(createMockType);
 
@@ -86,45 +92,45 @@ define(
                     return mockPolicyMap[type.getName()];
                 };
 
-                mockPolicyService.allow.andCallFake(function(category, type){
-                    return category === "creation" && mockCreationPolicy(type) ? true : false;
-                });
+                mockCompositionPolicy = function(){
+                    return true;
+                };
+
+                mockPolicyService.allow.andReturn(true);
 
                 mockTypeService.listTypes.andReturn(mockTypes);
 
-                provider = new CreateActionProvider(
+                provider = new AddActionProvider(
                     mockQ,
                     mockTypeService,
-                    mockNavigationService,
+                    mockDialogService,
                     mockPolicyService
                 );
             });
 
-            it("exposes one create action per type", function () {
-                expect(provider.getActions({
-                    key: "create",
-                    domainObject: {}
-                }).length).toEqual(3);
-            });
-
-            it("exposes no non-create actions", function () {
-                expect(provider.getActions({
-                    key: "somethingElse",
-                    domainObject: {}
-                }).length).toEqual(0);
-            });
-
-            it("does not expose non-creatable types", function () {
-                // One of the types won't have the creation feature...
-                mockPolicyMap[mockTypes[0].getName()] = false;
-                // ...so it should have been filtered out.
-                expect(provider.getActions({
-                    key: "create",
-                    domainObject: {}
-                }).length).toEqual(2);
+            it("checks for creatability", function () {
+                provider.getActions({
+                    key: "add",
+                    domainObject: mockDomainObject
+                });
                 // Make sure it was creation which was used to check
                 expect(mockPolicyService.allow)
                     .toHaveBeenCalledWith("creation", mockTypes[0]);
+            });
+
+            it("checks for composability of type", function () {
+                provider.getActions({
+                    key: "add",
+                    domainObject: mockDomainObject
+                });
+
+                expect(mockPolicyService.allow).toHaveBeenCalledWith(
+                    "composition",
+                    jasmine.any(Object),
+                    jasmine.any(Object)
+                );
+
+                expect(mockDomainObject.getCapability).toHaveBeenCalledWith('type');
             });
         });
     }

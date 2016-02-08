@@ -34,6 +34,7 @@ define([
     "./src/windowing/NewTabAction",
     "./src/windowing/FullscreenAction",
     "./src/creation/CreateActionProvider",
+    "./src/creation/AddActionProvider",
     "./src/creation/CreationService",
     "./src/windowing/WindowTitler",
     'legacyRegistry'
@@ -50,6 +51,7 @@ define([
     NewTabAction,
     FullscreenAction,
     CreateActionProvider,
+    AddActionProvider,
     CreationService,
     WindowTitler,
     legacyRegistry
@@ -117,7 +119,8 @@ define([
                     "implementation": LocatorController,
                     "depends": [
                         "$scope",
-                        "$timeout"
+                        "$timeout",
+                        "objectService"
                     ]
                 },
                 {
@@ -268,6 +271,18 @@ define([
                         "$q",
                         "typeService",
                         "navigationService",
+                        "policyService"
+                    ]
+                },
+                {
+                    "key": "AddActionProvider",
+                    "provides": "actionService",
+                    "type": "provider",
+                    "implementation": AddActionProvider,
+                    "depends": [
+                        "$q",
+                        "typeService",
+                        "dialogService",
                         "policyService"
                     ]
                 },
