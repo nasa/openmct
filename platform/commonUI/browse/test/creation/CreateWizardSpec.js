@@ -35,6 +35,7 @@ define(
                 mockProperties,
                 mockPolicyService,
                 testModel,
+                mockDomainObject,
                 wizard;
 
             function createMockProperty(name) {
@@ -81,8 +82,18 @@ define(
                 mockType.getInitialModel.andReturn(testModel);
                 mockType.getProperties.andReturn(mockProperties);
 
+                mockDomainObject = jasmine.createSpyObj(
+                    'domainObject',
+                    ['getCapability', 'useCapability', 'getModel']
+                );
+
+                //Mocking the getCapability('type') call
+                mockDomainObject.getCapability.andReturn(mockType);
+                mockDomainObject.useCapability.andReturn();
+                mockDomainObject.getModel.andReturn(testModel);
+
                 wizard = new CreateWizard(
-                    mockType,
+                    mockDomainObject,
                     mockParent,
                     mockPolicyService
                 );
@@ -130,6 +141,18 @@ define(
                 });
             });
 
+            it("populates the model on the associated object", function () {
+                var formValue = {
+                    "A": "ValueA",
+                    "B": "ValueB",
+                    "C": "ValueC"
+                    },
+                    compareModel = wizard.createModel(formValue);
+                wizard.populateObjectFromInput(formValue);
+                expect(mockDomainObject.useCapability).toHaveBeenCalledWith('mutation', jasmine.any(Function));
+                expect(mockDomainObject.useCapability.mostRecentCall.args[1]()).toEqual(compareModel);
+            });
+
             it("validates selection types using policy", function () {
                 var mockDomainObject = jasmine.createSpyObj(
                         'domainObject',
@@ -139,7 +162,8 @@ define(
                         'otherType',
                         ['getKey']
                     ),
-                    structure = wizard.getFormStructure(),
+                    //Create a form structure with location
+                    structure = wizard.getFormStructure(true),
                     sections = structure.sections,
                     rows = structure.sections[sections.length - 1].rows,
                     locationRow = rows[rows.length - 1];
@@ -154,6 +178,12 @@ define(
                     mockOtherType,
                     mockType
                 );
+            });
+
+            it("creates a form model without a location if not requested", function () {
+                expect(wizard.getFormStructure(false).sections.some(function(section){
+                    return section.name === 'Location';
+                })).toEqual(false);
             });
 
 
