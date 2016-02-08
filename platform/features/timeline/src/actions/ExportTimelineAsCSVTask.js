@@ -24,74 +24,40 @@
 /**
  * Module defining ExportTimelineAsCSVTask. Created by vwoeltje on 2/8/16.
  */
-define([], function () {
+define([
+    "TimelineTraverser"
+], function (TimelineTraverser, TimelineCSVExporter) {
     "use strict";
 
     /**
      *
      * @constructor
      * @memberof {platform/features/timeline}
+     * @implements {Task}
      */
-    function ExportTimelineAsCSVTask(domainObject) {
+    function ExportTimelineAsCSVTask(exportService, domainObject) {
         this.domainObject = domainObject;
+        this.exportService = exportService;
     }
 
-    /**
-     * @private
-     */
-    ExportTimelineAsCSVTask.prototype.buildObjectList = function () {
-        var idSet = {},
-            objects = [];
+    ExportTimelineAsCSVTask.prototype.run = function (progress) {
+        var name = this.domainObject.getModel().name,
+            exportService = this.exportService;
 
-        function addObject(domainObject) {
-            var id = domainObject.getId(),
-                subtasks = [];
-
-            function addCompositionObjects() {
-                return domainObject.useCapability('composition')
-                    .then(function (childObjects) {
-                        return Promise.all(childObjects.map(addObject));
-                    });
-            }
-
-            function addRelationships() {
-                var relationship = domainObject.getCapability('relationship');
-                relationship.getRelatedObjects('modes')
-                    .then(function (modeObjects) {
-                        return Promise.all(modeObjects.map(addObject));
-                    });
-            }
-
-            if (!idSet[id]) {
-                idSet[id] = true;
-                objects.push(domainObject);
-                if (domainObject.hasCapability('composition')) {
-                    subtasks.push(addCompositionObjects());
-                }
-                if (domainObject.hasCapability('relationship')) {
-                    subtasks.push(addRelationships());
-                }
-            }
-
-            return Promise.all(subtasks);
+        function doExport(objects) {
+            var exporter = new TimelineCSVExporter(objects);
+            return exportService.exportCSV(
+                exporter.rows(),
+                exporter.options()
+            );
         }
 
-        return addObject(this.domainObject).then(function () {
-            return objects;
-        });
-    };
-
-
-    ExportTimelineAsCSVTask.prototype.run = function (progressCallback) {
-        var name = this.domainObject.getModel().name;
-
-        progressCallback({
+        progress({
             title: "Preparing to export " + name
         });
 
-        this.buildObjectList().then(function (objects) {
-
-        });
+        return new TimelineTraverser().buildObjectList()
+            .then(doExport);
     };
 
     return ExportTimelineAsCSVTask;
