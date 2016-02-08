@@ -84,6 +84,8 @@ define(
          *        templates
          * @param element the jqLite-wrapped element into which templates
          *        should be inserted
+         * @param {TemplateDefinition} extensionDefinition the definition
+         *        of the template/representation/view to display initially
          * @returns {Function} a function which can be called with a template's
          *          extension definition to switch templates, or `undefined`
          *          to remove.
