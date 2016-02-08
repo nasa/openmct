@@ -15,6 +15,7 @@
 
 # Build output
 target
+dist
 
 # Mac OS X Finder
 .DS_Store
@@ -22,8 +23,9 @@ target
 # Closed source libraries
 closed-lib
 
-# Node dependencies
+# Node, Bower dependencies
 node_modules
+bower_components
 
 # Protractor logs
 protractor/logs

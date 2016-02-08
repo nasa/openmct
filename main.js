@@ -24,12 +24,24 @@
 requirejs.config({
     "paths": {
         "legacyRegistry": "src/legacyRegistry",
-        "angular": "platform/framework/lib/angular.min",
-        "moment": 'platform/telemetry/lib/moment.min'
+        "angular": "bower_components/angular/angular.min",
+        "angular-route": "bower_components/angular-route/angular-route.min",
+        "es6-promise": "bower_components/es6-promise/promise.min",
+        "moment": "bower_components/moment/moment",
+        "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
+        "screenfull": "bower_components/screenfull/dist/screenfull.min",
+        "text": "bower_components/text/text",
+        "uuid": "bower_components/node-uuid/uuid"
     },
     "shim": {
         "angular": {
             "exports": "angular"
+        },
+        "angular-route": {
+            "deps": [ "angular" ]
+        },
+        "moment-duration-format": {
+            "deps": [ "moment" ]
         }
     }
 });
@@ -77,5 +89,11 @@ define([
     './example/generator/bundle'
 ], function (Main, legacyRegistry) {
     'use strict';
-    new Main().run(legacyRegistry);
+
+    return {
+        legacyRegistry: legacyRegistry,
+        run: function () {
+            return new Main().run(legacyRegistry);
+        }
+    };
 });

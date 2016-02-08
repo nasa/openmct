@@ -44,5 +44,9 @@ define(function () {
         return Object.keys(this.bundles);
     };
 
+    BundleRegistry.prototype.remove = function (path) {
+        delete this.bundles[path];
+    };
+
     return BundleRegistry;
 });

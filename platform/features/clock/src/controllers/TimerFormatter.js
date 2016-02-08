@@ -21,16 +21,8 @@
  *****************************************************************************/
 /*global define,requirejs*/
 
-requirejs.config({
-    shim: {
-        'platform/features/clock/lib/moment-duration-format': {
-            deps: [ 'moment' ]
-        }
-    }
-});
-
 define(
-    ['moment', '../../lib/moment-duration-format'],
+    ['moment', 'moment-duration-format'],
     function (moment) {
         "use strict";
 

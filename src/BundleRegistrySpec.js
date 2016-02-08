@@ -68,6 +68,21 @@ define(['./BundleRegistry'], function (BundleRegistry) {
                 expect(bundleRegistry.get(testPath))
                     .toBe(testBundleDef);
             });
+
+            describe("and then removed", function () {
+                beforeEach(function () {
+                    bundleRegistry.remove(testPath);
+                });
+
+                it("appears empty again", function () {
+                    expect(bundleRegistry.list()).toEqual([]);
+                });
+
+                it("does not contain the removed bundle", function () {
+                    expect(bundleRegistry.contains(testPath))
+                        .toBe(false);
+                });
+            });
         });
 
     });

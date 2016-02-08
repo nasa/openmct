@@ -38,13 +38,32 @@ Object.keys(window.__karma__.files).forEach(function(file) {
 // Force es6-promise to load.
 allTestFiles.unshift('es6-promise');
 
-require.config({
+requirejs.config({
     // Karma serves files from the basePath defined in karma.conf.js
     baseUrl: '/base',
 
-    paths: {
-        'es6-promise': 'platform/framework/lib/es6-promise-2.0.0.min',
-        'moment': 'platform/telemetry/lib/moment.min'
+    "paths": {
+        "legacyRegistry": "src/legacyRegistry",
+        "angular": "bower_components/angular/angular.min",
+        "angular-route": "bower_components/angular-route/angular-route.min",
+        "es6-promise": "bower_components/es6-promise/promise.min",
+        "moment": "bower_components/moment/moment",
+        "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
+        "screenfull": "bower_components/screenfull/dist/screenfull.min",
+        "text": "bower_components/text/text",
+        "uuid": "bower_components/node-uuid/uuid"
+    },
+
+    "shim": {
+        "angular": {
+            "exports": "angular"
+        },
+        "angular-route": {
+            "deps": [ "angular" ]
+        },
+        "moment-duration-format": {
+            "deps": [ "moment" ]
+        }
     },
 
     // dynamically load all test files

@@ -22,8 +22,8 @@
 /*global define,moment*/
 
 define(
-    ["../../lib/moment.min"],
-    function () {
+    ["moment"],
+    function (moment) {
         "use strict";
 
         var DATE_FORMAT = "YYYY-MM-DD";

@@ -25,7 +25,7 @@
  * Module defining FullscreenAction. Created by vwoeltje on 11/18/14.
  */
 define(
-    ["../../lib/screenfull.min"],
+    ["screenfull"],
     function () {
         "use strict";
 
