@@ -19,12 +19,12 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div ng-controller="RegionController as regionController">
-    <div ng-repeat="part in regions.inspector.parts">
+<div ng-controller="InspectorController">
+    <div ng-repeat="region in regions">
         <mct-representation
-                key="part.content.key"
+                key="region.content.key"
                 mct-object="domainObject"
                 ng-model="ngModel">
         </mct-representation>
     </div>
-</div><!--/ PaneController -->
+</div>

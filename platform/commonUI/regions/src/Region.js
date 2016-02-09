@@ -34,13 +34,13 @@ define(
          */
 
         /**
-         * @typeDef {object} RegionPart
+         * @typeDef {object} RegionConfiguration
          * @property {string} name A unique name for this region part
-         * @property {PartContents} content the details of the region part
-         * being defined
-         * @property {Array<string>} [modes] the modes that this region part
+         * @property {PartContents} [content] the details of the region being
+         * defined
+         * @property {Array<string>} [modes] the modes that this region
          * should be included in. Options are 'edit' and 'browse'. By
-         * default, will be included in both. Inclusion of region parts is
+         * default, will be included in both. Inclusion of regions is
          * determined by policies of category 'region'. By default, the
          * {EditableRegionPolicy} will be applied.
          * @memberOf platform/commonUI/regions
@@ -54,40 +54,45 @@ define(
          * @abstract
          * @constructor
          */
-        function Region() {
-            this.parts = [];
+        function Region(configuration) {
+            configuration = configuration || {};
+            this.name = configuration.name;
+            this.content = configuration.content;
+            this.modes = configuration.modes;
+
+            this.regions = [];
         }
 
         /**
-         * Adds a part to this region.
-         * @param {RegionPart} part the part to add
-         * @param {number} [index] the position to insert the part. By default
+         * Adds a sub-region to this region.
+         * @param {Region} region the part to add
+         * @param {number} [index] the position to insert the region. By default
          * will add to the end
          */
-        Region.prototype.addPart = function (part, index){
+        Region.prototype.addRegion = function (region, index){
             if (index) {
-                this.parts.splice(index, 0, part);
+                this.regions.splice(index, 0, region);
             } else {
-                this.parts.push(part);
+                this.regions.push(region);
             }
         };
 
         /**
-         * Removes a part from this region.
-         * @param {RegionPart | number | strnig} part The region part to
-         * remove. If a number, will remove the part at that index. If a
-         * string, will remove the part with the matching name. If an
+         * Removes a sub-region from this region.
+         * @param {Region | number | strnig} region The region to
+         * remove. If a number, will remove the region at that index. If a
+         * string, will remove the region with the matching name. If an
          * object, will attempt to remove that object from the Region
          */
-        Region.prototype.removePart = function (part){
-            if (typeof part === 'number') {
-                this.parts.splice(part, 1);
-            } else if (typeof part === 'string'){
-                this.parts = this.parts.filter(function(thisPart) {
-                    return thisPart.name !== part;
+        Region.prototype.removeRegion = function (region){
+            if (typeof region === 'number') {
+                this.regions.splice(region, 1);
+            } else if (typeof region === 'string'){
+                this.regions = this.regions.filter(function(thisRegion) {
+                    return thisRegion.name !== region;
                 });
             } else {
-                this.parts.splice(this.parts.indexOf(part), 1);
+                this.regions.splice(this.regions.indexOf(region), 1);
             }
         };
 

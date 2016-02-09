@@ -22,11 +22,11 @@
 /*global define*/
 
 define([
-    './src/RegionController',
+    './src/InspectorController',
     './src/EditableRegionPolicy',
     'legacyRegistry'
 ], function (
-    RegionController,
+    InspectorController,
     EditableRegionPolicy,
     legacyRegistry
 ) {
@@ -36,8 +36,8 @@ define([
         "extensions": {
             "controllers": [
                 {
-                    "key": "RegionController",
-                    "implementation": RegionController,
+                    "key": "InspectorController",
+                    "implementation": InspectorController,
                     "depends": [
                         "$scope",
                         "policyService"

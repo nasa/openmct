@@ -47,67 +47,26 @@ define(
          */
         function PlotOptionsController($scope, topic) {
 
-            var self = this,
-                domainObject = $scope.domainObject,
-                composition,
-                mutationListener,
-                formListener,
-                configuration = domainObject.getModel().configuration || {};
-
+            var self = this;
+            this.$scope = $scope;
+            this.domainObject = $scope.domainObject;
+            this.configuration = this.domainObject.getModel().configuration || {};
             this.plotOptionsForm = new PlotOptionsForm(topic);
+            this.composition = [];
 
             /*
-             * Determine whether the changes to the model that triggered a
-             * mutation event were purely compositional.
+             Listen for changes to the domain object and update the object's
+             children.
              */
-            function hasCompositionChanged(oldComposition, newComposition){
-                // Framed slightly strangely, but the boolean logic is
-                // easier to follow for the unchanged case.
-                var isUnchanged = oldComposition === newComposition ||
-                        (
-                            oldComposition.length === newComposition.length &&
-                            oldComposition.every( function (currentValue, index) {
-                                return newComposition[index] && currentValue === newComposition[index];
-                            })
-                        );
-                return !isUnchanged;
-            }
+            this.mutationListener = this.domainObject.getCapability('mutation').listen(function(model) {
+                if (self.hasCompositionChanged(self.composition, model.composition)) {
+                    self.updateChildren();
+                }
+            });
 
-            /*
-             Default the plot options model
-             */
-            function defaultConfiguration() {
-                configuration.plot = configuration.plot || {};
-                configuration.plot.xAxis = configuration.plot.xAxis || {};
-                configuration.plot.yAxis = configuration.plot.yAxis || {}; // y-axes will be associative array keyed on axis key
-                configuration.plot.series = configuration.plot.series || {}; // series will be associative array keyed on sub-object id
-                $scope.configuration = configuration;
-            }
-
-            /*
-             When a child is added to, or removed from a plot, update the
-             plot options model
-             */
-            function updateChildren() {
-                domainObject.useCapability('composition').then(function(children){
-                    $scope.children = children;
-                    composition = domainObject.getModel().composition;
-                    children.forEach(function(child){
-                        configuration.plot.series[child.getId()] = configuration.plot.series[child.getId()] || {};
-                    });
-                });
-            }
-
-            /*
-             On changes to the form, update the configuration on the domain
-             object
-             */
-            function updateConfiguration() {
-                domainObject.useCapability('mutation', function(model){
-                    model.configuration = model.configuration || {};
-                    model.configuration.plot = configuration.plot;
-                });
-            }
+            this.formListener = this.plotOptionsForm.listen(function(value){
+                self.updateConfiguration(value);
+            });
 
             /*
              Set form structures on scope
@@ -116,28 +75,70 @@ define(
             $scope.xAxisForm = this.plotOptionsForm.xAxisForm;
             $scope.yAxisForm = this.plotOptionsForm.yAxisForm;
 
-            /*
-             Listen for changes to the domain object and update the object's
-             children.
-             */
-            mutationListener = domainObject.getCapability('mutation').listen(function(model) {
-                if (hasCompositionChanged(composition, model.composition)) {
-                    updateChildren();
-                }
-            });
-
-            formListener = this.plotOptionsForm.listen(updateConfiguration);
-
-            defaultConfiguration();
-            updateChildren();
-
             $scope.$on("$destroy", function() {
                 //Clean up any listeners on destruction of controller
-                mutationListener();
-                formListener();
+                self.mutationListener();
+                self.formListener();
             });
 
+            this.defaultConfiguration();
+            this.updateChildren();
         }
+
+        /*
+         * Determine whether the changes to the model that triggered a
+         * mutation event were purely compositional.
+         */
+        PlotOptionsController.prototype.hasCompositionChanged = function(oldComposition, newComposition){
+            // Framed slightly strangely, but the boolean logic is
+            // easier to follow for the unchanged case.
+            var isUnchanged = oldComposition === newComposition ||
+                    (
+                        oldComposition.length === newComposition.length &&
+                        oldComposition.every( function (currentValue, index) {
+                            return newComposition[index] && currentValue === newComposition[index];
+                        })
+                    );
+            return !isUnchanged;
+        };
+
+        /*
+         Default the plot options model
+         */
+        PlotOptionsController.prototype.defaultConfiguration = function () {
+            this.configuration.plot = this.configuration.plot || {};
+            this.configuration.plot.xAxis = this.configuration.plot.xAxis || {};
+            this.configuration.plot.yAxis = this.configuration.plot.yAxis || {}; // y-axes will be associative array keyed on axis key
+            this.configuration.plot.series = this.configuration.plot.series || {}; // series will be associative array keyed on sub-object id
+            this.$scope.configuration = this.configuration;
+        };
+
+        /*
+         When a child is added to, or removed from a plot, update the
+         plot options model
+         */
+        PlotOptionsController.prototype.updateChildren = function() {
+            var self = this;
+            this.domainObject.useCapability('composition').then(function(children){
+                self.$scope.children = children;
+                self.composition = self.domainObject.getModel().composition;
+                children.forEach(function(child){
+                    self.configuration.plot.series[child.getId()] = self.configuration.plot.series[child.getId()] || {};
+                });
+            });
+        };
+
+            /*
+             On changes to the form, update the configuration on the domain
+             object
+             */
+        PlotOptionsController.prototype.updateConfiguration = function() {
+            var self = this;
+            this.domainObject.useCapability('mutation', function(model){
+                model.configuration = model.configuration || {};
+                model.configuration.plot = self.configuration.plot;
+            });
+        };
 
         return PlotOptionsController;
     }

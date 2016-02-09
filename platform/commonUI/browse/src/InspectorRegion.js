@@ -36,7 +36,7 @@ define(
          * @constructor
          */
         function InspectorRegion() {
-            Region.call(this);
+            Region.call(this, {'name': 'Inspector'});
 
             this.buildRegion();
         }
@@ -48,9 +48,9 @@ define(
          * @private
          */
         InspectorRegion.prototype.buildRegion = function() {
-            var metadataPart = {
-                name: 'properties-location',
-                title: 'Properties and Location',
+            var metadataRegion = {
+                name: 'metadata',
+                title: 'Metadata Region',
                 // Which modes should the region part be visible in? If
                 // nothing provided here, then assumed that part is visible
                 // in both. The visibility or otherwise of a region part
@@ -61,7 +61,7 @@ define(
                     key: 'object-properties'
                 }
             };
-            this.addPart(metadataPart, 0);
+            this.addRegion(new Region(metadataRegion), 0);
         };
 
         return InspectorRegion;

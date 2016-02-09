@@ -22,17 +22,17 @@
 /*global define,Promise*/
 
 define(
-    [],
-    function () {
+    ['../../browse/src/InspectorRegion'],
+    function (InspectorRegion) {
         "use strict";
 
         /**
-         * The RegionController adds region data for a domain object's type
+         * The InspectorController adds region data for a domain object's type
          * to the scope.
          *
          * @constructor
          */
-        function RegionController($scope, policyService) {
+        function InspectorController($scope, policyService) {
             var domainObject = $scope.domainObject,
                 typeCapability = domainObject.getCapability('type');
 
@@ -41,21 +41,16 @@ define(
              * @param regions
              * @returns {{}}
              */
-            function filterParts(regions) {
+            function filterRegions(inspector) {
                 //Dupe so we're not modifying the type definition.
-                var filteredRegions = {};
-                Object.keys(regions).forEach(function(regionName) {
-                    filteredRegions[regionName] = Object.create(regions[regionName]);
-                    filteredRegions[regionName].parts = (regions[regionName].parts || []).filter(function(part){
-                       return policyService.allow('region', part, domainObject);
-                    });
+                return inspector.regions && inspector.regions.filter(function(region) {
+                    return policyService.allow('region', region, domainObject);
                 });
-                return filteredRegions;
             }
 
-            $scope.regions = filterParts(typeCapability.getDefinition().regions);
+            $scope.regions = filterRegions(typeCapability.getDefinition().inspector || new InspectorRegion());
         }
 
-        return RegionController;
+        return InspectorController;
     }
 );

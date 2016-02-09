@@ -22,11 +22,11 @@
 /*global define,describe,it,expect,beforeEach,waitsFor,jasmine */
 
 define(
-    ['../src/RegionController'],
-    function (RegionController) {
+    ['../src/InspectorController'],
+    function (InspectorController) {
         "use strict";
 
-        describe("The region controller ", function () {
+        describe("The inspector controller ", function () {
             var mockScope,
                 mockDomainObject,
                 mockTypeCapability,
@@ -36,14 +36,12 @@ define(
 
             beforeEach(function(){
                 mockTypeDefinition = {
-                    regions:
+                    inspector:
                         {
-                            'regionOne': {
-                                'parts': [
-                                    {'name': 'Part One'},
-                                    {'name': 'Part Two'}
-                                ]
-                            }
+                            'regions': [
+                                {'name': 'Part One'},
+                                {'name': 'Part Two'}
+                            ]
                         }
                 };
 
@@ -68,14 +66,14 @@ define(
 
             it("filters out regions disallowed by region policy", function() {
                 mockPolicyService.allow.andReturn(false);
-                controller = new RegionController(mockScope, mockPolicyService);
-                expect(mockScope.regions.regionOne.parts.length).toBe(0);
+                controller = new InspectorController(mockScope, mockPolicyService);
+                expect(mockScope.regions.length).toBe(0);
             });
 
             it("does not filter out regions allowed by region policy", function() {
                 mockPolicyService.allow.andReturn(true);
-                controller = new RegionController(mockScope, mockPolicyService);
-                expect(mockScope.regions.regionOne.parts.length).toBe(2);
+                controller = new InspectorController(mockScope, mockPolicyService);
+                expect(mockScope.regions.length).toBe(2);
             });
         });
     }

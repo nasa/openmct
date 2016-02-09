@@ -36,7 +36,6 @@ define([
     "./src/creation/CreateActionProvider",
     "./src/creation/CreationService",
     "./src/windowing/WindowTitler",
-    "./src/TypeRegionDecorator",
     'legacyRegistry'
 ], function (
     BrowseController,
@@ -53,7 +52,6 @@ define([
     CreateActionProvider,
     CreationService,
     WindowTitler,
-    TypeRegionDecorator,
     legacyRegistry
 ) {
     "use strict";
@@ -290,11 +288,6 @@ define([
                         "$q",
                         "$log"
                     ]
-                },
-                {
-                    "provides": "typeService",
-                    "type": "decorator",
-                    "implementation": TypeRegionDecorator
                 }
             ],
             "runs": [

@@ -55,16 +55,16 @@ define(
                 expect(plotOptionsForm.plotSeriesForm).toBeDefined();
             });
 
-            it("uses a topic to register listeners and inform them when a" +
+            it("uses a topic to register a listener and inform them when a" +
                 " form value changes", function () {
                 var changedValue = 'changedValue';
 
-                expect(plotOptionsForm.xAxisForm.sections[0].rows[0].onchange).toBeDefined();
+                expect(plotOptionsForm.xAxisForm.onchange).toBeDefined();
 
                 plotOptionsForm.listen(listener);
                 expect(mockTopicObject.listen).toHaveBeenCalledWith(listener);
 
-                plotOptionsForm.xAxisForm.sections[0].rows[0].onchange(changedValue);
+                plotOptionsForm.xAxisForm.onchange(changedValue);
                 expect(mockTopicObject.notify).toHaveBeenCalledWith(changedValue);
             });
 

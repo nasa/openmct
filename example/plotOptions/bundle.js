@@ -23,10 +23,12 @@
 
 define([
     'legacyRegistry',
-    '../../platform/commonUI/browse/src/InspectorRegion'
+    '../../platform/commonUI/browse/src/InspectorRegion',
+    '../../platform/commonUI/regions/src/Region'
 ], function (
     legacyRegistry,
-    InspectorRegion
+    InspectorRegion,
+    Region
 ) {
     "use strict";
 
@@ -45,22 +47,22 @@ define([
       * to the same representation, but a different key could be used here to
       * include a customized representation for edit mode.
       */
-        plotOptionsBrowsePart = {
+        plotOptionsBrowseRegion = new Region({
             name: "plot-options",
             title: "Plot Options",
             modes: ['browse'],
             content: {
                 key: "plot-options-browse"
             }
-        },
-        plotOptionsEditPart = {
+        }),
+        plotOptionsEditRegion = new Region({
             name: "plot-options",
             title: "Plot Options",
             modes: ['edit'],
             content: {
                 key: "plot-options-browse"
             }
-        };
+        });
 
     /**
      * Both parts are added, and policies of type 'region' will determine
@@ -68,8 +70,8 @@ define([
      * provided which will check the 'modes' attribute of the region part
      * definition.
      */
-    plotInspector.addPart(plotOptionsBrowsePart);
-    plotInspector.addPart(plotOptionsEditPart);
+    plotInspector.addRegion(plotOptionsBrowseRegion);
+    plotInspector.addRegion(plotOptionsEditRegion);
 
     legacyRegistry.register("example/plotType", {
         "name": "Plot Type",
@@ -93,9 +95,7 @@ define([
                     "model": {
                         "composition": []
                     },
-                    "regions": {
-                        "inspector": plotInspector
-                    },
+                    "inspector": plotInspector,
                     "telemetry": {
                         "source": "generator",
                         "domains": [
