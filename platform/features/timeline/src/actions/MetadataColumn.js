@@ -22,6 +22,8 @@
 /*global define*/
 
 define([], function () {
+    "use strict";
+
     function MetadataColumn(property) {
         this.property = property;
     }
@@ -38,4 +40,6 @@ define([], function () {
             });
         return property ? property.value : "";
     };
+
+    return MetadataColumn;
 });

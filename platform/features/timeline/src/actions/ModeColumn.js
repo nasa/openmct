@@ -22,6 +22,8 @@
 /*global define*/
 
 define([], function () {
+    "use strict";
+
     function ModeColumn(index) {
         this.index = index;
     }
@@ -35,4 +37,6 @@ define([], function () {
             composition = (model.relationships || {}).modes || [];
         return (composition[this.index]) || "";
     };
+
+    return ModeColumn;
 });
