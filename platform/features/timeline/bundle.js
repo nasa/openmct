@@ -22,6 +22,7 @@
 /*global define*/
 
 define([
+    "./src/actions/ExportTimelineAsCSVAction",
     "./src/controllers/TimelineController",
     "./src/controllers/TimelineGraphController",
     "./src/controllers/TimelineDateTimeController",
@@ -40,6 +41,7 @@ define([
     "./src/services/ObjectLoader",
     'legacyRegistry'
 ], function (
+    ExportTimelineAsCSVAction,
     TimelineController,
     TimelineGraphController,
     TimelineDateTimeController,
@@ -65,6 +67,15 @@ define([
         "description": "Resources, templates, CSS, and code for Timelines.",
         "resources": "res",
         "extensions": {
+            "actions": [
+                {
+                    "key": "timeline.export",
+                    "name": "Export Timeline as CSV",
+                    "category": "contextual",
+                    "implementation": ExportTimelineAsCSVAction,
+                    "depends": [ "exportService" ]
+                }
+            ],
             "constants": [
                 {
                     "key": "TIMELINE_MINIMUM_DURATION",

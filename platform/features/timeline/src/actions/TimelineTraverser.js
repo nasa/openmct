@@ -22,6 +22,7 @@
 /*global define,Promise*/
 
 define([], function () {
+    "use strict";
 
     function TimelineTraverser(domainObject) {
         this.domainObject = domainObject;

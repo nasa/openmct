@@ -24,13 +24,17 @@
 define(["./ExportTimelineAsCSVTask"], function (ExportTimelineAsCSVTask) {
     'use strict';
 
-    function ExportTimelineAsCSVAction(taskService, context) {
-        this.task = new ExportTimelineAsCSVTask(context.domainObject);
-        this.taskService = taskService;
+    function ExportTimelineAsCSVAction(exportService, context) {
+        this.task = new ExportTimelineAsCSVTask(
+            exportService,
+            context.domainObject
+        );
+        //this.taskService = taskService;
     }
 
     ExportTimelineAsCSVAction.prototype.perform = function () {
-        return this.taskService.run(this.task);
+        return this.task.run();
+        //return this.taskService.run(this.task);
     };
 
     ExportTimelineAsCSVAction.appliesTo = function (context) {

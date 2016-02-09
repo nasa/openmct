@@ -22,9 +22,9 @@
 /*global define,Promise*/
 
 define([
-    "ModeColumn",
-    "CompositionColumn",
-    "MetadataColumn"
+    "./ModeColumn",
+    "./CompositionColumn",
+    "./MetadataColumn"
 ], function (ModeColumn, CompositionColumn, MetadataColumn) {
     'use strict';
 

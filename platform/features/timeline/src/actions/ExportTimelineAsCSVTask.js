@@ -25,7 +25,8 @@
  * Module defining ExportTimelineAsCSVTask. Created by vwoeltje on 2/8/16.
  */
 define([
-    "TimelineTraverser"
+    "./TimelineTraverser",
+    "./TimelineCSVExporter"
 ], function (TimelineTraverser, TimelineCSVExporter) {
     "use strict";
 
