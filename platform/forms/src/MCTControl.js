@@ -97,6 +97,8 @@ define(
                     // Set of choices (if any)
                     options: "=",
 
+                    ngChange: "&",
+
                     // Structure (subtree of Form Structure)
                     structure: "=",
 

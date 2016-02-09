@@ -46,6 +46,7 @@ define(
              */
             this.xAxisForm = {
                 'name':'x-axis',
+                'onchange': onchange,
                 'sections': [{
                     'name': 'x-axis',
                     'rows': [
@@ -53,7 +54,6 @@ define(
                             'name': 'Domain',
                             'control': 'select',
                             'key': 'key',
-                            'onchange': onchange,
                             'options': [
                                 {'name':'scet', 'value': 'scet'},
                                 {'name':'sclk', 'value': 'sclk'},
@@ -65,6 +65,7 @@ define(
 
             this.yAxisForm = {
                 'name':'y-axis',
+                'onchange': onchange,
                 'sections': [{
                 // Will need to be repeated for each y-axis, with a
                 // distinct name for each. Ideally the name of the axis
@@ -74,28 +75,24 @@ define(
                     {
                         'name': 'Autoscale',
                         'control': 'checkbox',
-                        'key': 'autoscale',
-                        'onchange': onchange
+                        'key': 'autoscale'
                     },
                     {
                         'name': 'Min',
                         'control': 'textfield',
                         'key': 'min',
-                        'pattern': '[0-9]',
-                        'onchange': onchange
+                        'pattern': '[0-9]'
                     },
                     {
                         'name': 'Max',
                         'control': 'textfield',
                         'key': 'max',
-                        'pattern': '[0-9]',
-                        'onchange': onchange
+                        'pattern': '[0-9]'
                     },
                     {
                         'name': 'Range',
                         'control': 'select',
                         'key': 'key',
-                        'onchange': onchange,
                         'options': [
                             {'name':'eu', 'value': 'eu'},
                             {'name':'dn', 'value': 'dn'},
@@ -107,14 +104,14 @@ define(
             };
             this.plotSeriesForm = {
                 'name':'Series Options',
+                'onchange': onchange,
                 'sections': [
                     {
                         rows: [
                         {
                             'name': 'Color',
                             'control': 'color',
-                            'key': 'color',
-                            'onchange': onchange
+                            'key': 'color'
                         }]
                     },
                     {
@@ -122,8 +119,7 @@ define(
                             {
                                 'name': 'Markers',
                                 'control': 'checkbox',
-                                'key': 'markers',
-                                'onchange': onchange
+                                'key': 'markers'
                             }
                         ]
                     },
@@ -133,22 +129,19 @@ define(
                                 'name': 'No Line',
                                 'control': 'radio',
                                 'key': 'lineType',
-                                'value': 'noLine',
-                                'onchange': onchange
+                                'value': 'noLine'
                             },
                             {
                                 'name': 'Step Line',
                                 'control': 'radio',
                                 'key': 'lineType',
-                                'value': 'stepLine',
-                                'onchange': onchange
+                                'value': 'stepLine'
                             },
                             {
                                 'name': 'Linear Line',
                                 'control': 'radio',
                                 'key': 'lineType',
-                                'value': 'linearLine',
-                                'onchange': onchange
+                                'value': 'linearLine'
                             }
                         ]
                     }

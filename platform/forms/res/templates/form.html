@@ -41,7 +41,7 @@
                             <mct-control key="row.control"
                                          ng-model="ngModel"
                                          ng-required="row.required"
-                                         ng-change="row.onchange"
+                                         ng-change="row.onchange(ngModel[row.key]); structure.onchange(ngModel)"
                                          ng-pattern="getRegExp(row.pattern)"
                                          options="row.options"
                                          structure="row"
