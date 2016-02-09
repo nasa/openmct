@@ -24,17 +24,17 @@
 define([], function () {
     "use strict";
 
-    function MetadataColumn(property) {
-        this.property = property;
+    function MetadataColumn(propertyName) {
+        this.propertyName = propertyName;
     }
 
     MetadataColumn.prototype.name = function () {
-        return this.property.name;
+        return this.propertyName;
     };
 
     MetadataColumn.prototype.value = function (domainObject) {
         var properties = domainObject.useCapability('metadata'),
-            name = this.property.name,
+            name = this.propertyName,
             property = properties.find(function (p) {
                 return p.name === name;
             });

@@ -64,7 +64,7 @@ define([
         }
 
         for (i = 0; i < maxRelationships; i += 1) {
-            columns.push(new RelationshipColumn(i));
+            columns.push(new ModeColumn(i));
         }
 
         this.domainObjects = domainObjects;

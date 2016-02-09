@@ -53,7 +53,8 @@ define([
             );
         }
 
-        return new TimelineTraverser().buildObjectList()
+        return new TimelineTraverser(this.domainObject)
+            .buildObjectList()
             .then(doExport);
     };
 
