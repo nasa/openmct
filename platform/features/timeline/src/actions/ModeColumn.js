@@ -19,42 +19,20 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
+/*global define*/
 
-/**
- * Module defining ExportTimelineAsCSVTask. Created by vwoeltje on 2/8/16.
- */
-define([
-    "TimelineTraverser"
-], function (TimelineTraverser, TimelineCSVExporter) {
-    "use strict";
-
-    /**
-     *
-     * @constructor
-     * @memberof {platform/features/timeline}
-     * @implements {Task}
-     */
-    function ExportTimelineAsCSVTask(exportService, domainObject) {
-        this.domainObject = domainObject;
-        this.exportService = exportService;
+define([], function () {
+    function ModeColumn(index) {
+        this.index = index;
     }
 
-    ExportTimelineAsCSVTask.prototype.run = function (progress) {
-        var name = this.domainObject.getModel().name,
-            exportService = this.exportService;
-
-        function doExport(objects) {
-            var exporter = new TimelineCSVExporter(objects);
-            return exportService.exportCSV(
-                exporter.rows(),
-                exporter.options()
-            );
-        }
-
-        return new TimelineTraverser().buildObjectList()
-            .then(doExport);
+    ModeColumn.prototype.name = function () {
+        return "Mode " + (this.index + 1);
     };
 
-    return ExportTimelineAsCSVTask;
+    ModeColumn.prototype.value = function (domainObject) {
+        var model = domainObject.getModel(),
+            composition = (model.relationships || {}).modes || [];
+        return (composition[this.index]) || "";
+    };
 });
