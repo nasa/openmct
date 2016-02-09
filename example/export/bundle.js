@@ -21,50 +21,11 @@
  *****************************************************************************/
 /*global define*/
 
-define(['legacyRegistry'], function (legacyRegistry) {
+define([
+    'legacyRegistry',
+    './ExportTelemetryAsCSVAction'
+], function (legacyRegistry, ExportTelemetryAsCSVAction) {
     "use strict";
-
-    function ExportTelemetryAsCSVAction(exportService, context) {
-        this.exportService = exportService;
-        this.context = context;
-    }
-
-    ExportTelemetryAsCSVAction.prototype.perform = function () {
-        var context = this.context,
-            domainObject = context.domainObject,
-            telemetry = domainObject.getCapability("telemetry"),
-            metadata = telemetry.getMetadata(),
-            domains = metadata.domains,
-            ranges = metadata.ranges,
-            exportService = this.exportService;
-
-        function getName(domainOrRange) {
-            return domainOrRange.name;
-        }
-
-        telemetry.requestData({}).then(function (series) {
-            var headers = domains.map(getName).concat(ranges.map(getName)),
-                rows = [],
-                row,
-                i;
-            for (i = 0; i < series.getPointCount(); i += 1) {
-                row = {};
-                domains.forEach(function (domain) {
-                    row[domain.name] = series.getDomainValue(i, domain.key);
-                });
-                ranges.forEach(function (range) {
-                    row[range.name] = series.getRangeValue(i, range.key);
-                });
-                rows.push(row);
-            }
-            exportService.exportCSV(rows, { headers: headers });
-        });
-    };
-
-    ExportTelemetryAsCSVAction.appliesTo = function (context) {
-        return context.domainObject &&
-                context.domainObject.hasCapability("telemetry");
-    };
 
     legacyRegistry.register("example/export", {
         "name": "Example of using CSV Export",
