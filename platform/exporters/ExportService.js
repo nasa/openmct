@@ -21,13 +21,28 @@
  *****************************************************************************/
 /*global define,Blob*/
 
+/**
+ * @namespace platform/exporters
+ */
 define(['csv'], function (CSV) {
 
     /**
-     * The `exportService` provides
-     * @param {function} saveAs a function that takes a Blob and a file name
-     *        and triggers a file download as a consequence
+     * Callback used to initiate saving files from the export service;
+     * typical implementation is
+     * [FileSaver.js](https://github.com/eligrey/FileSaver.js/).
+     * @callback platform/exporters.ExportService~saveAs
+     * @param {Blob} blob the contents of the file to export
+     * @param {string} filename the name of the file to export
+     */
+
+
+    /**
+     * The `exportService` provides a means to initiate downloads of
+     * structured data in the CSV format.
+     * @param {platform/exporters.ExportService~saveAs} saveAs function
+     *        used to initiate saving files
      * @constructor
+     * @memberof platform/exporters
      */
     function ExportService(saveAs) {
         this.saveAs = saveAs;
