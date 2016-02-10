@@ -126,7 +126,14 @@ define(
          * @param {DomainObject} domainObject the domain object
          */
         EditableDomainObjectCache.prototype.markClean = function (domainObject) {
-            delete this.dirtyObjects[domainObject.getId()];
+            var self = this;
+            if (!domainObject) {
+                Object.keys(this.dirtyObjects).forEach(function(key) {
+                    delete self.dirtyObjects[key];
+                });
+            } else {
+                delete this.dirtyObjects[domainObject.getId()];
+            }
         };
 
         /**
