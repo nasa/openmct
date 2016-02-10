@@ -106,12 +106,13 @@ define(
                 return fetchObject(object.getModel().location);
             }
 
-            function isOriginal(domainObject) {
-                return domainObject.getCapability('location').isOriginal();
+            function allowClone(objectToClone) {
+                return (objectToClone.getId() === domainObject.getId()) ||
+                    objectToClone.getCapability('location').isOriginal();
             }
 
             function cloneIntoParent(parent) {
-                return copyService.perform(domainObject, parent, isOriginal);
+                return copyService.perform(domainObject, parent, allowClone);
             }
 
             function cancelEditingAfterClone(clonedObject) {
