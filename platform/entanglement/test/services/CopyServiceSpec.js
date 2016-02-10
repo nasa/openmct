@@ -162,6 +162,7 @@ define(
                         'compositionCapability',
                         ['invoke', 'add']
                     );
+                    compositionCapability.add.andCallFake(synchronousPromise);
 
                     locationCapability = jasmine.createSpyObj(
                         'locationCapability',
@@ -401,8 +402,8 @@ define(
                         it ("creates link instead of clone", function() {
                             var copiedObject = copyFinished.calls[0].args[0];
                             expect(copiedObject).toBe(object);
-                            expect(compositionCapability.add).toHaveBeenCalledWith(copiedObject.getId());
-                            //expect(newParent.getModel().composition).toContain(copiedObject.getId());
+                            expect(compositionCapability.add)
+                                .toHaveBeenCalledWith(copiedObject);
                         });
                     });
                 });
