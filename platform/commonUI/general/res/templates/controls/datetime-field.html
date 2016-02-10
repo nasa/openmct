@@ -23,7 +23,6 @@
       ng-controller="DateTimeFieldController">
     <input type="text"
            ng-model="textValue"
-           ng-change="structure.onchange(ngModel[field])"
            ng-blur="restoreTextValue(); ngBlur()"
            ng-class="{
                         error: textInvalid ||

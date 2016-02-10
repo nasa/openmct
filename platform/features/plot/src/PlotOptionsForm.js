@@ -40,7 +40,6 @@ define(
              */
             this.xAxisForm = {
                 'name':'x-axis',
-                'onchange': onchange,
                 'sections': [{
                     'name': 'x-axis',
                     'rows': [
@@ -59,7 +58,6 @@ define(
 
             this.yAxisForm = {
                 'name':'y-axis',
-                'onchange': onchange,
                 'sections': [{
                 // Will need to be repeated for each y-axis, with a
                 // distinct name for each. Ideally the name of the axis
@@ -98,7 +96,6 @@ define(
             };
             this.plotSeriesForm = {
                 'name':'Series Options',
-                'onchange': onchange,
                 'sections': [
                     {
                         rows: [

@@ -146,7 +146,6 @@ define(
              */
         PlotOptionsController.prototype.updateConfiguration = function() {
             var self = this;
-            console.log('form values changed');
             this.domainObject.useCapability('mutation', function(model){
                 model.configuration = model.configuration || {};
                 model.configuration.plot = self.configuration.plot;
