@@ -106,6 +106,14 @@ define(
                 return fetchObject(object.getModel().location);
             }
 
+            function isOriginal(domainObject) {
+                return domainObject.getCapability('location').isOriginal();
+            }
+
+            function cloneIntoParent(parent) {
+                return copyService.perform(domainObject, parent, isOriginal);
+            }
+
             function cancelEditingAfterClone(clonedObject) {
                 return domainObject.getCapability("editor").cancel()
                     .then(resolveWith(clonedObject));
@@ -122,7 +130,7 @@ define(
                     return getParent(domainObject)
                         .then(doWizardSave)
                         .then(getParent)
-                        .then(copyService.perform.bind(copyService, domainObject))
+                        .then(cloneIntoParent)
                         .then(cancelEditingAfterClone)
                         .catch(resolveWith(false));
                 } else {
