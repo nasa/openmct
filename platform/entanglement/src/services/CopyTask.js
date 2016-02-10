@@ -31,18 +31,21 @@ define(
          * This class encapsulates the process of copying a domain object
          * and all of its children.
          *
-         * @param domainObject The object to copy
-         * @param parent The new location of the cloned object tree
-         * @param $q
+         * @param {DomainObject} domainObject The object to copy
+         * @param {DomainObject} parent The new location of the cloned object tree
+         * @param {platform/entanglement.CopyService~filter} filter
+         *        a function used to filter out objects from
+         *        the cloning process
+         * @param $q Angular's $q, for promises
          * @constructor
          */
-        function CopyTask (domainObject, parent, policyService, $q){
+        function CopyTask (domainObject, parent, filter, $q){
             this.domainObject = domainObject;
             this.parent = parent;
             this.firstClone = undefined;
             this.$q = $q;
             this.deferred = undefined;
-            this.policyService = policyService;
+            this.filter = filter;
             this.persisted = 0;
             this.clones = [];
             this.idMap = {};
@@ -198,7 +201,7 @@ define(
             //Check if the type of the object being copied allows for
             // creation of new instances. If it does not, then a link to the
             // original will be created instead.
-            if (this.policyService.allow("creation", originalObject.getCapability("type"))){
+            if (this.filter(originalObject)) {
                 //create a new clone of the original object. Use the
                 // creation capability of the targetParent to create the
                 // new clone. This will ensure that the correct persistence

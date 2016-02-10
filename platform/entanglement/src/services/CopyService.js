@@ -81,10 +81,23 @@ define(
          * domainObject when the duplication is successful.
          */
         CopyService.prototype.perform = function (domainObject, parent, filter) {
-            var $q = this.$q,
-                copyTask = new CopyTask(domainObject, parent, this.policyService, this.$q);
+            var policyService = this.policyService;
+
+            function completeFilter(domainObject) {
+                return (!filter || filter(domainObject)) &&
+                    policyService.allow(
+                        "creation",
+                        domainObject.getCapability("type")
+                    );
+            }
+
             if (this.validate(domainObject, parent)) {
-                return copyTask.perform();
+                return new CopyTask(
+                    domainObject,
+                    parent,
+                    completeFilter,
+                    this.$q
+                ).perform();
             } else {
                 throw new Error(
                     "Tried to copy objects without validating first."
