@@ -33,13 +33,7 @@ define(
          * @param topic
          * @constructor
          */
-        function PlotOptionsForm(topic) {
-            var self = this;
-            this.onchangeTopic = topic();
-
-            function onchange(value){
-                self.onchangeTopic.notify(value);
-            }
+        function PlotOptionsForm() {
 
             /*
              Defined below are the form structures for the plot options.
@@ -148,10 +142,6 @@ define(
                 ]
             };
         }
-
-        PlotOptionsForm.prototype.listen = function (callback){
-            return this.onchangeTopic.listen(callback);
-        };
 
         return PlotOptionsForm;
     }

@@ -45,13 +45,13 @@ define(
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
-        function PlotOptionsController($scope, topic) {
+        function PlotOptionsController($scope) {
 
             var self = this;
             this.$scope = $scope;
             this.domainObject = $scope.domainObject;
             this.configuration = this.domainObject.getModel().configuration || {};
-            this.plotOptionsForm = new PlotOptionsForm(topic);
+            this.plotOptionsForm = new PlotOptionsForm();
             this.composition = [];
 
             /*
@@ -64,10 +64,6 @@ define(
                 }
             });
 
-            this.formListener = this.plotOptionsForm.listen(function(value){
-                self.updateConfiguration(value);
-            });
-
             /*
              Set form structures on scope
              */
@@ -78,11 +74,27 @@ define(
             $scope.$on("$destroy", function() {
                 //Clean up any listeners on destruction of controller
                 self.mutationListener();
-                self.formListener();
             });
 
             this.defaultConfiguration();
             this.updateChildren();
+
+            /**
+             * Setup a number of watches for changes to form values. On
+             * change, update the model configuration via mutation
+             */
+            $scope.$watchCollection('configuration.plot.yAxis', function(newValue, oldValue){
+                self.updateConfiguration(newValue, oldValue);
+            });
+            $scope.$watchCollection('configuration.plot.xAxis', function(newValue, oldValue){
+                self.updateConfiguration(newValue, oldValue);
+            });
+            ($scope.children || []).forEach(function(child){
+                $scope.$watchCollection('configuration.plot.series[' + child.getId() + ']', function(newValue, oldValue){
+                    self.updateConfiguration(newValue, oldValue);
+                });
+            });
+
         }
 
         /*
@@ -134,6 +146,7 @@ define(
              */
         PlotOptionsController.prototype.updateConfiguration = function() {
             var self = this;
+            console.log('form values changed');
             this.domainObject.useCapability('mutation', function(model){
                 model.configuration = model.configuration || {};
                 model.configuration.plot = self.configuration.plot;

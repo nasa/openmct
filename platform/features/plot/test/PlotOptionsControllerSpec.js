@@ -28,8 +28,6 @@ define(
 
         describe("The Plot Options controller", function () {
             var plotOptionsController,
-                mockTopicFunction,
-                mockTopicObject,
                 mockDomainObject,
                 mockMutationCapability,
                 mockUseCapabilities,
@@ -79,18 +77,6 @@ define(
                 mockUnlisten = jasmine.createSpy('unlisten');
                 mockMutationCapability.listen.andReturn(mockUnlisten);
 
-
-                mockTopicObject = jasmine.createSpyObj('Topic', [
-                    'listen',
-                    'notify'
-                ]);
-                mockFormUnlisten = jasmine.createSpy('formUnlisten');
-                mockTopicObject.listen.andReturn(mockFormUnlisten);
-
-                mockTopicFunction = function() {
-                    return mockTopicObject;
-                };
-
                 mockDomainObject = jasmine.createSpyObj('domainObject', [
                     'getModel',
                     'useCapability',
@@ -103,11 +89,12 @@ define(
                 mockDomainObject.getModel.andReturn(model);
 
                 mockScope = jasmine.createSpyObj('scope', [
-                    '$on'
+                    '$on',
+                    '$watchCollection'
                 ]);
                 mockScope.domainObject = mockDomainObject;
 
-                plotOptionsController = new PlotOptionsController(mockScope, mockTopicFunction);
+                plotOptionsController = new PlotOptionsController(mockScope);
             });
 
             it("sets form definitions on scope", function () {
@@ -135,25 +122,24 @@ define(
                 var scopeConfiguration = mockScope.configuration,
                     model = mockDomainObject.getModel();
 
-                scopeConfiguration.plot.xAxis.key = 'lst';
                 scopeConfiguration.plot.yAxis.autoScale = true;
                 scopeConfiguration.plot.yAxis.key = 'eu';
+                scopeConfiguration.plot.xAxis.key = 'lst';
 
-                expect(mockTopicObject.listen).toHaveBeenCalled();
-                mockTopicObject.listen.mostRecentCall.args[0]();
+                expect(mockScope.$watchCollection).toHaveBeenCalled();
+                mockScope.$watchCollection.calls[0].args[1]();
                 expect(mockDomainObject.useCapability).toHaveBeenCalledWith('mutation', jasmine.any(Function));
 
                 mockDomainObject.useCapability.mostRecentCall.args[1](model);
-                expect(model.configuration.plot.xAxis.key).toBe('lst');
                 expect(model.configuration.plot.yAxis.autoScale).toBe(true);
                 expect(model.configuration.plot.yAxis.key).toBe('eu');
+                expect(model.configuration.plot.xAxis.key).toBe('lst');
 
             });
 
             it("cleans up listeners on destruction of the controller", function () {
                 mockScope.$on.mostRecentCall.args[1]();
                 expect(mockUnlisten).toHaveBeenCalled();
-                expect(mockFormUnlisten).toHaveBeenCalled();
             });
 
         });

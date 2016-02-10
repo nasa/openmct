@@ -78,8 +78,7 @@ define([
                     "key": "PlotOptionsController",
                     "implementation": PlotOptionsController,
                     "depends": [
-                        "$scope",
-                        "topic"
+                        "$scope"
                     ]
                 }
             ],

@@ -28,21 +28,11 @@ define(
 
         describe("The Plot Options form", function () {
             var plotOptionsForm,
-                mockTopicFunction,
-                mockTopicObject,
                 listener;
 
             beforeEach(function () {
 
-                mockTopicObject = jasmine.createSpyObj('Topic', [
-                    'listen',
-                    'notify'
-                ]);
-                mockTopicFunction = function() {
-                    return mockTopicObject;
-                };
-
-                plotOptionsForm = new PlotOptionsForm(mockTopicFunction);
+                plotOptionsForm = new PlotOptionsForm();
             });
 
             it("defines form specs for x-axis, y-axis, and series data", function () {
@@ -53,19 +43,6 @@ define(
 
                 expect(plotOptionsForm.yAxisForm).toBeDefined();
                 expect(plotOptionsForm.plotSeriesForm).toBeDefined();
-            });
-
-            it("uses a topic to register a listener and inform them when a" +
-                " form value changes", function () {
-                var changedValue = 'changedValue';
-
-                expect(plotOptionsForm.xAxisForm.onchange).toBeDefined();
-
-                plotOptionsForm.listen(listener);
-                expect(mockTopicObject.listen).toHaveBeenCalledWith(listener);
-
-                plotOptionsForm.xAxisForm.onchange(changedValue);
-                expect(mockTopicObject.notify).toHaveBeenCalledWith(changedValue);
             });
 
         });
