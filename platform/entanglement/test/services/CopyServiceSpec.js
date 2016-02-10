@@ -388,6 +388,7 @@ define(
                             expect(childObjectClone.getModel().location).toEqual(objectClone.getId());
                         });
                     });
+
                     describe("when cloning non-creatable objects", function() {
                         beforeEach(function () {
                             policyService.allow.andCallFake(function(category){
@@ -404,6 +405,31 @@ define(
                             expect(copiedObject).toBe(object);
                             expect(compositionCapability.add)
                                 .toHaveBeenCalledWith(copiedObject);
+                        });
+                    });
+
+                    describe("when provided a filtering function", function () {
+                        function accept() {
+                            return true;
+                        }
+                        function reject() {
+                            return false;
+                        }
+
+                        it("does not create new instances of objects " +
+                            "rejected by the filter", function() {
+                            copyService.perform(object, newParent, reject)
+                                .then(copyFinished);
+                            expect(copyFinished.mostRecentCall.args[0])
+                                .toBe(object);
+                        });
+
+                        it("does create new instances of objects " +
+                            "accepted by the filter", function() {
+                            copyService.perform(object, newParent, accept)
+                                .then(copyFinished);
+                            expect(copyFinished.mostRecentCall.args[0])
+                                .not.toBe(object);
                         });
                     });
                 });
