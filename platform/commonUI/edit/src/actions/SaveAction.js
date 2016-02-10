@@ -36,7 +36,18 @@ define(
          * @implements {Action}
          * @memberof platform/commonUI/edit
          */
-        function SaveAction($q, $location, $injector, urlService, navigationService, policyService, dialogService, creationService, context) {
+        function SaveAction(
+            $q,
+            $location,
+            $injector,
+            urlService,
+            navigationService,
+            policyService,
+            dialogService,
+            creationService,
+            copyService,
+            context
+        ) {
             this.domainObject = (context || {}).domainObject;
             this.$location = $location;
             this.injectObjectService = function(){
@@ -47,6 +58,7 @@ define(
             this.policyService = policyService;
             this.dialogService = dialogService;
             this.creationService = creationService;
+            this.copyService = copyService;
             this.$q = $q;
         }
 
@@ -69,6 +81,7 @@ define(
             var domainObject = this.domainObject,
                 $location = this.$location,
                 urlService = this.urlService,
+                copyService = this.copyService,
                 self = this;
 
             function resolveWith(object){
@@ -87,7 +100,6 @@ define(
                         return wizard.populateObjectFromInput(formValue, domainObject);
                     });
             }
-
 
             function persistObject(object){
 
@@ -129,14 +141,11 @@ define(
                 // yet.
                 if (!domainObject.getModel().persisted){
                     return getParent(domainObject)
-                            .then(doWizardSave)
-                            .then(persistObject)
-                            .then(getParent)//Parent may have changed based
-                                            // on user selection
-                            .then(locateObjectInParent)
-                            .then(function(){
-                                return fetchObject(domainObject.getId());
-                            })
+                        .then(doWizardSave)
+                        .then(copyService.perform.bind(
+                            copyService,
+                            [ domainObject ]
+                        ))
                         .catch(doNothing);
                 } else {
                     return domainObject.getCapability("editor").save()
