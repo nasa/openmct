@@ -132,6 +132,11 @@ define(
                 return false;
             }
 
+            function cancelEditingAfterClone(clonedObject) {
+                return domainObject.getCapability("editor").cancel()
+                    .then(resolveWith(clonedObject));
+            }
+
             // Invoke any save behavior introduced by the editor capability;
             // this is introduced by EditableDomainObject which is
             // used to insulate underlying objects from changes made
@@ -142,10 +147,9 @@ define(
                 if (!domainObject.getModel().persisted){
                     return getParent(domainObject)
                         .then(doWizardSave)
-                        .then(copyService.perform.bind(
-                            copyService,
-                            [ domainObject ]
-                        ))
+                        .then(getParent)
+                        .then(copyService.perform.bind(copyService, domainObject))
+                        .then(cancelEditingAfterClone)
                         .catch(doNothing);
                 } else {
                     return domainObject.getCapability("editor").save()
