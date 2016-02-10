@@ -118,7 +118,7 @@ define(
             function doSave() {
                 //This is a new 'virtual object' that has not been persisted
                 // yet.
-                if (!domainObject.getModel().persisted){
+                if (domainObject.getModel().persisted === undefined){
                     return getParent(domainObject)
                         .then(doWizardSave)
                         .then(getParent)
