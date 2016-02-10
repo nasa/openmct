@@ -105,7 +105,7 @@ define(
          */
         function addClonesToParent(self) {
             return self.parent.getCapability("composition")
-                .add(self.firstClone.getId())
+                .add(self.firstClone)
                 .then(function (addedClone) {
                     return self.parent.getCapability("persistence").persist()
                         .then(function () {
