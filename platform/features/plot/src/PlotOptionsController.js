@@ -53,6 +53,7 @@ define(
             this.configuration = this.domainObject.getModel().configuration || {};
             this.plotOptionsForm = new PlotOptionsForm();
             this.composition = [];
+            this.watches = [];
 
             /*
              Listen for changes to the domain object and update the object's
@@ -79,7 +80,7 @@ define(
             this.defaultConfiguration();
             this.updateChildren();
 
-            /**
+            /*
              * Setup a number of watches for changes to form values. On
              * change, update the model configuration via mutation
              */
@@ -89,17 +90,52 @@ define(
             $scope.$watchCollection('configuration.plot.xAxis', function(newValue, oldValue){
                 self.updateConfiguration(newValue, oldValue);
             });
-            ($scope.children || []).forEach(function(child){
-                $scope.$watchCollection('configuration.plot.series[' + child.getId() + ']', function(newValue, oldValue){
-                    self.updateConfiguration(newValue, oldValue);
-                });
-            });
+
+            this.watchSeries();
 
         }
 
-        /*
+        /**
+         * Unregister all watches for series data (ie. the configuration for
+         * child objects)
+         * @private
+         */
+        PlotOptionsController.prototype.clearSeriesWatches = function() {
+            this.watches.forEach(function(watch) {
+                watch();
+            });
+            this.watches = [];
+        }
+
+        /**
+         * Attach watches for each object in the plot's composition
+         * @private
+         */
+        PlotOptionsController.prototype.watchSeries = function() {
+            var self = this;
+
+            this.clearSeriesWatches();
+
+            console.log("watches before: " + this.watches.length);
+
+            (self.$scope.children || []).forEach(function(child, index){
+                self.watches.push(
+                    self.$scope.$watchCollection(
+                        'configuration.plot.series[' + index + ']',
+                        function(newValue, oldValue){
+                            self.updateConfiguration(newValue, oldValue);
+                        }
+                    )
+                );
+            });
+            console.log("watches after: " + self.watches.length);
+        };
+
+        /**
          * Determine whether the changes to the model that triggered a
          * mutation event were purely compositional.
+         *
+         * @private
          */
         PlotOptionsController.prototype.hasCompositionChanged = function(oldComposition, newComposition){
             // Framed slightly strangely, but the boolean logic is
@@ -114,36 +150,42 @@ define(
             return !isUnchanged;
         };
 
-        /*
-         Default the plot options model
+        /**
+         * Default the plot options model
+         *
+         * @private
          */
         PlotOptionsController.prototype.defaultConfiguration = function () {
             this.configuration.plot = this.configuration.plot || {};
             this.configuration.plot.xAxis = this.configuration.plot.xAxis || {};
             this.configuration.plot.yAxis = this.configuration.plot.yAxis || {}; // y-axes will be associative array keyed on axis key
-            this.configuration.plot.series = this.configuration.plot.series || {}; // series will be associative array keyed on sub-object id
+            this.configuration.plot.series = this.configuration.plot.series || []; // series will be associative array keyed on sub-object id
             this.$scope.configuration = this.configuration;
         };
 
-        /*
-         When a child is added to, or removed from a plot, update the
-         plot options model
+        /**
+         * When a child is added to, or removed from a plot, update the
+         * plot options model
+         * @private
          */
         PlotOptionsController.prototype.updateChildren = function() {
             var self = this;
             this.domainObject.useCapability('composition').then(function(children){
                 self.$scope.children = children;
                 self.composition = self.domainObject.getModel().composition;
-                children.forEach(function(child){
-                    self.configuration.plot.series[child.getId()] = self.configuration.plot.series[child.getId()] || {};
+                children.forEach(function(child, index){
+                    self.configuration.plot.series[index] =
+                        self.configuration.plot.series[index] || {'id': child.getId()};
                 });
+                self.watchSeries();
             });
         };
 
-            /*
-             On changes to the form, update the configuration on the domain
-             object
-             */
+        /**
+         * On changes to the form, update the configuration on the domain
+         * object
+         * @private
+         */
         PlotOptionsController.prototype.updateConfiguration = function() {
             var self = this;
             this.domainObject.useCapability('mutation', function(model){

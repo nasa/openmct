@@ -64,7 +64,7 @@
                     </span>
                     <mct-form
                         ng-class="{hidden: !toggle.isActive()}"
-                        ng-model="configuration.plot.series[child.getId()]"
+                        ng-model="configuration.plot.series[$index]"
                         structure="plotSeriesForm"
                         name="plotOptionsState"
                         class="flex-elem l-flex-row l-controls-first no-validate">
