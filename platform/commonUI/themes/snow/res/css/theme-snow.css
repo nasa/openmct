@@ -810,7 +810,7 @@ mct-container {
   .search-results .s-status-editing .search-result-item.t-item-icon:before {
     color: #0099cc;
     font-size: inherit; }
-    /* line 40, ../../../../general/res/sass/_icons.scss */
+    /* line 39, ../../../../general/res/sass/_icons.scss */
     .ui-symbol.icon.alert, .alert.t-item-icon, .icon.alert.s-icon-btn, .l-datetime-picker .l-month-year-pager .icon.alert.pager, .l-datetime-picker .l-month-year-pager .alert.pager.t-item-icon, .tree .s-status-editing .icon.alert.tree-item:before, .tree .s-status-editing .alert.tree-item.t-item-icon:before,
     .tree .s-status-editing .icon.alert.search-result-item:before,
     .tree .s-status-editing .alert.search-result-item.t-item-icon:before,
@@ -819,7 +819,7 @@ mct-container {
     .search-results .s-status-editing .icon.alert.search-result-item:before,
     .search-results .s-status-editing .alert.search-result-item.t-item-icon:before {
       color: #ff3c00; }
-      /* line 42, ../../../../general/res/sass/_icons.scss */
+      /* line 41, ../../../../general/res/sass/_icons.scss */
       .ui-symbol.icon.alert:hover, .alert.t-item-icon:hover, .icon.alert.s-icon-btn:hover, .l-datetime-picker .l-month-year-pager .icon.alert.pager:hover, .tree .s-status-editing .icon.alert.tree-item:hover:before, .tree .s-status-editing .alert.tree-item.t-item-icon:hover:before,
       .tree .s-status-editing .icon.alert.search-result-item:hover:before,
       .tree .s-status-editing .alert.search-result-item.t-item-icon:hover:before,
@@ -828,7 +828,7 @@ mct-container {
       .search-results .s-status-editing .icon.alert.search-result-item:hover:before,
       .search-results .s-status-editing .alert.search-result-item.t-item-icon:hover:before {
         color: #ff8a66; }
-    /* line 46, ../../../../general/res/sass/_icons.scss */
+    /* line 45, ../../../../general/res/sass/_icons.scss */
     .ui-symbol.icon.major, .major.t-item-icon, .icon.major.s-icon-btn, .l-datetime-picker .l-month-year-pager .icon.major.pager, .l-datetime-picker .l-month-year-pager .major.pager.t-item-icon, .tree .s-status-editing .icon.major.tree-item:before, .tree .s-status-editing .major.tree-item.t-item-icon:before,
     .tree .s-status-editing .icon.major.search-result-item:before,
     .tree .s-status-editing .major.search-result-item.t-item-icon:before,
@@ -837,11 +837,11 @@ mct-container {
     .search-results .s-status-editing .icon.major.search-result-item:before,
     .search-results .s-status-editing .major.search-result-item.t-item-icon:before {
       font-size: 1.65em; }
-  /* line 50, ../../../../general/res/sass/_icons.scss */
+  /* line 49, ../../../../general/res/sass/_icons.scss */
   .ui-symbol.icon-calendar:after, .icon-calendar.t-item-icon:after, .icon-calendar.s-icon-btn:after, .l-datetime-picker .l-month-year-pager .icon-calendar.pager:after {
     content: "\e605"; }
 
-/* line 55, ../../../../general/res/sass/_icons.scss */
+/* line 54, ../../../../general/res/sass/_icons.scss */
 .bar .ui-symbol, .bar .t-item-icon, .bar .s-icon-btn, .bar .l-datetime-picker .l-month-year-pager .pager, .l-datetime-picker .l-month-year-pager .bar .pager, .bar .tree .s-status-editing .tree-item:before, .tree .s-status-editing .bar .tree-item:before,
 .bar .tree .s-status-editing .search-result-item:before,
 .tree .s-status-editing .bar .search-result-item:before,
@@ -851,36 +851,36 @@ mct-container {
 .search-results .s-status-editing .bar .search-result-item:before {
   display: inline-block; }
 
-/* line 59, ../../../../general/res/sass/_icons.scss */
+/* line 58, ../../../../general/res/sass/_icons.scss */
 .invoke-menu {
   text-shadow: none;
   display: inline-block; }
 
-/* line 64, ../../../../general/res/sass/_icons.scss */
+/* line 63, ../../../../general/res/sass/_icons.scss */
 .s-menu-btn .invoke-menu,
 .icon.major .invoke-menu,
 .major.t-item-icon .invoke-menu {
   margin-left: 3px; }
 
-/* line 69, ../../../../general/res/sass/_icons.scss */
+/* line 68, ../../../../general/res/sass/_icons.scss */
 .menu .type-icon,
 .tree-item .type-icon,
 .super-menu.menu .type-icon {
   position: absolute; }
 
-/* line 75, ../../../../general/res/sass/_icons.scss */
+/* line 74, ../../../../general/res/sass/_icons.scss */
 .l-icon-alert {
   display: none !important; }
-  /* line 77, ../../../../general/res/sass/_icons.scss */
+  /* line 76, ../../../../general/res/sass/_icons.scss */
   .l-icon-alert:before {
     color: #ff3c00;
     content: "!"; }
 
-/* line 83, ../../../../general/res/sass/_icons.scss */
+/* line 82, ../../../../general/res/sass/_icons.scss */
 .t-item-icon {
   line-height: normal;
   position: relative; }
-  /* line 94, ../../../../general/res/sass/_icons.scss */
+  /* line 90, ../../../../general/res/sass/_icons.scss */
   .t-item-icon.l-icon-link .t-item-icon-glyph:before {
     color: #49dedb;
     content: "\f4";
@@ -4196,10 +4196,10 @@ textarea {
   	.field-hints,
   	.fields {
   	}
-
-
+  
+  	
   	.field-hints {
-
+  
   	}
   	*/ }
   /* line 30, ../../../../general/res/sass/forms/_datetime.scss */
@@ -6000,7 +6000,7 @@ ul.tree {
   margin-bottom: 3px;
   padding: 0 3px;
   position: relative; }
-  /* line 49, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 48, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .view-control,
   .search-result-item .view-control {
     color: #666;
@@ -6009,7 +6009,7 @@ ul.tree {
     height: 100%;
     line-height: inherit;
     width: 10px; }
-    /* line 57, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 56, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .view-control.has-children:before,
     .search-result-item .view-control.has-children:before {
       position: absolute;
@@ -6034,7 +6034,7 @@ ul.tree {
       -ms-transform-origin: center 50%;
       -webkit-transform-origin: center 50%;
       transform-origin: center 50%; }
-    /* line 63, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 62, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .view-control.has-children.expanded:before,
     .search-result-item .view-control.has-children.expanded:before {
       -moz-transform: rotate(90deg);
@@ -6042,121 +6042,79 @@ ul.tree {
       -webkit-transform: rotate(90deg);
       transform: rotate(90deg); }
     @media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-      /* line 68, ../../../../general/res/sass/tree/_tree.scss */
+      /* line 67, ../../../../general/res/sass/tree/_tree.scss */
       .tree-item .view-control:hover,
       .search-result-item .view-control:hover {
         color: #0099cc !important; } }
-  /* line 74, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 73, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .t-object-label,
   .search-result-item .t-object-label {
     line-height: 1.5rem; }
-    /* line 76, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 75, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .t-object-label .t-item-icon,
     .search-result-item .t-object-label .t-item-icon {
       font-size: 1.4em;
       color: #0099cc;
       width: 18px; }
-    /* line 82, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 81, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .t-object-label .t-title-label,
     .search-result-item .t-object-label .t-title-label {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap; }
-  /* line 87, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 86, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item.selected,
   .search-result-item.selected {
     background: #1ac6ff;
     color: #fcfcfc; }
-    /* line 90, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 89, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .view-control,
     .search-result-item.selected .view-control {
       color: #fcfcfc; }
-    /* line 93, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 92, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .t-object-label .t-item-icon,
     .search-result-item.selected .t-object-label .t-item-icon {
       color: #fcfcfc; }
   @media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-    /* line 100, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 99, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item:not(.selected):hover,
     .search-result-item:not(.selected):hover {
       background: rgba(102, 102, 102, 0.1);
       color: #333333; }
-      /* line 103, ../../../../general/res/sass/tree/_tree.scss */
+      /* line 102, ../../../../general/res/sass/tree/_tree.scss */
       .tree-item:not(.selected):hover .t-item-icon,
       .search-result-item:not(.selected):hover .t-item-icon {
         color: #0099cc; } }
-  /* line 110, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 109, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item:not(.loading),
   .search-result-item:not(.loading) {
     cursor: pointer; }
-  /* line 114, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 113, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .context-trigger,
   .search-result-item .context-trigger {
     top: -1px;
     position: absolute;
     right: 3px; }
-    /* line 119, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 118, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .context-trigger .invoke-menu,
     .search-result-item .context-trigger .invoke-menu {
       font-size: 0.75em;
       height: 0.9rem;
       line-height: 0.9rem; }
 
-/* line 131, ../../../../general/res/sass/tree/_tree.scss */
+/* line 130, ../../../../general/res/sass/tree/_tree.scss */
 mct-representation.s-status-pending .t-object-label .t-item-icon:before {
-  -moz-transform-origin: center 50%;
-  -ms-transform-origin: center 50%;
-  -webkit-transform-origin: center 50%;
-  transform-origin: center 50%;
-  -moz-animation-name: rotation-centered;
-  -webkit-animation-name: rotation-centered;
-  animation-name: rotation-centered;
-  -moz-animation-duration: 0.5s;
-  -webkit-animation-duration: 0.5s;
-  animation-duration: 0.5s;
-  -moz-animation-iteration-count: infinite;
-  -webkit-animation-iteration-count: infinite;
-  animation-iteration-count: infinite;
-  -moz-animation-timing-function: linear;
-  -webkit-animation-timing-function: linear;
-  animation-timing-function: linear;
-  -moz-border-radius: 100%;
-  -webkit-border-radius: 100%;
-  border-radius: 100%;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  border-color: rgba(0, 153, 204, 0.25);
-  border-top-color: #0099cc;
-  border-style: solid;
-  border-width: 4px;
-  display: block;
-  position: absolute;
-  left: 50%;
-  top: 50%;
   border-color: rgba(0, 153, 204, 0.25);
   border-top-color: #0099cc; }
-/* line 137, ../../../../general/res/sass/tree/_tree.scss */
-mct-representation.s-status-pending .t-object-label .t-item-icon .t-item-icon-glyph {
-  display: none; }
-/* line 141, ../../../../general/res/sass/tree/_tree.scss */
-mct-representation.s-status-pending .t-object-label .t-title-label {
-  font-style: italic;
-  opacity: 0.6; }
 
-/* line 148, ../../../../general/res/sass/tree/_tree.scss */
-.selected mct-representation.s-status-pending .t-object-label .t-item-icon:before {
-  border-color: rgba(252, 252, 252, 0.25);
-  border-top-color: #fcfcfc; }
-
-/* line 156, ../../../../general/res/sass/tree/_tree.scss */
+/* line 142, ../../../../general/res/sass/tree/_tree.scss */
 .tree .s-status-editing .tree-item,
 .tree .s-status-editing .search-result-item,
 .search-results .s-status-editing .tree-item,
 .search-results .s-status-editing .search-result-item {
   background: #caf1ff;
   pointer-events: none; }
-  /* line 160, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 146, ../../../../general/res/sass/tree/_tree.scss */
   .tree .s-status-editing .tree-item:before,
   .tree .s-status-editing .search-result-item:before,
   .search-results .s-status-editing .tree-item:before,
@@ -6194,7 +6152,7 @@ mct-representation.s-status-pending .t-object-label .t-title-label {
     opacity: 0.25; }
   100% {
     opacity: 1; } }
-  /* line 169, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 155, ../../../../general/res/sass/tree/_tree.scss */
   .tree .s-status-editing .tree-item .t-object-label .t-item-icon,
   .tree .s-status-editing .tree-item .t-object-label .t-title-label,
   .tree .s-status-editing .search-result-item .t-object-label .t-item-icon,
@@ -6205,13 +6163,13 @@ mct-representation.s-status-pending .t-object-label .t-title-label {
   .search-results .s-status-editing .search-result-item .t-object-label .t-title-label {
     color: #4bb1c7;
     text-shadow: none; }
-  /* line 174, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 160, ../../../../general/res/sass/tree/_tree.scss */
   .tree .s-status-editing .tree-item .t-object-label .t-title-label,
   .tree .s-status-editing .search-result-item .t-object-label .t-title-label,
   .search-results .s-status-editing .tree-item .t-object-label .t-title-label,
   .search-results .s-status-editing .search-result-item .t-object-label .t-title-label {
     font-style: italic; }
-  /* line 178, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 164, ../../../../general/res/sass/tree/_tree.scss */
   .tree .s-status-editing .tree-item .view-control, .tree .s-status-editing .tree-item + .tree-item-subtree,
   .tree .s-status-editing .search-result-item .view-control,
   .tree .s-status-editing .search-result-item + .tree-item-subtree,
@@ -6289,21 +6247,19 @@ mct-representation.s-status-pending .t-object-label .t-item-icon:before {
   left: 50%;
   top: 50%;
   content: "";
-  padding: 30%;
-  width: 0;
-  height: 0; }
-/* line 55, ../../../../general/res/sass/_object-label.scss */
+  padding: 30%; }
+/* line 48, ../../../../general/res/sass/_object-label.scss */
 mct-representation.s-status-pending .t-object-label .t-item-icon .t-item-icon-glyph {
   display: none; }
-/* line 59, ../../../../general/res/sass/_object-label.scss */
+/* line 52, ../../../../general/res/sass/_object-label.scss */
 mct-representation.s-status-pending .t-object-label .t-title-label {
   font-style: italic;
   opacity: 0.6; }
 
-/* line 66, ../../../../general/res/sass/_object-label.scss */
+/* line 60, ../../../../general/res/sass/_object-label.scss */
 .selected mct-representation.s-status-pending .t-object-label .t-item-icon:before {
-  border-color: rgba(252, 252, 252, 0.25);
-  border-top-color: #fcfcfc; }
+  border-color: rgba(252, 252, 252, 0.25) !important;
+  border-top-color: #fcfcfc !important; }
 
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
@@ -7209,7 +7165,7 @@ table {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis; }
-  /* line 274, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 276, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot-tick.gl-plot-x-tick-label, .gl-plot-tick.tick-label-x,
   .tick-label.gl-plot-x-tick-label,
   .tick-label.tick-label-x {
@@ -7220,7 +7176,7 @@ table {
     width: 20%;
     margin-left: -10%;
     text-align: center; }
-  /* line 284, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 286, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot-tick.gl-plot-y-tick-label, .gl-plot-tick.tick-label-y,
   .tick-label.gl-plot-y-tick-label,
   .tick-label.tick-label-y {
@@ -7230,18 +7186,18 @@ table {
     margin-bottom: -0.5em;
     text-align: right; }
 
-/* line 295, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 297, ../../../../general/res/sass/plots/_plots-main.scss */
 .gl-plot-tick.gl-plot-x-tick-label {
   top: 5px; }
-/* line 298, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 300, ../../../../general/res/sass/plots/_plots-main.scss */
 .gl-plot-tick.gl-plot-y-tick-label {
   right: 5px;
   left: 5px; }
 
-/* line 305, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 307, ../../../../general/res/sass/plots/_plots-main.scss */
 .tick-label.tick-label-x {
   top: 0; }
-/* line 308, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 310, ../../../../general/res/sass/plots/_plots-main.scss */
 .tick-label.tick-label-y {
   right: 0;
   left: 0; }

@@ -142,11 +142,13 @@
           right: 0;
           left: auto; }
 
-/* line 58, ../sass/_activities.scss */
-.edit-mode .s-timeline-gantt .handle {
+/* line 59, ../sass/_activities.scss */
+.edit-mode .s-timeline-gantt .handle,
+.s-status-editing .s-timeline-gantt .handle {
   cursor: col-resize; }
-  /* line 60, ../sass/_activities.scss */
-  .edit-mode .s-timeline-gantt .handle.mid {
+  /* line 61, ../sass/_activities.scss */
+  .edit-mode .s-timeline-gantt .handle.mid,
+  .s-status-editing .s-timeline-gantt .handle.mid {
     cursor: ew-resize; }
 
 /*****************************************************************************
@@ -527,24 +529,39 @@
       /* line 257, ../sass/_timelines.scss */
       .l-timeline-holder .l-cols .l-col.l-title {
         width: 250px; }
-      /* line 261, ../sass/_timelines.scss */
+        /* line 259, ../sass/_timelines.scss */
+        .l-timeline-holder .l-cols .l-col.l-title .rep-object-label[draggable="true"] {
+          -moz-border-radius: 3px;
+          -webkit-border-radius: 3px;
+          border-radius: 3px;
+          -moz-transition: background-color 0.25s;
+          -o-transition: background-color 0.25s;
+          -webkit-transition: background-color 0.25s;
+          transition: background-color 0.25s;
+          cursor: pointer;
+          display: inline-block;
+          padding: 0 3px; }
+          /* line 265, ../sass/_timelines.scss */
+          .l-timeline-holder .l-cols .l-col.l-title .rep-object-label[draggable="true"]:hover {
+            background-color: rgba(153, 153, 153, 0.1); }
+      /* line 271, ../sass/_timelines.scss */
       .l-timeline-holder .l-cols .l-col.l-start, .l-timeline-holder .l-cols .l-col.l-end, .l-timeline-holder .l-cols .l-col.l-duration {
         width: 110px; }
-      /* line 267, ../sass/_timelines.scss */
+      /* line 277, ../sass/_timelines.scss */
       .l-timeline-holder .l-cols .l-col.l-activity-modes {
         display: none;
         width: 250px; }
-  /* line 275, ../sass/_timelines.scss */
+  /* line 285, ../sass/_timelines.scss */
   .l-timeline-holder .s-timeline-tabular .l-header .l-cols {
     top: 5px;
     bottom: 5px; }
-  /* line 281, ../sass/_timelines.scss */
+  /* line 291, ../sass/_timelines.scss */
   .l-timeline-holder .s-timeline-tabular .l-pane-l .l-cols {
     left: 5px; }
-  /* line 287, ../sass/_timelines.scss */
+  /* line 297, ../sass/_timelines.scss */
   .l-timeline-holder .splitter {
     top: 0; }
-  /* line 293, ../sass/_timelines.scss */
+  /* line 303, ../sass/_timelines.scss */
   .l-timeline-holder .l-ticks,
   .l-timeline-holder .l-subticks {
     overflow: hidden;
@@ -557,9 +574,9 @@
     height: auto;
     top: auto;
     bottom: 3px; }
-  /* line 299, ../sass/_timelines.scss */
+  /* line 309, ../sass/_timelines.scss */
   .l-timeline-holder .l-ticks {
     height: 10px; }
-  /* line 303, ../sass/_timelines.scss */
+  /* line 313, ../sass/_timelines.scss */
   .l-timeline-holder .l-subticks {
     height: 5px; }
