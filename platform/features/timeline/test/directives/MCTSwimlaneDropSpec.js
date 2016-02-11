@@ -87,7 +87,8 @@ define(
                 testEvent = {
                     pageY: TEST_TOP + TEST_HEIGHT / 10,
                     dataTransfer: { getData: jasmine.createSpy() },
-                    preventDefault: jasmine.createSpy()
+                    preventDefault: jasmine.createSpy(),
+                    stopPropagation: jasmine.createSpy()
                 };
 
                 testEvent.dataTransfer.getData.andReturn('abc');
