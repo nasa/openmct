@@ -85,6 +85,7 @@ define(
                     );
 
                 if (id) {
+                    event.stopPropagation();
                     // Delegate the drop to the swimlane itself
                     swimlane.drop(id, (draggedSwimlane || {}).domainObject);
                 }
