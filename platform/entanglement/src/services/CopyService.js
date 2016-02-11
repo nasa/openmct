@@ -83,7 +83,9 @@ define(
         CopyService.prototype.perform = function (domainObject, parent, filter) {
             var policyService = this.policyService;
 
-            function completeFilter(domainObject) {
+            // Combines caller-provided filter (if any) with the
+            // baseline behavior of respecting creation policy.
+            function filterWithPolicy(domainObject) {
                 return (!filter || filter(domainObject)) &&
                     policyService.allow(
                         "creation",
@@ -95,7 +97,7 @@ define(
                 return new CopyTask(
                     domainObject,
                     parent,
-                    completeFilter,
+                    filterWithPolicy,
                     this.$q
                 ).perform();
             } else {
