@@ -256,6 +256,16 @@
 
 			&.l-title {
 				width: $timelineColTitleW;
+                .rep-object-label[draggable="true"] {
+                    @include border-radius($basicCr);
+                    @include single-transition(background-color, 0.25s);
+                    cursor: pointer;
+                    display: inline-block;
+                    padding: 0 $interiorMarginSm;
+                    &:hover {
+                        background-color: $colorItemTreeHoverBg;
+                    }
+                }
 			}
 
 			&.l-start,

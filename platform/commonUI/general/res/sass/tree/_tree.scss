@@ -34,7 +34,6 @@ ul.tree {
 
 .tree-item,
 .search-result-item {
-	$runningItemW: 0;
     @extend .l-flex-row;
 	@include box-sizing(border-box);
 	@include border-radius($basicCr);
@@ -129,25 +128,12 @@ mct-representation {
         .t-object-label {
             .t-item-icon {
                 &:before {
-                    $spinBW: 4px;
-                    @include spinner($spinBW);
                     border-color: rgba($colorItemTreeIcon, 0.25);
                     border-top-color: rgba($colorItemTreeIcon, 1.0);
                 }
-                .t-item-icon-glyph {
-                    display: none;
-                }
-            }
-            .t-title-label {
-                font-style: italic;
-                opacity: 0.6;
             }
         }
     }
-}
-.selected mct-representation.s-status-pending .t-object-label .t-item-icon:before {
-    border-color: rgba($colorItemTreeSelectedFg, 0.25);
-    border-top-color: rgba($colorItemTreeSelectedFg, 1.0);
 }
 
 .tree .s-status-editing,
