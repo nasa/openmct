@@ -33,6 +33,8 @@ define(
                 testRepresentation,
                 mockDomainObject,
                 mockPersistence,
+                mockCapabilities,
+                mockStatusCapability,
                 representer;
 
             function mockPromise(value) {
@@ -57,11 +59,20 @@ define(
                 ]);
                 mockPersistence =
                     jasmine.createSpyObj("persistence", ["persist"]);
+                mockStatusCapability =
+                    jasmine.createSpyObj("status", ["get"]);
+                mockStatusCapability.get.andReturn(false);
+                mockCapabilities = {
+                    'persistence': mockPersistence,
+                    'status': mockStatusCapability
+                };
 
                 mockDomainObject.getModel.andReturn({});
                 mockDomainObject.hasCapability.andReturn(true);
                 mockDomainObject.useCapability.andReturn(true);
-                mockDomainObject.getCapability.andReturn(mockPersistence);
+                mockDomainObject.getCapability.andCallFake(function(capability){
+                    return mockCapabilities[capability];
+                });
 
                 representer = new EditRepresenter(mockQ, mockLog, mockScope);
                 representer.represent(testRepresentation, mockDomainObject);
