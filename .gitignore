@@ -6,6 +6,7 @@
 
 *.sass-cache
 *COMPILE.css
+compass_scripts
 
 # Intellij project configuration files
 *.idea
