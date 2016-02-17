@@ -156,7 +156,7 @@
     }
 }
 
-@include desktop {
+body.desktop {
     .desktop-hide {
         display: none;
     }

@@ -235,16 +235,16 @@ label.checkbox.custom {
         font-size: 0.7em;
         @include webkitProp(flex, '0 0 1');
     }
+}
 
-    @include desktop {
+body.desktop .object-header {
+    .context-available {
+        @include trans-prop-nice(opacity, 0.25s);
+        opacity: 0;
+    }
+    &:hover {
         .context-available {
-            @include trans-prop-nice(opacity, 0.25s);
-            opacity: 0;
-        }
-        &:hover {
-            .context-available {
-                opacity: 1;
-            }
+            opacity: 1;
         }
     }
 }

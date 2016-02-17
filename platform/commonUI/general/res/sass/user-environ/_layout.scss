@@ -137,48 +137,6 @@
 
     .mini-tab-icon.toggle-pane {
         z-index: 5;
-        @include desktop {
-            $d: $uePaneMiniTabH;
-            $paneExpandedOffset: $splitterD + $uePaneMiniTabW;
-            top: $bodyMargin;
-            height: $d;
-            line-height: $d;
-            &:after {
-                // Always the icon that shows when the pane is collapsed
-                opacity: 0;
-            }
-            &.collapsed {
-                &:before {
-                    opacity: 0;
-                }
-                &:after {
-                    opacity: 1;
-                }
-            }
-            &.toggle-tree.anchor-left {
-                left: 0;
-                @include transform(translateX(-1 * $paneExpandedOffset));
-                &:after {
-                    content: '\6d'; // Menu 'hamburger' icon
-                }
-                &.collapsed {
-                    left: 0;
-                    @include transform(translateX((-1 * $ueCollapsedPaneEdgeM) + $interiorMargin));
-                }
-                &:not(.collapsed):before {
-                    @include trans-prop-nice(opacity, 200ms, 200ms);
-                }
-            }
-            &.toggle-inspect.anchor-right {
-                right: $bodyMargin;
-                &:after {
-                    content: '\e615'; // Eye icon
-                }
-                &.collapsed {
-                    right: $interiorMargin;
-                }
-            }
-        }
     }
     &.items {
         .object-browse-bar {
@@ -186,6 +144,49 @@
             .right.abs {
                 top: auto;
             }
+        }
+    }
+}
+
+body.desktop .pane .mini-tab-icon.toggle-pane {
+    $d: $uePaneMiniTabH;
+    $paneExpandedOffset: $splitterD + $uePaneMiniTabW;
+    top: $bodyMargin;
+    height: $d;
+    line-height: $d;
+    &:after {
+        // Always the icon that shows when the pane is collapsed
+        opacity: 0;
+    }
+    &.collapsed {
+        &:before {
+            opacity: 0;
+        }
+        &:after {
+            opacity: 1;
+        }
+    }
+    &.toggle-tree.anchor-left {
+        left: 0;
+        @include transform(translateX(-1 * $paneExpandedOffset));
+        &:after {
+            content: '\6d'; // Menu 'hamburger' icon
+        }
+        &.collapsed {
+            left: 0;
+            @include transform(translateX((-1 * $ueCollapsedPaneEdgeM) + $interiorMargin));
+        }
+        &:not(.collapsed):before {
+            @include trans-prop-nice(opacity, 200ms, 200ms);
+        }
+    }
+    &.toggle-inspect.anchor-right {
+        right: $bodyMargin;
+        &:after {
+            content: '\e615'; // Eye icon
+        }
+        &.collapsed {
+            right: $interiorMargin;
         }
     }
 }
@@ -339,7 +340,7 @@
     }
 }
 
-@include desktop {
+body.desktop {
     .holder-all {
         min-width: $ueDesktopMinW;
     }

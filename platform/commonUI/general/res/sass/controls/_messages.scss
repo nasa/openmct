@@ -275,17 +275,17 @@
 // Message as singleton
 .t-message-single {
     @include messageBlock(80px);
+}
 
-    @include desktop {
-        .l-message,
-        .bottom-bar {
-            @include absPosDefault();
-        }
+body.desktop .t-message-single {
+    .l-message,
+    .bottom-bar {
+        @include absPosDefault();
+    }
 
-        .bottom-bar {
-            top: auto;
-            height: $ovrFooterH;
-        }
+    .bottom-bar {
+        top: auto;
+        height: $ovrFooterH;
     }
 }
 
@@ -295,7 +295,6 @@
 
     .message-contents {
         .l-message {
-            //border-bottom: 1px solid pullForward($colorOvrBg, 20%);
             @include border-radius($controlCr);
             background: rgba($colorOvrFg, 0.1);
             margin-bottom: $interiorMargin;
@@ -303,7 +302,6 @@
 
             .message-contents,
             .bottom-bar {
-                //@include test(green);
                 position: relative;
             }
 
@@ -320,8 +318,8 @@
             }
         }
     }
+}
 
-    @include desktop {
-        .message-contents .l-message { margin-right: $interiorMarginLg; }
-    }
+body.desktop .t-message-list {
+    .message-contents .l-message { margin-right: $interiorMarginLg; }
 }

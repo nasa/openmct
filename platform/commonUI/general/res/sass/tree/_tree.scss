@@ -63,11 +63,6 @@ ul.tree {
                 @include transform(rotate(90deg));
             }
         }
-		@include desktop {
-			&:hover {
-				color: $colorItemTreeVCHover !important;
-			}
-		}
 	}
 
 	.t-object-label {
@@ -94,18 +89,6 @@ ul.tree {
 		}
 	}
 
-	&:not(.selected) {
-		@include desktop {
-			&:hover {
-				background: $colorItemTreeHoverBg;
-				color: $colorItemTreeHoverFg;
-				.t-item-icon {
-					color: $colorItemTreeIconHover;
-				}
-			}
-		}
-	}
-
 	&:not(.loading) {
 		cursor: pointer;
 	}
@@ -121,6 +104,26 @@ ul.tree {
 			line-height: $h;
 		}
 	}
+}
+
+body.desktop {
+    .tree-item,
+    .search-result-item {
+        .view-control {
+            &:hover {
+                color: $colorItemTreeVCHover !important;
+            }
+        }
+        &:not(.selected) {
+            &:hover {
+                background: $colorItemTreeHoverBg;
+                color: $colorItemTreeHoverFg;
+                .t-item-icon {
+                    color: $colorItemTreeIconHover;
+                }
+            }
+        }
+    }
 }
 
 mct-representation {
