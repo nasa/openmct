@@ -481,7 +481,7 @@ body.desktop .object-header {
 
 /******************************************************** BROWSER ELEMENTS */
 
-@include desktop {
+body.desktop {
     ::-webkit-scrollbar {
         @include border-radius(2px);
         @include box-sizing(border-box);
