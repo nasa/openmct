@@ -6091,7 +6091,7 @@ ul.tree {
   /* line 48, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .view-control,
   .search-result-item .view-control {
-    color: rgba(255, 255, 255, 0.3);
+    color: #999;
     font-size: 0.75em;
     margin-right: 5px;
     height: 100%;
@@ -6154,7 +6154,7 @@ ul.tree {
     /* line 84, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .view-control,
     .search-result-item.selected .view-control {
-      color: rgba(255, 255, 255, 0.3); }
+      color: #999; }
     /* line 87, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .t-object-label .t-item-icon,
     .search-result-item.selected .t-object-label .t-item-icon {
@@ -6179,7 +6179,7 @@ ul.tree {
 /* line 113, ../../../../general/res/sass/tree/_tree.scss */
 body.desktop .tree-item .view-control:hover,
 body.desktop .search-result-item .view-control:hover {
-  color: #ffc700 !important; }
+  color: #cccccc !important; }
 /* line 118, ../../../../general/res/sass/tree/_tree.scss */
 body.desktop .tree-item:not(.selected):hover,
 body.desktop .search-result-item:not(.selected):hover {

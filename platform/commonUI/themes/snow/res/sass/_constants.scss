@@ -153,13 +153,13 @@ $colorItemTreeHoverBg: rgba($colorBodyFg, 0.1);
 $colorItemTreeHoverFg: pullForward($colorBodyFg, 20%);
 $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: $colorItemTreeIcon; //pushBack($colorItemTreeIcon, 20%);
-$colorItemTreeVCHover: $colorKey;
 $colorItemTreeFg: $colorBodyFg;
 $colorItemTreeSelectedBg: pushBack($colorKey, 15%);
 $colorItemTreeSelectedFg: $colorBodyBg;
 $colorItemTreeEditingBg: #caf1ff; //#c6e3ff;
 $colorItemTreeEditingFg: $colorEditAreaFg;
 $colorItemTreeVC: $colorBodyFg;
+$colorItemTreeVCHover: $colorKey;
 $colorItemTreeSelectedVC: $colorBodyBg;
 $shdwItemTreeIcon: none;
 
