@@ -303,16 +303,14 @@
 	.icon {
 		color: $ic;
 	}
-	@include desktop {
-		@if $bgHov != none {
-			&:not(.disabled):hover {
-				@include background-image($bgHov);
-				>.icon {
-					color: lighten($ic, $ltGamma);
-				}
-			}
-		}
-	}
+    @if $bgHov != none {
+        &:not(.disabled):hover {
+            @include background-image($bgHov);
+            >.icon {
+                color: lighten($ic, $ltGamma);
+            }
+        }
+    }
 }
 
 @mixin input-base($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.6) 0 1px 3px) {
