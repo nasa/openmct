@@ -5203,196 +5203,176 @@ body.desktop .pane.primary-pane .object-browse-bar {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@media only screen and (orientation: portrait) and (max-device-width: 767px), only screen and (orientation: landscape) and (max-device-width: 767px), only screen and (orientation: portrait) and (min-device-width: 768px) and (max-device-width: 1024px), only screen and (orientation: landscape) and (min-device-width: 768px) and (max-device-width: 1024px) {
-  /* line 26, ../../../../general/res/sass/mobile/_layout.scss */
-  .browse-wrapper,
-  .pane {
-    top: 0 !important;
-    right: 0;
-    bottom: 0;
-    left: 0; }
-
-  /* line 31, ../../../../general/res/sass/mobile/_layout.scss */
-  .pane.left.treeview {
-    background-color: #262626; }
-
-  /* line 35, ../../../../general/res/sass/mobile/_layout.scss */
-  .pane.right.items {
+/* line 31, ../../../../general/res/sass/mobile/_layout.scss */
+body.mobile .pane.left.treeview {
+  background-color: #262626; }
+/* line 35, ../../../../general/res/sass/mobile/_layout.scss */
+body.mobile .pane.right.items {
+  -moz-transition-duration: 0.35s;
+  -o-transition-duration: 0.35s;
+  -webkit-transition-duration: 0.35s;
+  transition-duration: 0.35s;
+  transition-timing-function: ease;
+  backface-visibility: hidden;
+  margin-left: 0 !important; }
+  /* line 39, ../../../../general/res/sass/mobile/_layout.scss */
+  body.mobile .pane.right.items .holder-object-and-inspector {
     -moz-transition-duration: 0.35s;
     -o-transition-duration: 0.35s;
     -webkit-transition-duration: 0.35s;
     transition-duration: 0.35s;
     transition-timing-function: ease;
     backface-visibility: hidden;
-    margin-left: 0 !important; }
-    /* line 39, ../../../../general/res/sass/mobile/_layout.scss */
-    .pane.right.items .holder-object-and-inspector {
-      -moz-transition-duration: 0.35s;
-      -o-transition-duration: 0.35s;
-      -webkit-transition-duration: 0.35s;
-      transition-duration: 0.35s;
-      transition-timing-function: ease;
-      backface-visibility: hidden;
-      left: 10px;
-      right: 10px;
-      opacity: 1; }
+    left: 10px;
+    right: 10px;
+    opacity: 1; }
+/* line 47, ../../../../general/res/sass/mobile/_layout.scss */
+body.mobile .create-btn-holder {
+  display: none; }
+/* line 53, ../../../../general/res/sass/mobile/_layout.scss */
+body.mobile .holder.holder-treeview-elements {
+  right: 10px !important; }
+/* line 63, ../../../../general/res/sass/mobile/_layout.scss */
+body.mobile .pane-tree-hidden .pane.left.treeview {
+  -moz-transition-property: opacity;
+  -o-transition-property: opacity;
+  -webkit-transition-property: opacity;
+  transition-property: opacity;
+  -moz-transition-duration: 150ms;
+  -o-transition-duration: 150ms;
+  -webkit-transition-duration: 150ms;
+  transition-duration: 150ms;
+  -moz-transition-timing-function: ease-in-out;
+  -o-transition-timing-function: ease-in-out;
+  -webkit-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  -moz-transition-delay: 0;
+  -o-transition-delay: 0;
+  -webkit-transition-delay: 0;
+  transition-delay: 0;
+  opacity: 0 !important; }
+/* line 67, ../../../../general/res/sass/mobile/_layout.scss */
+body.mobile .pane-tree-hidden .pane.right.items {
+  left: 0 !important; }
+/* line 80, ../../../../general/res/sass/mobile/_layout.scss */
+body.mobile .pane-tree-showing .pane.left.treeview {
+  -moz-transition-property: opacity;
+  -o-transition-property: opacity;
+  -webkit-transition-property: opacity;
+  transition-property: opacity;
+  -moz-transition-duration: 250ms;
+  -o-transition-duration: 250ms;
+  -webkit-transition-duration: 250ms;
+  transition-duration: 250ms;
+  -moz-transition-timing-function: ease-in-out;
+  -o-transition-timing-function: ease-in-out;
+  -webkit-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  -moz-transition-delay: 250ms;
+  -o-transition-delay: 250ms;
+  -webkit-transition-delay: 250ms;
+  transition-delay: 250ms;
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuMCIgeTE9IjAuNSIgeDI9IjEuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSI5OCUiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMC4wIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAuMyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+  background-size: 100%;
+  background-image: -moz-linear-gradient(0deg, rgba(0, 0, 0, 0) 98%, rgba(0, 0, 0, 0.3) 100%);
+  background-image: -webkit-linear-gradient(0deg, rgba(0, 0, 0, 0) 98%, rgba(0, 0, 0, 0.3) 100%);
+  background-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 98%, rgba(0, 0, 0, 0.3) 100%);
+  right: auto !important;
+  width: 40% !important; }
+/* line 87, ../../../../general/res/sass/mobile/_layout.scss */
+body.mobile .pane-tree-showing .pane.right.items {
+  left: 40% !important; }
+/* line 92, ../../../../general/res/sass/mobile/_layout.scss */
+body.mobile .toggle-tree {
+  color: #0099cc !important;
+  font-size: 110%;
+  position: absolute;
+  top: 12px;
+  left: 10px; }
+  /* line 98, ../../../../general/res/sass/mobile/_layout.scss */
+  body.mobile .toggle-tree:after {
+    content: 'm' !important;
+    font-family: symbolsfont; }
+/* line 104, ../../../../general/res/sass/mobile/_layout.scss */
+body.mobile .object-browse-bar {
+  margin-left: 45px; }
+  /* line 106, ../../../../general/res/sass/mobile/_layout.scss */
+  body.mobile .object-browse-bar .context-available {
+    opacity: 1 !important; }
+  /* line 109, ../../../../general/res/sass/mobile/_layout.scss */
+  body.mobile .object-browse-bar .view-switcher {
+    margin-right: 0 !important; }
+    /* line 111, ../../../../general/res/sass/mobile/_layout.scss */
+    body.mobile .object-browse-bar .view-switcher .title-label {
+      display: none; }
+/* line 118, ../../../../general/res/sass/mobile/_layout.scss */
+body.mobile .tree-holder {
+  overflow-x: hidden !important; }
+/* line 122, ../../../../general/res/sass/mobile/_layout.scss */
+body.mobile .mobile-disable-select {
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none; }
+/* line 127, ../../../../general/res/sass/mobile/_layout.scss */
+body.mobile .mobile-hide,
+body.mobile .mobile-hide-important {
+  display: none !important; }
+/* line 132, ../../../../general/res/sass/mobile/_layout.scss */
+body.mobile .mobile-back-hide {
+  pointer-events: none;
+  -moz-transition-property: opacity;
+  -o-transition-property: opacity;
+  -webkit-transition-property: opacity;
+  transition-property: opacity;
+  -moz-transition-duration: 0.4s;
+  -o-transition-duration: 0.4s;
+  -webkit-transition-duration: 0.4s;
+  transition-duration: 0.4s;
+  -moz-transition-timing-function: ease-in-out;
+  -o-transition-timing-function: ease-in-out;
+  -webkit-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  -moz-transition-delay: 0;
+  -o-transition-delay: 0;
+  -webkit-transition-delay: 0;
+  transition-delay: 0;
+  opacity: 0; }
+/* line 137, ../../../../general/res/sass/mobile/_layout.scss */
+body.mobile .mobile-back-unhide {
+  pointer-events: all;
+  -moz-transition-property: opacity;
+  -o-transition-property: opacity;
+  -webkit-transition-property: opacity;
+  transition-property: opacity;
+  -moz-transition-duration: 0.4s;
+  -o-transition-duration: 0.4s;
+  -webkit-transition-duration: 0.4s;
+  transition-duration: 0.4s;
+  -moz-transition-timing-function: ease-in-out;
+  -o-transition-timing-function: ease-in-out;
+  -webkit-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  -moz-transition-delay: 0;
+  -o-transition-delay: 0;
+  -webkit-transition-delay: 0;
+  transition-delay: 0;
+  opacity: 1; }
 
-  /* line 47, ../../../../general/res/sass/mobile/_layout.scss */
-  .create-btn-holder {
-    display: none; }
-
-  /* line 53, ../../../../general/res/sass/mobile/_layout.scss */
-  .holder.holder-treeview-elements {
-    right: 10px !important; }
-
-  /* line 63, ../../../../general/res/sass/mobile/_layout.scss */
-  .pane-tree-hidden .pane.left.treeview {
-    -moz-transition-property: opacity;
-    -o-transition-property: opacity;
-    -webkit-transition-property: opacity;
-    transition-property: opacity;
-    -moz-transition-duration: 150ms;
-    -o-transition-duration: 150ms;
-    -webkit-transition-duration: 150ms;
-    transition-duration: 150ms;
-    -moz-transition-timing-function: ease-in-out;
-    -o-transition-timing-function: ease-in-out;
-    -webkit-transition-timing-function: ease-in-out;
-    transition-timing-function: ease-in-out;
-    -moz-transition-delay: 0;
-    -o-transition-delay: 0;
-    -webkit-transition-delay: 0;
-    transition-delay: 0;
-    opacity: 0 !important; }
-  /* line 67, ../../../../general/res/sass/mobile/_layout.scss */
-  .pane-tree-hidden .pane.right.items {
-    left: 0 !important; }
-
-  /* line 80, ../../../../general/res/sass/mobile/_layout.scss */
-  .pane-tree-showing .pane.left.treeview {
-    -moz-transition-property: opacity;
-    -o-transition-property: opacity;
-    -webkit-transition-property: opacity;
-    transition-property: opacity;
-    -moz-transition-duration: 250ms;
-    -o-transition-duration: 250ms;
-    -webkit-transition-duration: 250ms;
-    transition-duration: 250ms;
-    -moz-transition-timing-function: ease-in-out;
-    -o-transition-timing-function: ease-in-out;
-    -webkit-transition-timing-function: ease-in-out;
-    transition-timing-function: ease-in-out;
-    -moz-transition-delay: 250ms;
-    -o-transition-delay: 250ms;
-    -webkit-transition-delay: 250ms;
-    transition-delay: 250ms;
-    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuMCIgeTE9IjAuNSIgeDI9IjEuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSI5OCUiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMC4wIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAuMyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
-    background-size: 100%;
-    background-image: -moz-linear-gradient(0deg, rgba(0, 0, 0, 0) 98%, rgba(0, 0, 0, 0.3) 100%);
-    background-image: -webkit-linear-gradient(0deg, rgba(0, 0, 0, 0) 98%, rgba(0, 0, 0, 0.3) 100%);
-    background-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 98%, rgba(0, 0, 0, 0.3) 100%);
-    right: auto !important;
-    width: 40% !important; }
-  /* line 87, ../../../../general/res/sass/mobile/_layout.scss */
-  .pane-tree-showing .pane.right.items {
-    left: 40% !important; }
-
-  /* line 92, ../../../../general/res/sass/mobile/_layout.scss */
-  .toggle-tree {
-    color: #0099cc !important;
-    font-size: 110%;
-    position: absolute;
-    top: 12px;
-    left: 10px; }
-    /* line 98, ../../../../general/res/sass/mobile/_layout.scss */
-    .toggle-tree:after {
-      content: 'm' !important;
-      font-family: symbolsfont; }
-
-  /* line 104, ../../../../general/res/sass/mobile/_layout.scss */
-  .object-browse-bar {
-    margin-left: 45px; }
-    /* line 106, ../../../../general/res/sass/mobile/_layout.scss */
-    .object-browse-bar .context-available {
-      opacity: 1 !important; }
-    /* line 109, ../../../../general/res/sass/mobile/_layout.scss */
-    .object-browse-bar .view-switcher {
-      margin-right: 0 !important; }
-      /* line 111, ../../../../general/res/sass/mobile/_layout.scss */
-      .object-browse-bar .view-switcher .title-label {
-        display: none; }
-
-  /* line 118, ../../../../general/res/sass/mobile/_layout.scss */
-  .tree-holder {
-    overflow-x: hidden !important; }
-
-  /* line 122, ../../../../general/res/sass/mobile/_layout.scss */
-  .mobile-disable-select {
-    -moz-user-select: -moz-none;
-    -ms-user-select: none;
-    -webkit-user-select: none;
-    user-select: none; }
-
-  /* line 127, ../../../../general/res/sass/mobile/_layout.scss */
-  .mobile-hide,
-  .mobile-hide-important {
-    display: none !important; }
-
-  /* line 132, ../../../../general/res/sass/mobile/_layout.scss */
-  .mobile-back-hide {
-    pointer-events: none;
-    -moz-transition-property: opacity;
-    -o-transition-property: opacity;
-    -webkit-transition-property: opacity;
-    transition-property: opacity;
-    -moz-transition-duration: 0.4s;
-    -o-transition-duration: 0.4s;
-    -webkit-transition-duration: 0.4s;
-    transition-duration: 0.4s;
-    -moz-transition-timing-function: ease-in-out;
-    -o-transition-timing-function: ease-in-out;
-    -webkit-transition-timing-function: ease-in-out;
-    transition-timing-function: ease-in-out;
-    -moz-transition-delay: 0;
-    -o-transition-delay: 0;
-    -webkit-transition-delay: 0;
-    transition-delay: 0;
+/* line 146, ../../../../general/res/sass/mobile/_layout.scss */
+body.phone.portrait .pane-tree-showing .pane.left.treeview {
+  width: 90% !important; }
+/* line 149, ../../../../general/res/sass/mobile/_layout.scss */
+body.phone.portrait .pane-tree-showing .pane.right.items {
+  left: 0 !important;
+  -moz-transform: translateX(90%);
+  -ms-transform: translateX(90%);
+  -webkit-transform: translateX(90%);
+  transform: translateX(90%); }
+  /* line 152, ../../../../general/res/sass/mobile/_layout.scss */
+  body.phone.portrait .pane-tree-showing .pane.right.items .holder-object-and-inspector {
     opacity: 0; }
 
-  /* line 137, ../../../../general/res/sass/mobile/_layout.scss */
-  .mobile-back-unhide {
-    pointer-events: all;
-    -moz-transition-property: opacity;
-    -o-transition-property: opacity;
-    -webkit-transition-property: opacity;
-    transition-property: opacity;
-    -moz-transition-duration: 0.4s;
-    -o-transition-duration: 0.4s;
-    -webkit-transition-duration: 0.4s;
-    transition-duration: 0.4s;
-    -moz-transition-timing-function: ease-in-out;
-    -o-transition-timing-function: ease-in-out;
-    -webkit-transition-timing-function: ease-in-out;
-    transition-timing-function: ease-in-out;
-    -moz-transition-delay: 0;
-    -o-transition-delay: 0;
-    -webkit-transition-delay: 0;
-    transition-delay: 0;
-    opacity: 1; } }
-@media only screen and (orientation: portrait) and (max-device-width: 767px) {
-  /* line 146, ../../../../general/res/sass/mobile/_layout.scss */
-  .pane-tree-showing .pane.left.treeview {
-    width: 90% !important; }
-  /* line 149, ../../../../general/res/sass/mobile/_layout.scss */
-  .pane-tree-showing .pane.right.items {
-    left: 0 !important;
-    -moz-transform: translateX(90%);
-    -ms-transform: translateX(90%);
-    -webkit-transform: translateX(90%);
-    transform: translateX(90%); }
-    /* line 152, ../../../../general/res/sass/mobile/_layout.scss */
-    .pane-tree-showing .pane.right.items .holder-object-and-inspector {
-      opacity: 0; } }
 /* line 160, ../../../../general/res/sass/mobile/_layout.scss */
 body.desktop .desktop-hide {
   display: none; }

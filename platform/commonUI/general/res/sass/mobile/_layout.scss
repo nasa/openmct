@@ -20,14 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-@include phoneandtablet {
-    // Wrapper of the entire 2 panes, only enacted on
-    // phone and tablet. Also for the panes
-    .browse-wrapper,
-    .pane {
-        top: 0 !important; right: 0; bottom: 0; left: 0;
-    }
-
+body.mobile {
     .pane.left.treeview {
         background-color: $colorMobilePaneLeft;
     }
@@ -141,7 +134,7 @@
     }
 }
 
-@include phonePortrait {
+body.phone.portrait {
     .pane-tree-showing {
         .pane.left.treeview {
             width: $proporMenuOnly !important;
