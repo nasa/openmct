@@ -111,7 +111,7 @@ $pad: $interiorMargin * $baseRatio;
     // Color and styling additionally in _controls.scss
 }
 
-body.desktop.mini-tab {
+body.desktop .mini-tab {
     // Meant to be used as pane hide/show control elements in concert with mct-splitter
     $iconH: $uePaneMiniTabH;
     $iconW: $uePaneMiniTabW;
@@ -206,7 +206,7 @@ body.desktop.mini-tab {
     }
 }
 
-body.desktop.mini-tab-icon {
+body.desktop .mini-tab-icon {
     // Meant to be used as pane hide/show control elements in concert with mct-splitter
     $d: $uePaneMiniTabW;
     color: pullForward($colorBodyBg, 15%);
