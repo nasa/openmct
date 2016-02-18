@@ -324,7 +324,6 @@ a {
 /* line 47, ../../../../general/res/sass/_global.scss */
 body, html {
   -webkit-font-smoothing: subpixel-antialiased;
-  -moz-osx-font-smoothing: grayscale;
   background-color: #333;
   color: #999;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -334,24 +333,24 @@ body, html {
   width: 100%;
   overflow: hidden; }
 
-/* line 60, ../../../../general/res/sass/_global.scss */
+/* line 59, ../../../../general/res/sass/_global.scss */
 em {
   font-style: normal; }
 
-/* line 64, ../../../../general/res/sass/_global.scss */
+/* line 63, ../../../../general/res/sass/_global.scss */
 input, textarea {
   font-family: Helvetica, Arial, sans-serif; }
 
-/* line 68, ../../../../general/res/sass/_global.scss */
+/* line 67, ../../../../general/res/sass/_global.scss */
 input[type="text"] {
   vertical-align: baseline;
   padding: 3px 5px !important; }
 
-/* line 73, ../../../../general/res/sass/_global.scss */
+/* line 72, ../../../../general/res/sass/_global.scss */
 h1, h2, h3 {
   margin: 0; }
 
-/* line 77, ../../../../general/res/sass/_global.scss */
+/* line 76, ../../../../general/res/sass/_global.scss */
 h1 {
   font-size: 1.7em;
   font-weight: normal !important;
@@ -359,15 +358,15 @@ h1 {
   margin-bottom: 20px;
   margin-top: 0; }
 
-/* line 85, ../../../../general/res/sass/_global.scss */
+/* line 84, ../../../../general/res/sass/_global.scss */
 p {
   margin-bottom: 10px; }
 
-/* line 89, ../../../../general/res/sass/_global.scss */
+/* line 88, ../../../../general/res/sass/_global.scss */
 mct-container {
   display: block; }
 
-/* line 93, ../../../../general/res/sass/_global.scss */
+/* line 92, ../../../../general/res/sass/_global.scss */
 .abs, .l-inspect, .l-datetime-picker .l-month-year-pager .pager,
 .l-datetime-picker .l-month-year-pager .val, .s-menu-btn span.l-click-area, .l-object-wrapper, .l-object-wrapper .object-holder-main {
   position: absolute;
@@ -378,57 +377,57 @@ mct-container {
   height: auto;
   width: auto; }
 
-/* line 103, ../../../../general/res/sass/_global.scss */
+/* line 102, ../../../../general/res/sass/_global.scss */
 .code, .codehilite {
   font-family: "Lucida Console", monospace;
   font-size: 0.7em;
   line-height: 150%;
   white-space: pre; }
 
-/* line 110, ../../../../general/res/sass/_global.scss */
+/* line 109, ../../../../general/res/sass/_global.scss */
 .codehilite {
   background-color: rgba(153, 153, 153, 0.1);
   padding: 1em; }
 
-/* line 116, ../../../../general/res/sass/_global.scss */
+/* line 115, ../../../../general/res/sass/_global.scss */
 .align-right {
   text-align: right; }
 
-/* line 120, ../../../../general/res/sass/_global.scss */
+/* line 119, ../../../../general/res/sass/_global.scss */
 .centered {
   text-align: center; }
 
-/* line 124, ../../../../general/res/sass/_global.scss */
+/* line 123, ../../../../general/res/sass/_global.scss */
 .ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap; }
 
-/* line 128, ../../../../general/res/sass/_global.scss */
+/* line 127, ../../../../general/res/sass/_global.scss */
 .scrolling,
 .scroll {
   overflow: auto; }
 
-/* line 133, ../../../../general/res/sass/_global.scss */
+/* line 132, ../../../../general/res/sass/_global.scss */
 .vscroll {
   overflow-y: auto; }
 
-/* line 137, ../../../../general/res/sass/_global.scss */
+/* line 136, ../../../../general/res/sass/_global.scss */
 .no-margin {
   margin: 0; }
 
-/* line 141, ../../../../general/res/sass/_global.scss */
+/* line 140, ../../../../general/res/sass/_global.scss */
 .ds {
   -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px; }
 
-/* line 145, ../../../../general/res/sass/_global.scss */
+/* line 144, ../../../../general/res/sass/_global.scss */
 .hide,
 .hidden {
   display: none !important; }
 
-/* line 150, ../../../../general/res/sass/_global.scss */
+/* line 149, ../../../../general/res/sass/_global.scss */
 .off {
   visibility: hidden;
   opacity: 0;
@@ -438,7 +437,7 @@ mct-container {
   border: 0;
   margin: 0 !important; }
 
-/* line 160, ../../../../general/res/sass/_global.scss */
+/* line 159, ../../../../general/res/sass/_global.scss */
 .sep {
   color: rgba(255, 255, 255, 0.2); }
 
