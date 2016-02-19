@@ -20,7 +20,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 5, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -41,38 +41,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block; }
 
@@ -1906,10 +1906,10 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     height: 24px;
     width: 9px;
     text-align: center; }
-    /* line 143, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 142, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab:hover {
       color: #0099cc; }
-    /* line 148, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 147, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.collapsed {
       background-color: #454545;
       -moz-border-radius: 3px;
@@ -1954,19 +1954,19 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
         .mini-tab.collapsed:not(.disabled):hover > .icon, .mini-tab.collapsed:not(.disabled):hover > .t-item-icon {
           color: #33ccff; } }
 @media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-      /* line 151, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 150, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.collapsed:before {
         opacity: 0; }
-      /* line 152, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 151, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.collapsed:after {
         opacity: 1; }
-      /* line 154, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 153, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.collapsed:hover:before {
         opacity: 1; }
-      /* line 155, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 154, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.collapsed:hover:after {
         opacity: 0; }
-    /* line 160, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 159, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab:before, .mini-tab:after {
       -moz-transition-property: left, right, opacity;
       -o-transition-property: left, right, opacity;
@@ -1987,22 +1987,22 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
       display: block;
       height: 100%;
       position: absolute; }
-    /* line 169, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 168, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab:before {
       width: 9px; }
-    /* line 175, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 174, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab:after {
       width: 100%;
       text-align: center;
       opacity: 0; }
-    /* line 182, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 181, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-left {
       text-align: right; }
-      /* line 185, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 184, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.anchor-left:before {
         content: '\3c';
         right: 0; }
-      /* line 190, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 189, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.anchor-left.collapsed {
         -moz-border-radius-topleft: 0;
         -webkit-border-top-left-radius: 0;
@@ -2011,21 +2011,21 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
         -webkit-border-bottom-left-radius: 0;
         border-bottom-left-radius: 0;
         text-align: left; }
-        /* line 193, ../../../../general/res/sass/controls/_buttons.scss */
+        /* line 192, ../../../../general/res/sass/controls/_buttons.scss */
         .mini-tab.anchor-left.collapsed:before {
           content: '\3e';
           left: 0; }
-        /* line 197, ../../../../general/res/sass/controls/_buttons.scss */
+        /* line 196, ../../../../general/res/sass/controls/_buttons.scss */
         .mini-tab.anchor-left.collapsed:hover:before {
           left: 2px; }
-    /* line 200, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 199, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-right {
       text-align: left; }
-      /* line 203, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 202, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.anchor-right:before {
         content: '\3e';
         left: 0; }
-      /* line 208, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 207, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.anchor-right.collapsed {
         -moz-border-radius-topright: 0;
         -webkit-border-top-right-radius: 0;
@@ -2033,17 +2033,17 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
         -moz-border-radius-bottomright: 0;
         -webkit-border-bottom-right-radius: 0;
         border-bottom-right-radius: 0; }
-        /* line 210, ../../../../general/res/sass/controls/_buttons.scss */
+        /* line 209, ../../../../general/res/sass/controls/_buttons.scss */
         .mini-tab.anchor-right.collapsed:before {
           text-align: right;
           content: '\3c';
           right: 0; }
-        /* line 215, ../../../../general/res/sass/controls/_buttons.scss */
+        /* line 214, ../../../../general/res/sass/controls/_buttons.scss */
         .mini-tab.anchor-right.collapsed:hover:before {
           right: 2px; } }
 
 @media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-  /* line 221, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 220, ../../../../general/res/sass/controls/_buttons.scss */
   .mini-tab-icon {
     color: #595959;
     cursor: pointer;
@@ -2056,31 +2056,31 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     line-height: 9px;
     overflow: hidden;
     word-break: break-all; }
-    /* line 238, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 237, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab-icon.collapsed {
       width: 11px;
       font-size: 11px; }
-    /* line 243, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 242, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab-icon:before, .mini-tab-icon:after {
       position: absolute;
       display: inherit; }
-    /* line 249, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 248, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab-icon:before {
       content: '\78'; }
-    /* line 253, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 252, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab-icon:hover {
       color: #0099cc; } }
 
-/* line 260, ../../../../general/res/sass/controls/_buttons.scss */
+/* line 259, ../../../../general/res/sass/controls/_buttons.scss */
 .l-btn-set {
   font-size: 0; }
-  /* line 266, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 265, ../../../../general/res/sass/controls/_buttons.scss */
   .l-btn-set .s-btn, .l-btn-set .s-menu-btn {
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
     border-radius: 0;
     margin-left: 1px; }
-  /* line 272, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 271, ../../../../general/res/sass/controls/_buttons.scss */
   .l-btn-set .first .s-btn, .l-btn-set .first .s-menu-btn {
     -moz-border-radius-topleft: 3px;
     -webkit-border-top-left-radius: 3px;
@@ -2089,7 +2089,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     -webkit-border-bottom-left-radius: 3px;
     border-bottom-left-radius: 3px;
     margin-left: 0; }
-  /* line 279, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 278, ../../../../general/res/sass/controls/_buttons.scss */
   .l-btn-set .last .s-btn, .l-btn-set .last .s-menu-btn {
     -moz-border-radius-topright: 3px;
     -webkit-border-top-right-radius: 3px;
@@ -2098,7 +2098,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     -webkit-border-bottom-right-radius: 3px;
     border-bottom-right-radius: 3px; }
 
-/* line 286, ../../../../general/res/sass/controls/_buttons.scss */
+/* line 285, ../../../../general/res/sass/controls/_buttons.scss */
 .paused:not(.s-btn):not(.s-menu-btn) {
   border-color: #c56f01 !important;
   color: #c56f01 !important; }
@@ -3163,28 +3163,33 @@ label.checkbox.custom {
 /* line 39, ../../../../general/res/sass/controls/_messages.scss */
 .status.block {
   color: #ccc;
-  cursor: default;
   display: inline-block;
   margin-right: 5px; }
-  /* line 46, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 45, ../../../../general/res/sass/controls/_messages.scss */
   .status.block .status-indicator,
   .status.block .label,
   .status.block .count {
     display: inline-block;
     vertical-align: top; }
-  /* line 54, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 52, ../../../../general/res/sass/controls/_messages.scss */
+  .status.block.clickable {
+    cursor: pointer; }
+  /* line 53, ../../../../general/res/sass/controls/_messages.scss */
+  .status.block:not(.clickable) {
+    cursor: default; }
+  /* line 56, ../../../../general/res/sass/controls/_messages.scss */
   .status.block.no-icon .status-indicator {
     display: none; }
-  /* line 59, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 61, ../../../../general/res/sass/controls/_messages.scss */
   .status.block.float-right {
     float: right; }
-  /* line 63, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 65, ../../../../general/res/sass/controls/_messages.scss */
   .status.block.subtle {
     opacity: 0.5; }
-  /* line 66, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 68, ../../../../general/res/sass/controls/_messages.scss */
   .status.block .status-indicator {
     margin-right: 3px; }
-  /* line 71, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 73, ../../../../general/res/sass/controls/_messages.scss */
   .status.block:not(.no-collapse) .label {
     -moz-transition-property: max-width;
     -o-transition-property: max-width;
@@ -3204,7 +3209,7 @@ label.checkbox.custom {
     transition-delay: 1.5s;
     overflow: hidden;
     max-width: 0px; }
-  /* line 78, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 80, ../../../../general/res/sass/controls/_messages.scss */
   .status.block:not(.no-collapse):hover .label {
     -moz-transition-property: max-width;
     -o-transition-property: max-width;
@@ -3224,7 +3229,7 @@ label.checkbox.custom {
     transition-delay: 0s;
     max-width: 450px;
     width: auto; }
-  /* line 83, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 85, ../../../../general/res/sass/controls/_messages.scss */
   .status.block:not(.no-collapse):hover .count {
     -moz-transition-property: max-width;
     -o-transition-property: max-width;
@@ -3243,16 +3248,16 @@ label.checkbox.custom {
     -webkit-transition-delay: 0s;
     transition-delay: 0s;
     opacity: 0; }
-  /* line 90, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 92, ../../../../general/res/sass/controls/_messages.scss */
   .status.block.ok .status-indicator, .status.block.info .status-indicator {
     color: #62ba72; }
-  /* line 94, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 96, ../../../../general/res/sass/controls/_messages.scss */
   .status.block.alert .status-indicator, .status.block.warning .status-indicator, .status.block.caution .status-indicator {
     color: #ffa66d; }
-  /* line 99, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 101, ../../../../general/res/sass/controls/_messages.scss */
   .status.block.error .status-indicator {
     color: #d4585c; }
-  /* line 102, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 104, ../../../../general/res/sass/controls/_messages.scss */
   .status.block .count {
     -moz-transition-property: opacity;
     -o-transition-property: opacity;
@@ -3272,20 +3277,25 @@ label.checkbox.custom {
     transition-delay: 1.5s;
     font-weight: bold;
     opacity: 1; }
+  /* line 109, ../../../../general/res/sass/controls/_messages.scss */
+  .status.block .s-btn, .status.block .s-menu-btn {
+    padding: 0 3px;
+    height: auto;
+    line-height: inherit; }
 
 /* Styles for messages and message banners */
-/* line 111, ../../../../general/res/sass/controls/_messages.scss */
+/* line 119, ../../../../general/res/sass/controls/_messages.scss */
 .message.block {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
   padding: 10px; }
-/* line 115, ../../../../general/res/sass/controls/_messages.scss */
+/* line 123, ../../../../general/res/sass/controls/_messages.scss */
 .message.error {
   background-color: rgba(255, 60, 0, 0.3);
   color: #ff8a66; }
 
-/* line 121, ../../../../general/res/sass/controls/_messages.scss */
+/* line 129, ../../../../general/res/sass/controls/_messages.scss */
 .l-message-banner {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -3314,7 +3324,7 @@ label.checkbox.custom {
   -webkit-transform: translateX(-50%);
   transform: translateX(-50%);
   z-index: 10; }
-  /* line 137, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 145, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner.minimized {
     -moz-transition-property: left, opacity;
     -o-transition-property: left, opacity;
@@ -3330,11 +3340,11 @@ label.checkbox.custom {
     transition-timing-function: ease-in-out;
     left: 0;
     opacity: 0; }
-  /* line 145, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 153, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner.new {
     left: 50%;
     opacity: 1; }
-    /* line 148, ../../../../general/res/sass/controls/_messages.scss */
+    /* line 156, ../../../../general/res/sass/controls/_messages.scss */
     .l-message-banner.new:not(.info) {
       -moz-animation-name: pulse;
       -webkit-animation-name: pulse;
@@ -3366,33 +3376,33 @@ label.checkbox.custom {
     opacity: 0.5; }
   100% {
     opacity: 1; } }
-  /* line 153, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 161, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner .banner-elem {
     -webkit-flex: 0 1 auto;
     flex: 0 1 auto;
     margin-left: 5px; }
-  /* line 157, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 165, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner a {
     display: inline-block; }
-  /* line 160, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 168, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner .l-action {
     line-height: 15px;
     padding: 0 5px; }
-  /* line 164, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 172, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner .close {
     cursor: pointer;
     font-size: 7px;
     width: 8px; }
-  /* line 170, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 178, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner .l-progress-bar {
     height: 8px;
     line-height: 8px;
     width: 100px; }
-  /* line 176, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 184, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner .progress-info {
     display: none; }
 
-/* line 186, ../../../../general/res/sass/controls/_messages.scss */
+/* line 194, ../../../../general/res/sass/controls/_messages.scss */
 .s-message-banner {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
@@ -3409,10 +3419,10 @@ label.checkbox.custom {
     /* line 33, ../../../../general/res/sass/controls/_messages.scss */
     .s-message-banner .s-action:hover {
       background-color: gray; }
-  /* line 190, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 198, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner a {
     color: inherit; }
-  /* line 191, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 199, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner .s-action {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -3433,13 +3443,13 @@ label.checkbox.custom {
     -o-transition-delay: 0;
     -webkit-transition-delay: 0;
     transition-delay: 0; }
-  /* line 195, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 203, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner .close {
     opacity: 0.5; }
-    /* line 197, ../../../../general/res/sass/controls/_messages.scss */
+    /* line 205, ../../../../general/res/sass/controls/_messages.scss */
     .s-message-banner .close:hover {
       opacity: 1; }
-  /* line 201, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 209, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner.ok, .s-message-banner.info {
     background-color: #285b31;
     color: #ccc; }
@@ -3452,7 +3462,7 @@ label.checkbox.custom {
       /* line 33, ../../../../general/res/sass/controls/_messages.scss */
       .s-message-banner.ok .s-action:hover, .s-message-banner.info .s-action:hover {
         background-color: #285b31; }
-  /* line 205, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 213, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner.caution, .s-message-banner.warning, .s-message-banner.alert {
     background-color: #d35200;
     color: #ccc; }
@@ -3465,7 +3475,7 @@ label.checkbox.custom {
       /* line 33, ../../../../general/res/sass/controls/_messages.scss */
       .s-message-banner.caution .s-action:hover, .s-message-banner.warning .s-action:hover, .s-message-banner.alert .s-action:hover {
         background-color: #d35200; }
-  /* line 210, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 218, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner.error {
     background-color: #751e21;
     color: #ccc; }
@@ -3492,7 +3502,7 @@ label.checkbox.custom {
                 ... same as above
         bottom-bar
 */
-/* line 252, ../../../../general/res/sass/controls/_messages.scss */
+/* line 260, ../../../../general/res/sass/controls/_messages.scss */
 .l-message {
   display: -webkit-flex;
   display: flex;
@@ -3500,52 +3510,52 @@ label.checkbox.custom {
   flex-direction: row;
   -webkit-align-items: stretch;
   align-items: stretch; }
-  /* line 256, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 264, ../../../../general/res/sass/controls/_messages.scss */
   .l-message .type-icon.message-type {
     -webkit-flex: 0 1 auto;
     flex: 0 1 auto;
     position: relative; }
-  /* line 261, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 269, ../../../../general/res/sass/controls/_messages.scss */
   .l-message .message-contents {
     -webkit-flex: 1 1 auto;
     flex: 1 1 auto;
     margin-left: 25px;
     position: relative; }
-    /* line 267, ../../../../general/res/sass/controls/_messages.scss */
+    /* line 275, ../../../../general/res/sass/controls/_messages.scss */
     .l-message .message-contents .top-bar,
     .l-message .message-contents .message-body {
       margin-bottom: 20px; }
 
-/* line 216, ../../../../general/res/sass/controls/_messages.scss */
+/* line 224, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-single .type-icon.message-type {
   text-shadow: rgba(0, 0, 0, 0.4) 0 1px 2px;
   color: #ccc;
   font-size: 80px;
   padding: 1px;
   width: 82px; }
-  /* line 218, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 226, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .type-icon.message-type:before {
     content: "\e608"; }
-/* line 225, ../../../../general/res/sass/controls/_messages.scss */
+/* line 233, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-single .message-severity-info .type-icon.message-type {
   color: #62ba72; }
-  /* line 226, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 234, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .message-severity-info .type-icon.message-type:before {
     content: "\e608"; }
-/* line 229, ../../../../general/res/sass/controls/_messages.scss */
+/* line 237, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-single .message-severity-alert .type-icon.message-type {
   color: #ffa66d; }
-  /* line 230, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 238, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .message-severity-alert .type-icon.message-type:before {
     content: "\e610"; }
-/* line 233, ../../../../general/res/sass/controls/_messages.scss */
+/* line 241, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-single .message-severity-error .type-icon.message-type {
   color: #d4585c; }
-  /* line 234, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 242, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .message-severity-error .type-icon.message-type:before {
     content: "\21"; }
 @media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-  /* line 280, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 288, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .l-message,
   .t-message-single .bottom-bar {
     overflow: hidden;
@@ -3556,40 +3566,40 @@ label.checkbox.custom {
     left: 0px;
     width: auto;
     height: auto; }
-  /* line 285, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 293, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .bottom-bar {
     top: auto;
     height: 24px; } }
 
-/* line 216, ../../../../general/res/sass/controls/_messages.scss */
+/* line 224, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-list .type-icon.message-type {
   text-shadow: rgba(0, 0, 0, 0.4) 0 1px 2px;
   color: #ccc;
   font-size: 32px;
   padding: 1px;
   width: 34px; }
-  /* line 218, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 226, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .type-icon.message-type:before {
     content: "\e608"; }
-/* line 225, ../../../../general/res/sass/controls/_messages.scss */
+/* line 233, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-list .message-severity-info .type-icon.message-type {
   color: #62ba72; }
-  /* line 226, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 234, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-severity-info .type-icon.message-type:before {
     content: "\e608"; }
-/* line 229, ../../../../general/res/sass/controls/_messages.scss */
+/* line 237, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-list .message-severity-alert .type-icon.message-type {
   color: #ffa66d; }
-  /* line 230, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 238, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-severity-alert .type-icon.message-type:before {
     content: "\e610"; }
-/* line 233, ../../../../general/res/sass/controls/_messages.scss */
+/* line 241, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-list .message-severity-error .type-icon.message-type {
   color: #d4585c; }
-  /* line 234, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 242, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-severity-error .type-icon.message-type:before {
     content: "\21"; }
-/* line 297, ../../../../general/res/sass/controls/_messages.scss */
+/* line 305, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-list .message-contents .l-message {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
@@ -3597,26 +3607,26 @@ label.checkbox.custom {
   background: rgba(230, 230, 230, 0.1);
   margin-bottom: 5px;
   padding: 10px; }
-  /* line 304, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 311, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-contents .l-message .message-contents,
   .t-message-list .message-contents .l-message .bottom-bar {
     position: relative; }
-  /* line 310, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 317, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-contents .l-message .message-contents {
     font-size: 0.9em;
     margin-left: 10px; }
-    /* line 313, ../../../../general/res/sass/controls/_messages.scss */
+    /* line 320, ../../../../general/res/sass/controls/_messages.scss */
     .t-message-list .message-contents .l-message .message-contents .message-action {
       color: #b3b3b3; }
-    /* line 314, ../../../../general/res/sass/controls/_messages.scss */
+    /* line 321, ../../../../general/res/sass/controls/_messages.scss */
     .t-message-list .message-contents .l-message .message-contents .bottom-bar {
       text-align: left; }
-  /* line 317, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 324, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-contents .l-message .top-bar,
   .t-message-list .message-contents .l-message .message-body {
     margin-bottom: 10px; }
 @media only screen and (min-device-width: 1025px) and (-webkit-min-device-pixel-ratio: 1) {
-  /* line 325, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 332, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-contents .l-message {
     margin-right: 10px; } }
 

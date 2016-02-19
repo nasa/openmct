@@ -40,7 +40,6 @@
     $transDelay: 1.5s;
     $transSpeed: .25s;
 	color: $colorStatusDefault;
-	cursor: default;
 	display: inline-block;
 	margin-right: $interiorMargin;
 	.status-indicator,
@@ -49,6 +48,9 @@
 		display: inline-block;
 		vertical-align: top;
 	}
+
+    &.clickable { cursor: pointer; }
+    &:not(.clickable) { cursor: default; }
 
     &.no-icon {
         .status-indicator {
@@ -104,6 +106,12 @@
 		font-weight: bold;
 		opacity: 1;
 	}
+    .s-btn {
+        //background: orange;
+        padding: 0 $interiorMarginSm;
+        height: auto;
+        line-height: inherit;
+    }
 }
 
 /* Styles for messages and message banners */
@@ -295,7 +303,6 @@
 
     .message-contents {
         .l-message {
-            //border-bottom: 1px solid pullForward($colorOvrBg, 20%);
             @include border-radius($controlCr);
             background: rgba($colorOvrFg, 0.1);
             margin-bottom: $interiorMargin;
