@@ -62,9 +62,6 @@
         float: right;
     }
 
-    &.subtle {
-        opacity: 0.5;
-    }
 	.status-indicator {
 		margin-right: $interiorMarginSm;
 	}
@@ -79,7 +76,7 @@
         &:hover {
             .label {
                 @include trans-prop-nice(max-width, $transSpeed, 0s);
-                max-width: 450px;
+                max-width: 600px;
                 width: auto;
             }
             .count {
@@ -107,8 +104,8 @@
 		opacity: 1;
 	}
     .s-btn {
-        //background: orange;
-        padding: 0 $interiorMarginSm;
+        background: $colorStatusBtnBg;
+        padding: 0 $interiorMargin;
         height: auto;
         line-height: inherit;
     }
@@ -154,7 +151,7 @@
         left: 50%;
         opacity: 1;
         &:not(.info) {
-            @include pulse(100ms, 10);
+            @include pulse($dur: 100ms, $iteration: 10);
         }
     }
 
