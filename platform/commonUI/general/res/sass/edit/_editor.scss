@@ -19,8 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+.s-status-editing .l-object-wrapper,
 .edit-main {
+    // .s-status-editing .l-object-wrapper is relevant to New Edit Mode;
+    // .edit-main is legacy for old edit mode.
     $handleD: 15px;
     $cr: 5px;
     .edit-corner,
@@ -92,12 +94,10 @@
         }
     }
 
-
     .frame.child-frame.panel {
         &:hover {
             @include boxShdwLarge();
             border-color: $colorKey;
-            //z-index: 2;
             .view-switcher {
                 opacity: 1;
             }

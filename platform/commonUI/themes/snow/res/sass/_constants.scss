@@ -6,16 +6,20 @@ $colorFooterBg: #000;
 $colorKey: #0099cc;
 $colorKeySelectedBg: $colorKey;
 $colorKeyFg: #fff;
+$colorEditAreaBg: #eafaff;
+$colorEditAreaFg: #4bb1c7; //587ab5;
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: #999;
 $colorAHov: $colorKey;
 $contrastRatioPercent: 40%;
+$hoverRatioPercent: 10%;
 $basicCr: 4px;
 $controlCr: $basicCr;
 $smallCr: 3px;
 
 // Buttons and Controls
 $colorBtnBg: pullForward($colorBodyBg, $contrastRatioPercent);
+$colorBtnBgHov: pullForward($colorBtnBg, $hoverRatioPercent);
 $colorBtnFg: #fff;
 $colorBtnMajorBg: $colorKey;
 $colorBtnMajorFg: $colorKeyFg;
@@ -52,13 +56,13 @@ $colorTick: rgba(black, 0.2);
 $colorMenuBg: pushBack($colorBodyBg, 10%);
 $colorMenuFg: pullForward($colorMenuBg, 70%);
 $colorMenuIc: $colorKey;
-$colorMenuHovBg: pullForward($colorMenuBg, 10%);
+$colorMenuHovBg: pullForward($colorMenuBg, $hoverRatioPercent);
 $colorMenuHovFg: $colorMenuFg;
 $colorMenuHovIc: $colorMenuIc;
-$colorCreateMenuLgIcon: $colorKey;
-$colorCreateMenuText: $colorBodyFg;
 $shdwMenu: rgba(black, 0.5) 0 1px 5px;
 $shdwMenuText: none;
+$colorCreateMenuLgIcon: $colorKey;
+$colorCreateMenuText: $colorBodyFg;
 
 // Form colors
 $colorCheck: $colorKey;
@@ -87,6 +91,8 @@ $colorStatusDefault: #ccc;
 $colorStatusInfo: #60ba7b;
 $colorStatusAlert: #ffb66c;
 $colorStatusError: #c96b68;
+$colorStatusAvailable: $colorKey;
+$colorStatusBtnBg: #666;
 $colorProgressBarOuter: rgba(#000, 0.1);
 $colorProgressBarAmt: #0a0;
 $progressBarHOverlay: 15px;
@@ -107,8 +113,8 @@ $colorLimitRedBg: rgba(red, 0.3);
 $colorLimitRedIc: red;
 
 // Bubble colors
-$colorInfoBubbleFg: #666;
 $colorInfoBubbleBg: $colorMenuBg;
+$colorInfoBubbleFg: #666;
 $colorThumbsBubbleFg: pullForward($colorBodyFg, 10%);
 $colorThumbsBubbleBg: pullForward($colorBodyBg, 10%);
 
@@ -121,18 +127,17 @@ $colorOvrBtnFg: #fff;
 
 // Items
 $colorItemBg: #ddd;
-$colorItemBgHov: pullForward($colorItemBg, 5%);
+$colorItemBgHov: pullForward($colorItemBg, $hoverRatioPercent);
 $colorItemFg: $colorBodyFg;
 $colorItemFgDetails: pushBack($colorItemFg, 15%);
 $colorItemIc: $colorKey;
 $colorItemSubIcons: $colorItemFgDetails;
 $colorItemOpenIcon: $colorItemFgDetails;
-$shdwItemText: none; //rgba(black, 0.2) 0 1px 2px;
+$shdwItemText: none;
 $colorItemBgSelected: $colorKey;
 
 // Tabular
 $colorTabBorder: pullForward($colorBodyBg, 10%);
-$colorItemTreeHoverFg: pullForward($colorBodyFg, 20%);
 $colorTabBodyBg: $colorBodyBg;
 $colorTabBodyFg: pullForward($colorBodyFg, 20%);
 $colorTabHeaderBg: pullForward($colorBodyBg, 10%);
@@ -148,13 +153,16 @@ $colorPlotAreaBorder: $colorInteriorBorder;
 $colorPlotLabelFg: pushBack($colorPlotFg, 20%);
 
 // Tree
-$colorItemTreeHoverBg: rgba($colorBodyFg, 0.1);
+$colorItemTreeHoverBg: pullForward($colorBodyBg, $hoverRatioPercent);
+$colorItemTreeHoverFg: pullForward($colorBodyFg, $hoverRatioPercent);
 $colorItemTreeIcon: $colorKey;
-$colorItemTreeIconHover: $colorItemTreeIcon; //pushBack($colorItemTreeIcon, 20%);
+$colorItemTreeIconHover: $colorItemTreeIcon;
 $colorItemTreeVCHover: $colorKey;
 $colorItemTreeFg: $colorBodyFg;
 $colorItemTreeSelectedBg: pushBack($colorKey, 15%);
 $colorItemTreeSelectedFg: $colorBodyBg;
+$colorItemTreeEditingBg: #caf1ff;
+$colorItemTreeEditingFg: $colorEditAreaFg;
 $colorItemTreeVC: $colorBodyFg;
 $colorItemTreeSelectedVC: $colorBodyBg;
 $shdwItemTreeIcon: none;

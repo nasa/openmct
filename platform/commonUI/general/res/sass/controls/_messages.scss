@@ -36,21 +36,62 @@
 	}
 }
 
+mct-include.status-block-holder {
+    // mct-include that wraps status.block
+    // Must use display: inline-block to fix white space problems
+    display: inline-block;
+}
+
 .status.block {
+    $transDelay: 1.5s;
+    $transSpeed: .25s;
 	color: $colorStatusDefault;
-	cursor: default;
 	display: inline-block;
 	margin-right: $interiorMargin;
 	.status-indicator,
 	.label,
 	.count {
-		//@include test(#00ff00);
 		display: inline-block;
 		vertical-align: top;
 	}
+
+    &.clickable { cursor: pointer; }
+    &:not(.clickable) { cursor: default; }
+
+    &.no-icon {
+        .status-indicator {
+            display: none;
+        }
+    }
+
+    &.float-right {
+        float: right;
+    }
+
 	.status-indicator {
 		margin-right: $interiorMarginSm;
 	}
+
+    &:not(.no-collapse) {
+        .label {
+            // Max-width silliness is necessary for width transition
+            @include trans-prop-nice(max-width, $transSpeed, $transDelay);
+            overflow: hidden;
+            max-width: 0px;
+        }
+        &:hover {
+            .label {
+                @include trans-prop-nice(max-width, $transSpeed, 0s);
+                max-width: 600px;
+                width: auto;
+            }
+            .count {
+                @include trans-prop-nice(max-width, $transSpeed, 0s);
+                opacity: 0;
+            }
+        }
+    }
+
 	&.ok .status-indicator,
     &.info .status-indicator {
 		color: $colorStatusInfo;
@@ -63,26 +104,20 @@
 	&.error .status-indicator {
 		color: $colorStatusError;
 	}
-	.label {
-		// Max-width silliness is necessary for width transition
-		@include trans-prop-nice(max-width, .25s);
-		overflow: hidden;
-		max-width: 0px;
-	}
+    &.available .status-indicator {
+        color: $colorStatusAvailable;
+    }
 	.count {
-		@include trans-prop-nice(opacity, .25s);
+		@include trans-prop-nice(opacity, $transSpeed, $transDelay);
 		font-weight: bold;
 		opacity: 1;
 	}
-	&:hover {
-		.label {
-			max-width: 450px;
-			width: auto;
-		}
-		.count {
-			opacity: 0;
-		}
-	}
+    .s-btn {
+        background: $colorStatusBtnBg;
+        padding: 0 $interiorMargin;
+        height: auto;
+        line-height: inherit;
+    }
 }
 
 /* Styles for messages and message banners */
@@ -125,7 +160,7 @@
         left: 50%;
         opacity: 1;
         &:not(.info) {
-            @include pulse(100ms, 10);
+            @include pulse($dur: 100ms, $iteration: 10);
         }
     }
 
@@ -274,7 +309,6 @@
 
     .message-contents {
         .l-message {
-            //border-bottom: 1px solid pullForward($colorOvrBg, 20%);
             @include border-radius($controlCr);
             background: rgba($colorOvrFg, 0.1);
             margin-bottom: $interiorMargin;

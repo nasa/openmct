@@ -37,7 +37,6 @@ define(
         describe("The logging level handler", function () {
             var mockLog,
                 mockApp,
-                mockProvide,
                 mockDelegate,
                 mockMethods;
 
@@ -61,8 +60,7 @@ define(
             beforeEach(function () {
                 mockMethods = jasmine.createSpyObj("levels", LOG_METHODS);
                 mockLog = jasmine.createSpyObj('$log', LOG_METHODS);
-                mockApp = jasmine.createSpyObj('app', ['config']);
-                mockProvide = jasmine.createSpyObj('$provide', ['decorator']);
+                mockApp = jasmine.createSpyObj('app', ['config', 'decorator']);
                 mockDelegate = jasmine.createSpyObj('$delegate', LOG_METHODS);
 
                 LOG_METHODS.forEach(function (m) {
@@ -70,14 +68,11 @@ define(
                     mockDelegate[m].andCallFake(mockMethods[m]);
                 });
 
-                mockApp.config.andCallFake(function (callback) {
-                    callback(mockProvide);
-                });
-
-                mockProvide.decorator.andCallFake(function (key, callback) {
-                    // Only $log should be configured in any case
-                    expect(key).toEqual('$log');
-                    callback(mockDelegate);
+                mockApp.decorator.andCallFake(function (key, decoration) {
+                    // We only expect $log to be decorated
+                    if (key === '$log' && decoration[0] === '$delegate') {
+                        decoration[1](mockDelegate);
+                    }
                 });
             });
 

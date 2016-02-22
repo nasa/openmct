@@ -34,21 +34,56 @@ define(
          * @constructor
          * @implements {Policy.<Action, ActionContext>}
          */
-        function EditActionPolicy() {
+        function EditActionPolicy(policyService) {
+            this.policyService = policyService;
         }
 
-        // Get a count of views which are not flagged as non-editable.
-        function countEditableViews(context) {
-            var domainObject = (context || {}).domainObject,
-                views = domainObject && domainObject.useCapability('view'),
-                count = 0;
+        function applicableView(key){
+            return ['plot', 'scrolling'].indexOf(key) >= 0;
+        }
+
+        function editableType(key){
+            return key === 'telemetry.panel';
+        }
+
+        /**
+         * Get a count of views which are not flagged as non-editable.
+         * @private
+         */
+        EditActionPolicy.prototype.countEditableViews = function (context) {
+            var domainObject = context.domainObject,
+                count = 0,
+                type, views;
+
+            if (!domainObject){
+                return count;
+            }
+
+            type = domainObject.getCapability('type');
+            views = domainObject.useCapability('view');
+
 
             // A view is editable unless explicitly flagged as not
             (views || []).forEach(function (view) {
-                count += (view.editable !== false) ? 1 : 0;
+                if (view.editable === true || (applicableView(view.key) && editableType(type.getKey()))) {
+                    count++;
+                }
             });
 
             return count;
+        };
+
+        /**
+         * Checks whether the domain object is currently being edited. If
+         * so, the edit action is not applicable.
+         * @param context
+         * @returns {*|boolean}
+         */
+        function isEditing(context) {
+            var domainObject = (context || {}).domainObject;
+            return domainObject
+                && domainObject.hasCapability('status')
+                && domainObject.getCapability('status').get('editing');
         }
 
         EditActionPolicy.prototype.allow = function (action, context) {
@@ -59,11 +94,12 @@ define(
             if (category === 'view-control') {
                 // Restrict 'edit' to cases where there are editable
                 // views (similarly, restrict 'properties' to when
-                // the converse is true)
+                // the converse is true), and where the domain object is not
+                // already being edited.
                 if (key === 'edit') {
-                    return countEditableViews(context) > 0;
+                    return this.countEditableViews(context) > 0 && !isEditing(context);
                 } else if (key === 'properties') {
-                    return countEditableViews(context) < 1;
+                    return this.countEditableViews(context) < 1 && !isEditing(context);
                 }
             }
 

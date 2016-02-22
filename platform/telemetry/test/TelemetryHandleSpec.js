@@ -47,7 +47,13 @@ define(
                 mockQ = jasmine.createSpyObj('$q', ['when', 'all']);
                 mockSubscription = jasmine.createSpyObj(
                     'subscription',
-                    ['unsubscribe', 'getTelemetryObjects', 'promiseTelemetryObjects']
+                    [
+                        'makeDatum',
+                        'getDatum',
+                        'unsubscribe',
+                        'getTelemetryObjects',
+                        'promiseTelemetryObjects'
+                    ]
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
@@ -111,6 +117,20 @@ define(
                 handle.request({});
                 expect(handle.getSeries(mockDomainObject))
                     .toEqual(mockSeries);
+            });
+
+            it("provides access to the datum objects by index", function () {
+                var testDatum = { a: 1, b: 2 }, testIndex = 42;
+                mockSubscription.makeDatum.andReturn(testDatum);
+                handle.request({});
+                expect(handle.getDatum(mockDomainObject, testIndex))
+                    .toEqual(testDatum);
+                expect(mockSubscription.makeDatum)
+                    .toHaveBeenCalledWith(
+                        mockDomainObject,
+                        mockSeries,
+                        testIndex
+                    );
             });
         });
     }

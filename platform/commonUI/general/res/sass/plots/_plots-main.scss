@@ -33,7 +33,22 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 	width: 100%;
 	height: 100%;
 
+    .gl-plot-local-controls {
+        @include trans-prop-nice(opacity, 150ms);
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .gl-plot-display-area,
+    .gl-plot-axis-area {
+        &:hover .gl-plot-local-controls {
+            opacity: 1;
+            pointer-events: inherit;
+        }
+    }
+
 	.gl-plot-axis-area {
+        //@include test();
 		position: absolute;
 		&.gl-plot-x {
 			top: auto;
@@ -114,15 +129,17 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 
 	.gl-plot-x-options,
     .gl-plot-y-options {
-		$h: 32px;
+		$h: 24px;
 		position: absolute;
-		height: auto;
+		height: $h;
 		min-height: $h;
         z-index: 2;
 	}
 
     .gl-plot-x-options {
-        top: $interiorMargin;
+        @include transform(translateX(-50%));
+        bottom: 0;
+        left: 50%;
     }
 
     .gl-plot-y-options {
@@ -130,6 +147,12 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
         min-width: 150px; // Need this due to enclosure of .select
         top: 50%;
         left: $yLabelW + $interiorMargin * 2;
+    }
+
+    .t-plot-display-controls {
+        position: absolute;
+        top: $interiorMargin;
+        right: $interiorMargin;
     }
 
 	.gl-plot-hash {
@@ -243,6 +266,8 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 
 .gl-plot-tick,
 .tick-label {
+    direction: rtl;
+    unicode-bidi:bidi-override;
 	font-size: 0.7rem;
 	position: absolute;
 	overflow: hidden;

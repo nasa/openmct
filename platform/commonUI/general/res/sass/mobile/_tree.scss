@@ -30,25 +30,30 @@
     }
 	.tree-item,
 	.search-result-item {
-		height: $mobileTreeItemH;
-		line-height: $mobileTreeItemH;
-		margin-bottom: 0px;
+		height: $mobileTreeItemH !important;
+		line-height: $mobileTreeItemH !important;
+		margin-bottom: 0px !important;
 		.view-control {
-			//@include test(red);
-			position: absolute;
-			font-size: 1.1em;
-			height: $mobileTreeItemH;
-			line-height: inherit;
-			right: 0px;
-			width: $mobileTreeRightArrowW;
-			text-align: center;
+            font-size: 1.2em;
+            margin-right: 0;
+            order: 2;
+            width: $mobileTreeItemH;
+            &.has-children {
+                &:before {
+                    content: "\7d";
+                    left: 50%;
+                    @include transform(translateX(-50%) rotate(90deg));
+                }
+                &.expanded:before {
+                    @include transform(translateX(-50%) rotate(270deg));
+                }
+            }
 		}
-
-		.label,
 		.t-object-label {
-			left: 0;
-			right: $mobileTreeRightArrowW + $interiorMargin; // Allows tree item name to stop prior to the arrow
 			line-height: inherit;
+            .t-item-icon.l-icon-link .t-item-icon-glyph:before {
+                bottom: 20%; // Shift up due to height of mobile menu items
+            }
 		}
 	}
 }

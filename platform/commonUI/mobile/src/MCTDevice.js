@@ -22,30 +22,9 @@
 /*global define,Promise*/
 
 define(
-    function () {
+    ['./DeviceMatchers'],
+    function (DeviceMatchers) {
         'use strict';
-
-        var DEVICE_MATCHERS = {
-            mobile: function (agentService) {
-                return agentService.isMobile();
-            },
-            phone: function (agentService) {
-                return agentService.isPhone();
-            },
-            tablet: function (agentService) {
-                return agentService.isTablet();
-            },
-            desktop: function (agentService) {
-                return !agentService.isMobile();
-            },
-            portrait: function (agentService) {
-                return agentService.isPortrait();
-            },
-            landscape: function (agentService) {
-                return agentService.isLandscape();
-            }
-        };
-
 
         /**
          * The `mct-device` directive, when applied as an attribute,
@@ -68,6 +47,7 @@ define(
          * * `desktop`: Non-mobile devices.
          * * `portrait`: Devices in a portrait-style orientation.
          * * `landscape`: Devices in a landscape-style orientation.
+         * * `touch`: Device supports touch events.
          *
          * @param {AgentService} agentService used to detect device type
          *        based on information about the user agent
@@ -77,7 +57,7 @@ define(
             function deviceMatches(tokens) {
                 tokens = tokens || "";
                 return tokens.split(" ").every(function (token) {
-                    var fn = DEVICE_MATCHERS[token];
+                    var fn = DeviceMatchers[token];
                     return fn && fn(agentService);
                 });
             }

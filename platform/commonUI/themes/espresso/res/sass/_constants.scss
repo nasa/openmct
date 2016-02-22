@@ -6,16 +6,20 @@ $colorFooterBg: #000;
 $colorKey: #0099cc;
 $colorKeySelectedBg: #005177;
 $colorKeyFg: #fff;
+$colorEditAreaBg: #31363e;
+$colorEditAreaFg: #587ab5;
 $colorInteriorBorder: rgba($colorBodyFg, 0.1);
 $colorA: #ccc;
 $colorAHov: #fff;
 $contrastRatioPercent: 7%;
+$hoverRatioPercent: 10%;
 $basicCr: 3px;
 $controlCr: 3px;
 $smallCr: 2px;
 
 // Buttons and Controls
-$colorBtnBg: pullForward($colorBodyBg, $contrastRatioPercent); //
+$colorBtnBg: pullForward($colorBodyBg, $contrastRatioPercent);
+$colorBtnBgHov: pullForward($colorBtnBg, $hoverRatioPercent);
 $colorBtnFg: $colorBodyFg;
 $colorBtnMajorBg: $colorKey;
 $colorBtnMajorFg: $colorKeyFg;
@@ -43,8 +47,6 @@ $colorPausedBg: #c56f01;
 $colorPausedFg: #fff;
 $colorCreateBtn: $colorKey;
 $colorGridLines: rgba(#fff, 0.05);
-$colorFormLines: rgba(#fff, 0.1);
-$colorFormSectionHeader: rgba(#000, 0.2);
 $colorInvokeMenu: #fff;
 $colorObjHdrTxt: $colorBodyFg;
 $colorObjHdrIc: pullForward($colorObjHdrTxt, 20%);
@@ -54,7 +56,7 @@ $colorTick: rgba(white, 0.2);
 $colorMenuBg: pullForward($colorBodyBg, 23%);
 $colorMenuFg: pullForward($colorMenuBg, 70%);
 $colorMenuIc: pullForward($colorKey, 17%);
-$colorMenuHovBg: pullForward($colorMenuBg, 10%);
+$colorMenuHovBg: pullForward($colorMenuBg, $hoverRatioPercent);
 $colorMenuHovFg: #fff;
 $colorMenuHovIc: $colorMenuHovFg;
 $shdwMenu: none;
@@ -69,8 +71,8 @@ $colorFormValid: #33cc33;
 $colorFormError: #cc0000;
 $colorFormInvalid: #ff3300;
 $colorFormLines: rgba(#fff, 0.1);
-$colorFormSectionHeader: rgba(#000, 0.2);
-$colorInputBg: rgba(#fff, 0.1);
+$colorFormSectionHeader: rgba(#fff, 0.1);
+$colorInputBg: rgba(#000, 0.1);
 $colorInputFg: pullForward($colorBodyFg, 20%);
 $colorFormText: rgba(#fff, 0.5);
 $colorInputIcon: pushBack($colorBodyFg, 15%);
@@ -80,7 +82,7 @@ $colorInspectorBg: pullForward($colorBodyBg, 3%);
 $colorInspectorFg: $colorBodyFg;
 $colorInspectorPropName: pushBack($colorBodyFg, 15%);
 $colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
-$colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
+$colorInspectorSectionHeaderBg: $colorFormSectionHeader;
 $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
 // Status colors, mainly used for messaging and item ancillary symbols
@@ -89,6 +91,8 @@ $colorStatusDefault: #ccc;
 $colorStatusInfo: #62ba72;
 $colorStatusAlert: #ffa66d;
 $colorStatusError: #d4585c;
+$colorStatusAvailable: $colorKey;
+$colorStatusBtnBg: $colorBtnBg;
 $colorProgressBarOuter: rgba(#000, 0.1);
 $colorProgressBarAmt: $colorKey;
 $progressBarHOverlay: 15px;
@@ -109,8 +113,8 @@ $colorLimitRedBg: rgba(red, 0.3);
 $colorLimitRedIc: red;
 
 // Bubble colors
-$colorInfoBubbleFg: #666;
 $colorInfoBubbleBg: #ddd;
+$colorInfoBubbleFg: #666;
 $colorThumbsBubbleFg: pullForward($colorBodyFg, 10%);
 $colorThumbsBubbleBg: pullForward($colorBodyBg, 10%);
 
@@ -123,10 +127,10 @@ $colorOvrBtnFg: #fff;
 
 // Items
 $colorItemBg: lighten($colorBodyBg, 5%);
-$colorItemBgHov: pullForward($colorItemBg, 15%);
+$colorItemBgHov: pullForward($colorItemBg, $hoverRatioPercent);
 $colorItemFg: lighten($colorItemBg, 50%);
 $colorItemFgDetails: lighten($colorItemBg, 30%);
-$colorItemIc: $colorKey; //pullForward($colorItemFg, 20%);
+$colorItemIc: $colorKey;
 $colorItemSubIcons: $colorItemFgDetails;
 $colorItemOpenIcon: $colorItemFgDetails;
 $shdwItemText: rgba(black, 0.1) 0 1px 2px;
@@ -149,29 +153,31 @@ $colorPlotAreaBorder: $colorInteriorBorder;
 $colorPlotLabelFg: pushBack($colorPlotFg, 20%);
 
 // Tree
-$colorItemTreeHoverBg: rgba($colorBodyFg, 0.1);
-$colorItemTreeHoverFg: pullForward($colorBodyFg, 20%);
+$colorItemTreeHoverBg: pullForward($colorBodyBg, $hoverRatioPercent);
+$colorItemTreeHoverFg: pullForward($colorBodyFg, $hoverRatioPercent);
 $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: lighten($colorItemTreeIcon, 20%);
+$colorItemTreeVCHover: $colorAlt1;
 $colorItemTreeFg: $colorBodyFg;
 $colorItemTreeSelectedBg: pushBack($colorKey, 15%);
 $colorItemTreeSelectedFg: pullForward($colorBodyFg, 20%);
+$colorItemTreeEditingBg: #344154;
+$colorItemTreeEditingFg: $colorEditAreaFg;
 $colorItemTreeVC: rgba(#fff, 0.3);
 $colorItemTreeSelectedVC: $colorItemTreeVC;
-$colorItemTreeVCHover: $colorAlt1;
 $shdwItemTreeIcon: 0.6;
 
 // Scrollbar
 $scrollbarTrackSize: 10px;
+$scrollbarTrackShdw: rgba(#000, 0.7) 0 1px 5px;
 $scrollbarTrackColorBg: rgba(#000, 0.4);
 $scrollbarThumbColor: lighten($colorBodyBg, 10%);
 $scrollbarThumbColorHov: lighten($scrollbarThumbColor, 2%);
-$scrollbarTrackShdw: rgba(#000, 0.7) 0 1px 5px;
 
 // Splitter
 $splitterD: 25px; // splitterD and HandleD should both be odd, or even
 $splitterHandleD: 1px;
-$colorSplitterBg: pullForward($colorBodyBg, 5%);
+$colorSplitterBg: rgba(#fff, 0.1); //pullForward($colorBodyBg, 5%);
 $splitterShdw: rgba(black, 0.4) 0 0 3px;
 $splitterEndCr: none;
 $colorSplitterHover: pullForward($colorBodyBg, 15%);
@@ -191,5 +197,5 @@ $colorCalCellInMonthBg: pushBack($colorMenuBg, 5%);
 $colorAboutLink: #84b3ff;
 
 // Loading
-$colorLoadingBg: rgba($colorBodyFg, 0.2);
 $colorLoadingFg: $colorAlt1;
+$colorLoadingBg: rgba($colorBodyFg, 0.2);

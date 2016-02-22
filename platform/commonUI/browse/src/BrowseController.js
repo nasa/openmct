@@ -19,18 +19,23 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
+/*global define,Promise, confirm*/
 
 /**
  * This bundle implements Browse mode.
  * @namespace platform/commonUI/browse
  */
 define(
-    [],
-    function () {
+    [
+        '../../../representation/src/gestures/GestureConstants',
+        '../../edit/src/objects/EditableDomainObject'
+    ],
+    function (GestureConstants, EditableDomainObject) {
         "use strict";
 
-        var ROOT_ID = "ROOT";
+        var ROOT_ID = "ROOT",
+            DEFAULT_PATH = "mine",
+            CONFIRM_MSG = "Unsaved changes will be lost if you leave this page.";
 
         /**
          * The BrowseController is used to populate the initial scope in Browse
@@ -46,6 +51,7 @@ define(
             $scope,
             $route,
             $location,
+            $q,
             objectService,
             navigationService,
             urlService,
@@ -54,6 +60,13 @@ define(
             var path = [ROOT_ID].concat(
                 ($route.current.params.ids || defaultPath).split("/")
             );
+
+            function isDirty(){
+                var editorCapability = $scope.navigatedObject &&
+                        $scope.navigatedObject.getCapability("editor"),
+                    hasChanges = editorCapability && editorCapability.dirty();
+                return hasChanges;
+            }
 
             function updateRoute(domainObject) {
                 var priorRoute = $route.current,
@@ -71,20 +84,36 @@ define(
                 // urlService.urlForLocation used to adjust current
                 // path to new, addressed, path based on
                 // domainObject
-                $location.path(urlService.urlForLocation("browse", domainObject));
+                $location.path(urlService.urlForLocation("browse",
+                    domainObject.hasCapability('editor') ?
+                        domainObject.getOriginalObject() : domainObject));
 
             }
 
             // Callback for updating the in-scope reference to the object
             // that is currently navigated-to.
             function setNavigation(domainObject) {
-                $scope.navigatedObject = domainObject;
-                $scope.treeModel.selectedObject = domainObject;
-                navigationService.setNavigation(domainObject);
-                updateRoute(domainObject);
+                if (domainObject === $scope.navigatedObject){
+                    //do nothing;
+                    return;
+                }
+
+                if (isDirty() && !confirm(CONFIRM_MSG)) {
+                    $scope.treeModel.selectedObject = $scope.navigatedObject;
+                    navigationService.setNavigation($scope.navigatedObject);
+                } else {
+                    if ($scope.navigatedObject && $scope.navigatedObject.hasCapability("editor")){
+                        $scope.navigatedObject.getCapability("editor").cancel();
+                    }
+                    $scope.navigatedObject = domainObject;
+                    $scope.treeModel.selectedObject = domainObject;
+                    navigationService.setNavigation(domainObject);
+                    updateRoute(domainObject);
+                }
             }
 
             function navigateTo(domainObject) {
+
                 // Check if an object has been navigated-to already...
                 // If not, or if an ID path has been explicitly set in the URL,
                 // navigate to the URL-specified object.
@@ -156,12 +185,18 @@ define(
                 selectedObject: navigationService.getNavigation()
             };
 
+            $scope.beforeUnloadWarning = function() {
+                return isDirty() ?
+                    "Unsaved changes will be lost if you leave this page." :
+                    undefined;
+            };
+
             // Listen for changes in navigation state.
             navigationService.addListener(setNavigation);
 
             // Also listen for changes which come from the tree
             $scope.$watch("treeModel.selectedObject", setNavigation);
-
+            
             // Clean up when the scope is destroyed
             $scope.$on("$destroy", function () {
                 navigationService.removeListener(setNavigation);

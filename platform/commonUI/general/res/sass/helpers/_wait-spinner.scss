@@ -20,56 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 @include keyframes(rotation) {
-    0%   { transform: rotate(0deg); }
-    100% { transform: rotate(359deg); }
+    100% { @include transform(rotate(360deg)); }
 }
 
-@mixin wait-spinner2($b: 5px, $c: $colorAlt1) {
-    @include keyframes(rotateCentered) {
-         0%   { transform: translateX(-50%) translateY(-50%) rotate(0deg); }
-         100% { transform: translateX(-50%) translateY(-50%) rotate(359deg); }
-     }
-    @include animation-name(rotateCentered);
+@include keyframes(rotation-centered) {
+    0%   { @include transform(translate(-50%, -50%) rotate(0deg)); }
+    100% { @include transform(translate(-50%, -50%) rotate(360deg)); }
+}
+
+@mixin spinner($b: 5px, $c: $colorKey) {
+    @include transform-origin(center);
+    @include animation-name(rotation-centered);
     @include animation-duration(0.5s);
     @include animation-iteration-count(infinite);
     @include animation-timing-function(linear);
+    @include border-radius(100%);
+    @include box-sizing(border-box);
     border-color: rgba($c, 0.25);
     border-top-color: rgba($c, 1.0);
     border-style: solid;
-    border-width: 5px;
-    @include border-radius(100%);
-    @include box-sizing(border-box);
+    border-width: $b;
     display: block;
     position: absolute;
-    height: 0; width: 0;
-    padding: 7%;
     left: 50%; top: 50%;
 }
 
-@mixin wait-spinner($b: 5px, $c: $colorAlt1) {
-	display: block;
-	position: absolute;
-	-webkit-animation: rotation .6s infinite linear;
-	-moz-animation: rotation .6s infinite linear;
-	-o-animation: rotation .6s infinite linear;
-	animation: rotation .6s infinite linear;
-	border-color: rgba($c, 0.25);
-	border-top-color: rgba($c, 1.0);
-	border-style: solid;
-	border-width: $b;
-	@include border-radius(100%);
-}
-
-.t-wait-spinner,
 .wait-spinner {
 	$d: 5%;
-	@include wait-spinner(0.5em, $colorKey);
-	top: 50%; left: 50%;
+	@include spinner(0.5em, $colorKey);
 	height: auto; width: auto;
 	padding: $d; // Will size object based on parent container WIDTH
 	pointer-events: none;
-	margin-top: $d / -1;
-	margin-left: $d / -1;
 	z-index: 2;
 	&.inline {
 		display: inline-block !important;
@@ -79,44 +60,13 @@
 	}
 }
 
-.l-wait-spinner-holder {
-	pointer-events: none;
-	position: absolute;
-	&.align-left {
-		.t-wait-spinner {
-			left: 0;
-			margin-left: 0;
-		}
-	}
-	&.full-size {
-		display: inline-block;
-		height: 100%; width: 100%;
-		.t-wait-spinner {
-			top: 0;
-			margin-top: 0;
-			padding: 30%;
-		}
-	}
-}
-
-
 .treeview .wait-spinner {
+    // Only used in subtree.html, which I don't think this is actually being used
 	$d: 10px;
-	@include wait-spinner(0.25em, $colorKey);
 	height: $d; width: $d;
 	margin: 0 !important;
 	padding: 0 !important;
 	top: 2px; left: 0;
-}
-
-.wait-spinner.sm {
-	$d: 13px;
-	@include wait-spinner(0.25em, $colorKey);
-	height: $d; width: $d;
-	margin-left: 0 !important;
-	margin-top: 0 !important;
-	padding: 0 !important;
-	top: 0; left: 0;
 }
 
 .loading {
@@ -127,7 +77,8 @@
         content: '';
     }
 	&:before {
-        @include wait-spinner2(5px, $colorLoadingFg);
+        @include spinner(5px, $colorLoadingFg);
+        padding: 5%;
         z-index: 10;
 	}
     &:after {
@@ -140,5 +91,4 @@
         padding: $menuLineH / 4;
         border-width: 2px;
     }
-
 }

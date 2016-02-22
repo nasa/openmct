@@ -80,7 +80,9 @@ define(
         EditorCapability.prototype.save = function (nonrecursive) {
             var domainObject = this.domainObject,
                 editableObject = this.editableObject,
-                cache = this.cache;
+                self = this,
+                cache = this.cache,
+                returnPromise;
 
             // Update the underlying, "real" domain object's model
             // with changes made to the copy used for editing.
@@ -95,9 +97,21 @@ define(
                 return domainObject.getCapability('persistence').persist();
             }
 
-            return nonrecursive ?
-                resolvePromise(doMutate()).then(doPersist) :
-                resolvePromise(cache.saveAll());
+            editableObject.getCapability("status").set("editing", false);
+
+            if (nonrecursive) {
+                returnPromise = resolvePromise(doMutate())
+                    .then(doPersist)
+                    .then(function(){
+                        self.cancel();
+                    });
+            } else {
+                returnPromise = resolvePromise(cache.saveAll());
+            }
+            //Return the original (non-editable) object
+            return returnPromise.then(function() {
+                return domainObject.getOriginalObject ? domainObject.getOriginalObject() : domainObject;
+            });
         };
 
         /**
@@ -109,6 +123,9 @@ define(
          * @memberof platform/commonUI/edit.EditorCapability#
          */
         EditorCapability.prototype.cancel = function () {
+            this.editableObject.getCapability("status").set("editing", false);
+            //TODO: Reset the cache as well here.
+            this.cache.markClean();
             return resolvePromise(undefined);
         };
 

@@ -64,6 +64,12 @@
     }
 }
 
+@mixin trans-prop-nice-resize($t: 0.5s, $tf: ease-in-out) {
+    @include transition-property(height, width, top, right, bottom, left, opacity);
+    @include transition-duration($t);
+    @include transition-timing-function($tf);
+}
+
 @mixin trans-prop-nice-resize-h($dur: 500ms, $delay: 0) {
     @include transition-property(height, bottom, top);
     @include transition-duration($dur);
@@ -291,29 +297,28 @@
 	display: inline-block;
 }
 
-@mixin btnBase($bg: $colorBodyBg, $bgHov: none, $fg: $colorBodyFg, $ic: $colorBtnIcon) {
+@mixin btnBase($bg: $colorBodyBg, $bgHovColor: none, $fg: $colorBodyFg, $ic: $colorBtnIcon) {
 	@include user-select(none);
-    @include transition(background, .25s);
 	.icon {
 		color: $ic;
 	}
 	@include desktop {
-		@if $bgHov != none {
-			&:not(.disabled):hover {
-				background: $bgHov;
-				>.icon {
-					color: lighten($ic, $ltGamma);
-				}
-			}
-		}
+        @if $bgHovColor != none {
+            &:not(.disabled):hover {
+                background: $bgHovColor; // was just background, and background-image before that
+                >.icon {
+                    color: lighten($ic, $ltGamma);
+                }
+            }
+        }
 	}
 }
 
-@mixin input-base($bg: $colorBodyBg, $fg: $colorBodyFg) {
+@mixin input-base($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.6) 0 1px 3px) {
 	@include appearance(none);
 	@include border-radius($controlCr);
 	@include box-sizing(border-box);
-	@include box-shadow(inset rgba(black, 0.4) 0 1px 3px);
+	@include box-shadow(inset $shdw);
 	background: $bg;
 	border: none;
 	color: $fg;
@@ -323,7 +328,7 @@
 	}
 }
 
-@mixin nice-input($bg: $colorBodyBg, $fg: $colorBodyFg) {
+@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg) {
 	@include input-base($bg, $fg);
 	padding: 0 $interiorMarginSm;
 }

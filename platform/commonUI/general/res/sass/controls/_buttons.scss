@@ -35,6 +35,7 @@ $pad: $interiorMargin * $baseRatio;
     @include box-sizing(border-box);
     padding: 0 $pad;
     font-size: 0.7rem;
+    vertical-align: top;
 
     .icon {
         font-size: 0.8rem;
@@ -65,10 +66,22 @@ $pad: $interiorMargin * $baseRatio;
 
     &:not(.major) {
         // bg, bgHov, fg, ic
-        @include btnSubtle($colorBtnBg, $colorKey, $colorBtnFg, $colorBtnIcon);
+        @include btnSubtle($colorBtnBg, $colorBtnBgHov, $colorBtnFg, $colorBtnIcon);
     }
     &.pause-play {
 
+    }
+    &.t-save:before {
+        content:'\e612';
+        font-family: symbolsfont;
+        margin-right: $interiorMarginSm;
+    }
+    &.t-cancel {
+        .title-label { display: none; }
+        &:before {
+            content:'\78';
+            font-family: symbolsfont;
+        }
     }
 
     &.pause-play {
@@ -78,7 +91,7 @@ $pad: $interiorMargin * $baseRatio;
         &.paused {
             @include btnSubtle($colorPausedBg, pushBack($colorPausedBg, 10%), $colorPausedFg, $colorPausedFg);
             .icon {
-                @include pulse(1000ms);
+                @include pulse($dur: 1000ms);
                 :before {
                     content: "\0000EF";
                 }
@@ -256,14 +269,16 @@ $pad: $interiorMargin * $baseRatio;
     }
 
     .first {
-        .s-btn {
+        .s-btn,
+        &.s-btn {
             @include border-left-radius($controlCr);
             margin-left: 0;
         }
     }
 
     .last {
-        .s-btn {
+        .s-btn,
+        &.s-btn {
             @include border-right-radius($controlCr);
         }
     }

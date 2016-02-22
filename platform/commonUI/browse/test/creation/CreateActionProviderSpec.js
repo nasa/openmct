@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
+/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine,xit,xdescribe*/
 
 /**
  * MCTRepresentationSpec. Created by vwoeltje on 11/6/14.
@@ -32,11 +32,12 @@ define(
         describe("The create action provider", function () {
             var mockTypeService,
                 mockDialogService,
-                mockCreationService,
+                mockNavigationService,
                 mockPolicyService,
                 mockCreationPolicy,
                 mockPolicyMap = {},
                 mockTypes,
+                mockQ,
                 provider;
 
             function createMockType(name) {
@@ -66,9 +67,9 @@ define(
                     "dialogService",
                     [ "getUserInput" ]
                 );
-                mockCreationService = jasmine.createSpyObj(
-                    "creationService",
-                    [ "createObject" ]
+                mockNavigationService = jasmine.createSpyObj(
+                    "navigationService",
+                    [ "setNavigation" ]
                 );
                 mockPolicyService = jasmine.createSpyObj(
                     "policyService",
@@ -92,9 +93,9 @@ define(
                 mockTypeService.listTypes.andReturn(mockTypes);
 
                 provider = new CreateActionProvider(
+                    mockQ,
                     mockTypeService,
-                    mockDialogService,
-                    mockCreationService,
+                    mockNavigationService,
                     mockPolicyService
                 );
             });

@@ -69,7 +69,9 @@ define(
          */
         EditableDomainObjectCache.prototype.getEditableObject = function (domainObject) {
             var type = domainObject.getCapability('type'),
-                EditableDomainObject = this.EditableDomainObject;
+                EditableDomainObject = this.EditableDomainObject,
+                editableObject,
+                statusListener;
 
             // Track the top-level domain object; this will have
             // some special behavior for its context capability.
@@ -86,10 +88,12 @@ define(
             }
 
             // Provide an editable form of the object
-            return new EditableDomainObject(
+            editableObject = new EditableDomainObject(
                 domainObject,
                 this.cache.getCachedModel(domainObject)
             );
+
+            return editableObject;
         };
 
         /**
@@ -122,7 +126,14 @@ define(
          * @param {DomainObject} domainObject the domain object
          */
         EditableDomainObjectCache.prototype.markClean = function (domainObject) {
-            delete this.dirtyObjects[domainObject.getId()];
+            var self = this;
+            if (!domainObject) {
+                Object.keys(this.dirtyObjects).forEach(function(key) {
+                    delete self.dirtyObjects[key];
+                });
+            } else {
+                delete this.dirtyObjects[domainObject.getId()];
+            }
         };
 
         /**

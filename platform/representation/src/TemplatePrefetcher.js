@@ -30,7 +30,7 @@ define(
          * @param {platform/representation.TemplateLinker} templateLinker
          *        the `templateLinker` service, used to load and cache
          *        template extensions
-         * @param {...{templateUrl: string}[]} extensions arrays
+         * @param {...Array.<{templateUrl: string}>} extensions arrays
          *        of template or template-like extensions
          */
         function TemplatePrefetcher(templateLinker, extensions) {
@@ -38,11 +38,10 @@ define(
                 .reduce(function (a, b) {
                     return a.concat(b);
                 }, [])
-                .map(function (ext) {
-                    return templateLinker.getPath(ext);
-                })
-                .forEach(function (path) {
-                    templateLinker.load(path);
+                .forEach(function (ext) {
+                    if (ext.templateUrl) {
+                        templateLinker.load(templateLinker.getPath(ext));
+                    }
                 });
         }
 

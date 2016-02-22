@@ -19,8 +19,8 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<span ng-controller="BrowseObjectController">
-    <div class="object-browse-bar l-flex-row">
+<div ng-controller="BrowseObjectController" class="abs l-flex-col">
+    <div class="holder flex-elem l-flex-row object-browse-bar ">
         <div class="items-select left flex-elem l-flex-row grows">
             <mct-representation key="'back-arrow'"
                                 mct-object="domainObject"
@@ -43,8 +43,26 @@
             </mct-representation>
         </div>
     </div>
-    <mct-representation key="representation.selected.key"
-                        mct-object="representation.selected.key && domainObject"
-                        class="abs object-holder">
-    </mct-representation>
-</span>
+    <div class="holder l-flex-col flex-elem grows l-object-wrapper">
+        <div class="holder l-flex-col flex-elem grows l-object-wrapper-inner">
+            <!-- Toolbar and Save/Cancel buttons -->
+            <div class="l-edit-controls flex-elem l-flex-row flex-align-end">
+                <mct-toolbar name="mctToolbar"
+                             structure="toolbar.structure"
+                             ng-model="toolbar.state"
+                             class="flex-elem grows">
+                </mct-toolbar>
+                <mct-representation key="'edit-action-buttons'"
+                                    mct-object="domainObject"
+                                    class='flex-elem conclude-editing'>
+                </mct-representation>
+
+            </div>
+            <mct-representation key="representation.selected.key"
+                                mct-object="representation.selected.key && domainObject"
+                                class="abs flex-elem grows object-holder-main scroll"
+                                toolbar="toolbar">
+            </mct-representation>
+        </div><!--/ l-object-wrapper-inner -->
+    </div>
+</div>

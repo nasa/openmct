@@ -38,20 +38,31 @@ Object.keys(window.__karma__.files).forEach(function(file) {
 // Force es6-promise to load.
 allTestFiles.unshift('es6-promise');
 
-require.config({
+requirejs.config({
     // Karma serves files from the basePath defined in karma.conf.js
     baseUrl: '/base',
 
-    paths: {
-        'es6-promise': 'platform/framework/lib/es6-promise-2.0.0.min',
-        'moment': 'platform/telemetry/lib/moment.min',
-        'moment-duration-format': 'platform/features/clock/lib/moment-duration-format',
-        'uuid': 'platform/core/lib/uuid'
+    "paths": {
+        "legacyRegistry": "src/legacyRegistry",
+        "angular": "bower_components/angular/angular.min",
+        "angular-route": "bower_components/angular-route/angular-route.min",
+        "es6-promise": "bower_components/es6-promise/promise.min",
+        "moment": "bower_components/moment/moment",
+        "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
+        "screenfull": "bower_components/screenfull/dist/screenfull.min",
+        "text": "bower_components/text/text",
+        "uuid": "bower_components/node-uuid/uuid"
     },
 
-    shim: {
-        'moment-duration-format': {
-            deps: [ 'moment' ]
+    "shim": {
+        "angular": {
+            "exports": "angular"
+        },
+        "angular-route": {
+            "deps": [ "angular" ]
+        },
+        "moment-duration-format": {
+            "deps": [ "moment" ]
         }
     },
 
@@ -59,5 +70,13 @@ require.config({
     deps: allTestFiles,
 
     // we have to kickoff jasmine, as it is asynchronous
-    callback: window.__karma__.start
+    callback: function () {
+        var args = [].slice.apply(arguments);
+        require(['es6-promise'], function (es6Promise) {
+            if (!window.Promise) {
+                window.Promise = es6Promise.Promise;
+            }
+            window.__karma__.start.apply(window.__karma__, args);
+        });
+    }
 });

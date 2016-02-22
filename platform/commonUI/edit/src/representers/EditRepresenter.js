@@ -48,6 +48,8 @@ define(
         function EditRepresenter($q, $log, scope) {
             var self = this;
 
+            this.scope = scope;
+
             // Mutate and persist a new version of a domain object's model.
             function doPersist(model) {
                 var domainObject = self.domainObject;
@@ -90,8 +92,14 @@ define(
                 }
             }
 
+            function setEditable(editableDomainObject) {
+                self.domainObject = editableDomainObject;
+                scope.model = editableDomainObject.getModel();
+            }
+
             // Place the "commit" method in the scope
             scope.commit = commit;
+            scope.setEditable = setEditable;
         }
 
         // Handle a specific representation of a specific domain object
@@ -100,6 +108,7 @@ define(
             this.key = (representation || {}).key;
             // Track the represented object
             this.domainObject = representedObject;
+
             // Ensure existing watches are released
             this.destroy();
         };

@@ -69,7 +69,8 @@
     }
 }
 
-.edit-mode .s-timeline-gantt {
+.edit-mode .s-timeline-gantt,
+.s-status-editing .s-timeline-gantt {
     .bar {
         &:hover {
             @include background-image(linear-gradient(lighten($colorGanttBarBg, 20), lighten($colorGanttBarBg, 10)));
@@ -140,7 +141,8 @@
     }
 }
 
-.edit-mode .s-swimlane {
+.edit-mode .s-swimlane,
+.s-status-editing .s-swimlane {
     cursor: pointer;
     .t-object-label {
         @include border-radius($controlCr);
