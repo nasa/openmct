@@ -90,17 +90,15 @@ function customCompass() {
                 css: baseDir + 'css/',
                 comments: true,
                 bundle_exec: true
-            },
-            compassObj;
+            };
 
-        compassObj = compass(options);
-        compassObj.on('data', function (file) {
-            this.push(file);
-        }.bind(this));
-        compassObj.on('end', function () {
-            done();
-        });
-        compassObj.end(chunk);
+        compass(options)
+            .on('data', function (file) {
+                this.push(file);
+            }.bind(this))
+            .on('error', done)
+            .on('end', done)
+            .end(chunk);
     };
     return compassWrapper;
 }
