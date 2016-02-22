@@ -36,6 +36,12 @@
 	}
 }
 
+mct-include.status-block-holder {
+    // mct-include that wraps status.block
+    // Must use display: inline-block to fix white space problems
+    display: inline-block;
+}
+
 .status.block {
     $transDelay: 1.5s;
     $transSpeed: .25s;
@@ -98,6 +104,9 @@
 	&.error .status-indicator {
 		color: $colorStatusError;
 	}
+    &.available .status-indicator {
+        color: $colorStatusAvailable;
+    }
 	.count {
 		@include trans-prop-nice(opacity, $transSpeed, $transDelay);
 		font-weight: bold;
