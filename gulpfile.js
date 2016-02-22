@@ -59,7 +59,8 @@ var gulp = require('gulp'),
         },
         compass: {
             sass: __dirname,
-            css: paths.assets
+            css: paths.assets,
+            sourcemap: true
         },
         replace: {
             variables: {
@@ -69,7 +70,31 @@ var gulp = require('gulp'),
                 branch: fs.existsSync('.git') ? git.branch() : 'Unknown'
             }
         }
-    };
+    },
+    stream = require('stream'),
+    compassWrapper = new stream.Transform({objectMode: true});
+
+/* Transform stream that allows us to transform individual files */
+compassWrapper._transform = function (chunk, encoding, done) {
+    if (/\/_[^\/]*.scss$/.test(chunk.path)) {
+        return done();
+    }
+    var baseDir = 'platform/' + chunk.relative.replace(/sass\/.*$/, ''),
+        options = {
+            project: __dirname,
+            sass: baseDir + 'sass/',
+            css: baseDir + 'css/',
+            comments: true,
+            bundle_exec: true
+        };
+
+    compass(options).on('data', function (file) {
+        done(null, file);
+    }).on('error', function (error) {
+        done(error);
+    })
+    .end(chunk);
+};
 
 gulp.task('scripts', function () {
     return gulp.src(paths.main)
@@ -84,10 +109,11 @@ gulp.task('test', function (done) {
     new karma.Server(options.karma, done).start();
 });
 
+gulp.task('compass');
+
 gulp.task('stylesheets', function () {
     return gulp.src(paths.scss)
-        .pipe(compass(options.compass))
-        .pipe(gulp.dest(paths.assets));
+        .pipe(compassWrapper);
 });
 
 gulp.task('lint', function () {
@@ -110,10 +136,21 @@ gulp.task('fixstyle', function () {
         .pipe(gulp.dest('.'));
 });
 
-gulp.task('static', function () {
+gulp.task('static', ['stylesheets'], function () {
     return gulp.src(paths.static, { base: '.' })
         .pipe(gulp.dest(paths.dist));
 });
+
+gulp.task('watch', function () {
+    gulp.watch(paths.scss, ['stylesheets']);
+});
+
+gulp.task('serve', function () {
+    console.log('Running development server with all defaults');
+    var app = require('./app.js');
+});
+
+gulp.task('develop', ['serve', 'watch']);
 
 gulp.task('install', [ 'static', 'scripts' ]);
 
