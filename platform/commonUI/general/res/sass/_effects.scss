@@ -39,39 +39,35 @@ a.disabled {
 	@include test();
 }
 
-@mixin customKeyframes($animName: pulse, $op0: 0.5) {
-	@include keyframes($animName) {
-		0%   { opacity: $op0; }
-		100% { opacity: 1; }
-	}
-	@include animation-name(pulse, 0.2);
-}
-
-@mixin pulse($dur: 500ms, $iteration: infinite, $opacity0: 0.5, $opacity100: 1) {
-    @include keyframes(pulse) {
+@mixin pulse($animName: pulse, $dur: 500ms, $iteration: infinite, $opacity0: 0.5, $opacity100: 1) {
+    @include keyframes($animName) {
         0%   { opacity: $opacity0; }
         100% { opacity: $opacity100; }
     }
-	@include animation-name(pulse);
+	@include animation-name($animName);
 	@include animation-duration($dur);
 	@include animation-direction(alternate);
 	@include animation-iteration-count($iteration);
 	@include animation-timing-function(ease-in-out);
 }
 
-@mixin pulseBorder($c: red, $dur: 500ms, $iteration: infinite, $delay: 0s, $opacity0: 0, $opacity100: 1) {
-	@include keyframes(pulseBorder) {
-		0%   { border-color: rgba($c, $opacity0); }
-		100% { border-color: rgba($c, $opacity100); }
-	}
-	@include animation-name(pulseBorder);
-	@include animation-duration($dur);
-	@include animation-direction(alternate);
-	@include animation-iteration-count($iteration);
-	@include animation-timing-function(ease);
-    @include animation-delay($delay);
+.pulse {
+	@include pulse($animName: pulse, $dur: 750ms);
 }
 
-.pulse {
-	@include pulse(750ms);
+.pulse-subtle {
+    @include pulse($animName: pulse-subtle, $dur: 500ms, $opacity0: 0.7);
+}
+
+@mixin pulseBorder($c: red, $dur: 500ms, $iteration: infinite, $delay: 0s, $opacity0: 0, $opacity100: 1) {
+    @include keyframes(pulseBorder) {
+        0%   { border-color: rgba($c, $opacity0); }
+        100% { border-color: rgba($c, $opacity100); }
+    }
+    @include animation-name(pulseBorder);
+    @include animation-duration($dur);
+    @include animation-direction(alternate);
+    @include animation-iteration-count($iteration);
+    @include animation-timing-function(ease);
+    @include animation-delay($delay);
 }

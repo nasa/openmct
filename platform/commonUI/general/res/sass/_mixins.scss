@@ -297,21 +297,20 @@
 	display: inline-block;
 }
 
-@mixin btnBase($bg: $colorBodyBg, $bgHov: none, $fg: $colorBodyFg, $ic: $colorBtnIcon) {
+@mixin btnBase($bg: $colorBodyBg, $bgHovColor: none, $fg: $colorBodyFg, $ic: $colorBtnIcon) {
 	@include user-select(none);
-    @include transition(background, .25s);
 	.icon {
 		color: $ic;
 	}
 	@include desktop {
-		@if $bgHov != none {
-			&:not(.disabled):hover {
-				@include background-image($bgHov);
-				>.icon {
-					color: lighten($ic, $ltGamma);
-				}
-			}
-		}
+        @if $bgHovColor != none {
+            &:not(.disabled):hover {
+                background: $bgHovColor; // was just background, and background-image before that
+                >.icon {
+                    color: lighten($ic, $ltGamma);
+                }
+            }
+        }
 	}
 }
 

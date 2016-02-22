@@ -3,9 +3,9 @@
 	@include boxShdw($shdwBtns);
 }
 
-@mixin btnSubtle($bg: $colorBtnBg, $bgHov: none, $fg: $colorBtnFg, $ic: $colorBtnIcon) {
+@mixin btnSubtle($bg: $colorBtnBg, $bgHovColor: none, $fg: $colorBtnFg, $ic: $colorBtnIcon) {
 	@include containerSubtle($bg, $fg);
-	@include btnBase($bg, $bgHov, $fg, $ic);
+	@include btnBase($bg, $bgHovColor, $fg, $ic);
 	@include text-shadow($shdwItemText);
 }
 
