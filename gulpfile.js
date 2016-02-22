@@ -84,7 +84,8 @@ compassWrapper._transform = function (chunk, encoding, done) {
             project: __dirname,
             sass: baseDir + 'sass/',
             css: baseDir + 'css/',
-            comments: true
+            comments: true,
+            bundle_exec: true
         };
 
     compass(options).on('data', function (file) {
