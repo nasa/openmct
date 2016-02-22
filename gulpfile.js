@@ -71,30 +71,41 @@ var gulp = require('gulp'),
             }
         }
     },
-    stream = require('stream'),
-    compassWrapper = new stream.Transform({objectMode: true});
+    stream = require('stream');
 
-/* Transform stream that allows us to transform individual files */
-compassWrapper._transform = function (chunk, encoding, done) {
-    if (/\/_[^\/]*.scss$/.test(chunk.path)) {
-        return done();
-    }
-    var baseDir = 'platform/' + chunk.relative.replace(/sass\/.*$/, ''),
-        options = {
-            project: __dirname,
-            sass: baseDir + 'sass/',
-            css: baseDir + 'css/',
-            comments: true,
-            bundle_exec: true
-        };
+/**
+* Returns a transform stream that allows us to customize the destination
+* paths for individual sass files.  Wraps compass.
+*/
+function customCompass() {
+    var compassWrapper = new stream.Transform({objectMode: true});
+    compassWrapper._transform = function (chunk, encoding, done) {
+        if (/\/_[^\/]*.scss$/.test(chunk.path)) {
+            return done();
+        }
+        var baseDir = 'platform/' + chunk.relative.replace(/sass\/.*$/, ''),
+            options = {
+                project: __dirname,
+                sass: baseDir + 'sass/',
+                css: baseDir + 'css/',
+                comments: true,
+                bundle_exec: true
+            },
+            compassObj;
 
-    compass(options).on('data', function (file) {
-        done(null, file);
-    }).on('error', function (error) {
-        done(error);
-    })
-    .end(chunk);
-};
+        compassObj = compass(options);
+        compassObj.on('data', function (file) {
+            this.push(file);
+        }.bind(this));
+        compassObj.on('end', function () {
+            done();
+        });
+        compassObj.end(chunk);
+    };
+    return compassWrapper;
+}
+
+
 
 gulp.task('scripts', function () {
     return gulp.src(paths.main)
@@ -113,7 +124,7 @@ gulp.task('compass');
 
 gulp.task('stylesheets', function () {
     return gulp.src(paths.scss)
-        .pipe(compassWrapper);
+        .pipe(customCompass());
 });
 
 gulp.task('lint', function () {
