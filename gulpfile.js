@@ -129,7 +129,7 @@ gulp.task('serve', function () {
     var app = require('./app.js');
 });
 
-gulp.task('develop', ['serve', 'watch']);
+gulp.task('develop', ['serve', 'stylesheets', 'watch']);
 
 gulp.task('install', [ 'static', 'scripts' ]);
 
