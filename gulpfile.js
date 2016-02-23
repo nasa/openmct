@@ -78,7 +78,7 @@ gulp.task('scripts', function () {
         .pipe(requirejsOptimize(options.requirejsOptimize))
         .pipe(sourcemaps.write('.'))
         .pipe(replace(options.replace))
-        .pipe(gulp.dest(paths));
+        .pipe(gulp.dest(paths.dist));
 });
 
 gulp.task('test', function (done) {
