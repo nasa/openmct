@@ -35,7 +35,6 @@
     "mkdirp": "^0.5.1",
     "moment": "^2.11.1",
     "node-bourbon": "^4.2.3",
-    "node-neat": "^1.7.2",
     "phantomjs": "^1.9.19",
     "requirejs": "^2.1.17",
     "split": "^1.0.0"

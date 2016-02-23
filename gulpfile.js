@@ -26,7 +26,7 @@ var gulp = require('gulp'),
     sourcemaps = require('gulp-sourcemaps'),
     rename = require('gulp-rename'),
     sass = require('gulp-sass'),
-    neat = require('node-neat'),
+    bourbon = require('node-bourbon'),
     jshint = require('gulp-jshint'),
     jscs = require('gulp-jscs'),
     replace = require('gulp-replace-task'),
@@ -60,7 +60,7 @@ var gulp = require('gulp'),
             singleRun: true
         },
         sass: {
-            includePaths: neat.includePaths
+            includePaths: bourbon.includePaths
         },
         replace: {
             variables: {
