@@ -23,7 +23,8 @@
     <div id='status' class='status-holder'>
         <mct-include ng-repeat="indicator in bar.getIndicators()"
                      ng-model="indicator.ngModel"
-                     key="indicator.template">
+                     key="indicator.template"
+                     class="status-block-holder">
         </mct-include>
     </div>
     <mct-include key="'message-banner'"></mct-include>

@@ -1,17 +1,27 @@
 {
-  "name": "open-mct-web",
-  "version": "0.7.2",
-  "description": "The OpenMCTWeb core platform",
+  "name": "openmctweb",
+  "version": "0.9.2-SNAPSHOT",
+  "description": "The Open MCT Web core platform",
   "dependencies": {
     "express": "^4.13.1",
     "minimist": "^1.1.1"
   },
   "devDependencies": {
+    "bower": "^1.7.7",
+    "git-rev-sync": "^1.4.0",
     "glob": ">= 3.0.0",
+    "gulp": "^3.9.0",
+    "gulp-jscs": "^3.0.2",
+    "gulp-jshint": "^2.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-replace-task": "^0.11.0",
+    "gulp-requirejs-optimize": "^0.3.1",
+    "gulp-sass": "^2.2.0",
+    "gulp-sourcemaps": "^1.6.0",
     "jasmine-core": "^2.3.0",
     "jsdoc": "^3.3.2",
     "jshint": "^2.7.0",
-    "karma": "^0.12.31",
+    "karma": "^0.13.3",
     "karma-chrome-launcher": "^0.1.8",
     "karma-cli": "0.0.4",
     "karma-coverage": "^0.5.3",
@@ -23,6 +33,8 @@
     "markdown-toc": "^0.11.7",
     "marked": "^0.3.5",
     "mkdirp": "^0.5.1",
+    "moment": "^2.11.1",
+    "node-bourbon": "^4.2.3",
     "phantomjs": "^1.9.19",
     "requirejs": "^2.1.17",
     "split": "^1.0.0"
@@ -34,12 +46,14 @@
     "watch": "karma start",
     "jsdoc": "jsdoc -c jsdoc.json -r -d target/docs/api",
     "otherdoc": "node docs/gendocs.js --in docs/src --out target/docs --suppress-toc 'docs/src/index.md|docs/src/process/index.md'",
-    "docs": "npm run jsdoc ; npm run otherdoc"
+    "docs": "npm run jsdoc ; npm run otherdoc",
+    "prepublish": "./node_modules/bower/bin/bower install && ./node_modules/gulp/bin/gulp.js install"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/nasa/openmctweb.git"
   },
   "author": "",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "private": true
 }

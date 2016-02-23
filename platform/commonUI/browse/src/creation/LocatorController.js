@@ -33,7 +33,7 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function LocatorController($scope, $timeout) {
+        function LocatorController($scope, $timeout, objectService) {
             // Populate values needed by the locator control. These are:
             // * rootObject: The top-level object, since we want to show
             //               the full tree
@@ -52,6 +52,18 @@ define(
                         $scope.rootObject =
                             (context && context.getRoot()) || $scope.rootObject;
                     }, 0);
+                } else if (!contextRoot){
+                    //If no context root is available, default to the root
+                    // object
+                    $scope.rootObject = undefined;
+                    // Update the displayed tree on a timeout to avoid
+                    // an infinite digest exception.
+                    objectService.getObjects(['ROOT'])
+                        .then(function(objects){
+                            $timeout(function () {
+                                $scope.rootObject = objects.ROOT;
+                            }, 0);
+                        });
                 }
 
                 $scope.treeModel.selectedObject = domainObject;

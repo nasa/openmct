@@ -32,11 +32,12 @@ define(
         describe("The create action provider", function () {
             var mockTypeService,
                 mockDialogService,
-                mockCreationService,
+                mockNavigationService,
                 mockPolicyService,
                 mockCreationPolicy,
                 mockPolicyMap = {},
                 mockTypes,
+                mockQ,
                 provider;
 
             function createMockType(name) {
@@ -66,9 +67,9 @@ define(
                     "dialogService",
                     [ "getUserInput" ]
                 );
-                mockCreationService = jasmine.createSpyObj(
-                    "creationService",
-                    [ "createObject" ]
+                mockNavigationService = jasmine.createSpyObj(
+                    "navigationService",
+                    [ "setNavigation" ]
                 );
                 mockPolicyService = jasmine.createSpyObj(
                     "policyService",
@@ -92,15 +93,14 @@ define(
                 mockTypeService.listTypes.andReturn(mockTypes);
 
                 provider = new CreateActionProvider(
+                    mockQ,
                     mockTypeService,
-                    mockDialogService,
-                    mockCreationService,
+                    mockNavigationService,
                     mockPolicyService
                 );
             });
 
-            //TODO: Disabled for NEM Beta
-            xit("exposes one create action per type", function () {
+            it("exposes one create action per type", function () {
                 expect(provider.getActions({
                     key: "create",
                     domainObject: {}
@@ -114,8 +114,7 @@ define(
                 }).length).toEqual(0);
             });
 
-            //TODO: Disabled for NEM Beta
-            xit("does not expose non-creatable types", function () {
+            it("does not expose non-creatable types", function () {
                 // One of the types won't have the creation feature...
                 mockPolicyMap[mockTypes[0].getName()] = false;
                 // ...so it should have been filtered out.

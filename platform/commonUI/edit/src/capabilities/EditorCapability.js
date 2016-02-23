@@ -81,7 +81,8 @@ define(
             var domainObject = this.domainObject,
                 editableObject = this.editableObject,
                 self = this,
-                cache = this.cache;
+                cache = this.cache,
+                returnPromise;
 
             // Update the underlying, "real" domain object's model
             // with changes made to the copy used for editing.
@@ -99,14 +100,18 @@ define(
             editableObject.getCapability("status").set("editing", false);
 
             if (nonrecursive) {
-                return resolvePromise(doMutate())
+                returnPromise = resolvePromise(doMutate())
                     .then(doPersist)
                     .then(function(){
                         self.cancel();
                     });
             } else {
-                return resolvePromise(cache.saveAll());
+                returnPromise = resolvePromise(cache.saveAll());
             }
+            //Return the original (non-editable) object
+            return returnPromise.then(function() {
+                return domainObject.getOriginalObject ? domainObject.getOriginalObject() : domainObject;
+            });
         };
 
         /**
@@ -120,7 +125,7 @@ define(
         EditorCapability.prototype.cancel = function () {
             this.editableObject.getCapability("status").set("editing", false);
             //TODO: Reset the cache as well here.
-            this.cache.markClean(this.editableObject);
+            this.cache.markClean();
             return resolvePromise(undefined);
         };
 

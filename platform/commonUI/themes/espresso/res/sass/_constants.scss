@@ -12,12 +12,14 @@ $colorInteriorBorder: rgba($colorBodyFg, 0.1);
 $colorA: #ccc;
 $colorAHov: #fff;
 $contrastRatioPercent: 7%;
+$hoverRatioPercent: 10%;
 $basicCr: 3px;
 $controlCr: 3px;
 $smallCr: 2px;
 
 // Buttons and Controls
-$colorBtnBg: pullForward($colorBodyBg, $contrastRatioPercent); //
+$colorBtnBg: pullForward($colorBodyBg, $contrastRatioPercent);
+$colorBtnBgHov: pullForward($colorBtnBg, $hoverRatioPercent);
 $colorBtnFg: $colorBodyFg;
 $colorBtnMajorBg: $colorKey;
 $colorBtnMajorFg: $colorKeyFg;
@@ -54,7 +56,7 @@ $colorTick: rgba(white, 0.2);
 $colorMenuBg: pullForward($colorBodyBg, 23%);
 $colorMenuFg: pullForward($colorMenuBg, 70%);
 $colorMenuIc: pullForward($colorKey, 17%);
-$colorMenuHovBg: pullForward($colorMenuBg, 10%);
+$colorMenuHovBg: pullForward($colorMenuBg, $hoverRatioPercent);
 $colorMenuHovFg: #fff;
 $colorMenuHovIc: $colorMenuHovFg;
 $shdwMenu: none;
@@ -89,6 +91,8 @@ $colorStatusDefault: #ccc;
 $colorStatusInfo: #62ba72;
 $colorStatusAlert: #ffa66d;
 $colorStatusError: #d4585c;
+$colorStatusAvailable: $colorKey;
+$colorStatusBtnBg: $colorBtnBg;
 $colorProgressBarOuter: rgba(#000, 0.1);
 $colorProgressBarAmt: $colorKey;
 $progressBarHOverlay: 15px;
@@ -123,7 +127,7 @@ $colorOvrBtnFg: #fff;
 
 // Items
 $colorItemBg: lighten($colorBodyBg, 5%);
-$colorItemBgHov: pullForward($colorItemBg, 15%);
+$colorItemBgHov: pullForward($colorItemBg, $hoverRatioPercent);
 $colorItemFg: lighten($colorItemBg, 50%);
 $colorItemFgDetails: lighten($colorItemBg, 30%);
 $colorItemIc: $colorKey;
@@ -149,26 +153,26 @@ $colorPlotAreaBorder: $colorInteriorBorder;
 $colorPlotLabelFg: pushBack($colorPlotFg, 20%);
 
 // Tree
-$colorItemTreeHoverBg: rgba($colorBodyFg, 0.1);
-$colorItemTreeHoverFg: pullForward($colorBodyFg, 20%);
+$colorItemTreeHoverBg: pullForward($colorBodyBg, $hoverRatioPercent);
+$colorItemTreeHoverFg: pullForward($colorBodyFg, $hoverRatioPercent);
 $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: lighten($colorItemTreeIcon, 20%);
-$colorItemTreeVCHover: $colorAlt1;
 $colorItemTreeFg: $colorBodyFg;
 $colorItemTreeSelectedBg: pushBack($colorKey, 15%);
 $colorItemTreeSelectedFg: pullForward($colorBodyFg, 20%);
 $colorItemTreeEditingBg: #344154;
 $colorItemTreeEditingFg: $colorEditAreaFg;
-$colorItemTreeVC: rgba(#fff, 0.3);
+$colorItemTreeVC: $colorBodyFg; //rgba(#fff, 0.3);
+$colorItemTreeVCHover: pullForward($colorItemTreeVC, 20%);
 $colorItemTreeSelectedVC: $colorItemTreeVC;
 $shdwItemTreeIcon: 0.6;
 
 // Scrollbar
 $scrollbarTrackSize: 10px;
+$scrollbarTrackShdw: rgba(#000, 0.7) 0 1px 5px;
 $scrollbarTrackColorBg: rgba(#000, 0.4);
 $scrollbarThumbColor: lighten($colorBodyBg, 10%);
 $scrollbarThumbColorHov: lighten($scrollbarThumbColor, 2%);
-$scrollbarTrackShdw: rgba(#000, 0.7) 0 1px 5px;
 
 // Splitter
 $splitterD: 25px; // splitterD and HandleD should both be odd, or even

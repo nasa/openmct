@@ -35,6 +35,8 @@ define(
                 mockDomainObject,
                 mockRootObject,
                 mockContext,
+                mockObjectService,
+                getObjectsPromise,
                 controller;
 
             beforeEach(function () {
@@ -55,73 +57,106 @@ define(
                     "context",
                     [ "getRoot" ]
                 );
+                mockObjectService = jasmine.createSpyObj(
+                    "objectService",
+                    ["getObjects"]
+                );
+                getObjectsPromise = jasmine.createSpyObj(
+                    "promise",
+                    ["then"]
+                );
 
                 mockDomainObject.getCapability.andReturn(mockContext);
                 mockContext.getRoot.andReturn(mockRootObject);
+                mockObjectService.getObjects.andReturn(getObjectsPromise);
 
                 mockScope.ngModel = {};
                 mockScope.field = "someField";
 
-                controller = new LocatorController(mockScope, mockTimeout);
+                controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
             });
+                describe("when context is available", function () {
 
-            it("adds a treeModel to scope", function () {
-                expect(mockScope.treeModel).toBeDefined();
-            });
+                    beforeEach(function () {
+                        mockContext.getRoot.andReturn(mockRootObject);
+                        controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
+                    });
 
-            it("watches for changes to treeModel", function () {
-                // This is what the embedded tree representation
-                // will be modifying.
-                expect(mockScope.$watch).toHaveBeenCalledWith(
-                    "treeModel.selectedObject",
-                    jasmine.any(Function)
-                );
-            });
+                    it("adds a treeModel to scope", function () {
+                        expect(mockScope.treeModel).toBeDefined();
+                    });
 
-            it("changes its own model on embedded model updates", function () {
-                // Need to pass on selection changes as updates to
-                // the control's value
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
-                mockTimeout.mostRecentCall.args[0]();
-                expect(mockScope.ngModel.someField).toEqual(mockDomainObject);
-                expect(mockScope.rootObject).toEqual(mockRootObject);
+                    it("watches for changes to treeModel", function () {
+                        // This is what the embedded tree representation
+                        // will be modifying.
+                        expect(mockScope.$watch).toHaveBeenCalledWith(
+                            "treeModel.selectedObject",
+                            jasmine.any(Function)
+                        );
+                    });
 
-                // Verify that the capability we expect to have been used
-                // was used.
-                expect(mockDomainObject.getCapability)
-                    .toHaveBeenCalledWith("context");
-            });
+                    it("changes its own model on embedded model updates", function () {
+                        // Need to pass on selection changes as updates to
+                        // the control's value
+                        mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                        mockTimeout.mostRecentCall.args[0]();
+                        expect(mockScope.ngModel.someField).toEqual(mockDomainObject);
+                        expect(mockScope.rootObject).toEqual(mockRootObject);
 
-            it("rejects changes which fail validation", function () {
-                mockScope.structure = { validate: jasmine.createSpy('validate') };
-                mockScope.structure.validate.andReturn(false);
+                        // Verify that the capability we expect to have been used
+                        // was used.
+                        expect(mockDomainObject.getCapability)
+                            .toHaveBeenCalledWith("context");
+                    });
 
-                // Pass selection change
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
-                mockTimeout.mostRecentCall.args[0]();
+                    it("rejects changes which fail validation", function () {
+                        mockScope.structure = { validate: jasmine.createSpy('validate') };
+                        mockScope.structure.validate.andReturn(false);
 
-                expect(mockScope.structure.validate).toHaveBeenCalled();
-                // Change should have been rejected
-                expect(mockScope.ngModel.someField).not.toEqual(mockDomainObject);
-            });
+                        // Pass selection change
+                        mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                        mockTimeout.mostRecentCall.args[0]();
 
-            it("treats a lack of a selection as invalid", function () {
-                mockScope.ngModelController = jasmine.createSpyObj(
-                    'ngModelController',
-                    [ '$setValidity' ]
-                );
+                        expect(mockScope.structure.validate).toHaveBeenCalled();
+                        // Change should have been rejected
+                        expect(mockScope.ngModel.someField).not.toEqual(mockDomainObject);
+                    });
 
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
-                mockTimeout.mostRecentCall.args[0]();
-                expect(mockScope.ngModelController.$setValidity)
-                    .toHaveBeenCalledWith(jasmine.any(String), true);
+                    it("treats a lack of a selection as invalid", function () {
+                        mockScope.ngModelController = jasmine.createSpyObj(
+                            'ngModelController',
+                            [ '$setValidity' ]
+                        );
 
-                mockScope.$watch.mostRecentCall.args[1](undefined);
-                mockTimeout.mostRecentCall.args[0]();
-                expect(mockScope.ngModelController.$setValidity)
-                    .toHaveBeenCalledWith(jasmine.any(String), false);
-            });
+                        mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                        mockTimeout.mostRecentCall.args[0]();
+                        expect(mockScope.ngModelController.$setValidity)
+                            .toHaveBeenCalledWith(jasmine.any(String), true);
 
+                        mockScope.$watch.mostRecentCall.args[1](undefined);
+                        mockTimeout.mostRecentCall.args[0]();
+                        expect(mockScope.ngModelController.$setValidity)
+                            .toHaveBeenCalledWith(jasmine.any(String), false);
+                    });
+                });
+                describe("when no context is available", function () {
+                    var defaultRoot = "DEFAULT_ROOT";
+
+                    beforeEach(function () {
+                        mockContext.getRoot.andReturn(undefined);
+                        getObjectsPromise.then.andCallFake(function(callback){
+                            callback({'ROOT':defaultRoot});
+                        });
+                        controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
+                    });
+
+                    it("provides a default context where none is available", function () {
+                        mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                        mockTimeout.mostRecentCall.args[0]();
+                        expect(mockScope.rootObject).toBe(defaultRoot);
+
+                    });
+                });
         });
     }
 );

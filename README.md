@@ -20,27 +20,6 @@ directory names) to include in a running instance of Open MCT Web. Adding or
 removing paths from this list will add or remove bundles from the running
 application.
 
-### Bundle Contents
-
-A bundle directory will contain:
-
-* `bundle.json`, the declaration of the bundles contents.
-* A source code directory, named `src` by convention. This contains all
-  JavaScript sources exposed by the bundle. These are declared as
-  AMD modules.
-* A directory for other resources, named `res` by convention. This
-  contains all HTML templates, CSS files, images, and so forth to be
-  used within a given bundle.
-* A library directory, named `lib` by convention. This contains all
-  external libraries used and/or exposed by the bundle.
-* A test directory, named `test` by convention. This contains all unit
-  tests declared for the bundle, as well as a `suite.json` that acts
-  as a listing of these dependencies. See the section on unit testing
-  below.
-
-Following these bundle conventions is required, at present, to ensure
-that Open MCT Web (and its build and tests) execute correctly.
-
 ## Tests
 
 Tests are written for [Jasmine 1.3](http://jasmine.github.io/1.3/introduction.html)
@@ -77,24 +56,22 @@ To run:
 
 ## Build
 
-Open MCT Web includes a Maven command line build. Although Open MCT Web
-can be run as-is using the repository contents (that is, by viewing
-`index.html` in a web browser), the command
-line build allows machine-driven verification and packaging.
+Open MCT Web is built using [`npm`](http://npmjs.com/)
+and [`gulp`](http://gulpjs.com/).
 
-This build will:
+To build:
 
-* Check all sources (excluding those in directories named `lib`) with
-  JSLint for code style compliance. The build will fail if any sources
-  do not satisfy JSLint.
-* Run the [unit test suite](#tests).
-* Package the application as a `war` (web archive) file. This is
-  convenient for deployment on Tomcat or similar. This archive will
-  include sources, resources, and libraries for bundles, as well
-  as the top-level files used to initiate running of the application
-  (`index.html` and `bundles.json`).
+`npm run prepublish`
 
-Run as `mvn clean install`.
+This will compile and minify JavaScript sources, as well as copy over assets.
+The contents of the `dist` folder will contain a runnable Open MCT Web
+instance (e.g. by starting an HTTP server in that directory), including:
+
+* A `main.js` file containing Open MCT Web source code.
+* Various assets in the `example` and `platform` directories.
+* An `index.html` that runs Open MCT Web in its default configuration.
+
+Additional `gulp` tasks are defined in [the gulpfile](gulpfile.js).
 
 ### Building Documentation
 

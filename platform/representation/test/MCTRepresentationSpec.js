@@ -174,7 +174,7 @@ define(
                 fireWatch('domainObject', mockDomainObject);
 
                 expect(mockChangeTemplate)
-                    .toHaveBeenCalledWith(testUrls.abc);
+                    .toHaveBeenCalledWith(testRepresentations[0]);
             });
 
             it("recognizes keys for views", function () {
@@ -186,7 +186,7 @@ define(
                 fireWatch('domainObject', mockDomainObject);
 
                 expect(mockChangeTemplate)
-                    .toHaveBeenCalledWith(testUrls.xyz);
+                    .toHaveBeenCalledWith(testViews[1]);
             });
 
             it("does not load templates until there is an object", function () {
@@ -196,13 +196,13 @@ define(
                 fireWatch('key', mockScope.key);
 
                 expect(mockChangeTemplate)
-                    .not.toHaveBeenCalledWith(jasmine.any(String));
+                    .not.toHaveBeenCalledWith(jasmine.any(Object));
 
                 mockScope.domainObject = mockDomainObject;
                 fireWatch('domainObject', mockDomainObject);
 
                 expect(mockChangeTemplate)
-                    .toHaveBeenCalledWith(jasmine.any(String));
+                    .toHaveBeenCalledWith(jasmine.any(Object));
             });
 
             it("loads declared capabilities", function () {

@@ -34,8 +34,8 @@
     @include animation-duration(0.5s);
     @include animation-iteration-count(infinite);
     @include animation-timing-function(linear);
-    @include border-radius(100%);
-    @include box-sizing(border-box);
+    border-radius: 100%;
+    box-sizing: border-box;
     border-color: rgba($c, 0.25);
     border-top-color: rgba($c, 1.0);
     border-style: solid;

@@ -22,11 +22,13 @@
 /*global define*/
 
 define([
+    "text!./res/templates/about-dialog.html",
     "./src/LogoController",
     "./src/AboutController",
     "./src/LicenseController",
     'legacyRegistry'
 ], function (
+    aboutDialogTemplate,
     LogoController,
     AboutController,
     LicenseController,
@@ -50,7 +52,7 @@ define([
                 },
                 {
                     "key": "about-dialog",
-                    "templateUrl": "templates/about-dialog.html"
+                    "template": aboutDialogTemplate
                 },
                 {
                     "key": "overlay-about",

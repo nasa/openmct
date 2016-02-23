@@ -20,10 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-@import "compass";
-@import "compass/reset";
-@import "compass/css3";
-@import "compass/utilities";
+@import "bourbon";
 
 @import "../../../../general/res/sass/_mixins";
 @import "../../../../general/res/sass/mobile/mixins";

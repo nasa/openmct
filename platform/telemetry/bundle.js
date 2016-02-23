@@ -116,7 +116,7 @@ define([
             "licenses": [
                 {
                     "name": "Moment.js",
-                    "version": "2.7.0",
+                    "version": "2.11.1",
                     "author": "Tim Wood, Iskren Chernev, Moment.js contributors",
                     "description": "Time/date parsing/formatting",
                     "website": "http://momentjs.com",

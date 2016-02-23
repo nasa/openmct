@@ -2245,18 +2245,27 @@ options. The sources can be deployed in the same directory structure used during
 development. A few utilities are included to support development processes.
 
 ## Command-line Build
-Open MCT Web includes a script for building via command line using Maven 3.3.9 
-https://maven.apache.org/ .
-        
-Invoking mvn clean install will:
 
-* Check code style using JSLint. The build will fail if JSLint raises any warnings.
-* Run the test suite (see below.) The build will fail if any tests fail.
-* Populate version info (e.g. commit hash, build time.)
-* Produce a web archive (`.war`) artifact in the `target` directory.
+Open MCT Web is built using [`npm`](http://npmjs.com/)
+and [`gulp`](http://gulpjs.com/).
 
-The produced artifact contains a subset of the repository's own folder 
-hierarchy, omitting tests and example bundles.        
+To install build dependencies (only needs to be run once):
+
+`npm install`
+
+To build:
+
+`npm run prepublish`
+
+This will compile and minify JavaScript sources, as well as copy over assets.
+The contents of the `dist` folder will contain a runnable Open MCT Web
+instance (e.g. by starting an HTTP server in that directory), including:
+
+* A `main.js` file containing Open MCT Web source code.
+* Various assets in the `example` and `platform` directories.
+* An `index.html` that runs Open MCT Web in its default configuration.
+
+Additional `gulp` tasks are defined in [the gulpfile](gulpfile.js).
 
 Note that an internet connection is required to run this build, in order to 
 download build dependencies.
