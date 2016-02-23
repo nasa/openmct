@@ -468,28 +468,6 @@ define([
                     "key": "datetime-field",
                     "templateUrl": "templates/controls/datetime-field.html"
                 }
-            ],
-            "licenses": [
-                {
-                    "name": "Modernizr",
-                    "version": "2.6.2",
-                    "description": "Browser/device capability finding",
-                    "author": "Faruk Ateş",
-                    "website": "http://modernizr.com",
-                    "copyright": "Copyright (c) 2009–2015",
-                    "license": "license-mit",
-                    "link": "http://modernizr.com/license/"
-                },
-                {
-                    "name": "Normalize.css",
-                    "version": "1.1.2",
-                    "description": "Browser style normalization",
-                    "author": "Nicolas Gallagher, Jonathan Neal",
-                    "website": "http://necolas.github.io/normalize.css/",
-                    "copyright": "Copyright (c) Nicolas Gallagher and Jonathan Neal",
-                    "license": "license-mit",
-                    "link": "https://github.com/necolas/normalize.css/blob/v1.1.2/LICENSE.md"
-                }
             ]
         }
     });
