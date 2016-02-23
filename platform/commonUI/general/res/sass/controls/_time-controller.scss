@@ -37,7 +37,7 @@ mct-include.l-time-controller {
 	{
 		//@include test();
 		@include absPosDefault(0, visible);
-		@include box-sizing(border-box);
+		box-sizing: border-box;
 		top: auto;
 	}
 	.l-time-range-slider,
@@ -73,7 +73,7 @@ mct-include.l-time-controller {
 		//@include test(green);
 		height: $r2H; bottom: $r3H + ($interiorMarginSm * 1);
 		.range-holder {
-			@include box-shadow(none);
+			box-shadow: none;
 			background: none;
 			border: none;
 			.range {
@@ -101,7 +101,7 @@ mct-include.l-time-controller {
 					}
 					&:after {
 						// Circle element
-						@include border-radius($myW);
+						border-radius: $myW;
 						@include transform(translateY(-50%));
 						top: 50%; right: 0; bottom: auto; left: 0;
 						width: auto;
@@ -167,7 +167,7 @@ mct-include.l-time-controller {
 			color: $sliderColorKnobHov;
 		}
 		&.knob-l {
-			//@include border-bottom-left-radius($knobCr); // MOVED TO _CONTROLS.SCSS
+			//border-bottom-left-radius: $knobCr; // MOVED TO _CONTROLS.SCSS
 			margin-left: $knobM;
 			.range-value {
 				text-align: right;
@@ -175,7 +175,7 @@ mct-include.l-time-controller {
 			}
 		}
 		&.knob-r {
-			//@include border-bottom-right-radius($knobCr);
+			//border-bottom-right-radius: $knobCr;
 			margin-right: $knobM;
 			.range-value {
 				left: $rangeValOffset;
@@ -193,7 +193,7 @@ mct-include.l-time-controller {
 
 .s-time-range-val {
 	//@include test();
-	@include border-radius($controlCr);
+	border-radius: $controlCr;
 	background-color: $colorInputBg;
 	padding: 1px 1px 0 $interiorMargin;
 }

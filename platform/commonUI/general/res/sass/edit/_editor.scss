@@ -38,22 +38,22 @@
             z-index: 11;
         }
         &.edit-resize-nw {
-            @include border-bottom-right-radius($cr);
+            border-bottom-right-radius: $cr;
             cursor: nw-resize;
             top: 0; left: 0;
         }
         &.edit-resize-ne {
-            @include border-bottom-left-radius($cr);
+            border-bottom-left-radius: $cr;
             cursor: ne-resize;
             top: 0; right: 0;
         }
         &.edit-resize-se {
-            @include border-top-left-radius($cr);
+            border-top-left-radius: $cr;
             cursor: se-resize;
             bottom: 0; right: 0;
         }
         &.edit-resize-sw {
-            @include border-top-right-radius($cr);
+            border-top-right-radius: $cr;
             cursor: sw-resize;
             bottom: 0; left: 0;
         }

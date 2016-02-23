@@ -62,7 +62,7 @@
                 }
             }
 	        &.l-timeline-resource-legend {
-		        @include box-sizing(border-box);
+		        box-sizing: border-box;
 		        padding: $interiorMargin 0;
 		        white-space: nowrap;
 
@@ -214,7 +214,7 @@
 
 	.l-hover-btns-holder {
 		@include absPosDefault();
-		@include box-sizing(border-box);
+		box-sizing: border-box;
 		@include trans-prop-nice-fade(500ms);
 		opacity: 0;
 		height: $timelineTopPaneHeaderH;
@@ -230,7 +230,7 @@
 		text-wrap: none;
 		white-space: nowrap;
 		.l-col {
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 			@include ellipsize();
 			display: inline-block;
 			height: 100%;
@@ -257,8 +257,8 @@
 			&.l-title {
 				width: $timelineColTitleW;
                 .rep-object-label[draggable="true"] {
-                    @include border-radius($basicCr);
-                    @include single-transition(background-color, 0.25s);
+                    border-radius: $basicCr;
+                    @include transition(background-color, 0.25s);
                     cursor: pointer;
                     display: inline-block;
                     padding: 0 $interiorMarginSm;

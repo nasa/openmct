@@ -139,7 +139,7 @@ mct-container {
 }
 
 .ds {
-	@include box-shadow(rgba(#000, 0.7) 0 4px 10px 2px);
+	box-shadow: rgba(#000, 0.7) 0 4px 10px 2px;
 }
 
 .hide,

@@ -35,9 +35,9 @@ ul.tree {
 .tree-item,
 .search-result-item {
     @extend .l-flex-row;
-	@include box-sizing(border-box);
-	@include border-radius($basicCr);
-	@include single-transition(background-color, 0.25s);
+	box-sizing: border-box;
+	border-radius: $basicCr;
+	@include transition(background-color, 0.25s);
 	font-size: 0.8rem;
 	height: $menuLineH;
 	line-height: $menuLineH;
@@ -155,7 +155,7 @@ mct-representation {
             .t-item-icon,
             .t-title-label {
                 color: $colorItemTreeEditingFg;
-                @include text-shadow(none);
+                text-shadow: none;
             }
             .t-title-label {
                 font-style: italic;

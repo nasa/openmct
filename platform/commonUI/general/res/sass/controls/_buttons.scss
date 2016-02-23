@@ -32,7 +32,7 @@ $pad: $interiorMargin * $baseRatio;
 }
 
 .s-btn {
-    @include box-sizing(border-box);
+    box-sizing: border-box;
     padding: 0 $pad;
     font-size: 0.7rem;
     vertical-align: top;
@@ -126,9 +126,9 @@ $pad: $interiorMargin * $baseRatio;
         $cFg: $cBg;
 
 
-        @include border-radius($basicCr);
+        border-radius: $basicCr;
         //@include boxShdw($shdwBtns);
-        @include box-sizing(border-box);
+        box-sizing: border-box;
         @include trans-prop-nice((color, background-color), 100ms);
         color: $cFg;
         cursor: pointer;
@@ -264,7 +264,7 @@ $pad: $interiorMargin * $baseRatio;
     font-size: 0; // Remove space between s-btn elements due to white space in markup
 
     .s-btn {
-        @include border-radius(0);
+        border-radius: 0;
         margin-left: 1px;
     }
 

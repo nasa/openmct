@@ -104,8 +104,8 @@
 }
 
 .l-image-thumb-item {
-	@include single-transition(background-color, 0.25s);
-	@include box-sizing(border-box);
+	@include transition(background-color, 0.25s);
+	box-sizing: border-box;
 	padding: 1px;
 	position: relative;
 	.l-thumb,
