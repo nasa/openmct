@@ -94,6 +94,9 @@ define(
                 ]);
                 mockScope.domainObject = mockDomainObject;
 
+                function noop() {}
+                mockScope.$watchCollection.andReturn(noop);
+
                 plotOptionsController = new PlotOptionsController(mockScope);
             });
 

@@ -116,8 +116,6 @@ define(
 
             this.clearSeriesWatches();
 
-            console.log("watches before: " + this.watches.length);
-
             (self.$scope.children || []).forEach(function(child, index){
                 self.watches.push(
                     self.$scope.$watchCollection(
@@ -128,7 +126,6 @@ define(
                     )
                 );
             });
-            console.log("watches after: " + self.watches.length);
         };
 
         /**
