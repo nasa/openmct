@@ -53,7 +53,7 @@
 		&:before,
 		.clear-icon,
 		.menu-icon {
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 			color: $colorInputIcon;
 			height: $iconD;
             width: $iconD;
@@ -130,7 +130,7 @@
 	.active-filter-display {
 		$s: 0.7em;
 		$p: $interiorMargin;
-		@include box-sizing(border-box);
+		box-sizing: border-box;
 		line-height: 130%;
 		padding-left: $s * 2.25;
 		font-size: $s;

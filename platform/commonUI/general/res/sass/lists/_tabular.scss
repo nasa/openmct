@@ -26,7 +26,7 @@
 
 .tabular,
 table {
-	@include box-sizing(border-box);
+	box-sizing: border-box;
 	border-spacing: 0;
 	border-collapse: collapse;
 	display: table;
@@ -107,7 +107,7 @@ table {
 			&.s-cell-type-value {
 				text-align: right;
 				.l-cell-contents {
-					@include border-radius($smallCr);
+					border-radius: $smallCr;
 					padding-left: $itemPadLR;
 					padding-right: $itemPadLR;
 				}
@@ -126,7 +126,7 @@ table {
 			top: $tabularHeaderH * 2;
 		}
 		input[type="text"] {
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 			width: 100%; //50px;
 		}
 	}

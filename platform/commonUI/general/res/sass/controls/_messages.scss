@@ -123,7 +123,7 @@ mct-include.status-block-holder {
 /* Styles for messages and message banners */
 .message {
 	&.block {
-		@include border-radius($basicCr);
+		border-radius: $basicCr;
 		padding: $interiorMarginLg;
 	}
 	&.error {
@@ -135,9 +135,9 @@ mct-include.status-block-holder {
 .l-message-banner {
 	$m: $interiorMarginSm;
 	$lh: $ueFooterH - ($m*2) - 1;
-	@include box-sizing(border-box);
+	box-sizing: border-box;
 	@include ellipsize();
-	@include display-flex;
+	@include display(flex);
 	@include flex-direction(row);
 	@include align-items(center);
 	position: absolute;
@@ -198,12 +198,12 @@ mct-include.status-block-holder {
 }
 
 .s-message-banner {
-	@include border-radius($controlCr);
+	border-radius: $controlCr;
 	@include statusBannerColors($colorStatusDefault, $colorStatusFg);
 	cursor: pointer;
 	a { color: inherit; }
 	.s-action {
-		@include border-radius($basicCr);
+		border-radius: $basicCr;
         @include trans-prop-nice(background-color);
 	}
 	.close {
@@ -264,7 +264,7 @@ mct-include.status-block-holder {
 */
 
 .l-message {
-    @include display-flex;
+    @include display(flex);
     @include flex-direction(row);
     @include align-items(stretch);
     .type-icon.message-type {
@@ -309,7 +309,7 @@ mct-include.status-block-holder {
 
     .message-contents {
         .l-message {
-            @include border-radius($controlCr);
+            border-radius: $controlCr;
             background: rgba($colorOvrFg, 0.1);
             margin-bottom: $interiorMargin;
             padding: $interiorMarginLg;

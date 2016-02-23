@@ -58,7 +58,7 @@
     }
     
     ul {
-        @include box-sizing(border-box);
+        box-sizing: border-box;
         padding-right: $interiorMargin;
     }
 
@@ -73,7 +73,7 @@
     }
     
     em {
-        @include border-radius($basicCr);
+        border-radius: $basicCr;
         background-color: $colorInspectorSectionHeaderBg;
         color: $colorInspectorSectionHeaderFg;
         margin-bottom: $interiorMargin;
@@ -99,7 +99,7 @@
     .inspector-location {
         .location-item {
             $h: 1.2em;
-            @include box-sizing(border-box);
+            box-sizing: border-box;
             cursor: pointer;
             display: inline-block;
             line-height: $h;

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .section-header {
-	@include border-radius($basicCr);
+	border-radius: $basicCr;
 	background: $colorFormSectionHeader;
 	$c: lighten($colorBodyFg, 20%);
 	//border-bottom: 1px solid rgba(#fff, 0.3);
@@ -39,7 +39,7 @@
 
 	.form-row {
 		$m: $interiorMargin;
-		@include box-sizing(border-box);
+		box-sizing: border-box;
 		@include clearfix;
 		border-top: 1px solid $colorFormLines;
 		margin-top: $m;
@@ -51,7 +51,7 @@
 
 		>.label,
 		>.controls {
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 			@include clearfix;
 			font-size: 0.8rem;
 			line-height: $formInputH;
@@ -149,7 +149,7 @@ label.form-control.checkbox {
 	vertical-align: top;
 
 	div.s-hint {
-		@include border-radius($basicCr);
+		border-radius: $basicCr;
 		background: rgba($colorFormInvalid, 0.8);
 		display: block;
 		color: lighten($colorFormInvalid, 30%);

@@ -27,7 +27,7 @@
 		height: $btnToolbarH;
 	}
 	input[type="text"] {
-		@include box-sizing(border-box);
+		box-sizing: border-box;
 		font-size: .9em;
 		height: $btnToolbarH;
 		margin-bottom: 1px;

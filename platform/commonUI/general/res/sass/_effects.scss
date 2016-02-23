@@ -21,7 +21,7 @@
  *****************************************************************************/
 .disabled,
 a.disabled {
-	@include opacity($controlDisabledOpacity);
+	opacity: $controlDisabledOpacity;
 	pointer-events: none !important;
 	cursor: default !important;
 }
