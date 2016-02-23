@@ -87,11 +87,13 @@ gulp.task('test', function (done) {
 
 gulp.task('stylesheets', function () {
     return gulp.src(paths.scss, {base: '.'})
+        .pipe(sourcemaps.init())
         .pipe(sass(options.sass).on('error', sass.logError))
         .pipe(rename(function (file) {
             file.dirname = file.dirname.replace('/sass', '/css');
             return file;
         }))
+        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(__dirname));
 });
 
