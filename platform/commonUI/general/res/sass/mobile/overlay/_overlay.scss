@@ -27,7 +27,7 @@
     .overlay > .holder {
         //@include test(orange); // This works!
         $m: 0;
-        @include border-radius($m);
+        border-radius: $m;
         top: $m;
         right: $m;
         bottom: $m;

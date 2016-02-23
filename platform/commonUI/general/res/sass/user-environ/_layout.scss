@@ -27,7 +27,7 @@
 }
 
 .editor {
-    @include border-radius($basicCr * 1.5);
+    border-radius: $basicCr * 1.5;
 }
 
 .contents {
@@ -86,7 +86,7 @@
         color: lighten($colorBodyBg, 30%);
         font-size: .7rem;
         .status-holder {
-            @include box-sizing(border-box);
+            box-sizing: border-box;
             @include absPosDefault($interiorMargin);
             @include ellipsize();
             right: 120px;
@@ -94,7 +94,7 @@
             z-index: 1;
         }
         .app-logo {
-            @include box-sizing(border-box);
+            box-sizing: border-box;
             @include absPosDefault($interiorMargin);
             cursor: pointer;
             left: auto;
@@ -121,7 +121,7 @@
 }
 
 .pane {
-    @include box-sizing(border-box);
+    box-sizing: border-box;
     position: absolute;
 
     .pane-header {
@@ -283,7 +283,7 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
 
 /***************************************************** OBJECT BROWSE BAR */
 .object-browse-bar {
-    @include box-sizing(border-box);
+    box-sizing: border-box;
     height: $ueTopBarH;
     line-height: $ueTopBarH;
     white-space: nowrap;
@@ -379,7 +379,7 @@ body.desktop {
 .s-status-editing {
     .l-object-wrapper {
         @include pulseBorder($colorEditAreaFg, $dur: 1s, $opacity0: 0.3);
-        @include border-radius($controlCr);
+        border-radius: $controlCr;
         background-color: $colorEditAreaBg;
         border-color: $colorEditAreaFg;
         border-width: 2px;

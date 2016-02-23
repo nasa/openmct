@@ -64,7 +64,7 @@
 		white-space: nowrap;
 		.l-autoflow-col {
 //			@include test();
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 			border-left: 1px solid $colorInteriorBorder;
 			display: inline-block;
 //			height: 100%;
@@ -74,7 +74,7 @@
 			width: $colW;
 			.l-autoflow-row {
 				//				@include test(red);
-				@include box-sizing(border-box);
+				box-sizing: border-box;
 				border-bottom: 1px solid rgba(#fff,0.05);
 				display: block;
 				height: $rowH;
@@ -110,7 +110,7 @@
 						width: auto;
 					}
 					&.r {
-						@include border-radius($smallCr);
+						border-radius: $smallCr;
 						float: right;
 						margin-left: $interiorMargin;
 						padding-left: $valPad;

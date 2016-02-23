@@ -34,7 +34,7 @@
 .cols {
     @include clearfix;
     .col {
-        @include box-sizing(border-box);
+        box-sizing: border-box;
         @include clearfix;
         float: left;
         margin-left: $ueColMargin;
@@ -94,7 +94,7 @@
 /********************************************* FLEX STYLES */
 .l-flex-row,
 .l-flex-col {
-    @include display-flex;
+    @include display(flex);
     @include flex-wrap(nowrap);
     .flex-elem {
         min-height: 0; // Needed to allow element to shrink within parent
@@ -111,7 +111,7 @@
     }
     .flex-container {
         // Apply to wrapping elements, mct-includes, etc.
-        @include display-flex;
+        @include display(flex);
         @include flex-wrap(nowrap);
         @include flex(1 1 auto);
         min-height:0;

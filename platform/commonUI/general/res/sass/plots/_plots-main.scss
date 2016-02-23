@@ -69,8 +69,8 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 	}
 
 	.gl-plot-coords {
-		@include box-sizing(border-box);
-		@include border-radius($controlCr);
+		box-sizing: border-box;
+		border-radius: $controlCr;
 		background: black;
 		color: lighten($colorBodyFg, 30%);
 		padding: 2px 5px;
@@ -117,7 +117,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 		&.l-plot-y-label {
 			$x: -50%;
 			$r: -90deg;
-			@include transform-origin(50%, 0);
+			@include transform-origin(50% 0);
 			@include transform(translateX($x) rotate($r));
 			display: inline-block;
 			margin-left: $interiorMargin; // Kick off the left edge
@@ -234,7 +234,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 		}
 		.plot-color-swatch,
 		.color-swatch {
-			@include border-radius(2px);
+			border-radius: 2px;
 			display: inline-block;
 			height: $swatchD;
 			width: $swatchD;
@@ -244,7 +244,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 
 .gl-plot-legend {
 	.plot-legend-item {
-		@include border-radius($smallCr);
+		border-radius: $smallCr;
 		line-height: 1.5em;
 		padding: 0px $itemPadLR;
 		.plot-color-swatch {

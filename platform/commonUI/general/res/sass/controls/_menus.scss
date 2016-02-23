@@ -72,7 +72,7 @@
 }
 
 .s-menu {
-	@include border-radius($basicCr);
+	border-radius: $basicCr;
 	@include containerSubtle($colorMenuBg, $colorMenuFg);
 	@include boxShdw($shdwMenu);
 	@include txtShdw($shdwMenuText);
@@ -87,7 +87,7 @@
 	ul {
 		@include menuUlReset();
 		li {
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 			border-top: 1px solid pullForward($colorMenuBg, 10%);
 			color: pullForward($colorMenuBg, 60%);
 			line-height: $menuLineH;
@@ -171,7 +171,7 @@
 		@include absPosDefault($interiorMargin);
 	}
 	.pane {
-		@include box-sizing(border-box);
+		box-sizing: border-box;
 		&.left {
 			//@include test();
 			border-right: 1px solid pullForward($colorMenuBg, 10%);
@@ -183,7 +183,7 @@
 			overflow-y: auto;
 			ul {
 				li {
-					@include border-radius($controlCr);
+					border-radius: $controlCr;
 					padding-left: 30px;
 					border-top: none;
 				}

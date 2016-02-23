@@ -30,7 +30,7 @@
 
 .l-infobubble-wrapper {
 	$arwSize: 5px;
-	@include box-shadow(rgba(black, 0.4) 0 1px 5px);
+	box-shadow: rgba(black, 0.4) 0 1px 5px;
 	position: relative;
 	z-index: 50;
 	.l-infobubble {
@@ -149,8 +149,8 @@
 
 .s-infobubble {
 	$emFg: darken($colorInfoBubbleFg, 20%);
-	@include border-radius($basicCr);
-	@include box-shadow(rgba(black, 0.4) 0 1px 5px);
+	border-radius: $basicCr;
+	box-shadow: rgba(black, 0.4) 0 1px 5px;
 	background: $colorInfoBubbleBg;
 	color: $colorInfoBubbleFg;
 	font-size: 0.8rem;

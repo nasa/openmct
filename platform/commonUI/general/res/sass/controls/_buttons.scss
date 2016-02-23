@@ -32,7 +32,7 @@ $pad: $interiorMargin * $baseRatio;
 }
 
 .s-btn {
-    @include box-sizing(border-box);
+    box-sizing: border-box;
     padding: 0 $pad;
     font-size: 0.7rem;
     vertical-align: top;
@@ -66,7 +66,7 @@ $pad: $interiorMargin * $baseRatio;
 
     &:not(.major) {
         // bg, bgHov, fg, ic
-        @include btnSubtle($colorBtnBg, $colorKey, $colorBtnFg, $colorBtnIcon);
+        @include btnSubtle($colorBtnBg, $colorBtnBgHov, $colorBtnFg, $colorBtnIcon);
     }
     &.pause-play {
 
@@ -91,7 +91,7 @@ $pad: $interiorMargin * $baseRatio;
         &.paused {
             @include btnSubtle($colorPausedBg, pushBack($colorPausedBg, 10%), $colorPausedFg, $colorPausedFg);
             .icon {
-                @include pulse(1000ms);
+                @include pulse($dur: 1000ms);
                 :before {
                     content: "\0000EF";
                 }
@@ -122,8 +122,10 @@ body.desktop .mini-tab {
     $cBg: pullForward($colorBodyBg, 15%);
     $cFg: $cBg;
 
-    @include border-radius($basicCr);
-    @include box-sizing(border-box);
+
+    border-radius: $basicCr;
+    //@include boxShdw($shdwBtns);
+    box-sizing: border-box;
     @include trans-prop-nice((color, background-color), 100ms);
     color: $cFg;
     cursor: pointer;
@@ -134,10 +136,6 @@ body.desktop .mini-tab {
     line-height: $iconH;
     height: $iconH; width: $iconW;
     text-align: center;
-
-    &:hover {
-        color: $colorKey;
-    }
 
     &.collapsed {
         // State when the pane this element controls has been collapsed
@@ -246,19 +244,21 @@ body.desktop .mini-tab-icon {
     font-size: 0; // Remove space between s-btn elements due to white space in markup
 
     .s-btn {
-        @include border-radius(0);
+        border-radius: 0;
         margin-left: 1px;
     }
 
     .first {
-        .s-btn {
+        .s-btn,
+        &.s-btn {
             @include border-left-radius($controlCr);
             margin-left: 0;
         }
     }
 
     .last {
-        .s-btn {
+        .s-btn,
+        &.s-btn {
             @include border-right-radius($controlCr);
         }
     }

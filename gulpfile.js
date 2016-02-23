@@ -24,7 +24,9 @@
 var gulp = require('gulp'),
     requirejsOptimize = require('gulp-requirejs-optimize'),
     sourcemaps = require('gulp-sourcemaps'),
-    compass = require('gulp-compass'),
+    rename = require('gulp-rename'),
+    sass = require('gulp-sass'),
+    bourbon = require('node-bourbon'),
     jshint = require('gulp-jshint'),
     jscs = require('gulp-jscs'),
     replace = require('gulp-replace-task'),
@@ -38,7 +40,7 @@ var gulp = require('gulp'),
         main: 'main.js',
         dist: 'dist',
         assets: 'dist/assets',
-        scss: 'platform/**/*.scss',
+        scss: ['./platform/**/*.scss', './example/**/*.scss'],
         scripts: [ 'main.js', 'platform/**/*.js', 'src/**/*.js' ],
         static: [
             'index.html',
@@ -57,9 +59,8 @@ var gulp = require('gulp'),
             configFile: path.resolve(__dirname, 'karma.conf.js'),
             singleRun: true
         },
-        compass: {
-            sass: __dirname,
-            css: paths.assets
+        sass: {
+            includePaths: bourbon.includePaths
         },
         replace: {
             variables: {
@@ -85,9 +86,15 @@ gulp.task('test', function (done) {
 });
 
 gulp.task('stylesheets', function () {
-    return gulp.src(paths.scss)
-        .pipe(compass(options.compass))
-        .pipe(gulp.dest(paths.assets));
+    return gulp.src(paths.scss, {base: '.'})
+        .pipe(sourcemaps.init())
+        .pipe(sass(options.sass).on('error', sass.logError))
+        .pipe(rename(function (file) {
+            file.dirname = file.dirname.replace('/sass', '/css');
+            return file;
+        }))
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(__dirname));
 });
 
 gulp.task('lint', function () {
@@ -110,10 +117,21 @@ gulp.task('fixstyle', function () {
         .pipe(gulp.dest('.'));
 });
 
-gulp.task('static', function () {
+gulp.task('static', ['stylesheets'], function () {
     return gulp.src(paths.static, { base: '.' })
         .pipe(gulp.dest(paths.dist));
 });
+
+gulp.task('watch', function () {
+    gulp.watch(paths.scss, ['stylesheets']);
+});
+
+gulp.task('serve', function () {
+    console.log('Running development server with all defaults');
+    var app = require('./app.js');
+});
+
+gulp.task('develop', ['serve', 'stylesheets', 'watch']);
 
 gulp.task('install', [ 'static', 'scripts' ]);
 
