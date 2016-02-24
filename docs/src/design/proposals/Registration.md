@@ -65,6 +65,100 @@ be implemented in these plugins.
 
 # Interfaces
 
+## Applications and Plugins
+
+```nomnoml
+#direction: down
+
+[Application |
+    install(plugin : Plugin)
+    uninstall(plugin : Plugin)
+    run()
+]
+
+[Plugin |
+    initialize()
+    start()
+]
+
+[Application]<:-[MCT |
+    core : Plugin
+    ui : Plugin
+    policy : Plugin
+    ...etc
+]
+[Application]-o[Plugin]
+```
+
+Summary of interfaces:
+
+* `Application` represents a complete piece of software that has been
+  composed of plugins.
+  * `install(plugin)` adds a plugin to this application.
+  * `uninstall(plugin)` removes a plugin from this application.
+  * `run()` starts the application. This will first initialize all
+    plugins, then start all plugins.
+* `Plugin` represents a unit of functionality available for use within
+  applications. It exposes methods to be triggered at various points
+  in the application lifecycle. A plugin is meant to be "single-use";
+  multiple calls to `initialize()` and/or `start()` should have no
+  effect.
+  * `initialize()` performs any configuration and/or registration
+    associated with this plugin.
+  * `start()` initiates any behavior associated with this plugin that
+    needs to run immediately after the application has started. (Useful
+    for a "bootstrap" plugin.)
+* `MCT` is an instance of an `Application` that self-installs various
+  plugins during its constructor call. It also exposes these same
+  plugins as public fields such that other applications may access
+  them (to `uninstall` them, for instance, or to pass them into other
+  plugins.)
+
+Rationale for various interfaces:
+
+* `Application` separates out a core responsibility of Open MCT (plugin
+  composition) from the specific details of Open MCT (the set of plugins
+  which compose it.)
+  * `install` allows plugins to be added (central to plugin support.)
+  * `uninstall` allows plugins to be removed in circumstances where they
+    are unwanted; have observed practical cases where this is desirable.
+  * `run` separates instantiation of the application from the initiation
+    of its behavior.
+* `Plugin` provides an interface for `Application` to use when accepting
+  plugins, and a base class for plugin developers to extend from.
+  * `initialize` is useful to `Application`, which wants to implement
+    `run` in a manner which wholly separates initialization (the wiring
+    up of various services/registries) from bootstrapping.
+  * `start` is useful to `Application`, to start any run-time behavior
+    once the application is fully-configured.
+* `MCT` is useful to producers of software built on Open MCT, who would
+  like a baseline set of functionality to build upon.
+
+Applications built on Open MCT are expected to be exposed as classes
+which extend `MCT` and add/remove plugins during the constructor
+call. (This is a recommended pattern of use only; other, more
+imperative usage of this API is equally viable.)
+
+
+## Extension Points
+
+```nomnoml
+[Provider<X,S> |
+    get() : S
+    register(factory : (function () : S))
+    decorate(decorator : (function (S) : S))
+    compose(compositor : (function (Array<X>) : S))
+]
+
+[Provider<X,S>]<:-[Provider<T,Array<T>>]
+[Provider<T,Array<T>>]<:-[Registry<T>]
+[Provider<X,S>]<:-[Provider<S,S>]
+[Provider<S,S>]<:-[ServiceProvider<S>]
+```
+
+
+# Interfaces
+
 * `Dependency<S>` is an interface describing dependencies generally.
   * `get() : S` provides an instance of the architectural component.
 * `Provider<X, S>` extends `Dependency<S>`. It is responsible for providing
