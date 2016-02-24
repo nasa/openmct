@@ -39,7 +39,7 @@
         display: block;
 
         @if $splitterEndCr != 'none' {
-            @include border-radius($splitterEndCr);
+            border-radius: $splitterEndCr;
         }
     }
     &:active {

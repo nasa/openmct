@@ -137,6 +137,10 @@ define([
                 {
                     "stylesheetUrl": "css/normalize.min.css",
                     "priority": "mandatory"
+                },
+                {
+                    "stylesheetUrl": "css/reset.css",
+                    "priority": "mandatory"
                 }
             ],
             "templates": [

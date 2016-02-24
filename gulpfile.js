@@ -24,7 +24,9 @@
 var gulp = require('gulp'),
     requirejsOptimize = require('gulp-requirejs-optimize'),
     sourcemaps = require('gulp-sourcemaps'),
-    compass = require('gulp-compass'),
+    rename = require('gulp-rename'),
+    sass = require('gulp-sass'),
+    bourbon = require('node-bourbon'),
     jshint = require('gulp-jshint'),
     jscs = require('gulp-jscs'),
     replace = require('gulp-replace-task'),
@@ -38,7 +40,7 @@ var gulp = require('gulp'),
         main: 'main.js',
         dist: 'dist',
         assets: 'dist/assets',
-        scss: 'platform/**/*.scss',
+        scss: ['./platform/**/*.scss', './example/**/*.scss'],
         scripts: [ 'main.js', 'platform/**/*.js', 'src/**/*.js' ],
         static: [
             'index.html',
@@ -57,10 +59,8 @@ var gulp = require('gulp'),
             configFile: path.resolve(__dirname, 'karma.conf.js'),
             singleRun: true
         },
-        compass: {
-            sass: __dirname,
-            css: paths.assets,
-            sourcemap: true
+        sass: {
+            includePaths: bourbon.includePaths
         },
         replace: {
             variables: {
@@ -70,42 +70,7 @@ var gulp = require('gulp'),
                 branch: fs.existsSync('.git') ? git.branch() : 'Unknown'
             }
         }
-    },
-    stream = require('stream');
-
-/**
-* Returns a transform stream that allows us to customize the destination
-* paths for individual sass files.  Wraps compass.
-*/
-function customCompass() {
-    var compassWrapper = new stream.Transform({objectMode: true});
-    compassWrapper._transform = function (chunk, encoding, done) {
-        if (/\/_[^\/]*.scss$/.test(chunk.path)) {
-            return done();
-        }
-        var baseDir = 'platform/' + chunk.relative.replace(/sass\/.*$/, ''),
-            options = {
-                project: __dirname,
-                sass: baseDir + 'sass/',
-                css: baseDir + 'css/',
-                comments: true,
-                bundle_exec: true
-            },
-            compassObj;
-
-        compassObj = compass(options);
-        compassObj.on('data', function (file) {
-            this.push(file);
-        }.bind(this));
-        compassObj.on('end', function () {
-            done();
-        });
-        compassObj.end(chunk);
     };
-    return compassWrapper;
-}
-
-
 
 gulp.task('scripts', function () {
     return gulp.src(paths.main)
@@ -120,11 +85,16 @@ gulp.task('test', function (done) {
     new karma.Server(options.karma, done).start();
 });
 
-gulp.task('compass');
-
 gulp.task('stylesheets', function () {
-    return gulp.src(paths.scss)
-        .pipe(customCompass());
+    return gulp.src(paths.scss, {base: '.'})
+        .pipe(sourcemaps.init())
+        .pipe(sass(options.sass).on('error', sass.logError))
+        .pipe(rename(function (file) {
+            file.dirname = file.dirname.replace('/sass', '/css');
+            return file;
+        }))
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(__dirname));
 });
 
 gulp.task('lint', function () {
@@ -161,7 +131,7 @@ gulp.task('serve', function () {
     var app = require('./app.js');
 });
 
-gulp.task('develop', ['serve', 'watch']);
+gulp.task('develop', ['serve', 'stylesheets', 'watch']);
 
 gulp.task('install', [ 'static', 'scripts' ]);
 

@@ -36,11 +36,16 @@
 	}
 }
 
+mct-include.status-block-holder {
+    // mct-include that wraps status.block
+    // Must use display: inline-block to fix white space problems
+    display: inline-block;
+}
+
 .status.block {
     $transDelay: 1.5s;
     $transSpeed: .25s;
 	color: $colorStatusDefault;
-	cursor: default;
 	display: inline-block;
 	margin-right: $interiorMargin;
 	.status-indicator,
@@ -49,6 +54,9 @@
 		display: inline-block;
 		vertical-align: top;
 	}
+
+    &.clickable { cursor: pointer; }
+    &:not(.clickable) { cursor: default; }
 
     &.no-icon {
         .status-indicator {
@@ -60,9 +68,6 @@
         float: right;
     }
 
-    &.subtle {
-        opacity: 0.5;
-    }
 	.status-indicator {
 		margin-right: $interiorMarginSm;
 	}
@@ -77,7 +82,7 @@
         &:hover {
             .label {
                 @include trans-prop-nice(max-width, $transSpeed, 0s);
-                max-width: 450px;
+                max-width: 600px;
                 width: auto;
             }
             .count {
@@ -99,17 +104,26 @@
 	&.error .status-indicator {
 		color: $colorStatusError;
 	}
+    &.available .status-indicator {
+        color: $colorStatusAvailable;
+    }
 	.count {
 		@include trans-prop-nice(opacity, $transSpeed, $transDelay);
 		font-weight: bold;
 		opacity: 1;
 	}
+    .s-btn {
+        background: $colorStatusBtnBg;
+        padding: 0 $interiorMargin;
+        height: auto;
+        line-height: inherit;
+    }
 }
 
 /* Styles for messages and message banners */
 .message {
 	&.block {
-		@include border-radius($basicCr);
+		border-radius: $basicCr;
 		padding: $interiorMarginLg;
 	}
 	&.error {
@@ -121,9 +135,9 @@
 .l-message-banner {
 	$m: $interiorMarginSm;
 	$lh: $ueFooterH - ($m*2) - 1;
-	@include box-sizing(border-box);
+	box-sizing: border-box;
 	@include ellipsize();
-	@include display-flex;
+	@include display(flex);
 	@include flex-direction(row);
 	@include align-items(center);
 	position: absolute;
@@ -146,7 +160,7 @@
         left: 50%;
         opacity: 1;
         &:not(.info) {
-            @include pulse(100ms, 10);
+            @include pulse($dur: 100ms, $iteration: 10);
         }
     }
 
@@ -184,12 +198,12 @@
 }
 
 .s-message-banner {
-	@include border-radius($controlCr);
+	border-radius: $controlCr;
 	@include statusBannerColors($colorStatusDefault, $colorStatusFg);
 	cursor: pointer;
 	a { color: inherit; }
 	.s-action {
-		@include border-radius($basicCr);
+		border-radius: $basicCr;
         @include trans-prop-nice(background-color);
 	}
 	.close {
@@ -250,7 +264,7 @@
 */
 
 .l-message {
-    @include display-flex;
+    @include display(flex);
     @include flex-direction(row);
     @include align-items(stretch);
     .type-icon.message-type {
@@ -275,17 +289,17 @@
 // Message as singleton
 .t-message-single {
     @include messageBlock(80px);
+}
 
-    @include desktop {
-        .l-message,
-        .bottom-bar {
-            @include absPosDefault();
-        }
+body.desktop .t-message-single {
+    .l-message,
+    .bottom-bar {
+        @include absPosDefault();
+    }
 
-        .bottom-bar {
-            top: auto;
-            height: $ovrFooterH;
-        }
+    .bottom-bar {
+        top: auto;
+        height: $ovrFooterH;
     }
 }
 
@@ -295,15 +309,13 @@
 
     .message-contents {
         .l-message {
-            //border-bottom: 1px solid pullForward($colorOvrBg, 20%);
-            @include border-radius($controlCr);
+            border-radius: $controlCr;
             background: rgba($colorOvrFg, 0.1);
             margin-bottom: $interiorMargin;
             padding: $interiorMarginLg;
 
             .message-contents,
             .bottom-bar {
-                //@include test(green);
                 position: relative;
             }
 
@@ -320,8 +332,8 @@
             }
         }
     }
+}
 
-    @include desktop {
-        .message-contents .l-message { margin-right: $interiorMarginLg; }
-    }
+body.desktop .t-message-list {
+    .message-contents .l-message { margin-right: $interiorMarginLg; }
 }
