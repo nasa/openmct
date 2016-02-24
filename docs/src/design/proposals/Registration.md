@@ -65,7 +65,21 @@ be implemented in these plugins.
 
 # Interfaces
 
-## Applications and Plugins
+In keeping with the scope of the Registration API, the interfaces
+described here are sufficient to:
+
+* Describe the set of plugins in use for a particular instance of
+  Open MCT, and initiate their behavior.
+* Support common patterns by which plugins can utilize and expose
+  defined extension points.
+
+Notably, there is no interdependency between these two sets of
+behavior; one could use the base classes for extension points
+independently of the plugin mechanism, and vice versa. This both
+ensures loose coupling within the Registration API, and also
+allows for greater flexibility for developers implementing plugins.
+
+## Application-level Interfaces
 
 ```nomnoml
 [Application |
@@ -137,7 +151,6 @@ which extend `MCT` and add/remove plugins during the constructor
 call. (This is a recommended pattern of use only; other, more
 imperative usage of this API is equally viable.)
 
-
 ## Extension Points
 
 ```nomnoml
@@ -154,27 +167,39 @@ imperative usage of this API is equally viable.)
 [Provider<S,S>]<:-[ServiceProvider<S>]
 ```
 
+Omitted from this diagram (for clarity) are `options` arguments to
+`register`, `decorate`, and `compose`. This argument should allow,
+at minimum, a `priority` to be specified, in order to control ordering
+of registered extensions.
 
-# Interfaces
-
-* `Dependency<S>` is an interface describing dependencies generally.
-  * `get() : S` provides an instance of the architectural component.
-* `Provider<X, S>` extends `Dependency<S>`. It is responsible for providing
-  objects of type `S` based
+* `Provider<X, S>` is responsible for providing objects of type `S` based
   on zero or more instances of objects of type `X` which have been registered.
   In practice, a `Provider` instance is an extension point within the
   architecture.
+  * `get() : S` provides an instance of the architectural component, as
+    constructed using the registered objects, along with the highest-priority
+    compositor and and decorators.
   * `register(factory : (function () : X), [options] : RegistrationOptions)`
     registers an object (as returned by the provided `factory` function)
     with this provider. Evaluation of the provided `factory` will be
     deferred until the first `get()` call to the `Provider`.
-  * `composite(compositor : (function (X[]) : S), [options] : RegistrationOptions)`
+  * `compose(compositor : (function (X[]) : S), [options] : RegistrationOptions)`
     introduces a new strategy for converting an array of registered objects
     of type `X` into a single instance of an object of type `S`. The
     highest-priority `compositor` that has been registered in this fashion
     will be used to assemble the provided object (before decoration)
   * `decorate(decorator : (function (S) : S), [options] : RegistrationOptions)`
-    augments behavior of provided objects, in priority order.
+    augments behavior of objects provided by `get`, in priority order.
+* `ServiceProvider<S>` provides analogous support for the _composite services_
+  pattern used throughout Open MCT (which, in turn, is a superset of the
+  functionality needed for plain services.)
+* `Registry<T>` provides analogous support for _extension categories_, also
+  used ubiquitously through Open MCT.
+
+# Interfaces
+
+
+
 
 `Registry<T>` extends `Provider<T, T[]>`. It provides simple registries, where
 a full list of all registered extensions of a certain category may be readily
