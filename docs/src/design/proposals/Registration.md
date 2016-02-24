@@ -68,8 +68,6 @@ be implemented in these plugins.
 ## Applications and Plugins
 
 ```nomnoml
-#direction: down
-
 [Application |
     install(plugin : Plugin)
     uninstall(plugin : Plugin)
