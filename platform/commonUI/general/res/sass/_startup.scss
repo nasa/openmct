@@ -1,0 +1,47 @@
+@import "bourbon";
+$dirImgs: '../../../general/res/images/';
+@import "logo-and-bg";
+
+@mixin splashElem($m: 20%) {
+    top: $m; right: $m * 1.25; bottom: $m; left: $m * 1.25;
+
+}
+
+.l-splash-holder {
+    // Main outer holder.
+    @include transition-property(opacity);
+    @include transition-duration(500ms);
+    @include transition-timing-function(ease-in-out);
+    @include transition-delay(1s);
+    z-index: 10000;
+    opacity: 1;
+    &.fadeout {
+        opacity: 0;
+        pointer-events: none;
+    }
+    .l-splash {
+        // The splash element.
+        @include splashElem();
+        border-radius: 10px;
+        box-shadow: 0 5px 50px 25px rgba(#fff, 0.1);
+    }
+}
+
+@media only screen and (max-device-width: 767px) {
+    .l-splash-holder .l-splash {
+        @include splashElem(0);
+        border-radius: 0;
+        box-shadow: none;
+    }
+}
+
+@media only screen and (max-device-width: 767px) and (orientation: portrait) {
+    .l-splash-holder .l-splash {
+        &:before {
+            $w: 12%;
+            width: $w * 2;
+            padding-bottom: $w;
+            padding-top: $w;
+        }
+    }
+}

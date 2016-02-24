@@ -1,30 +1,46 @@
-.l-logo-holder {
+.l-splash {
+    background-size: cover;
     position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
-    .l-logo {
-        $w: 5%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    &:before,
+    &:after {
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+        content: '';
         position: absolute;
-        &.l-logo-app {
-            top: 0; right: 15%; bottom: 0; left: 15%;
-        }
-        &.s-logo-nasa {
-            $m: 10px;
-            background-image: url($dirImgs + 'logo-nasa.svg');
-            top: $m; right: auto; bottom: auto; left: $m;
-            width: $w * 2; height: auto; padding-bottom: $w; padding-top: $w;
-        }
+    }
+
+    &:before {
+        // NASA logo
+        $w: 5%;
+        $m: 10px;
+        background-image: url($dirImgs + 'logo-nasa.svg');
+        top: $m;
+        right: auto;
+        bottom: auto;
+        left: $m;
+        height: auto;
+        width: $w * 2;
+        padding-bottom: $w;
+        padding-top: $w;
+    }
+
+    &:after {
+        // App logo
+        top: 0;
+        right: 15%;
+        bottom: 0;
+        left: 15%;
     }
 }
 
-.s-logo-holder {
-    background: url($dirImgs + "bg-about-openmctweb.jpg") no-repeat center; // For OpenMCT Web.
-    background-size: cover;
-}
-.s-logo {
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-}
-.s-logo-openmctweb {
-    background-image: url($dirImgs + 'logo-openmctweb-shdw.svg');
+.s-splash {
+    background-image: url($dirImgs + "bg-about-openmctweb.jpg"); // For OpenMCT Web.
+    &:after {
+        background-image: url($dirImgs + 'logo-openmctweb-shdw.svg');
+    }
 }
