@@ -196,56 +196,17 @@ of registered extensions.
 * `Registry<T>` provides analogous support for _extension categories_, also
   used ubiquitously through Open MCT.
 
-# Interfaces
+# Examples
 
+The following examples are provided to illustrate the intended usage of
+the Registration API. Particular attention is given to obeying and
+utilizing the "dependency injection as code style"
+[decision from the API Redesign](APIRedesign.md#decisions).
 
+## Building Applications on Open MCT
 
-
-`Registry<T>` extends `Provider<T, T[]>`. It provides simple registries, where
-a full list of all registered extensions of a certain category may be readily
-accessed.
-
-`ServiceProvider<T>` extends `Provider<T, T>`. It provides single instances of
-services, and allows service instances of the same type to be registered.
-The default composition strategy is to provide the highest-priority service
-which has been registered.
-
-# Turtles All the Way Down
-
-An `Initializer` provides an interface of communicating application life
-cycle events to application components (such as plugins.)
-* `install()`: Install any extensions associate with the component.
-* `start()`: Perform any application start-up behavior associated with
-  this component.
-
-`Application` extends `Provider<Dependency<Initializer>, Initializer>`.
-* `run()`: Run the `install` phases of all registered components, then
-  runs the `start` phases of all registered components.
-
-As such, the following _could_ be valid initialization code
-(but wait, there's more):
-
-```js
-var app = new mct.Application();
-
-app.register(new mct.Core());
-
-app.run(window);
-```
-
-`MCT` extends `Application` by self-registering common plugins.
-
-Other variants may similarly extend `MCT` and self-register additional
-plugins. As such, bootstrapping an `MCT`-derived application should
-be as simple as:
-
-```
-define(['Variant'], function (Variant) {
-  new Variant().run();
-});
-```
-
-Where `Variant` may simply look like:
+Applications built using Open MCT are expected to extend the `MCT` base
+class and
 
 ```
 define(['mct', './plugins'], function (mct, plugins) {
