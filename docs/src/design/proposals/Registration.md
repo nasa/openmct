@@ -1,9 +1,10 @@
-* `Provider<S>` is an interface describing dependencies generally.
-* `Provider<X, S>` is responsible for providing objects of type `S` based
+* `Dependency<S>` is an interface describing dependencies generally.
+  * `get() : S` provides an instance of the architectural component.
+* `Provider<X, S>` extends `Dependency<S>`. It is responsible for providing
+  objects of type `S` based
   on zero or more instances of objects of type `X` which have been registered.
   In practice, a `Provider` instance is an extension point within the
   architecture.
-  * `get() : S` provides an instance of the architectural component.
   * `register(factory : (function () : X), [options] : RegistrationOptions)`
     registers an object (as returned by the provided `factory` function)
     with this provider. Evaluation of the provided `factory` will be
@@ -27,7 +28,15 @@ which has been registered.
 
 # Turtles All the Way Down
 
-`Application` extends `Provider<Provider<?, Initializer>, Initializer>`.
+An `Initializer` provides an interface of communicating application life
+cycle events to application components (such as plugins.)
+* `install()`: Install any extensions associate with the component.
+* `start()`: Perform any application start-up behavior associated with
+  this component.
+
+`Application` extends `Provider<Dependency<Initializer>, Initializer>`.
+* `run()`: Run the `install` phases of all registered components, then
+  runs the `start` phases of all registered components.
 
 As such, the following _could_ be valid initialization code
 (but wait, there's more):
@@ -56,14 +65,16 @@ Where `Variant` may simply look like:
 
 ```
 define(['mct', './plugins'], function (mct, plugins) {
+  var MCT = mct.MCT;
+
   function Variant() {
-    mct.MCT.call(this);
+    MCT.call(this);
 
     this.register(new plugins.SomePlugin());
     this.register(new plugins.SomeOtherPlugin());
   }
 
-  Variant.prototype = Object.create(mct.MCT.prototype);
+  Variant.prototype = Object.create(MCT.prototype);
 
   return Variant;
 });
