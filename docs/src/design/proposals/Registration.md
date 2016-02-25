@@ -11,7 +11,7 @@ As demonstrated by the existing APIs, writing plugins is sufficient to
 satisfy the three use cases above in the majority of cases. The only feature
 which is known to be unsatisfiable by plugins is plugin support itself.
 
-As such, prefer to keep "plugin-external" components small as simple, to
+As such, prefer to keep "plugin-external" components small and simple, to
 keep the majority of development in plugins (or plugin-like components.)
 
 The "registration API" described in this document is limited to that scope:
@@ -370,12 +370,30 @@ define(['mct', './SomeAction'], function (mct, SomeAction) {
   return MyPlugin;
 
 });
+```
 
 # Evaluation
 
+[Identified problems](#problems-to-address) are addressed by this solution:
+
+1. Dependencies between plugins can be made explicit; a `Plugin` may
+   impose dependencies on other specific `Plugin` subclasses as constructor
+   arguments, disambiguated with JSDoc. The software does not take part
+   in dependency management among plugins; rather, this responsibility is
+   plainly communicated to developers.
+2. Extension points are made explicit; `Provider` instances must be
+   reachable for plugins to configure, and may be made available as
+   public fields of `Plugin`s. Their types can be clearly documented,
+   usages and interactions can be followed with standard developer tools
+   (e.g. breakpoints), and so on.
+3. Reuse of classes between plugins is neither facilitated nor impeded
+   by the registration API. If, however, plugins are written following the
+   "expose classes in namespaces" approach, then it is trivially to
+   expose additional classes in these same namespaces.
+
 There are some problems with this approach:
 
-* Highly sensitive to ordering; does not address the problem of
+* It is highly sensitive to ordering; does not address the problem of
   [separating configuration from use](http://www.martinfowler.com/articles/injection.html#SeparatingConfigurationFromUse),
   but instead leaves this as a problem to solve with code style
   (requiring familiarity with the system.) This is particularly
