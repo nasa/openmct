@@ -19,18 +19,21 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@import "startup";
+.app-logo {
+    background: url('/platform/commonUI/general/res/images/logo-app.svg') no-repeat center center;
+}
 
 .l-splash-holder {
     background: #333;
-    position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
     .s-splash {
-        background-image: url($dirImgs + "bg-about-openmctweb.jpg"); // For OpenMCT Web.
-        // &:before { // Use this to override the NASA logo. Could add a AMMOS logo along with NASA if desired. }
-        &:after {
-            // App logo
-            background-image: url($dirImgs + 'logo-openmctweb-shdw.svg');
-        }
+        border-radius: 10px;
+        box-shadow: 0 5px 50px 25px rgba(255, 255, 255, 0.1);
+    }
+}
+
+.s-splash {
+    background-image: url('/platform/commonUI/general/res/images/bg-splash.jpg');
+    &:after {
+        background-image: url('/platform/commonUI/general/res/images/logo-app-shdw.svg');
     }
 }

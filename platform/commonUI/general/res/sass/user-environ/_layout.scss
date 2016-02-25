@@ -100,9 +100,6 @@
             left: auto;
             width: $ueAppLogoW;
             z-index: 2;
-            &.logo-openmctweb {
-                background: url($dirImgs + 'logo-openmctweb.svg') no-repeat center center;
-            }
         }
     }
 }

@@ -19,54 +19,52 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-.l-splash,
-.l-splash:before,
-.l-splash:after {
-    background-position: center;
-    background-repeat: no-repeat;
-    position: absolute;
+@import "bourbon";
+@import "logo-and-bg";
+
+@mixin splashElem($m: 20%) {
+    top: $m; right: $m * 1.25; bottom: $m; left: $m * 1.25;
 }
 
-.l-splash {
-    background-size: cover;
+.l-splash-holder {
+    // Main outer holder.
+    @include transition-property(opacity);
+    @include transition-duration(500ms);
+    @include transition-timing-function(ease-in-out);
+    @include transition-delay(1s);
+    position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-    &:before,
-    &:after {
-        background-size: contain;
-        content: '';
+    z-index: 10000;
+    opacity: 1;
+    &.fadeout {
+        opacity: 0;
+        pointer-events: none;
     }
-
-    &:before {
-        // NASA logo
-        $w: 5%;
-        $m: 10px;
-        background-image: url('/platform/commonUI/general/res/images/logo-nasa.svg');
-        top: $m;
-        right: auto;
-        bottom: auto;
-        left: $m;
-        height: auto;
-        width: $w * 2;
-        padding-bottom: $w;
-        padding-top: $w;
-    }
-
-    &:after {
-        // App logo
-        top: 0;
-        right: 15%;
-        bottom: 0;
-        left: 15%;
+    .l-splash {
+        // The splash element.
+        @include splashElem();
     }
 }
 
-/*
-.s-splash {
-    background-image: url('/branding/res/images/bg-splash.jpg');
-    &:after {
-        background-image: url('/branding/res/images/logo-app-shdw.svg');
+@media only screen and (max-device-width: 767px) {
+    .l-splash-holder .l-splash {
+        @include splashElem(0);
+        border-radius: 0;
+        box-shadow: none;
     }
-}*/
+}
+
+@media only screen and (max-device-width: 767px) and (orientation: portrait) {
+    .l-splash-holder .l-splash {
+        &:before {
+            // Make the NASA logo a bit bigger when we're in portrait mode.
+            $w: 12%;
+            width: $w * 2;
+            padding-bottom: $w;
+            padding-top: $w;
+        }
+    }
+}
