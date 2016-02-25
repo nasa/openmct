@@ -370,3 +370,20 @@ define(['mct', './SomeAction'], function (mct, SomeAction) {
   return MyPlugin;
 
 });
+
+# Evaluation
+
+There are some problems with this approach:
+
+* Highly sensitive to ordering; does not address the problem of
+  [separating configuration from use](http://www.martinfowler.com/articles/injection.html#SeparatingConfigurationFromUse),
+  but instead leaves this as a problem to solve with code style
+  (requiring familiarity with the system.) This is particularly
+  true with `Provider#get` (don't want to invoke before configuration
+  is finished), but also true for `Application` and `Plugin`.
+  * One approach to mitigate this would be to throw `Error`s when
+    calls are made out-of-order (e.g. configuration after use.)
+* Some redundancy among interfaces (`Plugin` and `Application` both
+  look a lot like a `Provider`, but of what?)
+  * But, don't want to over-exercise commonalities and end up with
+    unclear interfaces.
