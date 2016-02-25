@@ -391,6 +391,23 @@ define(['mct', './SomeAction'], function (mct, SomeAction) {
    "expose classes in namespaces" approach, then it is trivially to
    expose additional classes in these same namespaces.
 
+This solution offers further benefits:
+
+* The `Provider` API is robust enough to support the various existing
+  extensions of Open MCT, but its usage is opt-in; plugins are free
+  to expose other (potentially wildly different) means of extension.
+  Usage of `Provider`s is _encouraged_ to promote ubiquitous
+  extensibility, but no limitation is exposed.
+* By moving everything into classes which accept dependencies, a
+  degree of inflexibility is removed from the architecture. In principle,
+  it should be possible to run multiple instances of `MCT` (with
+  their own service instances, etc.) within the same environment. While
+  this is not specifically desirable, it reflects a generally looser
+  coupling between the software and it environment (no expectation of a
+  `bundles.json`, no usage of global state at the language level or
+  effectively-global state at the RequireJS level, etc.) and implies
+  greater flexibility of the application's components.
+
 There are some problems with this approach:
 
 * It is highly sensitive to ordering; does not address the problem of
