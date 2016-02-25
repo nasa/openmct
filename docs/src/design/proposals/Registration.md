@@ -206,7 +206,13 @@ utilizing the "dependency injection as code style"
 ## Building Applications on Open MCT
 
 Applications built using Open MCT are expected to extend the `MCT` base
-class and
+class and should typically self-install distinguishing plugins during
+the constructor call. Any pre-installed plugins that are undesirable
+should also be uninstalled at this point (to support such usage,
+`MCT` should expose instances of any installed plugins that are
+considered optional.)
+
+For example:
 
 ```
 define(['mct', './plugins'], function (mct, plugins) {
@@ -215,8 +221,10 @@ define(['mct', './plugins'], function (mct, plugins) {
   function Variant() {
     MCT.call(this);
 
-    this.register(new plugins.SomePlugin());
-    this.register(new plugins.SomeOtherPlugin());
+    this.install(new plugins.SomePlugin());
+    this.install(new plugins.SomeOtherPlugin(this.core));
+
+    this.uninstall(this.plugins.persistence.localStorage);
   }
 
   Variant.prototype = Object.create(MCT.prototype);
@@ -224,3 +232,141 @@ define(['mct', './plugins'], function (mct, plugins) {
   return Variant;
 });
 ```
+
+Running an application build using Open MCT then typically looks like:
+
+```
+define(['./Variant], function (Variant) {
+  new Variant().run();
+});
+```
+
+## Writing Plugins
+
+A plugin for Open MCT should inherit from the `Plugin` base class.
+
+Plugins will typically use extension points exposed by other plugins;
+put another way, plugins will typically _depend_ upon other plugins.
+Consistent with "dependency injection as a code style," the preferred
+way for plugins to acquire these references is via constructor
+arguments. (Put another way, in order to use a plugin, you are expected
+to supply its dependencies.) Note that this is not a requirement,
+as Open MCT only ever interacts directly with plugin _instances_;
+any other way of assembling an object with the `Plugin` interface
+should be compatible.
+
+Plugins will also typically expose extension points. The preferred
+way to do this is to expose `Provider` instances as public fields
+of plugins, but this is a matter of code style, and is not enforced
+or expected by the Registration API.
+
+For example, if a plugin depends on the `core` plugin of MCT:
+
+```
+define(['mct', './SomeAction'], function (mct, SomeAction) {
+  var Plugin = mct.Plugin,
+    ServiceProvider = mct.ServiceProvider;
+
+  function ExamplePlugin(core) {
+    Plugin.call(this, function () {
+      core.actionRegistry.register(function () {
+        return new SomeAction();
+      });
+    });
+
+    this.someServiceProvider = new ServiceProvider();
+    this.someServiceProvider.register(function () {
+      return new SomeService();
+    });
+  }
+
+  ExamplePlugin.prototype = Object.create(Plugin.prototype);
+
+  return ExamplePlugin;
+});
+```
+
+Using this plugin then looks like:
+
+```
+define([
+  'mct',
+  './ExamplePlugin',
+  './OtherPlugin'
+], function (mct, ExamplePlugin, OtherPlugin) {
+  var MCT = mct.MCT;
+
+  function MyApplication() {
+    MCT.call(this);
+
+    this.examplePlugin = new ExamplePlugin(this.core);
+    this.otherPlugin = new OtherPlugin(this.examplePlugin);
+
+    this.install(this.examplePlugin);
+    this.install(this.otherPlugin);
+  }
+
+  MyApplication.prototype = Object.create(MCT.prototype);
+
+  return MyApplication;
+});
+```
+
+## Using Extension Points
+
+The services and extensions exposed by providers are retrieved via
+`get` calls to those providers. These calls are expected to occur
+during registration of other extensions, _or_ in the `start` phase
+of the plugin lifecycle.
+
+There are effectively four distinct stages for a plugin:
+
+* __Pre-initialization__. This is the plugin immediately after its
+  constructor call. Any extension points exposed by the plugin are
+  expected to be defined during this stage.
+* __Initialization__. Triggered by calling `initialize`; invokes
+
+For example:
+
+```
+define(['mct', './SomeAction'], function (mct, SomeAction) {
+  var Plugin = mct.Plugin;
+
+  function MyPlugin(core, notificationPlugin) {
+    var notificationServiceProvider =
+      notificationPlugin.notificationServiceProvider;
+
+    Plugin.call(this, function initialize() {
+      // During this stage, extensions may be installed and other
+      // general plugin configuration should occur.
+      // Calls to get should be avoided at this stage, as
+      // providers may not be fully configured.
+      core.actionRegistry.register(function () {
+        // In factory functions, however, get calls are expected;
+        // this is when dependencies actually get injected.
+        // Calls which register/configure extensions should be
+        // avoided at this point. 
+        return new SomeAction(notificationServiceProvider.get());
+      });
+    }, function start() {
+      // Any behavior that should occur when the application starts.
+      // All providers should be fully-configured at this point; `get`
+      // calls may be issued freely at this point, and no more
+      // registration should occur. This stage is not useful to most
+      // plugins and this argument would typically be omitted.
+
+      notifications.notificationServiceProvider.get()
+        .notify("Hello world!");
+    });
+
+    // Code in the constructor is run when the plugin is instantiated;
+    // any extension points exposed by the plugin should be declared
+    // here, typically as providers.
+    this.someRegistry = new mct.Registry();
+  }
+
+  MyPlugin.prototype = Object.create(Plugin.prototype);
+
+  return MyPlugin;
+
+});
