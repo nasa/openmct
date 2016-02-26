@@ -98,9 +98,12 @@ define(
                     });
                 }
             }
-
+            
             // Recalculate swimlane state on changes
             $scope.$watch("domainObject", swimlanePopulator.populate);
+
+            // Pass selection object into swimlane populator
+            $scope.$watch("selection", swimlanePopulator.selection);
 
             // Also recalculate whenever anything in view is modified
             $scope.$watch(modificationSum, repopulateSwimlanes);
