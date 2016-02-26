@@ -90,9 +90,10 @@ function rewriteTemplateUrls(sourceCode) {
 }
 
 function migrate(file) {
-    var sourceCode = fs.readFileSync(file, 'utf8'),
-        templateUrls = findTemplateURLs(sourceCode);
-    console.log(rewriteTemplateUrls(injectRequireArgument(sourceCode, templateUrls)));
+    var sourceCode = fs.readFileSync(file, 'utf8');
+    fs.writeFileSync(file, rewriteTemplateUrls(
+        injectRequireArgument(sourceCode, findTemplateURLs(sourceCode))
+    ), 'utf8');
 }
 
 glob('platform/**/bundle.js', {}, function (err, files) {
