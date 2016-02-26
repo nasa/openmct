@@ -19,6 +19,10 @@ It describes classes and patterns that can allow plugins to interact,
 while making minimal assumptions about what specific functionality is to
 be implemented in these plugins.
 
+By analogy to current API, this set of functionality will effectively
+replace the [Framework Layer](http://nasa.github.io/openmctweb/guide/#framework)
+of Open MCT.
+
 # Problems to Address
 
 1. Dependencies between plugins are implicit; a plugin may fail if its
@@ -407,6 +411,12 @@ This solution offers further benefits:
   `bundles.json`, no usage of global state at the language level or
   effectively-global state at the RequireJS level, etc.) and implies
   greater flexibility of the application's components.
+* Provides a reduction in code associated with a particular capability;
+  the Framework Layer consists of 18 classes (and has broader
+  responsibilities, including script-loading) whereas this approach
+  consists of 6 classes. (Although some additional work for Angular
+  integration and legacy support will also be needed before achieving
+  parity with the Framework Layer.)
 
 There are some problems with this approach:
 
