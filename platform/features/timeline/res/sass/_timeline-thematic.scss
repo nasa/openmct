@@ -36,8 +36,8 @@
     .bar {
         color: $colorGanttBarFg;
         @include activityBg($colorGanttBarBg);
-        @include border-radius($br);
-        @include box-shadow($shdwGanttBar);
+        border-radius: $br;
+        box-shadow: $shdwGanttBar;
         &.expanded {
             @include border-top-radius($br);
             @include border-bottom-radius(0);
@@ -145,7 +145,7 @@
 .s-status-editing .s-swimlane {
     cursor: pointer;
     .t-object-label {
-        @include border-radius($controlCr);
+        border-radius: $controlCr;
         cursor: move;
         padding: 2px 5px;
         &:hover {

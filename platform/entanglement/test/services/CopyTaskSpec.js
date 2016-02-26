@@ -44,11 +44,10 @@ define(
         describe("CopyTask", function () {
             var mockDomainObject,
                 mockParentObject,
-                mockPolicyService,
+                mockFilter,
                 mockQ,
                 mockDeferred,
                 testModel,
-                mockCallback,
                 counter,
                 cloneIds,
                 task;
@@ -119,17 +118,14 @@ define(
                 mockParentObject = domainObjectFactory({
                     capabilities: makeMockCapabilities()
                 });
-                mockPolicyService = jasmine.createSpyObj(
-                    'policyService',
-                    [ 'allow' ]
-                );
+                mockFilter = jasmine.createSpy('filter');
                 mockQ = jasmine.createSpyObj('$q', ['when', 'defer', 'all']);
                 mockDeferred = jasmine.createSpyObj(
                     'deferred',
                     [ 'notify', 'resolve', 'reject' ]
                 );
 
-                mockPolicyService.allow.andReturn(true);
+                mockFilter.andReturn(true);
 
                 mockQ.when.andCallFake(synchronousPromise);
                 mockQ.defer.andReturn(mockDeferred);
@@ -156,7 +152,7 @@ define(
                     task = new CopyTask(
                         mockDomainObject,
                         mockParentObject,
-                        mockPolicyService,
+                        mockFilter,
                         mockQ
                     );
 
@@ -218,7 +214,7 @@ define(
                     task = new CopyTask(
                         mockComposingObject,
                         mockParentObject,
-                        mockPolicyService,
+                        mockFilter,
                         mockQ
                     );
 

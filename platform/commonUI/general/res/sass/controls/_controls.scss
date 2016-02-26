@@ -28,8 +28,8 @@
     }
     .accordion-head {
         $op: 0.2;
-        @include border-radius($basicCr * 0.75);
-        @include box-sizing("border-box");
+        border-radius: $basicCr * 0.75;
+        box-sizing: "border-box";
         background: rgba($colorBodyFg, $op);
         cursor: pointer;
         font-size: 0.75em;
@@ -84,7 +84,7 @@
 .l-control-group {
     // Buttons that have a conceptual grouping - internal space between, and a divider between groups.
     //    @include test();
-    @include box-sizing(border-box);
+    box-sizing: border-box;
     border-left: 1px solid $colorInteriorBorder;
     display: inline-block;
     padding: 0 $interiorMargin;
@@ -125,9 +125,9 @@ label.checkbox.custom {
         height: $d;
         min-width: $d;
         &:before {
-            @include border-radius($basicCr * .75);
+            border-radius: $basicCr * .75;
             background: $bg;
-            @include box-shadow(inset rgba(black, 0.4) 0 1px 2px);
+            box-shadow: inset rgba(black, 0.4) 0 1px 2px;
             box-sizing: border-box;
             content: " ";
             font-family: 'symbolsfont';
@@ -182,7 +182,7 @@ label.checkbox.custom {
 
 .item .checkbox {
     &.checked label {
-        @include box-shadow(none);
+        box-shadow: none;
         border-bottom: none;
     }
 }
@@ -235,16 +235,16 @@ label.checkbox.custom {
         font-size: 0.7em;
         @include webkitProp(flex, '0 0 1');
     }
+}
 
-    @include desktop {
+body.desktop .object-header {
+    .context-available {
+        @include trans-prop-nice(opacity, 0.25s);
+        opacity: 0;
+    }
+    &:hover {
         .context-available {
-            @include trans-prop-nice(opacity, 0.25s);
-            opacity: 0;
-        }
-        &:hover {
-            .context-available {
-                opacity: 1;
-            }
+            opacity: 1;
         }
     }
 }
@@ -293,13 +293,13 @@ label.checkbox.custom {
 }
 
 .s-progress-bar {
-    @include border-radius($basicCr);
+    border-radius: $basicCr;
     @include boxIncised(0.3, 4px);
     background: $colorProgressBarOuter;
     .progress-amt {
-        @include border-radius($basicCr);
+        border-radius: $basicCr;
         @include boxShdw();
-        @include border-radius($basicCr - 1);
+        border-radius: $basicCr - 1;
         @include trans-prop-nice(width);
         &:before {
             background-color: $colorProgressBarAmt;
@@ -433,7 +433,7 @@ label.checkbox.custom {
 .l-calendar {
     $colorMuted: pushBack($colorMenuFg, 30%);
     ul.l-cal-row {
-        @include display-flex;
+        @include display(flex);
         @include flex-flow(row nowrap);
         margin-top: 1px;
         &:first-child {
@@ -481,11 +481,11 @@ label.checkbox.custom {
 
 /******************************************************** BROWSER ELEMENTS */
 
-@include desktop {
+body.desktop {
     ::-webkit-scrollbar {
-        @include border-radius(2px);
-        @include box-sizing(border-box);
-        @include box-shadow(inset $scrollbarTrackShdw);
+        border-radius: 2px;
+        box-sizing: border-box;
+        box-shadow: inset $scrollbarTrackShdw;
         background-color: $scrollbarTrackColorBg;
         height: $scrollbarTrackSize;
         width: $scrollbarTrackSize;
@@ -496,8 +496,8 @@ label.checkbox.custom {
         $hc: $scrollbarThumbColorHov;
         $gr: 5%;
         @include background-image(linear-gradient(lighten($bg, $gr), $bg 20px));
-        @include border-radius(2px);
-        @include box-sizing(border-box);
+        border-radius: 2px;
+        box-sizing: border-box;
         &:hover {
             @include background-image(linear-gradient(lighten($hc, $gr), $hc 20px));
         }

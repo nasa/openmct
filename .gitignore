@@ -4,8 +4,11 @@
 *.tgz
 *.DS_Store
 
+# Compiled CSS, unless directly added
 *.sass-cache
 *COMPILE.css
+*.css
+*.css.map
 
 # Intellij project configuration files
 *.idea

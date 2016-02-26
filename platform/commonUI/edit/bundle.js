@@ -156,14 +156,11 @@ define([
                     "name": "Save",
                     "description": "Save changes made to these objects.",
                     "depends": [
-                        "$q",
-                        "$location",
                         "$injector",
-                        "urlService",
-                        "navigationService",
                         "policyService",
                         "dialogService",
-                        "creationService"
+                        "creationService",
+                        "copyService"
                     ],
                     "priority": "mandatory"
                 },

@@ -27,7 +27,7 @@
 }
 
 .top-bar .badge {
-    @include border-radius($controlCr * 1.5);
+    border-radius: $controlCr * 1.5;
     $h: $btnStdH; //$ueTopBarBtnH; // - 5px;
     font-size: 1.4em;
     height: $h;
@@ -39,7 +39,7 @@
 
 //.top-bar .btn-browse .badge {
 // Moved to _controls.scss .btn.browse-btn
-//    @include border-radius($controlCr * 1.5);
+//    border-radius: $controlCr * 1.5;
 //    $d: 20px;
 //    display: block;
 //    font-size: 1em;
@@ -53,7 +53,7 @@
 
 .super-menu .badge {
     @include background-image(linear-gradient(lighten($colorCreateBtn, 10%), $colorCreateBtn));
-    @include border-radius($controlCr);
+    border-radius: $controlCr;
     @include boxShdwSubtle();
 //    display: inline-block;
 //    margin-right: 10px !important;

@@ -125,7 +125,7 @@ define(
         EditorCapability.prototype.cancel = function () {
             this.editableObject.getCapability("status").set("editing", false);
             //TODO: Reset the cache as well here.
-            this.cache.markClean(this.editableObject);
+            this.cache.markClean();
             return resolvePromise(undefined);
         };
 

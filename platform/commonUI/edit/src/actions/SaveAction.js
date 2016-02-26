@@ -36,18 +36,22 @@ define(
          * @implements {Action}
          * @memberof platform/commonUI/edit
          */
-        function SaveAction($q, $location, $injector, urlService, navigationService, policyService, dialogService, creationService, context) {
+        function SaveAction(
+            $injector,
+            policyService,
+            dialogService,
+            creationService,
+            copyService,
+            context
+        ) {
             this.domainObject = (context || {}).domainObject;
-            this.$location = $location;
             this.injectObjectService = function(){
                 this.objectService = $injector.get("objectService");
             };
-            this.urlService = urlService;
-            this.navigationService = navigationService;
             this.policyService = policyService;
             this.dialogService = dialogService;
             this.creationService = creationService;
-            this.$q = $q;
+            this.copyService = copyService;
         }
 
         SaveAction.prototype.getObjectService = function(){
@@ -67,35 +71,29 @@ define(
          */
         SaveAction.prototype.perform = function () {
             var domainObject = this.domainObject,
-                $location = this.$location,
-                urlService = this.urlService,
+                copyService = this.copyService,
                 self = this;
 
             function resolveWith(object){
-                return function() {
+                return function () {
                     return object;
                 };
             }
 
             function doWizardSave(parent) {
                 var context = domainObject.getCapability("context"),
-                    wizard = new CreateWizard(domainObject, parent, self.policyService);
+                    wizard = new CreateWizard(
+                        domainObject,
+                        parent,
+                        self.policyService
+                    );
 
                 return self.dialogService
-                    .getUserInput(wizard.getFormStructure(true), wizard.getInitialFormValue())
-                    .then(function(formValue){
-                        return wizard.populateObjectFromInput(formValue, domainObject);
-                    });
-            }
-
-
-            function persistObject(object){
-
-                //Persist first to mark dirty
-                return object.getCapability('persistence').persist().then(function(){
-                    //then save permanently
-                    return object.getCapability('editor').save();
-                });
+                    .getUserInput(
+                        wizard.getFormStructure(true),
+                        wizard.getInitialFormValue()
+                    )
+                    .then(wizard.populateObjectFromInput.bind(wizard));
             }
 
             function fetchObject(objectId){
@@ -108,16 +106,18 @@ define(
                 return fetchObject(object.getModel().location);
             }
 
-            function locateObjectInParent(parent){
-                parent.getCapability('composition').add(domainObject.getId());
-                return parent.getCapability('persistence').persist().then(function() {
-                    return parent;
-                });
+            function allowClone(objectToClone) {
+                return (objectToClone.getId() === domainObject.getId()) ||
+                    objectToClone.getCapability('location').isOriginal();
             }
 
-            function doNothing() {
-                // Create cancelled, do nothing
-                return false;
+            function cloneIntoParent(parent) {
+                return copyService.perform(domainObject, parent, allowClone);
+            }
+
+            function cancelEditingAfterClone(clonedObject) {
+                return domainObject.getCapability("editor").cancel()
+                    .then(resolveWith(clonedObject));
             }
 
             // Invoke any save behavior introduced by the editor capability;
@@ -127,17 +127,13 @@ define(
             function doSave() {
                 //This is a new 'virtual object' that has not been persisted
                 // yet.
-                if (!domainObject.getModel().persisted){
+                if (domainObject.getModel().persisted === undefined){
                     return getParent(domainObject)
-                            .then(doWizardSave)
-                            .then(persistObject)
-                            .then(getParent)//Parent may have changed based
-                                            // on user selection
-                            .then(locateObjectInParent)
-                            .then(function(){
-                                return fetchObject(domainObject.getId());
-                            })
-                        .catch(doNothing);
+                        .then(doWizardSave)
+                        .then(getParent)
+                        .then(cloneIntoParent)
+                        .then(cancelEditingAfterClone)
+                        .catch(resolveWith(false));
                 } else {
                     return domainObject.getCapability("editor").save()
                         .then(resolveWith(domainObject.getOriginalObject()));
@@ -148,7 +144,7 @@ define(
             // UI, which will have been pushed atop the Browse UI.)
             function returnToBrowse(object) {
                 if (object) {
-                    self.navigationService.setNavigation(object);
+                    object.getCapability("action").perform("navigate");
                 }
                 return object;
             }

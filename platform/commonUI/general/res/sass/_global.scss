@@ -46,7 +46,6 @@ a {
 
 body, html {
 	-webkit-font-smoothing: subpixel-antialiased;
-	-moz-osx-font-smoothing: grayscale;
 	background-color: $colorBodyBg;
 	color: $colorBodyFg;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -139,7 +138,7 @@ mct-container {
 }
 
 .ds {
-	@include box-shadow(rgba(#000, 0.7) 0 4px 10px 2px);
+	box-shadow: rgba(#000, 0.7) 0 4px 10px 2px;
 }
 
 .hide,

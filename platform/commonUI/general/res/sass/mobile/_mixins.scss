@@ -78,6 +78,8 @@
 
 // Desktop monitors in any orientation
 @mixin desktopandtablet {
+    // Keeping only for legacy - should not be used moving forward
+    // Use body.desktop, body.tablet instead.
     @media #{$tabletPortrait},
            #{$tabletLandscape},
            #{$desktop} {
@@ -87,6 +89,8 @@
 
 // Desktop monitors in any orientation
 @mixin desktop {
+    // Keeping only for legacy - should not be used moving forward
+    // Use body.desktop instead.
     @media #{$desktop} {
         @content
     }

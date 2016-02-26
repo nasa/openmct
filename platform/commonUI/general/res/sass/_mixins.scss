@@ -175,8 +175,8 @@
 
 @mixin sliderTrack($bg: $scrollbarTrackColorBg) {
     //$b: 1px solid lighten($bg, 30%);
-    @include border-radius(2px);
-    @include box-sizing(border-box);
+    border-radius: 2px;
+    box-sizing: border-box;
     @include boxIncised(0.7);
     background-color: $bg;
     //border-bottom: $b;
@@ -210,7 +210,7 @@
 }
 
 @mixin boxIncised($sVal: 0.6, $inset: 5px) {
-    @include box-shadow(inset rgba(black, $sVal) 0 1px $inset);
+    box-shadow: inset rgba(black, $sVal) 0 1px $inset;
 }
 
 @mixin boxOutline($c: lighten($colorBodyBg, 20%)) {
@@ -219,24 +219,24 @@
 
 @mixin boxShdw($sVal: rgba(black, 0.4) 0 0 3px) {
 	@if $sVal != 'none' {
-		@include box-shadow($sVal);
+		box-shadow: $sVal;
 	}
 }
 
 @mixin boxShdwSubtle($sVal: 0.2) {
 	@if $sVal != 'none' {
-		@include box-shadow(rgba(black, $sVal) 0 1px 2px);
+		box-shadow: rgba(black, $sVal) 0 1px 2px;
 	}
 }
 
 @mixin boxShdwLarge($sVal: 0.7) {
 	@if $sVal != 'none' {
-		@include box-shadow(rgba(black, $sVal) 0 3px 10px);
+		box-shadow: rgba(black, $sVal) 0 3px 10px;
 	}
 }
 
 @mixin outerGlow($color: #fff, $sVal: 0.3) {
-    @include box-shadow(rgba($color, $sVal) 0 0 30px);
+    box-shadow: rgba($color, $sVal) 0 0 30px;
 }
 
 @mixin linearGlow($deg: 0, $c: red, $a: 0.4) {
@@ -249,18 +249,18 @@
 
 @mixin txtShdw($sVal) {
 	//@if $sVal != 'none' {
-		@include text-shadow($sVal);
+		text-shadow: $sVal;
 	//}
 }
 
 @mixin txtShdwSubtle($sVal: 0.1) {
 	@if $sVal != 'none' {
-	    @include text-shadow(rgba(black, $sVal) 0 1px 2px);
+	    text-shadow: rgba(black, $sVal) 0 1px 2px;
 	}
 }
 
 @mixin txtShdwLarge($sVal: 0.7) {
-    @include text-shadow(rgba(black, $sVal) 0 3px 7px);
+    text-shadow: rgba(black, $sVal) 0 3px 7px;
 }
 
 @function pullForward($c, $p: 20%) {
@@ -291,35 +291,32 @@
 
 @mixin containerBase($bg: $colorBodyBg, $fg: $colorBodyFg) {
 	background-color: $bg;
-	@include border-radius($controlCr);
-	@include box-sizing(border-box);
+	border-radius: $controlCr;
+	box-sizing: border-box;
 	color: $fg;
 	display: inline-block;
 }
 
-@mixin btnBase($bg: $colorBodyBg, $bgHov: none, $fg: $colorBodyFg, $ic: $colorBtnIcon) {
+@mixin btnBase($bg: $colorBodyBg, $bgHovColor: none, $fg: $colorBodyFg, $ic: $colorBtnIcon) {
 	@include user-select(none);
-    @include transition(background, .25s);
 	.icon {
 		color: $ic;
 	}
-	@include desktop {
-		@if $bgHov != none {
-			&:not(.disabled):hover {
-				@include background-image($bgHov);
-				>.icon {
-					color: lighten($ic, $ltGamma);
-				}
-			}
-		}
-	}
+  @if $bgHovColor != none {
+      &:not(.disabled):hover {
+          background: $bgHovColor; // was just background, and background-image before that
+          >.icon {
+              color: lighten($ic, $ltGamma);
+          }
+      }
+  }
 }
 
 @mixin input-base($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.6) 0 1px 3px) {
 	@include appearance(none);
-	@include border-radius($controlCr);
-	@include box-sizing(border-box);
-	@include box-shadow(inset $shdw);
+	border-radius: $controlCr;
+	box-sizing: border-box;
+	box-shadow: inset $shdw;
 	background: $bg;
 	border: none;
 	color: $fg;
@@ -335,7 +332,7 @@
 }
 
 @mixin contextArrow() {
-	@include text-shadow(none);
+	text-shadow: none;
 	content: '\76';
 	display: inline-block;
 	font-family: 'symbolsfont';
@@ -408,13 +405,13 @@
 }
 
 @mixin tmpBorder($c: #ffcc00, $a: 0.75) {
-    @include box-sizing(border-box);
+    box-sizing: border-box;
     border: 1px dotted rgba($c, $a);
 }
 
 @mixin testObj($w: 2000px, $h: 1000px, $c: black, $a: 0.1) {
     &:after {
-        @include box-sizing(border-box);
+        box-sizing: border-box;
         @include bgDiagonalStripes($c, $a);
         color: rgba(white, 0.3);
         font-style: italic;
