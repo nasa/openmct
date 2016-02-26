@@ -50,12 +50,6 @@ define(
          * @constructor
          */
         function MCTForm() {
-            var templatePath = [
-                "platform/forms", //MCTForm.bundle.path,
-                "res", //MCTForm.bundle.resources,
-                "templates/toolbar.html"
-            ].join("/");
-
             return {
                 // Only show at the element level
                 restrict: "E",
