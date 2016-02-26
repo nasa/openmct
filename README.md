@@ -45,7 +45,7 @@ When `npm test` is run, test results will be written as HTML to
 
 The tests described above are all at the unit-level; an additional
 test suite using [Protractor](https://angular.github.io/protractor/)
-us under development, in the `protractor` folder.
+is under development, in the `protractor` folder.
 
 To run:
 
