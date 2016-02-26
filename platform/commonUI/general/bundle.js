@@ -48,6 +48,25 @@ define([
     "./src/directives/MCTScroll",
     "./src/directives/MCTSplitPane",
     "./src/directives/MCTSplitter",
+    "text!./res/templates/bottombar.html",
+    "text!./res/templates/controls/action-button.html",
+    "text!./res/templates/controls/input-filter.html",
+    "text!./res/templates/indicator.html",
+    "text!./res/templates/message-banner.html",
+    "text!./res/templates/progress-bar.html",
+    "text!./res/templates/controls/time-controller.html",
+    "text!./res/templates/containers/accordion.html",
+    "text!./res/templates/subtree.html",
+    "text!./res/templates/tree.html",
+    "text!./res/templates/tree-node.html",
+    "text!./res/templates/label.html",
+    "text!./res/templates/controls/action-group.html",
+    "text!./res/templates/menu/context-menu.html",
+    "text!./res/templates/controls/switcher.html",
+    "text!./res/templates/object-inspector.html",
+    "text!./res/templates/controls/selector.html",
+    "text!./res/templates/controls/datetime-picker.html",
+    "text!./res/templates/controls/datetime-field.html",
     'legacyRegistry'
 ], function (
     UrlService,
@@ -76,6 +95,25 @@ define([
     MCTScroll,
     MCTSplitPane,
     MCTSplitter,
+    bottombarTemplate,
+    actionButtonTemplate,
+    inputFilterTemplate,
+    indicatorTemplate,
+    messageBannerTemplate,
+    progressBarTemplate,
+    timeControllerTemplate,
+    accordionTemplate,
+    subtreeTemplate,
+    treeTemplate,
+    treeNodeTemplate,
+    labelTemplate,
+    actionGroupTemplate,
+    contextMenuTemplate,
+    switcherTemplate,
+    objectInspectorTemplate,
+    selectorTemplate,
+    datetimePickerTemplate,
+    datetimeFieldTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -138,31 +176,31 @@ define([
             "templates": [
                 {
                     "key": "bottombar",
-                    "templateUrl": "templates/bottombar.html"
+                    "template": bottombarTemplate
                 },
                 {
                     "key": "action-button",
-                    "templateUrl": "templates/controls/action-button.html"
+                    "template": actionButtonTemplate
                 },
                 {
                     "key": "input-filter",
-                    "templateUrl": "templates/controls/input-filter.html"
+                    "template": inputFilterTemplate
                 },
                 {
                     "key": "indicator",
-                    "templateUrl": "templates/indicator.html"
+                    "template": indicatorTemplate
                 },
                 {
                     "key": "message-banner",
-                    "templateUrl": "templates/message-banner.html"
+                    "template": messageBannerTemplate
                 },
                 {
                     "key": "progress-bar",
-                    "templateUrl": "templates/progress-bar.html"
+                    "template": progressBarTemplate
                 },
                 {
                     "key": "time-controller",
-                    "templateUrl": "templates/controls/time-controller.html"
+                    "template": timeControllerTemplate
                 }
             ],
             "controllers": [
@@ -371,7 +409,7 @@ define([
             "containers": [
                 {
                     "key": "accordion",
-                    "templateUrl": "templates/containers/accordion.html",
+                    "template": accordionTemplate,
                     "attributes": [
                         "label"
                     ]
@@ -380,7 +418,7 @@ define([
             "representations": [
                 {
                     "key": "tree",
-                    "templateUrl": "templates/subtree.html",
+                    "template": subtreeTemplate,
                     "uses": [
                         "composition"
                     ],
@@ -389,25 +427,25 @@ define([
                 },
                 {
                     "key": "tree",
-                    "templateUrl": "templates/tree.html"
+                    "template": treeTemplate
                 },
                 {
                     "key": "subtree",
-                    "templateUrl": "templates/subtree.html",
+                    "template": subtreeTemplate,
                     "uses": [
                         "composition"
                     ]
                 },
                 {
                     "key": "tree-node",
-                    "templateUrl": "templates/tree-node.html",
+                    "template": treeNodeTemplate,
                     "uses": [
                         "action"
                     ]
                 },
                 {
                     "key": "label",
-                    "templateUrl": "templates/label.html",
+                    "template": labelTemplate,
                     "uses": [
                         "type",
                         "location"
@@ -420,7 +458,7 @@ define([
                 },
                 {
                     "key": "node",
-                    "templateUrl": "templates/label.html",
+                    "template": labelTemplate,
                     "uses": [
                         "type"
                     ],
@@ -431,42 +469,42 @@ define([
                 },
                 {
                     "key": "action-group",
-                    "templateUrl": "templates/controls/action-group.html",
+                    "template": actionGroupTemplate,
                     "uses": [
                         "action"
                     ]
                 },
                 {
                     "key": "context-menu",
-                    "templateUrl": "templates/menu/context-menu.html",
+                    "template": contextMenuTemplate,
                     "uses": [
                         "action"
                     ]
                 },
                 {
                     "key": "switcher",
-                    "templateUrl": "templates/controls/switcher.html",
+                    "template": switcherTemplate,
                     "uses": [
                         "view"
                     ]
                 },
                 {
                     "key": "object-inspector",
-                    "templateUrl": "templates/object-inspector.html"
+                    "template": objectInspectorTemplate
                 }
             ],
             "controls": [
                 {
                     "key": "selector",
-                    "templateUrl": "templates/controls/selector.html"
+                    "template": selectorTemplate
                 },
                 {
                     "key": "datetime-picker",
-                    "templateUrl": "templates/controls/datetime-picker.html"
+                    "template": datetimePickerTemplate
                 },
                 {
                     "key": "datetime-field",
-                    "templateUrl": "templates/controls/datetime-field.html"
+                    "template": datetimeFieldTemplate
                 }
             ],
             "licenses": [

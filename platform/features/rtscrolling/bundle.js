@@ -23,9 +23,11 @@
 
 define([
     "./src/RTScrollingListController",
+    "text!./res/templates/rtscrolling.html",
     'legacyRegistry'
 ], function (
     RTScrollingListController,
+    rtscrollingTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -40,7 +42,7 @@ define([
                     "name": "Scrolling",
                     "glyph": "5",
                     "description": "Scrolling list of data values.",
-                    "templateUrl": "templates/rtscrolling.html",
+                    "template": rtscrollingTemplate,
                     "needs": [
                         "telemetry"
                     ],

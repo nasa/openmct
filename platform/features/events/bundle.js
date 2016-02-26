@@ -25,11 +25,13 @@ define([
     "./src/EventListController",
     "./src/directives/MCTDataTable",
     "./src/policies/MessagesViewPolicy",
+    "text!./res/templates/messages.html",
     'legacyRegistry'
 ], function (
     EventListController,
     MCTDataTable,
     MessagesViewPolicy,
+    messagesTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -44,7 +46,7 @@ define([
                     "name": "Messages",
                     "glyph": "5",
                     "description": "Scrolling list of messages.",
-                    "templateUrl": "templates/messages.html",
+                    "template": messagesTemplate,
                     "needs": [
                         "telemetry"
                     ],

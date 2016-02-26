@@ -36,6 +36,12 @@ define([
     "./src/policies/EditActionPolicy",
     "./src/representers/EditRepresenter",
     "./src/representers/EditToolbarRepresenter",
+    "text!./res/templates/edit.html",
+    "text!./res/templates/library.html",
+    "text!./res/templates/edit-object.html",
+    "text!./res/templates/edit-action-buttons.html",
+    "text!./res/templates/elements.html",
+    "text!./res/templates/topbar-edit.html",
     'legacyRegistry'
 ], function (
     EditController,
@@ -52,6 +58,12 @@ define([
     EditActionPolicy,
     EditRepresenter,
     EditToolbarRepresenter,
+    editTemplate,
+    libraryTemplate,
+    editObjectTemplate,
+    editActionButtonsTemplate,
+    elementsTemplate,
+    topbarEditTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -61,7 +73,7 @@ define([
             "routes": [
                 {
                     "when": "/edit",
-                    "templateUrl": "templates/edit.html"
+                    "template": editTemplate
                 }
             ],
             "controllers": [
@@ -185,27 +197,27 @@ define([
             "templates": [
                 {
                     "key": "edit-library",
-                    "templateUrl": "templates/library.html"
+                    "template": libraryTemplate
                 }
             ],
             "representations": [
                 {
                     "key": "edit-object",
-                    "templateUrl": "templates/edit-object.html",
+                    "template": editObjectTemplate,
                     "uses": [
                         "view"
                     ]
                 },
                 {
                     "key": "edit-action-buttons",
-                    "templateUrl": "templates/edit-action-buttons.html",
+                    "template": editActionButtonsTemplate,
                     "uses": [
                         "action"
                     ]
                 },
                 {
                     "key": "edit-elements",
-                    "templateUrl": "templates/elements.html",
+                    "template": elementsTemplate,
                     "uses": [
                         "composition"
                     ],
@@ -215,7 +227,7 @@ define([
                 },
                 {
                     "key": "topbar-edit",
-                    "templateUrl": "templates/topbar-edit.html"
+                    "template": topbarEditTemplate
                 }
             ],
             "representers": [

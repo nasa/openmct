@@ -23,9 +23,11 @@
 
 define([
     "./src/EmbeddedPageController",
+    "text!./res/iframe.html",
     'legacyRegistry'
 ], function (
     EmbeddedPageController,
+    iframeTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -54,7 +56,7 @@ define([
             ],
             "views": [
                 {
-                    "templateUrl": "iframe.html",
+                    "template": iframeTemplate,
                     "name": "Page",
                     "type": "example.page",
                     "key": "example.page",

@@ -25,11 +25,13 @@ define([
     "./src/ConductorRepresenter",
     "./src/ConductorTelemetryDecorator",
     "./src/ConductorService",
+    "text!./res/templates/time-conductor.html",
     'legacyRegistry'
 ], function (
     ConductorRepresenter,
     ConductorTelemetryDecorator,
     ConductorService,
+    timeConductorTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -70,7 +72,7 @@ define([
             "templates": [
                 {
                     "key": "time-conductor",
-                    "templateUrl": "templates/time-conductor.html"
+                    "template": timeConductorTemplate
                 }
             ],
             "constants": [

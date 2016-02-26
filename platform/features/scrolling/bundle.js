@@ -23,9 +23,11 @@
 
 define([
     "./src/ScrollingListController",
+    "text!./res/templates/scrolling.html",
     'legacyRegistry'
 ], function (
     ScrollingListController,
+    scrollingTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -40,7 +42,7 @@ define([
                     "name": "Scrolling",
                     "glyph": "5",
                     "description": "Scrolling list of data values.",
-                    "templateUrl": "templates/scrolling.html",
+                    "template": scrollingTemplate,
                     "needs": [
                         "telemetry"
                     ],
