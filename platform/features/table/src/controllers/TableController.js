@@ -166,10 +166,10 @@ define(
                 configuration;
 
             if (handle) {
-                handle.promiseTelemetryObjects().then(function () {
+                handle.promiseTelemetryObjects().then(function (objects) {
                     table.buildColumns(handle.getMetadata());
 
-                    if (table.columns.length > 0){
+                    if (objects && objects.length > 1){
                         table.addColumn(new NameColumn(), 0);
                     }
 
