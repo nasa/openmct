@@ -25,8 +25,8 @@
  * Module defining MCTForm. Created by vwoeltje on 11/10/14.
  */
 define(
-    ["./controllers/FormController"],
-    function (FormController) {
+    ["./controllers/FormController", "text!../res/templates/toolbar.html"],
+    function (FormController, toolbarTemplate) {
         "use strict";
 
         /**
@@ -61,7 +61,7 @@ define(
                 restrict: "E",
 
                 // Load the forms template
-                templateUrl: templatePath,
+                template: toolbarTemplate,
 
                 // Use FormController to populate/respond to changes in scope
                 controller: [ '$scope', FormController ],
