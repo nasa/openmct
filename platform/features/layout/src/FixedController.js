@@ -303,12 +303,16 @@ define(
             this.generateDragHandles = generateDragHandles;
 
             // Track current selection state
-            this.selection = $scope.selection;
+            $scope.$watch("selection", function (selection) {
+                this.selection = selection;
 
-            // Expose the view's selection proxy
-            if (this.selection) {
-                this.selection.proxy(new FixedProxy(addElement, $q, dialogService));
-            }
+                // Expose the view's selection proxy
+                if (this.selection) {
+                    this.selection.proxy(
+                        new FixedProxy(addElement, $q, dialogService)
+                    );
+                }
+            }.bind(this));
 
             // Refresh list of elements whenever model changes
             $scope.$watch("model.modified", refreshElements);
