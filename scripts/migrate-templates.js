@@ -29,18 +29,29 @@ var glob = require('glob'),
     path = require('path'),
     _ = require('lodash');
 
+function toTemplateName(templateUrl) {
+    var parts = templateUrl.split('/');
+    return _.camelCase(parts[parts.length - 1].replace(".html", "")) +
+            "Template";
+}
+
 function findTemplateURLs(sourceCode) {
     return sourceCode.split('\n')
         .map(_.trim)
         .filter(function (line) {
             return line.indexOf("templateUrl") !== -1;
+        })
+        .map(function (line) {
+            return _.trim(line.split(":")[1], "\", ");
         });
 }
 
 function migrate(file) {
     var sourceCode = fs.readFileSync(file, 'utf8'),
         templateUrls = findTemplateURLs(sourceCode);
-    console.log(templateUrls);
+    templateUrls.forEach(function (templateUrl) {
+        console.log(templateUrl, toTemplateName(templateUrl));
+    });
 }
 
 glob('platform/**/bundle.js', {}, function (err, files) {
