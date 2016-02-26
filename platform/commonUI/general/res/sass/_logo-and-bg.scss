@@ -40,10 +40,10 @@
     }
 
     &:before {
-        // NASA logo
+        // NASA logo, dude
         $w: 5%;
         $m: 10px;
-        background-image: url('/platform/commonUI/general/res/images/logo-nasa.svg');
+        background-image: url('../images/logo-nasa.svg');
         top: $m;
         right: auto;
         bottom: auto;

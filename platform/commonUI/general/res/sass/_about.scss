@@ -20,9 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 // General About dialog styling
-
-@import "logo-and-bg";
-
+// Depends on styles loaded via /platform/commonUI/general/res/sass/startup-base.scss
 .l-about {
 	&.abs {
 		overflow: auto;
@@ -67,4 +65,3 @@
 		}
 	}
 }
-
