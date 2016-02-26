@@ -25,8 +25,8 @@
  * Module defining MCTForm. Created by vwoeltje on 11/10/14.
  */
 define(
-    ["./controllers/FormController", "text!../res/templates/toolbar.html"],
-    function (FormController, toolbarTemplate) {
+    ["./MCTForm", "text!../res/templates/toolbar.html"],
+    function (MCTForm, toolbarTemplate) {
         "use strict";
 
         /**
@@ -49,32 +49,14 @@ define(
          * @memberof platform/forms
          * @constructor
          */
-        function MCTForm() {
-            return {
-                // Only show at the element level
-                restrict: "E",
-
-                // Load the forms template
-                template: toolbarTemplate,
-
-                // Use FormController to populate/respond to changes in scope
-                controller: [ '$scope', FormController ],
-
-                // Initial an isolate scope
-                scope: {
-
-                    // The model: Where form input will actually go
-                    ngModel: "=",
-
-                    // Form structure; what sections/rows to show
-                    structure: "=",
-
-                    // Name under which to publish the form
-                    name: "@"
-                }
-            };
+        function MCTToolbar() {
+            // Use Directive Definition Object from mct-form,
+            // but use the toolbar's template instead.
+            var ddo = new MCTForm();
+            ddo.template = toolbarTemplate;
+            return ddo;
         }
 
-        return MCTForm;
+        return MCTToolbar;
     }
 );
