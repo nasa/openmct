@@ -36,23 +36,18 @@ define(
          * @constructor
          * @memberof platform/forms
          */
-        function MCTControl(controls) {
+        function MCTControl(templateLinker, controls) {
             var controlMap = {};
 
             // Prepopulate controlMap for easy look up by key
             controls.forEach(function (control) {
-                var path = [
-                    control.bundle.path,
-                    control.bundle.resources,
-                    control.templateUrl
-                ].join("/");
-                controlMap[control.key] = path;
+                controlMap[control.key] = control;
             });
 
             function link(scope, element, attrs, ngModelController) {
+                var changeTemplate = templateLinker.link(scope, element);
                 scope.$watch("key", function (key) {
-                    // Pass the template URL to ng-include via scope.
-                    scope.inclusion = controlMap[key];
+                    changeTemplate(controlMap[key]);
                 });
                 scope.ngModelController = ngModelController;
             }
@@ -60,10 +55,6 @@ define(
             return {
                 // Only show at the element level
                 restrict: "E",
-
-                // Use ng-include as a template; "inclusion" will be the real
-                // template path
-                template: '<ng-include src="inclusion"></ng-include>',
 
                 // ngOptions is terminal, so we need to be higher priority
                 priority: 1000,

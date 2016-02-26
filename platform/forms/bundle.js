@@ -77,6 +77,7 @@ define([
                     "key": "mctControl",
                     "implementation": MCTControl,
                     "depends": [
+                        "templateLinker",
                         "controls[]"
                     ]
                 }
