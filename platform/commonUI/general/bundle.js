@@ -319,6 +319,7 @@ define([
                     "key": "mctContainer",
                     "implementation": MCTContainer,
                     "depends": [
+                        "templateLinker",
                         "containers[]"
                     ]
                 },
