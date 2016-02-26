@@ -28,7 +28,7 @@
     "karma-coverage": "^0.5.3",
     "karma-html-reporter": "^0.2.7",
     "karma-jasmine": "^0.1.5",
-    "karma-phantomjs-launcher": "^0.2.3",
+    "karma-phantomjs-launcher": "^1.0.0",
     "karma-requirejs": "^0.2.2",
     "lodash": "^3.10.1",
     "markdown-toc": "^0.11.7",
@@ -36,7 +36,7 @@
     "mkdirp": "^0.5.1",
     "moment": "^2.11.1",
     "node-bourbon": "^4.2.3",
-    "phantomjs": "^1.9.19",
+    "phantomjs-prebuilt": "^2.1.0",
     "requirejs": "^2.1.17",
     "split": "^1.0.0"
   },
