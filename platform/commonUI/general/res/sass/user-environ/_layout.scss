@@ -94,10 +94,11 @@
             z-index: 1;
         }
         .app-logo {
+            background-position: right center;
             box-sizing: border-box;
-            @include absPosDefault($interiorMargin);
+            @include absPosDefault($interiorMargin - 1);
             cursor: pointer;
-            left: auto;
+            left: auto; right: $interiorMargin;
             width: $ueAppLogoW;
             z-index: 2;
         }

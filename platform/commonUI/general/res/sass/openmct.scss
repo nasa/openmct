@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .app-logo {
-    background: url('/platform/commonUI/general/res/images/logo-app.svg') no-repeat center center;
+    background: url('../images/logo-app.svg') no-repeat center center;
 }
 
 .l-splash-holder {
@@ -32,8 +32,8 @@
 }
 
 .s-splash {
-    background-image: url('/platform/commonUI/general/res/images/bg-splash.jpg');
+    background-image: url('../images/bg-splash.jpg');
     &:after {
-        background-image: url('/platform/commonUI/general/res/images/logo-app-shdw.svg');
+        background-image: url('../images/logo-app-shdw.svg');
     }
 }
