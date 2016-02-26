@@ -33,7 +33,6 @@ define([
         var splash;
         $document = $document[0];
         splash = $document.querySelectorAll('.l-splash-holder')[0];
-        console.log(splash);
         if (!splash) {
             return;
         }
