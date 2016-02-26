@@ -52,10 +52,16 @@ function injectRequireArgument(sourceCode, templateUrls) {
 
     templateUrls = _.uniq(templateUrls);
 
+    // Add arguments for source paths...
     index = lines.map(_.trim).indexOf("'legacyRegistry'");
-
     lines = lines.slice(0, index).concat(templateUrls.map(function (url) {
         return "    \"text!./res/" + url + "\",";
+    }).concat(lines.slice(index)));
+
+    /// ...and for arguments
+    index = lines.map(_.trim).indexOf("legacyRegistry");
+    lines = lines.slice(0, index).concat(templateUrls.map(function (url) {
+        return "    " + toTemplateName(url) + ",";
     }).concat(lines.slice(index)));
 
     return lines.join('\n');
