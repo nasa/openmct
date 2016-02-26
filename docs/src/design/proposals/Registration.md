@@ -376,6 +376,27 @@ define(['mct', './SomeAction'], function (mct, SomeAction) {
 });
 ```
 
+# Legacy Support
+
+The proposed API does not achieve parity with the existing Framework
+Layer. In particular:
+
+1. There is no Angular integration.
+2. Transitional support for legacy bundles is not specified.
+3. Script loading is not handled.
+
+Propose to resolve these by:
+
+1. Adding an Angular integration plugin that uses registries for
+   controllers/directives/etc. and maps these to appropriate configuration
+   of an Angular application.
+2. Adding a legacy support plugin that maps (and transforms, as necessary)
+   extensions exposed by legacy bundles to appropriate registries and/or
+   service providers using the new Registration API.
+3. Not handling script loading; the Registration API expects objects,
+   so how the scripts necessary to instantiate those objects (and how they
+   are instantiated) is left to the application developer.
+
 # Evaluation
 
 [Identified problems](#problems-to-address) are addressed by this solution:
