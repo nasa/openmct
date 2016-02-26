@@ -910,7 +910,24 @@ A capability's implementation may also expose a static method `appliesTo(model)`
 which should return a boolean value, and will be used by the platform to filter 
 down capabilities to those which should be exposed by specific domain objects, 
 based on their domain object models. 
- 
+
+## Containers Category
+
+Containers provide options for the `mct-container` directive.
+
+The definition for an extension in the `containers` category should include:
+
+* `key`: An identifier for the container.
+* `template`: An Angular template for the container, including an
+  `ng-transclude` where contained content should go.
+* `attributes`: An array of attribute names. The values associated with
+   these attributes will be exposed in the template's scope under the
+   name provided by the `alias` property.
+* `alias`: The property name in scope under which attributes will be
+  exposed. Optional; defaults to "container".
+
+Note that `templateUrl` is not supported for `containers`.
+
 ## Controls Category
 
 Controls provide options for the `mct-control` directive. 

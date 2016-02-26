@@ -42,7 +42,7 @@ define(
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function MCTContainer(templateLinker, containers) {
+        function MCTContainer(containers) {
             var containerMap = {};
 
             // Initialize container map from extensions
@@ -67,11 +67,9 @@ define(
                     var key = attrs.key,
                         container = containerMap[key],
                         alias = "container",
-                        copiedAttributes = {},
-                        changeTemplate = templateLinker.link(scope, element);
+                        copiedAttributes = {};
 
                     if (container) {
-                        changeTemplate(container);
                         alias = container.alias || alias;
                         (container.attributes || []).forEach(function (attr) {
                             copiedAttributes[attr] = attrs[attr];
@@ -79,6 +77,12 @@ define(
                     }
 
                     scope[alias] = copiedAttributes;
+                },
+
+                template: function (element, attrs) {
+                    var key = attrs.key,
+                        container = containerMap[key];
+                    return container ? container.template : "";
                 }
             };
         }
