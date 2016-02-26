@@ -46,12 +46,25 @@ function findTemplateURLs(sourceCode) {
         });
 }
 
+function injectRequireArgument(sourceCode, templateUrls) {
+    var lines = sourceCode.split('\n'),
+        index;
+
+    templateUrls = _.uniq(templateUrls);
+
+    index = lines.map(_.trim).indexOf("'legacyRegistry'");
+
+    lines = lines.slice(0, index).concat(templateUrls.map(function (url) {
+        return "    \"text!./res/" + url + "\",";
+    }).concat(lines.slice(index)));
+
+    return lines.join('\n');
+}
+
 function migrate(file) {
     var sourceCode = fs.readFileSync(file, 'utf8'),
         templateUrls = findTemplateURLs(sourceCode);
-    templateUrls.forEach(function (templateUrl) {
-        console.log(templateUrl, toTemplateName(templateUrl));
-    });
+    console.log(injectRequireArgument(sourceCode, templateUrls));
 }
 
 glob('platform/**/bundle.js', {}, function (err, files) {
