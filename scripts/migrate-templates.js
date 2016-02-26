@@ -35,15 +35,19 @@ function toTemplateName(templateUrl) {
             "Template";
 }
 
+function getTemplateUrl(sourceLine) {
+    return _.trim(sourceLine.split(":")[1], "\", ");
+}
+
+function hasTemplateUrl(sourceLine) {
+    return sourceLine.indexOf("templateUrl") !== -1;
+}
+
 function findTemplateURLs(sourceCode) {
     return sourceCode.split('\n')
         .map(_.trim)
-        .filter(function (line) {
-            return line.indexOf("templateUrl") !== -1;
-        })
-        .map(function (line) {
-            return _.trim(line.split(":")[1], "\", ");
-        });
+        .filter(hasTemplateUrl)
+        .map(getTemplateUrl);
 }
 
 function injectRequireArgument(sourceCode, templateUrls) {
@@ -67,10 +71,24 @@ function injectRequireArgument(sourceCode, templateUrls) {
     return lines.join('\n');
 }
 
+function rewriteUrl(sourceLine) {
+    return "\"template\": " + toTemplateName(getTemplateUrl(sourceLine));
+}
+
+function rewriteLine(sourceLine) {
+    return hasTemplateUrl(sourceLine) ?
+        rewriteUrl(sourceLine.replace("templateUrl", "template")) :
+        sourceLine;
+}
+
+function rewriteTemplateUrls(sourceCode) {
+    return sourceCode.split('\n').map(rewriteLine).join('\n');
+}
+
 function migrate(file) {
     var sourceCode = fs.readFileSync(file, 'utf8'),
         templateUrls = findTemplateURLs(sourceCode);
-    console.log(injectRequireArgument(sourceCode, templateUrls));
+    console.log(rewriteTemplateUrls(injectRequireArgument(sourceCode, templateUrls)));
 }
 
 glob('platform/**/bundle.js', {}, function (err, files) {
