@@ -72,7 +72,11 @@ function injectRequireArgument(sourceCode, templateUrls) {
 }
 
 function rewriteUrl(sourceLine) {
-    return "\"template\": " + toTemplateName(getTemplateUrl(sourceLine));
+    return [
+        sourceLine.substring(0, sourceLine.indexOf(sourceLine.trim())),
+        "\"template\": " + toTemplateName(getTemplateUrl(sourceLine)),
+        _.endsWith(sourceLine, ",") ? "," : ""
+    ].join('');
 }
 
 function rewriteLine(sourceLine) {
