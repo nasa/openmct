@@ -171,7 +171,7 @@ define([
             ],
             "representations": [
                 {
-                    "key": "view-region",
+                    "key": "view-object",
                     "templateUrl": "templates/view-object.html"
                 },
                 {

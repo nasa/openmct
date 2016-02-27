@@ -63,7 +63,7 @@
                     <mct-split-pane class='l-object-and-inspector contents abs' anchor='right'>
                         <div class='split-pane-component t-object pane primary-pane left'>
                             <mct-representation mct-object="navigatedObject"
-                                                key="'view-region'"
+                                                key="'view-object'"
                                                 class="abs holder holder-object">
                             </mct-representation>
                         </div>
@@ -71,8 +71,8 @@
                         <mct-splitter class="splitter-inspect mobile-hide flush-right edge-shdw"></mct-splitter>
 
                         <div class="split-pane-component t-inspect pane right mobile-hide">
-                            <mct-representation key="'inspector-region'"
-                                                mct-object="navigatedObject"
+                            <mct-representation key="'object-inspector'"
+                                                mct-object="domainObject"
                                                 ng-model="treeModel">
                             </mct-representation>
                             <a class="mini-tab-icon anchor-right mobile-hide toggle-pane toggle-inspect"
