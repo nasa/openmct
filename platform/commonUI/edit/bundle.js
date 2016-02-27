@@ -94,7 +94,8 @@ define([
                     "key": "EditObjectController",
                     "implementation": EditObjectController,
                     "depends": [
-                        "$scope"
+                        "$scope",
+                        "$location"
                     ]
                 }
             ],
