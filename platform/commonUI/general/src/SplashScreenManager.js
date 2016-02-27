@@ -19,49 +19,28 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-// General About dialog styling
-// Depends on styles loaded via /platform/commonUI/general/res/sass/startup-base.scss
-.l-about {
-	&.abs {
-		overflow: auto;
-	}
-	$contentH: 200px;
-	.l-splash {
-		position: relative;
-		height: 45%;
-	}
-	.l-content {
-		position: relative;
-		margin-top: $interiorMarginLg;
-	}
-}
 
-.s-about {
-	line-height: 120%;
+/*global define*/
 
-	a {
-		color: $colorAboutLink;
-	}
-	.s-description,
-	.s-btn {
-		line-height: 2em;
-	}
-	.l-licenses-software {
-		.l-license-software {
-			border-top: 1px solid $colorInteriorBorder;
-			padding: 0.5em 0;
-			&:first-child {
-				border-top: none;
-			}
-			em {
-				color: pushBack($colorBodyFg, 20%);
-			}
-			h3 {
-				font-size: 1.25em;
-			}
-			.s-license-text {
-				font-size: 0.9em;
-			}
-		}
-	}
-}
+define([
+
+], function (
+
+) {
+    'use strict';
+
+    function SplashScreenManager($document) {
+        var splash;
+        $document = $document[0];
+        splash = $document.querySelectorAll('.l-splash-holder')[0];
+        if (!splash) {
+            return;
+        }
+        splash.className += ' fadeout';
+        splash.addEventListener('transitionend', function () {
+            splash.parentNode.removeChild(splash);
+        });
+    }
+
+    return SplashScreenManager;
+});

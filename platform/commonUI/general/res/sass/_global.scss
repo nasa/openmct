@@ -112,6 +112,13 @@ mct-container {
 	padding: 1em;
 }
 
+.disabled,
+a.disabled {
+    opacity: $controlDisabledOpacity;
+    pointer-events: none !important;
+    cursor: default !important;
+}
+
 .align-right {
 	text-align: right;
 }
@@ -158,4 +165,12 @@ mct-container {
 
 .sep {
 	color: rgba(#fff, 0.2);
+}
+
+.test-stripes {
+    @include bgDiagonalStripes();
+}
+
+.test {
+    @include test();
 }

@@ -24,6 +24,7 @@
 define([
     "./src/services/UrlService",
     "./src/services/PopupService",
+    "./src/SplashScreenManager",
     "./src/StyleSheetLoader",
     "./src/UnsupportedBrowserWarning",
     "./src/controllers/TimeRangeController",
@@ -52,6 +53,7 @@ define([
 ], function (
     UrlService,
     PopupService,
+    SplashScreenManager,
     StyleSheetLoader,
     UnsupportedBrowserWarning,
     TimeRangeController,
@@ -116,6 +118,12 @@ define([
                     "depends": [
                         "notificationService",
                         "agentService"
+                    ]
+                },
+                {
+                    "implementation": SplashScreenManager,
+                    "depends": [
+                        "$document"
                     ]
                 }
             ],

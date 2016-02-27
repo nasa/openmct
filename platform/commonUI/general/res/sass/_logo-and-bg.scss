@@ -19,49 +19,46 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-// General About dialog styling
-// Depends on styles loaded via /platform/commonUI/general/res/sass/startup-base.scss
-.l-about {
-	&.abs {
-		overflow: auto;
-	}
-	$contentH: 200px;
-	.l-splash {
-		position: relative;
-		height: 45%;
-	}
-	.l-content {
-		position: relative;
-		margin-top: $interiorMarginLg;
-	}
+.l-splash,
+.l-splash:before,
+.l-splash:after {
+    background-position: center;
+    background-repeat: no-repeat;
+    position: absolute;
 }
 
-.s-about {
-	line-height: 120%;
+.l-splash {
+    background-size: cover;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    &:before,
+    &:after {
+        background-size: contain;
+        content: '';
+    }
 
-	a {
-		color: $colorAboutLink;
-	}
-	.s-description,
-	.s-btn {
-		line-height: 2em;
-	}
-	.l-licenses-software {
-		.l-license-software {
-			border-top: 1px solid $colorInteriorBorder;
-			padding: 0.5em 0;
-			&:first-child {
-				border-top: none;
-			}
-			em {
-				color: pushBack($colorBodyFg, 20%);
-			}
-			h3 {
-				font-size: 1.25em;
-			}
-			.s-license-text {
-				font-size: 0.9em;
-			}
-		}
-	}
+    &:before {
+        // NASA logo, dude
+        $w: 5%;
+        $m: 10px;
+        background-image: url('../images/logo-nasa.svg');
+        top: $m;
+        right: auto;
+        bottom: auto;
+        left: $m;
+        height: auto;
+        width: $w * 2;
+        padding-bottom: $w;
+        padding-top: $w;
+    }
+
+    &:after {
+        // App logo
+        top: 0;
+        right: 15%;
+        bottom: 0;
+        left: 15%;
+    }
 }
