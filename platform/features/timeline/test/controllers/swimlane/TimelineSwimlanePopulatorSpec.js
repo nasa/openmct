@@ -150,6 +150,15 @@ define(
                 expect(mockSelection.proxy).toHaveBeenCalled();
             });
 
+            it("allows selection object to be changed", function () {
+                var mockNewSelectionObject = jasmine.createSpyObj(
+                    'new-selection',
+                    ['get', 'select', 'proxy']
+                );
+                populator.selection(mockNewSelectionObject);
+                expect(mockNewSelectionObject.proxy)
+                    .toHaveBeenCalled();
+            });
 
         });
     }
