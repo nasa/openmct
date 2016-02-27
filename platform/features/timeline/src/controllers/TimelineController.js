@@ -102,14 +102,14 @@ define(
             // Recalculate swimlane state on changes
             $scope.$watch("domainObject", swimlanePopulator.populate);
 
-            // Pass selection object into swimlane populator
-            $scope.$watch("selection", swimlanePopulator.selection);
-
             // Also recalculate whenever anything in view is modified
             $scope.$watch(modificationSum, repopulateSwimlanes);
 
             // Carry over changes in swimlane set to changes in graphs
             $scope.$watch(graphMask, repopulateGraphs);
+
+            // Pass selection object into swimlane populator
+            $scope.$watch("selection", swimlanePopulator.selection);
 
             // Convey current selection to drag handle populator
             $scope.$watch("selection.get()", dragPopulator.select);
