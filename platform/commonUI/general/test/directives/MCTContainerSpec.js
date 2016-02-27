@@ -30,12 +30,12 @@ define(
             var testContainers = [
                     {
                         bundle: { path: "a", resources: "b" },
-                        templateUrl: "c/template.html",
+                        template: "<div>foo</div>",
                         key: "abc"
                     },
                     {
                         bundle: { path: "x", resources: "y" },
-                        templateUrl: "z/template.html",
+                        template: "<span>bar</span>",
                         key: "xyz",
                         attributes: [ "someAttr", "someOtherAttr" ]
                     }
@@ -55,15 +55,15 @@ define(
             });
 
             it("chooses a template based on key", function () {
-                expect(mctContainer.templateUrl(
+                expect(mctContainer.template(
                     undefined,
                     { key: "abc" }
-                )).toEqual("a/b/c/template.html");
+                )).toEqual(testContainers[0].template);
 
-                expect(mctContainer.templateUrl(
+                expect(mctContainer.template(
                     undefined,
                     { key: "xyz" }
-                )).toEqual("x/y/z/template.html");
+                )).toEqual(testContainers[1].template);
             });
 
             it("copies attributes needed by the container", function () {
