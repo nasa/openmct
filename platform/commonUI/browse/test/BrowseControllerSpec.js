@@ -29,8 +29,7 @@ define(
     function (BrowseController) {
         "use strict";
 
-        //TODO: Disabled for NEM Beta
-        xdescribe("The browse controller", function () {
+        describe("The browse controller", function () {
             var mockScope,
                 mockRoute,
                 mockLocation,
@@ -214,7 +213,10 @@ define(
                 // prior to setting $route.current
                 mockLocation.path.andReturn("/browse/");
 
+                mockNavigationService.setNavigation.andReturn(true);
+
                 // Exercise the Angular workaround
+                mockNavigationService.addListener.mostRecentCall.args[0]();
                 mockScope.$on.mostRecentCall.args[1]();
                 expect(mockUnlisten).toHaveBeenCalled();
 
@@ -223,6 +225,32 @@ define(
                 expect(mockLocation.path).toHaveBeenCalledWith(
                     mockUrlService.urlForLocation(mockMode, mockNextObject)
                 );
+            });
+
+            it("after successful navigation event sets the selected tree " +
+                "object", function () {
+                mockScope.navigatedObject = mockDomainObject;
+                mockNavigationService.setNavigation.andReturn(true);
+
+                //Simulate a change in selected tree object
+                mockScope.treeModel = {selectedObject: mockDomainObject};
+                mockScope.$watch.mostRecentCall.args[1](mockNextObject);
+
+                expect(mockScope.treeModel.selectedObject).toBe(mockNextObject);
+                expect(mockScope.treeModel.selectedObject).not.toBe(mockDomainObject);
+            });
+
+            it("after failed navigation event resets the selected tree" +
+                " object", function () {
+                mockScope.navigatedObject = mockDomainObject;
+                mockNavigationService.setNavigation.andReturn(false);
+
+                //Simulate a change in selected tree object
+                mockScope.treeModel = {selectedObject: mockDomainObject};
+                mockScope.$watch.mostRecentCall.args[1](mockNextObject);
+
+                expect(mockScope.treeModel.selectedObject).not.toBe(mockNextObject);
+                expect(mockScope.treeModel.selectedObject).toBe(mockDomainObject);
             });
 
         });

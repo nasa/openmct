@@ -33,8 +33,8 @@ define(
                 testRepresentation,
                 mockDomainObject,
                 mockPersistence,
-                mockCapabilities,
                 mockStatusCapability,
+                mockCapabilities,
                 representer;
 
             function mockPromise(value) {
@@ -48,7 +48,7 @@ define(
             beforeEach(function () {
                 mockQ = { when: mockPromise };
                 mockLog = jasmine.createSpyObj("$log", ["info", "debug"]);
-                mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
+                mockScope = jasmine.createSpyObj("$scope", ["$watch", "$on"]);
                 testRepresentation = { key: "test" };
                 mockDomainObject = jasmine.createSpyObj("domainObject", [
                     "getId",
@@ -60,7 +60,7 @@ define(
                 mockPersistence =
                     jasmine.createSpyObj("persistence", ["persist"]);
                 mockStatusCapability =
-                    jasmine.createSpyObj("status", ["get"]);
+                    jasmine.createSpyObj("statusCapability", ["get", "listen"]);
                 mockStatusCapability.get.andReturn(false);
                 mockCapabilities = {
                     'persistence': mockPersistence,
@@ -80,6 +80,17 @@ define(
 
             it("provides a commit method in scope", function () {
                 expect(mockScope.commit).toEqual(jasmine.any(Function));
+            });
+
+            it("Sets edit view template on edit mode", function () {
+                mockStatusCapability.listen.mostRecentCall.args[0](['editing']);
+                expect(mockScope.viewObjectTemplate).toEqual('edit-object');
+            });
+
+            it("Cleans up listeners on scope destroy", function () {
+                representer.listenHandle = jasmine.createSpy('listen');
+                mockScope.$on.mostRecentCall.args[1]();
+                expect(representer.listenHandle).toHaveBeenCalled();
             });
 
             it("mutates and persists upon observed changes", function () {

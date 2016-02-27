@@ -57,7 +57,7 @@ define(
         NavigationService.prototype.setNavigation = function (value) {
             var canNavigate = true;
             if (this.navigated !== value) {
-                canNavigate = (this.callbacks['before'] || [])
+                canNavigate = (this.callbacks.before || [])
                     .reduce(function (previous, callback) {
                         //Check whether the callback returned a value of
                         // 'false' indicating that navigation should not
@@ -67,7 +67,7 @@ define(
                     }, true);
                 if (canNavigate) {
                     this.navigated = value;
-                    this.callbacks['after'].forEach(function (callback) {
+                    (this.callbacks.after || []).forEach(function (callback) {
                         callback(value);
                     });
                 }

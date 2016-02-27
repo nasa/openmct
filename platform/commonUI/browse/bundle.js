@@ -111,7 +111,6 @@ define([
                         "$scope",
                         "$route",
                         "$location",
-                        "$q",
                         "objectService",
                         "navigationService",
                         "urlService",

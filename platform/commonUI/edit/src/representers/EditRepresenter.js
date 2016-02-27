@@ -102,6 +102,11 @@ define(
             scope.commit = commit;
             scope.setEditable = setEditable;
 
+            // Clean up when the scope is destroyed
+            scope.$on("$destroy", function () {
+                self.destroy();
+            });
+
         }
 
         // Handle a specific representation of a specific domain object
@@ -119,8 +124,7 @@ define(
             this.destroy();
 
             function setEditing(){
-                scope.viewRegionTemplate = 'edit-object';
-                scope.inspectorRegionTemplate = 'inspector-edit'
+                scope.viewObjectTemplate = 'edit-object';
             }
 
             /**
@@ -132,7 +136,7 @@ define(
                 if (statuses.indexOf('editing')!=-1){
                     setEditing();
                 } else {
-                    delete scope.viewRegionTemplate;
+                    delete scope.viewObjectTemplate;
                 }
             });
 
@@ -144,7 +148,7 @@ define(
         // Respond to the destruction of the current representation.
         EditRepresenter.prototype.destroy = function destroy() {
             // Nothing to clean up
-            this.listenHandle && this.listenHandle();
+            return this.listenHandle && this.listenHandle();
         };
 
         return EditRepresenter;
