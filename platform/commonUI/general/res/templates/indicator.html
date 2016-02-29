@@ -23,7 +23,6 @@
 <div class='status block'
 	 title="{{ngModel.getDescription()}}"
 	 ng-click='ngModel.configure()'
-	 ng-class='ngModel.getGlyphClass()'
 	 ng-show="ngModel.getText().length > 0">
 	<span class="ui-symbol status-indicator">
 		{{ngModel.getGlyph()}}
@@ -32,6 +31,5 @@
 		{{ngModel.getText()}}
         <a class="s-btn ui-symbol" ng-if="ngModel.configure">G</a>
 	</span><span class="count">
-		<!-- Add int count value here if this type of indicator has one or more messages associated with it -->
 	</span>
 </div>

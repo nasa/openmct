@@ -36,43 +36,49 @@
 	}
 }
 
-mct-include.status-block-holder {
-    // mct-include that wraps status.block
-    // Must use display: inline-block to fix white space problems
-    display: inline-block;
+// Status coloring
+.ok, .info {
+    .status-indicator {
+        color: $colorStatusInfo;
+    }
 }
 
-.status.block {
+.alert, .caution, .warning {
+    .status-indicator, .count {
+        color: $colorStatusAlert;
+    }
+
+}
+
+.error, .err {
+    .status-indicator, .count {
+        color: $colorStatusError;
+    }
+}
+
+.available {
+    .status-indicator, .count {
+        color: $colorStatusAvailable;
+    }
+}
+
+.status-block-holder {
+    // Applied to mct-include element
+    // Contains status.block elements
     $transDelay: 1.5s;
     $transSpeed: .25s;
-	color: $colorStatusDefault;
-	display: inline-block;
-	margin-right: $interiorMargin;
-	.status-indicator,
-	.label,
-	.count {
-		display: inline-block;
-		vertical-align: top;
-	}
-
+    display: inline-block;
     &.clickable { cursor: pointer; }
     &:not(.clickable) { cursor: default; }
-
-    &.no-icon {
+    &.no-icon .status.block {
         .status-indicator {
             display: none;
         }
     }
-
     &.float-right {
         float: right;
     }
-
-	.status-indicator {
-		margin-right: $interiorMarginSm;
-	}
-
-    &:not(.no-collapse) {
+    &:not(.no-collapse) .status.block {
         .label {
             // Max-width silliness is necessary for width transition
             @include trans-prop-nice(max-width, $transSpeed, $transDelay);
@@ -92,21 +98,25 @@ mct-include.status-block-holder {
         }
     }
 
-	&.ok .status-indicator,
-    &.info .status-indicator {
-		color: $colorStatusInfo;
+}
+
+.status.block {
+    $transDelay: 1.5s;
+    $transSpeed: .25s;
+	color: $colorStatusDefault;
+	display: inline-block;
+	margin-right: $interiorMargin;
+	.status-indicator,
+	.label,
+	.count {
+		display: inline-block;
+		vertical-align: top;
 	}
-    &.alert .status-indicator,
-	&.warning .status-indicator,
-	&.caution .status-indicator {
-		color: $colorStatusAlert;
+
+	.status-indicator {
+		margin-right: $interiorMarginSm;
 	}
-	&.error .status-indicator {
-		color: $colorStatusError;
-	}
-    &.available .status-indicator {
-        color: $colorStatusAvailable;
-    }
+
 	.count {
 		@include trans-prop-nice(opacity, $transSpeed, $transDelay);
 		font-weight: bold;
@@ -189,12 +199,6 @@ mct-include.status-block-holder {
 	}
     .progress-info { display: none; }
 	z-index: 10;
-}
-
-.s-message-banner {
-    //@include transition-property(left, opacity);
-    //@include transition-duration(0.35s);
-    //@include transition-timing-function(ease-in-out);
 }
 
 .s-message-banner {
