@@ -27,8 +27,8 @@
  * @namespace platform/forms
  */
 define(
-    ["./controllers/FormController"],
-    function (FormController) {
+    ["./controllers/FormController", "text!../res/templates/form.html"],
+    function (FormController, formTemplate) {
         "use strict";
 
         /**
@@ -52,18 +52,12 @@ define(
          * @constructor
          */
         function MCTForm() {
-            var templatePath = [
-                "platform/forms", //MCTForm.bundle.path,
-                "res", //MCTForm.bundle.resources,
-                "templates/form.html"
-            ].join("/");
-
             return {
                 // Only show at the element level
                 restrict: "E",
 
                 // Load the forms template
-                templateUrl: templatePath,
+                template: formTemplate,
 
                 // Use FormController to populate/respond to changes in scope
                 controller: [ '$scope', FormController ],

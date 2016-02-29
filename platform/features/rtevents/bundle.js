@@ -25,11 +25,13 @@ define([
     "./src/RTEventListController",
     "./src/directives/MCTRTDataTable",
     "./src/policies/RTMessagesViewPolicy",
+    "text!./res/templates/rtmessages.html",
     'legacyRegistry'
 ], function (
     RTEventListController,
     MCTRTDataTable,
     RTMessagesViewPolicy,
+    rtmessagesTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -44,7 +46,7 @@ define([
                     "name": "RT Messages",
                     "glyph": "5",
                     "description": "Scrolling list of real time messages.",
-                    "templateUrl": "templates/rtmessages.html",
+                    "template": rtmessagesTemplate,
                     "needs": [
                         "telemetry"
                     ],

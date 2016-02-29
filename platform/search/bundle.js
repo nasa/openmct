@@ -27,6 +27,9 @@ define([
     "./src/controllers/ClickAwayController",
     "./src/services/GenericSearchProvider",
     "./src/services/SearchAggregator",
+    "text!./res/templates/search-item.html",
+    "text!./res/templates/search.html",
+    "text!./res/templates/search-menu.html",
     'legacyRegistry'
 ], function (
     SearchController,
@@ -34,6 +37,9 @@ define([
     ClickAwayController,
     GenericSearchProvider,
     SearchAggregator,
+    searchItemTemplate,
+    searchTemplate,
+    searchMenuTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -80,17 +86,17 @@ define([
             "representations": [
                 {
                     "key": "search-item",
-                    "templateUrl": "templates/search-item.html"
+                    "template": searchItemTemplate
                 }
             ],
             "templates": [
                 {
                     "key": "search",
-                    "templateUrl": "templates/search.html"
+                    "template": searchTemplate
                 },
                 {
                     "key": "search-menu",
-                    "templateUrl": "templates/search-menu.html"
+                    "template": searchMenuTemplate
                 }
             ],
             "components": [

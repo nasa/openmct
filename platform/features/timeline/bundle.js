@@ -38,6 +38,16 @@ define([
     "./src/directives/MCTSwimlaneDrop",
     "./src/directives/MCTSwimlaneDrag",
     "./src/services/ObjectLoader",
+    "text!./res/templates/values.html",
+    "text!./res/templates/timeline.html",
+    "text!./res/templates/activity-gantt.html",
+    "text!./res/templates/tabular-swimlane-cols-tree.html",
+    "text!./res/templates/tabular-swimlane-cols-data.html",
+    "text!./res/templates/resource-graphs.html",
+    "text!./res/templates/resource-graph-labels.html",
+    "text!./res/templates/legend-item.html",
+    "text!./res/templates/ticks.html",
+    "text!./res/templates/controls/datetime.html",
     'legacyRegistry'
 ], function (
     TimelineController,
@@ -56,6 +66,16 @@ define([
     MCTSwimlaneDrop,
     MCTSwimlaneDrag,
     ObjectLoader,
+    valuesTemplate,
+    timelineTemplate,
+    activityGanttTemplate,
+    tabularSwimlaneColsTreeTemplate,
+    tabularSwimlaneColsDataTemplate,
+    resourceGraphsTemplate,
+    resourceGraphLabelsTemplate,
+    legendItemTemplate,
+    ticksTemplate,
+    datetimeTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -226,7 +246,7 @@ define([
                     "key": "values",
                     "name": "Values",
                     "glyph": "A",
-                    "templateUrl": "templates/values.html",
+                    "template": valuesTemplate,
                     "type": "mode",
                     "uses": [
                         "cost"
@@ -239,7 +259,7 @@ define([
                     "glyph": "S",
                     "type": "timeline",
                     "description": "A timeline view of Timelines and Activities.",
-                    "templateUrl": "templates/timeline.html",
+                    "template": timelineTemplate,
                     "editable": true,
                     "toolbar": {
                         "sections": [
@@ -335,7 +355,7 @@ define([
             "representations": [
                 {
                     "key": "gantt",
-                    "templateUrl": "templates/activity-gantt.html",
+                    "template": activityGanttTemplate,
                     "uses": [
                         "timespan",
                         "type"
@@ -346,42 +366,42 @@ define([
                 {
                     "key": "timeline-tabular-swimlane-cols-tree",
                     "priority": "mandatory",
-                    "templateUrl": "templates/tabular-swimlane-cols-tree.html"
+                    "template": tabularSwimlaneColsTreeTemplate
                 },
                 {
                     "key": "timeline-tabular-swimlane-cols-data",
                     "priority": "mandatory",
-                    "templateUrl": "templates/tabular-swimlane-cols-data.html"
+                    "template": tabularSwimlaneColsDataTemplate
                 },
                 {
                     "key": "timeline-resource-graphs",
                     "priority": "mandatory",
-                    "templateUrl": "templates/resource-graphs.html"
+                    "template": resourceGraphsTemplate
                 },
                 {
                     "key": "timeline-resource-graph-labels",
                     "priority": "mandatory",
-                    "templateUrl": "templates/resource-graph-labels.html"
+                    "template": resourceGraphLabelsTemplate
                 },
                 {
                     "key": "timeline-legend-item",
                     "priority": "mandatory",
-                    "templateUrl": "templates/legend-item.html"
+                    "template": legendItemTemplate
                 },
                 {
                     "key": "timeline-ticks",
                     "priority": "mandatory",
-                    "templateUrl": "templates/ticks.html"
+                    "template": ticksTemplate
                 }
             ],
             "controls": [
                 {
                     "key": "timeline-datetime",
-                    "templateUrl": "templates/controls/datetime.html"
+                    "template": datetimeTemplate
                 },
                 {
                     "key": "duration",
-                    "templateUrl": "templates/controls/datetime.html"
+                    "template": datetimeTemplate
                 }
             ],
             "controllers": [

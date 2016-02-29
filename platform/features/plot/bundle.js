@@ -25,11 +25,13 @@ define([
     "./src/MCTChart",
     "./src/PlotController",
     "./src/policies/PlotViewPolicy",
+    "text!./res/templates/plot.html",
     'legacyRegistry'
 ], function (
     MCTChart,
     PlotController,
     PlotViewPolicy,
+    plotTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -42,7 +44,7 @@ define([
                     "name": "Plot",
                     "key": "plot",
                     "glyph": "6",
-                    "templateUrl": "templates/plot.html",
+                    "template": plotTemplate,
                     "needs": [
                         "telemetry"
                     ],

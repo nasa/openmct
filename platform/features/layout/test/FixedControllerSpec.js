@@ -148,6 +148,8 @@ define(
                     mockHandler,
                     mockFormatter
                 );
+
+                findWatch("selection")(mockScope.selection);
             });
 
             it("subscribes when a domain object is available", function () {

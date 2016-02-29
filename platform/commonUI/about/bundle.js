@@ -26,12 +26,26 @@ define([
     "./src/LogoController",
     "./src/AboutController",
     "./src/LicenseController",
+    "text!./res/templates/app-logo.html",
+    "text!./res/templates/about-logo.html",
+    "text!./res/templates/overlay-about.html",
+    "text!./res/templates/license-apache.html",
+    "text!./res/templates/license-mit.html",
+    "text!./res/templates/licenses.html",
+    "text!./res/templates/licenses-export-md.html",
     'legacyRegistry'
 ], function (
     aboutDialogTemplate,
     LogoController,
     AboutController,
     LicenseController,
+    appLogoTemplate,
+    aboutLogoTemplate,
+    overlayAboutTemplate,
+    licenseApacheTemplate,
+    licenseMitTemplate,
+    licensesTemplate,
+    licensesExportMdTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -43,12 +57,12 @@ define([
                 {
                     "key": "app-logo",
                     "priority": "optional",
-                    "templateUrl": "templates/app-logo.html"
+                    "template": appLogoTemplate
                 },
                 {
                     "key": "about-logo",
                     "priority": "preferred",
-                    "templateUrl": "templates/about-logo.html"
+                    "template": aboutLogoTemplate
                 },
                 {
                     "key": "about-dialog",
@@ -56,15 +70,15 @@ define([
                 },
                 {
                     "key": "overlay-about",
-                    "templateUrl": "templates/overlay-about.html"
+                    "template": overlayAboutTemplate
                 },
                 {
                     "key": "license-apache",
-                    "templateUrl": "templates/license-apache.html"
+                    "template": licenseApacheTemplate
                 },
                 {
                     "key": "license-mit",
-                    "templateUrl": "templates/license-mit.html"
+                    "template": licenseMitTemplate
                 }
             ],
             "controllers": [
@@ -156,11 +170,11 @@ define([
             "routes": [
                 {
                     "when": "/licenses",
-                    "templateUrl": "templates/licenses.html"
+                    "template": licensesTemplate
                 },
                 {
                     "when": "/licenses-md",
-                    "templateUrl": "templates/licenses-export-md.html"
+                    "template": licensesExportMdTemplate
                 }
             ]
         }
