@@ -37,6 +37,16 @@ define([
     "./src/creation/AddActionProvider",
     "./src/creation/CreationService",
     "./src/windowing/WindowTitler",
+    "text!./res/templates/browse.html",
+    "text!./res/templates/create/locator.html",
+    "text!./res/templates/browse-object.html",
+    "text!./res/templates/create/create-button.html",
+    "text!./res/templates/create/create-menu.html",
+    "text!./res/templates/items/grid-item.html",
+    "text!./res/templates/browse/object-header.html",
+    "text!./res/templates/menu-arrow.html",
+    "text!./res/templates/back-arrow.html",
+    "text!./res/templates/items/items.html",
     'legacyRegistry'
 ], function (
     BrowseController,
@@ -54,6 +64,16 @@ define([
     AddActionProvider,
     CreationService,
     WindowTitler,
+    browseTemplate,
+    locatorTemplate,
+    browseObjectTemplate,
+    createButtonTemplate,
+    createMenuTemplate,
+    gridItemTemplate,
+    objectHeaderTemplate,
+    menuArrowTemplate,
+    backArrowTemplate,
+    itemsTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -63,13 +83,20 @@ define([
             "routes": [
                 {
                     "when": "/browse/:ids*",
-                    "templateUrl": "templates/browse.html",
+                    "template": browseTemplate,
                     "reloadOnSearch": false
                 },
                 {
                     "when": "",
-                    "templateUrl": "templates/browse.html",
+                    "template": browseTemplate,
                     "reloadOnSearch": false
+                }
+            ],
+            "constants": [
+                {
+                    "key": "DEFAULT_PATH",
+                    "value": "mine",
+                    "priority": "fallback"
                 }
             ],
             "controllers": [
@@ -83,7 +110,8 @@ define([
                         "$q",
                         "objectService",
                         "navigationService",
-                        "urlService"
+                        "urlService",
+                        "DEFAULT_PATH"
                     ]
                 },
                 {
@@ -134,13 +162,13 @@ define([
             "controls": [
                 {
                     "key": "locator",
-                    "templateUrl": "templates/create/locator.html"
+                    "template": locatorTemplate
                 }
             ],
             "representations": [
                 {
                     "key": "browse-object",
-                    "templateUrl": "templates/browse-object.html",
+                    "template": browseObjectTemplate,
                     "gestures": [
                         "drop"
                     ],
@@ -150,18 +178,18 @@ define([
                 },
                 {
                     "key": "create-button",
-                    "templateUrl": "templates/create/create-button.html"
+                    "template": createButtonTemplate
                 },
                 {
                     "key": "create-menu",
-                    "templateUrl": "templates/create/create-menu.html",
+                    "template": createMenuTemplate,
                     "uses": [
                         "action"
                     ]
                 },
                 {
                     "key": "grid-item",
-                    "templateUrl": "templates/items/grid-item.html",
+                    "template": gridItemTemplate,
                     "uses": [
                         "type",
                         "action",
@@ -174,14 +202,14 @@ define([
                 },
                 {
                     "key": "object-header",
-                    "templateUrl": "templates/browse/object-header.html",
+                    "template": objectHeaderTemplate,
                     "uses": [
                         "type"
                     ]
                 },
                 {
                     "key": "menu-arrow",
-                    "templateUrl": "templates/menu-arrow.html",
+                    "template": menuArrowTemplate,
                     "uses": [
                         "action"
                     ],
@@ -194,7 +222,7 @@ define([
                     "uses": [
                         "context"
                     ],
-                    "templateUrl": "templates/back-arrow.html"
+                    "template": backArrowTemplate
                 },
                 {
                     "key": "object-properties",
@@ -258,7 +286,7 @@ define([
                     "name": "Items",
                     "glyph": "9",
                     "description": "Grid of available items",
-                    "templateUrl": "templates/items/items.html",
+                    "template": itemsTemplate,
                     "uses": [
                         "composition"
                     ],

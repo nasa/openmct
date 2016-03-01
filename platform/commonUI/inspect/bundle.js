@@ -25,11 +25,19 @@ define([
     "./src/gestures/InfoGesture",
     "./src/gestures/InfoButtonGesture",
     "./src/services/InfoService",
+    "text!./res/info-table.html",
+    "text!./res/info-bubble.html",
+    "text!./res/bubble.html",
+    "text!./res/templates/info-button.html",
     'legacyRegistry'
 ], function (
     InfoGesture,
     InfoButtonGesture,
     InfoService,
+    infoTableTemplate,
+    infoBubbleTemplate,
+    bubbleTemplate,
+    infoButtonTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -39,17 +47,17 @@ define([
             "templates": [
                 {
                     "key": "info-table",
-                    "templateUrl": "info-table.html"
+                    "template": infoTableTemplate
                 },
                 {
                     "key": "info-bubble",
-                    "templateUrl": "info-bubble.html"
+                    "template": infoBubbleTemplate
                 }
             ],
             "containers": [
                 {
                     "key": "bubble",
-                    "templateUrl": "bubble.html",
+                    "template": bubbleTemplate,
                     "attributes": [
                         "bubbleTitle",
                         "bubbleLayout"
@@ -99,7 +107,7 @@ define([
             "representations": [
                 {
                     "key": "info-button",
-                    "templateUrl": "templates/info-button.html",
+                    "template": infoButtonTemplate,
                     "gestures": [
                         "infobutton"
                     ]

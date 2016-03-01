@@ -25,11 +25,27 @@ define([
     "./src/LayoutController",
     "./src/FixedController",
     "./src/LayoutCompositionPolicy",
+    "text!./res/templates/layout.html",
+    "text!./res/templates/fixed.html",
+    "text!./res/templates/frame.html",
+    "text!./res/templates/elements/telemetry.html",
+    "text!./res/templates/elements/box.html",
+    "text!./res/templates/elements/line.html",
+    "text!./res/templates/elements/text.html",
+    "text!./res/templates/elements/image.html",
     'legacyRegistry'
 ], function (
     LayoutController,
     FixedController,
     LayoutCompositionPolicy,
+    layoutTemplate,
+    fixedTemplate,
+    frameTemplate,
+    telemetryTemplate,
+    boxTemplate,
+    lineTemplate,
+    textTemplate,
+    imageTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -44,7 +60,7 @@ define([
                     "name": "Display Layout",
                     "glyph": "L",
                     "type": "layout",
-                    "templateUrl": "templates/layout.html",
+                    "template": layoutTemplate,
                     "editable": true,
                     "uses": []
                 },
@@ -53,7 +69,7 @@ define([
                     "name": "Fixed Position",
                     "glyph": "3",
                     "type": "telemetry.panel",
-                    "templateUrl": "templates/fixed.html",
+                    "template": fixedTemplate,
                     "uses": [
                         "composition"
                     ],
@@ -191,7 +207,7 @@ define([
             "representations": [
                 {
                     "key": "frame",
-                    "templateUrl": "templates/frame.html"
+                    "template": frameTemplate
                 }
             ],
             "controllers": [
@@ -218,23 +234,23 @@ define([
             "templates": [
                 {
                     "key": "fixed.telemetry",
-                    "templateUrl": "templates/elements/telemetry.html"
+                    "template": telemetryTemplate
                 },
                 {
                     "key": "fixed.box",
-                    "templateUrl": "templates/elements/box.html"
+                    "template": boxTemplate
                 },
                 {
                     "key": "fixed.line",
-                    "templateUrl": "templates/elements/line.html"
+                    "template": lineTemplate
                 },
                 {
                     "key": "fixed.text",
-                    "templateUrl": "templates/elements/text.html"
+                    "template": textTemplate
                 },
                 {
                     "key": "fixed.image",
-                    "templateUrl": "templates/elements/image.html"
+                    "template": imageTemplate
                 }
             ],
             "policies": [

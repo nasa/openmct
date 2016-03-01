@@ -29,6 +29,15 @@ define([
     "./src/controllers/CompositeController",
     "./src/controllers/ColorController",
     "./src/controllers/DialogButtonController",
+    "text!./res/templates/controls/checkbox.html",
+    "text!./res/templates/controls/datetime.html",
+    "text!./res/templates/controls/select.html",
+    "text!./res/templates/controls/textfield.html",
+    "text!./res/templates/controls/button.html",
+    "text!./res/templates/controls/color.html",
+    "text!./res/templates/controls/composite.html",
+    "text!./res/templates/controls/menu-button.html",
+    "text!./res/templates/controls/dialog.html",
     'legacyRegistry'
 ], function (
     MCTForm,
@@ -38,6 +47,15 @@ define([
     CompositeController,
     ColorController,
     DialogButtonController,
+    checkboxTemplate,
+    datetimeTemplate,
+    selectTemplate,
+    textfieldTemplate,
+    buttonTemplate,
+    colorTemplate,
+    compositeTemplate,
+    menuButtonTemplate,
+    dialogTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -59,6 +77,7 @@ define([
                     "key": "mctControl",
                     "implementation": MCTControl,
                     "depends": [
+                        "templateLinker",
                         "controls[]"
                     ]
                 }
@@ -66,7 +85,7 @@ define([
             "controls": [
                 {
                     "key": "checkbox",
-                    "templateUrl": "templates/controls/checkbox.html"
+                    "template": checkboxTemplate
                 },
                 {
                     "key": "radio",
@@ -74,35 +93,35 @@ define([
                 },
                 {
                     "key": "datetime",
-                    "templateUrl": "templates/controls/datetime.html"
+                    "template": datetimeTemplate
                 },
                 {
                     "key": "select",
-                    "templateUrl": "templates/controls/select.html"
+                    "template": selectTemplate
                 },
                 {
                     "key": "textfield",
-                    "templateUrl": "templates/controls/textfield.html"
+                    "template": textfieldTemplate
                 },
                 {
                     "key": "button",
-                    "templateUrl": "templates/controls/button.html"
+                    "template": buttonTemplate
                 },
                 {
                     "key": "color",
-                    "templateUrl": "templates/controls/color.html"
+                    "template": colorTemplate
                 },
                 {
                     "key": "composite",
-                    "templateUrl": "templates/controls/composite.html"
+                    "template": compositeTemplate
                 },
                 {
                     "key": "menu-button",
-                    "templateUrl": "templates/controls/menu-button.html"
+                    "template": menuButtonTemplate
                 },
                 {
                     "key": "dialog-button",
-                    "templateUrl": "templates/controls/dialog.html"
+                    "template": dialogTemplate
                 }
             ],
             "controllers": [

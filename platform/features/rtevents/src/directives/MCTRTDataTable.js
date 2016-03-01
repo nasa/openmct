@@ -25,14 +25,14 @@
  * Module defining MCTRTDataTable. Created by shale on 06/25/2015.
  */
 define(
-    [],
-    function () {
+    ['text!../../res/templates/mct-rt-data-table.html'],
+    function (dataTableTemplate) {
         "use strict";
         
         function MCTRTDataTable($window) {
             return {
                 restrict: "E",
-                templateUrl: "platform/features/rtevents/res/templates/mct-rt-data-table.html",
+                template: dataTableTemplate,
                 scope: {
                     headers: "=",
                     rows: "=",

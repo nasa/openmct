@@ -29,6 +29,8 @@ define([
     "./src/controllers/RefreshingController",
     "./src/actions/StartTimerAction",
     "./src/actions/RestartTimerAction",
+    "text!./res/templates/clock.html",
+    "text!./res/templates/timer.html",
     'legacyRegistry'
 ], function (
     ClockIndicator,
@@ -38,6 +40,8 @@ define([
     RefreshingController,
     StartTimerAction,
     RestartTimerAction,
+    clockTemplate,
+    timerTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -116,13 +120,13 @@ define([
                     "key": "clock",
                     "type": "clock",
                     "editable": false,
-                    "templateUrl": "templates/clock.html"
+                    "template": clockTemplate
                 },
                 {
                     "key": "timer",
                     "type": "timer",
                     "editable": false,
-                    "templateUrl": "templates/timer.html"
+                    "template": timerTemplate
                 }
             ],
             "actions": [

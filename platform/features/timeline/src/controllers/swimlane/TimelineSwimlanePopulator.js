@@ -46,7 +46,8 @@ define(
                 start = Number.POSITIVE_INFINITY,
                 end = Number.NEGATIVE_INFINITY,
                 colors = (configuration.colors || {}),
-                assigner = new TimelineColorAssigner(colors);
+                assigner = new TimelineColorAssigner(colors),
+                lastDomainObject;
 
             // Track extremes of start/end times
             function trackStartEnd(timespan) {
@@ -144,12 +145,25 @@ define(
                         domainObject && new TimelineProxy(domainObject, selection)
                     );
                 }
+
+                lastDomainObject = domainObject;
+            }
+
+            function setSelectionObject(s) {
+                selection = s;
+                recalculateSwimlanes(lastDomainObject);
             }
 
             // Ensure colors are exposed in configuration
             configuration.colors = colors;
 
             return {
+                /**
+                 * Set the selection object associated with this timeline view.
+                 * @param {Object} selection the selection object
+                 */
+                selection: setSelectionObject,
+
                 /**
                  * Update list of swimlanes to match those reachable from this
                  * object.

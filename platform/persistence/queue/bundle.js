@@ -25,11 +25,13 @@ define([
     "./src/QueuingPersistenceCapabilityDecorator",
     "./src/PersistenceQueue",
     "./src/PersistenceFailureController",
+    "text!./res/templates/persistence-failure-dialog.html",
     'legacyRegistry'
 ], function (
     QueuingPersistenceCapabilityDecorator,
     PersistenceQueue,
     PersistenceFailureController,
+    persistenceFailureDialogTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -67,7 +69,7 @@ define([
             "templates": [
                 {
                     "key": "persistence-failure-dialog",
-                    "templateUrl": "templates/persistence-failure-dialog.html"
+                    "template": persistenceFailureDialogTemplate
                 }
             ],
             "controllers": [
