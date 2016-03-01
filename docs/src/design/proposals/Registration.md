@@ -130,7 +130,7 @@ Summary of interfaces:
   * `start()` initiates any behavior associated with this plugin that
     needs to run immediately after the application has started. (Useful
     for a "bootstrap" plugin.)
-* `MCT` is an instance of an `Application` that self-installs various
+* `MCT` extends `Application` and self-installs various
   plugins during its constructor call. It also exposes these same
   plugins as public fields such that other applications may access
   them (to `uninstall` them, for instance, or to pass them into other
@@ -200,10 +200,12 @@ of registered extensions.
     will be used to assemble the provided object (before decoration)
   * `decorate(decorator : (function (S) : S), [options] : RegistrationOptions)`
     augments behavior of objects provided by `get`, in priority order.
-* `ServiceProvider<S>` provides analogous support for the _composite services_
+* `ServiceProvider<S>` extends `Provider<S, S>` and provides analogous support
+  for the _composite services_
   pattern used throughout Open MCT (which, in turn, is a superset of the
   functionality needed for plain services.)
-* `Registry<T>` provides analogous support for _extension categories_, also
+* `Registry<T>` extends `Provider<T, T[]>` and provides analogous support for
+  _extension categories_, also
   used ubiquitously through Open MCT.
 
 # Examples
