@@ -92,6 +92,13 @@ define([
                     "reloadOnSearch": false
                 }
             ],
+            "constants": [
+                {
+                    "key": "DEFAULT_PATH",
+                    "value": "mine",
+                    "priority": "fallback"
+                }
+            ],
             "controllers": [
                 {
                     "key": "BrowseController",
@@ -103,7 +110,8 @@ define([
                         "$q",
                         "objectService",
                         "navigationService",
-                        "urlService"
+                        "urlService",
+                        "DEFAULT_PATH"
                     ]
                 },
                 {
