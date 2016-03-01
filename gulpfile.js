@@ -31,6 +31,8 @@ var gulp = require('gulp'),
     jscs = require('gulp-jscs'),
     replace = require('gulp-replace-task'),
     karma = require('karma'),
+    protractor = require('gulp-protractor').protractor,
+    webdriver_update = require('gulp-protractor').webdriver_update,
     path = require('path'),
     fs = require('fs'),
     git = require('git-rev-sync'),
@@ -47,7 +49,8 @@ var gulp = require('gulp'),
             'platform/**/*',
             'example/**/*',
             'bower_components/**/*'
-        ]
+        ],
+        protractor: './protractor/**/*Spec.js'
     },
     options = {
         requirejsOptimize: {
@@ -69,6 +72,10 @@ var gulp = require('gulp'),
                 revision: fs.existsSync('.git') ? git.long() : 'Unknown',
                 branch: fs.existsSync('.git') ? git.branch() : 'Unknown'
             }
+        },
+        protractor: {
+            configFile: 'protractor/conf.js',
+            args: [ '--baseUrl', 'localhost:8080' ]
         }
     };
 
@@ -83,6 +90,16 @@ gulp.task('scripts', function () {
 
 gulp.task('test', function (done) {
     new karma.Server(options.karma, done).start();
+});
+
+gulp.task('webdriver_update', webdriver_update);
+
+gulp.task('protractor', ['webdriver_update'], function () {
+    return gulp.src(paths.protractor)
+        .pipe(protractor(options.protractor))
+        .on('error', function (err) {
+            throw err;
+        });
 });
 
 gulp.task('stylesheets', function () {
