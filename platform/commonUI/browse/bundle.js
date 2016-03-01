@@ -47,6 +47,8 @@ define([
     "text!./res/templates/menu-arrow.html",
     "text!./res/templates/back-arrow.html",
     "text!./res/templates/items/items.html",
+    "text!./res/templates/browse/object-properties.html",
+    "text!./res/templates/browse/inspector-region.html",
     'legacyRegistry'
 ], function (
     BrowseController,
@@ -74,6 +76,8 @@ define([
     menuArrowTemplate,
     backArrowTemplate,
     itemsTemplate,
+    objectPropertiesTemplate,
+    inspectorRegionTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -226,11 +230,11 @@ define([
                 },
                 {
                     "key": "object-properties",
-                    "templateUrl": "templates/browse/object-properties.html"
+                    "template": objectPropertiesTemplate
                 },
                 {
                     "key": "inspector-region",
-                    "templateUrl": "templates/browse/inspector-region.html"
+                    "template": inspectorRegionTemplate
                 }
             ],
             "services": [

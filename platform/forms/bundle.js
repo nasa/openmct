@@ -38,6 +38,7 @@ define([
     "text!./res/templates/controls/composite.html",
     "text!./res/templates/controls/menu-button.html",
     "text!./res/templates/controls/dialog.html",
+    "text!./res/templates/controls/radio.html",
     'legacyRegistry'
 ], function (
     MCTForm,
@@ -56,6 +57,7 @@ define([
     compositeTemplate,
     menuButtonTemplate,
     dialogTemplate,
+    radioTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -89,7 +91,7 @@ define([
                 },
                 {
                     "key": "radio",
-                    "templateUrl": "templates/controls/radio.html"
+                    "template": radioTemplate
                 },
                 {
                     "key": "datetime",

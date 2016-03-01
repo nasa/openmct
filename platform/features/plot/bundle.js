@@ -27,6 +27,7 @@ define([
     "./src/policies/PlotViewPolicy",
     "./src/PlotOptionsController",
     "text!./res/templates/plot.html",
+    "text!./res/templates/plot-options-browse.html",
     'legacyRegistry'
 ], function (
     MCTChart,
@@ -34,6 +35,7 @@ define([
     PlotViewPolicy,
     PlotOptionsController,
     plotTemplate,
+    plotOptionsBrowseTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -101,7 +103,7 @@ define([
             "representations": [
                 {
                     "key": "plot-options-browse",
-                    "templateUrl": "templates/plot-options-browse.html"
+                    "template": plotOptionsBrowseTemplate
                 }
             ]
         }
