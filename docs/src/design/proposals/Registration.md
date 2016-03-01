@@ -384,6 +384,49 @@ define(['mct', './SomeAction'], function (mct, SomeAction) {
 });
 ```
 
+## Extending Extensions
+
+Augmenting the behavior of individual extensions is difficult in the
+existing bundle mechanism; for instance, to decorate a specific
+Action one has to decorate the ActionService, recognize the specific
+Action, and then decorate _that_.
+
+By introducing `Provider`s as a more general pattern for extensibility,
+cases like this may be simplified, provided that an appropriate `Plugin`
+exposes individual extensions in a suitable way.
+
+As an example, a plugin implementing a "navigate" action might look like:
+
+```
+function NavigationPlugin(core) {
+    var navigateActionProvider = new Provider(function () {
+        return new NavigateAction();
+    });
+
+    // Expose to permit extension
+    this.navigateActionProvider = navigateActionProvider;
+
+    Plugin.call(this, function () {
+        core.actionRegistry.register(function () {
+            return navigateActionProvider.get();
+        });
+    });
+}
+```
+
+And other plugins could then extend the "navigate" action directly:
+
+```
+function EditPlugin(navigationPlugin) {
+    Plugin.call(this, function () {
+        navigationPlugin.navigateActionProvider
+            .decorate(function (navigateAction) {
+                return new DecoratedNavigationAction(navigateAction);
+            });
+    });
+}
+```
+
 # Legacy Support
 
 The proposed API does not achieve parity with the existing Framework
