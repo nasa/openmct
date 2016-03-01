@@ -164,17 +164,18 @@ imperative usage of this API is equally viable.)
 ## Extension Points
 
 ```nomnoml
-[Provider<X,S> |
+[Provider<S> |
     get() : S
-    register(factory : (function () : S))
     decorate(decorator : (function (S) : S))
+]<:-[CompositeProvider<X,S> |
+    register(factory : (function () : S))
     compose(compositor : (function (Array<X>) : S))
 ]
 
-[Provider<X,S>]<:-[Provider<T,Array<T>>]
-[Provider<T,Array<T>>]<:-[Registry<T>]
-[Provider<X,S>]<:-[Provider<S,S>]
-[Provider<S,S>]<:-[ServiceProvider<S>]
+[CompositeProvider<X,S>]<:-[CompositeProvider<T,Array<T>>]
+[CompositeProvider<T,Array<T>>]<:-[Registry<T>]
+[CompositeProvider<X,S>]<:-[CompositeProvider<S,S>]
+[CompositeProvider<S,S>]<:-[ServiceProvider<S>]
 ```
 
 Omitted from this diagram (for clarity) are `options` arguments to
@@ -182,13 +183,19 @@ Omitted from this diagram (for clarity) are `options` arguments to
 at minimum, a `priority` to be specified, in order to control ordering
 of registered extensions.
 
-* `Provider<X, S>` is responsible for providing objects of type `S` based
-  on zero or more instances of objects of type `X` which have been registered.
-  In practice, a `Provider` instance is an extension point within the
-  architecture.
+* `Provider<S>` is responsible for providing objects of type `S`.
+  In practice, a `Provider` is a usable component of the architecture
+  which supports basic extensibility (via decoration.)
   * `get() : S` provides an instance of the architectural component, as
     constructed using the registered objects, along with the highest-priority
     compositor and and decorators.
+  * `decorate(decorator : (function (S) : S), [options] : RegistrationOptions)`
+    augments behavior of objects provided by `get`, in priority order.
+* `CompositeProvider<X,S>` extends `Provider<S>` to handle many-to-one
+  dependencies. The provided object based will be instantiated using
+  zero or more instances of objects of type `X` which have been registered,
+  using a `compositor` function provided as a constructor argument (or via
+  a subsequent `compose` call.)
   * `register(factory : (function () : X), [options] : RegistrationOptions)`
     registers an object (as returned by the provided `factory` function)
     with this provider. Evaluation of the provided `factory` will be
@@ -198,13 +205,11 @@ of registered extensions.
     of type `X` into a single instance of an object of type `S`. The
     highest-priority `compositor` that has been registered in this fashion
     will be used to assemble the provided object (before decoration)
-  * `decorate(decorator : (function (S) : S), [options] : RegistrationOptions)`
-    augments behavior of objects provided by `get`, in priority order.
-* `ServiceProvider<S>` extends `Provider<S, S>` and provides analogous support
+* `ServiceProvider<S>` extends `CompositeProvider<S, S>` and provides analogous support
   for the _composite services_
   pattern used throughout Open MCT (which, in turn, is a superset of the
   functionality needed for plain services.)
-* `Registry<T>` extends `Provider<T, T[]>` and provides analogous support for
+* `Registry<T>` extends `CompositeProvider<T, T[]>` and provides analogous support for
   _extension categories_, also
   used ubiquitously through Open MCT.
 
