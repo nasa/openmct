@@ -212,6 +212,11 @@ of registered extensions.
 * `Registry<T>` extends `CompositeProvider<T, T[]>` and provides analogous support for
   _extension categories_, also
   used ubiquitously through Open MCT.
+* `RegistrationOptions` provides a location for additional
+  registration-related metadata to be provided.
+  * `priority` is used to control the ordering and/or preference of
+    factories, compositors, and/or decorators,
+    [as in the existing Framework Layer.](http://nasa.github.io/openmctweb/guide/#priority)
 
 # Examples
 
