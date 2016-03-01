@@ -1,3 +1,9 @@
+# Introduction
+
+This document proposes a Registration API which allows for components
+of Open MCT to communicate with one another using reusable, internally
+standardized patterns.
+
 # Developer Use Cases
 
 1. Extending and maintaining Open MCT itself.
