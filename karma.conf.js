@@ -58,7 +58,7 @@ module.exports = function(config) {
         // Test results reporter to use
         // Possible values: 'dots', 'progress'
         // Available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['progress', 'coverage', 'html'],
+        reporters: ['progress', 'coverage', 'html', 'junit'],
 
         // Web server port.
         port: 9876,
@@ -87,6 +87,10 @@ module.exports = function(config) {
             outputDir: "target/tests",
             preserveDescribeNesting: true,
             foldAll: false
+        },
+
+        junitReporter: {
+            outputDir: process.env.CIRCLE_TEST_REPORTS || 'target/junit',
         },
 
         // Continuous Integration mode.
