@@ -105,7 +105,7 @@ define(
                 watch();
             });
             this.watches = [];
-        }
+        };
 
         /**
          * Attach watches for each object in the plot's composition
