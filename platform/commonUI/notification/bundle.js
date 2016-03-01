@@ -81,6 +81,7 @@ define([
                     "implementation": NotificationService,
                     "depends": [
                         "$timeout",
+                        "topic",
                         "DEFAULT_AUTO_DISMISS",
                         "MINIMIZE_TIMEOUT"
                     ]
