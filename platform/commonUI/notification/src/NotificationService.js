@@ -67,7 +67,7 @@ define(
          * be automatically minimized or dismissed (depending on severity).
          * Additionally, if the provided value is a number, it will be used
          * as the delay period before being dismissed.
-         * @property {boolean} [dismissable=true] If truthy, notification will
+         * @property {boolean} [dismissable=true] If true, notification will
          * include an option to dismiss it completely.
          * @property {NotificationOption} [primaryOption] the default user
          * response to
