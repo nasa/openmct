@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global module*/
+/*global module,process*/
 module.exports = function(config) {
     config.set({
 
@@ -79,7 +79,9 @@ module.exports = function(config) {
 
         // Code coverage reporting.
         coverageReporter: {
-            dir: "dist/coverage"
+            dir: process.env.CIRCLE_ARTIFACTS ?
+                process.env.CIRCLE_ARTIFACTS + '/coverage' :
+                "dist/coverage"
         },
 
         // HTML test reporting.
@@ -90,7 +92,7 @@ module.exports = function(config) {
         },
 
         junitReporter: {
-            outputDir: process.env.CIRCLE_TEST_REPORTS || 'target/junit',
+            outputDir: process.env.CIRCLE_TEST_REPORTS || 'target/junit'
         },
 
         // Continuous Integration mode.
