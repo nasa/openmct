@@ -40,6 +40,7 @@ define(
                 mockUrlService,
                 mockDomainObject,
                 mockNextObject,
+                testDefaultRoot,
                 controller;
 
             function mockPromise(value) {
@@ -50,7 +51,21 @@ define(
                 };
             }
 
+            function instantiateController() {
+                controller = new BrowseController(
+                    mockScope,
+                    mockRoute,
+                    mockLocation,
+                    mockObjectService,
+                    mockNavigationService,
+                    mockUrlService,
+                    testDefaultRoot
+                );
+            }
+
             beforeEach(function () {
+                testDefaultRoot = "some-root-level-domain-object";
+
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     [ "$on", "$watch" ]
@@ -101,41 +116,28 @@ define(
                 ]));
                 mockNextObject.useCapability.andReturn(undefined);
                 mockNextObject.getId.andReturn("next");
-                mockDomainObject.getId.andReturn("mine");
+                mockDomainObject.getId.andReturn(testDefaultRoot);
 
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService,
-                    mockUrlService
-                );
+                instantiateController();
             });
 
             it("uses composition to set the navigated object, if there is none", function () {
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService,
-                    mockUrlService
-                );
+                instantiateController();
+                expect(mockNavigationService.setNavigation)
+                    .toHaveBeenCalledWith(mockDomainObject);
+            });
+
+            it("navigates to a root-level object, even when default path is not found", function () {
+                mockDomainObject.getId
+                    .andReturn("something-other-than-the-" + testDefaultRoot);
+                instantiateController();
                 expect(mockNavigationService.setNavigation)
                     .toHaveBeenCalledWith(mockDomainObject);
             });
 
             it("does not try to override navigation", function () {
                 mockNavigationService.getNavigation.andReturn(mockDomainObject);
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService,
-                    mockUrlService
-                );
+                instantiateController();
                 expect(mockScope.navigatedObject).toBe(mockDomainObject);
             });
 
@@ -162,14 +164,8 @@ define(
             });
 
             it("uses route parameters to choose initially-navigated object", function () {
-                mockRoute.current.params.ids = "mine/next";
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService
-                );
+                mockRoute.current.params.ids = testDefaultRoot + "/next";
+                instantiateController();
                 expect(mockScope.navigatedObject).toBe(mockNextObject);
                 expect(mockNavigationService.setNavigation)
                     .toHaveBeenCalledWith(mockNextObject);
@@ -179,14 +175,8 @@ define(
                 // Idea here is that if we get a bad path of IDs,
                 // browse controller should traverse down it until
                 // it hits an invalid ID.
-                mockRoute.current.params.ids = "mine/junk";
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService
-                );
+                mockRoute.current.params.ids = testDefaultRoot + "/junk";
+                instantiateController();
                 expect(mockScope.navigatedObject).toBe(mockDomainObject);
                 expect(mockNavigationService.setNavigation)
                     .toHaveBeenCalledWith(mockDomainObject);
@@ -196,14 +186,8 @@ define(
                 // Idea here is that if we get a path which passes
                 // through an object without a composition, browse controller
                 // should stop at it since remaining IDs cannot be loaded.
-                mockRoute.current.params.ids = "mine/next/junk";
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService
-                );
+                mockRoute.current.params.ids = testDefaultRoot + "/next/junk";
+                instantiateController();
                 expect(mockScope.navigatedObject).toBe(mockNextObject);
                 expect(mockNavigationService.setNavigation)
                     .toHaveBeenCalledWith(mockNextObject);

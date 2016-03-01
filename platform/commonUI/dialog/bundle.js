@@ -24,10 +24,24 @@
 define([
     "./src/DialogService",
     "./src/OverlayService",
+    "text!./res/templates/overlay-dialog.html",
+    "text!./res/templates/overlay-options.html",
+    "text!./res/templates/dialog.html",
+    "text!./res/templates/overlay-blocking-message.html",
+    "text!./res/templates/message.html",
+    "text!./res/templates/overlay-message-list.html",
+    "text!./res/templates/overlay.html",
     'legacyRegistry'
 ], function (
     DialogService,
     OverlayService,
+    overlayDialogTemplate,
+    overlayOptionsTemplate,
+    dialogTemplate,
+    overlayBlockingMessageTemplate,
+    messageTemplate,
+    overlayMessageListTemplate,
+    overlayTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -57,33 +71,33 @@ define([
             "templates": [
                 {
                     "key": "overlay-dialog",
-                    "templateUrl": "templates/overlay-dialog.html"
+                    "template": overlayDialogTemplate
                 },
                 {
                     "key": "overlay-options",
-                    "templateUrl": "templates/overlay-options.html"
+                    "template": overlayOptionsTemplate
                 },
                 {
                     "key": "form-dialog",
-                    "templateUrl": "templates/dialog.html"
+                    "template": dialogTemplate
                 },
                 {
                     "key": "overlay-blocking-message",
-                    "templateUrl": "templates/overlay-blocking-message.html"
+                    "template": overlayBlockingMessageTemplate
                 },
                 {
                     "key": "message",
-                    "templateUrl": "templates/message.html"
+                    "template": messageTemplate
                 },
                 {
                     "key": "overlay-message-list",
-                    "templateUrl": "templates/overlay-message-list.html"
+                    "template": overlayMessageListTemplate
                 }
             ],
             "containers": [
                 {
                     "key": "overlay",
-                    "templateUrl": "templates/overlay.html"
+                    "template": overlayTemplate
                 }
             ]
         }

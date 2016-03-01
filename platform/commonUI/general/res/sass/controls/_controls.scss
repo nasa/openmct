@@ -83,7 +83,6 @@
 
 .l-control-group {
     // Buttons that have a conceptual grouping - internal space between, and a divider between groups.
-    //    @include test();
     box-sizing: border-box;
     border-left: 1px solid $colorInteriorBorder;
     display: inline-block;
@@ -109,31 +108,29 @@
     font-size: 0.7rem;
 }
 
-label.checkbox.custom {
+label.checkbox.custom,
+label.radio.custom {
     $bg: pullForward($colorBodyBg, 10%);
     $d: $formRowCtrlsH;
     cursor: pointer;
     display: inline-block;
-    line-height: $d;
     margin-right: $interiorMargin * 4;
     padding-left: $d + $interiorMargin;
     position: relative;
-    vertical-align: middle; // was top
     em {
         color: $colorBodyFg;
         display: inline-block;
         height: $d;
-        min-width: $d;
+        width: $d;
         &:before {
             border-radius: $basicCr * .75;
             background: $bg;
             box-shadow: inset rgba(black, 0.4) 0 1px 2px;
             box-sizing: border-box;
-            content: " ";
+            content: "";
             font-family: 'symbolsfont';
-            font-size: 0.8em;
+            font-size: 0.7em;
             display: inline-block;
-            margin-right: $interiorMargin;
             height: $d;
             width: $d;
             left: 0;
@@ -157,10 +154,12 @@ label.checkbox.custom {
         &:checked ~ em:before {
             background: $colorCheck;
             color: lighten($colorCheck, 50%);
-            content: "2";
         }
     }
 }
+
+label.checkbox.custom input:checked ~ em:before { content: "\32"; }
+label.radio.custom input:checked ~ em:before { content: "\e619"; }
 
 .input-labeled {
     margin-left: $interiorMargin;
@@ -333,7 +332,7 @@ body.desktop .object-header {
 /******************************************************** SLIDERS */
 
 .slider {
-    $knobH: 100%; //14px;
+    $knobH: 100%;
     .slot {
         width: auto;
         position: absolute;
@@ -369,7 +368,7 @@ body.desktop .object-header {
         background-color: $sliderColorRange;
         cursor: ew-resize;
         position: absolute;
-        top: 0; //$tbOffset;
+        top: 0;
         right: auto;
         bottom: 0;
         left: auto;

@@ -32,14 +32,16 @@
     color: $colorInspectorFg;
     line-height: 140%;
 
-    .flex-elem.holder:not(:last-child) { margin-bottom: $interiorMargin; }
+    .flex-elem.holder:not(:last-child) {
+        margin-bottom: $interiorMargin;
+    }
 
     .pane-header {
         color: pushBack($colorInspectorFg, 20%);
         font-size: 0.8rem;
         &:before {
             color: pushBack($colorInspectorFg, 10%);
-            content:'\e615'; // e615 Crosshair symbol
+            content: '\e615'; // e615 Crosshair symbol
             display: inline;
             font-family: symbolsfont;
             margin-right: $interiorMargin;
@@ -56,14 +58,28 @@
             }
         }
     }
-    
-    ul {
+    .l-inspector-part {
         box-sizing: border-box;
         padding-right: $interiorMargin;
+        .form {
+            margin-left: $treeVCW + $interiorMarginLg;
+            margin-bottom: $interiorMarginLg;
+            .form-section {
+                margin-bottom: 0;
+                &:not(.first) {
+                    border-top: 1px solid $colorFormLines;
+                }
+                .form-row {
+                    @include align-items(center);
+                    border: none;
+                    padding: 0;
+                }
+            }
+        }
     }
 
     ul li,
-    em {
+    em.t-inspector-part-header {
         display: block;
         position: relative;
     }
@@ -71,8 +87,8 @@
     ul li {
         margin-bottom: $interiorMarginLg;
     }
-    
-    em {
+
+    em.t-inspector-part-header {
         border-radius: $basicCr;
         background-color: $colorInspectorSectionHeaderBg;
         color: $colorInspectorSectionHeaderFg;
@@ -154,8 +170,16 @@
     }
 }
 
+mct-representation:not(.s-status-editing) .l-inspect {
+    .split-pane-component.pane.top {
+        bottom: 0 !important;
+    }
+}
+
 .s-status-editing .l-inspect {
-    .location-item { pointer-events: none; }
+    .location-item {
+        pointer-events: none;
+    }
     .splitter-inspect-panel,
     .split-pane-component.pane.bottom {
         opacity: 1;

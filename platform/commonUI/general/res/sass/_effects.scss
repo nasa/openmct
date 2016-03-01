@@ -19,26 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-.disabled,
-a.disabled {
-	opacity: $controlDisabledOpacity;
-	pointer-events: none !important;
-	cursor: default !important;
-}
-
-.incised {
-    @include boxIncised(0.8);
-    border-bottom: 1px solid rgba(#fff, 0.3);
-}
-
-.test-stripes {
-	@include bgDiagonalStripes();
-}
-
-.test {
-	@include test();
-}
-
 @mixin pulse($animName: pulse, $dur: 500ms, $iteration: infinite, $opacity0: 0.5, $opacity100: 1) {
     @include keyframes($animName) {
         0%   { opacity: $opacity0; }

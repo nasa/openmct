@@ -25,11 +25,17 @@ define([
     "./src/MCTChart",
     "./src/PlotController",
     "./src/policies/PlotViewPolicy",
+    "./src/PlotOptionsController",
+    "text!./res/templates/plot.html",
+    "text!./res/templates/plot-options-browse.html",
     'legacyRegistry'
 ], function (
     MCTChart,
     PlotController,
     PlotViewPolicy,
+    PlotOptionsController,
+    plotTemplate,
+    plotOptionsBrowseTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -42,7 +48,7 @@ define([
                     "name": "Plot",
                     "key": "plot",
                     "glyph": "6",
-                    "templateUrl": "templates/plot.html",
+                    "template": plotTemplate,
                     "needs": [
                         "telemetry"
                     ],
@@ -71,6 +77,13 @@ define([
                         "throttle",
                         "PLOT_FIXED_DURATION"
                     ]
+                },
+                {
+                    "key": "PlotOptionsController",
+                    "implementation": PlotOptionsController,
+                    "depends": [
+                        "$scope"
+                    ]
                 }
             ],
             "constants": [
@@ -85,6 +98,12 @@ define([
                 {
                     "category": "view",
                     "implementation": PlotViewPolicy
+                }
+            ],
+            "representations": [
+                {
+                    "key": "plot-options-browse",
+                    "template": plotOptionsBrowseTemplate
                 }
             ]
         }

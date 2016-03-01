@@ -39,6 +39,7 @@ module.exports = function(config) {
             {pattern: 'example/**/*.js', included: false},
             {pattern: 'platform/**/*.js', included: false},
             {pattern: 'warp/**/*.js', included: false},
+            {pattern: 'platform/**/*.html', included: false},
             'test-main.js'
         ],
 
