@@ -28,6 +28,7 @@
     "karma-coverage": "^0.5.3",
     "karma-html-reporter": "^0.2.7",
     "karma-jasmine": "^0.1.5",
+    "karma-junit-reporter": "^0.3.8",
     "karma-phantomjs-launcher": "^1.0.0",
     "karma-requirejs": "^0.2.2",
     "lodash": "^3.10.1",
@@ -43,7 +44,7 @@
   "scripts": {
     "start": "node app.js",
     "test": "karma start --single-run",
-    "jshint": "jshint platform example || exit 0",
+    "jshint": "jshint platform example",
     "watch": "karma start",
     "jsdoc": "jsdoc -c jsdoc.json -r -d target/docs/api",
     "otherdoc": "node docs/gendocs.js --in docs/src --out target/docs --suppress-toc 'docs/src/index.md|docs/src/process/index.md'",

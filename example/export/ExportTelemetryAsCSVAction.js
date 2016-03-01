@@ -57,14 +57,23 @@ define([], function () {
                 rows = [],
                 row,
                 i;
+
+            function copyDomainsToRow(row, index) {
+                domains.forEach(function (domain) {
+                    row[domain.name] = series.getDomainValue(index, domain.key);
+                });
+            }
+
+            function copyRangesToRow(row, index) {
+                ranges.forEach(function (range) {
+                    row[range.name] = series.getRangeValue(index, range.key);
+                });
+            }
+
             for (i = 0; i < series.getPointCount(); i += 1) {
                 row = {};
-                domains.forEach(function (domain) {
-                    row[domain.name] = series.getDomainValue(i, domain.key);
-                });
-                ranges.forEach(function (range) {
-                    row[range.name] = series.getRangeValue(i, range.key);
-                });
+                copyDomainsToRow(row, i);
+                copyRangesToRow(row, i);
                 rows.push(row);
             }
             exportService.exportCSV(rows, { headers: headers });
