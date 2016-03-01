@@ -34,7 +34,6 @@ define(
         "use strict";
 
         var ROOT_ID = "ROOT",
-            DEFAULT_PATH = "mine",
             CONFIRM_MSG = "Unsaved changes will be lost if you leave this page.";
 
         /**
