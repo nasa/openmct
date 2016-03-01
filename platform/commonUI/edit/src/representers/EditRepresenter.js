@@ -147,7 +147,6 @@ define(
 
         // Respond to the destruction of the current representation.
         EditRepresenter.prototype.destroy = function destroy() {
-            // Nothing to clean up
             return this.listenHandle && this.listenHandle();
         };
 

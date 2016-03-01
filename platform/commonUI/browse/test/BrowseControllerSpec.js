@@ -39,6 +39,8 @@ define(
                 mockUrlService,
                 mockDomainObject,
                 mockNextObject,
+                mockWindow,
+                mockPolicyService,
                 testDefaultRoot,
                 controller;
 
@@ -55,14 +57,25 @@ define(
                     mockScope,
                     mockRoute,
                     mockLocation,
+                    mockWindow,
                     mockObjectService,
                     mockNavigationService,
                     mockUrlService,
+                    mockPolicyService,
                     testDefaultRoot
                 );
             }
 
             beforeEach(function () {
+                mockWindow = jasmine.createSpyObj('$window', [
+                   "confirm"
+                ]);
+                mockWindow.confirm.andReturn(true);
+
+                mockPolicyService = jasmine.createSpyObj('policyService', [
+                    'allow'
+                ]);
+
                 testDefaultRoot = "some-root-level-domain-object";
 
                 mockScope = jasmine.createSpyObj(

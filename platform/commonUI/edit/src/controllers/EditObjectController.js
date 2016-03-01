@@ -36,8 +36,9 @@ define(
          * @memberof platform/commonUI/edit
          * @constructor
          */
-        function EditObjectController($scope, $location) {
+        function EditObjectController($scope, $location, policyService) {
             this.scope = $scope;
+            this.policyService = policyService;
 
             var navigatedObject;
             function setViewForDomainObject(domainObject) {
@@ -73,16 +74,14 @@ define(
          */
         EditObjectController.prototype.getUnloadWarning = function () {
             var navigatedObject = this.scope.domainObject,
-                editorCapability = navigatedObject &&
-                    navigatedObject.getCapability("editor"),
-                statusCapability = navigatedObject &&
-                    navigatedObject.getCapability("status"),
-                hasChanges = statusCapability && statusCapability.get('editing')
-                    && editorCapability && editorCapability.dirty();
+                policyMessage;
 
-            return hasChanges ?
-                "Unsaved changes will be lost if you leave this page." :
-                undefined;
+            this.policyService.allow("navigation", navigatedObject, undefined, function(message) {
+               policyMessage = message;
+            });
+
+            return policyMessage;
+
         };
 
         return EditObjectController;

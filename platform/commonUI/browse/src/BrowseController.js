@@ -33,6 +33,7 @@ define(
         "use strict";
 
         var ROOT_ID = "ROOT",
+            DEFAULT_PATH = "mine",
             CONFIRM_MSG = "Unsaved changes will be lost if you leave this page.";
 
         /**
@@ -46,12 +47,14 @@ define(
          * @constructor
          */
         function BrowseController(
-            $scope,
-            $route,
-            $location,
-            objectService,
-            navigationService,
-            urlService,
+            $scope, 
+            $route, 
+            $location, 
+            $window, 
+            objectService, 
+            navigationService, 
+            urlService, 
+            policyService,
             defaultPath
         ) {
             var path = [ROOT_ID].concat(
@@ -81,14 +84,22 @@ define(
             // Callback for updating the in-scope reference to the object
             // that is currently navigated-to.
             function setNavigation(domainObject) {
+                var navigationAllowed = true;
+
                 if (domainObject === $scope.navigatedObject){
                     //do nothing;
                     return;
                 }
 
-                if (navigationService.setNavigation(domainObject)) {
+                policyService.allow("navigation", $scope.navigatedObject, domainObject, function(message){
+                    navigationAllowed = $window.confirm(message + "\r\n\r\n" +
+                        " Are you sure you want to continue?");
+                });
+
+                if (navigationAllowed) {
                     $scope.navigatedObject = domainObject;
                     $scope.treeModel.selectedObject = domainObject;
+                    navigationService.setNavigation(domainObject);
                     updateRoute(domainObject);
                 } else {
                     //If navigation was unsuccessful (ie. blocked), reset

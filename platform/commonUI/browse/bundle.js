@@ -111,9 +111,11 @@ define([
                         "$scope",
                         "$route",
                         "$location",
+                        "$window",
                         "objectService",
                         "navigationService",
                         "urlService",
+                        "policyService",
                         "DEFAULT_PATH"
                     ]
                 },

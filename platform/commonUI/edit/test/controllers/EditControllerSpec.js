@@ -33,6 +33,7 @@ define(
                 mockLocation,
                 mockStatusCapability,
                 mockCapabilities,
+                mockPolicyService,
                 controller;
 
             // Utility function; look for a $watch on scope and fire it
@@ -45,6 +46,12 @@ define(
             }
 
             beforeEach(function () {
+                mockPolicyService = jasmine.createSpyObj(
+                    "policyService",
+                    [
+                        "allow"
+                    ]
+                );
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     [ "$on", "$watch" ]

@@ -34,6 +34,7 @@ define([
     "./src/actions/SaveAction",
     "./src/actions/CancelAction",
     "./src/policies/EditActionPolicy",
+    "./src/policies/EditNavigationPolicy",
     "./src/representers/EditRepresenter",
     "./src/representers/EditToolbarRepresenter",
     "text!./res/templates/library.html",
@@ -55,6 +56,7 @@ define([
     SaveAction,
     CancelAction,
     EditActionPolicy,
+    EditNavigationPolicy,
     EditRepresenter,
     EditToolbarRepresenter,
     libraryTemplate,
@@ -95,7 +97,8 @@ define([
                     "implementation": EditObjectController,
                     "depends": [
                         "$scope",
-                        "$location"
+                        "$location",
+                        "policyService"
                     ]
                 }
             ],
@@ -183,7 +186,16 @@ define([
                 {
                     "category": "action",
                     "implementation": EditActionPolicy
+                },
+                {
+                    "category": "navigation",
+                    "message": "There are unsaved changes.",
+                    "implementation": EditNavigationPolicy,
+                    "depends": [
+                        "$window"
+                    ]
                 }
+
             ],
             "templates": [
                 {
