@@ -33,6 +33,7 @@ var gulp = require('gulp'),
     karma = require('karma'),
     protractor = require('gulp-protractor').protractor,
     webdriver_update = require('gulp-protractor').webdriver_update,
+    connect = require('gulp-connect'),
     path = require('path'),
     fs = require('fs'),
     git = require('git-rev-sync'),
@@ -76,6 +77,9 @@ var gulp = require('gulp'),
         protractor: {
             configFile: 'protractor/conf.js',
             args: [ '--baseUrl', 'localhost:8080' ]
+        },
+        connect: {
+            root: paths.dist
         }
     };
 
@@ -94,10 +98,14 @@ gulp.task('test', function (done) {
 
 gulp.task('webdriver_update', webdriver_update);
 
-gulp.task('protractor', ['webdriver_update'], function () {
+gulp.task('protractor', ['webdriver_update', 'install'], function () {
+    connect.server(options.connect);
+
     return gulp.src(paths.protractor)
         .pipe(protractor(options.protractor))
+        .on('end', connect.serverClose.bind(connect))
         .on('error', function (err) {
+            connect.serverClose();
             throw err;
         });
 });

@@ -24,6 +24,6 @@
 module.exports = function launch() {
     'use strict';
     browser.ignoreSynchronization = true;
-    browser.get('http://localhost:1984');
+    browser.get('http://localhost:8080/index.html');
     browser.sleep(2000);  // 2 seconds
 };

@@ -12,6 +12,7 @@
     "git-rev-sync": "^1.4.0",
     "glob": ">= 3.0.0",
     "gulp": "^3.9.0",
+    "gulp-connect": "^3.1.0",
     "gulp-jscs": "^3.0.2",
     "gulp-jshint": "^2.0.0",
     "gulp-protractor": "^1.0.0",
