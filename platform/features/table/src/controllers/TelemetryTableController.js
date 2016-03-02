@@ -57,7 +57,7 @@ define(
             this.table = new TableConfiguration($scope.domainObject, telemetryFormatter);
             this.changeListeners = [];
 
-            $scope.rows = [];
+            $scope.rows = undefined;
 
             // Subscribe to telemetry when a domain object becomes available
             this.$scope.$watch('domainObject', function(domainObject){

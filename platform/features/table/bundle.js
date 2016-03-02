@@ -23,6 +23,7 @@
 
 define([
     "./src/directives/MCTTable",
+    "./src/controllers/RTTableController",
     "./src/controllers/TelemetryTableController",
     "./src/controllers/TableOptionsController",
     '../../commonUI/regions/src/Region',
@@ -31,6 +32,7 @@ define([
 ], function (
     MCTTable,
     TelemetryTableController,
+    RTTableController,
     TableOptionsController,
     Region,
     InspectorRegion,
@@ -87,6 +89,11 @@ define([
                     "depends": ["$scope", "telemetryHandler", "telemetryFormatter"]
                 },
                 {
+                    "key": "RTTableController",
+                    "implementation": RTTableController,
+                    "depends": ["$scope", "telemetryHandler", "telemetryFormatter"]
+                },
+                {
                     "key": "TableOptionsController",
                     "implementation": TableOptionsController,
                     "depends": ["$scope"]
@@ -99,6 +106,17 @@ define([
                     "key": "table",
                     "glyph": "\ue605",
                     "templateUrl": "templates/table.html",
+                    "needs": [
+                        "telemetry"
+                    ],
+                    "delegation": true,
+                    "editable": true
+                },
+                {
+                    "name": "Scrolling",
+                    "key": "realtime",
+                    "glyph": "\ue605",
+                    "templateUrl": "templates/rt-table.html",
                     "needs": [
                         "telemetry"
                     ],

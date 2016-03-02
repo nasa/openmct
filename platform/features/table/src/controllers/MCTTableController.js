@@ -12,8 +12,10 @@ define(
             this.element = element;
             this.$timeout = $timeout;
             this.maxDisplayRows = 50;
+            element.find('div').on('scroll', this.onScroll.bind(this));
+            this.scrollable = element.find('div')[0];
 
-            $scope.visibleRows = [];
+                $scope.visibleRows = [];
             $scope.overrideRowPositioning = false;
 
             /**
@@ -33,8 +35,6 @@ define(
 
             setDefaults($scope);
 
-            element.find('div').on('scroll', this.onScroll.bind(this));
-
             $scope.toggleSort = function (key) {
                 if (!$scope.enableSort) {
                     return;
@@ -52,10 +52,17 @@ define(
             };
 
             $scope.$watchCollection('filters', function () {
-                self.updateRows(self.$scope.rows);
+                self.updateRows(self.$scope.displayRows);
             });
             $scope.$watchCollection('headers', this.updateHeaders.bind(this));
-            $scope.$watchCollection('rows', this.updateRows.bind(this));
+            $scope.$watch('rows', this.updateRows.bind(this));
+            $scope.$on('newRow', this.newRow.bind(this));
+        }
+
+        MCTTableController.prototype.newRow = function (event, newRow) {
+            this.$scope.displayRows.push(newRow);
+            this.filterAndSort(this.$scope.displayRows);
+            this.$timeout(this.setElementSizes(), 0);
         }
 
         /**
@@ -65,8 +72,9 @@ define(
          */
         MCTTableController.prototype.onScroll = function (event) {
             var self = this,
-                topScroll = event.target.scrollTop,
-                bottomScroll = topScroll + event.target.offsetHeight,
+                target = this.scrollable,
+                topScroll = target.scrollTop,
+                bottomScroll = topScroll + target.offsetHeight,
                 firstVisible,
                 lastVisible,
                 totalVisible,
@@ -177,6 +185,7 @@ define(
                 };
             });
 
+            this.onScroll();
             this.$scope.overrideRowPositioning = true;
         };
 
@@ -290,19 +299,8 @@ define(
             this.$timeout(this.setElementSizes.bind(this));
         };
 
-        /**
-         * Update rows with new data.  If filtering is enabled, rows
-         * will be sorted before display.
-         */
-        MCTTableController.prototype.updateRows = function (newRows) {
-            var displayRows = newRows;
-            this.$scope.visibleRows = [];
-            this.$scope.overrideRowPositioning = false;
-
-            if (!this.$scope.displayHeaders) {
-                return;
-            }
-
+        MCTTableController.prototype.filterAndSort = function(rows) {
+            var displayRows = rows;
             if (this.$scope.enableFilter) {
                 displayRows = this.filterRows(displayRows);
             }
@@ -311,6 +309,21 @@ define(
                 displayRows = this.sortRows(displayRows);
             }
             this.$scope.displayRows = displayRows;
+        };
+
+        /**
+         * Update rows with new data.  If filtering is enabled, rows
+         * will be sorted before display.
+         */
+        MCTTableController.prototype.updateRows = function (newRows) {
+            console.log('updateRows');
+            this.$scope.visibleRows = [];
+            this.$scope.overrideRowPositioning = false;
+
+            if (!this.$scope.displayHeaders) {
+                return;
+            }
+            this.filterAndSort(newRows || []);
             this.resize();
         };
 
