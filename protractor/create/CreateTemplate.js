@@ -23,12 +23,49 @@ CreateTemplate.prototype.describe = function (nested) {
 
         if (this.expectEditMode) {
             describe("when saved", function () {
+                var overlay;
+
                 beforeEach(function () {
                     element(by.css('.t-save')).click();
+                    overlay = element(by.css('.overlay'));
                 });
 
                 it("shows a dialog", function () {
-                    expect(element(by.css('.overlay')).isPresent()).toBe(true);
+                    expect(overlay.isPresent()).toBe(true);
+                });
+
+                describe("and confirmed", function () {
+                    beforeEach(function () {
+                        overlay.all(by.css('.bottom-bar .s-btn'))
+                            .filter(function (element) {
+                                return element.getText().then(function (text) {
+                                    return text === 'OK';
+                                });
+                            })
+                            .click();
+                    });
+
+                    it("dismisses the dialog", function () {
+                        expect(element(by.css('.overlay')).isPresent())
+                            .toBe(false);
+                    });
+                });
+
+                describe("and cancelled", function () {
+                    beforeEach(function () {
+                        overlay.all(by.css('.bottom-bar .s-btn'))
+                            .filter(function (element) {
+                                return element.getText().then(function (text) {
+                                    return text === 'Cancel';
+                                });
+                            })
+                            .click();
+                    });
+
+                    it("dismisses the dialog", function () {
+                        expect(element(by.css('.overlay')).isPresent())
+                            .toBe(false);
+                    });
                 });
             });
         }
