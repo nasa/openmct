@@ -23,3 +23,4 @@
 var CreateTemplate = require('./CreateTemplate');
 
 new CreateTemplate("Display Layout", true).describe();
+new CreateTemplate("Web Page", false).describe();
