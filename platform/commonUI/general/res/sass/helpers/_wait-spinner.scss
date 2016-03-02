@@ -78,7 +78,7 @@
     }
 	&:before {
         @include spinner(5px, $colorLoadingFg);
-        padding: 5%;
+        padding: 15px;
         z-index: 10;
 	}
     &:after {
@@ -86,9 +86,5 @@
         background: $colorLoadingBg;
         display: block;
         z-index: 9;
-    }
-    &.tree-item:before {
-        padding: $menuLineH / 4;
-        border-width: 2px;
     }
 }
