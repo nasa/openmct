@@ -256,7 +256,11 @@ define(
             it("after failed navigation event resets the selected tree" +
                 " object", function () {
                 mockScope.navigatedObject = mockDomainObject;
-                mockNavigationService.setNavigation.andReturn(false);
+                mockWindow.confirm.andReturn(false);
+                mockPolicyService.allow.andCallFake(function(category, object, context, callback){
+                    callback("unsaved changes");
+                    return false;
+                });
 
                 //Simulate a change in selected tree object
                 mockScope.treeModel = {selectedObject: mockDomainObject};

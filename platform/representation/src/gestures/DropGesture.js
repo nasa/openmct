@@ -80,13 +80,6 @@ define(
                 }).length > 0;
             }
 
-            function shouldCreateVirtualPanel(domainObject){
-                return domainObject.useCapability('view').filter(function (view){
-                        return (view.key === 'plot' || view.key === 'scrolling')
-                            && domainObject.getModel().type !== 'telemetry.panel';
-                    }).length > 0;
-            }
-
             function dragOver(e) {
                 //Refresh domain object on each dragOver to catch external
                 // updates to the model
@@ -111,9 +104,7 @@ define(
                         key: 'compose',
                         selectedObject: selectedObject
                     })[0];
-                    //TODO: Fix this. Define an action for creating new
-                    // virtual panel
-                    if (action || shouldCreateVirtualPanel(domainObject, selectedObject)) {
+                    if (action) {
                         event.dataTransfer.dropEffect = 'move';
 
                         // Indicate that we will accept the drag
@@ -123,61 +114,23 @@ define(
                 }
             }
 
-            function createVirtualPanel(base, selectedObject){
-
-                var typeKey = 'telemetry.panel',
-                    type = typeService.getType(typeKey),
-                    model = type.getInitialModel(),
-                    newPanel;
-
-                model.type = typeKey;
-                newPanel = new EditableDomainObject(instantiate(model), $q);
-                if (!canCompose(newPanel, selectedObject)) {
-                    return undefined;
-                }
-
-                [base.getId(), selectedObject.getId()].forEach(function(id){
-                    newPanel.getCapability('composition').add(id);
-                });
-
-                newPanel.getCapability('location')
-                    .setPrimaryLocation(base.getCapability('location')
-                        .getContextualLocation());
-
-                newPanel.setOriginalObject(base);
-                return newPanel;
-
-            }
-
             function drop(e) {
                 var event = (e || {}).originalEvent || e,
                     id = event.dataTransfer.getData(GestureConstants.MCT_DRAG_TYPE),
-                    domainObjectType = editableDomainObject.getModel().type,
-                    selectedObject = dndService.getData(
-                        GestureConstants.MCT_EXTENDED_DRAG_TYPE
-                    );
-                
+                    domainObjectType = editableDomainObject.getModel().type;
+
                 // Handle the drop; add the dropped identifier to the
                 // destination domain object's composition, and persist
                 // the change.
                 if (id) {
-                    if (shouldCreateVirtualPanel(domainObject, selectedObject)){
-                        editableDomainObject = createVirtualPanel(domainObject, selectedObject);
-                        if (editableDomainObject) {
+                    $q.when(action && action.perform()).then(function (result) {
+                        //Don't go into edit mode for folders
+                        if (domainObjectType!=='folder') {
                             editableDomainObject.getCapability('action').perform('edit');
-                            broadcastDrop(id, event);
                         }
-                    } else {
-                        $q.when(action && action.perform()).then(function (result) {
-                            //Don't go into edit mode for folders
-                            if (domainObjectType!=='folder') {
-                                editableDomainObject.getCapability('action').perform('edit');
-                            }
-                            broadcastDrop(id, event);
-                        });
-                    }
+                        broadcastDrop(id, event);
+                    });
                 }
-                // TODO: Alert user if drag and drop is not allowed
             }
 
             // We can only handle drops if we have access to actions...

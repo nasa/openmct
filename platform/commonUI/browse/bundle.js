@@ -248,6 +248,12 @@ define([
                     "implementation": NavigationService
                 }
             ],
+            "services": [
+                {
+                    "key": "navigationService",
+                    "implementation": NavigationService
+                }
+            ],
             "policies": [
                 {
                     "implementation": CreationPolicy,

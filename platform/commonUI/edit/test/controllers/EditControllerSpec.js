@@ -89,25 +89,25 @@ define(
 
                 controller = new EditObjectController(
                     mockScope,
-                    mockLocation
+                    mockLocation,
+                    mockPolicyService
                 );
             });
 
             it("exposes a warning message for unload", function () {
                 var obj = mockObject,
-                    mockEditor = jasmine.createSpyObj('editor', ['dirty']);
+                    errorMessage = "Unsaved changes";
 
                 // Normally, should be undefined
                 expect(controller.getUnloadWarning()).toBeUndefined();
 
-                // Override the object's editor capability, make it look
-                // like there are unsaved changes.
-                mockCapabilities.editor = mockEditor;
-                mockEditor.dirty.andReturn(true);
-                mockStatusCapability.get.andReturn(true);
+                // Override the policy service to prevent navigation
+                mockPolicyService.allow.andCallFake(function(category, object, context, callback){
+                   callback(errorMessage);
+                });
 
                 // Should have some warning message here now
-                expect(controller.getUnloadWarning()).toEqual(jasmine.any(String));
+                expect(controller.getUnloadWarning()).toEqual(errorMessage);
             });
 
 

@@ -31,7 +31,6 @@ define(
                 mockScope,
                 testAttrs,
                 mockEvent,
-                mockNavigationService,
                 directive;
 
             function fireListener(eventType, value) {
@@ -47,8 +46,7 @@ define(
                 mockScope = jasmine.createSpyObj("$scope", ['$eval', '$on']);
                 testAttrs = { mctBeforeUnload: "someExpression" };
                 mockEvent = jasmine.createSpyObj("event", ["preventDefault"]);
-                mockNavigationService = jasmine.createSpyObj("navigationService", ["addListener", "removeListener"]);
-                directive = new MCTBeforeUnload(mockWindow, mockNavigationService);
+                directive = new MCTBeforeUnload(mockWindow);
                 directive.link(mockScope, {}, testAttrs);
             });
 
@@ -65,10 +63,6 @@ define(
                     "$locationChangeStart",
                     jasmine.any(Function)
                 );
-            });
-
-            it("listens for navigation changes", function () {
-                expect(mockNavigationService.addListener).toHaveBeenCalledWith(jasmine.any(Function), "before");
             });
 
             it("listens for its scope's destroy event", function () {
@@ -114,7 +108,6 @@ define(
             it("cleans up listeners when destroyed", function () {
                 fireListener("$destroy", mockEvent);
                 expect(mockWindow.onbeforeunload).toBeUndefined();
-                expect(mockNavigationService.removeListener).toHaveBeenCalled();
             });
 
 
