@@ -32,7 +32,7 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function BrowseObjectController($scope, $location, $route, $q, navigationService) {
+        function BrowseObjectController($scope, $location, $route) {
             var navigatedObject;
             function setViewForDomainObject(domainObject) {
                 

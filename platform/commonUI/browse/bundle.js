@@ -135,9 +135,7 @@ define([
                     "depends": [
                         "$scope",
                         "$location",
-                        "$route",
-                        "$q",
-                        "navigationService"
+                        "$route"
                     ]
                 },
                 {
@@ -240,12 +238,6 @@ define([
                 {
                     "key": "inspector-region",
                     "template": inspectorRegionTemplate
-                }
-            ],
-            "services": [
-                {
-                    "key": "navigationService",
-                    "implementation": NavigationService
                 }
             ],
             "services": [

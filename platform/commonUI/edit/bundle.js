@@ -190,10 +190,7 @@ define([
                 {
                     "category": "navigation",
                     "message": "There are unsaved changes.",
-                    "implementation": EditNavigationPolicy,
-                    "depends": [
-                        "$window"
-                    ]
+                    "implementation": EditNavigationPolicy
                 }
 
             ],

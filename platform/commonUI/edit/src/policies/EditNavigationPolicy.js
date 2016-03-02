@@ -33,8 +33,7 @@ define(
          * @constructor
          * @implements {Policy.<Action, ActionContext>}
          */
-        function EditNavigationPolicy($window, policyService) {
-            this.window = $window;
+        function EditNavigationPolicy(policyService) {
             this.policyService = policyService;
         }
 

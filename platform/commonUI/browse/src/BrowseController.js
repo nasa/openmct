@@ -32,9 +32,7 @@ define(
     function (GestureConstants) {
         "use strict";
 
-        var ROOT_ID = "ROOT",
-            DEFAULT_PATH = "mine",
-            CONFIRM_MSG = "Unsaved changes will be lost if you leave this page.";
+        var ROOT_ID = "ROOT";
 
         /**
          * The BrowseController is used to populate the initial scope in Browse
