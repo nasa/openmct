@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <span class="l-inspect">
-    <div ng-controller="PaneController as modelPaneEdit">
+    <div ng-controller="PaneController">
         <mct-split-pane class='abs contents split-layout' anchor='bottom'>
             <div class="split-pane-component pane top">
                 <div class="abs holder holder-inspector l-flex-col">
@@ -31,8 +31,8 @@
                             ng-model="ngModel"
                             class="flex-elem grows vscroll l-flex-col">
                     </mct-representation>
-                </div><!--/ holder-inspector -->
-            </div><!--/ split-pane-component -->
+                </div>
+            </div>
             <mct-splitter class="splitter-inspect-panel mobile-hide"></mct-splitter>
             <div class="split-pane-component pane bottom">
                 <div class="abs holder holder-elements l-flex-col">
@@ -45,5 +45,5 @@
                 </div>
             </div>
         </mct-split-pane>
-    </div><!--/ PaneController -->
+    </div>
 </span>

@@ -19,14 +19,15 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div content="jquery-wrapper"
-     class="abs holder-all edit-mode"
-     ng-controller="EditController as editMode"
-     mct-before-unload="editMode.getUnloadWarning()">
+<!--
+ A representation that allows the 'View' region of an object view to change
+ dynamically (eg. between browse and edit modes). Values correspond to a
+ representation key, and currently defaults to 'browse-object'.
 
-    <mct-representation key="'edit-object'" mct-object="editMode.navigatedObject()">
-    </mct-representation>
-
-    <mct-include key="'bottombar'"></mct-include>
-
-</div>
+ In the case of edit, the EditRepresenter will change this to editable
+ representation of the object as needed.
+ -->
+<mct-representation mct-object="domainObject"
+                    key="viewObjectTemplate || 'browse-object'"
+                    class="abs holder holder-object">
+</mct-representation>

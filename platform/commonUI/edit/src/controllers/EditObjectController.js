@@ -26,41 +26,45 @@
  * @namespace platform/commonUI/edit
  */
 define(
-    ["../objects/EditableDomainObject"],
-    function (EditableDomainObject) {
+    [],
+    function () {
         "use strict";
 
         /**
          * Controller which is responsible for populating the scope for
-         * Edit mode; introduces an editable version of the currently
-         * navigated domain object into the scope.
+         * Edit mode
          * @memberof platform/commonUI/edit
          * @constructor
          */
-        function EditController($scope, $q, navigationService) {
-            var self = this;
+        function EditObjectController($scope, $location, policyService) {
+            this.scope = $scope;
+            this.policyService = policyService;
 
-            function setNavigation(domainObject) {
-                // Wrap the domain object such that all mutation is
-                // confined to edit mode (until Save)
-                self.navigatedDomainObject =
-                    domainObject && new EditableDomainObject(domainObject, $q);
+            var navigatedObject;
+            function setViewForDomainObject(domainObject) {
+
+                var locationViewKey = $location.search().view;
+
+                function selectViewIfMatching(view) {
+                    if (view.key === locationViewKey) {
+                        $scope.representation = $scope.representation || {};
+                        $scope.representation.selected = view;
+                    }
+                }
+
+                if (locationViewKey) {
+                    ((domainObject && domainObject.useCapability('view')) || [])
+                        .forEach(selectViewIfMatching);
+                }
+                navigatedObject = domainObject;
             }
 
-            setNavigation(navigationService.getNavigation());
-            navigationService.addListener(setNavigation);
-            $scope.$on("$destroy", function () {
-                navigationService.removeListener(setNavigation);
-            });
-        }
+            $scope.$watch('domainObject', setViewForDomainObject);
 
-        /**
-         * Get the domain object which is navigated-to.
-         * @returns {DomainObject} the domain object that is navigated-to
-         */
-        EditController.prototype.navigatedObject = function () {
-            return this.navigatedDomainObject;
-        };
+            $scope.doAction = function (action){
+                return $scope[action] && $scope[action]();
+            };
+        }
 
         /**
          * Get the warning to show if the user attempts to navigate
@@ -68,17 +72,18 @@ define(
          * @returns {string} the warning to show, or undefined if
          *          there are no unsaved changes
          */
-        EditController.prototype.getUnloadWarning = function () {
-            var navigatedObject = this.navigatedDomainObject,
-                editorCapability = navigatedObject &&
-                    navigatedObject.getCapability("editor"),
-                hasChanges = editorCapability && editorCapability.dirty();
+        EditObjectController.prototype.getUnloadWarning = function () {
+            var navigatedObject = this.scope.domainObject,
+                policyMessage;
 
-            return hasChanges ?
-                "Unsaved changes will be lost if you leave this page." :
-                undefined;
+            this.policyService.allow("navigation", navigatedObject, undefined, function(message) {
+               policyMessage = message;
+            });
+
+            return policyMessage;
+
         };
 
-        return EditController;
+        return EditObjectController;
     }
 );

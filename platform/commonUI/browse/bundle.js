@@ -111,10 +111,11 @@ define([
                         "$scope",
                         "$route",
                         "$location",
-                        "$q",
+                        "$window",
                         "objectService",
                         "navigationService",
                         "urlService",
+                        "policyService",
                         "DEFAULT_PATH"
                     ]
                 },
@@ -134,9 +135,7 @@ define([
                     "depends": [
                         "$scope",
                         "$location",
-                        "$route",
-                        "$q",
-                        "navigationService"
+                        "$route"
                     ]
                 },
                 {
@@ -170,6 +169,10 @@ define([
                 }
             ],
             "representations": [
+                {
+                    "key": "view-object",
+                    "templateUrl": "templates/view-object.html"
+                },
                 {
                     "key": "browse-object",
                     "template": browseObjectTemplate,

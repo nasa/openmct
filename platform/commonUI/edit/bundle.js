@@ -22,10 +22,10 @@
 /*global define*/
 
 define([
-    "./src/controllers/EditController",
     "./src/controllers/EditActionController",
     "./src/controllers/EditPanesController",
     "./src/controllers/ElementsController",
+    "./src/controllers/EditObjectController",
     "./src/directives/MCTBeforeUnload",
     "./src/actions/LinkAction",
     "./src/actions/EditAction",
@@ -34,9 +34,9 @@ define([
     "./src/actions/SaveAction",
     "./src/actions/CancelAction",
     "./src/policies/EditActionPolicy",
+    "./src/policies/EditNavigationPolicy",
     "./src/representers/EditRepresenter",
     "./src/representers/EditToolbarRepresenter",
-    "text!./res/templates/edit.html",
     "text!./res/templates/library.html",
     "text!./res/templates/edit-object.html",
     "text!./res/templates/edit-action-buttons.html",
@@ -44,10 +44,10 @@ define([
     "text!./res/templates/topbar-edit.html",
     'legacyRegistry'
 ], function (
-    EditController,
     EditActionController,
     EditPanesController,
     ElementsController,
+    EditObjectController,
     MCTBeforeUnload,
     LinkAction,
     EditAction,
@@ -56,9 +56,9 @@ define([
     SaveAction,
     CancelAction,
     EditActionPolicy,
+    EditNavigationPolicy,
     EditRepresenter,
     EditToolbarRepresenter,
-    editTemplate,
     libraryTemplate,
     editObjectTemplate,
     editActionButtonsTemplate,
@@ -70,22 +70,7 @@ define([
 
     legacyRegistry.register("platform/commonUI/edit", {
         "extensions": {
-            "routes": [
-                {
-                    "when": "/edit",
-                    "template": editTemplate
-                }
-            ],
             "controllers": [
-                {
-                    "key": "EditController",
-                    "implementation": EditController,
-                    "depends": [
-                        "$scope",
-                        "$q",
-                        "navigationService"
-                    ]
-                },
                 {
                     "key": "EditActionController",
                     "implementation": EditActionController,
@@ -105,6 +90,15 @@ define([
                     "implementation": ElementsController,
                     "depends": [
                         "$scope"
+                    ]
+                },
+                {
+                    "key": "EditObjectController",
+                    "implementation": EditObjectController,
+                    "depends": [
+                        "$scope",
+                        "$location",
+                        "policyService"
                     ]
                 }
             ],
@@ -192,7 +186,13 @@ define([
                 {
                     "category": "action",
                     "implementation": EditActionPolicy
+                },
+                {
+                    "category": "navigation",
+                    "message": "There are unsaved changes.",
+                    "implementation": EditNavigationPolicy
                 }
+
             ],
             "templates": [
                 {
@@ -206,6 +206,9 @@ define([
                     "template": editObjectTemplate,
                     "uses": [
                         "view"
+                    ],
+                    "gestures": [
+                        "drop"
                     ]
                 },
                 {
