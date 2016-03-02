@@ -31,7 +31,13 @@ describe('Create Display', function() {
     var ITEM_GRID_SELECT = 'P\nL\nDisplay\n0 Items';
 
     beforeEach(require('../common/Launch'));
-    it('should Create new Display', function(){
+    beforeEach(require('../common/create').bind(null, "Display Layout"));
+
+    it("", function () {
+
+    });
+
+    xit('should Create new Display', function(){
         //button.click()
         browser.wait(function() {
            createClass.createButton().click();
