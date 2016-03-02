@@ -16,6 +16,23 @@ CreateTemplate.prototype.describe = function (nested) {
                 .toBe(this.expectEditMode);
         }.bind(this));
 
+        it(!this.expectEditMode ? "shows a dialog" : "does not show a dialog", function () {
+            expect(element(by.css('.overlay')).isPresent())
+                .toBe(!this.expectEditMode);
+        }.bind(this));
+
+        if (this.expectEditMode) {
+            describe("when saved", function () {
+                beforeEach(function () {
+                    element(by.css('.t-save')).click();
+                });
+
+                it("shows a dialog", function () {
+                    expect(element(by.css('.overlay')).isPresent()).toBe(true);
+                });
+            });
+        }
+
         if (nested) {
             nested();
         }
