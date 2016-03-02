@@ -484,6 +484,8 @@ This solution offers further benefits:
   to expose other (potentially wildly different) means of extension.
   Usage of `Provider`s is _encouraged_ to promote ubiquitous
   extensibility, but no limitation is exposed.
+* Plugins (and even whole applications, e.g. `MCT`) can be unit tested,
+  in the same style as individual extensions.
 * By moving everything into classes which accept dependencies, a
   degree of inflexibility is removed from the architecture. In principle,
   it should be possible to run multiple instances of `MCT` (with
