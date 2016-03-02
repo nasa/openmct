@@ -12,7 +12,7 @@ module.exports = function create(name) {
                 .isPresent();
         }, 1000)
         .then(function () {
-            return element(by.css('[ng-click="createAction.perform()"]'))
+            return element.all(by.css('[ng-click="createAction.perform()"]'))
                 .filter(function (el) {
                     return el.getText().then(function (text) {
                         return text.indexOf(name) > -1;
