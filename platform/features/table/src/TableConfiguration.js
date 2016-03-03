@@ -60,10 +60,10 @@ define(
 
                 metadata.forEach(function (metadatum) {
                     //Push domains first
-                    metadatum.domains.forEach(function (domainMetadata) {
+                    (metadatum.domains || []).forEach(function (domainMetadata) {
                         self.addColumn(new DomainColumn(domainMetadata, self.telemetryFormatter));
                     });
-                    metadatum.ranges.forEach(function (rangeMetadata) {
+                    (metadatum.ranges || []).forEach(function (rangeMetadata) {
                         self.addColumn(new RangeColumn(rangeMetadata, self.telemetryFormatter));
                     });
                 });
@@ -100,8 +100,8 @@ define(
          */
         TableConfiguration.prototype.getHeaders = function() {
             var self = this;
-            return this.columns.map(function (column){
-                return self.getColumnTitle(column);
+            return this.columns.map(function (column, i){
+                return self.getColumnTitle(column) || 'Column ' + (i + 1);
             });
         };
 
@@ -115,8 +115,8 @@ define(
          */
         TableConfiguration.prototype.getRowValues = function(telemetryObject, datum) {
             var self = this;
-            return this.columns.reduce(function(rowObject, column){
-                var columnTitle = self.getColumnTitle(column),
+            return this.columns.reduce(function(rowObject, column, i){
+                var columnTitle = self.getColumnTitle(column) || 'Column ' + (i + 1),
                     columnValue = column.getValue(telemetryObject, datum);
 
                 if (columnValue !== undefined && columnValue.text === undefined){
