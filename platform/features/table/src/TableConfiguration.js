@@ -36,7 +36,7 @@ define(
          * @param domainObject
          * @constructor
          */
-        function Table(domainObject, telemetryFormatter) {
+        function TableConfiguration(domainObject, telemetryFormatter) {
             this.domainObject = domainObject;
             this.columns = [];
             this.telemetryFormatter = telemetryFormatter;
@@ -45,14 +45,19 @@ define(
         /**
          * Build column definitions based on supplied telemetry metadata
          * @param metadata Metadata describing the domains and ranges available
-         * @returns {Table} This object
+         * @returns {TableConfiguration} This object
          */
-        Table.prototype.buildColumns = function(metadata) {
+        TableConfiguration.prototype.buildColumns = function(metadata) {
             var self = this;
 
             this.columns = [];
 
             if (metadata) {
+
+                if (metadata.length > 1){
+                    self.addColumn(new NameColumn(), 0);
+                }
+
                 metadata.forEach(function (metadatum) {
                     //Push domains first
                     metadatum.domains.forEach(function (domainMetadata) {
@@ -72,7 +77,7 @@ define(
          * @param {Number} [index] Where the column should appear (will be
          * affected by column filtering)
          */
-        Table.prototype.addColumn = function (column, index) {
+        TableConfiguration.prototype.addColumn = function (column, index) {
             if (typeof index === 'undefined') {
                 this.columns.push(column);
             } else {
@@ -85,7 +90,7 @@ define(
          * @param column
          * @returns {*|string}
          */
-        Table.prototype.getColumnTitle = function (column) {
+        TableConfiguration.prototype.getColumnTitle = function (column) {
                 return column.getTitle();
         };
 
@@ -93,7 +98,7 @@ define(
          * Get a simple list of column titles
          * @returns {Array} The titles of the columns
          */
-        Table.prototype.getHeaders = function() {
+        TableConfiguration.prototype.getHeaders = function() {
             var self = this;
             return this.columns.map(function (column){
                 return self.getColumnTitle(column);
@@ -108,7 +113,7 @@ define(
          * @returns {Object} Key value pairs where the key is the column
          * title, and the value is the formatted value from the provided datum.
          */
-        Table.prototype.getRowValues = function(telemetryObject, datum) {
+        TableConfiguration.prototype.getRowValues = function(telemetryObject, datum) {
             var self = this;
             return this.columns.reduce(function(rowObject, column){
                 var columnTitle = self.getColumnTitle(column),
@@ -130,8 +135,20 @@ define(
         /**
          * @private
          */
-        Table.prototype.defaultColumnConfiguration = function () {
+        TableConfiguration.prototype.defaultColumnConfiguration = function () {
             return ((this.domainObject.getModel().configuration || {}).table || {}).columns || {};
+        };
+
+        /**
+         * Set the established configuration on the domain object
+         * @private
+         */
+        TableConfiguration.prototype.saveColumnConfig = function (columnConfig) {
+            this.domainObject.useCapability('mutation', function (model) {
+                model.configuration = model.configuration || {};
+                model.configuration.table = model.configuration.table || {};
+                model.configuration.table.columns = columnConfig;
+            });
         };
 
         /**
@@ -141,7 +158,7 @@ define(
          * pairs where the key is the column title, and the value is a
          * boolean indicating whether the column should be shown.
          */
-        Table.prototype.getColumnConfiguration = function() {
+        TableConfiguration.prototype.getColumnConfig = function() {
             var configuration = {},
                 //Use existing persisted config, or default it
                 defaultConfig = this.defaultColumnConfiguration();
@@ -158,6 +175,6 @@ define(
             return configuration;
         };
 
-        return Table;
+        return TableConfiguration;
     }
 );

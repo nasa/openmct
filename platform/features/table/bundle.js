@@ -23,17 +23,15 @@
 
 define([
     "./src/directives/MCTTable",
-    "./src/controllers/TableController",
+    "./src/controllers/TelemetryTableController",
     "./src/controllers/TableOptionsController",
-    "./src/controllers/MCTTableController",
     '../../commonUI/regions/src/Region',
     '../../commonUI/browse/src/InspectorRegion',
     "legacyRegistry"
 ], function (
     MCTTable,
-    TableController,
+    TelemetryTableController,
     TableOptionsController,
-    MCTTableController,
     Region,
     InspectorRegion,
     legacyRegistry
@@ -84,19 +82,14 @@ define([
             ],
             "controllers": [
                 {
-                    "key": "TableController",
-                    "implementation": TableController,
+                    "key": "TelemetryTableController",
+                    "implementation": TelemetryTableController,
                     "depends": ["$scope", "telemetryHandler", "telemetryFormatter"]
                 },
                 {
                     "key": "TableOptionsController",
                     "implementation": TableOptionsController,
                     "depends": ["$scope"]
-                },
-                {
-                    "key": "MCTTableController",
-                    "implementation": MCTTableController,
-                    "depends": ["$scope", "$timeout", "$element"]
                 }
 
             ],

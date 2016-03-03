@@ -287,7 +287,7 @@ define(
                 }
             ];
 
-            this.$timeout(this.setElementSizes.bind(this), 0);
+            this.$timeout(this.setElementSizes.bind(this));
         };
 
         /**

@@ -27,10 +27,9 @@
  */
 define(
     [
-        '../Table',
-        '../NameColumn'
+        '../TableConfiguration'
     ],
-    function (Table, NameColumn) {
+    function (TableConfiguration) {
         "use strict";
 
         /**
@@ -43,7 +42,7 @@ define(
          * @param telemetryFormatter
          * @constructor
          */
-        function TableController(
+        function TelemetryTableController(
             $scope,
             telemetryHandler,
             telemetryFormatter
@@ -55,7 +54,7 @@ define(
             this.handle = undefined;
             //this.pending = false;
             this.telemetryHandler = telemetryHandler;
-            this.table = new Table($scope.domainObject, telemetryFormatter);
+            this.table = new TableConfiguration($scope.domainObject, telemetryFormatter);
             this.changeListeners = [];
 
             $scope.rows = [];
@@ -73,7 +72,7 @@ define(
             this.$scope.$on("$destroy", this.destroy.bind(this));
         }
 
-        TableController.prototype.registerChangeListeners = function() {
+        TelemetryTableController.prototype.registerChangeListeners = function() {
             //Defer registration of change listeners until domain object is
             // available in order to avoid race conditions
 
@@ -93,7 +92,7 @@ define(
         /**
          * Release the current subscription (called when scope is destroyed)
          */
-        TableController.prototype.destroy = function () {
+        TelemetryTableController.prototype.destroy = function () {
             if (this.handle) {
                 this.handle.unsubscribe();
                 this.handle = undefined;
@@ -103,13 +102,7 @@ define(
         /**
          Create a new subscription. This is called when
          */
-        TableController.prototype.subscribe = function() {
-            var self = this;
-
-            /*if (this.pending){
-                return;
-            }*/
-            //this.pending = true;
+        TelemetryTableController.prototype.subscribe = function() {
 
             if (this.handle) {
                 this.handle.unsubscribe();
@@ -119,7 +112,6 @@ define(
 
             //Noop because not supporting realtime data right now
             function noop(){
-                //self.pending = false;
             }
 
             this.handle = this.$scope.domainObject && this.telemetryHandler.handle(
@@ -136,42 +128,24 @@ define(
         /**
          * Add any historical data available
          */
-        TableController.prototype.addHistoricalData = function(domainObject, series) {
+        TelemetryTableController.prototype.addHistoricalData = function(domainObject, series) {
             var i;
-            //this.pending = false;
             for (i=0; i < series.getPointCount(); i++) {
                 this.updateRows(domainObject, this.handle.makeDatum(domainObject, series, i));
             }
         };
 
         /**
-         * Set the established configuration on the domain object
-         * @private
-         */
-        TableController.prototype.writeConfigToModel = function (configuration) {
-            this.$scope.domainObject.useCapability('mutation', function (model) {
-                model.configuration = model.configuration || {};
-                model.configuration.table = model.configuration.table || {};
-                model.configuration.table.columns = configuration;
-            });
-        };
-
-        /**
          * Setup table columns based on domain object metadata
          */
-        TableController.prototype.setup = function() {
+        TelemetryTableController.prototype.setup = function() {
             var handle = this.handle,
                 table = this.table,
-                self = this,
-                configuration;
+                self = this;
 
             if (handle) {
                 handle.promiseTelemetryObjects().then(function (objects) {
                     table.buildColumns(handle.getMetadata());
-
-                    if (objects && objects.length > 1){
-                        table.addColumn(new NameColumn(), 0);
-                    }
 
                     self.filterColumns();
 
@@ -191,7 +165,7 @@ define(
          * be composed of multiple objects)
          * @param datum The data received from the telemetry source
          */
-        TableController.prototype.updateRows = function (object, datum) {
+        TelemetryTableController.prototype.updateRows = function (object, datum) {
             this.$scope.rows.push(this.table.getRowValues(object, datum));
         };
 
@@ -199,16 +173,17 @@ define(
          * When column configuration changes, update the visible headers
          * accordingly.
          */
-        TableController.prototype.filterColumns = function () {
-            var config = this.table.getColumnConfiguration();
-
-            this.writeConfigToModel(config);
+        TelemetryTableController.prototype.filterColumns = function (columnConfig) {
+            if (!columnConfig){
+                columnConfig = this.table.getColumnConfig();
+                this.table.saveColumnConfig(columnConfig);
+            }
             //Populate headers with visible columns (determined by configuration)
-            this.$scope.headers = Object.keys(config).filter(function(column) {
-                return config[column];
+            this.$scope.headers = Object.keys(columnConfig).filter(function(column) {
+                return columnConfig[column];
             });
         };
 
-        return TableController;
+        return TelemetryTableController;
     }
 );
