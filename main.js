@@ -77,6 +77,7 @@ define([
     './platform/features/plot/bundle',
     './platform/features/scrolling/bundle',
     './platform/features/timeline/bundle',
+    './platform/features/table/bundle',
     './platform/forms/bundle',
     './platform/identity/bundle',
     './platform/persistence/aggregator/bundle',
