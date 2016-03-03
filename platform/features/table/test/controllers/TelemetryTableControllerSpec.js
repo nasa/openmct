@@ -23,7 +23,7 @@
 
 define(
     [
-        "../../src/controllers/TableController"
+        "../../src/controllers/TelemetryTableController"
     ],
     function (TableController) {
         "use strict";
@@ -75,7 +75,8 @@ define(
                     [
                         'buildColumns',
                         'getColumnConfiguration',
-                        'getRowValues'
+                        'getRowValues',
+                        'saveColumnConfiguration'
                     ]
                 );
                 mockTable.columns = [];
@@ -135,10 +136,7 @@ define(
 
                     controller.setup();
                     expect(mockTable.getColumnConfiguration).toHaveBeenCalled();
-                    expect(mockDomainObject.useCapability).toHaveBeenCalledWith('mutation', jasmine.any(Function));
-
-                    mockDomainObject.useCapability.mostRecentCall.args[1](mockModel);
-                    expect(mockModel.configuration).toBeDefined();
+                    expect(mockTable.saveColumnConfiguration).toHaveBeenCalled();
                 });
             });
 

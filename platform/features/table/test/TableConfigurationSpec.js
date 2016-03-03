@@ -23,7 +23,7 @@
 
 define(
     [
-        "../src/Table",
+        "../src/TableConfiguration",
         "../src/DomainColumn"
     ],
     function (Table, DomainColumn) {

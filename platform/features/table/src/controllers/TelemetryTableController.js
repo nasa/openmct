@@ -175,8 +175,8 @@ define(
          */
         TelemetryTableController.prototype.filterColumns = function (columnConfig) {
             if (!columnConfig){
-                columnConfig = this.table.getColumnConfig();
-                this.table.saveColumnConfig(columnConfig);
+                columnConfig = this.table.getColumnConfiguration();
+                this.table.saveColumnConfiguration(columnConfig);
             }
             //Populate headers with visible columns (determined by configuration)
             this.$scope.headers = Object.keys(columnConfig).filter(function(column) {

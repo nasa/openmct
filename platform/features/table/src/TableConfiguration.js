@@ -143,7 +143,7 @@ define(
          * Set the established configuration on the domain object
          * @private
          */
-        TableConfiguration.prototype.saveColumnConfig = function (columnConfig) {
+        TableConfiguration.prototype.saveColumnConfiguration = function (columnConfig) {
             this.domainObject.useCapability('mutation', function (model) {
                 model.configuration = model.configuration || {};
                 model.configuration.table = model.configuration.table || {};
@@ -158,7 +158,7 @@ define(
          * pairs where the key is the column title, and the value is a
          * boolean indicating whether the column should be shown.
          */
-        TableConfiguration.prototype.getColumnConfig = function() {
+        TableConfiguration.prototype.getColumnConfiguration = function() {
             var configuration = {},
                 //Use existing persisted config, or default it
                 defaultConfig = this.defaultColumnConfiguration();
