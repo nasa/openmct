@@ -67,7 +67,7 @@ define(
 
             // On a phone, bubble takes up more screen real estate,
             // so position it differently (toward the bottom)
-            if (this.agentService.isPhone(navigator.userAgent)) {
+            if (this.agentService.isPhone()) {
                 position = MOBILE_POSITION;
                 options = {};
             }
