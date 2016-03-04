@@ -50,8 +50,8 @@ define(
 
         GoToOriginalAction.appliesTo = function (context) {
             var domainObject = context.domainObject;
-            return domainObject && domainObject.hasCapability("location")
-                && domainObject.getCapability("location").isLink();
+            return domainObject && domainObject.hasCapability("location") &&
+                domainObject.getCapability("location").isLink();
         };
 
         return GoToOriginalAction;

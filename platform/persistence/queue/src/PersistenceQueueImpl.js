@@ -66,8 +66,8 @@ define(
 
             // Check if the queue's size has stopped increasing)
             function quiescent() {
-                return Object.keys(self.persistences).length
-                        === self.lastObservedSize;
+                return Object.keys(self.persistences).length ===
+                    self.lastObservedSize;
             }
 
             // Persist all queued objects

@@ -388,8 +388,8 @@ define(
                  notifications queued for display, setup a timeout to
                   dismiss the dialog.
                  */
-                if (notification && (notification.model.autoDismiss
-                    || this.selectNextNotification())) {
+                if (notification && (notification.model.autoDismiss ||
+                    this.selectNextNotification())) {
 
                     timeout = notification.model.autoDismiss || this.DEFAULT_AUTO_DISMISS;
                     this.active.timeout = this.$timeout(function () {
@@ -416,8 +416,8 @@ define(
             for (; i< this.notifications.length; i++) {
                 notification = this.notifications[i];
 
-                if (!notification.model.minimized
-                    && notification!== this.active.notification) {
+                if (!notification.model.minimized &&
+                    notification!== this.active.notification) {
 
                     return notification;
                 }

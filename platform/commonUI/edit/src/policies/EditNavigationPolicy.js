@@ -45,8 +45,8 @@ define(
                 statusCapability = navigatedObject &&
                     navigatedObject.getCapability("status");
 
-            return statusCapability && statusCapability.get('editing')
-                && editorCapability && editorCapability.dirty();
+            return statusCapability && statusCapability.get('editing') &&
+                editorCapability && editorCapability.dirty();
         };
 
         /**

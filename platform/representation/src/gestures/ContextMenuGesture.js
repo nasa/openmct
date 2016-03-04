@@ -45,10 +45,10 @@ define(
                 parameters = element && element.attr('parameters') && $parse(element.attr('parameters'))();
 
             function suppressMenu() {
-                return parameters
-                && parameters.suppressMenuOnEdit
-                && navigationService.getNavigation()
-                && navigationService.getNavigation().hasCapability('editor');
+                return parameters &&
+                    parameters.suppressMenuOnEdit &&
+                    navigationService.getNavigation() &&
+                    navigationService.getNavigation().hasCapability('editor');
             }
 
             function showMenu(event) {
