@@ -30,7 +30,8 @@ define([
 ) {
 
     describe('GenericSearchProvider', function () {
-        var $q,
+        var $timeout,
+            $q,
             $log,
             modelService,
             models,
