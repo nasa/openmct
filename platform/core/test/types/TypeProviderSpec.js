@@ -26,7 +26,8 @@ define(
 
         describe("Type provider", function () {
 
-            var testTypeDefinitions = [
+            var captured = {},
+                testTypeDefinitions = [
                     {
                         key: 'basic',
                         glyph: "X",
