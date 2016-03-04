@@ -52,7 +52,7 @@ define([
         describe('when element exists', function () {
             beforeEach(function () {
                 $document.querySelectorAll.andReturn([splashElement]);
-                new SplashScreenManager([$document]);
+                return new SplashScreenManager([$document]);
             });
 
             it('adds fade out class', function () {
@@ -79,7 +79,7 @@ define([
             $document.querySelectorAll.andReturn([]);
 
             function run() {
-                new SplashScreenManager([$document]);
+                return new SplashScreenManager([$document]);
             }
 
             expect(run).not.toThrow();
