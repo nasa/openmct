@@ -117,13 +117,10 @@ define(
 
                 style: function (zoom) {
                     return {
-                        left: zoom.toPixels(dragHandler.start(id)) +
-                            Constants.HANDLE_WIDTH +
-                            'px',
-                        width: zoom.toPixels(dragHandler.duration(id)) -
-                            Constants.HANDLE_WIDTH * 2
-                            + 'px'
-                        //cursor: initialStart === undefined ? 'grab' : 'grabbing'
+                        left: (zoom.toPixels(dragHandler.start(id)) +
+                            Constants.HANDLE_WIDTH) + 'px',
+                        width: (zoom.toPixels(dragHandler.duration(id)) -
+                            Constants.HANDLE_WIDTH * 2) + 'px'
                     };
                 }
             };
