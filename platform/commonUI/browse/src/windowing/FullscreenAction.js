@@ -25,7 +25,7 @@
  */
 define(
     ["screenfull"],
-    function () {
+    function (screenfull) {
 
         var ENTER_FULLSCREEN = "Enter full screen mode",
             EXIT_FULLSCREEN = "Exit full screen mode";
