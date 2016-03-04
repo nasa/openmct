@@ -91,7 +91,7 @@ define(
                 });
 
                 // Whenever the touch event ends, 'isPressing' is false.
-                element.on('touchend', function (event) {
+                element.on('touchend', function () {
                     isPressing = false;
                 });
             }

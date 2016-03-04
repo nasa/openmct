@@ -143,7 +143,7 @@ define(
                 self = this;
 
             if (handle) {
-                handle.promiseTelemetryObjects().then(function (objects) {
+                handle.promiseTelemetryObjects().then(function () {
                     table.buildColumns(handle.getMetadata());
 
                     self.filterColumns();

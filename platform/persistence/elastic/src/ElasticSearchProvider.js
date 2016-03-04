@@ -73,7 +73,7 @@ define([
             })
             .then(function success(succesResponse) {
                 return provider.parseResponse(succesResponse);
-            }, function error(errorResponse) {
+            }, function error() {
                 // Gracefully fail.
                 return {
                     hits: [],

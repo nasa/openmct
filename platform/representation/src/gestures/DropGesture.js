@@ -71,13 +71,6 @@ define(
                 }
             }
 
-            function canCompose(domainObject, selectedObject){
-                return domainObject.getCapability("action").getActions({
-                    key: 'compose',
-                    selectedObject: selectedObject
-                }).length > 0;
-            }
-
             function dragOver(e) {
                 //Refresh domain object on each dragOver to catch external
                 // updates to the model
@@ -121,7 +114,7 @@ define(
                 // destination domain object's composition, and persist
                 // the change.
                 if (id) {
-                    $q.when(action && action.perform()).then(function (result) {
+                    $q.when(action && action.perform()).then(function () {
                         //Don't go into edit mode for folders
                         if (domainObjectType!=='folder') {
                             editableDomainObject.getCapability('action').perform('edit');

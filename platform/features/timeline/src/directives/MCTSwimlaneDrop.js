@@ -40,7 +40,6 @@ define(
                     height = element[0].offsetHeight,
                     rect = element[0].getBoundingClientRect(),
                     offset = event.pageY - rect.top,
-                    dataTransfer = event.dataTransfer,
                     id = dndService.getData(
                         SwimlaneDragConstants.MCT_DRAG_TYPE
                     ),

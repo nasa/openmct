@@ -26,8 +26,6 @@
 define(
     [],
     function () {
-        var ROOT_ID = "ROOT",
-            DEFAULT_PATH = "/mine";
         /**
          * The new tab action allows a domain object to be opened
          * into a new browser tab.

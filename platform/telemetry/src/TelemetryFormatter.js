@@ -70,7 +70,7 @@ define(
          * @returns {string} a textual representation of the
          *        value, suitable for display.
          */
-        TelemetryFormatter.prototype.formatRangeValue = function (v, key) {
+        TelemetryFormatter.prototype.formatRangeValue = function (v) {
             return isNaN(v) ? String(v) : v.toFixed(VALUE_FORMAT_DIGITS);
         };
 

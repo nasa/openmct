@@ -36,7 +36,7 @@ define(
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
-        function FixedController($scope, $q, dialogService, telemetryHandler, telemetryFormatter, throttle) {
+        function FixedController($scope, $q, dialogService, telemetryHandler, telemetryFormatter) {
             var self = this,
                 handle,
                 names = {}, // Cache names by ID
@@ -230,7 +230,7 @@ define(
             }
 
             // Handle changes in the object's composition
-            function updateComposition(ids) {
+            function updateComposition() {
                 // Populate panel positions
                 // TODO: Ensure defaults here
                 // Resubscribe - objects in view have changed

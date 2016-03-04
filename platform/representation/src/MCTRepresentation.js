@@ -53,8 +53,7 @@ define(
          * @param {ViewDefinition[]} views an array of view extensions
          */
         function MCTRepresentation(representations, views, representers, $q, templateLinker, $log) {
-            var representationMap = {},
-                gestureMap = {};
+            var representationMap = {};
 
             // Assemble all representations and views
             // The distinction between views and representations is
@@ -82,7 +81,7 @@ define(
                 }
             }
 
-            function link($scope, element, attrs, ctrl, transclude) {
+            function link($scope, element, attrs) {
                 var activeRepresenters = representers.map(function (Representer) {
                         return new Representer($scope, element, attrs);
                     }),

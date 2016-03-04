@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['moment'],
-    function (moment) {
+    [],
+    function () {
 
         /**
          * Calls functions every second, as close to the actual second

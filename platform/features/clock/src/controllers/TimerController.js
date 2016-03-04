@@ -38,8 +38,7 @@ define(
          *        time (typically wrapping `Date.now`)
          */
         function TimerController($scope, $window, now) {
-            var timerObject,
-                formatter,
+            var formatter,
                 active = true,
                 relativeTimestamp,
                 lastTimestamp,

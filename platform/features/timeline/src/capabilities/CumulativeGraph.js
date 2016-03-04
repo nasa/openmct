@@ -55,7 +55,6 @@ define(
             function initializeValues() {
                 var values = [],
                     slope = 0,
-                    previous = 0,
                     i;
 
                 // Add a point (or points, if needed) reaching to the provided

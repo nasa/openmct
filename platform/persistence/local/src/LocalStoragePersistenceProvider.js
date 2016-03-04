@@ -79,7 +79,7 @@ define(
             return this.$q.when(spaceObj[key]);
         };
 
-        LocalStoragePersistenceProvider.prototype.deleteObject = function (space, key, value) {
+        LocalStoragePersistenceProvider.prototype.deleteObject = function (space, key) {
             var spaceObj = this.getValue(space);
             delete spaceObj[key];
             this.setValue(space, spaceObj);

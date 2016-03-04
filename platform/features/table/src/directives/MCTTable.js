@@ -3,7 +3,7 @@ define(
     ["../controllers/MCTTableController"],
     function (MCTTableController) {
 
-        function MCTTable($timeout) {
+        function MCTTable() {
             return {
                 restrict: "E",
                 templateUrl: "platform/features/table/res/templates/mct-data-table.html",
@@ -13,7 +13,7 @@ define(
                     rows: "=",
                     enableFilter: "=?",
                     enableSort: "=?"
-                },
+                }
             };
         }
 

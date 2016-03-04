@@ -20,11 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 define(
-    ['../TimelineFormatter'],
-    function (TimelineFormatter) {
-
-
-        var FORMATTER = new TimelineFormatter();
+    [],
+    function () {
 
         /**
          * Controls the pan-zoom state of a timeline view.
@@ -113,7 +110,6 @@ define(
                  * @returns {number} duration, in milliseconds
                  */
                 duration: function (value) {
-                    var prior = duration;
                     if (arguments.length > 0) {
                         duration = roundDuration(value);
                     }

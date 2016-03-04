@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['moment'],
-    function (moment) {
+    [],
+    function () {
 
         var TICK_SPACING_PX = 150;
 
@@ -180,7 +180,7 @@ define(
                 };
             }
 
-            function updateOuterStart(t) {
+            function updateOuterStart() {
                 var ngModel = $scope.ngModel;
 
                 ngModel.inner.start =
@@ -195,7 +195,7 @@ define(
                 updateTicks();
             }
 
-            function updateOuterEnd(t) {
+            function updateOuterEnd() {
                 var ngModel = $scope.ngModel;
 
                 ngModel.inner.end =

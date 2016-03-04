@@ -79,8 +79,7 @@ define(
             }
 
             function doWizardSave(parent) {
-                var context = domainObject.getCapability("context"),
-                    wizard = new CreateWizard(
+                var wizard = new CreateWizard(
                         domainObject,
                         parent,
                         self.policyService

@@ -68,8 +68,7 @@ define(
         EditableDomainObjectCache.prototype.getEditableObject = function (domainObject) {
             var type = domainObject.getCapability('type'),
                 EditableDomainObject = this.EditableDomainObject,
-                editableObject,
-                statusListener;
+                editableObject;
 
             // Track the top-level domain object; this will have
             // some special behavior for its context capability.

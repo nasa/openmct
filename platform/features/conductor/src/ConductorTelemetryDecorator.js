@@ -57,14 +57,11 @@ define(
         };
 
         ConductorTelemetryDecorator.prototype.requestTelemetry = function (requests) {
-            var self = this;
             return this.telemetryService
                 .requestTelemetry(this.amendRequests(requests));
         };
 
         ConductorTelemetryDecorator.prototype.subscribe = function (callback, requests) {
-            var self = this;
-
             return this.telemetryService
                 .subscribe(callback, this.amendRequests(requests));
         };

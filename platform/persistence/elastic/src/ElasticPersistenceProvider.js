@@ -157,7 +157,7 @@ define(
                 .then(checkUpdate);
         };
 
-        ElasticPersistenceProvider.prototype.deleteObject = function (space, key, value) {
+        ElasticPersistenceProvider.prototype.deleteObject = function (space, key) {
             return this.del(key).then(bind(this.checkResponse, this));
         };
 

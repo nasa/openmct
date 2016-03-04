@@ -35,10 +35,10 @@ define(
                 getPointCount: function () {
                     return 0;
                 },
-                getDomainValue: function (index) {
+                getDomainValue: function () {
                     return 0;
                 },
-                getRangeValue: function (index) {
+                getRangeValue: function () {
                     return 0;
                 }
             };

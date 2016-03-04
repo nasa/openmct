@@ -144,7 +144,7 @@ define(
         };
 
         // Handle a specific representation of a specific domain object
-        ConductorRepresenter.prototype.represent = function represent(representation, representedObject) {
+        ConductorRepresenter.prototype.represent = function represent(representation) {
             this.destroy();
 
             if (this.views.indexOf(representation) !== -1 && !GLOBAL_SHOWING) {

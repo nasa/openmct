@@ -55,7 +55,7 @@ define(
         }
 
         function initializeGroups() {
-            var i, group;
+            var group;
 
             // Ten grayscale colors
             group = [];

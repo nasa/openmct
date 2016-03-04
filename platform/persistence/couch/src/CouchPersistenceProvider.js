@@ -116,7 +116,7 @@ define(
             return this.$q.when(this.spaces);
         };
 
-        CouchPersistenceProvider.prototype.listObjects = function (space) {
+        CouchPersistenceProvider.prototype.listObjects = function () {
             return this.get("_all_docs").then(bind(getIdsFromAllDocs, this));
         };
 

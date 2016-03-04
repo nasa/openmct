@@ -63,12 +63,12 @@ define(
             }
 
             // Set the duration associated with this object
-            function setDuration(value) {
+            function setDuration() {
                 // No-op; duration is implicit
             }
 
             // Set the end time associated with this object
-            function setEnd(value) {
+            function setEnd() {
                 // No-op; end time is implicit
             }
 

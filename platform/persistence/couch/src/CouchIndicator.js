@@ -74,7 +74,7 @@ define(
 
 
             // Callback if the HTTP request to Couch fails
-            function handleError(err) {
+            function handleError() {
                 self.state = DISCONNECTED;
             }
 

@@ -25,10 +25,8 @@
  * @namespace platform/commonUI/browse
  */
 define(
-    [
-        '../../../representation/src/gestures/GestureConstants'
-    ],
-    function (GestureConstants) {
+    [],
+    function () {
 
         var ROOT_ID = "ROOT";
 

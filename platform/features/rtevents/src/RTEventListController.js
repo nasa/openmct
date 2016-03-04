@@ -58,11 +58,7 @@ define(
                         lastIds.some(mismatch);
             }
 
-            function setupColumns(telemetryObjects) {
-                var id = $scope.domainObject && $scope.domainObject.getId(),
-                    firstId =
-                        telemetryObjects[0] && telemetryObjects[0].getId();
-
+            function setupColumns() {
                 columns = [];
                 
                 columns.push(new DomainColumn(telemetryFormatter));

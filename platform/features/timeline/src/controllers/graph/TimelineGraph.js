@@ -45,8 +45,6 @@ define(
                 min = 0,
                 // current maximum
                 max = 0,
-                // current displayed time span
-                duration = 1000,
                 // line colors to display
                 colors = Object.keys(domainObjects);
 

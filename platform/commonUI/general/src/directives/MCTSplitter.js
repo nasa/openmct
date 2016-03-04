@@ -28,13 +28,7 @@ define(
         var SPLITTER_TEMPLATE = "<div class='abs'" +
                 "mct-drag-down=\"splitter.startMove()\" " +
                 "mct-drag=\"splitter.move(delta)\" " +
-                "mct-drag-up=\"splitter.endMove()\"></div>",
-            OFFSETS_BY_EDGE = {
-                left: "offsetLeft",
-                right: "offsetRight",
-                top: "offsetTop",
-                bottom: "offsetBottom"
-            };
+                "mct-drag-up=\"splitter.endMove()\"></div>";
 
         /**
          * Implements `mct-splitter` directive.
@@ -50,7 +44,6 @@ define(
                 scope.splitter = {
                     // Begin moving this splitter
                     startMove: function () {
-                        var splitter = element[0];
                         initialPosition = mctSplitPane.position();
                         mctSplitPane.toggleClass('resizing');
                     },

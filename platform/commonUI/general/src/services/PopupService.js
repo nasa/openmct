@@ -81,8 +81,7 @@ define(
                 winDim = [ $window.innerWidth, $window.innerHeight ],
                 styles = { position: 'absolute' },
                 margin,
-                offset,
-                bubble;
+                offset;
 
             function adjustNegatives(value, index) {
                 return value < 0 ? (value + winDim[index]) : value;

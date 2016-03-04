@@ -379,9 +379,8 @@ define(
          */
         NotificationService.prototype.setActiveNotification =
             function (notification) {
+                var timeout;
 
-                var self = this,
-                    timeout;
                 this.active.notification = notification;
                 /*
                 If autoDismiss has been specified, OR there are other

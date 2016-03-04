@@ -28,9 +28,7 @@ define(
     function () {
 
         var NON_PERSISTENT_WARNING =
-                "Tried to create an object in non-persistent container.",
-            NO_COMPOSITION_WARNING =
-                "Could not add to composition; no composition in ";
+                "Tried to create an object in non-persistent container.";
 
         /**
          * The creation service is responsible for instantiating and

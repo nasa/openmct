@@ -61,7 +61,7 @@ define(
          * @memberof platform/core
          * @constructor
          */
-        function DomainObjectProvider(modelService, instantiate, $q) {
+        function DomainObjectProvider(modelService, instantiate) {
             this.modelService = modelService;
             this.instantiate = instantiate;
         }
@@ -75,7 +75,7 @@ define(
             // from this service.
             function assembleResult(models) {
                 var result = {};
-                ids.forEach(function (id, index) {
+                ids.forEach(function (id) {
                     if (models[id]) {
                         // Create the domain object
                         result[id] = instantiate(models[id], id);

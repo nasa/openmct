@@ -31,7 +31,7 @@ define(
          * @param {...Array.<{templateUrl: string}>} extensions arrays
          *        of template or template-like extensions
          */
-        function TemplatePrefetcher(templateLinker, extensions) {
+        function TemplatePrefetcher(templateLinker) {
             Array.prototype.slice.apply(arguments, [1])
                 .reduce(function (a, b) {
                     return a.concat(b);

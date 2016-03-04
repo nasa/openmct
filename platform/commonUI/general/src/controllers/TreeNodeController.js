@@ -60,9 +60,7 @@ define(
          */
         function TreeNodeController($scope, $timeout) {
             var self = this,
-                selectedObject = ($scope.ngModel || {}).selectedObject,
-                isSelected = false,
-                hasBeenExpanded = false;
+                selectedObject = ($scope.ngModel || {}).selectedObject;
 
             // Look up the id for a domain object. A convenience
             // for mapping; additionally does some undefined-checking.

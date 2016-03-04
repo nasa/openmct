@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['../objects/DomainObjectImpl'],
-    function (DomainObjectImpl) {
+    [],
+    function () {
 
         /**
          * Implements the `instantiation` capability. This allows new domain

@@ -37,10 +37,7 @@ define(
          * @implements {PersistenceCapability}
          */
         function EditableActionCapability(
-            actionCapability,
-            editableObject,
-            domainObject,
-            cache
+            actionCapability
         ) {
             var action = Object.create(actionCapability);
 
