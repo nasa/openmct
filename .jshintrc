@@ -2,7 +2,6 @@
     "bitwise": true,
     "curly": true,
     "eqeqeq": true,
-    "esversion": 5,
     "freeze": true,
     "funcscope": true,
     "futurehostile": true,
@@ -11,7 +10,7 @@
     "nocomma": true,
     "nonbsp": true,
     "nonew": true,
-    "predef": [ "define" ],
+    "predef": ["define"],
     "strict": "implied",
     "undef": true,
     "unused": true
