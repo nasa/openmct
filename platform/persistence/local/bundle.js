@@ -38,6 +38,7 @@ define([
                     "type": "provider",
                     "implementation": LocalStoragePersistenceProvider,
                     "depends": [
+                        "$window",
                         "$q",
                         "PERSISTENCE_SPACE"
                     ]

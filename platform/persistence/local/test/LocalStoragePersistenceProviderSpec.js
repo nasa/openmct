@@ -49,14 +49,11 @@ define(
                 mockQ.when.andCallFake(mockPromise);
 
                 provider = new LocalStoragePersistenceProvider(
+                    { localStorage: testLocalStorage },
                     mockQ,
                     testSpace,
                     testLocalStorage
                 );
-
-                // White-boxy: Can't effectively mock window.localStorage,
-                // so override the provider's local reference to it.
-                provider.localStorage = testLocalStorage;
             });
 
             it("reports available spaces", function () {

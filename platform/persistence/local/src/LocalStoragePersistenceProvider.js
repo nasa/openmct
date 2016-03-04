@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 define(
     [],
     function () {
@@ -36,11 +35,11 @@ define(
          * @param $interval Angular's $interval service
          * @param {string} space the name of the persistence space being served
          */
-        function LocalStoragePersistenceProvider($q, space) {
+        function LocalStoragePersistenceProvider($window, $q, space) {
             this.$q = $q;
             this.space = space;
             this.spaces = space ? [space] : [];
-            this.localStorage = window.localStorage;
+            this.localStorage = $window.localStorage;
         }
 
         /**
