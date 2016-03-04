@@ -47,8 +47,8 @@ define(
 
         RestartTimerAction.appliesTo = function (context) {
             var model =
-                (context.domainObject && context.domainObject.getModel())
-                || {};
+                (context.domainObject && context.domainObject.getModel()) ||
+                {};
 
             // We show this variant for timers which already have
             // a target time.

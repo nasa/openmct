@@ -47,8 +47,8 @@ define(
 
         StartTimerAction.appliesTo = function (context) {
             var model =
-                (context.domainObject && context.domainObject.getModel())
-                || {};
+                (context.domainObject && context.domainObject.getModel()) ||
+                {};
 
             // We show this variant for timers which do not yet have
             // a target time.
