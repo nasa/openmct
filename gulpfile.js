@@ -42,6 +42,7 @@ var gulp = require('gulp'),
         assets: 'dist/assets',
         scss: ['./platform/**/*.scss', './example/**/*.scss'],
         scripts: [ 'main.js', 'platform/**/*.js', 'src/**/*.js' ],
+        specs: [ 'platform/**/*Spec.js', 'src/**/*Spec.js' ],
         static: [
             'index.html',
             'platform/**/*',
@@ -98,7 +99,10 @@ gulp.task('stylesheets', function () {
 });
 
 gulp.task('lint', function () {
-    return gulp.src(paths.scripts.concat(['!**/test/**/*.js', '!**/*Spec.js']))
+    var nonspecs = paths.specs.map(function (glob) {
+        return "!" + glob;
+    });
+    return gulp.src(paths.scripts.concat(nonspecs))
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
         .pipe(jshint.reporter('fail'));
