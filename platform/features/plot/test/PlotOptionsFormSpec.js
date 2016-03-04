@@ -25,8 +25,7 @@ define(
     function (PlotOptionsForm) {
 
         describe("The Plot Options form", function () {
-            var plotOptionsForm,
-                listener;
+            var plotOptionsForm;
 
             beforeEach(function () {
 

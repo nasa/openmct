@@ -93,8 +93,7 @@ define(
             });
 
             it("exposes a warning message for unload", function () {
-                var obj = mockObject,
-                    errorMessage = "Unsaved changes";
+                var errorMessage = "Unsaved changes";
 
                 // Normally, should be undefined
                 expect(controller.getUnloadWarning()).toBeUndefined();

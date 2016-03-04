@@ -235,7 +235,7 @@ define(
             });
 
             it("ensures a minimum frame size", function () {
-                var styleB, styleC;
+                var styleB;
 
                 // Start with a very small frame size
                 testModel.layoutGrid = [ 1, 1 ];

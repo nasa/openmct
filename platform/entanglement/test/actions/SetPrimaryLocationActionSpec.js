@@ -32,8 +32,7 @@ define(
             var testContext,
                 testModel,
                 testId,
-                mockLocationCapability,
-                mockContextCapability;
+                mockLocationCapability;
 
             beforeEach(function () {
                 testId = "some-id";

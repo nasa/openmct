@@ -104,7 +104,7 @@ define(
                 // User chooses overwrite
                 mockPromise.then.mostRecentCall.args[0](false);
                 // Should refresh, but not remutate, and requeue all objects
-                mockFailures.forEach(function (mockFailure, i) {
+                mockFailures.forEach(function (mockFailure) {
                     expect(mockFailure.persistence.refresh).toHaveBeenCalled();
                     expect(mockFailure.requeue).not.toHaveBeenCalled();
                     expect(mockFailure.domainObject.useCapability).not.toHaveBeenCalled();

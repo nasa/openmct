@@ -33,16 +33,6 @@ define(
                 mockSeries,
                 decorator;
 
-            function seriesIsInWindow(series) {
-                var i, v, inWindow = true;
-                for (i = 0; i < series.getPointCount(); i += 1) {
-                    v = series.getDomainValue(i);
-                    inWindow = inWindow && (v >= mockConductor.displayStart());
-                    inWindow = inWindow && (v <= mockConductor.displayEnd());
-                }
-                return inWindow;
-            }
-
             beforeEach(function () {
                 mockTelemetryService = jasmine.createSpyObj(
                     'telemetryService',

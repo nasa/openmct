@@ -30,19 +30,10 @@ define(
         describe("Stacked plot mode", function () {
             var mockDomainObject,
                 mockSubPlotFactory,
-                mockSubPlot,
                 mockPrepared,
                 testBuffers,
                 testDrawingObjects,
                 mode;
-
-            function mockElement(x, y, w, h) {
-                return {
-                    getBoundingClientRect: function () {
-                        return { left: x, top: y, width: w, height: h };
-                    }
-                };
-            }
 
             function createMockSubPlot() {
                 var mockSubPlot = jasmine.createSpyObj(
@@ -172,7 +163,7 @@ define(
                 });
 
                 // Step back the same number of zoom changes
-                mockSubPlotFactory.createSubPlot.calls.forEach(function (c) {
+                mockSubPlotFactory.createSubPlot.calls.forEach(function () {
                     // Should still be zoomed at start of each iteration
                     expect(mode.isZoomed()).toBeTruthy();
                     // Step back

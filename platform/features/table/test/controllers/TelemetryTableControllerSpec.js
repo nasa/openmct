@@ -130,8 +130,6 @@ define(
 
                 it('to create column configuration, which is written to the' +
                     ' object model', function() {
-                    var mockModel = {};
-
                     controller.setup();
                     expect(mockTable.getColumnConfiguration).toHaveBeenCalled();
                     expect(mockTable.saveColumnConfiguration).toHaveBeenCalled();

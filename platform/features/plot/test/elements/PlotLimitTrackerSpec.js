@@ -29,7 +29,6 @@ define(
                 testRange,
                 mockTelemetryObjects,
                 testData,
-                mockLimitCapabilities,
                 tracker;
 
             beforeEach(function () {

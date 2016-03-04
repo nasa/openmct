@@ -104,10 +104,8 @@ define(
             });
 
             it("avoids redundant requests", function () {
-                    // Lookups can be expensive, so this capability
+                // Lookups can be expensive, so this capability
                 // should have some self-caching
-                var response;
-
                 mockDomainObject.getModel
                     .andReturn({ relationships: { xyz: ['a'] } });
 
@@ -123,7 +121,7 @@ define(
             it("makes new requests on modification", function () {
                 // Lookups can be expensive, so this capability
                 // should have some self-caching
-                var response, testModel;
+                var testModel;
 
                 testModel = { relationships: { xyz: ['a'] } };
 

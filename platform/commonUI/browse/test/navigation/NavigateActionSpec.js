@@ -30,7 +30,6 @@ define(
         describe("The navigate action", function () {
             var mockNavigationService,
                 mockQ,
-                actionContext,
                 mockDomainObject,
                 action;
 

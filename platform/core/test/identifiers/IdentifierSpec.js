@@ -34,7 +34,7 @@ define(
             });
 
             describe("when space is encoded", function () {
-                var idSpace, idKey, spacedId;
+                var idSpace, idKey;
 
                 beforeEach(function () {
                     idSpace = "a-specific-space";

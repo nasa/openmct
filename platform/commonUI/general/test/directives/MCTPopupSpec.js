@@ -40,14 +40,6 @@ define(
                 testRect,
                 mctPopup;
 
-            function testEvent(x, y) {
-                return {
-                    pageX: x,
-                    pageY: y,
-                    preventDefault: jasmine.createSpy("preventDefault")
-                };
-            }
-
             beforeEach(function () {
                 mockCompile =
                     jasmine.createSpy("$compile");

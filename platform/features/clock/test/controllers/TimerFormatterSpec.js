@@ -45,10 +45,6 @@ define(
                 ].reduce(sum, 0);
             }
 
-            function twoDigits(n) {
-                return n < 10 ? ('0' + n) : n;
-            }
-
             it("formats short-form values (no days)", function () {
                 expect(formatter.short(toDuration(0, 123, 2, 3) + 123))
                     .toEqual("123:02:03");

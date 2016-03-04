@@ -27,7 +27,6 @@ define(
         describe("A gesture representer", function () {
             var mockGestureService,
                 mockGestureHandle,
-                mockScope,
                 mockElement,
                 representer;
 

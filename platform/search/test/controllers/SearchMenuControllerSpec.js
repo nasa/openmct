@@ -29,7 +29,6 @@ define(
 
         describe("The search menu controller", function () {
             var mockScope,
-                mockPromise,
                 mockTypes,
                 controller;
             

@@ -31,7 +31,6 @@ define(
             var mockScope,
                 mockTicker,
                 mockUnticker,
-                mockDomainObject,
                 controller;
 
             beforeEach(function () {

@@ -25,8 +25,7 @@ define(
     function (EditableViewPolicy) {
 
         describe("The editable view policy", function () {
-            var testView,
-                mockDomainObject,
+            var mockDomainObject,
                 testMode,
                 policy;
 

@@ -147,8 +147,7 @@ define(
             });
 
             it("adds new objects to the parent's composition", function () {
-                var model = { someKey: "some value" },
-                    parentModel = { composition: ["notAnyUUID"] };
+                var model = { someKey: "some value" };
                 creationService.createObject(model, mockParentObject);
 
                 // Verify that a new ID was added
@@ -199,8 +198,7 @@ define(
             it("logs an error when mutaton fails", function () {
                 // If mutation of the parent fails, we've lost the
                 // created object - this is an error.
-                var model = { someKey: "some value" },
-                    parentModel = { composition: ["notAnyUUID"] };
+                var model = { someKey: "some value" };
 
                 mockCompositionCapability.add.andReturn(mockPromise(false));
 

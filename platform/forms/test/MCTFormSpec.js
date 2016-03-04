@@ -29,8 +29,7 @@ define(
                 mctForm;
 
             function installController() {
-                var controllerProperty = mctForm.controller,
-                    Controller = mctForm.controller[1];
+                var Controller = mctForm.controller[1];
                 return new Controller(mockScope);
             }
 

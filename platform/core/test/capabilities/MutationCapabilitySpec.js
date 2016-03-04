@@ -60,7 +60,7 @@ define(
             });
 
             it("allows setting a model", function () {
-                mutation.invoke(function (m) {
+                mutation.invoke(function () {
                     return { someKey: "some value" };
                 });
                 expect(testModel.number).toBeUndefined();

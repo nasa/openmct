@@ -147,7 +147,7 @@ define(
             });
 
             it("invokes setters on update", function () {
-                var structure, state;
+                var structure;
 
                 testABC.a = jasmine.createSpy('a');
 

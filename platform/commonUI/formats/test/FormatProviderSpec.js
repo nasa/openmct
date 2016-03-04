@@ -28,7 +28,6 @@ define(
 
         describe("The FormatProvider", function () {
             var mockFormats,
-                mockLog,
                 mockFormatInstances,
                 provider;
 

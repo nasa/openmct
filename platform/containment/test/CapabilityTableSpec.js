@@ -39,7 +39,7 @@ define(
                     [ 'getCapabilities' ]
                 );
                 // Both types can only contain b, let's say
-                mockTypes = ['a', 'b'].map(function (type, index) {
+                mockTypes = ['a', 'b'].map(function (type) {
                     var mockType = jasmine.createSpyObj(
                         'type-' + type,
                         ['getKey', 'getDefinition', 'getInitialModel']

@@ -46,12 +46,6 @@ define(
                 };
             }
 
-            function mockAll(mockPromises) {
-                return mockPromise(mockPromises.map(function (p) {
-                    return mockPromise(p).testValue;
-                }));
-            }
-
             beforeEach(function () {
                 mockModelService = jasmine.createSpyObj(
                     "modelService",

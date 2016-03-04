@@ -90,7 +90,7 @@ define(
 
             it("filters out policy-disallowed views", function () {
                 // Disallow the second action
-                mockPolicyService.allow.andCallFake(function (cat, candidate, ctxt) {
+                mockPolicyService.allow.andCallFake(function (cat, candidate) {
                     return candidate.someKey !== 'b';
                 });
                 expect(decorator.getViews(mockDomainObject))

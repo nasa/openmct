@@ -28,7 +28,6 @@ define(
             var actionSelected,
                 actionCurrent,
                 mockWindow,
-                mockDomainObject,
                 mockContextCurrent,
                 mockContextSelected,
                 mockUrlService;

@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['../../src/services/InfoService', '../../src/InfoConstants'],
-    function (InfoService, InfoConstants) {
+    ['../../src/services/InfoService'],
+    function (InfoService) {
 
         describe("The info service", function () {
             var mockCompile,

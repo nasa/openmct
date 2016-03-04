@@ -34,14 +34,6 @@ define(
                 mockTimeout,
                 mockElement;
 
-            function promise(value) {
-                return {
-                    then: function (callback){
-                        return promise(callback(value));
-                    }
-                };
-            }
-
             beforeEach(function() {
                 watches = {};
 

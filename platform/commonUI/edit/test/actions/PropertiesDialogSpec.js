@@ -26,7 +26,7 @@ define(
 
         describe("Properties dialog", function () {
 
-            var type, properties, domainObject, model, dialog;
+            var type, properties, model, dialog;
 
             beforeEach(function () {
                 type = {

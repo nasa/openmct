@@ -32,14 +32,6 @@ define(
                 controller,
                 mockScope;
 
-            function promise(value) {
-                return {
-                    then: function (callback){
-                        return promise(callback(value));
-                    }
-                };
-            }
-
             beforeEach(function() {
                 mockCapability = jasmine.createSpyObj('mutationCapability', [
                     'listen'

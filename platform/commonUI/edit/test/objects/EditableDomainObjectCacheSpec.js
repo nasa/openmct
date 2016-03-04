@@ -28,7 +28,6 @@ define(
 
             var captured,
                 completionCapability,
-                object,
                 mockQ,
                 mockType,
                 cache;
@@ -45,7 +44,7 @@ define(
                             type: mockType
                         }[key];
                     },
-                    hasCapability: function (key) {
+                    hasCapability: function () {
                         return false;
                     }
                 };

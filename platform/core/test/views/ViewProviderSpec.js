@@ -133,8 +133,7 @@ define(
             });
 
             it("enforces view restrictions from types", function () {
-                var testType = "testType",
-                    testView = { key: "x" },
+                var testView = { key: "x" },
                     provider = new ViewProvider([testView], mockLog);
 
                 // Include a "type" capability

@@ -33,7 +33,6 @@ define(
                 mockElement,
                 testAttrs,
                 mockSwimlane,
-                mockRealElement,
                 testEvent,
                 handlers,
                 directive;

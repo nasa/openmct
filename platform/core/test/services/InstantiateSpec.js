@@ -30,8 +30,6 @@ define(
                 mockIdentifierService,
                 mockCapabilityConstructor,
                 mockCapabilityInstance,
-                mockCapabilities,
-                mockIdentifier,
                 idCounter,
                 testModel,
                 instantiate,

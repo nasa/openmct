@@ -28,7 +28,6 @@ define(
             var mockProviders,
                 mockQ,
                 resolves,
-                mockPromise,
                 mockCallback,
                 testUsers,
                 aggregator;

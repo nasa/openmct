@@ -30,7 +30,6 @@ define(
         describe("The messages view policy", function () {
             var mockDomainObject,
                 mockTelemetry,
-                telemetryType,
                 testType,
                 testView,
                 testMetadata,
@@ -50,7 +49,7 @@ define(
                     ['getMetadata']
                 );
                 
-                mockDomainObject.getModel.andCallFake(function (c) {
+                mockDomainObject.getModel.andCallFake(function () {
                     return {type: testType};
                 });
                 mockDomainObject.getCapability.andCallFake(function (c) {

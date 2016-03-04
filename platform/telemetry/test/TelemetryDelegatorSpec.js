@@ -25,7 +25,11 @@ define(
     function (TelemetryDelegator) {
 
         describe("The telemetry delegator", function () {
+            var delegator;
 
+            beforeEach(function () {
+                delegator = new TelemetryDelegator();
+            });
         });
     }
 );

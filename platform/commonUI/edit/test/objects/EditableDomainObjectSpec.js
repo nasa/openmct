@@ -25,7 +25,11 @@ define(
     function (EditableDomainObject) {
 
         describe("Editable domain object", function () {
+            var object;
 
+            beforeEach(function () {
+                object = new EditableDomainObject();
+            });
         });
     }
 );

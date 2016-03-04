@@ -61,6 +61,8 @@ define(
                 var datas = [makeMockData(1)],
                     preparer = new PlotPreparer(datas, "testDomain", "testRange");
 
+                expect(preparer).toBeDefined();
+
                 expect(datas[0].getDomainValue).toHaveBeenCalledWith(
                     jasmine.any(Number),
                     "testDomain"
