@@ -10,7 +10,11 @@
     "nocomma": true,
     "nonbsp": true,
     "nonew": true,
-    "predef": ["define"],
+    "predef": [
+        "define",
+        "Blob",
+        "Promise"
+    ],
     "strict": "implied",
     "undef": true,
     "unused": true
