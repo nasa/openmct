@@ -1,6 +1,6 @@
 {
   "name": "openmctweb",
-  "version": "0.9.2",
+  "version": "0.9.3-SNAPSHOT",
   "description": "The Open MCT Web core platform",
   "dependencies": {
     "express": "^4.13.1",
