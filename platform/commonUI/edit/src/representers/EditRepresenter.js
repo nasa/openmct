@@ -131,7 +131,7 @@ define(
              * object representation accordingly
              */
             this.listenHandle = this.domainObject.getCapability('status').listen(function(statuses){
-                if (statuses.indexOf('editing')!=-1){
+                if (statuses.indexOf('editing') !== -1){
                     setEditing();
                 } else {
                     delete scope.viewObjectTemplate;
