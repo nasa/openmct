@@ -60,6 +60,7 @@ var gulp = require('gulp'),
         },
         jshint: {
             "bitwise": true,
+            "browser": true,
             "curly": true,
             "eqeqeq": true,
             "freeze": true,
@@ -72,8 +73,6 @@ var gulp = require('gulp'),
             "nonew": true,
             "predef": [
                 "define",
-                "Blob",
-                "Float32Array",
                 "Promise"
             ],
             "strict": "implied",
