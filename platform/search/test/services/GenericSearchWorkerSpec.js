@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-         require,afterEach*/
 
 /**
  *  SearchSpec. Created by shale on 07/31/2015.
