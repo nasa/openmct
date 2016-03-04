@@ -31,7 +31,7 @@ function migrate(file) {
     var sourceCode = fs.readFileSync(file, 'utf8'),
         lines = sourceCode.split('\n')
             .filter(function (line) {
-                return line.trim().replace("'", '"') !== '"use strict";';
+                return !(/^\W*['"]use strict['"];\W*$/.test(line));
             })
             .filter(function (line) {
                 return line.indexOf("/*global") !== 0;
@@ -39,7 +39,7 @@ function migrate(file) {
     fs.writeFileSync(file, lines.join('\n'));
 }
 
-glob('platform/**/*.js', {}, function (err, files) {
+glob('@(src|platform)/**/*.js', {}, function (err, files) {
     if (err) {
         console.log(err);
         return;
