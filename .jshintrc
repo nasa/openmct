@@ -13,6 +13,7 @@
     "predef": [
         "define",
         "Blob",
+        "Float32Array",
         "Promise"
     ],
     "strict": "implied",
