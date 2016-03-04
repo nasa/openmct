@@ -108,14 +108,14 @@ define(
         };
 
         // Get a domain object model out of ElasticSearch's response
-        function getModel(response) {
+        ElasticPersistenceProvider.prototype.getModel = function (response) {
             if (response && response[SRC]) {
                 this.revs[response[ID]] = response[REV];
                 return response[SRC];
             } else {
                 return undefined;
             }
-        }
+        };
 
         // Check the response to a create/update/delete request;
         // track the rev if it's valid, otherwise return false to
@@ -145,15 +145,16 @@ define(
         };
 
         ElasticPersistenceProvider.prototype.readObject = function (space, key) {
-            return this.get(key).then(bind(getModel, this));
+            return this.get(key).then(bind(this.getModel, this));
         };
 
         ElasticPersistenceProvider.prototype.updateObject = function (space, key, value) {
+            var self = this;
             function checkUpdate(response) {
-                return this.checkResponse(response, key);
+                return self.checkResponse(response, key);
             }
             return this.put(key, value, { version: this.revs[key] })
-                .then(bind(checkUpdate, this));
+                .then(checkUpdate);
         };
 
         ElasticPersistenceProvider.prototype.deleteObject = function (space, key, value) {

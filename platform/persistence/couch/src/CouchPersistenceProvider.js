@@ -69,24 +69,24 @@ define(
         // Check the response to a create/update/delete request;
         // track the rev if it's valid, otherwise return false to
         // indicate that the request failed.
-        function checkResponse(response) {
+        CouchPersistenceProvider.prototype.checkResponse = function (response) {
             if (response && response.ok) {
                 this.revs[response.id] = response.rev;
                 return response.ok;
             } else {
                 return false;
             }
-        }
+        };
 
         // Get a domain object model out of CouchDB's response
-        function getModel(response) {
+        CouchPersistenceProvider.prototype.getModel = function (response) {
             if (response && response.model) {
                 this.revs[response[ID]] = response[REV];
                 return response.model;
             } else {
                 return undefined;
             }
-        }
+        };
 
         // Issue a request using $http; get back the plain JS object
         // from the expected JSON response
@@ -122,24 +122,24 @@ define(
 
         CouchPersistenceProvider.prototype.createObject = function (space, key, value) {
             return this.put(key, new CouchDocument(key, value))
-                .then(bind(checkResponse, this));
+                .then(bind(this.checkResponse, this));
         };
 
 
         CouchPersistenceProvider.prototype.readObject = function (space, key) {
-            return this.get(key).then(bind(getModel, this));
+            return this.get(key).then(bind(this.getModel, this));
         };
 
         CouchPersistenceProvider.prototype.updateObject = function (space, key, value) {
             var rev = this.revs[key];
             return this.put(key, new CouchDocument(key, value, rev))
-                .then(bind(checkResponse, this));
+                .then(bind(this.checkResponse, this));
         };
 
         CouchPersistenceProvider.prototype.deleteObject = function (space, key, value) {
             var rev = this.revs[key];
             return this.put(key, new CouchDocument(key, value, rev, true))
-                .then(bind(checkResponse, this));
+                .then(bind(this.checkResponse, this));
         };
 
         return CouchPersistenceProvider;
