@@ -98,7 +98,7 @@ gulp.task('stylesheets', function () {
 });
 
 gulp.task('lint', function () {
-    return gulp.src(paths.scripts)
+    return gulp.src(paths.scripts.concat(['!**/test/*', '!**/*Spec.js']))
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
         .pipe(jshint.reporter('fail'));
