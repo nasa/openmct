@@ -81,6 +81,10 @@ define([
 
             spyOn(GenericSearchProvider.prototype, 'scheduleForIndexing');
 
+            $timeout.andCallFake(function (callback, millis) {
+                window.setTimeout(callback, millis);
+            });
+
             provider = new GenericSearchProvider(
                 $timeout,
                 $q,
