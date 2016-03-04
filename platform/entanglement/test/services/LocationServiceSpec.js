@@ -20,14 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect */
 
 define(
     [
         '../../src/services/LocationService'
     ],
     function (LocationService) {
-        "use strict";
 
         describe("LocationService", function () {
             var dialogService,

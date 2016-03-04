@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,xit*/
 
 define(
     [
@@ -27,7 +26,6 @@ define(
         "../src/DomainColumn"
     ],
     function (Table, DomainColumn) {
-        "use strict";
 
         describe("A table", function () {
             var mockDomainObject,

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['../../TimelineConstants'],
     function (Constants) {
-        "use strict";
 
         /**
          * Handle for moving (by drag) a timeline or

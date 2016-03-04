@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,screenfull,Promise*/
 
 /**
  * Module defining FullscreenAction. Created by vwoeltje on 11/18/14.
@@ -27,7 +26,6 @@
 define(
     ["screenfull"],
     function () {
-        "use strict";
 
         var ENTER_FULLSCREEN = "Enter full screen mode",
             EXIT_FULLSCREEN = "Exit full screen mode";

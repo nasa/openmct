@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect,spyOn */
 
 define(
     [
@@ -28,7 +27,6 @@ define(
         '../DomainObjectFactory'
     ],
     function (CopyTask, domainObjectFactory) {
-        'use strict';
 
         var ID_A = "some-string-with-vaguely-uuidish-uniqueness",
             ID_B = "some-other-similarly-unique-string";

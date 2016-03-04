@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 
 define(
     function () {
-        'use strict';
         var DISALLOWED_ACTIONS = ["move", "copy", "link", "window", "follow"];
         /**
          * Editable Action Capability. Overrides the action capability

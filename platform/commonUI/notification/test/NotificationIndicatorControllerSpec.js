@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine */
 
 define(
     ['../src/NotificationIndicatorController'],
     function (NotificationIndicatorController) {
-        "use strict";
 
         describe("The notification indicator controller ", function () {
             var mockNotificationService,

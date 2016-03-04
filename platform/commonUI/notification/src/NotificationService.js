@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle implements the notification service, which can be used to
@@ -34,7 +33,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * A representation of a user action. Options are provided to

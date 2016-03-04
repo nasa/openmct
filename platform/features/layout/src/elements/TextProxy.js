@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./BoxProxy', './AccessorMutator'],
     function (BoxProxy, AccessorMutator) {
-        'use strict';
 
         /**
          * Selection proxy for Text elements in a fixed position view.

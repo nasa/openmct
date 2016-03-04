@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect,spyOn */
 
 define(
     [
@@ -28,7 +27,6 @@ define(
         '../DomainObjectFactory'
     ],
     function (CopyService, domainObjectFactory) {
-        "use strict";
 
         function synchronousPromise(value) {
             if (value && value.then) {

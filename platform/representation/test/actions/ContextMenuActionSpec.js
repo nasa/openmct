@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 
 /**
@@ -28,7 +27,6 @@
 define(
     ["../../src/actions/ContextMenuAction", "../../src/gestures/GestureConstants"],
     function (ContextMenuAction, GestureConstants) {
-        "use strict";
 
         var JQLITE_FUNCTIONS = [ "on", "off", "find", "append", "remove" ],
             DOMAIN_OBJECT_METHODS = [ "getId", "getModel", "getCapability", "hasCapability", "useCapability" ],

@@ -1,9 +1,7 @@
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         function MCTTableController($scope, $timeout, element) {
             var self = this;

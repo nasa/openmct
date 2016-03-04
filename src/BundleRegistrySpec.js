@@ -19,10 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,runs,jasmine*/
 
 define(['./BundleRegistry'], function (BundleRegistry) {
-    'use strict';
 
     describe("BundleRegistry", function () {
         var testPath,

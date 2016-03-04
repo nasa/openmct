@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 /**
  *  SearchSpec. Created by shale on 08/17/2015.
@@ -27,7 +26,6 @@
 define(
     ["../../src/controllers/SearchMenuController"],
     function (SearchMenuController) {
-        "use strict";
 
         describe("The search menu controller", function () {
             var mockScope,

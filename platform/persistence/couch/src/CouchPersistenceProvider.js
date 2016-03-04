@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle implements a persistence service which uses CouchDB to
@@ -29,7 +28,6 @@
 define(
     ["./CouchDocument"],
     function (CouchDocument) {
-        'use strict';
 
         // JSLint doesn't like dangling _'s, but CouchDB uses these, so
         // hide this behind variables.

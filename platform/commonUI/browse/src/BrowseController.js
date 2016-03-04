@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise, confirm*/
 
 /**
  * This bundle implements Browse mode.
@@ -30,7 +29,6 @@ define(
         '../../../representation/src/gestures/GestureConstants'
     ],
     function (GestureConstants) {
-        "use strict";
 
         var ROOT_ID = "ROOT";
 

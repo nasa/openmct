@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./ElementProxy', './AccessorMutator'],
     function (ElementProxy, AccessorMutator) {
-        'use strict';
 
         /**
          * Selection proxy for Image elements in a fixed position view.

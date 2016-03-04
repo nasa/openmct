@@ -19,14 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * Module defining CompositionCapability. Created by vwoeltje on 11/7/14.
  */
 define(
     function () {
-        "use strict";
 
         /**
          * Composition capability. A domain object's composition is the set of

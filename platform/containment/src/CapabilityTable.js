@@ -19,13 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Build a table indicating which types are expected to expose

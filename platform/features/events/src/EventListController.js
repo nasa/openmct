@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /*
  * Module defining EventListController. 
@@ -34,7 +33,6 @@
 define(
     ["./DomainColumn", "./RangeColumn", "./EventListPopulator"],
     function (DomainColumn, RangeColumn, EventListPopulator) {
-        "use strict";
         
         var ROW_COUNT = 100;
 

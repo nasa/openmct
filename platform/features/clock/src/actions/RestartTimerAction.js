@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./AbstractStartTimerAction'],
     function (AbstractStartTimerAction) {
-        "use strict";
 
         /**
          * Implements the "Restart at 0" action.

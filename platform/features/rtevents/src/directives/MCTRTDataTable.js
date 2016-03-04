@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining MCTRTDataTable. Created by shale on 06/25/2015.
@@ -27,7 +26,6 @@
 define(
     ['text!../../res/templates/mct-rt-data-table.html'],
     function (dataTableTemplate) {
-        "use strict";
         
         function MCTRTDataTable($window) {
             return {

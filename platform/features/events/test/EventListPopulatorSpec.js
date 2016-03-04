@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  *  EventSpec. Created by shale on 06/24/2015.
@@ -27,7 +26,6 @@
 define(
     ["../src/EventListPopulator"],
     function (EventListPopulator) {
-        "use strict";
 
         describe("The event list populator", function () {
             var mockColumns,

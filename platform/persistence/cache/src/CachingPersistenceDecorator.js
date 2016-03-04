@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle decorates the persistence service to maintain a local cache
@@ -29,7 +28,6 @@
 define(
     [],
     function () {
-        'use strict';
 
         /**
          * A caching persistence decorator maintains local copies of persistent objects

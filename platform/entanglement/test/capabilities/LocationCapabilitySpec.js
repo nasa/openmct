@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,it,expect,beforeEach,jasmine */
 
 define(
     [
@@ -29,7 +28,6 @@ define(
         '../ControlledPromise'
     ],
     function (LocationCapability, domainObjectFactory, ControlledPromise) {
-        'use strict';
 
         describe("LocationCapability", function () {
 

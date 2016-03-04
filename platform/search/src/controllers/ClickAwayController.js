@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /*
  * Copied from the ClickAwayController in platform/commonUI/general
@@ -28,7 +27,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * A ClickAwayController is used to toggle things (such as context

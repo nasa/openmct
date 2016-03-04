@@ -20,11 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,jasmine */
 
 define(
     function () {
-        "use strict";
 
         /**
          * MockMoveService provides the same interface as the moveService,

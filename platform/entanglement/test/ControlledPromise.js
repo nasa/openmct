@@ -1,4 +1,3 @@
-/*global define,spyOn */
 
 define(
     function () {

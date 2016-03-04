@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining ActionCapability. Created by vwoeltje on 11/10/14.
@@ -27,7 +26,6 @@
 define(
     [],
     function () {
-        "use strict";
         var DISALLOWED_ACTIONS = ["move", "copy", "link", "window", "follow"];
         /**
          * The ActionCapability allows applicable Actions to be retrieved and

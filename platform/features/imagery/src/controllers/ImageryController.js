@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle implements views of image telemetry.
@@ -28,7 +27,6 @@
 define(
     ['moment'],
     function (moment) {
-        "use strict";
 
         var DATE_FORMAT = "YYYY-MM-DD",
             TIME_FORMAT = "HH:mm:ss.SSS";

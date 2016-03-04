@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  *  RTEventSpec. Created by vwoeltje on 11/6/14. Modified by shale on 06/25/2015.
@@ -27,7 +26,6 @@
 define(
     ["../src/DomainColumn"],
     function (DomainColumn) {
-        "use strict";
 
         var TEST_DOMAIN_VALUE = "some formatted domain value";
 

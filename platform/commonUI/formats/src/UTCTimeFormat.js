@@ -19,14 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     'moment'
 ], function (
     moment
 ) {
-    "use strict";
 
     var DATE_FORMAT = "YYYY-MM-DD HH:mm:ss",
         DATE_FORMATS = [

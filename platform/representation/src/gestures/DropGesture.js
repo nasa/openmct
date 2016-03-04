@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining DropGesture. Created by vwoeltje on 11/17/14.
@@ -28,7 +27,6 @@ define(
     ['./GestureConstants',
      '../../../commonUI/edit/src/objects/EditableDomainObject'],
     function (GestureConstants, EditableDomainObject) {
-        "use strict";
 
         /**
          * A DropGesture adds and maintains event handlers upon an element

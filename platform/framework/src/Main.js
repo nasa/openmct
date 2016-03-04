@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define, window, requirejs*/
 
 /**
  * Implements the framework layer, which handles the loading of bundles
@@ -40,7 +39,6 @@ define(
         FrameworkLayer,
         angular
     ) {
-        "use strict";
 
         function Main() {
         }

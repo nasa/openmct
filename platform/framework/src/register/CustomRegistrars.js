@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining CustomRegistrars. Created by vwoeltje on 11/3/14.
@@ -27,7 +26,6 @@
 define(
     ['../Constants', './ServiceCompositor'],
     function (Constants, ServiceCompositor) {
-        "use strict";
 
         /**
          * Handles registration of a few specific extension types that are

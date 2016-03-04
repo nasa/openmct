@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle implements a persistence service which uses ElasticSearch to
@@ -29,7 +28,6 @@
 define(
     [],
     function () {
-        'use strict';
 
         // JSLint doesn't like underscore-prefixed properties,
         // so hide them here.

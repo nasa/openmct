@@ -20,12 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,window*/
 
 define(
     [],
     function () {
-        'use strict';
 
         /**
          * The LocalStoragePersistenceProvider reads and writes JSON documents

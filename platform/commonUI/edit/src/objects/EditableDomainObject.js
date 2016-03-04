@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * Defines EditableDomainObject, which wraps domain objects
@@ -51,7 +50,6 @@ define(
         EditableActionCapability,
         EditableDomainObjectCache
     ) {
-        "use strict";
 
         var capabilityFactories = {
             persistence: EditablePersistenceCapability,

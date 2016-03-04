@@ -1,9 +1,7 @@
-/*global define*/
 
 define(
     ["../controllers/MCTTableController"],
     function (MCTTableController) {
-        "use strict";
 
         function MCTTable($timeout) {
             return {

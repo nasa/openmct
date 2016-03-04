@@ -20,12 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define */
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * This class encapsulates the process of copying a domain object

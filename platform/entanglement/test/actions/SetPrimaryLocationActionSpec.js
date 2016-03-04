@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect */
 
 define(
     [
@@ -28,7 +27,6 @@ define(
         '../DomainObjectFactory'
     ],
     function (SetPrimaryLocation, domainObjectFactory) {
-        'use strict';
 
         describe("The 'set primary location' action", function () {
             var testContext,

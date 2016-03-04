@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine,xit*/
 
 define(
     ['../src/PlotOptionsController'],
     function (PlotOptionsController) {
-        "use strict";
 
         describe("The Plot Options controller", function () {
             var plotOptionsController,

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./Popup'],
     function (Popup) {
-        "use strict";
 
         /**
          * Displays popup elements at specific positions within the document.

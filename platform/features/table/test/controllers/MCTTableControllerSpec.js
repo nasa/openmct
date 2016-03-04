@@ -19,14 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,xit*/
 
 define(
     [
         "../../src/controllers/MCTTableController"
     ],
     function (MCTTableController) {
-        "use strict";
 
         describe('The MCTTable Controller', function() {
 

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle implements the dialog service, which can be used to
@@ -29,7 +28,6 @@
 define(
     [],
     function () {
-        "use strict";
         /**
          * The dialog service is responsible for handling window-modal
          * communication with the user, such as displaying forms for user

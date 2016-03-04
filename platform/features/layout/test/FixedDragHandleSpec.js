@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine,xit*/
 
 define(
     ['../src/FixedDragHandle'],
     function (FixedDragHandle) {
-        "use strict";
 
         var TEST_GRID_SIZE = [ 13, 33 ];
 

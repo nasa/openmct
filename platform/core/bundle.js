@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     "./src/objects/DomainObjectProvider",
@@ -84,7 +83,6 @@ define([
     Instantiate,
     legacyRegistry
 ) {
-    "use strict";
 
     legacyRegistry.register("platform/core", {
         "name": "Open MCT Web Core",

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./TimeConductor'],
     function (TimeConductor) {
-        'use strict';
 
         var ONE_DAY_IN_MS = 1000 * 60 * 60 * 24,
             SIX_HOURS_IN_MS = ONE_DAY_IN_MS / 4;

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle provides infrastructure and utility services for handling
@@ -29,7 +28,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Describes a request for telemetry data. Note that responses

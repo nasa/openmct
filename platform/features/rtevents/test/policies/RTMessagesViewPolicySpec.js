@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 /**
  *  RTEventSpec. Created by shale on 06/25/2015.
@@ -27,7 +26,6 @@
 define(
     ["../../src/policies/RTMessagesViewPolicy"],
     function (RTMessagesViewPolicy) {
-        "use strict";
 
         describe("The real time Messages view policy", function () {
             var testView,

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./TypeImpl', './MergeModels'],
     function (TypeImpl, mergeModels) {
-        'use strict';
 
         /**
          * Provides domain object types that are available/recognized within

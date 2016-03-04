@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * The time conductor bundle adds a global control to the bottom of the
@@ -30,7 +29,6 @@
  */
 define(
     function () {
-        'use strict';
 
         /**
          * Tracks the current state of the time conductor.

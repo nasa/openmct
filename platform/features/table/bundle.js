@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     "./src/directives/MCTTable",
@@ -36,7 +35,6 @@ define([
     InspectorRegion,
     legacyRegistry
 ) {
-    "use strict";
     /**
      * Two region parts are defined here. One that appears only in browse
      * mode, and one that appears only in edit mode. For not they both point

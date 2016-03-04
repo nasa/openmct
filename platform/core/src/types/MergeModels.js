@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * Defines MergedModel, which allows a deep merge of domain object
@@ -28,7 +27,6 @@
  */
 define(
     function () {
-        'use strict';
 
         /**
          * Utility function for merging domain object models (or any

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [
@@ -27,7 +26,6 @@ define(
         './elements/PlotTickGenerator'
     ],
     function (PlotPosition, PlotTickGenerator) {
-        "use strict";
 
         var DOMAIN_TICKS = 5,
             RANGE_TICKS = 7;

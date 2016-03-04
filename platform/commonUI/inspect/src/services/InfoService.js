@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['../InfoConstants'],
     function (InfoConstants) {
-        "use strict";
 
         var BUBBLE_TEMPLATE = InfoConstants.BUBBLE_TEMPLATE,
             MOBILE_POSITION = InfoConstants.BUBBLE_MOBILE_POSITION,

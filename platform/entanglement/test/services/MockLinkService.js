@@ -20,14 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,jasmine */
 
 define(
     [
         '../ControlledPromise'
     ],
     function (ControlledPromise) {
-        "use strict";
 
         /**
          * MockLinkService provides the same interface as the linkService,

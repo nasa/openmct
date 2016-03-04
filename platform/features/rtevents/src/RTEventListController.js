@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * Module defining RTEventListController. 
@@ -28,7 +27,6 @@
 define(
     ["./DomainColumn", "./RangeColumn"],
     function (DomainColumn, RangeColumn) {
-        "use strict";
 
         var ROW_COUNT = 100;
 

@@ -1,9 +1,7 @@
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Policy allowing composition only for domain object types which

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * This bundle implements a "Scrolling List" view of telemetry data.
@@ -28,7 +27,6 @@
 define(
     ["./NameColumn", "./DomainColumn", "./RangeColumn", "./ScrollingListPopulator"],
     function (NameColumn, DomainColumn, RangeColumn, ScrollingListPopulator) {
-        "use strict";
 
         var ROW_COUNT = 18;
 
