@@ -24,7 +24,7 @@
 define(
     [],
     function () {
-
+        /*jshint forin:false */
         /**
          * Wrapper for both "context" and "composition" capabilities;
          * ensures that any domain objects reachable in Edit mode

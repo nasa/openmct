@@ -87,24 +87,20 @@ define(
             });
             
             it("checking checkAll option resets other options", function () {
-                var type;
-                
                 mockScope.ngModel.checked['mock.type.1'] = true;
                 mockScope.ngModel.checked['mock.type.2'] = true;
                 
                 controller.checkAll();
-                
-                for (type in mockScope.ngModel.checked) {
+
+                Object.keys(mockScope.ngModel.checked).forEach(function (type) {
                     expect(mockScope.ngModel.checked[type]).toBeFalsy();
-                }
+                });
             });
             
             it("tells the user when no options are checked", function () {
-                var type;
-                
-                for (type in mockScope.ngModel.checked) {
+                Object.keys(mockScope.ngModel.checked).forEach(function (type) {
                     mockScope.ngModel.checked[type] = false;
-                }
+                });
                 mockScope.ngModel.checkAll = false;
                 
                 controller.updateOptions();
@@ -113,12 +109,10 @@ define(
             });
             
             it("tells the user when options are checked", function () {
-                var type;
-                
                 mockScope.ngModel.checkAll = false;
-                for (type in mockScope.ngModel.checked) {
+                Object.keys(mockScope.ngModel.checked).forEach(function (type) {
                     mockScope.ngModel.checked[type] = true;
-                }
+                });
                 
                 controller.updateOptions();
                 

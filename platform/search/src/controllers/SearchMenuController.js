@@ -90,12 +90,10 @@ define(function () {
         
         // For documentation, see checkAll below
         function checkAll() {
-            var type;
-
             // Reset all the other options to original/default position
-            for (type in $scope.ngModel.checked) {
+            Object.keys($scope.ngModel.checked).forEach(function (type) {
                 $scope.ngModel.checked[type] = false;
-            }
+            });
             
             // Change the filters string depending on checkAll status
             if ($scope.ngModel.checkAll) {
