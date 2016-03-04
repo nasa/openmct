@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
+/*global jasmine*/
 define(
     [
         '../ControlledPromise'
@@ -63,7 +63,7 @@ define(
                 ]
             );
 
-            mockLinkService.perform.andCallFake(function (object, newParent) {
+            mockLinkService.perform.andCallFake(function (object) {
                 var performPromise = new ControlledPromise();
 
                 this.perform.mostRecentCall.promise = performPromise;
