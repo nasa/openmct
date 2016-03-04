@@ -35,7 +35,9 @@ var gulp = require('gulp'),
     fs = require('fs'),
     git = require('git-rev-sync'),
     moment = require('moment'),
+    merge = require('merge-stream'),
     project = require('./package.json'),
+    _ = require('lodash'),
     paths = {
         main: 'main.js',
         dist: 'dist',
@@ -122,10 +124,14 @@ gulp.task('stylesheets', function () {
 
 gulp.task('lint', function () {
     var nonspecs = paths.specs.map(function (glob) {
-        return "!" + glob;
-    });
-    return gulp.src(paths.scripts.concat(nonspecs))
-        .pipe(jshint(options.jshint))
+            return "!" + glob;
+        }),
+        scriptLint = gulp.src(paths.scripts.concat(nonspecs))
+            .pipe(jshint(options.jshint)),
+        specLint = gulp.src(paths.specs)
+            .pipe(jshint(_.extend({ jasmine: true }, options.jshint)));
+
+    return merge(scriptLint, specLint)
         .pipe(jshint.reporter('default'))
         .pipe(jshint.reporter('fail'));
 });
