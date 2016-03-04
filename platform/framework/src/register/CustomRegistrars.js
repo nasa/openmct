@@ -26,6 +26,7 @@
 define(
     ['../Constants', './ServiceCompositor'],
     function (Constants, ServiceCompositor) {
+        /*jshint validthis:true */
 
         /**
          * Handles registration of a few specific extension types that are
