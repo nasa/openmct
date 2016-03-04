@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-         runs*/
 
 /**
  *  SearchSpec. Created by shale on 07/31/2015.
@@ -43,6 +42,7 @@ define([
             provider;
 
         beforeEach(function () {
+            $timeout = jasmine.createSpy('$timeout');
             $q = jasmine.createSpyObj(
                 '$q',
                 ['defer']
@@ -82,6 +82,7 @@ define([
             spyOn(GenericSearchProvider.prototype, 'scheduleForIndexing');
 
             provider = new GenericSearchProvider(
+                $timeout,
                 $q,
                 $log,
                 modelService,
