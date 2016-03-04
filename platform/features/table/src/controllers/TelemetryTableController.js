@@ -59,8 +59,9 @@ define(
 
             // Subscribe to telemetry when a domain object becomes available
             this.$scope.$watch('domainObject', function(domainObject){
-                if (!domainObject)
+                if (!domainObject) {
                     return;
+                }
 
                 self.subscribe();
                 self.registerChangeListeners();
