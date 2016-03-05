@@ -15,4 +15,4 @@ deployment:
       appname: openmctweb-staging-deux
 test:
   post:
-    - npm run jshint --silent
+    - gulp lint
