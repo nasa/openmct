@@ -19,55 +19,24 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<span class="l-inspect" ng-controller="ObjectInspectorController as controller">
-    <div ng-controller="PaneController as modelPaneEdit">
+<span class="l-inspect">
+    <div ng-controller="PaneController">
         <mct-split-pane class='abs contents split-layout' anchor='bottom'>
             <div class="split-pane-component pane top">
                 <div class="abs holder holder-inspector l-flex-col">
                     <div class="pane-header flex-elem">Inspection</div>
-                    <ul class="flex-elem grows vscroll">
-                        <li>
-                            <em>Properties</em>
-                            <div class="inspector-properties"
-                                 ng-repeat="data in metadata"
-                                 ng-class="{ first:$index === 0 }">
-                                <div class="label">{{ data.name }}</div>
-                                <div class="value">{{ data.value }}</div>
-                            </div>
-                        </li>
-                        <li ng-if="contextutalParents.length > 0">
-                            <em title="The location of this linked object.">Location</em>
-                            <span class="inspector-location"
-                                  ng-repeat="parent in contextutalParents"
-                                  ng-class="{ last:($index + 1) === contextualParents.length }">
-                                <mct-representation key="'label'"
-                                                    mct-object="parent"
-                                                    ng-model="ngModel"
-                                                    ng-click="ngModel.selectedObject = parent"
-                                                    class="location-item">
-                                </mct-representation>
-                            </span>
-                        </li>
-                        <li ng-if="primaryParents.length > 0">
-                            <em title="The location of the original object that this was linked from.">Original Location</em>
-                            <span class="inspector-location"
-                                  ng-repeat="parent in primaryParents"
-                                  ng-class="{ last:($index + 1) === primaryParents.length }">
-                                <mct-representation key="'label'"
-                                                    mct-object="parent"
-                                                    ng-model="ngModel"
-                                                    ng-click="ngModel.selectedObject = parent"
-                                                    class="location-item">
-                                </mct-representation>
-                            </span>
-                        </li>
-                    </ul>
-                </div><!--/ holder-inspector -->
-            </div><!--/ split-pane-component -->
+                    <mct-representation
+                            key="'inspector-region'"
+                            mct-object="domainObject"
+                            ng-model="ngModel"
+                            class="flex-elem grows vscroll l-flex-col">
+                    </mct-representation>
+                </div>
+            </div>
             <mct-splitter class="splitter-inspect-panel mobile-hide"></mct-splitter>
             <div class="split-pane-component pane bottom">
                 <div class="abs holder holder-elements l-flex-col">
-                    <em class="flex-elem">Elements</em>
+                    <em class="flex-elem t-inspector-part-header">Elements</em>
                     <mct-representation
                             key="'edit-elements'"
                             mct-object="domainObject"
@@ -76,5 +45,5 @@
                 </div>
             </div>
         </mct-split-pane>
-    </div><!--/ PaneController -->
+    </div>
 </span>

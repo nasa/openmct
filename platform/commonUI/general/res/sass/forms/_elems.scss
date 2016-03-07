@@ -20,10 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .section-header {
-	@include border-radius($basicCr);
+	border-radius: $basicCr;
 	background: $colorFormSectionHeader;
 	$c: lighten($colorBodyFg, 20%);
-	//border-bottom: 1px solid rgba(#fff, 0.3);
 	color: $c;
 	font-size: 0.8em;
 	padding: $formTBPad $formLRPad;
@@ -32,6 +31,7 @@
 
 .form {
 	color: $colorFormText;
+    width: 100%;
 	.form-section {
 		position: relative;
 		margin-bottom: $interiorMarginLg * 2;
@@ -39,7 +39,7 @@
 
 	.form-row {
 		$m: $interiorMargin;
-		@include box-sizing(border-box);
+		box-sizing: border-box;
 		@include clearfix;
 		border-top: 1px solid $colorFormLines;
 		margin-top: $m;
@@ -51,7 +51,7 @@
 
 		>.label,
 		>.controls {
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 			@include clearfix;
 			font-size: 0.8rem;
 			line-height: $formInputH;
@@ -60,28 +60,24 @@
 
 		>.label {
 			// Only style this way for immediate children of .form-row; prevents problems when .label is used in .controls section of a form
-			//@include test(orange, 0.05);
-			float: left;
 			min-width: 120px;
+            order: 1;
             position: relative;
 			white-space: nowrap;
 			width: $formLabelW;
 		}
 
 		.value {
-			color: $colorInputFg; //lighten($colorBodyFg, 20%);
+			color: $colorInputFg;
 		}
 
 		.controls {
-			float: left;
+            order: 2;
             position: relative;
-			width: 99.9% - $formLabelW; // Start with less than 100% for Firefox
+            @include flex(1 1 auto);
 
 			.l-composite-control {
-//				display: inline-block;
 				&.l-checkbox {
-//					@include test();
-//					height: $formRowCtrlsH;
 					display: inline-block;
 					line-height: $formRowCtrlsH;
 					margin-right: 5px;
@@ -115,7 +111,6 @@
 			$h: 150px;
 			position: relative;
 			height: $h;
-//			max-width: 50%;
 			>.wrapper {
 				$p: $interiorMargin;
 				overflow: auto;
@@ -127,6 +122,37 @@
 			}
 		}
 	}
+}
+
+.l-controls-first {
+    .form .form-row {
+        margin-top: $interiorMarginSm;
+        >.label,
+        >.controls {
+            line-height: inherit;
+            min-height: inherit;;
+        }
+        >.label {
+            @include flex(1 1 auto);
+            min-width: 0;
+            width: auto;
+            order: 2;
+        }
+        >.controls {
+            @include flex(0 0 auto);
+            margin-right: $interiorMargin;
+            order: 1;
+        }
+    }
+}
+
+.no-validate {
+    .form .form-row >.label {
+        padding-right: 0;
+        &:after {
+            display: none;
+        }
+    }
 }
 
 label.form-control.checkbox {
@@ -149,7 +175,7 @@ label.form-control.checkbox {
 	vertical-align: top;
 
 	div.s-hint {
-		@include border-radius($basicCr);
+		border-radius: $basicCr;
 		background: rgba($colorFormInvalid, 0.8);
 		display: block;
 		color: lighten($colorFormInvalid, 30%);

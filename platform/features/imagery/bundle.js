@@ -25,11 +25,13 @@ define([
     "./src/policies/ImageryViewPolicy",
     "./src/controllers/ImageryController",
     "./src/directives/MCTBackgroundImage",
+    "text!./res/templates/imagery.html",
     'legacyRegistry'
 ], function (
     ImageryViewPolicy,
     ImageryController,
     MCTBackgroundImage,
+    imageryTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -42,7 +44,7 @@ define([
                     "name": "Imagery",
                     "key": "imagery",
                     "glyph": "ã",
-                    "templateUrl": "templates/imagery.html",
+                    "template": imageryTemplate,
                     "priority": "preferred",
                     "needs": [
                         "telemetry"

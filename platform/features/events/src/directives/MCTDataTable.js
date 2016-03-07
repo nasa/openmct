@@ -25,14 +25,14 @@
  * Module defining MCTDataTable. Created by shale on 06/22/2015.
  */
 define(
-    [],
-    function () {
+    ['text!../../res/templates/mct-data-table.html'],
+    function (dataTableTemplate) {
         "use strict";
         
         function MCTDataTable($window) {
             return {
                 restrict: "E",
-                templateUrl: "platform/features/events/res/templates/mct-data-table.html",
+                template: dataTableTemplate,
                 scope: {
                     headers: "=",
                     rows: "=",

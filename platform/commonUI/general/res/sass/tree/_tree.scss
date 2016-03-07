@@ -34,11 +34,10 @@ ul.tree {
 
 .tree-item,
 .search-result-item {
-	$runningItemW: 0;
     @extend .l-flex-row;
-	@include box-sizing(border-box);
-	@include border-radius($basicCr);
-	@include single-transition(background-color, 0.25s);
+	box-sizing: border-box;
+	border-radius: $basicCr;
+	@include transition(background-color, 0.25s);
 	font-size: 0.8rem;
 	height: $menuLineH;
 	line-height: $menuLineH;
@@ -64,11 +63,6 @@ ul.tree {
                 @include transform(rotate(90deg));
             }
         }
-		@include desktop {
-			&:hover {
-				color: $colorItemTreeVCHover !important;
-			}
-		}
 	}
 
 	.t-object-label {
@@ -95,18 +89,6 @@ ul.tree {
 		}
 	}
 
-	&:not(.selected) {
-		@include desktop {
-			&:hover {
-				background: $colorItemTreeHoverBg;
-				color: $colorItemTreeHoverFg;
-				.t-item-icon {
-					color: $colorItemTreeIconHover;
-				}
-			}
-		}
-	}
-
 	&:not(.loading) {
 		cursor: pointer;
 	}
@@ -124,30 +106,37 @@ ul.tree {
 	}
 }
 
+body.desktop {
+    .tree-item,
+    .search-result-item {
+        .view-control {
+            &:hover {
+                color: $colorItemTreeVCHover !important;
+            }
+        }
+        &:not(.selected) {
+            &:hover {
+                background: $colorItemTreeHoverBg;
+                color: $colorItemTreeHoverFg;
+                .t-item-icon {
+                    color: $colorItemTreeIconHover;
+                }
+            }
+        }
+    }
+}
+
 mct-representation {
     &.s-status-pending {
         .t-object-label {
             .t-item-icon {
                 &:before {
-                    $spinBW: 4px;
-                    @include spinner($spinBW);
                     border-color: rgba($colorItemTreeIcon, 0.25);
                     border-top-color: rgba($colorItemTreeIcon, 1.0);
                 }
-                .t-item-icon-glyph {
-                    display: none;
-                }
-            }
-            .t-title-label {
-                font-style: italic;
-                opacity: 0.6;
             }
         }
     }
-}
-.selected mct-representation.s-status-pending .t-object-label .t-item-icon:before {
-    border-color: rgba($colorItemTreeSelectedFg, 0.25);
-    border-top-color: rgba($colorItemTreeSelectedFg, 1.0);
 }
 
 .tree .s-status-editing,
@@ -169,7 +158,7 @@ mct-representation {
             .t-item-icon,
             .t-title-label {
                 color: $colorItemTreeEditingFg;
-                @include text-shadow(none);
+                text-shadow: none;
             }
             .t-title-label {
                 font-style: italic;

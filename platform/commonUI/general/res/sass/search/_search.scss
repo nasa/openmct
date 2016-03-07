@@ -42,7 +42,6 @@
 		$iconEdgeM: 4px;
 		$iconD: $treeSearchInputBarH - ($iconEdgeM*2);
 		font-size: 0.8em;
-		max-width: 250px;
 		position: relative;
 
 		.search-input {
@@ -53,7 +52,7 @@
 		&:before,
 		.clear-icon,
 		.menu-icon {
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 			color: $colorInputIcon;
 			height: $iconD;
             width: $iconD;
@@ -130,7 +129,7 @@
 	.active-filter-display {
 		$s: 0.7em;
 		$p: $interiorMargin;
-		@include box-sizing(border-box);
+		box-sizing: border-box;
 		line-height: 130%;
 		padding-left: $s * 2.25;
 		font-size: $s;

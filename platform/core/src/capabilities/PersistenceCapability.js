@@ -111,7 +111,8 @@ define(
 
             notificationService.error({
                 title: "Error persisting " + domainObject.getModel().name,
-                hint: errorMessage || "Unknown error"
+                hint: errorMessage,
+                dismissable: true
             });
 
             return $q.reject(error);

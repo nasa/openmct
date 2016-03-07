@@ -49,6 +49,7 @@ define(
             var self = this;
 
             this.scope = scope;
+            this.listenHandle = undefined;
 
             // Mutate and persist a new version of a domain object's model.
             function doPersist(model) {
@@ -100,22 +101,53 @@ define(
             // Place the "commit" method in the scope
             scope.commit = commit;
             scope.setEditable = setEditable;
+
+            // Clean up when the scope is destroyed
+            scope.$on("$destroy", function () {
+                self.destroy();
+            });
+
         }
 
         // Handle a specific representation of a specific domain object
         EditRepresenter.prototype.represent = function represent(representation, representedObject) {
+            var scope = this.scope,
+                self = this;
             // Track the key, to know which view configuration to save to.
             this.key = (representation || {}).key;
             // Track the represented object
             this.domainObject = representedObject;
 
+            this.scope.isEditable = representedObject.getCapability('status').get('editing');
+
             // Ensure existing watches are released
             this.destroy();
+
+            function setEditing(){
+                scope.viewObjectTemplate = 'edit-object';
+            }
+
+            /**
+             * Listen for changes in object state. If the object becomes
+             * editable then change the view and inspector regions
+             * object representation accordingly
+             */
+            this.listenHandle = this.domainObject.getCapability('status').listen(function(statuses){
+                if (statuses.indexOf('editing')!=-1){
+                    setEditing();
+                } else {
+                    delete scope.viewObjectTemplate;
+                }
+            });
+
+            if (representedObject.getCapability('status').get('editing')){
+                setEditing();
+            }
         };
 
         // Respond to the destruction of the current representation.
         EditRepresenter.prototype.destroy = function destroy() {
-            // Nothing to clean up
+            return this.listenHandle && this.listenHandle();
         };
 
         return EditRepresenter;

@@ -50,9 +50,7 @@ define(
                         title: "Messages",
                         //Launch the message list dialog with the models
                         // from the notifications
-                        messages: notificationService.notifications && notificationService.notifications.map(function(notification){
-                            return notification.model;
-                        })
+                        messages: notificationService.notifications
                     },
                     cancel: function(){
                         dialogService.dismiss();

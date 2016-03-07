@@ -25,11 +25,13 @@ define([
     "./src/NotificationIndicatorController",
     "./src/NotificationIndicator",
     "./src/NotificationService",
+    "text!./res/notification-indicator.html",
     'legacyRegistry'
 ], function (
     NotificationIndicatorController,
     NotificationIndicator,
     NotificationService,
+    notificationIndicatorTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -53,7 +55,7 @@ define([
             "templates": [
                 {
                     "key": "notificationIndicatorTemplate",
-                    "templateUrl": "notification-indicator.html"
+                    "template": notificationIndicatorTemplate
                 }
             ],
             "controllers": [
@@ -79,6 +81,7 @@ define([
                     "implementation": NotificationService,
                     "depends": [
                         "$timeout",
+                        "topic",
                         "DEFAULT_AUTO_DISMISS",
                         "MINIMIZE_TIMEOUT"
                     ]

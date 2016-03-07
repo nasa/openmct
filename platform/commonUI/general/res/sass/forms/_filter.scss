@@ -27,7 +27,7 @@
 		}
 	}
 	.icon.ui-symbol {
-		@include border-radius($controlCr);
+		border-radius: $controlCr;
 		display: inline-block;
 		font-size: 1.3em;
 		height: $formInputH;
@@ -43,9 +43,9 @@
 		$d: $formInputH - $mgn * 2;
 		$cb: #fff;
 		$cf: #333;
-		@include border-radius($controlCr);
-		@include box-sizing(border-box);
-		@include opacity(0.2);
+		border-radius: $controlCr;
+		box-sizing: border-box;
+		opacity: 0.2;
 		background: $cb;
 		color: $cf;
 		display: block;
@@ -59,7 +59,7 @@
 		text-align: center;
 		z-index: 5;
 		&:hover {
-			@include opacity(0.6);
+			opacity: 0.6;
 			background-color: $colorKey;
 		}
 	}
@@ -95,7 +95,7 @@
     .clear-icon,
     .menu-icon,
     &:before {
-        @include box-sizing(border-box);
+        box-sizing: border-box;
         display: inline-block;
         line-height: inherit;
         position: absolute;

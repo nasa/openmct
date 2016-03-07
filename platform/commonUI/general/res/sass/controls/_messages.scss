@@ -36,38 +36,49 @@
 	}
 }
 
-.status.block {
+// Status coloring
+.ok, .info {
+    .status-indicator {
+        color: $colorStatusInfo;
+    }
+}
+
+.alert, .caution, .warning {
+    .status-indicator, .count {
+        color: $colorStatusAlert;
+    }
+
+}
+
+.error, .err {
+    .status-indicator, .count {
+        color: $colorStatusError;
+    }
+}
+
+.available {
+    .status-indicator, .count {
+        color: $colorStatusAvailable;
+    }
+}
+
+.status-block-holder {
+    // Applied to mct-include element
+    // Contains status.block elements
     $transDelay: 1.5s;
     $transSpeed: .25s;
-	color: $colorStatusDefault;
-	cursor: default;
-	display: inline-block;
-	margin-right: $interiorMargin;
-	.status-indicator,
-	.label,
-	.count {
-		display: inline-block;
-		vertical-align: top;
-	}
-
-    &.no-icon {
+    display: inline-block;
+    &.clickable { cursor: pointer; }
+    &:not(.clickable) { cursor: default; }
+    &.no-icon .status.block {
         .status-indicator {
             display: none;
         }
     }
-
     &.float-right {
         float: right;
     }
-
-    &.subtle {
-        opacity: 0.5;
-    }
-	.status-indicator {
-		margin-right: $interiorMarginSm;
-	}
-
-    &:not(.no-collapse) {
+    &:not(.no-collapse) .status.block {
         .label {
             // Max-width silliness is necessary for width transition
             @include trans-prop-nice(max-width, $transSpeed, $transDelay);
@@ -77,7 +88,7 @@
         &:hover {
             .label {
                 @include trans-prop-nice(max-width, $transSpeed, 0s);
-                max-width: 450px;
+                max-width: 600px;
                 width: auto;
             }
             .count {
@@ -87,29 +98,42 @@
         }
     }
 
-	&.ok .status-indicator,
-    &.info .status-indicator {
-		color: $colorStatusInfo;
+}
+
+.status.block {
+    $transDelay: 1.5s;
+    $transSpeed: .25s;
+	color: $colorStatusDefault;
+	display: inline-block;
+	margin-right: $interiorMargin;
+	.status-indicator,
+	.label,
+	.count {
+		display: inline-block;
+		vertical-align: top;
 	}
-    &.alert .status-indicator,
-	&.warning .status-indicator,
-	&.caution .status-indicator {
-		color: $colorStatusAlert;
+
+	.status-indicator {
+		margin-right: $interiorMarginSm;
 	}
-	&.error .status-indicator {
-		color: $colorStatusError;
-	}
+
 	.count {
 		@include trans-prop-nice(opacity, $transSpeed, $transDelay);
 		font-weight: bold;
 		opacity: 1;
 	}
+    .s-btn {
+        background: $colorStatusBtnBg;
+        padding: 0 $interiorMargin;
+        height: auto;
+        line-height: inherit;
+    }
 }
 
 /* Styles for messages and message banners */
 .message {
 	&.block {
-		@include border-radius($basicCr);
+		border-radius: $basicCr;
 		padding: $interiorMarginLg;
 	}
 	&.error {
@@ -121,9 +145,9 @@
 .l-message-banner {
 	$m: $interiorMarginSm;
 	$lh: $ueFooterH - ($m*2) - 1;
-	@include box-sizing(border-box);
+	box-sizing: border-box;
 	@include ellipsize();
-	@include display-flex;
+	@include display(flex);
 	@include flex-direction(row);
 	@include align-items(center);
 	position: absolute;
@@ -146,7 +170,7 @@
         left: 50%;
         opacity: 1;
         &:not(.info) {
-            @include pulse(100ms, 10);
+            @include pulse($dur: 100ms, $iteration: 10);
         }
     }
 
@@ -178,18 +202,12 @@
 }
 
 .s-message-banner {
-    //@include transition-property(left, opacity);
-    //@include transition-duration(0.35s);
-    //@include transition-timing-function(ease-in-out);
-}
-
-.s-message-banner {
-	@include border-radius($controlCr);
+	border-radius: $controlCr;
 	@include statusBannerColors($colorStatusDefault, $colorStatusFg);
 	cursor: pointer;
 	a { color: inherit; }
 	.s-action {
-		@include border-radius($basicCr);
+		border-radius: $basicCr;
         @include trans-prop-nice(background-color);
 	}
 	.close {
@@ -250,7 +268,7 @@
 */
 
 .l-message {
-    @include display-flex;
+    @include display(flex);
     @include flex-direction(row);
     @include align-items(stretch);
     .type-icon.message-type {
@@ -275,17 +293,17 @@
 // Message as singleton
 .t-message-single {
     @include messageBlock(80px);
+}
 
-    @include desktop {
-        .l-message,
-        .bottom-bar {
-            @include absPosDefault();
-        }
+body.desktop .t-message-single {
+    .l-message,
+    .bottom-bar {
+        @include absPosDefault();
+    }
 
-        .bottom-bar {
-            top: auto;
-            height: $ovrFooterH;
-        }
+    .bottom-bar {
+        top: auto;
+        height: $ovrFooterH;
     }
 }
 
@@ -295,15 +313,13 @@
 
     .message-contents {
         .l-message {
-            //border-bottom: 1px solid pullForward($colorOvrBg, 20%);
-            @include border-radius($controlCr);
+            border-radius: $controlCr;
             background: rgba($colorOvrFg, 0.1);
             margin-bottom: $interiorMargin;
             padding: $interiorMarginLg;
 
             .message-contents,
             .bottom-bar {
-                //@include test(green);
                 position: relative;
             }
 
@@ -320,8 +336,8 @@
             }
         }
     }
+}
 
-    @include desktop {
-        .message-contents .l-message { margin-right: $interiorMarginLg; }
-    }
+body.desktop .t-message-list {
+    .message-contents .l-message { margin-right: $interiorMarginLg; }
 }

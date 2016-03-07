@@ -22,10 +22,10 @@
 <div class="t-timeline-gantt l-timeline-gantt s-timeline-gantt"
      title="{{model.name}}"
      ng-controller="TimelineGanttController as gantt"
-     ng-style="{
+     ng-style="timespan ? {
                left: gantt.left(timespan, parameters.scroll, parameters.toPixels) + 'px',
                width: gantt.width(timespan, parameters.scroll, parameters.toPixels) + 'px'
-               }">
+               } : {}">
 
     <div class="bar">
 		<span class="s-activity-type ui-symbol">

@@ -27,7 +27,7 @@
 }
 
 .editor {
-    @include border-radius($basicCr * 1.5);
+    border-radius: $basicCr * 1.5;
 }
 
 .contents {
@@ -86,7 +86,7 @@
         color: lighten($colorBodyBg, 30%);
         font-size: .7rem;
         .status-holder {
-            @include box-sizing(border-box);
+            box-sizing: border-box;
             @include absPosDefault($interiorMargin);
             @include ellipsize();
             right: 120px;
@@ -94,15 +94,13 @@
             z-index: 1;
         }
         .app-logo {
-            @include box-sizing(border-box);
-            @include absPosDefault($interiorMargin);
+            background-position: right center;
+            box-sizing: border-box;
+            @include absPosDefault($interiorMargin - 1);
             cursor: pointer;
-            left: auto;
+            left: auto; right: $interiorMargin;
             width: $ueAppLogoW;
             z-index: 2;
-            &.logo-openmctweb {
-                background: url($dirImgs + 'logo-openmctweb.svg') no-repeat center center;
-            }
         }
     }
 }
@@ -121,7 +119,7 @@
 }
 
 .pane {
-    @include box-sizing(border-box);
+    box-sizing: border-box;
     position: absolute;
 
     .pane-header {
@@ -137,48 +135,6 @@
 
     .mini-tab-icon.toggle-pane {
         z-index: 5;
-        @include desktop {
-            $d: $uePaneMiniTabH;
-            $paneExpandedOffset: $splitterD + $uePaneMiniTabW;
-            top: $bodyMargin;
-            height: $d;
-            line-height: $d;
-            &:after {
-                // Always the icon that shows when the pane is collapsed
-                opacity: 0;
-            }
-            &.collapsed {
-                &:before {
-                    opacity: 0;
-                }
-                &:after {
-                    opacity: 1;
-                }
-            }
-            &.toggle-tree.anchor-left {
-                left: 0;
-                @include transform(translateX(-1 * $paneExpandedOffset));
-                &:after {
-                    content: '\6d'; // Menu 'hamburger' icon
-                }
-                &.collapsed {
-                    left: 0;
-                    @include transform(translateX((-1 * $ueCollapsedPaneEdgeM) + $interiorMargin));
-                }
-                &:not(.collapsed):before {
-                    @include trans-prop-nice(opacity, 200ms, 200ms);
-                }
-            }
-            &.toggle-inspect.anchor-right {
-                right: $bodyMargin;
-                &:after {
-                    content: '\e615'; // Eye icon
-                }
-                &.collapsed {
-                    right: $interiorMargin;
-                }
-            }
-        }
     }
     &.items {
         .object-browse-bar {
@@ -186,6 +142,49 @@
             .right.abs {
                 top: auto;
             }
+        }
+    }
+}
+
+body.desktop .pane .mini-tab-icon.toggle-pane {
+    $d: $uePaneMiniTabH;
+    $paneExpandedOffset: $splitterD + $uePaneMiniTabW;
+    top: $bodyMargin;
+    height: $d;
+    line-height: $d;
+    &:after {
+        // Always the icon that shows when the pane is collapsed
+        opacity: 0;
+    }
+    &.collapsed {
+        &:before {
+            opacity: 0;
+        }
+        &:after {
+            opacity: 1;
+        }
+    }
+    &.toggle-tree.anchor-left {
+        left: 0;
+        @include transform(translateX(-1 * $paneExpandedOffset));
+        &:after {
+            content: '\6d'; // Menu 'hamburger' icon
+        }
+        &.collapsed {
+            left: 0;
+            @include transform(translateX((-1 * $ueCollapsedPaneEdgeM) + $interiorMargin));
+        }
+        &:not(.collapsed):before {
+            @include trans-prop-nice(opacity, 200ms, 200ms);
+        }
+    }
+    &.toggle-inspect.anchor-right {
+        right: $bodyMargin;
+        &:after {
+            content: '\e615'; // Eye icon
+        }
+        &.collapsed {
+            right: $interiorMargin;
         }
     }
 }
@@ -282,7 +281,7 @@
 
 /***************************************************** OBJECT BROWSE BAR */
 .object-browse-bar {
-    @include box-sizing(border-box);
+    box-sizing: border-box;
     height: $ueTopBarH;
     line-height: $ueTopBarH;
     white-space: nowrap;
@@ -339,7 +338,7 @@
     }
 }
 
-@include desktop {
+body.desktop {
     .holder-all {
         min-width: $ueDesktopMinW;
     }
@@ -378,7 +377,7 @@
 .s-status-editing {
     .l-object-wrapper {
         @include pulseBorder($colorEditAreaFg, $dur: 1s, $opacity0: 0.3);
-        @include border-radius($controlCr);
+        border-radius: $controlCr;
         background-color: $colorEditAreaBg;
         border-color: $colorEditAreaFg;
         border-width: 2px;

@@ -13,3 +13,6 @@ deployment:
     branch: mobile
     heroku:
       appname: openmctweb-staging-deux
+test:
+  post:
+    - npm run jshint --silent

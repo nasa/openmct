@@ -77,6 +77,7 @@ define([
     './platform/features/plot/bundle',
     './platform/features/scrolling/bundle',
     './platform/features/timeline/bundle',
+    './platform/features/table/bundle',
     './platform/forms/bundle',
     './platform/identity/bundle',
     './platform/persistence/aggregator/bundle',
@@ -86,6 +87,7 @@ define([
     './platform/entanglement/bundle',
     './platform/search/bundle',
     './platform/status/bundle',
+    './platform/commonUI/regions/bundle',
 
     './example/imagery/bundle',
     './example/eventGenerator/bundle',

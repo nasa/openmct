@@ -22,10 +22,10 @@
 /*global define*/
 
 define([
-    "./src/controllers/EditController",
     "./src/controllers/EditActionController",
     "./src/controllers/EditPanesController",
     "./src/controllers/ElementsController",
+    "./src/controllers/EditObjectController",
     "./src/directives/MCTBeforeUnload",
     "./src/actions/LinkAction",
     "./src/actions/EditAction",
@@ -34,14 +34,20 @@ define([
     "./src/actions/SaveAction",
     "./src/actions/CancelAction",
     "./src/policies/EditActionPolicy",
+    "./src/policies/EditNavigationPolicy",
     "./src/representers/EditRepresenter",
     "./src/representers/EditToolbarRepresenter",
+    "text!./res/templates/library.html",
+    "text!./res/templates/edit-object.html",
+    "text!./res/templates/edit-action-buttons.html",
+    "text!./res/templates/elements.html",
+    "text!./res/templates/topbar-edit.html",
     'legacyRegistry'
 ], function (
-    EditController,
     EditActionController,
     EditPanesController,
     ElementsController,
+    EditObjectController,
     MCTBeforeUnload,
     LinkAction,
     EditAction,
@@ -50,30 +56,21 @@ define([
     SaveAction,
     CancelAction,
     EditActionPolicy,
+    EditNavigationPolicy,
     EditRepresenter,
     EditToolbarRepresenter,
+    libraryTemplate,
+    editObjectTemplate,
+    editActionButtonsTemplate,
+    elementsTemplate,
+    topbarEditTemplate,
     legacyRegistry
 ) {
     "use strict";
 
     legacyRegistry.register("platform/commonUI/edit", {
         "extensions": {
-            "routes": [
-                {
-                    "when": "/edit",
-                    "templateUrl": "templates/edit.html"
-                }
-            ],
             "controllers": [
-                {
-                    "key": "EditController",
-                    "implementation": EditController,
-                    "depends": [
-                        "$scope",
-                        "$q",
-                        "navigationService"
-                    ]
-                },
                 {
                     "key": "EditActionController",
                     "implementation": EditActionController,
@@ -93,6 +90,15 @@ define([
                     "implementation": ElementsController,
                     "depends": [
                         "$scope"
+                    ]
+                },
+                {
+                    "key": "EditObjectController",
+                    "implementation": EditObjectController,
+                    "depends": [
+                        "$scope",
+                        "$location",
+                        "policyService"
                     ]
                 }
             ],
@@ -156,14 +162,11 @@ define([
                     "name": "Save",
                     "description": "Save changes made to these objects.",
                     "depends": [
-                        "$q",
-                        "$location",
                         "$injector",
-                        "urlService",
-                        "navigationService",
                         "policyService",
                         "dialogService",
-                        "creationService"
+                        "creationService",
+                        "copyService"
                     ],
                     "priority": "mandatory"
                 },
@@ -183,32 +186,41 @@ define([
                 {
                     "category": "action",
                     "implementation": EditActionPolicy
+                },
+                {
+                    "category": "navigation",
+                    "message": "There are unsaved changes.",
+                    "implementation": EditNavigationPolicy
                 }
+
             ],
             "templates": [
                 {
                     "key": "edit-library",
-                    "templateUrl": "templates/library.html"
+                    "template": libraryTemplate
                 }
             ],
             "representations": [
                 {
                     "key": "edit-object",
-                    "templateUrl": "templates/edit-object.html",
+                    "template": editObjectTemplate,
                     "uses": [
                         "view"
+                    ],
+                    "gestures": [
+                        "drop"
                     ]
                 },
                 {
                     "key": "edit-action-buttons",
-                    "templateUrl": "templates/edit-action-buttons.html",
+                    "template": editActionButtonsTemplate,
                     "uses": [
                         "action"
                     ]
                 },
                 {
                     "key": "edit-elements",
-                    "templateUrl": "templates/elements.html",
+                    "template": elementsTemplate,
                     "uses": [
                         "composition"
                     ],
@@ -218,7 +230,7 @@ define([
                 },
                 {
                     "key": "topbar-edit",
-                    "templateUrl": "templates/topbar-edit.html"
+                    "template": topbarEditTemplate
                 }
             ],
             "representers": [

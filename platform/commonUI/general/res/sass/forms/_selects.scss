@@ -30,7 +30,7 @@
     line-height: $formInputH;
 	select {
 		@include appearance(none);
-		@include box-sizing(border-box);
+		box-sizing: border-box;
 		background: none;
 		color: $colorSelectFg;
 		cursor: pointer;

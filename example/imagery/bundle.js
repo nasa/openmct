@@ -60,7 +60,7 @@ define([
                             {
                                 "name": "Time",
                                 "key": "time",
-                                "format": "timestamp"
+                                "format": "utc"
                             }
                         ],
                         "ranges": [

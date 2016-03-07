@@ -29,8 +29,7 @@ define(
     function (BrowseController) {
         "use strict";
 
-        //TODO: Disabled for NEM Beta
-        xdescribe("The browse controller", function () {
+        describe("The browse controller", function () {
             var mockScope,
                 mockRoute,
                 mockLocation,
@@ -40,6 +39,9 @@ define(
                 mockUrlService,
                 mockDomainObject,
                 mockNextObject,
+                mockWindow,
+                mockPolicyService,
+                testDefaultRoot,
                 controller;
 
             function mockPromise(value) {
@@ -50,7 +52,32 @@ define(
                 };
             }
 
+            function instantiateController() {
+                controller = new BrowseController(
+                    mockScope,
+                    mockRoute,
+                    mockLocation,
+                    mockWindow,
+                    mockObjectService,
+                    mockNavigationService,
+                    mockUrlService,
+                    mockPolicyService,
+                    testDefaultRoot
+                );
+            }
+
             beforeEach(function () {
+                mockWindow = jasmine.createSpyObj('$window', [
+                   "confirm"
+                ]);
+                mockWindow.confirm.andReturn(true);
+
+                mockPolicyService = jasmine.createSpyObj('policyService', [
+                    'allow'
+                ]);
+
+                testDefaultRoot = "some-root-level-domain-object";
+
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     [ "$on", "$watch" ]
@@ -101,41 +128,28 @@ define(
                 ]));
                 mockNextObject.useCapability.andReturn(undefined);
                 mockNextObject.getId.andReturn("next");
-                mockDomainObject.getId.andReturn("mine");
+                mockDomainObject.getId.andReturn(testDefaultRoot);
 
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService,
-                    mockUrlService
-                );
+                instantiateController();
             });
 
             it("uses composition to set the navigated object, if there is none", function () {
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService,
-                    mockUrlService
-                );
+                instantiateController();
+                expect(mockNavigationService.setNavigation)
+                    .toHaveBeenCalledWith(mockDomainObject);
+            });
+
+            it("navigates to a root-level object, even when default path is not found", function () {
+                mockDomainObject.getId
+                    .andReturn("something-other-than-the-" + testDefaultRoot);
+                instantiateController();
                 expect(mockNavigationService.setNavigation)
                     .toHaveBeenCalledWith(mockDomainObject);
             });
 
             it("does not try to override navigation", function () {
                 mockNavigationService.getNavigation.andReturn(mockDomainObject);
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService,
-                    mockUrlService
-                );
+                instantiateController();
                 expect(mockScope.navigatedObject).toBe(mockDomainObject);
             });
 
@@ -162,14 +176,8 @@ define(
             });
 
             it("uses route parameters to choose initially-navigated object", function () {
-                mockRoute.current.params.ids = "mine/next";
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService
-                );
+                mockRoute.current.params.ids = testDefaultRoot + "/next";
+                instantiateController();
                 expect(mockScope.navigatedObject).toBe(mockNextObject);
                 expect(mockNavigationService.setNavigation)
                     .toHaveBeenCalledWith(mockNextObject);
@@ -179,14 +187,8 @@ define(
                 // Idea here is that if we get a bad path of IDs,
                 // browse controller should traverse down it until
                 // it hits an invalid ID.
-                mockRoute.current.params.ids = "mine/junk";
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService
-                );
+                mockRoute.current.params.ids = testDefaultRoot + "/junk";
+                instantiateController();
                 expect(mockScope.navigatedObject).toBe(mockDomainObject);
                 expect(mockNavigationService.setNavigation)
                     .toHaveBeenCalledWith(mockDomainObject);
@@ -196,14 +198,8 @@ define(
                 // Idea here is that if we get a path which passes
                 // through an object without a composition, browse controller
                 // should stop at it since remaining IDs cannot be loaded.
-                mockRoute.current.params.ids = "mine/next/junk";
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService
-                );
+                mockRoute.current.params.ids = testDefaultRoot + "/next/junk";
+                instantiateController();
                 expect(mockScope.navigatedObject).toBe(mockNextObject);
                 expect(mockNavigationService.setNavigation)
                     .toHaveBeenCalledWith(mockNextObject);
@@ -230,7 +226,10 @@ define(
                 // prior to setting $route.current
                 mockLocation.path.andReturn("/browse/");
 
+                mockNavigationService.setNavigation.andReturn(true);
+
                 // Exercise the Angular workaround
+                mockNavigationService.addListener.mostRecentCall.args[0]();
                 mockScope.$on.mostRecentCall.args[1]();
                 expect(mockUnlisten).toHaveBeenCalled();
 
@@ -239,6 +238,36 @@ define(
                 expect(mockLocation.path).toHaveBeenCalledWith(
                     mockUrlService.urlForLocation(mockMode, mockNextObject)
                 );
+            });
+
+            it("after successful navigation event sets the selected tree " +
+                "object", function () {
+                mockScope.navigatedObject = mockDomainObject;
+                mockNavigationService.setNavigation.andReturn(true);
+
+                //Simulate a change in selected tree object
+                mockScope.treeModel = {selectedObject: mockDomainObject};
+                mockScope.$watch.mostRecentCall.args[1](mockNextObject);
+
+                expect(mockScope.treeModel.selectedObject).toBe(mockNextObject);
+                expect(mockScope.treeModel.selectedObject).not.toBe(mockDomainObject);
+            });
+
+            it("after failed navigation event resets the selected tree" +
+                " object", function () {
+                mockScope.navigatedObject = mockDomainObject;
+                mockWindow.confirm.andReturn(false);
+                mockPolicyService.allow.andCallFake(function(category, object, context, callback){
+                    callback("unsaved changes");
+                    return false;
+                });
+
+                //Simulate a change in selected tree object
+                mockScope.treeModel = {selectedObject: mockDomainObject};
+                mockScope.$watch.mostRecentCall.args[1](mockNextObject);
+
+                expect(mockScope.treeModel.selectedObject).not.toBe(mockNextObject);
+                expect(mockScope.treeModel.selectedObject).toBe(mockDomainObject);
             });
 
         });

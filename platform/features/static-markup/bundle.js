@@ -23,9 +23,11 @@
 
 define([
     
+    "text!./res/markup.html",
     'legacyRegistry'
 ], function (
     
+    markupTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -45,7 +47,7 @@ define([
             ],
             "views": [
                 {
-                    "templateUrl": "markup.html",
+                    "template": markupTemplate,
                     "name": "Static Markup",
                     "type": "static.markup",
                     "key": "static.markup"
