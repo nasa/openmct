@@ -99,12 +99,15 @@ define([
                 .toHaveBeenCalledWith(jasmine.any(Function));
         });
 
-        it('reschedules indexing when mutation occurs', function () {
+        it('re-indexes when mutation occurs', function () {
             var mockDomainObject =
-                jasmine.createSpyObj('domainObj', ['getId']);
+                    jasmine.createSpyObj('domainObj', ['getId', 'getModel']),
+                testModel = { some: 'model' };
             mockDomainObject.getId.andReturn("some-id");
+            mockDomainObject.getModel.andReturn(testModel);
+            spyOn(provider, 'index').andCallThrough();
             mutationTopic.listen.mostRecentCall.args[0](mockDomainObject);
-            expect(provider.scheduleForIndexing).toHaveBeenCalledWith('some-id');
+            expect(provider.index).toHaveBeenCalledWith('some-id', testModel);
         });
 
         it('starts indexing roots', function () {
