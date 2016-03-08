@@ -24,17 +24,29 @@
 define(["./ExportTimelineAsCSVTask"], function (ExportTimelineAsCSVTask) {
     'use strict';
 
-    function ExportTimelineAsCSVAction(exportService, context) {
+    function ExportTimelineAsCSVAction(exportService, notificationService, context) {
         this.task = new ExportTimelineAsCSVTask(
             exportService,
             context.domainObject
         );
-        //this.taskService = taskService;
+        this.notificationService = notificationService;
     }
 
     ExportTimelineAsCSVAction.prototype.perform = function () {
-        return this.task.run();
-        //return this.taskService.run(this.task);
+        var notificationService = this.notificationService,
+            notification = notificationService.notify({
+                title: "Exporting CSV",
+                unknownProgress: true
+            });
+
+        return this.task.run()
+            .then(function () {
+                notification.dismiss();
+            })
+            .catch(function () {
+                notification.dismiss();
+                notificationService.error("Error exporting CSV");
+            });
     };
 
     ExportTimelineAsCSVAction.appliesTo = function (context) {
