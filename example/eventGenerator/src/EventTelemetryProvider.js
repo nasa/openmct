@@ -36,8 +36,7 @@ define(
         function EventTelemetryProvider($q, $timeout) {
             var
 	            subscriptions = [],
-	            genInterval = 1000,
-	            startTime = Date.now();
+	            genInterval = 1000;
 
             //
             function matchesSource(request) {
@@ -80,7 +79,6 @@ define(
 
             function startGenerating() {
                 $timeout(function () {
-	                //console.log("startGenerating... " + Date.now());
                     handleSubscriptions();
                     if (subscriptions.length > 0) {
                         startGenerating();
@@ -93,7 +91,8 @@ define(
                     callback: callback,
                     requests: requests
                 };
-
+                console.log("subscribe... " + Date.now() / 1000 + " request:" +
+                    " " + requests[0].id);
                 function unsubscribe() {
                     subscriptions = subscriptions.filter(function (s) {
                         return s !== subscription;
@@ -101,7 +100,6 @@ define(
                 }
 
                 subscriptions.push(subscription);
-
                 if (subscriptions.length === 1) {
                     startGenerating();
                 }

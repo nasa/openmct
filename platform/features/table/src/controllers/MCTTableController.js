@@ -12,7 +12,7 @@ define(
             this.element = element;
             this.$timeout = $timeout;
             this.maxDisplayRows = 50;
-            element.find('div').on('scroll', this.onScroll.bind(this));
+            element.find('div').on('scroll', this.setVisibleRows.bind(this));
             this.scrollable = element.find('div')[0];
 
                 $scope.visibleRows = [];
@@ -66,11 +66,10 @@ define(
         }
 
         /**
-         * On scroll, calculate which rows indexes are visible and
-         * ensure that an equal number of rows are preloaded for
-         * scrolling in either direction.
+         * Re-synchronize between data rows and visible rows, based on array
+         * content and scroll state.
          */
-        MCTTableController.prototype.onScroll = function (event) {
+        MCTTableController.prototype.setVisibleRows = function () {
             var self = this,
                 target = this.scrollable,
                 topScroll = target.scrollTop,
@@ -82,40 +81,53 @@ define(
                 start,
                 end;
 
+            //No need to scroll
             if (this.$scope.displayRows.length < this.maxDisplayRows) {
-                return;
-            }
-
-            if (topScroll < this.$scope.headerHeight) {
-                firstVisible = 0;
+                //Check whether need to resynchronize visible with display
+                // rows (if data added)
+                if (this.$scope.visibleRows.length != this.$scope.displayRows.length){
+                    start = 0;
+                    end = this.$scope.displayRows.length-1;
+                } else {
+                    //Data is in sync, and no need to calculate scroll,
+                    // so do nothing.
+                    return;
+                }
             } else {
-                firstVisible = Math.floor(
-                    (topScroll - this.$scope.headerHeight) / this.$scope.rowHeight
+                //rows has exceeded display maximum, so may be necessary to
+                // scroll
+                if (topScroll < this.$scope.headerHeight) {
+                    firstVisible = 0;
+                } else {
+                    firstVisible = Math.floor(
+                        (topScroll - this.$scope.headerHeight) / this.$scope.rowHeight
+                    );
+                }
+                lastVisible = Math.ceil(
+                    (bottomScroll - this.$scope.headerHeight) / this.$scope.rowHeight
                 );
+
+                totalVisible = lastVisible - firstVisible;
+                numberOffscreen = this.maxDisplayRows - totalVisible;
+                start = firstVisible - Math.floor(numberOffscreen / 2);
+                end = lastVisible + Math.ceil(numberOffscreen / 2);
+
+                if (start < 0) {
+                    start = 0;
+                    //end = this.$scope.visibleRows.length - 1;
+                    end = Math.min(this.maxDisplayRows, this.$scope.displayRows.length) - 1;
+                } else if (end >= this.$scope.displayRows.length) {
+                    end = this.$scope.displayRows.length - 1;
+                    start = end - this.maxDisplayRows + 1;
+                }
+                if (this.$scope.visibleRows[0].rowIndex === start &&
+                    this.$scope.visibleRows[this.$scope.visibleRows.length - 1]
+                        .rowIndex === end) {
+
+                    return; // don't update if no changes are required.
+                }
             }
-            lastVisible = Math.ceil(
-                (bottomScroll - this.$scope.headerHeight) / this.$scope.rowHeight
-            );
-
-            totalVisible = lastVisible - firstVisible;
-            numberOffscreen = this.maxDisplayRows - totalVisible;
-            start = firstVisible - Math.floor(numberOffscreen / 2);
-            end = lastVisible + Math.ceil(numberOffscreen / 2);
-
-            if (start < 0) {
-                start = 0;
-                end = this.$scope.visibleRows.length - 1;
-            } else if (end >= this.$scope.displayRows.length) {
-                end = this.$scope.displayRows.length - 1;
-                start = end - this.maxDisplayRows + 1;
-            }
-            if (this.$scope.visibleRows[0].rowIndex === start &&
-                this.$scope.visibleRows[this.$scope.visibleRows.length-1]
-                    .rowIndex === end) {
-
-                return; // don't update if no changes are required.
-            }
-
+            //Set visible rows from display rows, based on calculated offset.
             this.$scope.visibleRows = this.$scope.displayRows.slice(start, end)
                 .map(function(row, i) {
                     return {
@@ -176,16 +188,7 @@ define(
             this.$scope.headerHeight = headerHeight;
             this.$scope.rowHeight = rowHeight;
             this.$scope.totalHeight = overallHeight;
-
-            this.$scope.visibleRows = this.$scope.displayRows.slice(0, this.maxDisplayRows).map(function(row, i) {
-                return {
-                    rowIndex: i,
-                    offsetY: (i * self.$scope.rowHeight) + self.$scope.headerHeight,
-                    contents: row
-                };
-            });
-
-            this.onScroll();
+            this.setVisibleRows();
             this.$scope.overrideRowPositioning = true;
         };
 
@@ -316,13 +319,13 @@ define(
          * will be sorted before display.
          */
         MCTTableController.prototype.updateRows = function (newRows) {
-            console.log('updateRows');
             this.$scope.visibleRows = [];
             this.$scope.overrideRowPositioning = false;
 
             if (!this.$scope.displayHeaders) {
                 return;
             }
+
             this.filterAndSort(newRows || []);
             this.resize();
         };

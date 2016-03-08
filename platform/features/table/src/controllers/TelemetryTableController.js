@@ -82,7 +82,7 @@ define(
             this.changeListeners = [];
             // When composition changes, re-subscribe to the various
             // telemetry subscriptions
-            this.changeListeners.push(this.$scope.$watchCollection('domainObject.getModel().composition', this.subscribe.bind(this)));
+            //this.changeListeners.push(this.$scope.$watchCollection('domainObject.getModel().composition', this.subscribe.bind(this)));
 
             //Change of bounds in time conductor
             this.changeListeners.push(this.$scope.$on('telemetry:display:bounds', this.subscribe.bind(this)));
@@ -103,7 +103,7 @@ define(
          Create a new subscription. This is called when
          */
         TelemetryTableController.prototype.subscribe = function() {
-
+            console.trace();
             if (this.handle) {
                 this.handle.unsubscribe();
             }

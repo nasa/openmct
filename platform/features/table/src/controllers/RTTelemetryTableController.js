@@ -27,8 +27,8 @@
  */
 define(
     [
-        './TableController',
-        '../Table',
+        './TelemetryTableController',
+        '../TableConfiguration',
         '../NameColumn'
     ],
     function (TableController, Table, NameColumn) {
@@ -44,16 +44,17 @@ define(
          * @param telemetryFormatter
          * @constructor
          */
-        function RTTableController($scope, telemetryHandler, telemetryFormatter) {
+        function RTTelemetryTableController($scope, telemetryHandler, telemetryFormatter) {
             TableController.call(this, $scope, telemetryHandler, telemetryFormatter);
         }
 
-        RTTableController.prototype = Object.create(TableController.prototype);
+        RTTelemetryTableController.prototype = Object.create(TableController.prototype);
 
         /**
-         Create a new subscription. This is called when
+         Create a new telemetry subscription.
          */
-        RTTableController.prototype.subscribe = function() {
+        RTTelemetryTableController.prototype.subscribe = function() {
+            console.trace();
             var self = this;
 
             if (this.handle) {
@@ -90,10 +91,10 @@ define(
          * be composed of multiple objects)
          * @param datum The data received from the telemetry source
          */
-        RTTableController.prototype.updateRows = function (object, datum) {
+        RTTelemetryTableController.prototype.updateRows = function (object, datum) {
             this.$scope.$broadcast('newRow', this.table.getRowValues(object, datum));
         };
 
-        return RTTableController;
+        return RTTelemetryTableController;
     }
 );
