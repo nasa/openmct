@@ -25,7 +25,10 @@ define(
     ['../../src/actions/ExportTimelineAsCSVAction'],
     function (ExportTimelineAsCSVAction) {
         describe("ExportTimelineAsCSVAction", function () {
-            var mockDomainObject,
+            var mockExportService,
+                mockNotificationService,
+                mockNotification,
+                mockDomainObject,
                 mockType,
                 testContext,
                 testType,
@@ -37,6 +40,20 @@ define(
                     [ 'getId', 'getModel', 'getCapability', 'hasCapability' ]
                 );
                 mockType = jasmine.createSpyObj('type', [ 'instanceOf' ]);
+                mockExportService = jasmine.createSpyObj(
+                    'exportService',
+                    [ 'exportCSV' ]
+                );
+                mockNotificationService = jasmine.createSpyObj(
+                    'notificationService',
+                    [ 'notify', 'error' ]
+                );
+                mockNotification = jasmine.createSpyObj(
+                    'notification',
+                    [ 'dismiss' ]
+                );
+
+                mockNotificationService.notify.andReturn(mockNotification);
 
                 mockDomainObject.hasCapability.andReturn(true);
                 mockDomainObject.getCapability.andReturn(mockType);
@@ -45,6 +62,12 @@ define(
                 });
 
                 testContext = { domainObject: mockDomainObject };
+
+                action = new ExportTimelineAsCSVAction(
+                    mockExportService,
+                    mockNotificationService,
+                    testContext
+                );
             });
 
             it("is applicable to timelines", function () {
@@ -57,6 +80,73 @@ define(
                 testType = 'folder';
                 expect(ExportTimelineAsCSVAction.appliesTo(testContext))
                     .toBe(false);
+            });
+
+            describe("when performed", function () {
+                var testPromise,
+                    mockCallback;
+
+                beforeEach(function () {
+                    mockCallback = jasmine.createSpy('callback');
+                    // White-boxy; we know most work is delegated
+                    // to the associated Task, so stub out that interaction.
+                    spyOn(action.task, "run").andCallFake(function () {
+                        return new Promise(function (resolve, reject) {
+                            testPromise = {
+                                resolve: resolve,
+                                reject: reject
+                            };
+                        });
+                    });
+                    action.perform().then(mockCallback);
+                });
+
+                it("shows a notification", function () {
+                    expect(mockNotificationService.notify)
+                        .toHaveBeenCalled();
+                });
+
+                it("starts an export task", function () {
+                    expect(action.task.run).toHaveBeenCalled();
+                });
+
+                describe("and completed", function () {
+                    beforeEach(function () {
+                        testPromise.resolve();
+                        waitsFor(function () {
+                            return mockCallback.calls.length > 0;
+                        });
+                    });
+
+                    it("dismisses the displayed notification", function () {
+                        expect(mockNotification.dismiss)
+                            .toHaveBeenCalled();
+                    });
+
+                    it("shows no error messages", function () {
+                        expect(mockNotificationService.error)
+                            .not.toHaveBeenCalled();
+                    });
+                });
+
+                describe("and an error occurs", function () {
+                    beforeEach(function () {
+                        testPromise.reject();
+                        waitsFor(function () {
+                            return mockCallback.calls.length > 0;
+                        });
+                    });
+
+                    it("dismisses the displayed notification", function () {
+                        expect(mockNotification.dismiss)
+                            .toHaveBeenCalled();
+                    });
+
+                    it("shows an error message", function () {
+                        expect(mockNotificationService.error)
+                            .toHaveBeenCalledWith(jasmine.any(String));
+                    });
+                });
             });
         });
     }
