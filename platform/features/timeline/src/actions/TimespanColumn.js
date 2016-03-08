@@ -21,8 +21,10 @@
  *****************************************************************************/
 /*global define*/
 
-define([], function () {
+define(['../TimelineFormatter'], function (TimelineFormatter) {
     "use strict";
+
+    var FORMATTER = new TimelineFormatter();
 
     function TimespanColumn(isStart) {
         this.isStart = isStart;
@@ -36,7 +38,9 @@ define([], function () {
         var isStart = this.isStart;
         return domainObject.hasCapability('timespan') ?
             domainObject.useCapability('timespan').then(function (timespan) {
-                return isStart ? timespan.getStart() : timespan.getEnd();
+                return FORMATTER.format(
+                    isStart ? timespan.getStart() : timespan.getEnd()
+                );
             }) : "";
     };
 
