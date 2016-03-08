@@ -24,6 +24,11 @@
 define([], function () {
     "use strict";
 
+    /**
+     * A column showing domain object identifiers.
+     * @constructor
+     * @implements {platform/features/timeline.TimelineCSVColumn}
+     */
     function IdColumn() {
     }
 

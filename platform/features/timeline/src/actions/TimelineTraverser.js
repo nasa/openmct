@@ -24,10 +24,20 @@
 define([], function () {
     "use strict";
 
+    /**
+     * Builds a list of domain objects which should be included
+     * in the CSV export of a given timeline.
+     * @param {DomainObject} domainObject the object being exported
+     * @constructor
+     */
     function TimelineTraverser(domainObject) {
         this.domainObject = domainObject;
     }
 
+    /**
+     * Get a list of domain objects for CSV export.
+     * @returns {Promise.<DomainObject[]>} a list of domain objects
+     */
     TimelineTraverser.prototype.buildObjectList = function () {
         var idSet = {},
             objects = [];

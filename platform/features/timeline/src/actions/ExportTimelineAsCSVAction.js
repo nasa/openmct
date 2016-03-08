@@ -24,6 +24,16 @@
 define(["./ExportTimelineAsCSVTask"], function (ExportTimelineAsCSVTask) {
     'use strict';
 
+    /**
+     * Implements the "Export Timeline as CSV" action.
+     *
+     * @param exportService the service used to perform the CSV export
+     * @param notificationService the service used to show notifications
+     * @param context the Action's context
+     * @implements {Action}
+     * @constructor
+     * @memberof {platform/features/timeline}
+     */
     function ExportTimelineAsCSVAction(exportService, notificationService, context) {
         this.task = new ExportTimelineAsCSVTask(
             exportService,

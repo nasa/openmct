@@ -24,6 +24,14 @@
 define([], function () {
     "use strict";
 
+    /**
+     * A column containing references to other objects contained
+     * in a domain object's composition.
+     * @param {number} index the zero-based index of the composition
+     *        element associated with this column
+     * @constructor
+     * @implements {platform/features/timeline.TimelineCSVColumn}
+     */
     function CompositionColumn(index) {
         this.index = index;
     }

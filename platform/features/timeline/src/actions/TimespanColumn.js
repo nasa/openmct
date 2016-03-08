@@ -26,6 +26,13 @@ define(['../TimelineFormatter'], function (TimelineFormatter) {
 
     var FORMATTER = new TimelineFormatter();
 
+    /**
+     * A column showing start or end times associated with a domain object.
+     * @constructor
+     * @param {boolean} isStart true if this column refers to the object's
+     *        start time; false if it refers to the object's end time
+     * @implements {platform/features/timeline.TimelineCSVColumn}
+     */
     function TimespanColumn(isStart) {
         this.isStart = isStart;
     }

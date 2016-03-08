@@ -36,6 +36,38 @@ define([
 ) {
     'use strict';
 
+    /**
+     * A description of how to populate a given column within a
+     * prepared table of domain object data, for CSV export.
+     * @interface platform/features/timeline.TimelineCSVColumn
+     */
+
+    /**
+     * Get the value that belongs in this column for a given
+     * domain object.
+     * @memberof {platform/features/timeline.TimelineCSVColumn#}
+     * @method value
+     * @param {DomainObject} domainObject the domain object
+     *        represented by this row
+     * @returns {string|Promise<string>} the value for this cell
+     */
+
+    /**
+     * Get the name of this column, as belongs in a header.
+     * @memberof {platform/features/timeline.TimelineCSVColumn#}
+     * @method name
+     * @returns {string} the name of this column
+     */
+
+    /**
+     * Handles conversion of a list of domain objects to a table
+     * representation appropriate for CSV export.
+     *
+     * @param {DomainObject[]} domainObjects the objects to include
+     *        in the exported data
+     * @constructor
+     * @memberof {platform/features/timeline}
+     */
     function TimelineCSVExporter(domainObjects) {
         var maxComposition = 0,
             maxRelationships = 0,
@@ -90,6 +122,13 @@ define([
         this.columns = columns;
     }
 
+    /**
+     * Get a tabular representation of domain object data.
+     * Each row corresponds to a single object; each element
+     * in each row corresponds to a property designated by
+     * the `headers`, correlated by index.
+     * @returns {Promise.<string[][]>} domain object data
+     */
     TimelineCSVExporter.prototype.rows = function () {
         var columns = this.columns;
 
@@ -102,6 +141,11 @@ define([
         return Promise.all(this.domainObjects.map(toRow));
     };
 
+    /**
+     * Get the column headers associated with this tabular
+     * representation of objects.
+     * @returns {string[]} column headers
+     */
     TimelineCSVExporter.prototype.headers = function () {
         return this.columns.map(function (column) {
             return column.name();

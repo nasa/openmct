@@ -24,6 +24,13 @@
 define([], function () {
     "use strict";
 
+    /**
+     * A column showing relationships to activity modes.
+     * @constructor
+     * @param {number} index the zero-based index of the composition
+     *        element associated with this column
+     * @implements {platform/features/timeline.TimelineCSVColumn}
+     */
     function ModeColumn(index) {
         this.index = index;
     }

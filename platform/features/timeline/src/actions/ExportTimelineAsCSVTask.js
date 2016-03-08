@@ -31,16 +31,25 @@ define([
     "use strict";
 
     /**
+     * Runs (and coordinates) the preparation and export of CSV data
+     * for the "Export Timeline as CSV" action.
      *
      * @constructor
      * @memberof {platform/features/timeline}
-     * @implements {Task}
+     * @param exportService the service used to export as CSV
+     * @param {DomainObject} domainObject the timeline being exported
      */
     function ExportTimelineAsCSVTask(exportService, domainObject) {
         this.domainObject = domainObject;
         this.exportService = exportService;
     }
 
+    /**
+     * Run this CSV export task.
+     *
+     * @returns {Promise} a promise that will be resolved when the
+     *          export has finished (or rejected if there are problems.)
+     */
     ExportTimelineAsCSVTask.prototype.run = function () {
         var exportService = this.exportService;
 

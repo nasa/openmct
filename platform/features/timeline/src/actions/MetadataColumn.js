@@ -24,6 +24,11 @@
 define([], function () {
     "use strict";
 
+    /**
+     * A column reflecting properties from domain object metadata.
+     * @constructor
+     * @implements {platform/features/timeline.TimelineCSVColumn}
+     */
     function MetadataColumn(propertyName) {
         this.propertyName = propertyName;
     }
