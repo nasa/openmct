@@ -26,6 +26,7 @@ define(
     function (TimelineCSVExporter) {
         describe("TimelineCSVExporter", function () {
             var mockDomainObjects,
+                testMetadata,
                 exporter;
 
             function makeMockDomainObject(model, index) {
@@ -41,15 +42,27 @@ define(
                 );
                 mockDomainObject.getId.andReturn('id-' + index);
                 mockDomainObject.getModel.andReturn(model);
+                mockDomainObject.useCapability.andCallFake(function (c) {
+                    return c === 'metadata' && [];
+                });
                 return mockDomainObject;
             }
 
             beforeEach(function () {
+                testMetadata = [
+                    { name: "abc", value: 123 },
+                    { name: "xyz", value: 456 }
+                ];
+
                 mockDomainObjects = [
                     { composition: [ 'a', 'b', 'c' ] },
                     { relationships: { modes: [ 'x', 'y' ] } },
                     { }
                 ].map(makeMockDomainObject);
+
+                mockDomainObjects[2].useCapability.andCallFake(function (c) {
+                    return c === 'metadata' && testMetadata;
+                });
 
                 exporter = new TimelineCSVExporter(mockDomainObjects);
             });
@@ -79,7 +92,20 @@ define(
                 });
             });
 
+            describe("headers", function () {
+                var headers;
 
+                beforeEach(function () {
+                    headers = exporter.headers();
+                });
+
+                it("contains all metadata properties", function () {
+                    testMetadata.forEach(function (property) {
+                        expect(headers.indexOf(property.name))
+                            .not.toEqual(-1);
+                    });
+                });
+            });
 
         });
     }
