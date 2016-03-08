@@ -54,17 +54,31 @@ define(
                 exporter = new TimelineCSVExporter(mockDomainObjects);
             });
 
-            it("includes one row per domain object", function () {
-                var mockCallback = jasmine.createSpy('callback');
-                exporter.rows().then(mockCallback);
-                waitsFor(function () {
-                    return mockCallback.calls.length > 0;
+            describe("rows", function () {
+                var rows;
+
+                beforeEach(function () {
+                    exporter.rows().then(function (r) {
+                        rows = r;
+                    });
+                    waitsFor(function () {
+                        return rows !== undefined;
+                    });
                 });
-                runs(function () {
-                    expect(mockCallback.mostRecentCall.args[0].length)
-                        .toEqual(mockDomainObjects.length);
+
+
+                it("include one row per domain object", function () {
+                    expect(rows.length).toEqual(mockDomainObjects.length);
+                });
+
+                it("includes identifiers for each domain object", function () {
+                    rows.forEach(function (row, index) {
+                        var id = mockDomainObjects[index].getId();
+                        expect(row.indexOf(id)).not.toEqual(-1);
+                    });
                 });
             });
+
 
 
         });
