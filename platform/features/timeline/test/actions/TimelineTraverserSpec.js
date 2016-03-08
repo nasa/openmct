@@ -42,6 +42,7 @@ define([
                         'getModel'
                     ]
                 ),
+                mockRelationships,
                 model = testModels[id];
 
             mockDomainObject.getId.andReturn(id);
@@ -52,6 +53,31 @@ define([
                     c === 'relationship' ? !!model.relationships :
                         false;
             });
+
+            if (!!model.composition) {
+                mockDomainObject.useCapability.andCallFake(function (c) {
+                    return c === 'composition' &&
+                        Promise.resolve(model.composition.map(function (id) {
+                            return mockDomainObjects[id]
+                        }));
+                });
+            }
+
+            if (!!model.relationships) {
+                mockRelationships = jasmine.createSpyObj(
+                    'relationship',
+                    ['getRelatedObjects']
+                );
+                mockRelationships.getRelatedObjects.andCallFake(function (k) {
+                    var ids = model.relationships[k] || [];
+                    return Promise.resolve(ids.map(function (id) {
+                        return mockDomainObjects[id];
+                    }));
+                });
+                mockDomainObject.getCapability.andCallFake(function (c) {
+                    return c === 'relationship' && mockRelationships;
+                });
+            }
 
             mockDomainObjects[id] = mockDomainObject;
         }
