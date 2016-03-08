@@ -29,7 +29,7 @@ define([], function () {
     }
 
     ModeColumn.prototype.name = function () {
-        return "Mode " + (this.index + 1);
+        return "Activity Mode " + (this.index + 1);
     };
 
     ModeColumn.prototype.value = function (domainObject) {
