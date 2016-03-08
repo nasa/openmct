@@ -41,7 +41,7 @@ define([
             var name = property.name;
             if (!columnNames[name]) {
                 columnNames[name] = true;
-                columns.push(new MetadataColumn(name))
+                columns.push(new MetadataColumn(name));
             }
         }
 
