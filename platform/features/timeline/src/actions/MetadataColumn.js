@@ -34,11 +34,11 @@ define([], function () {
 
     MetadataColumn.prototype.value = function (domainObject) {
         var properties = domainObject.useCapability('metadata'),
-            name = this.propertyName,
-            property = properties.find(function (p) {
-                return p.name === name;
-            });
-        return property ? property.value : "";
+            name = this.propertyName;
+        return properties.reduce(function (value, property) {
+            return property.name === name ?
+                property.value : value;
+        }, "");
     };
 
     return MetadataColumn;
