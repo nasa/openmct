@@ -58,7 +58,7 @@ define([
                 mockDomainObject.useCapability.andCallFake(function (c) {
                     return c === 'composition' &&
                         Promise.resolve(model.composition.map(function (id) {
-                            return mockDomainObjects[id]
+                            return mockDomainObjects[id];
                         }));
                 });
             }
