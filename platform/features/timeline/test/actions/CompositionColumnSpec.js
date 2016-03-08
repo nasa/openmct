@@ -29,7 +29,7 @@ define(
                 column;
 
             beforeEach(function () {
-                testIndex = 42;
+                testIndex = 3;
                 column = new CompositionColumn(testIndex);
             });
 
@@ -37,6 +37,38 @@ define(
                 expect(column.name().indexOf(String(testIndex + 1)))
                     .not.toEqual(-1);
             });
+
+            describe("value", function () {
+                var mockDomainObject,
+                    testModel;
+
+                beforeEach(function () {
+                    mockDomainObject = jasmine.createSpyObj(
+                        'domainObject',
+                        [ 'getId', 'getModel', 'getCapability' ]
+                    );
+                    testModel = {
+                        composition: [ 'a', 'b', 'c', 'd', 'e', 'f' ]
+                    };
+                    mockDomainObject.getModel.andReturn(testModel);
+                });
+
+                it("returns a corresponding identifier", function () {
+                    expect(column.value(mockDomainObject))
+                        .toEqual(testModel.composition[testIndex]);
+                });
+
+                it("returns nothing when composition is exceeded", function () {
+                    testModel.composition = [ 'foo' ];
+                    expect(column.value(mockDomainObject)).toEqual("");
+                });
+
+                it("returns nothing when composition is absent", function () {
+                    delete testModel.composition;
+                    expect(column.value(mockDomainObject)).toEqual("");
+                });
+            });
+
         });
     }
 );
