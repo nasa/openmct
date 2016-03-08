@@ -94,7 +94,6 @@ define([
             mockDomainObjects = {};
             Object.keys(testModels).forEach(addMockDomainObject);
 
-
             traverser = new TimelineTraverser(mockDomainObjects.a);
         });
 
@@ -102,12 +101,17 @@ define([
             var objects;
 
             function contains(id) {
-                return objects.indexOf(mockDomainObjects[id]) !== -1;
+                return objects.some(function (object) {
+                    return object.getId() === id;
+                });
             }
 
             beforeEach(function () {
                 traverser.buildObjectList().then(function (objectList) {
                     objects = objectList;
+                });
+                waitsFor(function () {
+                    return objects !== undefined;
                 });
             });
 
