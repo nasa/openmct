@@ -24,8 +24,9 @@
 define([
     "./ModeColumn",
     "./CompositionColumn",
-    "./MetadataColumn"
-], function (ModeColumn, CompositionColumn, MetadataColumn) {
+    "./MetadataColumn",
+    "./TimespanColumn"
+], function (ModeColumn, CompositionColumn, MetadataColumn, TimespanColumn) {
     'use strict';
 
     function TimelineCSVExporter(domainObjects) {
@@ -33,6 +34,7 @@ define([
             maxRelationships = 0,
             columnNames = {},
             columns = [],
+            foundTimespan = false,
             i;
 
         function addMetadataProperty(property) {
@@ -56,8 +58,16 @@ define([
             maxComposition = Math.max(maxComposition, compositionLength);
             maxRelationships = Math.max(maxRelationships, relationshipLength);
 
+            foundTimespan =
+                foundTimespan || domainObject.hasCapability('timespan');
+
             metadataProperties.forEach(addMetadataProperty);
         });
+
+        if (foundTimespan) {
+            columns.push(new TimespanColumn(true));
+            columns.push(new TimespanColumn(false));
+        }
 
         for (i = 0; i < maxComposition; i += 1) {
             columns.push(new CompositionColumn(i));
@@ -75,14 +85,12 @@ define([
         var columns = this.columns;
 
         function toRow(domainObject) {
-            var row = {};
-            columns.forEach(function (column) {
-                row[column.name()] = column.value(domainObject);
-            });
-            return row;
+            return Promise.all(columns.map(function (column) {
+                return column.value(domainObject);
+            }));
         }
 
-        return this.domainObjects.map(toRow);
+        return Promise.all(this.domainObjects.map(toRow));
     };
 
     TimelineCSVExporter.prototype.options = function () {

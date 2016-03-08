@@ -19,42 +19,26 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
+/*global define*/
 
-/**
- * Module defining ExportTimelineAsCSVTask. Created by vwoeltje on 2/8/16.
- */
-define([
-    "./TimelineTraverser",
-    "./TimelineCSVExporter"
-], function (TimelineTraverser, TimelineCSVExporter) {
+define([], function () {
     "use strict";
 
-    /**
-     *
-     * @constructor
-     * @memberof {platform/features/timeline}
-     * @implements {Task}
-     */
-    function ExportTimelineAsCSVTask(exportService, domainObject) {
-        this.domainObject = domainObject;
-        this.exportService = exportService;
+    function TimespanColumn(isStart) {
+        this.isStart = isStart;
     }
 
-    ExportTimelineAsCSVTask.prototype.run = function () {
-        var exportService = this.exportService;
-
-        function doExport(objects) {
-            var exporter = new TimelineCSVExporter(objects);
-            return exporter.rows().then(function (rows) {
-                return exportService.exportCSV(rows, exporter.options());
-            });
-        }
-
-        return new TimelineTraverser(this.domainObject)
-            .buildObjectList()
-            .then(doExport);
+    TimespanColumn.prototype.name = function () {
+        return this.isStart ? "Start" : "End";
     };
 
-    return ExportTimelineAsCSVTask;
+    TimespanColumn.prototype.value = function (domainObject) {
+        var isStart = this.isStart;
+        return domainObject.hasCapability('timespan') ?
+            domainObject.useCapability('timespan').then(function (timespan) {
+                return isStart ? timespan.getStart() : timespan.getEnd();
+            }) : "";
+    };
+
+    return TimespanColumn;
 });
