@@ -28,8 +28,29 @@ define(
             var mockDomainObjects,
                 exporter;
 
+            function makeMockDomainObject(model, index) {
+                var mockDomainObject = jasmine.createSpyObj(
+                    'domainObject-' + index,
+                    [
+                        'getId',
+                        'getCapability',
+                        'useCapability',
+                        'hasCapability',
+                        'getModel'
+                    ]
+                );
+                mockDomainObject.getId.andReturn('id-' + index);
+                mockDomainObject.getModel.andReturn(model);
+                return mockDomainObject;
+            }
+
             beforeEach(function () {
-                mockDomainObjects = [];
+                mockDomainObjects = [
+                    { composition: [ 'a', 'b', 'c' ] },
+                    { relationships: { modes: [ 'x', 'y' ] } },
+                    { }
+                ].map(makeMockDomainObject);
+
                 exporter = new TimelineCSVExporter(mockDomainObjects);
             });
 
