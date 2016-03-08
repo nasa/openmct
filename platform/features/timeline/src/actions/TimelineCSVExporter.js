@@ -22,11 +22,18 @@
 /*global define,Promise*/
 
 define([
+    "./IdColumn",
     "./ModeColumn",
     "./CompositionColumn",
     "./MetadataColumn",
     "./TimespanColumn"
-], function (ModeColumn, CompositionColumn, MetadataColumn, TimespanColumn) {
+], function (
+    IdColumn,
+    ModeColumn,
+    CompositionColumn,
+    MetadataColumn,
+    TimespanColumn
+) {
     'use strict';
 
     function TimelineCSVExporter(domainObjects) {
@@ -44,6 +51,8 @@ define([
                 columns.push(new MetadataColumn(name));
             }
         }
+
+        columns.push(new IdColumn());
 
         domainObjects.forEach(function (domainObject) {
             var model = domainObject.getModel(),
