@@ -49,6 +49,11 @@ define(
             }
 
             beforeEach(function () {
+                var mockTimespan = jasmine.createSpyObj(
+                    'timespan',
+                    [ 'getStart', 'getEnd' ]
+                );
+
                 testMetadata = [
                     { name: "abc", value: 123 },
                     { name: "xyz", value: 456 }
@@ -60,6 +65,13 @@ define(
                     { }
                 ].map(makeMockDomainObject);
 
+                mockDomainObjects[1].hasCapability.andCallFake(function (c) {
+                    return c === 'timespan';
+                });
+                mockDomainObjects[1].useCapability.andCallFake(function (c) {
+                    return c === 'timespan' ? Promise.resolve(mockTimespan) :
+                        c === 'metadata' ? [] : undefined;
+                });
                 mockDomainObjects[2].useCapability.andCallFake(function (c) {
                     return c === 'metadata' && testMetadata;
                 });
@@ -104,6 +116,11 @@ define(
                         expect(headers.indexOf(property.name))
                             .not.toEqual(-1);
                     });
+                });
+
+                it("contains timespan properties", function () {
+                    expect(headers.indexOf("Start")).not.toEqual(-1);
+                    expect(headers.indexOf("End")).not.toEqual(-1);
                 });
             });
 
