@@ -93,12 +93,10 @@ define([
         return Promise.all(this.domainObjects.map(toRow));
     };
 
-    TimelineCSVExporter.prototype.options = function () {
-        return {
-            headers: this.columns.map(function (column) {
-                return column.name();
-            })
-        };
+    TimelineCSVExporter.prototype.headers = function () {
+        return this.columns.map(function (column) {
+            return column.name();
+        });
     };
 
     return TimelineCSVExporter;

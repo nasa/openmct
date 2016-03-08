@@ -45,9 +45,10 @@ define([
         var exportService = this.exportService;
 
         function doExport(objects) {
-            var exporter = new TimelineCSVExporter(objects);
+            var exporter = new TimelineCSVExporter(objects),
+                options = { headers: exporter.headers() };
             return exporter.rows().then(function (rows) {
-                return exportService.exportCSV(rows, exporter.options());
+                return exportService.exportCSV(rows, options);
             });
         }
 
