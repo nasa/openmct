@@ -72,21 +72,22 @@ define(
             this.$scope.$on("$destroy", this.destroy.bind(this));
         }
 
+        /**
+         * Defer registration of change listeners until domain object is
+         * available in order to avoid race conditions
+         * @private
+         */
         TelemetryTableController.prototype.registerChangeListeners = function() {
-            //Defer registration of change listeners until domain object is
-            // available in order to avoid race conditions
-
             this.changeListeners.forEach(function (listener) {
                 return listener && listener();
             });
             this.changeListeners = [];
             // When composition changes, re-subscribe to the various
             // telemetry subscriptions
-            //this.changeListeners.push(this.$scope.$watchCollection('domainObject.getModel().composition', this.subscribe.bind(this)));
+            this.changeListeners.push(this.$scope.$watchCollection('domainObject.getModel().composition', this.subscribe.bind(this)));
 
             //Change of bounds in time conductor
             this.changeListeners.push(this.$scope.$on('telemetry:display:bounds', this.subscribe.bind(this)));
-
         };
 
         /**
@@ -100,15 +101,14 @@ define(
         };
 
         /**
-         Create a new subscription. This is called when
+         Create a new subscription. This can be overridden by children to
+         change default behaviour (which is to retrieve historical telemetry
+         only).
          */
         TelemetryTableController.prototype.subscribe = function() {
-            console.trace();
             if (this.handle) {
                 this.handle.unsubscribe();
             }
-
-            this.$scope.rows = [];
 
             //Noop because not supporting realtime data right now
             function noop(){
@@ -127,12 +127,17 @@ define(
 
         /**
          * Add any historical data available
+         * @private
          */
         TelemetryTableController.prototype.addHistoricalData = function(domainObject, series) {
-            var i;
+            var i,
+                newRows = [];
+
             for (i=0; i < series.getPointCount(); i++) {
-                this.updateRows(domainObject, this.handle.makeDatum(domainObject, series, i));
+                newRows.push(this.table.getRowValues(domainObject, this.handle.makeDatum(domainObject, series, i)));
             }
+
+            this.$scope.rows = newRows;
         };
 
         /**
@@ -160,7 +165,7 @@ define(
         };
 
         /**
-         * Add data to rows
+         * @private
          * @param object The object for which data is available (table may
          * be composed of multiple objects)
          * @param datum The data received from the telemetry source
@@ -172,6 +177,7 @@ define(
         /**
          * When column configuration changes, update the visible headers
          * accordingly.
+         * @private
          */
         TelemetryTableController.prototype.filterColumns = function (columnConfig) {
             if (!columnConfig){

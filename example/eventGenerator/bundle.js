@@ -57,6 +57,13 @@ define([
                     },
                     "telemetry": {
                         "source": "eventGenerator",
+                        "domains": [
+                            {
+                                "key": "time",
+                                "name": "Time",
+                                "format": "utc"
+                            }
+                        ],
                         "ranges": [
                             {
                                 "format": "string"

@@ -21,23 +21,16 @@
  *****************************************************************************/
 /*global define*/
 
-/**
- * This bundle adds a table view for displaying telemetry data.
- * @namespace platform/features/table
- */
 define(
     [
-        './TelemetryTableController',
-        '../TableConfiguration',
-        '../NameColumn'
+        './TelemetryTableController'
     ],
-    function (TableController, Table, NameColumn) {
+    function (TableController) {
         "use strict";
 
         /**
-         * The TableController is responsible for getting data onto the page
-         * in the table widget. This includes handling composition,
-         * configuration, and telemetry subscriptions.
+         * Extends TelemetryTableController and adds real-time streaming
+         * support.
          * @memberof platform/features/table
          * @param $scope
          * @param telemetryHandler
@@ -46,16 +39,44 @@ define(
          */
         function RTTelemetryTableController($scope, telemetryHandler, telemetryFormatter) {
             TableController.call(this, $scope, telemetryHandler, telemetryFormatter);
+
+            $scope.autoScroll = false;
+
+            /*
+             * Determine if auto-scroll should be enabled. Is enabled
+             * automatically when telemetry type is string
+             */
+            function hasStringTelemetry(domainObject) {
+                var telemetry = domainObject &&
+                        domainObject.getCapability('telemetry'),
+                    metadata = telemetry ? telemetry.getMetadata() : {},
+                    ranges = metadata.ranges || [];
+
+                return ranges.some(function (range) {
+                    return range.format === 'string';
+                });
+            }
+            $scope.$watch('domainObject', function(domainObject) {
+                //When a domain object becomes available, check whether the
+                // view should auto-scroll to the bottom.
+                if (domainObject && hasStringTelemetry(domainObject)){
+                    $scope.autoScroll = true;
+                }
+            });
         }
 
         RTTelemetryTableController.prototype = Object.create(TableController.prototype);
 
         /**
-         Create a new telemetry subscription.
+         Override the subscribe function defined on the parent controller in
+         order to handle realtime telemetry instead of historical.
          */
         RTTelemetryTableController.prototype.subscribe = function() {
-            console.trace();
             var self = this;
+            self.$scope.rows = undefined;
+            (this.subscriptions || []).forEach(function(unsubscribe){
+                unsubscribe();
+            });
 
             if (this.handle) {
                 this.handle.unsubscribe();
@@ -66,11 +87,8 @@ define(
                 self.handle.getTelemetryObjects().forEach(function(telemetryObject){
                     datum = self.handle.getDatum(telemetryObject);
                     if (datum) {
-                        if (!self.$scope.rows) {
-                            self.$scope.rows = [self.table.getRowValues(telemetryObject, datum)];
-                        } else {
-                            self.updateRows(telemetryObject, datum);
-                        }
+                        var rowValue = self.table.getRowValues(telemetryObject, datum);
+                        self.$scope.$broadcast('addRow', rowValue);
                     }
                 });
 
@@ -83,16 +101,6 @@ define(
                 );
 
             this.setup();
-        };
-
-        /**
-         * Add data to rows
-         * @param object The object for which data is available (table may
-         * be composed of multiple objects)
-         * @param datum The data received from the telemetry source
-         */
-        RTTelemetryTableController.prototype.updateRows = function (object, datum) {
-            this.$scope.$broadcast('newRow', this.table.getRowValues(object, datum));
         };
 
         return RTTelemetryTableController;

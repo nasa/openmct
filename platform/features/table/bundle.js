@@ -101,7 +101,8 @@ define([
                         "composition": []
                     },
                     "views": [
-                        "realtime"
+                        "rt-table",
+                        "scrolling-table"
                     ]
                 }
             ],
@@ -137,7 +138,7 @@ define([
                 },
                 {
                     "name": "Real-time Table",
-                    "key": "realtime",
+                    "key": "rt-table",
                     "glyph": "\ue605",
                     "templateUrl": "templates/rt-table.html",
                     "needs": [

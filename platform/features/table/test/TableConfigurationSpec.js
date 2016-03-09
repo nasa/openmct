@@ -120,13 +120,13 @@ define(
                 });
 
                 it("populates the columns attribute", function() {
-                    expect(table.columns.length).toBe(4);
+                    expect(table.columns.length).toBe(5);
                 });
 
                 it("Build columns populates columns with domains to the left", function() {
-                    expect(table.columns[0] instanceof DomainColumn).toBeTruthy();
                     expect(table.columns[1] instanceof DomainColumn).toBeTruthy();
-                    expect(table.columns[2] instanceof DomainColumn).toBeFalsy();
+                    expect(table.columns[2] instanceof DomainColumn).toBeTruthy();
+                    expect(table.columns[3] instanceof DomainColumn).toBeFalsy();
                 });
 
                 it("Produces headers for each column based on title", function() {
@@ -135,7 +135,7 @@ define(
 
                     spyOn(firstColumn, 'getTitle');
                     headers = table.getHeaders();
-                    expect(headers.length).toBe(4);
+                    expect(headers.length).toBe(5);
                     expect(firstColumn.getTitle).toHaveBeenCalled();
                 });
 

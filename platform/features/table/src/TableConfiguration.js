@@ -54,10 +54,6 @@ define(
 
             if (metadata) {
 
-                if (metadata.length > 1){
-                    self.addColumn(new NameColumn(), 0);
-                }
-
                 metadata.forEach(function (metadatum) {
                     //Push domains first
                     (metadatum.domains || []).forEach(function (domainMetadata) {
@@ -67,6 +63,10 @@ define(
                         self.addColumn(new RangeColumn(rangeMetadata, self.telemetryFormatter));
                     });
                 });
+
+                if (this.columns.length > 0){
+                    self.addColumn(new NameColumn(), 0);
+                }
             }
             return this;
         };

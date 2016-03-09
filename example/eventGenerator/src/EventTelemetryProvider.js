@@ -36,7 +36,9 @@ define(
         function EventTelemetryProvider($q, $timeout) {
             var
 	            subscriptions = [],
-	            genInterval = 1000;
+	            genInterval = 1000,
+                generating = false,
+                id = Math.random() * 100000;
 
             //
             function matchesSource(request) {
@@ -78,10 +80,13 @@ define(
             }
 
             function startGenerating() {
+                generating = true;
                 $timeout(function () {
                     handleSubscriptions();
-                    if (subscriptions.length > 0) {
+                    if (generating && subscriptions.length > 0) {
                         startGenerating();
+                    } else {
+                        generating = false;
                     }
                 }, genInterval);
             }
@@ -91,8 +96,6 @@ define(
                     callback: callback,
                     requests: requests
                 };
-                console.log("subscribe... " + Date.now() / 1000 + " request:" +
-                    " " + requests[0].id);
                 function unsubscribe() {
                     subscriptions = subscriptions.filter(function (s) {
                         return s !== subscription;
@@ -100,7 +103,7 @@ define(
                 }
 
                 subscriptions.push(subscription);
-                if (subscriptions.length === 1) {
+                if (!generating) {
                     startGenerating();
                 }
 
