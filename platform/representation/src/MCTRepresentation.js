@@ -94,7 +94,20 @@ define(
                     couldEdit = false,
                     lastIdPath = [],
                     lastKey,
+                    metrics = {
+                        linked: (new Date()).toString(),
+                        checked: 0,
+                        refreshed: 0
+                    },
                     changeTemplate = templateLinker.link($scope, element);
+
+                function updateTitle() {
+                    element.attr("title", [
+                        "Linked: " + metrics.linked,
+                        "Checked: " + metrics.checked,
+                        "Refreshed: " + metrics.refreshed
+                    ].join("; "));
+                }
 
                 // Populate scope with any capabilities indicated by the
                 // representation's extension definition
@@ -176,9 +189,15 @@ define(
                         idPath = getIdPath(domainObject),
                         key = $scope.key;
 
+                    metrics.checked += 1;
+
                     if (unchanged(canRepresent, canEdit, idPath, key)) {
+                        updateTitle();
                         return;
                     }
+
+                    metrics.refreshed += 1;
+                    updateTitle();
 
                     // Create an empty object named "representation", for this
                     // representation to store local variables into.
