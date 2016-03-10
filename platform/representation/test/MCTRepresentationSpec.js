@@ -232,6 +232,19 @@ define(
                 expect(mockScope.testCapability).toBeUndefined();
             });
 
+            it("watches for changes on both ng-model and mct-model", function () {
+                expect(mockScope.$parent.$watch).toHaveBeenCalledWith(
+                    testAttrs.ngModel,
+                    jasmine.any(Function),
+                    false
+                );
+                expect(mockScope.$parent.$watch).toHaveBeenCalledWith(
+                    testAttrs.mctModel,
+                    jasmine.any(Function),
+                    false
+                );
+            });
+
             it("detects changes among linked instances", function () {
                 var mockContext = jasmine.createSpyObj('context', ['getPath']),
                     mockContext2 = jasmine.createSpyObj('context', ['getPath']),
