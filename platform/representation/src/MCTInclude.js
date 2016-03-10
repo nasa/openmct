@@ -25,8 +25,8 @@
  * Module defining MCTInclude. Created by vwoeltje on 11/7/14.
  */
 define(
-    [],
-    function () {
+    ["./OneWayBinder"],
+    function (OneWayBinder) {
         "use strict";
 
         /**
@@ -35,19 +35,26 @@ define(
          * key which can be exposed by bundles, instead of requiring
          * an explicit path.
          *
-         * This directive uses two-way binding for three attributes:
+         * This directive uses the following attributes:
          *
-         * * `key`, matched against the key of a defined template extension
-         *   in order to determine which actual template to include.
-         * * `ng-model`, populated as `ngModel` in the loaded template's
-         *   scope; used for normal ng-model purposes (e.g. if the
-         *   included template is meant to two-way bind to a data model.)
-         * * `parameters`, used to communicate display parameters to
-         *   the included template (e.g. title.) The difference between
-         *   `parameters` and `ngModel` is intent: Both are two-way
-         *   bound, but `ngModel` is useful for data models (more like
-         *   an output) and `parameters` is meant to be useful for
-         *   display parameterization (more like an input.)
+         * * `key`: An Angular expression, matched against the key of a
+         *   defined template extension in order to determine which actual
+         *   template to include.
+         * * `mct-model`: An Angular expression; its value is watched
+         *   and passed into the template's scope as property `mctModel`.
+         * * `parameters`: An Angular expression; its value is watched
+         *   and passed into the template's scope as property `parameters`.
+         *
+         * The difference between `parameters` and `mct-model` is intent;
+         * `parameters` should be used for display-time parameters which
+         * are not meant to be changed, whereas `mct-model` should be
+         * used to pass in objects whose properties will (or may) be
+         * modified by the included template.
+         *
+         * (For backwards compatibility, `ng-model` is treated identically
+         * to `mct-model`, and the property `ngModel` will be provided
+         * in scope with the same value as `mctModel`. This usage is
+         * deprecated and should be avoided.)
          *
          * @memberof platform/representation
          * @constructor
@@ -57,14 +64,24 @@ define(
         function MCTInclude(templates, templateLinker) {
             var templateMap = {};
 
-            function link(scope, element) {
-                var changeTemplate = templateLinker.link(
-                    scope,
-                    element,
-                    scope.key && templateMap[scope.key]
-                );
+            function link(scope, element, attrs) {
+                var parent = scope.$parent,
+                    key = parent.$eval(attrs.key),
+                    changeTemplate = templateLinker.link(
+                        scope,
+                        element,
+                        key && templateMap[key]
+                    ),
+                    binder = new OneWayBinder(scope, attrs);
 
-                scope.$watch('key', function (key) {
+                binder.bind('ngModel');
+                binder.bind('mctModel');
+                binder.bind('parameters');
+
+                binder.alias('ngModel', 'mctModel');
+                binder.alias('mctModel', 'ngModel');
+
+                binder.watch('key', function (key) {
                     changeTemplate(key && templateMap[key]);
                 });
             }
@@ -87,8 +104,8 @@ define(
                 // May hide the element, so let other directives act first
                 priority: -1000,
 
-                // Two-way bind key, ngModel, and parameters
-                scope: { key: "=", ngModel: "=", parameters: "=" }
+                // Isolate this scope; do not inherit properties from parent
+                scope: {}
             };
         }
 

@@ -27,26 +27,40 @@
  * @namespace platform/representation
  */
 define(
-    [],
-    function () {
+    ["./OneWayBinder"],
+    function (OneWayBinder) {
         "use strict";
 
         /**
          * Defines the mct-representation directive. This may be used to
          * present domain objects as HTML (with event wiring), with the
          * specific representation being mapped to a defined extension
-         * (as defined in either the `representation` category-of-extension,
+         * (as defined in either the `representations` category-of-extension,
          * or the `views` category-of-extension.)
          *
          * This directive uses two-way binding for three attributes:
          *
-         * * `key`, matched against the key of a defined template extension
-         *   in order to determine which actual template to include.
          * * `mct-object`, populated as `domainObject` in the loaded
          *   template's scope. This is the domain object being
          *   represented as HTML by this directive.
-         * * `parameters`, used to communicate display parameters to
-         *   the included template (e.g. title.)
+         * * `key`: An Angular expression, matched against the key of a
+         *   defined representation or view extension in order to determine
+         *   which actual template to include.
+         * * `mct-model`: An Angular expression; its value is watched
+         *   and passed into the template's scope as property `mctModel`.
+         * * `parameters`: An Angular expression; its value is watched
+         *   and passed into the template's scope as property `parameters`.
+         *
+         * The difference between `parameters` and `mct-model` is intent;
+         * `parameters` should be used for display-time parameters which
+         * are not meant to be changed, whereas `mct-model` should be
+         * used to pass in objects whose properties will (or may) be
+         * modified by the included representation.
+         *
+         * (For backwards compatibility, `ng-model` is treated identically
+         * to `mct-model`, and the property `ngModel` will be provided
+         * in scope with the same value as `mctModel`. This usage is
+         * deprecated and should be avoided.)
          *
          * @memberof platform/representation
          * @constructor
@@ -94,7 +108,8 @@ define(
                     couldEdit = false,
                     lastIdPath = [],
                     lastKey,
-                    changeTemplate = templateLinker.link($scope, element);
+                    changeTemplate = templateLinker.link($scope, element),
+                    binder = new OneWayBinder($scope, attrs);
 
                 // Populate scope with any capabilities indicated by the
                 // representation's extension definition
@@ -236,13 +251,20 @@ define(
                     }
                 }
 
+                binder.bind('parameters');
+                binder.bind('mctModel');
+                binder.bind('ngModel');
+
+                binder.alias('ngModel', 'mctModel');
+                binder.alias('mctModel', 'ngModel');
+
                 // Update the representation when the key changes (e.g. if a
                 // different representation has been selected)
-                $scope.$watch("key", refresh);
+                binder.bind('key', refresh);
 
                 // Also update when the represented domain object changes
                 // (to a different object)
-                $scope.$watch("domainObject", refresh);
+                binder.alias('mctObject', 'domainObject', refresh);
 
                 // Finally, also update when there is a new version of that
                 // same domain object; these changes should be tracked in the
@@ -270,14 +292,8 @@ define(
                 // May hide the element, so let other directives act first
                 priority: -1000,
 
-                // Two-way bind key and parameters, get the represented domain
-                // object as "mct-object"
-                scope: {
-                    key: "=",
-                    domainObject: "=mctObject",
-                    ngModel: "=",
-                    parameters: "="
-                }
+                // Isolate this scope
+                scope: {}
             };
         }
 

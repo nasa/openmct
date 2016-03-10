@@ -35,11 +35,12 @@ define(
                 mockLinker,
                 mockScope,
                 mockElement,
+                testAttrs,
                 mockChangeTemplate,
                 mctInclude;
 
             function fireWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$parent.$watch.calls.forEach(function (call) {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
@@ -68,6 +69,8 @@ define(
                     ['link', 'getPath']
                 );
                 mockScope = jasmine.createSpyObj('$scope', ['$watch', '$on']);
+                mockScope.$parent =
+                    jasmine.createSpyObj('parent', ['$watch', '$eval']);
                 mockElement = jasmine.createSpyObj('element', ['empty']);
                 mockChangeTemplate = jasmine.createSpy('changeTemplate');
                 mockLinker.link.andReturn(mockChangeTemplate);
@@ -75,7 +78,12 @@ define(
                     return testUrls[template.key];
                 });
                 mctInclude = new MCTInclude(testTemplates, mockLinker);
-                mctInclude.link(mockScope, mockElement, {});
+                testAttrs = {
+                    key: "parentKey",
+                    mctModel: "someExpr",
+                    ngModel: "someOtherExpr"
+                };
+                mctInclude.link(mockScope, mockElement, testAttrs);
             });
 
             it("is restricted to elements", function () {
@@ -88,15 +96,26 @@ define(
             });
 
             it("reads a template location from a scope's key variable", function () {
-                mockScope.key = 'abc';
-                fireWatch('key', mockScope.key);
+                fireWatch(testAttrs.key, 'abc');
                 expect(mockChangeTemplate)
                     .toHaveBeenCalledWith(testTemplates[0]);
 
-                mockScope.key = 'xyz';
-                fireWatch('key', mockScope.key);
+                fireWatch(testAttrs.key, 'xyz');
                 expect(mockChangeTemplate)
                     .toHaveBeenCalledWith(testTemplates[1]);
+            });
+
+            it("watches for changes on both ng-model and mct-model", function () {
+                expect(mockScope.$parent.$watch).toHaveBeenCalledWith(
+                    testAttrs.ngModel,
+                    jasmine.any(Function),
+                    false
+                );
+                expect(mockScope.$parent.$watch).toHaveBeenCalledWith(
+                    testAttrs.mctModel,
+                    jasmine.any(Function),
+                    false
+                );
             });
 
         });

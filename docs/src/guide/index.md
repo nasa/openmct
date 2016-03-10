@@ -1113,9 +1113,9 @@ contents of this object are managed entirely by the view/representation which
 receives it. 
 * `representation`: An empty object, useful as a 'scratch pad' for 
 representation state. 
-* `ngModel`: An object passed through the ng-model attribute of the 
+* `mctModel`: An object passed through the `mct-model` attribute of the
 `mct-representation` , if any. 
-* `parameters`: An object passed through the parameters attribute of the 
+* `parameters`: An object passed through the `parameters` attribute of the
 `mct-representation`, if any. 
 * Any capabilities requested by the uses property of the representation 
 definition.
@@ -1507,10 +1507,12 @@ attributes, all of which are specified as Angular expressions:
 
 * `key`: Machine-readable identifier for the template (of extension category  
 templates ) to be displayed. 
-* `ng-model`: _Optional_; will be passed into the template's scope as `ngModel`. 
-Intended usage is for two-way bound user input.
+* `mct-model`: _Optional_; will be passed into the template's scope as `mctModel`.
+Intended usage is for modification by the template.
+Note that this value will _not_ be two-way bound, so bi-directional
+communication should be achieved by modifying _properties_ on the object.
 * `parameters`: _Optional_; will be passed into the template's scope as 
-parameters. Intended usage is for template-specific display parameters. 
+`parameters`. Intended usage is for template-specific display parameters.
 
 ## Representation 
 
@@ -1522,11 +1524,14 @@ attributes, all of which are specified as Angular expressions:
 
 * `key`: Machine-readable identifier for the representation (of extension 
 category _representations_ or _views_ ) to be displayed. 
-* `mct-object`: The domain object being represented. 
-* `ng-model`: Optional; will be passed into the template's scope as `ngModel`. 
-Intended usage is for two-way bound user input. 
-* `parameters`: Optional; will be passed into the template's scope as  
-parameters . Intended usage is for template-specific display parameters. 
+* `mct-object`: The domain object being represented. Will be available in the
+representation's scope as `domainObject`.
+* `mct-model`: Optional; will be passed into the template's scope as `mctModel`.
+Intended usage is for modification by the template.
+Note that this value will _not_ be two-way bound, so bi-directional
+communication should be achieved by modifying _properties_ on the object.
+* `parameters`: Optional; will be passed into the representation's scope as
+`parameters`. Intended usage is for representation-specific display parameters.
 
 ## Resize 
 
