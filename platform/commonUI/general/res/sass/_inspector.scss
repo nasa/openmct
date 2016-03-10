@@ -77,7 +77,8 @@
         }
 
         .form {
-            margin-bottom: $interiorMargin;
+            margin-bottom: $interiorMarginSm;
+            padding-bottom: $interiorMarginLg;
             .form-section {
                 margin-bottom: 0;
                 &:not(.first) {

@@ -77,8 +77,7 @@ define(
                     {
                         'name': 'Autoscale',
                         'control': 'checkbox',
-                        'key': 'autoscale',
-                        'layout': 'control-first'
+                        'key': 'autoscale'
                     },
                     {
                         'name': 'Min',
