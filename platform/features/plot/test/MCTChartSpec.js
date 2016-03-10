@@ -45,8 +45,10 @@ define(
                     jasmine.createSpy("$interval");
                 mockLog =
                     jasmine.createSpyObj("$log", ["warn", "info", "debug"]);
-                mockScope =
-                    jasmine.createSpyObj("$scope", ["$watchCollection", "$on"]);
+                mockScope = jasmine.createSpyObj(
+                    "$scope",
+                    ["$watchCollection", "$on", "$apply"]
+                );
                 mockElement =
                     jasmine.createSpyObj("element", ["find", "html"]);
                 mockInterval.cancel = jasmine.createSpy("cancelInterval");
@@ -152,7 +154,9 @@ define(
                 // Should track canvas size in an interval
                 expect(mockInterval).toHaveBeenCalledWith(
                     jasmine.any(Function),
-                    jasmine.any(Number)
+                    jasmine.any(Number),
+                    0,
+                    false
                 );
 
                 // Verify pre-condition

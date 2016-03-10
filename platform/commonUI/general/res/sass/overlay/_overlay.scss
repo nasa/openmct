@@ -37,7 +37,7 @@
     > .holder {
         //$i: 15%;
         @include containerSubtle($colorOvrBg, $colorOvrFg);
-        @include border-radius($basicCr * 3);
+        border-radius: $basicCr * 3;
         color: $colorOvrFg;
         top: 50%;
         right: auto;

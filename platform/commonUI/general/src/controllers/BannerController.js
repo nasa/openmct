@@ -60,6 +60,12 @@ define(
                     notification.model.cancel = function(){
                         dialogService.dismiss();
                     };
+                    //If the notification is dismissed by the user, close
+                    // the dialog.
+                    notification.onDismiss(function(){
+                        dialogService.dismiss();
+                    });
+
                     dialogService.showBlockingMessage(notification.model);
                 }
             };

@@ -81,6 +81,22 @@ define(
                 expect(agentService.isPortrait()).toBeTruthy();
                 expect(agentService.isLandscape()).toBeFalsy();
             });
+
+            it("detects touch support", function () {
+                testWindow.ontouchstart = null;
+                expect(new AgentService(testWindow).isTouch())
+                    .toBe(true);
+                delete testWindow.ontouchstart;
+                expect(new AgentService(testWindow).isTouch())
+                    .toBe(false);
+            });
+
+            it("allows for checking browser type", function () {
+                testWindow.navigator.userAgent = "Chromezilla Safarifox";
+                agentService = new AgentService(testWindow);
+                expect(agentService.isBrowser("Chrome")).toBe(true);
+                expect(agentService.isBrowser("Firefox")).toBe(false);
+            });
         });
     }
 );

@@ -24,11 +24,21 @@
 // representation. Instead of a grid,
 // a list is used.
 
+
+// Refactored to use Victorizr
 .items-holder {
     .item {
         &.grid-item {
             $titleH: 30px;
-            @include phoneandtablet {
+        }
+    }
+}
+
+body.phone,
+body.tablet {
+    .items-holder {
+        .item {
+            &.grid-item {
                 width: 100%;
                 >.contents {
                     top: 0px; right: $interiorMarginLg; bottom: 0px; left: $interiorMarginLg;
@@ -36,7 +46,6 @@
                 .bar {
                     &.top-bar {
                         // Becomes the right side of the item
-                        //@include test(blue);
                         bottom: 0 !important; left: auto !important; right: 20px !important;
                         width: 40px !important; height: auto !important;
                         text-align: right;
@@ -46,7 +55,7 @@
                         left: $mobileListIconSize + $interiorMarginLg;
                         right: 60px;
                     }
-                    
+
                 }
                 .item-main {
                     .item-type,
@@ -63,8 +72,14 @@
                     }
                 }
             }
+        }
+    }
+}
 
-            @include phone {
+body.phone {
+    .items-holder {
+        .item {
+            &.grid-item {
                 $dHei: $phoneItemH;
                 height: $dHei;
                 .bar {
@@ -85,8 +100,14 @@
                     }
                 }
             }
-            
-            @include tablet {
+        }
+    }
+}
+
+body.tablet {
+    .items-holder {
+        .item {
+            &.grid-item {
                 $dHei: $tabletItemH;
                 height: $dHei;
                 .bar {

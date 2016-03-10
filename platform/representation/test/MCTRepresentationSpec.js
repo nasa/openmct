@@ -174,7 +174,7 @@ define(
                 fireWatch('domainObject', mockDomainObject);
 
                 expect(mockChangeTemplate)
-                    .toHaveBeenCalledWith(testUrls.abc);
+                    .toHaveBeenCalledWith(testRepresentations[0]);
             });
 
             it("recognizes keys for views", function () {
@@ -186,7 +186,7 @@ define(
                 fireWatch('domainObject', mockDomainObject);
 
                 expect(mockChangeTemplate)
-                    .toHaveBeenCalledWith(testUrls.xyz);
+                    .toHaveBeenCalledWith(testViews[1]);
             });
 
             it("does not load templates until there is an object", function () {
@@ -196,13 +196,13 @@ define(
                 fireWatch('key', mockScope.key);
 
                 expect(mockChangeTemplate)
-                    .not.toHaveBeenCalledWith(jasmine.any(String));
+                    .not.toHaveBeenCalledWith(jasmine.any(Object));
 
                 mockScope.domainObject = mockDomainObject;
                 fireWatch('domainObject', mockDomainObject);
 
                 expect(mockChangeTemplate)
-                    .toHaveBeenCalledWith(jasmine.any(String));
+                    .toHaveBeenCalledWith(jasmine.any(Object));
             });
 
             it("loads declared capabilities", function () {
@@ -246,6 +246,54 @@ define(
                 // Trigger the watch again; should clear capability from scope
                 mockScope.$watch.calls[0].args[1]();
                 expect(mockScope.testCapability).toBeUndefined();
+            });
+
+            it("detects changes among linked instances", function () {
+                var mockContext = jasmine.createSpyObj('context', ['getPath']),
+                    mockContext2 = jasmine.createSpyObj('context', ['getPath']),
+                    mockLink = jasmine.createSpyObj(
+                        'linkedObject',
+                        DOMAIN_OBJECT_METHODS
+                    ),
+                    mockParent = jasmine.createSpyObj(
+                        'parentObject',
+                        DOMAIN_OBJECT_METHODS
+                    ),
+                    callCount;
+
+                mockDomainObject.getCapability.andCallFake(function (c) {
+                    return c === 'context' && mockContext;
+                });
+                mockLink.getCapability.andCallFake(function (c) {
+                    return c === 'context' && mockContext2;
+                });
+                mockDomainObject.hasCapability.andCallFake(function (c) {
+                    return c === 'context';
+                });
+                mockLink.hasCapability.andCallFake(function (c) {
+                    return c === 'context';
+                });
+                mockLink.getModel.andReturn({});
+
+                mockContext.getPath.andReturn([mockDomainObject]);
+                mockContext2.getPath.andReturn([mockParent, mockLink]);
+
+                mockLink.getId.andReturn('test-id');
+                mockDomainObject.getId.andReturn('test-id');
+
+                mockParent.getId.andReturn('parent-id');
+
+                mockScope.key = "abc";
+                mockScope.domainObject = mockDomainObject;
+
+                mockScope.$watch.calls[0].args[1]();
+                callCount = mockChangeTemplate.calls.length;
+
+                mockScope.domainObject = mockLink;
+                mockScope.$watch.calls[0].args[1]();
+
+                expect(mockChangeTemplate.calls.length)
+                    .toEqual(callCount + 1);
             });
         });
     }

@@ -74,7 +74,7 @@ define(
                 expect(mockDomainObject.getCapability)
                     .toHaveBeenCalledWith('action');
                 expect(mockActionCapability.getActions)
-                    .toHaveBeenCalledWith('create');
+                    .toHaveBeenCalledWith('add');
             });
 
             it("invokes the action on the selection, if any", function () {

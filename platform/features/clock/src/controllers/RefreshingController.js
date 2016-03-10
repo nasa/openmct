@@ -31,6 +31,12 @@ define(
          *
          * This is a short-term workaround to assure Timer views stay
          * up-to-date; should be replaced by a global auto-refresh.
+         *
+         * @constructor
+         * @memberof platform/features/clock
+         * @param {angular.Scope} $scope the Angular scope
+         * @param {platform/features/clock.TickerService} tickerService
+         *        a service used to align behavior with clock ticks
          */
         function RefreshingController($scope, tickerService) {
             var unlisten;

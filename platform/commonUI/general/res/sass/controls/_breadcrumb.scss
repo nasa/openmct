@@ -8,9 +8,9 @@
 	.l-breadcrumb-item {
 		//@include test();
 		a {
-			@include box-sizing(border-box);
-			@include border-radius($basicCr*.75);
-			@include single-transition(background-color, 0.25s);
+			box-sizing: border-box;
+			border-radius: $basicCr*.75;
+			@include transition(background-color, 0.25s);
 			color: darken($colorBodyFg, 15%);
 			display: inline-block;
 			//margin-right: $interiorMargin;

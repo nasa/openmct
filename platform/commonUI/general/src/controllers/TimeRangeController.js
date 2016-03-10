@@ -43,7 +43,7 @@ define(
         function TimeRangeController($scope, formatService, defaultFormat, now) {
             var tickCount = 2,
                 innerMinimumSpan = 1000, // 1 second
-                outerMinimumSpan = 1000 * 60 * 60, // 1 hour
+                outerMinimumSpan = 1000, // 1 second
                 initialDragValue,
                 formatter = formatService.getFormat(defaultFormat);
 
@@ -175,15 +175,15 @@ define(
                 updateViewFromModel($scope.ngModel);
             }
 
+            function updateFormModel() {
+                $scope.formModel = {
+                    start: (($scope.ngModel || {}).outer || {}).start,
+                    end: (($scope.ngModel || {}).outer || {}).end
+                };
+            }
+
             function updateOuterStart(t) {
                 var ngModel = $scope.ngModel;
-
-                ngModel.outer.start = t;
-
-                ngModel.outer.end = Math.max(
-                    ngModel.outer.start + outerMinimumSpan,
-                    ngModel.outer.end
-                );
 
                 ngModel.inner.start =
                     Math.max(ngModel.outer.start, ngModel.inner.start);
@@ -192,19 +192,13 @@ define(
                     ngModel.inner.end
                 );
 
+                updateFormModel();
                 updateViewForInnerSpanFromModel(ngModel);
                 updateTicks();
             }
 
             function updateOuterEnd(t) {
                 var ngModel = $scope.ngModel;
-
-                ngModel.outer.end = t;
-
-                ngModel.outer.start = Math.min(
-                    ngModel.outer.end - outerMinimumSpan,
-                    ngModel.outer.start
-                );
 
                 ngModel.inner.end =
                     Math.min(ngModel.outer.end, ngModel.inner.end);
@@ -213,6 +207,7 @@ define(
                     ngModel.inner.start
                 );
 
+                updateFormModel();
                 updateViewForInnerSpanFromModel(ngModel);
                 updateTicks();
             }
@@ -223,6 +218,23 @@ define(
                 updateTicks();
             }
 
+            function updateBoundsFromForm() {
+                var start = $scope.formModel.start,
+                    end = $scope.formModel.end;
+                if (end >= start + outerMinimumSpan) {
+                    $scope.ngModel = $scope.ngModel || {};
+                    $scope.ngModel.outer = { start: start, end: end };
+                }
+            }
+
+            function validateStart(startValue) {
+                return startValue <= $scope.formModel.end - outerMinimumSpan;
+            }
+
+            function validateEnd(endValue) {
+                return endValue >= $scope.formModel.start + outerMinimumSpan;
+            }
+
             $scope.startLeftDrag = startLeftDrag;
             $scope.startRightDrag = startRightDrag;
             $scope.startMiddleDrag = startMiddleDrag;
@@ -230,10 +242,16 @@ define(
             $scope.rightDrag = rightDrag;
             $scope.middleDrag = middleDrag;
 
+            $scope.updateBoundsFromForm = updateBoundsFromForm;
+
+            $scope.validateStart = validateStart;
+            $scope.validateEnd = validateEnd;
+
             $scope.ticks = [];
 
             // Initialize scope to defaults
             updateViewFromModel($scope.ngModel);
+            updateFormModel();
 
             $scope.$watchCollection("ngModel", updateViewFromModel);
             $scope.$watch("spanWidth", updateSpanWidth);

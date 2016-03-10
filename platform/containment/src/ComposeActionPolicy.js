@@ -55,11 +55,12 @@ define(
             this.policyService = this.policyService || this.getPolicyService();
 
             // ...and delegate to the composition policy
-            return this.policyService.allow(
-                'composition',
-                containerType,
-                selectedType
-            );
+            return containerObject.getId() !== selectedObject.getId() &&
+                this.policyService.allow(
+                    'composition',
+                    containerType,
+                    selectedType
+                );
         };
 
         /**
