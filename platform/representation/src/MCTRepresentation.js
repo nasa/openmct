@@ -97,7 +97,8 @@ define(
                     metrics = {
                         linked: (new Date()).toString(),
                         checked: 0,
-                        refreshed: 0
+                        refreshed: 0,
+                        represented: 0
                     },
                     changeTemplate = templateLinker.link($scope, element);
 
@@ -105,8 +106,9 @@ define(
                     element.attr("title", [
                         "Linked: " + metrics.linked,
                         "Checked: " + metrics.checked,
-                        "Refreshed: " + metrics.refreshed
-                    ].join("; "));
+                        "Refreshed: " + metrics.refreshed,
+                        "Represented: " + metrics.represented
+                    ].join("\n"));
                 }
 
                 // Populate scope with any capabilities indicated by the
@@ -197,7 +199,6 @@ define(
                     }
 
                     metrics.refreshed += 1;
-                    updateTitle();
 
                     // Create an empty object named "representation", for this
                     // representation to store local variables into.
@@ -230,6 +231,7 @@ define(
                     // Populate scope with fields associated with the current
                     // domain object (if one has been passed in)
                     if (canRepresent) {
+                        metrics.represented += 1;
                         // Track how many representations we've made in this scope,
                         // to ensure that the correct representations are matched to
                         // the correct object/key pairs.
@@ -253,6 +255,8 @@ define(
                         // next change object/key pair changes
                         toClear = uses.concat(['model']);
                     }
+
+                    updateTitle();
                 }
 
                 // Update the representation when the key changes (e.g. if a
