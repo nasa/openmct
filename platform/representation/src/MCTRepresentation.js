@@ -140,15 +140,13 @@ define(
                 }
 
                 function unchanged(canRepresent, canEdit, idPath, key) {
-                    return canRepresent &&
-                        couldRepresent &&
-                        key === lastKey &&
-                        idPath.length === lastIdPath.length &&
+                    return (canRepresent === couldRepresent) &&
+                        (key === lastKey) &&
+                        (idPath.length === lastIdPath.length) &&
                         idPath.every(function (id, i) {
                             return id === lastIdPath[i];
                         }) &&
-                        canEdit &&
-                        couldEdit;
+                        (canEdit === couldEdit);
                 }
 
                 function getIdPath(domainObject) {
