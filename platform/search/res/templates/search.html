@@ -48,7 +48,7 @@
     <div class="search-results flex-elem holder grows vscroll"
          ng-class="{ off: !(loading || results.length > 0), loading: loading }">
         <mct-representation key="'search-item'"
-                            ng-repeat="result in results"
+                            ng-repeat="result in results track by result.object.getId()"
                             mct-object="result.object"
                             ng-model="ngModel"
                             class="l-flex-row flex-elem grows">

@@ -26,7 +26,7 @@
             <span class="title-label">Loading...</span>
         </span>
     </li>
-    <li ng-repeat="child in composition">
+    <li ng-repeat="child in composition track by child.getId()">
         <mct-representation key="'tree-node'"
                             mct-object="child"
                             parameters="parameters"
