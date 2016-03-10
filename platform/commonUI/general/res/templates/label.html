@@ -19,7 +19,8 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="t-object-label l-flex-row flex-elem grows">
+<div class="t-object-label l-flex-row flex-elem grows"
+     mct-refresh="domainObject.getCapability('mutation').listen(callback)">
     <div class="t-item-icon flex-elem" ng-class="{ 'l-icon-link':location.isLink() }">
         <div class="t-item-icon-glyph">{{::type.getGlyph()}}</div>
     </div>
