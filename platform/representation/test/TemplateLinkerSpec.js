@@ -44,6 +44,16 @@ define(
                 mockPromise,
                 linker;
 
+            function testExtension(path, res, templatePath) {
+                return {
+                    bundle: {
+                        path: path,
+                        resources: res
+                    },
+                    templateUrl: templatePath
+                };
+            }
+
             beforeEach(function () {
                 mockTemplateRequest = jasmine.createSpy('$templateRequest');
                 mockSce = jasmine.createSpyObj('$sce', ['trustAsResourceUrl']);
@@ -91,13 +101,8 @@ define(
             });
 
             it("resolves extension paths", function () {
-                expect(linker.getPath({
-                    bundle: {
-                        path: 'a',
-                        resources: 'b'
-                    },
-                    templateUrl: 'c/d.html'
-                })).toEqual('a/b/c/d.html');
+                var testExt = testExtension('a', 'b', 'c/d.html');
+                expect(linker.getPath(testExt)).toEqual('a/b/c/d.html');
             });
 
             describe("when linking elements", function () {
@@ -132,13 +137,15 @@ define(
                 });
 
                 describe("and then changing templates", function () {
-                    var testUrl,
+                    var testExt,
+                        testUrl,
                         testTemplate;
 
                     beforeEach(function () {
-                        testUrl = "some/url/template.html";
+                        testExt = testExtension('some', 'url', 'template.html');
+                        testUrl = linker.getPath(testExt);
                         testTemplate = "<div>Some template!</div>";
-                        changeTemplate(testUrl);
+                        changeTemplate(testExt);
                         mockPromise.then.mostRecentCall
                             .args[0](testTemplate);
                     });
@@ -182,7 +189,9 @@ define(
 
                     describe("which cannot be found", function () {
                         beforeEach(function () {
-                            changeTemplate("some/bad/url");
+                            changeTemplate(
+                                testExtension("some", "bad", "template.html")
+                            );
                             // Reject the template promise
                             mockPromise.then.mostRecentCall.args[1]();
                         });
@@ -206,11 +215,13 @@ define(
             });
 
             describe("when an initial template URL is provided", function () {
-                var testUrl;
+                var testExt,
+                    testUrl;
 
                 beforeEach(function () {
-                    testUrl = "some/test/url.html";
-                    linker.link(mockScope, mockElement, testUrl);
+                    testExt = testExtension('some', 'test', 'template.html');
+                    testUrl = linker.getPath(testExt);
+                    linker.link(mockScope, mockElement, testExt);
                 });
 
                 it("does not remove the element initially", function () {

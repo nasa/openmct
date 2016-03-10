@@ -1697,8 +1697,7 @@ Next, we utilize this functionality from the template:
         </div>
     </div>
 </div>
-'''
-
+```
 __tutorials/bargraph/res/templates/bargraph.html__
 
 Here, we utilize the functions we just provided from the controller to position 

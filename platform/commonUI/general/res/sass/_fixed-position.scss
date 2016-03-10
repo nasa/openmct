@@ -61,7 +61,7 @@
 		.l-fixed-position-box,
 		.l-fixed-position-image,
 		.l-fixed-position-text {
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 			height: 100%;
 			width: 100%;
 		}
@@ -89,7 +89,7 @@
 				.l-elem {
 					//@include absPosDefault($p);
 					//@include absPosDefault(0);
-					@include box-sizing(border-box);
+					box-sizing: border-box;
 					display: block;
 					padding: 2px;
 					//width: 50%;
@@ -106,7 +106,7 @@
 						// @include test(blue);
 						// right: $p;
 						// left: auto;
-						@include border-radius($smallCr);
+						border-radius: $smallCr;
 						$valPad: 5px;
 						float: right;
 						margin-left: $interiorMargin;
@@ -125,7 +125,7 @@
 
 	.l-fixed-position-item-handle {
 		$brd: 1px solid $colorKey;
-		//		@include border-radius($controlCr);
+		//		border-radius: $controlCr;
 		background: rgba($colorKey, 0.5);
 		cursor: crosshair;
 		border: $brd;

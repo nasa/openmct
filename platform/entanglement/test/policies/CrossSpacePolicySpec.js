@@ -72,7 +72,7 @@ define(
                 policy = new CrossSpacePolicy();
             });
 
-            ['move', 'copy', 'link', 'compose'].forEach(function (key) {
+            ['move', 'copy'].forEach(function (key) {
                 describe("for " + key + " actions", function () {
                     beforeEach(function () {
                         testActionMetadata.key = key;

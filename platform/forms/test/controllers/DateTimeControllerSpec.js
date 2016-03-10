@@ -26,7 +26,7 @@ define(
     function (DateTimeController) {
         "use strict";
 
-        describe("The date-time directive", function () {
+        describe("The date-time controller", function () {
             var mockScope,
                 controller;
 

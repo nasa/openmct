@@ -53,7 +53,9 @@ define(
                         formatter.parse($scope.textValue) !== value) {
                     $scope.textValue = formatter.format(value);
                     $scope.textInvalid = false;
+                    $scope.lastValidValue = $scope.textValue;
                 }
+                $scope.pickerModel = { value: value };
             }
 
             function updateFromView(textValue) {
@@ -61,6 +63,17 @@ define(
                 if (!$scope.textInvalid) {
                     $scope.ngModel[$scope.field] =
                         formatter.parse(textValue);
+                    $scope.lastValidValue = $scope.textValue;
+                }
+            }
+
+            function updateFromPicker(value) {
+                if (value !== $scope.ngModel[$scope.field]) {
+                    $scope.ngModel[$scope.field] = value;
+                    updateFromModel(value);
+                    if ($scope.ngBlur) {
+                        $scope.ngBlur();
+                    }
                 }
             }
 
@@ -69,10 +82,18 @@ define(
                 updateFromModel($scope.ngModel[$scope.field]);
             }
 
+            function restoreTextValue() {
+                $scope.textValue = $scope.lastValidValue;
+                updateFromView($scope.textValue);
+            }
+
+            $scope.restoreTextValue = restoreTextValue;
+
             $scope.picker = { active: false };
 
             $scope.$watch('structure.format', setFormat);
             $scope.$watch('ngModel[field]', updateFromModel);
+            $scope.$watch('pickerModel.value', updateFromPicker);
             $scope.$watch('textValue', updateFromView);
 
         }

@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
+/*jslint es5: true */
 
 /**
  * PersistenceCapabilitySpec. Created by vwoeltje on 11/6/14.
@@ -34,24 +35,36 @@ define(
                 mockIdentifierService,
                 mockDomainObject,
                 mockIdentifier,
+                mockNofificationService,
+                mockQ,
                 id = "object id",
-                model = { someKey: "some value"},
+                model,
                 SPACE = "some space",
-                persistence;
+                persistence,
+                happyPromise;
 
-            function asPromise(value) {
+            function asPromise(value, doCatch) {
                 return (value || {}).then ? value : {
                     then: function (callback) {
                         return asPromise(callback(value));
+                    },
+                    catch: function(callback) {
+                        //Define a default 'happy' catch, that skips over the
+                        // catch callback
+                        return doCatch ? asPromise(callback(value)): asPromise(value);
                     }
                 };
             }
 
             beforeEach(function () {
+                happyPromise = asPromise(true);
+                model = { someKey: "some value", name: "domain object"};
+
                 mockPersistenceService = jasmine.createSpyObj(
                     "persistenceService",
                     [ "updateObject", "readObject", "createObject", "deleteObject" ]
                 );
+
                 mockIdentifierService = jasmine.createSpyObj(
                     'identifierService',
                     [ 'parse', 'generate' ]
@@ -60,6 +73,15 @@ define(
                     'identifier',
                     [ 'getSpace', 'getKey', 'getDefinedSpace' ]
                 );
+                mockQ = jasmine.createSpyObj(
+                    "$q",
+                    ["reject"]
+                );
+                mockNofificationService = jasmine.createSpyObj(
+                    "notificationService",
+                    ["error"]
+                );
+
                 mockDomainObject = {
                     getId: function () { return id; },
                     getModel: function () { return model; },
@@ -76,66 +98,99 @@ define(
                 persistence = new PersistenceCapability(
                     mockPersistenceService,
                     mockIdentifierService,
+                    mockNofificationService,
+                    mockQ,
                     mockDomainObject
                 );
             });
 
-            it("creates unpersisted objects with the persistence service", function () {
-                // Verify precondition; no call made during constructor
-                expect(mockPersistenceService.createObject).not.toHaveBeenCalled();
+            describe("successful persistence", function() {
+                beforeEach(function () {
+                    mockPersistenceService.updateObject.andReturn(happyPromise);
+                    mockPersistenceService.createObject.andReturn(happyPromise);
+                });
+                it("creates unpersisted objects with the persistence service", function () {
+                    // Verify precondition; no call made during constructor
+                    expect(mockPersistenceService.createObject).not.toHaveBeenCalled();
 
-                persistence.persist();
+                    persistence.persist();
 
-                expect(mockPersistenceService.createObject).toHaveBeenCalledWith(
-                    SPACE,
-                    id,
-                    model
-                );
+                    expect(mockPersistenceService.createObject).toHaveBeenCalledWith(
+                        SPACE,
+                        id,
+                        model
+                    );
+                });
+
+                it("updates previously persisted objects with the persistence service", function () {
+                    // Verify precondition; no call made during constructor
+                    expect(mockPersistenceService.updateObject).not.toHaveBeenCalled();
+
+                    model.persisted = 12321;
+                    persistence.persist();
+
+                    expect(mockPersistenceService.updateObject).toHaveBeenCalledWith(
+                        SPACE,
+                        id,
+                        model
+                    );
+                });
+
+                it("reports which persistence space an object belongs to", function () {
+                    expect(persistence.getSpace()).toEqual(SPACE);
+                });
+
+                it("updates persisted timestamp on persistence", function () {
+                    model.modified = 12321;
+                    persistence.persist();
+                    expect(model.persisted).toEqual(12321);
+                });
+                it("refreshes the domain object model from persistence", function () {
+                    var refreshModel = {someOtherKey: "some other value"};
+                    mockPersistenceService.readObject.andReturn(asPromise(refreshModel));
+                    persistence.refresh();
+                    expect(model).toEqual(refreshModel);
+                });
+
+                it("does not overwrite unpersisted changes on refresh", function () {
+                    var refreshModel = {someOtherKey: "some other value"},
+                        mockCallback = jasmine.createSpy();
+                    model.modified = 2;
+                    model.persisted = 1;
+                    mockPersistenceService.readObject.andReturn(asPromise(refreshModel));
+                    persistence.refresh().then(mockCallback);
+                    expect(model).not.toEqual(refreshModel);
+                    // Should have also indicated that no changes were actually made
+                    expect(mockCallback).toHaveBeenCalledWith(false);
+                });
+
+                it("does not trigger error notification on successful" +
+                    " persistence", function () {
+                    persistence.persist();
+                    expect(mockQ.reject).not.toHaveBeenCalled();
+                    expect(mockNofificationService.error).not.toHaveBeenCalled();
+                });
             });
+            describe("unsuccessful persistence", function() {
+                var sadPromise = {
+                        then: function(callback){
+                            return asPromise(callback(0), true);
+                        }
+                    };
+                beforeEach(function () {
+                    mockPersistenceService.createObject.andReturn(sadPromise);
+                });
+                it("rejects on falsey persistence result", function () {
+                    persistence.persist();
+                    expect(mockQ.reject).toHaveBeenCalled();
+                });
 
-            it("updates previously persisted objects with the persistence service", function () {
-                // Verify precondition; no call made during constructor
-                expect(mockPersistenceService.updateObject).not.toHaveBeenCalled();
-
-                model.persisted = 12321;
-                persistence.persist();
-
-                expect(mockPersistenceService.updateObject).toHaveBeenCalledWith(
-                    SPACE,
-                    id,
-                    model
-                );
+                it("notifies user on persistence failure", function () {
+                    persistence.persist();
+                    expect(mockQ.reject).toHaveBeenCalled();
+                    expect(mockNofificationService.error).toHaveBeenCalled();
+                });
             });
-
-            it("reports which persistence space an object belongs to", function () {
-                expect(persistence.getSpace()).toEqual(SPACE);
-            });
-
-            it("updates persisted timestamp on persistence", function () {
-                model.modified = 12321;
-                persistence.persist();
-                expect(model.persisted).toEqual(12321);
-            });
-
-            it("refreshes the domain object model from persistence", function () {
-                var refreshModel = { someOtherKey: "some other value" };
-                mockPersistenceService.readObject.andReturn(asPromise(refreshModel));
-                persistence.refresh();
-                expect(model).toEqual(refreshModel);
-            });
-
-            it("does not overwrite unpersisted changes on refresh", function () {
-                var refreshModel = { someOtherKey: "some other value" },
-                    mockCallback = jasmine.createSpy();
-                model.modified = 2;
-                model.persisted = 1;
-                mockPersistenceService.readObject.andReturn(asPromise(refreshModel));
-                persistence.refresh().then(mockCallback);
-                expect(model).not.toEqual(refreshModel);
-                // Should have also indicated that no changes were actually made
-                expect(mockCallback).toHaveBeenCalledWith(false);
-            });
-
         });
     }
 );

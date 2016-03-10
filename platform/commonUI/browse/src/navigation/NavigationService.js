@@ -59,6 +59,7 @@ define(
                     callback(value);
                 });
             }
+            return true;
         };
 
         /**

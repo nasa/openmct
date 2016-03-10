@@ -32,13 +32,19 @@ define(
                 mockAutoDismiss,
                 mockMinimizeTimeout,
                 successModel,
+                mockTopicFunction,
+                mockTopicObject,
                 errorModel;
 
             beforeEach(function(){
                 mockTimeout = jasmine.createSpy("$timeout");
+                mockTopicFunction = jasmine.createSpy("topic");
+                mockTopicObject = jasmine.createSpyObj("topicObject", ["listen", "notify"]);
+                mockTopicFunction.andReturn(mockTopicObject);
+
                 mockAutoDismiss = mockMinimizeTimeout = 1000;
                 notificationService = new NotificationService(
-                    mockTimeout, mockAutoDismiss, mockMinimizeTimeout);
+                    mockTimeout, mockTopicFunction, mockAutoDismiss, mockMinimizeTimeout);
                 successModel = {
                     title: "Mock Success Notification",
                     severity: "info"
@@ -55,6 +61,19 @@ define(
                 notificationService.notify(successModel);
                 activeNotification = notificationService.getActiveNotification();
                 expect(activeNotification.model).toBe(successModel);
+            });
+
+            it("notifies listeners on dismissal of notification", function() {
+                var notification,
+                    dismissListener = jasmine.createSpy("ondismiss");
+                notification = notificationService.notify(successModel);
+                notification.onDismiss(dismissListener);
+                expect(mockTopicObject.listen).toHaveBeenCalled();
+                notification.dismiss();
+                expect(mockTopicObject.notify).toHaveBeenCalled();
+                mockTopicObject.listen.mostRecentCall.args[0]();
+                expect(dismissListener).toHaveBeenCalled();
+
             });
 
             it("allows specification of an info notification given just a" +

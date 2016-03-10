@@ -23,11 +23,8 @@
 /*global define */
 
 define(
-    [
-        "uuid",
-        "./CopyTask"
-    ],
-    function (uuid, CopyTask) {
+    [ "./CopyTask" ],
+    function (CopyTask) {
         "use strict";
 
         /**
@@ -38,12 +35,9 @@ define(
          * @memberof platform/entanglement
          * @implements {platform/entanglement.AbstractComposeService}
          */
-        function CopyService($q, creationService, policyService, persistenceService, now) {
+        function CopyService($q, policyService) {
             this.$q = $q;
-            this.creationService = creationService;
             this.policyService = policyService;
-            this.persistenceService = persistenceService;
-            this.now = now;
         }
 
         CopyService.prototype.validate = function (object, parentCandidate) {
@@ -61,19 +55,51 @@ define(
         };
 
         /**
+         * A function used to check if a domain object should be cloned
+         * or not.
+         * @callback platform/entanglement.CopyService~filter
+         * @param {DomainObject} domainObject the object to be cloned
+         * @returns {boolean} true if the object should be cloned; false
+         *          if it should be linked
+         */
+
+        /**
          * Creates a duplicate of the object tree starting at domainObject to
          * the new parent specified.
-         * @param domainObject
-         * @param parent
-         * @param progress
+         *
+         * Any domain objects which cannot be created will not be cloned;
+         * instead, these will appear as links. If a filtering function
+         * is provided, any objects which fail that check will also be
+         * linked instead of cloned
+         *
+         * @param {DomainObject} domainObject the object to duplicate
+         * @param {DomainObject} parent the destination for the clone
+         * @param {platform/entanglement.CopyService~filter} [filter]
+         *        an optional function used to filter out objects from
+         *        the cloning process
          * @returns a promise that will be completed with the clone of
          * domainObject when the duplication is successful.
          */
-        CopyService.prototype.perform = function (domainObject, parent) {
-            var $q = this.$q,
-                copyTask = new CopyTask(domainObject, parent, this.persistenceService, this.$q, this.now);
+        CopyService.prototype.perform = function (domainObject, parent, filter) {
+            var policyService = this.policyService;
+
+            // Combines caller-provided filter (if any) with the
+            // baseline behavior of respecting creation policy.
+            function filterWithPolicy(domainObject) {
+                return (!filter || filter(domainObject)) &&
+                    policyService.allow(
+                        "creation",
+                        domainObject.getCapability("type")
+                    );
+            }
+
             if (this.validate(domainObject, parent)) {
-                return copyTask.perform();
+                return new CopyTask(
+                    domainObject,
+                    parent,
+                    filterWithPolicy,
+                    this.$q
+                ).perform();
             } else {
                 throw new Error(
                     "Tried to copy objects without validating first."

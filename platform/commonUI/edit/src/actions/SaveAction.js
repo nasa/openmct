@@ -20,10 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /*global define*/
+/*jslint es5: true */
 
 
 define(
-    function () {
+    ['../../../browse/src/creation/CreateWizard'],
+    function (CreateWizard) {
         'use strict';
 
         /**
@@ -34,11 +36,31 @@ define(
          * @implements {Action}
          * @memberof platform/commonUI/edit
          */
-        function SaveAction($location, urlService, context) {
+        function SaveAction(
+            $injector,
+            policyService,
+            dialogService,
+            creationService,
+            copyService,
+            context
+        ) {
             this.domainObject = (context || {}).domainObject;
-            this.$location = $location;
-            this.urlService = urlService;
+            this.injectObjectService = function(){
+                this.objectService = $injector.get("objectService");
+            };
+            this.policyService = policyService;
+            this.dialogService = dialogService;
+            this.creationService = creationService;
+            this.copyService = copyService;
         }
+
+        SaveAction.prototype.getObjectService = function(){
+            // Lazily acquire object service (avoids cyclical dependency)
+            if (!this.objectService) {
+                this.injectObjectService();
+            }
+            return this.objectService;
+        };
 
         /**
          * Save changes and conclude editing.
@@ -49,26 +71,85 @@ define(
          */
         SaveAction.prototype.perform = function () {
             var domainObject = this.domainObject,
-                $location = this.$location,
-                urlService = this.urlService;
+                copyService = this.copyService,
+                self = this;
+
+            function resolveWith(object){
+                return function () {
+                    return object;
+                };
+            }
+
+            function doWizardSave(parent) {
+                var context = domainObject.getCapability("context"),
+                    wizard = new CreateWizard(
+                        domainObject,
+                        parent,
+                        self.policyService
+                    );
+
+                return self.dialogService
+                    .getUserInput(
+                        wizard.getFormStructure(true),
+                        wizard.getInitialFormValue()
+                    )
+                    .then(wizard.populateObjectFromInput.bind(wizard));
+            }
+
+            function fetchObject(objectId){
+                return self.getObjectService().getObjects([objectId]).then(function(objects){
+                    return objects[objectId];
+                });
+            }
+
+            function getParent(object){
+                return fetchObject(object.getModel().location);
+            }
+
+            function allowClone(objectToClone) {
+                return (objectToClone.getId() === domainObject.getId()) ||
+                    objectToClone.getCapability('location').isOriginal();
+            }
+
+            function cloneIntoParent(parent) {
+                return copyService.perform(domainObject, parent, allowClone);
+            }
+
+            function cancelEditingAfterClone(clonedObject) {
+                return domainObject.getCapability("editor").cancel()
+                    .then(resolveWith(clonedObject));
+            }
 
             // Invoke any save behavior introduced by the editor capability;
             // this is introduced by EditableDomainObject which is
             // used to insulate underlying objects from changes made
             // during editing.
             function doSave() {
-                return domainObject.getCapability("editor").save();
+                //This is a new 'virtual object' that has not been persisted
+                // yet.
+                if (domainObject.getModel().persisted === undefined){
+                    return getParent(domainObject)
+                        .then(doWizardSave)
+                        .then(getParent)
+                        .then(cloneIntoParent)
+                        .then(cancelEditingAfterClone)
+                        .catch(resolveWith(false));
+                } else {
+                    return domainObject.getCapability("editor").save()
+                        .then(resolveWith(domainObject.getOriginalObject()));
+                }
             }
 
             // Discard the current root view (which will be the editing
-            // UI, which will have been pushed atop the Browise UI.)
-            function returnToBrowse() {
-                return $location.path(urlService.urlForLocation(
-                    "browse",
-                    domainObject
-                ));
+            // UI, which will have been pushed atop the Browse UI.)
+            function returnToBrowse(object) {
+                if (object) {
+                    object.getCapability("action").perform("navigate");
+                }
+                return object;
             }
 
+            //return doSave().then(returnToBrowse);
             return doSave().then(returnToBrowse);
         };
 

@@ -67,21 +67,13 @@ define(
                 mockScope.ngModel = { testField: 12321 };
                 mockScope.field = "testField";
                 mockScope.structure = { format: "someFormat" };
+                mockScope.ngBlur = jasmine.createSpy('blur');
 
                 controller = new DateTimeFieldController(
                     mockScope,
                     mockFormatService
                 );
-            });
-
-            it("updates models from user-entered text", function () {
-                var newText = "1977-05-25 17:30:00";
-
-                mockScope.textValue = newText;
-                fireWatch("textValue", newText);
-                expect(mockScope.ngModel.testField)
-                    .toEqual(mockFormat.parse(newText));
-                expect(mockScope.textInvalid).toBeFalsy();
+                fireWatch("ngModel[field]", mockScope.ngModel.testField);
             });
 
             it("updates text from model values", function () {
@@ -91,16 +83,55 @@ define(
                 expect(mockScope.textValue).toEqual("1977-05-25 17:30:00");
             });
 
+            describe("when valid text is entered", function () {
+                var newText;
+
+                beforeEach(function () {
+                    newText = "1977-05-25 17:30:00";
+                    mockScope.textValue = newText;
+                    fireWatch("textValue", newText);
+                });
+
+                it("updates models from user-entered text", function () {
+                    expect(mockScope.ngModel.testField)
+                        .toEqual(mockFormat.parse(newText));
+                    expect(mockScope.textInvalid).toBeFalsy();
+                });
+
+                it("does not indicate a blur event", function () {
+                    expect(mockScope.ngBlur).not.toHaveBeenCalled();
+                });
+            });
+
+            describe("when a date is chosen via the date picker", function () {
+                var newValue;
+
+                beforeEach(function () {
+                    newValue = 12345654321;
+                    mockScope.pickerModel.value = newValue;
+                    fireWatch("pickerModel.value", newValue);
+                });
+
+                it("updates models", function () {
+                    expect(mockScope.ngModel.testField).toEqual(newValue);
+                });
+
+                it("fires a blur event", function () {
+                    expect(mockScope.ngBlur).toHaveBeenCalled();
+                });
+            });
+
             it("exposes toggle state for date-time picker", function () {
                 expect(mockScope.picker.active).toBe(false);
             });
 
             describe("when user input is invalid", function () {
-                var newText, oldValue;
+                var newText, oldText, oldValue;
 
                 beforeEach(function () {
                     newText = "Not a date";
                     oldValue = mockScope.ngModel.testField;
+                    oldText = mockScope.textValue;
                     mockScope.textValue = newText;
                     fireWatch("textValue", newText);
                 });
@@ -115,6 +146,11 @@ define(
 
                 it("does not modify user input", function () {
                     expect(mockScope.textValue).toEqual(newText);
+                });
+
+                it("restores valid text values on request", function () {
+                    mockScope.restoreTextValue();
+                    expect(mockScope.textValue).toEqual(oldText);
                 });
             });
 
