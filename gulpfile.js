@@ -60,7 +60,8 @@ var gulp = require('gulp'),
             singleRun: true
         },
         sass: {
-            includePaths: bourbon.includePaths
+            includePaths: bourbon.includePaths,
+            sourceComments: true
         },
         replace: {
             variables: {

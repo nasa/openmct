@@ -41,36 +41,38 @@
             name="yAxisFormState"
             class="flex-elem l-flex-row no-validate no-margin reduced-min-width">
     </mct-form>
-    <div class="section-header ng-binding ng-scope">
-        Plot Series
-    </div>
-    <ul class="first flex-elem grows vscroll">
-        <ul class="tree">
-            <li ng-repeat="child in children">
-                <span ng-controller="ToggleController as toggle">
-                    <span ng-controller="TreeNodeController as treeNode">
-                        <span class="tree-item menus-to-left">
-                            <span
-                                class='ui-symbol view-control flex-elem has-children'
-                                ng-class="{ expanded: toggle.isActive() }"
-                                ng-click="toggle.toggle(); treeNode.trackExpansion()">
+    <div class="form">
+        <div class="section-header ng-binding ng-scope">
+            Plot Series
+        </div>
+        <ul class="first flex-elem grows vscroll">
+            <ul class="tree">
+                <li ng-repeat="child in children">
+                    <span ng-controller="ToggleController as toggle">
+                        <span ng-controller="TreeNodeController as treeNode">
+                            <span class="tree-item menus-to-left">
+                                <span
+                                    class='ui-symbol view-control flex-elem has-children'
+                                    ng-class="{ expanded: toggle.isActive() }"
+                                    ng-click="toggle.toggle(); treeNode.trackExpansion()">
+                                </span>
+                                <mct-representation
+                                    class="rep-object-label"
+                                    key="'label'"
+                                    mct-object="child">
+                                </mct-representation>
                             </span>
-                            <mct-representation
-                                class="rep-object-label"
-                                key="'label'"
-                                mct-object="child">
-                            </mct-representation>
                         </span>
+                        <mct-form
+                            ng-class="{hidden: !toggle.isActive()}"
+                            ng-model="configuration.plot.series[$index]"
+                            structure="plotSeriesForm"
+                            name="plotOptionsState"
+                            class="flex-elem l-flex-row l-controls-first no-validate">
+                        </mct-form>
                     </span>
-                    <mct-form
-                        ng-class="{hidden: !toggle.isActive()}"
-                        ng-model="configuration.plot.series[$index]"
-                        structure="plotSeriesForm"
-                        name="plotOptionsState"
-                        class="flex-elem l-flex-row l-controls-first no-validate">
-                    </mct-form>
-                </span>
-            </li>
+                </li>
+            </ul>
         </ul>
-    </ul>
+    </div>
 </div>

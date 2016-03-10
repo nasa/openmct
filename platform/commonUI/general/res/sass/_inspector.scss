@@ -61,9 +61,23 @@
     .l-inspector-part {
         box-sizing: border-box;
         padding-right: $interiorMargin;
-        .form {
+        .tree .form {
             margin-left: $treeVCW + $interiorMarginLg;
-            margin-bottom: $interiorMarginLg;
+        }
+        .section-header {
+            background: none;
+            color: $colorInspectorPropName;
+            border-radius: unset;
+            font-size: inherit;
+            padding: $interiorMarginSm 0;
+        }
+
+        mct-form:not(:last-child) .form {
+            border-bottom: 1px solid $colorInspectorSectionHeaderBg;
+        }
+
+        .form {
+            margin-bottom: $interiorMargin;
             .form-section {
                 margin-bottom: 0;
                 &:not(.first) {

@@ -19,16 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-.section-header {
-	border-radius: $basicCr;
-	background: $colorFormSectionHeader;
-	$c: lighten($colorBodyFg, 20%);
-	color: $c;
-	font-size: 0.8em;
-	padding: $formTBPad $formLRPad;
-	text-transform: uppercase;
-}
-
 .form {
 	color: $colorFormText;
     width: 100%;
@@ -36,6 +26,16 @@
 		position: relative;
 		margin-bottom: $interiorMarginLg * 2;
 	}
+
+    .section-header {
+        border-radius: $basicCr;
+        background: $colorFormSectionHeader;
+        $c: lighten($colorBodyFg, 20%);
+        color: $c;
+        font-size: 0.8em;
+        padding: $formTBPad $formLRPad;
+        text-transform: uppercase;
+    }
 
 	.form-row {
 		$m: $interiorMargin;
@@ -52,9 +52,9 @@
 		>.label,
 		>.controls {
 			box-sizing: border-box;
-			@include clearfix;
+			//@include clearfix;
 			font-size: 0.8rem;
-			line-height: $formInputH;
+			//line-height: $formInputH;
             min-height: $formInputH;
 		}
 
