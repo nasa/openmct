@@ -91,7 +91,7 @@ define(
                 var key = template.key;
                 // First found should win (priority ordering)
                 templateMap[key] =
-                    templateMap[key] || templateLinker.getPath(template);
+                    templateMap[key] || template;
             });
 
             return {

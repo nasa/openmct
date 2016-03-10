@@ -28,9 +28,7 @@ define(
 
         var DISALLOWED_ACTIONS = [
             "move",
-            "copy",
-            "link",
-            "compose"
+            "copy"
         ];
 
         /**

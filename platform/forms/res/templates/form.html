@@ -19,31 +19,24 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<form name="mctForm" novalidate>
-
-<div class="form">
+<form name="mctForm" novalidate class="form">
     <span ng-repeat="section in structure.sections">
         <div class="section-header" ng-if="section.name">
             {{section.name}}
         </div>
-        <div class="form-section">
+        <div class="form-section" ng-class="{ first:$index < 1 }">
             <ng-form name="mctFormInner" ng-repeat="row in section.rows">
-                <div class="form-row validates"
+                <div class="form-row validates l-flex-row"
                      ng-class="{
                                req: row.required,
                                valid: mctFormInner.$dirty && mctFormInner.$valid,
                                invalid: mctFormInner.$dirty && !mctFormInner.$valid,
                                first: $index < 1
                                }">
-
-                    <div class='label' title="{{row.description}}">
+                    <div class='label flex-elem' title="{{row.description}}">
                         {{row.name}}
-                        <span ng-if="row.description"
-                              class="ui-symbol">
-                            i
-                        </span>
                     </div>
-                    <div class='controls'>
+                    <div class='controls flex-elem'>
                         <div class="wrapper" ng-if="row.control">
                             <mct-control key="row.control"
                                          ng-model="ngModel"
@@ -59,6 +52,4 @@
             </ng-form>
         </div>
     </span>
-</div>
-
 </form>

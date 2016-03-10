@@ -34,6 +34,7 @@ define(
                 mockCallback,
                 mockHttp,
                 mockLog,
+                mockRegistry,
                 testBundles;
 
             // Used to wait for then-chain resolution;
@@ -53,7 +54,13 @@ define(
                 mockCallback = jasmine.createSpy("callback");
                 mockHttp = jasmine.createSpyObj("$http", ["get"]);
                 mockLog = jasmine.createSpyObj("$log", ["error", "warn", "info", "debug"]);
-                loader = new BundleLoader(mockHttp, mockLog);
+                mockRegistry = jasmine.createSpyObj(
+                    'legacyRegistry',
+                    [ 'list', 'contains', 'get' ]
+                );
+                mockRegistry.list.andReturn([]);
+                mockRegistry.contains.andReturn(false);
+                loader = new BundleLoader(mockHttp, mockLog, mockRegistry);
             });
 
             it("accepts a JSON file name and loads all bundles", function () {

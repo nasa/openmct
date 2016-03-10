@@ -25,7 +25,7 @@
 	$m: 1;
 	$colorSelectedColor: #fff;
 
-	@include box-sizing(border-box);
+	box-sizing: border-box;
 	padding: $interiorMargin !important;
 
 	.l-palette-row {
@@ -34,7 +34,7 @@
 		width: ($d * $colorsPerRow) + ($m * $colorsPerRow);
 
 		.l-palette-item {
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 			@include txtShdwSubtle(0.8);
 			@include trans-prop-nice-fade(0.25s);
 			border: 1px solid transparent;

@@ -39,8 +39,11 @@ define(
                 start = Date.now();
 
             function update() {
-                var secs = (Date.now() - start) / 1000;
+                var now = Date.now(),
+                    secs = (now - start) / 1000;
                 displayed = Math.round(digests / secs);
+                start = now;
+                digests = 0;
             }
 
             function increment() {

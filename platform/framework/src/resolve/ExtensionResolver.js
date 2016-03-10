@@ -61,8 +61,9 @@ define(
                 $log = this.$log;
 
             function loadImplementation(extension) {
-                var implPath = extension.getImplementationPath(),
-                    implPromise = loader.load(implPath),
+                var implPromise = extension.hasImplementationValue() ?
+                            Promise.resolve(extension.getImplementationValue()) :
+                            loader.load(extension.getImplementationPath()),
                     definition = extension.getDefinition();
 
                 // Wrap a constructor function (to avoid modifying the original)
@@ -117,13 +118,15 @@ define(
                     return extension.getDefinition();
                 }
 
-                // Log that loading has begun
-                $log.info([
-                    "Loading implementation ",
-                    implPath,
-                    " for extension ",
-                    extension.getLogName()
-                ].join(""));
+                if (!extension.hasImplementationValue()) {
+                    // Log that loading has begun
+                    $log.info([
+                        "Loading implementation ",
+                        extension.getImplementationPath(),
+                        " for extension ",
+                        extension.getLogName()
+                    ].join(""));
+                }
 
                 return implPromise.then(attachDefinition, handleError);
             }

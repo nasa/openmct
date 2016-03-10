@@ -91,6 +91,57 @@ define(
                     .toHaveBeenCalledWith("ngModel", jasmine.any(Function));
             });
 
+            it("exposes start time validator", function () {
+                var testValue = 42000000;
+                mockScope.formModel = { end: testValue };
+                expect(mockScope.validateStart(testValue + 1))
+                    .toBe(false);
+                expect(mockScope.validateStart(testValue - 60 * 60 * 1000 - 1))
+                    .toBe(true);
+            });
+
+            it("exposes end time validator", function () {
+                var testValue = 42000000;
+                mockScope.formModel = { start:  testValue };
+                expect(mockScope.validateEnd(testValue - 1))
+                    .toBe(false);
+                expect(mockScope.validateEnd(testValue + 60 * 60 * 1000 + 1))
+                    .toBe(true);
+            });
+
+            describe("when changes are made via form entry", function () {
+                beforeEach(function () {
+                    mockScope.ngModel = {
+                        outer: { start: DAY * 2, end: DAY * 3 },
+                        inner: { start: DAY * 2.25, end: DAY * 2.75 }
+                    };
+                    mockScope.formModel = {
+                        start: DAY * 10000,
+                        end: DAY * 11000
+                    };
+                    // These watches may not exist, but Angular would fire
+                    // them if they did.
+                    fireWatchCollection("formModel", mockScope.formModel);
+                    fireWatch("formModel.start", mockScope.formModel.start);
+                    fireWatch("formModel.end", mockScope.formModel.end);
+                });
+
+                it("does not immediately make changes to the model", function () {
+                    expect(mockScope.ngModel.outer.start)
+                        .not.toEqual(mockScope.formModel.start);
+                    expect(mockScope.ngModel.outer.end)
+                        .not.toEqual(mockScope.formModel.end);
+                });
+
+                it("updates model bounds on request", function () {
+                    mockScope.updateBoundsFromForm();
+                    expect(mockScope.ngModel.outer.start)
+                        .toEqual(mockScope.formModel.start);
+                    expect(mockScope.ngModel.outer.end)
+                        .toEqual(mockScope.formModel.end);
+                });
+            });
+
             describe("when dragged", function () {
                 beforeEach(function () {
                     mockScope.ngModel = {
@@ -159,26 +210,6 @@ define(
                     mockScope.spanWidth = 1000;
                     fireWatch("spanWidth", mockScope.spanWidth);
                     fireWatchCollection("ngModel", mockScope.ngModel);
-                });
-
-                it("enforces a minimum outer span", function () {
-                    mockScope.ngModel.outer.end =
-                        mockScope.ngModel.outer.start - DAY * 100;
-                    fireWatch(
-                        "ngModel.outer.end",
-                        mockScope.ngModel.outer.end
-                    );
-                    expect(mockScope.ngModel.outer.end)
-                        .toBeGreaterThan(mockScope.ngModel.outer.start);
-
-                    mockScope.ngModel.outer.start =
-                        mockScope.ngModel.outer.end + DAY * 100;
-                    fireWatch(
-                        "ngModel.outer.start",
-                        mockScope.ngModel.outer.start
-                    );
-                    expect(mockScope.ngModel.outer.end)
-                        .toBeGreaterThan(mockScope.ngModel.outer.start);
                 });
 
                 it("enforces a minimum inner span when outer span changes", function () {

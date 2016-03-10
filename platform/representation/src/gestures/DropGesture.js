@@ -25,8 +25,9 @@
  * Module defining DropGesture. Created by vwoeltje on 11/17/14.
  */
 define(
-    ['./GestureConstants'],
-    function (GestureConstants) {
+    ['./GestureConstants',
+     '../../../commonUI/edit/src/objects/EditableDomainObject'],
+    function (GestureConstants, EditableDomainObject) {
         "use strict";
 
         /**
@@ -40,14 +41,15 @@ define(
          * @param {DomainObject} domainObject the domain object whose
          *        composition should be modified as a result of the drop.
          */
-        function DropGesture(dndService, $q, element, domainObject) {
+        function DropGesture(dndService, $q, navigationService, instantiate, typeService, element, domainObject) {
             var actionCapability = domainObject.getCapability('action'),
+                editableDomainObject,
+                scope = element.scope && element.scope(),
                 action; // Action for the drop, when it occurs
             
             function broadcastDrop(id, event) {
                 // Find the relevant scope...
-                var scope = element && element.scope && element.scope(),
-                    rect;
+                var rect;
                 if (scope && scope.$broadcast) {
                     // Get the representation's bounds, to convert
                     // drop position
@@ -56,18 +58,41 @@ define(
                     // ...and broadcast the event. This allows specific
                     // views to have post-drop behavior which depends on
                     // drop position.
+                    // Also broadcast the editableDomainObject to
+                    // avoid race condition against non-editable
+                    // version in EditRepresenter
                     scope.$broadcast(
                         GestureConstants.MCT_DROP_EVENT,
                         id,
                         {
                             x: event.pageX - rect.left,
                             y: event.pageY - rect.top
-                        }
+                        },
+                        editableDomainObject
                     );
                 }
             }
 
+            function canCompose(domainObject, selectedObject){
+                return domainObject.getCapability("action").getActions({
+                    key: 'compose',
+                    selectedObject: selectedObject
+                }).length > 0;
+            }
+
             function dragOver(e) {
+                //Refresh domain object on each dragOver to catch external
+                // updates to the model
+                //Don't use EditableDomainObject for folders, allow immediate persistence
+                if (domainObject.hasCapability('editor') ||
+                    domainObject.getModel().type==='folder') {
+                    editableDomainObject = domainObject;
+                } else {
+                    editableDomainObject = new EditableDomainObject(domainObject, $q);
+                }
+
+                actionCapability = editableDomainObject.getCapability('action');
+
                 var event = (e || {}).originalEvent || e,
                     selectedObject = dndService.getData(
                         GestureConstants.MCT_EXTENDED_DRAG_TYPE
@@ -79,7 +104,6 @@ define(
                         key: 'compose',
                         selectedObject: selectedObject
                     })[0];
-
                     if (action) {
                         event.dataTransfer.dropEffect = 'move';
 
@@ -93,23 +117,20 @@ define(
             function drop(e) {
                 var event = (e || {}).originalEvent || e,
                     id = event.dataTransfer.getData(GestureConstants.MCT_DRAG_TYPE),
-                    domainObjectType = domainObject.getModel().type;
-                
-                // If currently in edit mode allow drag and drop gestures to the
-                // domain object. An exception to this is folders which have drop
-                // gestures in browse mode.
-                if (domainObjectType === 'folder' || domainObject.hasCapability('editor')) {
-                
-                    // Handle the drop; add the dropped identifier to the
-                    // destination domain object's composition, and persist
-                    // the change.
-                    if (id) {
-                        $q.when(action && action.perform()).then(function (result) {
-                            broadcastDrop(id, event);
-                        });
-                    }
+                    domainObjectType = editableDomainObject.getModel().type;
+
+                // Handle the drop; add the dropped identifier to the
+                // destination domain object's composition, and persist
+                // the change.
+                if (id) {
+                    $q.when(action && action.perform()).then(function (result) {
+                        //Don't go into edit mode for folders
+                        if (domainObjectType!=='folder') {
+                            editableDomainObject.getCapability('action').perform('edit');
+                        }
+                        broadcastDrop(id, event);
+                    });
                 }
-                // TODO: Alert user if drag and drop is not allowed
             }
 
             // We can only handle drops if we have access to actions...

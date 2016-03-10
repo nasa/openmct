@@ -29,6 +29,8 @@ define(
         describe("The mct-control directive", function () {
             var testControls,
                 mockScope,
+                mockLinker,
+                mockChangeTemplate,
                 mctControl;
 
             beforeEach(function () {
@@ -46,8 +48,11 @@ define(
                 ];
 
                 mockScope = jasmine.createSpyObj("$scope", [ "$watch" ]);
+                mockLinker = jasmine.createSpyObj("templateLinker", ["link"]);
+                mockChangeTemplate = jasmine.createSpy('changeTemplate');
+                mockLinker.link.andReturn(mockChangeTemplate);
 
-                mctControl = new MCTControl(testControls);
+                mctControl = new MCTControl(mockLinker, testControls);
             });
 
             it("is restricted to the element level", function () {
@@ -66,14 +71,16 @@ define(
             it("changes its template dynamically", function () {
                 mctControl.link(mockScope);
 
+                expect(mockChangeTemplate)
+                    .not.toHaveBeenCalledWith(testControls[1]);
+
                 mockScope.key = "xyz";
                 mockScope.$watch.mostRecentCall.args[1]("xyz");
 
                 // Should have communicated the template path to
                 // ng-include via the "inclusion" field in scope
-                expect(mockScope.inclusion).toEqual(
-                    "x/y/z/template.html"
-                );
+                expect(mockChangeTemplate)
+                    .toHaveBeenCalledWith(testControls[1]);
             });
 
         });
