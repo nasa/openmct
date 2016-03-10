@@ -46,10 +46,10 @@ define(
          *        introduced in this bundle), responsible for handling actual
          *        object creation.
          */
-        function CreateActionProvider(typeService, dialogService, creationService, policyService) {
+        function CreateActionProvider($q, typeService, navigationService, policyService) {
             this.typeService = typeService;
-            this.dialogService = dialogService;
-            this.creationService = creationService;
+            this.navigationService = navigationService;
+            this.$q = $q;
             this.policyService = policyService;
         }
 
@@ -69,15 +69,14 @@ define(
 
             // Introduce one create action per type
             return this.typeService.listTypes().filter(function (type) {
-                return type.hasFeature("creation");
+                return self.policyService.allow("creation", type);
             }).map(function (type) {
                 return new CreateAction(
                     type,
                     destination,
                     context,
-                    self.dialogService,
-                    self.creationService,
-                    self.policyService
+                    self.$q,
+                    self.navigationService
                 );
             });
         };

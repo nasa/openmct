@@ -32,11 +32,20 @@ define(
          * Sets the reference timestamp in a timer to the current
          * time, such that it begins counting up.
          *
-         * @implements Action
+         * @extends {platform/features/clock.AbstractTimerAction}
+         * @implements {Action}
+         * @memberof platform/features/clock
+         * @constructor
+         * @param {Function} now a function which returns the current
+         *        time (typically wrapping `Date.now`)
+         * @param {ActionContext} context the context for this action
          */
         function StartTimerAction(now, context) {
-            return new AbstractStartTimerAction(now, context);
+            AbstractStartTimerAction.apply(this, [ now, context ]);
         }
+
+        StartTimerAction.prototype =
+            Object.create(AbstractStartTimerAction.prototype);
 
         StartTimerAction.appliesTo = function (context) {
             var model =

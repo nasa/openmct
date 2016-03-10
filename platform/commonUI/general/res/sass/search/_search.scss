@@ -42,7 +42,6 @@
 		$iconEdgeM: 4px;
 		$iconD: $treeSearchInputBarH - ($iconEdgeM*2);
 		font-size: 0.8em;
-		max-width: 250px;
 		position: relative;
 
 		.search-input {
@@ -53,7 +52,7 @@
 		&:before,
 		.clear-icon,
 		.menu-icon {
-			@include box-sizing(border-box);
+			box-sizing: border-box;
 			color: $colorInputIcon;
 			height: $iconD;
             width: $iconD;
@@ -82,6 +81,7 @@
             left: $interiorMarginSm;
             @include trans-prop-nice(color, 250ms);
             pointer-events: none;
+            z-index: 1;
         }
 
 		// Make icon lighten when hovering over search bar
@@ -127,9 +127,9 @@
 	}
 
 	.active-filter-display {
-		$s: 0.65em;
+		$s: 0.7em;
 		$p: $interiorMargin;
-		@include box-sizing(border-box);
+		box-sizing: border-box;
 		line-height: 130%;
 		padding-left: $s * 2.25;
 		font-size: $s;
@@ -146,7 +146,6 @@
 
 	.search-results {
         @include trans-prop-nice((opacity, visibility), 250ms);
-        margin-top: $interiorMarginLg; // Always include margin here to fend off the search input
 		padding-right: $interiorMargin;
         .hint {
             margin-bottom: $interiorMarginLg;

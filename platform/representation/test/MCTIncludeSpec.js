@@ -98,11 +98,11 @@ define(
             it("reads a template location from a scope's key variable", function () {
                 fireWatch(testAttrs.key, 'abc');
                 expect(mockChangeTemplate)
-                    .toHaveBeenCalledWith(testUrls.abc);
+                    .toHaveBeenCalledWith(testTemplates[0]);
 
                 fireWatch(testAttrs.key, 'xyz');
                 expect(mockChangeTemplate)
-                    .toHaveBeenCalledWith(testUrls.xyz);
+                    .toHaveBeenCalledWith(testTemplates[1]);
             });
 
             it("watches for changes on both ng-model and mct-model", function () {

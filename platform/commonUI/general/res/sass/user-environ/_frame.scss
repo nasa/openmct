@@ -25,6 +25,7 @@
 	&.child-frame.panel {
 		background: $colorBodyBg;
 		border: 1px solid $bc;
+        z-index: 0; // Needed to prevent child-frame controls from showing through when another child-frame is above
 		&:hover {
 			border-color: lighten($bc, 10%);
 		}
@@ -65,17 +66,6 @@
 		.view-switcher {
 			z-index: 10;
 		}
-		// Hide the view switcher by default when it's in an element that's in a frame context
-		// Frame template is used because we need to target the lowest nested frame
-		@include desktop {
-			.view-switcher {
-				opacity: 0;
-			}
-			&:hover .view-switcher {
-				// Show the view switcher on frame hover
-				opacity: 1;
-			}
-		}
 	}
 	.view-switcher {
 		// Hide the name when the view switcher is in a frame context
@@ -84,3 +74,14 @@
 		}
 	}
 }
+ body.desktop .frame.frame-template {
+     // Hide the view switcher by default when it's in an element that's in a frame context
+     // Frame template is used because we need to target the lowest nested frame
+     .view-switcher {
+         opacity: 0;
+     }
+     &:hover .view-switcher {
+         // Show the view switcher on frame hover
+         opacity: 1;
+     }
+ }

@@ -31,11 +31,21 @@ define(
          *
          * Behaves the same as (and delegates functionality to)
          * the "Start" action.
-         * @implements Action
+         *
+         * @extends {platform/features/clock.AbstractTimerAction}
+         * @implements {Action}
+         * @memberof platform/features/clock
+         * @constructor
+         * @param {Function} now a function which returns the current
+         *        time (typically wrapping `Date.now`)
+         * @param {ActionContext} context the context for this action
          */
         function RestartTimerAction(now, context) {
-            return new AbstractStartTimerAction(now, context);
+            AbstractStartTimerAction.apply(this, [ now, context ]);
         }
+
+        RestartTimerAction.prototype =
+            Object.create(AbstractStartTimerAction.prototype);
 
         RestartTimerAction.appliesTo = function (context) {
             var model =

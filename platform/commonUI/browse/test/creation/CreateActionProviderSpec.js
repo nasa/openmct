@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
+/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine,xit,xdescribe*/
 
 /**
  * MCTRepresentationSpec. Created by vwoeltje on 11/6/14.
@@ -32,8 +32,12 @@ define(
         describe("The create action provider", function () {
             var mockTypeService,
                 mockDialogService,
-                mockCreationService,
+                mockNavigationService,
+                mockPolicyService,
+                mockCreationPolicy,
+                mockPolicyMap = {},
                 mockTypes,
+                mockQ,
                 provider;
 
             function createMockType(name) {
@@ -63,18 +67,36 @@ define(
                     "dialogService",
                     [ "getUserInput" ]
                 );
-                mockCreationService = jasmine.createSpyObj(
-                    "creationService",
-                    [ "createObject" ]
+                mockNavigationService = jasmine.createSpyObj(
+                    "navigationService",
+                    [ "setNavigation" ]
                 );
+                mockPolicyService = jasmine.createSpyObj(
+                    "policyService",
+                    [ "allow" ]
+                );
+
                 mockTypes = [ "A", "B", "C" ].map(createMockType);
+
+                mockTypes.forEach(function(type){
+                    mockPolicyMap[type.getName()] = true;
+                });
+
+                mockCreationPolicy = function(type){
+                    return mockPolicyMap[type.getName()];
+                };
+
+                mockPolicyService.allow.andCallFake(function(category, type){
+                    return category === "creation" && mockCreationPolicy(type) ? true : false;
+                });
 
                 mockTypeService.listTypes.andReturn(mockTypes);
 
                 provider = new CreateActionProvider(
+                    mockQ,
                     mockTypeService,
-                    mockDialogService,
-                    mockCreationService
+                    mockNavigationService,
+                    mockPolicyService
                 );
             });
 
@@ -94,15 +116,15 @@ define(
 
             it("does not expose non-creatable types", function () {
                 // One of the types won't have the creation feature...
-                mockTypes[1].hasFeature.andReturn(false);
+                mockPolicyMap[mockTypes[0].getName()] = false;
                 // ...so it should have been filtered out.
                 expect(provider.getActions({
                     key: "create",
                     domainObject: {}
                 }).length).toEqual(2);
                 // Make sure it was creation which was used to check
-                expect(mockTypes[1].hasFeature)
-                    .toHaveBeenCalledWith("creation");
+                expect(mockPolicyService.allow)
+                    .toHaveBeenCalledWith("creation", mockTypes[0]);
             });
         });
     }

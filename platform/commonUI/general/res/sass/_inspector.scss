@@ -23,7 +23,7 @@
 
 .l-inspect,
 .l-inspect table tr td {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
 }
 
 .l-inspect {
@@ -31,26 +31,55 @@
     background: $colorInspectorBg;
     color: $colorInspectorFg;
     line-height: 140%;
+
+    .flex-elem.holder:not(:last-child) {
+        margin-bottom: $interiorMargin;
+    }
+
     .pane-header {
         color: pushBack($colorInspectorFg, 20%);
         font-size: 0.8rem;
         &:before {
             color: pushBack($colorInspectorFg, 10%);
-            content:'\e615'; // e615 Crosshair symbol
+            content: '\e615'; // e615 Crosshair symbol
             display: inline;
             font-family: symbolsfont;
             margin-right: $interiorMargin;
             vertical-align: bottom;
         }
     }
-    
-    ul {
-        @include box-sizing(border-box);
+
+    .split-layout {
+        .split-pane-component.pane {
+            &.bottom {
+                height: 30%;
+                min-height: 20%;
+                max-height: 80%;
+            }
+        }
+    }
+    .l-inspector-part {
+        box-sizing: border-box;
         padding-right: $interiorMargin;
+        .form {
+            margin-left: $treeVCW + $interiorMarginLg;
+            margin-bottom: $interiorMarginLg;
+            .form-section {
+                margin-bottom: 0;
+                &:not(.first) {
+                    border-top: 1px solid $colorFormLines;
+                }
+                .form-row {
+                    @include align-items(center);
+                    border: none;
+                    padding: 0;
+                }
+            }
+        }
     }
 
     ul li,
-    em {
+    em.t-inspector-part-header {
         display: block;
         position: relative;
     }
@@ -58,9 +87,9 @@
     ul li {
         margin-bottom: $interiorMarginLg;
     }
-    
-    em {
-        @include border-radius($basicCr);
+
+    em.t-inspector-part-header {
+        border-radius: $basicCr;
         background-color: $colorInspectorSectionHeaderBg;
         color: $colorInspectorSectionHeaderFg;
         margin-bottom: $interiorMargin;
@@ -84,12 +113,20 @@
     }
 
     .inspector-location {
-        //line-height: 180%;
         .location-item {
+            $h: 1.2em;
+            box-sizing: border-box;
             cursor: pointer;
             display: inline-block;
+            line-height: $h;
             position: relative;
             padding: 2px 4px;
+            .t-object-label {
+                .t-item-icon {
+                    height: $h;
+                    width: 0.7rem;
+                }
+            }
             &:hover {
                 background: $colorItemTreeHoverBg;
                 color: $colorItemTreeHoverFg;
@@ -104,9 +141,48 @@
             display: inline-block;
             font-family: symbolsfont;
             font-size: 8px;
+            font-style: normal !important;
             line-height: inherit;
             margin-left: $interiorMarginSm;
             width: 4px;
         }
+    }
+    .holder-elements {
+        .current-elements {
+            position: relative;
+            .tree-item {
+                .t-object-label {
+                    // Elements pool is a flat list, so don't indent items.
+                    font-size: 0.75rem;
+                    left: 0;
+                }
+            }
+        }
+    }
+}
+
+.l-inspect {
+    .splitter-inspect-panel,
+    .split-pane-component.pane.bottom {
+        @include trans-prop-nice(opacity, 250ms); // Not working as desired currently; entire inspector seems to be destroyed and recreated when switching into and out of edit mode.
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+mct-representation:not(.s-status-editing) .l-inspect {
+    .split-pane-component.pane.top {
+        bottom: 0 !important;
+    }
+}
+
+.s-status-editing .l-inspect {
+    .location-item {
+        pointer-events: none;
+    }
+    .splitter-inspect-panel,
+    .split-pane-component.pane.bottom {
+        opacity: 1;
+        pointer-events: inherit;
     }
 }

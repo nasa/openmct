@@ -27,7 +27,7 @@
 }
 
 .editor {
-    @include border-radius($basicCr * 1.5);
+    border-radius: $basicCr * 1.5;
 }
 
 .contents {
@@ -77,38 +77,36 @@
         }
     }
 
-	// from _bottom-bar.scss
-	.ue-bottom-bar {
-		@include absPosDefault(0);// New status bar design
-		top: auto;
-		height: $ueFooterH;
-		line-height: $ueFooterH - ($interiorMargin * 2);
-		background: $colorFooterBg;
-		color: lighten($colorBodyBg, 30%);
-		font-size: .7rem;
-		.status-holder {
-			@include box-sizing(border-box);
-			@include absPosDefault($interiorMargin);
-			@include ellipsize();
-			right: 120px;
-			text-transform: uppercase;
-			z-index: 1;
-		}
-		.app-logo {
-			@include box-sizing(border-box);
-			@include absPosDefault($interiorMargin);
-			cursor: pointer;
-			left: auto;
-			width: $ueAppLogoW;
-			z-index: 2;
-			&.logo-openmctweb {
-				background: url($dirImgs + 'logo-openmctweb.svg') no-repeat center center;
-			}
-		}
-	}
+    .ue-bottom-bar {
+        @include absPosDefault(0);// New status bar design
+        top: auto;
+        height: $ueFooterH;
+        line-height: $ueFooterH - ($interiorMargin * 2);
+        background: $colorFooterBg;
+        color: lighten($colorBodyBg, 30%);
+        font-size: .7rem;
+        .status-holder {
+            box-sizing: border-box;
+            @include absPosDefault($interiorMargin);
+            @include ellipsize();
+            right: 120px;
+            text-transform: uppercase;
+            z-index: 1;
+        }
+        .app-logo {
+            background-position: right center;
+            box-sizing: border-box;
+            @include absPosDefault($interiorMargin - 1);
+            cursor: pointer;
+            left: auto; right: $interiorMargin;
+            width: $ueAppLogoW;
+            z-index: 2;
+        }
+    }
 }
 
 .edit-mode {
+    // Old edit mode
     .split-layout {
         .split-pane-component.pane.right {
             width: 15%;
@@ -121,7 +119,7 @@
 }
 
 .pane {
-    @include box-sizing(border-box);
+    box-sizing: border-box;
     position: absolute;
 
     .pane-header {
@@ -132,53 +130,11 @@
 
     .primary-pane {
         // Need to lift up this pane to ensure that 'collapsed' panes don't block user interactions
-        z-index: 2;
+        z-index: 4;
     }
 
     .mini-tab-icon.toggle-pane {
         z-index: 5;
-        @include desktop {
-            $d: $uePaneMiniTabH;
-            $paneExpandedOffset: $splitterD + $uePaneMiniTabW;
-            top: $bodyMargin;
-            height: $d;
-            line-height: $d;
-            &:after {
-                // Always the icon that shows when the pane is collapsed
-                opacity: 0;
-            }
-            &.collapsed {
-                &:before {
-                    opacity: 0;
-                }
-                &:after {
-                    opacity: 1;
-                }
-            }
-            &.toggle-tree.anchor-left {
-                left: 0;
-                @include transform(translateX(-1 * $paneExpandedOffset));
-                &:after {
-                    content: '\6d'; // Menu 'hamburger' icon
-                }
-                &.collapsed {
-                    left: 0;
-                    @include transform(translateX((-1 * $ueCollapsedPaneEdgeM) + $interiorMargin));
-                }
-                &:not(.collapsed):before {
-                    @include trans-prop-nice(opacity, 200ms, 200ms);
-                }
-            }
-            &.toggle-inspect.anchor-right {
-                right: $bodyMargin;
-                &:after {
-                    content: '\e615';  // e615: Crosshair icon; was e608: Info "i" icon
-                }
-                &.collapsed {
-                    right: $interiorMargin;
-                }
-            }
-        }
     }
     &.items {
         .object-browse-bar {
@@ -190,6 +146,49 @@
     }
 }
 
+body.desktop .pane .mini-tab-icon.toggle-pane {
+    $d: $uePaneMiniTabH;
+    $paneExpandedOffset: $splitterD + $uePaneMiniTabW;
+    top: $bodyMargin;
+    height: $d;
+    line-height: $d;
+    &:after {
+        // Always the icon that shows when the pane is collapsed
+        opacity: 0;
+    }
+    &.collapsed {
+        &:before {
+            opacity: 0;
+        }
+        &:after {
+            opacity: 1;
+        }
+    }
+    &.toggle-tree.anchor-left {
+        left: 0;
+        @include transform(translateX(-1 * $paneExpandedOffset));
+        &:after {
+            content: '\6d'; // Menu 'hamburger' icon
+        }
+        &.collapsed {
+            left: 0;
+            @include transform(translateX((-1 * $ueCollapsedPaneEdgeM) + $interiorMargin));
+        }
+        &:not(.collapsed):before {
+            @include trans-prop-nice(opacity, 200ms, 200ms);
+        }
+    }
+    &.toggle-inspect.anchor-right {
+        right: $bodyMargin;
+        &:after {
+            content: '\e615'; // Eye icon
+        }
+        &.collapsed {
+            right: $interiorMargin;
+        }
+    }
+}
+
 .split-layout {
     // Specific elements margins
     .holder.holder-treeview-elements {
@@ -197,6 +196,16 @@
         right: 0;
         bottom: $bodyMargin;
         left: $bodyMargin;
+        .create-btn-holder {
+            &.s-status-editing {
+                display: none;
+                & + .search-holder .search-bar {
+                    // .search-holder is adjacent sibling to .create-btn-holder
+                    // Add right margin when create button is hidden, to make room for the collapse pane 'x' button
+                    margin-right: $interiorMarginLg * 2;
+                }
+            }
+        }
     }
 
     .holder.holder-object-and-inspector {
@@ -208,8 +217,14 @@
             top: $bodyMargin;
             bottom: $bodyMargin;
         }
-        .holder-inspector-elements {
+        .holder-inspector {
             top: $bodyMargin;
+            bottom: $bodyMargin;
+            left: $bodyMargin;
+            right: $bodyMargin;
+        }
+        .holder-elements {
+            top: 0;
             bottom: $bodyMargin;
             left: $bodyMargin;
             right: $bodyMargin;
@@ -220,12 +235,31 @@
 .object-holder {
     @include absPosDefault(0, auto);
     top: $ueTopBarH + $interiorMarginLg;
-    &.l-controls-visible {
-        &.l-time-controller-visible {
-            bottom: nth($ueTimeControlH,1) + nth($ueTimeControlH,2) +nth($ueTimeControlH,3) + ($interiorMargin * 3);
+}
+
+.l-object-wrapper {
+    @extend .abs;
+
+    .object-holder-main {
+        @extend .abs;
+    }
+    .l-edit-controls {
+        //@include trans-prop-nice((opacity, height), 0.25s);
+        border-bottom: 1px solid $colorInteriorBorder;
+        line-height: $ueEditToolBarH;
+        height: 0px;
+        opacity: 0;
+        .tool-bar {
+            right: $interiorMargin;
         }
     }
 }
+
+.l-object-wrapper-inner {
+    @include trans-prop-nice-resize(0.25s);
+}
+
+
 
 .object-browse-bar .s-btn,
 .top-bar .buttons-main .s-btn,
@@ -247,29 +281,27 @@
 
 /***************************************************** OBJECT BROWSE BAR */
 .object-browse-bar {
-    @include absPosDefault(0, visible); // Must use visible to avoid hiding view switcher menu
-    @include box-sizing(border-box);
+    box-sizing: border-box;
     height: $ueTopBarH;
     line-height: $ueTopBarH;
     white-space: nowrap;
 
     .left {
         padding-right: $interiorMarginLg;
-        .l-back {
+        .l-back:not(.s-status-editing) {
             margin-right: $interiorMarginLg;
         }
     }
 }
 
-// When the tree is hidden, these are the
-// classes used for the left menu and the
-// right representation.
+// When the tree is hidden, these are the classes used for the left menu and the right representation.
 .pane-tree-hidden {
     // Sets the left tree menu when the tree is hidden.
     .tree-holder,
     .splitter-treeview,
     .holder-treeview-elements {
         opacity: 0;
+        pointer-events: none;
     }
 }
 
@@ -298,17 +330,15 @@
 
 .pane-inspect-hidden {
     .l-object-and-inspector {
-        .t-inspect {
-            z-index: 1 !important; // Move down so that primary pane elements are clickable
-        }
         .l-inspect,
         .splitter-inspect {
             opacity: 0;
+            pointer-events: none;
         }
     }
 }
 
-@include desktop {
+body.desktop {
     .holder-all {
         min-width: $ueDesktopMinW;
     }
@@ -341,5 +371,24 @@
     }
     .pane.primary-pane .object-browse-bar {
         min-width: 200px; // Needed for nice display when primary pane is constrained severely via splitters
+    }
+}
+
+.s-status-editing {
+    .l-object-wrapper {
+        @include pulseBorder($colorEditAreaFg, $dur: 1s, $opacity0: 0.3);
+        border-radius: $controlCr;
+        background-color: $colorEditAreaBg;
+        border-color: $colorEditAreaFg;
+        border-width: 2px;
+        border-style: dotted;
+        .l-object-wrapper-inner {
+            @include absPosDefault(3px, hidden);
+        }
+        .l-edit-controls {
+            height: $ueEditToolBarH + $interiorMargin;
+            margin-bottom: $interiorMargin;
+            opacity: 1;
+        }
     }
 }

@@ -20,11 +20,12 @@
  at runtime from the About dialog for additional information.
 --> 
 
-<div class="search-result-item"
+<div class="search-result-item l-flex-row flex-elem grows"
      ng-class="{selected: ngModel.selectedObject.getId() === domainObject.getId()}">
     <mct-representation key="'label'"
                         mct-object="domainObject"
                         ng-model="ngModel"
-                        ng-click="ngModel.selectedObject = domainObject">
+                        ng-click="ngModel.selectedObject = domainObject"
+                        class="l-flex-row flex-elem grows">
     </mct-representation>
 </div>

@@ -44,10 +44,10 @@ define(
          * @param $http Angular's HTTP requester
          * @param $log Angular's logging service
          */
-        function BundleLoader($http, $log) {
+        function BundleLoader($http, $log, legacyRegistry) {
             this.$http = $http;
             this.$log = $log;
-
+            this.legacyRegistry = legacyRegistry;
         }
 
         /**
@@ -60,7 +60,8 @@ define(
          */
         BundleLoader.prototype.loadBundles = function (bundles) {
             var $http = this.$http,
-                $log = this.$log;
+                $log = this.$log,
+                legacyRegistry = this.legacyRegistry;
 
             // Utility function; load contents of JSON file using $http
             function getJSON(file) {
@@ -97,15 +98,30 @@ define(
             // Load an individual bundle, as a Bundle object.
             // Returns undefined if the definition could not be loaded.
             function loadBundle(bundlePath) {
+                if (legacyRegistry.contains(bundlePath)) {
+                    return Promise.resolve(new Bundle(
+                        bundlePath,
+                        legacyRegistry.get(bundlePath)
+                    ));
+                }
+
                 return loadBundleDefinition(bundlePath).then(function (definition) {
                     return definition && (new Bundle(bundlePath, definition));
                 });
             }
 
+            // Used to filter out redundant bundles
+            function unique(element, index, array) {
+                return array.indexOf(element) === index;
+            }
+
             // Load all named bundles from the array, returned as an array
             // of Bundle objects.
             function loadBundlesFromArray(bundleArray) {
-                var bundlePromises = bundleArray.map(loadBundle);
+                var bundlePromises = legacyRegistry.list()
+                    .concat(bundleArray)
+                    .filter(unique)
+                    .map(loadBundle);
 
                 return Promise.all(bundlePromises)
                     .then(filterBundles);
@@ -114,12 +130,25 @@ define(
             // Load all bundles named in the referenced file. The file is
             // presumed to be a JSON file
             function loadBundlesFromFile(listFile) {
-                return getJSON(listFile).then(loadBundlesFromArray);
+                function handleError(err) {
+                    $log.info([
+                        "No external bundles loaded;",
+                        "could not load bundle listing in",
+                        listFile,
+                        "due to error",
+                        err.status,
+                        err.statusText
+                    ].join(' '));
+                    return loadBundlesFromArray([]);
+                }
+
+                return getJSON(listFile)
+                    .then(loadBundlesFromArray, handleError);
             }
 
             return Array.isArray(bundles) ? loadBundlesFromArray(bundles) :
-                (typeof bundles === 'string') ? loadBundlesFromFile(bundles) :
-                    Promise.reject(new Error(INVALID_ARGUMENT_MESSAGE));
+                    (typeof bundles === 'string') ? loadBundlesFromFile(bundles) :
+                            Promise.reject(new Error(INVALID_ARGUMENT_MESSAGE));
         };
 
         return BundleLoader;

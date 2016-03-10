@@ -35,10 +35,21 @@ define(
          * Both "Start" and "Restart" share this implementation, but
          * control their visibility with different `appliesTo` behavior.
          *
-         * @implements Action
+         * @implements {Action}
+         * @memberof platform/features/clock
+         * @constructor
+         * @param {Function} now a function which returns the current
+         *        time (typically wrapping `Date.now`)
+         * @param {ActionContext} context the context for this action
          */
         function AbstractStartTimerAction(now, context) {
-            var domainObject = context.domainObject;
+            this.domainObject = context.domainObject;
+            this.now = now;
+        }
+
+        AbstractStartTimerAction.prototype.perform = function () {
+            var domainObject = this.domainObject,
+                now = this.now;
 
             function doPersist() {
                 var persistence = domainObject.getCapability('persistence');
@@ -49,13 +60,9 @@ define(
                 model.timestamp = now();
             }
 
-            return {
-                perform: function () {
-                    return domainObject.useCapability('mutation', setTimestamp)
-                        .then(doPersist);
-                }
-            };
-        }
+            return domainObject.useCapability('mutation', setTimestamp)
+                .then(doPersist);
+        };
 
         return AbstractStartTimerAction;
     }

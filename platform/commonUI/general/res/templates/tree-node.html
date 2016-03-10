@@ -26,39 +26,19 @@
             class="tree-item menus-to-left"
             ng-class="::{selected: treeNode.isSelected()}">
             <span
-                mct-device="desktop"
-                class='ui-symbol view-control'
-                ng-click="treeNode.toggle()"
-                ng-if="::(model.composition !== undefined)"
+                class='ui-symbol view-control flex-elem'
+                ng-class="::{ 'has-children': model.composition !== undefined, expanded: toggle.isActive() }"
+                ng-click="toggle.toggle(); treeNode.trackExpansion()"
                 >
-                {{::(treeNode.isExpanded() ? "v" : ">")}}
             </span>
-
             <mct-representation
-                mct-device="desktop"
-                class="mobile-hide"
+                class="rep-object-label"
                 key="'label'"
-                mct-object="::domainObject"
+                mct-object="domainObject"
+                parameters="::{suppressMenuOnEdit: true}"
                 ng-click="treeNode.select()"
                 >
             </mct-representation>
-            <mct-representation
-                mct-device="mobile"
-                class="desktop-hide"
-                key="'label'"
-                mct-object="::domainObject"
-                ng-click="(model.composition === undefined) && treeNode.select();
-                          treeNode.toggle();"
-                >
-            </mct-representation>
-
-            <span
-                mct-device="mobile"
-                class='ui-symbol view-control'
-                ng-click="treeNode.select()"
-                >
-                }
-            </span>
         </span>
         <span
             class="tree-item-subtree"

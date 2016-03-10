@@ -36,8 +36,8 @@
     .bar {
         color: $colorGanttBarFg;
         @include activityBg($colorGanttBarBg);
-        @include border-radius($br);
-        @include box-shadow($shdwGanttBar);
+        border-radius: $br;
+        box-shadow: $shdwGanttBar;
         &.expanded {
             @include border-top-radius($br);
             @include border-bottom-radius(0);
@@ -69,7 +69,8 @@
     }
 }
 
-.edit-mode .s-timeline-gantt {
+.edit-mode .s-timeline-gantt,
+.s-status-editing .s-timeline-gantt {
     .bar {
         &:hover {
             @include background-image(linear-gradient(lighten($colorGanttBarBg, 20), lighten($colorGanttBarBg, 10)));
@@ -140,10 +141,11 @@
     }
 }
 
-.edit-mode .s-swimlane {
+.edit-mode .s-swimlane,
+.s-status-editing .s-swimlane {
     cursor: pointer;
     .t-object-label {
-        @include border-radius($controlCr);
+        border-radius: $controlCr;
         cursor: move;
         padding: 2px 5px;
         &:hover {

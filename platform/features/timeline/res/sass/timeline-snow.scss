@@ -19,9 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@import "compass";
-@import "compass/css3";
-@import "compass/utilities";
+@import "bourbon";
 
 @import "../../../../commonUI/general/res/sass/constants";
 @import "../../../../commonUI/general/res/sass/mixins";

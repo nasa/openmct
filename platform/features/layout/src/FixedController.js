@@ -273,11 +273,14 @@ define(
             }
 
             // Position a panel after a drop event
-            function handleDrop(e, id, position) {
+            function handleDrop(e, id, position, editableDomainObject) {
                 // Don't handle this event if it has already been handled
                 // color is set to "" to let the CSS theme determine the default color
                 if (e.defaultPrevented) {
                     return;
+                }
+                if (editableDomainObject){
+                    $scope.setEditable(editableDomainObject);
                 }
                 e.preventDefault();
                 // Store the position of this element.
@@ -300,12 +303,16 @@ define(
             this.generateDragHandles = generateDragHandles;
 
             // Track current selection state
-            this.selection = $scope.selection;
+            $scope.$watch("selection", function (selection) {
+                this.selection = selection;
 
-            // Expose the view's selection proxy
-            if (this.selection) {
-                this.selection.proxy(new FixedProxy(addElement, $q, dialogService));
-            }
+                // Expose the view's selection proxy
+                if (this.selection) {
+                    this.selection.proxy(
+                        new FixedProxy(addElement, $q, dialogService)
+                    );
+                }
+            }.bind(this));
 
             // Refresh list of elements whenever model changes
             $scope.$watch("model.modified", refreshElements);

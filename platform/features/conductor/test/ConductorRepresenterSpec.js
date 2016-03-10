@@ -19,7 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,afterEach,jasmine*/
+/*global define,describe,xdescribe,it,expect,beforeEach,
+ waitsFor,afterEach,jasmine*/
 
 define(
     ["../src/ConductorRepresenter", "./TestTimeConductor"],
@@ -40,10 +41,11 @@ define(
                 'removeClass',
                 'css',
                 'after',
-                'remove'
+                'remove',
+                'parent'
             ];
 
-        describe("ConductorRepresenter", function () {
+        xdescribe("ConductorRepresenter", function () {
             var mockThrottle,
                 mockConductorService,
                 mockCompile,
@@ -74,6 +76,7 @@ define(
                 testViews = [ { someKey: "some value" } ];
                 mockScope = jasmine.createSpyObj('scope', SCOPE_METHODS);
                 mockElement = jasmine.createSpyObj('element', ELEMENT_METHODS);
+                mockElement.parent.andReturn(mockElement);
                 mockConductor = new TestTimeConductor();
                 mockCompiledTemplate = jasmine.createSpy('template');
                 mockNewScope = jasmine.createSpyObj('newScope', SCOPE_METHODS);

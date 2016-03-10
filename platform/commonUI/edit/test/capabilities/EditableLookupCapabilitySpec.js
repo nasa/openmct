@@ -118,6 +118,29 @@ define(
                 expect(mockContext.getDomainObject.calls.length).toEqual(2);
             });
 
+            it("wraps inherited methods", function () {
+                var CapabilityClass = function(){
+                };
+                CapabilityClass.prototype.inheritedMethod=function () {
+                    return "an inherited method";
+                };
+
+                mockContext = new CapabilityClass();
+
+                capability = new EditableLookupCapability(
+                    mockContext,
+                    mockEditableObject,
+                    mockDomainObject,
+                    factory,
+                    false
+                );
+                expect(capability.inheritedMethod()).toEqual("an inherited method");
+                expect(capability.hasOwnProperty('inheritedMethod')).toBe(true);
+                // The presence of an own property indicates that the method
+                // has been wrapped on the object itself and this is a valid
+                // test that the inherited method has been wrapped.
+            });
+
         });
     }
 );

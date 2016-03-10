@@ -39,7 +39,7 @@ define(
             function populateActionMap(domainObject) {
                 var actionCapability = domainObject.getCapability('action'),
                     actions = actionCapability ?
-                            actionCapability.getActions('create') : [];
+                            actionCapability.getActions('add') : [];
                 actions.forEach(function (action) {
                     actionMap[action.getMetadata().type] = action;
                 });

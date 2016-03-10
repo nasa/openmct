@@ -55,6 +55,7 @@ define(
                 expect(mockInterval).toHaveBeenCalledWith(
                     jasmine.any(Function),
                     testInterval,
+                    0,
                     false
                 );
             });

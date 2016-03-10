@@ -83,11 +83,6 @@ define(
                 representationMap[representation.key].push(representation);
             });
 
-            // Get a path to a representation
-            function getPath(representation) {
-                return templateLinker.getPath(representation);
-            }
-
             // Look up a matching representation for this domain object
             function lookup(key, domainObject) {
                 var candidates = representationMap[key] || [],
@@ -110,6 +105,7 @@ define(
                     toClear = [], // Properties to clear out of scope on change
                     counter = 0,
                     couldRepresent = false,
+                    couldEdit = false,
                     lastIdPath = [],
                     lastKey,
                     changeTemplate = templateLinker.link($scope, element),
@@ -158,14 +154,16 @@ define(
                     });
                 }
 
-                function unchanged(canRepresent, idPath, key) {
+                function unchanged(canRepresent, canEdit, idPath, key) {
                     return canRepresent &&
                         couldRepresent &&
                         key === lastKey &&
                         idPath.length === lastIdPath.length &&
                         idPath.every(function (id, i) {
                             return id === lastIdPath[i];
-                        });
+                        }) &&
+                        canEdit &&
+                        couldEdit;
                 }
 
                 function getIdPath(domainObject) {
@@ -187,13 +185,13 @@ define(
                 function refresh() {
                     var domainObject = $scope.domainObject,
                         representation = lookup($scope.key, domainObject),
-                        path = representation && getPath(representation),
                         uses = ((representation || {}).uses || []),
-                        canRepresent = !!(path && domainObject),
+                        canRepresent = !!(representation && domainObject),
+                        canEdit = !!(domainObject && domainObject.hasCapability('editor')),
                         idPath = getIdPath(domainObject),
                         key = $scope.key;
 
-                    if (unchanged(canRepresent, idPath, key)) {
+                    if (unchanged(canRepresent, canEdit, idPath, key)) {
                         return;
                     }
 
@@ -203,7 +201,7 @@ define(
 
                     // Change templates (passing in undefined to clear
                     // if we don't have enough info to show a template.)
-                    changeTemplate(canRepresent ? path : undefined);
+                    changeTemplate(canRepresent ? representation : undefined);
 
                     // Any existing representers are no longer valid; release them.
                     destroyRepresenters();
@@ -222,6 +220,7 @@ define(
                     // To allow simplified change detection next time around
                     couldRepresent = canRepresent;
                     lastIdPath = idPath;
+                    couldEdit = canEdit;
                     lastKey = key;
 
                     // Populate scope with fields associated with the current

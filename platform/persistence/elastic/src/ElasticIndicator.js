@@ -80,7 +80,7 @@ define(
 
             // Update the indicator initially, and start polling.
             updateIndicator();
-            $interval(updateIndicator, interval, false);
+            $interval(updateIndicator, interval, 0, false);
         }
 
         ElasticIndicator.prototype.getGlyph = function () {

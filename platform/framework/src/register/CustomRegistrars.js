@@ -222,6 +222,13 @@ define(
             mapUpon(customRegistrar("service"));
 
         /**
+         * Register Angular filters.
+         * @param {Array} extensions the resolved extensions
+         */
+        CustomRegistrars.prototype.filters =
+            mapUpon(customRegistrar("filter"));
+
+        /**
          * Register functions which will run after bootstrapping.
          * @param {Array} extensions the resolved extensions
          */
