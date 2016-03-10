@@ -31,7 +31,9 @@
                                req: row.required,
                                valid: mctFormInner.$dirty && mctFormInner.$valid,
                                invalid: mctFormInner.$dirty && !mctFormInner.$valid,
-                               first: $index < 1
+                               first: $index < 1,
+                               'l-controls-first': row.layout === 'control-first',
+                               'l-input-sm': row.inputsize === 'sm'
                                }">
                     <div class='label flex-elem' title="{{row.description}}">
                         {{row.name}}

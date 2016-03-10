@@ -42,7 +42,7 @@
 		box-sizing: border-box;
 		@include clearfix;
 		border-top: 1px solid $colorFormLines;
-		margin-top: $m;
+		//margin-top: $m;
 		padding: $formTBPad 0;
 		position: relative;
 		&.first {
@@ -83,19 +83,6 @@
 					margin-right: 5px;
 				}
 			}
-
-			.l-med input[type="text"] {
-				width: 200px;
-			}
-
-			.l-small input[type="text"] {
-				width: 50px;
-			}
-
-			.l-numeric input[type="text"] {
-				text-align: right;
-			}
-
 			.select {
 				margin-right: $interiorMargin;
 			}
@@ -124,25 +111,23 @@
 	}
 }
 
-.l-controls-first {
-    .form .form-row {
-        margin-top: $interiorMarginSm;
-        >.label,
-        >.controls {
-            line-height: inherit;
-            min-height: inherit;;
-        }
-        >.label {
-            @include flex(1 1 auto);
-            min-width: 0;
-            width: auto;
-            order: 2;
-        }
-        >.controls {
-            @include flex(0 0 auto);
-            margin-right: $interiorMargin;
-            order: 1;
-        }
+.l-controls-first .form .form-row,
+.form .form-row.l-controls-first {
+    >.label,
+    >.controls {
+        line-height: inherit;
+        min-height: inherit;;
+    }
+    >.label {
+        @include flex(1 1 auto);
+        min-width: 0;
+        width: auto;
+        order: 2;
+    }
+    >.controls {
+        @include flex(0 0 auto);
+        margin-right: $interiorMargin;
+        order: 1;
     }
 }
 
@@ -189,6 +174,18 @@ input[type="search"] {
 	&.numeric {
 		text-align: right;
 	}
+}
+
+.l-input-med input[type="text"] {
+    width: 200px !important;
+}
+
+.l-input-sm input[type="text"] {
+    width: 50px !important;
+}
+
+.l-numeric input[type="text"] {
+    text-align: right;
 }
 
 textarea {
