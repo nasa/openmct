@@ -87,6 +87,9 @@
                     @include align-items(center);
                     border: none;
                     padding: $interiorMarginSm 0;
+                    .label {
+                        min-width: 80px;
+                    }
                     input[type='text'],
                     input[type='search'] {
                         width: 100%;

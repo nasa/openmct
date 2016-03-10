@@ -19,27 +19,19 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<style>
-    .l-inspect .l-inspector-part .no-margin .form {
-        margin-left: 0;
-    }
-    .reduced-min-width .form .form-row > .label {
-        min-width: 80px;
-    }
-</style>
 <div ng-controller="PlotOptionsController" class="flex-elem grows l-inspector-part">
     <em class="t-inspector-part-header" title="Display properties for this object">Plot Options</em>
     <mct-form
             ng-model="configuration.plot.xAxis"
             structure="xAxisForm"
             name="xAxisFormState"
-            class="flex-elem l-flex-row no-validate no-margin reduced-min-width">
+            class="flex-elem l-flex-row no-validate no-margin">
     </mct-form>
     <mct-form
             ng-model="configuration.plot.yAxis"
             structure="yAxisForm"
             name="yAxisFormState"
-            class="flex-elem l-flex-row no-validate no-margin reduced-min-width">
+            class="flex-elem l-flex-row no-validate no-margin">
     </mct-form>
     <div class="form">
         <div class="section-header ng-binding ng-scope">
