@@ -66,6 +66,8 @@ define([
                         ],
                         "ranges": [
                             {
+                                "key": "message",
+                                "name": "Message",
                                 "format": "string"
                             }
                         ]

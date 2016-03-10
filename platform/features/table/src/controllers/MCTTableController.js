@@ -262,13 +262,17 @@ define(
                 sortKey = this.$scope.sortColumn;
 
             function binarySearch(searchArray, searchElement, min, max){
-                var sampleAt = Math.floor((max - min) / 2) + min;
-
+                var sampleAt = Math.floor((max - min) / 2) + min,
+                    valA,
+                    valB;
                 if (max < min) {
                     return min; // Element is not in array, min gives direction
                 }
 
-                switch(self.sortComparator(searchElement[sortKey].text, searchArray[sampleAt][sortKey].text)) {
+                valA = isNaN(searchElement[sortKey].text) ? searchElement[sortKey].text : parseFloat(searchElement[sortKey].text);
+                valB = isNaN(searchArray[sampleAt][sortKey].text) ? searchArray[sampleAt][sortKey].text : searchArray[sampleAt][sortKey].text;
+
+                switch(self.sortComparator(valA, valB)) {
                     case -1:
                         return binarySearch(searchArray, searchElement, min, sampleAt - 1);
                     case 0 :
