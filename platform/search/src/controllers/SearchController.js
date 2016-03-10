@@ -48,10 +48,11 @@ define(function () {
         this.$scope = $scope;
         this.searchService = searchService;
         this.numberToDisplay = this.RESULTS_PER_PAGE;
-        this.availabileResults = 0;
+        this.availableResults = 0;
         this.$scope.results = [];
         this.$scope.loading = false;
         this.pendingQuery = undefined;
+        this.$scope.ngModel = this.$scope.ngModel || {};
         this.$scope.ngModel.filter = function () {
             return controller.onFilterChange.apply(controller, arguments);
         };
