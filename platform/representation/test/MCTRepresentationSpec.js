@@ -248,53 +248,70 @@ define(
                 expect(mockScope.testCapability).toBeUndefined();
             });
 
-            it("detects changes among linked instances", function () {
-                var mockContext = jasmine.createSpyObj('context', ['getPath']),
-                    mockContext2 = jasmine.createSpyObj('context', ['getPath']),
+            describe("when a domain object has been observed", function () {
+                var mockContext,
+                    mockContext2,
+                    mockLink,
+                    mockParent;
+
+                beforeEach(function () {
+                    mockContext = jasmine.createSpyObj('context', ['getPath']);
+                    mockContext2 = jasmine.createSpyObj('context', ['getPath']);
                     mockLink = jasmine.createSpyObj(
                         'linkedObject',
                         DOMAIN_OBJECT_METHODS
-                    ),
+                    );
                     mockParent = jasmine.createSpyObj(
                         'parentObject',
                         DOMAIN_OBJECT_METHODS
-                    ),
-                    callCount;
+                    );
 
-                mockDomainObject.getCapability.andCallFake(function (c) {
-                    return c === 'context' && mockContext;
+                    mockDomainObject.getCapability.andCallFake(function (c) {
+                        return c === 'context' && mockContext;
+                    });
+                    mockLink.getCapability.andCallFake(function (c) {
+                        return c === 'context' && mockContext2;
+                    });
+                    mockDomainObject.hasCapability.andCallFake(function (c) {
+                        return c === 'context';
+                    });
+                    mockLink.hasCapability.andCallFake(function (c) {
+                        return c === 'context';
+                    });
+                    mockLink.getModel.andReturn({});
+
+                    mockContext.getPath.andReturn([mockDomainObject]);
+                    mockContext2.getPath.andReturn([mockParent, mockLink]);
+
+                    mockLink.getId.andReturn('test-id');
+                    mockDomainObject.getId.andReturn('test-id');
+
+                    mockParent.getId.andReturn('parent-id');
+
+                    mockScope.key = "abc";
+                    mockScope.domainObject = mockDomainObject;
+
+                    mockScope.$watch.calls[0].args[1]();
                 });
-                mockLink.getCapability.andCallFake(function (c) {
-                    return c === 'context' && mockContext2;
+
+                it("detects subsequent changes among linked instances", function () {
+                    var callCount = mockChangeTemplate.calls.length;
+
+                    mockScope.domainObject = mockLink;
+                    mockScope.$watch.calls[0].args[1]();
+
+                    expect(mockChangeTemplate.calls.length)
+                        .toEqual(callCount + 1);
                 });
-                mockDomainObject.hasCapability.andCallFake(function (c) {
-                    return c === 'context';
+
+                it("does not trigger excess template changes for same instances", function () {
+                    var callCount = mockChangeTemplate.calls.length;
+                    mockScope.$watch.calls[0].args[1]();
+                    expect(mockChangeTemplate.calls.length).toEqual(callCount);
                 });
-                mockLink.hasCapability.andCallFake(function (c) {
-                    return c === 'context';
-                });
-                mockLink.getModel.andReturn({});
-
-                mockContext.getPath.andReturn([mockDomainObject]);
-                mockContext2.getPath.andReturn([mockParent, mockLink]);
-
-                mockLink.getId.andReturn('test-id');
-                mockDomainObject.getId.andReturn('test-id');
-
-                mockParent.getId.andReturn('parent-id');
-
-                mockScope.key = "abc";
-                mockScope.domainObject = mockDomainObject;
-
-                mockScope.$watch.calls[0].args[1]();
-                callCount = mockChangeTemplate.calls.length;
-
-                mockScope.domainObject = mockLink;
-                mockScope.$watch.calls[0].args[1]();
-
-                expect(mockChangeTemplate.calls.length)
-                    .toEqual(callCount + 1);
             });
+
+
         });
     }
 );
