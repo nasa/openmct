@@ -22,7 +22,8 @@
 /*global define*/
 
 define([
-    'angular'
+    'angular',
+    './TreeNodeView'
 ], function (angular, TreeNodeView) {
     'use strict';
 
@@ -34,11 +35,15 @@ define([
         this.nodeViews = [];
     }
 
+    function newTreeView() {
+        return new TreeView();
+    }
+
     TreeView.prototype.setSize = function (sz) {
         var nodeView;
 
         while (this.nodeViews.length < sz) {
-            nodeView = new TreeNodeView();
+            nodeView = new TreeNodeView(newTreeView);
             this.nodeViews.push(nodeView);
             this.ul.append($(nodeView.elements()));
         }

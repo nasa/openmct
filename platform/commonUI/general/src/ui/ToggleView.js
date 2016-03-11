@@ -23,48 +23,39 @@
 
 define([
     'angular',
-    'text!../../res/templates/ui/node.html'
-], function (angular, nodeTemplate) {
-    'use strict';
-
-    var $ = angular.element.bind(angular);
-
-    function TreeNodeView(subtreeFactory) {
-        this.factory = subtreeFactory;
-        this.li = $('<li>');
-        this.expanded = false;
+    'text!../../res/templates/ui/toggle.html'
+], function (angular, toggleTemplate) {
+    function ToggleView(state) {
+        this.expanded = !!state;
+        this.callbacks = [];
+        this.el = angular.element(toggleTemplate);
+        this.el.on('click', function () {
+            this.model(!this.expanded);
+        }.bind(this));
     }
 
-    TreeNodeView.prototype.populateContents = function (domainObject) {
-        if (this.li.children().length === 0) {
-            this.li.append($(nodeTemplate));
-        }
+    ToggleView.prototype.model = function (state) {
+        this.expanded = state;
 
-
-    };
-
-    TreeNodeView.prototype.model = function (domainObject) {
-        if (this.unlisten) {
-            this.unlisten();
-        }
-
-        if (domainObject) {
-            this.unlisten = domainObject.getCapability('mutation')
-                .listen(this.populateContents.bind(this));
-            this.populateContents(domainObject);
+        if (state) {
+            this.el.addClass('expanded');
         } else {
-            this.li.empty();
+            this.el.removeClass('expanded');
         }
+
+        this.callbacks.forEach(function (callback) {
+            callback(state);
+        });
     };
 
-    /**
-     *
-     * @returns {HTMLElement[]}
-     */
-    TreeNodeView.prototype.elements = function () {
-        return this.li;
+    ToggleView.prototype.observe = function (callback) {
+        this.callbacks.push(callback);
+        return function () {
+            this.callbacks = this.callbacks.filter(function (c) {
+                return c !== callback;
+            });
+        }.bind(this);
     };
 
-
-    return TreeNodeView;
+    return ToggleView;
 });
