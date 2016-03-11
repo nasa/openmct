@@ -23,15 +23,51 @@
 
 define([
     'text!../../res/templates/subtree.html'
-], function () {
-    function MCTTree() {
-        function link(scope, elem) {
+], function (subtreeTemplate) {
+    function MCTTreeController($scope, $element) {
+        var ul = elem.filter('ul'),
+            activeObject,
+            unlisten;
 
+        function addNodes(domainObjects) {
+            domainObjects.forEach(function (addNode));
         }
 
+        function loadComposition(domainObject) {
+            activeObject = domainObject;
+            ul.empty();
+            if (domainObject.hasCapability('composition')) {
+                // TODO: Add pending indicator
+                domainObject.useCapability('composition')
+                    .then(addNodes);
+            }
+        }
+
+        function changeObject(domainObject) {
+            if (unlisten) {
+                unlisten();
+            }
+
+            unlisten = domainObject.getCapability('mutation')
+                .listen(loadComposition);
+
+            loadComposition(domainObject);
+        }
+
+        scope.$watch('mctObject', changeObject);
+    }
+
+    function MCTTree() {
         return {
-            link: link,
-            scope: { mctModel: "=" }
+            restrict: "E",
+            controller: [
+                '$scope',
+                '$element',
+                MCTTreeController
+            ],
+            require: [ "mctTree" ],
+            scope: { mctObject: "=" },
+            template: subtreeTemplate
         };
     }
 
