@@ -22,19 +22,47 @@
 /*global define*/
 
 define([
-    'angular',
+    'zepto',
     'text!../../res/templates/ui/tree-label.html'
-], function (angular, labelTemplate) {
+], function ($, labelTemplate) {
     'use strict';
-
-    var $ = angular.element.bind(angular);
 
     function TreeLabelView() {
         this.el = $(labelTemplate);
     }
 
+    function getGlyph(domainObject) {
+        var type = domainObject.getCapability('type');
+        return type.getGlyph();
+    }
+
+    TreeLabelView.prototype.updateView = function (domainObject) {
+        var titleEl = this.el.find('.t-title-label'),
+            glyphEl = this.el.find('.t-item-icon-glyph'),
+            iconEl = this.el.find('.t-item-icon');
+
+        titleEl.text(domainObject ? domainObject.getModel().name : "");
+        glyphEl.text(domainObject ? getGlyph(domainObject) : "");
+
+        if (domainObject && isLink(domainObject)) {
+            iconEl.addClass('l-icon-link');
+        } else {
+            iconEl.removeClass('l-icon-link');
+        }
+    };
+
     TreeLabelView.prototype.model = function (domainObject) {
-        
+        if (this.unlisten) {
+            this.unlisten();
+            delete this.unlisten;
+        }
+
+        this.updateView(domainObject);
+
+        if (domainObject) {
+            this.unlisten = domainObject.getCapability('mutation')
+                .listen(this.updateView.bind(this));
+        }
     };
 
     TreeLabelView.prototype.elements = function () {
