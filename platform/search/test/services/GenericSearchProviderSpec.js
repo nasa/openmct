@@ -101,7 +101,11 @@ define([
 
         it('re-indexes when mutation occurs', function () {
             var mockDomainObject =
-                    jasmine.createSpyObj('domainObj', ['getId', 'getModel']),
+                    jasmine.createSpyObj('domainObj', [
+                        'getId',
+                        'getModel',
+                        'getCapability'
+                    ]),
                 testModel = { some: 'model' };
             mockDomainObject.getId.andReturn("some-id");
             mockDomainObject.getModel.andReturn(testModel);
