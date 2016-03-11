@@ -22,39 +22,19 @@
 /*global define*/
 
 define([
-    'text!../../res/templates/subtree.html'
-], function (subtreeTemplate) {
-    function MCTTreeController($scope, $element) {
-        var ul = elem.filter('ul'),
+    'text!../../res/templates/subtree.html',
+    'text!../../res/templates/tree/node.html'
+], function (subtreeTemplate, nodeTemplate) {
+    function MCTTreeController($scope, $element, $compile) {
+        var ul = $element.filter('ul'),
+            makeNode = $compile(nodeTemplate),
             activeObject,
             unlisten;
 
-        function addNodes(domainObjects) {
-            domainObjects.forEach(function (addNode));
-        }
 
-        function loadComposition(domainObject) {
-            activeObject = domainObject;
-            ul.empty();
-            if (domainObject.hasCapability('composition')) {
-                // TODO: Add pending indicator
-                domainObject.useCapability('composition')
-                    .then(addNodes);
-            }
-        }
 
-        function changeObject(domainObject) {
-            if (unlisten) {
-                unlisten();
-            }
 
-            unlisten = domainObject.getCapability('mutation')
-                .listen(loadComposition);
-
-            loadComposition(domainObject);
-        }
-
-        scope.$watch('mctObject', changeObject);
+        $scope.$watch('mctObject', changeObject);
     }
 
     function MCTTree() {
@@ -63,11 +43,12 @@ define([
             controller: [
                 '$scope',
                 '$element',
+                '$compile',
                 MCTTreeController
             ],
             require: [ "mctTree" ],
             scope: { mctObject: "=" },
-            template: subtreeTemplate
+            template: ""
         };
     }
 

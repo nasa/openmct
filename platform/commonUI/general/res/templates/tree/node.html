@@ -1,0 +1,32 @@
+<li>
+    <span
+        class="tree-item menus-to-left"
+        ng-class="{selected: treeNode.isSelected()}"
+        >
+        <span
+                class='ui-symbol view-control flex-elem'
+                ng-class="{ 'has-children': model.composition !== undefined, expanded: toggle.isActive() }"
+                ng-click="toggle.toggle(); treeNode.trackExpansion()"
+                >
+        </span>
+        <mct-representation
+                class="rep-object-label"
+                key="'label'"
+                mct-object="domainObject"
+                parameters="{suppressMenuOnEdit: true}"
+                ng-click="treeNode.select()"
+                >
+        </mct-representation>
+    </span>
+    <span
+        class="tree-item-subtree"
+        ng-show="toggle.isActive()"
+        ng-if="model.composition !== undefined"
+        >
+        <mct-representation key="'subtree'"
+                            ng-model="ngModel"
+                            parameters="parameters"
+                            mct-object="treeNode.hasBeenExpanded() && domainObject">
+        </mct-representation>
+    </span>
+</li>
