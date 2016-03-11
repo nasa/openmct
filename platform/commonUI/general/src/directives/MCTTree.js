@@ -22,30 +22,21 @@
 /*global define*/
 
 define([
-    'text!../../res/templates/subtree.html',
-    'text!../../res/templates/tree/node.html'
-], function (subtreeTemplate, nodeTemplate) {
-    function MCTTreeController($scope, $element, $compile) {
-        var ul = $element.filter('ul'),
-            makeNode = $compile(nodeTemplate),
-            activeObject,
-            unlisten;
-
-
-
-
-        $scope.$watch('mctObject', changeObject);
-    }
-
+    'angular',
+    '../ui/TreeView'
+], function (angular, TreeView) {
     function MCTTree() {
+        function link(scope, element) {
+            var treeView = new TreeView();
+
+            element.append(angular.element(treeView.elements()));
+
+            scope.$watch('mctObject', treeView.model.bind(treeView));
+        }
+
         return {
             restrict: "E",
-            controller: [
-                '$scope',
-                '$element',
-                '$compile',
-                MCTTreeController
-            ],
+            link: link,
             require: [ "mctTree" ],
             scope: { mctObject: "=" },
             template: ""
