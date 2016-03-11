@@ -23,24 +23,34 @@
 
 define([
     'angular',
-    'text!../../res/templates/ui/node.html'
-], function (angular, nodeTemplate) {
+    'text!../../res/templates/ui/node.html',
+    './ToggleView'
+], function (angular, nodeTemplate, ToggleView) {
     'use strict';
 
     var $ = angular.element.bind(angular);
 
     function TreeNodeView(subtreeFactory) {
-        this.factory = subtreeFactory;
         this.li = $('<li>');
-        this.expanded = false;
+
+        this.toggleView = new ToggleView(false);
+        this.toggleView.observe(function (state) {
+            if (state) {
+                if (!this.subtreeView) {
+                    this.subtreeView = subtreeFactory();
+                    this.subtreeView.model(this.activeObject);
+                }
+                $(this.subtreeView.elements()).removeClass('hidden');
+            } else if (this.subtreeView) {
+                $(this.subtreeView.elements()).addClass('hidden');
+            }
+        }.bind(this));
     }
 
     TreeNodeView.prototype.populateContents = function (domainObject) {
         if (this.li.children().length === 0) {
             this.li.append($(nodeTemplate));
         }
-
-
     };
 
     TreeNodeView.prototype.model = function (domainObject) {
@@ -48,12 +58,18 @@ define([
             this.unlisten();
         }
 
+        this.activeObject = domainObject;
+
         if (domainObject) {
             this.unlisten = domainObject.getCapability('mutation')
                 .listen(this.populateContents.bind(this));
             this.populateContents(domainObject);
         } else {
             this.li.empty();
+        }
+
+        if (this.subtreeView) {
+            this.subtreeView.model(domainObject);
         }
     };
 

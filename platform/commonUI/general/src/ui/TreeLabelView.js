@@ -23,43 +23,23 @@
 
 define([
     'angular',
-    'text!../../res/templates/ui/toggle.html'
-], function (angular, toggleTemplate) {
-    function ToggleView(state) {
-        this.expanded = !!state;
-        this.callbacks = [];
-        this.el = angular.element(toggleTemplate);
-        this.el.on('click', function () {
-            this.model(!this.expanded);
-        }.bind(this));
+    'text!../../res/templates/ui/tree-label.html'
+], function (angular, labelTemplate) {
+    'use strict';
+
+    var $ = angular.element.bind(angular);
+
+    function TreeLabelView() {
+        this.el = $(labelTemplate);
     }
 
-    ToggleView.prototype.model = function (state) {
-        this.expanded = state;
-
-        if (state) {
-            this.el.addClass('expanded');
-        } else {
-            this.el.removeClass('expanded');
-        }
-
-        this.callbacks.forEach(function (callback) {
-            callback(state);
-        });
+    TreeLabelView.prototype.model = function (domainObject) {
+        
     };
 
-    ToggleView.prototype.observe = function (callback) {
-        this.callbacks.push(callback);
-        return function () {
-            this.callbacks = this.callbacks.filter(function (c) {
-                return c !== callback;
-            });
-        }.bind(this);
-    };
-
-    ToggleView.prototype.elements = function () {
+    TreeLabelView.prototype.elements = function () {
         return this.el;
     };
 
-    return ToggleView;
+    return TreeLabelView;
 });
