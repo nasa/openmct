@@ -22,13 +22,13 @@
 /*global define*/
 
 define([
-    'angular',
+    'zepto',
     'text!../../res/templates/tree/toggle.html'
-], function (angular, toggleTemplate) {
+], function ($, toggleTemplate) {
     function ToggleView(state) {
         this.expanded = !!state;
         this.callbacks = [];
-        this.el = angular.element(toggleTemplate);
+        this.el = $(toggleTemplate);
         this.el.on('click', function () {
             this.model(!this.expanded);
         }.bind(this));

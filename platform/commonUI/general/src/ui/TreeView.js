@@ -22,12 +22,10 @@
 /*global define*/
 
 define([
-    'angular',
+    'zepto',
     './TreeNodeView'
-], function (angular, TreeNodeView) {
+], function ($, TreeNodeView) {
     'use strict';
-
-    var $ = angular.element.bind(angular);
 
     function TreeView() {
         this.ul = $('<ul class="tree"></ul>');

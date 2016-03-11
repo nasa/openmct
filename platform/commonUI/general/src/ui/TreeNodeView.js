@@ -22,14 +22,12 @@
 /*global define*/
 
 define([
-    'angular',
+    'zepto',
     'text!../../res/templates/tree/node.html',
     './ToggleView',
     './TreeLabelView'
-], function (angular, nodeTemplate, ToggleView, TreeLabelView) {
+], function ($, nodeTemplate, ToggleView, TreeLabelView) {
     'use strict';
-
-    var $ = angular.element.bind(angular);
 
     function TreeNodeView(subtreeFactory) {
         this.li = $('<li>');
@@ -40,6 +38,8 @@ define([
                 if (!this.subtreeView) {
                     this.subtreeView = subtreeFactory();
                     this.subtreeView.model(this.activeObject);
+                    this.li.find('.tree-item-subtree').eq(0)
+                        .append($(this.subtreeView.elements()));
                 }
                 $(this.subtreeView.elements()).removeClass('hidden');
             } else if (this.subtreeView) {
@@ -51,8 +51,8 @@ define([
 
         this.li.append($(nodeTemplate));
         this.li.find('span').eq(0)
-            .append(this.toggleView.elements())
-            .append(this.labelView.elements());
+            .append($(this.toggleView.elements()))
+            .append($(this.labelView.elements()));
 
         this.model(undefined);
     }
