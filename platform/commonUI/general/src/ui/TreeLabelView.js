@@ -66,7 +66,7 @@ define([
 
         if (domainObject) {
             this.unlisten = domainObject.getCapability('mutation')
-                .listen(this.updateView.bind(this));
+                .listen(this.updateView.bind(this, domainObject));
         }
     };
 
