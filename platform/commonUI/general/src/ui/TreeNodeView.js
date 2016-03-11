@@ -24,8 +24,9 @@
 define([
     'angular',
     'text!../../res/templates/tree/node.html',
-    './ToggleView'
-], function (angular, nodeTemplate, ToggleView) {
+    './ToggleView',
+    './TreeLabelView'
+], function (angular, nodeTemplate, ToggleView, TreeLabelView) {
     'use strict';
 
     var $ = angular.element.bind(angular);
@@ -45,13 +46,16 @@ define([
                 $(this.subtreeView.elements()).addClass('hidden');
             }
         }.bind(this));
-    }
 
-    TreeNodeView.prototype.populateContents = function (domainObject) {
-        if (this.li.children().length === 0) {
-            this.li.append($(nodeTemplate));
-        }
-    };
+        this.labelView = new TreeLabelView();
+
+        this.li.append($(nodeTemplate));
+        this.li.find('span').eq(0)
+            .append(this.toggleView.elements())
+            .append(this.labelView.elements());
+
+        this.model(undefined);
+    }
 
     TreeNodeView.prototype.model = function (domainObject) {
         if (this.unlisten) {
@@ -60,14 +64,13 @@ define([
 
         this.activeObject = domainObject;
 
-        if (domainObject) {
-            this.unlisten = domainObject.getCapability('mutation')
-                .listen(this.populateContents.bind(this));
-            this.populateContents(domainObject);
+        if (domainObject && domainObject.hasCapability('composition')) {
+            $(this.toggleView.elements()).addClass('has-children');
         } else {
-            this.li.empty();
+            $(this.toggleView.elements()).removeClass('has-children');
         }
 
+        this.labelView.model(domainObject);
         if (this.subtreeView) {
             this.subtreeView.model(domainObject);
         }

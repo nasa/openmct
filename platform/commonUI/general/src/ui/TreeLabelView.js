@@ -36,6 +36,11 @@ define([
         return type.getGlyph();
     }
 
+    function isLink(domainObject) {
+        var location = domainObject.getCapability('location');
+        return location.isLink();
+    }
+
     TreeLabelView.prototype.updateView = function (domainObject) {
         var titleEl = this.el.find('.t-title-label'),
             glyphEl = this.el.find('.t-item-icon-glyph'),
