@@ -30,8 +30,7 @@ define([
     var $ = angular.element.bind(angular);
 
     function TreeView() {
-        this.ul = $('<ul>');
-        this.ul.addClass('tree');
+        this.ul = $('<ul class="tree"></ul>');
         this.nodeViews = [];
     }
 

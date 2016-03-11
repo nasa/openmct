@@ -23,7 +23,7 @@
 
 define([
     'angular',
-    'text!../../res/templates/ui/node.html',
+    'text!../../res/templates/tree/node.html',
     './ToggleView'
 ], function (angular, nodeTemplate, ToggleView) {
     'use strict';

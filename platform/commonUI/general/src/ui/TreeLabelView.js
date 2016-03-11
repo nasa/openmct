@@ -23,7 +23,7 @@
 
 define([
     'zepto',
-    'text!../../res/templates/ui/tree-label.html'
+    'text!../../res/templates/tree/tree-label.html'
 ], function ($, labelTemplate) {
     'use strict';
 

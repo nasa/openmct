@@ -49,6 +49,7 @@ define([
     "./src/directives/MCTScroll",
     "./src/directives/MCTSplitPane",
     "./src/directives/MCTSplitter",
+    "./src/directives/MCTTree",
     "text!./res/templates/bottombar.html",
     "text!./res/templates/controls/action-button.html",
     "text!./res/templates/controls/input-filter.html",
@@ -97,6 +98,7 @@ define([
     MCTScroll,
     MCTSplitPane,
     MCTSplitter,
+    MCTTree,
     bottombarTemplate,
     actionButtonTemplate,
     inputFilterTemplate,
@@ -389,6 +391,10 @@ define([
                 {
                     "key": "mctSplitter",
                     "implementation": MCTSplitter
+                },
+                {
+                    "key": "mctTree",
+                    "implementation": MCTTree
                 }
             ],
             "constants": [

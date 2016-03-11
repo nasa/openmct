@@ -23,7 +23,7 @@
 
 define([
     'angular',
-    'text!../../res/templates/ui/toggle.html'
+    'text!../../res/templates/tree/toggle.html'
 ], function (angular, toggleTemplate) {
     function ToggleView(state) {
         this.expanded = !!state;

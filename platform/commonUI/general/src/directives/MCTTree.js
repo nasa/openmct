@@ -37,9 +37,7 @@ define([
         return {
             restrict: "E",
             link: link,
-            require: [ "mctTree" ],
-            scope: { mctObject: "=" },
-            template: ""
+            scope: { mctObject: "=" }
         };
     }
 
