@@ -85,7 +85,6 @@ define(
                 popup.goesUp() ? 'arw-btm' : 'arw-top',
                 popup.goesLeft() ? 'arw-right' : 'arw-left'
             ].join(' ');
-            scope.bubbleLayout = 'arw-top arw-left';
 
             // Create the info bubble, now that we know how to
             // point the arrow...
