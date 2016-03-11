@@ -81,7 +81,12 @@ module.exports = function(config) {
         coverageReporter: {
             dir: process.env.CIRCLE_ARTIFACTS ?
                 process.env.CIRCLE_ARTIFACTS + '/coverage' :
-                "dist/coverage"
+                "dist/coverage",
+            check: {
+                global: {
+                    lines: 80
+                }
+            }
         },
 
         // HTML test reporting.
