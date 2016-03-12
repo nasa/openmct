@@ -29,8 +29,12 @@ define([
         function link(scope, element, attrs) {
             var treeView = new TreeView(),
                 expr = $parse(attrs.mctModel),
-                assign = expr.assign.bind(expr, scope.$parent),
-                unobserve = treeView.observe(assign);
+                unobserve = treeView.observe(function (domainObject) {
+                    if (domainObject !== expr(scope.$parent)) {
+                        expr.assign(scope.$parent, domainObject);
+                        scope.$apply();
+                    }
+                });
 
             element.append(angular.element(treeView.elements()));
 
