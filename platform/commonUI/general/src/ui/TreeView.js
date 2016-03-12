@@ -92,7 +92,7 @@ define([
     TreeView.prototype.updateNodeViewSelection = function () {
         this.nodeViews.forEach(function (nodeView) {
             nodeView.value(this.selectedObject);
-        });
+        }.bind(this));
     };
 
     TreeView.prototype.value = function (domainObject) {

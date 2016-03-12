@@ -76,6 +76,16 @@ define([
         }
     };
 
+    function getIdPath(domainObject) {
+        function getId(domainObject) {
+            return domainObject.getId();
+        }
+        
+        return domainObject ?
+            domainObject.getCapability('context').getPath().map(getId) :
+            [];
+    }
+
     TreeNodeView.prototype.value = function (domainObject) {
         var activeIdPath = getIdPath(this.activeObject),
             selectedIdPath = getIdPath(domainObject);

@@ -394,7 +394,8 @@ define([
                 },
                 {
                     "key": "mctTree",
-                    "implementation": MCTTree
+                    "implementation": MCTTree,
+                    "depends": [ '$parse' ]
                 }
             ],
             "constants": [
