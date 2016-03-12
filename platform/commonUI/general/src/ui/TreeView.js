@@ -30,6 +30,7 @@ define([
     function TreeView() {
         this.ul = $('<ul class="tree"></ul>');
         this.nodeViews = [];
+        this.callbacks = [];
     }
 
     function newTreeView() {
@@ -62,6 +63,7 @@ define([
             if (domainObject === self.activeObject) {
                 self.setSize(domainObjects.length);
                 domainObjects.forEach(addNode);
+                self.updateNodeViewSelection();
             }
         }
 
@@ -85,6 +87,20 @@ define([
         } else {
             this.setSize(0);
         }
+    };
+
+    TreeView.prototype.updateNodeViewSelection = function () {
+        this.nodeViews.forEach(function (nodeView) {
+            nodeView.value(this.selectedObject);
+        });
+    };
+
+    TreeView.prototype.value = function (domainObject) {
+        this.selectedObject = domainObject;
+        this.updateNodeViewSelection();
+        this.callbacks.forEach(function (callback) {
+            callback(domainObject);
+        });
     };
 
     /**

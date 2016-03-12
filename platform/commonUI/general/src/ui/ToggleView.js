@@ -30,11 +30,11 @@ define([
         this.callbacks = [];
         this.el = $(toggleTemplate);
         this.el.on('click', function () {
-            this.model(!this.expanded);
+            this.value(!this.expanded);
         }.bind(this));
     }
 
-    ToggleView.prototype.model = function (state) {
+    ToggleView.prototype.value = function (state) {
         this.expanded = state;
 
         if (state) {

@@ -76,6 +76,36 @@ define([
         }
     };
 
+    TreeNodeView.prototype.value = function (domainObject) {
+        var activeIdPath = getIdPath(this.activeObject),
+            selectedIdPath = getIdPath(domainObject);
+
+        if (this.onSelectionPath) {
+            this.li.find('.tree-item').eq(0).removeClass('selected');
+            if (this.subtreeView) {
+                this.subtreeView.value(undefined);
+            }
+        }
+
+        this.onSelectionPath =
+            !!domainObject &&
+            !!this.activeObject &&
+            (activeIdPath.length <= selectedIdPath.length) &&
+                activeIdPath.every(function (id, index) {
+                    return selectedIdPath[index] === id;
+                });
+
+        if (this.onSelectionPath) {
+            if (activeIdPath.length === selectedIdPath.length) {
+                this.li.find('.tree-item').eq(0).addClass('selected');
+            } else {
+                // Expand to reveal the selection
+                this.toggleView.value(true);
+                this.subtreeView.value(domainObject);
+            }
+        }
+    };
+
     /**
      *
      * @returns {HTMLElement[]}
