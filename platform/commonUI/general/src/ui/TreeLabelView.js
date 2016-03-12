@@ -27,8 +27,9 @@ define([
 ], function ($, labelTemplate) {
     'use strict';
 
-    function TreeLabelView() {
+    function TreeLabelView(gestureService) {
         this.el = $(labelTemplate);
+        this.gestureService = gestureService;
     }
 
     function getGlyph(domainObject) {
@@ -62,11 +63,22 @@ define([
             delete this.unlisten;
         }
 
+        if (this.activeGestures) {
+            this.activeGestures.destroy();
+            delete this.activeGestures;
+        }
+
         this.updateView(domainObject);
 
         if (domainObject) {
             this.unlisten = domainObject.getCapability('mutation')
                 .listen(this.updateView.bind(this, domainObject));
+
+            this.activeGestures = this.gestureService.attachGestures(
+                this.elements(),
+                domainObject,
+                [ 'info', 'menu', 'drag' ]
+            );
         }
     };
 

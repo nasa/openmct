@@ -25,9 +25,9 @@ define([
     'angular',
     '../ui/TreeView'
 ], function (angular, TreeView) {
-    function MCTTree($parse) {
+    function MCTTree($parse, gestureService) {
         function link(scope, element, attrs) {
-            var treeView = new TreeView(),
+            var treeView = new TreeView(gestureService),
                 expr = $parse(attrs.mctModel),
                 unobserve = treeView.observe(function (domainObject) {
                     if (domainObject !== expr(scope.$parent)) {

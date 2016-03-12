@@ -27,22 +27,24 @@ define([
 ], function ($, TreeNodeView) {
     'use strict';
 
-    function TreeView(selectFn) {
+    function TreeView(gestureService, selectFn) {
         this.ul = $('<ul class="tree"></ul>');
         this.nodeViews = [];
         this.callbacks = [];
         this.selectFn = selectFn || this.value.bind(this);
+        this.gestureService = gestureService;
     }
 
     TreeView.prototype.newTreeView = function () {
-        return new TreeView(this.selectFn);
-    }
+        return new TreeView(this.gestureService, this.selectFn);
+    };
 
     TreeView.prototype.setSize = function (sz) {
         var nodeView;
 
         while (this.nodeViews.length < sz) {
             nodeView = new TreeNodeView(
+                this.gestureService,
                 this.newTreeView.bind(this),
                 this.selectFn
             );

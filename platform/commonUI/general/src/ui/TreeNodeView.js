@@ -29,7 +29,7 @@ define([
 ], function ($, nodeTemplate, ToggleView, TreeLabelView) {
     'use strict';
 
-    function TreeNodeView(subtreeFactory, selectFn) {
+    function TreeNodeView(gestureService, subtreeFactory, selectFn) {
         this.li = $('<li>');
 
         this.toggleView = new ToggleView(false);
@@ -47,7 +47,7 @@ define([
             }
         }.bind(this));
 
-        this.labelView = new TreeLabelView();
+        this.labelView = new TreeLabelView(gestureService);
 
         $(this.labelView.elements()).on('click', function () {
             selectFn(this.activeObject);
