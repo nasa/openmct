@@ -29,7 +29,7 @@ define([
 ], function ($, nodeTemplate, ToggleView, TreeLabelView) {
     'use strict';
 
-    function TreeNodeView(subtreeFactory) {
+    function TreeNodeView(subtreeFactory, selectFn) {
         this.li = $('<li>');
 
         this.toggleView = new ToggleView(false);
@@ -48,6 +48,10 @@ define([
         }.bind(this));
 
         this.labelView = new TreeLabelView();
+
+        $(this.labelView.elements()).on('click', function () {
+            selectFn(this.activeObject);
+        }.bind(this));
 
         this.li.append($(nodeTemplate));
         this.li.find('span').eq(0)
@@ -80,7 +84,7 @@ define([
         function getId(domainObject) {
             return domainObject.getId();
         }
-        
+
         return domainObject ?
             domainObject.getCapability('context').getPath().map(getId) :
             [];

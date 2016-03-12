@@ -27,21 +27,25 @@ define([
 ], function ($, TreeNodeView) {
     'use strict';
 
-    function TreeView() {
+    function TreeView(selectFn) {
         this.ul = $('<ul class="tree"></ul>');
         this.nodeViews = [];
         this.callbacks = [];
+        this.selectFn = selectFn || this.value.bind(this);
     }
 
-    function newTreeView() {
-        return new TreeView();
+    TreeView.prototype.newTreeView = function () {
+        return new TreeView(this.selectFn);
     }
 
     TreeView.prototype.setSize = function (sz) {
         var nodeView;
 
         while (this.nodeViews.length < sz) {
-            nodeView = new TreeNodeView(newTreeView);
+            nodeView = new TreeNodeView(
+                this.newTreeView.bind(this),
+                this.selectFn
+            );
             this.nodeViews.push(nodeView);
             this.ul.append($(nodeView.elements()));
         }
@@ -104,7 +108,6 @@ define([
     };
 
     TreeView.prototype.observe = function (callback) {
-        callback(this.selectedObject);
         this.callbacks.push(callback);
         return function () {
             this.callbacks = this.callbacks.filter(function (c) {
