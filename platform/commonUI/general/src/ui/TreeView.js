@@ -23,8 +23,9 @@
 
 define([
     'zepto',
-    './TreeNodeView'
-], function ($, TreeNodeView) {
+    './TreeNodeView',
+    'text!../../res/templates/tree/wait-node.html'
+], function ($, TreeNodeView, spinnerTemplate) {
     'use strict';
 
     function TreeView(gestureService, selectFn) {
@@ -33,6 +34,7 @@ define([
         this.callbacks = [];
         this.selectFn = selectFn || this.value.bind(this);
         this.gestureService = gestureService;
+        this.pending = false;
     }
 
     TreeView.prototype.newTreeView = function () {
@@ -66,6 +68,12 @@ define([
         }
 
         function addNodes(domainObjects) {
+            if (self.pending) {
+                self.pending = false;
+                self.nodeViews = [];
+                self.ul.empty();
+            }
+
             if (domainObject === self.activeObject) {
                 self.setSize(domainObjects.length);
                 domainObjects.forEach(addNode);
@@ -73,7 +81,6 @@ define([
             }
         }
 
-        // TODO: Add pending indicator
         domainObject.useCapability('composition')
             .then(addNodes);
     };
@@ -87,6 +94,8 @@ define([
         this.ul.empty();
 
         if (domainObject && domainObject.hasCapability('composition')) {
+            this.pending = true;
+            this.ul.append($(spinnerTemplate));
             this.unlisten = domainObject.getCapability('mutation')
                 .listen(this.loadComposition.bind(this));
             this.loadComposition(domainObject);
