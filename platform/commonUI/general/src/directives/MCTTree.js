@@ -25,13 +25,17 @@ define([
     'angular',
     '../ui/TreeView'
 ], function (angular, TreeView) {
-    function MCTTree() {
-        function link(scope, element) {
-            var treeView = new TreeView();
+    function MCTTree($parse) {
+        function link(scope, element, attrs) {
+            var treeView = new TreeView(),
+                expr = $parse(attrs.mctModel),
+                unobserve = treeView.observe(expr.assign.bind(expr, scope));
 
             element.append(angular.element(treeView.elements()));
 
+            scope.$parent.$watch(attrs.mctModel, treeView.value.bind(treeView));
             scope.$watch('mctObject', treeView.model.bind(treeView));
+            scope.$on('$destroy', unobserve);
         }
 
         return {

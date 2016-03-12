@@ -103,6 +103,16 @@ define([
         });
     };
 
+    TreeView.prototype.observe = function (callback) {
+        callback(this.selectedObject);
+        this.callbacks.push(callback);
+        return function () {
+            this.callbacks = this.callbacks.filter(function (c) {
+                return c !== callback;
+            });
+        }.bind(this);
+    };
+
     /**
      *
      * @returns {HTMLElement[]}
