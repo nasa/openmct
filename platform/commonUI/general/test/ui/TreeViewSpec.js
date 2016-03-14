@@ -28,8 +28,11 @@ define([
 
     describe("TreeView", function () {
         var mockGestureService,
-            mockSelectFn,
             mockGestureHandle,
+            mockDomainObject,
+            mockMutation,
+            mockUnlisten,
+            testCapabilities,
             treeView;
 
         beforeEach(function () {
@@ -38,13 +41,38 @@ define([
                 [ 'attachGestures' ]
             );
 
-            mockSelectFn = jasmine.createSpy('select');
-
             mockGestureHandle = jasmine.createSpyObj('gestures', ['destroy']);
 
             mockGestureService.attachGestures.andReturn(mockGestureHandle);
 
-            treeView = new TreeView(mockGestureService, mockSelectFn);
+            mockDomainObject = jasmine.createSpyObj(
+                'domainObject',
+                [
+                    'getId',
+                    'getModel',
+                    'getCapability',
+                    'hasCapability',
+                    'useCapability'
+                ]
+            );
+
+            mockMutation = jasmine.createSpyObj('mutation', ['listen']);
+            mockUnlisten = jasmine.createSpy('unlisten');
+            mockMutation.listen.andReturn(mockUnlisten);
+
+            testCapabilities = { mutation: mockMutation };
+
+            mockDomainObject.hasCapability.andCallFake(function (c) {
+                return !!(testCapabilities[c]);
+            });
+            mockDomainObject.getCapability.andCallFake(function (c) {
+                return testCapabilities[c];
+            });
+            mockDomainObject.useCapability.andCallFake(function (c) {
+                return testCapabilities[c] && testCapabilities[c].invoke();
+            });
+
+            treeView = new TreeView(mockGestureService);
         });
 
         describe("elements", function () {
@@ -57,6 +85,109 @@ define([
             it("is an unordered list", function () {
                 expect(elements[0].tagName.toLowerCase())
                     .toEqual('ul');
+            });
+        });
+
+        describe("model", function () {
+            var mockComposition;
+
+            function waitForCompositionCallback() {
+                var calledBack = false;
+                testCapabilities.composition.invoke().then(function () {
+                    calledBack = true;
+                });
+                waitsFor(function () {
+                    return calledBack;
+                });
+            }
+
+            beforeEach(function () {
+                mockComposition = ['a', 'b', 'c'].map(function (id) {
+                    var mockDomainObject = jasmine.createSpyObj(
+                        'domainObject-' + id,
+                        [
+                            'getId',
+                            'getModel',
+                            'getCapability',
+                            'hasCapability',
+                            'useCapability'
+                        ]
+                    );
+                    mockDomainObject.getId.andReturn(id);
+                    mockDomainObject.getModel.andReturn({});
+                    return mockDomainObject;
+                });
+
+                testCapabilities.composition = jasmine.createSpyObj(
+                    'composition',
+                    ['invoke']
+                );
+                testCapabilities.composition.invoke
+                    .andReturn(Promise.resolve(mockComposition));
+
+                treeView.model(mockDomainObject);
+                waitForCompositionCallback();
+            });
+
+            it("adds one node per composition element", function () {
+                expect(treeView.elements()[0].childElementCount)
+                    .toEqual(mockComposition.length);
+            });
+
+            it("listens for mutation", function () {
+                expect(testCapabilities.mutation.listen)
+                    .toHaveBeenCalledWith(jasmine.any(Function));
+            });
+
+            describe("when mutation occurs", function () {
+                beforeEach(function () {
+                    mockComposition.pop();
+                    testCapabilities.mutation.listen
+                        .mostRecentCall.args[0](mockDomainObject);
+                    waitForCompositionCallback();
+                });
+
+                it("continues to show one node per composition element", function () {
+                    expect(treeView.elements()[0].childElementCount)
+                        .toEqual(mockComposition.length);
+                });
+            });
+
+            describe("when replaced with a non-compositional domain object", function () {
+                beforeEach(function () {
+                    delete testCapabilities.composition;
+                    treeView.model(mockDomainObject);
+                });
+
+                it("stops listening for mutation", function () {
+                    expect(mockUnlisten).toHaveBeenCalled();
+                });
+
+                it("removes all tree nodes", function () {
+                    expect(treeView.elements()[0].childElementCount)
+                        .toEqual(0);
+                });
+            });
+        });
+
+        describe("observe", function () {
+            var mockCallback,
+                unobserve;
+
+            beforeEach(function () {
+                mockCallback = jasmine.createSpy('callback');
+                unobserve = treeView.observe(mockCallback);
+            });
+
+            it("notifies listeners when value is changed", function () {
+                treeView.value(mockDomainObject);
+                expect(mockCallback).toHaveBeenCalledWith(mockDomainObject);
+            });
+
+            it("does not notify listeners when deactivated", function () {
+                unobserve();
+                treeView.value(mockDomainObject);
+                expect(mockCallback).not.toHaveBeenCalled();
             });
         });
     });
