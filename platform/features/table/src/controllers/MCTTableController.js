@@ -238,12 +238,16 @@ define(
                 column = firstRow.find('td'),
                 headerHeight = thead.prop('offsetHeight'),
                 rowHeight = 20,
+                columnWidth,
+                tableWidth = 0,
                 overallHeight = headerHeight + (rowHeight * (this.$scope.displayRows ? this.$scope.displayRows.length - 1  : 0));
 
             this.$scope.columnWidths = [];
 
             while (column.length) {
+                columnWidth = column.prop('offsetWidth');
                 this.$scope.columnWidths.push(column.prop('offsetWidth'));
+                tableWidth += columnWidth;
                 column = column.next();
             }
             this.$scope.headerHeight = headerHeight;
@@ -251,6 +255,11 @@ define(
             this.$scope.totalHeight = overallHeight;
             this.setVisibleRows();
             this.$scope.overrideRowPositioning = true;
+            if (tableWidth > 0) {
+                this.$scope.totalWidth = tableWidth + 'px';
+            } else {
+                this.$scope.totalWidth = 'none';
+            }
         };
 
         /**

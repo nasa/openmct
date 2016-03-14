@@ -6,7 +6,8 @@
     <table class="filterable"
            ng-style="overrideRowPositioning && {
             height: totalHeight + 'px',
-            'table-layout': overrideRowPositioning ? 'fixed' : 'auto'
+            'table-layout': overrideRowPositioning ? 'fixed' : 'auto',
+            'max-width': totalWidth
         }">
         <thead>
             <tr>
@@ -57,7 +58,7 @@
                         'box-sizing': 'border-box'
                     }"
                     class="{{visibleRow.contents[header].cssClass}}">
-                     {{ visibleRow.contents[header].text }}
+                    {{ visibleRow.contents[header].text }}
                 </td>
             </tr>
         </tbody>

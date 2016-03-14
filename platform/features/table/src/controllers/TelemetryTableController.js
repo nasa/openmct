@@ -106,6 +106,8 @@ define(
          only).
          */
         TelemetryTableController.prototype.subscribe = function() {
+            var self = this;
+
             if (this.handle) {
                 this.handle.unsubscribe();
             }
@@ -120,7 +122,22 @@ define(
                     true // Lossless
                 );
 
-            this.handle.request({}, this.addHistoricalData.bind(this));
+            function getHistoricalData(){
+                var rowData = [];
+
+                self.handle.getTelemetryObjects().forEach(function(telemetryObject){
+                    var series = self.handle.getSeries(telemetryObject) || {},
+                        pointCount = series.getPointCount ? series.getPointCount() : 0,
+                        i = 0;
+
+                    for (; i < pointCount; i++) {
+                        rowData.push(self.table.getRowValues(telemetryObject, self.handle.makeDatum(telemetryObject, series, i)));
+                    }
+                });
+
+                self.$scope.rows = rowData;
+            }
+            this.handle.request({}).then(getHistoricalData);
 
             this.setup();
         };
@@ -134,10 +151,8 @@ define(
                 newRows = [];
 
             for (i=0; i < series.getPointCount(); i++) {
-                newRows.push(this.table.getRowValues(domainObject, this.handle.makeDatum(domainObject, series, i)));
+                this.$scope.rows.push(this.table.getRowValues(domainObject, this.handle.makeDatum(domainObject, series, i)));
             }
-
-            this.$scope.rows = newRows;
         };
 
         /**
