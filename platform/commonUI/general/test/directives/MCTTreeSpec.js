@@ -77,7 +77,10 @@ define([
             });
 
             it("watches for changes to mct-object", function () {
-                expect(mockScope.$watch).toHaveBeenCalledWith("mctObject");
+                expect(mockScope.$watch).toHaveBeenCalledWith(
+                    "mctObject",
+                    jasmine.any(Function)
+                );
             });
 
             it("listens for the $destroy event", function () {
