@@ -45,7 +45,6 @@
 		box-sizing: border-box;
 		@include clearfix;
 		border-top: 1px solid $colorFormLines;
-		//margin-top: $m;
 		padding: $formTBPad 0;
 		position: relative;
 		&.first {
@@ -55,9 +54,7 @@
 		>.label,
 		>.controls {
 			box-sizing: border-box;
-			//@include clearfix;
 			font-size: 0.8rem;
-			//line-height: $formInputH;
             min-height: $formInputH;
 		}
 
