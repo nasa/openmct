@@ -94,11 +94,15 @@ define(
                 mockTelemetryHandle = jasmine.createSpyObj('telemetryHandle', [
                     'request',
                     'promiseTelemetryObjects',
+                    'getTelemetryObjects',
                     'getMetadata',
+                    'getSeries',
                     'unsubscribe',
                     'makeDatum'
                 ]);
                 mockTelemetryHandle.promiseTelemetryObjects.andReturn(promise(undefined));
+                mockTelemetryHandle.request.andReturn(promise(undefined));
+                mockTelemetryHandle.getTelemetryObjects.andReturn([]);
 
                 mockTelemetryHandler = jasmine.createSpyObj('telemetryHandler', [
                     'handle'
@@ -159,6 +163,9 @@ define(
                     return mockRow;
                 });
                 mockTable.getRowValues.andReturn(mockRow);
+                mockTelemetryHandle.getTelemetryObjects.andReturn([mockDomainObject]);
+                mockTelemetryHandle.getSeries.andReturn(mockSeries);
+
                 controller.addHistoricalData(mockDomainObject, mockSeries);
 
                 expect(controller.$scope.rows.length).toBe(5);

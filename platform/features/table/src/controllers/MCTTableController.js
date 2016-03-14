@@ -73,7 +73,7 @@ define(
             /*
              * Listen for rows added individually (eg. for real-time tables)
              */
-            $scope.$on('addRow', this.newRow.bind(this));
+            $scope.$on('add:row', this.newRow.bind(this));
         }
 
         /**
@@ -98,18 +98,12 @@ define(
          * `addRow` broadcast event.
          * @private
          */
-        MCTTableController.prototype.newRow = function (event, row) {
+        MCTTableController.prototype.newRow = function (event, rowIndex) {
+            var row = this.$scope.rows[rowIndex];
             //Add row to the filtered, sorted list of all rows
             if (this.filterRows([row]).length > 0) {
                 this.insertSorted(this.$scope.displayRows, row);
             }
-
-            //Keep 'rows' synchronized as it provides the unsorted,
-            // unfiltered model for this view
-            if (!this.$scope.rows) {
-                this.$scope.rows = [];
-            }
-            this.$scope.rows.push(row);
 
             this.$timeout(this.setElementSizes.bind(this))
                 .then(this.scrollToBottom.bind(this));
@@ -354,7 +348,7 @@ define(
                 return rowsToSort;
             }
 
-            return rowsToSort.slice(0).sort(function(a, b) {
+            return rowsToSort.sort(function(a, b) {
                 //If the values to compare can be compared as
                 // numbers, do so. String comparison of number
                 // values can cause inconsistencies
@@ -447,7 +441,7 @@ define(
             }
 
             if (this.$scope.enableSort) {
-                displayRows = this.sortRows(displayRows);
+                displayRows = this.sortRows(displayRows.slice(0));
             }
             this.$scope.displayRows = displayRows;
         };
@@ -467,15 +461,15 @@ define(
                 return;
             }
 
-            //Apply filters and sort a copy of the the new rows
-            this.filterAndSort((newRows || []).slice(0));
-            //Resize columns appropriately
+            this.filterAndSort(newRows || []);
             this.resize();
         };
 
         /**
          * Applies user defined filters to rows. These filters are based on
-         * the text entered in the search areas in each column
+         * the text entered in the search areas in each column.
+         * @param rowsToFilter {Object[]} The rows to apply filters to
+         * @returns {Object[]} A filtered copy of the supplied rows
          */
         MCTTableController.prototype.filterRows = function(rowsToFilter) {
             var filters = {},

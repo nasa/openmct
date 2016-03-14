@@ -122,37 +122,30 @@ define(
                     true // Lossless
                 );
 
-            function getHistoricalData(){
-                var rowData = [];
-
-                self.handle.getTelemetryObjects().forEach(function(telemetryObject){
-                    var series = self.handle.getSeries(telemetryObject) || {},
-                        pointCount = series.getPointCount ? series.getPointCount() : 0,
-                        i = 0;
-
-                    for (; i < pointCount; i++) {
-                        rowData.push(self.table.getRowValues(telemetryObject, self.handle.makeDatum(telemetryObject, series, i)));
-                    }
-                });
-
-                self.$scope.rows = rowData;
-            }
-            this.handle.request({}).then(getHistoricalData);
+            this.handle.request({}).then(this.addHistoricalData.bind(this));
 
             this.setup();
         };
 
         /**
-         * Add any historical data available
+         * Populates historical data on scope when it becomes available
          * @private
          */
-        TelemetryTableController.prototype.addHistoricalData = function(domainObject, series) {
-            var i,
-                newRows = [];
+        TelemetryTableController.prototype.addHistoricalData = function() {
+            var rowData = [],
+                self = this;
 
-            for (i=0; i < series.getPointCount(); i++) {
-                this.$scope.rows.push(this.table.getRowValues(domainObject, this.handle.makeDatum(domainObject, series, i)));
-            }
+            this.handle.getTelemetryObjects().forEach(function(telemetryObject){
+                var series = self.handle.getSeries(telemetryObject) || {},
+                    pointCount = series.getPointCount ? series.getPointCount() : 0,
+                    i = 0;
+
+                for (; i < pointCount; i++) {
+                    rowData.push(self.table.getRowValues(telemetryObject, self.handle.makeDatum(telemetryObject, series, i)));
+                }
+            });
+
+            this.$scope.rows = rowData;
         };
 
         /**

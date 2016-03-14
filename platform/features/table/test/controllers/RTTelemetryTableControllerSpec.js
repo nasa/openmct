@@ -132,7 +132,7 @@ define(
             it('updates table with new streaming telemetry', function() {
                 controller.subscribe();
                 mockTelemetryHandler.handle.mostRecentCall.args[1]();
-                expect(mockScope.$broadcast).toHaveBeenCalledWith('addRow', mockTableRow);
+                expect(mockScope.$broadcast).toHaveBeenCalledWith('add:row', 0);
             });
 
             it('enables autoscroll for event telemetry', function() {

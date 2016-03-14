@@ -83,12 +83,19 @@ define(
             }
 
             function updateData(){
-                var datum;
+                var datum,
+                    row;
                 self.handle.getTelemetryObjects().forEach(function(telemetryObject){
                     datum = self.handle.getDatum(telemetryObject);
                     if (datum) {
-                        var rowValue = self.table.getRowValues(telemetryObject, datum);
-                        self.$scope.$broadcast('addRow', rowValue);
+                        row = self.table.getRowValues(telemetryObject, datum);
+                        self.$scope.rows = self.$scope.rows || [];
+                        if (!self.$scope.rows){
+                            self.$scope.rows = [row];
+                        } else {
+                            self.$scope.rows.push(row);
+                            self.$scope.$broadcast('add:row', self.$scope.rows.length - 1);
+                        }
                     }
                 });
 
