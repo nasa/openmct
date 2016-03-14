@@ -36,6 +36,31 @@ define([
             testCapabilities,
             treeView;
 
+        function makeMockDomainObject(id, model, capabilities) {
+            var mockDomainObject = jasmine.createSpyObj(
+                'domainObject-' + id,
+                [
+                    'getId',
+                    'getModel',
+                    'getCapability',
+                    'hasCapability',
+                    'useCapability'
+                ]
+            );
+            mockDomainObject.getId.andReturn(id);
+            mockDomainObject.getModel.andReturn(model);
+            mockDomainObject.hasCapability.andCallFake(function (c) {
+                return !!(capabilities[c]);
+            });
+            mockDomainObject.getCapability.andCallFake(function (c) {
+                return capabilities[c];
+            });
+            mockDomainObject.useCapability.andCallFake(function (c) {
+                return capabilities[c] && capabilities[c].invoke();
+            });
+            return mockDomainObject;
+        }
+
         beforeEach(function () {
             mockGestureService = jasmine.createSpyObj(
                 'gestureService',
@@ -46,33 +71,14 @@ define([
 
             mockGestureService.attachGestures.andReturn(mockGestureHandle);
 
-            mockDomainObject = jasmine.createSpyObj(
-                'domainObject',
-                [
-                    'getId',
-                    'getModel',
-                    'getCapability',
-                    'hasCapability',
-                    'useCapability'
-                ]
-            );
-
             mockMutation = jasmine.createSpyObj('mutation', ['listen']);
             mockUnlisten = jasmine.createSpy('unlisten');
             mockMutation.listen.andReturn(mockUnlisten);
 
             testCapabilities = { mutation: mockMutation };
 
-            mockDomainObject.getId.andReturn('parent');
-            mockDomainObject.hasCapability.andCallFake(function (c) {
-                return !!(testCapabilities[c]);
-            });
-            mockDomainObject.getCapability.andCallFake(function (c) {
-                return testCapabilities[c];
-            });
-            mockDomainObject.useCapability.andCallFake(function (c) {
-                return testCapabilities[c] && testCapabilities[c].invoke();
-            });
+            mockDomainObject =
+                makeMockDomainObject('parent', {}, testCapabilities);
 
             treeView = new TreeView(mockGestureService);
         });
@@ -94,8 +100,9 @@ define([
             var mockComposition;
 
             function waitForCompositionCallback() {
-                var calledBack = false;
-                testCapabilities.composition.invoke().then(function () {
+                var calledBack = false,
+                    n = Math.random();
+                testCapabilities.composition.invoke().then(function (c) {
                     calledBack = true;
                 });
                 waitsFor(function () {
@@ -105,34 +112,29 @@ define([
 
             beforeEach(function () {
                 mockComposition = ['a', 'b', 'c'].map(function (id) {
-                    var mockChild = jasmine.createSpyObj(
-                            'domainObject-' + id,
-                            [
-                                'getId',
-                                'getModel',
-                                'getCapability',
-                                'hasCapability',
-                                'useCapability'
-                            ]
-                        ),
-                        mockContext = jasmine.createSpyObj(
-                            'context',
-                            [ 'getPath' ]
-                        );
-                    mockChild.getId.andReturn(id);
-                    mockChild.getModel.andReturn({});
-                    mockChild.getCapability.andCallFake(function (c) {
-                        return c === 'context' && mockContext;
-                    });
+                    var mockContext =
+                            jasmine.createSpyObj('context', [ 'getPath' ]),
+                        mockType =
+                            jasmine.createSpyObj('type', [ 'getGlyph' ]),
+                        mockLocation =
+                            jasmine.createSpyObj('location', [ 'isLink' ]),
+                        mockMutation =
+                            jasmine.createSpyObj('mutation', [ 'listen' ]),
+                        mockChild = makeMockDomainObject(id, {}, {
+                            context: mockContext,
+                            type: mockType,
+                            mutation: mockMutation,
+                            location: mockLocation
+                        });
+
                     mockContext.getPath
                         .andReturn([mockDomainObject, mockChild]);
+
                     return mockChild;
                 });
 
-                testCapabilities.composition = jasmine.createSpyObj(
-                    'composition',
-                    ['invoke']
-                );
+                testCapabilities.composition =
+                    jasmine.createSpyObj('composition', ['invoke']);
                 testCapabilities.composition.invoke
                     .andReturn(Promise.resolve(mockComposition));
 
