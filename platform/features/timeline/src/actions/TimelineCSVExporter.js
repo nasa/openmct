@@ -88,21 +88,26 @@ define([
 
         domainObjects.forEach(function (domainObject) {
             var model = domainObject.getModel(),
-                compositionLength = model.composition ?
-                    model.composition.length : 0,
-                relationshipLength = (model.relationships || {}).modes ?
-                    model.relationships.modes.length :
-                    0,
-                metadataProperties =
-                    domainObject.useCapability('metadata') || [];
+                composition = model.composition,
+                relationships = model.relationships,
+                modes = relationships && relationships.modes,
+                metadataProperties = domainObject.useCapability('metadata');
 
-            maxComposition = Math.max(maxComposition, compositionLength);
-            maxRelationships = Math.max(maxRelationships, relationshipLength);
+            if (composition) {
+                maxComposition = Math.max(maxComposition, composition.length);
+            }
 
-            foundTimespan =
-                foundTimespan || domainObject.hasCapability('timespan');
+            if (modes) {
+                maxRelationships = Math.max(maxRelationships, modes.length);
+            }
 
-            metadataProperties.forEach(addMetadataProperty);
+            if (domainObject.hasCapability('timespan')) {
+                foundTimespan = true;
+            }
+
+            if (metadataProperties) {
+                metadataProperties.forEach(addMetadataProperty);
+            }
         });
 
         if (foundTimespan) {
