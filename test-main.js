@@ -66,6 +66,9 @@ requirejs.config({
         },
         "moment-duration-format": {
             "deps": [ "moment" ]
+        },
+        "zepto": {
+            "exports": "Zepto"
         }
     },
 
