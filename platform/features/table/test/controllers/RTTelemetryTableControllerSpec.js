@@ -56,6 +56,7 @@ define(
                     '$on',
                     '$watch',
                     '$watchCollection',
+                    '$digest',
                     '$broadcast'
                 ]);
                 mockScope.$on.andCallFake(function (expression, callback){
@@ -131,6 +132,7 @@ define(
 
             it('updates table with new streaming telemetry', function () {
                 controller.subscribe();
+                mockScope.rows = [];
                 mockTelemetryHandler.handle.mostRecentCall.args[1]();
                 expect(mockScope.$broadcast).toHaveBeenCalledWith('add:row', 0);
             });
