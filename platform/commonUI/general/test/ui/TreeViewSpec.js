@@ -99,9 +99,25 @@ define([
         describe("model", function () {
             var mockComposition;
 
+            function makeGenericCapabilities() {
+                var mockContext =
+                        jasmine.createSpyObj('context', [ 'getPath' ]),
+                    mockType =
+                        jasmine.createSpyObj('type', [ 'getGlyph' ]),
+                    mockLocation =
+                        jasmine.createSpyObj('location', [ 'isLink' ]),
+                    mockMutation =
+                        jasmine.createSpyObj('mutation', [ 'listen' ]);
+                return {
+                    context: mockContext,
+                    type: mockType,
+                    mutation: mockMutation,
+                    location: mockLocation
+                };
+            }
+
             function waitForCompositionCallback() {
-                var calledBack = false,
-                    n = Math.random();
+                var calledBack = false;
                 testCapabilities.composition.invoke().then(function (c) {
                     calledBack = true;
                 });
@@ -112,22 +128,11 @@ define([
 
             beforeEach(function () {
                 mockComposition = ['a', 'b', 'c'].map(function (id) {
-                    var mockContext =
-                            jasmine.createSpyObj('context', [ 'getPath' ]),
-                        mockType =
-                            jasmine.createSpyObj('type', [ 'getGlyph' ]),
-                        mockLocation =
-                            jasmine.createSpyObj('location', [ 'isLink' ]),
-                        mockMutation =
-                            jasmine.createSpyObj('mutation', [ 'listen' ]),
-                        mockChild = makeMockDomainObject(id, {}, {
-                            context: mockContext,
-                            type: mockType,
-                            mutation: mockMutation,
-                            location: mockLocation
-                        });
+                    var testCapabilities = makeGenericCapabilities(),
+                        mockChild =
+                            makeMockDomainObject(id, {}, testCapabilities);
 
-                    mockContext.getPath
+                    testCapabilities.context.getPath
                         .andReturn([mockDomainObject, mockChild]);
 
                     return mockChild;
@@ -192,6 +197,54 @@ define([
                 it("communicates selection state to an appropriate node", function () {
                     var selected = $(treeView.elements()[0]).find('.selected');
                     expect(selected.length).toEqual(1);
+                });
+            });
+
+            describe("when children contain children", function () {
+                beforeEach(function () {
+                    var newCapabilities = makeGenericCapabilities(),
+                        gcCapabilities = makeGenericCapabilities(),
+                        mockNewChild =
+                            makeMockDomainObject('d', {}, newCapabilities),
+                        mockGrandchild =
+                            makeMockDomainObject('gc', {}, gcCapabilities),
+                        calledBackInner = false;
+
+                    newCapabilities.composition =
+                        jasmine.createSpyObj('composition', [ 'invoke' ]);
+                    newCapabilities.composition.invoke
+                        .andReturn(Promise.resolve([mockGrandchild]));
+                    mockComposition.push(mockNewChild);
+
+                    newCapabilities.context.getPath.andReturn([
+                        mockDomainObject,
+                        mockNewChild
+                    ]);
+                    gcCapabilities.context.getPath.andReturn([
+                        mockDomainObject,
+                        mockNewChild,
+                        mockGrandchild
+                    ]);
+
+                    testCapabilities.mutation.listen
+                        .mostRecentCall.args[0](mockDomainObject);
+                    waitForCompositionCallback();
+                    runs(function () {
+                        // Select the innermost object to force expansion,
+                        // such that we can verify the subtree is present.
+                        treeView.value(mockGrandchild);
+                        newCapabilities.composition.invoke().then(function () {
+                            calledBackInner = true;
+                        });
+                    });
+                    waitsFor(function () {
+                        return calledBackInner;
+                    });
+                });
+
+                it("creates inner trees", function () {
+                    expect($(treeView.elements()[0]).find('ul').length)
+                        .toEqual(1);
                 });
             });
         });
