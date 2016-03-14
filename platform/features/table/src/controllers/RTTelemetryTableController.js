@@ -56,7 +56,7 @@ define(
                     return range.format === 'string';
                 });
             }
-            $scope.$watch('domainObject', function(domainObject) {
+            $scope.$watch('domainObject', function (domainObject) {
                 //When a domain object becomes available, check whether the
                 // view should auto-scroll to the bottom.
                 if (domainObject && hasStringTelemetry(domainObject)){
@@ -71,10 +71,10 @@ define(
          Override the subscribe function defined on the parent controller in
          order to handle realtime telemetry instead of historical.
          */
-        RTTelemetryTableController.prototype.subscribe = function() {
+        RTTelemetryTableController.prototype.subscribe = function () {
             var self = this;
             self.$scope.rows = undefined;
-            (this.subscriptions || []).forEach(function(unsubscribe){
+            (this.subscriptions || []).forEach(function (unsubscribe){
                 unsubscribe();
             });
 
@@ -85,7 +85,7 @@ define(
             function updateData(){
                 var datum,
                     row;
-                self.handle.getTelemetryObjects().forEach(function(telemetryObject){
+                self.handle.getTelemetryObjects().forEach(function (telemetryObject){
                     datum = self.handle.getDatum(telemetryObject);
                     if (datum) {
                         row = self.table.getRowValues(telemetryObject, datum);
@@ -94,7 +94,8 @@ define(
                             self.$scope.rows = [row];
                         } else {
                             self.$scope.rows.push(row);
-                            self.$scope.$broadcast('add:row', self.$scope.rows.length - 1);
+                            self.$scope.$broadcast('add:row',
+                                self.$scope.rows.length - 1);
                         }
                     }
                 });

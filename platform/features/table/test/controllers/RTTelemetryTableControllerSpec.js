@@ -28,7 +28,7 @@ define(
     function (TableController) {
         "use strict";
 
-        describe('The real-time table controller', function() {
+        describe('The real-time table controller', function () {
             var mockScope,
                 mockTelemetryHandler,
                 mockTelemetryHandle,
@@ -48,7 +48,7 @@ define(
                 };
             }
 
-            beforeEach(function() {
+            beforeEach(function () {
                 watches = {};
                 mockTableRow = {'col1': 'val1', 'col2': 'row2'};
 
@@ -58,13 +58,13 @@ define(
                     '$watchCollection',
                     '$broadcast'
                 ]);
-                mockScope.$on.andCallFake(function(expression, callback){
+                mockScope.$on.andCallFake(function (expression, callback){
                     watches[expression] = callback;
                 });
-                mockScope.$watch.andCallFake(function(expression, callback){
+                mockScope.$watch.andCallFake(function (expression, callback){
                    watches[expression] = callback;
                 });
-                mockScope.$watchCollection.andCallFake(function(expression, callback){
+                mockScope.$watchCollection.andCallFake(function (expression, callback){
                     watches[expression] = callback;
                 });
 
@@ -94,7 +94,7 @@ define(
                 mockDomainObject.getModel.andReturn({});
                 mockDomainObject.getCapability.andReturn(
                     {
-                        getMetadata: function(){
+                        getMetadata: function (){
                             return {ranges: [{format: 'string'}]};
                         }
                     });
@@ -124,18 +124,18 @@ define(
                 controller.handle = mockTelemetryHandle;
             });
 
-            it('registers for streaming telemetry', function() {
+            it('registers for streaming telemetry', function () {
                 controller.subscribe();
                 expect(mockTelemetryHandler.handle).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Function), true);
             });
 
-            it('updates table with new streaming telemetry', function() {
+            it('updates table with new streaming telemetry', function () {
                 controller.subscribe();
                 mockTelemetryHandler.handle.mostRecentCall.args[1]();
                 expect(mockScope.$broadcast).toHaveBeenCalledWith('add:row', 0);
             });
 
-            it('enables autoscroll for event telemetry', function() {
+            it('enables autoscroll for event telemetry', function () {
                 controller.subscribe();
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
                 expect(mockScope.autoScroll).toBe(true);
