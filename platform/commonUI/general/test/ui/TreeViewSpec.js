@@ -22,8 +22,9 @@
 /*global define,describe,beforeEach,jasmine,it,expect*/
 
 define([
-    '../../src/ui/TreeView'
-], function (TreeView) {
+    '../../src/ui/TreeView',
+    'zepto'
+], function (TreeView, $) {
     'use strict';
 
     describe("TreeView", function () {
@@ -62,6 +63,7 @@ define([
 
             testCapabilities = { mutation: mockMutation };
 
+            mockDomainObject.getId.andReturn('parent');
             mockDomainObject.hasCapability.andCallFake(function (c) {
                 return !!(testCapabilities[c]);
             });
@@ -103,19 +105,28 @@ define([
 
             beforeEach(function () {
                 mockComposition = ['a', 'b', 'c'].map(function (id) {
-                    var mockDomainObject = jasmine.createSpyObj(
-                        'domainObject-' + id,
-                        [
-                            'getId',
-                            'getModel',
-                            'getCapability',
-                            'hasCapability',
-                            'useCapability'
-                        ]
-                    );
-                    mockDomainObject.getId.andReturn(id);
-                    mockDomainObject.getModel.andReturn({});
-                    return mockDomainObject;
+                    var mockChild = jasmine.createSpyObj(
+                            'domainObject-' + id,
+                            [
+                                'getId',
+                                'getModel',
+                                'getCapability',
+                                'hasCapability',
+                                'useCapability'
+                            ]
+                        ),
+                        mockContext = jasmine.createSpyObj(
+                            'context',
+                            [ 'getPath' ]
+                        );
+                    mockChild.getId.andReturn(id);
+                    mockChild.getModel.andReturn({});
+                    mockChild.getCapability.andCallFake(function (c) {
+                        return c === 'context' && mockContext;
+                    });
+                    mockContext.getPath
+                        .andReturn([mockDomainObject, mockChild]);
+                    return mockChild;
                 });
 
                 testCapabilities.composition = jasmine.createSpyObj(
@@ -166,6 +177,19 @@ define([
                 it("removes all tree nodes", function () {
                     expect(treeView.elements()[0].childElementCount)
                         .toEqual(0);
+                });
+            });
+
+            describe("when selection state changes", function () {
+                var selectionIndex = 1;
+
+                beforeEach(function () {
+                    treeView.value(mockComposition[selectionIndex]);
+                });
+
+                it("communicates selection state to an appropriate node", function () {
+                    var selected = $(treeView.elements()[0]).find('.selected');
+                    expect(selected.length).toEqual(1);
                 });
             });
         });
