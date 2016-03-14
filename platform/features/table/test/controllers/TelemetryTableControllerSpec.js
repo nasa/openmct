@@ -28,7 +28,7 @@ define(
     function (TableController) {
         "use strict";
 
-        describe('The Table Controller', function() {
+        describe('The Table Controller', function () {
             var mockScope,
                 mockTelemetryHandler,
                 mockTelemetryHandle,
@@ -47,7 +47,7 @@ define(
                 };
             }
 
-            beforeEach(function() {
+            beforeEach(function () {
                 watches = {};
                 mockScope = jasmine.createSpyObj('scope', [
                     '$on',
@@ -55,13 +55,13 @@ define(
                     '$watchCollection'
                 ]);
 
-                mockScope.$on.andCallFake(function(expression, callback){
+                mockScope.$on.andCallFake(function (expression, callback){
                     watches[expression] = callback;
                 });
-                mockScope.$watch.andCallFake(function(expression, callback){
+                mockScope.$watch.andCallFake(function (expression, callback){
                    watches[expression] = callback;
                 });
-                mockScope.$watchCollection.andCallFake(function(expression, callback){
+                mockScope.$watchCollection.andCallFake(function (expression, callback){
                     watches[expression] = callback;
                 });
 
@@ -94,11 +94,15 @@ define(
                 mockTelemetryHandle = jasmine.createSpyObj('telemetryHandle', [
                     'request',
                     'promiseTelemetryObjects',
+                    'getTelemetryObjects',
                     'getMetadata',
+                    'getSeries',
                     'unsubscribe',
                     'makeDatum'
                 ]);
                 mockTelemetryHandle.promiseTelemetryObjects.andReturn(promise(undefined));
+                mockTelemetryHandle.request.andReturn(promise(undefined));
+                mockTelemetryHandle.getTelemetryObjects.andReturn([]);
 
                 mockTelemetryHandler = jasmine.createSpyObj('telemetryHandler', [
                     'handle'
@@ -110,28 +114,28 @@ define(
                 controller.handle = mockTelemetryHandle;
             });
 
-            it('subscribes to telemetry handler for telemetry updates', function() {
+            it('subscribes to telemetry handler for telemetry updates', function () {
                 controller.subscribe();
                 expect(mockTelemetryHandler.handle).toHaveBeenCalled();
                 expect(mockTelemetryHandle.request).toHaveBeenCalled();
             });
 
-            it('Unsubscribes from telemetry when scope is destroyed',function() {
+            it('Unsubscribes from telemetry when scope is destroyed',function () {
                 controller.handle = mockTelemetryHandle;
                 watches.$destroy();
                 expect(mockTelemetryHandle.unsubscribe).toHaveBeenCalled();
             });
 
-            describe('the controller makes use of the table', function() {
+            describe('the controller makes use of the table', function () {
 
                 it('to create column definitions from telemetry' +
-                    ' metadata', function() {
+                    ' metadata', function () {
                     controller.setup();
                     expect(mockTable.buildColumns).toHaveBeenCalled();
                 });
 
                 it('to create column configuration, which is written to the' +
-                    ' object model', function() {
+                    ' object model', function () {
                     var mockModel = {};
 
                     controller.setup();
@@ -140,32 +144,35 @@ define(
                 });
             });
 
-            it('updates the rows on scope when historical telemetry is received', function(){
+            it('updates the rows on scope when historical telemetry is received', function (){
                 var mockSeries = {
-                        getPointCount: function() {
+                        getPointCount: function () {
                             return 5;
                         },
-                        getDomainValue: function() {
+                        getDomainValue: function () {
                             return 'Domain Value';
                         },
-                        getRangeValue: function() {
+                        getRangeValue: function () {
                             return 'Range Value';
                         }
                     },
                     mockRow = {'domain': 'Domain Value', 'range': 'Range' +
                     ' Value'};
 
-                mockTelemetryHandle.makeDatum.andCallFake(function(){
+                mockTelemetryHandle.makeDatum.andCallFake(function (){
                     return mockRow;
                 });
                 mockTable.getRowValues.andReturn(mockRow);
+                mockTelemetryHandle.getTelemetryObjects.andReturn([mockDomainObject]);
+                mockTelemetryHandle.getSeries.andReturn(mockSeries);
+
                 controller.addHistoricalData(mockDomainObject, mockSeries);
 
                 expect(controller.$scope.rows.length).toBe(5);
                 expect(controller.$scope.rows[0]).toBe(mockRow);
             });
 
-            it('filters the visible columns based on configuration', function(){
+            it('filters the visible columns based on configuration', function (){
                 controller.filterColumns();
                 expect(controller.$scope.headers.length).toBe(3);
                 expect(controller.$scope.headers[2]).toEqual('domain1');
@@ -176,14 +183,14 @@ define(
                 expect(controller.$scope.headers[2]).toBeUndefined();
             });
 
-            describe('creates event listeners', function(){
-                beforeEach(function() {
+            describe('creates event listeners', function (){
+                beforeEach(function () {
                     spyOn(controller,'subscribe');
                     spyOn(controller, 'filterColumns');
                 });
 
                 it('triggers telemetry subscription update when domain' +
-                    ' object changes', function() {
+                    ' object changes', function () {
                     controller.registerChangeListeners();
                     //'watches' object is populated by fake scope watch and
                     // watchCollection functions defined above
@@ -193,7 +200,7 @@ define(
                 });
 
                 it('triggers telemetry subscription update when domain' +
-                    ' object composition changes', function() {
+                    ' object composition changes', function () {
                     controller.registerChangeListeners();
                     expect(watches['domainObject.getModel().composition']).toBeDefined();
                     watches['domainObject.getModel().composition']();
@@ -201,7 +208,7 @@ define(
                 });
 
                 it('triggers telemetry subscription update when time' +
-                    ' conductor bounds change', function() {
+                    ' conductor bounds change', function () {
                     controller.registerChangeListeners();
                     expect(watches['telemetry:display:bounds']).toBeDefined();
                     watches['telemetry:display:bounds']();
@@ -209,7 +216,7 @@ define(
                 });
 
                 it('triggers refiltering of the columns when configuration' +
-                    ' changes', function() {
+                    ' changes', function () {
                     controller.setup();
                     expect(watches['domainObject.getModel().configuration.table.columns']).toBeDefined();
                     watches['domainObject.getModel().configuration.table.columns']();

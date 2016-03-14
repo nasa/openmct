@@ -23,6 +23,7 @@
 
 define([
     "./src/directives/MCTTable",
+    "./src/controllers/RTTelemetryTableController",
     "./src/controllers/TelemetryTableController",
     "./src/controllers/TableOptionsController",
     '../../commonUI/regions/src/Region',
@@ -30,6 +31,7 @@ define([
     "legacyRegistry"
 ], function (
     MCTTable,
+    RTTelemetryTableController,
     TelemetryTableController,
     TableOptionsController,
     Region,
@@ -59,7 +61,7 @@ define([
             "types": [
                 {
                     "key": "table",
-                    "name": "Table",
+                    "name": "Historical Telemetry Table",
                     "glyph": "\ue605",
                     "description": "A table for displaying telemetry data",
                     "features": "creation",
@@ -78,12 +80,41 @@ define([
                     "views": [
                         "table"
                     ]
+                },
+                {
+                    "key": "rttable",
+                    "name": "Real-time Telemetry Table",
+                    "glyph": "\ue605",
+                    "description": "A table for displaying realtime telemetry" +
+                    " data",
+                    "features": "creation",
+                    "delegates": [
+                        "telemetry"
+                    ],
+                    "inspector": tableInspector,
+                    "contains": [
+                        {
+                            "has": "telemetry"
+                        }
+                    ],
+                    "model": {
+                        "composition": []
+                    },
+                    "views": [
+                        "rt-table",
+                        "scrolling-table"
+                    ]
                 }
             ],
             "controllers": [
                 {
                     "key": "TelemetryTableController",
                     "implementation": TelemetryTableController,
+                    "depends": ["$scope", "telemetryHandler", "telemetryFormatter"]
+                },
+                {
+                    "key": "RTTelemetryTableController",
+                    "implementation": RTTelemetryTableController,
                     "depends": ["$scope", "telemetryHandler", "telemetryFormatter"]
                 },
                 {
@@ -95,10 +126,21 @@ define([
             ],
             "views": [
                 {
-                    "name": "Table",
+                    "name": "Historical Table",
                     "key": "table",
                     "glyph": "\ue605",
                     "templateUrl": "templates/table.html",
+                    "needs": [
+                        "telemetry"
+                    ],
+                    "delegation": true,
+                    "editable": true
+                },
+                {
+                    "name": "Real-time Table",
+                    "key": "rt-table",
+                    "glyph": "\ue605",
+                    "templateUrl": "templates/rt-table.html",
                     "needs": [
                         "telemetry"
                     ],

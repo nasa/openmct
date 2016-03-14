@@ -34,7 +34,8 @@ define(
          * @constructor
          */
         function SinewaveTelemetryProvider($q, $timeout) {
-            var subscriptions = [];
+            var subscriptions = [],
+                generating = false;
 
             //
             function matchesSource(request) {
@@ -75,10 +76,13 @@ define(
             }
 
             function startGenerating() {
+                generating = true;
                 $timeout(function () {
                     handleSubscriptions();
-                    if (subscriptions.length > 0) {
+                    if (generating && subscriptions.length > 0) {
                         startGenerating();
+                    } else {
+                        generating = false;
                     }
                 }, 1000);
             }
@@ -97,7 +101,7 @@ define(
 
                 subscriptions.push(subscription);
 
-                if (subscriptions.length === 1) {
+                if (!generating) {
                     startGenerating();
                 }
 

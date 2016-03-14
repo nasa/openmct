@@ -1,10 +1,13 @@
 <div class="l-view-section scrolling"
-     style="overflow: auto;"
+     ng-style="overrideRowPositioning ?
+         {'overflow': 'auto'} :
+         {'overflow': 'scroll'}"
      >
     <table class="filterable"
            ng-style="overrideRowPositioning && {
             height: totalHeight + 'px',
-            'table-layout': overrideRowPositioning ? 'fixed' : 'auto'
+            'table-layout': overrideRowPositioning ? 'fixed' : 'auto',
+            'max-width': totalWidth
         }">
         <thead>
             <tr>
@@ -59,6 +62,5 @@
                 </td>
             </tr>
         </tbody>
-
     </table>
 </div>

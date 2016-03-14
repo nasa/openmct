@@ -37,7 +37,8 @@ define(
             var
 	            subscriptions = [],
 	            genInterval = 1000,
-	            startTime = Date.now();
+                generating = false,
+                id = Math.random() * 100000;
 
             //
             function matchesSource(request) {
@@ -79,11 +80,13 @@ define(
             }
 
             function startGenerating() {
+                generating = true;
                 $timeout(function () {
-	                //console.log("startGenerating... " + Date.now());
                     handleSubscriptions();
-                    if (subscriptions.length > 0) {
+                    if (generating && subscriptions.length > 0) {
                         startGenerating();
+                    } else {
+                        generating = false;
                     }
                 }, genInterval);
             }
@@ -93,7 +96,6 @@ define(
                     callback: callback,
                     requests: requests
                 };
-
                 function unsubscribe() {
                     subscriptions = subscriptions.filter(function (s) {
                         return s !== subscription;
@@ -101,8 +103,7 @@ define(
                 }
 
                 subscriptions.push(subscription);
-
-                if (subscriptions.length === 1) {
+                if (!generating) {
                     startGenerating();
                 }
 
