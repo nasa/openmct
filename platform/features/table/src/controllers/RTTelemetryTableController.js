@@ -89,9 +89,9 @@ define(
                     datum = self.handle.getDatum(telemetryObject);
                     if (datum) {
                         row = self.table.getRowValues(telemetryObject, datum);
-                        self.$scope.rows = self.$scope.rows || [];
                         if (!self.$scope.rows){
                             self.$scope.rows = [row];
+                            self.$scope.$digest();
                         } else {
                             self.$scope.rows.push(row);
                             self.$scope.$broadcast('add:row',
