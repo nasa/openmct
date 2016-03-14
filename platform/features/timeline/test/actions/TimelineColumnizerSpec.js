@@ -22,9 +22,9 @@
 /*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
-    ['../../src/actions/TimelineCSVExporter'],
-    function (TimelineCSVExporter) {
-        describe("TimelineCSVExporter", function () {
+    ['../../src/actions/TimelineColumnizer'],
+    function (TimelineColumnizer) {
+        describe("TimelineColumnizer", function () {
             var mockDomainObjects,
                 testMetadata,
                 exporter;
@@ -76,7 +76,7 @@ define(
                     return c === 'metadata' && testMetadata;
                 });
 
-                exporter = new TimelineCSVExporter(mockDomainObjects);
+                exporter = new TimelineColumnizer(mockDomainObjects);
             });
 
             describe("rows", function () {

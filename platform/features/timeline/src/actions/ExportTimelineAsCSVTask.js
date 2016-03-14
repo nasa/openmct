@@ -26,8 +26,8 @@
  */
 define([
     "./TimelineTraverser",
-    "./TimelineCSVExporter"
-], function (TimelineTraverser, TimelineCSVExporter) {
+    "./TimelineColumnizer"
+], function (TimelineTraverser, TimelineColumnizer) {
     "use strict";
 
     /**
@@ -54,7 +54,7 @@ define([
         var exportService = this.exportService;
 
         function doExport(objects) {
-            var exporter = new TimelineCSVExporter(objects),
+            var exporter = new TimelineColumnizer(objects),
                 options = { headers: exporter.headers() };
             return exporter.rows().then(function (rows) {
                 return exportService.exportCSV(rows, options);

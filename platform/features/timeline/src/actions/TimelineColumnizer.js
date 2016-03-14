@@ -68,7 +68,7 @@ define([
      * @constructor
      * @memberof {platform/features/timeline}
      */
-    function TimelineCSVExporter(domainObjects) {
+    function TimelineColumnizer(domainObjects) {
         var maxComposition = 0,
             maxRelationships = 0,
             columnNames = {},
@@ -134,7 +134,7 @@ define([
      * the `headers`, correlated by index.
      * @returns {Promise.<string[][]>} domain object data
      */
-    TimelineCSVExporter.prototype.rows = function () {
+    TimelineColumnizer.prototype.rows = function () {
         var columns = this.columns;
 
         function toRow(domainObject) {
@@ -151,11 +151,11 @@ define([
      * representation of objects.
      * @returns {string[]} column headers
      */
-    TimelineCSVExporter.prototype.headers = function () {
+    TimelineColumnizer.prototype.headers = function () {
         return this.columns.map(function (column) {
             return column.name();
         });
     };
 
-    return TimelineCSVExporter;
+    return TimelineColumnizer;
 });
