@@ -33,7 +33,8 @@ requirejs.config({
         "saveAs": "bower_components/FileSaver.js/FileSaver.min",
         "screenfull": "bower_components/screenfull/dist/screenfull.min",
         "text": "bower_components/text/text",
-        "uuid": "bower_components/node-uuid/uuid"
+        "uuid": "bower_components/node-uuid/uuid",
+        "zepto": "bower_components/zepto/zepto.min"
     },
     "shim": {
         "angular": {
@@ -44,6 +45,9 @@ requirejs.config({
         },
         "moment-duration-format": {
             "deps": [ "moment" ]
+        },
+        "zepto": {
+            "exports": "Zepto"
         }
     }
 });

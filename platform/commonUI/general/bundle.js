@@ -49,6 +49,7 @@ define([
     "./src/directives/MCTScroll",
     "./src/directives/MCTSplitPane",
     "./src/directives/MCTSplitter",
+    "./src/directives/MCTTree",
     "text!./res/templates/bottombar.html",
     "text!./res/templates/controls/action-button.html",
     "text!./res/templates/controls/input-filter.html",
@@ -97,6 +98,7 @@ define([
     MCTScroll,
     MCTSplitPane,
     MCTSplitter,
+    MCTTree,
     bottombarTemplate,
     actionButtonTemplate,
     inputFilterTemplate,
@@ -389,6 +391,11 @@ define([
                 {
                     "key": "mctSplitter",
                     "implementation": MCTSplitter
+                },
+                {
+                    "key": "mctTree",
+                    "implementation": MCTTree,
+                    "depends": [ '$parse', 'gestureService' ]
                 }
             ],
             "constants": [
@@ -535,6 +542,16 @@ define([
                     "copyright": "Copyright (c) Nicolas Gallagher and Jonathan Neal",
                     "license": "license-mit",
                     "link": "https://github.com/necolas/normalize.css/blob/v1.1.2/LICENSE.md"
+                },
+                {
+                    "name": "Zepto",
+                    "version": "1.1.6",
+                    "description": "DOM manipulation",
+                    "author": "Thomas Fuchs",
+                    "website": "http://zeptojs.com/",
+                    "copyright": "Copyright (c) 2010-2016 Thomas Fuchs",
+                    "license": "license-mit",
+                    "link": "https://github.com/madrobby/zepto/blob/master/MIT-LICENSE"
                 }
             ]
         }
