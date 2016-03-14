@@ -32,6 +32,7 @@
         </li>
         <li ng-if="contextutalParents.length > 0">
             <em class="t-inspector-part-header" title="The location of this linked object.">Location</em>
+            <div ng-if="primaryParents.length > 0" class="section-header">This Object</div>
             <span class="inspector-location"
                   ng-repeat="parent in contextutalParents"
                   ng-class="{ last:($index + 1) === contextualParents.length }">
@@ -44,7 +45,7 @@
             </span>
         </li>
         <li ng-if="primaryParents.length > 0">
-            <em class="t-inspector-part-header" title="The location of the original object that this was linked from.">Original Location</em>
+            <div class="section-header">Object's Original</div>
             <span class="inspector-location"
                   ng-repeat="parent in primaryParents"
                   ng-class="{ last:($index + 1) === primaryParents.length }">
