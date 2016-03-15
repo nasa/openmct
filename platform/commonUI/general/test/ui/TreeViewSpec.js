@@ -107,12 +107,18 @@ define([
                     mockLocation =
                         jasmine.createSpyObj('location', [ 'isLink' ]),
                     mockMutation =
-                        jasmine.createSpyObj('mutation', [ 'listen' ]);
+                        jasmine.createSpyObj('mutation', [ 'listen' ]),
+                    mockStatus =
+                        jasmine.createSpyObj('status', [ 'listen', 'list' ]);
+
+                mockStatus.list.andReturn([]);
+
                 return {
                     context: mockContext,
                     type: mockType,
                     mutation: mockMutation,
-                    location: mockLocation
+                    location: mockLocation,
+                    status: mockStatus
                 };
             }
 
@@ -244,6 +250,24 @@ define([
 
                 it("creates inner trees", function () {
                     expect($(treeView.elements()[0]).find('ul').length)
+                        .toEqual(1);
+                });
+            });
+
+            describe("when status changes", function () {
+                var testStatuses;
+
+                beforeEach(function () {
+                    var mockStatus = mockComposition[1].getCapability('status');
+
+                    testStatuses = [ 'foo' ];
+
+                    mockStatus.list.andReturn(testStatuses);
+                    mockStatus.listen.mostRecentCall.args[0](testStatuses);
+                });
+
+                it("reflects the status change in the tree", function () {
+                    expect($(treeView.elements()).find('.s-status-foo').length)
                         .toEqual(1);
                 });
             });

@@ -32,6 +32,8 @@ define([
     function TreeNodeView(gestureService, subtreeFactory, selectFn) {
         this.li = $('<li>');
 
+        this.statusClasses = [];
+
         this.toggleView = new ToggleView(false);
         this.toggleView.observe(function (state) {
             if (state) {
@@ -61,6 +63,20 @@ define([
         this.model(undefined);
     }
 
+    TreeNodeView.prototype.updateStatusClasses = function (statuses) {
+        this.statusClasses.forEach(function (statusClass) {
+            this.li.removeClass(statusClass);
+        }.bind(this));
+
+        this.statusClasses = statuses.map(function (status) {
+            return 's-status-' + status;
+        });
+
+        this.statusClasses.forEach(function (statusClass) {
+            this.li.addClass(statusClass);
+        }.bind(this));
+    };
+
     TreeNodeView.prototype.model = function (domainObject) {
         if (this.unlisten) {
             this.unlisten();
@@ -72,6 +88,14 @@ define([
             $(this.toggleView.elements()).addClass('has-children');
         } else {
             $(this.toggleView.elements()).removeClass('has-children');
+        }
+
+        if (domainObject && domainObject.hasCapability('status')) {
+            this.unlisten = domainObject.getCapability('status')
+                .listen(this.updateStatusClasses.bind(this));
+            this.updateStatusClasses(
+                domainObject.getCapability('status').list()
+            );
         }
 
         this.labelView.model(domainObject);
