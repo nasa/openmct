@@ -93,7 +93,9 @@ define([
 
     './example/imagery/bundle',
     './example/eventGenerator/bundle',
-    './example/generator/bundle'
+    './example/generator/bundle',
+    './example/enumeratedTelemetry/bundle'
+
 ], function (Main, legacyRegistry) {
     'use strict';
 
