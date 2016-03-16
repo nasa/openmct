@@ -200,6 +200,21 @@ define([
                 });
             });
 
+            describe("when a context-less object is selected", function () {
+                beforeEach(function () {
+                    var testCapabilities = makeGenericCapabilities(),
+                        mockDomainObject =
+                            makeMockDomainObject('xyz', {}, testCapabilities);
+                    delete testCapabilities.context;
+                    treeView.value(mockDomainObject);
+                });
+
+                it("clears all selection state", function () {
+                    var selected = $(treeView.elements()[0]).find('.selected');
+                    expect(selected.length).toEqual(0);
+                });
+            });
+
             describe("when children contain children", function () {
                 beforeEach(function () {
                     var newCapabilities = makeGenericCapabilities(),
