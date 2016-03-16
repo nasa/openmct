@@ -174,7 +174,7 @@ $scrollbarTrackShdw: rgba(#000, 0.2) 0 1px 2px;
 $scrollbarTrackColorBg: rgba(#000, 0.2);
 $scrollbarThumbColor: darken($colorBodyBg, 50%);
 $scrollbarThumbColorHov: $colorKey;
-$scrollbarThumbColorOverlay: darken($colorOvrBg, 15%);
+$scrollbarThumbColorOverlay: darken($colorOvrBg, 50%);
 $scrollbarThumbColorOverlayHov: $scrollbarThumbColorHov;
 
 // Splitter
