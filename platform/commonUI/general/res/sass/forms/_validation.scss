@@ -23,9 +23,13 @@
     > .label {
         padding-right: $reqSymbolM; // Keep room for validation element
         &::after {
-	        float: right;
+            position: absolute;
+            right: $interiorMargin;
             font-family: symbolsfont;
             font-size: $reqSymbolFontSize;
+            height: 100%;
+            line-height: 200%;
+
         }
     }
     &.invalid,

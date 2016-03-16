@@ -85,6 +85,8 @@ p {
 	margin-bottom: $interiorMarginLg;
 }
 
+ol, ul { padding-left: 0; }
+
 mct-container {
 	display: block;
 }
