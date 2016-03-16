@@ -105,13 +105,13 @@ define([
     };
 
     function getIdPath(domainObject) {
+        var context = domainObject && domainObject.getCapability('context');
+
         function getId(domainObject) {
             return domainObject.getId();
         }
 
-        return domainObject ?
-            domainObject.getCapability('context').getPath().map(getId) :
-            [];
+        return context ? context.getPath().map(getId) : [];
     }
 
     TreeNodeView.prototype.value = function (domainObject) {
