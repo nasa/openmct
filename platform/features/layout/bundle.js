@@ -278,12 +278,12 @@ define([
                                 {
                                     "name": "Horizontal grid (px)",
                                     "control": "textfield",
-                                    "cssclass": "l-small l-numeric"
+                                    "cssclass": "l-input-sm l-numeric"
                                 },
                                 {
                                     "name": "Vertical grid (px)",
                                     "control": "textfield",
-                                    "cssclass": "l-small l-numeric"
+                                    "cssclass": "l-input-sm l-numeric"
                                 }
                             ],
                             "key": "layoutGrid",

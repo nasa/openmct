@@ -248,7 +248,7 @@ define([
                             "property": "name",
                             "pattern": "\\S+",
                             "required": true,
-                            "cssclass": "l-med"
+                            "cssclass": "l-input-lg"
                         }
                     ]
                 },

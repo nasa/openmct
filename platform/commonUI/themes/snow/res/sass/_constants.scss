@@ -27,6 +27,7 @@ $colorBtnIcon: #eee;
 $colorInvokeMenu: #000;
 $contrastInvokeMenuPercent: 40%;
 $shdwBtns: none;
+$shdwBtnsOverlay: none;
 $sliderColorBase: $colorKey;
 $sliderColorRangeHolder: rgba(black, 0.07);
 $sliderColorRange: rgba($sliderColorBase, 0.2);
@@ -170,9 +171,11 @@ $shdwItemTreeIcon: none;
 // Scrollbar
 $scrollbarTrackSize: 10px;
 $scrollbarTrackShdw: rgba(#000, 0.2) 0 1px 2px;
-$scrollbarTrackColorBg: rgba(#000, 0.1);
-$scrollbarThumbColor: darken($colorBodyBg, 50%);//
+$scrollbarTrackColorBg: rgba(#000, 0.2);
+$scrollbarThumbColor: darken($colorBodyBg, 50%);
 $scrollbarThumbColorHov: $colorKey;
+$scrollbarThumbColorOverlay: darken($colorOvrBg, 15%);
+$scrollbarThumbColorOverlayHov: $scrollbarThumbColorHov;
 
 // Splitter
 $splitterD: 24px;
