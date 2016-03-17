@@ -140,17 +140,3 @@
         }
     }
 }
-
-.edit-mode .s-swimlane,
-.s-status-editing .s-swimlane {
-    cursor: pointer;
-    .t-object-label {
-        border-radius: $controlCr;
-        cursor: move;
-        padding: 2px 5px;
-        &:hover {
-            background: rgba($colorBodyFg, 0.3);
-            color: pullForward($colorBodyFg, 20%);
-        }
-    }
-}

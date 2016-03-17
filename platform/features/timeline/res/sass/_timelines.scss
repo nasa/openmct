@@ -23,6 +23,11 @@
 .l-timeline-holder {
     @include absPosDefault();
 
+    .l-header {
+        @include user-select(none);
+        cursor: default;
+    }
+
     .l-timeline-pane {
         @include absPosDefault();
 
@@ -33,6 +38,9 @@
 	    .l-swimlanes-holder {
 		    @include absPosDefault();
 		    top: $timelineTopPaneHeaderH + 1;
+            .l-col.l-plot-resource {
+                cursor: pointer;
+            }
 	    }
 
 	    // Overall layout
@@ -250,21 +258,15 @@
 
 			&.l-plot-resource {
 				border-left: none !important;
-				cursor: pointer;
 				padding-left: 0;
 			}
 
 			&.l-title {
 				width: $timelineColTitleW;
-                .rep-object-label[draggable="true"] {
+                .rep-object-label {
                     border-radius: $basicCr;
-                    @include transition(background-color, 0.25s);
-                    cursor: pointer;
                     display: inline-block;
-                    padding: 0 $interiorMarginSm;
-                    &:hover {
-                        background-color: $colorItemTreeHoverBg;
-                    }
+                    padding: 0 $interiorMargin;
                 }
 			}
 
@@ -313,4 +315,12 @@
 	.l-subticks {
 		height: 5px
 	}
+}
+
+.s-status-editing .l-title .rep-object-label[draggable="true"] {
+    @include transition(background-color, 0.25s);
+    cursor: pointer;
+    &:hover {
+        background-color: $colorItemTreeHoverBg;
+    }
 }
