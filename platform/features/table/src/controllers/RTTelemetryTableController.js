@@ -41,6 +41,7 @@ define(
             TableController.call(this, $scope, telemetryHandler, telemetryFormatter);
 
             $scope.autoScroll = false;
+            this.maxRows = 100000;
 
             /*
              * Determine if auto-scroll should be enabled. Is enabled
@@ -94,6 +95,12 @@ define(
                             self.$scope.$digest();
                         } else {
                             self.$scope.rows.push(row);
+
+                            if (self.$scope.rows.length > self.maxRows) {
+                                self.$scope.$broadcast('remove:row', 0);
+                                self.$scope.rows.shift();
+                            }
+
                             self.$scope.$broadcast('add:row',
                                 self.$scope.rows.length - 1);
                         }

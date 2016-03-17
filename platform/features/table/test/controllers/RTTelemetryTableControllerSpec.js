@@ -130,11 +130,29 @@ define(
                 expect(mockTelemetryHandler.handle).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Function), true);
             });
 
-            it('updates table with new streaming telemetry', function () {
-                controller.subscribe();
-                mockScope.rows = [];
-                mockTelemetryHandler.handle.mostRecentCall.args[1]();
-                expect(mockScope.$broadcast).toHaveBeenCalledWith('add:row', 0);
+            describe('receives new telemetry', function() {
+                beforeEach(function() {
+                    controller.subscribe();
+                    mockScope.rows = [];
+                });
+
+                it('updates table with new streaming telemetry', function () {
+                    mockTelemetryHandler.handle.mostRecentCall.args[1]();
+                    expect(mockScope.$broadcast).toHaveBeenCalledWith('add:row', 0);
+                });
+                it('observes the row limit', function () {
+                    var i=0;
+                    controller.maxRows = 10;
+
+                    //Fill rows array with elements
+                    for (; i < 10; i++) {
+                        mockScope.rows.push({row: i});
+                    }
+                    mockTelemetryHandler.handle.mostRecentCall.args[1]();
+                    expect(mockScope.rows.length).toBe(controller.maxRows);
+                    expect(mockScope.rows[mockScope.rows.length-1]).toBe(mockTableRow);
+                    expect(mockScope.rows[0].row).toBe(1);
+                });
             });
 
             it('enables autoscroll for event telemetry', function () {
