@@ -74,6 +74,12 @@
 
 .l-composite-control {
     vertical-align: middle;
+    &:not(.l-inline) {
+        margin-bottom: $interiorMargin;
+    }
+    &.l-inline {
+        display: inline-block;
+    }
     &.l-checkbox {
         .composite-control-label {
             line-height: 18px;
@@ -108,12 +114,14 @@
     font-size: 0.7rem;
 }
 
+/******************************************************** CUSTOM CHECKBOXES */
 label.checkbox.custom,
 label.radio.custom {
     $bg: pullForward($colorBodyBg, 10%);
     $d: $formRowCtrlsH;
     cursor: pointer;
     display: inline-block;
+    line-height: 120%;
     margin-right: $interiorMargin * 4;
     padding-left: $d + $interiorMargin;
     position: relative;
@@ -161,7 +169,40 @@ label.radio.custom {
 label.checkbox.custom input:checked ~ em:before { content: "\32"; }
 label.radio.custom input:checked ~ em:before { content: "\e619"; }
 
+.s-menu-btn label.checkbox.custom {
+    margin-left: 5px;
+}
+
+.item .checkbox {
+    &.checked label {
+        box-shadow: none;
+        border-bottom: none;
+    }
+}
+
+label.form-control.checkbox {
+    input {
+        margin-right: $interiorMargin;
+        vertical-align: top;
+    }
+}
+
+/******************************************************** INPUTS */
+input[type="text"],
+input[type="search"] {
+    @include nice-input();
+    &.numeric {
+        text-align: right;
+    }
+}
+
+.l-input-lg input[type="text"] {  width: 100% !important; }
+.l-input-med input[type="text"] { width: 200px !important; }
+.l-input-sm input[type="text"] {  width: 50px !important; }
+.l-numeric input[type="text"] { text-align: right; }
+
 .input-labeled {
+    // Used in toolbar
     margin-left: $interiorMargin;
     label {
         display: inline-block;
@@ -175,28 +216,36 @@ label.radio.custom input:checked ~ em:before { content: "\e619"; }
     }
 }
 
-.s-menu-btn label.checkbox.custom {
-    margin-left: 5px;
-}
-
-.item .checkbox {
-    &.checked label {
-        box-shadow: none;
-        border-bottom: none;
+/******************************************************** SELECTS */
+.select {
+    @include btnSubtle($colorSelectBg);
+    @if $shdwBtns != none {
+        margin: 0 0 2px 0; // Needed to avoid dropshadow from being clipped by parent containers
     }
-}
-
-.context-available,
-.s-icon-btn {
-    $c: $colorKey;
-    color: $c;
-    &:hover {
-        color: lighten($c, 10%);
+    padding: 0 $interiorMargin;
+    overflow: hidden;
+    position: relative;
+    line-height: $formInputH;
+    select {
+        @include appearance(none);
+        box-sizing: border-box;
+        background: none;
+        color: $colorSelectFg;
+        cursor: pointer;
+        border: none !important;
+        padding: 4px 25px 2px 0px;
+        width: 130%;
+        option {
+            margin: $interiorMargin 0; // Firefox
+        }
     }
-}
-
-.view-switcher {
-    @include trans-prop-nice-fade($controlFadeMs);
+    &:after {
+        @include contextArrow();
+        pointer-events: none;
+        color: rgba($colorSelectFg, percentToDecimal($contrastInvokeMenuPercent));
+        position: absolute;
+        right: $interiorMargin; top: 0;
+    }
 }
 
 /******************************************************** OBJECT-HEADER */
@@ -330,7 +379,6 @@ body.desktop .object-header {
 }
 
 /******************************************************** SLIDERS */
-
 .slider {
     $knobH: 100%;
     .slot {
@@ -424,7 +472,7 @@ body.desktop .object-header {
         border-top: 1px solid $colorInteriorBorder
     }
     .l-time-selects {
-        line-height: $formInputH;
+        line-height: inherit;
     }
 }
 
@@ -478,11 +526,31 @@ body.desktop .object-header {
     }
 }
 
-/******************************************************** BROWSER ELEMENTS */
+/******************************************************** TEXTAREA */
+textarea {
+    @include nice-textarea($colorInputBg, $colorInputFg);
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
 
+/******************************************************** MISC */
+.context-available,
+.s-icon-btn {
+    $c: $colorKey;
+    color: $c;
+    &:hover {
+        color: lighten($c, 10%);
+    }
+}
+
+.view-switcher {
+    @include trans-prop-nice-fade($controlFadeMs);
+}
+
+/******************************************************** BROWSER ELEMENTS */
 body.desktop {
     ::-webkit-scrollbar {
-        border-radius: 2px;
         box-sizing: border-box;
         box-shadow: inset $scrollbarTrackShdw;
         background-color: $scrollbarTrackColorBg;
@@ -491,15 +559,15 @@ body.desktop {
     }
 
     ::-webkit-scrollbar-thumb {
-        $bg: $scrollbarThumbColor;
-        $hc: $scrollbarThumbColorHov;
-        $gr: 5%;
-        @include background-image(linear-gradient(lighten($bg, $gr), $bg 20px));
-        border-radius: 2px;
         box-sizing: border-box;
-        &:hover {
-            @include background-image(linear-gradient(lighten($hc, $gr), $hc 20px));
-        }
+        background: $scrollbarThumbColor;
+        &:hover { background: $scrollbarThumbColorHov; }
+    }
+
+    .overlay ::-webkit-scrollbar-thumb {
+        $lr: 15%;
+        background: $scrollbarThumbColorOverlay;
+        &:hover { background: $scrollbarThumbColorOverlayHov; }
     }
 
     ::-webkit-scrollbar-corner {

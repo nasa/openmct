@@ -35,7 +35,6 @@
         z-index: 100;
     }
     > .holder {
-        //$i: 15%;
         @include containerSubtle($colorOvrBg, $colorOvrFg);
         border-radius: $basicCr * 3;
         color: $colorOvrFg;
@@ -57,15 +56,8 @@
             right: $m;
             bottom: $m;
             left: $m;
-
-            //.top-bar,
-            //.editor,
-            //.bottom-bar {
-            //    @include absPosDefault();
-            //}
         }
     }
-
     .title {
         @include ellipsize();
         font-size: 1.2em;
@@ -120,7 +112,6 @@
         bottom: 0;
         left: 0;
         overflow: visible;
-        //font-size: 1em;
         height: $ovrFooterH;
     }
 
@@ -132,11 +123,14 @@
         margin: .5em 0;
         width: 100%;
     }
+
+    .select {
+        box-shadow: $shdwBtnsOverlay;
+    }
 }
 
 .t-dialog-sm .overlay > .holder {
     // Used for blocker and in-progress dialogs, modal alerts, etc.
-    //@include test(red);
     $h: 225px;
     min-height: $h;
     height: $h;

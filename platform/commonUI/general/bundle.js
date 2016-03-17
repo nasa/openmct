@@ -177,10 +177,6 @@ define([
                 {
                     "stylesheetUrl": "css/normalize.min.css",
                     "priority": "mandatory"
-                },
-                {
-                    "stylesheetUrl": "css/reset.css",
-                    "priority": "mandatory"
                 }
             ],
             "templates": [
@@ -523,16 +519,6 @@ define([
                 }
             ],
             "licenses": [
-                {
-                    "name": "Modernizr",
-                    "version": "2.6.2",
-                    "description": "Browser/device capability finding",
-                    "author": "Faruk Ateş",
-                    "website": "http://modernizr.com",
-                    "copyright": "Copyright (c) 2009–2015",
-                    "license": "license-mit",
-                    "link": "http://modernizr.com/license/"
-                },
                 {
                     "name": "Normalize.css",
                     "version": "1.1.2",

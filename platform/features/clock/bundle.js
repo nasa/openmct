@@ -182,7 +182,8 @@ define([
                                             "value": "hh:mm:ss",
                                             "name": "hh:mm:ss"
                                         }
-                                    ]
+                                    ],
+                                    "cssclass": "l-inline"
                                 },
                                 {
                                     "control": "select",
@@ -195,7 +196,8 @@ define([
                                             "value": "clock24",
                                             "name": "24hr"
                                         }
-                                    ]
+                                    ],
+                                    "cssclass": "l-inline"
                                 }
                             ]
                         }
@@ -223,6 +225,7 @@ define([
                         {
                             "key": "timerFormat",
                             "control": "select",
+                            "name": "Display Format",
                             "options": [
                                 {
                                     "value": "long",

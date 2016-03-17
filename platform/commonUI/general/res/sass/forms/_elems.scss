@@ -55,7 +55,6 @@
 		>.controls {
 			box-sizing: border-box;
 			font-size: 0.8rem;
-            min-height: $formInputH;
 		}
 
 		>.label {
@@ -140,13 +139,6 @@
     }
 }
 
-label.form-control.checkbox {
-	input {
-		margin-right: $interiorMargin;
-		vertical-align: top;
-	}
-}
-
 .hint,
 .s-hint {
 	font-size: 0.9em;
@@ -166,31 +158,4 @@ label.form-control.checkbox {
 		color: lighten($colorFormInvalid, 30%);
 		padding: $interiorMargin;
 	}
-}
-
-input[type="text"],
-input[type="search"] {
-	@include nice-input();
-	&.numeric {
-		text-align: right;
-	}
-}
-
-.l-input-med input[type="text"] {
-    width: 200px !important;
-}
-
-.l-input-sm input[type="text"] {
-    width: 50px !important;
-}
-
-.l-numeric input[type="text"] {
-    text-align: right;
-}
-
-textarea {
-	@include nice-textarea($colorInputBg, $colorInputFg);
-	position: absolute;
-	height: 100%;
-	width: 100%;
 }
