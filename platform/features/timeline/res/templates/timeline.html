@@ -26,20 +26,17 @@
     <!-- LEFT PANE: TABULAR AND RESOURCE LEGEND AREAS -->
     <mct-split-pane anchor="bottom"
                     position="pane.y"
-                    class="abs horizontal split-pane-component l-timeline-pane l-pane-l t-pane-v"
-                    >
+                    class="abs horizontal split-pane-component l-timeline-pane l-pane-l t-pane-v">
         <!-- TOP PANE TABULAR AREA. ADD CLASS "hidden" FOR INTERIM NO-TABULAR DELIVERY -->
         <div class="split-pane-component s-timeline-tabular l-timeline-pane t-pane-h l-pane-top">
             <!-- TABULAR LEFT FIXED AREA -->
-            <div
-                class="t-pane-v l-pane-l l-tabular-l"
-                ng-if="true"
-                >
+            <div class="t-pane-v l-pane-l l-tabular-l"
+                ng-if="true">
 
                     <div class="t-header l-header s-header">
                         <div class="l-cols">
-                            <span class="l-col l-col-icon l-plot-resource ui-symbol">&#x00e9;</span>
-                            <span class="l-col  l-col-icon l-col-link ui-symbol">&#x00e8;</span>
+                            <span title="Click in a row to enable or disable inclusion in the Resource Graph" class="l-col l-col-icon l-plot-resource ui-symbol">&#x00e9;</span>
+                            <span title="Each row will display a link icon when it has one defined - click to go its destination." class="l-col  l-col-icon l-col-link ui-symbol">&#x00e8;</span>
                             <span class="l-col l-title">Title</span>
                         </div>
                     </div>
@@ -54,9 +51,7 @@
             </div>
 
             <!-- TABULAR RIGHT HORZ SCROLLING AREA -->
-            <div
-                class="t-pane-v l-pane-r l-tabular-r"
-                >
+            <div class="t-pane-v l-pane-r l-tabular-r">
                 <div class="l-width">
                     <div class="t-header l-header s-header">
                         <div class="l-cols">
@@ -102,12 +97,10 @@
     <span ng-controller="TimelineZoomController as zoomController" class="abs">
     <mct-split-pane anchor="bottom"
                     position="pane.y"
-                    class="abs split-pane-component l-timeline-pane l-pane-r t-pane-v"
-                    >
+                    class="abs split-pane-component l-timeline-pane l-pane-r t-pane-v">
 
         <!-- TOP PANE GANTT BARS -->
-        <div class="split-pane-component l-timeline-pane t-pane-h l-pane-top t-timeline-gantt l-timeline-gantt s-timeline-gantt"
-             >
+        <div class="split-pane-component l-timeline-pane t-pane-h l-pane-top t-timeline-gantt l-timeline-gantt s-timeline-gantt">
             <div class="l-hover-btns-holder s-hover-btns-holder t-btns-zoom">
                 <a class="t-btn l-btn s-btn"
                    ng-click="zoomController.zoom(-1)"
@@ -124,8 +117,7 @@
                 </a>
             </div>
 
-            <div style="overflow: hidden; position: absolute; left: 0; top: 0; right: 0; height: 30px;"
-                 mct-scroll-x="scroll.x">
+            <div style="overflow: hidden; position: absolute; left: 0; top: 0; right: 0; height: 30px;" mct-scroll-x="scroll.x">
                 <mct-include key="'timeline-ticks'"
                              parameters="{
                                          fullWidth: zoomController.toPixels(zoomController.duration()),
@@ -137,9 +129,6 @@
                 </mct-include>
             </div>
 
-            <!-- TO-DO:
-                Make this control y-scroll of both .t-swimlanes-holder elements in TOP PANE TABULAR AREA
-            -->
             <div class="t-swimlanes-holder l-swimlanes-holder"
                  mct-scroll-x="scroll.x"
                  mct-scroll-y="scroll.y">
@@ -175,12 +164,9 @@
                                   mct-drag-up="handle.finish()">
                             </span>
                         </span>
-
                     </div>
                 </div>
             </div>
-
-
         </div>
 
         <!-- HORZ SPLITTER -->
@@ -188,11 +174,8 @@
 
         <!-- BOTTOM PANE RESOURCE GRAPHS AND RIGHT PANE HORIZONTAL SCROLL CONTROL -->
         <div class="split-pane-component l-timeline-resource-graph l-timeline-pane t-pane-h l-pane-btm">
-
             <div class="l-graphs-holder"
                  mct-resize="scroll.width = bounds.width">
-
-                <!-- TO-DO: Make this control y-scroll of .t-graph-labels-holder -->
                 <div class="t-graphs l-graphs">
                     <mct-include key="'timeline-resource-graphs'"
                                  parameters="{
@@ -202,9 +185,7 @@
                                              }">
                     </mct-include>
                 </div>
-
             </div>
-            <!-- TO-DO:  Make this control x-scroll of .t-timeline-gantt -->
             <div mct-scroll-x="scroll.x"
                  class="t-pane-r-scroll-h-control l-scroll-control s-scroll-control">
                 <div class="l-width-control"
