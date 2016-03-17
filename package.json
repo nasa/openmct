@@ -38,7 +38,7 @@
     "moment": "^2.11.1",
     "node-bourbon": "^4.2.3",
     "phantomjs-prebuilt": "^2.1.0",
-    "requirejs": "^2.1.17",
+    "requirejs": "2.1.x",
     "split": "^1.0.0"
   },
   "scripts": {
