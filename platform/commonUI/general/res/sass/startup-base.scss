@@ -26,6 +26,10 @@
     top: $m; right: $m * 1.25; bottom: $m; left: $m * 1.25;
 }
 
+body, html {
+    overflow: hidden;
+}
+
 .l-splash-holder {
     // Main outer holder.
     @include transition-property(opacity);
