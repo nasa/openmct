@@ -121,7 +121,7 @@ define(
                 });
 
                 it('Supports adding rows individually', function() {
-                    var addRowFunc = mockScope.$on.mostRecentCall.args[1],
+                    var addRowFunc = mockScope.$on.calls[mockScope.$on.calls.length-2].args[1],
                         row4 = {
                             'col1': {'text': 'row3 col1'},
                             'col2': {'text': 'ghi'},
@@ -130,8 +130,19 @@ define(
                     controller.updateRows(testRows);
                     expect(mockScope.displayRows.length).toBe(3);
                     testRows.push(row4);
-                    addRowFunc(3);
+                    addRowFunc(undefined, 3);
                     expect(mockScope.displayRows.length).toBe(4);
+                });
+
+                it('Supports removing rows individually', function() {
+                    var removeRowFunc = mockScope.$on.calls[mockScope.$on.calls.length-1].args[1];
+                    controller.updateRows(testRows);
+                    expect(mockScope.displayRows.length).toBe(3);
+                    spyOn(controller, 'setVisibleRows');
+                    //controller.setVisibleRows.andReturn(undefined);
+                    removeRowFunc(undefined, 2);
+                    expect(mockScope.displayRows.length).toBe(2);
+                    expect(controller.setVisibleRows).toHaveBeenCalled();
                 });
 
                 describe('sorting', function() {

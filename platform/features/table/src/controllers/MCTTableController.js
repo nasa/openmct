@@ -74,6 +74,7 @@ define(
              * Listen for rows added individually (eg. for real-time tables)
              */
             $scope.$on('add:row', this.newRow.bind(this));
+            $scope.$on('remove:row', this.removeRow.bind(this));
         }
 
         /**
@@ -107,6 +108,22 @@ define(
 
             this.$timeout(this.setElementSizes.bind(this))
                 .then(this.scrollToBottom.bind(this));
+        };
+
+        /**
+         * Handles a row add event. Rows can be added as needed using the
+         * `addRow` broadcast event.
+         * @private
+         */
+        MCTTableController.prototype.removeRow = function (event, rowIndex) {
+            var row = this.$scope.rows[rowIndex],
+                // Do a sequential search here. Only way of finding row is by
+                // object equality, so array is in effect unsorted.
+                indexInDisplayRows = this.$scope.displayRows.indexOf(row);
+                if (indexInDisplayRows != -1) {
+                    this.$scope.displayRows.splice(indexInDisplayRows, 1);
+                    this.setVisibleRows();
+                }
         };
 
         /**
@@ -287,7 +304,7 @@ define(
                     parseFloat(searchElement[sortKey].text);
                 valB = isNaN(searchArray[sampleAt][sortKey].text) ?
                     searchArray[sampleAt][sortKey].text :
-                    searchArray[sampleAt][sortKey].text;
+                    parseFloat(searchArray[sampleAt][sortKey].text);
 
                 switch(self.sortComparator(valA, valB)) {
                     case -1:
