@@ -167,7 +167,7 @@ define([
                 beforeEach(function () {
                     mockComposition.pop();
                     testCapabilities.mutation.listen
-                        .mostRecentCall.args[0](mockDomainObject);
+                        .mostRecentCall.args[0](mockDomainObject.getModel());
                     waitForCompositionCallback();
                 });
 
