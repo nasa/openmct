@@ -130,7 +130,7 @@ define(
                 expect(mockTelemetryHandler.handle).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Function), true);
             });
 
-            describe('receives new telemetry', function() {
+            describe('receives new telemetry', function () {
                 beforeEach(function() {
                     controller.subscribe();
                     mockScope.rows = [];
@@ -141,7 +141,7 @@ define(
                     expect(mockScope.$broadcast).toHaveBeenCalledWith('add:row', 0);
                 });
                 it('observes the row limit', function () {
-                    var i=0;
+                    var i = 0;
                     controller.maxRows = 10;
 
                     //Fill rows array with elements
