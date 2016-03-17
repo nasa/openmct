@@ -59,7 +59,7 @@
 	.handle {
 		cursor: col-resize;
 		&.mid {
-			cursor: ew-resize;
+			cursor: move;
 		}
 	}
 }
