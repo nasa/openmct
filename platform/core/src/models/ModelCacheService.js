@@ -60,7 +60,7 @@ define([], function () {
      * @returns {boolean} true if present; false if not
      */
     ModelCacheService.prototype.has = function (id) {
-        return this.cached[id];
+        return !!this.cached[id];
     };
 
     /**
