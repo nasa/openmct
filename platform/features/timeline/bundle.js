@@ -324,7 +324,8 @@ define([
                                         "dialog": {
                                             "control": "textfield",
                                             "name": "Link",
-                                            "pattern": "^(ftp|https?)\\:\\/\\/\\w+(\\.\\w+)*(\\:\\d+)?(\\/\\S*)*$"
+                                            "pattern": "^(ftp|https?)\\:\\/\\/\\w+(\\.\\w+)*(\\:\\d+)?(\\/\\S*)*$",
+                                            "cssclass": "l-input-lg"
                                         },
                                         "property": "link"
                                     },
