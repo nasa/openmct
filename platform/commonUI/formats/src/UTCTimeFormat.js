@@ -28,9 +28,10 @@ define([
 ) {
     "use strict";
 
-    var DATE_FORMAT = "YYYY-MM-DD HH:mm:ss",
+    var DATE_FORMAT = "YYYY-MM-DD HH:mm:ss.SSSZ",
         DATE_FORMATS = [
             DATE_FORMAT,
+            "YYYY-MM-DD HH:mm:ss",
             "YYYY-MM-DD HH:mm",
             "YYYY-MM-DD"
         ];
