@@ -24,29 +24,60 @@
 define([], function () {
     'use strict';
 
+    /**
+     * Provides a cache for domain object models which exist in memory,
+     * but may or may not exist in backing persistene stores.
+     * @constructor
+     * @memberof platform/core
+     */
     function ModelCacheService() {
         this.cache = {};
         this.cached = {};
     }
 
+    /**
+     * Put a domain object model in the cache.
+     * @param {string} id the domain object's identifier
+     * @param {object} model the domain object's model
+     */
     ModelCacheService.prototype.put = function (id, model) {
         this.cached[id] = true;
         this.cache[id] = model;
     };
 
+    /**
+     * Retrieve a domain object model from the cache.
+     * @param {string} id the domain object's identifier
+     * @returns {object} the domain object's model
+     */
     ModelCacheService.prototype.get = function (id) {
         return this.cache[id];
     };
 
+    /**
+     * Check if a domain object model is in the cache.
+     * @param {string} id the domain object's identifier
+     * @returns {boolean} true if present; false if not
+     */
     ModelCacheService.prototype.has = function (id) {
         return this.cached[id];
     };
 
+    /**
+     * Remove a domain object model from the cache.
+     * @param {string} id the domain object's identifier
+     */
     ModelCacheService.prototype.remove = function (id) {
         delete this.cached[id];
         delete this.cache[id];
     };
 
+    /**
+     * Retrieve all cached domain object models. These are given
+     * as an object containing key-value pairs, where keys are
+     * domain object identifiers and values are domain object models.
+     * @returns {object} all domain object models
+     */
     ModelCacheService.prototype.all = function () {
         return this.cache;
     };
