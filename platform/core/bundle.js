@@ -394,7 +394,8 @@ define([
                     "implementation": Instantiate,
                     "depends": [
                         "capabilityService",
-                        "identifierService"
+                        "identifierService",
+                        "cacheService"
                     ]
                 }
             ],
