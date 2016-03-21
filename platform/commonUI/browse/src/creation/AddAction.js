@@ -93,21 +93,23 @@ define(
                 return wizard.populateObjectFromInput(formValue, newObject);
             }
 
-            function addToParent (populatedObject) {
-                parentObject.getCapability('composition').add(populatedObject);
-                return parentObject.getCapability('persistence').persist().then(function(){
-                    return parentObject;
-                });
+            function persistAndReturn(domainObject) {
+                return domainObject.getCapability('persistence')
+                    .persist()
+                    .then(function () {
+                        return domainObject;
+                    });
             }
 
-            function persistNewObject(object) {
-                return object.getCapability('persistence').persist();
+            function addToParent (populatedObject) {
+                parentObject.getCapability('composition').add(populatedObject);
+                return persistAndReturn(parentObject);
             }
 
             return this.dialogService
                 .getUserInput(wizard.getFormStructure(false), wizard.getInitialFormValue())
                 .then(populateObjectFromInput)
-                .then(persistNewObject)
+                .then(persistAndReturn)
                 .then(addToParent);
 
         };
