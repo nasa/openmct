@@ -59,7 +59,7 @@ define(
             // We update in-place to ensure there is only ever one instance
             // of any given model exposed by the modelService as a whole.
             function updateModel(id, model) {
-                var oldModel = cache[id];
+                var oldModel = cacheService.get(id);
 
                 // Same object instance is a possibility, so don't copy
                 if (oldModel === model) {
@@ -108,7 +108,7 @@ define(
             }
 
             // Otherwise, just expose the cache directly
-            return fastPromise(cache);
+            return fastPromise(cacheService.all());
         };
 
         return CachingModelDecorator;
