@@ -77,6 +77,7 @@ $colorInputBg: $colorGenBg;
 $colorInputFg: $colorBodyFg;
 $colorFormText: pushBack($colorBodyFg, 10%);
 $colorInputIcon: pushBack($colorBodyFg, 25%);
+$colorFieldHint: pullForward($colorBodyFg, 40%);
 
 // Inspector
 $colorInspectorBg: pullForward($colorBodyBg, 5%);
@@ -125,6 +126,7 @@ $colorOvrBg: $colorBodyBg;
 $colorOvrFg: $colorBodyFg;
 $colorOvrBtnBg: pullForward($colorOvrBg, 40%);
 $colorOvrBtnFg: #fff;
+$colorFieldHintOverlay: pullForward($colorOvrBg, 40%);
 
 // Items
 $colorItemBg: #ddd;

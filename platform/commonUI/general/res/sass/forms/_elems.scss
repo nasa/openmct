@@ -87,9 +87,7 @@
 			}
 		}
 
-		.field-hints {
-			color: darken($colorBodyFg, 20%);
-		}
+		.hint, .field-hints {  color: $colorFieldHint;  }
 
 		.selector-list {
 			// Used in create overlay to display tree view
@@ -127,6 +125,14 @@
         @include flex(0 0 auto);
         margin-right: $interiorMargin;
         order: 1;
+    }
+}
+
+.l-controls-under.l-flex-row {
+    // Change to use column layout
+    @include flex-direction(column);
+    .flex-elem {
+        margin-bottom: $interiorMarginLg;
     }
 }
 

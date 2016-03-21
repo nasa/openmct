@@ -65,9 +65,7 @@
         margin-bottom: $interiorMargin;
     }
 
-    .hint {
-        color: pushBack($colorOvrFg, 20%);
-    }
+    .hint, .field-hints { color: $colorFieldHintOverlay !important;  }
 
     .abs.top-bar {
         height: $ovrTopBarH;

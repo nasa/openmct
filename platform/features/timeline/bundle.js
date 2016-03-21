@@ -312,7 +312,8 @@ define([
                                         "dialog": {
                                             "control": "selector",
                                             "name": "Modes",
-                                            "type": "mode"
+                                            "type": "mode",
+                                            "layout": "controls-under"
                                         },
                                         "property": "modes"
                                     },
