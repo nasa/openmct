@@ -26,6 +26,12 @@ define(
     function () {
         "use strict";
 
+        var NULL_ACTION = {
+            perform: function () {
+                return Promise.resolve(true);
+            }
+        };
+
         /**
          * Handles drop (from drag-and-drop) initiated changes to a swimlane.
          * @constructor
@@ -119,11 +125,7 @@ define(
                     droppedParentId = droppedParent && droppedParent.getId();
 
                 if (targetObject.getId() === droppedParentId) {
-                    return {
-                        perform: function () {
-                            return Promise.resolve(true);
-                        }
-                    };
+                    return NULL_ACTION;
                 }
 
                 return actionCapability && actionCapability.getActions({
