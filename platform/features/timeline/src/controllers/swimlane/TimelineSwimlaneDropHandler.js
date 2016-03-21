@@ -110,14 +110,26 @@ define(
             // Choose an appropriate composition action for the drag-and-drop
             function chooseAction(targetObject, droppedObject) {
                 var actionCapability =
-                    targetObject.getCapability('action'),
+                        targetObject.getCapability('action'),
                     actionKey = droppedObject.hasCapability('editor') ?
                         'move' : 'link',
-                    actions = actionCapability && actionCapability.getActions({
-                        key: actionKey,
-                        selectedObject: droppedObject
-                    });
-                return actions[0];
+                    droppedContext = droppedObject.getCapability('context'),
+                    droppedParent =
+                        droppedContext && droppedContext.getParent(),
+                    droppedParentId = droppedParent && droppedParent.getId();
+
+                if (targetObject.getId() === droppedParentId) {
+                    return {
+                        perform: function () {
+                            return Promise.resolve(true);
+                        }
+                    };
+                }
+
+                return actionCapability && actionCapability.getActions({
+                    key: actionKey,
+                    selectedObject: droppedObject
+                })[0];
             }
 
             // Choose an index for insertion in a domain object's composition
@@ -135,9 +147,10 @@ define(
             function insert(id, target, indexOffset) {
                 var myId = swimlane.domainObject.getId();
                 return doMutate(target, function (model) {
-                    model.composition = model.composition.filter(function (i) {
-                        return i !== id;
-                    });
+                    model.composition =
+                        model.composition.filter(function (compId) {
+                            return compId !== id;
+                        });
                     model.composition.splice(
                         chooseTargetIndex(myId, indexOffset, model.composition),
                         0,
