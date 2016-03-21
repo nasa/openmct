@@ -108,15 +108,16 @@ define(
 
 
             // Choose an appropriate composition action for the drag-and-drop
-            function chooseAction(swimlane, domainObject) {
+            function chooseAction(targetObject, droppedObject) {
                 var actionCapability =
-                    swimlane.domainObject.getCapability('action'),
-                    actionKey = domainObject.hasCapability('editor') ?
-                        'move' : 'link';
-                return actionCapability && actionCapability.getActions({
-                    key: actionKey,
-                    selectedObject: domainObject
-                })[0];
+                    targetObject.getCapability('action'),
+                    actionKey = droppedObject.hasCapability('editor') ?
+                        'move' : 'link',
+                    actions = actionCapability && actionCapability.getActions({
+                        key: actionKey,
+                        selectedObject: droppedObject
+                    });
+                return actions[0];
             }
 
             // Choose an index for insertion in a domain object's composition
@@ -134,6 +135,9 @@ define(
             function insert(id, target, indexOffset) {
                 var myId = swimlane.domainObject.getId();
                 return doMutate(target, function (model) {
+                    model.composition = model.composition.filter(function (i) {
+                        return i !== id;
+                    });
                     model.composition.splice(
                         chooseTargetIndex(myId, indexOffset, model.composition),
                         0,
@@ -142,17 +146,11 @@ define(
                 });
             }
 
-            function drop(domainObject, swimlane, indexOffset) {
-                var action = chooseAction(swimlane, domainObject);
+            function drop(domainObject, targetObject, indexOffset) {
+                var action = chooseAction(targetObject, domainObject);
                 return action.perform().then(function () {
-                    return insert(
-                        domainObject.getId(),
-                        swimlane.domainObject,
-                        indexOffset
-                    );
-                }).then(function () {
-                    return swimlane.domainObject.getCapability('persistence')
-                        .persist();
+                    var id = domainObject.getId();
+                    return insert(id, targetObject, indexOffset);
                 });
             }
 
@@ -168,7 +166,7 @@ define(
                     return inEditMode() &&
                         !pathContains(swimlane, id) &&
                         !contains(swimlane, id) &&
-                        !!chooseAction(swimlane, domainObject);
+                        !!chooseAction(swimlane.domainObject, domainObject);
                 },
                 /**
                  * Check if a drop-after should be allowed for this swimlane,
@@ -183,7 +181,7 @@ define(
                     return inEditMode() &&
                         target &&
                         !pathContains(target, id) &&
-                        !!chooseAction(target, domainObject);
+                        !!chooseAction(target.domainObject, domainObject);
                 },
                 /**
                  * Drop the provided domain object into a timeline. This is
