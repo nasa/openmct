@@ -22,8 +22,11 @@
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
-    ["../../src/models/CachingModelDecorator"],
-    function (CachingModelDecorator) {
+    [
+        "../../src/models/CachingModelDecorator",
+        "../../src/models/ModelCacheService"
+    ],
+    function (CachingModelDecorator, ModelCacheService) {
         "use strict";
 
         describe("The caching model decorator", function () {
@@ -67,7 +70,10 @@ define(
                     b: { someOtherKey: "some other value" }
                 };
                 mockModelService.getModels.andReturn(asPromise(testModels));
-                decorator = new CachingModelDecorator(mockModelService);
+                decorator = new CachingModelDecorator(
+                    new ModelCacheService(),
+                    mockModelService
+                );
             });
 
             it("loads models from its wrapped model service", function () {
