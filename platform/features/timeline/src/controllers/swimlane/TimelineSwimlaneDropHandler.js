@@ -106,6 +106,19 @@ define(
                 return swimlane.highlight() || expandedForDropInto();
             }
 
+
+            // Choose an appropriate composition action for the drag-and-drop
+            function chooseAction(swimlane, domainObject) {
+                var actionCapability =
+                    swimlane.domainObject.getCapability('action'),
+                    actionKey = domainObject.hasCapability('editor') ?
+                        'move' : 'link';
+                return actionCapability && actionCapability.getActions({
+                    key: actionKey,
+                    selectedObject: domainObject
+                })[0];
+            }
+
             // Choose an index for insertion in a domain object's composition
             function chooseTargetIndex(id, offset, composition) {
                 return Math.max(
@@ -129,17 +142,18 @@ define(
                 });
             }
 
-            // Check if a compose action is allowed for the object in this
-            // swimlane (we handle the link differently to set the index,
-            // but check for the existence of the action to invole the
-            // relevant policies.)
-            function allowsCompose(swimlane, domainObject) {
-                var actionCapability =
-                    swimlane.domainObject.getCapability('action');
-                return actionCapability && actionCapability.getActions({
-                    key: 'compose',
-                    selectedObject: domainObject
-                }).length > 0;
+            function drop(domainObject, swimlane, indexOffset) {
+                var action = chooseAction(swimlane, domainObject);
+                return action.perform().then(function () {
+                    return insert(
+                        domainObject.getId(),
+                        swimlane.domainObject,
+                        indexOffset
+                    );
+                }).then(function () {
+                    return swimlane.domainObject.getCapability('persistence')
+                        .persist();
+                });
             }
 
             return {
@@ -154,7 +168,7 @@ define(
                     return inEditMode() &&
                         !pathContains(swimlane, id) &&
                         !contains(swimlane, id) &&
-                        allowsCompose(swimlane, domainObject);
+                        !!chooseAction(swimlane, domainObject);
                 },
                 /**
                  * Check if a drop-after should be allowed for this swimlane,
@@ -169,7 +183,7 @@ define(
                     return inEditMode() &&
                         target &&
                         !pathContains(target, id) &&
-                        allowsCompose(target, domainObject);
+                        !!chooseAction(target, domainObject);
                 },
                 /**
                  * Drop the provided domain object into a timeline. This is
@@ -192,11 +206,7 @@ define(
                                         Number.POSITIVE_INFINITY;
 
                     if (swimlane.highlight() || swimlane.highlightBottom()) {
-                        // Remove the domain object from its original location...
-                        return asPromise(remove(domainObject)).then(function () {
-                            // ...then insert it at its new location.
-                            insert(id, dropTarget, dropIndexOffset);
-                        });
+                        return drop(domainObject, dropTarget, dropIndexOffset);
                     }
                 }
             };
