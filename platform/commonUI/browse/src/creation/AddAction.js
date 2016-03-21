@@ -100,20 +100,14 @@ define(
                 });
             }
 
-            function save(object) {
-                /*
-                It's necessary to persist the new sub-object in order
-                 that it can be retrieved for composition in the parent.
-                 Future refactoring that allows temporary objects to be
-                 retrieved from object services will make this unnecessary.
-                 */
-                return object.getCapability('editor').save(true);
+            function persistNewObject(object) {
+                return object.getCapability('persistence').persist();
             }
 
             return this.dialogService
                 .getUserInput(wizard.getFormStructure(false), wizard.getInitialFormValue())
                 .then(populateObjectFromInput)
-                .then(save)
+                .then(persistNewObject)
                 .then(addToParent);
 
         };
