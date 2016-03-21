@@ -35,9 +35,8 @@ define(
          * @param {ModelService} modelService this service to decorate
          * @implements {ModelService}
          */
-        function CachingModelDecorator(modelService) {
-            this.cache = {};
-            this.cached = {};
+        function CachingModelDecorator(cacheService, modelService) {
+            this.cacheService = cacheService;
             this.modelService = modelService;
         }
 
@@ -51,10 +50,9 @@ define(
         }
 
         CachingModelDecorator.prototype.getModels = function (ids) {
-            var cache = this.cache,
-                cached = this.cached,
+            var cacheService = this.cacheService,
                 neededIds = ids.filter(function notCached(id) {
-                    return !cached[id];
+                    return !cacheService.has(id);
                 });
 
             // Update the cached instance of a model to a new value.
@@ -71,7 +69,7 @@ define(
                 // If we'd previously cached an undefined value, or are now
                 // seeing undefined, replace the item in the cache entirely.
                 if (oldModel === undefined || model === undefined) {
-                    cache[id] = model;
+                    cacheService.put(id, model);
                     return model;
                 }
 
@@ -91,15 +89,15 @@ define(
             // Store the provided models in our cache
             function cacheAll(models) {
                 Object.keys(models).forEach(function (id) {
-                    cache[id] = cached[id] ?
+                    var model = cacheService.has(id) ?
                         updateModel(id, models[id]) : models[id];
-                    cached[id] = true;
+                    cacheService.put(id, model);
                 });
             }
 
             // Expose the cache (for promise chaining)
             function giveCache() {
-                return cache;
+                return cacheService.all();
             }
 
             // Look up if we have unknown IDs

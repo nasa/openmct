@@ -27,6 +27,7 @@ define([
     "./src/models/StaticModelProvider",
     "./src/models/RootModelProvider",
     "./src/models/ModelAggregator",
+    "./src/models/ModelCacheService",
     "./src/models/PersistedModelProvider",
     "./src/models/CachingModelDecorator",
     "./src/models/MissingModelDecorator",
@@ -58,6 +59,7 @@ define([
     StaticModelProvider,
     RootModelProvider,
     ModelAggregator,
+    ModelCacheService,
     PersistedModelProvider,
     CachingModelDecorator,
     MissingModelDecorator,
@@ -182,7 +184,10 @@ define([
                 {
                     "provides": "modelService",
                     "type": "decorator",
-                    "implementation": CachingModelDecorator
+                    "implementation": CachingModelDecorator,
+                    "depends": [
+                        "cacheService"
+                    ]
                 },
                 {
                     "provides": "modelService",
@@ -319,6 +324,7 @@ define([
                     "key": "persistence",
                     "implementation": PersistenceCapability,
                     "depends": [
+                        "cacheService",
                         "persistenceService",
                         "identifierService",
                         "notificationService",
@@ -354,6 +360,10 @@ define([
                 }
             ],
             "services": [
+                {
+                    "key": "cacheService",
+                    "implementation": ModelCacheService
+                },
                 {
                     "key": "now",
                     "implementation": Now

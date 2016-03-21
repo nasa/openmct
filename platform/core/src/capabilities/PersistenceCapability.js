@@ -46,6 +46,7 @@ define(
          * @implements {Capability}
          */
         function PersistenceCapability(
+            cacheService,
             persistenceService,
             identifierService,
             notificationService,
@@ -56,6 +57,7 @@ define(
             this.modified = domainObject.getModel().modified;
 
             this.domainObject = domainObject;
+            this.cacheService = cacheService;
             this.identifierService = identifierService;
             this.persistenceService = persistenceService;
             this.notificationService = notificationService;
@@ -130,6 +132,7 @@ define(
                 domainObject = this.domainObject,
                 model = domainObject.getModel(),
                 modified = model.modified,
+                cacheService = this.cacheService,
                 persistenceService = this.persistenceService,
                 persistenceFn = model.persisted !== undefined ?
                     this.persistenceService.updateObject :
@@ -146,6 +149,9 @@ define(
                 getKey(domainObject.getId()),
                 domainObject.getModel()
             ]).then(function(result){
+                if (result) {
+                    cacheService.remove(domainObject.getId());
+                }
                 return rejectIfFalsey(result, self.$q);
             }).catch(function(error){
                 return notifyOnError(error, domainObject, self.notificationService, self.$q);
