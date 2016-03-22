@@ -82,12 +82,17 @@ define(
                     ),
                     draggedSwimlane = dndService.getData(
                         SwimlaneDragConstants.TIMELINE_SWIMLANE_DRAG_TYPE
-                    );
+                    ),
+                    droppedObject = draggedSwimlane ?
+                        draggedSwimlane.domainObject :
+                        dndService.getData(
+                            SwimlaneDragConstants.MCT_EXTENDED_DRAG_TYPE
+                        );
 
                 if (id) {
                     event.stopPropagation();
                     // Delegate the drop to the swimlane itself
-                    swimlane.drop(id, (draggedSwimlane || {}).domainObject);
+                    swimlane.drop(id, droppedObject);
                 }
 
                 // Clear the swimlane highlights
