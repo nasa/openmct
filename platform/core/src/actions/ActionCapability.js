@@ -28,7 +28,8 @@ define(
     [],
     function () {
         "use strict";
-        var DISALLOWED_ACTIONS = ["copy", "link", "window", "follow"];
+        var DISALLOWED_ACTIONS = ["copy", "window", "follow"];
+
         /**
          * The ActionCapability allows applicable Actions to be retrieved and
          * performed for specific domain objects, e.g.:
