@@ -55,7 +55,7 @@ define(
                     'dndService',
                     ['setData', 'getData', 'removeData']
                 );
-                mockScope = jasmine.createSpyObj('$scope', ['$eval']);
+                mockScope = jasmine.createSpyObj('$scope', ['$eval', '$apply']);
                 mockElement = jasmine.createSpyObj('element', ['on']);
                 testAttrs = { mctSwimlaneDrop: "mockSwimlane" };
                 mockSwimlane = jasmine.createSpyObj(
@@ -118,6 +118,7 @@ define(
 
                 expect(mockSwimlane.highlight).toHaveBeenCalledWith(true);
                 expect(mockSwimlane.highlightBottom).toHaveBeenCalledWith(false);
+                expect(mockScope.$apply).toHaveBeenCalled();
             });
 
             it("updates bottom highlights on drag over", function () {
@@ -128,6 +129,7 @@ define(
 
                 expect(mockSwimlane.highlight).toHaveBeenCalledWith(false);
                 expect(mockSwimlane.highlightBottom).toHaveBeenCalledWith(true);
+                expect(mockScope.$apply).toHaveBeenCalled();
             });
 
             it("respects swimlane's allowDropIn response", function () {
@@ -157,12 +159,15 @@ define(
             it("notifies swimlane on drop", function () {
                 handlers.drop(testEvent);
                 expect(mockSwimlane.drop).toHaveBeenCalledWith('abc', 'someDomainObject');
+                expect(mockScope.$apply).toHaveBeenCalled();
             });
 
             it("clears highlights when drag leaves", function () {
+                mockSwimlane.highlight.andReturn(true);
                 handlers.dragleave();
                 expect(mockSwimlane.highlight).toHaveBeenCalledWith(false);
                 expect(mockSwimlane.highlightBottom).toHaveBeenCalledWith(false);
+                expect(mockScope.$apply).toHaveBeenCalled();
             });
         });
     }
