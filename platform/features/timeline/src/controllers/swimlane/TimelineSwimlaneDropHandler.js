@@ -26,12 +26,6 @@ define(
     function () {
         "use strict";
 
-        var NULL_ACTION = {
-            perform: function () {
-                return Promise.resolve(true);
-            }
-        };
-
         /**
          * Handles drop (from drag-and-drop) initiated changes to a swimlane.
          * @constructor
@@ -112,15 +106,7 @@ define(
                 var actionCapability =
                         targetObject.getCapability('action'),
                     actionKey = droppedObject.hasCapability('editor') ?
-                        'move' : 'link',
-                    droppedContext = droppedObject.getCapability('context'),
-                    droppedParent =
-                        droppedContext && droppedContext.getParent(),
-                    droppedParentId = droppedParent && droppedParent.getId();
-
-                if (targetObject.getId() === droppedParentId) {
-                    return NULL_ACTION;
-                }
+                        'move' : 'link';
 
                 return actionCapability && actionCapability.getActions({
                     key: actionKey,
@@ -155,12 +141,27 @@ define(
                 });
             }
 
+            function canDrop(targetObject, droppedObject) {
+                var droppedContext = droppedObject.getCapability('context'),
+                    droppedParent =
+                        droppedContext && droppedContext.getParent(),
+                    droppedParentId = droppedParent && droppedParent.getId();
+
+                return (targetObject.getId() === droppedParentId) ||
+                        !!chooseAction(targetObject, droppedObject);
+            }
+
             function drop(domainObject, targetObject, indexOffset) {
                 var action = chooseAction(targetObject, domainObject);
-                return action.perform().then(function () {
+
+                function changeIndex() {
                     var id = domainObject.getId();
                     return insert(id, targetObject, indexOffset);
-                });
+                }
+
+                return action ?
+                    action.perform().then(changeIndex) :
+                    changeIndex();
             }
 
             return {
@@ -175,7 +176,7 @@ define(
                     return inEditMode() &&
                         !pathContains(swimlane, id) &&
                         !contains(swimlane, id) &&
-                        !!chooseAction(swimlane.domainObject, domainObject);
+                        canDrop(swimlane.domainObject, domainObject);
                 },
                 /**
                  * Check if a drop-after should be allowed for this swimlane,
@@ -190,7 +191,7 @@ define(
                     return inEditMode() &&
                         target &&
                         !pathContains(target, id) &&
-                        !!chooseAction(target.domainObject, domainObject);
+                        canDrop(target.domainObject, domainObject);
                 },
                 /**
                  * Drop the provided domain object into a timeline. This is
