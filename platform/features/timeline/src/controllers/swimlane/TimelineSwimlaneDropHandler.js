@@ -80,12 +80,6 @@ define(
                 return swimlane.children.map(matches).reduce(or, false);
             }
 
-            // Remove a domain object from its current location
-            function remove(domainObject) {
-                return domainObject &&
-                    domainObject.getCapability('action').perform('remove');
-            }
-
             // Initiate mutation of a domain object
             function doMutate(domainObject, mutator) {
                 return asPromise(
