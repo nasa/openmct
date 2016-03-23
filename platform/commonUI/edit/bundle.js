@@ -37,6 +37,7 @@ define([
     "./src/policies/EditableLinkPolicy",
     "./src/policies/EditableMovePolicy",
     "./src/policies/EditNavigationPolicy",
+    "./src/policies/EditContextualActionPolicy",
     "./src/representers/EditRepresenter",
     "./src/representers/EditToolbarRepresenter",
     "text!./res/templates/library.html",
@@ -61,6 +62,7 @@ define([
     EditableLinkPolicy,
     EditableMovePolicy,
     EditNavigationPolicy,
+    EditContextualActionPolicy,
     EditRepresenter,
     EditToolbarRepresenter,
     libraryTemplate,
@@ -190,6 +192,11 @@ define([
                 {
                     "category": "action",
                     "implementation": EditActionPolicy
+                },
+                {
+                    "category": "action",
+                    "implementation": EditContextualActionPolicy,
+                    "depends": ["navigationService"]
                 },
                 {
                     "category": "action",
