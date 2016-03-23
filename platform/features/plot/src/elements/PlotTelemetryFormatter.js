@@ -26,6 +26,8 @@ define(
     function () {
         'use strict';
 
+        var DIGITS = 3;
+
         /**
          * Wraps a `TelemetryFormatter` to provide formats for domain and
          * range values; provides a single place to track domain/range
@@ -63,6 +65,10 @@ define(
         };
 
         PlotTelemetryFormatter.prototype.formatRangeValue = function (value) {
+            if (typeof value === 'number') {
+                return value.toFixed(DIGITS);
+            }
+
             return this.telemetryFormatter
                 .formatRangeValue(value, this.rangeFormat);
         };
