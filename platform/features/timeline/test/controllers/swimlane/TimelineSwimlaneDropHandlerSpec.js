@@ -204,6 +204,27 @@ define(
                 expect(testModel.composition).toEqual([ 'x', 'b', 'd', 'y']);
             });
 
+            it("allows reordering within a parent", function () {
+                var testModel = { composition: [ 'x', 'b', 'y', 'd' ] };
+                mockSwimlane.highlightBottom.andReturn(true);
+                mockSwimlane.expanded = true;
+                mockSwimlane.children = [];
+                mockContext.getParent
+                    .andReturn(mockSwimlane.parent.domainObject);
+                handler.drop('d', mockOtherObject);
+
+                waitsFor(function () {
+                    return mockSwimlane.parent.domainObject.useCapability
+                        .calls.length > 0;
+                });
+
+                runs(function () {
+                    mockSwimlane.parent.domainObject.useCapability.mostRecentCall
+                        .args[1](testModel);
+                    expect(testModel.composition).toEqual([ 'x', 'b', 'd', 'y']);
+                });
+            });
+
         });
     }
 );
