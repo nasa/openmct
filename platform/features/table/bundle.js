@@ -62,8 +62,8 @@ define([
                 {
                     "key": "table",
                     "name": "Historical Telemetry Table",
-                    "glyph": "\ue605",
-                    "description": "A table for displaying telemetry data",
+                    "glyph": "\ue604",
+                    "description": "A table for displaying historic telemetry data",
                     "features": "creation",
                     "delegates": [
                         "telemetry"
@@ -84,8 +84,8 @@ define([
                 {
                     "key": "rttable",
                     "name": "Real-time Telemetry Table",
-                    "glyph": "\ue605",
-                    "description": "A table for displaying realtime telemetry" +
+                    "glyph": "\ue620",
+                    "description": "A table for displaying real-time telemetry" +
                     " data",
                     "features": "creation",
                     "delegates": [
@@ -128,7 +128,7 @@ define([
                 {
                     "name": "Historical Table",
                     "key": "table",
-                    "glyph": "\ue605",
+                    "glyph": "\ue604",
                     "templateUrl": "templates/table.html",
                     "needs": [
                         "telemetry"
@@ -139,7 +139,7 @@ define([
                 {
                     "name": "Real-time Table",
                     "key": "rt-table",
-                    "glyph": "\ue605",
+                    "glyph": "\ue620",
                     "templateUrl": "templates/rt-table.html",
                     "needs": [
                         "telemetry"
