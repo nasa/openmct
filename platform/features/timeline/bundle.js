@@ -312,7 +312,8 @@ define([
                                         "dialog": {
                                             "control": "selector",
                                             "name": "Modes",
-                                            "type": "mode"
+                                            "type": "mode",
+                                            "layout": "controls-under"
                                         },
                                         "property": "modes"
                                     },
@@ -324,7 +325,8 @@ define([
                                         "dialog": {
                                             "control": "textfield",
                                             "name": "Link",
-                                            "pattern": "^(ftp|https?)\\:\\/\\/\\w+(\\.\\w+)*(\\:\\d+)?(\\/\\S*)*$"
+                                            "pattern": "^(ftp|https?)\\:\\/\\/\\w+(\\.\\w+)*(\\:\\d+)?(\\/\\S*)*$",
+                                            "cssclass": "l-input-lg"
                                         },
                                         "property": "link"
                                     },
