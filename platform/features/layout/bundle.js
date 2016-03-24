@@ -94,7 +94,7 @@ define([
                                             {
                                                 "name": "Line",
                                                 "glyph": "\u00e2",
-                                                    "key": "fixed.line"
+                                                "key": "fixed.line"
                                             },
                                             {
                                                 "name": "Text",
