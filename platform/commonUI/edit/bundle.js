@@ -34,6 +34,8 @@ define([
     "./src/actions/SaveAction",
     "./src/actions/CancelAction",
     "./src/policies/EditActionPolicy",
+    "./src/policies/EditableLinkPolicy",
+    "./src/policies/EditableMovePolicy",
     "./src/policies/EditNavigationPolicy",
     "./src/representers/EditRepresenter",
     "./src/representers/EditToolbarRepresenter",
@@ -56,6 +58,8 @@ define([
     SaveAction,
     CancelAction,
     EditActionPolicy,
+    EditableLinkPolicy,
+    EditableMovePolicy,
     EditNavigationPolicy,
     EditRepresenter,
     EditToolbarRepresenter,
@@ -186,6 +190,14 @@ define([
                 {
                     "category": "action",
                     "implementation": EditActionPolicy
+                },
+                {
+                    "category": "action",
+                    "implementation": EditableMovePolicy
+                },
+                {
+                    "category": "action",
+                    "implementation": EditableLinkPolicy
                 },
                 {
                     "category": "navigation",

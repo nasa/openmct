@@ -74,12 +74,6 @@ define(
                 return swimlane.children.map(matches).reduce(or, false);
             }
 
-            // Remove a domain object from its current location
-            function remove(domainObject) {
-                return domainObject &&
-                    domainObject.getCapability('action').perform('remove');
-            }
-
             // Initiate mutation of a domain object
             function doMutate(domainObject, mutator) {
                 return asPromise(
@@ -106,6 +100,20 @@ define(
                 return swimlane.highlight() || expandedForDropInto();
             }
 
+
+            // Choose an appropriate composition action for the drag-and-drop
+            function chooseAction(targetObject, droppedObject) {
+                var actionCapability =
+                        targetObject.getCapability('action'),
+                    actionKey = droppedObject.hasCapability('editor') ?
+                        'move' : 'link';
+
+                return actionCapability && actionCapability.getActions({
+                    key: actionKey,
+                    selectedObject: droppedObject
+                })[0];
+            }
+
             // Choose an index for insertion in a domain object's composition
             function chooseTargetIndex(id, offset, composition) {
                 return Math.max(
@@ -121,6 +129,10 @@ define(
             function insert(id, target, indexOffset) {
                 var myId = swimlane.domainObject.getId();
                 return doMutate(target, function (model) {
+                    model.composition =
+                        model.composition.filter(function (compId) {
+                            return compId !== id;
+                        });
                     model.composition.splice(
                         chooseTargetIndex(myId, indexOffset, model.composition),
                         0,
@@ -129,17 +141,27 @@ define(
                 });
             }
 
-            // Check if a compose action is allowed for the object in this
-            // swimlane (we handle the link differently to set the index,
-            // but check for the existence of the action to invole the
-            // relevant policies.)
-            function allowsCompose(swimlane, domainObject) {
-                var actionCapability =
-                    swimlane.domainObject.getCapability('action');
-                return actionCapability && actionCapability.getActions({
-                    key: 'compose',
-                    selectedObject: domainObject
-                }).length > 0;
+            function canDrop(targetObject, droppedObject) {
+                var droppedContext = droppedObject.getCapability('context'),
+                    droppedParent =
+                        droppedContext && droppedContext.getParent(),
+                    droppedParentId = droppedParent && droppedParent.getId();
+
+                return (targetObject.getId() === droppedParentId) ||
+                        !!chooseAction(targetObject, droppedObject);
+            }
+
+            function drop(domainObject, targetObject, indexOffset) {
+                var action = chooseAction(targetObject, domainObject);
+
+                function changeIndex() {
+                    var id = domainObject.getId();
+                    return insert(id, targetObject, indexOffset);
+                }
+
+                return action ?
+                    action.perform().then(changeIndex) :
+                    changeIndex();
             }
 
             return {
@@ -154,7 +176,7 @@ define(
                     return inEditMode() &&
                         !pathContains(swimlane, id) &&
                         !contains(swimlane, id) &&
-                        allowsCompose(swimlane, domainObject);
+                        canDrop(swimlane.domainObject, domainObject);
                 },
                 /**
                  * Check if a drop-after should be allowed for this swimlane,
@@ -169,7 +191,7 @@ define(
                     return inEditMode() &&
                         target &&
                         !pathContains(target, id) &&
-                        allowsCompose(target, domainObject);
+                        canDrop(target.domainObject, domainObject);
                 },
                 /**
                  * Drop the provided domain object into a timeline. This is
@@ -192,11 +214,7 @@ define(
                                         Number.POSITIVE_INFINITY;
 
                     if (swimlane.highlight() || swimlane.highlightBottom()) {
-                        // Remove the domain object from its original location...
-                        return asPromise(remove(domainObject)).then(function () {
-                            // ...then insert it at its new location.
-                            insert(id, dropTarget, dropIndexOffset);
-                        });
+                        return drop(domainObject, dropTarget, dropIndexOffset);
                     }
                 }
             };
