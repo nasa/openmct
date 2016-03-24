@@ -35,15 +35,15 @@
     }
 }
 
-mct-representation {
+mct-representation,
+.rep-object-label {
     &.s-status-pending {
         .t-object-label {
             .t-item-icon {
                 &:before {
-                    $spinBW: 4px;
-                    @include spinner($spinBW);
+                    @include spinner($waitSpinnerTreeBorderW,  $colorLoadingFg);
                     content: "";
-                    padding: 30%;
+                    height: $waitSpinnerTreeD; width: $waitSpinnerTreeD;
                 }
                 .t-item-icon-glyph {
                     display: none;
@@ -57,7 +57,10 @@ mct-representation {
     }
 }
 
-.selected mct-representation.s-status-pending .t-object-label .t-item-icon:before {
-    border-color: rgba($colorItemTreeSelectedFg, 0.25) !important;
-    border-top-color: rgba($colorItemTreeSelectedFg, 1.0) !important;
+.selected mct-representation,
+.selected .rep-object-label {
+    .s-status-pending .t-object-label .t-item-icon:before {
+        border-color: rgba($colorItemTreeSelectedFg, 0.25) !important;
+        border-top-color: rgba($colorItemTreeSelectedFg, 1.0) !important;
+    }
 }

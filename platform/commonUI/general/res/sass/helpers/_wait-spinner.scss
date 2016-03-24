@@ -28,7 +28,7 @@
     100% { @include transform(translate(-50%, -50%) rotate(360deg)); }
 }
 
-@mixin spinner($b: 5px, $c: $colorKey) {
+@mixin  spinner($b: 5px, $c: $colorKey) {
     @include transform-origin(center);
     @include animation-name(rotation-centered);
     @include animation-duration(0.5s);
@@ -76,14 +76,17 @@
         z-index: 9;
     }
     &.tree-item.t-wait-node {
-        $d: $treeTypeIconW;
+        $d: $waitSpinnerTreeD;
         $spinnerL: $treeVCW + $interiorMargin + 3px + $d/2;
-        font-style: italic;
         padding-left: $spinnerL + $d/2 + $interiorMargin;
+        .t-title-label {
+            font-style: italic;
+            opacity: 0.6;
+        }
         &:before {
             height: $d;
             width: $d;
-            border-width: 3px;
+            border-width: 4px;
             left: $spinnerL;
         }
         &:after {
