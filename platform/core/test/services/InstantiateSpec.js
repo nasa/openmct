@@ -32,8 +32,7 @@ define(
                 mockIdentifierService,
                 mockCapabilityConstructor,
                 mockCapabilityInstance,
-                mockCapabilities,
-                mockIdentifier,
+                mockCacheService,
                 idCounter,
                 testModel,
                 instantiate,
@@ -62,11 +61,17 @@ define(
                             "some-id-" + (idCounter += 1);
                 });
 
+                mockCacheService = jasmine.createSpyObj(
+                    'cacheService',
+                    [ 'get', 'put', 'remove', 'all' ]
+                );
+
                 testModel = { someKey: "some value" };
 
                 instantiate = new Instantiate(
                     mockCapabilityService,
-                    mockIdentifierService
+                    mockIdentifierService,
+                    mockCacheService
                 );
                 domainObject = instantiate(testModel);
             });
@@ -91,6 +96,13 @@ define(
                 expect(domainObject.getId()).toEqual(jasmine.any(String));
                 expect(instantiate(testModel).getId())
                     .not.toEqual(domainObject.getId());
+            });
+
+            it("caches the instantiated model", function () {
+                expect(mockCacheService.put).toHaveBeenCalledWith(
+                    domainObject.getId(),
+                    testModel
+                );
             });
         });
 
