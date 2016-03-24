@@ -141,6 +141,7 @@ define([
                     "name": "Timeline",
                     "glyph": "\u0053",
                     "description": "A time-oriented container that lets you enclose and organize other Timelines and Activities. The Timeline view provides both tabular and Gantt views as well as resource utilization graphing of Activities.",
+                    "priority": 502,
                     "features": [
                         "creation"
                     ],
@@ -186,6 +187,7 @@ define([
                         "activity"
                     ],
                     "description": "An event or process that starts and ends at a discrete datetime. Activities can be nested in other Activities, and can be added to Timelines. Activity Modes can be added to an Activity to define its resource utilization over time.",
+                    "priority": 501,
                     "properties": [
                         {
                             "name": "Start date/time",
@@ -222,6 +224,7 @@ define([
                         "creation"
                     ],
                     "description": "When a sub-system utilizes Power or Communications resources over time, you can define those values in an Activity Mode. Activity Modes can then be linked to Activities to allow resource utilization graphing and estimating in a Timeline.",
+                    "priority": 500,
                     "model": {
                         "resources": {
                             "comms": 0,

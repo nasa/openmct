@@ -265,6 +265,7 @@ define([
                     "name": "Display Layout",
                     "glyph": "\u004c",
                     "description": "Assemble other objects and components together into a reusable screen layout. Working in a simple canvas workspace, simply drag in the objects you want, position and size them. Save your design and view or edit it at any time.",
+                    "priority": 900,
                     "features": "creation",
                     "model": {
                         "composition": []
@@ -296,6 +297,7 @@ define([
                     "name": "Telemetry Panel",
                     "glyph": "t",
                     "description": "A panel for collecting telemetry elements.",
+                    "priority": 899,
                     "delegates": [
                         "telemetry"
                     ],

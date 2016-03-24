@@ -263,6 +263,7 @@ define([
                     "glyph": "\u0046",
                     "features": "creation",
                     "description": "Create folders to organize other objects or links to objects.",
+                    "priority": 1000,
                     "model": {
                         "composition": []
                     }

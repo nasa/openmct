@@ -52,6 +52,7 @@ define([
                     "glyph": "\u00e3",
                     "features": "creation",
                     "description": "For development use. Creates example imagery data that mimics a live imagery stream.",
+                    "priority": 10,
                     "model": {
                         "telemetry": {}
                     },

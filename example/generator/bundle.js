@@ -88,6 +88,7 @@ define([
                     "name": "Sine Wave Generator",
                     "glyph": "\u0054",
                     "description": "For development use. Generates example streaming telemetry data using a simple sine wave algorithm.",
+                    "priority": 10,
                     "features": "creation",
                     "model": {
                         "telemetry": {

@@ -51,6 +51,7 @@ define([
                     "name": "Event Message Generator",
                     "glyph": "\u0066",
                     "description": "For development use. Creates sample event message data that mimics a live data stream.",
+                    "priority": 10,
                     "features": "creation",
                     "model": {
                         "telemetry": {}
