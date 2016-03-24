@@ -32,7 +32,6 @@ define([], function () {
      */
     function ModelCacheService() {
         this.cache = {};
-        this.cached = {};
     }
 
     /**
@@ -41,7 +40,6 @@ define([], function () {
      * @param {object} model the domain object's model
      */
     ModelCacheService.prototype.put = function (id, model) {
-        this.cached[id] = true;
         this.cache[id] = model;
     };
 
@@ -60,7 +58,7 @@ define([], function () {
      * @returns {boolean} true if present; false if not
      */
     ModelCacheService.prototype.has = function (id) {
-        return !!this.cached[id];
+        return this.cache.hasOwnProperty(id);
     };
 
     /**
@@ -68,7 +66,6 @@ define([], function () {
      * @param {string} id the domain object's identifier
      */
     ModelCacheService.prototype.remove = function (id) {
-        delete this.cached[id];
         delete this.cache[id];
     };
 
