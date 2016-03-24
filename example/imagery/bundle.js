@@ -49,8 +49,9 @@ define([
                 {
                     "key": "imagery",
                     "name": "Example Imagery",
-                    "glyph": "T",
+                    "glyph": "\u00e3",
                     "features": "creation",
+                    "description": "For development use. Creates example imagery data that mimics a live imagery stream.",
                     "model": {
                         "telemetry": {}
                     },

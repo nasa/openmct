@@ -32,7 +32,7 @@ define([
 
     legacyRegistry.register("example/eventGenerator", {
         "name": "Event Message Generator",
-        "description": "Example of a component that produces event data.",
+        "description": "For development use. Creates sample event message data that mimics a live data stream.",
         "extensions": {
             "components": [
                 {
@@ -49,8 +49,8 @@ define([
                 {
                     "key": "eventGenerator",
                     "name": "Event Message Generator",
-                    "glyph": "f",
-                    "description": "An event message generator",
+                    "glyph": "\u0066",
+                    "description": "For development use. Creates sample event message data that mimics a live data stream.",
                     "features": "creation",
                     "model": {
                         "telemetry": {}

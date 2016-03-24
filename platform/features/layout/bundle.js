@@ -58,7 +58,7 @@ define([
                 {
                     "key": "layout",
                     "name": "Display Layout",
-                    "glyph": "L",
+                    "glyph": "\u004c",
                     "type": "layout",
                     "template": layoutTemplate,
                     "editable": true,
@@ -82,28 +82,28 @@ define([
                                 "items": [
                                     {
                                         "method": "add",
-                                        "glyph": "+",
+                                        "glyph": "\u002b",
                                         "control": "menu-button",
                                         "text": "Add",
                                         "options": [
                                             {
                                                 "name": "Box",
-                                                "glyph": "à",
+                                                "glyph": "\u00e0",
                                                 "key": "fixed.box"
                                             },
                                             {
                                                 "name": "Line",
-                                                "glyph": "â",
-                                                "key": "fixed.line"
+                                                "glyph": "\u00e2",
+                                                    "key": "fixed.line"
                                             },
                                             {
                                                 "name": "Text",
-                                                "glyph": "ä",
+                                                "glyph": "\u00e4",
                                                 "key": "fixed.text"
                                             },
                                             {
                                                 "name": "Image",
-                                                "glyph": "ã",
+                                                "glyph": "\u00e3",
                                                 "key": "fixed.image"
                                             }
                                         ]
@@ -119,22 +119,22 @@ define([
                                         "options": [
                                             {
                                                 "name": "Move to Top",
-                                                "glyph": "^",
+                                                "glyph": "\u00eb",
                                                 "key": "top"
                                             },
                                             {
                                                 "name": "Move Up",
-                                                "glyph": "^",
+                                                "glyph": "\u005e",
                                                 "key": "up"
                                             },
                                             {
                                                 "name": "Move Down",
-                                                "glyph": "v",
+                                                "glyph": "\u005e",
                                                 "key": "down"
                                             },
                                             {
                                                 "name": "Move to Bottom",
-                                                "glyph": "v",
+                                                "glyph": "\u00ee",
                                                 "key": "bottom"
                                             }
                                         ]
@@ -263,8 +263,8 @@ define([
                 {
                     "key": "layout",
                     "name": "Display Layout",
-                    "glyph": "L",
-                    "description": "A layout in which multiple telemetry panels may be displayed.",
+                    "glyph": "\u004c",
+                    "description": "Assemble other objects and components together into a reusable screen layout. Working in a simple canvas workspace, simply drag in the objects you want, position and size them. Save your design and view or edit it at any time.",
                     "features": "creation",
                     "model": {
                         "composition": []

@@ -54,7 +54,7 @@ define([
             {
                 "name": "Measurement",
                 "key": "msl.measurement",
-                "glyph": "T",
+                "glyph": "\u0054",
                 "model": {"telemetry": {}},
                 "telemetry": {
                     "source": "rems.source",

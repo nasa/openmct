@@ -63,7 +63,7 @@ define([
                     "key": "table",
                     "name": "Historical Telemetry Table",
                     "glyph": "\ue604",
-                    "description": "A table for displaying historic telemetry data",
+                    "description": "A static table of all values over time for all included telemetry elements. Rows are timestamped data values for each telemetry element; columns are data fields. The number of rows is based on the range of your query. New incoming data must be manually re-queried for.",
                     "features": "creation",
                     "delegates": [
                         "telemetry"
@@ -85,8 +85,7 @@ define([
                     "key": "rttable",
                     "name": "Real-time Telemetry Table",
                     "glyph": "\ue620",
-                    "description": "A table for displaying real-time telemetry" +
-                    " data",
+                    "description": "A scrolling table of latest values for all included telemetry elements. Rows are timestamped data values for each telemetry element; columns are data fields. New incoming data is automatically added to the view.",
                     "features": "creation",
                     "delegates": [
                         "telemetry"
