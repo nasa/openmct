@@ -108,7 +108,7 @@ define(
 
                     dragOver(e, element, swimlane);
 
-                    if ((highlightBottom !== swimlane.highlightBottom()) ||
+                    if (highlightBottom !== swimlane.highlightBottom() ||
                             highlight !== swimlane.highlight()) {
                         scope.$apply();
                     }
