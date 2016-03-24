@@ -102,21 +102,37 @@ define(
 
             function link(scope, element, attrs) {
                 // Lookup swimlane by evaluating this attribute
-                function swimlane() {
+                function lookupSwimlane() {
                     return scope.$eval(attrs.mctSwimlaneDrop);
                 }
                 // Handle dragover
                 element.on('dragover', function (e) {
-                    dragOver(e, element, swimlane());
+                    var swimlane = lookupSwimlane(),
+                        highlight = swimlane.highlight(),
+                        highlightBottom = swimlane.highlightBottom();
+
+                    dragOver(e, element, swimlane);
+
+                    if (highlightBottom !== swimlane.highlightBottom() ||
+                            highlight !== swimlane.highlight()) {
+                        scope.$apply();
+                    }
                 });
                 // Handle drops
                 element.on('drop', function (e) {
-                    drop(e, element, swimlane());
+                    drop(e, element, lookupSwimlane());
+                    scope.$apply();
                 });
                 // Clear highlights when drag leaves this swimlane
                 element.on('dragleave', function () {
-                    swimlane().highlight(false);
-                    swimlane().highlightBottom(false);
+                    var swimlane = lookupSwimlane(),
+                        wasHighlighted = swimlane.highlight() ||
+                                swimlane.highlightBottom();
+                    swimlane.highlight(false);
+                    swimlane.highlightBottom(false);
+                    if (wasHighlighted) {
+                        scope.$apply();
+                    }
                 });
             }
 
