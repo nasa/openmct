@@ -129,7 +129,7 @@ define([
                                             },
                                             {
                                                 "name": "Move Down",
-                                                "glyph": "\u005e",
+                                                "glyph": "\u0076",
                                                 "key": "down"
                                             },
                                             {
