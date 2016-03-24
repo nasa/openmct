@@ -46,10 +46,7 @@
 }
 
 .wait-spinner {
-	$d: 5%;
-	@include spinner(0.5em, $colorKey);
-	height: auto; width: auto;
-	padding: $d; // Will size object based on parent container WIDTH
+	@include spinner($waitSpinnerBorderW, $colorKey);
 	pointer-events: none;
 	z-index: 2;
 	&.inline {
@@ -60,15 +57,6 @@
 	}
 }
 
-.treeview .wait-spinner {
-    // Only used in subtree.html, which I don't think this is actually being used
-	$d: 10px;
-	height: $d; width: $d;
-	margin: 0 !important;
-	padding: 0 !important;
-	top: 2px; left: 0;
-}
-
 .loading {
 	// Can be applied to any block element with height and width
     pointer-events: none;
@@ -77,8 +65,8 @@
         content: '';
     }
 	&:before {
-        @include spinner(5px, $colorLoadingFg);
-        padding: 5%;
+        @include spinner($waitSpinnerBorderW, $colorLoadingFg);
+        height: $waitSpinnerD; width: $waitSpinnerD;
         z-index: 10;
 	}
     &:after {
@@ -87,8 +75,19 @@
         display: block;
         z-index: 9;
     }
-    &.tree-item:before {
-        padding: $menuLineH / 4;
-        border-width: 2px;
+    &.tree-item.t-wait-node {
+        $d: $treeTypeIconW;
+        $spinnerL: $treeVCW + $interiorMargin + 3px + $d/2;
+        font-style: italic;
+        padding-left: $spinnerL + $d/2 + $interiorMargin;
+        &:before {
+            height: $d;
+            width: $d;
+            border-width: 3px;
+            left: $spinnerL;
+        }
+        &:after {
+            display: none;
+        }
     }
 }
