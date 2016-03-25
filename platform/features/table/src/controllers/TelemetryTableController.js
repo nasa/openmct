@@ -57,6 +57,7 @@ define(
             this.table = new TableConfiguration($scope.domainObject,
                 telemetryFormatter);
             this.changeListeners = [];
+            this.initialized = false;
 
             $scope.rows = undefined;
 
@@ -110,24 +111,35 @@ define(
          */
         TelemetryTableController.prototype.subscribe = function () {
             var self = this;
+            this.initialized = false;
 
             if (this.handle) {
                 this.handle.unsubscribe();
             }
 
             //Noop because not supporting realtime data right now
-            function noop(){
+            function update(){
+                if(!self.initialized){
+                    self.setup();
+                    self.initialized = true;
+                }
+                self.updateRealtime();
             }
 
             this.handle = this.$scope.domainObject && this.telemetryHandler.handle(
                     this.$scope.domainObject,
-                    noop,
+                    update,
                     true // Lossless
                 );
 
             this.handle.request({}).then(this.addHistoricalData.bind(this));
+        };
 
-            this.setup();
+        /**
+         * Override this method to define handling for realtime data.
+         */
+        TelemetryTableController.prototype.updateRealtime = function () {
+            //Noop in an historical table
         };
 
         /**
@@ -161,18 +173,16 @@ define(
                 self = this;
 
             if (handle) {
-                handle.promiseTelemetryObjects().then(function () {
-                    table.buildColumns(handle.getMetadata());
+                table.buildColumns(handle.getMetadata());
 
-                    self.filterColumns();
+                self.filterColumns();
 
-                    // When table column configuration changes, (due to being
-                    // selected or deselected), filter columns appropriately.
-                    self.changeListeners.push(self.$scope.$watchCollection(
-                        'domainObject.getModel().configuration.table.columns',
-                        self.filterColumns.bind(self)
-                    ));
-                });
+                // When table column configuration changes, (due to being
+                // selected or deselected), filter columns appropriately.
+                self.changeListeners.push(self.$scope.$watchCollection(
+                    'domainObject.getModel().configuration.table.columns',
+                    self.filterColumns.bind(self)
+                ));
             }
         };
 
