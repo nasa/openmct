@@ -103,6 +103,7 @@ define(
                 mockScope.domainObject = mockDomainObject;
 
                 mockTelemetryHandle = jasmine.createSpyObj('telemetryHandle', [
+                    'request',
                     'getMetadata',
                     'unsubscribe',
                     'getDatum',
@@ -113,6 +114,7 @@ define(
                 // used by mocks
                 mockTelemetryHandle.getTelemetryObjects.andReturn([{}]);
                 mockTelemetryHandle.promiseTelemetryObjects.andReturn(promise(undefined));
+                mockTelemetryHandle.request.andReturn(promise(undefined));
                 mockTelemetryHandle.getDatum.andReturn({});
 
                 mockTelemetryHandler = jasmine.createSpyObj('telemetryHandler', [

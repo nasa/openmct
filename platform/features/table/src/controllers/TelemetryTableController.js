@@ -66,7 +66,7 @@ define(
                 if (!domainObject)
                     return;
 
-                self.subscribe();
+                self.subscribe(domainObject);
                 self.registerChangeListeners();
             });
 
@@ -80,6 +80,8 @@ define(
          * @private
          */
         TelemetryTableController.prototype.registerChangeListeners = function () {
+            var self = this;
+
             this.changeListeners.forEach(function (listener) {
                 return listener && listener();
             });
@@ -87,7 +89,11 @@ define(
             // When composition changes, re-subscribe to the various
             // telemetry subscriptions
             this.changeListeners.push(this.$scope.$watchCollection(
-                'domainObject.getModel().composition', this.subscribe.bind(this)));
+               'domainObject.getModel().composition', function(composition, oldComposition) {
+                    if (composition!== oldComposition) {
+                        self.subscribe();
+                    }
+                }));
 
             //Change of bounds in time conductor
             this.changeListeners.push(this.$scope.$on('telemetry:display:bounds',
@@ -112,6 +118,7 @@ define(
         TelemetryTableController.prototype.subscribe = function () {
             var self = this;
             this.initialized = false;
+            this.$scope.rows = undefined;
 
             if (this.handle) {
                 this.handle.unsubscribe();
@@ -121,13 +128,12 @@ define(
             function update(){
                 if(!self.initialized){
                     self.setup();
-                    self.initialized = true;
                 }
                 self.updateRealtime();
             }
 
             this.handle = this.$scope.domainObject && this.telemetryHandler.handle(
-                    this.$scope.domainObject,
+                    self.$scope.domainObject,
                     update,
                     true // Lossless
                 );
@@ -172,6 +178,7 @@ define(
                 table = this.table,
                 self = this;
 
+            //Is metadata available yet?
             if (handle) {
                 table.buildColumns(handle.getMetadata());
 
@@ -183,6 +190,7 @@ define(
                     'domainObject.getModel().configuration.table.columns',
                     self.filterColumns.bind(self)
                 ));
+                self.initialized = true;
             }
         };
 

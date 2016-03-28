@@ -203,7 +203,7 @@ define(
                     ' object composition changes', function () {
                     controller.registerChangeListeners();
                     expect(watches['domainObject.getModel().composition']).toBeDefined();
-                    watches['domainObject.getModel().composition']();
+                    watches['domainObject.getModel().composition'](["one"], ["two"]);
                     expect(controller.subscribe).toHaveBeenCalled();
                 });
 

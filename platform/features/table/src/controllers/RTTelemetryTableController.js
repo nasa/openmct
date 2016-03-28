@@ -82,27 +82,28 @@ define(
             var datum,
                 row,
                 self = this;
+            if (this.handle) {
+                this.handle.getTelemetryObjects().forEach(function (telemetryObject) {
+                    datum = self.handle.getDatum(telemetryObject);
+                    if (datum) {
+                        row = self.table.getRowValues(telemetryObject, datum);
+                        if (!self.$scope.rows) {
+                            self.$scope.rows = [row];
+                            self.$scope.$digest();
+                        } else {
+                            self.$scope.rows.push(row);
 
-            this.handle.getTelemetryObjects().forEach(function (telemetryObject){
-                datum = self.handle.getDatum(telemetryObject);
-                if (datum) {
-                    row = self.table.getRowValues(telemetryObject, datum);
-                    if (!self.$scope.rows){
-                        self.$scope.rows = [row];
-                        self.$scope.$digest();
-                    } else {
-                        self.$scope.rows.push(row);
+                            if (self.$scope.rows.length > self.maxRows) {
+                                self.$scope.$broadcast('remove:row', 0);
+                                self.$scope.rows.shift();
+                            }
 
-                        if (self.$scope.rows.length > self.maxRows) {
-                            self.$scope.$broadcast('remove:row', 0);
-                            self.$scope.rows.shift();
+                            self.$scope.$broadcast('add:row',
+                                self.$scope.rows.length - 1);
                         }
-
-                        self.$scope.$broadcast('add:row',
-                            self.$scope.rows.length - 1);
                     }
-                }
-            });
+                });
+            }
         };
 
         return RTTelemetryTableController;
