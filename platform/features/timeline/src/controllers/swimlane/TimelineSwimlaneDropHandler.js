@@ -100,6 +100,13 @@ define(
                 return swimlane.highlight() || expandedForDropInto();
             }
 
+            function isReorder(targetObject, droppedObject) {
+                var droppedContext = droppedObject.getCapability('context'),
+                    droppedParent =
+                        droppedContext && droppedContext.getParent(),
+                    droppedParentId = droppedParent && droppedParent.getId();
+                return targetObject.getId() === droppedParentId;
+            }
 
             // Choose an appropriate composition action for the drag-and-drop
             function chooseAction(targetObject, droppedObject) {
@@ -142,26 +149,21 @@ define(
             }
 
             function canDrop(targetObject, droppedObject) {
-                var droppedContext = droppedObject.getCapability('context'),
-                    droppedParent =
-                        droppedContext && droppedContext.getParent(),
-                    droppedParentId = droppedParent && droppedParent.getId();
 
-                return (targetObject.getId() === droppedParentId) ||
+                return isReorder(targetObject, droppedObject) ||
                         !!chooseAction(targetObject, droppedObject);
             }
 
             function drop(domainObject, targetObject, indexOffset) {
-                var action = chooseAction(targetObject, domainObject);
-
                 function changeIndex() {
                     var id = domainObject.getId();
                     return insert(id, targetObject, indexOffset);
                 }
 
-                return action ?
-                    action.perform().then(changeIndex) :
-                    changeIndex();
+                return isReorder(targetObject, domainObject) ?
+                    changeIndex() :
+                    chooseAction(targetObject, domainObject)
+                        .perform().then(changeIndex);
             }
 
             return {
