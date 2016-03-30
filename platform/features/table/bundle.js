@@ -56,6 +56,27 @@ define([
         });
     tableInspector.addRegion(tableOptionsEditRegion);
 
+    function TestTableController($scope) {
+        $scope.headers = ['a', 'b', 'c'];
+        $scope.rows = [
+            {
+                a: { text: 1},
+                b: { text: 2},
+                c: { text: 3}
+            },
+            {
+                a: { text: 1},
+                b: { text: 2},
+                c: { text: 3}
+            },
+            {
+                a: { text: 1},
+                b: { text: 2},
+                c: { text: 3}
+            }
+        ];
+    };
+
     legacyRegistry.register("platform/features/table", {
         "extensions": {
             "types": [
@@ -121,8 +142,12 @@ define([
                     "key": "TableOptionsController",
                     "implementation": TableOptionsController,
                     "depends": ["$scope"]
+                },
+                {
+                    "key": "TestTableController",
+                    "implementation": TestTableController,
+                    "depends": ["$scope"]
                 }
-
             ],
             "views": [
                 {
@@ -141,6 +166,17 @@ define([
                     "key": "rt-table",
                     "glyph": "\ue605",
                     "templateUrl": "templates/rt-table.html",
+                    "needs": [
+                        "telemetry"
+                    ],
+                    "delegation": true,
+                    "editable": true
+                },
+                {
+                    "name": "Test Table",
+                    "key": "testTable",
+                    "glyph": "\ue605",
+                    "templateUrl": "templates/test-table.html",
                     "needs": [
                         "telemetry"
                     ],
