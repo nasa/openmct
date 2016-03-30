@@ -33,7 +33,13 @@ define(
                 mockTelemetryHandler,
                 mockTelemetryHandle,
                 mockTelemetryFormatter,
+                mockTelemetryCapability,
                 mockDomainObject,
+                mockChild,
+                mockMutationCapability,
+                mockCompositionCapability,
+                childMutationCapability,
+                capabilities = {},
                 mockTable,
                 mockConfiguration,
                 watches,
@@ -64,6 +70,17 @@ define(
                 mockScope.$watchCollection.andCallFake(function (expression, callback){
                     watches[expression] = callback;
                 });
+                mockTelemetryCapability = jasmine.createSpyObj('telemetryCapability',
+                    ['getMetadata']
+                );
+                mockTelemetryCapability.getMetadata.andReturn({});
+                capabilities.telemetry = mockTelemetryCapability;
+
+                mockCompositionCapability = jasmine.createSpyObj('compositionCapability',
+                    ['invoke']
+                );
+                mockCompositionCapability.invoke.andReturn(promise([]));
+                capabilities.composition = mockCompositionCapability;
 
                 mockConfiguration = {
                     'range1': true,
@@ -81,13 +98,36 @@ define(
                 );
                 mockTable.columns = [];
                 mockTable.getColumnConfiguration.andReturn(mockConfiguration);
+                mockMutationCapability = jasmine.createSpyObj('mutationCapability', [
+                    "listen"
+                ]);
+                capabilities.mutation = mockMutationCapability;
 
-                mockDomainObject= jasmine.createSpyObj('domainObject', [
+                mockDomainObject = jasmine.createSpyObj('domainObject', [
                     'getCapability',
+                    'hasCapability',
                     'useCapability',
                     'getModel'
                 ]);
+                mockChild = jasmine.createSpyObj('domainObject', [
+                    'getCapability'
+                ]);
+                childMutationCapability = jasmine.createSpyObj('childMutationCapability', [
+                    "listen"
+                ]);
+                mockChild.getCapability.andReturn(childMutationCapability);
+
+
                 mockDomainObject.getModel.andReturn({});
+                mockDomainObject.hasCapability.andCallFake(function (name){
+                    return typeof capabilities[name] !== 'undefined';
+                });
+                mockDomainObject.useCapability.andCallFake(function (capability){
+                    return capabilities[capability] && capabilities[capability].invoke && capabilities[capability].invoke();
+                });
+                mockDomainObject.getCapability.andCallFake(function (name){
+                    return capabilities[name];
+                });
 
                 mockScope.domainObject = mockDomainObject;
 
@@ -103,6 +143,7 @@ define(
                 mockTelemetryHandle.promiseTelemetryObjects.andReturn(promise(undefined));
                 mockTelemetryHandle.request.andReturn(promise(undefined));
                 mockTelemetryHandle.getTelemetryObjects.andReturn([]);
+                mockTelemetryHandle.getMetadata.andReturn(["a", "b", "c"]);
 
                 mockTelemetryHandler = jasmine.createSpyObj('telemetryHandler', [
                     'handle'
@@ -127,7 +168,6 @@ define(
             });
 
             describe('the controller makes use of the table', function () {
-
                 it('to create column definitions from telemetry' +
                     ' metadata', function () {
                     controller.setup();
@@ -199,14 +239,6 @@ define(
                     expect(controller.subscribe).toHaveBeenCalled();
                 });
 
-                it('triggers telemetry subscription update when domain' +
-                    ' object composition changes', function () {
-                    controller.registerChangeListeners();
-                    expect(watches['domainObject.getModel().composition']).toBeDefined();
-                    watches['domainObject.getModel().composition'](["one"], ["two"]);
-                    expect(controller.subscribe).toHaveBeenCalled();
-                });
-
                 it('triggers telemetry subscription update when time' +
                     ' conductor bounds change', function () {
                     controller.registerChangeListeners();
@@ -214,12 +246,21 @@ define(
                     watches['telemetry:display:bounds']();
                     expect(controller.subscribe).toHaveBeenCalled();
                 });
+                it('Listens for changes to object model', function () {
+                    controller.registerChangeListeners();
+                    expect(mockMutationCapability.listen).toHaveBeenCalled();
+                });
 
-                it('triggers refiltering of the columns when configuration' +
-                    ' changes', function () {
-                    controller.setup();
-                    expect(watches['domainObject.getModel().configuration.table.columns']).toBeDefined();
-                    watches['domainObject.getModel().configuration.table.columns']();
+                it('Listens for changes to child model', function () {
+                    mockCompositionCapability.invoke.andReturn(promise([mockChild]));
+                    controller.registerChangeListeners();
+                    expect(childMutationCapability.listen).toHaveBeenCalled();
+                });
+
+                it('Recalculates columns when model changes occur', function () {
+                    controller.registerChangeListeners();
+                    expect(mockMutationCapability.listen).toHaveBeenCalled();
+                    mockMutationCapability.listen.mostRecentCall.args[0]();
                     expect(controller.filterColumns).toHaveBeenCalled();
                 });
 

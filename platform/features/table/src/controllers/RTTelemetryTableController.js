@@ -87,20 +87,15 @@ define(
                     datum = self.handle.getDatum(telemetryObject);
                     if (datum) {
                         row = self.table.getRowValues(telemetryObject, datum);
-                        if (!self.$scope.rows) {
-                            self.$scope.rows = [row];
-                            self.$scope.$digest();
-                        } else {
-                            self.$scope.rows.push(row);
+                        self.$scope.rows.push(row);
 
-                            if (self.$scope.rows.length > self.maxRows) {
-                                self.$scope.$broadcast('remove:row', 0);
-                                self.$scope.rows.shift();
-                            }
-
-                            self.$scope.$broadcast('add:row',
-                                self.$scope.rows.length - 1);
+                        if (self.$scope.rows.length > self.maxRows) {
+                            self.$scope.$broadcast('remove:row', 0);
+                            self.$scope.rows.shift();
                         }
+
+                        self.$scope.$broadcast('add:row',
+                            self.$scope.rows.length - 1);
                     }
                 });
             }

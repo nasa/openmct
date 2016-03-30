@@ -67,8 +67,8 @@ define(
             $scope.$watchCollection('filters', function () {
                 self.updateRows($scope.rows);
             });
-            $scope.$watch('headers', this.updateHeaders.bind(this));
             $scope.$watch('rows', this.updateRows.bind(this));
+            $scope.$watch('headers', this.updateHeaders.bind(this));
 
             /*
              * Listen for rows added individually (eg. for real-time tables)
@@ -101,13 +101,19 @@ define(
          */
         MCTTableController.prototype.newRow = function (event, rowIndex) {
             var row = this.$scope.rows[rowIndex];
-            //Add row to the filtered, sorted list of all rows
-            if (this.filterRows([row]).length > 0) {
-                this.insertSorted(this.$scope.displayRows, row);
-            }
+            //If rows.length === 1 we need to calculate column widths etc.
+            // so do the updateRows logic, rather than the 'add row' logic
+            if (this.$scope.rows.length === 1){
+                this.updateRows(this.$scope.rows);
+            } else {
+                //Add row to the filtered, sorted list of all rows
+                if (this.filterRows([row]).length > 0) {
+                    this.insertSorted(this.$scope.displayRows, row);
+                }
 
-            this.$timeout(this.setElementSizes.bind(this))
-                .then(this.scrollToBottom.bind(this));
+                this.$timeout(this.setElementSizes.bind(this))
+                    .then(this.scrollToBottom.bind(this));
+            }
         };
 
         /**
