@@ -91,6 +91,7 @@ define(
 
                 if (id) {
                     event.stopPropagation();
+                    e.preventDefault();
                     // Delegate the drop to the swimlane itself
                     swimlane.drop(id, droppedObject);
                 }

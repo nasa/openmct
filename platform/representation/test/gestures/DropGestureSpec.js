@@ -194,6 +194,11 @@ define(
                 );
             });
 
+            it("invokes preventDefault on drop", function () {
+                callbacks.drop(mockEvent);
+                expect(mockEvent.preventDefault).toHaveBeenCalled();
+            });
+
         });
     }
 );
