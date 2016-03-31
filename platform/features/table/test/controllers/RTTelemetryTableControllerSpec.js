@@ -89,20 +89,24 @@ define(
 
                 mockDomainObject= jasmine.createSpyObj('domainObject', [
                     'getCapability',
+                    'hasCapability',
                     'useCapability',
                     'getModel'
                 ]);
                 mockDomainObject.getModel.andReturn({});
+                mockDomainObject.hasCapability.andReturn(true);
                 mockDomainObject.getCapability.andReturn(
                     {
                         getMetadata: function (){
                             return {ranges: [{format: 'string'}]};
                         }
                     });
+                mockDomainObject.useCapability.andReturn(promise([]));
 
                 mockScope.domainObject = mockDomainObject;
 
                 mockTelemetryHandle = jasmine.createSpyObj('telemetryHandle', [
+                    'request',
                     'getMetadata',
                     'unsubscribe',
                     'getDatum',
@@ -113,6 +117,7 @@ define(
                 // used by mocks
                 mockTelemetryHandle.getTelemetryObjects.andReturn([{}]);
                 mockTelemetryHandle.promiseTelemetryObjects.andReturn(promise(undefined));
+                mockTelemetryHandle.request.andReturn(promise(undefined));
                 mockTelemetryHandle.getDatum.andReturn({});
 
                 mockTelemetryHandler = jasmine.createSpyObj('telemetryHandler', [
@@ -123,6 +128,8 @@ define(
                 controller = new TableController(mockScope, mockTelemetryHandler, mockTelemetryFormatter);
                 controller.table = mockTable;
                 controller.handle = mockTelemetryHandle;
+                spyOn(controller, 'updateRealtime');
+                controller.updateRealtime.andCallThrough();
             });
 
             it('registers for streaming telemetry', function () {
@@ -130,14 +137,16 @@ define(
                 expect(mockTelemetryHandler.handle).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Function), true);
             });
 
-            describe('receives new telemetry', function () {
+            describe('when receiving new telemetry', function () {
                 beforeEach(function() {
                     controller.subscribe();
                     mockScope.rows = [];
+                    mockTable.columns = ['a', 'b'];
                 });
 
                 it('updates table with new streaming telemetry', function () {
                     mockTelemetryHandler.handle.mostRecentCall.args[1]();
+                    expect(controller.updateRealtime).toHaveBeenCalled();
                     expect(mockScope.$broadcast).toHaveBeenCalledWith('add:row', 0);
                 });
                 it('observes the row limit', function () {

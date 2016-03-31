@@ -58,14 +58,14 @@ define(
                 telemetryFormatter);
             this.changeListeners = [];
 
-            $scope.rows = undefined;
+            $scope.rows = [];
 
             // Subscribe to telemetry when a domain object becomes available
             this.$scope.$watch('domainObject', function(domainObject){
                 if (!domainObject)
                     return;
 
-                self.subscribe();
+                self.subscribe(domainObject);
                 self.registerChangeListeners();
             });
 
@@ -79,14 +79,28 @@ define(
          * @private
          */
         TelemetryTableController.prototype.registerChangeListeners = function () {
+            var self = this;
+
             this.changeListeners.forEach(function (listener) {
                 return listener && listener();
             });
             this.changeListeners = [];
-            // When composition changes, re-subscribe to the various
-            // telemetry subscriptions
-            this.changeListeners.push(this.$scope.$watchCollection(
-                'domainObject.getModel().composition', this.subscribe.bind(this)));
+
+            /**
+             * Listen to all children for model mutation events that might
+             * indicate that metadata is available, or that composition has
+             * changed.
+             */
+            if (this.$scope.domainObject.hasCapability('composition')) {
+                this.$scope.domainObject.useCapability('composition').then(function (composees) {
+                    composees.forEach(function (composee) {
+                        self.changeListeners.push(composee.getCapability('mutation').listen(self.setup.bind(self)));
+                    });
+                });
+            }
+
+            //Register mutation listener for the parent itself
+            self.changeListeners.push(self.$scope.domainObject.getCapability('mutation').listen(this.setup.bind(this)));
 
             //Change of bounds in time conductor
             this.changeListeners.push(this.$scope.$on('telemetry:display:bounds',
@@ -110,24 +124,36 @@ define(
          */
         TelemetryTableController.prototype.subscribe = function () {
             var self = this;
+            this.$scope.rows = [];
 
             if (this.handle) {
                 this.handle.unsubscribe();
             }
 
             //Noop because not supporting realtime data right now
-            function noop(){
+            function update(){
+                //Is there anything to show?
+                if (self.table.columns.length > 0){
+                    self.updateRealtime();
+                }
             }
 
             this.handle = this.$scope.domainObject && this.telemetryHandler.handle(
-                    this.$scope.domainObject,
-                    noop,
+                    self.$scope.domainObject,
+                    update,
                     true // Lossless
                 );
-
             this.handle.request({}).then(this.addHistoricalData.bind(this));
 
+            //Call setup at least once
             this.setup();
+        };
+
+        /**
+         * Override this method to define handling for realtime data.
+         */
+        TelemetryTableController.prototype.updateRealtime = function () {
+            //Noop in an historical table
         };
 
         /**
@@ -157,33 +183,42 @@ define(
          */
         TelemetryTableController.prototype.setup = function () {
             var handle = this.handle,
+                domainObject = this.$scope.domainObject,
                 table = this.table,
-                self = this;
+                self = this,
+                metadatas = [];
 
-            if (handle) {
-                handle.promiseTelemetryObjects().then(function () {
-                    table.buildColumns(handle.getMetadata());
-
-                    self.filterColumns();
-
-                    // When table column configuration changes, (due to being
-                    // selected or deselected), filter columns appropriately.
-                    self.changeListeners.push(self.$scope.$watchCollection(
-                        'domainObject.getModel().configuration.table.columns',
-                        self.filterColumns.bind(self)
-                    ));
-                });
+            function addMetadata(object) {
+                if (object.hasCapability('telemetry') &&
+                    object.getCapability('telemetry').getMetadata()){
+                    metadatas.push(object.getCapability('telemetry').getMetadata());
+                }
             }
-        };
 
-        /**
-         * @private
-         * @param object The object for which data is available (table may
-         * be composed of multiple objects)
-         * @param datum The data received from the telemetry source
-         */
-        TelemetryTableController.prototype.updateRows = function (object, datum) {
-            this.$scope.rows.push(this.table.getRowValues(object, datum));
+            function buildAndFilterColumns(){
+                if (metadatas && metadatas.length > 0){
+                    self.$scope.rows = [];
+                    table.buildColumns(metadatas);
+                    self.filterColumns();
+                }
+            }
+
+            //Add telemetry metadata (if any) for parent object
+            addMetadata(domainObject);
+
+            //If object is composed of multiple objects, also add
+            // telemetry metadata from children
+            if (domainObject.hasCapability('composition')) {
+                domainObject.useCapability('composition').then(function (composition) {
+                    composition.forEach(addMetadata);
+                }).then(function () {
+                    //Build columns based on available metadata
+                    buildAndFilterColumns();
+                });
+            } else {
+                //Build columns based on collected metadata
+                buildAndFilterColumns();
+            }
         };
 
         /**
@@ -191,11 +226,9 @@ define(
          * accordingly.
          * @private
          */
-        TelemetryTableController.prototype.filterColumns = function (columnConfig) {
-            if (!columnConfig){
-                columnConfig = this.table.getColumnConfiguration();
-                this.table.saveColumnConfiguration(columnConfig);
-            }
+        TelemetryTableController.prototype.filterColumns = function () {
+            var columnConfig = this.table.getColumnConfiguration();
+            this.table.saveColumnConfiguration(columnConfig);
             //Populate headers with visible columns (determined by configuration)
             this.$scope.headers = Object.keys(columnConfig).filter(function (column) {
                 return columnConfig[column];

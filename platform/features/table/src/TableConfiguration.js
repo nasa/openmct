@@ -39,6 +39,7 @@ define(
         function TableConfiguration(domainObject, telemetryFormatter) {
             this.domainObject = domainObject;
             this.columns = [];
+            this.columnConfiguration = {};
             this.telemetryFormatter = telemetryFormatter;
         }
 
@@ -144,16 +145,30 @@ define(
                 {}).columns || {};
         };
 
+        function configEqual(obj1, obj2) {
+            var obj1Keys = Object.keys(obj1),
+                obj2Keys = Object.keys(obj2);
+            return (obj1Keys.length === obj2Keys.length) &&
+                    obj1Keys.every(function (key) {
+                       return obj1[key] === obj2[key];
+                    });
+        }
+
         /**
-         * Set the established configuration on the domain object
+         * Set the established configuration on the domain object. Will noop
+         * if configuration is unchanged
          * @private
          */
         TableConfiguration.prototype.saveColumnConfiguration = function (columnConfig) {
-            this.domainObject.useCapability('mutation', function (model) {
-                model.configuration = model.configuration || {};
-                model.configuration.table = model.configuration.table || {};
-                model.configuration.table.columns = columnConfig;
-            });
+            var self = this;
+            if (!configEqual(this.columnConfiguration, columnConfig)) {
+                this.domainObject.useCapability('mutation', function (model) {
+                    model.configuration = model.configuration || {};
+                    model.configuration.table = model.configuration.table || {};
+                    model.configuration.table.columns = columnConfig;
+                    self.columnConfiguration = columnConfig;
+                });
+            }
         };
 
         /**
