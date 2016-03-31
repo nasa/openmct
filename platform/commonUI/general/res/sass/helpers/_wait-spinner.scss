@@ -28,7 +28,7 @@
     100% { @include transform(translate(-50%, -50%) rotate(360deg)); }
 }
 
-@mixin spinner($b: 5px, $c: $colorKey) {
+@mixin  spinner($b: 5px, $c: $colorKey) {
     @include transform-origin(center);
     @include animation-name(rotation-centered);
     @include animation-duration(0.5s);
@@ -46,10 +46,7 @@
 }
 
 .wait-spinner {
-	$d: 5%;
-	@include spinner(0.5em, $colorKey);
-	height: auto; width: auto;
-	padding: $d; // Will size object based on parent container WIDTH
+	@include spinner($waitSpinnerBorderW, $colorKey);
 	pointer-events: none;
 	z-index: 2;
 	&.inline {
@@ -60,15 +57,6 @@
 	}
 }
 
-.treeview .wait-spinner {
-    // Only used in subtree.html, which I don't think this is actually being used
-	$d: 10px;
-	height: $d; width: $d;
-	margin: 0 !important;
-	padding: 0 !important;
-	top: 2px; left: 0;
-}
-
 .loading {
 	// Can be applied to any block element with height and width
     pointer-events: none;
@@ -77,8 +65,8 @@
         content: '';
     }
 	&:before {
-        @include spinner(5px, $colorLoadingFg);
-        padding: 5%;
+        @include spinner($waitSpinnerBorderW, $colorLoadingFg);
+        height: $waitSpinnerD; width: $waitSpinnerD;
         z-index: 10;
 	}
     &:after {
@@ -87,8 +75,22 @@
         display: block;
         z-index: 9;
     }
-    &.tree-item:before {
-        padding: $menuLineH / 4;
-        border-width: 2px;
+    &.tree-item.t-wait-node {
+        $d: $waitSpinnerTreeD;
+        $spinnerL: $treeVCW + $interiorMargin + 3px + $d/2;
+        padding-left: $spinnerL + $d/2 + $interiorMargin;
+        .t-title-label {
+            font-style: italic;
+            opacity: 0.6;
+        }
+        &:before {
+            height: $d;
+            width: $d;
+            border-width: 4px;
+            left: $spinnerL;
+        }
+        &:after {
+            display: none;
+        }
     }
 }
