@@ -145,25 +145,23 @@ define(
                 {}).columns || {};
         };
 
-        function equal(obj1, obj2) {
+        function configEqual(obj1, obj2) {
             var obj1Keys = Object.keys(obj1),
                 obj2Keys = Object.keys(obj2);
             return (obj1Keys.length === obj2Keys.length) &&
-                    obj1Keys.every(function(key){
-                        //To do a deep equals, could recurse here if typeof
-                        // obj1 === Object
+                    obj1Keys.every(function (key) {
                        return obj1[key] === obj2[key];
                     });
         }
 
         /**
-         * Set the established configuration on the domain object
+         * Set the established configuration on the domain object. Will noop
+         * if configuration is unchanged
          * @private
          */
         TableConfiguration.prototype.saveColumnConfiguration = function (columnConfig) {
             var self = this;
-            //Don't bother mutating if column configuration is unchanged
-            if (!equal(this.columnConfiguration, columnConfig)) {
+            if (!configEqual(this.columnConfiguration, columnConfig)) {
                 this.domainObject.useCapability('mutation', function (model) {
                     model.configuration = model.configuration || {};
                     model.configuration.table = model.configuration.table || {};

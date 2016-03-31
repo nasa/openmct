@@ -203,24 +203,22 @@ define(
                 }
             }
 
-            //if (handle) {
-                //Add telemetry metadata (if any) for parent object
-                addMetadata(domainObject);
+            //Add telemetry metadata (if any) for parent object
+            addMetadata(domainObject);
 
-                //If object is composed of multiple objects, also add
-                // telemetry metadata from children
-                if (domainObject.hasCapability('composition')) {
-                    domainObject.useCapability('composition').then(function (composition) {
-                        composition.forEach(addMetadata);
-                    }).then(function () {
-                        //Build columns based on available metadata
-                        buildAndFilterColumns();
-                    });
-                } else {
-                    //Build columns based on collected metadata
+            //If object is composed of multiple objects, also add
+            // telemetry metadata from children
+            if (domainObject.hasCapability('composition')) {
+                domainObject.useCapability('composition').then(function (composition) {
+                    composition.forEach(addMetadata);
+                }).then(function () {
+                    //Build columns based on available metadata
                     buildAndFilterColumns();
-                }
-           // }
+                });
+            } else {
+                //Build columns based on collected metadata
+                buildAndFilterColumns();
+            }
         };
 
         /**
@@ -228,11 +226,9 @@ define(
          * accordingly.
          * @private
          */
-        TelemetryTableController.prototype.filterColumns = function (columnConfig) {
-            if (!columnConfig){
-                columnConfig = this.table.getColumnConfiguration();
-                this.table.saveColumnConfiguration(columnConfig);
-            }
+        TelemetryTableController.prototype.filterColumns = function () {
+            var columnConfig = this.table.getColumnConfiguration();
+            this.table.saveColumnConfiguration(columnConfig);
             //Populate headers with visible columns (determined by configuration)
             this.$scope.headers = Object.keys(columnConfig).filter(function (column) {
                 return columnConfig[column];
