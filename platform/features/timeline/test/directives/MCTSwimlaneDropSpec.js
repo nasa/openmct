@@ -162,6 +162,11 @@ define(
                 expect(mockScope.$apply).toHaveBeenCalled();
             });
 
+            it("invokes preventDefault on drop", function () {
+                handlers.drop(testEvent);
+                expect(testEvent.preventDefault).toHaveBeenCalled();
+            });
+
             it("clears highlights when drag leaves", function () {
                 mockSwimlane.highlight.andReturn(true);
                 handlers.dragleave();
