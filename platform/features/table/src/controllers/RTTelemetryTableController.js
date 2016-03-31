@@ -69,36 +69,53 @@ define(
         RTTelemetryTableController.prototype = Object.create(TableController.prototype);
 
         /**
-         *
+         Override the subscribe function defined on the parent controller in
+         order to handle realtime telemetry instead of historical.
          */
-        RTTelemetryTableController.prototype.addHistoricalData = function () {
-            //Noop for realtime table
-        };
+        RTTelemetryTableController.prototype.subscribe = function () {
+            var self = this;
+            self.$scope.rows = undefined;
+            (this.subscriptions || []).forEach(function (unsubscribe){
+                unsubscribe();
+            });
 
-        /**
-         * Handling for real-time data
-         */
-        RTTelemetryTableController.prototype.updateRealtime = function () {
-            var datum,
-                row,
-                self = this;
             if (this.handle) {
-                this.handle.getTelemetryObjects().forEach(function (telemetryObject) {
+                this.handle.unsubscribe();
+            }
+
+            function updateData(){
+                var datum,
+                    row;
+                self.handle.getTelemetryObjects().forEach(function (telemetryObject){
                     datum = self.handle.getDatum(telemetryObject);
                     if (datum) {
                         row = self.table.getRowValues(telemetryObject, datum);
-                        self.$scope.rows.push(row);
+                        if (!self.$scope.rows){
+                            self.$scope.rows = [row];
+                            self.$scope.$digest();
+                        } else {
+                            self.$scope.rows.push(row);
 
-                        if (self.$scope.rows.length > self.maxRows) {
-                            self.$scope.$broadcast('remove:row', 0);
-                            self.$scope.rows.shift();
+                            if (self.$scope.rows.length > self.maxRows) {
+                                self.$scope.$broadcast('remove:row', 0);
+                                self.$scope.rows.shift();
+                            }
+
+                            self.$scope.$broadcast('add:row',
+                                self.$scope.rows.length - 1);
                         }
-
-                        self.$scope.$broadcast('add:row',
-                            self.$scope.rows.length - 1);
                     }
                 });
+
             }
+
+            this.handle = this.$scope.domainObject && this.telemetryHandler.handle(
+                    this.$scope.domainObject,
+                    updateData,
+                    true // Lossless
+                );
+
+            this.setup();
         };
 
         return RTTelemetryTableController;
