@@ -176,12 +176,8 @@ define(
                     expect(mockQ.reject).not.toHaveBeenCalled();
                     expect(mockNofificationService.error).not.toHaveBeenCalled();
                 });
-
-                it("removes the model from the cache", function () {
-                    persistence.persist();
-                    expect(mockCacheService.remove).toHaveBeenCalledWith(id);
-                });
             });
+
             describe("unsuccessful persistence", function() {
                 var sadPromise = {
                         then: function(callback){

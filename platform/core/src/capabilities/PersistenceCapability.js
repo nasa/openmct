@@ -149,9 +149,6 @@ define(
                 getKey(domainObject.getId()),
                 domainObject.getModel()
             ]).then(function(result){
-                if (result) {
-                    cacheService.remove(domainObject.getId());
-                }
                 return rejectIfFalsey(result, self.$q);
             }).catch(function(error){
                 return notifyOnError(error, domainObject, self.notificationService, self.$q);
