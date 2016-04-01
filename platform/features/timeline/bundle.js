@@ -172,7 +172,10 @@ define([
                         }
                     ],
                     "model": {
-                        "composition": []
+                        "composition": [],
+                        "start": {
+                            "timestamp": 0
+                        }
                     }
                 },
                 {
@@ -211,6 +214,12 @@ define([
                         "composition": [],
                         "relationships": {
                             "modes": []
+                        },
+                        "start": {
+                            "timestamp": 0
+                        },
+                        "duration": {
+                            "timestamp": 0
                         }
                     }
                 },
