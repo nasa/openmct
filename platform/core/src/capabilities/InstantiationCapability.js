@@ -35,10 +35,16 @@ define(
          * @param $injector Angular's `$injector`
          * @implements {Capability}
          */
-        function InstantiationCapability($injector, identifierService, domainObject) {
+        function InstantiationCapability(
+            $injector,
+            identifierService,
+            now,
+            domainObject
+        ) {
             this.$injector = $injector;
             this.identifierService = identifierService;
             this.domainObject = domainObject;
+            this.now = now;
         }
 
         /**
@@ -56,6 +62,8 @@ define(
                     this.identifierService.parse(this.domainObject.getId()),
                 space = parsedId.getDefinedSpace(),
                 id = this.identifierService.generate(space);
+
+            model.modified = this.now();
 
             // Lazily initialize; instantiate depends on capabilityService,
             // which depends on all capabilities, including this one.

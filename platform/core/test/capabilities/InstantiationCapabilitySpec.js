@@ -31,6 +31,7 @@ define(
                 mockIdentifierService,
                 mockInstantiate,
                 mockIdentifier,
+                mockNow,
                 mockDomainObject,
                 instantiation;
 
@@ -57,9 +58,13 @@ define(
                 mockIdentifierService.parse.andReturn(mockIdentifier);
                 mockIdentifierService.generate.andReturn("some-id");
 
+                mockNow = jasmine.createSpy();
+                mockNow.andReturn(1234321);
+
                 instantiation = new InstantiationCapability(
                     mockInjector,
                     mockIdentifierService,
+                    mockNow,
                     mockDomainObject
                 );
             });
@@ -81,7 +86,10 @@ define(
                 expect(instantiation.instantiate(testModel))
                     .toBe(mockDomainObject);
                 expect(mockInstantiate)
-                    .toHaveBeenCalledWith(testModel, jasmine.any(String));
+                    .toHaveBeenCalledWith({
+                        someKey: "some value",
+                        modified: mockNow()
+                    }, jasmine.any(String));
             });
 
         });

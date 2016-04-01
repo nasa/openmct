@@ -355,7 +355,8 @@ define([
                     "implementation": InstantiationCapability,
                     "depends": [
                         "$injector",
-                        "identifierService"
+                        "identifierService",
+                        "now"
                     ]
                 }
             ],
