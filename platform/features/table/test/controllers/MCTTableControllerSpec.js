@@ -58,15 +58,18 @@ define(
 
                 mockElement = jasmine.createSpyObj('element', [
                     'find',
+                    'prop',
                     'on'
                 ]);
                 mockElement.find.andReturn(mockElement);
+                mockElement.prop.andReturn(0);
 
                 mockScope.displayHeaders = true;
                 mockTimeout = jasmine.createSpy('$timeout');
                 mockTimeout.andReturn(promise(undefined));
 
                 controller = new MCTTableController(mockScope, mockTimeout, mockElement);
+                spyOn(controller, 'setVisibleRows');
             });
 
             it('Reacts to changes to filters, headers, and rows', function() {
@@ -138,8 +141,6 @@ define(
                     var removeRowFunc = mockScope.$on.calls[mockScope.$on.calls.length-1].args[1];
                     controller.updateRows(testRows);
                     expect(mockScope.displayRows.length).toBe(3);
-                    spyOn(controller, 'setVisibleRows');
-                    //controller.setVisibleRows.andReturn(undefined);
                     removeRowFunc(undefined, 2);
                     expect(mockScope.displayRows.length).toBe(2);
                     expect(controller.setVisibleRows).toHaveBeenCalled();
@@ -264,6 +265,25 @@ define(
                             mockScope.rows.push(row6);
                             controller.newRow(undefined, mockScope.rows.length-1);
                             expect(mockScope.displayRows[4].col2.text).toEqual('ggg');
+                        });
+
+                        it('Resizes columns if length of any columns in new' +
+                            ' row exceeds corresponding existing column', function() {
+                            var row7 = {
+                                'col1': {'text': 'row6 col1'},
+                                'col2': {'text': 'some longer string'},
+                                'col3': {'text': 'row6 col3'}
+                            };
+
+                            mockScope.sortColumn = undefined;
+                            mockScope.sortDirection = undefined;
+                            mockScope.filters = {};
+
+                            mockScope.displayRows = testRows.slice(0);
+
+                            mockScope.rows.push(row7);
+                            controller.newRow(undefined, mockScope.rows.length-1);
+                            expect(controller.$scope.sizingRow.col2).toEqual({text: 'some longer string'});
                         });
 
                     });

@@ -1,22 +1,25 @@
-<div class="l-view-section scrolling"
-     ng-style="overrideRowPositioning ?
-         {'overflow': 'auto'} :
-         {'overflow': 'scroll'}"
-     >
-    <table class="filterable"
-           ng-style="overrideRowPositioning && {
+<div class="l-view-section scrolling" style="overflow: auto;">
+    <table class="sizing-table">
+        <tbody>
+            <tr>
+                <td ng-repeat="header in displayHeaders">{{header}}</td>
+            </tr>
+            <tr><td ng-repeat="header in displayHeaders" >
+                {{sizingRow[header].text}}
+            </td></tr>
+        </tbody>
+    </table>
+    <table class="filterable mct-table"
+           ng-style="{
             height: totalHeight + 'px',
-            'table-layout': overrideRowPositioning ? 'fixed' : 'auto',
             'max-width': totalWidth
-        }">
+            }">
         <thead>
             <tr>
                 <th ng-repeat="header in displayHeaders"
-                    ng-style="overrideRowPositioning && {
+                    ng-style="{
                         width: columnWidths[$index] + 'px',
                         'max-width': columnWidths[$index] + 'px',
-                        overflow: 'none',
-                        'box-sizing': 'border-box'
                     }"
                     ng-class="[
                         enableSort ? 'sortable' : '',
@@ -29,11 +32,9 @@
             </tr>
             <tr ng-if="enableFilter" class="s-filters">
                 <th ng-repeat="header in displayHeaders"
-                    ng-style="overrideRowPositioning && {
+                    ng-style="{
                         width: columnWidths[$index] + 'px',
                         'max-width': columnWidths[$index] + 'px',
-                        overflow: 'none',
-                        'box-sizing': 'border-box'
                     }">
                     <input type="text"
                            ng-model="filters[header]"/>
@@ -41,21 +42,15 @@
             </tr>
         </thead>
 
-        <tbody ng-style="overrideRowPositioning ? '' : {
-            'opacity': '0.0'
-        }">
+        <tbody>
             <tr ng-repeat="visibleRow in visibleRows track by visibleRow.rowIndex"
-                ng-style="overrideRowPositioning && {
-                    position: 'absolute',
+                ng-style="{
                     top: visibleRow.offsetY + 'px',
                 }">
                 <td ng-repeat="header in displayHeaders"
-                    ng-style="overrideRowPositioning && {
+                    ng-style=" {
                         width: columnWidths[$index] + 'px',
-                        'white-space': 'nowrap',
                         'max-width': columnWidths[$index] + 'px',
-                        overflow: 'hidden',
-                        'box-sizing': 'border-box'
                     }"
                     class="{{visibleRow.contents[header].cssClass}}">
                     {{ visibleRow.contents[header].text }}
