@@ -61,14 +61,14 @@ define(
                     $scope.sortColumn = undefined;
                     $scope.sortDirection = undefined;
                 }
-                self.updateRows($scope.rows);
+                self.setRows($scope.rows);
             };
 
             /*
              * Define watches to listen for changes to headers and rows.
              */
             $scope.$watchCollection('filters', function () {
-                self.updateRows($scope.rows);
+                self.setRows($scope.rows);
             });
             $scope.$watch('rows', this.setRows.bind(this));
             $scope.$watch('headers', this.setHeaders.bind(this));
