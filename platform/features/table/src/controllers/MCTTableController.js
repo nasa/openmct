@@ -296,6 +296,20 @@ define(
         };
 
         /**
+         * Given a value, if it can be coerced to a number, then return a
+         * number representation. It's a little more robust than using just
+         * Number() or parseFloat, or isNaN in isolation, all of which are
+         * fairly inconsistent in their results.
+         * @param value The value to cast (if possible)
+         * @returns {*} The value cast to a Number, or the original value if
+         * a Number representation is not possible.
+         */
+        MCTTableController.prototype.toNumber = function (value){
+            var val = !isNaN(Number(value)) && !isNaN(parseFloat(value)) ? Number(value) : value;
+            return val;
+        };
+
+        /**
          * @private
          */
         MCTTableController.prototype.insertSorted = function (array, element) {
@@ -311,12 +325,8 @@ define(
                     return min; // Element is not in array, min gives direction
                 }
 
-                valA = isNaN(searchElement[sortKey].text) ?
-                    searchElement[sortKey].text :
-                    parseFloat(searchElement[sortKey].text);
-                valB = isNaN(searchArray[sampleAt][sortKey].text) ?
-                    searchArray[sampleAt][sortKey].text :
-                    parseFloat(searchArray[sampleAt][sortKey].text);
+                valA = self.toNumber(searchElement[sortKey].text);
+                valB = self.toNumber(searchArray[sampleAt][sortKey].text);
 
                 switch(self.sortComparator(valA, valB)) {
                     case -1:
@@ -397,10 +407,9 @@ define(
                 //If the values to compare can be compared as
                 // numbers, do so. String comparison of number
                 // values can cause inconsistencies
-                var valA = isNaN(a[sortKey].text) ? a[sortKey].text :
-                        parseFloat(a[sortKey].text),
-                    valB = isNaN(b[sortKey].text) ? b[sortKey].text :
-                        parseFloat(b[sortKey].text);
+
+                var valA = self.toNumber(a[sortKey].text),
+                    valB = self.toNumber(b[sortKey].text);
 
                 return self.sortComparator(valA, valB);
             });

@@ -180,6 +180,50 @@ define(
                         expect(sortedRows[2].col2.text).toEqual('abc');
                     });
 
+                    it('converts number strings to numbers', function () {
+                        var val1 = "",
+                            val2 = "1",
+                            val3 = "2016-04-05 18:41:30.713Z",
+                            val4 = "1.1",
+                            val5 = "8.945520958175627e-13";
+
+                        expect(controller.toNumber(val1)).toEqual("");
+                        expect(controller.toNumber(val2)).toEqual(1);
+                        expect(controller.toNumber(val3)).toEqual("2016-04-05 18:41:30.713Z");
+                        expect(controller.toNumber(val4)).toEqual(1.1);
+                        expect(controller.toNumber(val5)).toEqual(8.945520958175627e-13);
+                    });
+
+                    it('correctly sorts rows of differing types', function () {
+                        mockScope.sortColumn = 'col2';
+                        mockScope.sortDirection = 'desc';
+
+                        testRows.push({
+                            'col1': {'text': 'row4 col1'},
+                            'col2': {'text': '123'},
+                            'col3': {'text': 'row4 col3'}
+                        });
+                        testRows.push({
+                            'col1': {'text': 'row5 col1'},
+                            'col2': {'text': '456'},
+                            'col3': {'text': 'row5 col3'}
+                        });
+                        testRows.push({
+                            'col1': {'text': 'row5 col1'},
+                            'col2': {'text': ''},
+                            'col3': {'text': 'row5 col3'}
+                        });
+
+                        sortedRows = controller.sortRows(testRows);
+                        expect(sortedRows[0].col2.text).toEqual('ghi');
+                        expect(sortedRows[1].col2.text).toEqual('def');
+                        expect(sortedRows[2].col2.text).toEqual('abc');
+
+                        expect(sortedRows[sortedRows.length-3].col2.text).toEqual('456');
+                        expect(sortedRows[sortedRows.length-2].col2.text).toEqual('123');
+                        expect(sortedRows[sortedRows.length-1].col2.text).toEqual('');
+                    });
+
                     describe('Adding new rows', function() {
                         var row4,
                             row5,
@@ -251,7 +295,7 @@ define(
                         });
 
                         it('Adds new rows at the correct sort position when' +
-                            ' not sorted ', function() {
+                            ' not sorted ', function () {
                             mockScope.sortColumn = undefined;
                             mockScope.sortDirection = undefined;
                             mockScope.filters = {};
