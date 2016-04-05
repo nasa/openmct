@@ -151,11 +151,9 @@ emphasis on testing.
   ensuring software passes that testing in order to ship on time;
   may prefer to disable malfunctioning components and fix them
   in a subsequent sprint, for example.
-* __Ship.__ Tag a code snapshot that has passed acceptance
-  testing and deploy that version. (Only true if acceptance
-  testing has passed by this point; if acceptance testing has not
+* [__Ship.__](version.md) Tag a code snapshot that has passed release/sprint
+  testing and deploy that version. (Only true if relevant
+  testing has passed by this point; if testing has not
   been passed, will need to make ad hoc decisions with stakeholders,
   e.g. "extend the sprint" or "defer shipment until end of next
   sprint.")
-
-
