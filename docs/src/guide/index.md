@@ -6,12 +6,13 @@ Victor Woeltjen
 September 23, 2015  
 Document Version 1.1  
 
-Date                | Version   | Summary of Changes      | Author
-------------------- | --------- | ----------------------- | ---------------
-April 29, 2015      | 0         | Initial Draft           | Victor Woeltjen
-May 12, 2015        | 0.1       |                         | Victor Woeltjen
-June 4, 2015        | 1.0       | Name Changes            | Victor Woeltjen
-October 4, 2015     | 1.1       | Conversion to MarkDown  | Andrew Henry
+Date                | Version   | Summary of Changes        | Author
+------------------- | --------- | ------------------------- | ---------------
+April 29, 2015      | 0         | Initial Draft             | Victor Woeltjen
+May 12, 2015        | 0.1       |                           | Victor Woeltjen
+June 4, 2015        | 1.0       | Name Changes              | Victor Woeltjen
+October 4, 2015     | 1.1       | Conversion to MarkDown    | Andrew Henry
+April 5, 2016       | 1.2       | Added Mct-table directive | Andrew Henry
 
 # Introduction
 The purpose of this guide is to familiarize software developers with the Open
@@ -1599,6 +1600,61 @@ there are items .
             ... and other sections ... 
         ] 
     }
+
+## Table
+
+The `mct-table` directive provides a generic table component, with optional 
+sorting and filtering capabilities. The table can be pre-populated with data 
+by setting the `rows` parameter, and it can be updated in real-time using the
+`add:row` and `remove:row` broadcast events. The table will expand to occupy 
+100% of the size of its containing element. The table is highly optimized for 
+very large data sets.
+
+### Events
+
+The table supports two events for notifying that the rows have changed. For 
+performance reasons, the table does not monitor the content of `rows` 
+constantly. 
+
+* `add:row`: A `$broadcast` event that will notify the table that a new row 
+has been added to the table.
+
+eg. The code below adds a new row, and alerts the table using the `add:row` 
+event. Sorting and filtering will be applied automatically by the table component.
+
+```
+$scope.rows.push(newRow);
+$scope.$broadcast('add:row', $scope.rows.length-1);
+```
+
+* `remove:row`: A `$broadcast` event that will notify the table that a row 
+should be removed from the table.
+
+eg. The code below removes a row from the rows array, and then alerts the table 
+to its removal.
+    
+```
+$scope.rows.slice(5, 1);
+$scope.$broadcast('remove:row', 5);
+```
+
+### Parameters
+
+* `headers`: An array of string values which will constitute the column titles
+ that appear at the top of the table. Corresponding values are specified in 
+ the rows using the header title provided here.
+* `rows`: An array of objects containing row values. Each element in the 
+array must be an associative array, where the key corresponds to a column header. 
+* `enableFilter`: A boolean that if true, will enable searching and result 
+filtering. When enabled, each column will have a text input field that can be
+used to filter the table rows in real time.
+* `enableSort`: A boolean determining whether rows can be sorted. If true, 
+sorting will be enabled allowing sorting by clicking on column headers. Only 
+one column may be sorted at a time.
+* `autoScroll`: A boolean value that if true, will cause the table to automatically 
+scroll to the bottom as new data arrives. Auto-scroll can be disengaged manually 
+by scrolling away from the bottom of the table, and can also be enabled manually 
+by scrolling to the bottom of the table rows.
 
 # Services 
 

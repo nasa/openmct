@@ -85,7 +85,7 @@ define(
                 then: function (callback) {
                     return fastPromise(callback(returnValue));
                 }
-            }
+            };
         }
 
         /**

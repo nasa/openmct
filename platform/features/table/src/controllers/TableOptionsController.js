@@ -55,8 +55,15 @@ define(
 
             $scope.columnsForm = {};
 
+            function unlisten() {
+                self.listeners.forEach(function (listener) {
+                    listener();
+                });
+            }
+
             $scope.$watch('domainObject', function(domainObject) {
-               self.populateForm(domainObject.getModel());
+                unlisten();
+                self.populateForm(domainObject.getModel());
 
                 self.listeners.push(self.domainObject.getCapability('mutation').listen(function (model) {
                     self.populateForm(model);
@@ -79,11 +86,7 @@ define(
             /**
              * Destroy all mutation listeners
              */
-            $scope.$on('$destroy', function () {
-                self.listeners.forEach(function (listener) {
-                   listener();
-                });
-            })
+            $scope.$on('$destroy', unlisten);
 
         }
 
