@@ -77,7 +77,7 @@ define(
                 return listener && listener();
             });
             this.changeListeners = [];
-        }
+        };
 
         /**
          * Defer registration of change listeners until domain object is
@@ -156,7 +156,7 @@ define(
 
             if (handle) {
                 handle.promiseTelemetryObjects().then(function () {
-                    self.$scope.headers = []
+                    self.$scope.headers = [];
                     self.$scope.rows = [];
                     table.populateColumns(handle.getMetadata());
 

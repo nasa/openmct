@@ -68,6 +68,10 @@ define(
 
         RealtimeTableController.prototype = Object.create(TableController.prototype);
 
+        /**
+         * Overrides method on TelemetryTableController providing handling
+         * for realtime data.
+         */
         RealtimeTableController.prototype.addRealtimeData = function() {
             var self = this,
                 datum,
@@ -89,7 +93,7 @@ define(
                         self.$scope.rows.length - 1);
                 }
             });
-        }
+        };
 
         return RealtimeTableController;
     }
