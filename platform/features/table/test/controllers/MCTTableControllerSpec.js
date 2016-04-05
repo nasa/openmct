@@ -58,15 +58,18 @@ define(
 
                 mockElement = jasmine.createSpyObj('element', [
                     'find',
+                    'prop',
                     'on'
                 ]);
                 mockElement.find.andReturn(mockElement);
+                mockElement.prop.andReturn(0);
 
                 mockScope.displayHeaders = true;
                 mockTimeout = jasmine.createSpy('$timeout');
                 mockTimeout.andReturn(promise(undefined));
 
                 controller = new MCTTableController(mockScope, mockTimeout, mockElement);
+                spyOn(controller, 'setVisibleRows');
             });
 
             it('Reacts to changes to filters, headers, and rows', function() {
@@ -115,7 +118,7 @@ define(
                 });
 
                 it('Sets rows on scope when rows change', function() {
-                    controller.updateRows(testRows);
+                    controller.setRows(testRows);
                     expect(mockScope.displayRows.length).toBe(3);
                     expect(mockScope.displayRows).toEqual(testRows);
                 });
@@ -127,7 +130,7 @@ define(
                             'col2': {'text': 'ghi'},
                             'col3': {'text': 'row3 col3'}
                         };
-                    controller.updateRows(testRows);
+                    controller.setRows(testRows);
                     expect(mockScope.displayRows.length).toBe(3);
                     testRows.push(row4);
                     addRowFunc(undefined, 3);
@@ -136,10 +139,8 @@ define(
 
                 it('Supports removing rows individually', function() {
                     var removeRowFunc = mockScope.$on.calls[mockScope.$on.calls.length-1].args[1];
-                    controller.updateRows(testRows);
+                    controller.setRows(testRows);
                     expect(mockScope.displayRows.length).toBe(3);
-                    spyOn(controller, 'setVisibleRows');
-                    //controller.setVisibleRows.andReturn(undefined);
                     removeRowFunc(undefined, 2);
                     expect(mockScope.displayRows.length).toBe(2);
                     expect(controller.setVisibleRows).toHaveBeenCalled();
@@ -210,20 +211,20 @@ define(
                             mockScope.displayRows = controller.sortRows(testRows.slice(0));
 
                             mockScope.rows.push(row4);
-                            controller.newRow(undefined, mockScope.rows.length-1);
+                            controller.addRow(undefined, mockScope.rows.length-1);
                             expect(mockScope.displayRows[0].col2.text).toEqual('xyz');
 
                             mockScope.rows.push(row5);
-                            controller.newRow(undefined, mockScope.rows.length-1);
+                            controller.addRow(undefined, mockScope.rows.length-1);
                             expect(mockScope.displayRows[4].col2.text).toEqual('aaa');
 
                             mockScope.rows.push(row6);
-                            controller.newRow(undefined, mockScope.rows.length-1);
+                            controller.addRow(undefined, mockScope.rows.length-1);
                             expect(mockScope.displayRows[2].col2.text).toEqual('ggg');
 
                             //Add a duplicate row
                             mockScope.rows.push(row6);
-                            controller.newRow(undefined, mockScope.rows.length-1);
+                            controller.addRow(undefined, mockScope.rows.length-1);
                             expect(mockScope.displayRows[2].col2.text).toEqual('ggg');
                             expect(mockScope.displayRows[3].col2.text).toEqual('ggg');
                         });
@@ -239,12 +240,12 @@ define(
                             mockScope.displayRows = controller.filterRows(testRows);
 
                             mockScope.rows.push(row5);
-                            controller.newRow(undefined, mockScope.rows.length-1);
+                            controller.addRow(undefined, mockScope.rows.length-1);
                             expect(mockScope.displayRows.length).toBe(2);
                             expect(mockScope.displayRows[1].col2.text).toEqual('aaa');
 
                             mockScope.rows.push(row6);
-                            controller.newRow(undefined, mockScope.rows.length-1);
+                            controller.addRow(undefined, mockScope.rows.length-1);
                             expect(mockScope.displayRows.length).toBe(2);
                             //Row was not added because does not match filter
                         });
@@ -258,12 +259,31 @@ define(
                             mockScope.displayRows = testRows.slice(0);
 
                             mockScope.rows.push(row5);
-                            controller.newRow(undefined, mockScope.rows.length-1);
+                            controller.addRow(undefined, mockScope.rows.length-1);
                             expect(mockScope.displayRows[3].col2.text).toEqual('aaa');
 
                             mockScope.rows.push(row6);
-                            controller.newRow(undefined, mockScope.rows.length-1);
+                            controller.addRow(undefined, mockScope.rows.length-1);
                             expect(mockScope.displayRows[4].col2.text).toEqual('ggg');
+                        });
+
+                        it('Resizes columns if length of any columns in new' +
+                            ' row exceeds corresponding existing column', function() {
+                            var row7 = {
+                                'col1': {'text': 'row6 col1'},
+                                'col2': {'text': 'some longer string'},
+                                'col3': {'text': 'row6 col3'}
+                            };
+
+                            mockScope.sortColumn = undefined;
+                            mockScope.sortDirection = undefined;
+                            mockScope.filters = {};
+
+                            mockScope.displayRows = testRows.slice(0);
+
+                            mockScope.rows.push(row7);
+                            controller.addRow(undefined, mockScope.rows.length-1);
+                            expect(controller.$scope.sizingRow.col2).toEqual({text: 'some longer string'});
                         });
 
                     });
