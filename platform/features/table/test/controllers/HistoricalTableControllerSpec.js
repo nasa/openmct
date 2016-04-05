@@ -23,7 +23,7 @@
 
 define(
     [
-        "../../src/controllers/TelemetryTableController"
+        "../../src/controllers/HistoricalTableController"
     ],
     function (TableController) {
         "use strict";
@@ -73,14 +73,14 @@ define(
 
                 mockTable = jasmine.createSpyObj('table',
                     [
-                        'buildColumns',
-                        'getColumnConfiguration',
+                        'populateColumns',
+                        'buildColumnConfiguration',
                         'getRowValues',
                         'saveColumnConfiguration'
                     ]
                 );
                 mockTable.columns = [];
-                mockTable.getColumnConfiguration.andReturn(mockConfiguration);
+                mockTable.buildColumnConfiguration.andReturn(mockConfiguration);
 
                 mockDomainObject= jasmine.createSpyObj('domainObject', [
                     'getCapability',
@@ -126,21 +126,18 @@ define(
                 expect(mockTelemetryHandle.unsubscribe).toHaveBeenCalled();
             });
 
-            describe('the controller makes use of the table', function () {
+            describe('makes use of the table', function () {
 
                 it('to create column definitions from telemetry' +
                     ' metadata', function () {
                     controller.setup();
-                    expect(mockTable.buildColumns).toHaveBeenCalled();
+                    expect(mockTable.populateColumns).toHaveBeenCalled();
                 });
 
                 it('to create column configuration, which is written to the' +
                     ' object model', function () {
-                    var mockModel = {};
-
                     controller.setup();
-                    expect(mockTable.getColumnConfiguration).toHaveBeenCalled();
-                    expect(mockTable.saveColumnConfiguration).toHaveBeenCalled();
+                    expect(mockTable.buildColumnConfiguration).toHaveBeenCalled();
                 });
             });
 

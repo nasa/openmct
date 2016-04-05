@@ -104,7 +104,7 @@ define(
                     'key': key
                 });
             });
-            this.$scope.configuration = JSON.parse(JSON.stringify(model.configuration));
+            this.$scope.configuration = JSON.parse(JSON.stringify(model.configuration || {}));
         };
 
         return TableOptionsController;

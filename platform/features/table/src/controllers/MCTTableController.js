@@ -120,7 +120,8 @@ define(
                 //Resize the columns (if necessary), then update the rows
                 // visible in the table
                 this.resize([this.$scope.sizingRow, row])
-                    .then(this.setVisibleRows.bind(this));
+                    .then(this.setVisibleRows.bind(this))
+                    .then(this.scrollToBottom.bind(this));
             }
         };
 

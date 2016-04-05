@@ -47,7 +47,7 @@ define(
          * Populates historical data on scope when it becomes available from
          * the telemetry API
          */
-        HistoricalTableController.prototype.addHistoricalData = function (domainObject) {
+        HistoricalTableController.prototype.addHistoricalData = function () {
             var rowData = [],
                 self = this;
 
