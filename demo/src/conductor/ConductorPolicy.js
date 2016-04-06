@@ -22,22 +22,16 @@
 /*global define*/
 
 define(
-    [
-        "zepto"
-    ],
-    function ($) {
+    [],
+    function () {
         "use strict";
 
-        function DemoConductorRepresenter(
-            $q,
-            views,
-            scope,
-            element
-        ) {
+        /**
+         * A policy that will test whether a given object OR all of its
+         * support historical telemetry
+         */
+        function ConductorPolicy($q) {
             this.$q = $q;
-            this.scope = scope;
-            this.element = element;
-            this.views = views;
         }
 
         function fastPromise(value) {
@@ -55,47 +49,33 @@ define(
         }
 
         /**
-         * Test whether the given object OR all of its descendants have the
-         * conductor enabled
-         * @param object
-         * @returns {*}
+         * @param {DomainObject} candidate
+         * @returns {Promise} a promise resolved with true if the object
+         * supports historical telemetry
          */
-        DemoConductorRepresenter.prototype.showConductor = function (object) {
+        ConductorPolicy.prototype.allow = function (candidate) {
             var self = this;
 
             //Does the object itself allow the time conductor?
-            if (object.getModel().showConductor) {
-                return fastPromise(object.getModel().showConductor);
+            if (candidate.hasCapability('telemetry') && candidate.getCapability('telemetry').getMetadata().historical) {
+                return fastPromise(true);
             } else {
                 //If not, do all of its constituents allow time conductor?
-                if (object.hasCapability('composition')) {
-                    return object.useCapability('composition').then(function (composition) {
-                        return self.$q.all(composition.map(self.showConductor.bind(self))).then(and);
+                if (candidate.hasCapability('composition')) {
+                    return candidate.useCapability('composition').then(function (composition) {
+                        if (composition.length === 0 ) {
+                            return fastPromise(false);
+                        } else {
+                            return self.$q.all(composition.map(self.allow.bind(self))).then(and);
+                        }
                     });
                 } else {
                     //if no, hide time conductor
                     return fastPromise(false);
                 }
             }
-        }
-
-        /**
-         * @param representation
-         * @param representedObject
-         */
-        DemoConductorRepresenter.prototype.represent = function (representation, representedObject) {
-            if (this.views.indexOf(representation) !== -1) {
-                this.showConductor(representedObject).then(function (show) {
-                    if (!show || representation.type === 'folder') {
-                        $('.l-time-controller').hide();
-                    }
-                });
-            }
         };
 
-        DemoConductorRepresenter.prototype.destroy = function destroy() {
-
-        };
-
-        return DemoConductorRepresenter;
-    });
+        return ConductorPolicy;
+    }
+);

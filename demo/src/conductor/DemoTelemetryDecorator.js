@@ -26,16 +26,29 @@ define(
     function () {
         "use strict";
 
-        function ConductorServiceDecorator(conductorService) {
-            conductorService.getConductor().displayStart(Date.UTC(2012,8,7));
-
-            return {
-                getConductor: function () {
-                    return conductorService.getConductor();
-                }
-            };
+        function DemoTelemetryDecorator(telemetryService) {
+            this.telemetryService = telemetryService;
         }
 
-        return ConductorServiceDecorator;
+        function processRequest(request ) {
+            if (!request.historical) {
+                ['start', 'end', 'domain'].forEach(function (attribute){
+                   delete request[attribute];
+                });
+            }
+            return request;
+        }
+
+        DemoTelemetryDecorator.prototype.requestTelemetry = function (requests) {
+            return this.telemetryService
+                .requestTelemetry(requests.map(processRequest));
+        };
+
+        DemoTelemetryDecorator.prototype.subscribe = function (callback, requests) {
+            return this.telemetryService
+                .subscribe(callback, requests.map(processRequest));
+        };
+
+        return DemoTelemetryDecorator;
     }
 );
