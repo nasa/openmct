@@ -57,11 +57,10 @@ define([
                     "depends": [
                         "conductorService"
                     ]
-                }
-            ],
-            "services": [
+                },
                 {
-                    "key": "conductorService",
+                    "provides": "conductorService",
+                    "type": "provider",
                     "implementation": ConductorService,
                     "depends": [
                         "now",

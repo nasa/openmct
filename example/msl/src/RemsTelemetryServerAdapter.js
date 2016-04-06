@@ -44,7 +44,7 @@ define(
          */
         function RemsTelemetryServerAdapter($q, $http, $log, REMS_WS_URL) {
             this.localDataURI = module.uri.substring(0, module.uri.lastIndexOf('/') + 1) + LOCAL_DATA;
-            this.deferreds = {};
+            this.requestDeferred = undefined;
             this.REMS_WS_URL = REMS_WS_URL;
             this.$q = $q;
             this.$http = $http;
@@ -70,10 +70,6 @@ define(
 
             function processResponse(response){
                 var data = [];
-                /*
-                 * Currently all data is returned for entire history of the mission. Cache response to avoid unnecessary re-queries.
-                 */
-                self.cache = response;
                 /*
                  * History data is organised by Sol. Iterate over sols...
                  */
@@ -109,19 +105,41 @@ define(
                 });
             }
 
-            function packageAndResolve(results){
-                deferred.resolve({id: id, values: results});
+            function packageResults(results){
+                return {id: id, values: results};
             }
 
-
-            this.$q.when(this.cache || this.$http.get(this.REMS_WS_URL))
+            return this.request()
                 .catch(fallbackToLocal)
                 .then(processResponse)
                 .then(filterResults)
-                .then(packageAndResolve);
-
-            return deferred.promise;
+                .then(packageResults);
         };
+
+        /**
+         * Sends a request for data, or uses local cache (if available).
+         * Allows only one HTTP request at a time.
+         * @private
+         * @returns {Function|promise}
+         */
+        RemsTelemetryServerAdapter.prototype.request = function () {
+            var self = this;
+
+            if (this.requestDeferred) {
+                return this.requestDeferred.promise;
+            } else {
+                this.requestDeferred = this.$q.defer();
+                this.$q.when(this.cache || this.$http.get(this.REMS_WS_URL))
+                    .then(function(response){
+                        self.cache = response;
+                        self.requestDeferred.resolve(response);
+                        self.requestDeferred = undefined;
+                        return response;
+                    })
+                    .catch(this.requestDeferred.reject);
+                return this.requestDeferred.promise;
+            }
+        }
 
         /**
          * Requests historical telemetry for the named data attribute. In

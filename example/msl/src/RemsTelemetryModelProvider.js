@@ -50,6 +50,7 @@ define(
                     models[makeId(measurement)] = {
                         type: "msl.measurement",
                         name: measurement.name,
+                        showConductor: true,
                         telemetry: {
                             key: measurement.identifier,
                             ranges: [{

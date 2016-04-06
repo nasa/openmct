@@ -80,6 +80,7 @@ define([
     './platform/features/plot/bundle',
     './platform/features/timeline/bundle',
     './platform/features/table/bundle',
+    './platform/features/conductor/bundle',
     './platform/forms/bundle',
     './platform/identity/bundle',
     './platform/persistence/aggregator/bundle',
@@ -93,7 +94,10 @@ define([
 
     './example/imagery/bundle',
     './example/eventGenerator/bundle',
-    './example/generator/bundle'
+    './example/generator/bundle',
+    './example/msl/bundle',
+
+    './demo/bundle',
 ], function (Main, legacyRegistry) {
     'use strict';
 
