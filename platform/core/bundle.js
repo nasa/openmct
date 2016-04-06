@@ -260,14 +260,15 @@ define([
                 {
                     "key": "root",
                     "name": "Root",
-                    "glyph": "F"
+                    "glyph": "\u0046"
                 },
                 {
                     "key": "folder",
                     "name": "Folder",
-                    "glyph": "F",
+                    "glyph": "\u0046",
                     "features": "creation",
-                    "description": "Useful for storing and organizing domain objects.",
+                    "description": "Create folders to organize other objects or links to objects.",
+                    "priority": 1000,
                     "model": {
                         "composition": []
                     }
@@ -275,11 +276,11 @@ define([
                 {
                     "key": "unknown",
                     "name": "Unknown Type",
-                    "glyph": "?"
+                    "glyph": "\u003f"
                 },
                 {
                     "name": "Unknown Type",
-                    "glyph": "?"
+                    "glyph": "\u003f"
                 }
             ],
             "capabilities": [

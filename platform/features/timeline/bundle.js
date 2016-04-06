@@ -139,8 +139,9 @@ define([
                 {
                     "key": "timeline",
                     "name": "Timeline",
-                    "glyph": "S",
-                    "description": "A container for arranging Timelines and Activities in time.",
+                    "glyph": "\u0053",
+                    "description": "A time-oriented container that lets you enclose and organize other Timelines and Activities. The Timeline view provides both tabular and Gantt views as well as resource utilization graphing of Activities.",
+                    "priority": 502,
                     "features": [
                         "creation"
                     ],
@@ -181,14 +182,15 @@ define([
                 {
                     "key": "activity",
                     "name": "Activity",
-                    "glyph": "a",
+                    "glyph": "\u0061",
                     "features": [
                         "creation"
                     ],
                     "contains": [
                         "activity"
                     ],
-                    "description": "An action that takes place in time. You can define a start time and duration. Activities can be nested within other Activities, or within Timelines.",
+                    "description": "An event or process that starts and ends at a discrete datetime. Activities can be nested in other Activities, and can be added to Timelines. Activity Modes can be added to an Activity to define its resource utilization over time.",
+                    "priority": 501,
                     "properties": [
                         {
                             "name": "Start date/time",
@@ -226,11 +228,12 @@ define([
                 {
                     "key": "mode",
                     "name": "Activity Mode",
-                    "glyph": "A",
+                    "glyph": "\u0041",
                     "features": [
                         "creation"
                     ],
-                    "description": "Define resource utilizations over time, then apply to an Activity.",
+                    "description": "When a sub-system utilizes Power or Communications resources over time, you can define those values in an Activity Mode. Activity Modes can then be linked to Activities to allow resource utilization graphing and estimating in a Timeline.",
+                    "priority": 500,
                     "model": {
                         "resources": {
                             "comms": 0,
@@ -265,7 +268,7 @@ define([
                 {
                     "key": "values",
                     "name": "Values",
-                    "glyph": "A",
+                    "glyph": "\u0041",
                     "template": valuesTemplate,
                     "type": "mode",
                     "uses": [
@@ -276,9 +279,9 @@ define([
                 {
                     "key": "timeline",
                     "name": "Timeline",
-                    "glyph": "S",
+                    "glyph": "\u0053",
                     "type": "timeline",
-                    "description": "A timeline view of Timelines and Activities.",
+                    "description": "A time-oriented container that lets you enclose and organize other Timelines and Activities. The Timeline view provides both tabular and Gantt views as well as resource utilization graphing of Activities.",
                     "template": timelineTemplate,
                     "editable": true,
                     "toolbar": {
@@ -287,18 +290,18 @@ define([
                                 "items": [
                                     {
                                         "method": "add",
-                                        "glyph": "+",
+                                        "glyph": "\u002b",
                                         "control": "menu-button",
                                         "text": "Add",
                                         "options": [
                                             {
                                                 "name": "Timeline",
-                                                "glyph": "S",
+                                                "glyph": "\u0053",
                                                 "key": "timeline"
                                             },
                                             {
                                                 "name": "Activity",
-                                                "glyph": "a",
+                                                "glyph": "\u0061",
                                                 "key": "activity"
                                             }
                                         ]
@@ -308,13 +311,13 @@ define([
                             {
                                 "items": [
                                     {
-                                        "glyph": "é",
-                                        "description": "Graph resource utilization",
+                                        "glyph": "\u00e9",
+                                        "description": "Graph Resource Utilization",
                                         "control": "button",
                                         "method": "toggleGraph"
                                     },
                                     {
-                                        "glyph": "A",
+                                        "glyph": "\u0041",
                                         "control": "dialog-button",
                                         "description": "Apply Activity Modes...",
                                         "title": "Apply Activity Modes",
@@ -327,7 +330,7 @@ define([
                                         "property": "modes"
                                     },
                                     {
-                                        "glyph": "è",
+                                        "glyph": "\u00e8",
                                         "description": "Edit Activity Link",
                                         "title": "Activity Link",
                                         "control": "dialog-button",
@@ -340,7 +343,7 @@ define([
                                         "property": "link"
                                     },
                                     {
-                                        "glyph": "G",
+                                        "glyph": "\u0047",
                                         "description": "Edit Properties...",
                                         "control": "button",
                                         "method": "properties"
@@ -351,9 +354,9 @@ define([
                                 "items": [
                                     {
                                         "method": "remove",
-                                        "description": "Remove item",
+                                        "description": "Remove Item",
                                         "control": "button",
-                                        "glyph": "Z"
+                                        "glyph": "\u005a"
                                     }
                                 ]
                             }

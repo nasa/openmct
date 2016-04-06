@@ -80,9 +80,10 @@ define([
             "types": [
                 {
                     "key": "plot",
-                    "name": "Telemetry Plot",
-                    "glyph": "t",
-                    "description": "A plot for displaying telemetry",
+                    "name": "Example Telemetry Plot",
+                    "glyph": "\u0074",
+                    "description": "For development use. A plot for displaying telemetry.",
+                    "priority": 10,
                     "delegates": [
                         "telemetry"
                     ],
