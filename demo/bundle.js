@@ -22,14 +22,18 @@
 /*global define*/
 
 define([
-    "./src/DemoConductorRepresenter",
+    "./src/conductor/DemoConductorRepresenter",
     "./src/DemoInitializer",
-    "./src/ConductorServiceDecorator",
+    "./src/conductor/ConductorServiceDecorator",
+    "./src/conductor/DemoTelemetryDecorator",
+    "./src/telemetry/DemoTelemetryProvider",
     'legacyRegistry'
 ], function (
     DemoConductorRepresenter,
     DemoInitializer,
     ConductorServiceDecorator,
+    DemoTelemetryDecorator,
+    DemoTelemetryProvider,
     legacyRegistry
 ) {
     "use strict";
@@ -41,8 +45,7 @@ define([
             "representers": [
                 {
                     "implementation": DemoConductorRepresenter,
-                    "depends": ["$q", "views[]"],
-                    "priority": "fallback"
+                    "depends": ["$q", "$compile", "conductorService", "views[]", "throttle"]
                 }
             ],
             "components": [
@@ -50,6 +53,54 @@ define([
                     "implementation": ConductorServiceDecorator,
                     "provides": "conductorService",
                     "type": "decorator"
+                },
+                {
+                    "implementation": DemoTelemetryDecorator,
+                    "provides": "telemetryService",
+                    "type": "decorator",
+                    "priority": "mandatory"
+                },
+                {
+                    "implementation": DemoTelemetryProvider,
+                    "type": "decorator",
+                    "provides": "telemetryService"
+                }
+            ],
+            "runs": [
+                {
+                    "implementation": DemoInitializer,
+                    "depends": [
+                        "representers[]"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "key": "demo-telemetry",
+                    "name": "Spacecraft Telemetry Generator",
+                    "glyph": "T",
+                    "description": "Mock realtime spacecraft telemetry",
+                    "features": "creation",
+                    "model": {
+                        "telemetry": {
+                            "period": 1000
+                        }
+                    },
+                    "telemetry": {
+                        "source": "demo-telemetry",
+                        "domains": [
+                            {
+                                "key": "time",
+                                "name": "Time"
+                            }
+                        ],
+                        "ranges": [
+                            {
+                                "key": "value",
+                                "name": "value"
+                            }
+                        ]
+                    }
                 }
             ]
         }
