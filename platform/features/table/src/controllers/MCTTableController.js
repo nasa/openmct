@@ -296,11 +296,12 @@ define(
         };
 
         /**
-         * Given a value, if it can be coerced to a number, then return a
-         * number representation. It's a little more robust than using just
+         * Given a value, if it is a number, or a string representation of a
+         * number, then return a number representation. Otherwise, return
+         * the original value. It's a little more robust than using just
          * Number() or parseFloat, or isNaN in isolation, all of which are
          * fairly inconsistent in their results.
-         * @param value The value to cast (if possible)
+         * @param value The value to return as a number.
          * @returns {*} The value cast to a Number, or the original value if
          * a Number representation is not possible.
          */
