@@ -22,12 +22,34 @@
 /*global define*/
 
 define(
-    function (){
+    ["../../platform/features/conductor/src/ConductorRepresenter"],
+    function (ConductorRepresenter){
         "use strict";
 
-        function DemoInitializer(conductorService) {
-            conductorService.getConductor().displayStart(Date.UTC(2012,8,7));
+        function DemoInitializer(representers) {
+
+            function indexOf(array, callback) {
+                return array.reduce(function(previous, element, index) {
+                   if (previous=== -1 && callback(element)) {
+                       return index;
+                   } else {
+                       return previous;
+                   }
+                }, -1);
+            }
+
+            function removeRepresenter(type){
+                var index = indexOf(representers, function(representer) {
+                    return representer.implementation === type;
+                });
+                if (index !== -1) {
+                    representers.splice(index, 1);
+                }
+            }
+
+            removeRepresenter(ConductorRepresenter);
         }
+
         return DemoInitializer;
     }
 );

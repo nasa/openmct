@@ -25,7 +25,7 @@ define(
     [
         "zepto",
         "./ConductorPolicy",
-        "../../platform/features/conductor/src/ConductorRepresenter"
+        "../../../platform/features/conductor/src/ConductorRepresenter"
     ],
     function ($, ConductorPolicy, ConductorRepresenter) {
         "use strict";
