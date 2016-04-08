@@ -62,8 +62,9 @@ define([
                 },
                 {
                     "implementation": DemoTelemetryProvider,
-                    "type": "decorator",
-                    "provides": "telemetryService"
+                    "type": "provider",
+                    "provides": "telemetryService",
+                    "depends": ["$q", "$timeout"]
                 }
             ],
             "runs": [
@@ -83,7 +84,8 @@ define([
                     "features": "creation",
                     "model": {
                         "telemetry": {
-                            "period": 1000
+                            "period": 10000,
+                            "multiplier": 10
                         }
                     },
                     "telemetry": {
@@ -96,7 +98,7 @@ define([
                         ],
                         "ranges": [
                             {
-                                "key": "value",
+                                "key": "sin",
                                 "name": "value"
                             }
                         ]

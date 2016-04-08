@@ -22,26 +22,41 @@
 /*global define,Promise*/
 
 define(
-    [""],
-    function () {
+    ["../../../example/generator/src/SinewaveTelemetryProvider"],
+    function (SinewaveTelemetryProvider) {
         "use strict";
 
-        var SOURCE = 'generator';
+        var SOURCE = 'demo-telemetry';
 
-        //TODO: Redo as class extension.
-        function DemoTelemetryProvider(telemetryProvider) {
+        function DemoTelemetryProvider($q, $timeout) {
+            SinewaveTelemetryProvider.call(this, $q, $timeout);
+        }
 
-            function requestTelemetry(requests) {
-                return telemetryProvider.requestTelemetry(requests);
-            }
+        DemoTelemetryProvider.prototype = Object.create(SinewaveTelemetryProvider.prototype);
 
-            function wrapSeries(telemetrySeries) {
+        DemoTelemetryProvider.prototype.doPackage = function (results) {
+            var packaged = {};
+            results.forEach(function (result) {
+                packaged[result.key] = result.telemetry;
+            });
+            // Format as expected (sources -> keys -> telemetry)
+            return { "demo-telemetry": packaged };
+        }
+
+        DemoTelemetryProvider.prototype.matchesSource = function (request) {
+            return request.source === SOURCE;
+        }
+
+        DemoTelemetryProvider.prototype.subscribe = function (callback, requests) {
+            var offsets = {};
+
+            function wrapSeries(telemetrySeries, offset) {
                 return {
                     getDomainValue: function (index, domain) {
                         return telemetrySeries.getDomainValue(index, domain);
                     },
                     getRangeValue: function (index, range) {
-                        return Math.random(1)/5 + telemetrySeries.getRangeValue(index, range);
+                        return Math.random(1)/50 + telemetrySeries.getRangeValue(index, range) + offset;
                     },
                     getPointCount: function () {
                         return telemetrySeries.getPointCount();
@@ -49,23 +64,17 @@ define(
                 }
             }
 
-            function subscribe(callback, requests) {
-                function randomize(telemetry){
-                    if (telemetry.generator) {
-                        Object.keys(telemetry.generator).forEach(function(key) {
-                           telemetry.generator[key] = wrapSeries(telemetry.generator[key]);
-                        });
-                    }
-                    callback(telemetry);
-                }
-                return telemetryProvider.subscribe(randomize, requests);
+            function randomize(telemetry){
+                Object.keys(telemetry[SOURCE]).forEach(function(key) {
+                    if (!offsets[key])
+                        offsets[key] = 1 + Math.random(10);
+                    telemetry[SOURCE][key] = wrapSeries(telemetry[SOURCE][key], offsets[key]);
+                });
+                callback(telemetry);
             }
 
-            return {
-                requestTelemetry: requestTelemetry,
-                subscribe: subscribe
-            }
-        }
+            return SinewaveTelemetryProvider.prototype.subscribe.call(this, randomize, requests);
+        };
 
         return DemoTelemetryProvider;
     }

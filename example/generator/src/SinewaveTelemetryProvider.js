@@ -44,7 +44,7 @@ define(
             this.generating = false;
         }
 
-        function doPackage(results) {
+        SinewaveTelemetryProvider.prototype.doPackage = function (results) {
             var packaged = {};
             results.forEach(function (result) {
                 packaged[result.key] = result.telemetry;
@@ -77,7 +77,7 @@ define(
             var self = this;
             self.subscriptions.forEach(function (subscription) {
                 var requests = subscription.requests;
-                subscription.callback(doPackage(
+                subscription.callback(self.doPackage(
                     requests.filter(self.matchesSource).map(self.generateData)
                 ));
             });
@@ -108,7 +108,7 @@ define(
         SinewaveTelemetryProvider.prototype.requestTelemetry = function (requests) {
             var self = this;
             return this.$timeout(function () {
-                return doPackage(requests.filter(self.matchesSource).map(self.generateData));
+                return self.doPackage(requests.filter(self.matchesSource).map(self.generateData));
             }, 0);
         };
 
@@ -128,7 +128,7 @@ define(
                 };
 
             function unsubscribe() {
-                self.subscriptions = subscriptions.filter(function (s) {
+                self.subscriptions = self.subscriptions.filter(function (s) {
                     return s !== subscription;
                 });
             }
