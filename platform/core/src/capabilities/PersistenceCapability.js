@@ -130,7 +130,6 @@ define(
                 domainObject = this.domainObject,
                 model = domainObject.getModel(),
                 modified = model.modified,
-                cacheService = this.cacheService,
                 persistenceService = this.persistenceService,
                 persistenceFn = model.persisted !== undefined ?
                     this.persistenceService.updateObject :

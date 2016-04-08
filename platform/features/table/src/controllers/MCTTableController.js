@@ -118,7 +118,7 @@ define(
                 // Do a sequential search here. Only way of finding row is by
                 // object equality, so array is in effect unsorted.
                 indexInDisplayRows = this.$scope.displayRows.indexOf(row);
-                if (indexInDisplayRows != -1) {
+                if (indexInDisplayRows !== -1) {
                     this.$scope.displayRows.splice(indexInDisplayRows, 1);
                     this.setVisibleRows();
                 }
@@ -160,7 +160,7 @@ define(
             if (this.$scope.displayRows.length < this.maxDisplayRows) {
                 //Check whether need to resynchronize visible with display
                 // rows (if data added)
-                if (this.$scope.visibleRows.length !=
+                if (this.$scope.visibleRows.length !==
                     this.$scope.displayRows.length){
                     start = 0;
                     end = this.$scope.displayRows.length;
@@ -247,8 +247,7 @@ define(
          * for individual rows.
          */
         MCTTableController.prototype.setElementSizes = function () {
-            var self = this,
-                thead = this.element.find('thead'),
+            var thead = this.element.find('thead'),
                 tbody = this.element.find('tbody'),
                 firstRow = tbody.find('tr'),
                 column = firstRow.find('td'),

@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global define,describe,beforeEach,jasmine,it,expect*/
 
 define([
     '../../src/ui/TreeView',
@@ -122,7 +123,7 @@ define([
 
             function waitForCompositionCallback() {
                 var calledBack = false;
-                testCapabilities.composition.invoke().then(function (c) {
+                testCapabilities.composition.invoke().then(function () {
                     calledBack = true;
                 });
                 waitsFor(function () {

@@ -108,8 +108,6 @@ define(
          only).
          */
         TelemetryTableController.prototype.subscribe = function () {
-            var self = this;
-
             if (this.handle) {
                 this.handle.unsubscribe();
             }
