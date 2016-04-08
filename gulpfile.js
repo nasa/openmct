@@ -58,28 +58,6 @@ var gulp = require('gulp'),
             mainConfigFile: paths.main,
             wrapShim: true
         },
-        jshint: {
-            "bitwise": true,
-            "browser": true,
-            "curly": true,
-            "eqeqeq": true,
-            "forin": true,
-            "freeze": true,
-            "funcscope": true,
-            "futurehostile": true,
-            "latedef": true,
-            "noarg": true,
-            "nocomma": true,
-            "nonbsp": true,
-            "nonew": true,
-            "predef": [
-                "define",
-                "Promise"
-            ],
-            "strict": "implied",
-            "undef": true,
-            "unused": "vars"
-        },
         karma: {
             configFile: path.resolve(__dirname, 'karma.conf.js'),
             singleRun: true
@@ -128,9 +106,9 @@ gulp.task('lint', function () {
             return "!" + glob;
         }),
         scriptLint = gulp.src(paths.scripts.concat(nonspecs))
-            .pipe(jshint(options.jshint)),
+            .pipe(jshint()),
         specLint = gulp.src(paths.specs)
-            .pipe(jshint(_.extend({ jasmine: true }, options.jshint)));
+            .pipe(jshint({ jasmine: true }));
 
     return merge(scriptLint, specLint)
         .pipe(jshint.reporter('default'))
