@@ -54,12 +54,6 @@ define(
             this.path = path;
         }
 
-        function bind(fn, thisArg) {
-            return function () {
-                return fn.apply(thisArg, arguments);
-            };
-        }
-
         // Pull out a list of document IDs from CouchDB's
         // _all_docs response
         function getIdsFromAllDocs(allDocs) {
@@ -117,29 +111,29 @@ define(
         };
 
         CouchPersistenceProvider.prototype.listObjects = function () {
-            return this.get("_all_docs").then(bind(getIdsFromAllDocs, this));
+            return this.get("_all_docs").then(getIdsFromAllDocs.bind(this));
         };
 
         CouchPersistenceProvider.prototype.createObject = function (space, key, value) {
             return this.put(key, new CouchDocument(key, value))
-                .then(bind(this.checkResponse, this));
+                .then(this.checkResponse.bind(this));
         };
 
 
         CouchPersistenceProvider.prototype.readObject = function (space, key) {
-            return this.get(key).then(bind(this.getModel, this));
+            return this.get(key).then(this.getModel.bind(this));
         };
 
         CouchPersistenceProvider.prototype.updateObject = function (space, key, value) {
             var rev = this.revs[key];
             return this.put(key, new CouchDocument(key, value, rev))
-                .then(bind(this.checkResponse, this));
+                .then(this.checkResponse.bind(this));
         };
 
         CouchPersistenceProvider.prototype.deleteObject = function (space, key, value) {
             var rev = this.revs[key];
             return this.put(key, new CouchDocument(key, value, rev, true))
-                .then(bind(this.checkResponse, this));
+                .then(this.checkResponse.bind(this));
         };
 
         return CouchPersistenceProvider;

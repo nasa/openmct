@@ -58,12 +58,6 @@ define(
             this.path = path;
         }
 
-        function bind(fn, thisArg) {
-            return function () {
-                return fn.apply(thisArg, arguments);
-            };
-        }
-
         // Issue a request using $http; get back the plain JS object
         // from the expected JSON response
         ElasticPersistenceProvider.prototype.request = function (subpath, method, value, params) {
@@ -141,11 +135,11 @@ define(
 
 
         ElasticPersistenceProvider.prototype.createObject = function (space, key, value) {
-            return this.put(key, value).then(bind(this.checkResponse, this));
+            return this.put(key, value).then(this.checkResponse.bind(this));
         };
 
         ElasticPersistenceProvider.prototype.readObject = function (space, key) {
-            return this.get(key).then(bind(this.getModel, this));
+            return this.get(key).then(this.getModel.bind(this));
         };
 
         ElasticPersistenceProvider.prototype.updateObject = function (space, key, value) {
@@ -158,7 +152,7 @@ define(
         };
 
         ElasticPersistenceProvider.prototype.deleteObject = function (space, key) {
-            return this.del(key).then(bind(this.checkResponse, this));
+            return this.del(key).then(this.checkResponse.bind(this));
         };
 
         return ElasticPersistenceProvider;
