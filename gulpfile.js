@@ -78,7 +78,7 @@ var gulp = require('gulp'),
             ],
             "strict": "implied",
             "undef": true,
-            "unused": true
+            "unused": "vars"
         },
         karma: {
             configFile: path.resolve(__dirname, 'karma.conf.js'),
