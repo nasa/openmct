@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global setTimeout*/
 
 /**
  * Module defining GenericSearchProvider. Created by shale on 07/16/2015.
@@ -41,9 +42,8 @@ define([
      * @param {TopicService} topic the topic service.
      * @param {Array} ROOTS An array of object Ids to begin indexing.
      */
-    function GenericSearchProvider($timeout, $q, $log, modelService, workerService, topic, ROOTS) {
+    function GenericSearchProvider($q, $log, modelService, workerService, topic, ROOTS) {
         var provider = this;
-        this.$timeout = $timeout;
         this.$q = $q;
         this.$log = $log;
         this.modelService = modelService;
@@ -193,8 +193,7 @@ define([
      */
     GenericSearchProvider.prototype.beginIndexRequest = function () {
         var idToIndex = this.idsToIndex.shift(),
-            provider = this,
-            $timeout = this.$timeout;
+            provider = this;
 
         this.pendingRequests += 1;
         this.modelService
@@ -210,10 +209,10 @@ define([
                     .warn('Failed to index domain object ' + idToIndex);
             })
             .then(function () {
-                $timeout(function () {
+                setTimeout(function () {
                     provider.pendingRequests -= 1;
                     provider.keepIndexing();
-                }, 0, false);
+                }, 0);
             });
     };
 

@@ -30,8 +30,7 @@ define([
 ) {
 
     describe('GenericSearchProvider', function () {
-        var $timeout,
-            $q,
+        var $q,
             $log,
             modelService,
             models,
@@ -43,7 +42,6 @@ define([
             provider;
 
         beforeEach(function () {
-            $timeout = jasmine.createSpy('$timeout');
             $q = jasmine.createSpyObj(
                 '$q',
                 ['defer']
@@ -82,12 +80,7 @@ define([
 
             spyOn(GenericSearchProvider.prototype, 'scheduleForIndexing');
 
-            $timeout.andCallFake(function (callback, millis) {
-                window.setTimeout(callback, millis);
-            });
-
             provider = new GenericSearchProvider(
-                $timeout,
                 $q,
                 $log,
                 modelService,

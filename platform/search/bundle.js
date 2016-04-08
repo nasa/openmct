@@ -103,7 +103,6 @@ define([
                     "type": "provider",
                     "implementation": GenericSearchProvider,
                     "depends": [
-                        "$timeout",
                         "$q",
                         "$log",
                         "modelService",
