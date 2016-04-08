@@ -28,7 +28,9 @@ define([
     "./src/actions/SetPrimaryLocationAction",
     "./src/services/LocatingCreationDecorator",
     "./src/services/LocatingObjectDecorator",
+    "./src/policies/CopyPolicy",
     "./src/policies/CrossSpacePolicy",
+    "./src/policies/MovePolicy",
     "./src/capabilities/LocationCapability",
     "./src/services/MoveService",
     "./src/services/LinkService",
@@ -43,7 +45,9 @@ define([
     SetPrimaryLocationAction,
     LocatingCreationDecorator,
     LocatingObjectDecorator,
+    CopyPolicy,
     CrossSpacePolicy,
+    MovePolicy,
     LocationCapability,
     MoveService,
     LinkService,
@@ -138,6 +142,14 @@ define([
                 {
                     "category": "action",
                     "implementation": CrossSpacePolicy
+                },
+                {
+                    "category": "action",
+                    "implementation": CopyPolicy
+                },
+                {
+                    "category": "action",
+                    "implementation": MovePolicy
                 }
             ],
             "capabilities": [

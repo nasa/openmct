@@ -26,6 +26,7 @@ define([
     "./src/models/StaticModelProvider",
     "./src/models/RootModelProvider",
     "./src/models/ModelAggregator",
+    "./src/models/ModelCacheService",
     "./src/models/PersistedModelProvider",
     "./src/models/CachingModelDecorator",
     "./src/models/MissingModelDecorator",
@@ -57,6 +58,7 @@ define([
     StaticModelProvider,
     RootModelProvider,
     ModelAggregator,
+    ModelCacheService,
     PersistedModelProvider,
     CachingModelDecorator,
     MissingModelDecorator,
@@ -180,7 +182,10 @@ define([
                 {
                     "provides": "modelService",
                     "type": "decorator",
-                    "implementation": CachingModelDecorator
+                    "implementation": CachingModelDecorator,
+                    "depends": [
+                        "cacheService"
+                    ]
                 },
                 {
                     "provides": "modelService",
@@ -246,21 +251,22 @@ define([
                             "property": "name",
                             "pattern": "\\S+",
                             "required": true,
-                            "cssclass": "l-med"
+                            "cssclass": "l-input-lg"
                         }
                     ]
                 },
                 {
                     "key": "root",
                     "name": "Root",
-                    "glyph": "F"
+                    "glyph": "\u0046"
                 },
                 {
                     "key": "folder",
                     "name": "Folder",
-                    "glyph": "F",
+                    "glyph": "\u0046",
                     "features": "creation",
-                    "description": "Useful for storing and organizing domain objects.",
+                    "description": "Create folders to organize other objects or links to objects.",
+                    "priority": 1000,
                     "model": {
                         "composition": []
                     }
@@ -268,11 +274,11 @@ define([
                 {
                     "key": "unknown",
                     "name": "Unknown Type",
-                    "glyph": "?"
+                    "glyph": "\u003f"
                 },
                 {
                     "name": "Unknown Type",
-                    "glyph": "?"
+                    "glyph": "\u003f"
                 }
             ],
             "capabilities": [
@@ -317,6 +323,7 @@ define([
                     "key": "persistence",
                     "implementation": PersistenceCapability,
                     "depends": [
+                        "cacheService",
                         "persistenceService",
                         "identifierService",
                         "notificationService",
@@ -347,11 +354,16 @@ define([
                     "implementation": InstantiationCapability,
                     "depends": [
                         "$injector",
-                        "identifierService"
+                        "identifierService",
+                        "now"
                     ]
                 }
             ],
             "services": [
+                {
+                    "key": "cacheService",
+                    "implementation": ModelCacheService
+                },
                 {
                     "key": "now",
                     "implementation": Now
@@ -382,7 +394,8 @@ define([
                     "implementation": Instantiate,
                     "depends": [
                         "capabilityService",
-                        "identifierService"
+                        "identifierService",
+                        "cacheService"
                     ]
                 }
             ],

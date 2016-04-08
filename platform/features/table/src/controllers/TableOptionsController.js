@@ -56,9 +56,9 @@ define(
                self.populateForm(model);
             });
 
-            $scope.$watchCollection('configuration.table.columns', function(columns){
+            $scope.$watchCollection('configuration.table.columns', function (columns){
                 if (columns){
-                    self.domainObject.useCapability('mutation', function(model) {
+                    self.domainObject.useCapability('mutation', function (model) {
                        model.configuration.table.columns = columns;
                     });
                     self.domainObject.getCapability('persistence').persist();

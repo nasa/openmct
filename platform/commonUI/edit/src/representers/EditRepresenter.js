@@ -116,8 +116,6 @@ define(
             // Track the represented object
             this.domainObject = representedObject;
 
-            this.scope.isEditable = representedObject.getCapability('status').get('editing');
-
             // Ensure existing watches are released
             this.destroy();
 

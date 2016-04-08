@@ -27,6 +27,14 @@
     <span class="l-click-area" ng-click="toggle.toggle()"></span>
 
     <span class="ui-symbol icon">{{structure.glyph}}</span>
+    <span ng-style="{
+             background: ngModel[field],
+             display: 'inline-block',
+             height: '11px',
+             width: '11px',
+         }"
+         ng-show="ngModel[field]">
+    </span>
     <span class="title-label" ng-if="structure.text">
         {{structure.text}}
     </span>

@@ -98,6 +98,11 @@ $bubbleMaxW: 300px;
 $reqSymbolW: 15px;
 $reqSymbolM: $interiorMargin * 2;
 $reqSymbolFontSize: 0.7em;
+// Wait Spinner Defaults
+$waitSpinnerD: 32px;
+$waitSpinnerTreeD: 20px;
+$waitSpinnerBorderW: 5px;
+$waitSpinnerTreeBorderW: 4px;
 
 /************************** CONTROLS */
 $controlDisabledOpacity: 0.3;

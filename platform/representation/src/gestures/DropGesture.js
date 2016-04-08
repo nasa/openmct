@@ -114,7 +114,8 @@ define(
                 // destination domain object's composition, and persist
                 // the change.
                 if (id) {
-                    $q.when(action && action.perform()).then(function () {
+                    e.preventDefault();
+                    $q.when(action && action.perform()).then(function (result) {
                         //Don't go into edit mode for folders
                         if (domainObjectType!=='folder') {
                             editableDomainObject.getCapability('action').perform('edit');

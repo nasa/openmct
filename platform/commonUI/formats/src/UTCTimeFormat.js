@@ -26,9 +26,10 @@ define([
     moment
 ) {
 
-    var DATE_FORMAT = "YYYY-MM-DD HH:mm:ss",
+    var DATE_FORMAT = "YYYY-MM-DD HH:mm:ss.SSS",
         DATE_FORMATS = [
             DATE_FORMAT,
+            "YYYY-MM-DD HH:mm:ss",
             "YYYY-MM-DD HH:mm",
             "YYYY-MM-DD"
         ];
@@ -46,7 +47,7 @@ define([
     }
 
     UTCTimeFormat.prototype.format = function (value) {
-        return moment.utc(value).format(DATE_FORMAT);
+        return moment.utc(value).format(DATE_FORMAT) + "Z";
     };
 
     UTCTimeFormat.prototype.parse = function (text) {

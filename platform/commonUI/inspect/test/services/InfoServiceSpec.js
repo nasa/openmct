@@ -107,6 +107,35 @@ define(
                 );
             });
 
+            [ false, true ].forEach(function (goesLeft) {
+                [ false, true].forEach(function (goesUp) {
+                    var vertical = goesUp ? "up" : "down",
+                        horizontal = goesLeft ? "left" : "right",
+                        location = [ vertical, horizontal].join('-');
+                    describe("when bubble goes " + location, function () {
+                        var expectedLocation = [
+                                goesUp ? "bottom" : "top",
+                                goesLeft ? "right" : "left"
+                            ].join('-');
+
+                        beforeEach(function () {
+                            mockPopup.goesUp.andReturn(goesUp);
+                            mockPopup.goesDown.andReturn(!goesUp);
+                            mockPopup.goesLeft.andReturn(goesLeft);
+                            mockPopup.goesRight.andReturn(!goesLeft);
+                            service.display('', '', {}, [ 10, 10 ]);
+                        });
+
+                        it("positions the arrow in the " + expectedLocation, function () {
+                            expect(mockScope.bubbleLayout).toEqual([
+                                goesUp ? "arw-btm" : "arw-top",
+                                goesLeft ? "arw-right" : "arw-left"
+                            ].join(' '));
+                        });
+                    });
+                });
+            });
+
         });
     }
 );

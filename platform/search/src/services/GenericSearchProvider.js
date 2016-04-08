@@ -120,9 +120,13 @@ define([
             provider = this;
 
         mutationTopic.listen(function (mutatedObject) {
-            var id = mutatedObject.getId();
-            provider.indexedIds[id] = false;
-            provider.scheduleForIndexing(id);
+            var status = mutatedObject.getCapability('status');
+            if (!status || !status.get('editing')) {
+                provider.index(
+                    mutatedObject.getId(),
+                    mutatedObject.getModel()
+                );
+            }
         });
     };
 

@@ -35,7 +35,6 @@
         z-index: 100;
     }
     > .holder {
-        //$i: 15%;
         @include containerSubtle($colorOvrBg, $colorOvrFg);
         border-radius: $basicCr * 3;
         color: $colorOvrFg;
@@ -57,15 +56,8 @@
             right: $m;
             bottom: $m;
             left: $m;
-
-            //.top-bar,
-            //.editor,
-            //.bottom-bar {
-            //    @include absPosDefault();
-            //}
         }
     }
-
     .title {
         @include ellipsize();
         font-size: 1.2em;
@@ -73,9 +65,7 @@
         margin-bottom: $interiorMargin;
     }
 
-    .hint {
-        color: pushBack($colorOvrFg, 20%);
-    }
+    .hint, .field-hints { color: $colorFieldHintOverlay !important;  }
 
     .abs.top-bar {
         height: $ovrTopBarH;
@@ -88,7 +78,7 @@
         left: 0;
         right: 0;
         overflow: auto;
-        .field.l-med {
+        .field.l-input-med {
             input[type='text'] {
                 width: 100%;
             }
@@ -120,7 +110,6 @@
         bottom: 0;
         left: 0;
         overflow: visible;
-        //font-size: 1em;
         height: $ovrFooterH;
     }
 
@@ -132,11 +121,14 @@
         margin: .5em 0;
         width: 100%;
     }
+
+    .select {
+        box-shadow: $shdwBtnsOverlay;
+    }
 }
 
 .t-dialog-sm .overlay > .holder {
     // Used for blocker and in-progress dialogs, modal alerts, etc.
-    //@include test(red);
     $h: 225px;
     min-height: $h;
     height: $h;

@@ -33,7 +33,8 @@ requirejs.config({
         "saveAs": "bower_components/FileSaver.js/FileSaver.min",
         "screenfull": "bower_components/screenfull/dist/screenfull.min",
         "text": "bower_components/text/text",
-        "uuid": "bower_components/node-uuid/uuid"
+        "uuid": "bower_components/node-uuid/uuid",
+        "zepto": "bower_components/zepto/zepto.min"
     },
     "shim": {
         "angular": {
@@ -47,6 +48,9 @@ requirejs.config({
         },
         "screenfull": {
             "exports": "screenfull"
+        },
+        "zepto": {
+            "exports": "Zepto"
         }
     }
 });
@@ -73,12 +77,10 @@ define([
     './platform/exporters/bundle',
     './platform/telemetry/bundle',
     './platform/features/clock/bundle',
-    './platform/features/events/bundle',
     './platform/features/imagery/bundle',
     './platform/features/layout/bundle',
     './platform/features/pages/bundle',
     './platform/features/plot/bundle',
-    './platform/features/scrolling/bundle',
     './platform/features/timeline/bundle',
     './platform/features/table/bundle',
     './platform/forms/bundle',

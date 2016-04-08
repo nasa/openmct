@@ -34,6 +34,7 @@ define(
                 mockDomainObject,
                 mockIdentifier,
                 mockNofificationService,
+                mockCacheService,
                 mockQ,
                 id = "object id",
                 model,
@@ -79,6 +80,10 @@ define(
                     "notificationService",
                     ["error"]
                 );
+                mockCacheService = jasmine.createSpyObj(
+                    "cacheService",
+                    [ "get", "put", "remove", "all" ]
+                );
 
                 mockDomainObject = {
                     getId: function () { return id; },
@@ -94,6 +99,7 @@ define(
                 mockIdentifierService.parse.andReturn(mockIdentifier);
                 mockIdentifier.getSpace.andReturn(SPACE);
                 persistence = new PersistenceCapability(
+                    mockCacheService,
                     mockPersistenceService,
                     mockIdentifierService,
                     mockNofificationService,
@@ -169,6 +175,7 @@ define(
                     expect(mockNofificationService.error).not.toHaveBeenCalled();
                 });
             });
+
             describe("unsuccessful persistence", function() {
                 var sadPromise = {
                         then: function(callback){

@@ -53,14 +53,17 @@ define(
                         .toHaveBeenCalledWith(12321, domainFormat);
                 });
 
-                it("includes format in formatRangeValue calls", function () {
+                it("includes format in formatRangeValue calls for strings", function () {
                     mockFormatter.formatRangeValue.andReturn("formatted!");
-                    expect(formatter.formatRangeValue(12321))
+                    expect(formatter.formatRangeValue('foo'))
                         .toEqual("formatted!");
                     expect(mockFormatter.formatRangeValue)
-                        .toHaveBeenCalledWith(12321, rangeFormat);
+                        .toHaveBeenCalledWith('foo', rangeFormat);
                 });
 
+                it("formats numeric values with three fixed digits", function () {
+                    expect(formatter.formatRangeValue(10)).toEqual("10.000");
+                });
             });
 
         });

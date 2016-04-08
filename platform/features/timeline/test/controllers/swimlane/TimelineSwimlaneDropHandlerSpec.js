@@ -29,9 +29,13 @@ define(
                 mockOtherObject,
                 mockActionCapability,
                 mockPersistence,
+                mockContext,
+                mockAction,
                 handler;
 
             beforeEach(function () {
+                var mockPromise = jasmine.createSpyObj('promise', ['then']);
+
                 mockSwimlane = jasmine.createSpyObj(
                     "swimlane",
                     [ "highlight", "highlightBottom" ]
@@ -58,6 +62,11 @@ define(
                     [ "getId", "getCapability", "useCapability", "hasCapability" ]
                 );
 
+                mockAction = jasmine.createSpyObj('action', ['perform']);
+                mockAction.perform.andReturn(mockPromise);
+                mockPromise.then.andCallFake(function (callback) {
+                    callback();
+                });
 
                 mockOtherObject = jasmine.createSpyObj(
                     "domainObject",
@@ -65,12 +74,14 @@ define(
                 );
                 mockActionCapability = jasmine.createSpyObj("action", ["perform", "getActions"]);
                 mockPersistence = jasmine.createSpyObj("persistence", ["persist"]);
+                mockContext = jasmine.createSpyObj('context', [ 'getParent' ]);
 
-                mockActionCapability.getActions.andReturn([{}]);
+                mockActionCapability.getActions.andReturn([mockAction]);
                 mockSwimlane.parent.domainObject.getId.andReturn('a');
                 mockSwimlane.domainObject.getId.andReturn('b');
                 mockSwimlane.children[0].domainObject.getId.andReturn('c');
                 mockOtherObject.getId.andReturn('d');
+
 
                 mockSwimlane.domainObject.getCapability.andCallFake(function (c) {
                     return {
@@ -78,7 +89,19 @@ define(
                         persistence: mockPersistence
                     }[c];
                 });
-                mockOtherObject.getCapability.andReturn(mockActionCapability);
+                mockSwimlane.parent.domainObject.getCapability.andCallFake(function (c) {
+                    return {
+                        action: mockActionCapability,
+                        persistence: mockPersistence
+                    }[c];
+                });
+                mockOtherObject.getCapability.andCallFake(function (c) {
+                    return {
+                        action: mockActionCapability,
+                        context: mockContext
+                    }[c];
+                });
+                mockContext.getParent.andReturn(mockOtherObject);
 
                 mockSwimlane.domainObject.hasCapability.andReturn(true);
 
@@ -87,13 +110,17 @@ define(
 
             it("disallows drop outside of edit mode", function () {
                 // Verify precondition
-                expect(handler.allowDropIn('d')).toBeTruthy();
-                expect(handler.allowDropAfter('d')).toBeTruthy();
+                expect(handler.allowDropIn('d', mockSwimlane.domainObject))
+                    .toBeTruthy();
+                expect(handler.allowDropAfter('d', mockSwimlane.domainObject))
+                    .toBeTruthy();
                 // Act as if we're not in edit mode
                 mockSwimlane.domainObject.hasCapability.andReturn(false);
                 // Now, they should be disallowed
-                expect(handler.allowDropIn('d')).toBeFalsy();
-                expect(handler.allowDropAfter('d')).toBeFalsy();
+                expect(handler.allowDropIn('d', mockSwimlane.domainObject))
+                    .toBeFalsy();
+                expect(handler.allowDropAfter('d', mockSwimlane.domainObject))
+                    .toBeFalsy();
 
                 // Verify that editor capability was really checked for
                 expect(mockSwimlane.domainObject.hasCapability)
@@ -101,8 +128,9 @@ define(
             });
 
             it("disallows dropping of parents", function () {
-                expect(handler.allowDropIn('a')).toBeFalsy();
-                expect(handler.allowDropAfter('a')).toBeFalsy();
+                var mockParent = mockSwimlane.parent.domainObject;
+                expect(handler.allowDropIn('a', mockParent)).toBeFalsy();
+                expect(handler.allowDropAfter('a', mockParent)).toBeFalsy();
             });
 
             it("does not drop when no highlight state is present", function () {
@@ -119,7 +147,7 @@ define(
             it("inserts into when highlighted", function () {
                 var testModel = { composition: [ 'c' ] };
                 mockSwimlane.highlight.andReturn(true);
-                handler.drop('d');
+                handler.drop('d', mockOtherObject);
                 // Should have mutated
                 expect(mockSwimlane.domainObject.useCapability)
                     .toHaveBeenCalledWith("mutation", jasmine.any(Function));
@@ -131,24 +159,11 @@ define(
                 expect(mockPersistence.persist).toHaveBeenCalled();
             });
 
-            it("removes objects before insertion, if provided", function () {
-                var testModel = { composition: [ 'c' ] };
-                mockSwimlane.highlight.andReturn(true);
-                handler.drop('d', mockOtherObject);
-                // Should have invoked a remove action
-                expect(mockActionCapability.perform)
-                    .toHaveBeenCalledWith('remove');
-                // Verify that mutator still ran as expected
-                mockSwimlane.domainObject.useCapability.mostRecentCall
-                    .args[1](testModel);
-                expect(testModel.composition).toEqual(['c', 'd']);
-            });
-
             it("inserts after as a peer when highlighted at the bottom", function () {
                 var testModel = { composition: [ 'x', 'b', 'y' ] };
                 mockSwimlane.highlightBottom.andReturn(true);
                 mockSwimlane.expanded = false;
-                handler.drop('d');
+                handler.drop('d', mockOtherObject);
                 // Should have mutated
                 expect(mockSwimlane.parent.domainObject.useCapability)
                     .toHaveBeenCalledWith("mutation", jasmine.any(Function));
@@ -162,7 +177,7 @@ define(
                 var testModel = { composition: [ 'c' ] };
                 mockSwimlane.highlightBottom.andReturn(true);
                 mockSwimlane.expanded = true;
-                handler.drop('d');
+                handler.drop('d', mockOtherObject);
                 // Should have mutated
                 expect(mockSwimlane.domainObject.useCapability)
                     .toHaveBeenCalledWith("mutation", jasmine.any(Function));
@@ -177,7 +192,7 @@ define(
                 mockSwimlane.highlightBottom.andReturn(true);
                 mockSwimlane.expanded = true;
                 mockSwimlane.children = [];
-                handler.drop('d');
+                handler.drop('d', mockOtherObject);
                 // Should have mutated
                 expect(mockSwimlane.parent.domainObject.useCapability)
                     .toHaveBeenCalledWith("mutation", jasmine.any(Function));
@@ -185,6 +200,38 @@ define(
                 mockSwimlane.parent.domainObject.useCapability.mostRecentCall
                     .args[1](testModel);
                 expect(testModel.composition).toEqual([ 'x', 'b', 'd', 'y']);
+            });
+
+            it("allows reordering within a parent", function () {
+                var testModel = { composition: [ 'x', 'b', 'y', 'd' ] };
+
+                mockSwimlane.highlightBottom.andReturn(true);
+                mockSwimlane.expanded = true;
+                mockSwimlane.children = [];
+                mockContext.getParent
+                    .andReturn(mockSwimlane.parent.domainObject);
+                handler.drop('d', mockOtherObject);
+
+                waitsFor(function () {
+                    return mockSwimlane.parent.domainObject.useCapability
+                        .calls.length > 0;
+                });
+
+                runs(function () {
+                    mockSwimlane.parent.domainObject.useCapability.mostRecentCall
+                        .args[1](testModel);
+                    expect(testModel.composition).toEqual([ 'x', 'b', 'd', 'y']);
+                });
+            });
+
+            it("does not invoke an action when reordering", function () {
+                mockSwimlane.highlightBottom.andReturn(true);
+                mockSwimlane.expanded = true;
+                mockSwimlane.children = [];
+                mockContext.getParent
+                    .andReturn(mockSwimlane.parent.domainObject);
+                handler.drop('d', mockOtherObject);
+                expect(mockAction.perform).not.toHaveBeenCalled();
             });
 
         });

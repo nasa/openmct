@@ -36,8 +36,9 @@ define([
                 {
                     "key": "example.page",
                     "name": "Web Page",
-                    "glyph": "ê",
-                    "description": "A component to display a web page or image with a valid URL. Can be added to a Display Layout.",
+                    "glyph": "\u00ea",
+                    "description": "Embed a web page or web-based image in a resizeable window component. Can be added to Display Layouts. Note that the URL being embedded must allow iframing.",
+                    "priority": 50,
                     "features": [
                         "creation"
                     ],
@@ -47,7 +48,8 @@ define([
                             "name": "URL",
                             "control": "textfield",
                             "pattern": "^(ftp|https?)\\:\\/\\/\\w+(\\.\\w+)*(\\:\\d+)?(\\/\\S*)*$",
-                            "required": true
+                            "required": true,
+                            "cssclass": "l-input-lg"
                         }
                     ]
                 }

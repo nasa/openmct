@@ -30,12 +30,14 @@ define(
                 mockCapabilities,
                 testModel,
                 mockPromise,
+                testModes,
                 decorator;
 
             beforeEach(function () {
                 mockSwimlane = {};
                 mockCapabilities = {};
                 testModel = {};
+                testModes = ['a', 'b', 'c'];
 
                 mockSelection = jasmine.createSpyObj('selection', ['select', 'get']);
 
@@ -131,6 +133,22 @@ define(
                 expect(mockCapabilities.persistence.persist).not.toHaveBeenCalled();
                 mockPromise.then.mostRecentCall.args[0]();
                 expect(mockCapabilities.persistence.persist).toHaveBeenCalled();
+            });
+
+            it("does not mutate modes when unchanged", function () {
+                testModel.relationships = { modes: testModes };
+                decorator.modes(testModes);
+                expect(mockCapabilities.mutation.mutate).not.toHaveBeenCalled();
+                expect(testModel.relationships.modes).toEqual(testModes);
+            });
+
+            it("does mutate modes when changed", function () {
+                var testModes2 = ['d', 'e', 'f'];
+                testModel.relationships = { modes: testModes };
+                decorator.modes(testModes2);
+                expect(mockCapabilities.mutation.mutate).toHaveBeenCalled();
+                mockCapabilities.mutation.mutate.mostRecentCall.args[0](testModel);
+                expect(testModel.relationships.modes).toBe(testModes2);
             });
 
             it("does not provide a 'remove' method with no parent", function () {

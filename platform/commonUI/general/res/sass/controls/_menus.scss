@@ -51,9 +51,6 @@
 		.title-label {
 			font-size: 1rem;
 		}
-		//&:after {
-		//	color: rgba($colorInvokeMenu, 0.5);
-		//}
 	}
 
 	.menu {
@@ -113,21 +110,19 @@
 
 .menu,
 .context-menu,
-.super-menu {
+.super-menu,
+.s-menu-btn .menu {
 	pointer-events: auto;
 	ul li {
-		//padding-left: 25px;
 		a {
 			color: $colorMenuFg;
+            display: block;
 		}
 		.icon {
 			color: $colorMenuIc;
 		}
 		.type-icon {
 			left: $interiorMargin;
-		}
-		&:hover .icon {
-			//color: lighten($colorMenuIc, 5%);
 		}
 	}
 }
@@ -146,7 +141,7 @@
 				height: $d;
 				width: $d;
 				&:before {
-					font-size: 7px !important;// $d/2;
+					font-size: 7px !important;
 					height: $d;
 					width: $d;
 					line-height: $d;
@@ -173,7 +168,6 @@
 	.pane {
 		box-sizing: border-box;
 		&.left {
-			//@include test();
 			border-right: 1px solid pullForward($colorMenuBg, 10%);
 			left: 0;
 			padding-right: $interiorMargin;
@@ -190,7 +184,6 @@
 			}
 		}
 		&.right {
-			//@include test(red);
 			left: auto;
 			right: 0;
 			padding: $interiorMargin * 5;
@@ -216,7 +209,6 @@
 				margin-bottom: 0.5em;
 			}
 			&.description {
-				//color: lighten($colorMenuBg, 30%);
 				color: $colorCreateMenuText;
 				font-size: 0.8em;
 				line-height: 1.5em;

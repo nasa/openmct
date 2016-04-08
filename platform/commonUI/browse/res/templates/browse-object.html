@@ -44,22 +44,7 @@
         </div>
     </div>
     <div class="holder l-flex-col flex-elem grows l-object-wrapper">
-        <div ng-if="isEditable" class="holder l-flex-col flex-elem grows l-object-wrapper-inner">
-            <!-- Toolbar and Save/Cancel buttons -->
-            <div class="l-edit-controls flex-elem l-flex-row flex-align-end">
-                <mct-representation key="'edit-action-buttons'"
-                                    mct-object="domainObject"
-                                    class='flex-elem conclude-editing'>
-                </mct-representation>
-
-            </div>
-            <mct-representation key="representation.selected.key"
-                                mct-object="representation.selected.key && domainObject"
-                                class="abs flex-elem grows object-holder-main scroll"
-                                toolbar="toolbar">
-            </mct-representation>
-        </div>
-        <div ng-if="!isEditable" class="holder l-flex-col flex-elem grows l-object-wrapper-inner">
+        <div class="holder l-flex-col flex-elem grows l-object-wrapper-inner">
             <!-- Toolbar and Save/Cancel buttons -->
             <div class="l-edit-controls flex-elem l-flex-row flex-align-end">
                 <mct-representation key="'edit-action-buttons'"

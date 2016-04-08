@@ -38,6 +38,12 @@ define(
                 expect(moment.utc(formatted).valueOf()).toEqual(timestamp);
             });
 
+            it("displays with millisecond precision", function () {
+                var timestamp = 12345670789,
+                    formatted = format.format(timestamp);
+                expect(moment.utc(formatted).valueOf()).toEqual(timestamp);
+            });
+
             it("validates time inputs", function () {
                 expect(format.validate("1977-05-25 11:21:22")).toBe(true);
                 expect(format.validate("garbage text")).toBe(false);

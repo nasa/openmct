@@ -57,7 +57,10 @@ define(
             });
 
             it("formats ranges as values", function () {
-                expect(formatter.formatRangeValue(10)).toEqual("10.000");
+                var value = 3.14159265352979323846264338, // not pi
+                    formatted = formatter.formatRangeValue(value);
+                // Make sure we don't lose information by formatting
+                expect(parseFloat(formatted)).toEqual(value);
             });
         });
     }

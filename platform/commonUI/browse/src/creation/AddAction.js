@@ -91,27 +91,23 @@ define(
                 return wizard.populateObjectFromInput(formValue, newObject);
             }
 
-            function addToParent (populatedObject) {
-                parentObject.getCapability('composition').add(populatedObject);
-                return parentObject.getCapability('persistence').persist().then(function(){
-                    return parentObject;
-                });
+            function persistAndReturn(domainObject) {
+                return domainObject.getCapability('persistence')
+                    .persist()
+                    .then(function () {
+                        return domainObject;
+                    });
             }
 
-            function save(object) {
-                /*
-                It's necessary to persist the new sub-object in order
-                 that it can be retrieved for composition in the parent.
-                 Future refactoring that allows temporary objects to be
-                 retrieved from object services will make this unnecessary.
-                 */
-                return object.getCapability('editor').save(true);
+            function addToParent (populatedObject) {
+                parentObject.getCapability('composition').add(populatedObject);
+                return persistAndReturn(parentObject);
             }
 
             return this.dialogService
                 .getUserInput(wizard.getFormStructure(false), wizard.getInitialFormValue())
                 .then(populateObjectFromInput)
-                .then(save)
+                .then(persistAndReturn)
                 .then(addToParent);
 
         };

@@ -36,7 +36,7 @@ define([
 
     legacyRegistry.register("example/generator", {
         "name": "Sine Wave Generator",
-        "description": "Example of a component that produces dataa.",
+        "description": "For development use. Generates example streaming telemetry data using a simple sine wave algorithm.",
         "extensions": {
             "components": [
                 {
@@ -86,8 +86,9 @@ define([
                 {
                     "key": "generator",
                     "name": "Sine Wave Generator",
-                    "glyph": "T",
-                    "description": "A sine wave generator",
+                    "glyph": "\u0054",
+                    "description": "For development use. Generates example streaming telemetry data using a simple sine wave algorithm.",
+                    "priority": 10,
                     "features": "creation",
                     "model": {
                         "telemetry": {
@@ -126,7 +127,7 @@ define([
                         {
                             "name": "Period",
                             "control": "textfield",
-                            "cssclass": "l-small l-numeric",
+                            "cssclass": "l-input-sm l-numeric",
                             "key": "period",
                             "required": true,
                             "property": [

@@ -45,26 +45,28 @@ define(
          * @param metadata Metadata describing the domains and ranges available
          * @returns {TableConfiguration} This object
          */
-        TableConfiguration.prototype.buildColumns = function(metadata) {
+        TableConfiguration.prototype.buildColumns = function (metadata) {
             var self = this;
 
             this.columns = [];
 
             if (metadata) {
 
-                if (metadata.length > 1){
-                    self.addColumn(new NameColumn(), 0);
-                }
-
                 metadata.forEach(function (metadatum) {
                     //Push domains first
                     (metadatum.domains || []).forEach(function (domainMetadata) {
-                        self.addColumn(new DomainColumn(domainMetadata, self.telemetryFormatter));
+                        self.addColumn(new DomainColumn(domainMetadata,
+                            self.telemetryFormatter));
                     });
                     (metadatum.ranges || []).forEach(function (rangeMetadata) {
-                        self.addColumn(new RangeColumn(rangeMetadata, self.telemetryFormatter));
+                        self.addColumn(new RangeColumn(rangeMetadata,
+                            self.telemetryFormatter));
                     });
                 });
+
+                if (this.columns.length > 0){
+                    self.addColumn(new NameColumn(), 0);
+                }
             }
             return this;
         };
@@ -96,7 +98,7 @@ define(
          * Get a simple list of column titles
          * @returns {Array} The titles of the columns
          */
-        TableConfiguration.prototype.getHeaders = function() {
+        TableConfiguration.prototype.getHeaders = function () {
             var self = this;
             return this.columns.map(function (column, i){
                 return self.getColumnTitle(column) || 'Column ' + (i + 1);
@@ -111,9 +113,9 @@ define(
          * @returns {Object} Key value pairs where the key is the column
          * title, and the value is the formatted value from the provided datum.
          */
-        TableConfiguration.prototype.getRowValues = function(telemetryObject, datum) {
+        TableConfiguration.prototype.getRowValues = function (telemetryObject, datum) {
             var self = this;
-            return this.columns.reduce(function(rowObject, column, i){
+            return this.columns.reduce(function (rowObject, column, i){
                 var columnTitle = self.getColumnTitle(column) || 'Column ' + (i + 1),
                     columnValue = column.getValue(telemetryObject, datum);
 
@@ -123,7 +125,9 @@ define(
                 // Don't replace something with nothing.
                 // This occurs when there are multiple columns with the
                 // column title
-                if (rowObject[columnTitle] === undefined || rowObject[columnTitle].text === undefined || rowObject[columnTitle].text.length === 0) {
+                if (rowObject[columnTitle] === undefined ||
+                    rowObject[columnTitle].text === undefined ||
+                    rowObject[columnTitle].text.length === 0) {
                     rowObject[columnTitle] = columnValue;
                 }
                 return rowObject;
@@ -134,7 +138,8 @@ define(
          * @private
          */
         TableConfiguration.prototype.defaultColumnConfiguration = function () {
-            return ((this.domainObject.getModel().configuration || {}).table || {}).columns || {};
+            return ((this.domainObject.getModel().configuration || {}).table ||
+                {}).columns || {};
         };
 
         /**
@@ -156,7 +161,7 @@ define(
          * pairs where the key is the column title, and the value is a
          * boolean indicating whether the column should be shown.
          */
-        TableConfiguration.prototype.getColumnConfiguration = function() {
+        TableConfiguration.prototype.getColumnConfiguration = function () {
             var configuration = {},
                 //Use existing persisted config, or default it
                 defaultConfig = this.defaultColumnConfiguration();
@@ -166,8 +171,10 @@ define(
              * specifying whether the column is visible or not. Default to
              * existing (persisted) configuration if available
              */
-            this.getHeaders().forEach(function(columnTitle) {
-                configuration[columnTitle] = typeof defaultConfig[columnTitle] === 'undefined' ? true : defaultConfig[columnTitle];
+            this.getHeaders().forEach(function (columnTitle) {
+                configuration[columnTitle] =
+                    typeof defaultConfig[columnTitle] === 'undefined' ? true :
+                        defaultConfig[columnTitle];
             });
 
             return configuration;

@@ -24,10 +24,6 @@ define(
     [],
     function () {
 
-        // Date format to use for domain values; in particular,
-        // use day-of-year instead of month/day
-        var VALUE_FORMAT_DIGITS = 3;
-
         /**
          * The TelemetryFormatter is responsible for formatting (as text
          * for display) values along either the domain (usually time) or
@@ -70,8 +66,8 @@ define(
          * @returns {string} a textual representation of the
          *        value, suitable for display.
          */
-        TelemetryFormatter.prototype.formatRangeValue = function (v) {
-            return isNaN(v) ? String(v) : v.toFixed(VALUE_FORMAT_DIGITS);
+        TelemetryFormatter.prototype.formatRangeValue = function (v, key) {
+            return String(v);
         };
 
         return TelemetryFormatter;

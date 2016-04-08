@@ -46,9 +46,9 @@ define(
                             'control': 'select',
                             'key': 'key',
                             'options': [
-                                {'name':'scet', 'value': 'scet'},
-                                {'name':'sclk', 'value': 'sclk'},
-                                {'name':'lst', 'value': 'lst'}
+                                {'name':'SCET', 'value': 'scet'},
+                                {'name':'SCLK', 'value': 'sclk'},
+                                {'name':'LST', 'value': 'lst'}
                             ]
                         }
                     ]
@@ -63,6 +63,16 @@ define(
                 'name': 'y-axis',
                 'rows': [
                     {
+                        'name': 'Range',
+                        'control': 'select',
+                        'key': 'key',
+                        'options': [
+                            {'name':'EU', 'value': 'eu'},
+                            {'name':'DN', 'value': 'dn'},
+                            {'name':'Status', 'value': 'status'}
+                        ]
+                    },
+                    {
                         'name': 'Autoscale',
                         'control': 'checkbox',
                         'key': 'autoscale'
@@ -71,23 +81,15 @@ define(
                         'name': 'Min',
                         'control': 'textfield',
                         'key': 'min',
-                        'pattern': '[0-9]'
+                        'pattern': '[0-9]',
+                        'inputsize' : 'sm'
                     },
                     {
                         'name': 'Max',
                         'control': 'textfield',
                         'key': 'max',
-                        'pattern': '[0-9]'
-                    },
-                    {
-                        'name': 'Range',
-                        'control': 'select',
-                        'key': 'key',
-                        'options': [
-                            {'name':'eu', 'value': 'eu'},
-                            {'name':'dn', 'value': 'dn'},
-                            {'name':'status', 'value': 'status'}
-                        ]
+                        'pattern': '[0-9]',
+                        'inputsize' : 'sm'
                     }
                 ]
                 }]
@@ -108,7 +110,8 @@ define(
                             {
                                 'name': 'Markers',
                                 'control': 'checkbox',
-                                'key': 'markers'
+                                'key': 'markers',
+                                'layout': 'control-first'
                             }
                         ]
                     },
@@ -118,19 +121,22 @@ define(
                                 'name': 'No Line',
                                 'control': 'radio',
                                 'key': 'lineType',
-                                'value': 'noLine'
+                                'value': 'noLine',
+                                'layout': 'control-first'
                             },
                             {
                                 'name': 'Step Line',
                                 'control': 'radio',
                                 'key': 'lineType',
-                                'value': 'stepLine'
+                                'value': 'stepLine',
+                                'layout': 'control-first'
                             },
                             {
                                 'name': 'Linear Line',
                                 'control': 'radio',
                                 'key': 'lineType',
-                                'value': 'linearLine'
+                                'value': 'linearLine',
+                                'layout': 'control-first'
                             }
                         ]
                     }

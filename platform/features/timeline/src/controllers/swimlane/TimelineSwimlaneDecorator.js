@@ -43,11 +43,13 @@ define(
             function modes(value) {
                 // Can be used as a setter...
                 if (arguments.length > 0 && Array.isArray(value)) {
-                    // Update the relationships
-                    mutator.mutate(function (model) {
-                        model.relationships = model.relationships || {};
-                        model.relationships[ACTIVITY_RELATIONSHIP] = value;
-                    }).then(persister.persist);
+                    if ((model.relationships || {})[ACTIVITY_RELATIONSHIP] !== value) {
+                        // Update the relationships
+                        mutator.mutate(function (model) {
+                            model.relationships = model.relationships || {};
+                            model.relationships[ACTIVITY_RELATIONSHIP] = value;
+                        }).then(persister.persist);
+                    }
                 }
                 // ...otherwise, use as a getter
                 return (model.relationships || {})[ACTIVITY_RELATIONSHIP] || [];
