@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global window,requirejs*/
 
 /**
  * Implements the framework layer, which handles the loading of bundles

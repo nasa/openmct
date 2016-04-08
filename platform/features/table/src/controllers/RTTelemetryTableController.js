@@ -19,14 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [
         './TelemetryTableController'
     ],
     function (TableController) {
-        "use strict";
 
         /**
          * Extends TelemetryTableController and adds real-time streaming

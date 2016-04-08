@@ -19,13 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,beforeEach,jasmine,it,expect*/
 
 define([
     '../../src/ui/TreeView',
     'zepto'
 ], function (TreeView, $) {
-    'use strict';
 
     describe("TreeView", function () {
         var mockGestureService,

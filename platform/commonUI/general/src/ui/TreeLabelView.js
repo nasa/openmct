@@ -19,13 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     'zepto',
     'text!../../res/templates/tree/tree-label.html'
 ], function ($, labelTemplate) {
-    'use strict';
 
     function TreeLabelView(gestureService) {
         this.el = $(labelTemplate);

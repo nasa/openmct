@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global self*/
 
 /**
  * Module defining GenericSearchWorker. Created by shale on 07/21/2015.
