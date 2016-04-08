@@ -51,8 +51,7 @@ define(
                 provider = new LocalStoragePersistenceProvider(
                     { localStorage: testLocalStorage },
                     mockQ,
-                    testSpace,
-                    testLocalStorage
+                    testSpace
                 );
             });
 
