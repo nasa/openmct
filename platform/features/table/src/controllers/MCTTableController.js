@@ -450,8 +450,7 @@ define(
          * occurred.
          * @private
          */
-        MCTTableController.prototype.resize = function (rows){
-
+        MCTTableController.prototype.resize = function (rows) {
             this.$scope.sizingRow = this.buildLargestRow(rows);
             return this.$timeout(this.setElementSizes.bind(this));
         };
@@ -468,7 +467,7 @@ define(
             if (this.$scope.enableSort) {
                 displayRows = this.sortRows(displayRows.slice(0));
             }
-            this.$scope.displayRows = displayRows;
+            return displayRows;
         };
 
         /**
@@ -481,7 +480,7 @@ define(
                 return;
             }
 
-            this.filterAndSort(newRows || []);
+            this.$scope.displayRows = this.filterAndSort(newRows || []);
             this.resize(newRows).then(this.setVisibleRows.bind(this));
         };
 

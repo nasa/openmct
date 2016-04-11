@@ -191,9 +191,6 @@ define(
                         expect(mockTelemetryFormatter.formatRangeValue).toHaveBeenCalled();
                     });
                 });
-                /**
-                 * TODO: Add test for saving column config
-                 */
             });
         });
     }
