@@ -20,13 +20,40 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /*global define*/
+require.config({
+/*    paths: {
+        tether: "demo/lib/tether/tether",
+        shepherd: "demo/lib/shepherd/shepherd.min"
+    },
+    shim: {
+        tether: {
+            exports: "tether"
+        },
+        shepherd: {
+            deps: ["tether"],
+            exports: "shepherd"
+        }
+    }*/
+    paths: {
+        hopscotch: "demo/lib/hopscotch/hopscotch.min"
+    },
+    shim: {
+        tourist: {
+            exports: "hopscotch"
+        }
+    }
 
+});
 define(
-    ["../../platform/features/conductor/src/ConductorRepresenter"],
-    function (ConductorRepresenter){
+    [
+        "../../platform/features/conductor/src/ConductorRepresenter",
+        "hopscotch",
+        "zepto"
+    ],
+    function (ConductorRepresenter, hopscotch, $){
         "use strict";
 
-        function DemoInitializer(representers) {
+        function DemoInitializer($timeout, representers) {
 
             function indexOf(array, callback) {
                 return array.reduce(function(previous, element, index) {
@@ -48,6 +75,53 @@ define(
             }
 
             removeRepresenter(ConductorRepresenter);
+
+            $timeout(function() {
+                var tour = {
+                    id: "hello-hopscotch",
+                    steps: [
+                        {
+                            title: "The Object Tree",
+                            content: "The object tree contains telemetry and" +
+                            " view <strong>objects</strong>",
+                            target: document.querySelector("mct-tree ul.tree"),
+                            placement: "right"
+                        },
+                        {
+                            title: "Creating objects",
+                            content: "New objects can be created under" +
+                            " the <strong>My Items</strong> folder using the " +
+                            " <strong>Create</strong> button",
+                            target: document.querySelector(".create-btn"),
+                            placement: "bottom"
+                        },
+                        {
+                            title: "Composing objects",
+                            content: "Objects can be composed by dragging" +
+                            " them from the tree...",
+                            target: document.querySelector("mct-tree" +
+                                " ul.tree"),
+                            placement: "right"
+                        },
+                        {
+                            title: "Composing objects (cont.)",
+                            content: "...into the current view",
+                            target: document.querySelector(".object-holder-main"),
+                            placement: "top"
+                        },
+                        {
+                            title: "Create a layout",
+                            content: "Try composing a <strong> Display Layout </strong> by creating it from the create menu, and then dragging some objects into it.",
+                            target: document.querySelector(".create-btn"),
+                            placement: "right"
+                        }
+                    ]
+                };
+                hopscotch.endTour(true);
+                // Start the tour!
+                hopscotch.startTour(tour);
+
+            }, 3000);
         }
 
         return DemoInitializer;
