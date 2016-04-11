@@ -61,23 +61,31 @@ define(
                     $scope.sortColumn = undefined;
                     $scope.sortDirection = undefined;
                 }
-                self.updateRows($scope.rows);
+                self.setRows($scope.rows);
             };
 
             /*
              * Define watches to listen for changes to headers and rows.
              */
             $scope.$watchCollection('filters', function () {
-                self.updateRows($scope.rows);
+                self.setRows($scope.rows);
             });
-            $scope.$watch('headers', this.updateHeaders.bind(this));
-            $scope.$watch('rows', this.updateRows.bind(this));
+            $scope.$watch('headers', this.setHeaders.bind(this));
+            $scope.$watch('rows', this.setRows.bind(this));
 
             /*
              * Listen for rows added individually (eg. for real-time tables)
              */
-            $scope.$on('add:row', this.newRow.bind(this));
+            $scope.$on('add:row', this.addRow.bind(this));
             $scope.$on('remove:row', this.removeRow.bind(this));
+        }
+
+        function fastPromise(returnValue) {
+            return {
+                then: function (callback) {
+                    return fastPromise(callback(returnValue));
+                }
+            }
         }
 
         /**
@@ -99,40 +107,28 @@ define(
 
         /**
          * Handles a row add event. Rows can be added as needed using the
-         * `addRow` broadcast event.
+         * `add:row` broadcast event.
          * @private
          */
-        MCTTableController.prototype.newRow = function (event, rowIndex) {
-            var self = this,
-                row = this.$scope.rows[rowIndex],
-                largestRow;
-
-            function sizeAndScroll () {
-                self.setElementSizes();
-                self.scrollToBottom();
-            }
+        MCTTableController.prototype.addRow = function (event, rowIndex) {
+            var row = this.$scope.rows[rowIndex];
 
             //Does the row pass the current filter?
             if (this.filterRows([row]).length === 1) {
+                //Insert the row into the correct position in the array
                 this.insertSorted(this.$scope.displayRows, row);
-
-                //Calculate largest row
-                largestRow = this.buildLargestRow([this.$scope.sizingRow, row]);
-
-                // Has it changed? If so, set the the 'sizing' row which
-                // determines column widths
-                if (JSON.stringify(largestRow) !== JSON.stringify(this.$scope.sizingRow)){
-                    this.$scope.sizingRow = largestRow;
-                    this.$timeout(sizeAndScroll);
-                } else {
-                    sizeAndScroll();
-                }
+                
+                //Resize the columns , then update the rows
+                // visible in the table
+                this.resize([this.$scope.sizingRow, row])
+                    .then(this.setVisibleRows.bind(this))
+                    .then(this.scrollToBottom.bind(this));
             }
         };
 
         /**
-         * Handles a row add event. Rows can be added as needed using the
-         * `addRow` broadcast event.
+         * Handles a row remove event. Rows can be removed as needed using the
+         * `remove:row` broadcast event.
          * @private
          */
         MCTTableController.prototype.removeRow = function (event, rowIndex) {
@@ -245,7 +241,7 @@ define(
          * enabled, reset filters.  If sorting is enabled, reset
          * sorting.
          */
-        MCTTableController.prototype.updateHeaders = function (newHeaders) {
+        MCTTableController.prototype.setHeaders = function (newHeaders) {
             if (!newHeaders){
                 return;
             }
@@ -261,7 +257,7 @@ define(
                     this.$scope.sortColumn = undefined;
                     this.$scope.sortDirection = undefined;
             }
-            this.updateRows(this.$scope.rows);
+            this.setRows(this.$scope.rows);
         };
 
         /**
@@ -291,7 +287,6 @@ define(
             this.$scope.headerHeight = headerHeight;
             this.$scope.rowHeight = rowHeight;
             this.$scope.totalHeight = overallHeight;
-            this.setVisibleRows();
 
             if (tableWidth > 0) {
                 this.$scope.totalWidth = tableWidth + 'px';
@@ -439,7 +434,6 @@ define(
                             prevLargest[key] = JSON.parse(JSON.stringify(row[key]));
                         }
                     }
-
                 });
                 return prevLargest;
             }, JSON.parse(JSON.stringify(rows[0] || {})));
@@ -447,26 +441,30 @@ define(
         };
 
         /**
-         * Calculates the widest row in the table, pads that row, and adds
-         * it to the table. Allows the table to size itself, then uses this
-         * as basis for column dimensions.
+         * Calculates the widest row in the table, and if necessary, resizes
+         * the table accordingly
+         *
+         * @param rows the rows on which to resize
+         * @returns {Promise} a promise that will resolve when resizing has
+         * occurred.
          * @private
          */
-        MCTTableController.prototype.resize = function (){
-            var self = this;
+        MCTTableController.prototype.resize = function (rows){
+            //Calculate largest row
+            var largestRow = this.buildLargestRow(rows);
 
-            this.$scope.sizingRow = this.buildLargestRow(this.$scope.displayRows);
-
-            //Wait a timeout to allow digest of previous change to visible
-            // rows to happen.
-            this.$timeout(function () {
-                self.$scope.visibleRows = [];
-                self.setElementSizes();
-            });
+            // Has it changed? If so, set the the 'sizing' row which
+            // determines column widths
+            if (JSON.stringify(largestRow) !== JSON.stringify(this.$scope.sizingRow)){
+                this.$scope.sizingRow = largestRow;
+                return this.$timeout(this.setElementSizes.bind(this));
+            } else {
+                return fastPromise(undefined);
+            }
         };
 
         /**
-         * @priate
+         * @private
          */
         MCTTableController.prototype.filterAndSort = function (rows) {
             var displayRows = rows;
@@ -484,17 +482,14 @@ define(
          * Update rows with new data.  If filtering is enabled, rows
          * will be sorted before display.
          */
-        MCTTableController.prototype.updateRows = function (newRows) {
-            //Reset visible rows because new row data available.
-            this.$scope.visibleRows = [];
-
+        MCTTableController.prototype.setRows = function (newRows) {
             //Nothing to show because no columns visible
-            if (!this.$scope.displayHeaders) {
+            if (!this.$scope.displayHeaders || !newRows) {
                 return;
             }
 
             this.filterAndSort(newRows || []);
-            this.resize();
+            this.resize(newRows).then(this.setVisibleRows.bind(this));
         };
 
         /**

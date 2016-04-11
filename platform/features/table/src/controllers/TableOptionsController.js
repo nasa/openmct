@@ -51,13 +51,22 @@ define(
 
             this.$scope = $scope;
             this.domainObject = $scope.domainObject;
+            this.listeners = [];
 
             $scope.columnsForm = {};
 
-            this.domainObject.getCapability('mutation').listen(function (model) {
-               self.populateForm(model);
+            $scope.$watch('domainObject', function(domainObject) {
+               self.populateForm(domainObject.getModel());
+
+                self.listeners.push(self.domainObject.getCapability('mutation').listen(function (model) {
+                    self.populateForm(model);
+                }));
             });
 
+            /**
+             * Maintain a configuration object on scope that stores column
+             * configuration. On change, synchronize with object model.
+             */
             $scope.$watchCollection('configuration.table.columns', function (columns){
                 if (columns){
                     self.domainObject.useCapability('mutation', function (model) {
@@ -66,6 +75,15 @@ define(
                     self.domainObject.getCapability('persistence').persist();
                 }
             });
+
+            /**
+             * Destroy all mutation listeners
+             */
+            $scope.$on('$destroy', function () {
+                self.listeners.forEach(function (listener) {
+                   listener();
+                });
+            })
 
         }
 
@@ -86,7 +104,7 @@ define(
                     'key': key
                 });
             });
-            this.$scope.configuration = JSON.parse(JSON.stringify(model.configuration));
+            this.$scope.configuration = JSON.parse(JSON.stringify(model.configuration || {}));
         };
 
         return TableOptionsController;

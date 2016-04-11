@@ -47,7 +47,7 @@ define(
          * @param metadata Metadata describing the domains and ranges available
          * @returns {TableConfiguration} This object
          */
-        TableConfiguration.prototype.buildColumns = function (metadata) {
+        TableConfiguration.prototype.populateColumns = function (metadata) {
             var self = this;
 
             this.columns = [];
@@ -141,7 +141,7 @@ define(
          */
         TableConfiguration.prototype.defaultColumnConfiguration = function () {
             return ((this.domainObject.getModel().configuration || {}).table ||
-                {}).columns || {};
+                {}).columns;
         };
 
         /**
@@ -156,6 +156,16 @@ define(
             });
         };
 
+        function configChanged(config1, config2) {
+            var config1Keys = Object.keys(config1),
+                config2Keys = Object.keys(config2);
+
+            return (config1Keys.length !== config2Keys.length) ||
+                config1Keys.some(function(key){
+                    return config1[key] !== config2[key];
+                });
+        }
+
         /**
          * As part of the process of building the table definition, extract
          * configuration from column definitions.
@@ -163,10 +173,10 @@ define(
          * pairs where the key is the column title, and the value is a
          * boolean indicating whether the column should be shown.
          */
-        TableConfiguration.prototype.getColumnConfiguration = function () {
+        TableConfiguration.prototype.buildColumnConfiguration = function () {
             var configuration = {},
                 //Use existing persisted config, or default it
-                defaultConfig = this.defaultColumnConfiguration();
+                defaultConfig = this.defaultColumnConfiguration() || {};
 
             /**
              * For each column header, define a configuration value
@@ -175,9 +185,14 @@ define(
              */
             this.getHeaders().forEach(function (columnTitle) {
                 configuration[columnTitle] =
-                    typeof defaultConfig[columnTitle] === 'undefined' ? true :
+                    typeof (defaultConfig || {})[columnTitle] === 'undefined' ? true :
                         defaultConfig[columnTitle];
             });
+
+            //Synchronize column configuration with model
+            if (configChanged(configuration, defaultConfig)) {
+                this.saveColumnConfiguration(configuration);
+            }
 
             return configuration;
         };

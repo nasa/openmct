@@ -47,11 +47,16 @@ define(
                     'listen'
                 ]);
                 mockDomainObject = jasmine.createSpyObj('domainObject', [
-                   'getCapability'
+                   'getCapability',
+                   'getModel'
                 ]);
                 mockDomainObject.getCapability.andReturn(mockCapability);
+                mockDomainObject.getModel.andReturn({});
+
                 mockScope = jasmine.createSpyObj('scope', [
-                    '$watchCollection'
+                    '$watchCollection',
+                    '$watch',
+                    '$on'
                 ]);
                 mockScope.domainObject = mockDomainObject;
 
@@ -59,6 +64,7 @@ define(
             });
 
             it('Registers a listener for mutation events on the object', function() {
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
                 expect(mockCapability.listen).toHaveBeenCalled();
             });
 
