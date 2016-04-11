@@ -80,14 +80,6 @@ define(
             $scope.$on('remove:row', this.removeRow.bind(this));
         }
 
-        function fastPromise(returnValue) {
-            return {
-                then: function (callback) {
-                    return fastPromise(callback(returnValue));
-                }
-            };
-        }
-
         /**
          * If auto-scroll is enabled, this function will scroll to the
          * bottom of the page
@@ -118,8 +110,7 @@ define(
                 //Insert the row into the correct position in the array
                 this.insertSorted(this.$scope.displayRows, row);
                 
-                //Resize the columns , then update the rows
-                // visible in the table
+                //Resize the columns , then update the rows visible in the table
                 this.resize([this.$scope.sizingRow, row])
                     .then(this.setVisibleRows.bind(this))
                     .then(this.scrollToBottom.bind(this));
@@ -460,17 +451,9 @@ define(
          * @private
          */
         MCTTableController.prototype.resize = function (rows){
-            //Calculate largest row
-            var largestRow = this.buildLargestRow(rows);
 
-            // Has it changed? If so, set the the 'sizing' row which
-            // determines column widths
-            if (JSON.stringify(largestRow) !== JSON.stringify(this.$scope.sizingRow)){
-                this.$scope.sizingRow = largestRow;
-                return this.$timeout(this.setElementSizes.bind(this));
-            } else {
-                return fastPromise(undefined);
-            }
+            this.$scope.sizingRow = this.buildLargestRow(rows);
+            return this.$timeout(this.setElementSizes.bind(this));
         };
 
         /**
