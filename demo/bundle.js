@@ -27,6 +27,7 @@ define([
     "./src/conductor/ConductorServiceDecorator",
     "./src/conductor/DemoTelemetryDecorator",
     "./src/telemetry/DemoTelemetryProvider",
+    "./src/DemoModelProvider",
     'legacyRegistry'
 ], function (
     DemoConductorRepresenter,
@@ -34,6 +35,7 @@ define([
     ConductorServiceDecorator,
     DemoTelemetryDecorator,
     DemoTelemetryProvider,
+    DemoModelProvider,
     legacyRegistry
 ) {
     "use strict";
@@ -65,15 +67,33 @@ define([
                     "type": "provider",
                     "provides": "telemetryService",
                     "depends": ["$q", "$timeout"]
-                }
+                },
+                {
+                    "implementation": DemoModelProvider,
+                    "provides": "modelService",
+                    "type": "provider"
+                },
             ],
             "runs": [
                 {
                     "implementation": DemoInitializer,
                     "depends": [
                         "$timeout",
-                        "representers[]"
+                        "representers[]",
+                        "objectService",
+                        "$location"
                     ]
+                }
+            ],
+            "roots": [
+                {
+                    "id":"mct:demo",
+                    "model": {
+                        "type":"folder",
+                        "name": "Examples",
+                        "composition": []
+                    },
+                    "priority": "preferred"
                 }
             ],
             "types": [
