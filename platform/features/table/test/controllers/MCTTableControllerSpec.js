@@ -180,20 +180,6 @@ define(
                         expect(sortedRows[2].col2.text).toEqual('abc');
                     });
 
-                    it('converts number strings to numbers', function () {
-                        var val1 = "",
-                            val2 = "1",
-                            val3 = "2016-04-05 18:41:30.713Z",
-                            val4 = "1.1",
-                            val5 = "8.945520958175627e-13";
-
-                        expect(controller.toNumber(val1)).toEqual("");
-                        expect(controller.toNumber(val2)).toEqual(1);
-                        expect(controller.toNumber(val3)).toEqual("2016-04-05 18:41:30.713Z");
-                        expect(controller.toNumber(val4)).toEqual(1.1);
-                        expect(controller.toNumber(val5)).toEqual(8.945520958175627e-13);
-                    });
-
                     it('correctly sorts rows of differing types', function () {
                         mockScope.sortColumn = 'col2';
                         mockScope.sortDirection = 'desc';
@@ -224,7 +210,24 @@ define(
                         expect(sortedRows[sortedRows.length-1].col2.text).toEqual('');
                     });
 
-                    describe('Adding new rows', function() {
+                    describe('The sort comparator', function () {
+                        it('Correctly sorts different data types', function () {
+                            var val1 = "",
+                                val2 = "1",
+                                val3 = "2016-04-05 18:41:30.713Z",
+                                val4 = "1.1",
+                                val5 = "8.945520958175627e-13";
+                            mockScope.sortDirection = "asc";
+
+                            expect(controller.sortComparator(val1, val2)).toEqual(-1);
+                            expect(controller.sortComparator(val3, val1)).toEqual(1);
+                            expect(controller.sortComparator(val3, val2)).toEqual(1);
+                            expect(controller.sortComparator(val4, val2)).toEqual(1);
+                            expect(controller.sortComparator(val2, val5)).toEqual(1);
+                        });
+                    });
+
+                    describe('Adding new rows', function () {
                         var row4,
                             row5,
                             row6;

@@ -287,21 +287,6 @@ define(
         };
 
         /**
-         * Given a value, if it is a number, or a string representation of a
-         * number, then return a number representation. Otherwise, return
-         * the original value. It's a little more robust than using just
-         * Number() or parseFloat, or isNaN in isolation, all of which are
-         * fairly inconsistent in their results.
-         * @param value The value to return as a number.
-         * @returns {*} The value cast to a Number, or the original value if
-         * a Number representation is not possible.
-         */
-        MCTTableController.prototype.toNumber = function (value){
-            var val = !isNaN(Number(value)) && !isNaN(parseFloat(value)) ? Number(value) : value;
-            return val;
-        };
-
-        /**
          * @private
          */
         MCTTableController.prototype.insertSorted = function (array, element) {
@@ -310,17 +295,14 @@ define(
                 sortKey = this.$scope.sortColumn;
 
             function binarySearch(searchArray, searchElement, min, max){
-                var sampleAt = Math.floor((max - min) / 2) + min,
-                    valA,
-                    valB;
+                var sampleAt = Math.floor((max - min) / 2) + min;
+
                 if (max < min) {
                     return min; // Element is not in array, min gives direction
                 }
 
-                valA = self.toNumber(searchElement[sortKey].text);
-                valB = self.toNumber(searchArray[sampleAt][sortKey].text);
-
-                switch(self.sortComparator(valA, valB)) {
+                switch(self.sortComparator(searchElement[sortKey].text,
+                    searchArray[sampleAt][sortKey].text)) {
                     case -1:
                         return binarySearch(searchArray, searchElement, min,
                             sampleAt - 1);
@@ -358,8 +340,34 @@ define(
          */
         MCTTableController.prototype.sortComparator = function (a, b) {
             var result = 0,
-                sortDirectionMultiplier;
+                sortDirectionMultiplier,
+                numberA,
+                numberB;
+            /**
+             * Given a value, if it is a number, or a string representation of a
+             * number, then return a number representation. Otherwise, return
+             * the original value. It's a little more robust than using just
+             * Number() or parseFloat, or isNaN in isolation, all of which are
+             * fairly inconsistent in their results.
+             * @param value The value to return as a number.
+             * @returns {*} The value cast to a Number, or the original value if
+             * a Number representation is not possible.
+             */
+            function toNumber (value){
+                var val = !isNaN(Number(value)) && !isNaN(parseFloat(value)) ? Number(value) : value;
+                return val;
+            }
 
+            numberA = toNumber(a);
+            numberB = toNumber(b);
+
+            //If they're both numbers, then compare them as numbers
+            if (typeof numberA === "number" && typeof numberB === "number") {
+                a = numberA;
+                b = numberB;
+            }
+
+            //If they're both strings, then ignore case
             if (typeof a === "string" && typeof b === "string") {
                 a = a.toLowerCase();
                 b = b.toLowerCase();
@@ -396,14 +404,7 @@ define(
             }
 
             return rowsToSort.sort(function (a, b) {
-                //If the values to compare can be compared as
-                // numbers, do so. String comparison of number
-                // values can cause inconsistencies
-
-                var valA = self.toNumber(a[sortKey].text),
-                    valB = self.toNumber(b[sortKey].text);
-
-                return self.sortComparator(valA, valB);
+                return self.sortComparator(a[sortKey].text, b[sortKey].text);
             });
         };
 
