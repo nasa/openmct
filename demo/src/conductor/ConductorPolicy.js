@@ -48,6 +48,12 @@ define(
             }, true);
         }
 
+        function or(array) {
+            return array.reduce(function (previous, next) {
+                return previous || next;
+            }, false);
+        }
+
         /**
          * @param {DomainObject} candidate
          * @returns {Promise} a promise resolved with true if the object
@@ -66,7 +72,7 @@ define(
                         if (composition.length === 0 ) {
                             return fastPromise(false);
                         } else {
-                            return self.$q.all(composition.map(self.allow.bind(self))).then(and);
+                            return self.$q.all(composition.map(self.allow.bind(self))).then(or);
                         }
                     });
                 } else {

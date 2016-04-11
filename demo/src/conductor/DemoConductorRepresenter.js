@@ -36,6 +36,7 @@ define(
             conductorService,
             views,
             throttle,
+            navigationService,
             scope,
             element
         ) {
@@ -43,6 +44,7 @@ define(
             this.element = element;
             this.views = views;
             this.conductorPolicy = new ConductorPolicy($q);
+            this.navigationService = navigationService;
 
             ConductorRepresenter.call(this,
                 throttle,
@@ -57,7 +59,8 @@ define(
 
         DemoConductorRepresenter.prototype.represent = function (representation, representedObject) {
             var self = this;
-            if (this.views.indexOf(representation) !== -1) {
+            if (this.views.indexOf(representation) !== -1 && representedObject.getId() === this.navigationService.getNavigation().getId()) {
+
                 this.conductorPolicy.allow(representedObject).then(function (show) {
                     if (show && representation.type !== 'folder') {
                         ConductorRepresenter.prototype.represent.call(self, representation, representedObject);
@@ -65,8 +68,6 @@ define(
                 });
             }
         };
-
-        DemoConductorRepresenter.prototype.destroy = function destroy() {};
 
         return DemoConductorRepresenter;
     });

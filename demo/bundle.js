@@ -45,7 +45,7 @@ define([
             "representers": [
                 {
                     "implementation": DemoConductorRepresenter,
-                    "depends": ["$q", "$compile", "conductorService", "views[]", "throttle"]
+                    "depends": ["$q", "$compile", "conductorService", "views[]", "throttle", "navigationService"]
                 }
             ],
             "components": [
@@ -71,6 +71,7 @@ define([
                 {
                     "implementation": DemoInitializer,
                     "depends": [
+                        "$timeout",
                         "representers[]"
                     ]
                 }
@@ -103,6 +104,16 @@ define([
                             }
                         ]
                     }
+                }
+            ],
+            "stylesheets": [
+                {
+                    "stylesheetUrl": "css/hopscotch.css",
+                    priority: "fallback"
+
+                },
+                {
+                    "stylesheetUrl": "css/tour.css"
                 }
             ]
         }
