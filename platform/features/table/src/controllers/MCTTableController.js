@@ -23,10 +23,13 @@ define(
             this.maxDisplayRows = 50;
 
             this.scrollable = element.find('div');
+            this.thead = element.find('thead');
+            this.tbody = element.find('tbody');
+            this.$scope.sizingRow = {};
+
             this.scrollable.on('scroll', this.onScroll.bind(this));
 
             $scope.visibleRows = [];
-            $scope.overrideRowPositioning = false;
 
             /**
              * Set default values for optional parameters on a given scope
@@ -100,14 +103,31 @@ define(
          * @private
          */
         MCTTableController.prototype.newRow = function (event, rowIndex) {
-            var row = this.$scope.rows[rowIndex];
-            //Add row to the filtered, sorted list of all rows
-            if (this.filterRows([row]).length > 0) {
-                this.insertSorted(this.$scope.displayRows, row);
+            var self = this,
+                row = this.$scope.rows[rowIndex],
+                largestRow;
+
+            function sizeAndScroll () {
+                self.setElementSizes();
+                self.scrollToBottom();
             }
 
-            this.$timeout(this.setElementSizes.bind(this))
-                .then(this.scrollToBottom.bind(this));
+            //Does the row pass the current filter?
+            if (this.filterRows([row]).length === 1) {
+                this.insertSorted(this.$scope.displayRows, row);
+
+                //Calculate largest row
+                largestRow = this.buildLargestRow([this.$scope.sizingRow, row]);
+
+                // Has it changed? If so, set the the 'sizing' row which
+                // determines column widths
+                if (JSON.stringify(largestRow) !== JSON.stringify(this.$scope.sizingRow)){
+                    this.$scope.sizingRow = largestRow;
+                    this.$timeout(sizeAndScroll);
+                } else {
+                    sizeAndScroll();
+                }
+            }
         };
 
         /**
@@ -249,13 +269,12 @@ define(
          * for individual rows.
          */
         MCTTableController.prototype.setElementSizes = function () {
-            var self = this,
-                thead = this.element.find('thead'),
-                tbody = this.element.find('tbody'),
+            var thead = this.thead,
+                tbody = this.tbody,
                 firstRow = tbody.find('tr'),
                 column = firstRow.find('td'),
                 headerHeight = thead.prop('offsetHeight'),
-                rowHeight = 20,
+                rowHeight = firstRow.prop('offsetHeight'),
                 columnWidth,
                 tableWidth = 0,
                 overallHeight = headerHeight + (rowHeight *
@@ -279,8 +298,6 @@ define(
             } else {
                 this.$scope.totalWidth = 'none';
             }
-
-            this.$scope.overrideRowPositioning = true;
         };
 
         /**
@@ -400,43 +417,32 @@ define(
          * pre-calculate optimal column sizes without having to render
          * every row.
          */
-        MCTTableController.prototype.findLargestRow = function (rows) {
-            var largestRow = rows.reduce(function (largestRow, row) {
+        MCTTableController.prototype.buildLargestRow = function (rows) {
+            var largestRow = rows.reduce(function (prevLargest, row) {
                 Object.keys(row).forEach(function (key) {
-                    var currentColumn = row[key].text,
+                    var currentColumn,
+                        currentColumnLength,
+                        largestColumn,
+                        largestColumnLength;
+                    if (!row[key]){
+                        //do nothing, no value for this column;
+                    } else {
+                        currentColumn = (row[key]).text;
                         currentColumnLength =
                             (currentColumn && currentColumn.length) ?
                                 currentColumn.length :
-                                currentColumn,
-                        largestColumn = largestRow[key].text,
-                        largestColumnLength =
-                            (largestColumn && largestColumn.length) ?
-                                largestColumn.length :
-                                largestColumn;
+                                currentColumn;
+                        largestColumn = prevLargest[key] ? prevLargest[key].text : "";
+                        largestColumnLength = largestColumn.length;
 
-                    if (currentColumnLength > largestColumnLength) {
-                        largestRow[key] = JSON.parse(JSON.stringify(row[key]));
+                        if (currentColumnLength > largestColumnLength) {
+                            prevLargest[key] = JSON.parse(JSON.stringify(row[key]));
+                        }
                     }
+
                 });
-                return largestRow;
+                return prevLargest;
             }, JSON.parse(JSON.stringify(rows[0] || {})));
-
-            largestRow = JSON.parse(JSON.stringify(largestRow));
-
-            // Pad with characters to accomodate variable-width fonts,
-            // and remove characters that would allow word-wrapping.
-            Object.keys(largestRow).forEach(function (key) {
-                var padCharacters,
-                    i;
-
-                largestRow[key].text = String(largestRow[key].text);
-                padCharacters = largestRow[key].text.length / 10;
-                for (i = 0; i < padCharacters; i++) {
-                    largestRow[key].text = largestRow[key].text + 'W';
-                }
-                largestRow[key].text = largestRow[key].text
-                    .replace(/[ \-_]/g, 'W');
-            });
             return largestRow;
         };
 
@@ -447,20 +453,13 @@ define(
          * @private
          */
         MCTTableController.prototype.resize = function (){
-            var largestRow = this.findLargestRow(this.$scope.displayRows),
-                self = this;
-            this.$scope.visibleRows = [
-                {
-                    rowIndex: 0,
-                    offsetY: undefined,
-                    contents: largestRow
-                }
-            ];
+            var self = this;
+
+            this.$scope.sizingRow = this.buildLargestRow(this.$scope.displayRows);
 
             //Wait a timeout to allow digest of previous change to visible
             // rows to happen.
             this.$timeout(function () {
-                //Remove temporary padding row used for setting column widths
                 self.$scope.visibleRows = [];
                 self.setElementSizes();
             });
@@ -488,8 +487,6 @@ define(
         MCTTableController.prototype.updateRows = function (newRows) {
             //Reset visible rows because new row data available.
             this.$scope.visibleRows = [];
-
-            this.$scope.overrideRowPositioning = false;
 
             //Nothing to show because no columns visible
             if (!this.$scope.displayHeaders) {
