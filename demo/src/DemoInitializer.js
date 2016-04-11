@@ -21,19 +21,6 @@
  *****************************************************************************/
 /*global define*/
 require.config({
-/*    paths: {
-        tether: "demo/lib/tether/tether",
-        shepherd: "demo/lib/shepherd/shepherd.min"
-    },
-    shim: {
-        tether: {
-            exports: "tether"
-        },
-        shepherd: {
-            deps: ["tether"],
-            exports: "shepherd"
-        }
-    }*/
     paths: {
         hopscotch: "demo/lib/hopscotch/hopscotch.min"
     },
@@ -53,7 +40,7 @@ define(
     function (ConductorRepresenter, hopscotch, $){
         "use strict";
 
-        function DemoInitializer($timeout, representers) {
+        function DemoInitializer($timeout, representers, objectService, $location) {
 
             function indexOf(array, callback) {
                 return array.reduce(function(previous, element, index) {
@@ -76,6 +63,21 @@ define(
 
             removeRepresenter(ConductorRepresenter);
 
+            objectService.getObjects([
+                "mct:demo"
+            ]).then(function (objects) {
+                objects["mct:demo"].useCapability("mutation", function (model) {
+                    model.composition = [
+                        "88a26104-8bd5-445d-8b57-10b567d2823d",
+                        "f3744144-8842-4b7a-bddc-4abbf21315d9",
+                        "1731fc2d-ddce-4ace-ae3c-60b46c178beb",
+                        "b171cc31-2cc5-4ae9-ba40-baf1163f22c4"
+                    ];
+                })
+            }).then(function() {
+                $location.url("/browse/mct:demo/88a26104-8bd5-445d-8b57-10b567d2823d");
+            });
+
             $timeout(function() {
                 var tour = {
                     id: "hello-hopscotch",
@@ -88,6 +90,14 @@ define(
                             placement: "right"
                         },
                         {
+                            title: "Viewing objects",
+                            content: "Objects selected in the tree" +
+                            " are shown in the <strong>view</strong>",
+                            target: document.querySelector(".object-holder-main"),
+                            placement: "left",
+                            xOffset: "200px;"
+                        },
+                        {
                             title: "Creating objects",
                             content: "New objects can be created under" +
                             " the <strong>My Items</strong> folder using the " +
@@ -95,6 +105,7 @@ define(
                             target: document.querySelector(".create-btn"),
                             placement: "bottom"
                         },
+                        /*
                         {
                             title: "Composing objects",
                             content: "Objects can be composed by dragging" +
@@ -107,14 +118,9 @@ define(
                             title: "Composing objects (cont.)",
                             content: "...into the current view",
                             target: document.querySelector(".object-holder-main"),
-                            placement: "top"
-                        },
-                        {
-                            title: "Create a layout",
-                            content: "Try composing a <strong> Display Layout </strong> by creating it from the create menu, and then dragging some objects into it.",
-                            target: document.querySelector(".create-btn"),
-                            placement: "right"
-                        }
+                            placement: "top",
+                            yOffset: "100px;"
+                        }*/
                     ]
                 };
                 hopscotch.endTour(true);
