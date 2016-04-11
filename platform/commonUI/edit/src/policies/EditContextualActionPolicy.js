@@ -35,7 +35,11 @@ define(
          */
         function EditContextualActionPolicy(navigationService) {
             this.navigationService = navigationService;
-            this.blacklist = ["move", "copy", "link", "window", "follow"];
+            //The list of objects disallowed on target object when in edit mode
+            this.editBlacklist = ["copy", "follow", "window"];
+            //The list of objects disallowed on target object that is not in
+            // edit mode (ie. the context menu in the tree on the LHS).
+            this.nonEditBlacklist = ["copy", "follow", "properties", "move", "link", "remove"];
         }
 
         EditContextualActionPolicy.prototype.allow = function (action, context) {
@@ -45,9 +49,10 @@ define(
 
             if (navigatedObject.hasCapability('editor')) {
                 if (!selectedObject.hasCapability('editor')){
-                    return false;
+                    //Target is in the context menu
+                    return this.nonEditBlacklist.indexOf(actionMetadata.key) === -1;
                 } else {
-                    return this.blacklist.indexOf(actionMetadata.key) === -1;
+                    return this.editBlacklist.indexOf(actionMetadata.key) === -1;
                 }
             } else {
                 return true;
