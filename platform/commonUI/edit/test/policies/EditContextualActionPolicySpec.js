@@ -58,16 +58,25 @@ define(
                 expect(policy.allow(mockAction, context)).toBe(true);
             });
 
-            it('Allows no actions when navigated object in edit mode, but' +
-                ' selected object not in edit mode ', function() {
+            it('Allows "window" action when navigated object in edit mode,' +
+                ' but selected object not in edit mode ', function() {
                 navigatedObject.hasCapability.andReturn(true);
+                metadata.key = "window";
+                expect(policy.allow(mockAction, context)).toBe(true);
+            });
+
+            it('Disallows "move" action when navigated object in edit mode,' +
+                ' but selected object not in edit mode ', function() {
+                navigatedObject.hasCapability.andReturn(true);
+                metadata.key = "move";
                 expect(policy.allow(mockAction, context)).toBe(false);
             });
 
-            it('Disallows blacklisted actions when navigated object and' +
+            it('Disallows copy action when navigated object and' +
                 ' selected object in edit mode', function() {
                 navigatedObject.hasCapability.andReturn(true);
                 mockDomainObject.hasCapability.andReturn(true);
+                metadata.key = "copy";
                 expect(policy.allow(mockAction, context)).toBe(false);
             });
 
