@@ -103,7 +103,7 @@ define(
             if (countEditableViews(editableObject) > 0 && editableObject.hasCapability('composition')) {
                 this.navigationService.setNavigation(editableObject);
             } else {
-                return editableObject.getCapability('action').perform('save');
+                return editableObject.getCapability('action').perform('save-as');
             }
         };
 

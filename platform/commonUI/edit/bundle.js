@@ -32,6 +32,7 @@ define([
     "./src/actions/PropertiesAction",
     "./src/actions/RemoveAction",
     "./src/actions/SaveAction",
+    "./src/actions/SaveAsAction",
     "./src/actions/CancelAction",
     "./src/policies/EditActionPolicy",
     "./src/policies/EditableLinkPolicy",
@@ -56,6 +57,7 @@ define([
     PropertiesAction,
     RemoveAction,
     SaveAction,
+    SaveAsAction,
     CancelAction,
     EditActionPolicy,
     EditableLinkPolicy,
@@ -164,6 +166,15 @@ define([
                     "category": "conclude-editing",
                     "implementation": SaveAction,
                     "name": "Save",
+                    "description": "Save changes made to these objects.",
+                    "depends": [],
+                    "priority": "mandatory"
+                },
+                {
+                    "key": "save-as",
+                    "category": "conclude-editing",
+                    "implementation": SaveAsAction,
+                    "name": "Save As",
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "$injector",
