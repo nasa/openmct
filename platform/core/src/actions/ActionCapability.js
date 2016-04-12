@@ -28,7 +28,6 @@ define(
     [],
     function () {
         "use strict";
-        var DISALLOWED_ACTIONS = ["copy", "window", "follow"];
 
         /**
          * The ActionCapability allows applicable Actions to be retrieved and
@@ -55,37 +54,22 @@ define(
             this.domainObject = domainObject;
         }
 
-        function isEditable(domainObject){
-            return domainObject.getCapability('status').get('editing');
-        }
-
-        function hasEditableAncestor(domainObject){
-            return domainObject.hasCapability('context') &&
-                domainObject
-                    .getCapability('context')
-                    .getPath()
-                    .some(function isEditable (ancestor){
-                        return ancestor.getCapability('status').get('editing');
-                    });
-        }
-
         /**
-         * Retrieve the actions applicable to the domain object in the given
-         * context.
+         * Perform an action. This will find and perform the
+         * first matching action available for the specified
+         * context or key.
          *
          * @param {ActionContext|string} context the context in which
-         *       to assess the applicability of the available actions; this is
-         *       passed along to the action service to match against available
+         *       to perform the action; this is passed along to
+         *       the action service to match against available
          *       actions. The "domainObject" field will automatically
          *       be populated with the domain object that exposed
          *       this capability. If given as a string, this will
          *       be taken as the "key" field to match against
          *       specific actions.
-         *
-         *       Additionally, this function will limit the actions
-         *       available for an object in Edit Mode
-         * @returns {Array<Action>} The actions applicable to this domain
-         * object in the given context
+         * @returns {Promise} the result of the action that was
+         *       performed, or undefined if no matching action
+         *       was found.
          * @memberof platform/core.ActionCapability#
          */
         ActionCapability.prototype.getActions = function (context) {
@@ -94,19 +78,11 @@ define(
             // but additionally adds a domainObject field.
             var baseContext = typeof context === 'string' ?
                         { key: context } : (context || {}),
-                actionContext = Object.create(baseContext),
-                actions;
+                actionContext = Object.create(baseContext);
 
             actionContext.domainObject = this.domainObject;
 
-            actions = this.actionService.getActions(actionContext) || [];
-            if (isEditable(this.domainObject) || hasEditableAncestor(this.domainObject)){
-                return actions.filter(function(action){
-                    return DISALLOWED_ACTIONS.indexOf(action.getMetadata().key) === -1;
-                });
-            } else {
-                return actions;
-            }
+            return this.actionService.getActions(actionContext);
         };
 
         /**
