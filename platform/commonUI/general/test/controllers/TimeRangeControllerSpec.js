@@ -94,18 +94,18 @@ define(
             it("exposes start time validator", function () {
                 var testValue = 42000000;
                 mockScope.formModel = { end: testValue };
-                expect(mockScope.validateStart(testValue + 1))
+                expect(controller.validateStart(testValue + 1))
                     .toBe(false);
-                expect(mockScope.validateStart(testValue - 60 * 60 * 1000 - 1))
+                expect(controller.validateStart(testValue - 60 * 60 * 1000 - 1))
                     .toBe(true);
             });
 
             it("exposes end time validator", function () {
                 var testValue = 42000000;
                 mockScope.formModel = { start:  testValue };
-                expect(mockScope.validateEnd(testValue - 1))
+                expect(controller.validateEnd(testValue - 1))
                     .toBe(false);
-                expect(mockScope.validateEnd(testValue + 60 * 60 * 1000 + 1))
+                expect(controller.validateEnd(testValue + 60 * 60 * 1000 + 1))
                     .toBe(true);
             });
 
@@ -134,7 +134,7 @@ define(
                 });
 
                 it("updates model bounds on request", function () {
-                    mockScope.updateBoundsFromForm();
+                    controller.updateBoundsFromForm();
                     expect(mockScope.ngModel.outer.start)
                         .toEqual(mockScope.formModel.start);
                     expect(mockScope.ngModel.outer.end)
@@ -160,27 +160,27 @@ define(
                 });
 
                 it("updates the start time for left drags", function () {
-                    mockScope.startLeftDrag();
-                    mockScope.leftDrag(250);
+                    controller.startLeftDrag();
+                    controller.leftDrag(250);
                     expect(mockScope.ngModel.inner.start)
                         .toEqual(DAY * 1000 + HOUR * 9);
                 });
 
                 it("updates the end time for right drags", function () {
-                    mockScope.startRightDrag();
-                    mockScope.rightDrag(-250);
+                    controller.startRightDrag();
+                    controller.rightDrag(-250);
                     expect(mockScope.ngModel.inner.end)
                         .toEqual(DAY * 1000 + HOUR * 15);
                 });
 
                 it("updates both start and end for middle drags", function () {
-                    mockScope.startMiddleDrag();
-                    mockScope.middleDrag(-125);
+                    controller.startMiddleDrag();
+                    controller.middleDrag(-125);
                     expect(mockScope.ngModel.inner).toEqual({
                         start: DAY * 1000,
                         end: DAY * 1000 + HOUR * 18
                     });
-                    mockScope.middleDrag(250);
+                    controller.middleDrag(250);
                     expect(mockScope.ngModel.inner).toEqual({
                         start: DAY * 1000 + HOUR * 6,
                         end: DAY * 1001
@@ -188,8 +188,8 @@ define(
                 });
 
                 it("enforces a minimum inner span", function () {
-                    mockScope.startRightDrag();
-                    mockScope.rightDrag(-9999999);
+                    controller.startRightDrag();
+                    controller.rightDrag(-9999999);
                     expect(mockScope.ngModel.inner.end)
                         .toBeGreaterThan(mockScope.ngModel.inner.start);
                 });
