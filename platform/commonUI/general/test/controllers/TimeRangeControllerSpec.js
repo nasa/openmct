@@ -119,25 +119,87 @@ define(
                         start: DAY * 10000,
                         end: DAY * 11000
                     };
-                    // These watches may not exist, but Angular would fire
-                    // them if they did.
+                });
+
+                it('updates all changed bounds when requested', function () {
                     fireWatchCollection("formModel", mockScope.formModel);
                     fireWatch("formModel.start", mockScope.formModel.start);
                     fireWatch("formModel.end", mockScope.formModel.end);
-                });
 
-                it("does not immediately make changes to the model", function () {
                     expect(mockScope.ngModel.outer.start)
                         .not.toEqual(mockScope.formModel.start);
+                    expect(mockScope.ngModel.inner.start)
+                        .not.toEqual(mockScope.formModel.start);
+
                     expect(mockScope.ngModel.outer.end)
+                        .not.toEqual(mockScope.formModel.end);
+                    expect(mockScope.ngModel.inner.end)
+                        .not.toEqual(mockScope.formModel.end);
+
+                    controller.updateBoundsFromForm();
+
+                    expect(mockScope.ngModel.outer.start)
+                        .toEqual(mockScope.formModel.start);
+                    expect(mockScope.ngModel.inner.start)
+                        .toEqual(mockScope.formModel.start);
+
+                    expect(mockScope.ngModel.outer.end)
+                        .toEqual(mockScope.formModel.end);
+                    expect(mockScope.ngModel.inner.end)
+                        .toEqual(mockScope.formModel.end);
+                });
+
+                it('updates changed start bound when requested', function () {
+                    fireWatchCollection("formModel", mockScope.formModel);
+                    fireWatch("formModel.start", mockScope.formModel.start);
+
+                    expect(mockScope.ngModel.outer.start)
+                        .not.toEqual(mockScope.formModel.start);
+                    expect(mockScope.ngModel.inner.start)
+                        .not.toEqual(mockScope.formModel.start);
+
+                    expect(mockScope.ngModel.outer.end)
+                        .not.toEqual(mockScope.formModel.end);
+                    expect(mockScope.ngModel.inner.end)
+                        .not.toEqual(mockScope.formModel.end);
+
+                    controller.updateBoundsFromForm();
+
+                    expect(mockScope.ngModel.outer.start)
+                        .toEqual(mockScope.formModel.start);
+                    expect(mockScope.ngModel.inner.start)
+                        .toEqual(mockScope.formModel.start);
+
+                    expect(mockScope.ngModel.outer.end)
+                        .not.toEqual(mockScope.formModel.end);
+                    expect(mockScope.ngModel.inner.end)
                         .not.toEqual(mockScope.formModel.end);
                 });
 
-                it("updates model bounds on request", function () {
-                    controller.updateBoundsFromForm();
+                it('updates changed end bound when requested', function () {
+                    fireWatchCollection("formModel", mockScope.formModel);
+                    fireWatch("formModel.end", mockScope.formModel.end);
+
                     expect(mockScope.ngModel.outer.start)
-                        .toEqual(mockScope.formModel.start);
+                        .not.toEqual(mockScope.formModel.start);
+                    expect(mockScope.ngModel.inner.start)
+                        .not.toEqual(mockScope.formModel.start);
+
                     expect(mockScope.ngModel.outer.end)
+                        .not.toEqual(mockScope.formModel.end);
+                    expect(mockScope.ngModel.inner.end)
+                        .not.toEqual(mockScope.formModel.end);
+
+                    controller.updateBoundsFromForm();
+
+                    expect(mockScope.ngModel.outer.start)
+                        .not.toEqual(mockScope.formModel.start);
+                    expect(mockScope.ngModel.inner.start)
+                        .not.toEqual(mockScope.formModel.start);
+
+                    expect(mockScope.ngModel.outer.end)
+                        .toEqual(mockScope.formModel.end);
+                    expect(mockScope.ngModel.inner.end)
                         .toEqual(mockScope.formModel.end);
                 });
             });

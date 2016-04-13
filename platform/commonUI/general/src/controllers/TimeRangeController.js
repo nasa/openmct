@@ -66,6 +66,8 @@ define([
         this.outerMinimumSpan = 1000; // 1 second
         this.initialDragValue = undefined;
         this.formatter = formatService.getFormat(defaultFormat);
+        this.formStartChanged = false;
+        this.formEndChanged = false;
 
         this.$scope.ticks = [];
 
@@ -79,7 +81,9 @@ define([
             'updateOuterEnd',
             'updateFormat',
             'validateStart',
-            'validateEnd'
+            'validateEnd',
+            'onFormStartChange',
+            'onFormEndChange'
         ].forEach(function (boundFn) {
             this[boundFn] = this[boundFn].bind(this);
         }, this);
@@ -89,6 +93,8 @@ define([
         this.$scope.$watch("ngModel.outer.start", this.updateOuterStart);
         this.$scope.$watch("ngModel.outer.end", this.updateOuterEnd);
         this.$scope.$watch("parameters.format", this.updateFormat);
+        this.$scope.$watch("formModel.start", this.onFormStartChange);
+        this.$scope.$watch("formModel.end", this.onFormEndChange);
     }
 
     TimeRangeController.prototype.formatTimestamp = function (ts) {
@@ -255,11 +261,35 @@ define([
     };
 
     TimeRangeController.prototype.updateBoundsFromForm = function () {
-        var start = this.$scope.formModel.start,
-            end = this.$scope.formModel.end;
-        if (end >= start + this.outerMinimumSpan) {
-            this.$scope.ngModel = this.$scope.ngModel || {};
-            this.$scope.ngModel.outer = { start: start, end: end };
+        if (this.formStartChanged) {
+            this.$scope.ngModel.outer.start =
+                this.$scope.ngModel.inner.start =
+                this.$scope.formModel.start;
+            this.formStartChanged = false;
+        }
+        if (this.formEndChanged) {
+            this.$scope.ngModel.outer.end =
+                this.$scope.ngModel.inner.end =
+                this.$scope.formModel.end;
+            this.formEndChanged = false;
+        }
+    };
+
+    TimeRangeController.prototype.onFormStartChange = function (
+        newValue,
+        oldValue
+    ) {
+        if (!this.formStartChanged && newValue !== oldValue) {
+            this.formStartChanged = true;
+        }
+    };
+
+    TimeRangeController.prototype.onFormEndChange = function (
+        newValue,
+        oldValue
+    ) {
+        if (!this.formEndChanged && newValue !== oldValue) {
+            this.formEndChanged = true;
         }
     };
 
