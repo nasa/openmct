@@ -171,10 +171,10 @@ define([
                     "priority": "mandatory"
                 },
                 {
-                    "key": "save-as",
+                    "key": "save",
                     "category": "conclude-editing",
                     "implementation": SaveAsAction,
-                    "name": "Save As",
+                    "name": "Save",
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "$injector",
