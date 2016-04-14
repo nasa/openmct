@@ -190,11 +190,7 @@ define([
                     "implementation": CancelAction,
                     "name": "Cancel",
                     "description": "Discard changes made to these objects.",
-                    "depends": [
-                        "$injector",
-                        "navigationService",
-                        "$window"
-                    ]
+                    "depends": []
                 }
             ],
             "policies": [

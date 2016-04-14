@@ -115,15 +115,11 @@ define(
                 return copyService.perform(domainObject, parent, allowClone);
             }
 
-            function cancelEditingAfterClone(clonedObject) {
-                return domainObject.getCapability("editor").cancel()
+            function saveEdit(clonedObject) {
+                return domainObject.getCapability("editor").save()
                     .then(resolveWith(clonedObject));
             }
 
-            // Invoke any save behavior introduced by the editor capability;
-            // this is introduced by EditableDomainObject which is
-            // used to insulate underlying objects from changes made
-            // during editing.
             function doSave() {
                 //This is a new 'virtual object' that has not been persisted
                 // yet.
@@ -132,7 +128,7 @@ define(
                         .then(doWizardSave)
                         .then(getParent)
                         .then(cloneIntoParent)
-                        .then(cancelEditingAfterClone)
+                        .then(saveEdit)
                         .catch(resolveWith(false));
                 } else {
                     return domainObject.getCapability("editor").save();
@@ -161,7 +157,7 @@ define(
         SaveAction.appliesTo = function (context) {
             var domainObject = (context || {}).domainObject;
             return domainObject !== undefined &&
-                domainObject.hasCapability("editor");
+                domainObject.getCapability("status").get("editing");
         };
 
         return SaveAction;

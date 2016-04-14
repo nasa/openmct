@@ -26,20 +26,6 @@ define(
     function () {
         'use strict';
 
-        /**
-         * Implements "save" and "cancel" as capabilities of
-         * the object. In editing mode, user is seeing/using
-         * a copy of the object which is disconnected from persistence; the Save
-         * and Cancel actions can use this capability to
-         * propagate changes from edit mode to the underlying
-         * actual persistable object.
-         *
-         * Meant specifically for use by EditableDomainObject and the
-         * associated cache; the constructor signature is particular
-         * to a pattern used there and may contain unused arguments.
-         * @constructor
-         * @memberof platform/commonUI/edit
-         */
         function EditorCapability(
             transactionService,
             dirtyModelCache,

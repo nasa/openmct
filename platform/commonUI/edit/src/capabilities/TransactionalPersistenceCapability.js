@@ -43,7 +43,7 @@ define(
         TransactionalPersistenceCapability.prototype.persist = function () {
             var domainObject = this.domainObject,
                 dirtyModelCache = this.dirtyModelCache;
-            if (this.transactionService.isActive()) {
+            if (this.transactionService.isActive() && !this.transactionService.isCommitting()) {
                 dirtyModelCache.markDirty(domainObject);
                 //Using $q here because need to return something
                 // from which 'catch' can be chained

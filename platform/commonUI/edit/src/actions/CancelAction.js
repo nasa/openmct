@@ -33,10 +33,8 @@ define(
          * @memberof platform/commonUI/edit
          * @implements {Action}
          */
-        function CancelAction($injector, navigationService, context) {
+        function CancelAction(context) {
             this.domainObject = context.domainObject;
-            this.navigationService = navigationService;
-            this.objectService = $injector.get('objectService');
         }
 
         /**
@@ -68,7 +66,7 @@ define(
         CancelAction.appliesTo = function (context) {
             var domainObject = (context || {}).domainObject;
             return domainObject !== undefined &&
-                domainObject.hasCapability("editor");
+                domainObject.getCapability("status").get("editing");
         };
 
         return CancelAction;
