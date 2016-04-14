@@ -26,53 +26,48 @@ define(
     function () {
         'use strict';
 
-        /**
-         * Implements "save" and "cancel" as capabilities of
-         * the object. In editing mode, user is seeing/using
-         * a copy of the object which is disconnected from persistence; the Save
-         * and Cancel actions can use this capability to
-         * propagate changes from edit mode to the underlying
-         * actual persistable object.
-         *
-         * Meant specifically for use by EditableDomainObject and the
-         * associated cache; the constructor signature is particular
-         * to a pattern used there and may contain unused arguments.
-         * @constructor
-         * @memberof platform/commonUI/edit
-         */
-        function EditorCapability(
+        function TransactionalPersistenceCapability(
+            $q,
             transactionService,
             dirtyModelCache,
+            persistenceCapability,
             domainObject
         ) {
             this.transactionService = transactionService;
             this.dirtyModelCache = dirtyModelCache;
+            this.persistenceCapability = Object.create(persistenceCapability);
             this.domainObject = domainObject;
+            this.$q = $q;
         }
 
-        EditorCapability.prototype.edit = function () {
-            this.transactionService.startTransaction();
-            this.getCapability('status').set('editing', true);
+        TransactionalPersistenceCapability.prototype.persist = function () {
+            var domainObject = this.domainObject,
+                dirtyModelCache = this.dirtyModelCache;
+            if (this.transactionService.isActive()) {
+                dirtyModelCache.markDirty(domainObject);
+                //Using $q here because need to return something
+                // from which 'catch' can be chained
+                return this.$q.when(true);
+            } else {
+                return this.persistenceCapability.persist().then(function (result) {
+                    dirtyModelCache.markClean(domainObject);
+                    return result;
+                });
+            }
         };
 
-        EditorCapability.prototype.save = function () {
-            return this.transactionService.commit();
-        };
-
-        EditorCapability.prototype.cancel = function () {
-            var domainObject = this.domainObject;
-            return this.transactionService.cancel().then(function(){
-                domainObject.getCapability("status").set("editing", false);
+        TransactionalPersistenceCapability.prototype.refresh = function () {
+            var dirtyModelCache = this.dirtyModelCache;
+            return this.persistenceCapability.refresh().then(function (result) {
+                dirtyModelCache.markClean(domainObject);
+                return result;
             });
         };
 
-        EditorCapability.prototype.dirty = function () {
-            return this.dirtyModelCache.isDirty(this.domainObject);
+        TransactionalPersistenceCapability.prototype.getSpace = function () {
+            return this.persistenceCapability.getSpace();
         };
 
-        //TODO: add 'appliesTo'. EditorCapability should not be available
-        // for objects that should not be edited
-
-        return EditorCapability;
+        return TransactionalPersistenceCapability;
     }
 );

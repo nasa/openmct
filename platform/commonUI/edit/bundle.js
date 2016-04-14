@@ -40,6 +40,10 @@ define([
     "./src/policies/EditContextualActionPolicy",
     "./src/representers/EditRepresenter",
     "./src/representers/EditToolbarRepresenter",
+    "./src/capabilities/EditorCapability",
+    "./src/capabilities/TransactionDecorator",
+    "./src/services/TransactionService",
+    "./src/services/DirtyModelCache",
     "text!./res/templates/library.html",
     "text!./res/templates/edit-object.html",
     "text!./res/templates/edit-action-buttons.html",
@@ -65,6 +69,10 @@ define([
     EditContextualActionPolicy,
     EditRepresenter,
     EditToolbarRepresenter,
+    EditorCapability,
+    TransactionDecorator,
+    TransactionService,
+    DirtyModelCache,
     libraryTemplate,
     editObjectTemplate,
     editActionButtonsTemplate,
@@ -252,6 +260,35 @@ define([
                     "template": topbarEditTemplate
                 }
             ],
+            "components": [
+                {
+                    "type": "decorator",
+                    "provides": "capabilityService",
+                    "implementation": TransactionDecorator,
+                    "depends": [
+                        "$q",
+                        "transactionService",
+                        "dirtyModelCache"
+                    ]
+                },
+                {
+                    "type": "provider",
+                    "provides": "transactionService",
+                    "implementation": TransactionService,
+                    "depends": [
+                        "$q",
+                        "dirtyModelCache"
+                    ]
+                },
+                {
+                    "type": "provider",
+                    "provides": "dirtyModelCache",
+                    "implementation": DirtyModelCache,
+                    "depends": [
+                        "topic"
+                    ]
+                }
+            ],
             "representers": [
                 {
                     "implementation": EditRepresenter,
@@ -263,7 +300,19 @@ define([
                 {
                     "implementation": EditToolbarRepresenter
                 }
-            ]
+            ],
+            "capabilities": [
+                {
+                    "key": "editor",
+                    "name": "Editor Capability",
+                    "description": "Provides transactional editing capabilities",
+                    "implementation": EditorCapability,
+                    "depends": [
+                        "transactionService",
+                        "dirtyModelCache"
+                    ]
+                }
+            ],
         }
     });
 });

@@ -22,14 +22,15 @@
 /*global define*/
 
 define(
-    [],
-    function () {
+    ['./TransactionalPersistenceCapability'],
+    function (TransactionalPersistenceCapability) {
         'use strict';
 
         /**
          * Implements "save" and "cancel" as capabilities of
          * the object. In editing mode, user is seeing/using
-         * a copy of the object which is disconnected from persistence; the Save
+         * a copy of the object (an EditableDomainObject)
+         * which is disconnected from persistence; the Save
          * and Cancel actions can use this capability to
          * propagate changes from edit mode to the underlying
          * actual persistable object.
@@ -40,39 +41,42 @@ define(
          * @constructor
          * @memberof platform/commonUI/edit
          */
-        function EditorCapability(
+        function TransactionDecorator(
+            $q,
             transactionService,
             dirtyModelCache,
-            domainObject
+            capabilityService
         ) {
+            this.capabilityService = capabilityService;
             this.transactionService = transactionService;
             this.dirtyModelCache = dirtyModelCache;
-            this.domainObject = domainObject;
+            this.$q = $q;
         }
 
-        EditorCapability.prototype.edit = function () {
-            this.transactionService.startTransaction();
-            this.getCapability('status').set('editing', true);
+        /**
+         * Decorate PersistenceCapability to ignore persistence calls when a
+         * transaction is in progress.
+         */
+        TransactionDecorator.prototype.getCapabilities = function (model) {
+            var capabilities = this.capabilityService.getCapabilities(model),
+                persistenceCapability = capabilities.persistence;
+
+            capabilities.persistence = function (domainObject) {
+                var original =
+                    (typeof persistenceCapability === 'function') ?
+                        persistenceCapability(domainObject) :
+                        persistenceCapability;
+                return new TransactionalPersistenceCapability(
+                    self.$q,
+                    self.transactionService,
+                    self.dirtyModelCache,
+                    original,
+                    domainObject
+                );
+            };
+            return capabilities;
         };
 
-        EditorCapability.prototype.save = function () {
-            return this.transactionService.commit();
-        };
-
-        EditorCapability.prototype.cancel = function () {
-            var domainObject = this.domainObject;
-            return this.transactionService.cancel().then(function(){
-                domainObject.getCapability("status").set("editing", false);
-            });
-        };
-
-        EditorCapability.prototype.dirty = function () {
-            return this.dirtyModelCache.isDirty(this.domainObject);
-        };
-
-        //TODO: add 'appliesTo'. EditorCapability should not be available
-        // for objects that should not be edited
-
-        return EditorCapability;
+        return TransactionDecorator;
     }
 );
