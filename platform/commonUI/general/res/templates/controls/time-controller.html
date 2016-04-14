@@ -19,15 +19,18 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div ng-controller="TimeRangeController">
+<div ng-controller="TimeRangeController as trCtrl">
     <form class="l-time-range-inputs-holder"
-          ng-submit="updateBoundsFromForm()">
+          ng-submit="trCtrl.updateBoundsFromForm()">
         <span class="l-time-range-inputs-elem ui-symbol type-icon">&#x43;</span>
         <span class="l-time-range-input">
             <mct-control key="'datetime-field'"
-                         structure="{ format: parameters.format, validate: validateStart }"
+                         structure="{
+                             format: parameters.format,
+                             validate: trCtrl.validateStart
+                         }"
                          ng-model="formModel"
-                         ng-blur="updateBoundsFromForm()"
+                         ng-blur="trCtrl.updateBoundsFromForm()"
                          field="'start'"
                          class="time-range-start">
             </mct-control>
@@ -37,9 +40,12 @@
 
         <span class="l-time-range-input" ng-controller="ToggleController as t2">
             <mct-control key="'datetime-field'"
-                         structure="{ format: parameters.format, validate: validateEnd }"
+                         structure="{
+                             format: parameters.format,
+                             validate: trCtrl.validateEnd
+                         }"
                          ng-model="formModel"
-                         ng-blur="updateBoundsFromForm()"
+                         ng-blur="trCtrl.updateBoundsFromForm()"
                          field="'end'"
                          class="time-range-end">
             </mct-control>&nbsp;
@@ -53,22 +59,25 @@
             <div class="slider"
                  mct-resize="spanWidth = bounds.width">
                 <div class="knob knob-l"
-                     mct-drag-down="startLeftDrag()"
-                     mct-drag="leftDrag(delta[0])"
+                     mct-drag-down="trCtrl.startLeftDrag()"
+                     mct-drag="trCtrl.leftDrag(delta[0])"
                      ng-style="{ left: startInnerPct }">
                     <div class="range-value">{{startInnerText}}</div>
                 </div>
                 <div class="knob knob-r"
-                     mct-drag-down="startRightDrag()"
-                     mct-drag="rightDrag(delta[0])"
+                     mct-drag-down="trCtrl.startRightDrag()"
+                     mct-drag="trCtrl.rightDrag(delta[0])"
                      ng-style="{ right: endInnerPct }">
                     <div class="range-value">{{endInnerText}}</div>
                 </div>
                 <div class="slot range-holder">
                     <div class="range"
-                         mct-drag-down="startMiddleDrag()"
-                         mct-drag="middleDrag(delta[0])"
-                         ng-style="{ left: startInnerPct, right: endInnerPct}">
+                         mct-drag-down="trCtrl.startMiddleDrag()"
+                         mct-drag="trCtrl.middleDrag(delta[0])"
+                         ng-style="{
+                             left: startInnerPct,
+                             right: endInnerPct
+                         }">
                         <div class="toi-line"></div>
                     </div>
                 </div>
