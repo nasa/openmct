@@ -4,7 +4,7 @@ This document describes semantics and processes for providing version
 numbers for Open MCT, and additionally provides guidelines for dependent
 projects developed by the same team.
 
-Versions are incremented at specific points in  Open MCT's
+Versions are incremented at specific points in Open MCT's
 [Development Cycle](cycle.md); see that document for a description of
 sprints and releases.
 
