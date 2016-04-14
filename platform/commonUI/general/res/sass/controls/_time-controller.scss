@@ -1,58 +1,42 @@
 @mixin toiLineHovEffects() {
-	//@include pulse(.25s);
 	&:before,
 	&:after {
 		background-color: $timeControllerToiLineColorHov;
 	}
 }
 
-// Question for Charles: I believe this  is unnecessary here.  It
-// adds more specificity to the selector and makes the later override for
-// mobile styling also require more specificity. Without knowing whether or
-// not there is a specific reason this specifier is used, I won't remove it.
 .l-time-controller {
 	$minW: 500px;
 	$knobHOffset: 0px;
 	$knobM: ($sliderKnobW + $knobHOffset) * -1;
 	$rangeValPad: $interiorMargin;
 	$rangeValOffset: $sliderKnobW;
-	//$knobCr: $sliderKnobW;
 	$timeRangeSliderLROffset: 130px + $sliderKnobW + $rangeValOffset;
 	$r1H: nth($ueTimeControlH,1);
 	$r2H: nth($ueTimeControlH,2);
 	$r3H: nth($ueTimeControlH,3);
 
-    //@include absPosDefault();
-    //@include test();
     display: block;
-    //top: auto;
 	height: $r1H + $r2H + $r3H + ($interiorMargin * 2);
     min-width: $minW;
     font-size: 0.8rem;
 
-	.l-time-range-inputs-holder,
-	.l-time-range-slider {
-		//font-size: 0.8em;
-	}
 
 	.l-time-range-inputs-holder,
 	.l-time-range-slider-holder,
 	.l-time-range-ticks-holder
 	{
-		//@include test();
 		@include absPosDefault(0, visible);
 		box-sizing: border-box;
 		top: auto;
 	}
 	.l-time-range-slider,
 	.l-time-range-ticks {
-		//@include test(red, 0.1);
 		@include absPosDefault(0, visible);
 		left: $timeRangeSliderLROffset; right: $timeRangeSliderLROffset;
 	}
 
 	.l-time-range-inputs-holder {
-		//@include test(red);
 		height: $r1H; bottom: $r2H + $r3H + ($interiorMarginSm * 2);
 		padding-top: $interiorMargin;
 		border-top: 1px solid $colorInteriorBorder;
@@ -74,7 +58,6 @@
 	}
 
 	.l-time-range-slider-holder {
-		//@include test(green);
 		height: $r2H; bottom: $r3H + ($interiorMarginSm * 1);
 		.range-holder {
 			box-shadow: none;
@@ -86,7 +69,6 @@
 					$myW: 8px;
 					@include transform(translateX(50%));
 					position: absolute;
-					//@include test();
 					top: 0; right: 0; bottom: 0px; left: auto;
 					width: $myW;
 					height: auto;
@@ -101,7 +83,6 @@
 						// Vert line
 						top: 0; right: auto; bottom: -10px; left: floor($myW/2) - 1;
 						width: 2px;
-						//top: 0; right: 3px; bottom: 0; left: 3px;
 					}
 					&:after {
 						// Circle element
@@ -118,7 +99,6 @@
 			}
 		}
 		&:not(:active) {
-			//@include test(#ff00cc);
 			.knob,
 			.range {
 				@include transition-property(left, right);
@@ -159,7 +139,6 @@
 	.knob {
 		z-index: 2;
 		.range-value {
-			//@include test($sliderColorRange);
 			@include trans-prop-nice-fade(.25s);
 			padding: 0 $rangeValOffset;
 			position: absolute;
@@ -171,7 +150,6 @@
 			color: $sliderColorKnobHov;
 		}
 		&.knob-l {
-			//border-bottom-left-radius: $knobCr; // MOVED TO _CONTROLS.SCSS
 			margin-left: $knobM;
 			.range-value {
 				text-align: right;
@@ -179,7 +157,6 @@
 			}
 		}
 		&.knob-r {
-			//border-bottom-right-radius: $knobCr;
 			margin-right: $knobM;
 			.range-value {
 				left: $rangeValOffset;
@@ -198,12 +175,7 @@
 
 }
 
-//.slot.range-holder {
-//	background-color: $sliderColorRangeHolder;
-//}
-
 .s-time-range-val {
-	//@include test();
 	border-radius: $controlCr;
 	background-color: $colorInputBg;
 	padding: 1px 1px 0 $interiorMargin;
@@ -295,7 +267,7 @@
 		height: 17px;
 
 		.l-time-range-inputs-holder {
-			bottom: -7px; // 24 to -> -7 = -31px
+			bottom: -7px;
 			left: -5px;
 		}
 
@@ -322,7 +294,7 @@
 		height: 17px;
 
 		.l-time-range-inputs-holder {
-			bottom: -7px; // 24 to -> -7 = -31px
+			bottom: -7px;
 		}
 
 		.l-time-domain-selector {
