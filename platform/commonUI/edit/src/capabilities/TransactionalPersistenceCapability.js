@@ -57,7 +57,9 @@ define(
         };
 
         TransactionalPersistenceCapability.prototype.refresh = function () {
-            var dirtyModelCache = this.dirtyModelCache;
+            var domainObject = this.domainObject,
+                dirtyModelCache = this.dirtyModelCache;
+
             return this.persistenceCapability.refresh().then(function (result) {
                 dirtyModelCache.markClean(domainObject);
                 return result;

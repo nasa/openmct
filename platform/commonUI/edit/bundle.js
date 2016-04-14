@@ -192,7 +192,8 @@ define([
                     "description": "Discard changes made to these objects.",
                     "depends": [
                         "$injector",
-                        "navigationService"
+                        "navigationService",
+                        "$window"
                     ]
                 }
             ],

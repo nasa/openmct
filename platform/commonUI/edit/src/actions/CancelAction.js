@@ -46,30 +46,16 @@ define(
          *          cancellation has completed
          */
         CancelAction.prototype.perform = function () {
-            var domainObject = this.domainObject,
-                self = this;
+            var domainObject = this.domainObject;
 
-            // Look up the object's "editor.completion" capability;
-            // this is introduced by EditableDomainObject which is
-            // used to insulate underlying objects from changes made
-            // during editing.
-            function getEditorCapability() {
-                return domainObject.getCapability("editor");
+            function returnToBrowse () {
+                var parent;
+                domainObject.getCapability("location").getOriginal().then(function (original) {
+                    parent = original.getCapability("context").getParent();
+                    parent.getCapability("action").perform("navigate");
+                });
             }
-
-            // Invoke any save behavior introduced by the editor.completion
-            // capability.
-            function doCancel(editor) {
-                return editor.cancel();
-            }
-
-            //Discard current 'editable' object, and retrieve original
-            // un-edited object.
-            function returnToBrowse() {
-                return self.navigationService.setNavigation(self.domainObject.getOriginalObject());
-            }
-
-            return doCancel(getEditorCapability())
+            return this.domainObject.getCapability("editor").cancel()
                 .then(returnToBrowse);
         };
 

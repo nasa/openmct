@@ -52,17 +52,23 @@ define(
 
         EditorCapability.prototype.edit = function () {
             this.transactionService.startTransaction();
-            this.getCapability('status').set('editing', true);
+            this.domainObject.getCapability('status').set('editing', true);
         };
 
         EditorCapability.prototype.save = function () {
-            return this.transactionService.commit();
+            var domainObject = this.domainObject;
+            return this.transactionService.commit().then(function() {
+                domainObject.getCapability('status').set('editing', false);
+            });
         };
+
+        EditorCapability.prototype.invoke = EditorCapability.prototype.edit;
 
         EditorCapability.prototype.cancel = function () {
             var domainObject = this.domainObject;
             return this.transactionService.cancel().then(function(){
                 domainObject.getCapability("status").set("editing", false);
+                return domainObject;
             });
         };
 

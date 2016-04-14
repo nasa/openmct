@@ -173,13 +173,10 @@ define(
                 }, modified);
             }
 
-            // Only update if we don't have unsaved changes
-            return (model.modified === model.persisted) ?
-                this.persistenceService.readObject(
+            return this.persistenceService.readObject(
                     this.getSpace(),
                     this.domainObject.getId()
-                ).then(updateModel) :
-                fastPromise(false);
+                ).then(updateModel);
         };
 
         /**

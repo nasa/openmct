@@ -58,7 +58,8 @@ define(
          * transaction is in progress.
          */
         TransactionDecorator.prototype.getCapabilities = function (model) {
-            var capabilities = this.capabilityService.getCapabilities(model),
+            var self = this,
+                capabilities = this.capabilityService.getCapabilities(model),
                 persistenceCapability = capabilities.persistence;
 
             capabilities.persistence = function (domainObject) {

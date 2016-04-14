@@ -135,8 +135,7 @@ define(
                         .then(cancelEditingAfterClone)
                         .catch(resolveWith(false));
                 } else {
-                    return domainObject.getCapability("editor").save()
-                        .then(resolveWith(domainObject.getOriginalObject()));
+                    return domainObject.getCapability("editor").save();
                 }
             }
 
