@@ -6,11 +6,11 @@
 	}
 }
 
-// Question for Charles: I believe this mct-include is unnecessary here.  It
+// Question for Charles: I believe this  is unnecessary here.  It
 // adds more specificity to the selector and makes the later override for
 // mobile styling also require more specificity. Without knowing whether or
 // not there is a specific reason this specifier is used, I won't remove it.
-mct-include.l-time-controller {
+.l-time-controller {
 	$minW: 500px;
 	$knobHOffset: 0px;
 	$knobM: ($sliderKnobW + $knobHOffset) * -1;
@@ -210,20 +210,13 @@ mct-include.l-time-controller {
 }
 
 @include phoneandtablet {
-	mct-include.l-time-controller, mct-include.l-time-range-inputs-holder {
+	.l-time-controller, .l-time-range-inputs-holder {
 		min-width: 0px;
 	}
 
-	mct-include.l-time-controller {
-		height: 48px;
-
-		.l-time-range-inputs-holder {
-			bottom: 24px;
-		}
+	.l-time-controller {
 
 		.l-time-domain-selector {
-			width: 33%;
-			bottom: -9px;
 			select {
 				height: 25px;
 				margin-bottom: 0px;
@@ -241,9 +234,7 @@ mct-include.l-time-controller {
 		.l-time-range-inputs-holder {
 			.l-time-range-input {
 				display: block;
-				margin-bottom: 5px;
 				.s-btn {
-					width: 66%;
 					padding-right: 18px;
 					white-space: nowrap;
 					input {
@@ -252,16 +243,138 @@ mct-include.l-time-controller {
 				}
 			}
 			.l-time-range-inputs-elem {
-				display: none;
+
+			}
+		}
+	}
+}
+
+@include phone {
+	.l-time-controller {
+		height: 48px;
+
+		.l-time-range-inputs-holder {
+			bottom: 24px;
+		}
+
+		.l-time-domain-selector {
+			width: 33%;
+			bottom: -9px;
+		}
+
+		.l-time-range-inputs-holder {
+			.l-time-range-input {
+				margin-bottom: 5px;
+				.s-btn {
+					width: 66%;
+				}
+			}
+			.l-time-range-inputs-elem {
+				&.ui-symbol {
+					display: none;
+				}
+
 				&.lbl {
-					display: block;
-					height: 25px;
 					width: 33%;
 					right: 0px;
-					margin: 0;
 					top: 5px;
+					display: block;
+					height: 25px;
+					margin: 0;
 					line-height: 25px;
 					position: absolute;
+				}
+			}
+		}
+	}
+}
+
+
+@include tablet {
+	.l-time-controller {
+		height: 17px;
+
+		.l-time-range-inputs-holder {
+			bottom: -7px; // 24 to -> -7 = -31px
+			left: -5px;
+		}
+
+		.l-time-domain-selector {
+			width: 23%;
+			right: -4px;
+			bottom: -10px;
+		}
+
+		.l-time-range-inputs-holder {
+			.l-time-range-input {
+				float: left;
+				.s-btn {
+					width: 100%;
+					padding-left: 4px;
+				}
+			}
+		}
+	}
+}
+
+@include tabletLandscape {
+	.l-time-controller {
+		height: 17px;
+
+		.l-time-range-inputs-holder {
+			bottom: -7px; // 24 to -> -7 = -31px
+		}
+
+		.l-time-domain-selector {
+			width: 23%;
+			right: auto;
+			bottom: -10px;
+			left: 391px;
+		}
+
+		.l-time-range-inputs-holder {
+			.l-time-range-inputs-elem {
+				&.ui-symbol, &.lbl {
+					display: block;
+					float: left;
+					line-height: 25px;
+				}
+			}
+		}
+	}
+
+	.pane-tree-hidden .l-time-controller {
+		.l-time-domain-selector {
+			left: 667px;
+		}
+		.l-time-range-inputs-holder {
+			padding-left: 277px;
+		}
+	}
+}
+@include tabletPortrait {
+	.l-time-controller {
+		height: 17px;
+
+		.l-time-range-inputs-holder {
+			bottom: -7px;
+			left: -5px;
+		}
+
+		.l-time-domain-selector {
+			width: 23%;
+			right: -4px;
+			bottom: -10px;
+		}
+
+		.l-time-range-inputs-holder {
+			.l-time-range-input {
+				width: 38%;
+				float: left;
+			}
+			.l-time-range-inputs-elem {
+				&.ui-symbol, &.lbl {
+					display: none;
 				}
 			}
 		}
