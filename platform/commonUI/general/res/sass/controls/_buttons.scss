@@ -76,6 +76,11 @@ $pad: $interiorMargin * $baseRatio;
         font-family: symbolsfont;
         margin-right: $interiorMarginSm;
     }
+    &.t-save-as:before {
+        content:'\e612';
+        font-family: symbolsfont;
+        margin-right: $interiorMarginSm;
+    }
     &.t-cancel {
         .title-label { display: none; }
         &:before {
