@@ -29,14 +29,21 @@ define(["./ExportTimelineAsCSVTask"], function (ExportTimelineAsCSVTask) {
      *
      * @param exportService the service used to perform the CSV export
      * @param notificationService the service used to show notifications
+     * @param {Array} resources an array of `resources` extensions
      * @param context the Action's context
      * @implements {Action}
      * @constructor
      * @memberof {platform/features/timeline}
      */
-    function ExportTimelineAsCSVAction(exportService, notificationService, context) {
+    function ExportTimelineAsCSVAction(
+        exportService,
+        notificationService,
+        resources,
+        context
+    ) {
         this.task = new ExportTimelineAsCSVTask(
             exportService,
+            resources,
             context.domainObject
         );
         this.notificationService = notificationService;

@@ -37,11 +37,13 @@ define([
      * @constructor
      * @memberof {platform/features/timeline}
      * @param exportService the service used to export as CSV
+     * @param resources the `resources` extension category
      * @param {DomainObject} domainObject the timeline being exported
      */
-    function ExportTimelineAsCSVTask(exportService, domainObject) {
+    function ExportTimelineAsCSVTask(exportService, resources, domainObject) {
         this.domainObject = domainObject;
         this.exportService = exportService;
+        this.resources = resources;
     }
 
     /**
@@ -54,7 +56,7 @@ define([
         var exportService = this.exportService;
 
         function doExport(objects) {
-            var exporter = new TimelineColumnizer(objects),
+            var exporter = new TimelineColumnizer(objects, this.resources),
                 options = { headers: exporter.headers() };
             return exporter.rows().then(function (rows) {
                 return exportService.exportCSV(rows, options);

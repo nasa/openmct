@@ -68,12 +68,11 @@ define([
      * @constructor
      * @memberof {platform/features/timeline}
      */
-    function TimelineColumnizer(domainObjects, resourceMap) {
+    function TimelineColumnizer(domainObjects, resources) {
         var maxComposition = 0,
             maxRelationships = 0,
             columnNames = {},
             columns = [],
-            costKeys = [],
             foundTimespan = false,
             i;
 
@@ -114,10 +113,6 @@ define([
                 foundTimespan = true;
             }
 
-            if (domainObject.hasCapability('cost')) {
-                addCostProperties(domainObject.getCapability('cost'));
-            }
-
             if (metadataProperties) {
                 metadataProperties.forEach(addMetadataProperty);
             }
@@ -128,8 +123,8 @@ define([
             columns.push(new TimespanColumn(false));
         }
 
-        costKeys.forEach(function (key) {
-            columns.push(new UtilizationColumn(resourceMap[key]));
+        resources.forEach(function (resource) {
+            columns.push(new UtilizationColumn(resource));
         });
 
         for (i = 0; i < maxComposition; i += 1) {
