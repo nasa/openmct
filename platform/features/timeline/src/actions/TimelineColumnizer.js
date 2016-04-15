@@ -68,11 +68,12 @@ define([
      * @constructor
      * @memberof {platform/features/timeline}
      */
-    function TimelineColumnizer(domainObjects) {
+    function TimelineColumnizer(domainObjects, resourceMap) {
         var maxComposition = 0,
             maxRelationships = 0,
             columnNames = {},
             columns = [],
+            costKeys = [],
             foundTimespan = false,
             i;
 
@@ -82,6 +83,14 @@ define([
                 columnNames[name] = true;
                 columns.push(new MetadataColumn(name));
             }
+        }
+
+        function addCostProperties(costCapability) {
+            costCapability.resources().forEach(function (key) {
+                if (costKeys.indexOf(key) === -1) {
+                    costKeys.push(key);
+                }
+            });
         }
 
         columns.push(new IdColumn());
@@ -105,6 +114,10 @@ define([
                 foundTimespan = true;
             }
 
+            if (domainObject.hasCapability('cost')) {
+                addCostProperties(domainObject.getCapability('cost'));
+            }
+
             if (metadataProperties) {
                 metadataProperties.forEach(addMetadataProperty);
             }
@@ -114,6 +127,10 @@ define([
             columns.push(new TimespanColumn(true));
             columns.push(new TimespanColumn(false));
         }
+
+        costKeys.forEach(function (key) {
+            columns.push(new UtilizationColumn(resourceMap[key]));
+        });
 
         for (i = 0; i < maxComposition; i += 1) {
             columns.push(new CompositionColumn(i));
