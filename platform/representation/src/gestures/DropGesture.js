@@ -105,7 +105,6 @@ define(
                 // the change.
                 if (id) {
                     e.preventDefault();
-
                     if (domainObjectType!=='folder') {
                         domainObject.getCapability('action').perform('edit');
                     }

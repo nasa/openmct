@@ -34,7 +34,8 @@ define(
          */
         function InspectorController($scope, policyService) {
             var domainObject = $scope.domainObject,
-                typeCapability = domainObject.getCapability('type');
+                typeCapability = domainObject.getCapability('type'),
+                listener;
 
             /**
              * Filters region parts to only those allowed by region policies
@@ -48,7 +49,20 @@ define(
                 });
             }
 
-            $scope.regions = filterRegions(typeCapability.getDefinition().inspector || new InspectorRegion());
+            function setRegions() {
+                $scope.regions = filterRegions(typeCapability.getDefinition().inspector || new InspectorRegion());
+            }
+
+            //Listen for changes to object status that might necessitate
+            // recalculation of screen regions.
+            //listener =
+            // domainObject.getCapability("status").listen(setRegions);
+
+            setRegions();
+
+            $scope.$on("$destroy", function() {
+                listener();
+            })
         }
 
         return InspectorController;

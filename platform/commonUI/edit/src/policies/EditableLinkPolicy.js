@@ -37,11 +37,12 @@ define([], function () {
     }
 
     EditableLinkPolicy.prototype.allow = function (action, context) {
-        var key = action.getMetadata().key;
+        var key = action.getMetadata().key,
+            object;
 
         if (key === 'link') {
-            return !((context.selectedObject || context.domainObject)
-                .hasCapability('editor'));
+            object = context.selectedObject || context.domainObject;
+            return !(object.hasCapability("editor") && object.getCapability("editor").isEditing());
         }
 
         // Like all policies, allow by default.

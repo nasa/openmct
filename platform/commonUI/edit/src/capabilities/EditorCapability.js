@@ -41,6 +41,20 @@ define(
             this.domainObject.getCapability('status').set('editing', true);
         };
 
+        function isEditing (domainObject) {
+            return domainObject.getCapability('status').get('editing') ||
+                domainObject.hasCapability('context') && isEditing(domainObject.getCapability('context').getParent());
+        }
+
+        /**
+         * Determines whether this object, or any of its ancestors are
+         * currently being edited.
+         * @returns boolean
+         */
+        EditorCapability.prototype.isEditing = function () {
+            return isEditing(this.domainObject);
+        };
+
         EditorCapability.prototype.save = function () {
             var domainObject = this.domainObject;
             return this.transactionService.commit().then(function() {
@@ -62,8 +76,10 @@ define(
             return this.dirtyModelCache.isDirty(this.domainObject);
         };
 
-        //TODO: add 'appliesTo'. EditorCapability should not be available
-        // for objects that should not be edited
+        EditorCapability.prototype.appliesTo = function(context) {
+            var domainObject = context.domainObject;
+            return domainObject && domainObject.getType().hasFeature("creation");
+        }
 
         return EditorCapability;
     }
