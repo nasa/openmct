@@ -243,18 +243,25 @@ define(
                 // Also update when the represented domain object changes
                 // (to a different object)
                 $scope.$watch("domainObject", refresh);
-                $scope.$watch("domainObject", function(domainObject) {
-                    if (domainObject){
-                        if (statusListener) {
-                            statusListener();
-                            listeners--;
-                            console.log("directive listeners " + listeners);
-                        }
-                        statusListener = domainObject.getCapability("status").listen(refresh);
-                        listeners++;
-                        console.log("directive listeners " + listeners);
+
+                function listenForStatusChange(object) {
+                    if (statusListener) {
+                        statusListener();
+                    }
+                    statusListener = object.getCapability("status").listen(refresh);
+                }
+
+                /**
+                 * Add a listener for status changes to the object itself.
+                 */
+                $scope.$watch("domainObject", function(domainObject, oldDomainObject) {
+                    if (domainObject!==oldDomainObject){
+                        listenForStatusChange(domainObject);
                     }
                 });
+                if ($scope.domainObject) {
+                    listenForStatusChange($scope.domainObject);
+                }
 
                 // Finally, also update when there is a new version of that
                 // same domain object; these changes should be tracked in the
@@ -267,8 +274,6 @@ define(
                 $scope.$on("$destroy", function () {
                     if (statusListener) {
                         statusListener();
-                        listeners--;
-                        console.log("directive listeners " + listeners);
                     }
                 });
 
