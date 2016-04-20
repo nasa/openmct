@@ -57,7 +57,8 @@ define(
             function storeZoom() {
                 var isEditMode = $scope.commit &&
                     $scope.domainObject &&
-                    $scope.domainObject.hasCapability('editor');
+                    $scope.domainObject.hasCapability('editor') &&
+                    $scope.domainObject.getCapability('editor').inEditContext();
                 if (isEditMode) {
                     $scope.configuration = $scope.configuration || {};
                     $scope.configuration.zoomLevel = zoomIndex;

@@ -87,11 +87,10 @@ define(
          */
         EditAction.appliesTo = function (context) {
             var domainObject = (context || {}).domainObject,
-                type = domainObject && domainObject.getCapability('type'),
-                isEditMode = domainObject && domainObject.getDomainObject ? true : false;
+                type = domainObject && domainObject.getCapability('type');
 
             // Only allow creatable types to be edited
-            return type && type.hasFeature('creation') && !isEditMode;
+            return type && type.hasFeature('creation') && !domainObject.getCapability('status').get('editing');
         };
 
         return EditAction;
