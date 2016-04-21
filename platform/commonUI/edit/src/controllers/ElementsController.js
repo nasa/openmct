@@ -39,7 +39,18 @@ define(
                     $scope.searchText = text;
                 }
             }
+
+            function searchElements(value) {
+                if ($scope.searchText) {
+                    return value.getModel().name.toLowerCase().search(
+                            $scope.searchText.toLowerCase()) !== -1;
+                } else {
+                    return true;
+                }
+            }
+
             $scope.filterBy = filterBy;
+            $scope.searchElements = searchElements;
         }
 
         return ElementsController;
