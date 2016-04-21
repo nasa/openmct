@@ -83,6 +83,7 @@ define(
         CreateAction.prototype.perform = function () {
             var newModel = this.type.getInitialModel(),
                 parentObject = this.navigationService.getNavigation(),
+                editorCapability,
                 newObject;
 
             newModel.type = this.type.getKey();
@@ -90,12 +91,18 @@ define(
             newObject.useCapability('mutation', function(model){
                 model.location = parentObject.getId();
             });
+            editorCapability = newObject.getCapability("editor");
 
             if (countEditableViews(newObject) > 0 && newObject.hasCapability('composition')) {
                 this.navigationService.setNavigation(newObject);
-                newObject.getCapability("action").perform("edit");
+                return newObject.getCapability("action").perform("edit");
             } else {
-                return newObject.getCapability('action').perform('save');
+                editorCapability.edit();
+                return newObject.useCapability("action").perform("save").then(function () {
+                        return editorCapability.save();
+                    }, function () {
+                    return editorCapability.cancel()
+                });
             }
         };
 

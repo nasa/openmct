@@ -60,7 +60,7 @@ define(
             // during editing.
             function doSave() {
                 return domainObject.getCapability("editor").save()
-                    .then(resolveWith(domainObject.getOriginalObject()));
+                    .then(resolveWith(domainObject));
             }
 
             // Discard the current root view (which will be the editing
