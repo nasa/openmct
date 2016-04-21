@@ -33,13 +33,15 @@ define(
                 context,
                 navigatedObject,
                 mockDomainObject,
-                metadata;
+                metadata,
+                editModeBlacklist = ["copy", "follow", "window", "link", "locate"],
+                nonEditContextBlacklist = ["copy", "follow", "properties", "move", "link", "remove", "locate"];
 
             beforeEach(function () {
                 navigatedObject = jasmine.createSpyObj("navigatedObject", ["hasCapability"]);
                 navigatedObject.hasCapability.andReturn(false);
 
-                mockDomainObject = jasmine.createSpyObj("domainObject", ["hasCapability"]);
+                mockDomainObject = jasmine.createSpyObj("domainObject", ["hasCapability", "getCapability"]);
                 mockDomainObject.hasCapability.andReturn(false);
 
                 navigationService = jasmine.createSpyObj("navigationService", ["getNavigation"]);
@@ -51,7 +53,7 @@ define(
 
                 context = {domainObject: mockDomainObject};
 
-                policy = new EditContextualActionPolicy(navigationService);
+                policy = new EditContextualActionPolicy(navigationService, editModeBlacklist, nonEditContextBlacklist);
             });
 
             it('Allows all actions when navigated object not in edit mode', function() {
@@ -63,6 +65,28 @@ define(
                 navigatedObject.hasCapability.andReturn(true);
                 metadata.key = "window";
                 expect(policy.allow(mockAction, context)).toBe(true);
+            });
+
+            it('Allows "remove" action when navigated object in edit mode,' +
+                ' and selected object not editable, but its parent is.',
+                function() {
+                    var mockParent = jasmine.createSpyObj("parentObject", ["hasCapability"]),
+                        mockContextCapability = jasmine.createSpyObj("contextCapability", ["getParent"]);
+
+                    mockParent.hasCapability.andReturn(true);
+                    mockContextCapability.getParent.andReturn(mockParent);
+                    navigatedObject.hasCapability.andReturn(true);
+
+                    mockDomainObject.getCapability.andReturn(mockContextCapability);
+                    mockDomainObject.hasCapability.andCallFake(function (capability) {
+                        switch (capability) {
+                            case "editor": return false;
+                            case "context": return true;
+                        }
+                    });
+                    metadata.key = "remove";
+
+                    expect(policy.allow(mockAction, context)).toBe(true);
             });
 
             it('Disallows "move" action when navigated object in edit mode,' +

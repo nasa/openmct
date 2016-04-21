@@ -29,17 +29,27 @@ define(
         /**
          * Policy controlling whether the context menu is visible when
          * objects are being edited
-         * @memberof platform/commonUI/edit
+         * @param navigationService
+         * @param editModeBlacklist A blacklist of actions disallowed from
+         * context menu when navigated object is being edited
+         * @param nonEditContextBlacklist A blacklist of actions disallowed
+         * from context menu of non-editable objects, when navigated object
+         * is being edited
          * @constructor
-         * @implements {Policy.<Action, ActionContext>}
          */
-        function EditContextualActionPolicy(navigationService) {
+        function EditContextualActionPolicy(navigationService, editModeBlacklist, nonEditContextBlacklist) {
             this.navigationService = navigationService;
+
             //The list of objects disallowed on target object when in edit mode
-            this.editBlacklist = ["copy", "follow", "window"];
+            this.editModeBlacklist = editModeBlacklist;
             //The list of objects disallowed on target object that is not in
             // edit mode (ie. the context menu in the tree on the LHS).
-            this.nonEditBlacklist = ["copy", "follow", "properties", "move", "link", "remove"];
+            this.nonEditContextBlacklist = nonEditContextBlacklist;
+        }
+
+        function isParentEditable(object) {
+            var parent = object.hasCapability("context") && object.getCapability("context").getParent();
+            return !!parent && parent.hasCapability("editor");
         }
 
         EditContextualActionPolicy.prototype.allow = function (action, context) {
@@ -48,11 +58,11 @@ define(
                 actionMetadata = action.getMetadata ? action.getMetadata() : {};
 
             if (navigatedObject.hasCapability('editor')) {
-                if (!selectedObject.hasCapability('editor')){
-                    //Target is in the context menu
-                    return this.nonEditBlacklist.indexOf(actionMetadata.key) === -1;
+                if (selectedObject.hasCapability('editor') || isParentEditable(selectedObject)){
+                    return this.editModeBlacklist.indexOf(actionMetadata.key) === -1;
                 } else {
-                    return this.editBlacklist.indexOf(actionMetadata.key) === -1;
+                    //Target is in the context menu
+                    return this.nonEditContextBlacklist.indexOf(actionMetadata.key) === -1;
                 }
             } else {
                 return true;
