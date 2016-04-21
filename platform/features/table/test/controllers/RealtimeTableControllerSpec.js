@@ -23,7 +23,7 @@
 
 define(
     [
-        "../../src/controllers/RTTelemetryTableController"
+        "../../src/controllers/RealtimeTableController"
     ],
     function (TableController) {
         "use strict";
@@ -77,14 +77,14 @@ define(
 
                 mockTable = jasmine.createSpyObj('table',
                     [
-                        'buildColumns',
-                        'getColumnConfiguration',
+                        'populateColumns',
+                        'buildColumnConfiguration',
                         'getRowValues',
                         'saveColumnConfiguration'
                     ]
                 );
                 mockTable.columns = [];
-                mockTable.getColumnConfiguration.andReturn(mockConfiguration);
+                mockTable.buildColumnConfiguration.andReturn(mockConfiguration);
                 mockTable.getRowValues.andReturn(mockTableRow);
 
                 mockDomainObject= jasmine.createSpyObj('domainObject', [
@@ -107,13 +107,16 @@ define(
                     'unsubscribe',
                     'getDatum',
                     'promiseTelemetryObjects',
-                    'getTelemetryObjects'
+                    'getTelemetryObjects',
+                    'request'
                 ]);
+
                 // Arbitrary array with non-zero length, contents are not
                 // used by mocks
                 mockTelemetryHandle.getTelemetryObjects.andReturn([{}]);
                 mockTelemetryHandle.promiseTelemetryObjects.andReturn(promise(undefined));
                 mockTelemetryHandle.getDatum.andReturn({});
+                mockTelemetryHandle.request.andReturn(promise(undefined));
 
                 mockTelemetryHandler = jasmine.createSpyObj('telemetryHandler', [
                     'handle'
