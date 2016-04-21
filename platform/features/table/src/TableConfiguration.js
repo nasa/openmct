@@ -140,8 +140,7 @@ define(
          * @private
          */
         TableConfiguration.prototype.defaultColumnConfiguration = function () {
-            return ((this.domainObject.getModel().configuration || {}).table ||
-                {}).columns;
+            return ((this.domainObject.getModel().configuration || {}).table || {}).columns || {};
         };
 
         /**
@@ -176,7 +175,7 @@ define(
         TableConfiguration.prototype.buildColumnConfiguration = function () {
             var configuration = {},
                 //Use existing persisted config, or default it
-                defaultConfig = this.defaultColumnConfiguration() || {};
+                defaultConfig = this.defaultColumnConfiguration();
 
             /**
              * For each column header, define a configuration value
@@ -185,7 +184,7 @@ define(
              */
             this.getHeaders().forEach(function (columnTitle) {
                 configuration[columnTitle] =
-                    typeof (defaultConfig || {})[columnTitle] === 'undefined' ? true :
+                    typeof defaultConfig[columnTitle] === 'undefined' ? true :
                         defaultConfig[columnTitle];
             });
 

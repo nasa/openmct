@@ -421,9 +421,7 @@ define(
                         currentColumnLength,
                         largestColumn,
                         largestColumnLength;
-                    if (!row[key]){
-                        //do nothing, no value for this column;
-                    } else {
+                    if (row[key]){
                         currentColumn = (row[key]).text;
                         currentColumnLength =
                             (currentColumn && currentColumn.length) ?
