@@ -1,101 +1,61 @@
 {
     "f3744144-8842-4b7a-bddc-4abbf21315d9": {
-        "composition": [
-            "9b297044-84be-4814-9400-cbe2d4e72589",
-            "79b89853-6947-4516-8d8c-bfe239c83836",
-            "02d98e70-792e-4de9-9b1e-9b36685bff29"
-        ],
+        "composition": ["9b297044-84be-4814-9400-cbe2d4e72589", "79b89853-6947-4516-8d8c-bfe239c83836", "02d98e70-792e-4de9-9b1e-9b36685bff29", "msl_tlm:pressure", "e2f57978-dcae-4fe2-a637-4707929286ae", "6b2c3426-6d35-42ad-8720-95543567241f"],
         "name": "Mars Weather Display Layout",
         "type": "layout",
         "configuration": {
             "layout": {
                 "panels": {
                     "msl_tlm:min_temp": {
-                        "position": [
-                            0,
-                            0
-                        ],
-                        "dimensions": [
-                            12,
-                            8
-                        ]
+                        "position": [0, 0],
+                        "dimensions": [12, 8]
                     },
                     "msl_tlm:max_temp": {
-                        "position": [
-                            12,
-                            0
-                        ],
-                        "dimensions": [
-                            12,
-                            8
-                        ]
+                        "position": [12, 0],
+                        "dimensions": [12, 8]
                     },
                     "msl_tlm:min_gts_temp": {
-                        "position": [
-                            0,
-                            8
-                        ],
-                        "dimensions": [
-                            12,
-                            8
-                        ]
+                        "position": [0, 8],
+                        "dimensions": [12, 8]
                     },
                     "msl_tlm:max_gts_temp": {
-                        "position": [
-                            12,
-                            8
-                        ],
-                        "dimensions": [
-                            12,
-                            8
-                        ]
+                        "position": [12, 8],
+                        "dimensions": [12, 8]
                     },
                     "9b297044-84be-4814-9400-cbe2d4e72589": {
-                        "position": [
-                            0,
-                            9
-                        ],
-                        "dimensions": [
-                            24,
-                            7
-                        ]
+                        "position": [24, 9],
+                        "dimensions": [24, 9]
                     },
                     "79b89853-6947-4516-8d8c-bfe239c83836": {
-                        "position": [
-                            0,
-                            0
-                        ],
-                        "dimensions": [
-                            12,
-                            9
-                        ]
+                        "position": [0, 0],
+                        "dimensions": [24, 9]
                     },
                     "02d98e70-792e-4de9-9b1e-9b36685bff29": {
-                        "position": [
-                            12,
-                            0
-                        ],
-                        "dimensions": [
-                            12,
-                            9
-                        ]
+                        "position": [0, 9],
+                        "dimensions": [24, 9]
                     },
                     "b66be4e2-b918-42d2-ad0a-f70c7a6f4102": {
-                        "position": [
-                            24,
-                            10
-                        ],
-                        "dimensions": [
-                            12,
-                            8
-                        ]
+                        "position": [24, 10],
+                        "dimensions": [12, 8]
+                    },
+                    "msl_tlm:pressure": {
+                        "position": [0, 18],
+                        "dimensions": [24, 9]
+                    },
+                    "e2f57978-dcae-4fe2-a637-4707929286ae": {
+                        "position": [24, 0],
+                        "dimensions": [24, 9]
+                    },
+                    "6b2c3426-6d35-42ad-8720-95543567241f": {
+                        "position": [24, 18],
+                        "dimensions": [24, 9]
                     }
                 }
             }
         },
-        "modified": 1460333909183,
+        "modified": 1461351021462,
         "location": "mct:demo",
-        "persisted": 1460333909183
+        "persisted": 1461351021462
     },
     "b171cc31-2cc5-4ae9-ba40-baf1163f22c4": {
         "composition": [
@@ -150,16 +110,12 @@
         "persisted": 1459888918032
     },
     "90b28cb9-444b-4f57-a584-49032361d2a1": {
-        "composition": [
-            "9b297044-84be-4814-9400-cbe2d4e72589",
-            "02d98e70-792e-4de9-9b1e-9b36685bff29",
-            "79b89853-6947-4516-8d8c-bfe239c83836"
-        ],
+        "composition": ["9b297044-84be-4814-9400-cbe2d4e72589", "02d98e70-792e-4de9-9b1e-9b36685bff29", "79b89853-6947-4516-8d8c-bfe239c83836", "e2f57978-dcae-4fe2-a637-4707929286ae", "6b2c3426-6d35-42ad-8720-95543567241f"],
         "name": "Composites",
         "type": "folder",
-        "modified": 1459888924565,
+        "modified": 1461350853110,
         "location": "b171cc31-2cc5-4ae9-ba40-baf1163f22c4",
-        "persisted": 1459888924565
+        "persisted": 1461350853110
     },
     "1731fc2d-ddce-4ace-ae3c-60b46c178beb": {
         "composition": [
@@ -582,116 +538,54 @@
         "persisted": 1459972693087
     },
     "88a26104-8bd5-445d-8b57-10b567d2823d": {
-        "composition": [
-            "b8858147-8e4f-4249-badb-b4031dba90f9",
-            "aa1ea485-c4b9-4763-9c48-0ca06789cc78",
-            "f3abd7ed-a20e-46b9-a92d-32e23ae13600",
-            "67b4b0ef-c2bc-487a-ab04-0677d6c2207b",
-            "57375672-6388-45dd-ae78-a782e3abd366",
-            "68fdc972-4d06-46d1-a26f-5cd0c7ee33b8",
-            "e68ca22c-3250-4907-bc9c-7d504940d95d"
-        ],
+        "composition": ["b8858147-8e4f-4249-badb-b4031dba90f9", "aa1ea485-c4b9-4763-9c48-0ca06789cc78", "f3abd7ed-a20e-46b9-a92d-32e23ae13600", "67b4b0ef-c2bc-487a-ab04-0677d6c2207b", "57375672-6388-45dd-ae78-a782e3abd366", "68fdc972-4d06-46d1-a26f-5cd0c7ee33b8", "e68ca22c-3250-4907-bc9c-7d504940d95d"],
         "name": "Rover Operator Display Layout",
         "type": "layout",
         "configuration": {
             "layout": {
                 "panels": {
                     "4d5ca79c-9ad4-438a-beaf-affdda43b7da": {
-                        "position": [
-                            0,
-                            2
-                        ],
-                        "dimensions": [
-                            13,
-                            9
-                        ]
+                        "position": [0, 2],
+                        "dimensions": [13, 9]
                     },
                     "b8858147-8e4f-4249-badb-b4031dba90f9": {
-                        "position": [
-                            0,
-                            2
-                        ],
-                        "dimensions": [
-                            13,
-                            9
-                        ]
+                        "position": [0, 2],
+                        "dimensions": [17, 11]
                     },
                     "aa1ea485-c4b9-4763-9c48-0ca06789cc78": {
-                        "position": [
-                            0,
-                            21
-                        ],
-                        "dimensions": [
-                            38,
-                            8
-                        ]
+                        "position": [0, 24],
+                        "dimensions": [34, 8]
                     },
                     "e68ca22c-3250-4907-bc9c-7d504940d95d": {
-                        "position": [
-                            13,
-                            2
-                        ],
-                        "dimensions": [
-                            12,
-                            9
-                        ]
+                        "position": [17, 2],
+                        "dimensions": [17, 11]
                     },
                     "f3abd7ed-a20e-46b9-a92d-32e23ae13600": {
-                        "position": [
-                            13,
-                            12
-                        ],
-                        "dimensions": [
-                            12,
-                            8
-                        ]
+                        "position": [17, 13],
+                        "dimensions": [17, 11]
                     },
                     "67b4b0ef-c2bc-487a-ab04-0677d6c2207b": {
-                        "position": [
-                            0,
-                            12
-                        ],
-                        "dimensions": [
-                            13,
-                            8
-                        ]
+                        "position": [0, 13],
+                        "dimensions": [17, 11]
                     },
                     "aa381987-3ab7-4570-b2f5-71599d0dde03": {
-                        "position": [
-                            26,
-                            12
-                        ],
-                        "dimensions": [
-                            12,
-                            8
-                        ]
+                        "position": [26, 12],
+                        "dimensions": [12, 8]
                     },
                     "57375672-6388-45dd-ae78-a782e3abd366": {
-                        "position": [
-                            0,
-                            0
-                        ],
-                        "dimensions": [
-                            7,
-                            2
-                        ]
+                        "position": [0, 0],
+                        "dimensions": [7, 2]
                     },
                     "68fdc972-4d06-46d1-a26f-5cd0c7ee33b8": {
-                        "position": [
-                            7,
-                            0
-                        ],
-                        "dimensions": [
-                            6,
-                            2
-                        ]
+                        "position": [7, 0],
+                        "dimensions": [6, 2]
                     }
                 }
             }
         },
-        "modified": 1460333916196,
+        "modified": 1461352283181,
         "location": "mct:demo",
-        "persisted": 1460333916196
+        "persisted": 1461352283181
     },
     "934b199f-917e-46a2-9935-3117a9e29218": {
         "composition": [
@@ -823,5 +717,39 @@
         "modified": 1460333926615,
         "location": "mine",
         "persisted": 1460333926615
+    },
+    "e2f57978-dcae-4fe2-a637-4707929286ae": {
+        "composition": ["msl_tlm:min_temp", "msl_tlm:max_temp"],
+        "name": "Air Temperature",
+        "type": "table",
+        "configuration": {
+            "table": {
+                "columns": {
+                    "Name": true,
+                    "Time": true,
+                    "degrees": true
+                }
+            }
+        },
+        "modified": 1461350946908,
+        "location": "90b28cb9-444b-4f57-a584-49032361d2a1",
+        "persisted": 1461350946908
+    },
+    "6b2c3426-6d35-42ad-8720-95543567241f": {
+        "composition": ["msl_tlm:pressure"],
+        "name": "Air Pressure",
+        "type": "table",
+        "configuration": {
+            "table": {
+                "columns": {
+                    "Name": true,
+                    "Time": true,
+                    "pascals": true
+                }
+            }
+        },
+        "modified": 1461350853034,
+        "location": "90b28cb9-444b-4f57-a584-49032361d2a1",
+        "persisted": 1461350853034
     }
 }
