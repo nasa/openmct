@@ -51,17 +51,13 @@ define(
             var offsets = {};
 
             function wrapSeries(telemetrySeries, offset) {
-                var phaseOffset = Math.floor(Math.random(1000));
-                function phaseShift(index, length) {
-                    return (phaseOffset + index) % length;
-                }
                 return {
                     getDomainValue: function (index, domain) {
                         return telemetrySeries.getDomainValue(index, domain);
                     },
                     getRangeValue: function (index, range) {
                         // Sine wave 'carrier' signal, with random phase shift
-                        return telemetrySeries.getRangeValue(phaseShift(index,telemetrySeries.getPointCount()) , range)
+                        return telemetrySeries.getRangeValue(index, range)
                         // Introduce some random variability so that line is
                         // not straight or perfectly curved
                             + Math.random(1)/50
