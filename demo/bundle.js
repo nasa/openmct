@@ -130,6 +130,7 @@ define([
                 {
                     "name": "Hopscotch",
                     "version": "0.2.5",
+                    "author": "linkedin",
                     "description": "Hopscotch is a framework to make it easy" +
                     " for developers to add product tours to their pages.",
                     "license": "license-apache",
