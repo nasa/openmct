@@ -751,5 +751,316 @@
         "modified": 1461350853034,
         "location": "90b28cb9-444b-4f57-a584-49032361d2a1",
         "persisted": 1461350853034
+    },
+    "a32079d0-676b-4e9f-ade7-86d5d2f152fc": {
+        "composition": ["21a89560-680d-4eae-b1f7-c44cfa3b68da", "a36a131a-4bdb-4fd3-bc51-5385f060ee32", "80ddeac5-5f8e-444d-a1ad-94ecda8e3f38", "f018583c-c364-4942-83a1-78458a44c1f6", "9622cdee-96ba-40dd-b1ba-469d92574daf", "00f8c193-bbc3-497d-baf6-a7698948fca3"],
+        "name": "Edit Display Layout Example",
+        "type": "layout",
+        "configuration": {
+            "layout": {
+                "panels": {
+                    "4d5ca79c-9ad4-438a-beaf-affdda43b7da": {
+                        "position": [0, 2],
+                        "dimensions": [13, 9]
+                    },
+                    "aa381987-3ab7-4570-b2f5-71599d0dde03": {
+                        "position": [26, 12],
+                        "dimensions": [12, 8]
+                    },
+                    "21a89560-680d-4eae-b1f7-c44cfa3b68da": {
+                        "position": [0, 2],
+                        "dimensions": [13, 11]
+                    },
+                    "a36a131a-4bdb-4fd3-bc51-5385f060ee32": {
+                        "position": [0, 24],
+                        "dimensions": [34, 8]
+                    },
+                    "422f8488-541b-4d00-9413-18b3a11e43cd": {
+                        "position": [17, 2],
+                        "dimensions": [17, 11]
+                    },
+                    "80ddeac5-5f8e-444d-a1ad-94ecda8e3f38": {
+                        "position": [13, 13],
+                        "dimensions": [13, 11]
+                    },
+                    "f018583c-c364-4942-83a1-78458a44c1f6": {
+                        "position": [0, 13],
+                        "dimensions": [13, 11]
+                    },
+                    "9622cdee-96ba-40dd-b1ba-469d92574daf": {
+                        "position": [0, 0],
+                        "dimensions": [7, 2]
+                    },
+                    "00f8c193-bbc3-497d-baf6-a7698948fca3": {
+                        "position": [7, 0],
+                        "dimensions": [6, 2]
+                    }
+                }
+            }
+        },
+        "modified": 1461703210225,
+        "location": "mct:demo",
+        "persisted": 1461703210225
+    },
+    "21a89560-680d-4eae-b1f7-c44cfa3b68da": {
+        "telemetry": {},
+        "name": "Navcam Right",
+        "type": "imagery",
+        "modified": 1461703126642,
+        "location": "a32079d0-676b-4e9f-ade7-86d5d2f152fc",
+        "persisted": 1461703126642
+    },
+    "33323b29-f4b0-4d02-98a4-b8d57ed9c254": {
+        "composition": [],
+        "relationships": {
+            "modes": ["92f662cd-504a-4b9b-92fb-1c3cba275a39"]
+        },
+        "start": {
+            "timestamp": 0,
+            "epoch": "SET"
+        },
+        "duration": {
+            "timestamp": 7200000,
+            "epoch": "SET"
+        },
+        "name": "Post-landing shakedown",
+        "type": "activity",
+        "modified": 1461703126653,
+        "location": "a36a131a-4bdb-4fd3-bc51-5385f060ee32",
+        "persisted": 1461703126653
+    },
+    "200c3926-45fe-482b-b19d-e6793b02e67e": {
+        "composition": [],
+        "relationships": {
+            "modes": ["46499226-4a23-48d2-9037-366a0813f0d1"]
+        },
+        "start": {
+            "timestamp": 7200000,
+            "epoch": "SET"
+        },
+        "duration": {
+            "timestamp": 3600000,
+            "epoch": "SET"
+        },
+        "name": "Lander Egress",
+        "type": "activity",
+        "modified": 1461703126653,
+        "location": "a36a131a-4bdb-4fd3-bc51-5385f060ee32",
+        "persisted": 1461703126653
+    },
+    "312714bb-bb6a-42aa-aeca-3cd5d7121817": {
+        "composition": [],
+        "relationships": {
+            "modes": ["46499226-4a23-48d2-9037-366a0813f0d1"]
+        },
+        "start": {
+            "timestamp": 10800000,
+            "epoch": "SET"
+        },
+        "duration": {
+            "timestamp": 2124000,
+            "epoch": "SET"
+        },
+        "name": "Driving",
+        "type": "activity",
+        "modified": 1461703126654,
+        "location": "a36a131a-4bdb-4fd3-bc51-5385f060ee32",
+        "persisted": 1461703126654
+    },
+    "27758dd3-1c90-4525-8e7a-9bf902d719de": {
+        "composition": [],
+        "relationships": {
+            "modes": ["8294800a-b30f-4e5b-9059-7cd0cc86140c"]
+        },
+        "start": {
+            "timestamp": 12924000,
+            "epoch": "SET"
+        },
+        "duration": {
+            "timestamp": 6588000,
+            "epoch": "SET"
+        },
+        "name": "Drilling",
+        "type": "activity",
+        "modified": 1461703126654,
+        "location": "a36a131a-4bdb-4fd3-bc51-5385f060ee32",
+        "persisted": 1461703126654
+    },
+    "b07a7101-0e6c-4bc0-9f59-1334953d28a7": {
+        "composition": [],
+        "relationships": {
+            "modes": ["92f662cd-504a-4b9b-92fb-1c3cba275a39", "ee314011-250a-4592-aa9c-fb21c3b5b071"]
+        },
+        "start": {
+            "timestamp": 19512000,
+            "epoch": "SET"
+        },
+        "duration": {
+            "timestamp": 1944000,
+            "epoch": "SET"
+        },
+        "name": "Sample Analysis",
+        "type": "activity",
+        "modified": 1461703126654,
+        "location": "a36a131a-4bdb-4fd3-bc51-5385f060ee32",
+        "persisted": 1461703126654
+    },
+    "a36a131a-4bdb-4fd3-bc51-5385f060ee32": {
+        "composition": ["33323b29-f4b0-4d02-98a4-b8d57ed9c254", "200c3926-45fe-482b-b19d-e6793b02e67e", "312714bb-bb6a-42aa-aeca-3cd5d7121817", "27758dd3-1c90-4525-8e7a-9bf902d719de", "b07a7101-0e6c-4bc0-9f59-1334953d28a7"],
+        "start": {
+            "timestamp": 0,
+            "epoch": "SET"
+        },
+        "name": "Rover Surface Operations",
+        "type": "timeline",
+        "capacity": 100000,
+        "configuration": {
+            "timeline": {
+                "zoomLevel": 13
+            }
+        },
+        "modified": 1461703126651,
+        "location": "a32079d0-676b-4e9f-ade7-86d5d2f152fc",
+        "persisted": 1461703126651
+    },
+    "9d6d1789-ab39-4e90-865e-c587cd0ccacb": {
+        "telemetry": {
+            "period": 10000
+        },
+        "name": "Battery A Voltage",
+        "type": "demo-telemetry",
+        "modified": 1461703126655,
+        "location": "80ddeac5-5f8e-444d-a1ad-94ecda8e3f38",
+        "persisted": 1461703126655
+    },
+    "fa4c3575-645a-494f-be12-8566d23d84fb": {
+        "telemetry": {
+            "period": 10000
+        },
+        "name": "Battery B Voltage",
+        "type": "demo-telemetry",
+        "modified": 1461703126655,
+        "location": "80ddeac5-5f8e-444d-a1ad-94ecda8e3f38",
+        "persisted": 1461703126655
+    },
+    "e67c7a15-c21c-44dc-86cd-b7c161fcd598": {
+        "telemetry": {
+            "period": 10000
+        },
+        "name": "Bus A Current",
+        "type": "demo-telemetry",
+        "modified": 1461703126655,
+        "location": "80ddeac5-5f8e-444d-a1ad-94ecda8e3f38",
+        "persisted": 1461703126655
+    },
+    "353be267-5e96-4202-8fae-13b578df1c27": {
+        "telemetry": {
+            "period": 10000
+        },
+        "name": "Bus B Current",
+        "type": "demo-telemetry",
+        "modified": 1461703126656,
+        "location": "80ddeac5-5f8e-444d-a1ad-94ecda8e3f38",
+        "persisted": 1461703126656
+    },
+    "80ddeac5-5f8e-444d-a1ad-94ecda8e3f38": {
+        "composition": ["9d6d1789-ab39-4e90-865e-c587cd0ccacb", "fa4c3575-645a-494f-be12-8566d23d84fb", "e67c7a15-c21c-44dc-86cd-b7c161fcd598", "353be267-5e96-4202-8fae-13b578df1c27"],
+        "name": "Power Panel",
+        "type": "telemetry.panel",
+        "modified": 1461703126654,
+        "location": "a32079d0-676b-4e9f-ade7-86d5d2f152fc",
+        "persisted": 1461703126654
+    },
+    "72a8dd63-c92b-46d3-9ab4-da8728c46171": {
+        "telemetry": {
+            "period": 10000
+        },
+        "name": "Battery B State of Charge",
+        "type": "demo-telemetry",
+        "modified": 1461703126656,
+        "location": "f018583c-c364-4942-83a1-78458a44c1f6",
+        "persisted": 1461703126656
+    },
+    "e14cbf78-6bfd-47d0-bd72-736076d37fc4": {
+        "telemetry": {
+            "period": 10000
+        },
+        "name": "Battery A State of Charge",
+        "type": "demo-telemetry",
+        "modified": 1461703126656,
+        "location": "f018583c-c364-4942-83a1-78458a44c1f6",
+        "persisted": 1461703126656
+    },
+    "f018583c-c364-4942-83a1-78458a44c1f6": {
+        "composition": ["72a8dd63-c92b-46d3-9ab4-da8728c46171", "e14cbf78-6bfd-47d0-bd72-736076d37fc4"],
+        "name": "Battery Panel",
+        "type": "telemetry.panel",
+        "modified": 1461703126656,
+        "location": "a32079d0-676b-4e9f-ade7-86d5d2f152fc",
+        "persisted": 1461703126656
+    },
+    "9622cdee-96ba-40dd-b1ba-469d92574daf": {
+        "clockFormat": ["YYYY/MM/DD hh:mm:ss", "clock24"],
+        "name": "Mission Elapsed Time (MET)",
+        "type": "clock",
+        "modified": 1461703126657,
+        "location": "a32079d0-676b-4e9f-ade7-86d5d2f152fc",
+        "persisted": 1461703126657
+    },
+    "00f8c193-bbc3-497d-baf6-a7698948fca3": {
+        "clockFormat": ["YYYY/DDD hh:mm:ss", "clock24"],
+        "name": "Spacecraft Elapsed Time",
+        "type": "clock",
+        "modified": 1461703126657,
+        "location": "a32079d0-676b-4e9f-ade7-86d5d2f152fc",
+        "persisted": 1461703126657
+    },
+    "2cac7fc5-9295-4b22-bf47-4cb805ea7b25": {
+        "telemetry": {
+            "period": "10000"
+        },
+        "name": "Wheel RR Temp.",
+        "type": "demo-telemetry",
+        "modified": 1461703126658,
+        "location": "422f8488-541b-4d00-9413-18b3a11e43cd",
+        "persisted": 1461703126658
+    },
+    "c51438a5-2f4c-4e61-9a27-248c8bd463c0": {
+        "telemetry": {
+            "period": 10000
+        },
+        "name": "Wheel RL Temp.",
+        "type": "demo-telemetry",
+        "modified": 1461703126658,
+        "location": "422f8488-541b-4d00-9413-18b3a11e43cd",
+        "persisted": 1461703126658
+    },
+    "4813dfe0-ec5b-4dc4-a073-d057e13188ec": {
+        "telemetry": {
+            "period": 10000
+        },
+        "name": "Wheel FR Temp",
+        "type": "demo-telemetry",
+        "modified": 1461703126659,
+        "location": "422f8488-541b-4d00-9413-18b3a11e43cd",
+        "persisted": 1461703126659
+    },
+    "a971f68b-72f0-49e9-b42b-8e15788eb57c": {
+        "telemetry": {
+            "period": 10000
+        },
+        "name": "Wheel FL Temp.",
+        "type": "demo-telemetry",
+        "modified": 1461703126659,
+        "location": "422f8488-541b-4d00-9413-18b3a11e43cd",
+        "persisted": 1461703126659
+    },
+    "422f8488-541b-4d00-9413-18b3a11e43cd": {
+        "composition": ["2cac7fc5-9295-4b22-bf47-4cb805ea7b25", "c51438a5-2f4c-4e61-9a27-248c8bd463c0", "4813dfe0-ec5b-4dc4-a073-d057e13188ec", "a971f68b-72f0-49e9-b42b-8e15788eb57c"],
+        "name": "Thermal Panel",
+        "type": "telemetry.panel",
+        "modified": 1461703126657,
+        "location": "a32079d0-676b-4e9f-ade7-86d5d2f152fc",
+        "persisted": 1461703126657
     }
 }
