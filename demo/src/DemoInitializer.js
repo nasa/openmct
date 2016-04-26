@@ -64,7 +64,10 @@ define(
                     ];
                 })
             }).then(function() {
-                $location.url("/browse/mct:demo/88a26104-8bd5-445d-8b57-10b567d2823d");
+                //For default route, redirect user to layout
+                if ($location.path().length == 0 || $location.path() === "/") {
+                    $location.url("/browse/mct:demo/88a26104-8bd5-445d-8b57-10b567d2823d");
+                }
             });
 
             $timeout(function() {

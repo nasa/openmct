@@ -126,6 +126,17 @@ define([
                     }
                 }
             ],
+            "licenses": [
+                {
+                    "name": "Hopscotch",
+                    "version": "0.2.5",
+                    "description": "Hopscotch is a framework to make it easy" +
+                    " for developers to add product tours to their pages.",
+                    "license": "license-apache",
+                    "website": "http://linkedin.github.io/hopscotch/",
+                    "link": "https://raw.githubusercontent.com/linkedin/hopscotch/master/LICENSE"
+                }
+            ],
             "stylesheets": [
                 {
                     "stylesheetUrl": "css/hopscotch.css",
