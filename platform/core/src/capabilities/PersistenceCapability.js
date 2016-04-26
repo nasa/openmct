@@ -132,11 +132,16 @@ define(
                 domainObject = this.domainObject,
                 model = domainObject.getModel(),
                 modified = model.modified,
+                persisted = model.persisted,
                 cacheService = this.cacheService,
                 persistenceService = this.persistenceService,
                 persistenceFn = model.persisted !== undefined ?
                     this.persistenceService.updateObject :
                     this.persistenceService.createObject;
+
+            if (persisted !== undefined && persisted === modified) {
+                return this.$q.when(true);
+            }
 
             // Update persistence timestamp...
             domainObject.useCapability("mutation", function (model) {
