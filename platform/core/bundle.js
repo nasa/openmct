@@ -47,6 +47,7 @@ define([
     "./src/capabilities/MutationCapability",
     "./src/capabilities/DelegationCapability",
     "./src/capabilities/InstantiationCapability",
+    "./src/runs/PersistingMutationListener",
     "./src/services/Now",
     "./src/services/Throttle",
     "./src/services/Topic",
@@ -79,6 +80,7 @@ define([
     MutationCapability,
     DelegationCapability,
     InstantiationCapability,
+    PersistingMutationListener,
     Now,
     Throttle,
     Topic,
@@ -409,6 +411,12 @@ define([
                         "type": "folder",
                         "composition": []
                     }
+                }
+            ],
+            "runs": [
+                {
+                    "implementation": PersistingMutationListener,
+                    "depends": [ "topic" ]
                 }
             ],
             "constants": [
