@@ -57,12 +57,6 @@ define([
                     "type": "decorator"
                 },
                 {
-                    "implementation": DemoTelemetryDecorator,
-                    "provides": "telemetryService",
-                    "type": "decorator",
-                    "priority": "mandatory"
-                },
-                {
                     "implementation": DemoTelemetryProvider,
                     "type": "provider",
                     "provides": "telemetryService",
@@ -147,7 +141,15 @@ define([
                 {
                     "stylesheetUrl": "css/tour.css"
                 }
-            ]
+            ],
+            "constants": [
+                {
+                    "key": "PLOT_FIXED_DURATION",
+                    "value": 60000,
+                    "comment": "1 minute."
+                }
+            ],
+
         }
     });
 });

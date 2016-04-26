@@ -97,26 +97,9 @@ define(
                             target: document.querySelector(".create-btn"),
                             placement: "bottom"
                         },
-                        /*
-                        {
-                            title: "Composing objects",
-                            content: "Objects can be composed by dragging" +
-                            " them from the tree...",
-                            target: document.querySelector("mct-tree" +
-                                " ul.tree"),
-                            placement: "right"
-                        },
-                        {
-                            title: "Composing objects (cont.)",
-                            content: "...into the current view",
-                            target: document.querySelector(".object-holder-main"),
-                            placement: "top",
-                            yOffset: "100px;"
-                        }*/
                     ]
                 };
                 hopscotch.endTour(true);
-                // Start the tour!
                 hopscotch.startTour(tour);
 
             }, 3000);
