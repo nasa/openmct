@@ -52,12 +52,6 @@ define(
                 domainObject = this.domainObject,
                 dialogService = this.dialogService;
 
-            // Persist modifications to this domain object
-            function doPersist() {
-                var persistence = domainObject.getCapability('persistence');
-                return persistence && persistence.persist();
-            }
-
             // Update the domain object model based on user input
             function updateModel(userInput, dialog) {
                 return domainObject.useCapability('mutation', function (model) {
@@ -75,11 +69,9 @@ define(
                     dialog.getFormStructure(),
                     dialog.getInitialFormValue()
                 ).then(function (userInput) {
-                        // Update the model, if user input was provided
-                        return userInput && updateModel(userInput, dialog);
-                    }).then(function (result) {
-                        return result && doPersist();
-                    });
+                    // Update the model, if user input was provided
+                    return userInput && updateModel(userInput, dialog);
+                });
             }
 
             return type && showDialog(type);
@@ -96,9 +88,7 @@ define(
                 creatable = type && type.hasFeature('creation');
 
             // Only allow creatable types to be edited
-            return domainObject &&
-                domainObject.hasCapability("persistence") &&
-                creatable;
+            return domainObject && creatable;
         };
 
         return PropertiesAction;
