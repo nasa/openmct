@@ -21,66 +21,140 @@
  *****************************************************************************/
 /*global define,Promise*/
 
+/**
+ * Module defining SinewaveTelemetryProvider.
+ * Created by vwoeltje on 11/12/14.
+ *
+ * @memberof example/generator
+ */
 define(
-    ["../../../example/generator/src/SinewaveTelemetryProvider"],
-    function (SinewaveTelemetryProvider) {
+    ["./DemoTelemetrySeries"],
+    function (DemoTelemetrySeries) {
         "use strict";
 
-        var SOURCE = 'demo-telemetry';
+        var SOURCE = 'demo-telemetry',
+            series = {};
 
+        /**
+         * A telemetry provider that generates sine wave data for testing
+         * and telemetry purposes.
+         * @constructor
+         */
         function DemoTelemetryProvider($q, $timeout) {
-            SinewaveTelemetryProvider.call(this, $q, $timeout);
-        }
-
-        DemoTelemetryProvider.prototype = Object.create(SinewaveTelemetryProvider.prototype);
-
-        DemoTelemetryProvider.prototype.doPackage = function (results) {
-            var packaged = {};
-            results.forEach(function (result) {
-                packaged[result.key] = result.telemetry;
-            });
-            // Format as expected (sources -> keys -> telemetry)
-            return { "demo-telemetry": packaged };
+            this.$q = $q;
+            this.$timeout = $timeout;
+            this.subscriptions = [];
+            this.generating = false;
         }
 
         DemoTelemetryProvider.prototype.matchesSource = function (request) {
             return request.source === SOURCE;
+        };
+
+        DemoTelemetryProvider.prototype.doPackage = function (results) {
+            var packaged = {},
+                result = {};
+            results.forEach(function (result) {
+                packaged[result.key] = result.telemetry;
+            });
+            result[SOURCE] = packaged;
+            // Format as expected (sources -> keys -> telemetry)
+            return result;
         }
 
-        DemoTelemetryProvider.prototype.subscribe = function (callback, requests) {
-            var offsets = {};
+        /**
+         * Produce some data to be passed to registered subscription callbacks
+         * @param request
+         * @returns {{key: string, telemetry: DemoTelemetrySeries}}
+         */
+        DemoTelemetryProvider.prototype.generateData = function (request) {
+            if (!series[request.id]){
+                series[request.id] = {
+                    phaseShift: Math.random() * 2 * Math.PI,
+                    rangeOffset: 1 + Math.random()
+                };
+            }
+            return {
+                key: request.key,
+                telemetry: new DemoTelemetrySeries(request, series[request.id])
+            };
+        };
 
-            function wrapSeries(telemetrySeries, offset) {
-                return {
-                    getDomainValue: function (index, domain) {
-                        return telemetrySeries.getDomainValue(index, domain);
-                    },
-                    getRangeValue: function (index, range) {
-                        // Sine wave 'carrier' signal, with random phase shift
-                        return telemetrySeries.getRangeValue(index, range)
-                        // Introduce some random variability so that line is
-                        // not straight or perfectly curved
-                            + Math.random(1)/50
-                        //Add a random range offset so that lines
-                        // are not all bunched together
-                            + offset;
-                    },
-                    getPointCount: function () {
-                        return telemetrySeries.getPointCount();
-                    }
+        /**
+         * Invoke callbacks on all registered subscriptions when data is
+         * available.
+         */
+        DemoTelemetryProvider.prototype.handleSubscriptions = function () {
+            var self = this;
+            self.subscriptions.forEach(function (subscription) {
+                var requests = subscription.requests;
+                subscription.callback(self.doPackage(
+                    requests.filter(self.matchesSource).map(self.generateData)
+                ));
+            });
+        };
+
+        /**
+         * Will start producing telemetry @ 1hz
+         */
+        DemoTelemetryProvider.prototype.startGenerating = function () {
+            var self = this;
+            self.generating = true;
+            self.$timeout(function () {
+                self.handleSubscriptions();
+                if (self.generating && self.subscriptions.length > 0) {
+                    self.startGenerating();
+                } else {
+                    self.generating = false;
                 }
-            }
+            }, 1000);
+        };
 
-            function randomize(telemetry){
-                Object.keys(telemetry[SOURCE]).forEach(function(key) {
-                    if (!offsets[key])
-                        offsets[key] = 1 + Math.random(10);
-                    telemetry[SOURCE][key] = wrapSeries(telemetry[SOURCE][key], offsets[key]);
+        /**
+         * Request historical telemetry from this source.
+         * @param requests
+         * @returns {object} an object with the request key as the key, and
+         * a SinewaveTelemetrySeries as its value
+         */
+        DemoTelemetryProvider.prototype.requestTelemetry = function (requests) {
+            var self = this;
+            return this.$timeout(function () {
+                return self.doPackage(requests.filter(self.matchesSource).map(self.generateData));
+            }, 0);
+        };
+
+        /**
+         * Subscribe to realtime telemetry
+         * @param callback a function to call when data is available
+         * @param requests all current telemetry requests (will be tested to
+         * see if they match this source)
+         * @returns {function} a function to call to unsubscribe from this
+         * telemetry source
+         */
+        DemoTelemetryProvider.prototype.subscribe = function (callback, requests) {
+            var self = this,
+                subscription = {
+                    callback: callback,
+                    requests: requests
+                };
+
+            function unsubscribe() {
+                self.subscriptions = self.subscriptions.filter(function (s) {
+                    return s !== subscription;
                 });
-                callback(telemetry);
+                //Also delete series object
+                subscription.requests.forEach(function (request) {
+                    delete series[request.id];
+                });
             }
 
-            return SinewaveTelemetryProvider.prototype.subscribe.call(this, randomize, requests);
+            self.subscriptions.push(subscription);
+
+            if (!this.generating) {
+                this.startGenerating();
+            }
+
+            return unsubscribe;
         };
 
         return DemoTelemetryProvider;
