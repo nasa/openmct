@@ -51,8 +51,7 @@ define(
         }
 
         /**
-         * Add a domain object to the composition of the field.
-         * This mutates but does not persist the modified object.
+         * Add a domain object to the composition of this domain object.
          *
          * If no index is given, this is added to the end of the composition.
          *
