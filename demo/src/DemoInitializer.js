@@ -20,21 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /*global define*/
-require.config({
-    paths: {
-        hopscotch: "demo/lib/hopscotch/hopscotch.min"
-    },
-    shim: {
-        tourist: {
-            exports: "hopscotch"
-        }
-    }
-
-});
 define(
     [
         "../../platform/features/conductor/src/ConductorRepresenter",
-        "hopscotch",
+        "../lib/hopscotch/hopscotch.min",
         "zepto"
     ],
     function (ConductorRepresenter, hopscotch, $){
