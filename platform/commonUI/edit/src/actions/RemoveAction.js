@@ -41,9 +41,8 @@ define(
          * @constructor
          * @implements {Action}
          */
-        function RemoveAction($q, navigationService, context) {
+        function RemoveAction(navigationService, context) {
             this.domainObject = (context || {}).domainObject;
-            this.$q = $q;
             this.navigationService = navigationService;
         }
 
@@ -53,8 +52,7 @@ define(
          *         fulfilled when the action has completed.
          */
         RemoveAction.prototype.perform = function () {
-            var $q = this.$q,
-                navigationService = this.navigationService,
+            var navigationService = this.navigationService,
                 domainObject = this.domainObject;
             /*
              * Check whether an object ID matches the ID of the object being
@@ -71,15 +69,6 @@ define(
              */
             function doMutate(model) {
                 model.composition = model.composition.filter(isNotObject);
-            }
-
-            /*
-             * Invoke persistence on a domain object. This will be called upon
-             * the removed object's parent (as its composition will have changed.)
-             */
-            function doPersist(domainObject) {
-                var persistence = domainObject.getCapability('persistence');
-                return persistence && persistence.persist();
             }
 
             /*
@@ -121,15 +110,10 @@ define(
                 // navigates to existing object up tree
                 checkObjectNavigation(object, parent);
 
-                return $q.when(
-                    parent.useCapability('mutation', doMutate)
-                ).then(function () {
-                    return doPersist(parent);
-                });
+                return parent.useCapability('mutation', doMutate);
             }
 
-            return $q.when(domainObject)
-                .then(removeFromContext);
+            return removeFromContext(domainObject);
         };
 
         // Object needs to have a parent for Remove to be applicable
