@@ -83,11 +83,29 @@ define([
             ],
             "roots": [
                 {
-                    "id":"mct:demo",
+                    "id":"demo:realtime",
+                    "model": {
+                        "type":"demo.collection",
+                        "name": "Real-time Telemetry",
+                        "composition": [
+                            "be3d5df3-cc6e-4b8b-9865-fcd844e55b94",
+                            "930dd0b9-9d98-4908-b19c-c1c887117d42"
+                        ]
+                    },
+                    "priority": "preferred"
+                },
+                {
+                    "id":"demo:examples",
                     "model": {
                         "type":"folder",
                         "name": "Examples",
-                        "composition": []
+                        "composition": [
+                            "a330490d-59ba-4c0c-b046-e5450f29f39b",
+                            "934b199f-917e-46a2-9935-3117a9e29218",
+                            "88a26104-8bd5-445d-8b57-10b567d2823d",
+                            "f3744144-8842-4b7a-bddc-4abbf21315d9",
+                            "a32079d0-676b-4e9f-ade7-86d5d2f152fc"
+                        ]
                     },
                     "priority": "preferred"
                 }
@@ -100,7 +118,7 @@ define([
                     "description": "Mock realtime spacecraft telemetry",
                     "model": {
                         "telemetry": {
-                            "period": 10000,
+                            "period": 100,
                             "multiplier": 10
                         }
                     },
@@ -162,6 +180,12 @@ define([
                     "model": {
                         "composition": []
                     }
+                },
+                {
+                    "name": "Collection",
+                    "key": "demo.collection",
+                    "glyph": "o",
+                    "model": {"composition": []}
                 }
             ],
             "licenses": [

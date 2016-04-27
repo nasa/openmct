@@ -58,7 +58,7 @@
             }
         },
         "modified": 1461720385628,
-        "location": "mct:demo",
+        "location": "demo:examples",
         "persisted": 1461720385628
     },
     "b171cc31-2cc5-4ae9-ba40-baf1163f22c4": {
@@ -95,7 +95,7 @@
             "msl_tlm:max_temp"
         ],
         "name": "Air Temperature",
-        "type": "telemetry.panel",
+        "type": "demo.plot",
         "modified": 1459888924618,
         "location": "90b28cb9-444b-4f57-a584-49032361d2a1",
         "persisted": 1459888924618
@@ -106,7 +106,7 @@
             "msl_tlm:max_gts_temp"
         ],
         "name": "Ground Temperature",
-        "type": "telemetry.panel",
+        "type": "demo.plot",
         "modified": 1459888918032,
         "location": "90b28cb9-444b-4f57-a584-49032361d2a1",
         "persisted": 1459888918032
@@ -141,7 +141,7 @@
         "name": "Rover Subsystems",
         "type": "folder",
         "modified": 1459890405689,
-        "location": "1731fc2d-ddce-4ace-ae3c-60b46c178beb",
+        "location": "demo:realtime",
         "persisted": 1459890405689
     },
     "1325c1a1-65c9-4a82-9f1c-4ef27482d54c": {
@@ -301,7 +301,7 @@
         "name": "Rover Imagery",
         "type": "folder",
         "modified": 1459972004430,
-        "location": "1731fc2d-ddce-4ace-ae3c-60b46c178beb",
+        "location": "demo:realtime",
         "persisted": 1459972004430
     },
     "4d5ca79c-9ad4-438a-beaf-affdda43b7da": {
@@ -330,7 +330,7 @@
         "name": "Planning",
         "type": "folder",
         "modified": 1459986141623,
-        "location": "1731fc2d-ddce-4ace-ae3c-60b46c178beb",
+        "location": "demo:examples",
         "persisted": 1459986141623
     },
     "aa1ea485-c4b9-4763-9c48-0ca06789cc78": {
@@ -586,7 +586,7 @@
             }
         },
         "modified": 1461352283181,
-        "location": "mct:demo",
+        "location": "demo:examples",
         "persisted": 1461352283181
     },
     "934b199f-917e-46a2-9935-3117a9e29218": {
@@ -599,7 +599,7 @@
         "name": "Composites",
         "type": "folder",
         "modified": 1459985932921,
-        "location": "1731fc2d-ddce-4ace-ae3c-60b46c178beb",
+        "location": "demo:examples",
         "persisted": 1459985932921
     },
     "e68ca22c-3250-4907-bc9c-7d504940d95d": {
@@ -610,7 +610,7 @@
             "dfac7fe1-c8ee-4534-988d-af22a2e67a70"
         ],
         "name": "Thermal Panel",
-        "type": "telemetry.panel",
+        "type": "demo.plot",
         "modified": 1459973043096,
         "location": "934b199f-917e-46a2-9935-3117a9e29218",
         "persisted": 1459973043096
@@ -633,7 +633,7 @@
             "dd39ba74-f1d1-4a63-8ac2-5e4194667e38"
         ],
         "name": "Power Panel",
-        "type": "telemetry.panel",
+        "type": "demo.plot",
         "modified": 1459985767897,
         "location": "934b199f-917e-46a2-9935-3117a9e29218",
         "persisted": 1459985767897
@@ -654,7 +654,7 @@
             "1325c1a1-65c9-4a82-9f1c-4ef27482d54c"
         ],
         "name": "Battery Panel",
-        "type": "telemetry.panel",
+        "type": "demo.plot",
         "modified": 1460058472277,
         "location": "934b199f-917e-46a2-9935-3117a9e29218",
         "persisted": 1460058472277
@@ -685,7 +685,7 @@
             "eb70c9e8-6671-4981-94fc-bf30ef8e86ae"
         ],
         "name": "Flight Computer Panel",
-        "type": "telemetry.panel",
+        "type": "demo.plot",
         "modified": 1459985932861,
         "location": "934b199f-917e-46a2-9935-3117a9e29218",
         "persisted": 1459985932861
@@ -801,7 +801,7 @@
             }
         },
         "modified": 1461703210225,
-        "location": "mct:demo",
+        "location": "demo:examples",
         "persisted": 1461703210225
     },
     "21a89560-680d-4eae-b1f7-c44cfa3b68da": {
@@ -968,7 +968,7 @@
     "80ddeac5-5f8e-444d-a1ad-94ecda8e3f38": {
         "composition": ["9d6d1789-ab39-4e90-865e-c587cd0ccacb", "fa4c3575-645a-494f-be12-8566d23d84fb", "e67c7a15-c21c-44dc-86cd-b7c161fcd598", "353be267-5e96-4202-8fae-13b578df1c27"],
         "name": "Power Panel",
-        "type": "telemetry.panel",
+        "type": "demo.plot",
         "modified": 1461703126654,
         "location": "a32079d0-676b-4e9f-ade7-86d5d2f152fc",
         "persisted": 1461703126654
@@ -996,7 +996,7 @@
     "f018583c-c364-4942-83a1-78458a44c1f6": {
         "composition": ["72a8dd63-c92b-46d3-9ab4-da8728c46171", "e14cbf78-6bfd-47d0-bd72-736076d37fc4"],
         "name": "Battery Panel",
-        "type": "telemetry.panel",
+        "type": "demo.plot",
         "modified": 1461703126656,
         "location": "a32079d0-676b-4e9f-ade7-86d5d2f152fc",
         "persisted": 1461703126656
@@ -1060,7 +1060,7 @@
     "422f8488-541b-4d00-9413-18b3a11e43cd": {
         "composition": ["2cac7fc5-9295-4b22-bf47-4cb805ea7b25", "c51438a5-2f4c-4e61-9a27-248c8bd463c0", "4813dfe0-ec5b-4dc4-a073-d057e13188ec", "a971f68b-72f0-49e9-b42b-8e15788eb57c"],
         "name": "Thermal Panel",
-        "type": "telemetry.panel",
+        "type": "demo.plot",
         "modified": 1461703126657,
         "location": "a32079d0-676b-4e9f-ade7-86d5d2f152fc",
         "persisted": 1461703126657
