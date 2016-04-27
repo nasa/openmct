@@ -291,46 +291,6 @@ define([
                             "conversion": "number[]"
                         }
                     ]
-                },
-                {
-                    "key": "telemetry.panel",
-                    "name": "Telemetry Panel",
-                    "glyph": "t",
-                    "description": "A panel for collecting telemetry elements.",
-                    "priority": 899,
-                    "delegates": [
-                        "telemetry"
-                    ],
-                    "features": "creation",
-                    "contains": [
-                        {
-                            "has": "telemetry"
-                        }
-                    ],
-                    "model": {
-                        "composition": []
-                    },
-                    "properties": [
-                        {
-                            "name": "Layout Grid",
-                            "control": "composite",
-                            "items": [
-                                {
-                                    "name": "Horizontal grid (px)",
-                                    "control": "textfield",
-                                    "cssclass": "l-small l-numeric"
-                                },
-                                {
-                                    "name": "Vertical grid (px)",
-                                    "control": "textfield",
-                                    "cssclass": "l-small l-numeric"
-                                }
-                            ],
-                            "pattern": "^(\\d*[1-9]\\d*)?$",
-                            "property": "layoutGrid",
-                            "conversion": "number[]"
-                        }
-                    ]
                 }
             ]
         }

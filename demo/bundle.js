@@ -98,7 +98,6 @@ define([
                     "name": "Spacecraft Telemetry Generator",
                     "glyph": "T",
                     "description": "Mock realtime spacecraft telemetry",
-                    "features": "creation",
                     "model": {
                         "telemetry": {
                             "period": 10000,
@@ -141,6 +140,29 @@ define([
                         }
                     ]
                 },
+                {
+                    "key": "demo.plot",
+                    "name": "Telemetry Plot",
+                    "glyph": "t",
+                    "description": "A view that will plot telemetry in a" +
+                    " chart.",
+                    "priority": 899,
+                    "delegates": [
+                        "telemetry"
+                    ],
+                    "views": [
+                      "plot"
+                    ],
+                    "features": "creation",
+                    "contains": [
+                        {
+                            "has": "telemetry"
+                        }
+                    ],
+                    "model": {
+                        "composition": []
+                    }
+                }
             ],
             "licenses": [
                 {
