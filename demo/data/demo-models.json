@@ -1,6 +1,6 @@
 {
     "f3744144-8842-4b7a-bddc-4abbf21315d9": {
-        "composition": ["9b297044-84be-4814-9400-cbe2d4e72589", "79b89853-6947-4516-8d8c-bfe239c83836", "02d98e70-792e-4de9-9b1e-9b36685bff29", "msl_tlm:pressure", "e2f57978-dcae-4fe2-a637-4707929286ae", "6b2c3426-6d35-42ad-8720-95543567241f"],
+        "composition": ["79b89853-6947-4516-8d8c-bfe239c83836", "02d98e70-792e-4de9-9b1e-9b36685bff29", "msl_tlm:pressure", "6b2c3426-6d35-42ad-8720-95543567241f", "11247663-fad1-481a-93d8-429ba159bf6b"],
         "name": "Mars Weather Display Layout",
         "type": "layout",
         "configuration": {
@@ -28,44 +28,46 @@
                     },
                     "79b89853-6947-4516-8d8c-bfe239c83836": {
                         "position": [0, 0],
-                        "dimensions": [24, 9]
+                        "dimensions": [14, 8]
                     },
                     "02d98e70-792e-4de9-9b1e-9b36685bff29": {
-                        "position": [0, 9],
-                        "dimensions": [24, 9]
+                        "position": [0, 8],
+                        "dimensions": [14, 8]
                     },
                     "b66be4e2-b918-42d2-ad0a-f70c7a6f4102": {
                         "position": [24, 10],
                         "dimensions": [12, 8]
                     },
                     "msl_tlm:pressure": {
-                        "position": [0, 18],
-                        "dimensions": [24, 9]
+                        "position": [0, 16],
+                        "dimensions": [14, 8]
                     },
                     "e2f57978-dcae-4fe2-a637-4707929286ae": {
                         "position": [24, 0],
                         "dimensions": [24, 9]
                     },
                     "6b2c3426-6d35-42ad-8720-95543567241f": {
-                        "position": [24, 18],
-                        "dimensions": [24, 9]
+                        "position": [14, 16],
+                        "dimensions": [20, 8]
+                    },
+                    "11247663-fad1-481a-93d8-429ba159bf6b": {
+                        "position": [14, 0],
+                        "dimensions": [20, 16]
                     }
                 }
             }
         },
-        "modified": 1461351021462,
+        "modified": 1461720385628,
         "location": "mct:demo",
-        "persisted": 1461351021462
+        "persisted": 1461720385628
     },
     "b171cc31-2cc5-4ae9-ba40-baf1163f22c4": {
-        "composition": [
-            "90b28cb9-444b-4f57-a584-49032361d2a1"
-        ],
+        "composition": ["90b28cb9-444b-4f57-a584-49032361d2a1", "11247663-fad1-481a-93d8-429ba159bf6b"],
         "name": "Curiosity Rover",
         "type": "folder",
-        "modified": 1460333909213,
+        "modified": 1461720290523,
         "location": "mct:demo",
-        "persisted": 1460333909213
+        "persisted": 1461720290523
     },
     "9b297044-84be-4814-9400-cbe2d4e72589": {
         "composition": [
@@ -1062,5 +1064,13 @@
         "modified": 1461703126657,
         "location": "a32079d0-676b-4e9f-ade7-86d5d2f152fc",
         "persisted": 1461703126657
+    },
+    "11247663-fad1-481a-93d8-429ba159bf6b": {
+        "name": "Where is Curiosity?",
+        "type": "image-include",
+        "url": "http://mars.nasa.gov/msl/imgs/2016/04/MSL_TraverseMap_Sol1298-br2.jpg",
+        "modified": 1461720290507,
+        "location": "b171cc31-2cc5-4ae9-ba40-baf1163f22c4",
+        "persisted": 1461720290507
     }
 }
