@@ -67,7 +67,7 @@ define(
             };
 
             generatorData.getRangeValue = function (i, range) {
-                var rangeValue = Math[range || "sin"]((i + offset) * options.phaseShift / period),
+                var rangeValue = Math.sin((i + offset) * options.phaseShift / period),
                     damper = 0.05,
                     noise = Math.random() * damper;
                 rangeValue += options.rangeOffset;
