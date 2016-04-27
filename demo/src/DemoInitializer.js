@@ -52,7 +52,7 @@ define(
 
             removeRepresenter(ConductorRepresenter);
 
-            objectService.getObjects([
+            /*objectService.getObjects([
                 "mct:demo"
             ]).then(function (objects) {
                 objects["mct:demo"].useCapability("mutation", function (model) {
@@ -64,12 +64,12 @@ define(
                         "a32079d0-676b-4e9f-ade7-86d5d2f152fc"
                     ];
                 })
-            }).then(function () {
-                //For default route, redirect user to layout
-                if ($location.path().length == 0 || $location.path() === "/") {
-                    $location.url("/browse/mct:demo/88a26104-8bd5-445d-8b57-10b567d2823d");
-                }
-            });
+            }).then(function () {*/
+            //For default route, redirect user to layout
+            if ($location.path().length == 0 || $location.path() === "/") {
+                $location.url("/browse/demo:examples/88a26104-8bd5-445d-8b57-10b567d2823d?view=layout");
+            }
+            //});
 
             $timeout(function () {
                 var tour = {
