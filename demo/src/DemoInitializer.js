@@ -131,7 +131,7 @@ define(
                         },
                         {
                             title: "Select Object to Edit",
-                            content: "Expand the 'Examples' folder and click on the 'Layout Edit Example' object.",
+                            content: "Expand the 'Examples' folder and click on the 'Edit Display Layout Example' object.",
                             target: "mct-tree ul.tree",
                             placement: "right",
                             yOffset: "20px"
