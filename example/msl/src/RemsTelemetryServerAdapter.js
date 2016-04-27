@@ -139,7 +139,7 @@ define(
                     .catch(this.requestDeferred.reject);
                 return this.requestDeferred.promise;
             }
-        }
+        };
 
         /**
          * Requests historical telemetry for the named data attribute. In
