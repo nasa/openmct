@@ -140,7 +140,7 @@ define(
                             title: "Edit Button",
                             content: "<b>Click this button now</b> to begin editing the current object, or click 'Next' to continue.",
                             target: ".object-browse-bar .btn-bar",
-                            placement: "bottom",
+                            placement: "left",
                             width: "200px",
                             xOffset: "-20px",
                             nextOnTargetClick: true
@@ -156,7 +156,11 @@ define(
                         },
                         {
                             title: "Adding an Object",
-                            content: "Let’s add a telemetry element into our layout. Expand 'Mars Science Laboratory', then its folder 'rems', then drag 'Max Air Temperature' into the empty spot in the layout area. Click 'Next' to continue.",
+                            content: "Let’s add a telemetry element into our" +
+                            " layout. Expand 'Real-time telemetry'," +
+                            " 'Composites', and then drag 'Thermal Panel'" +
+                            " into the empty space in the example layout," +
+                            " Click 'Next' to continue.",
                             target: "mct-tree ul.tree",
                             placement: "right"
                         },
