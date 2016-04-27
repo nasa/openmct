@@ -100,11 +100,17 @@ define(
                         },
                         {
                             title: "Create Button",
-                            content: "Many objects in the application are created via this button. Click it to view the Create menu, and rollover each item in the menu to see more information about it. Click 'Next' when ready to continue.",
+                            content: "Many objects in the application are created via this button. <b>Click it now</b> to view the Create menu, and rollover each item in the menu to see more information about it. Or, click 'Next' to continue.",
                             target: ".create-btn",
                             placement: "right",
-                            width: "700px",
-                            yOffset: "-10px"
+                            yOffset: "-10px",
+                            nextOnTargetClick: true
+                        },
+                        {
+                            title: "Inspection Pane",
+                            content: "This pane shows useful information about the currently selected item. You can hide this pane by clicking its 'X' icon to the right.",
+                            target: ".split-pane-component.t-inspect",
+                            placement: "left"
                         },
                         {
                             title: "Search",
@@ -112,12 +118,6 @@ define(
                             target: ".search-bar",
                             placement: "right",
                             yOffset: "-20px"
-                        },
-                        {
-                            title: "Inspection Pane",
-                            content: "This pane shows useful information about the currently selected item. You can hide this pane by clicking its 'X' icon to the right.",
-                            target: ".split-pane-component.t-inspect",
-                            placement: "left"
                         },
                         {
                             title: "Editing",
@@ -137,11 +137,12 @@ define(
                         },
                         {
                             title: "Edit Button",
-                            content: "Click this button now to begin editing the current object, then click 'Next' to continue.",
+                            content: "<b>Click this button now</b> to begin editing the current object, or click 'Next' to continue.",
                             target: ".object-browse-bar .btn-bar",
                             placement: "bottom",
                             width: "200px",
-                            xOffset: "-20px"
+                            xOffset: "-20px",
+                            nextOnTargetClick: true
                         },
                         {
                             title: "Editing",
@@ -181,7 +182,7 @@ define(
                         },
                         {
                             title: "Object Types",
-                            content: "Try experimenting creating different object types, and adding other objects to them by dragging them from the tree. Only certain types of objects can be dragged into a given object type - if a type of object can’t be added, it simply won’t. ",
+                            content: "Try experimenting creating different object types, and adding objects to them by dragging them from the tree. Only certain types of objects can be dragged into a given object type - if a type of object can’t be added, it simply won’t. ",
                             target: ".user-environ",
                             placement: "top",
                             xOffset: "center",
