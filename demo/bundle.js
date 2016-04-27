@@ -28,6 +28,7 @@ define([
     "./src/conductor/DemoTelemetryDecorator",
     "./src/telemetry/DemoTelemetryProvider",
     "./src/DemoModelProvider",
+    'text!./res/image-template.html',
     'legacyRegistry'
 ], function (
     DemoConductorRepresenter,
@@ -36,6 +37,7 @@ define([
     DemoTelemetryDecorator,
     DemoTelemetryProvider,
     DemoModelProvider,
+    ImageTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -118,7 +120,27 @@ define([
                             }
                         ]
                     }
-                }
+                },
+                {
+                    "key": "image-include",
+                    "name": "Image include",
+                    "glyph": "ã",
+                    "description": "An image include that is resized to fit" +
+                    " its container",
+                    "views": [
+                        "image-view"
+                    ],
+                    "properties": [
+                        {
+                            "key": "url",
+                            "name": "URL",
+                            "control": "textfield",
+                            "pattern": "^(ftp|https?)\\:\\/\\/\\w+(\\.\\w+)*(\\:\\d+)?(\\/\\S*)*$",
+                            "required": true,
+                            "cssclass": "l-input-lg"
+                        }
+                    ]
+                },
             ],
             "licenses": [
                 {
@@ -140,6 +162,9 @@ define([
                 },
                 {
                     "stylesheetUrl": "css/tour.css"
+                },
+                {
+                    "stylesheetUrl": "css/image.css"
                 }
             ],
             "constants": [
@@ -149,7 +174,15 @@ define([
                     "comment": "1 minute."
                 }
             ],
-
+            "views": [
+                {
+                    "template": ImageTemplate,
+                    "name": "ImageInclude",
+                    "type": "image-include",
+                    "key": "image-view",
+                    "editable": false
+                }
+            ]
         }
     });
 });
