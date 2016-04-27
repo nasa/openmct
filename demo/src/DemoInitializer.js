@@ -152,7 +152,8 @@ define(
                             placement: "top",
                             xOffset: "center",
                             yOffset: "center",
-                            arrowOffset: "100000px"
+                            arrowOffset: "100000px",
+                            nextOnTargetClick: true
                         },
                         {
                             title: "Adding an Object",
@@ -162,6 +163,7 @@ define(
                             " into the empty space in the example layout," +
                             " Click 'Next' to continue.",
                             target: "mct-tree ul.tree",
+                            yOffset: "100px",
                             placement: "right"
                         },
                         {
@@ -174,7 +176,10 @@ define(
                         },
                         {
                             title: "Elements Pool",
-                            content: "This area lists all objects in the current object. To remove an object, right-click it and choose 'Remove' from the context menu.",
+                            content: "When the object inspector is expanded, this " +
+                            "area lists all objects in the current object. " +
+                            "To remove an object, right-click it and choose 'Remove' " +
+                            "from the context menu.",
                             target: ".holder-elements",
                             placement: "left"
                         },
@@ -183,7 +188,8 @@ define(
                             content: "When you are done editing, click 'Save' to save and exit editing. To exit without saving any changes, click the 'X' button.",
                             target: ".t-save",
                             width: "200px",
-                            placement: "bottom"
+                            placement: "bottom",
+                            nextOnTargetClick: true
                         },
                         {
                             title: "Object Types",
