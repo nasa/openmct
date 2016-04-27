@@ -51,7 +51,7 @@ define(
             });
             // Format as expected (sources -> keys -> telemetry)
             return { generator: packaged };
-        }
+        };
 
         /**
          * Produce some data to be passed to registered subscription callbacks
@@ -63,11 +63,11 @@ define(
                 key: request.key,
                 telemetry: new SinewaveTelemetrySeries(request)
             };
-        }
+        };
 
         SinewaveTelemetryProvider.prototype.matchesSource = function (request) {
             return request.source === "generator";
-        }
+        };
 
         /**
          * Invoke callbacks on all registered subscriptions when data is
@@ -81,7 +81,7 @@ define(
                     requests.filter(self.matchesSource).map(self.generateData)
                 ));
             });
-        }
+        };
 
         /**
          * Will start producing telemetry every second
