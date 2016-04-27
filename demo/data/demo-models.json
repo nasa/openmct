@@ -58,7 +58,7 @@
             }
         },
         "modified": 1461720385628,
-        "location": "demo:examples",
+        "location": "mine",
         "persisted": 1461720385628
     },
     "b171cc31-2cc5-4ae9-ba40-baf1163f22c4": {
@@ -66,28 +66,8 @@
         "name": "Curiosity Rover",
         "type": "folder",
         "modified": 1461720290523,
-        "location": "mct:demo",
+        "location": "mine",
         "persisted": 1461720290523
-    },
-    "9b297044-84be-4814-9400-cbe2d4e72589": {
-        "composition": [
-            "msl_tlm:min_gts_temp",
-            "msl_tlm:max_gts_temp"
-        ],
-        "name": "Ground Temperature",
-        "type": "table",
-        "configuration": {
-            "table": {
-                "columns": {
-                    "Name": true,
-                    "Time": true,
-                    "degrees": true
-                }
-            }
-        },
-        "modified": 1459888910376,
-        "location": "90b28cb9-444b-4f57-a584-49032361d2a1",
-        "persisted": 1459888910376
     },
     "79b89853-6947-4516-8d8c-bfe239c83836": {
         "composition": [
@@ -112,25 +92,12 @@
         "persisted": 1459888918032
     },
     "90b28cb9-444b-4f57-a584-49032361d2a1": {
-        "composition": ["9b297044-84be-4814-9400-cbe2d4e72589", "02d98e70-792e-4de9-9b1e-9b36685bff29", "79b89853-6947-4516-8d8c-bfe239c83836", "e2f57978-dcae-4fe2-a637-4707929286ae", "6b2c3426-6d35-42ad-8720-95543567241f"],
-        "name": "Composites",
+        "composition": ["02d98e70-792e-4de9-9b1e-9b36685bff29", "79b89853-6947-4516-8d8c-bfe239c83836", "6b2c3426-6d35-42ad-8720-95543567241f"],
+        "name": "Plots and Tables",
         "type": "folder",
         "modified": 1461350853110,
         "location": "b171cc31-2cc5-4ae9-ba40-baf1163f22c4",
         "persisted": 1461350853110
-    },
-    "1731fc2d-ddce-4ace-ae3c-60b46c178beb": {
-        "composition": [
-            "be3d5df3-cc6e-4b8b-9865-fcd844e55b94",
-            "930dd0b9-9d98-4908-b19c-c1c887117d42",
-            "a330490d-59ba-4c0c-b046-e5450f29f39b",
-            "934b199f-917e-46a2-9935-3117a9e29218"
-        ],
-        "name": "Real-time Telemetry",
-        "type": "folder",
-        "modified": 1460333916219,
-        "location": "mct:demo",
-        "persisted": 1460333916219
     },
     "be3d5df3-cc6e-4b8b-9865-fcd844e55b94": {
         "composition": [
@@ -139,14 +106,14 @@
             "329bf4c5-2f1a-4ce6-9a4d-18610c145f44"
         ],
         "name": "Rover Subsystems",
-        "type": "folder",
+        "type": "demo.collection",
         "modified": 1459890405689,
         "location": "demo:realtime",
         "persisted": 1459890405689
     },
     "1325c1a1-65c9-4a82-9f1c-4ef27482d54c": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Battery A State of Charge",
         "type": "demo-telemetry",
@@ -156,7 +123,7 @@
     },
     "c8700fa3-fc53-44a2-82a8-7854813803de": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "CPU Load",
         "type": "demo-telemetry",
@@ -166,7 +133,7 @@
     },
     "e043bd38-1cea-41ec-a90e-40763bd49c3a": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Battery B State of Charge",
         "type": "demo-telemetry",
@@ -176,7 +143,7 @@
     },
     "4bfe7c56-88a1-4a0a-886d-ee2366af9a2f": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Battery A Voltage",
         "type": "demo-telemetry",
@@ -186,7 +153,7 @@
     },
     "2910cf8f-c1d9-4153-b3ab-0d18108f6cc4": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Battery B Voltage",
         "type": "demo-telemetry",
@@ -196,7 +163,7 @@
     },
     "dfac7fe1-c8ee-4534-988d-af22a2e67a70": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Wheel FL Temp.",
         "type": "demo-telemetry",
@@ -206,7 +173,7 @@
     },
     "3711d99e-b6be-45b1-bbb2-d2a8c333aab6": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Wheel FR Temp",
         "type": "demo-telemetry",
@@ -216,7 +183,7 @@
     },
     "7cf47710-26ab-4689-b903-b0e6297ffe49": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Wheel RL Temp.",
         "type": "demo-telemetry",
@@ -242,7 +209,7 @@
             "dfac7fe1-c8ee-4534-988d-af22a2e67a70"
         ],
         "name": "Thermal",
-        "type": "folder",
+        "type": "demo.collection",
         "modified": 1459890428668,
         "location": "be3d5df3-cc6e-4b8b-9865-fcd844e55b94",
         "persisted": 1459890428668
@@ -257,7 +224,7 @@
             "dd39ba74-f1d1-4a63-8ac2-5e4194667e38"
         ],
         "name": "Power",
-        "type": "folder",
+        "type": "demo.collection",
         "modified": 1459890477967,
         "location": "be3d5df3-cc6e-4b8b-9865-fcd844e55b94",
         "persisted": 1459890477967
@@ -268,14 +235,14 @@
             "eb70c9e8-6671-4981-94fc-bf30ef8e86ae"
         ],
         "name": "Flight Computer",
-        "type": "folder",
+        "type": "demo.collection",
         "modified": 1459985915700,
         "location": "be3d5df3-cc6e-4b8b-9865-fcd844e55b94",
         "persisted": 1459985915700
     },
     "abc420b8-86dc-4abd-99c4-80828d5f8476": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Bus A Current",
         "type": "demo-telemetry",
@@ -285,7 +252,7 @@
     },
     "dd39ba74-f1d1-4a63-8ac2-5e4194667e38": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Bus B Current",
         "type": "demo-telemetry",
@@ -299,7 +266,7 @@
             "b8858147-8e4f-4249-badb-b4031dba90f9"
         ],
         "name": "Rover Imagery",
-        "type": "folder",
+        "type": "demo.collection",
         "modified": 1459972004430,
         "location": "demo:realtime",
         "persisted": 1459972004430
@@ -330,7 +297,7 @@
         "name": "Planning",
         "type": "folder",
         "modified": 1459986141623,
-        "location": "demo:examples",
+        "location": "mine",
         "persisted": 1459986141623
     },
     "aa1ea485-c4b9-4763-9c48-0ca06789cc78": {
@@ -586,7 +553,7 @@
             }
         },
         "modified": 1461352283181,
-        "location": "demo:examples",
+        "location": "mine",
         "persisted": 1461352283181
     },
     "934b199f-917e-46a2-9935-3117a9e29218": {
@@ -596,10 +563,10 @@
             "67b4b0ef-c2bc-487a-ab04-0677d6c2207b",
             "aa381987-3ab7-4570-b2f5-71599d0dde03"
         ],
-        "name": "Composites",
+        "name": "Real-time Plots",
         "type": "folder",
         "modified": 1459985932921,
-        "location": "demo:examples",
+        "location": "mine",
         "persisted": 1459985932921
     },
     "e68ca22c-3250-4907-bc9c-7d504940d95d": {
@@ -617,7 +584,7 @@
     },
     "00ba2221-f35a-44ab-bec9-50ecca5ee450": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Unnamed Sine Wave Generator",
         "type": "demo-telemetry",
@@ -640,7 +607,7 @@
     },
     "b15191b5-cd91-4d18-b36e-5802f3616a79": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Battery Panel",
         "type": "demo-telemetry",
@@ -661,7 +628,7 @@
     },
     "eb70c9e8-6671-4981-94fc-bf30ef8e86ae": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Memory Available",
         "type": "demo-telemetry",
@@ -671,7 +638,7 @@
     },
     "d7980e59-129a-4ded-b18a-dc6cda96a83e": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Memory Used",
         "type": "demo-telemetry",
@@ -720,26 +687,9 @@
         "location": "mine",
         "persisted": 1460333926615
     },
-    "e2f57978-dcae-4fe2-a637-4707929286ae": {
-        "composition": ["msl_tlm:min_temp", "msl_tlm:max_temp"],
-        "name": "Air Temperature",
-        "type": "table",
-        "configuration": {
-            "table": {
-                "columns": {
-                    "Name": true,
-                    "Time": true,
-                    "degrees": true
-                }
-            }
-        },
-        "modified": 1461350946908,
-        "location": "90b28cb9-444b-4f57-a584-49032361d2a1",
-        "persisted": 1461350946908
-    },
     "6b2c3426-6d35-42ad-8720-95543567241f": {
         "composition": ["msl_tlm:pressure"],
-        "name": "Air Pressure",
+        "name": "Atmospheric Pressure",
         "type": "table",
         "configuration": {
             "table": {
@@ -801,7 +751,7 @@
             }
         },
         "modified": 1461703210225,
-        "location": "demo:examples",
+        "location": "mine",
         "persisted": 1461703210225
     },
     "21a89560-680d-4eae-b1f7-c44cfa3b68da": {
@@ -927,7 +877,7 @@
     },
     "9d6d1789-ab39-4e90-865e-c587cd0ccacb": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Battery A Voltage",
         "type": "demo-telemetry",
@@ -937,7 +887,7 @@
     },
     "fa4c3575-645a-494f-be12-8566d23d84fb": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Battery B Voltage",
         "type": "demo-telemetry",
@@ -947,7 +897,7 @@
     },
     "e67c7a15-c21c-44dc-86cd-b7c161fcd598": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Bus A Current",
         "type": "demo-telemetry",
@@ -957,7 +907,7 @@
     },
     "353be267-5e96-4202-8fae-13b578df1c27": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Bus B Current",
         "type": "demo-telemetry",
@@ -975,7 +925,7 @@
     },
     "72a8dd63-c92b-46d3-9ab4-da8728c46171": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Battery B State of Charge",
         "type": "demo-telemetry",
@@ -985,7 +935,7 @@
     },
     "e14cbf78-6bfd-47d0-bd72-736076d37fc4": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Battery A State of Charge",
         "type": "demo-telemetry",
@@ -1029,7 +979,7 @@
     },
     "c51438a5-2f4c-4e61-9a27-248c8bd463c0": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Wheel RL Temp.",
         "type": "demo-telemetry",
@@ -1039,7 +989,7 @@
     },
     "4813dfe0-ec5b-4dc4-a073-d057e13188ec": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Wheel FR Temp",
         "type": "demo-telemetry",
@@ -1049,7 +999,7 @@
     },
     "a971f68b-72f0-49e9-b42b-8e15788eb57c": {
         "telemetry": {
-            "period": 10000
+            "period": 1000
         },
         "name": "Wheel FL Temp.",
         "type": "demo-telemetry",
