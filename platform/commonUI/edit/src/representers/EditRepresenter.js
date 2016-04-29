@@ -52,17 +52,13 @@ define(
             this.listenHandle = undefined;
 
             // Mutate and persist a new version of a domain object's model.
-            function doPersist(model) {
+            function doMutate(model) {
                 var domainObject = self.domainObject;
 
                 // First, mutate; then, persist.
                 return $q.when(domainObject.useCapability("mutation", function () {
                     return model;
-                })).then(function (result) {
-                    // Only persist when mutation was successful
-                    return result &&
-                        domainObject.getCapability("persistence").persist();
-                });
+                }));
             }
 
             // Handle changes to model and/or view configuration
@@ -82,14 +78,14 @@ define(
                 ].join(" "));
 
                 // Update the configuration stored in the model, and persist.
-                if (domainObject && domainObject.hasCapability("persistence")) {
+                if (domainObject) {
                     // Configurations for specific views are stored by
                     // key in the "configuration" field of the model.
                     if (self.key && configuration) {
                         model.configuration = model.configuration || {};
                         model.configuration[self.key] = configuration;
                     }
-                    doPersist(model);
+                    doMutate(model);
                 }
             }
 
