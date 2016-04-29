@@ -34,7 +34,9 @@ define([], function () {
         var mutationTopic = topic('mutation');
         mutationTopic.listen(function (domainObject) {
             var persistence = domainObject.getCapability('persistence');
-            persistence.persist();
+            if (persistence.persisted()) {
+                persistence.persist();
+            }
         });
     }
 

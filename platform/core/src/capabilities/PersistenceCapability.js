@@ -202,6 +202,15 @@ define(
             return this.identifierService.parse(id).getSpace();
         };
 
+        /**
+         * Check if this domain object has been persisted at some
+         * point.
+         * @returns {boolean} true if the object has been persisted
+         */
+        PersistenceCapability.prototype.persisted = function () {
+            return this.domainObject.getModel().persisted !== undefined;
+        };
+
         return PersistenceCapability;
     }
 );
