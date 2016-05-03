@@ -84,7 +84,11 @@ p {
 	margin-bottom: $interiorMarginLg;
 }
 
-ol, ul { padding-left: 0; }
+ol, ul {
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+}
 
 mct-container {
 	display: block;
