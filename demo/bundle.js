@@ -59,12 +59,6 @@ define([
                     "type": "decorator"
                 },
                 {
-                    "type": "decorator",
-                    "provides": "telemetryService",
-                    "implementation": DemoTelemetryDecorator,
-                    "priority": "mandatory"
-                },
-                {
                     "implementation": DemoTelemetryProvider,
                     "type": "provider",
                     "provides": "telemetryService",
@@ -73,7 +67,8 @@ define([
                 {
                     "implementation": DemoModelProvider,
                     "provides": "modelService",
-                    "type": "provider"
+                    "type": "provider",
+                    "priority": "fallback"
                 },
             ],
             "runs": [

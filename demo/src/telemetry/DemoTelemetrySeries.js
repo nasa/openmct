@@ -38,36 +38,25 @@ define(
          * @constructor
          */
         function DemoTelemetrySeries(request, options) {
-            var timeOffset = (request.domain === 'yesterday') ? ONE_DAY : 0,
-                latestTime = Math.floor(Date.now() / 1000) - timeOffset,
-                firstTime = firstObservedTime - timeOffset,
-                endTime = (request.end !== undefined) ?
-                        Math.floor(request.end / 1000) : latestTime,
-                count = Math.min(endTime, latestTime) - firstTime,
+            var latestTime = Math.floor(Date.now() / 1000),
+                count = latestTime - firstObservedTime,
                 period = +request.period || 30,
-                generatorData = {},
-                requestStart = (request.start === undefined) ? firstTime :
-                        Math.max(Math.floor(request.start / 1000), firstTime),
-                offset = requestStart - firstTime;
-
-            if (request.size !== undefined) {
-                offset = Math.max(offset, count - request.size);
-            }
+                generatorData = {};
 
             generatorData.getPointCount = function () {
-                return count - offset;
+                return count;
             };
 
             generatorData.getDomainValue = function (i, domain) {
                 // delta uses the same numeric values as the default domain,
                 // so it's not checked for here, just formatted for display
                 // differently.
-                return (i + offset) * 1000 + firstTime * 1000 -
+                return (i) * 1000 + firstObservedTime * 1000 -
                     (domain === 'yesterday' ? (ONE_DAY * 1000) : 0);
             };
 
             generatorData.getRangeValue = function (i, range) {
-                var rangeValue = Math.sin((i + offset) * options.phaseShift / period),
+                var rangeValue = Math.sin((i) * options.phaseShift / period),
                     damper = 0.05,
                     noise = Math.random() * damper;
                 rangeValue += options.rangeOffset;
