@@ -30,7 +30,7 @@ define(
         "use strict";
 
         var ONE_DAY = 60 * 60 * 24,
-            START_TIME = Date.now() - 24 * 60 * 60 * 1000, // Now minus a day.
+            START_TIME = Date.now(), // Now minus a day.
             firstObservedTime = Math.floor(START_TIME / 1000);
 
         /**
