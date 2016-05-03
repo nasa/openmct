@@ -55,21 +55,20 @@ define(
             objectService.getObjects([
                 "mine"
             ]).then(function (objects) {
-                objects["mine"].useCapability("mutation", function (model) {
-                    model.composition = [
-                        "88a26104-8bd5-445d-8b57-10b567d2823d",
-                        "f3744144-8842-4b7a-bddc-4abbf21315d9",
-                        "a32079d0-676b-4e9f-ade7-86d5d2f152fc",
-                        "a330490d-59ba-4c0c-b046-e5450f29f39b",
-                        "934b199f-917e-46a2-9935-3117a9e29218",
-                        "b171cc31-2cc5-4ae9-ba40-baf1163f22c4"
-                    ];
-                })
-            }).then(function () {
-            //For default route, redirect user to layout
-            if ($location.path().length == 0 || $location.path() === "/") {
-                $location.url("browse/mine/88a26104-8bd5-445d-8b57-10b567d2823d?view=layout");
-            }
+                [
+                    "88a26104-8bd5-445d-8b57-10b567d2823d",
+                    "f3744144-8842-4b7a-bddc-4abbf21315d9",
+                    "a32079d0-676b-4e9f-ade7-86d5d2f152fc",
+                    "a330490d-59ba-4c0c-b046-e5450f29f39b",
+                    "934b199f-917e-46a2-9935-3117a9e29218",
+                    "b171cc31-2cc5-4ae9-ba40-baf1163f22c4"
+                ].forEach(function (id, index) {
+                    objects['mine'].getCapability('composition').add(id, index);
+                });
+                //For default route, redirect user to layout
+                if ($location.path().length == 0 || $location.path() === "/") {
+                    $location.url("browse/mine/88a26104-8bd5-445d-8b57-10b567d2823d?view=layout");
+                }
             });
 
             if (!agentService.isMobile()) {
