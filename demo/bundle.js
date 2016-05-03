@@ -59,6 +59,12 @@ define([
                     "type": "decorator"
                 },
                 {
+                    "type": "decorator",
+                    "provides": "telemetryService",
+                    "implementation": DemoTelemetryDecorator,
+                    "priority": "mandatory"
+                },
+                {
                     "implementation": DemoTelemetryProvider,
                     "type": "provider",
                     "provides": "telemetryService",
@@ -77,7 +83,8 @@ define([
                         "$timeout",
                         "representers[]",
                         "objectService",
-                        "$location"
+                        "$location",
+                        "agentService"
                     ]
                 }
             ],
@@ -93,24 +100,7 @@ define([
                         ]
                     },
                     "priority": "preferred"
-                }/*,
-                {
-                    "id":"demo:examples",
-                    "editable": false,
-                    "model": {
-                        "type":"folder",
-                        "name": "Examples",
-                        "composition": [
-                            "88a26104-8bd5-445d-8b57-10b567d2823d",
-                            "f3744144-8842-4b7a-bddc-4abbf21315d9",
-                            "a32079d0-676b-4e9f-ade7-86d5d2f152fc",
-                            "a330490d-59ba-4c0c-b046-e5450f29f39b",
-                            "934b199f-917e-46a2-9935-3117a9e29218",
-                            "b171cc31-2cc5-4ae9-ba40-baf1163f22c4"
-                        ]
-                    },
-                    "priority": "preferred"
-                }*/
+                }
             ],
             "types": [
                 {

@@ -40,7 +40,7 @@ var gulp = require('gulp'),
         main: 'main.js',
         dist: 'dist',
         assets: 'dist/assets',
-        scss: ['./platform/**/*.scss', './example/**/*.scss'],
+        scss: ['./platform/**/*.scss', './example/**/*.scss', './demo/**/*.scss'],
         scripts: [ 'main.js', 'platform/**/*.js', 'src/**/*.js' ],
         static: [
             'index.html',
