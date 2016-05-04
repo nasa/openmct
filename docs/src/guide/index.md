@@ -1,4 +1,4 @@
-# Open MCT Web Developer Guide
+# Open MCT Developer Guide
 Victor Woeltjen
 
 [victor.woeltjen@nasa.gov](mailto:victor.woeltjen@nasa.gov)
@@ -18,24 +18,24 @@ April 5, 2016       | 1.2       | Added Mct-table directive | Andrew Henry
 The purpose of this guide is to familiarize software developers with the Open
 MCT Web platform.
 
-## What is Open MCT Web
-Open MCT Web is a platform for building user interface and display tools,
+## What is Open MCT
+Open MCT is a platform for building user interface and display tools,
 developed at the NASA Ames Research Center in collaboration with teams at the
 Jet Propulsion Laboratory. It is written in HTML5, CSS3, and JavaScript, using 
 [AngularJS](http://www.angularjs.org) as a framework. Its intended use is to 
 create single-page web applications which integrate data and behavior from a 
 variety of sources and domains.
 
-Open MCT Web has been developed to support the remote operation of space
+Open MCT has been developed to support the remote operation of space
 vehicles, so some of its features are specific to that task; however, it is
 flexible enough to be adapted to a variety of other application domains where a
 display tool oriented toward browsing, composing, and visualizing would be
 useful.
 
-Open MCT Web provides:
+Open MCT provides:
 
 *  A common user interface paradigm which can be applied to a variety of domains
-and tasks. Open MCT Web is more than a widget toolkit - it provides a standard
+and tasks. Open MCT is more than a widget toolkit - it provides a standard
 tree-on-the-left, view-on-the-right browsing environment which you customize by
 adding new browsable object types, visualizations, and back-end adapters.  
 *  A plugin framework and an extensible API for introducing new application
@@ -44,17 +44,17 @@ features of a variety of types.
 visualizations and infrastructure specific to telemetry display.
 
 ## Client-Server Relationship
-Open MCT Web is client software - it runs entirely in the user's web browser. As
+Open MCT is client software - it runs entirely in the user's web browser. As
 such, it is largely 'server agnostic'; any web server capable of serving files
-from paths is capable of providing Open MCT Web.
+from paths is capable of providing Open MCT.
 
-While Open MCT Web can be configured to run as a standalone client, this is
+While Open MCT can be configured to run as a standalone client, this is
 rarely very useful. Instead, it is intended to be used as a display and
 interaction layer for information obtained from a variety of back-end services.
 Doing so requires authoring or utilizing adapter plugins which allow Open MCT
 Web to interact with these services.
 
-Typically, the pattern here is to provide a known interface that Open MCT Web
+Typically, the pattern here is to provide a known interface that Open MCT
 can utilize, and implement it such that it interacts with whatever back-end
 provides the relevant information. Examples of back-ends that can be utilized in
 this fashion include databases for the persistence of user-created objects, or
@@ -63,52 +63,52 @@ sources of telemetry data.
 See the [Architecture Guide](../architecture/index.md#Overview) for information
 on the client-server relationship.
 
-## Developing with Open MCT Web
-Building applications with Open MCT Web typically means authoring and utilizing
+## Developing with Open MCT
+Building applications with Open MCT typically means authoring and utilizing
 a set of plugins which provide application-specific details about how Open MCT
 Web should behave.
 
 ### Technologies
 
-Open MCT Web sources are written in JavaScript, with a number of configuration
+Open MCT sources are written in JavaScript, with a number of configuration
 files written in JSON. Displayable components are written in HTML5 and CSS3.  
-Open MCT Web is built using [AngularJS](http://www.angularjs.org)  from Google. A
+Open MCT is built using [AngularJS](http://www.angularjs.org)  from Google. A
 good understanding of Angular is recommended for developers working with Open
 MCT Web.
 
 ### Forking
-Open MCT Web does not currently have a single stand-alone artifact that can be
+Open MCT does not currently have a single stand-alone artifact that can be
 used as a library. Instead, the recommended approach for creating a new
-application is to start by forking/branching Open MCT Web, and then adding new
-features from there. Put another way, Open MCT Web's source structure is built
+application is to start by forking/branching Open MCT, and then adding new
+features from there. Put another way, Open MCT's source structure is built
 to serve as a template for specific applications.
 
-Forking in this manner should not require that you edit Open MCT Web's sources.
+Forking in this manner should not require that you edit Open MCT's sources.
 The preferred approach is to create a new directory (peer to `index.html`) for
 the new application, then add new bundles (as described in the Framework
 chapter) within that directory.
 
-To initially clone the Open MCT Web repository:
+To initially clone the Open MCT repository:
 `git clone <repository URL> <local repo directory> -b open-master`
 
-To create a fork to begin working on a new application using Open MCT Web:  
+To create a fork to begin working on a new application using Open MCT:  
 
     cd <local repo directory>  
     git checkout open-master
     git checkout -b <new branch name>
 
-As a convention used internally, applications built using Open MCT Web have
+As a convention used internally, applications built using Open MCT have
 master branch names with an identifying prefix. For instance, if building an
 application called 'Foo', the last statement above would look like:
 
     git checkout -b foo-master
 
-This convention is not enforced or understood by Open MCT Web in any way; it is
+This convention is not enforced or understood by Open MCT in any way; it is
 mentioned here as a more general recommendation.
 
 # Overview
 
-Open MCT Web is implemented as a framework component which manages a set of
+Open MCT is implemented as a framework component which manages a set of
 other components. These components, called _bundles_, act as containers to group
 sets of related functionality; individual units of functionality are expressed
 within these bundles as _extensions_.
@@ -119,7 +119,7 @@ run-time to satisfy these declared dependency. This dependency injection
 approach allows software components which have been authored separately (e.g. as
 plugins) but to collaborate at run-time.
 
-Open MCT Web's framework layer is implemented on top of AngularJS's [dependency
+Open MCT's framework layer is implemented on top of AngularJS's [dependency
 injection mechanism](https://docs.angularjs.org/guide/di)  and is modelled after
 [OSGi](hhttp://www.osgi.org/)  and its [Declarative Services component model](http://wiki.osgi.org/wiki/Declarative_Services). 
 In particular, this is where the term _bundle_ comes from.
@@ -134,7 +134,7 @@ The framework is described in more detail in the [Framework Overview](../archite
 architecture guide.
 
 ### Tiers
-While all bundles in a running Open MCT Web instance are effectively peers, it
+While all bundles in a running Open MCT instance are effectively peers, it
 is useful to think of them as a tiered architecture, where each tier adds more
 specificity to the application.
 ```nomnoml
@@ -152,7 +152,7 @@ It additionally interprets bundle definitions (see explanation below, as well as
 further detail in the Framework chapter.) At this tier, we are at our most
 general: We know only that we are a plugin-based application.
 * __Platform__: Components in the Platform tier describe both the general user
-interface and corresponding developer-facing interfaces of Open MCT Web. This
+interface and corresponding developer-facing interfaces of Open MCT. This
 tier provides the general infrastructure for applications. It is less general
 than the framework tier, insofar as this tier introduces a specific user
 interface paradigm, but it is still non-specific as to what useful features
@@ -160,7 +160,7 @@ will be provided. Although they can be removed or replaced easily, bundles
 provided by the Platform tier generally should not be thought of as optional.
 * __Application__: The application tier consists of components which utilize the
 infrastructure provided by the Platform to provide functionality which will (or
-could) be useful to specific applications built using Open MCT Web. These
+could) be useful to specific applications built using Open MCT. These
 include adapters to specific persistence back-ends (such as ElasticSearch or
 CouchDB) as well as bundles which describe more user-facing features (such as
 _Plot_ views for visualizing time series data, or _Layout_ objects for
@@ -169,20 +169,20 @@ compromising basic application functionality, with the caveat that at least one
 persistence adapter needs to be present.
 * __Plugins__: Conceptually, this tier is not so different from the application
 tier; it consists of bundles describing new features, back-end adapters, that
-are specific to the application being built on Open MCT Web. It is described as
+are specific to the application being built on Open MCT. It is described as
 a separate tier here because it has one important distinction from the
 application tier: It consists of bundles that are not included with the platform
 (either authored anew for the specific application, or obtained from elsewhere.)
 
 Note that bundles in any tier can go off and consult back-end services. In
 practice, this responsibility is handled at the Application and/or Plugin tiers;
-Open MCT Web is built to be server-agnostic, so any back-end is considered an
+Open MCT is built to be server-agnostic, so any back-end is considered an
 application-specific detail.
 
 ## Platform Overview
 
 The "tiered" architecture described in the preceding text describes a way of
-thinking of and categorizing software components of a Open MCT Web application,
+thinking of and categorizing software components of a Open MCT application,
 as well as the framework layer's role in mediating between these components.
 Once the framework layer has wired these software components together, however,
 the application's logical architecture emerges.
@@ -193,7 +193,7 @@ section of the Platform guide
 
 ### Web Services
 
-As mentioned in the Introduction, Open MCT Web is a platform single-page 
+As mentioned in the Introduction, Open MCT is a platform single-page 
 applications which runs entirely in the browser. Most applications will want to 
 additionally interact with server-side resources, to (for example) read 
 telemetry data or store user-created objects. This interaction is handled by 
@@ -206,7 +206,7 @@ individual bundles using APIs which are supported in browser (such as
 [Web Service #2] <- [Web Browser]
 [Web Service #3] <- [Web Browser]
 [<package> Web Browser |
-  [<package> Open MCT Web |
+  [<package> Open MCT |
     [Plugin Bundle #1]-->[Core API]
     [Core API]<--[Plugin Bundle #2]
     [Platform Bundle #1]-->[Core API]
@@ -216,16 +216,16 @@ individual bundles using APIs which are supported in browser (such as
     [Core API]<--[Platform Bundle #5]
     [Core API]<--[Plugin Bundle #3]
   ]
-  [Open MCT Web] ->[Browser APIs]
+  [Open MCT] ->[Browser APIs]
 ]
 ```
 
 This architectural approach ensures a loose coupling between applications built 
-using Open MCT Web and the backends which support them. 
+using Open MCT and the backends which support them. 
  
 ### Glossary 
  
-Certain terms are used throughout Open MCT Web with consistent meanings or 
+Certain terms are used throughout Open MCT with consistent meanings or 
 conventions. Other developer documentation, particularly in-line documentation, 
 may presume an understanding of these terms.
 
@@ -247,7 +247,7 @@ readable description of a thing; usually a single sentence or short paragraph.
 (Most often used in the context of extensions, domain object models, or other 
 similar application-specific objects.) 
 * __domain object__: A meaningful object to the user; a distinct thing in the 
-work support by Open MCT Web. Anything that appears in the left-hand tree is a 
+work support by Open MCT. Anything that appears in the left-hand tree is a 
 domain object. 
 * __extension__: An extension is a unit of functionality exposed to the platform 
 in a declarative fashion by a bundle. The term 'extension category' is used to 
@@ -279,10 +279,10 @@ side-by-side without conflicting.
 
 # Framework
   
-Open MCT Web is built on the [AngularJS framework]( http://www.angularjs.org ). A 
+Open MCT is built on the [AngularJS framework]( http://www.angularjs.org ). A 
 good understanding of that framework is recommended. 
 
-Open MCT Web adds an extra layer on top of AngularJS to (a) generalize its 
+Open MCT adds an extra layer on top of AngularJS to (a) generalize its 
 dependency injection mechanism slightly, particularly to handle many-to-one 
 relationships; and (b) handle script loading. Combined, these features become a 
 plugin mechanism. 
@@ -301,7 +301,7 @@ MCT Web.)
 are collected together in bundles, and may interact with other extensions. 
 
 The framework layer, loaded and initiated from `index.html`, is the main point 
-of entry for an application built on Open MCT Web. It is responsible for wiring 
+of entry for an application built on Open MCT. It is responsible for wiring 
 together the application at run time (much of this responsibility is actually 
 delegated to Angular); at a high-level, the framework does this by proceeding 
 through four stages:
@@ -321,7 +321,7 @@ have been registered.
 
 ## Bundles 
 
-The basic configurable unit of Open MCT Web is the _bundle_. This term has been 
+The basic configurable unit of Open MCT is the _bundle_. This term has been 
 used a bit already; now we'll get to a more formal definition. 
 
 A bundle is a directory which contains:
@@ -329,13 +329,13 @@ A bundle is a directory which contains:
 * A bundle definition; a file named `bundle.json`.
 * Subdirectories for sources, resources, and tests. 
 * Optionally, a `README.md` Markdown file describing its contents (this is not 
-used by Open MCT Web in any way, but it's a helpful convention to follow.)
+used by Open MCT in any way, but it's a helpful convention to follow.)
 
 The bundle definition is the main point of entry for the bundle. The framework 
 looks at this to determine which components need to be loaded and how they 
 interact.
 
-A plugin in Open MCT Web is a bundle. The platform itself is also decomposed 
+A plugin in Open MCT is a bundle. The platform itself is also decomposed 
 into bundles, each of which provides some category of functionality. The 
 difference between a _bundle_ and a _plugin_ is purely a matter of the intended 
 use; a plugin is just a bundle that is meant to be easily added or removed. When 
@@ -356,7 +356,7 @@ For instance, if `bundles.json` contained:
         "example/extensions" 
     ] 
    
-...then the Open MCT Web framework would look for bundle definitions at 
+...then the Open MCT framework would look for bundle definitions at 
 `example/builtins/bundle.json` and `example/extensions/bundle.json`, relative 
 to the path of `index.html`. No other bundles would be loaded.  
 
@@ -457,7 +457,7 @@ arrays of extension definitions.
 ### General Extensions 
 
 Extensions are intended as a general-purpose mechanism for adding new types of 
-functionality to Open MCT Web. 
+functionality to Open MCT. 
 
 An extension category is registered with Angular under the name of the 
 extension, plus a suffix of two square brackets; so, an Angular service (or, 
@@ -466,7 +466,7 @@ extensions, from all bundles, by including this string (e.g. `types[]` to get
 all type definitions) in a dependency declaration. 
 
 As a convention, extension categories are given single-word, plural nouns for 
-names within Open MCT Web (e.g. `types`.) This convention is not enforced by the 
+names within Open MCT (e.g. `types`.) This convention is not enforced by the 
 platform in any way. For extension categories introduced by external plugins, it 
 is recommended to prefix the extension category with a vendor identifier (or 
 similar) followed by a dot, to avoid collisions. 
@@ -505,7 +505,7 @@ the Angular-supported method for dependency injection is (effectively)
 constructor-style injection; so, both declared dependencies and run-time 
 arguments are competing for space in a constructor's arguments. 
 
-To resolve this, the Open MCT Web framework registers extension instances in a 
+To resolve this, the Open MCT framework registers extension instances in a 
 partially constructed form. That is, the constructor exposed by the extension's 
 implementation is effectively decomposed into two calls; the first takes the 
 dependencies, and returns the constructor in its second form, which takes the 
@@ -549,7 +549,7 @@ sorted according to these conventions when using them.
 ### Angular Built-ins 
 
 Several entities supported Angular are expressed and managed as extensions in 
-Open MCT Web. Specifically, these extension categories are _directives_, 
+Open MCT. Specifically, these extension categories are _directives_, 
 _controllers_, _services_, _constants_, _runs_, and _routes_. 
  
 #### Angular Directives
@@ -592,7 +592,7 @@ property value , which is the constant value that will be registered.
 In some cases, you want to register code to run as soon as the application 
 starts; these can be registered as extensions of the [ runs category](https://docs.angularjs.org/api/ng/type/angular.Module#run ). 
 Implementations registered in this category will be invoked (with their declared 
-dependencies) when the Open MCT Web application first starts. (Note that, in 
+dependencies) when the Open MCT application first starts. (Note that, in 
 this case, the implementation is better thought of as just a function, as 
 opposed to a constructor function.)
 
@@ -627,13 +627,13 @@ providers of the same service (that is, with matching `provides` properties);
 for a decorator, this will be whichever provider, decorator, or aggregator is 
 next in the sequence of decorators. 
 
-Services exposed by the Open MCT Web platform are often declared as composite 
+Services exposed by the Open MCT platform are often declared as composite 
 services, as this form is open for a variety of common modifications. 
 
 # Core API 
 
-Most of Open MCT Web's relevant API is provided and/or mediated by the 
-framework; that is, much of developing for Open MCT Web is a matter of adding 
+Most of Open MCT's relevant API is provided and/or mediated by the 
+framework; that is, much of developing for Open MCT is a matter of adding 
 extensions which access other parts of the platform by means of dependency 
 injection. 
 
@@ -642,9 +642,9 @@ to be passed along by other services.
 
 ## Domain Objects 
 
-Domain objects are the most fundamental component of Open MCT Web's information 
+Domain objects are the most fundamental component of Open MCT's information 
 model. A domain object is some distinct thing relevant to a user's work flow, 
-such as a telemetry channel, display, or similar. Open MCT Web is a tool for 
+such as a telemetry channel, display, or similar. Open MCT is a tool for 
 viewing, browsing, manipulating, and otherwise interacting with a graph of 
 domain objects. 
 
@@ -681,7 +681,7 @@ exposed.
 ### Identifier Syntax
 
 For most purposes, a domain object identifier can be treated as a purely
-symbolic string; these are typically generated by Open MCT Web and plug-ins
+symbolic string; these are typically generated by Open MCT and plug-ins
 should rarely be concerned with its internal structure.
 
 A domain object identifier has one or two parts, separated by a colon.
@@ -724,7 +724,7 @@ exposed it to be removed from its container.
 containing: 
     * `name`: Human-readable name.
     * `description`: Human-readable summary of this action. 
-    * `glyph`: Single character to be displayed in Open MCT Web's icon font set. 
+    * `glyph`: Single character to be displayed in Open MCT's icon font set. 
     * `context`: The context in which this action is being performed (see below)
 
 Action instances are typically obtained via a domain object's `action` 
@@ -740,7 +740,7 @@ dragged object in a drag-and-drop operation.)
 
 ## Telemetry 
 
-Telemetry series data in Open MCT Web is represented by a common interface, and 
+Telemetry series data in Open MCT is represented by a common interface, and 
 packaged in a consistent manner to facilitate passing telemetry updates around 
 multiple visualizations. 
  
@@ -753,7 +753,7 @@ is useful when multiple distinct data sources are in use side-by-side.
 * `key`: A machine-readable identifier for a unique series of telemetry within 
 that source. 
 * _Note: This API is still under development; additional properties, such as 
-start and end time, should be present in future versions of Open MCT Web._ 
+start and end time, should be present in future versions of Open MCT._ 
 
 Additional properties may be included in telemetry requests which have specific 
 interpretations for specific sources.
@@ -777,7 +777,7 @@ not. (Typically, domain values are interpreted as UTC timestamps in milliseconds
 relative to the UNIX epoch.) A series must have at least one domain and one 
 range, and may have more than one.
 
-Telemetry series data in Open MCT Web is expressed via the following 
+Telemetry series data in Open MCT is expressed via the following 
 `TelemetrySeries` interface: 
 
 * `getPointCount()`: Returns the number of unique points/samples in this series. 
@@ -816,7 +816,7 @@ interface:
 * `getName()`: Get the human-readable name for this type. 
 * `getDescription()`: Get a human-readable summary of this type. 
 * `getGlyph()`: Get the single character to be rendered as an icon for this type 
-in Open MCT Web's custom font set. 
+in Open MCT's custom font set. 
 * `getInitialModel()`: Get a domain object model that represents the initial 
 state (before user specification of properties) for domain objects of this type. 
 * `getDefinition()`: Get the extension definition for this type, as a JavaScript 
@@ -832,7 +832,7 @@ an array of `TypeProperty` instances.
 ### Type Features 
 
 Features of a domain object type are expressed as symbolic string identifiers. 
-They are defined in practice by usage; currently, the Open MCT Web platform only 
+They are defined in practice by usage; currently, the Open MCT platform only 
 uses the creation feature to determine which domain object types should appear 
 in the Create menu. 
  
@@ -886,7 +886,7 @@ Categories supported by the platform include:
 * `key`: A machine-readable identifier for this action. 
 * `name`: A human-readable name for this action (e.g. to show in a menu) 
 * `description`: A human-readable summary of the behavior of this action. 
-* `glyph`: A single character which will be rendered in Open MCT Web's custom 
+* `glyph`: A single character which will be rendered in Open MCT's custom 
 font set as an icon for this action.
 
 ## Capabilities Category
@@ -997,7 +997,7 @@ of unremoved listeners.
 ## Indicators Category
 
 An indicator is an element that should appear in the status area at the bottom 
-of a running Open MCT Web client instance. 
+of a running Open MCT client instance. 
 
 ### Standard Indicators 
  
@@ -1007,7 +1007,7 @@ provide implementations with the following methods:
 * `getText()`: Provides the human-readable text that will be displayed for this 
 indicator. 
 * `getGlyph()`: Provides a single-character string that will be displayed as an 
-icon in Open MCT Web's custom font set. 
+icon in Open MCT's custom font set. 
 * `getDescription()`: Provides a human-readable summary of the current state of 
 this indicator; will be displayed in a tooltip on hover. 
 * `getClass()`: Get a CSS class that will be applied to this indicator. 
@@ -1033,7 +1033,7 @@ this variety do not need to provide an implementation.
 ## Licenses Category
 
 The extension category `licenses` can be used to add entries into the 'Licensing 
-information' page, reachable from Open MCT Web's About dialog. 
+information' page, reachable from Open MCT's About dialog. 
 
 Licenses may have the following properties, all of which are strings:
 
@@ -1046,11 +1046,11 @@ Licenses may have the following properties, all of which are strings:
 
 ## Policies Category
 
-Policies are used to handle decisions made using Open MCT Web's `policyService`; 
+Policies are used to handle decisions made using Open MCT's `policyService`; 
 examples of these decisions are determining the applicability of certain 
 actions, or checking whether or not a domain object of one type can contain a 
 domain object of a different type. See the section on the Policies for an 
-overview of Open MCT Web's policy model.
+overview of Open MCT's policy model.
 
 A policy's extension definition should include:
 
@@ -1066,7 +1066,7 @@ context)`. The specific types used for `candidate` and `context` vary by policy
 category; in general, what is being asked is 'is this candidate allowed in this 
 context?' This method should return a boolean value. 
 
-Open MCT Web's policy model requires consensus; a policy decision is allowed 
+Open MCT's policy model requires consensus; a policy decision is allowed 
 when and only when all policies choose to allow it. As such, policies should 
 generally be written to reject a certain case, and allow (by returning `true`) 
 anything else. 
@@ -1195,7 +1195,7 @@ Templates do not have implementations.
 ## Types Category
 
 The types extension category describes types of domain objects which may 
-appear within Open MCT Web.
+appear within Open MCT.
 
 A type's extension definition should have the following properties:
 
@@ -1203,7 +1203,7 @@ A type's extension definition should have the following properties:
 stored to and matched against the type property of domain object models.
 * `name`: The human-readable name for this domain object type.
 * `description`: A human-readable summary of this domain object type.
-* `glyph`: A single character to be rendered as an icon in Open MCT Web's custom 
+* `glyph`: A single character to be rendered as an icon in Open MCT's custom 
 font set. 
 * `model`: A domain object model, used as the initial state for created domain 
 objects of this type (before any properties are specified.)
@@ -1252,7 +1252,7 @@ utilized via `mct-representation`); additionally:
 
 * `name`: The human-readable name for this view type.
 * description : A human-readable summary of this view type.
-* `glyph`: A single character to be rendered as an icon in Open MCT Web's custom 
+* `glyph`: A single character to be rendered as an icon in Open MCT's custom 
 font set.
 * `type`: Optional; if present, this representation is only applicable for 
 domain object's of this type.
@@ -1294,7 +1294,7 @@ are visible, and what state they manage and/or behavior they invoke.
 
 This set may contain up to two different objects: The  _view proxy_, which is 
 used to make changes to the view as a whole, and the _selected object_, which is 
-used to represent some state within the view. (Future versions of Open MCT Web 
+used to represent some state within the view. (Future versions of Open MCT 
 may support multiple selected objects.) 
 
 The `selection` object made available during Edit mode has the following 
@@ -1330,14 +1330,14 @@ are supported:
 
 # Directives
 
-Open MCT Web defines several Angular directives that are intended for use both 
+Open MCT defines several Angular directives that are intended for use both 
 internally within the platform, and by plugins. 
 
 ## Before Unload 
 
 The `mct-before-unload` directive is used to listen for (and prompt for user 
 confirmation) of navigation changes in the browser. This includes reloading, 
-following links out of Open MCT Web, or changing routes. It is used to hook into 
+following links out of Open MCT, or changing routes. It is used to hook into 
 both `onbeforeunload` event handling as well as route changes from within 
 Angular.
 
@@ -1449,7 +1449,7 @@ Passed as plain text in the attribute.
 
 ### Form Structure 
 
-Forms in Open MCT Web have a common structure to permit consistent display. A 
+Forms in Open MCT have a common structure to permit consistent display. A 
 form is broken down into sections, which will be displayed in groups; each 
 section is broken down into rows, each of which provides a control for a single 
 property. Input from this form is two-way bound to the object passed via 
@@ -1658,7 +1658,7 @@ by scrolling to the bottom of the table rows.
 
 # Services 
 
-The Open MCT Web platform provides a variety of services which can be retrieved 
+The Open MCT platform provides a variety of services which can be retrieved 
 and utilized via dependency injection. These services fall into two categories: 
 
 * _Composite Services_ are defined by a set of components extensions; plugins may 
@@ -1670,7 +1670,7 @@ utilized by plugins but are not intended to be modified or augmented.
 
 ## Composite Type Services
 
-This section describes the composite services exposed by Open MCT Web, 
+This section describes the composite services exposed by Open MCT, 
 specifically focusing on their interface and contract. 
     
 In many cases, the platform will include a provider for a service which consumes 
@@ -1988,7 +1988,7 @@ The `workerService` may be used to run web workers defined via the
   as a shared worker); if the `key` is unknown, returns `undefined`.
 
 # Models
-Domain object models in Open MCT Web are JavaScript objects describing the 
+Domain object models in Open MCT are JavaScript objects describing the 
 persistent state of the domain objects they describe. Their contents include a 
 mix of commonly understood metadata attributes; attributes which are recognized 
 by and/or determine the applicability of specific extensions; and properties 
@@ -2004,7 +2004,7 @@ MCT Web and can be utilized directly:
 ## Extension-specific Properties 
 
 Other properties of domain object models have specific meaning imposed by other 
-extensions within the Open MCT Web platform. 
+extensions within the Open MCT platform. 
 
 ### Capability-specific Properties 
 
@@ -2288,7 +2288,7 @@ way of its `composition` capability.)
 
 # Policies
 
-Policies are consulted to determine when certain behavior in Open MCT Web is 
+Policies are consulted to determine when certain behavior in Open MCT is 
 allowed. Policy questions are assigned to certain categories, which broadly 
 describe the type of decision being made; within each category, policies have a 
 candidate (the thing which may or may not be allowed) and, optionally, a context 
@@ -2313,13 +2313,13 @@ The candidate argument is the view's extension definition; the context argument
 is the `DomainObject` to be viewed.
 
 # Build-Test-Deploy
-Open MCT Web is designed to support a broad variety of build and deployment 
+Open MCT is designed to support a broad variety of build and deployment 
 options. The sources can be deployed in the same directory structure used during 
 development. A few utilities are included to support development processes.
 
 ## Command-line Build
 
-Open MCT Web is built using [`npm`](http://npmjs.com/)
+Open MCT is built using [`npm`](http://npmjs.com/)
 and [`gulp`](http://gulpjs.com/).
 
 To install build dependencies (only needs to be run once):
@@ -2331,12 +2331,12 @@ To build:
 `npm run prepublish`
 
 This will compile and minify JavaScript sources, as well as copy over assets.
-The contents of the `dist` folder will contain a runnable Open MCT Web
+The contents of the `dist` folder will contain a runnable Open MCT
 instance (e.g. by starting an HTTP server in that directory), including:
 
-* A `main.js` file containing Open MCT Web source code.
+* A `main.js` file containing Open MCT source code.
 * Various assets in the `example` and `platform` directories.
-* An `index.html` that runs Open MCT Web in its default configuration.
+* An `index.html` that runs Open MCT in its default configuration.
 
 Additional `gulp` tasks are defined in [the gulpfile](gulpfile.js).
 
@@ -2345,7 +2345,7 @@ download build dependencies.
 
 ## Test Suite
 
-Open MCT Web uses [Jasmine 1.3](http://jasmine.github.io/) and
+Open MCT uses [Jasmine 1.3](http://jasmine.github.io/) and
 [Karma](http://karma-runner.github.io) for automated testing.
 
 The test suite is configured to load any scripts ending with `Spec.js` found
@@ -2383,8 +2383,8 @@ information using [Blanket.JS](http://blanketjs.org/) and display this at the
 bottom of the screen. Currently, only statement coverage is displayed.
 
 ## Deployment
-Open MCT Web is built to be flexible in terms of the deployment strategies it 
-supports. In order to run in the browser, Open MCT Web needs:
+Open MCT is built to be flexible in terms of the deployment strategies it 
+supports. In order to run in the browser, Open MCT needs:
 
 1. HTTP access to sources/resources for the framework, platform, and all active 
 bundles.
@@ -2393,13 +2393,13 @@ external services need to support HTTP or some other web-accessible interface,
 like WebSockets.)
 
 Any HTTP server capable of serving flat files is sufficient for the first point. 
-The command-line build also packages Open MCT Web into a `.war` file for easier 
+The command-line build also packages Open MCT into a `.war` file for easier 
 deployment on containers such as Apache Tomcat.
 
 The second point may be less flexible, as it depends upon the specific services 
-to be utilized by Open MCT Web. Because of this, it is often the set of external 
+to be utilized by Open MCT. Because of this, it is often the set of external 
 services (and the manner in which they are exposed) that determine how to deploy 
-Open MCT Web.
+Open MCT.
 
 One important constraint to consider in this context is the browser's same 
 origin policy. If external services are not on the same apparent host and port 
@@ -2416,7 +2416,7 @@ configuration does not create a security vulnerability.
 Examples of deployment strategies (and the conditions under which they make the 
 most sense) include:
 
-* If the external services that Open MCT Web will utilize are all running on 
+* If the external services that Open MCT will utilize are all running on 
 [Apache Tomcat](https://tomcat.apache.org/), then it makes sense to run Open 
 MCT Web from the same Tomcat instance as a separate web application. The 
 `.war` artifact produced by the command line build facilitates this deployment 
@@ -2427,28 +2427,28 @@ hosts/ports, then it may make sense to use a web server that supports proxying,
 such as the [Apache HTTP Server](http://httpd.apache.org/). In this 
 configuration, the HTTP server would be configured to proxy (or reverse proxy) 
 requests at specific paths to the various external services, while providing 
-Open MCT Web as flat files from a different path.
+Open MCT as flat files from a different path.
 * If a single server component is being developed to handle all server-side 
-needs of an Open MCT Web instance, it can make sense to serve Open MCT Web (as 
+needs of an Open MCT instance, it can make sense to serve Open MCT (as 
 flat files) from the same component using an embedded HTTP server such as 
 [Nancy](http://nancyfx.org/).
 * If no external services are needed (or if the 'external services' will just 
 be generating flat files to read) it makes sense to utilize a lightweight flat 
 file HTTP server such as [Lighttpd](http://www.lighttpd.net/). In this 
-configuration, Open MCT Web sources/resources would be placed at one path, while 
+configuration, Open MCT sources/resources would be placed at one path, while 
 the files generated by the external service are placed at another path.
 * If all external services support CORS, it may make sense to have an HTTP 
-server that is solely responsible for making Open MCT Web sources/resources 
-available, and to have Open MCT Web contact these external services directly. 
+server that is solely responsible for making Open MCT sources/resources 
+available, and to have Open MCT contact these external services directly. 
 Again, lightweight HTTP servers such as [Lighttpd](http://www.lighttpd.net/) 
 are useful in this circumstance. The downside of this option is that additional 
 configuration effort is required, both to enable CORS on the external services, 
-and to ensure that Open MCT Web can correctly locate these services.
+and to ensure that Open MCT can correctly locate these services.
 
-Another important consideration is authentication. By design, Open MCT Web does 
+Another important consideration is authentication. By design, Open MCT does 
 not handle user authentication. Instead, this should typically be treated as a 
 deployment-time concern, where authentication is handled by the HTTP server 
-which provides Open MCT Web, or an external access management system.
+which provides Open MCT, or an external access management system.
 
 ### Configuration
 In most of the deployment options above, some level of configuration is likely 
@@ -2456,7 +2456,7 @@ to be needed or desirable to make sure that bundles can reach the external
 services they need to reach. Most commonly this means providing the path or URL 
 to an external service.
 
-Configurable parameters within Open MCT Web are specified via constants 
+Configurable parameters within Open MCT are specified via constants 
 (literally, as extensions of the `constants` category) and accessed via 
 dependency injection by the scripts which need them. Reasonable defaults for 
 these constants are provided in the bundle where they are used. Plugins are 
@@ -2475,7 +2475,7 @@ for error, but is viable if there are a small number of constants to change.
 constants. This is particularly appropriate when multiple configurations (e.g. 
 development, test, production) need to be managed easily; these can be swapped 
 quickly by changing the set of active bundles in bundles.json.
-* Deploy Open MCT Web and its external services in such a fashion that the 
+* Deploy Open MCT and its external services in such a fashion that the 
 default paths to reach external services are all correct.
 
 ### Configuration Constants
@@ -2486,7 +2486,7 @@ The following constants have global significance:
   to be overridden by other bundles, but persistence adapters may wish to
   consume this constant in order to provide persistence for that space.
 
-The following configuration constants are recognized by Open MCT Web bundles:
+The following configuration constants are recognized by Open MCT bundles:
 * Common UI elements - `platform/commonUI/general`
     * `THEME`: A string identifying the current theme symbolically. Individual
     stylesheets (the `stylesheets` extension category) may specify an optional

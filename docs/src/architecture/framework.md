@@ -5,7 +5,7 @@ software components to communicate. The software components it recognizes
 are:
 
 * _Extensions_: Individual units of functionality that can be added to
-  or removed from Open MCT Web. _Extension categories_ distinguish what
+  or removed from Open MCT. _Extension categories_ distinguish what
   type of functionality is being added/removed.
 * _Bundles_: A grouping of related extensions
   (named after an analogous concept from [OSGi](http://www.osgi.org/))
@@ -19,7 +19,7 @@ manner which the framework layer can understand.
 
 ```nomnoml
 #direction: down
-[Open MCT Web|
+[Open MCT|
   [Dependency injection framework]-->[Platform bundle #1]
   [Dependency injection framework]-->[Platform bundle #2]
   [Dependency injection framework]-->[Plugin bundle #1]
@@ -35,7 +35,7 @@ manner which the framework layer can understand.
 ```
 
 The "dependency injection framework" in this case is
-[AngularJS](https://angularjs.org/). Open MCT Web's framework layer
+[AngularJS](https://angularjs.org/). Open MCT's framework layer
 is really just a thin wrapper over Angular that recognizes the
 concepts of bundles and extensions (as declared in JSON files) and
 registering extensions with Angular. It additionally acts as a
@@ -60,7 +60,7 @@ activities which were performed by the framework component.
 
 ## Application Initialization
 
-The framework component initializes an Open MCT Web application following
+The framework component initializes an Open MCT application following
 a simple sequence of steps.
 
 ```nomnoml
@@ -97,7 +97,7 @@ a simple sequence of steps.
 [Extension]o->[Dependency #3]
 ```
 
-Open MCT Web's architecture relies on a simple premise: Individual units
+Open MCT's architecture relies on a simple premise: Individual units
 (extensions) only have access to the dependencies they declare that they
 need, and they acquire references to these dependencies via dependency
 injection. This has several desirable traits:
@@ -121,11 +121,11 @@ injection. This has several desirable traits:
   the framework.
 
 A drawback to this approach is that it makes it difficult to define
-"the architecture" of Open MCT Web, in terms of describing the specific
+"the architecture" of Open MCT, in terms of describing the specific
 units that interact at run-time. The run-time architecture is determined
 by the framework as the consequence of wiring together dependencies.
 As such, the specific architecture of any given application built on
-Open MCT Web can look very different.
+Open MCT can look very different.
 
 Keeping that in mind, there are a few useful patterns supported by the
 framework that are useful to keep in mind.
