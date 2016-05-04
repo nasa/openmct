@@ -34,17 +34,28 @@
 }
 .mct-table {
     table-layout: fixed;
-    th {
-        box-sizing: border-box;
+    thead {
+        display: block;
+        tr {
+            display: block;
+            white-space: nowrap;
+            th {
+                display: inline-block;
+                box-sizing: border-box;
+            }
+        }
     }
     tbody {
         tr {
             position: absolute;
+            white-space: nowrap;
+            display: block;
         }
         td {
             white-space: nowrap;
             overflow: hidden;
             box-sizing: border-box;
+            display: inline-block;
         }
     }
 }
