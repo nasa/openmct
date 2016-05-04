@@ -1,4 +1,4 @@
-# Open MCTDocumentation
+# Open MCT Documentation
 
 ## Overview
 
