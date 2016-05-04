@@ -1,6 +1,6 @@
-# Contributing to Open MCT Web
+# Contributing to Open MCT
 
-This document describes the process of contributing to Open MCT Web as well
+This document describes the process of contributing to Open MCT as well
 as the standards that will be applied when evaluating contributions.
 
 Please be aware that additional agreements will be necessary before we can
@@ -21,9 +21,9 @@ The short version:
 
 ## Contribution Process
 
-Open MCT Web uses git for software version control, and for branching and
+Open MCT uses git for software version control, and for branching and
 merging. The central repository is at
-https://github.com/nasa/openmctweb.git.
+https://github.com/nasa/openmct.git.
 
 ### Roles
 
@@ -116,18 +116,18 @@ the merge back to the master branch.
 
 ## Standards
 
-Contributions to Open MCT Web are expected to meet the following standards.
+Contributions to Open MCT are expected to meet the following standards.
 In addition, reviewers should use general discretion before accepting
 changes.
 
 ### Code Standards
 
-JavaScript sources in Open MCT Web must satisfy JSLint under its default
+JavaScript sources in Open MCT must satisfy JSLint under its default
 settings. This is verified by the command line build.
 
 #### Code Guidelines
 
-JavaScript sources in Open MCT Web should:
+JavaScript sources in Open MCT should:
 
 * Use four spaces for indentation. Tabs should not be used.
 * Include JSDoc for any exposed API (e.g. public methods, constructors.)
@@ -159,7 +159,7 @@ JavaScript sources in Open MCT Web should:
   * Third, imperative statements.
   * Finally, the returned value.
 
-Deviations from Open MCT Web code style guidelines require two-party agreement,
+Deviations from Open MCT code style guidelines require two-party agreement,
 typically from the author of the change and its reviewer.
 
 #### Code Example
@@ -260,7 +260,7 @@ these standards.
 
 ## Issue Reporting
 
-Issues are tracked at https://github.com/nasa/openmctweb/issues
+Issues are tracked at https://github.com/nasa/openmct/issues
 
 Issues should include:
 

@@ -1,5 +1,5 @@
 {
-  "name": "openmctweb",
+  "name": "openmct",
   "version": "0.10.1-SNAPSHOT",
   "description": "The Open MCT core platform",
   "dependencies": {
@@ -53,7 +53,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nasa/openmctweb.git"
+    "url": "https://github.com/nasa/openmct.git"
   },
   "author": "",
   "license": "Apache-2.0",
