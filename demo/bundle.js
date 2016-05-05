@@ -27,7 +27,9 @@ define([
     "./src/conductor/ConductorServiceDecorator",
     "./src/telemetry/DemoTelemetryProvider",
     "./src/DemoModelProvider",
+    "./src/policies/CollectionViewPolicy",
     'text!./res/image-template.html',
+    "text!../platform/commonUI/browse/res/templates/items/items.html",
     'legacyRegistry'
 ], function (
     DemoConductorRepresenter,
@@ -35,7 +37,9 @@ define([
     ConductorServiceDecorator,
     DemoTelemetryProvider,
     DemoModelProvider,
+    CollectionViewPolicy,
     ImageTemplate,
+    ItemsTemplate,
     legacyRegistry
 ) {
     "use strict";
@@ -85,7 +89,7 @@ define([
                 {
                     "id":"demo:realtime",
                     "model": {
-                        "type":"demo.collection",
+                        "type":"collection",
                         "name": "Real-time Telemetry",
                         "composition": [
                             "be3d5df3-cc6e-4b8b-9865-fcd844e55b94",
@@ -168,8 +172,11 @@ define([
                 },
                 {
                     "name": "Collection",
-                    "key": "demo.collection",
+                    "key": "collection",
                     "glyph": "o",
+                    "views": [
+                        "collection-view"
+                    ],
                     "model": {"composition": []}
                 }
             ],
@@ -205,6 +212,12 @@ define([
                     "comment": "1 minute."
                 }
             ],
+            "policies": [
+                {
+                    "category": "view",
+                    "implementation": CollectionViewPolicy
+                }
+            ],
             "views": [
                 {
                     "template": ImageTemplate,
@@ -212,6 +225,18 @@ define([
                     "type": "image-include",
                     "key": "image-view",
                     "editable": false
+                },
+                {
+                    "key": "collection-view",
+                    "name": "collection",
+                    "glyph": "9",
+                    "description": "Grid of available items",
+                    "template": ItemsTemplate,
+                    "uses": [
+                        "composition"
+                    ],
+                    "editable": false
+
                 }
             ]
         }
