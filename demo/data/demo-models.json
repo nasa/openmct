@@ -106,7 +106,7 @@
             "329bf4c5-2f1a-4ce6-9a4d-18610c145f44"
         ],
         "name": "Rover Subsystems",
-        "type": "demo.collection",
+        "type": "collection",
         "modified": 1459890405689,
         "location": "demo:realtime",
         "persisted": 1459890405689
@@ -209,7 +209,7 @@
             "dfac7fe1-c8ee-4534-988d-af22a2e67a70"
         ],
         "name": "Thermal",
-        "type": "demo.collection",
+        "type": "collection",
         "modified": 1459890428668,
         "location": "be3d5df3-cc6e-4b8b-9865-fcd844e55b94",
         "persisted": 1459890428668
@@ -224,7 +224,7 @@
             "dd39ba74-f1d1-4a63-8ac2-5e4194667e38"
         ],
         "name": "Power",
-        "type": "demo.collection",
+        "type": "collection",
         "modified": 1459890477967,
         "location": "be3d5df3-cc6e-4b8b-9865-fcd844e55b94",
         "persisted": 1459890477967
@@ -235,7 +235,7 @@
             "eb70c9e8-6671-4981-94fc-bf30ef8e86ae"
         ],
         "name": "Flight Computer",
-        "type": "demo.collection",
+        "type": "collection",
         "modified": 1459985915700,
         "location": "be3d5df3-cc6e-4b8b-9865-fcd844e55b94",
         "persisted": 1459985915700
@@ -266,7 +266,7 @@
             "b8858147-8e4f-4249-badb-b4031dba90f9"
         ],
         "name": "Rover Imagery",
-        "type": "demo.collection",
+        "type": "collection",
         "modified": 1459972004430,
         "location": "demo:realtime",
         "persisted": 1459972004430
