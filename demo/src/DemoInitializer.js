@@ -19,43 +19,15 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-.sizing-table {
-    min-width: 100%;
-    z-index: -1;
-    visibility: hidden;
-    position: absolute;
+/*global define*/
 
-    //Add some padding to allow for decorations such as limits indicator
-    td {
-        padding-right: 15px;
-        padding-left: 10px;
-        white-space: nowrap;
-    }
-}
-.mct-table {
-    table-layout: fixed;
-    thead {
-        display: block;
-        tr {
-            display: block;
-            white-space: nowrap;
-            th {
-                display: inline-block;
-                box-sizing: border-box;
-            }
+define(
+    function (){
+        "use strict";
+
+        function DemoInitializer(conductorService) {
+            conductorService.getConductor().displayStart(Date.UTC(2012,8,7));
         }
+        return DemoInitializer;
     }
-    tbody {
-        tr {
-            position: absolute;
-            white-space: nowrap;
-            display: block;
-        }
-        td {
-            white-space: nowrap;
-            overflow: hidden;
-            box-sizing: border-box;
-            display: inline-block;
-        }
-    }
-}
+);

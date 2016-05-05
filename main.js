@@ -80,6 +80,7 @@ define([
     './platform/features/plot/bundle',
     './platform/features/timeline/bundle',
     './platform/features/table/bundle',
+    './platform/features/conductor/bundle',
     './platform/forms/bundle',
     './platform/identity/bundle',
     './platform/persistence/aggregator/bundle',

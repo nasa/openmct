@@ -19,43 +19,39 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-.sizing-table {
-    min-width: 100%;
-    z-index: -1;
-    visibility: hidden;
-    position: absolute;
+/*global define*/
 
-    //Add some padding to allow for decorations such as limits indicator
-    td {
-        padding-right: 15px;
-        padding-left: 10px;
-        white-space: nowrap;
-    }
-}
-.mct-table {
-    table-layout: fixed;
-    thead {
-        display: block;
-        tr {
-            display: block;
-            white-space: nowrap;
-            th {
-                display: inline-block;
-                box-sizing: border-box;
-            }
+define([
+    "./src/DemoConductorRepresenter",
+    "./src/DemoInitializer",
+    "./src/ConductorServiceDecorator",
+    'legacyRegistry'
+], function (
+    DemoConductorRepresenter,
+    DemoInitializer,
+    ConductorServiceDecorator,
+    legacyRegistry
+) {
+    "use strict";
+
+    legacyRegistry.register("demo", {
+        "name": "Live Demo configuration",
+        "description": "Adds demo data types, and demo-specific behavior",
+        "extensions": {
+            "representers": [
+                {
+                    "implementation": DemoConductorRepresenter,
+                    "depends": ["$q", "views[]"],
+                    "priority": "fallback"
+                }
+            ],
+            "components": [
+                {
+                    "implementation": ConductorServiceDecorator,
+                    "provides": "conductorService",
+                    "type": "decorator"
+                }
+            ]
         }
-    }
-    tbody {
-        tr {
-            position: absolute;
-            white-space: nowrap;
-            display: block;
-        }
-        td {
-            white-space: nowrap;
-            overflow: hidden;
-            box-sizing: border-box;
-            display: inline-block;
-        }
-    }
-}
+    });
+});
