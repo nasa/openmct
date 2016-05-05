@@ -4,7 +4,7 @@
 
 This document is intended to be used:
 
-* By testers, to verify that Open MCT Web behaves as specified.
+* By testers, to verify that Open MCT behaves as specified.
 * By the development team, to document new test cases and to provide
   guidance on how to author these.
 
@@ -62,7 +62,7 @@ Test cases should be narrow in scope; if a list of steps is excessively
 long (or must be written vaguely to be kept short) it should be broken
 down into multiple tests which reference one another.
 
-All requirements satisfied by Open MCT Web should be verifiable using
+All requirements satisfied by Open MCT should be verifiable using
 one or more test procedures.
 
 ## Glossary

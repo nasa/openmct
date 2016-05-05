@@ -1,10 +1,10 @@
 {
-  "name": "openmctweb",
-  "description": "The OpenMCTWeb core platform",
+  "name": "openmct",
+  "description": "The Open MCT core platform",
   "main": "",
   "license": "Apache-2.0",
   "moduleType": [],
-  "homepage": "http://nasa.github.io/openmctweb/",
+  "homepage": "http://nasa.github.io/openmct/",
   "private": true,
   "dependencies": {
     "angular": "1.4.4",
