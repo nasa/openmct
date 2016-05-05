@@ -110,7 +110,7 @@ define(
                             },
                             {
                                 title: "Inspection Pane",
-                                content: "This pane shows useful information about the currently selected item. You can hide this pane by clicking its 'X' icon to the right.",
+                                content: "This pane shows useful information about the currently selected item.",
                                 target: ".split-pane-component.t-inspect",
                                 placement: "left"
                             },
@@ -123,7 +123,7 @@ define(
                             },
                             {
                                 title: "Editing",
-                                content: "This part of the tour will step you through editing an object. Anything you change won’t be persisted, so don’t refresh your browser. Click 'Next' to continue.",
+                                content: "This part of the tour will step you through editing an object. Click 'Next' to continue.",
                                 target: ".user-environ",
                                 placement: "top",
                                 xOffset: "center",
@@ -132,7 +132,7 @@ define(
                             },
                             {
                                 title: "Select Object to Edit",
-                                content: "Expand the 'Examples' folder and click on the 'Edit Display Layout Example' object.",
+                                content: "Expand the 'My Items' folder and click on the 'Edit Display Layout Example' object.",
                                 target: "mct-tree ul.tree",
                                 placement: "right",
                                 yOffset: "20px"
@@ -141,7 +141,7 @@ define(
                                 title: "Edit Button",
                                 content: "<b>Click this button now</b> to begin editing the current object, or click 'Next' to continue.",
                                 target: ".object-browse-bar .btn-bar",
-                                placement: "left",
+                                placement: "bottom",
                                 width: "200px",
                                 xOffset: "-20px",
                                 nextOnTargetClick: true
@@ -159,8 +159,8 @@ define(
                             {
                                 title: "Adding an Object",
                                 content: "Let’s add a telemetry element into our" +
-                                " layout. Expand 'Real-time telemetry'," +
-                                " 'Composites', and then drag 'Thermal Panel'" +
+                                " layout. Expand 'Real-time Plots'," +
+                                " and then drag 'Thermal Panel'" +
                                 " into the empty space in the example layout," +
                                 " Click 'Next' to continue.",
                                 target: "mct-tree ul.tree",
@@ -194,7 +194,8 @@ define(
                             },
                             {
                                 title: "Object Types",
-                                content: "Try experimenting creating different object types, and adding objects to them by dragging them from the tree. Only certain types of objects can be dragged into a given object type - if a type of object can’t be added, it simply won’t. ",
+                                content: "Try experimenting by creating" +
+                                " different object types, and adding objects to them by dragging them from the tree. Only certain types of objects can be dragged into a given object type - if a type of object can’t be added, it simply won’t. ",
                                 target: ".user-environ",
                                 placement: "top",
                                 xOffset: "center",
