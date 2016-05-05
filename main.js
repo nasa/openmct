@@ -34,7 +34,9 @@ requirejs.config({
         "screenfull": "bower_components/screenfull/dist/screenfull.min",
         "text": "bower_components/text/text",
         "uuid": "bower_components/node-uuid/uuid",
-        "zepto": "bower_components/zepto/zepto.min"
+        "zepto": "bower_components/zepto/zepto.min",
+        "eventemitter2": "bower_components/eventemitter2/lib/eventemitter2",
+        "lodash": "bower_components/lodash/lodash.min"
     },
     "shim": {
         "angular": {
@@ -90,6 +92,7 @@ define([
     './platform/search/bundle',
     './platform/status/bundle',
     './platform/commonUI/regions/bundle',
+    './platform/telemetry-api/bundle',
 
     './example/imagery/bundle',
     './example/eventGenerator/bundle',
