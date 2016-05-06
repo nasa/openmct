@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
+/*global define*/
 
 /**
  * Module defining DomainColumn. Created by vwoeltje on 11/18/14.
@@ -41,24 +41,23 @@ define(
          * @param {TelemetryFormatter} telemetryFormatter the telemetry
          *        formatting service, for making values human-readable.
          */
-        function RangeColumn(rangeMetadata, telemetryFormatter) {
-            this.rangeMetadata = rangeMetadata;
-            this.telemetryFormatter = telemetryFormatter;
+        function RangeColumn(columnMetadata) {
+            this.title = columnMetadata.name || '';
+            this.key = columnMetadata.key;
         }
 
         RangeColumn.prototype.getTitle = function () {
-            return this.rangeMetadata.name;
+            return this.title;
         };
 
         RangeColumn.prototype.getValue = function (domainObject, datum) {
-            var range = this.rangeMetadata.key,
-                limit = domainObject.getCapability('limit'),
-                value = isNaN(datum[range]) ? datum[range] : parseFloat(datum[range]),
-                alarm = limit && limit.evaluate(datum, range);
+            var formatter = MCT.telemetry.Formatter(domainObject),
+                evaluator = MCT.telemetry.LimitEvaluator(domainObject),
+                alarm = evaluator.evaluate(datum, this.key);
 
             return {
                 cssClass: alarm && alarm.cssClass,
-                text: typeof(value) === 'undefined' ? undefined : this.telemetryFormatter.formatRangeValue(value)
+                text: formatter.format(datum, this.key)
             };
         };
 

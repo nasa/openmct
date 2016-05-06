@@ -19,15 +19,14 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,moment*/
+/*global define*/
 
 define(
     [
-        './DomainColumn',
         './RangeColumn',
         './NameColumn'
     ],
-    function (DomainColumn, RangeColumn, NameColumn) {
+    function (RangeColumn, NameColumn) {
         "use strict";
 
         /**
@@ -36,10 +35,9 @@ define(
          * @param domainObject
          * @constructor
          */
-        function TableConfiguration(domainObject, telemetryFormatter) {
+        function TableConfiguration(domainObject) {
             this.domainObject = domainObject;
             this.columns = [];
-            this.telemetryFormatter = telemetryFormatter;
         }
 
         /**
@@ -57,7 +55,7 @@ define(
                 metadata.forEach(function (metadatum) {
                     //Push domains first
                     (metadatum.domains || []).forEach(function (domainMetadata) {
-                        self.addColumn(new DomainColumn(domainMetadata,
+                        self.addColumn(new RangeColumn(domainMetadata,
                             self.telemetryFormatter));
                     });
                     (metadatum.ranges || []).forEach(function (rangeMetadata) {
@@ -75,7 +73,7 @@ define(
 
         /**
          * Add a column definition to this Table
-         * @param {RangeColumn | DomainColumn | NameColumn} column
+         * @param {RangeColumn | NameColumn} column
          * @param {Number} [index] Where the column should appear (will be
          * affected by column filtering)
          */
@@ -88,24 +86,23 @@ define(
         };
 
         /**
-         * @private
-         * @param column
-         * @returns {*|string}
-         */
-        TableConfiguration.prototype.getColumnTitle = function (column) {
-                return column.getTitle();
-        };
-
-        /**
          * Get a simple list of column titles
          * @returns {Array} The titles of the columns
          */
         TableConfiguration.prototype.getHeaders = function () {
-            var self = this;
-            return this.columns.map(function (column, i){
-                return self.getColumnTitle(column) || 'Column ' + (i + 1);
-            });
+            return this.columns.map(this.getColumnTitle, this);
         };
+
+         /**
+         * @private
+         * @param column
+         * @param i column index
+         * @returns {*|string}
+         */
+        TableConfiguration.prototype.getColumnTitle = function (column, i) {
+            return column.getTitle() || 'Column ' + (i + 1);
+        };
+
 
         /**
          * Retrieve and format values for a given telemetry datum.
@@ -116,24 +113,13 @@ define(
          * title, and the value is the formatted value from the provided datum.
          */
         TableConfiguration.prototype.getRowValues = function (telemetryObject, datum) {
-            var self = this;
-            return this.columns.reduce(function (rowObject, column, i){
-                var columnTitle = self.getColumnTitle(column) || 'Column ' + (i + 1),
+            return this.columns.reduce(function (row, column, i){
+                var columnTitle = this.getColumnTitle(column, i),
                     columnValue = column.getValue(telemetryObject, datum);
 
-                if (columnValue !== undefined && columnValue.text === undefined){
-                    columnValue.text = '';
-                }
-                // Don't replace something with nothing.
-                // This occurs when there are multiple columns with the
-                // column title
-                if (rowObject[columnTitle] === undefined ||
-                    rowObject[columnTitle].text === undefined ||
-                    rowObject[columnTitle].text.length === 0) {
-                    rowObject[columnTitle] = columnValue;
-                }
-                return rowObject;
-            }, {});
+                row[columnTitle] = columnValue;
+                return row;
+            }.bind(this), {});
         };
 
         /**
