@@ -70,6 +70,22 @@ define(
                 return Math[range]((i + offset) * Math.PI * 2 / period);
             };
 
+            generatorData.getData = function () {
+                var i,
+                    pointCount = generatorData.getPointCount(),
+                    data = [];
+                for (i = 1; i < pointCount; i++) {
+                    data.push({
+                        sin: generatorData.getRangeValue(i, 'sin'),
+                        cos: generatorData.getRangeValue(i, 'cos'),
+                        time: generatorData.getDomainValue(i, 'time'),
+                        yesterday: generatorData.getDomainValue(i, 'yesterday'),
+                        delta: generatorData.getDomainValue(i, 'delta')
+                    });
+                }
+                return data;
+            };
+
             return generatorData;
         }
 

@@ -22,7 +22,7 @@
 /*global define*/
 
 define([
-    'TelemetryAPI',
+    './TelemetryAPI',
     'legacyRegistry'
 ], function (
     TelemetryAPI,
@@ -32,11 +32,24 @@ define([
         name: 'Telemetry API',
         description: 'The public telemetry api',
         extensions: {
-            services: [
+            runs: [
                 {
                     key: "TelemetryAPI",
                     implementation: TelemetryAPI,
-                    depends: []
+                    depends: [
+                        'formatService'
+                    ]
+                },
+                {
+                    key: "objectexposer",
+                    implementation: function (objectService) {
+                        console.log('running!', arguments);
+                        window.MCT = window.MCT || {};
+                        window.MCT.objects = objectService;
+                    },
+                    depends: [
+                        'objectService'
+                    ]
                 }
             ]
         }

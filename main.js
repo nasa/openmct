@@ -36,7 +36,7 @@ requirejs.config({
         "uuid": "bower_components/node-uuid/uuid",
         "zepto": "bower_components/zepto/zepto.min",
         "eventemitter2": "bower_components/eventemitter2/lib/eventemitter2",
-        "lodash": "bower_components/lodash/lodash.min"
+        "lodash": "bower_components/lodash/lodash"
     },
     "shim": {
         "angular": {
