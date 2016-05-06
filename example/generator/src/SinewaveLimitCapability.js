@@ -61,6 +61,9 @@ define(
                     return LIMITS;
                 },
                 evaluate: function (datum, range) {
+                    if (range === 'positive') {
+                        return;
+                    }
                     range = range || 'sin';
                     if (datum[range] > RED) {
                         return LIMITS.rh;

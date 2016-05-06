@@ -100,26 +100,46 @@ define([
                         "domains": [
                             {
                                 "key": "time",
-                                "name": "Time"
+                                "name": "Time",
+                                "type": "utc"
                             },
                             {
                                 "key": "yesterday",
-                                "name": "Yesterday"
+                                "name": "Yesterday",
+                                "type": "utc"
                             },
                             {
                                 "key": "delta",
                                 "name": "Delta",
-                                "format": "example.delta"
+                                "type": "example.delta"
                             }
                         ],
                         "ranges": [
                             {
                                 "key": "sin",
-                                "name": "Sine"
+                                "name": "Sine",
+                                "type": "generic"
                             },
                             {
                                 "key": "cos",
-                                "name": "Cosine"
+                                "name": "Cosine",
+                                "type": "generic"
+                            },
+                            {
+                                "key": "positive",
+                                "name": "Positive Sine?",
+                                "type": "enum",
+                                "valueKey": "positive",
+                                "enumerations": [
+                                    {
+                                        "value": 0,
+                                        "text": "FALSE"
+                                    },
+                                    {
+                                        "value": 1,
+                                        "text": "TRUE"
+                                    }
+                                ]
                             }
                         ]
                     },

@@ -91,6 +91,7 @@ define(
                 data.push({
                     sin: Math.sin(i * Math.PI * 2 / period),
                     cos: Math.cos(i * Math.PI * 2 / period),
+                    positive: Math.sin(i * Math.PI * 2 / period) >= 0,
                     time: current,
                     yesterday: current - (60 * 60 * 24 * 1000),
                     delta: current
@@ -114,6 +115,7 @@ define(
                     point = {
                         sin: Math.sin(i * Math.PI * 2 / period),
                         cos: Math.cos(i * Math.PI * 2 / period),
+                        positive: Math.sin(i * Math.PI * 2 / period) >= 0,
                         time: currentTime,
                         yesterday: currentTime - (60 * 60 * 24 * 1000),
                         delta: currentTime
