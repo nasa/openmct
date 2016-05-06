@@ -24,7 +24,6 @@
 define([
     "./src/controllers/SearchController",
     "./src/controllers/SearchMenuController",
-    "./src/controllers/ClickAwayController",
     "./src/services/GenericSearchProvider",
     "./src/services/SearchAggregator",
     "text!./res/templates/search-item.html",
@@ -34,7 +33,6 @@ define([
 ], function (
     SearchController,
     SearchMenuController,
-    ClickAwayController,
     GenericSearchProvider,
     SearchAggregator,
     searchItemTemplate,
@@ -72,14 +70,6 @@ define([
                     "depends": [
                         "$scope",
                         "types[]"
-                    ]
-                },
-                {
-                    "key": "ClickAwayController",
-                    "implementation": ClickAwayController,
-                    "depends": [
-                        "$scope",
-                        "$document"
                     ]
                 }
             ],
