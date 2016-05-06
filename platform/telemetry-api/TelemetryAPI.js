@@ -58,7 +58,8 @@ define([
         formatService
     ) {
 
-        this.formatService = formatService;
+        var FORMATTER_CACHE = new WeakMap(),
+            EVALUATOR_CACHE = new WeakMap();
 
         function testAPI() {
             var key = '114ced6c-deb7-4169-ae71-68c571665514';
@@ -123,12 +124,11 @@ define([
 
         function LimitEvaluator(domainObject) {
             this.domainObject = domainObject;
-            this.evaluator = domainObject.getCapability('limits');
-
+            this.evaluator = domainObject.getCapability('limit');
             if (!this.evaluator) {
-                this.evaluator = function () {
+                this.evalute = function () {
                     return '';
-                };
+                }
             }
         }
 
@@ -136,7 +136,7 @@ define([
         is numeric by default? */
 
         LimitEvaluator.prototype.evaluate = function (datum, key) {
-            return this.evaluator(datum, key);
+            return this.evaluator.evaluate(datum, key);
         };
 
         /** Basic telemetry collection, needs more magic. **/
@@ -205,8 +205,24 @@ define([
             registerEvaluator: registerEvaluator,
             request: request,
             subscribe: subscribe,
-            Formatter: TelemetryFormatter,
-            LimitEvaluator: LimitEvaluator
+            Formatter: function (domainObject) {
+                if (!FORMATTER_CACHE.has(domainObject)) {
+                    FORMATTER_CACHE.set(
+                        domainObject,
+                        new TelemetryFormatter(domainObject)
+                    );
+                }
+                return FORMATTER_CACHE.get(domainObject);
+            },
+            LimitEvaluator: function (domainObject) {
+                if (!EVALUATOR_CACHE.has(domainObject)) {
+                    EVALUATOR_CACHE.set(
+                        domainObject,
+                        new LimitEvaluator(domainObject)
+                    );
+                }
+                return EVALUATOR_CACHE.get(domainObject);
+            }
         };
 
         window.MCT = window.MCT || {};
