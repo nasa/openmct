@@ -43,7 +43,6 @@ define([
                 {
                     key: "objectexposer",
                     implementation: function (objectService) {
-                        console.log('running!', arguments);
                         window.MCT = window.MCT || {};
                         window.MCT.objects = objectService;
                     },
