@@ -1,6 +1,6 @@
 # Development Cycle
 
-Development of Open MCT Web occurs on an iterative cycle of
+Development of Open MCT occurs on an iterative cycle of
 sprints and releases.
 
 * A _sprint_ is three weeks in duration, and represents a

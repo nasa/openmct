@@ -46,6 +46,7 @@ var gulp = require('gulp'),
             'index.html',
             'platform/**/*',
             'example/**/*',
+            'demo/**/*',
             'bower_components/**/*'
         ]
     },
