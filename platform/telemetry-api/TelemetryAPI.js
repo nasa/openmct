@@ -205,6 +205,9 @@ define([
             registerEvaluator: registerEvaluator,
             request: request,
             subscribe: subscribe,
+            getMetadata: function (domainObject) {
+                return domainObject.getCapability('telemetry').getMetadata();
+            },
             Formatter: function (domainObject) {
                 if (!FORMATTER_CACHE.has(domainObject)) {
                     FORMATTER_CACHE.set(
