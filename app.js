@@ -19,6 +19,7 @@
 
     // Defaults
     options.port = options.port || options.p || 8080;
+    options.directory = options.directory || options.D || '.';
     ['include', 'exclude', 'i', 'x'].forEach(function (opt) {
         options[opt] = options[opt] || [];
         // Make sure includes/excludes always end up as arrays
@@ -36,6 +37,7 @@
         console.log("  --port, -p <number>      Specify port.");
         console.log("  --include, -i <bundle>   Include the specified bundle.");
         console.log("  --exclude, -x <bundle>   Exclude the specified bundle.");
+        console.log("  --directory, -D <bundle>   Serve files from specified directory.");
         console.log("");
         process.exit(0);
     }
@@ -71,7 +73,7 @@
     });
 
     // Expose everything else as static files
-    app.use(express['static']('.'));
+    app.use(express['static'](options.directory));
 
     // Finally, open the HTTP server
     app.listen(options.port);
