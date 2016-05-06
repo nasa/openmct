@@ -132,14 +132,14 @@ define(
                             },
                             {
                                 title: "Select Object to Edit",
-                                content: "Expand the 'My Items' folder and click on the 'Edit Display Layout Example' object.",
+                                content: "Expand the 'My Items' folder and click on the 'Edit Display Layout Example' object to select it. Click 'Next' when you're ready to continue.",
                                 target: "mct-tree ul.tree",
                                 placement: "right",
                                 yOffset: "20px"
                             },
                             {
                                 title: "Edit Button",
-                                content: "<b>Click this button now</b> to begin editing the current object, or click 'Next' to continue.",
+                                content: "<b>Click this button now</b> to begin editing the current object.",
                                 target: ".object-browse-bar .btn-bar",
                                 placement: "bottom",
                                 width: "200px",
@@ -158,13 +158,9 @@ define(
                             },
                             {
                                 title: "Adding an Object",
-                                content: "Let’s add a telemetry element into our" +
-                                " layout. Expand 'Real-time Plots'," +
-                                " and then drag 'Thermal Panel'" +
-                                " into the empty space in the example layout," +
-                                " Click 'Next' to continue.",
+                                content: "Let’s add a telemetry element into our layout. Expand 'Real-time Telemetry', then 'Rover Subsystems', then 'Thermal'. Drag 'Wheel RL Temp' into the empty space in the example layout, then click 'Next' to continue.",
                                 target: "mct-tree ul.tree",
-                                yOffset: "100px",
+                                yOffset: "50px",
                                 placement: "right"
                             },
                             {
@@ -177,7 +173,7 @@ define(
                             },
                             {
                                 title: "Elements Pool",
-                                content: "When the object inspector is expanded, this " +
+                                content: "When the Object Inspector is expanded, this " +
                                 "area lists all objects in the current object. " +
                                 "To remove an object, right-click it and choose 'Remove' " +
                                 "from the context menu.",
