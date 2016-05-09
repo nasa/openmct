@@ -36,6 +36,8 @@
 		line-height: $ohH;
         .left {
             padding-right: $interiorMarginLg;
+
+            z-index: 5;
         }
 	}
 	>.object-holder.abs {
