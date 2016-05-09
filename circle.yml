@@ -1,8 +1,8 @@
 deployment:
   production:
     branch: master
-    commands:
-      - git push git@heroku.com:openmctweb-demo.git $CIRCLE_SHA1:refs/heads/master
+    heroku:
+      appname: openmctweb-demo
   openmct-demo:
     branch: live_demo
     heroku:
