@@ -38,8 +38,15 @@
 
 	.l-time-range-inputs-holder {
 		height: $r1H; bottom: $r2H + $r3H + ($interiorMarginSm * 2);
-		padding-top: $interiorMargin;
+		//padding-top: $interiorMargin;
 		border-top: 1px solid $colorInteriorBorder;
+        &.l-flex-row {
+            @include align-items(center);
+            .flex-elem {
+                height: auto;
+                line-height: normal;
+            }
+        }
 		.type-icon {
 			font-size: 120%;
 			vertical-align: middle;
@@ -141,7 +148,6 @@
 		z-index: 2;
 		.range-value {
 			@include trans-prop-nice-fade(.25s);
-            //background: rgba(red, 0.4);
             font-size: 0.7rem;
 			padding: 0 $rangeValOffset;
 			position: absolute;
@@ -175,7 +181,7 @@
 	.l-time-domain-selector {
 		position: absolute;
 		right: 0px;
-		bottom: 46px;
+		bottom: 43px;
 	}
 
 }
