@@ -25,7 +25,6 @@ define([
     "./src/services/PopupService",
     "./src/SplashScreenManager",
     "./src/StyleSheetLoader",
-    "./src/UnsupportedBrowserWarning",
     "./src/controllers/TimeRangeController",
     "./src/controllers/DateTimePickerController",
     "./src/controllers/DateTimeFieldController",
@@ -74,7 +73,6 @@ define([
     PopupService,
     SplashScreenManager,
     StyleSheetLoader,
-    UnsupportedBrowserWarning,
     TimeRangeController,
     DateTimePickerController,
     DateTimeFieldController,
@@ -149,13 +147,6 @@ define([
                         "stylesheets[]",
                         "$document",
                         "THEME"
-                    ]
-                },
-                {
-                    "implementation": UnsupportedBrowserWarning,
-                    "depends": [
-                        "notificationService",
-                        "agentService"
                     ]
                 },
                 {
@@ -266,8 +257,8 @@ define([
                     "key": "ClickAwayController",
                     "implementation": ClickAwayController,
                     "depends": [
-                        "$scope",
-                        "$document"
+                        "$document",
+                        "$timeout"
                     ]
                 },
                 {

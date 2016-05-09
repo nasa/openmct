@@ -92,11 +92,7 @@ define([
     './platform/entanglement/bundle',
     './platform/search/bundle',
     './platform/status/bundle',
-    './platform/commonUI/regions/bundle',
-
-    './example/imagery/bundle',
-    './example/eventGenerator/bundle',
-    './example/generator/bundle'
+    './platform/commonUI/regions/bundle'
 ], function (Main, legacyRegistry) {
     return {
         legacyRegistry: legacyRegistry,

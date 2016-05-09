@@ -31,11 +31,13 @@ define([
     "./src/actions/PropertiesAction",
     "./src/actions/RemoveAction",
     "./src/actions/SaveAction",
+    "./src/actions/SaveAsAction",
     "./src/actions/CancelAction",
     "./src/policies/EditActionPolicy",
     "./src/policies/EditableLinkPolicy",
     "./src/policies/EditableMovePolicy",
     "./src/policies/EditNavigationPolicy",
+    "./src/policies/EditContextualActionPolicy",
     "./src/representers/EditRepresenter",
     "./src/representers/EditToolbarRepresenter",
     "text!./res/templates/library.html",
@@ -55,11 +57,13 @@ define([
     PropertiesAction,
     RemoveAction,
     SaveAction,
+    SaveAsAction,
     CancelAction,
     EditActionPolicy,
     EditableLinkPolicy,
     EditableMovePolicy,
     EditNavigationPolicy,
+    EditContextualActionPolicy,
     EditRepresenter,
     EditToolbarRepresenter,
     libraryTemplate,
@@ -163,6 +167,15 @@ define([
                     "implementation": SaveAction,
                     "name": "Save",
                     "description": "Save changes made to these objects.",
+                    "depends": [],
+                    "priority": "mandatory"
+                },
+                {
+                    "key": "save",
+                    "category": "conclude-editing",
+                    "implementation": SaveAsAction,
+                    "name": "Save",
+                    "description": "Save changes made to these objects.",
                     "depends": [
                         "$injector",
                         "policyService",
@@ -188,6 +201,11 @@ define([
                 {
                     "category": "action",
                     "implementation": EditActionPolicy
+                },
+                {
+                    "category": "action",
+                    "implementation": EditContextualActionPolicy,
+                    "depends": ["navigationService", "editModeBlacklist", "nonEditContextBlacklist"]
                 },
                 {
                     "category": "action",
@@ -253,6 +271,16 @@ define([
                 },
                 {
                     "implementation": EditToolbarRepresenter
+                }
+            ],
+            "constants": [
+                {
+                    "key":"editModeBlacklist",
+                    "value": ["copy", "follow", "window", "link", "locate"]
+                },
+                {
+                    "key": "nonEditContextBlacklist",
+                    "value": ["copy", "follow", "properties", "move", "link", "remove", "locate"]
                 }
             ]
         }

@@ -26,8 +26,8 @@
 define(
     ["../../src/actions/ActionCapability"],
     function (ActionCapability) {
-        //TODO: Disabled for NEM beta
-        xdescribe("The action capability", function () {
+
+        describe("The action capability", function () {
             var mockQ,
                 mockAction,
                 mockActionService,

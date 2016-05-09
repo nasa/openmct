@@ -97,9 +97,7 @@ define([
                     "implementation": ContextMenuGesture,
                     "depends": [
                         "$timeout",
-                        "$parse",
-                        "agentService",
-                        "navigationService"
+                        "agentService"
                     ]
                 }
             ],

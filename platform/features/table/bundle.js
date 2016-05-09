@@ -22,16 +22,16 @@
 
 define([
     "./src/directives/MCTTable",
-    "./src/controllers/RTTelemetryTableController",
-    "./src/controllers/TelemetryTableController",
+    "./src/controllers/RealtimeTableController",
+    "./src/controllers/HistoricalTableController",
     "./src/controllers/TableOptionsController",
     '../../commonUI/regions/src/Region',
     '../../commonUI/browse/src/InspectorRegion',
     "legacyRegistry"
 ], function (
     MCTTable,
-    RTTelemetryTableController,
-    TelemetryTableController,
+    RealtimeTableController,
+    HistoricalTableController,
     TableOptionsController,
     Region,
     InspectorRegion,
@@ -107,13 +107,13 @@ define([
             ],
             "controllers": [
                 {
-                    "key": "TelemetryTableController",
-                    "implementation": TelemetryTableController,
+                    "key": "HistoricalTableController",
+                    "implementation": HistoricalTableController,
                     "depends": ["$scope", "telemetryHandler", "telemetryFormatter"]
                 },
                 {
-                    "key": "RTTelemetryTableController",
-                    "implementation": RTTelemetryTableController,
+                    "key": "RealtimeTableController",
+                    "implementation": RealtimeTableController,
                     "depends": ["$scope", "telemetryHandler", "telemetryFormatter"]
                 },
                 {
@@ -128,7 +128,7 @@ define([
                     "name": "Historical Table",
                     "key": "table",
                     "glyph": "\ue604",
-                    "templateUrl": "templates/table.html",
+                    "templateUrl": "templates/historical-table.html",
                     "needs": [
                         "telemetry"
                     ],
@@ -158,6 +158,12 @@ define([
                 {
                     "key": "table-options-edit",
                     "templateUrl": "templates/table-options-edit.html"
+                }
+            ],
+            "stylesheets": [
+                {
+                    "stylesheetUrl": "css/table.css",
+                    "priority": "mandatory"
                 }
             ]
         }

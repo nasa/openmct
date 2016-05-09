@@ -1,6 +1,6 @@
 {
-  "name": "openmctweb",
-  "version": "0.10.0-SNAPSHOT",
+  "name": "openmct",
+  "version": "0.10.1-SNAPSHOT",
   "description": "The Open MCT core platform",
   "dependencies": {
     "express": "^4.13.1",
@@ -50,11 +50,11 @@
     "jsdoc": "jsdoc -c jsdoc.json -r -d target/docs/api",
     "otherdoc": "node docs/gendocs.js --in docs/src --out target/docs --suppress-toc 'docs/src/index.md|docs/src/process/index.md'",
     "docs": "npm run jsdoc ; npm run otherdoc",
-    "prepublish": "./node_modules/bower/bin/bower install && ./node_modules/gulp/bin/gulp.js install"
+    "prepublish": "node ./node_modules/bower/bin/bower install && node ./node_modules/gulp/bin/gulp.js install"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nasa/openmctweb.git"
+    "url": "https://github.com/nasa/openmct.git"
   },
   "author": "",
   "license": "Apache-2.0",

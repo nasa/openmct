@@ -94,7 +94,8 @@ gulp.task('stylesheets', function () {
         .pipe(sourcemaps.init())
         .pipe(sass(options.sass).on('error', sass.logError))
         .pipe(rename(function (file) {
-            file.dirname = file.dirname.replace('/sass', '/css');
+            file.dirname =
+                file.dirname.replace(path.sep + 'sass', path.sep + 'css');
             return file;
         }))
         .pipe(sourcemaps.write('.'))

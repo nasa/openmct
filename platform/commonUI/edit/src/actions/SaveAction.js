@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['../../../browse/src/creation/CreateWizard'],
-    function (CreateWizard) {
+    [],
+    function () {
 
         /**
          * The "Save" action; the action triggered by clicking Save from
@@ -33,30 +33,10 @@ define(
          * @memberof platform/commonUI/edit
          */
         function SaveAction(
-            $injector,
-            policyService,
-            dialogService,
-            creationService,
-            copyService,
             context
         ) {
             this.domainObject = (context || {}).domainObject;
-            this.injectObjectService = function(){
-                this.objectService = $injector.get("objectService");
-            };
-            this.policyService = policyService;
-            this.dialogService = dialogService;
-            this.creationService = creationService;
-            this.copyService = copyService;
         }
-
-        SaveAction.prototype.getObjectService = function(){
-            // Lazily acquire object service (avoids cyclical dependency)
-            if (!this.objectService) {
-                this.injectObjectService();
-            }
-            return this.objectService;
-        };
 
         /**
          * Save changes and conclude editing.
@@ -66,9 +46,7 @@ define(
          * @memberof platform/commonUI/edit.SaveAction#
          */
         SaveAction.prototype.perform = function () {
-            var domainObject = this.domainObject,
-                copyService = this.copyService,
-                self = this;
+            var domainObject = this.domainObject;
 
             function resolveWith(object){
                 return function () {
@@ -76,63 +54,13 @@ define(
                 };
             }
 
-            function doWizardSave(parent) {
-                var wizard = new CreateWizard(
-                        domainObject,
-                        parent,
-                        self.policyService
-                    );
-
-                return self.dialogService
-                    .getUserInput(
-                        wizard.getFormStructure(true),
-                        wizard.getInitialFormValue()
-                    )
-                    .then(wizard.populateObjectFromInput.bind(wizard));
-            }
-
-            function fetchObject(objectId){
-                return self.getObjectService().getObjects([objectId]).then(function(objects){
-                    return objects[objectId];
-                });
-            }
-
-            function getParent(object){
-                return fetchObject(object.getModel().location);
-            }
-
-            function allowClone(objectToClone) {
-                return (objectToClone.getId() === domainObject.getId()) ||
-                    objectToClone.getCapability('location').isOriginal();
-            }
-
-            function cloneIntoParent(parent) {
-                return copyService.perform(domainObject, parent, allowClone);
-            }
-
-            function cancelEditingAfterClone(clonedObject) {
-                return domainObject.getCapability("editor").cancel()
-                    .then(resolveWith(clonedObject));
-            }
-
             // Invoke any save behavior introduced by the editor capability;
             // this is introduced by EditableDomainObject which is
             // used to insulate underlying objects from changes made
             // during editing.
             function doSave() {
-                //This is a new 'virtual object' that has not been persisted
-                // yet.
-                if (domainObject.getModel().persisted === undefined){
-                    return getParent(domainObject)
-                        .then(doWizardSave)
-                        .then(getParent)
-                        .then(cloneIntoParent)
-                        .then(cancelEditingAfterClone)
-                        .catch(resolveWith(false));
-                } else {
-                    return domainObject.getCapability("editor").save()
-                        .then(resolveWith(domainObject.getOriginalObject()));
-                }
+                return domainObject.getCapability("editor").save()
+                    .then(resolveWith(domainObject.getOriginalObject()));
             }
 
             // Discard the current root view (which will be the editing
@@ -157,7 +85,8 @@ define(
         SaveAction.appliesTo = function (context) {
             var domainObject = (context || {}).domainObject;
             return domainObject !== undefined &&
-                domainObject.hasCapability("editor");
+                domainObject.hasCapability("editor") &&
+                domainObject.getModel().persisted !== undefined;
         };
 
         return SaveAction;

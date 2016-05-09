@@ -20,28 +20,43 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    "./src/CachingPersistenceDecorator",
-    'legacyRegistry'
-], function (
-    CachingPersistenceDecorator,
-    legacyRegistry
-) {
+.sizing-table {
+    min-width: 100%;
+    z-index: -1;
+    visibility: hidden;
+    position: absolute;
 
-    legacyRegistry.register("platform/persistence/cache", {
-        "name": "Persistence cache",
-        "description": "Cache to improve availability of persisted objects.",
-        "extensions": {
-            "components": [
-                {
-                    "provides": "persistenceService",
-                    "type": "decorator",
-                    "implementation": CachingPersistenceDecorator,
-                    "depends": [
-                        "PERSISTENCE_SPACE"
-                    ]
-                }
-            ]
+    //Add some padding to allow for decorations such as limits indicator
+    td {
+        padding-right: 15px;
+        padding-left: 10px;
+        white-space: nowrap;
+    }
+}
+.mct-table {
+    table-layout: fixed;
+    thead {
+        display: block;
+        tr {
+            display: block;
+            white-space: nowrap;
+            th {
+                display: inline-block;
+                box-sizing: border-box;
+            }
         }
-    });
-});
+    }
+    tbody {
+        tr {
+            position: absolute;
+            white-space: nowrap;
+            display: block;
+        }
+        td {
+            white-space: nowrap;
+            overflow: hidden;
+            box-sizing: border-box;
+            display: inline-block;
+        }
+    }
+}

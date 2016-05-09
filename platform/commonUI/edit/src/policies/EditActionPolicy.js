@@ -36,14 +36,6 @@ define(
             this.policyService = policyService;
         }
 
-        function applicableView(key){
-            return ['plot', 'scrolling'].indexOf(key) >= 0;
-        }
-
-        function editableType(key){
-            return key === 'telemetry.panel';
-        }
-
         /**
          * Get a count of views which are not flagged as non-editable.
          * @private
@@ -63,7 +55,8 @@ define(
 
             // A view is editable unless explicitly flagged as not
             (views || []).forEach(function (view) {
-                if (view.editable === true || (applicableView(view.key) && editableType(type.getKey()))) {
+                if (view.editable === true ||
+                    (view.key === 'plot' && type.getKey() === 'telemetry.panel')) {
                     count++;
                 }
             });

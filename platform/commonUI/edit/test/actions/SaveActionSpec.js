@@ -25,11 +25,11 @@ define(
     function (SaveAction) {
 
         describe("The Save action", function () {
-            var mockLocation,
-                mockDomainObject,
+            var mockDomainObject,
                 mockEditorCapability,
-                mockUrlService,
                 actionContext,
+                mockActionCapability,
+                capabilities = {},
                 action;
 
             function mockPromise(value) {
@@ -41,65 +41,62 @@ define(
             }
 
             beforeEach(function () {
-                mockLocation = jasmine.createSpyObj(
-                    "$location",
-                    [ "path" ]
-                );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getCapability", "hasCapability" ]
+                    [
+                        "getCapability",
+                        "hasCapability",
+                        "getModel",
+                        "getOriginalObject"
+                    ]
                 );
                 mockEditorCapability = jasmine.createSpyObj(
                     "editor",
                     [ "save", "cancel" ]
                 );
-                mockUrlService = jasmine.createSpyObj(
-                    "urlService",
-                    ["urlForLocation"]
+                mockActionCapability = jasmine.createSpyObj(
+                    "actionCapability",
+                    [ "perform"]
                 );
-
+                capabilities.editor = mockEditorCapability;
+                capabilities.action = mockActionCapability;
 
                 actionContext = {
                     domainObject: mockDomainObject
                 };
 
                 mockDomainObject.hasCapability.andReturn(true);
-                mockDomainObject.getCapability.andReturn(mockEditorCapability);
+                mockDomainObject.getCapability.andCallFake(function (capability) {
+                    return capabilities[capability];
+                });
+                mockDomainObject.getModel.andReturn({persisted: 0});
                 mockEditorCapability.save.andReturn(mockPromise(true));
+                mockDomainObject.getOriginalObject.andReturn(mockDomainObject);
 
-                action = new SaveAction(mockLocation, mockUrlService, actionContext);
+                action = new SaveAction(actionContext);
 
             });
 
             it("only applies to domain object with an editor capability", function () {
-                expect(SaveAction.appliesTo(actionContext)).toBeTruthy();
+                expect(SaveAction.appliesTo(actionContext)).toBe(true);
                 expect(mockDomainObject.hasCapability).toHaveBeenCalledWith("editor");
 
                 mockDomainObject.hasCapability.andReturn(false);
                 mockDomainObject.getCapability.andReturn(undefined);
-                expect(SaveAction.appliesTo(actionContext)).toBeFalsy();
+                expect(SaveAction.appliesTo(actionContext)).toBe(false);
             });
 
-            //TODO: Disabled for NEM Beta
-            xit("invokes the editor capability's save functionality when performed", function () {
-                // Verify precondition
-                expect(mockEditorCapability.save).not.toHaveBeenCalled();
-                action.perform();
-
-                // Should have called cancel
-                expect(mockEditorCapability.save).toHaveBeenCalled();
-
-                // Also shouldn't call cancel
-                expect(mockEditorCapability.cancel).not.toHaveBeenCalled();
+            it("only applies to domain object that has already been persisted",
+                function () {
+                    mockDomainObject.getModel.andReturn({persisted: undefined});
+                    expect(SaveAction.appliesTo(actionContext)).toBe(false);
             });
 
-            //TODO: Disabled for NEM Beta
-            xit("returns to browse when performed", function () {
-                action.perform();
-                expect(mockLocation.path).toHaveBeenCalledWith(
-                    mockUrlService.urlForLocation("browse", mockDomainObject)
-                );
-            });
+            it("uses the editor capability to save the object",
+                function () {
+                    action.perform();
+                    expect(mockEditorCapability.save).toHaveBeenCalled();
+                });
         });
     }
 );

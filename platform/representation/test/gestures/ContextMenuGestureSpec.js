@@ -28,16 +28,14 @@ define(
     ["../../src/gestures/ContextMenuGesture"],
     function (ContextMenuGesture) {
 
-        var JQLITE_FUNCTIONS = [ "on", "off", "find", "append", "remove", "attr" ],
+        var JQLITE_FUNCTIONS = [ "on", "off", "find", "append", "remove" ],
             DOMAIN_OBJECT_METHODS = [ "getId", "getModel", "getCapability", "hasCapability", "useCapability"];
 
 
         describe("The 'context menu' gesture", function () {
             var mockTimeout,
-                mockParse,
                 mockElement,
                 mockAgentService,
-                mockNavigationService,
                 mockDomainObject,
                 mockEvent,
                 mockTouchEvent,
@@ -51,7 +49,6 @@ define(
 
             beforeEach(function () {
                 mockTimeout = jasmine.createSpy("$timeout");
-                mockParse = jasmine.createSpy("$parse");
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockAgentService = jasmine.createSpyObj("agentService", ["isMobile"]);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
@@ -60,17 +57,14 @@ define(
                     "action",
                     [ "perform", "getActions" ]
                 );
-                mockActionContext = jasmine.createSpyObj(
-                    "actionContext",
-                    [ "" ]
-                );
                 
                 mockActionContext = {domainObject: mockDomainObject, event: mockEvent};
                 mockDomainObject.getCapability.andReturn(mockContextMenuAction);
                 mockContextMenuAction.perform.andReturn(jasmine.any(Function));
                 mockAgentService.isMobile.andReturn(false);
                 
-                gesture = new ContextMenuGesture(mockTimeout, mockParse, mockAgentService, mockNavigationService, mockElement, mockDomainObject);
+                
+                gesture = new ContextMenuGesture(mockTimeout, mockAgentService, mockElement, mockDomainObject);
 
                 // Capture the contextmenu callback
                 fireGesture =  mockElement.on.mostRecentCall.args[1];
@@ -106,7 +100,7 @@ define(
                 mockAgentService.isMobile.andReturn(true);
                 
                 // Then create new (mobile) gesture
-                gesture = new ContextMenuGesture(mockTimeout, mockParse, mockAgentService, mockNavigationService, mockElement, mockDomainObject);
+                gesture = new ContextMenuGesture(mockTimeout, mockAgentService, mockElement, mockDomainObject);
                 
                 // Set calls for the touchstart and touchend gestures
                 fireTouchStartGesture = mockElement.on.calls[1].args[1];

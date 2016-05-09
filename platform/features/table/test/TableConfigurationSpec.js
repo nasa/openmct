@@ -114,10 +114,10 @@ define(
                 }];
 
                 beforeEach(function() {
-                    table.buildColumns(metadata);
+                    table.populateColumns(metadata);
                 });
 
-                it("populates the columns attribute", function() {
+                it("populates columns", function() {
                     expect(table.columns.length).toBe(5);
                 });
 
@@ -139,7 +139,7 @@ define(
 
                 it("Provides a default configuration with all columns" +
                     " visible", function() {
-                    var configuration = table.getColumnConfiguration();
+                    var configuration = table.buildColumnConfiguration();
 
                     expect(configuration).toBeDefined();
                     expect(Object.keys(configuration).every(function(key){
@@ -158,7 +158,7 @@ define(
                     };
                     mockModel.configuration = modelConfig;
 
-                    tableConfig = table.getColumnConfiguration();
+                    tableConfig = table.buildColumnConfiguration();
 
                     expect(tableConfig).toBeDefined();
                     expect(tableConfig['Range 1']).toBe(false);
