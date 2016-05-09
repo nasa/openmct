@@ -404,11 +404,11 @@ body.desktop .object-header {
         left: auto;
     }
     .knob-l {
-        @include border-left-radius($sliderKnobW);
+        @include border-left-radius($sliderKnobR);
         cursor: w-resize;
     }
     .knob-r {
-        @include border-right-radius($sliderKnobW);
+        @include border-right-radius($sliderKnobR);
         cursor: e-resize;
     }
     .range {

@@ -11,7 +11,7 @@
 	$knobM: ($sliderKnobW + $knobHOffset) * -1;
 	$rangeValPad: $interiorMargin;
 	$rangeValOffset: $sliderKnobW;
-	$timeRangeSliderLROffset: 130px + $sliderKnobW + $rangeValOffset;
+	$timeRangeSliderLROffset: 80px + ($sliderKnobW * 2);
 	$r1H: nth($ueTimeControlH,1);
 	$r2H: nth($ueTimeControlH,2);
 	$r3H: nth($ueTimeControlH,3);
@@ -76,22 +76,23 @@
 					&:before,
 					&:after {
 						background-color: $myC;
-						content: "";
+						//content: "";
 						position: absolute;
 					}
 					&:before {
 						// Vert line
+                        content: "";
 						top: 0; right: auto; bottom: -10px; left: floor($myW/2) - 1;
-						width: 2px;
+						width: 1px;
 					}
-					&:after {
+/*					&:after {
 						// Circle element
 						border-radius: $myW;
 						@include transform(translateY(-50%));
 						top: 50%; right: 0; bottom: auto; left: 0;
 						width: auto;
 						height: $myW;
-					}
+					}*/
 				}
 				&:hover .toi-line {
 					@include toiLineHovEffects;
@@ -126,9 +127,9 @@
 					@include webkitProp(transform, translateX(-50%));
 					color: $colorPlotLabelFg;
 					display: inline-block;
-					font-size: 0.9em;
+					font-size: 0.7rem;
 					position: absolute;
-					top: 8px;
+					top: 5px;
 					white-space: nowrap;
 					z-index: 2;
 				}
@@ -140,14 +141,18 @@
 		z-index: 2;
 		.range-value {
 			@include trans-prop-nice-fade(.25s);
+            //background: rgba(red, 0.4);
+            font-size: 0.7rem;
 			padding: 0 $rangeValOffset;
 			position: absolute;
 			height: $r2H;
-			line-height: $r2H;
-			white-space: nowrap;
+			line-height: $r2H/2;
+            z-index: 1;
 		}
-		&:hover .range-value {
-			color: $sliderColorKnobHov;
+		&:hover {
+            .range-value {
+                color: $sliderColorKnobHov;
+            }
 		}
 		&.knob-l {
 			margin-left: $knobM;
