@@ -19,12 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
+/*global describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/controllers/ElementsController"],
     function (ElementsController) {
-        "use strict";
 
         describe("The Elements Pane controller", function () {
             var mockScope,
@@ -34,6 +33,12 @@ define(
                 mockScope = jasmine.createSpy("$scope");
                 controller = new ElementsController(mockScope);
             });
+
+            function getModel (model) {
+                return function() {
+                    return model;
+                };
+            }
 
             it("filters objects in elements pool based on input text and" +
                 " object name", function () {
@@ -50,13 +55,8 @@ define(
                     {
                         getModel: getModel({name: "THIRD Element 1"})
                     }
-
                 ];
-                function getModel (model) {
-                    return function() {
-                        return model;
-                    };
-                }
+
                 mockScope.filterBy("third element");
                 expect(objects.filter(mockScope.searchElements).length).toBe(2);
                 mockScope.filterBy("element");
