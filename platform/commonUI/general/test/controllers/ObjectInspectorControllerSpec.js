@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT Web, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -45,7 +45,7 @@ define(
                 );
                 mockScope.ngModel = {};
                 mockScope.ngModel.selectedObject = 'mock selected object';
-                
+
                 mockObjectService = jasmine.createSpyObj(
                     "objectService",
                     [ "getObjects" ]
@@ -55,14 +55,14 @@ define(
                     [ "then" ]
                 );
                 mockObjectService.getObjects.andReturn(mockPromise);
-                
+
                 mockDomainObject = jasmine.createSpyObj(
                     "selectedObject",
                     [ "hasCapability", "getCapability", "useCapability", "getModel" ]
                 );
                 mockDomainObject.getModel.andReturn({location: 'somewhere'});
                 mockDomainObject.hasCapability.andReturn(true);
-                
+
                 mockContextCapability = jasmine.createSpyObj(
                     "context capability",
                     [ "getParent" ]
@@ -78,9 +78,9 @@ define(
                         return mockContextCapability;
                     }
                 });
-                
+
                 controller = new ObjectInspectorController(mockScope, mockObjectService);
-                
+
                 // Change the selected object to trigger the watch call
                 mockScope.ngModel.selectedObject = mockDomainObject;
             });
@@ -96,13 +96,13 @@ define(
 
             it("if link, looks for primary parent objects", function () {
                 mockLocationCapability.isLink.andReturn(true);
-                
+
                 mockScope.$watch.mostRecentCall.args[1]();
                 expect(mockDomainObject.getModel).toHaveBeenCalled();
                 expect(mockObjectService.getObjects).toHaveBeenCalled();
                 mockPromise.then.mostRecentCall.args[0]({'somewhere': mockDomainObject});
             });
-            
+
             it("gets metadata", function () {
                 mockScope.$watch.mostRecentCall.args[1]();
                 expect(mockDomainObject.useCapability).toHaveBeenCalledWith('metadata');

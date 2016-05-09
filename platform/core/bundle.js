@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT Web, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -424,7 +424,7 @@ define([
                     "description": "Unique identifer generation (code adapted.)",
                     "author": "Robert Kieffer",
                     "website": "https://github.com/broofa/node-uuid",
-                    "copyright": "Copyright (c) 2010-2012 Robert Kieffer",
+                    "copyright": "Copyright (c) 2010-2016 Robert Kieffer",
                     "license": "license-mit",
                     "link": "http://opensource.org/licenses/MIT"
                 }

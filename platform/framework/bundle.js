@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT Web, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,10 +22,10 @@
 /*global define*/
 
 define([
-    
+
     'legacyRegistry'
 ], function (
-    
+
     legacyRegistry
 ) {
     "use strict";
@@ -52,7 +52,7 @@ define([
                     "description": "Code coverage measurement and reporting",
                     "author": "Alex Seville",
                     "website": "http://blanketjs.org/",
-                    "copyright": "Copyright (c) 2013 Alex Seville",
+                    "copyright": "Copyright (c) 2013-2016 Alex Seville",
                     "license": "license-mit",
                     "link": "http://opensource.org/licenses/MIT"
                 },
@@ -62,7 +62,7 @@ define([
                     "description": "Unit testing",
                     "author": "Pivotal Labs",
                     "website": "http://jasmine.github.io/",
-                    "copyright": "Copyright (c) 2008-2011 Pivotal Labs",
+                    "copyright": "Copyright (c) 2008-2016 Pivotal Labs",
                     "license": "license-mit",
                     "link": "http://opensource.org/licenses/MIT"
                 },
@@ -72,7 +72,7 @@ define([
                     "description": "Script loader",
                     "author": "The Dojo Foundation",
                     "website": "http://requirejs.org/",
-                    "copyright": "Copyright (c) 2010-2015, The Dojo Foundation",
+                    "copyright": "Copyright (c) 2010-2016, The Dojo Foundation",
                     "license": "license-mit",
                     "link": "https://github.com/jrburke/requirejs/blob/master/LICENSE"
                 },
@@ -82,7 +82,7 @@ define([
                     "description": "Client-side web application framework",
                     "author": "Google",
                     "website": "http://angularjs.org/",
-                    "copyright": "Copyright (c) 2010-2015 Google, Inc. http://angularjs.org",
+                    "copyright": "Copyright (c) 2010-2016 Google, Inc. http://angularjs.org",
                     "license": "license-mit",
                     "link": "https://github.com/angular/angular.js/blob/v1.4.4/LICENSE"
                 },
@@ -92,7 +92,7 @@ define([
                     "description": "Client-side view routing",
                     "author": "Google",
                     "website": "http://angularjs.org/",
-                    "copyright": "Copyright (c) 2010-2015 Google, Inc. http://angularjs.org",
+                    "copyright": "Copyright (c) 2010-2016 Google, Inc. http://angularjs.org",
                     "license": "license-mit",
                     "link": "https://github.com/angular/angular.js/blob/v1.4.4/LICENSE"
                 },

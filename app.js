@@ -75,6 +75,9 @@
     // Expose everything else as static files
     app.use(express['static'](options.directory));
 
-    // Finally, open the HTTP server
-    app.listen(options.port);
+    // Finally, open the HTTP server and log where it runs to the console
+    app.listen(options.port, function() {
+      console.log('Express server running at localhost:' + options.port)
+    });
+
 }());

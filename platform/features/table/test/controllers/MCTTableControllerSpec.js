@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT Web, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -214,7 +214,7 @@ define(
                         it('Correctly sorts different data types', function () {
                             var val1 = "",
                                 val2 = "1",
-                                val3 = "2016-04-05 18:41:30.713Z",
+                                val3 = "2015-04-05 18:41:30.713Z",
                                 val4 = "1.1",
                                 val5 = "8.945520958175627e-13";
                             mockScope.sortDirection = "asc";

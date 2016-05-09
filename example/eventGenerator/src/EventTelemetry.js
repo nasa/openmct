@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT Web, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,9 +22,9 @@
 /*global define */
 
 /**
- * Module defining EventTelemetry. 
- * Created by chacskaylo on 06/18/2015.
- * Modified by shale on 06/23/2015. 
+ * Module defining EventTelemetry.
+ * Created by chacskaylo on 06/18/2016.
+ * Modified by shale on 06/23/2016.
  */
 define(
     [],
@@ -34,7 +34,7 @@ define(
         var
 	        firstObservedTime = Date.now(),
 	        messages = [];
-        
+
 	    messages.push(["CMD: SYS- MSG: Open the pod bay doors, please, Hal...Open the pod bay doors, please, Hal...Hullo, Hal, do you read me?...Hullo, Hal, do you read me?...Do you read me, Hal?"]);
 	    messages.push(["RESP: SYS-HAL9K MSG: Affirmative, Dave, I read you."]);
 	    messages.push(["CMD: SYS-COMM MSG: Open the pod bay doors, Hal."]);
@@ -65,14 +65,14 @@ define(
 	    messages.push(["RESP: SYS-COMM MSG: (Pause) Well, I'm sure you're right, Umm - fine, thanks very much. Oh, Frank, I'm having a bit of trouble with my transmitter in C-pod, I wonder if you'd come down and take a look at it with me?"]);
 	    messages.push(["CMD: SYS-HAL9K MSG: Sure."]);
 	    messages.push(["RESP: SYS-COMM MSG: See you later, Hal."]);
-        
-        
+
+
         function EventTelemetry(request, interval) {
 
             var latestObservedTime = Date.now(),
                 count = Math.floor((latestObservedTime - firstObservedTime) / interval),
                 generatorData = {};
-            
+
             generatorData.getPointCount = function () {
                 return count;
             };
@@ -81,14 +81,14 @@ define(
                 return i * interval +
                         (domain !== 'delta' ? firstObservedTime : 0);
             };
-            
+
 	        generatorData.getRangeValue = function (i, range) {
 		        var domainDelta = this.getDomainValue(i) - firstObservedTime,
                     ind = i % messages.length;
                 return "TEMP " + i.toString() + "-" + messages[ind][0] + "[" + domainDelta.toString() + "]";
                 // TODO: Unsure why we are prepeding 'TEMP'
 	        };
-            
+
             return generatorData;
         }
 
