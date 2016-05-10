@@ -80,4 +80,4 @@
         console.log('Open MCT application running at localhost:' + options.port)
     });
  
-    }());
+}());
