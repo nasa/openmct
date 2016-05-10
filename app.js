@@ -77,7 +77,7 @@
 
     // Finally, open the HTTP server and log the instance to the console
     app.listen(options.port, function() {
-          console.log('Open MCT application running at localhost:' + options.port)
+        console.log('Open MCT application running at localhost:' + options.port)
     });
  
     }());
