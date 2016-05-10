@@ -19,8 +19,8 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div ng-controller="TimeRangeController as trCtrl">
-    <form class="l-time-range-inputs-holder l-flex-row"
+<div ng-controller="TimeRangeController as trCtrl" class="l-flex-col">
+    <form class="l-time-range-inputs-holder l-flex-row flex-elem"
           ng-submit="trCtrl.updateBoundsFromForm()">
         <span class="l-time-range-inputs-elem ui-symbol type-icon flex-elem">&#x43;</span>
         <span class="l-time-range-input-w flex-elem">
@@ -54,7 +54,7 @@
         <input type="submit" class="hidden">
     </form>
 
-    <div class="l-time-range-slider-holder">
+    <div class="l-time-range-slider-holder flex-elem">
         <div class="l-time-range-slider">
             <div class="slider"
                  mct-resize="spanWidth = bounds.width">
@@ -85,7 +85,7 @@
         </div>
     </div>
 
-    <div class="l-time-range-ticks-holder">
+    <div class="l-time-range-ticks-holder flex-elem">
         <div class="l-time-range-ticks">
             <div
                 ng-repeat="tick in ticks track by $index"

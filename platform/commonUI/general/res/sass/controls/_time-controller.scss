@@ -12,23 +12,23 @@
 	$rangeValPad: $interiorMargin;
 	$rangeValOffset: $sliderKnobW + $interiorMargin;
 	$timeRangeSliderLROffset: 150px + ($sliderKnobW * 2);
-	$r1H: nth($ueTimeControlH,1);
+	$r1H: nth($ueTimeControlH,1); // Not currently used
 	$r2H: nth($ueTimeControlH,2);
 	$r3H: nth($ueTimeControlH,3);
 
-    display: block;
-	height: $r1H + $r2H + $r3H + ($interiorMargin * 2);
     min-width: $minW;
     font-size: 0.8rem;
-
 
 	.l-time-range-inputs-holder,
 	.l-time-range-slider-holder,
 	.l-time-range-ticks-holder
 	{
-		@include absPosDefault(0, visible);
 		box-sizing: border-box;
-		top: auto;
+        position: relative;
+		//top: auto;
+        &:not(:first-child) {
+            margin-top: $interiorMargin;
+        }
 	}
 	.l-time-range-slider,
 	.l-time-range-ticks {
@@ -37,8 +37,8 @@
 	}
 
 	.l-time-range-inputs-holder {
-		height: $r1H; bottom: $r2H + $r3H + ($interiorMarginSm * 2);
 		border-top: 1px solid $colorInteriorBorder;
+        padding-top: $interiorMargin;
         &.l-flex-row {
             @include align-items(center);
             .flex-elem {
@@ -78,7 +78,7 @@
 	}
 
 	.l-time-range-slider-holder {
-		height: $r2H; bottom: $r3H + ($interiorMarginSm * 1);
+		height: $r2H;
 		.range-holder {
 			box-shadow: none;
 			background: none;
