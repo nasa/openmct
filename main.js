@@ -56,6 +56,7 @@ requirejs.config({
 });
 
 define([
+    './src/MCT',
     './platform/framework/src/Main',
     'legacyRegistry',
 
@@ -94,10 +95,12 @@ define([
     './platform/status/bundle',
     './platform/commonUI/regions/bundle'
 ], function (Main, legacyRegistry) {
-    return {
-        legacyRegistry: legacyRegistry,
-        run: function () {
-            return new Main().run(legacyRegistry);
-        }
+    var mct = new MCT();
+
+    mct.legacyRegistry = legacyRegistry;
+    mct.start = function () {
+        return new Main().run(legacyRegistry);
     };
+
+    return mct;
 });
