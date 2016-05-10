@@ -79,5 +79,4 @@
     app.listen(options.port, function() {
         console.log('Open MCT application running at localhost:' + options.port)
     });
- 
 }());
