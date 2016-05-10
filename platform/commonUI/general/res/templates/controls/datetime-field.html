@@ -19,18 +19,17 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<span class="s-btn"
-      ng-controller="DateTimeFieldController">
+<span ng-controller="DateTimeFieldController">
     <input type="text"
            ng-model="textValue"
            ng-blur="restoreTextValue(); ngBlur()"
            ng-class="{
                         error: textInvalid ||
                             (structure.validate &&
-                                !structure.validate(ngModel[field]))
+                                !structure.validate(ngModel[field])),
+                        'picker-icon': structure.format === 'utc' || !structure.format
                      }">
-    </input>
-    <a class="ui-symbol icon icon-calendar"
+    </input><a class="ui-symbol icon icon-calendar"
        ng-if="structure.format === 'utc' || !structure.format"
        ng-click="picker.active = !picker.active">
     </a>

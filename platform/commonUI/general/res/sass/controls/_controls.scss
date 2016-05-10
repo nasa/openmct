@@ -29,7 +29,7 @@
     .accordion-head {
         $op: 0.2;
         border-radius: $basicCr * 0.75;
-        box-sizing: "border-box";
+        box-sizing: border-box;
         background: rgba($colorBodyFg, $op);
         cursor: pointer;
         font-size: 0.75em;

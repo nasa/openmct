@@ -322,13 +322,13 @@
 	color: $fg;
 	outline: none;
 	&.error {
-		background: rgba(red, 0.5);
+		background-color: $colorFormFieldErrorBg;
+        color: $colorFormFieldErrorFg;
 	}
 }
 
 @mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg) {
 	@include input-base($bg, $fg);
-	padding: 0 $interiorMarginSm;
 }
 
 @mixin contextArrow() {

@@ -23,7 +23,7 @@
     <form class="l-time-range-inputs-holder l-flex-row"
           ng-submit="trCtrl.updateBoundsFromForm()">
         <span class="l-time-range-inputs-elem ui-symbol type-icon flex-elem">&#x43;</span>
-        <span class="l-time-range-input flex-elem">
+        <span class="l-time-range-input-w flex-elem">
             <mct-control key="'datetime-field'"
                          structure="{
                              format: parameters.format,
@@ -38,7 +38,7 @@
 
         <span class="l-time-range-inputs-elem lbl flex-elem">to</span>
 
-        <span class="l-time-range-input flex-elem" ng-controller="ToggleController as t2">
+        <span class="l-time-range-input-w flex-elem" ng-controller="ToggleController as t2">
             <mct-control key="'datetime-field'"
                          structure="{
                              format: parameters.format,
@@ -48,7 +48,7 @@
                          ng-blur="trCtrl.updateBoundsFromForm()"
                          field="'end'"
                          class="time-range-end">
-            </mct-control>&nbsp;
+            </mct-control>
         </span>
 
         <input type="submit" class="hidden">
