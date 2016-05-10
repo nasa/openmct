@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     "./src/MCTForm",
@@ -60,7 +59,6 @@ define([
     radioTemplate,
     legacyRegistry
 ) {
-    "use strict";
 
     legacyRegistry.register("platform/forms", {
         "name": "MCT Forms",

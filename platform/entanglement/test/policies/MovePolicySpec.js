@@ -20,12 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect,spyOn */
 define([
     '../../src/policies/MovePolicy',
     '../DomainObjectFactory'
 ], function (MovePolicy, domainObjectFactory) {
-    'use strict';
 
     describe("MovePolicy", function () {
         var testMetadata,

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         // Log levels; note that these must be in order of
         // most-important-first for LogLevel to function correctly

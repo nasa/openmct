@@ -20,14 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect,Promise,waitsFor,runs */
 
 define(
     [
         '../src/IdentityProvider'
     ],
     function (IdentityProvider) {
-        "use strict";
 
         describe("IdentityProvider", function () {
             var mockQ, mockCallback, provider;

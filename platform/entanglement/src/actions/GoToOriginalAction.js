@@ -20,10 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define */
 define(
     function () {
-        "use strict";
 
         /**
          * Implements the "Go To Original" action, which follows a link back
@@ -52,8 +50,8 @@ define(
 
         GoToOriginalAction.appliesTo = function (context) {
             var domainObject = context.domainObject;
-            return domainObject && domainObject.hasCapability("location")
-                && domainObject.getCapability("location").isLink();
+            return domainObject && domainObject.hasCapability("location") &&
+                domainObject.getCapability("location").isLink();
         };
 
         return GoToOriginalAction;

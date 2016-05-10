@@ -19,14 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * Plot palette. Defines colors for various plot lines.
  */
 define(
     function () {
-        'use strict';
 
         // Prepare different forms of the palette, since we wish to
         // describe colors in several ways (as RGB 0-255, as

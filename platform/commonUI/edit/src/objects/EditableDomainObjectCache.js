@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 
 /*
@@ -36,7 +35,6 @@
 define(
     ["./EditableModelCache"],
     function (EditableModelCache) {
-        'use strict';
 
         /**
          * Construct a new cache for editable domain objects. This can be used
@@ -70,8 +68,7 @@ define(
         EditableDomainObjectCache.prototype.getEditableObject = function (domainObject) {
             var type = domainObject.getCapability('type'),
                 EditableDomainObject = this.EditableDomainObject,
-                editableObject,
-                statusListener;
+                editableObject;
 
             // Track the top-level domain object; this will have
             // some special behavior for its context capability.

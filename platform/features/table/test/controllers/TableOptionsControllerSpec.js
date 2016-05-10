@@ -19,28 +19,18 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,xit*/
 
 define(
     [
         "../../src/controllers/TableOptionsController"
     ],
     function (TableOptionsController) {
-        "use strict";
 
         describe('The Table Options Controller', function() {
             var mockDomainObject,
                 mockCapability,
                 controller,
                 mockScope;
-
-            function promise(value) {
-                return {
-                    then: function (callback){
-                        return promise(callback(value));
-                    }
-                };
-            }
 
             beforeEach(function() {
                 mockCapability = jasmine.createSpyObj('mutationCapability', [

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,moment*/
 
 /**
  * Module defining DomainColumn.
@@ -27,7 +26,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * A column which will report telemetry domain values

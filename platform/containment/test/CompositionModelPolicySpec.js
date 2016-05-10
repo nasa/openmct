@@ -1,9 +1,7 @@
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../src/CompositionModelPolicy"],
     function (CompositionModelPolicy) {
-        "use strict";
 
         describe("The composition model policy", function () {
             var mockType,

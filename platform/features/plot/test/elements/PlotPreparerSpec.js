@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine,Float32Array*/
 
 /**
  * MergeModelsSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/elements/PlotPreparer"],
     function (PlotPreparer) {
-        "use strict";
 
         var START = 123456;
 
@@ -62,6 +60,8 @@ define(
             it("looks up values using a specified domain and range", function () {
                 var datas = [makeMockData(1)],
                     preparer = new PlotPreparer(datas, "testDomain", "testRange");
+
+                expect(preparer).toBeDefined();
 
                 expect(datas[0].getDomainValue).toHaveBeenCalledWith(
                     jasmine.any(Number),

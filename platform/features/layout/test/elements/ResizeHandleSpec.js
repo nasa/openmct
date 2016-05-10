@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine,xit*/
 
 define(
     ['../../src/elements/ResizeHandle'],
     function (ResizeHandle) {
-        "use strict";
 
         var TEST_MIN_WIDTH = 4, TEST_MIN_HEIGHT = 2;
 

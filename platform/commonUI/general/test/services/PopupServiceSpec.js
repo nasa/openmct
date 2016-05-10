@@ -19,13 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 
 define(
     ["../../src/services/PopupService"],
     function (PopupService) {
-        'use strict';
 
         describe("PopupService", function () {
             var mockDocument,

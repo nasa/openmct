@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect */
 
 define(
     [
@@ -29,7 +28,6 @@ define(
         '../DomainObjectFactory'
     ],
     function (AbstractComposeAction, MockCopyService, domainObjectFactory) {
-        "use strict";
 
         describe("Move/copy/link Actions", function () {
 

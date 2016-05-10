@@ -19,13 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 
 define(
     ['../../../src/controllers/drag/TimelineDragPopulator'],
     function (TimelineDragPopulator) {
-        "use strict";
 
         describe("The timeline drag populator", function () {
             var mockObjectLoader,

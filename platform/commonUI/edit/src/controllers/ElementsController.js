@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * The ElementsController prepares the elements view for display
@@ -39,7 +37,18 @@ define(
                     $scope.searchText = text;
                 }
             }
+
+            function searchElements(value) {
+                if ($scope.searchText) {
+                    return value.getModel().name.toLowerCase().search(
+                            $scope.searchText.toLowerCase()) !== -1;
+                } else {
+                    return true;
+                }
+            }
+
             $scope.filterBy = filterBy;
+            $scope.searchElements = searchElements;
         }
 
         return ElementsController;

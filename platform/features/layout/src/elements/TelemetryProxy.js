@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
-    ['./TextProxy', './AccessorMutator'],
-    function (TextProxy, AccessorMutator) {
-        'use strict';
+    ['./TextProxy'],
+    function (TextProxy) {
 
         // Method names to expose from this proxy
         var HIDE = 'hideTitle', SHOW = 'showTitle';

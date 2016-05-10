@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/directives/MCTPopup"],
     function (MCTPopup) {
-        "use strict";
 
         var JQLITE_METHODS = [ "on", "off", "find", "parent", "css", "append" ];
 
@@ -41,14 +39,6 @@ define(
                 mockNewElement,
                 testRect,
                 mctPopup;
-
-            function testEvent(x, y) {
-                return {
-                    pageX: x,
-                    pageY: y,
-                    preventDefault: jasmine.createSpy("preventDefault")
-                };
-            }
 
             beforeEach(function () {
                 mockCompile =

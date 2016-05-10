@@ -20,11 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect,spyOn */
 define(
     ['../src/PersistenceAggregator'],
     function (PersistenceAggregator) {
-        'use strict';
 
         var PERSISTENCE_SERVICE_METHODS = [
                 'listSpaces',

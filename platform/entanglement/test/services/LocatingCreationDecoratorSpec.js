@@ -20,14 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect */
 
 define(
     [
         '../../src/services/LocatingCreationDecorator'
     ],
     function (LocatingCreationDecorator) {
-        "use strict";
 
         describe("LocatingCreationDecorator", function () {
             var mockCreationService,

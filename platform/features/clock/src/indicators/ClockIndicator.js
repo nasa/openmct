@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['moment'],
     function (moment) {
-        "use strict";
 
         /**
          * Indicator that displays the current UTC time in the status area.

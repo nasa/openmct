@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining CreateAction. Created by vwoeltje on 11/10/14.
@@ -30,7 +29,6 @@ define(
         '../../../edit/src/objects/EditableDomainObject'
     ],
     function (CreateWizard, EditableDomainObject) {
-        "use strict";
 
         /**
          * The Create Action is performed to create new instances of

@@ -20,11 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define */
 
 define(
     function () {
-        "use strict";
 
         /**
          * Ensures that domain objects are loaded with a context capability

@@ -23,8 +23,8 @@
 
 /**
  * Module defining EventTelemetry.
- * Created by chacskaylo on 06/18/2016.
- * Modified by shale on 06/23/2016.
+ * Created by chacskaylo on 06/18/2015.
+ * Modified by shale on 06/23/2015.
  */
 define(
     [],
@@ -66,7 +66,7 @@ define(
 	    messages.push(["CMD: SYS-HAL9K MSG: Sure."]);
 	    messages.push(["RESP: SYS-COMM MSG: See you later, Hal."]);
 
-
+        //TODO: Make all theese constructor functions instead?
         function EventTelemetry(request, interval) {
 
             var latestObservedTime = Date.now(),
@@ -87,6 +87,7 @@ define(
                     ind = i % messages.length;
                 return "TEMP " + i.toString() + "-" + messages[ind][0] + "[" + domainDelta.toString() + "]";
                 // TODO: Unsure why we are prepeding 'TEMP'
+                // TODO: Check if it is viable to use toLocaleString? / Do something better with `` or interpolarization
 	        };
 
             return generatorData;

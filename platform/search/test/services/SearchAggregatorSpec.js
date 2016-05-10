@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine,Promise,waitsFor,spyOn*/
 
 /**
  *  SearchSpec. Created by shale on 07/31/2015.
@@ -27,7 +26,6 @@
 define([
     "../../src/services/SearchAggregator"
 ], function (SearchAggregator) {
-    "use strict";
 
     describe("SearchAggregator", function () {
         var $q,

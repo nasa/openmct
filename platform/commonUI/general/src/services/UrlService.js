@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining UrlService.
@@ -27,7 +26,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * The url service handles calls for url paths

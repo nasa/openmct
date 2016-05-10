@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * An editable model cache stores domain object models that have been

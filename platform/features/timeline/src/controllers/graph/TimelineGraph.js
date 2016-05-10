@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        'use strict';
 
         /**
          * Provides data to populate a graph in a timeline view.
@@ -47,8 +45,6 @@ define(
                 min = 0,
                 // current maximum
                 max = 0,
-                // current displayed time span
-                duration = 1000,
                 // line colors to display
                 colors = Object.keys(domainObjects);
 

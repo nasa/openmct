@@ -19,11 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 define(
     function () {
-        'use strict';
 
         /**
          * Loads all templates when the application is started.
@@ -33,7 +31,7 @@ define(
          * @param {...Array.<{templateUrl: string}>} extensions arrays
          *        of template or template-like extensions
          */
-        function TemplatePrefetcher(templateLinker, extensions) {
+        function TemplatePrefetcher(templateLinker) {
             Array.prototype.slice.apply(arguments, [1])
                 .reduce(function (a, b) {
                     return a.concat(b);

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,jasmine*/
 
 /**
  * ServiceCompositorSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/register/ServiceCompositor"],
     function (ServiceCompositor) {
-        "use strict";
 
         describe("The service compositor", function () {
             var registered,

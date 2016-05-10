@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect,spyOn */
 define(
     [
         '../../src/services/MoveService',
@@ -34,7 +33,6 @@ define(
         domainObjectFactory,
         ControlledPromise
     ) {
-        "use strict";
 
         describe("MoveService", function () {
 

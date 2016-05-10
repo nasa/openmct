@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * Module defining TelemetryCapability. Created by vwoeltje on 11/12/14.
@@ -27,7 +26,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         var ZERO = function () { return 0; },
             EMPTY_SERIES = {

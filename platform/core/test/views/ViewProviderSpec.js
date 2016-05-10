@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * ViewProviderSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/views/ViewProvider"],
     function (ViewProvider) {
-        "use strict";
 
         describe("The view provider", function () {
             var viewA = {
@@ -135,8 +133,7 @@ define(
             });
 
             it("enforces view restrictions from types", function () {
-                var testType = "testType",
-                    testView = { key: "x" },
+                var testView = { key: "x" },
                     provider = new ViewProvider([testView], mockLog);
 
                 // Include a "type" capability

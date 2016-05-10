@@ -20,14 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,jasmine */
-
+/*global jasmine*/
 define(
     [
         '../ControlledPromise'
     ],
     function (ControlledPromise) {
-        "use strict";
 
         /**
          * MockLinkService provides the same interface as the linkService,
@@ -65,7 +63,7 @@ define(
                 ]
             );
 
-            mockLinkService.perform.andCallFake(function (object, newParent) {
+            mockLinkService.perform.andCallFake(function (object) {
                 var performPromise = new ControlledPromise();
 
                 this.perform.mostRecentCall.promise = performPromise;

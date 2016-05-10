@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect,spyOn */
 
 define(
     [
@@ -28,7 +27,6 @@ define(
         '../DomainObjectFactory'
     ],
     function (CopyTask, domainObjectFactory) {
-        'use strict';
 
         var ID_A = "some-string-with-vaguely-uuidish-uniqueness",
             ID_B = "some-other-similarly-unique-string";
@@ -189,8 +187,7 @@ define(
 
             describe("copies object trees with multiple references to the" +
                 " same object", function () {
-                var model,
-                    mockDomainObjectB,
+                var mockDomainObjectB,
                     mockComposingObject,
                     composingObjectModel,
                     domainObjectClone,
@@ -254,9 +251,7 @@ define(
                 it(" and correctly updates child identifiers in object" +
                     " arrays within models ", function () {
                     var childA_ID = task.clones[0].getId(),
-                        childB_ID = task.clones[1].getId(),
-                        childC_ID = task.clones[3].getId(),
-                        childD_ID = task.clones[4].getId();
+                        childB_ID = task.clones[1].getId();
 
                     expect(domainObjectClone.model.objArr[0].id).not.toBe(ID_A);
                     expect(domainObjectClone.model.objArr[0].id).toBe(childA_ID);

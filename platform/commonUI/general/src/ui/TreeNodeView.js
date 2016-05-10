@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     'zepto',
@@ -27,7 +26,6 @@ define([
     './ToggleView',
     './TreeLabelView'
 ], function ($, nodeTemplate, ToggleView, TreeLabelView) {
-    'use strict';
 
     function TreeNodeView(gestureService, subtreeFactory, selectFn) {
         this.li = $('<li>');

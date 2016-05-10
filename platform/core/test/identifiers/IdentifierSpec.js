@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../../src/identifiers/Identifier"],
     function (Identifier) {
-        'use strict';
 
         describe("A parsed domain object identifier", function () {
             var id,
@@ -36,7 +34,7 @@ define(
             });
 
             describe("when space is encoded", function () {
-                var idSpace, idKey, spacedId;
+                var idSpace, idKey;
 
                 beforeEach(function () {
                     idSpace = "a-specific-space";

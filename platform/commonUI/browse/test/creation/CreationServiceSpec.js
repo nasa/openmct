@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * MCTRepresentationSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/creation/CreationService"],
     function (CreationService) {
-        "use strict";
 
         describe("The creation service", function () {
             var mockQ,
@@ -149,8 +147,7 @@ define(
             });
 
             it("adds new objects to the parent's composition", function () {
-                var model = { someKey: "some value" },
-                    parentModel = { composition: ["notAnyUUID"] };
+                var model = { someKey: "some value" };
                 creationService.createObject(model, mockParentObject);
 
                 // Verify that a new ID was added
@@ -201,8 +198,7 @@ define(
             it("logs an error when mutaton fails", function () {
                 // If mutation of the parent fails, we've lost the
                 // created object - this is an error.
-                var model = { someKey: "some value" },
-                    parentModel = { composition: ["notAnyUUID"] };
+                var model = { someKey: "some value" };
 
                 mockCompositionCapability.add.andReturn(mockPromise(false));
 

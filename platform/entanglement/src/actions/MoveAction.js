@@ -20,11 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define */
 define(
     ['./AbstractComposeAction'],
     function (AbstractComposeAction) {
-        "use strict";
 
         /**
          * The MoveAction is available from context menus and allows a user to

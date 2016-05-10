@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../src/capabilities/TimelineTimespanCapability'],
     function (TimelineTimespanCapability) {
-        'use strict';
 
         describe("A Timeline's timespan capability", function () {
             var mockQ,

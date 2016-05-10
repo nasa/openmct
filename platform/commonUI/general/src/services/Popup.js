@@ -19,11 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     function () {
-        "use strict";
 
         /**
          * A popup is an element that has been displayed at a particular

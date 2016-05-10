@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine,xit,xdescribe*/
 
 /**
  * MCTRepresentationSpec. Created by ahenry on 01/21/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/creation/AddActionProvider"],
     function (AddActionProvider) {
-        "use strict";
 
         describe("The add action provider", function () {
             var mockTypeService,

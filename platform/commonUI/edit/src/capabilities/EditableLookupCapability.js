@@ -19,14 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 
 define(
     [],
     function () {
-        'use strict';
-
+        /*jshint forin:false */
         /**
          * Wrapper for both "context" and "composition" capabilities;
          * ensures that any domain objects reachable in Edit mode

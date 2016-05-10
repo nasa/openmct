@@ -19,13 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 
 define(
     ["../src/AgentService"],
     function (AgentService) {
-        "use strict";
 
         var TEST_USER_AGENTS = {
             DESKTOP: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36",

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining NewTabAction (Originally NewWindowAction). Created by vwoeltje on 11/18/14.
@@ -27,9 +26,6 @@
 define(
     [],
     function () {
-        "use strict";
-        var ROOT_ID = "ROOT",
-            DEFAULT_PATH = "/mine";
         /**
          * The new tab action allows a domain object to be opened
          * into a new browser tab.

@@ -20,12 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define */
 
 define(
     [ "./CopyTask" ],
     function (CopyTask) {
-        "use strict";
 
         /**
          * CopyService provides an interface for deep copying objects from one

@@ -20,11 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define*/
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Adds placeholder domain object models for any models which

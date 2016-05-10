@@ -19,13 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,afterEach,waitsFor,jasmine*/
 
 
 define(
     ["../src/LocalStoragePersistenceProvider"],
     function (LocalStoragePersistenceProvider) {
-        "use strict";
 
         describe("The local storage persistence provider", function () {
             var mockQ,
@@ -51,14 +49,10 @@ define(
                 mockQ.when.andCallFake(mockPromise);
 
                 provider = new LocalStoragePersistenceProvider(
+                    { localStorage: testLocalStorage },
                     mockQ,
-                    testSpace,
-                    testLocalStorage
+                    testSpace
                 );
-
-                // White-boxy: Can't effectively mock window.localStorage,
-                // so override the provider's local reference to it.
-                provider.localStorage = testLocalStorage;
             });
 
             it("reports available spaces", function () {

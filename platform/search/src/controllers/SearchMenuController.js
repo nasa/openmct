@@ -19,14 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * Module defining SearchMenuController. Created by shale on 08/17/2015.
  */
 define(function () {
+<<<<<<< HEAD
     "use strict";
 
+=======
+    
+>>>>>>> nasa/master
     function SearchMenuController($scope, types) {
 
         // Model variables are:
@@ -92,13 +95,16 @@ define(function () {
 
         // For documentation, see checkAll below
         function checkAll() {
-            var type;
-
             // Reset all the other options to original/default position
-            for (type in $scope.ngModel.checked) {
+            Object.keys($scope.ngModel.checked).forEach(function (type) {
                 $scope.ngModel.checked[type] = false;
+<<<<<<< HEAD
             }
 
+=======
+            });
+            
+>>>>>>> nasa/master
             // Change the filters string depending on checkAll status
             if ($scope.ngModel.checkAll) {
                 // This setting will make the filters display hidden

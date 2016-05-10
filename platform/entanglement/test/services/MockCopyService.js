@@ -20,11 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,jasmine */
-
+/*global jasmine*/
 define(
     function () {
-        "use strict";
 
         /**
          * MockCopyService provides the same interface as the copyService,

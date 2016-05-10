@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle implements "containment" rules, which determine which objects
@@ -29,7 +28,6 @@
 define(
     ['./ContainmentTable'],
     function (ContainmentTable) {
-        "use strict";
 
         /**
          * Defines composition policy as driven by type metadata.

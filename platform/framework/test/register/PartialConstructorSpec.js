@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach*/
 
 /**
  * PartialConstructorSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/register/PartialConstructor"],
     function (PartialConstructor) {
-        "use strict";
 
         describe("A partial constructor", function () {
             var result,

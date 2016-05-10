@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * Defines interfaces and common infrastructure for establishing
@@ -28,7 +27,6 @@
  */
 define(
     function () {
-        "use strict";
 
         /**
          * Default implementation of an identity service. Provides an

@@ -19,12 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine,xit,xdescribe*/
+/*global describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/policies/EditContextualActionPolicy"],
     function (EditContextualActionPolicy) {
-        "use strict";
 
         describe("The Edit contextual action policy", function () {
             var policy,

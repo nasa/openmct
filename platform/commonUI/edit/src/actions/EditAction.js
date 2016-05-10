@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining EditAction. Created by vwoeltje on 11/14/14.
@@ -27,7 +26,6 @@
 define(
     ['../objects/EditableDomainObject'],
     function (EditableDomainObject) {
-        "use strict";
 
         // A no-op action to return in the event that the action cannot
         // be completed.

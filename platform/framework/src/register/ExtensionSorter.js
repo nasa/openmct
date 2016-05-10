@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ["../Constants"],
     function (Constants) {
-        "use strict";
 
         /**
          * Responsible for applying priority order to extensions in a

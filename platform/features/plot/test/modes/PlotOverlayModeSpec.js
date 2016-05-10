@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * MergeModelsSpec. Created by vwoeltje on 11/6/14.
@@ -27,24 +26,14 @@
 define(
     ["../../src/modes/PlotOverlayMode"],
     function (PlotOverlayMode) {
-        "use strict";
 
         describe("Overlaid plot mode", function () {
             var mockDomainObject,
                 mockSubPlotFactory,
-                mockSubPlot,
                 mockPrepared,
                 testBuffers,
                 testDrawingObjects,
                 mode;
-
-            function mockElement(x, y, w, h) {
-                return {
-                    getBoundingClientRect: function () {
-                        return { left: x, top: y, width: w, height: h };
-                    }
-                };
-            }
 
             function createMockSubPlot() {
                 var mockSubPlot = jasmine.createSpyObj(
@@ -129,7 +118,7 @@ define(
                 mode.plotTelemetry(mockPrepared);
 
                 // Should have one sub-plot with three lines
-                testDrawingObjects.forEach(function (testDrawingObject, i) {
+                testDrawingObjects.forEach(function (testDrawingObject) {
                     // Either empty list or undefined is fine;
                     // just want to make sure there are no lines.
                     expect(testDrawingObject.lines.length)
@@ -180,7 +169,7 @@ define(
                 });
 
                 // Step back the same number of zoom changes
-                mockSubPlotFactory.createSubPlot.calls.forEach(function (c) {
+                mockSubPlotFactory.createSubPlot.calls.forEach(function () {
                     // Should still be zoomed at start of each iteration
                     expect(mode.isZoomed()).toBeTruthy();
                     // Step back one of the zoom changes.

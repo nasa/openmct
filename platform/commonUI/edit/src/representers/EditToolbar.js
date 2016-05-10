@@ -19,11 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 define(
     [],
     function () {
-        "use strict";
 
         // Utility functions for reducing truth arrays
         function and(a, b) { return a && b; }

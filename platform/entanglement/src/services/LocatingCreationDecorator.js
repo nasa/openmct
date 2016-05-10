@@ -20,11 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define */
 
 define(
     function () {
-        "use strict";
 
         /**
          * Adds a `location` property to newly-created domain objects.

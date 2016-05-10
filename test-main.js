@@ -67,6 +67,9 @@ requirejs.config({
         "moment-duration-format": {
             "deps": [ "moment" ]
         },
+        "screenfull": {
+            "exports": "screenfull"
+        },
         "zepto": {
             "exports": "Zepto"
         }

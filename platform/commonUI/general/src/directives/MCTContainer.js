@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining MCTContainer. Created by vwoeltje on 11/17/14.
@@ -27,7 +26,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * The mct-container is similar to the mct-include directive

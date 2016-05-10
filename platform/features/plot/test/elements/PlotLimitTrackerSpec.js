@@ -19,19 +19,16 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../../src/elements/PlotLimitTracker"],
     function (PlotLimitTracker) {
-        "use strict";
 
         describe("A plot's limit tracker", function () {
             var mockHandle,
                 testRange,
                 mockTelemetryObjects,
                 testData,
-                mockLimitCapabilities,
                 tracker;
 
             beforeEach(function () {

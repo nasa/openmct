@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 define([
     "./IdColumn",
@@ -34,7 +33,6 @@ define([
     MetadataColumn,
     TimespanColumn
 ) {
-    'use strict';
 
     /**
      * A description of how to populate a given column within a

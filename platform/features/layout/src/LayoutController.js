@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle implements object types and associated views for
@@ -29,7 +28,6 @@
 define(
     ['./LayoutDrag'],
     function (LayoutDrag) {
-        "use strict";
 
         var DEFAULT_DIMENSIONS = [ 12, 8 ],
             DEFAULT_GRID_SIZE = [ 32, 32 ],

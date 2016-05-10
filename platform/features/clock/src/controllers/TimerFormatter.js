@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,requirejs*/
 
 define(
     ['moment', 'moment-duration-format'],
     function (moment) {
-        "use strict";
 
         var SHORT_FORMAT = "HH:mm:ss",
             LONG_FORMAT = "d[D] HH:mm:ss";

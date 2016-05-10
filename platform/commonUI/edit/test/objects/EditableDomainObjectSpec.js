@@ -19,15 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/objects/EditableDomainObject"],
     function (EditableDomainObject) {
-        "use strict";
 
         describe("Editable domain object", function () {
+            var object;
 
+            beforeEach(function () {
+                object = new EditableDomainObject();
+            });
         });
     }
 );

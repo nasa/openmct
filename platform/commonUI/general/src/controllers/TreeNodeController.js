@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining TreeNodeController. Created by vwoeltje on 11/10/14.
@@ -27,7 +26,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * The TreeNodeController supports the tree node representation;
@@ -62,9 +60,7 @@ define(
          */
         function TreeNodeController($scope, $timeout) {
             var self = this,
-                selectedObject = ($scope.ngModel || {}).selectedObject,
-                isSelected = false,
-                hasBeenExpanded = false;
+                selectedObject = ($scope.ngModel || {}).selectedObject;
 
             // Look up the id for a domain object. A convenience
             // for mapping; additionally does some undefined-checking.

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * GestureProviderSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/gestures/GestureProvider"],
     function (GestureProvider) {
-        "use strict";
 
         var JQLITE_FUNCTIONS = [ "on", "off", "attr", "removeAttr" ],
             GESTURE_KEYS = ["a", "b", "c", "d", "e"],

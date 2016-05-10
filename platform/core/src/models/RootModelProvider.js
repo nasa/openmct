@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining RootModelProvider. Created by vwoeltje on 11/7/14.
@@ -27,7 +26,6 @@
 define(
     ['./StaticModelProvider'],
     function (StaticModelProvider) {
-        "use strict";
 
         /**
          * Provides the root object (id = "ROOT"), which is the top-level

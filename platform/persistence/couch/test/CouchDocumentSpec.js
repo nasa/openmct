@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * DomainObjectProviderSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../src/CouchDocument"],
     function (CouchDocument) {
-        "use strict";
 
         // JSLint doesn't like dangling _'s, but CouchDB uses these, so
         // hide this behind variables.

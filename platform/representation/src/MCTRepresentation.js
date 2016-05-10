@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * This bundle implements the directives for representing domain objects
@@ -29,7 +28,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Defines the mct-representation directive. This may be used to
@@ -55,8 +53,7 @@ define(
          * @param {ViewDefinition[]} views an array of view extensions
          */
         function MCTRepresentation(representations, views, representers, $q, templateLinker, $log) {
-            var representationMap = {},
-                gestureMap = {};
+            var representationMap = {};
 
             // Assemble all representations and views
             // The distinction between views and representations is
@@ -84,7 +81,7 @@ define(
                 }
             }
 
-            function link($scope, element, attrs, ctrl, transclude) {
+            function link($scope, element, attrs) {
                 var activeRepresenters = representers.map(function (Representer) {
                         return new Representer($scope, element, attrs);
                     }),

@@ -20,10 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define */
 define(
     function () {
-        "use strict";
 
         /**
          * Common interface exposed by services which support move, copy,

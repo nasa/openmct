@@ -19,17 +19,16 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine */
 
 define(
     ['../src/NotificationIndicatorController'],
     function (NotificationIndicatorController) {
-        "use strict";
 
         describe("The notification indicator controller ", function () {
             var mockNotificationService,
                 mockScope,
-                mockDialogService;
+                mockDialogService,
+                controller;
 
             beforeEach(function(){
                 mockNotificationService = jasmine.createSpy("notificationService");
@@ -38,19 +37,18 @@ define(
                     "dialogService",
                     ["getDialogResponse","dismiss"]
                 );
-            });
-
-            it("exposes the highest notification severity to the template", function() {
                 mockNotificationService.highest = {
                     severity: "error"
                 };
-                var controller = new NotificationIndicatorController(mockScope, mockNotificationService, mockDialogService);
+                controller = new NotificationIndicatorController(mockScope, mockNotificationService, mockDialogService);
+            });
+
+            it("exposes the highest notification severity to the template", function() {
                 expect(mockScope.highest).toBeTruthy();
                 expect(mockScope.highest.severity).toBe("error");
             });
 
             it("invokes the dialog service to show list of messages", function() {
-                var controller = new NotificationIndicatorController(mockScope, mockNotificationService, mockDialogService);
                 expect(mockScope.showNotificationsList).toBeDefined();
                 mockScope.showNotificationsList();
                 expect(mockDialogService.getDialogResponse).toHaveBeenCalled();
@@ -63,7 +61,6 @@ define(
             });
 
             it("provides a means of dismissing the message list", function() {
-                var controller = new NotificationIndicatorController(mockScope, mockNotificationService, mockDialogService);
                 expect(mockScope.showNotificationsList).toBeDefined();
                 mockScope.showNotificationsList();
                 expect(mockDialogService.getDialogResponse).toHaveBeenCalled();

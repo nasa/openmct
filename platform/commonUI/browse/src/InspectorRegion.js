@@ -19,14 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,window*/
 
 define(
     [
         '../../regions/src/Region'
     ],
     function (Region) {
-        "use strict";
 
         /**
          * Defines the a default Inspector region. Captured in a class to

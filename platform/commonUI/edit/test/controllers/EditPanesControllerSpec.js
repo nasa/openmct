@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/controllers/EditPanesController"],
     function (EditPanesController) {
-        "use strict";
 
         describe("The Edit Panes controller", function () {
             var mockScope,

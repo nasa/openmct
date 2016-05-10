@@ -20,11 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define */
 define(
     [],
     function () {
-        'use strict';
 
         var DISALLOWED_ACTIONS = [
             "move",
@@ -50,8 +48,7 @@ define(
 
         function isCrossSpace(context) {
             var domainObject = context.domainObject,
-                selectedObject = context.selectedObject,
-                spaces = [ domainObject, selectedObject ].map(lookupSpace);
+                selectedObject = context.selectedObject;
             return selectedObject !== undefined &&
                 domainObject !== undefined &&
                 lookupSpace(domainObject) !== lookupSpace(selectedObject);

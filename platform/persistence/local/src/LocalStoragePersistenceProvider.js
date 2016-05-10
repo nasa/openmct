@@ -20,12 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,window*/
-
 define(
     [],
     function () {
-        'use strict';
 
         /**
          * The LocalStoragePersistenceProvider reads and writes JSON documents
@@ -38,11 +35,11 @@ define(
          * @param $interval Angular's $interval service
          * @param {string} space the name of the persistence space being served
          */
-        function LocalStoragePersistenceProvider($q, space) {
+        function LocalStoragePersistenceProvider($window, $q, space) {
             this.$q = $q;
             this.space = space;
             this.spaces = space ? [space] : [];
-            this.localStorage = window.localStorage;
+            this.localStorage = $window.localStorage;
         }
 
         /**
@@ -82,7 +79,7 @@ define(
             return this.$q.when(spaceObj[key]);
         };
 
-        LocalStoragePersistenceProvider.prototype.deleteObject = function (space, key, value) {
+        LocalStoragePersistenceProvider.prototype.deleteObject = function (space, key) {
             var spaceObj = this.getValue(space);
             delete spaceObj[key];
             this.setValue(space, spaceObj);

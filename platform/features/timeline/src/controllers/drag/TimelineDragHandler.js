@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Handles business logic (mutation of objects, retrieval of start/end

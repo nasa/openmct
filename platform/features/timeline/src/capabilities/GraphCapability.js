@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./ResourceGraph', './CumulativeGraph'],
     function (ResourceGraph, CumulativeGraph) {
-        'use strict';
 
         /**
          * Implements the `graph` capability for Timeline and

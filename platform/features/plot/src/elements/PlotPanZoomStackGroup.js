@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./PlotPanZoomStack'],
     function (PlotPanZoomStack) {
-        "use strict";
 
         /**
          * A plot pan zoom stack group provides a collection of individual

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./FixedProxy', './elements/ElementProxies', './FixedDragHandle'],
     function (FixedProxy, ElementProxies, FixedDragHandle) {
-        "use strict";
 
         var DEFAULT_DIMENSIONS = [ 2, 1 ],
             DEFAULT_GRID_SIZE = [64, 16];
@@ -38,7 +36,7 @@ define(
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
-        function FixedController($scope, $q, dialogService, telemetryHandler, telemetryFormatter, throttle) {
+        function FixedController($scope, $q, dialogService, telemetryHandler, telemetryFormatter) {
             var self = this,
                 handle,
                 names = {}, // Cache names by ID
@@ -232,7 +230,7 @@ define(
             }
 
             // Handle changes in the object's composition
-            function updateComposition(ids) {
+            function updateComposition() {
                 // Populate panel positions
                 // TODO: Ensure defaults here
                 // Resubscribe - objects in view have changed

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ["../SubPlot", "../elements/PlotPalette", "../elements/PlotPanZoomStackGroup"],
     function (SubPlot, PlotPalette, PlotPanZoomStackGroup) {
-        "use strict";
 
         /**
          * Handles plotting in Stacked mode. In stacked mode, there

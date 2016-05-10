@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle implements the notification service, which can be used to
@@ -34,7 +33,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * A representation of a user action. Options are provided to
@@ -381,17 +379,16 @@ define(
          */
         NotificationService.prototype.setActiveNotification =
             function (notification) {
+                var timeout;
 
-                var self = this,
-                    timeout;
                 this.active.notification = notification;
                 /*
                 If autoDismiss has been specified, OR there are other
                  notifications queued for display, setup a timeout to
                   dismiss the dialog.
                  */
-                if (notification && (notification.model.autoDismiss
-                    || this.selectNextNotification())) {
+                if (notification && (notification.model.autoDismiss ||
+                    this.selectNextNotification())) {
 
                     timeout = notification.model.autoDismiss || this.DEFAULT_AUTO_DISMISS;
                     this.active.timeout = this.$timeout(function () {
@@ -418,8 +415,8 @@ define(
             for (; i< this.notifications.length; i++) {
                 notification = this.notifications[i];
 
-                if (!notification.model.minimized
-                    && notification!== this.active.notification) {
+                if (!notification.model.minimized &&
+                    notification!== this.active.notification) {
 
                     return notification;
                 }

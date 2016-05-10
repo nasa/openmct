@@ -20,11 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define */
 
 define(
     function () {
-        "use strict";
 
         /**
          * LinkService provides an interface for linking objects to additional

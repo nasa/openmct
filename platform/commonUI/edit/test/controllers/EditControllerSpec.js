@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/controllers/EditObjectController"],
     function (EditObjectController) {
-        "use strict";
 
         describe("The Edit mode controller", function () {
             var mockScope,
@@ -95,8 +93,7 @@ define(
             });
 
             it("exposes a warning message for unload", function () {
-                var obj = mockObject,
-                    errorMessage = "Unsaved changes";
+                var errorMessage = "Unsaved changes";
 
                 // Normally, should be undefined
                 expect(controller.getUnloadWarning()).toBeUndefined();

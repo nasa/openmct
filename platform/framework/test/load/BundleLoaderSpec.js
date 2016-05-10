@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,runs,jasmine*/
 
 /**
  * BundleLoaderSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/load/BundleLoader"],
     function (BundleLoader) {
-        "use strict";
 
         describe("The bundle loader", function () {
             var loader,

@@ -19,16 +19,14 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,xit,expect,beforeEach*/
 
 define(
     ["../../src/actions/PropertiesDialog"],
     function (PropertiesDialog) {
-        "use strict";
 
         describe("Properties dialog", function () {
 
-            var type, properties, domainObject, model, dialog;
+            var type, properties, model, dialog;
 
             beforeEach(function () {
                 type = {

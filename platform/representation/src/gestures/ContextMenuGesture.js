@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining ContextMenuGesture.
@@ -27,7 +26,6 @@
  */
 define(
     function () {
-        "use strict";
 
         /**
          * Add listeners to a representation such that it calls the
@@ -77,7 +75,7 @@ define(
                 });
 
                 // Whenever the touch event ends, 'isPressing' is false.
-                element.on('touchend', function (event) {
+                element.on('touchend', function () {
                     isPressing = false;
                 });
             }

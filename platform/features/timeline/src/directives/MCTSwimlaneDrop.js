@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./SwimlaneDragConstants'],
     function (SwimlaneDragConstants) {
-        "use strict";
 
         /**
          * Defines the `mct-swimlane-drop` directive. When a drop occurs
@@ -42,7 +40,6 @@ define(
                     height = element[0].offsetHeight,
                     rect = element[0].getBoundingClientRect(),
                     offset = event.pageY - rect.top,
-                    dataTransfer = event.dataTransfer,
                     id = dndService.getData(
                         SwimlaneDragConstants.MCT_DRAG_TYPE
                     ),

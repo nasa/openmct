@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * MenuArrowControllerSpec. Created by shale on 07/02/2015.
@@ -27,8 +26,12 @@
 define(
     ["../src/MenuArrowController"],
     function (MenuArrowController) {
+<<<<<<< HEAD
         "use strict";
 
+=======
+        
+>>>>>>> nasa/master
         describe("The menu arrow controller ", function () {
             var mockScope,
                 mockDomainObject,

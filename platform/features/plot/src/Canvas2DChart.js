@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Float32Array*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Create a new chart which uses Canvas's 2D API for rendering.

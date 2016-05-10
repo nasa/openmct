@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../src/controllers/TimelineGanttController'],
     function (TimelineGanttController) {
-        "use strict";
 
         var TEST_MAX_OFFSCREEN = 50;
 

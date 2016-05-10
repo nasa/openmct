@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Policy controlling whether navigation events should proceed
@@ -47,8 +45,8 @@ define(
                 statusCapability = navigatedObject &&
                     navigatedObject.getCapability("status");
 
-            return statusCapability && statusCapability.get('editing')
-                && editorCapability && editorCapability.dirty();
+            return statusCapability && statusCapability.get('editing') &&
+                editorCapability && editorCapability.dirty();
         };
 
         /**

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach*/
 
 define(
     ['../../src/types/TypeImpl'],
     function (TypeImpl) {
-        "use strict";
 
         describe("Type definition wrapper", function () {
             var testTypeDef,
