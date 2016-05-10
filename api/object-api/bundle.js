@@ -22,30 +22,20 @@
 /*global define*/
 
 define([
-    './TelemetryAPI',
+    './ObjectAPI',
     'legacyRegistry'
 ], function (
-    TelemetryAPI,
+    ObjectAPI,
     legacyRegistry
 ) {
-    legacyRegistry.register('platform/telemetry-api', {
-        name: 'Telemetry API',
-        description: 'The public telemetry api',
+    legacyRegistry.register('api/object-api', {
+        name: 'Object API',
+        description: 'The public Objects API',
         extensions: {
             runs: [
                 {
-                    key: "TelemetryAPI",
-                    implementation: TelemetryAPI,
-                    depends: [
-                        'formatService'
-                    ]
-                },
-                {
-                    key: "objectexposer",
-                    implementation: function (objectService) {
-                        window.MCT = window.MCT || {};
-                        window.MCT.objects = objectService;
-                    },
+                    key: "ObjectAPI",
+                    implementation: ObjectAPI,
                     depends: [
                         'objectService'
                     ]
