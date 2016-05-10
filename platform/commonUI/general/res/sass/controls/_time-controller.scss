@@ -147,6 +147,16 @@
 
 	.knob {
 		z-index: 2;
+        &:before {
+            $mTB: 2px;
+            $grippyW: 3px;
+            $mLR: ($sliderKnobW - $grippyW)/2;
+            @include bgStripes($c: pullForward($sliderColorKnob, 20%), $a: 1, $bgsize: 4px, $angle: 0deg);
+            content: '';
+            display: block;
+            position: absolute;
+            top: $mTB; right: $mLR; bottom: $mTB; left: $mLR;
+        }
 		.range-value {
 			@include trans-prop-nice-fade(.25s);
             font-size: 0.7rem;
@@ -192,6 +202,8 @@
 	background-color: $colorInputBg;
 	padding: 1px 1px 0 $interiorMargin;
 }
+
+/******************************************************************** MOBILE */
 
 @include phoneandtablet {
 	.l-time-controller, .l-time-range-inputs-holder {

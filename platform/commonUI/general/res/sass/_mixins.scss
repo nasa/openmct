@@ -139,6 +139,17 @@
     background-size: $d $d;
 }
 
+@mixin bgStripes($c: yellow, $a: 0.1, $bgsize: 5px, $angle: 90deg) {
+    @include background-image(linear-gradient($angle,
+        rgba($c, $a) 25%, transparent 25%,
+        transparent 50%, rgba($c, $a) 50%,
+        rgba($c, $a) 75%, transparent 75%,
+        transparent 100%
+    ));
+    background-repeat: repeat;
+    background-size: $bgsize $bgsize;
+}
+
 @mixin bgVertStripes($c: yellow, $a: 0.1, $d: 40px) {
     @include background-image(linear-gradient(-90deg,
         rgba($c, $a) 0%, rgba($c, $a) 50%,
