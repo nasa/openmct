@@ -165,17 +165,8 @@ define(
 
             //No need to scroll
             if (this.$scope.displayRows.length < this.maxDisplayRows) {
-                //Check whether need to resynchronize visible with display
-                // rows (if data added)
-                if (this.$scope.visibleRows.length !==
-                    this.$scope.displayRows.length){
-                    start = 0;
-                    end = this.$scope.displayRows.length;
-                } else {
-                    //Data is in sync, and no need to calculate scroll,
-                    // so do nothing.
-                    return;
-                }
+                start = 0;
+                end = this.$scope.displayRows.length;
             } else {
                 //rows has exceeded display maximum, so may be necessary to
                 // scroll
