@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,beforeEach,jasmine,it,expect*/
 
 define([
     '../src/SplashScreenManager'
 ], function (SplashScreenManager) {
-    'use strict';
 
     describe('SplashScreenManager', function () {
         var $document,
@@ -54,7 +52,7 @@ define([
         describe('when element exists', function () {
             beforeEach(function () {
                 $document.querySelectorAll.andReturn([splashElement]);
-                new SplashScreenManager([$document]);
+                return new SplashScreenManager([$document]);
             });
 
             it('adds fade out class', function () {
@@ -81,7 +79,7 @@ define([
             $document.querySelectorAll.andReturn([]);
 
             function run() {
-                new SplashScreenManager([$document]);
+                return new SplashScreenManager([$document]);
             }
 
             expect(run).not.toThrow();

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Float32Array*/
 
 define(
     ['./PlotLine', './PlotLineBuffer'],
     function (PlotLine, PlotLineBuffer) {
-        'use strict';
 
         var MAX_POINTS = 86400,
             PADDING_RATIO = 0.10, // Padding percentage for top & bottom

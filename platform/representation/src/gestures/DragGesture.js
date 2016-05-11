@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining DragGesture. Created by vwoeltje on 11/17/14.
@@ -27,7 +26,6 @@
 define(
     ['./GestureConstants'],
     function (GestureConstants) {
-        "use strict";
 
         /**
          * Add event handlers to a representation such that it may be

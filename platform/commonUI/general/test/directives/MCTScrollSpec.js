@@ -19,11 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,jasmine,beforeEach*/
 define(
     ['../../src/directives/MCTScroll'],
     function (MCTScroll) {
-        "use strict";
 
         var EVENT_PROPERTY = "testProperty",
             ATTRIBUTE = "testAttribute",

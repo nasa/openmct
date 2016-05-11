@@ -19,13 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,xdescribe,it,expect,beforeEach,
- waitsFor,afterEach,jasmine*/
 
 define(
     ["../src/ConductorRepresenter", "./TestTimeConductor"],
     function (ConductorRepresenter, TestTimeConductor) {
-        "use strict";
 
         var SCOPE_METHODS = [
                 '$on',

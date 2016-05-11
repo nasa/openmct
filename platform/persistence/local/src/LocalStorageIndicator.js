@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,window*/
 
 define(
     [],
     function () {
-        "use strict";
 
         var LOCAL_STORAGE_WARNING = [
             "Using browser local storage for persistence.",

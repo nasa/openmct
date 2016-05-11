@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle adds the Web Page object type, which can be used to embed
@@ -29,7 +28,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Controller for embedded web pages; serves simply as a

@@ -20,11 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define */
 
 define(
     function () {
-        "use strict";
         /**
          * MoveService provides an interface for moving objects from one
          * location to another.  It also provides a method for determining if

@@ -1,9 +1,7 @@
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Policy allowing composition only for domain object types which
@@ -15,7 +13,7 @@ define(
         function CompositionModelPolicy() {
         }
 
-        CompositionModelPolicy.prototype.allow = function (candidate, context) {
+        CompositionModelPolicy.prototype.allow = function (candidate) {
             return Array.isArray(
                 (candidate.getInitialModel() || {}).composition
             );

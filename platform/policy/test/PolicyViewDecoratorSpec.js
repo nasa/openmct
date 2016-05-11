@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../src/PolicyViewDecorator"],
     function (PolicyViewDecorator) {
-        "use strict";
 
         describe("The policy view decorator", function () {
             var mockPolicyService,
@@ -92,7 +90,7 @@ define(
 
             it("filters out policy-disallowed views", function () {
                 // Disallow the second action
-                mockPolicyService.allow.andCallFake(function (cat, candidate, ctxt) {
+                mockPolicyService.allow.andCallFake(function (cat, candidate) {
                     return candidate.someKey !== 'b';
                 });
                 expect(decorator.getViews(mockDomainObject))

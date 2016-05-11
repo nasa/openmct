@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./TelemetryProxy', './ImageProxy', './LineProxy', './BoxProxy', './TextProxy'],
     function (TelemetryProxy, ImageProxy, LineProxy, BoxProxy, TextProxy) {
-        "use strict";
 
         return {
             "fixed.telemetry": TelemetryProxy,

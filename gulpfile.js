@@ -35,13 +35,16 @@ var gulp = require('gulp'),
     fs = require('fs'),
     git = require('git-rev-sync'),
     moment = require('moment'),
+    merge = require('merge-stream'),
     project = require('./package.json'),
+    _ = require('lodash'),
     paths = {
         main: 'main.js',
         dist: 'dist',
         assets: 'dist/assets',
         scss: ['./platform/**/*.scss', './example/**/*.scss'],
         scripts: [ 'main.js', 'platform/**/*.js', 'src/**/*.js' ],
+        specs: [ 'platform/**/*Spec.js', 'src/**/*Spec.js' ],
         static: [
             'index.html',
             'platform/**/*',
@@ -100,8 +103,15 @@ gulp.task('stylesheets', function () {
 });
 
 gulp.task('lint', function () {
-    return gulp.src(paths.scripts)
-        .pipe(jshint())
+    var nonspecs = paths.specs.map(function (glob) {
+            return "!" + glob;
+        }),
+        scriptLint = gulp.src(paths.scripts.concat(nonspecs))
+            .pipe(jshint()),
+        specLint = gulp.src(paths.specs)
+            .pipe(jshint({ jasmine: true }));
+
+    return merge(scriptLint, specLint)
         .pipe(jshint.reporter('default'))
         .pipe(jshint.reporter('fail'));
 });

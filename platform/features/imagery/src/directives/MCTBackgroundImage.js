@@ -19,11 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     function () {
-        "use strict";
 
         /**
          * Defines the `mct-background-image` directive.
@@ -38,7 +36,7 @@ define(
          * @memberof platform/features/imagery
          */
         function MCTBackgroundImage($document) {
-            function link(scope, element, attrs) {
+            function link(scope, element) {
                 // General strategy here:
                 // - Keep count of how many images have been requested; this
                 //   counter will be used as an internal identifier or sorts
@@ -51,7 +49,7 @@ define(
                 // in which images are actually loaded may be different, so
                 // some strategy like this is necessary to ensure that images
                 // do not display out-of-order.
-                var div, requested = 0, loaded = 0;
+                var requested = 0, loaded = 0;
 
                 function nextImage(url) {
                     var myCounter = requested,

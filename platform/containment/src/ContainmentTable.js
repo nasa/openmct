@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./CapabilityTable'],
     function (CapabilityTable) {
-        "use strict";
 
         // Symbolic value for the type table for cases when any type
         // is allowed to be contained.

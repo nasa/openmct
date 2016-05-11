@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,moment*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * The TelemetryFormatter is responsible for formatting (as text

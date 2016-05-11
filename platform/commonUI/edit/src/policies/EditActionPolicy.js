@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Policy controlling when the `edit` and/or `properties` actions
@@ -74,9 +72,9 @@ define(
          */
         function isEditing(context) {
             var domainObject = (context || {}).domainObject;
-            return domainObject
-                && domainObject.hasCapability('status')
-                && domainObject.getCapability('status').get('editing');
+            return domainObject &&
+                domainObject.hasCapability('status') &&
+                domainObject.getCapability('status').get('editing');
         }
 
         EditActionPolicy.prototype.allow = function (action, context) {

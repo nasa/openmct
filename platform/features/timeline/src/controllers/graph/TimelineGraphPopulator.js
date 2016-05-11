@@ -19,11 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 define(
     ['./TimelineGraph', './TimelineGraphRenderer'],
     function (TimelineGraph, TimelineGraphRenderer) {
-        'use strict';
 
         /**
          * Responsible for determining which resource graphs

@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,setTimeout*/
+/*global setTimeout*/
 
 /**
  * Module defining GenericSearchProvider. Created by shale on 07/16/2015.
@@ -29,7 +29,6 @@ define([
 ], function (
 
 ) {
-    "use strict";
 
     /**
      * A search service which searches through domain objects in

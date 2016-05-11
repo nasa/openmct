@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect */
 
 define(
     [
@@ -29,7 +28,6 @@ define(
         '../ControlledPromise'
     ],
     function (GoToOriginalAction, domainObjectFactory, ControlledPromise) {
-        'use strict';
 
         describe("The 'go to original' action", function () {
             var testContext,

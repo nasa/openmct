@@ -19,18 +19,15 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/objects/EditableDomainObjectCache"],
     function (EditableDomainObjectCache) {
-        'use strict';
 
         describe("Editable domain object cache", function () {
 
             var captured,
                 completionCapability,
-                object,
                 mockQ,
                 mockType,
                 cache;
@@ -47,7 +44,7 @@ define(
                             type: mockType
                         }[key];
                     },
-                    hasCapability: function (key) {
+                    hasCapability: function () {
                         return false;
                     }
                 };

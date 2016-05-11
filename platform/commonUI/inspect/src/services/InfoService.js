@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['../InfoConstants'],
     function (InfoConstants) {
-        "use strict";
 
         var BUBBLE_TEMPLATE = InfoConstants.BUBBLE_TEMPLATE,
             MOBILE_POSITION = InfoConstants.BUBBLE_MOBILE_POSITION,
@@ -69,7 +67,7 @@ define(
 
             // On a phone, bubble takes up more screen real estate,
             // so position it differently (toward the bottom)
-            if (this.agentService.isPhone(navigator.userAgent)) {
+            if (this.agentService.isPhone()) {
                 position = MOBILE_POSITION;
                 options = {};
             }

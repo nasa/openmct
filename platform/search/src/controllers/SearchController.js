@@ -19,13 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * Module defining SearchController. Created by shale on 07/15/2015.
  */
 define(function () {
-    "use strict";
 
     /**
      * Controller for search in Tree View.

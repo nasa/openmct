@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine,xit*/
 
 define(
     ["../src/FixedController"],
     function (FixedController) {
-        "use strict";
 
         describe("The Fixed Position controller", function () {
             var mockScope,

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * CompositionCapabilitySpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/capabilities/RelationshipCapability"],
     function (RelationshipCapability) {
-        "use strict";
 
         var DOMAIN_OBJECT_METHODS = [
             "getId",
@@ -106,10 +104,8 @@ define(
             });
 
             it("avoids redundant requests", function () {
-                    // Lookups can be expensive, so this capability
+                // Lookups can be expensive, so this capability
                 // should have some self-caching
-                var response;
-
                 mockDomainObject.getModel
                     .andReturn({ relationships: { xyz: ['a'] } });
 
@@ -125,7 +121,7 @@ define(
             it("makes new requests on modification", function () {
                 // Lookups can be expensive, so this capability
                 // should have some self-caching
-                var response, testModel;
+                var testModel;
 
                 testModel = { relationships: { xyz: ['a'] } };
 

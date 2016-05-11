@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../src/CapabilityTable"],
     function (CapabilityTable) {
-        "use strict";
         describe("Composition policy's capability table", function () {
             var mockTypeService,
                 mockCapabilityService,
@@ -41,7 +39,7 @@ define(
                     [ 'getCapabilities' ]
                 );
                 // Both types can only contain b, let's say
-                mockTypes = ['a', 'b'].map(function (type, index) {
+                mockTypes = ['a', 'b'].map(function (type) {
                     var mockType = jasmine.createSpyObj(
                         'type-' + type,
                         ['getKey', 'getDefinition', 'getInitialModel']

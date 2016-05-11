@@ -19,14 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
-/*jslint es5: true */
-
 
 define(
     [],
     function () {
-        'use strict';
 
         /**
          * The "Save" action; the action triggered by clicking Save from

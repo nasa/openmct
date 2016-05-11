@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [
@@ -27,7 +26,6 @@ define(
         './elements/PlotTickGenerator'
     ],
     function (PlotPosition, PlotTickGenerator) {
-        "use strict";
 
         var DOMAIN_TICKS = 5,
             RANGE_TICKS = 7;
@@ -70,8 +68,8 @@ define(
          * @returns {boolean} true if domain data exists for the current pan/zoom level
          */
         SubPlot.prototype.hasDomainData = function() {
-            return this.panZoomStack
-                && this.panZoomStack.getDimensions()[0] > 0;
+            return this.panZoomStack &&
+                this.panZoomStack.getDimensions()[0] > 0;
         };
 
         // Utility function for filtering out empty strings.

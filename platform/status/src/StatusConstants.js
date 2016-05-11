@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 define({
     CSS_CLASS_PREFIX: 's-status-',
     TOPIC_PREFIX: 'status:'

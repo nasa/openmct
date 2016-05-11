@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine,spyOn*/
 
 define(
     ["../src/LayoutController"],
     function (LayoutController) {
-        "use strict";
 
         describe("The Layout controller", function () {
             var mockScope,
@@ -237,7 +235,7 @@ define(
             });
 
             it("ensures a minimum frame size", function () {
-                var styleB, styleC;
+                var styleB;
 
                 // Start with a very small frame size
                 testModel.layoutGrid = [ 1, 1 ];

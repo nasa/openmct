@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/objects/EditableModelCache"],
     function (EditableModelCache) {
-        "use strict";
 
         describe("The editable model cache", function () {
             var mockObject,

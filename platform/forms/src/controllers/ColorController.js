@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         var BASE_COLORS = [
                 [ 136, 32, 32 ],
@@ -57,7 +55,7 @@ define(
         }
 
         function initializeGroups() {
-            var i, group;
+            var group;
 
             // Ten grayscale colors
             group = [];

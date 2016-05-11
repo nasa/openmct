@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle adds a table view for displaying telemetry data.
@@ -30,7 +29,6 @@ define(
         '../TableConfiguration'
     ],
     function (TableConfiguration) {
-        "use strict";
 
         /**
          * The TableController is responsible for getting data onto the page

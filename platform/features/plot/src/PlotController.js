@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle adds a "Plot" view for numeric telemetry data.
@@ -44,7 +43,6 @@ define(
         PlotModeOptions,
         SubPlotFactory
     ) {
-        "use strict";
 
         var AXIS_DEFAULTS = [
                 { "name": "Time" },
