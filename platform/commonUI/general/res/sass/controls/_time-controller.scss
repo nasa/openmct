@@ -25,7 +25,6 @@
 	{
 		box-sizing: border-box;
         position: relative;
-		//top: auto;
         &:not(:first-child) {
             margin-top: $interiorMargin;
         }
@@ -39,7 +38,8 @@
 	.l-time-range-inputs-holder {
 		border-top: 1px solid $colorInteriorBorder;
         padding-top: $interiorMargin;
-        &.l-flex-row {
+        &.l-flex-row,
+        .l-flex-row {
             @include align-items(center);
             .flex-elem {
                 height: auto;
@@ -192,7 +192,7 @@
 	.l-time-domain-selector {
 		position: absolute;
 		right: 0px;
-		bottom: $r2H + $r3H + $interiorMargin;
+		top: $interiorMargin;
 	}
 
 }
@@ -206,172 +206,61 @@
 /******************************************************************** MOBILE */
 
 @include phoneandtablet {
-	.l-time-controller, .l-time-range-inputs-holder {
-		min-width: 0px;
-	}
-
-	.l-time-controller {
-
-		.l-time-domain-selector {
-			select {
-				height: 25px;
-				margin-bottom: 0px;
-			}
-		}
-
-		.l-time-range-slider-holder, .l-time-range-ticks-holder {
-			display: none;
-		}
-
-		.time-range-start, .time-range-end, {
-			width: 100%;
-		}
-
-		.l-time-range-inputs-holder {
-			.l-time-range-input {
-				display: block;
-				.s-btn {
-					padding-right: 18px;
-					white-space: nowrap;
-					input {
-						width: 100%;
-					}
-				}
-			}
-			.l-time-range-inputs-elem {
-
-			}
-		}
-	}
+    .l-time-controller {
+        min-width: 0;
+        .l-time-range-slider-holder,
+        .l-time-range-ticks-holder {
+            display: none;
+        }
+    }
 }
 
 @include phone {
-	.l-time-controller {
-		height: 48px;
-
-		.l-time-range-inputs-holder {
-			bottom: 24px;
-		}
-
-		.l-time-domain-selector {
-			width: 33%;
-			bottom: -9px;
-		}
-
-		.l-time-range-inputs-holder {
-			.l-time-range-input {
-				margin-bottom: 5px;
-				.s-btn {
-					width: 66%;
-				}
-			}
-			.l-time-range-inputs-elem {
-				&.ui-symbol {
-					display: none;
-				}
-
-				&.lbl {
-					width: 33%;
-					right: 0px;
-					top: 5px;
-					display: block;
-					height: 25px;
-					margin: 0;
-					line-height: 25px;
-					position: absolute;
-				}
-			}
-		}
-	}
+    .l-time-controller {
+        .l-time-range-inputs-holder {
+            &.l-flex-row,
+            .l-flex-row {
+                @include align-items(flex-start);
+            }
+            .l-time-range-inputs-elem {
+                &.type-icon {
+                    margin-top: 3px;
+                }
+            }
+            .t-inputs-w {
+                @include flex-direction(column);
+                .l-time-range-input-w:not(:first-child) {
+                    &:not(:first-child) {
+                        margin-top: $interiorMargin;
+                    }
+                    margin-right: 0;
+                }
+                .l-time-range-inputs-elem {
+                    &.lbl { display: none; }
+                }
+            }
+        }
+    }
 }
 
-@include tablet {
-	.l-time-controller {
-		height: 17px;
-
-		.l-time-range-inputs-holder {
-			bottom: -7px;
-			left: -5px;
-		}
-
-		.l-time-domain-selector {
-			width: 23%;
-			right: -4px;
-			bottom: -10px;
-		}
-
-		.l-time-range-inputs-holder {
-			.l-time-range-input {
-				float: left;
-				.s-btn {
-					width: 100%;
-					padding-left: 4px;
-				}
-			}
-		}
-	}
-}
-
-@include tabletLandscape {
-	.l-time-controller {
-		height: 17px;
-
-		.l-time-range-inputs-holder {
-			bottom: -7px;
-		}
-
-		.l-time-domain-selector {
-			width: 23%;
-			right: auto;
-			bottom: -10px;
-			left: 391px;
-		}
-
-		.l-time-range-inputs-holder {
-			.l-time-range-inputs-elem {
-				&.ui-symbol, &.lbl {
-					display: block;
-					float: left;
-					line-height: 25px;
-				}
-			}
-		}
-	}
-
-	.pane-tree-hidden .l-time-controller {
-		.l-time-domain-selector {
-			left: 667px;
-		}
-		.l-time-range-inputs-holder {
-			padding-left: 277px;
-		}
-	}
-}
-@include tabletPortrait {
-	.l-time-controller {
-		height: 17px;
-
-		.l-time-range-inputs-holder {
-			bottom: -7px;
-			left: -5px;
-		}
-
-		.l-time-domain-selector {
-			width: 23%;
-			right: -4px;
-			bottom: -10px;
-		}
-
-		.l-time-range-inputs-holder {
-			.l-time-range-input {
-				width: 38%;
-				float: left;
-			}
-			.l-time-range-inputs-elem {
-				&.ui-symbol, &.lbl {
-					display: none;
-				}
-			}
-		}
-	}
+@include phonePortrait {
+    .l-time-controller {
+        .l-time-range-inputs-holder {
+            .t-inputs-w {
+                @include flex(1 1 auto);
+                padding-top: 25px; // Make room for the ever lovin' Time Domain Selector
+                .flex-elem {
+                    @include flex(1 1 auto);
+                    width: 100%;
+                }
+                input[type="text"] {
+                    width: 100%;
+                }
+            }
+        }
+    }
+    .l-time-domain-selector {
+        right: auto;
+        left: 20px;
+    }
 }
