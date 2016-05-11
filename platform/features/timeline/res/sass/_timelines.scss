@@ -158,9 +158,13 @@
 		            top: 20px; bottom: 5px;
 		            .l-labels-holder {
 			            @include absPosDefault();
+                        @include justify-content(space-between);
 			            left: $m;
-			            .tick-label.tick-label-y {
-				            text-align: left;
+			            .t-resource-graph-tick-label {
+                            font-size: 0.9em;
+                            &.tick-label-y {
+                                text-align: left;
+                            }
 			            }
 		            }
 	            }
