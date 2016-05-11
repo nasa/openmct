@@ -434,7 +434,6 @@ body.desktop .object-header {
     @include user-select(none);
     font-size: 0.8rem;
     padding: $interiorMarginLg !important;
-    width: 230px;
     .l-month-year-pager {
         $pagerW: 20px;
         height: $r1H;
@@ -521,6 +520,19 @@ body.desktop .object-header {
                 .sub {
                     color: inherit;
                 }
+            }
+        }
+    }
+}
+
+@include phone {
+    .l-datetime-picker {
+        padding: $interiorMargin !important;
+    }
+    .l-calendar {
+        ul.l-cal-row {
+            li {
+                padding: 2px $interiorMargin;
             }
         }
     }
