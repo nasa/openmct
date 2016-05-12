@@ -7,6 +7,7 @@ The Telemetry API also provides a set of helpers built upon these basics-- Telem
 
 ## Getting Telemetry Data
 
+
 ### `MCT.telemetry.request(domainObject, options)`
 
 Request historical telemetry for a domain object.  Options allows you to specify filters (start, end, etc.), sort order, and strategies for retrieving telemetry (aggregation, latest available, etc.).

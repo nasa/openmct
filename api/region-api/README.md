@@ -8,6 +8,8 @@ The base region type, all regions implement this interface.
 
 `register(view)`
 
+`getViews(domainObject)`
+
 Additionally, Regions may have subregions for different modes of the application.  Specifying a view for a region 
 
 ### MCT.region.View
@@ -31,6 +33,7 @@ function HelloWorldView(container, domainObject) {
 
 HelloWorldView.label = 'Hello World';
 HelloWorldView.glyph = 'whatever';
+
 HelloWorldView.appliesTo = function (domainObject) {
     return 10;
 };
@@ -39,7 +42,7 @@ HelloWorldView.prototype.destroy = function () {
     // clean up outstanding handlers;
 };
 
-MCT.regions.Main.register(MyView);
+MCT.regions.Main.register(HelloWorldView);
 
 ```
 
