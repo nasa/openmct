@@ -271,7 +271,8 @@ define([
                     "depends": [
                         "$q",
                         "transactionService"
-                    ]
+                    ],
+                    "priority": "fallback"
                 },
                 {
                     "type": "provider",

@@ -55,6 +55,7 @@ define(
                     "transactionService",
                     [
                         "startTransaction",
+                        "size",
                         "commit",
                         "cancel"
                     ]
@@ -161,11 +162,9 @@ define(
                 });
                 it("returns true if the object has been modified since it" +
                     " was last persisted", function () {
-                    model.modified = 0;
-                    model.persisted = 0;
+                    mockTransactionService.size.andReturn(0);
                     expect(capability.dirty()).toBe(false);
-
-                    model.modified = 1;
+                    mockTransactionService.size.andReturn(1);
                     expect(capability.dirty()).toBe(true);
                 });
             });

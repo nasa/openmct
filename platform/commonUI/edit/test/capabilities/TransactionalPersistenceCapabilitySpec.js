@@ -56,7 +56,8 @@ define(
                     "persistenceCapability",
                     ["persist", "refresh"]
                 );
-
+                mockPersistence.persist.andReturn(fastPromise());
+                mockPersistence.refresh.andReturn(fastPromise());
                 capability = new TransactionalPersistenceCapability(mockQ, mockTransactionService, mockPersistence, mockDomainObject);
             });
 
@@ -67,24 +68,24 @@ define(
                 expect(mockPersistence.persist).toHaveBeenCalled();
             });
 
-            it("if transaction is active, persist call is queued", function() {
+            it("if transaction is active, persist and cancel calls are" +
+                " queued", function() {
                 mockTransactionService.isActive.andReturn(true);
                 capability.persist();
                 expect(mockTransactionService.addToTransaction).toHaveBeenCalled();
-
-                //Test that it was the persist call that was queued
                 mockTransactionService.addToTransaction.mostRecentCall.args[0]();
                 expect(mockPersistence.persist).toHaveBeenCalled();
-            });
-
-            it("if transaction is active, refresh call is queued as cancel" +
-                " function", function() {
-                mockTransactionService.isActive.andReturn(true);
-                capability.persist();
-
-                //Test that it was the persist call that was queued
                 mockTransactionService.addToTransaction.mostRecentCall.args[1]();
                 expect(mockPersistence.refresh).toHaveBeenCalled();
+            });
+
+            it("persist call is only added to transaction once", function() {
+                mockTransactionService.isActive.andReturn(true);
+                capability.persist();
+                expect(mockTransactionService.addToTransaction).toHaveBeenCalled();
+                capability.persist();
+                expect(mockTransactionService.addToTransaction.calls.length).toBe(1);
+
             });
 
         });

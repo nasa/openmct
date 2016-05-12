@@ -62,6 +62,17 @@ define(
                 expect(transactionService.onCancels.length).toBe(1);
             });
 
+            it("size function returns size of commit and cancel queues", function () {
+                var onCommit = jasmine.createSpy('onCommit'),
+                    onCancel = jasmine.createSpy('onCancel');
+
+                transactionService.startTransaction();
+                transactionService.addToTransaction(onCommit, onCancel);
+                transactionService.addToTransaction(onCommit, onCancel);
+                transactionService.addToTransaction(onCommit, onCancel);
+                expect(transactionService.size()).toBe(3);
+            });
+
             describe("commit", function () {
                 var onCommits;
 

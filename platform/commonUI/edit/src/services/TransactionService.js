@@ -141,7 +141,7 @@ define(
         };
 
         TransactionService.prototype.size = function () {
-            return this.onCommits.length + this.onCancels.length;
+            return this.onCommits.length;
         };
 
         return TransactionService;

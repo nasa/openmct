@@ -49,6 +49,7 @@ define(
             this.persistenceCapability = persistenceCapability;
             this.domainObject = domainObject;
             this.$q = $q;
+            this.persistPending = false;
         }
 
         /**
@@ -57,11 +58,27 @@ define(
          * @returns {*}
          */
         TransactionalPersistenceCapability.prototype.persist = function () {
+            var self = this;
+
+            function onCommit() {
+                return self.persistenceCapability.persist().then(function(result) {
+                    self.persistPending = false;
+                    return result;
+                });
+            }
+
+            function onCancel() {
+                return self.persistenceCapability.refresh().then(function(result) {
+                    self.persistPending = false;
+                    return result;
+                });
+            }
+
             if (this.transactionService.isActive()) {
-                this.transactionService.addToTransaction(
-                    this.persistenceCapability.persist.bind(this.persistenceCapability),
-                    this.persistenceCapability.refresh.bind(this.persistenceCapability)
-                );
+                if (!this.persistPending) {
+                    this.transactionService.addToTransaction(onCommit, onCancel);
+                    this.persistPending = true;
+                }
                 //Need to return a promise from this function
                 return this.$q.when(true);
             } else {
