@@ -112,7 +112,7 @@ define(
          * modifications since the last persist, false otherwise.
          */
         EditorCapability.prototype.dirty = function () {
-            return (this.domainObject.getModel().modified || 0) > (this.domainObject.getModel().persisted || 0);
+            return this.transactionService.size() > 0;
         };
 
         return EditorCapability;

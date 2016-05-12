@@ -38,7 +38,7 @@ define(
          * @param {DomainObject} domainObject the domain object whose
          *        composition should be modified as a result of the drop.
          */
-        function DropGesture(dndService, $q, navigationService, instantiate, typeService, element, domainObject) {
+        function DropGesture(dndService, $q, element, domainObject) {
             var actionCapability = domainObject.getCapability('action'),
                 scope = element.scope && element.scope(),
                 action; // Action for the drop, when it occurs
@@ -70,8 +70,6 @@ define(
             }
 
             function dragOver(e) {
-                actionCapability = domainObject.getCapability('action');
-
                 var event = (e || {}).originalEvent || e,
                     selectedObject = dndService.getData(
                         GestureConstants.MCT_EXTENDED_DRAG_TYPE
@@ -105,8 +103,7 @@ define(
                     e.preventDefault();
 
                     //Use scope.apply, drop event is outside digest cycle
-                    // and if not applied here causes visual artifacts.
-                    scope.$apply( function() {
+                    scope.$apply(function () {
                         if (domainObjectType !== 'folder') {
                             domainObject.getCapability('action').perform('edit');
                         }
