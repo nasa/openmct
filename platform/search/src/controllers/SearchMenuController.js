@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT Web, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,31 +24,36 @@
  * Module defining SearchMenuController. Created by shale on 08/17/2015.
  */
 define(function () {
+<<<<<<< HEAD
+    "use strict";
+
+=======
     
+>>>>>>> nasa/master
     function SearchMenuController($scope, types) {
-        
-        // Model variables are: 
-        //   ngModel.filter, the function filter defined in SearchController 
+
+        // Model variables are:
+        //   ngModel.filter, the function filter defined in SearchController
         //   ngModel.types, an array of type objects
-        //   ngModel.checked, a dictionary of which type filter options are checked 
-        //   ngModel.checkAll, a boolean of whether all of the types in ngModel.checked are checked 
+        //   ngModel.checked, a dictionary of which type filter options are checked
+        //   ngModel.checkAll, a boolean of whether all of the types in ngModel.checked are checked
         //   ngModel.filtersString, a string list of what filters on the results are active
         $scope.ngModel.types = [];
         $scope.ngModel.checked = {};
         $scope.ngModel.checkAll = true;
         $scope.ngModel.filtersString = '';
-        
+
         // On initialization, fill the model's types with type keys
         types.forEach(function (type) {
             // We only want some types, the ones that are probably human readable
-            // Manually remove 'root', but not 'unknown' 
+            // Manually remove 'root', but not 'unknown'
             if (type.key && type.name && type.key !== 'root') {
                 $scope.ngModel.types.push(type);
                 $scope.ngModel.checked[type.key] = false;
             }
         });
-        
-        
+
+
         // For documentation, see updateOptions below
         function updateOptions() {
             var type,
@@ -62,7 +67,7 @@ define(function () {
                     }
                 }
             }
-            
+
             // Update the current filters string
             $scope.ngModel.filtersString = '';
             if (!$scope.ngModel.checkAll) {
@@ -77,7 +82,7 @@ define(function () {
                         }
                     }
                 }
-                // If there's still nothing in the filters string, there are no 
+                // If there's still nothing in the filters string, there are no
                 //   filters selected
                 if ($scope.ngModel.filtersString === '') {
                     $scope.ngModel.filtersString = 'NONE';
@@ -87,14 +92,19 @@ define(function () {
             // Re-filter results
             $scope.ngModel.filter();
         }
-        
+
         // For documentation, see checkAll below
         function checkAll() {
             // Reset all the other options to original/default position
             Object.keys($scope.ngModel.checked).forEach(function (type) {
                 $scope.ngModel.checked[type] = false;
+<<<<<<< HEAD
+            }
+
+=======
             });
             
+>>>>>>> nasa/master
             // Change the filters string depending on checkAll status
             if ($scope.ngModel.checkAll) {
                 // This setting will make the filters display hidden
@@ -102,23 +112,23 @@ define(function () {
             } else {
                 $scope.ngModel.filtersString = 'NONE';
             }
-            
+
             // Re-filter results
             $scope.ngModel.filter();
         }
-        
+
         return {
             /**
-             * Updates the status of the checked options. Updates the filtersString 
+             * Updates the status of the checked options. Updates the filtersString
              *   with which options are checked. Re-filters the search results after.
-             *   Not intended to be called by checkAll when it is toggled. 
+             *   Not intended to be called by checkAll when it is toggled.
              */
             updateOptions: updateOptions,
-            
+
             /**
-             * Handles the search and filter options for when checkAll has been 
-             *   toggled. This is a special case, compared to the other search  
-             *   menu options, so is intended to be called instead of updateOptions. 
+             * Handles the search and filter options for when checkAll has been
+             *   toggled. This is a special case, compared to the other search
+             *   menu options, so is intended to be called instead of updateOptions.
              */
             checkAll: checkAll
         };

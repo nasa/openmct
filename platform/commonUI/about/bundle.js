@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT Web, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -110,7 +110,7 @@ define([
                     "author": "Newtonsoft",
                     "description": "JSON serialization/deserialization",
                     "website": "http://www.newtonsoft.com/json",
-                    "copyright": "Copyright (c) 2007 James Newton-King",
+                    "copyright": "Copyright (c) 2007-2016 James Newton-King",
                     "license": "license-mit",
                     "link": "https://github.com/JamesNK/Newtonsoft.Json/blob/master/LICENSE.md"
                 },
@@ -120,7 +120,7 @@ define([
                     "author": "Andreas Håkansson, Steven Robbins and contributors",
                     "description": "Embedded web server",
                     "website": "http://nancyfx.org/",
-                    "copyright": "Copyright © 2010 Andreas Håkansson, Steven Robbins and contributors",
+                    "copyright": "Copyright © 2010-2016 Andreas Håkansson, Steven Robbins and contributors",
                     "license": "license-mit",
                     "link": "http://www.opensource.org/licenses/mit-license.php"
                 },
@@ -130,7 +130,7 @@ define([
                     "author": "Andreas Håkansson, Steven Robbins and contributors",
                     "description": "Embedded web server",
                     "website": "http://nancyfx.org/",
-                    "copyright": "Copyright © 2010 Andreas Håkansson, Steven Robbins and contributors",
+                    "copyright": "Copyright © 2010-2016 Andreas Håkansson, Steven Robbins and contributors",
                     "license": "license-mit",
                     "link": "http://www.opensource.org/licenses/mit-license.php"
                 },
@@ -140,7 +140,7 @@ define([
                     "author": " Kerry Jiang",
                     "description": "Supports SuperWebSocket",
                     "website": "https://supersocket.codeplex.com/",
-                    "copyright": "Copyright 2010-2014 Kerry Jiang (kerry-jiang@hotmail.com)",
+                    "copyright": "Copyright 2010-2016 Kerry Jiang (kerry-jiang@hotmail.com)",
                     "license": "license-apache",
                     "link": "https://supersocket.codeplex.com/license"
                 },
@@ -150,7 +150,7 @@ define([
                     "author": " Kerry Jiang",
                     "description": "WebSocket implementation for client-server communication",
                     "website": "https://superwebsocket.codeplex.com/",
-                    "copyright": "Copyright 2010-2014 Kerry Jiang (kerry-jiang@hotmail.com)",
+                    "copyright": "Copyright 2010-2016 Kerry Jiang (kerry-jiang@hotmail.com)",
                     "license": "license-apache",
                     "link": "https://superwebsocket.codeplex.com/license"
                 },
@@ -160,7 +160,7 @@ define([
                     "author": "Apache Software Foundation",
                     "description": "Logging",
                     "website": "http://logging.apache.org/log4net/",
-                    "copyright": "Copyright © 2004-2015 Apache Software Foundation.",
+                    "copyright": "Copyright © 2004-2016 Apache Software Foundation.",
                     "license": "license-apache",
                     "link": "http://logging.apache.org/log4net/license.html"
                 }

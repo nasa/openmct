@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT Web, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,7 +26,12 @@
 define(
     ["../src/MenuArrowController"],
     function (MenuArrowController) {
+<<<<<<< HEAD
+        "use strict";
+
+=======
         
+>>>>>>> nasa/master
         describe("The menu arrow controller ", function () {
             var mockScope,
                 mockDomainObject,
@@ -34,7 +39,7 @@ define(
                 mockContextMenuAction,
                 mockActionContext,
                 controller;
-            
+
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
@@ -56,21 +61,21 @@ define(
                     "actionContext",
                     [ "" ]
                 );
-                
+
                 mockActionContext.domainObject = mockDomainObject;
                 mockActionContext.event = mockEvent;
                 mockScope.domainObject = mockDomainObject;
                 mockDomainObject.getCapability.andReturn(mockContextMenuAction);
                 mockContextMenuAction.perform.andReturn(jasmine.any(Function));
-                
+
                 controller = new MenuArrowController(mockScope);
             });
-            
+
             it("calls the context menu action when clicked", function () {
                 // Simulate a click on the menu arrow
                 controller.showMenu(mockEvent);
-                
-                // Expect the menu action to be performed 
+
+                // Expect the menu action to be performed
                 expect(mockDomainObject.getCapability).toHaveBeenCalledWith('action');
                 expect(mockContextMenuAction.perform).toHaveBeenCalled();
             });

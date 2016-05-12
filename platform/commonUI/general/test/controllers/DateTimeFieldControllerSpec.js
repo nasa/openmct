@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT Web, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -156,7 +156,7 @@ define(
                 // Don't want the controller "fixing" bad or
                 // irregularly-formatted input out from under
                 // the user's fingertips.
-                var newText = "2015-3-3 01:02:04",
+                var newText = "2016-3-3 01:02:04",
                     oldValue = mockScope.ngModel.testField;
 
                 mockFormat.validate.andReturn(true);

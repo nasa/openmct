@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT Web, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,11 +26,16 @@
 define(
     [],
     function () {
+<<<<<<< HEAD
+        "use strict";
+
+=======
         
+>>>>>>> nasa/master
         /**
-         * A left-click on the menu arrow should display a 
-         * context menu. This controller launches the context 
-         * menu. 
+         * A left-click on the menu arrow should display a
+         * context menu. This controller launches the context
+         * menu.
          * @memberof platform/commonUI/browse
          * @constructor
          */

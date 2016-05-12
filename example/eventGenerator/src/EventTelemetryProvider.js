@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT Web, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -40,7 +40,7 @@ define(
                 generating = false,
                 id = Math.random() * 100000;
 
-            //
+
             function matchesSource(request) {
                 return request.source === "eventGenerator";
             }
@@ -80,13 +80,14 @@ define(
             }
 
             function startGenerating() {
+                // TODO: Set this in constructor params?
                 generating = true;
                 $timeout(function () {
                     handleSubscriptions();
                     if (generating && subscriptions.length > 0) {
                         startGenerating();
                     } else {
-                        generating = false;
+                        generating = false; // TODO: Can I use more strict equal here?
                     }
                 }, genInterval);
             }

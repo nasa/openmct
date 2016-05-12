@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT Web, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -53,7 +53,7 @@ define([
                     "author": "Eli Grey",
                     "description": "File download initiator (for file exports)",
                     "website": "https://github.com/eligrey/FileSaver.js/",
-                    "copyright": "Copyright © 2015 Eli Grey.",
+                    "copyright": "Copyright © 2016 Eli Grey.",
                     "license": "license-mit",
                     "link": "https://github.com/eligrey/FileSaver.js/blob/master/LICENSE.md"
                 }
