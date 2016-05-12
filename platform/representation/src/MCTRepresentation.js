@@ -53,7 +53,8 @@ define(
          * @param {ViewDefinition[]} views an array of view extensions
          */
         function MCTRepresentation(representations, views, representers, $q, templateLinker, $log) {
-            var representationMap = {};
+            var representationMap = {},
+                domainObjectListener;
 
             // Assemble all representations and views
             // The distinction between views and representations is
@@ -167,13 +168,15 @@ define(
                         representation = lookup($scope.key, domainObject),
                         uses = ((representation || {}).uses || []),
                         canRepresent = !!(representation && domainObject),
-                        canEdit = !!(domainObject && domainObject.hasCapability('editor')),
+                        canEdit = !!(domainObject && domainObject.hasCapability('editor') && domainObject.getCapability('editor').isEditing()),
                         idPath = getIdPath(domainObject),
                         key = $scope.key;
 
                     if (unchanged(canRepresent, canEdit, idPath, key)) {
                         return;
                     }
+
+                    console.log("changed");
 
                     // Create an empty object named "representation", for this
                     // representation to store local variables into.
@@ -237,7 +240,17 @@ define(
 
                 // Also update when the represented domain object changes
                 // (to a different object)
-                $scope.$watch("domainObject", refresh);
+                //$scope.$watch("domainObject", refresh);
+
+                $scope.$watch("domainObject", function (domainObject) {
+                    if (domainObjectListener) {
+                        domainObjectListener();
+                    }
+                    if (domainObject) {
+                        domainObjectListener = domainObject.getCapability('status').listen(refresh);
+                    }
+                    refresh();
+                });
 
                 // Finally, also update when there is a new version of that
                 // same domain object; these changes should be tracked in the
