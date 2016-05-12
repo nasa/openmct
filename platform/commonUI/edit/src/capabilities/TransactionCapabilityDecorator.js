@@ -24,7 +24,6 @@
 define(
     ['./TransactionalPersistenceCapability'],
     function (TransactionalPersistenceCapability) {
-        'use strict';
 
         /**
          * Wraps the [PersistenceCapability]{@link PersistenceCapability} with

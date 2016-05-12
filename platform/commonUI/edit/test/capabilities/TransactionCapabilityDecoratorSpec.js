@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,runs,jasmine,xit,xdescribe*/
 
 define(
     [
@@ -27,7 +26,6 @@ define(
         "../../src/capabilities/TransactionCapabilityDecorator"
     ],
     function (TransactionalPersistenceCapability, TransactionCapabilityDecorator) {
-        "use strict";
 
         describe("The transaction capability decorator", function () {
             var mockQ,
@@ -36,10 +34,7 @@ define(
                 provider;
 
             beforeEach(function() {
-                //mockQ = jasmine.createSpyObj("$q", []);
                 mockQ = {};
-                //mockTransactionService =
-                // jasmine.createSpyObj("transactionService", []);
                 mockTransactionService = {};
                 mockCapabilityService = jasmine.createSpyObj("capabilityService", ["getCapabilities"]);
                 mockCapabilityService.getCapabilities.andReturn({

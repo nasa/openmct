@@ -60,16 +60,6 @@ define(
             this.$q = $q;
         }
 
-        // Utility function for creating promise-like objects which
-        // resolve synchronously when possible
-        function fastPromise(value) {
-            return (value || {}).then ? value : {
-                then: function (callback) {
-                    return fastPromise(callback(value));
-                }
-            };
-        }
-
         function getKey(id) {
             var parts = id.split(":");
             return parts.length > 1 ? parts.slice(1).join(":") : id;
@@ -157,8 +147,7 @@ define(
          *          when the update is complete
          */
         PersistenceCapability.prototype.refresh = function () {
-            var domainObject = this.domainObject,
-                model = domainObject.getModel();
+            var domainObject = this.domainObject;
 
             // Update a domain object's model upon refresh
             function updateModel(model) {

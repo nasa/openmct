@@ -24,7 +24,6 @@
 define(
     ["../../src/services/TransactionService"],
     function (TransactionService) {
-        "use strict";
 
         describe("The Transaction Service", function () {
             var mockQ,

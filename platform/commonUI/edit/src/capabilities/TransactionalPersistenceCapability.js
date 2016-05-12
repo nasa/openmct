@@ -24,7 +24,6 @@
 define(
     [],
     function () {
-        'use strict';
 
         /**
          * Wraps persistence capability to enable transactions. Transactions
