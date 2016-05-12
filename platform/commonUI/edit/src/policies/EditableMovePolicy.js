@@ -35,10 +35,13 @@ define([], function () {
     EditableMovePolicy.prototype.allow = function (action, context) {
         var domainObject = context.domainObject,
             selectedObject = context.selectedObject,
-            key = action.getMetadata().key;
+            key = action.getMetadata().key,
+            isDomainObjectEditing = domainObject.hasCapability('editor') &&
+                domainObject.getCapability('editor').inEditContext();
 
-        if (key === 'move' && domainObject.hasCapability('editor') && domainObject.getCapability('editor').inEditContext()) {
-            return !!selectedObject && selectedObject.hasCapability('editor') && selectedObject.getCapability('editor').inEditContext();
+        if (key === 'move' && isDomainObjectEditing) {
+            return !!selectedObject && selectedObject.hasCapability('editor') &&
+                selectedObject.getCapability('editor').inEditContext();
         }
 
         // Like all policies, allow by default.

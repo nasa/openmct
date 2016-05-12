@@ -155,18 +155,6 @@ define(
                     expect(model).toEqual(refreshModel);
                 });
 
-                it("does not overwrite unpersisted changes on refresh", function () {
-                    var refreshModel = {someOtherKey: "some other value"},
-                        mockCallback = jasmine.createSpy();
-                    model.modified = 2;
-                    model.persisted = 1;
-                    mockPersistenceService.readObject.andReturn(asPromise(refreshModel));
-                    persistence.refresh().then(mockCallback);
-                    expect(model).not.toEqual(refreshModel);
-                    // Should have also indicated that no changes were actually made
-                    expect(mockCallback).toHaveBeenCalledWith(false);
-                });
-
                 it("does not trigger error notification on successful" +
                     " persistence", function () {
                     persistence.persist();

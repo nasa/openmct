@@ -25,64 +25,90 @@ define(
     function() {
         /**
          * Implements an application-wide transaction state. Once a
-         * transaction is started, calls to PersistenceCapability.persist()
+         * transaction is started, calls to
+         * [PersistenceCapability.persist()]{@link PersistenceCapability#persist}
          * will be deferred until a subsequent call to
-         * TransactionService.commit() is made.
+         * [TransactionService.commit]{@link TransactionService#commit} is made.
          *
+         * @memberof platform/commonUI/edit/services
          * @param $q
          * @constructor
          */
-        function TransactionService($q, dirtyModelCache) {
+        function TransactionService($q, $log) {
             this.$q = $q;
+            this.$log = $log;
             this.transaction = false;
-            this.committing = false;
-            this.cache = dirtyModelCache;
+
+            this.onCommits = [];
+            this.onCancels = [];
         }
 
+        /**
+         * Starts a transaction. While a transaction is active all calls to
+         * [PersistenceCapability.persist](@link PersistenceCapability#persist)
+         * will be queued until [commit]{@link #commit} or [cancel]{@link
+         * #cancel} are called
+         */
         TransactionService.prototype.startTransaction = function () {
-            if (this.transaction)
-                console.error("Transaction already in progress")
+            if (this.transaction) {
+                //Log error because this is a programming error if it occurs.
+                this.$log.error("Transaction already in progress");
+            }
             this.transaction = true;
         };
 
+        /**
+         * @returns {boolean} If true, indicates that a transaction is in progress
+         */
         TransactionService.prototype.isActive = function () {
             return this.transaction;
         };
 
-        TransactionService.prototype.isCommitting = function () {
-            return this.committing;
+        /**
+         * Adds provided functions to a queue to be called on
+         * [.commit()]{@link #commit} or
+         * [.cancel()]{@link #commit}
+         * @param onCommit A function to call on commit
+         * @param onCancel A function to call on cancel
+         */
+        TransactionService.prototype.addToTransaction = function (onCommit, onCancel) {
+            if (this.transaction) {
+                this.onCommits.push(onCommit);
+                if (onCancel) {
+                    this.onCancels.push(onCancel);
+                }
+            } else {
+                //Log error because this is a programming error if it occurs.
+                this.$log.error("No transaction in progress");
+            }
         };
 
         /**
          * All persist calls deferred since the beginning of the transaction
-         * will be committed. Any failures will be reported via a promise
-         * rejection.
-         * @returns {*}
+         * will be committed.
+         *
+         * @returns {Promise} resolved when all persist operations have
+         * completed. Will reject if any commit operations fail
          */
         TransactionService.prototype.commit = function () {
-            var self = this;
-                cache = this.cache.get();
+            var self = this,
+                promises = [],
+                onCommit;
 
-            this.committing = true;
-
-            function keyToObject(key) {
-                return cache[key];
+            while (this.onCommits.length > 0) { // ...using a while in case some onCommit adds to transaction
+                onCommit = this.onCommits.pop();
+                try { // ...also don't want to fail mid-loop...
+                    promises.push(onCommit());
+                } catch (e) {
+                    this.$log.error("Error committing transaction.");
+                }
             }
+            return this.$q.all(promises).then( function () {
+                self.transaction = false;
 
-            function objectToPromise(object) {
-                return object.getCapability('persistence').persist();
-            }
-
-            return this.$q.all(
-                Object.keys(cache)
-                    .map(keyToObject)
-                    .map(objectToPromise))
-                .then(function () {
-                    self.transaction = false;
-                    this.committing = false;
-                }).catch(function() {
-                    return this.committing = false;
-                });
+                self.onCommits = [];
+                self.onCancels = [];
+            });
         };
 
         /**
@@ -95,23 +121,23 @@ define(
          */
         TransactionService.prototype.cancel = function () {
             var self = this,
-                cache = this.cache.get();
+                results = [],
+                onCancel;
 
-            function keyToObject(key) {
-                return cache[key];
+            while (this.onCancels.length > 0) {
+                onCancel = this.onCancels.pop();
+                try {
+                    results.push(onCancel());
+                } catch (error) {
+                    this.$log.error("Error committing transaction.");
+                }
             }
+            return this.$q.all(results).then(function () {
+                self.transaction = false;
 
-            function objectToPromise(object) {
-                return self.$q.when(object.getModel().persisted && object.getCapability('persistence').refresh());
-            }
-
-            return this.$q.all(Object.keys(cache)
-                .map(keyToObject)
-                .map(objectToPromise))
-                .then(function () {
-                    self.transaction = false;
-                    this.committing = false;
-                });
+                self.onCommits = [];
+                self.onCancels = [];
+            });
         };
 
         return TransactionService;

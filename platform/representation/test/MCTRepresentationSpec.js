@@ -36,6 +36,7 @@ define(
                 testViews,
                 testUrls,
                 mockRepresenters,
+                mockStatusCapability,
                 mockQ,
                 mockLinker,
                 mockLog,
@@ -118,6 +119,8 @@ define(
                 mockChangeTemplate = jasmine.createSpy('changeTemplate');
                 mockLog = jasmine.createSpyObj("$log", LOG_FUNCTIONS);
 
+                mockStatusCapability = jasmine.createSpyObj("statusCapability", ["listen"]);
+
                 mockScope = jasmine.createSpyObj("scope", [ "$watch", "$on" ]);
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
@@ -126,6 +129,10 @@ define(
                 mockLinker.link.andReturn(mockChangeTemplate);
                 mockLinker.getPath.andCallFake(function (ext) {
                     return testUrls[ext.key];
+                });
+
+                mockDomainObject.getCapability.andCallFake(function (c) {
+                    return c === 'status' && mockStatusCapability;
                 });
 
                 mctRepresentation = new MCTRepresentation(

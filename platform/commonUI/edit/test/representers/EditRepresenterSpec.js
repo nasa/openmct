@@ -32,6 +32,7 @@ define(
                 mockDomainObject,
                 mockPersistence,
                 mockStatusCapability,
+                mockEditorCapability,
                 mockCapabilities,
                 representer;
 
@@ -58,11 +59,14 @@ define(
                 mockPersistence =
                     jasmine.createSpyObj("persistence", ["persist"]);
                 mockStatusCapability =
-                    jasmine.createSpyObj("statusCapability", ["get", "listen"]);
-                mockStatusCapability.get.andReturn(false);
+                    jasmine.createSpyObj("statusCapability", ["listen"]);
+                mockEditorCapability =
+                    jasmine.createSpyObj("editorCapability", ["isEditContextRoot"]);
+
                 mockCapabilities = {
                     'persistence': mockPersistence,
-                    'status': mockStatusCapability
+                    'status': mockStatusCapability,
+                    'editor': mockEditorCapability
                 };
 
                 mockDomainObject.getModel.andReturn({});
@@ -82,6 +86,7 @@ define(
 
             it("Sets edit view template on edit mode", function () {
                 mockStatusCapability.listen.mostRecentCall.args[0](['editing']);
+                mockEditorCapability.isEditContextRoot.andReturn(true);
                 expect(mockScope.viewObjectTemplate).toEqual('edit-object');
             });
 

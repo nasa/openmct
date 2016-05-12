@@ -103,13 +103,18 @@ define(
                 // the change.
                 if (id) {
                     e.preventDefault();
-                    if (domainObjectType!=='folder') {
-                        domainObject.getCapability('action').perform('edit');
-                    }
 
+                    //Use scope.apply, drop event is outside digest cycle
+                    // and if not applied here causes visual artifacts.
+                    scope.$apply( function() {
+                        if (domainObjectType !== 'folder') {
+                            domainObject.getCapability('action').perform('edit');
+                        }
+                    });
                     $q.when(action && action.perform()).then(function () {
                         broadcastDrop(id, event);
                     });
+
                 }
             }
 

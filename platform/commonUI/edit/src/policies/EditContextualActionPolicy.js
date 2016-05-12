@@ -34,6 +34,11 @@ define(
          * from context menu of non-editable objects, when navigated object
          * is being edited
          * @constructor
+         * @param navigationService
+         * @param editModeBlacklist A blacklist of actions disallowed from
+         * context menu when navigated object is being edited
+         * @param nonEditContextBlacklist A blacklist of actions disallowed
+         * from context menu of non-editable objects, when navigated object
          * @implements {Policy.<Action, ActionContext>}
          */
         function EditContextualActionPolicy(navigationService, editModeBlacklist, nonEditContextBlacklist) {
@@ -51,7 +56,7 @@ define(
                 navigatedObject = this.navigationService.getNavigation(),
                 actionMetadata = action.getMetadata ? action.getMetadata() : {};
 
-            if (navigatedObject.getCapability("status").get("editing")) {
+            if (navigatedObject.hasCapability("editor") && navigatedObject.getCapability("editor").isEditContextRoot()) {
                 if (selectedObject.hasCapability("editor") && selectedObject.getCapability("editor").inEditContext()){
                     //Target is within the editing context
                     return this.editBlacklist.indexOf(actionMetadata.key) === -1;

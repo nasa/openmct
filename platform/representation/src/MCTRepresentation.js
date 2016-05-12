@@ -53,9 +53,7 @@ define(
          * @param {ViewDefinition[]} views an array of view extensions
          */
         function MCTRepresentation(representations, views, representers, $q, templateLinker, $log) {
-            var representationMap = {},
-                listeners = 0;
-                domainObjectListener;
+            var representationMap = {};
 
             // Assemble all representations and views
             // The distinction between views and representations is
@@ -250,10 +248,10 @@ define(
                 }
 
                 /**
-                 * Add a listener for status changes to the object itself.
+                 * Add a listener to the object for status changes.
                  */
-                $scope.$watch("domainObject", function(domainObject, oldDomainObject) {
-                    if (domainObject!==oldDomainObject){
+                $scope.$watch("domainObject", function (domainObject, oldDomainObject) {
+                    if (domainObject !== oldDomainObject){
                         listenForStatusChange(domainObject);
                     }
                 });

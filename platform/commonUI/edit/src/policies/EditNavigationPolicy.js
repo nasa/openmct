@@ -41,12 +41,11 @@ define(
         EditNavigationPolicy.prototype.isDirty = function(domainObject) {
             var navigatedObject = domainObject,
                 editorCapability = navigatedObject &&
-                    navigatedObject.getCapability("editor"),
-                statusCapability = navigatedObject &&
-                    navigatedObject.getCapability("status");
+                    navigatedObject.getCapability("editor");
 
-            return statusCapability && statusCapability.get('editing') &&
-                editorCapability && editorCapability.dirty();
+            return editorCapability &&
+                editorCapability.isEditContextRoot() &&
+                editorCapability.dirty();
         };
 
         /**

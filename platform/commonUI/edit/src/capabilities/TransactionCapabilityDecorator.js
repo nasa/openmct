@@ -26,23 +26,30 @@ define(
     function (TransactionalPersistenceCapability) {
         'use strict';
 
-        function TransactionDecorator(
+        /**
+         * Wraps the [PersistenceCapability]{@link PersistenceCapability} with
+         * transactional capabilities.
+         * @param $q
+         * @param transactionService
+         * @param capabilityService
+         * @see TransactionalPersistenceCapability
+         * @constructor
+         */
+        function TransactionCapabilityDecorator(
             $q,
             transactionService,
-            dirtyModelCache,
             capabilityService
         ) {
             this.capabilityService = capabilityService;
             this.transactionService = transactionService;
-            this.dirtyModelCache = dirtyModelCache;
             this.$q = $q;
         }
 
         /**
-         * Decorate PersistenceCapability to ignore persistence calls when a
+         * Decorate PersistenceCapability to queue persistence calls when a
          * transaction is in progress.
          */
-        TransactionDecorator.prototype.getCapabilities = function (model) {
+        TransactionCapabilityDecorator.prototype.getCapabilities = function (model) {
             var self = this,
                 capabilities = this.capabilityService.getCapabilities(model),
                 persistenceCapability = capabilities.persistence;
@@ -55,7 +62,6 @@ define(
                 return new TransactionalPersistenceCapability(
                     self.$q,
                     self.transactionService,
-                    self.dirtyModelCache,
                     original,
                     domainObject
                 );
@@ -63,6 +69,6 @@ define(
             return capabilities;
         };
 
-        return TransactionDecorator;
+        return TransactionCapabilityDecorator;
     }
 );

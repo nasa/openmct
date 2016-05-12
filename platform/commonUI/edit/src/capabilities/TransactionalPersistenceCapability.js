@@ -26,44 +26,51 @@ define(
     function () {
         'use strict';
 
+        /**
+         * Wraps persistence capability to enable transactions. Transactions
+         * will cause persist calls not to be invoked immediately, but
+         * rather queued until [EditorCapability.save()]{@link EditorCapability#save}
+         * or [EditorCapability.cancel()]{@link EditorCapability#cancel} are
+         * called.
+         * @memberof platform/commonUI/edit/capabilities
+         * @param $q
+         * @param transactionService
+         * @param persistenceCapability
+         * @param domainObject
+         * @constructor
+         */
         function TransactionalPersistenceCapability(
             $q,
             transactionService,
-            dirtyModelCache,
             persistenceCapability,
             domainObject
         ) {
             this.transactionService = transactionService;
-            this.dirtyModelCache = dirtyModelCache;
-            this.persistenceCapability = Object.create(persistenceCapability);
+            this.persistenceCapability = persistenceCapability;
             this.domainObject = domainObject;
             this.$q = $q;
         }
 
+        /**
+         * The wrapped persist function. If a transaction is active, persist
+         * will be queued until the transaction is committed or cancelled.
+         * @returns {*}
+         */
         TransactionalPersistenceCapability.prototype.persist = function () {
-            var domainObject = this.domainObject,
-                dirtyModelCache = this.dirtyModelCache;
-            if (this.transactionService.isActive() && !this.transactionService.isCommitting()) {
-                dirtyModelCache.markDirty(domainObject);
-                //Using $q here because need to return something
-                // from which 'catch' can be chained
+            if (this.transactionService.isActive()) {
+                this.transactionService.addToTransaction(
+                    this.persistenceCapability.persist.bind(this.persistenceCapability),
+                    this.persistenceCapability.refresh.bind(this.persistenceCapability)
+                );
+                //Need to return a promise from this function
                 return this.$q.when(true);
             } else {
-                return this.persistenceCapability.persist().then(function (result) {
-                    dirtyModelCache.markClean(domainObject);
-                    return result;
-                });
+                return this.persistenceCapability.persist();
             }
         };
 
         TransactionalPersistenceCapability.prototype.refresh = function () {
-            var domainObject = this.domainObject,
-                dirtyModelCache = this.dirtyModelCache;
-
-            return this.persistenceCapability.refresh().then(function (result) {
-                dirtyModelCache.markClean(domainObject);
-                return result;
-            });
+            return this.persistenceCapability.refresh();
         };
 
         TransactionalPersistenceCapability.prototype.getSpace = function () {

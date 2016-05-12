@@ -44,7 +44,7 @@ define(
          * @constructor
          * @implements {Action}
          */
-        function EditAction($location, navigationService, $log, $q, context) {
+        function EditAction($location, navigationService, $log, context) {
             var domainObject = (context || {}).domainObject;
 
             // We cannot enter Edit mode if we have no domain object to
@@ -63,7 +63,6 @@ define(
             this.domainObject = domainObject;
             this.$location = $location;
             this.navigationService = navigationService;
-            this.$q = $q;
         }
 
         /**
@@ -89,8 +88,11 @@ define(
             var domainObject = (context || {}).domainObject,
                 type = domainObject && domainObject.getCapability('type');
 
-            // Only allow creatable types to be edited
-            return type && type.hasFeature('creation') && !domainObject.getCapability('status').get('editing');
+            // Only allow editing of types that support it and are not already
+            // being edited
+            return type && type.hasFeature('creation') &&
+                domainObject.hasCapability('editor') &&
+                !domainObject.getCapability('editor').isEditContextRoot();
         };
 
         return EditAction;

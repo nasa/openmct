@@ -40,7 +40,7 @@ define(
             }
 
             // Check if we are in edit mode (also check parents)
-            function inEditMode(swimlane) {
+            function inEditMode() {
                 return swimlane.domainObject.hasCapability('editor') &&
                     swimlane.domainObject.getCapability('editor').inEditContext();
             }
@@ -174,7 +174,7 @@ define(
                  * @returns {boolean} true if this should be allowed
                  */
                 allowDropIn: function (id, domainObject) {
-                    return inEditMode(swimlane) &&
+                    return inEditMode() &&
                         !pathContains(swimlane, id) &&
                         !contains(swimlane, id) &&
                         canDrop(swimlane.domainObject, domainObject);
@@ -189,7 +189,7 @@ define(
                 allowDropAfter: function (id, domainObject) {
                     var target = expandedForDropInto() ?
                             swimlane : swimlane.parent;
-                    return inEditMode(swimlane) &&
+                    return inEditMode() &&
                         target &&
                         !pathContains(target, id) &&
                         canDrop(target.domainObject, domainObject);
