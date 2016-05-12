@@ -54,6 +54,7 @@ define(
          */
         function MCTRepresentation(representations, views, representers, $q, templateLinker, $log) {
             var representationMap = {},
+                listeners = 0;
                 domainObjectListener;
 
             // Assemble all representations and views
@@ -92,6 +93,7 @@ define(
                     couldEdit = false,
                     lastIdPath = [],
                     lastKey,
+                    statusListener,
                     changeTemplate = templateLinker.link($scope, element);
 
                 // Populate scope with any capabilities indicated by the
@@ -176,8 +178,6 @@ define(
                         return;
                     }
 
-                    console.log("changed");
-
                     // Create an empty object named "representation", for this
                     // representation to store local variables into.
                     $scope.representation = {};
@@ -240,16 +240,18 @@ define(
 
                 // Also update when the represented domain object changes
                 // (to a different object)
-                //$scope.$watch("domainObject", refresh);
-
-                $scope.$watch("domainObject", function (domainObject) {
-                    if (domainObjectListener) {
-                        domainObjectListener();
+                $scope.$watch("domainObject", refresh);
+                $scope.$watch("domainObject", function(domainObject) {
+                    if (domainObject){
+                        if (statusListener) {
+                            statusListener();
+                            listeners--;
+                            console.log("directive listeners " + listeners);
+                        }
+                        statusListener = domainObject.getCapability("status").listen(refresh);
+                        listeners++;
+                        console.log("directive listeners " + listeners);
                     }
-                    if (domainObject) {
-                        domainObjectListener = domainObject.getCapability('status').listen(refresh);
-                    }
-                    refresh();
                 });
 
                 // Finally, also update when there is a new version of that
@@ -260,6 +262,13 @@ define(
                 // Make sure any resources allocated by representers also get
                 // released.
                 $scope.$on("$destroy", destroyRepresenters);
+                $scope.$on("$destroy", function () {
+                    if (statusListener) {
+                        statusListener();
+                        listeners--;
+                        console.log("directive listeners " + listeners);
+                    }
+                });
 
                 // Do one initial refresh, so that we don't need another
                 // digest iteration just to populate the scope. Failure to
