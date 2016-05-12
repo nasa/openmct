@@ -49,7 +49,7 @@ define(
          * currently being edited.
          * @returns boolean
          */
-        EditorCapability.prototype.isEditing = function () {
+        EditorCapability.prototype.inEditContext = function () {
             return isEditing(this.domainObject);
         };
 

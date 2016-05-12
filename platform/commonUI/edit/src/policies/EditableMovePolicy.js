@@ -37,8 +37,8 @@ define([], function () {
             selectedObject = context.selectedObject,
             key = action.getMetadata().key;
 
-        if (key === 'move' && domainObject.hasCapability('editor') && domainObject.getCapability('editor').isEditing()) {
-            return !!selectedObject && selectedObject.hasCapability('editor') && selectedObject.getCapability('editor').isEditing();
+        if (key === 'move' && domainObject.hasCapability('editor') && domainObject.getCapability('editor').inEditContext()) {
+            return !!selectedObject && selectedObject.hasCapability('editor') && selectedObject.getCapability('editor').inEditContext();
         }
 
         // Like all policies, allow by default.

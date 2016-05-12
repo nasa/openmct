@@ -42,7 +42,7 @@ define(
             // Check if we are in edit mode (also check parents)
             function inEditMode(swimlane) {
                 return swimlane.domainObject.hasCapability('editor') &&
-                    swimlane.domainObject.getCapability('editor').isEditing();
+                    swimlane.domainObject.getCapability('editor').inEditContext();
             }
 
             // Boolean and (for reduce below)

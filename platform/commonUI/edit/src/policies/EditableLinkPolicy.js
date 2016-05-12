@@ -40,7 +40,7 @@ define([], function () {
 
         if (key === 'link') {
             object = context.selectedObject || context.domainObject;
-            return !(object.hasCapability("editor") && object.getCapability("editor").isEditing());
+            return !(object.hasCapability("editor") && object.getCapability("editor").inEditContext());
         }
 
         // Like all policies, allow by default.

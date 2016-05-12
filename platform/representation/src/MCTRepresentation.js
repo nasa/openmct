@@ -170,7 +170,7 @@ define(
                         representation = lookup($scope.key, domainObject),
                         uses = ((representation || {}).uses || []),
                         canRepresent = !!(representation && domainObject),
-                        canEdit = !!(domainObject && domainObject.hasCapability('editor') && domainObject.getCapability('editor').isEditing()),
+                        canEdit = !!(domainObject && domainObject.hasCapability('editor') && domainObject.getCapability('editor').inEditContext()),
                         idPath = getIdPath(domainObject),
                         key = $scope.key;
 

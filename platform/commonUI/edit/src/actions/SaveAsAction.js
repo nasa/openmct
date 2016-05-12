@@ -158,6 +158,7 @@ define(
             var domainObject = (context || {}).domainObject;
             return domainObject !== undefined &&
                 domainObject.hasCapability("editor") &&
+                domainObject.getCapability("editor").inEditContext() &&
                 domainObject.getModel().persisted === undefined;
         };
 
