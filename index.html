@@ -46,7 +46,10 @@
         })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
         ga('create', 'UA-76951009-1', 'auto');
-        ga('send', 'pageview');
+        ga('send', 'pageview', '/live_demo');
+        window.addEventListener('hashchange', function () {
+            ga('send', 'pageview', '/live_demo' + window.location.hash.slice(1));
+        });
 
     </script>
     <link rel="stylesheet" href="platform/commonUI/general/res/css/startup-base.css">
