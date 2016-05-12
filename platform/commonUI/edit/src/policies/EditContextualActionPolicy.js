@@ -34,6 +34,7 @@ define(
          * from context menu of non-editable objects, when navigated object
          * is being edited
          * @constructor
+         * @implements {Policy.<Action, ActionContext>}
          */
         function EditContextualActionPolicy(navigationService, editModeBlacklist, nonEditContextBlacklist) {
             this.navigationService = navigationService;
@@ -45,22 +46,18 @@ define(
             this.nonEditContextBlacklist = nonEditContextBlacklist;
         }
 
-        function isParentEditable(object) {
-            var parent = object.hasCapability("context") && object.getCapability("context").getParent();
-            return !!parent && parent.hasCapability("editor");
-        }
-
         EditContextualActionPolicy.prototype.allow = function (action, context) {
             var selectedObject = context.domainObject,
                 navigatedObject = this.navigationService.getNavigation(),
                 actionMetadata = action.getMetadata ? action.getMetadata() : {};
 
-            if (navigatedObject.hasCapability('editor')) {
-                if (selectedObject.hasCapability('editor') || isParentEditable(selectedObject)){
-                    return this.editModeBlacklist.indexOf(actionMetadata.key) === -1;
+            if (navigatedObject.getCapability("status").get("editing")) {
+                if (selectedObject.hasCapability("editor") && selectedObject.getCapability("editor").inEditContext()){
+                    //Target is within the editing context
+                    return this.editBlacklist.indexOf(actionMetadata.key) === -1;
                 } else {
-                    //Target is in the context menu
-                    return this.nonEditContextBlacklist.indexOf(actionMetadata.key) === -1;
+                    //Target is not within the editing context
+                    return this.nonEditBlacklist.indexOf(actionMetadata.key) === -1;
                 }
             } else {
                 return true;
