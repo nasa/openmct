@@ -39,9 +39,8 @@ define(
         }
 
         TransactionService.prototype.startTransaction = function () {
-            if (this.transaction) {
-                throw "Transaction in progress";
-            }
+            if (this.transaction)
+                console.error("Transaction already in progress")
             this.transaction = true;
         };
 
@@ -68,7 +67,7 @@ define(
             }
 
             return this.$q.all(
-                Object.keys(this.cache)
+                Object.keys(cache)
                     .map(keyToObject)
                     .map(objectToPromise))
                 .then(function () {
@@ -93,7 +92,7 @@ define(
             }
 
             function objectToPromise(object) {
-                return object.getCapability('persistence').refresh();
+                return self.$q.when(object.getModel().persisted && object.getCapability('persistence').refresh());
             }
 
             return this.$q.all(Object.keys(cache)

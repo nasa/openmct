@@ -32,7 +32,7 @@ define(
         };
 
         DirtyModelCache.prototype.isDirty = function (domainObject) {
-            return !!this.get(domainObject.getId());
+            return !!this.cache[domainObject.getId()];
         };
 
         DirtyModelCache.prototype.markDirty = function (domainObject) {
