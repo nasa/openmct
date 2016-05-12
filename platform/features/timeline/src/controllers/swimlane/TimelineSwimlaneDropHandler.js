@@ -39,9 +39,13 @@ define(
                 };
             }
 
-            // Check if we are in edit mode
-            function inEditMode() {
-                return swimlane.domainObject.hasCapability("editor");
+            // Check if we are in edit mode (also check parents)
+            function inEditMode(swimlane) {
+                if (!swimlane.domainObject.getCapability("status").get("editing") && swimlane.parent) {
+                    return inEditMode(swimlane.parent);
+                } else {
+                    return swimlane.domainObject.getCapability("status").get("editing");
+                }
             }
 
             // Boolean and (for reduce below)
@@ -173,7 +177,7 @@ define(
                  * @returns {boolean} true if this should be allowed
                  */
                 allowDropIn: function (id, domainObject) {
-                    return inEditMode() &&
+                    return inEditMode(swimlane) &&
                         !pathContains(swimlane, id) &&
                         !contains(swimlane, id) &&
                         canDrop(swimlane.domainObject, domainObject);
@@ -188,7 +192,7 @@ define(
                 allowDropAfter: function (id, domainObject) {
                     var target = expandedForDropInto() ?
                             swimlane : swimlane.parent;
-                    return inEditMode() &&
+                    return inEditMode(swimlane) &&
                         target &&
                         !pathContains(target, id) &&
                         canDrop(target.domainObject, domainObject);

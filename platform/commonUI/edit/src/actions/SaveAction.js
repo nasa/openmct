@@ -85,8 +85,8 @@ define(
         SaveAction.appliesTo = function (context) {
             var domainObject = (context || {}).domainObject;
             return domainObject !== undefined &&
-                domainObject.hasCapability("editor") &&
-                domainObject.getModel().persisted !== undefined;
+                domainObject.getModel().persisted !== undefined &&
+                domainObject.getCapability("status").get("editing");
         };
 
         return SaveAction;

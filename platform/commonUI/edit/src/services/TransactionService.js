@@ -35,6 +35,7 @@ define(
         function TransactionService($q, dirtyModelCache) {
             this.$q = $q;
             this.transaction = false;
+            this.committing = false;
             this.cache = dirtyModelCache;
         }
 
@@ -48,6 +49,10 @@ define(
             return this.transaction;
         };
 
+        TransactionService.prototype.isCommitting = function () {
+            return this.committing;
+        };
+
         /**
          * All persist calls deferred since the beginning of the transaction
          * will be committed. Any failures will be reported via a promise
@@ -57,6 +62,8 @@ define(
         TransactionService.prototype.commit = function () {
             var self = this;
                 cache = this.cache.get();
+
+            this.committing = true;
 
             function keyToObject(key) {
                 return cache[key];
@@ -72,6 +79,9 @@ define(
                     .map(objectToPromise))
                 .then(function () {
                     self.transaction = false;
+                    this.committing = false;
+                }).catch(function() {
+                    return this.committing = false;
                 });
         };
 
@@ -100,6 +110,7 @@ define(
                 .map(objectToPromise))
                 .then(function () {
                     self.transaction = false;
+                    this.committing = false;
                 });
         };
 

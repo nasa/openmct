@@ -24,8 +24,8 @@
  * Module defining EditAction. Created by vwoeltje on 11/14/14.
  */
 define(
-    ['../objects/EditableDomainObject'],
-    function (EditableDomainObject) {
+    [],
+    function () {
 
         // A no-op action to return in the event that the action cannot
         // be completed.
