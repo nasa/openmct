@@ -95,10 +95,12 @@ define([
     './platform/status/bundle',
     './platform/commonUI/regions/bundle'
 ], function (Main, legacyRegistry) {
-    var mct = new MCT();
+    var base = new MCT();
+    var mct = Object.create(base);
 
     mct.legacyRegistry = legacyRegistry;
     mct.start = function () {
+        base.start();
         return new Main().run(legacyRegistry);
     };
 

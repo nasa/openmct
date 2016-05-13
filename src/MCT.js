@@ -50,6 +50,10 @@ define(function () {
 
     };
 
+    MCT.prototype.namespace = function (namespace) {
+
+    };
+
     /**
      * Start running Open MCT in its current configuration.
      */
