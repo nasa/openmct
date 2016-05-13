@@ -48,6 +48,14 @@ define(function () {
 
     };
 
+    /**
+     * Get all currently registered types.
+     * @return
+     */
+    MCT.prototype.types = function () {
+
+    };
+
     MCT.prototype.namespace = function (namespace) {
 
     };
