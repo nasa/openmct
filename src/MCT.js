@@ -41,12 +41,10 @@ define(function () {
     }
 
     /**
-     *
-     * @param {mct.Category.<T>} category
-     * @param {function extension
-     * @template T
+     * Register a new type of domain object.
+     * @param type
      */
-    MCT.prototype.register = function (category, extension) {
+    MCT.prototype.type = function (type) {
 
     };
 

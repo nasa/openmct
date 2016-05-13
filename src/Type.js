@@ -1,13 +1,19 @@
 define(function () {
-    function Type(metadata, baseTypes) {
+    function Type(name, metadata, baseTypes) {
         this.baseTypes = baseTypes;
+        this.typeName = name;
+        this.typeMetadata = metadata;
     }
 
-    Type.prototype.metadata = function () {
-
+    Type.prototype.name = function () {
+        return this.typeName;
     };
 
-    Type.prototype.objectify = function (string) {
+    Type.prototype.metadata = function () {
+        return this.typeMetadata;
+    };
+
+    Type.prototype.objectify = function (model, id) {
 
     };
 
