@@ -91,14 +91,8 @@ define(
                 }
             }
 
-            function setEditable(editableDomainObject) {
-                self.domainObject = editableDomainObject;
-                scope.model = editableDomainObject.getModel();
-            }
-
             // Place the "commit" method in the scope
             scope.commit = commit;
-            scope.setEditable = setEditable;
 
             // Clean up when the scope is destroyed
             scope.$on("$destroy", function () {
