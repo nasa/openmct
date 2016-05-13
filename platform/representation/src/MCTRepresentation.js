@@ -88,7 +88,6 @@ define(
                     toClear = [], // Properties to clear out of scope on change
                     counter = 0,
                     couldRepresent = false,
-                    couldEdit = false,
                     lastIdPath = [],
                     lastKey,
                     statusListener,
@@ -137,14 +136,13 @@ define(
                     });
                 }
 
-                function unchanged(canRepresent, canEdit, idPath, key) {
+                function unchanged(canRepresent, idPath, key) {
                     return (canRepresent === couldRepresent) &&
                         (key === lastKey) &&
                         (idPath.length === lastIdPath.length) &&
                         idPath.every(function (id, i) {
                             return id === lastIdPath[i];
-                        }) &&
-                        (canEdit === couldEdit);
+                        });
                 }
 
                 function getIdPath(domainObject) {
@@ -168,11 +166,10 @@ define(
                         representation = lookup($scope.key, domainObject),
                         uses = ((representation || {}).uses || []),
                         canRepresent = !!(representation && domainObject),
-                        canEdit = !!(domainObject && domainObject.hasCapability('editor') && domainObject.getCapability('editor').inEditContext()),
                         idPath = getIdPath(domainObject),
                         key = $scope.key;
 
-                    if (unchanged(canRepresent, canEdit, idPath, key)) {
+                    if (unchanged(canRepresent, idPath, key)) {
                         return;
                     }
 
@@ -201,7 +198,6 @@ define(
                     // To allow simplified change detection next time around
                     couldRepresent = canRepresent;
                     lastIdPath = idPath;
-                    couldEdit = canEdit;
                     lastKey = key;
 
                     // Populate scope with fields associated with the current
@@ -239,25 +235,6 @@ define(
                 // Also update when the represented domain object changes
                 // (to a different object)
                 $scope.$watch("domainObject", refresh);
-
-                function listenForStatusChange(object) {
-                    if (statusListener) {
-                        statusListener();
-                    }
-                    statusListener = object.getCapability("status").listen(refresh);
-                }
-
-                /**
-                 * Add a listener to the object for status changes.
-                 */
-                $scope.$watch("domainObject", function (domainObject, oldDomainObject) {
-                    if (domainObject !== oldDomainObject){
-                        listenForStatusChange(domainObject);
-                    }
-                });
-                if ($scope.domainObject) {
-                    listenForStatusChange($scope.domainObject);
-                }
 
                 // Finally, also update when there is a new version of that
                 // same domain object; these changes should be tracked in the
