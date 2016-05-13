@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ["../../src/actions/LinkAction"],
-    function (LinkAction) {
+    ["../../src/actions/EditAndComposeAction"],
+    function (EditAndComposeAction) {
 
         describe("The Link action", function () {
             var mockQ,
@@ -31,6 +31,7 @@ define(
                 mockContext,
                 mockComposition,
                 mockPersistence,
+                mockActionCapability,
                 mockType,
                 actionContext,
                 model,
@@ -67,18 +68,21 @@ define(
                 mockContext = jasmine.createSpyObj("context", [ "getParent" ]);
                 mockComposition = jasmine.createSpyObj("composition", [ "invoke", "add" ]);
                 mockPersistence = jasmine.createSpyObj("persistence", [ "persist" ]);
-                mockType = jasmine.createSpyObj("type", [ "hasFeature" ]);
+                mockType = jasmine.createSpyObj("type", [ "hasFeature", "getKey" ]);
+                mockActionCapability = jasmine.createSpyObj("actionCapability", [ "perform"]);
 
                 mockDomainObject.getId.andReturn("test");
                 mockDomainObject.getCapability.andReturn(mockContext);
                 mockContext.getParent.andReturn(mockParent);
                 mockType.hasFeature.andReturn(true);
+                mockType.getKey.andReturn("layout");
                 mockComposition.invoke.andReturn(mockPromise(true));
                 mockComposition.add.andReturn(mockPromise(true));
 
                 capabilities = {
                     composition: mockComposition,
                     persistence: mockPersistence,
+                    action: mockActionCapability,
                     type: mockType
                 };
                 model = {
@@ -90,7 +94,7 @@ define(
                     selectedObject: mockDomainObject
                 };
 
-                action = new LinkAction(actionContext);
+                action = new EditAndComposeAction(actionContext);
             });
 
 
@@ -103,6 +107,11 @@ define(
             it("persists changes afterward", function () {
                 action.perform();
                 expect(mockPersistence.persist).toHaveBeenCalled();
+            });
+
+            it("enables edit mode", function () {
+                action.perform();
+                expect(mockActionCapability.perform).toHaveBeenCalledWith("edit");
             });
 
         });

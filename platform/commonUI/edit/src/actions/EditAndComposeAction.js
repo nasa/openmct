@@ -31,12 +31,12 @@ define(
          * @memberof platform/commonUI/edit
          * @implements {Action}
          */
-        function LinkAction(context) {
+        function EditAndComposeAction(context) {
             this.domainObject = (context || {}).domainObject;
             this.selectedObject = (context || {}).selectedObject;
         }
 
-        LinkAction.prototype.perform = function () {
+        EditAndComposeAction.prototype.perform = function () {
             var self = this;
 
             // Persist changes to the domain object
@@ -54,9 +54,13 @@ define(
                         .then(doPersist);
             }
 
+            if (this.domainObject.getCapability('type').getKey() !== 'folder') {
+                this.domainObject.getCapability('action').perform('edit');
+            }
+
             return this.selectedObject && doLink();
         };
 
-        return LinkAction;
+        return EditAndComposeAction;
     }
 );
