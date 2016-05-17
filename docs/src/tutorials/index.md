@@ -62,74 +62,19 @@ At this point, it will also be useful to branch off of Open MCT v0.6.2
 	git branch <my branch name> open-v0.6.2
 	git checkout <my branch name>
 
-### Configuring Persistence
 
-In its default configuration, Open MCT will try to use ElasticSearch 
-(expected to be deployed at /elastic on the same HTTP server running Open MCT 
-Web) to persist user-created domain objects. We don't need that for these 
-tutorials, so we will replace the ElasticSearch plugin with the example 
-persistence plugin. This doesn't actually persist, so anything we create within 
-Open MCT will be lost on reload, but that's fine for purposes of these 
-tutorials.
+### Building Open MCT
+Once downloaded, Open MCT can be built with the following command:
 
-To change this configuration, edit bundles.json (at the top level of the Open 
-MCT Web repository) and replace platform/persistence/elastic with 
-example/persistence.
+    npm install
 
-#### Bundle Before
-```diff
-[
-    "platform/framework",
-    "platform/core",
-    "platform/representation",
-    "platform/commonUI/about",
-    "platform/commonUI/browse",
-    "platform/commonUI/edit",
-    "platform/commonUI/dialog",
-    "platform/commonUI/general",
-    "platform/containment",
-    "platform/telemetry",
-    "platform/features/layout",
-    "platform/features/pages",
-    "platform/features/plot",
-    "platform/features/scrolling",
-    "platform/forms",
-    "platform/persistence/queue",
--   "platform/persistence/elastic",
-    "platform/policy",
+This will install various dependencies, build CSS from Sass files, run tests, 
+and lint the source code. 
 
-    "example/generator"
-]
-```
-__bundles.json__
+It's not necessary to do this after every code change, unless you are making 
+changes to stylesheets, or you are running the minified version of the app 
+(under `dist`). 
 
-#### Bundle After
-```diff
-[
-    "platform/framework",
-    "platform/core",
-    "platform/representation",
-    "platform/commonUI/about",
-    "platform/commonUI/browse",
-    "platform/commonUI/edit",
-    "platform/commonUI/dialog",
-    "platform/commonUI/general",
-    "platform/containment",
-    "platform/telemetry",
-    "platform/features/layout",
-    "platform/features/pages",
-    "platform/features/plot",
-    "platform/features/scrolling",
-    "platform/forms",
-    "platform/persistence/queue",
-    "platform/policy",
-
-+   "example/persistence",
-    "example/generator"
-]
-```
-__bundles.json__
-	
 ### Run a Web Server
 
 The next step is to run a web server so that you can view the Open MCT 
@@ -140,7 +85,7 @@ should not be used in a production environment
   
 To run the tutorial web server
 
-    node app.js
+    npm start
 
 ### Viewing in Browser
 
@@ -176,7 +121,7 @@ they need to do. This is modelled after the to-do lists at http://todomvc.com/.
 The first step to adding a new feature to Open MCT is to create the plugin 
 which will expose that feature. A plugin in Open MCT is represented by what 
 is called a bundle; a bundle, in turn, is a directory which contains a file 
-bundle.json, which in turn describes where other relevant sources & resources 
+bundle.js, which in turn describes where other relevant sources & resources 
 will be. The syntax of this file is described in more detail in the Open MCT 
 Developer Guide.
 
@@ -185,74 +130,203 @@ to this plugin as tutorials/todo as well.) We will start with an "empty bundle",
 one which exposes no extensions - which looks like:
 
 ```diff
-{
-    "name": "To-do Plugin",
-    "description": "Allows creating and editing to-do lists.",
-    "extensions": {
 
-    }
-}
+define([
+    'legacyRegistry'
+], function (
+    legacyRegistry
+) {
+    legacyRegistry.register("tutorials/todo", {
+        "name": "To-do Plugin",
+        "description": "Allows creating and editing to-do lists.",
+        "extensions":
+        {
+        }
+    });
+});
+
 ```
-__tutorials/todo/bundle.json__
+__tutorials/todo/bundle.js__
 
-We will also include this in our list of active bundles.
+With the new bundle defined, it is now necessary to register the bundle with 
+the application. The details of how a new bundle is defined are in the 
+process of changing. The Open MCT codebase has started to shift from a 
+declarative registration style toward an imperative registration style. 
+The tutorials will be updated with the new bundle registration mechanism once it 
+has been finalized. 
 
 #### Before
 ```diff
-[
-    "platform/framework",
-    "platform/core",
-    "platform/representation",
-    "platform/commonUI/about",
-    "platform/commonUI/browse",
-    "platform/commonUI/edit",
-    "platform/commonUI/dialog",
-    "platform/commonUI/general",
-    "platform/containment",
-    "platform/telemetry",
-    "platform/features/layout",
-    "platform/features/pages",
-    "platform/features/plot",
-    "platform/features/scrolling",
-    "platform/forms",
-    "platform/persistence/queue",
-    "platform/policy",
+requirejs.config({
+    "paths": {
+        "legacyRegistry": "src/legacyRegistry",
+        "angular": "bower_components/angular/angular.min",
+        "angular-route": "bower_components/angular-route/angular-route.min",
+        "csv": "bower_components/comma-separated-values/csv.min",
+        "es6-promise": "bower_components/es6-promise/promise.min",
+        "moment": "bower_components/moment/moment",
+        "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
+        "saveAs": "bower_components/FileSaver.js/FileSaver.min",
+        "screenfull": "bower_components/screenfull/dist/screenfull.min",
+        "text": "bower_components/text/text",
+        "uuid": "bower_components/node-uuid/uuid",
+        "zepto": "bower_components/zepto/zepto.min"
+    },
+    "shim": {
+        "angular": {
+            "exports": "angular"
+        },
+        "angular-route": {
+            "deps": [ "angular" ]
+        },
+        "moment-duration-format": {
+            "deps": [ "moment" ]
+        },
+        "screenfull": {
+            "exports": "screenfull"
+        },
+        "zepto": {
+            "exports": "Zepto"
+        }
+    }
+});
 
-    "example/persistence",
-    "example/generator"
-]
+define([
+    './platform/framework/src/Main',
+    'legacyRegistry',
+
+    './platform/framework/bundle',
+    './platform/core/bundle',
+    './platform/representation/bundle',
+    './platform/commonUI/about/bundle',
+    './platform/commonUI/browse/bundle',
+    './platform/commonUI/edit/bundle',
+    './platform/commonUI/dialog/bundle',
+    './platform/commonUI/formats/bundle',
+    './platform/commonUI/general/bundle',
+    './platform/commonUI/inspect/bundle',
+    './platform/commonUI/mobile/bundle',
+    './platform/commonUI/themes/espresso/bundle',
+    './platform/commonUI/notification/bundle',
+    './platform/containment/bundle',
+    './platform/execution/bundle',
+    './platform/exporters/bundle',
+    './platform/telemetry/bundle',
+    './platform/features/clock/bundle',
+    './platform/features/imagery/bundle',
+    './platform/features/layout/bundle',
+    './platform/features/pages/bundle',
+    './platform/features/plot/bundle',
+    './platform/features/timeline/bundle',
+    './platform/features/table/bundle',
+    './platform/forms/bundle',
+    './platform/identity/bundle',
+    './platform/persistence/aggregator/bundle',
+    './platform/persistence/local/bundle',
+    './platform/persistence/queue/bundle',
+    './platform/policy/bundle',
+    './platform/entanglement/bundle',
+    './platform/search/bundle',
+    './platform/status/bundle',
+    './platform/commonUI/regions/bundle'
+], function (Main, legacyRegistry) {
+    return {
+        legacyRegistry: legacyRegistry,
+        run: function () {
+            return new Main().run(legacyRegistry);
+        }
+    };
+});
 ```
-__bundles.json__
+__main.js__
 
 #### After
 
 ```diff
-[
-    "platform/framework",
-    "platform/core",
-    "platform/representation",
-    "platform/commonUI/about",
-    "platform/commonUI/browse",
-    "platform/commonUI/edit",
-    "platform/commonUI/dialog",
-    "platform/commonUI/general",
-    "platform/containment",
-    "platform/telemetry",
-    "platform/features/layout",
-    "platform/features/pages",
-    "platform/features/plot",
-    "platform/features/scrolling",
-    "platform/forms",
-    "platform/persistence/queue",
-    "platform/policy",
+requirejs.config({
+    "paths": {
+        "legacyRegistry": "src/legacyRegistry",
+        "angular": "bower_components/angular/angular.min",
+        "angular-route": "bower_components/angular-route/angular-route.min",
+        "csv": "bower_components/comma-separated-values/csv.min",
+        "es6-promise": "bower_components/es6-promise/promise.min",
+        "moment": "bower_components/moment/moment",
+        "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
+        "saveAs": "bower_components/FileSaver.js/FileSaver.min",
+        "screenfull": "bower_components/screenfull/dist/screenfull.min",
+        "text": "bower_components/text/text",
+        "uuid": "bower_components/node-uuid/uuid",
+        "zepto": "bower_components/zepto/zepto.min"
+    },
+    "shim": {
+        "angular": {
+            "exports": "angular"
+        },
+        "angular-route": {
+            "deps": [ "angular" ]
+        },
+        "moment-duration-format": {
+            "deps": [ "moment" ]
+        },
+        "screenfull": {
+            "exports": "screenfull"
+        },
+        "zepto": {
+            "exports": "Zepto"
+        }
+    }
+});
 
-    "example/persistence",
-    "example/generator",
+define([
+    './platform/framework/src/Main',
+    'legacyRegistry',
 
-+   "tutorials/todo"     
-]
+    './platform/framework/bundle',
+    './platform/core/bundle',
+    './platform/representation/bundle',
+    './platform/commonUI/about/bundle',
+    './platform/commonUI/browse/bundle',
+    './platform/commonUI/edit/bundle',
+    './platform/commonUI/dialog/bundle',
+    './platform/commonUI/formats/bundle',
+    './platform/commonUI/general/bundle',
+    './platform/commonUI/inspect/bundle',
+    './platform/commonUI/mobile/bundle',
+    './platform/commonUI/themes/espresso/bundle',
+    './platform/commonUI/notification/bundle',
+    './platform/containment/bundle',
+    './platform/execution/bundle',
+    './platform/exporters/bundle',
+    './platform/telemetry/bundle',
+    './platform/features/clock/bundle',
+    './platform/features/imagery/bundle',
+    './platform/features/layout/bundle',
+    './platform/features/pages/bundle',
+    './platform/features/plot/bundle',
+    './platform/features/timeline/bundle',
+    './platform/features/table/bundle',
+    './platform/forms/bundle',
+    './platform/identity/bundle',
+    './platform/persistence/aggregator/bundle',
+    './platform/persistence/local/bundle',
+    './platform/persistence/queue/bundle',
+    './platform/policy/bundle',
+    './platform/entanglement/bundle',
+    './platform/search/bundle',
+    './platform/status/bundle',
+    './platform/commonUI/regions/bundle',
+    
++   './tutorials/todo/bundle'
+], function (Main, legacyRegistry) {
+    return {
+        legacyRegistry: legacyRegistry,
+        run: function () {
+            return new Main().run(legacyRegistry);
+        }
+    };
+});
 ```    
-__bundles.json__
+__main.js__
 
 At this point, we can reload Open MCT. We haven't introduced any new 
 functionality, so we don't see anything different, but if we run with logging 
@@ -275,11 +349,17 @@ In the case of our to-do list feature, the to-do list itself is the thing we'll
 want users to be able to create and edit. So, we will add that as a new type in 
 our bundle definition:
 ```diff    
-{
-    "name": "To-do Plugin",
-    "description": "Allows creating and editing to-do lists.",
-    "extensions": {
-+      "types": [
+define([
+    'legacyRegistry'
+], function (
+    legacyRegistry
+) {
+    legacyRegistry.register("tutorials/todo", {
+        "name": "To-do Plugin",
+        "description": "Allows creating and editing to-do lists.",
+        "extensions":
+        {
++         "types": [
 +          {
 +              "key": "example.todo",
 +              "name": "To-Do List",
@@ -287,11 +367,12 @@ our bundle definition:
 +              "description": "A list of things that need to be done.",
 +              "features": ["creation"]
 +          }
-        ]
-    }
-}
+        }
+    });
+});
+
 ```
-__tutorials/todo/bundle.json__
+__tutorials/todo/bundle.js__
 
 What have we done here? We've stated that this bundle includes extensions of the 
 category _types_, which is used to describe domain object types. Then, we've 
@@ -366,7 +447,12 @@ To expose this view in Open MCT, we need to declare it in our bundle
 definition:
 
 ```diff
-{
+define([
+    'legacyRegistry'
+], function (
+    legacyRegistry
+) {
+    legacyRegistry.register("tutorials/todo", {
     "name": "To-do Plugin",
     "description": "Allows creating and editing to-do lists.",
     "extensions": {
@@ -389,9 +475,10 @@ definition:
 +           }
 +       ]
     }
-}
+    });
+});
 ```
-__tutorials/todo/bundle.json__
+__tutorials/todo/bundle.js__
 
 Here, we've added another extension, this time belonging to category `views`. It 
 contains the following properties:
@@ -416,7 +503,12 @@ will specify an initial state for To-do List domain object models in the
 definition of that type.
 
 ```diff
-{
+define([
+    'legacyRegistry'
+], function (
+    legacyRegistry
+) {
+    legacyRegistry.register("tutorials/todo", {
     "name": "To-do Plugin",
     "description": "Allows creating and editing to-do lists.",
     "extensions": {
@@ -445,9 +537,10 @@ definition of that type.
             }
         ]
     }
-}
+    });
+});
 ```
-__tutorials/todo/bundle.json__
+__tutorials/todo/bundle.js__
 
 Now, when To-do List objects are created in Open MCT, they will initially 
 have the state described by that model property.
@@ -580,7 +673,14 @@ If we were to try to run at this point, we'd run into problems because the
 it in our bundle definition, as an extension of category `controllers`:
 
 ```diff
-{
+define([
+    'legacyRegistry',
+    './controllers/TodoController'
+], function (
+    legacyRegistry,
+    TodoController
+) {
+    legacyRegistry.register("tutorials/todo", {
     "name": "To-do Plugin",
     "description": "Allows creating and editing to-do lists.",
     "extensions": {
@@ -611,14 +711,15 @@ it in our bundle definition, as an extension of category `controllers`:
 +       "controllers": [
 +           {
 +               "key": "TodoController",
-+               "implementation": "controllers/TodoController.js",
++               "implementation": TodoController,
 +               "depends": [ "$scope" ]
 +           }
 +       ]
     }
-}
+    });
+});
 ```
-__tutorials/todo/bundle.json__
+__tutorials/todo/bundle.js__
 
 In this extension definition we have:
 
@@ -665,7 +766,14 @@ view. The contents of this tool bar are defined declaratively in a view's
 extension definition.
 
 ```diff
-{
+define([
+    'legacyRegistry',
+    './controllers/TodoController'
+], function (
+    legacyRegistry,
+    TodoController
+) {
+    legacyRegistry.register("tutorials/todo", {
     "name": "To-do Plugin",
     "description": "Allows creating and editing to-do lists.",
     "extensions": {
@@ -719,14 +827,15 @@ extension definition.
         "controllers": [
             {
                 "key": "TodoController",
-                "implementation": "controllers/TodoController.js",
+                "implementation": TodoController,
                 "depends": [ "$scope" ]
             }
         ]
     }
-}
+    });
+});
 ```
-__tutorials/todo/bundle.json__
+__tutorials/todo/bundle.js__
 
 What we've stated here is that the To-Do List's view will have a toolbar which 
 contains two sections (which will be visually separated by a divider), each of 
@@ -884,7 +993,14 @@ __tutorials/todo/res/templates/todo.html__
 Finally, the `TodoController` uses the `dialogService` now, so we need to 
 declare that dependency in its extension definition:
 ```diff
-{
+define([
+    'legacyRegistry',
+    './controllers/TodoController'
+], function (
+    legacyRegistry,
+    TodoController
+) {
+    legacyRegistry.register("tutorials/todo", {
     "name": "To-do Plugin",
     "description": "Allows creating and editing to-do lists.",
     "extensions": {
@@ -938,14 +1054,15 @@ declare that dependency in its extension definition:
         "controllers": [
             {
                 "key": "TodoController",
-                "implementation": "controllers/TodoController.js",
+                "implementation": TodoController,
 +               "depends": [ "$scope", "dialogService" ]
             }
         ]
     }
-}
+    });
+});
 ```
-__tutorials/todo/bundle.json__
+__tutorials/todo/bundle.js__
 
 If we now reload Open MCT, we'll be able to see the new functionality we've 
 added. If we Create a new To-Do List, navigate to it, and click the button with 
@@ -1140,7 +1257,14 @@ To include this CSS file in our running instance of Open MCT, we need to
 declare it in our bundle definition, this time as an extension of category 
 `stylesheets`:
 ```diff
-{
+define([
+    'legacyRegistry',
+    './controllers/TodoController'
+], function (
+    legacyRegistry,
+    TodoController
+) {
+    legacyRegistry.register("tutorials/todo", {
     "name": "To-do Plugin",
     "description": "Allows creating and editing to-do lists.",
     "extensions": {
@@ -1191,7 +1315,7 @@ declare it in our bundle definition, this time as an extension of category
         "controllers": [
             {
                 "key": "TodoController",
-                "implementation": "controllers/TodoController.js",
+                "implementation": TodoController,
                 "depends": [ "$scope", "dialogService" ]
             }
         ],
@@ -1201,9 +1325,10 @@ declare it in our bundle definition, this time as an extension of category
 +           }
 +       ]
     }
-}
+    });
+});
 ```
-__tutorials/todo/bundle.json__
+__tutorials/todo/bundle.js__
 
 Note that we've also removed our placeholder tasks from the `model` of the 
 To-Do List's type above; now To-Do Lists will start off empty.
@@ -1270,7 +1395,12 @@ well. We'll be creating this plugin in `tutorials/bargraph`, so our initial
 bundle definition looks like:
 
 ```diff
-{
+define([
+    'legacyRegistry'
+], function (
+    legacyRegistry
+) {
+    legacyRegistry.register("tutorials/bargraph", {
     "name": "Bar Graph",
     "description": "Provides the Bar Graph view of telemetry elements.",
     "extensions": {
@@ -1290,10 +1420,11 @@ bundle definition looks like:
             }
         ]
     }
-}
+    });
+});
 ```
 
-__tutorials/bargraph/bundle.json__
+__tutorials/bargraph/bundle.js__
 
 The view definition should look familiar after the To-Do List tutorial, with 
 some additions:
@@ -1435,7 +1566,7 @@ The corresponding CSS file which styles and positions these elements:
 ```
 __tutorials/bargraph/res/css/bargraph.css__
 
-This is already enough that, if we add `"tutorials/bargraph"` to `bundles.json`, 
+This is already enough that, if we add `"tutorials/bargraph"` to `main.js`, 
 we should be able to run Open MCT and see our Bar Graph as an available view 
 for domain objects which provide telemetry (such as the example 
 _Sine Wave Generator_) as well as for _Telemetry Panel_ objects:
@@ -1563,7 +1694,14 @@ depends declaration includes both `$scope` as well as the `telemetryHandler`
 service we made use of.
 
 ```diff
-{
+define([
+    'legacyRegistry',
+    './controllers/BarGraphController'
+], function (
+    legacyRegistry,
+    BarGraphController
+) {
+    legacyRegistry.register("tutorials/bargraph", {
     "name": "Bar Graph",
     "description": "Provides the Bar Graph view of telemetry elements.",
     "extensions": {
@@ -1585,14 +1723,15 @@ service we made use of.
 +       "controllers": [
 +           {
 +               "key": "BarGraphController",
-+               "implementation": "controllers/BarGraphController.js",
++               "implementation": BarGraphController,
 +               "depends": [ "$scope", "telemetryHandler" ]
 +           }
 +       ]
     }
-}
+    });
+});
 ```
-__tutorials/bargraph/bundle.json__
+__tutorials/bargraph/bundle.js__
 
 When we reload Open MCT, we are now able to see that our bar graph view 
 correctly labels one bar per telemetry-providing domain object, as shown for 
@@ -1721,7 +1860,14 @@ when we return to our view later, those changes will be persisted.
 First, let's add a tool bar for changing these three values in Edit mode:
 
 ```diff
-{
+define([
+    'legacyRegistry',
+    './controllers/BarGraphController'
+], function (
+    legacyRegistry,
+    BarGraphController
+) {
+    legacyRegistry.register("tutorials/bargraph", {
     "name": "Bar Graph",
     "description": "Provides the Bar Graph view of telemetry elements.",
     "extensions": {
@@ -1772,14 +1918,15 @@ First, let's add a tool bar for changing these three values in Edit mode:
         "controllers": [
             {
                 "key": "BarGraphController",
-                "implementation": "controllers/BarGraphController.js",
+                "implementation": BarGraphController,
                 "depends": [ "$scope", "telemetryHandler" ]
             }
         ]
     }
-}
+    });
+});
 ```
-__tutorials/bargraph/bundle.json__
+__tutorials/bargraph/bundle.js__
 
 As we saw in to To-Do List plugin, a tool bar needs either a selected object or 
 a view proxy to work from. We will add this to our controller, and additionally 
@@ -2192,7 +2339,12 @@ add a top-level object which will serve as a container; in the next step, we
 will populate this with the contents of the telemetry dictionary (which we 
 will retrieve from the server.)
 
-    {
+define([
+    'legacyRegistry'
+], function (
+    legacyRegistry
+) {
+    legacyRegistry.register("tutorials/telemetry", {
         "name": "Example Telemetry Adapter",
         "extensions": {
             "types": [
@@ -2214,8 +2366,9 @@ will retrieve from the server.)
                 }
             ]
         }
-    }
-__tutorials/telemetry/bundle.json__
+    });
+});
+__tutorials/telemetry/bundle.js__
 
 Here, we've created our initial telemetry plugin. This exposes a new domain 
 object type (the "Spacecraft", which will be represented by the contents of the 
@@ -2226,55 +2379,91 @@ preferred so that this shows up near the top, instead of below My Items.
 If we include this in our set of active bundles:
 
 ```diff
-[
-    "platform/framework",
-    "platform/core",
-    "platform/representation",
-    "platform/commonUI/about",
-    "platform/commonUI/browse",
-    "platform/commonUI/edit",
-    "platform/commonUI/dialog",
-    "platform/commonUI/general",
-    "platform/containment",
-    "platform/telemetry",
-    "platform/features/layout",
-    "platform/features/pages",
-    "platform/features/plot",
-    "platform/features/scrolling",
-    "platform/forms",
-    "platform/persistence/queue",
-    "platform/policy",
+requirejs.config({
+    "paths": {
+        "legacyRegistry": "src/legacyRegistry",
+        "angular": "bower_components/angular/angular.min",
+        "angular-route": "bower_components/angular-route/angular-route.min",
+        "csv": "bower_components/comma-separated-values/csv.min",
+        "es6-promise": "bower_components/es6-promise/promise.min",
+        "moment": "bower_components/moment/moment",
+        "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
+        "saveAs": "bower_components/FileSaver.js/FileSaver.min",
+        "screenfull": "bower_components/screenfull/dist/screenfull.min",
+        "text": "bower_components/text/text",
+        "uuid": "bower_components/node-uuid/uuid",
+        "zepto": "bower_components/zepto/zepto.min"
+    },
+    "shim": {
+        "angular": {
+            "exports": "angular"
+        },
+        "angular-route": {
+            "deps": [ "angular" ]
+        },
+        "moment-duration-format": {
+            "deps": [ "moment" ]
+        },
+        "screenfull": {
+            "exports": "screenfull"
+        },
+        "zepto": {
+            "exports": "Zepto"
+        }
+    }
+});
 
-    "example/persistence",
-    "example/generator"
-]
-[
-    "platform/framework",
-    "platform/core",
-    "platform/representation",
-    "platform/commonUI/about",
-    "platform/commonUI/browse",
-    "platform/commonUI/edit",
-    "platform/commonUI/dialog",
-    "platform/commonUI/general",
-    "platform/containment",
-    "platform/telemetry",
-    "platform/features/layout",
-    "platform/features/pages",
-    "platform/features/plot",
-    "platform/features/scrolling",
-    "platform/forms",
-    "platform/persistence/queue",
-    "platform/policy",
+define([
+    './platform/framework/src/Main',
+    'legacyRegistry',
 
-    "example/persistence",
-    "example/generator",
-
-+   "tutorials/telemetry"      
-]
+    './platform/framework/bundle',
+    './platform/core/bundle',
+    './platform/representation/bundle',
+    './platform/commonUI/about/bundle',
+    './platform/commonUI/browse/bundle',
+    './platform/commonUI/edit/bundle',
+    './platform/commonUI/dialog/bundle',
+    './platform/commonUI/formats/bundle',
+    './platform/commonUI/general/bundle',
+    './platform/commonUI/inspect/bundle',
+    './platform/commonUI/mobile/bundle',
+    './platform/commonUI/themes/espresso/bundle',
+    './platform/commonUI/notification/bundle',
+    './platform/containment/bundle',
+    './platform/execution/bundle',
+    './platform/exporters/bundle',
+    './platform/telemetry/bundle',
+    './platform/features/clock/bundle',
+    './platform/features/imagery/bundle',
+    './platform/features/layout/bundle',
+    './platform/features/pages/bundle',
+    './platform/features/plot/bundle',
+    './platform/features/timeline/bundle',
+    './platform/features/table/bundle',
+    './platform/forms/bundle',
+    './platform/identity/bundle',
+    './platform/persistence/aggregator/bundle',
+    './platform/persistence/local/bundle',
+    './platform/persistence/queue/bundle',
+    './platform/policy/bundle',
+    './platform/entanglement/bundle',
+    './platform/search/bundle',
+    './platform/status/bundle',
+    './platform/commonUI/regions/bundle',
+    
++   './tutorials/telemetry/bundle'
+], function (Main, legacyRegistry) {
+    return {
+        legacyRegistry: legacyRegistry,
+        run: function () {
+            return new Main().run(legacyRegistry);
+        }
+    };
+});
 ```
 
-__bundles.json__
+__main.js__
 
 ...we will be able to reload Open MCT and see that it is present:
 
@@ -2534,12 +2723,23 @@ name to match what was in the dictionary, and set its `composition` to an array
 of domain object identifiers for all subsystems contained in the dictionary 
 (using the same identifier prefix as before.)
 
-Finally, we wire in these changes by modifying our plugin's `bundle.json` to 
+Finally, we wire in these changes by modifying our plugin's `bundle.js` to 
 provide metadata about how these pieces interact (both with each other, and 
 with the platform):
 
 ```diff
-{
+define([
+    'legacyRegistry',
+    './ExampleTelemetryServerAdapter',
+    './ExampleTelemetryInitializer',
+    './ExampleTelemetryModelProvider'
+], function (
+    legacyRegistry,
+    ExampleTelemetryServerAdapter,
+    ExampleTelemetryInitializer,
+    ExampleTelemetryModelProvider
+) {
+    legacyRegistry.register("tutorials/telemetry", {
     "name": "Example Telemetry Adapter",
     "extensions": {
         "types": [
@@ -2584,7 +2784,7 @@ with the platform):
 +       "services": [
 +           {
 +               "key": "example.adapter",
-+               "implementation": "ExampleTelemetryServerAdapter.js",
++               "implementation": ExampleTelemetryServerAdapter,
 +               "depends": [ "$q", "EXAMPLE_WS_URL" ]
 +           }
 +       ],
@@ -2597,7 +2797,7 @@ with the platform):
 +       ],
 +       "runs": [
 +           {
-+               "implementation": "ExampleTelemetryInitializer.js",
++               "implementation": ExampleTelemetryInitializer,
 +               "depends": [ "example.adapter", "objectService" ]
 +           }
 +       ],
@@ -2605,14 +2805,15 @@ with the platform):
 +           {
 +               "provides": "modelService",
 +               "type": "provider",
-+               "implementation": "ExampleTelemetryModelProvider.js",
++               "implementation": ExampleTelemetryModelProvider,
 +               "depends": [ "example.adapter", "$q" ]
 +           }
 +       ]
-    }
-}
+        }
+    });
+});
 ```
-__tutorials/telemetry/bundle.json__
+__tutorials/telemetry/bundle.js__
 
 A summary of what we've added here:
 
@@ -2843,7 +3044,18 @@ it with the interface expected by the platform (the methods shown.)
 
 Finally, we expose this `telemetryService` provider declaratively:
 ```diff
-{
+define([
+    'legacyRegistry',
+    './ExampleTelemetryServerAdapter',
+    './ExampleTelemetryInitializer',
+    './ExampleTelemetryModelProvider'
+], function (
+    legacyRegistry,
+    ExampleTelemetryServerAdapter,
+    ExampleTelemetryInitializer,
+    ExampleTelemetryModelProvider
+) {
+    legacyRegistry.register("tutorials/telemetry", {
     "name": "Example Telemetry Adapter",
     "extensions": {
         "types": [
@@ -2919,10 +3131,11 @@ Finally, we expose this `telemetryService` provider declaratively:
 +               "depends": [ "example.adapter", "$q" ]
 +           }
         ]
-    }
-}
+        }
+    });
+});
 ```
-__tutorials/telemetry/bundle.json__
+__tutorials/telemetry/bundle.js__
 
 Now, if we navigate to one of our numeric measurements, we should see a plot of 
 its historical telemetry:
