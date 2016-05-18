@@ -363,11 +363,11 @@ define([
 +          {
 +              "key": "example.todo",
 +              "name": "To-Do List",
-+              "glyph": "j",
++              "glyph": "2",
 +              "description": "A list of things that need to be done.",
 +              "features": ["creation"]
 +          }
-        }
++       ]}
     });
 });
 
@@ -460,7 +460,7 @@ define([
             {
                 "key": "example.todo",
                 "name": "To-Do List",
-                "glyph": "j",
+                "glyph": "2",
                 "description": "A list of things that need to be done.",
                 "features": ["creation"]
             }
@@ -469,9 +469,10 @@ define([
 +           {
 +               "key": "example.todo",
 +               "type": "example.todo",
-+               "glyph": "j",
++               "glyph": "2",
 +               "name": "List",
-+               "templateUrl": "templates/todo.html"
++               "templateUrl": "templates/todo.html",
++               "editable": true
 +           }
 +       ]
     }
@@ -516,7 +517,7 @@ define([
             {
                 "key": "example.todo",
                 "name": "To-Do List",
-                "glyph": "j",
+                "glyph": "2",
                 "description": "A list of things that need to be done.",
                 "features": ["creation"],
 +               "model": {
@@ -531,9 +532,10 @@ define([
             {
                 "key": "example.todo",
                 "type": "example.todo",
-                "glyph": "j",
+                "glyph": "2",
                 "name": "List",
-                "templateUrl": "templates/todo.html"
+                "templateUrl": "templates/todo.html",
+                "editable": true
             }
         ]
     }
@@ -675,7 +677,7 @@ it in our bundle definition, as an extension of category `controllers`:
 ```diff
 define([
     'legacyRegistry',
-    './controllers/TodoController'
+    './src/controllers/TodoController'
 ], function (
     legacyRegistry,
     TodoController
@@ -688,7 +690,7 @@ define([
             {
                 "key": "example.todo",
                 "name": "To-Do List",
-                "glyph": "j",
+                "glyph": "2",
                 "description": "A list of things that need to be done.",
                 "features": ["creation"],
                 "model": {
@@ -703,9 +705,10 @@ define([
             {
                 "key": "example.todo",
                 "type": "example.todo",
-                "glyph": "j",
+                "glyph": "2",
                 "name": "List",
-                "templateUrl": "templates/todo.html"
+                "templateUrl": "templates/todo.html",
+                "editable": true
             }
         ],
 +       "controllers": [
@@ -768,7 +771,7 @@ extension definition.
 ```diff
 define([
     'legacyRegistry',
-    './controllers/TodoController'
+    './src/controllers/TodoController'
 ], function (
     legacyRegistry,
     TodoController
@@ -781,7 +784,7 @@ define([
             {
                 "key": "example.todo",
                 "name": "To-Do List",
-                "glyph": "j",
+                "glyph": "2",
                 "description": "A list of things that need to be done.",
                 "features": ["creation"],
                 "model": {
@@ -796,9 +799,10 @@ define([
             {
                 "key": "example.todo",
                 "type": "example.todo",
-                "glyph": "j",
+                "glyph": "2",
                 "name": "List",
                 "templateUrl": "templates/todo.html",
+                "editable": true,
 +               "toolbar": {
 +                   "sections": [
 +                       {
@@ -995,7 +999,7 @@ declare that dependency in its extension definition:
 ```diff
 define([
     'legacyRegistry',
-    './controllers/TodoController'
+    './src/controllers/TodoController'
 ], function (
     legacyRegistry,
     TodoController
@@ -1008,7 +1012,7 @@ define([
             {
                 "key": "example.todo",
                 "name": "To-Do List",
-                "glyph": "j",
+                "glyph": "2",
                 "description": "A list of things that need to be done.",
                 "features": ["creation"],
                 "model": {
@@ -1023,9 +1027,10 @@ define([
             {
                 "key": "example.todo",
                 "type": "example.todo",
-                "glyph": "j",
+                "glyph": "2",
                 "name": "List",
                 "templateUrl": "templates/todo.html",
+                "editable": true,
                 "toolbar": {
                     "sections": [
                         {
@@ -1259,7 +1264,7 @@ declare it in our bundle definition, this time as an extension of category
 ```diff
 define([
     'legacyRegistry',
-    './controllers/TodoController'
+    './src/controllers/TodoController'
 ], function (
     legacyRegistry,
     TodoController
@@ -1272,7 +1277,7 @@ define([
             {
                 "key": "example.todo",
                 "name": "To-Do List",
-                "glyph": "j",
+                "glyph": "2",
                 "description": "A list of things that need to be done.",
                 "features": ["creation"],
                 "model": {
@@ -1284,9 +1289,10 @@ define([
             {
                 "key": "example.todo",
                 "type": "example.todo",
-                "glyph": "j",
+                "glyph": "2",
                 "name": "List",
                 "templateUrl": "templates/todo.html",
+                "editable": true,
                 "toolbar": {
                     "sections": [
                         {
@@ -1334,6 +1340,7 @@ Note that we've also removed our placeholder tasks from the `model` of the
 To-Do List's type above; now To-Do Lists will start off empty.
 
 Finally, let's utilize these changes from our view's template:
+
 ```diff
 + <div ng-controller="TodoController" class="example-todo">
 +     <div class="example-button-group">
@@ -1641,7 +1648,7 @@ telemetry objects in view, as well as the width for each bar.
 
 We will also utilize this from our template:
 ```diff
-<div class="example-bargraph">
++ <div class="example-bargraph" ng-controller="BarGraphController">
     <div class="example-tick-labels">
 +       <div ng-repeat="value in [low, middle, high] track by $index"
 +             class="example-tick-label"
@@ -1696,7 +1703,7 @@ service we made use of.
 ```diff
 define([
     'legacyRegistry',
-    './controllers/BarGraphController'
+    './src/controllers/BarGraphController'
 ], function (
     legacyRegistry,
     BarGraphController
@@ -1801,7 +1808,7 @@ decide this.
 Next, we utilize this functionality from the template:
 
 ```diff
-<div class="example-bargraph">
+<div class="example-bargraph" ng-controller="BarGraphController">
     <div class="example-tick-labels">
         <div ng-repeat="value in [low, middle, high] track by $index"
              class="example-tick-label"
@@ -1862,7 +1869,7 @@ First, let's add a tool bar for changing these three values in Edit mode:
 ```diff
 define([
     'legacyRegistry',
-    './controllers/BarGraphController'
+    './src/controllers/BarGraphController'
 ], function (
     legacyRegistry,
     BarGraphController
@@ -2730,9 +2737,9 @@ with the platform):
 ```diff
 define([
     'legacyRegistry',
-    './ExampleTelemetryServerAdapter',
-    './ExampleTelemetryInitializer',
-    './ExampleTelemetryModelProvider'
+    './src/ExampleTelemetryServerAdapter',
+    './src/ExampleTelemetryInitializer',
+    './src/ExampleTelemetryModelProvider'
 ], function (
     legacyRegistry,
     ExampleTelemetryServerAdapter,
@@ -2931,7 +2938,7 @@ will implement:
 /*global define*/
 
 define(
-    ['./ExampleTelemetrySeries'],
+    ['./src/ExampleTelemetrySeries'],
     function (ExampleTelemetrySeries) {
         "use strict";
 
@@ -3046,9 +3053,9 @@ Finally, we expose this `telemetryService` provider declaratively:
 ```diff
 define([
     'legacyRegistry',
-    './ExampleTelemetryServerAdapter',
-    './ExampleTelemetryInitializer',
-    './ExampleTelemetryModelProvider'
+    './src/ExampleTelemetryServerAdapter',
+    './src/ExampleTelemetryInitializer',
+    './src/ExampleTelemetryModelProvider'
 ], function (
     legacyRegistry,
     ExampleTelemetryServerAdapter,
@@ -3229,7 +3236,7 @@ We then need only to utilize these methods from our `telemetryService`:
 /*global define*/
 
 define(
-    ['./ExampleTelemetrySeries'],
+    ['./src/ExampleTelemetrySeries'],
     function (ExampleTelemetrySeries) {
         "use strict";
 
