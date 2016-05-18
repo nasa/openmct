@@ -3,6 +3,12 @@ deployment:
     branch: master
     heroku:
       appname: openmctweb-demo
+  website:
+    branch: openmct-website
+    commands:
+        - git clone
+        - git push git@heroku.com:openmctweb-demo.git $CIRCLE_SHA1:refs/heads/master
+
   openmct-demo:
     branch: live_demo
     heroku:

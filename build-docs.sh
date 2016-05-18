@@ -25,14 +25,15 @@
 # Script to build and deploy docs to github pages.
 
 OUTPUT_DIRECTORY="target/docs"
-REPOSITORY_URL="git@github.com:nasa/openmctweb.git"
+REPOSITORY_URL="git@github.com:nasa/openmct-website.git"
+WEBSITE_DIRECTORY="website"
 
 BUILD_SHA=`git rev-parse head`
 
 # A remote will be created for the git repository we are pushing to.
 # Don't worry, as this entire directory will get trashed inbetween builds.
 REMOTE_NAME="documentation"
-WEBSITE_BRANCH="gh-pages"
+WEBSITE_BRANCH="master"
 
 # Clean output directory, JSDOC will recreate
 if [ -d $OUTPUT_DIRECTORY ]; then
@@ -40,23 +41,21 @@ if [ -d $OUTPUT_DIRECTORY ]; then
 fi
 
 npm run docs
-cd $OUTPUT_DIRECTORY || exit 1
 
-echo "git init"
-git init
+echo "git clone $REPOSITORY_URL website"
+git clone $REPOSITORY_URL website
+echo "cp -r $OUTPUT_DIRECTORY $WEBSITE_DIRECTORY/docs"
+cp -r $OUTPUT_DIRECTORY $WEBSITE_DIRECTORY/docs
+echo "cd $WEBSITE_DIRECTORY"
+cd $WEBSITE_DIRECTORY
 
 # Configure github for CircleCI user.
 git config user.email "buildbot@circleci.com"
 git config user.name "BuildBot"
 
-echo "git remote add $REMOTE_NAME $REPOSITORY_URL"
-git remote add $REMOTE_NAME $REPOSITORY_URL
 echo "git add ."
 git add .
-echo "git commit -m \"Generate docs from build $BUILD_SHA\""
-git commit -m "Generate docs from build $BUILD_SHA"
-
-echo "git push $REMOTE_NAME HEAD:$WEBSITE_BRANCH -f"
-git push $REMOTE_NAME HEAD:$WEBSITE_BRANCH -f
-
-echo "Documentation pushed to gh-pages branch."
+echo "git commit -m \"Docs updated from build build $BUILD_SHA\""
+git commit -m "Docs updated from build build $BUILD_SHA"
+echo "git push"
+git push
