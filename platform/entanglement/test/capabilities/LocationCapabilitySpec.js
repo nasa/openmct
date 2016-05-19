@@ -33,7 +33,6 @@ define(
 
             describe("instantiated with domain object", function () {
                 var locationCapability,
-                    persistencePromise,
                     mutationPromise,
                     mockQ,
                     mockInjector,
@@ -49,10 +48,6 @@ define(
                                     return domainObjectFactory({id: 'root'});
                                 }
                             },
-                            persistence: jasmine.createSpyObj(
-                                'persistenceCapability',
-                                ['persist']
-                            ),
                             mutation: jasmine.createSpyObj(
                                 'mutationCapability',
                                 ['invoke']
@@ -64,11 +59,6 @@ define(
                     mockInjector = jasmine.createSpyObj("$injector", ["get"]);
                     mockObjectService =
                         jasmine.createSpyObj("objectService", ["getObjects"]);
-
-                    persistencePromise = new ControlledPromise();
-                    domainObject.capabilities.persistence.persist.andReturn(
-                        persistencePromise
-                    );
 
                     mutationPromise = new ControlledPromise();
                     domainObject.capabilities.mutation.invoke.andCallFake(
@@ -103,22 +93,17 @@ define(
                     expect(locationCapability.isOriginal()).toBe(false);
                 });
 
-                it("can persist location", function () {
-                    var persistResult = locationCapability
+                it("can mutate location", function () {
+                    var result = locationCapability
                             .setPrimaryLocation('root'),
                         whenComplete = jasmine.createSpy('whenComplete');
 
-                    persistResult.then(whenComplete);
+                    result.then(whenComplete);
 
                     expect(domainObject.model.location).not.toBeDefined();
                     mutationPromise.resolve();
                     expect(domainObject.model.location).toBe('root');
 
-                    expect(whenComplete).not.toHaveBeenCalled();
-                    expect(domainObject.capabilities.persistence.persist)
-                        .toHaveBeenCalled();
-
-                    persistencePromise.resolve();
                     expect(whenComplete).toHaveBeenCalled();
                 });
 
