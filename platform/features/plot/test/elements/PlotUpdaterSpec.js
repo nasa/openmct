@@ -39,19 +39,19 @@ define(
             function makeMockDomainObject(id) {
                 var mockDomainObject = jasmine.createSpyObj(
                     "object-" + id,
-                    [ "getId", "getCapability", "getModel" ]
+                    ["getId", "getCapability", "getModel"]
                 );
                 mockDomainObject.getId.andReturn(id);
                 return mockDomainObject;
             }
 
             beforeEach(function () {
-                var ids = [ 'a', 'b', 'c' ],
+                var ids = ['a', 'b', 'c'],
                     mockObjects = ids.map(makeMockDomainObject);
 
                 mockSubscription = jasmine.createSpyObj(
                     "subscription",
-                    [ "getDomainValue", "getRangeValue", "getTelemetryObjects" ]
+                    ["getDomainValue", "getRangeValue", "getTelemetryObjects"]
                 );
                 mockSeries = jasmine.createSpyObj(
                     'series',

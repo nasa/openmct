@@ -24,8 +24,12 @@ define(
     function () {
 
         // Utility functions for reducing truth arrays
-        function and(a, b) { return a && b; }
-        function or(a, b) { return a || b; }
+        function and(a, b) {
+            return a && b;
+        }
+        function or(a, b) {
+            return a || b;
+        }
 
 
         /**

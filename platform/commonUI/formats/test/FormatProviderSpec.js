@@ -24,7 +24,7 @@ define(
     ['../src/FormatProvider'],
     function (FormatProvider) {
 
-        var KEYS = [ 'a', 'b', 'c' ];
+        var KEYS = ['a', 'b', 'c'];
 
         describe("The FormatProvider", function () {
             var mockFormats,
@@ -35,12 +35,14 @@ define(
                 mockFormatInstances = KEYS.map(function (k) {
                     return jasmine.createSpyObj(
                         'format-' + k,
-                        [ 'parse', 'validate', 'format' ]
+                        ['parse', 'validate', 'format']
                     );
                 });
                 // Return constructors
                 mockFormats = KEYS.map(function (k, i) {
-                    function MockFormat() { return mockFormatInstances[i]; }
+                    function MockFormat() {
+                        return mockFormatInstances[i];
+                    }
                     MockFormat.key = k;
                     return MockFormat;
                 });

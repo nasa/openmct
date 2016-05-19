@@ -29,7 +29,7 @@ define(
 
         function fastPromise(val) {
             return {
-                then: function(callback) {
+                then: function (callback) {
                     return callback(val);
                 }
             };
@@ -42,7 +42,7 @@ define(
                 mockDomainObject,
                 capability;
 
-            beforeEach(function() {
+            beforeEach(function () {
                 mockQ = jasmine.createSpyObj("$q", ["when"]);
                 mockQ.when.andCallFake(function (val) {
                     return fastPromise(val);
@@ -61,14 +61,14 @@ define(
             });
 
             it("if no transaction is active, passes through to persistence" +
-                " provider", function() {
+                " provider", function () {
                 mockTransactionService.isActive.andReturn(false);
                 capability.persist();
                 expect(mockPersistence.persist).toHaveBeenCalled();
             });
 
             it("if transaction is active, persist and cancel calls are" +
-                " queued", function() {
+                " queued", function () {
                 mockTransactionService.isActive.andReturn(true);
                 capability.persist();
                 expect(mockTransactionService.addToTransaction).toHaveBeenCalled();
@@ -78,7 +78,7 @@ define(
                 expect(mockPersistence.refresh).toHaveBeenCalled();
             });
 
-            it("persist call is only added to transaction once", function() {
+            it("persist call is only added to transaction once", function () {
                 mockTransactionService.isActive.andReturn(true);
                 capability.persist();
                 expect(mockTransactionService.addToTransaction).toHaveBeenCalled();

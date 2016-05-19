@@ -69,18 +69,18 @@ define(
          * Checks if the value returned is falsey, and if so returns a
          * rejected promise
          */
-        function rejectIfFalsey(value, $q){
-            if (!value){
+        function rejectIfFalsey(value, $q) {
+            if (!value) {
                 return $q.reject("Error persisting object");
             } else {
                 return value;
             }
         }
 
-        function formatError(error){
+        function formatError(error) {
             if (error && error.message) {
                 return error.message;
-            } else if (error && typeof error === "string"){
+            } else if (error && typeof error === "string") {
                 return error;
             } else {
                 return "unknown error";
@@ -91,7 +91,7 @@ define(
          * Display a notification message if an error has occurred during
          * persistence.
          */
-        function notifyOnError(error, domainObject, notificationService, $q){
+        function notifyOnError(error, domainObject, notificationService, $q) {
             var errorMessage = "Unable to persist " + domainObject.getModel().name;
             if (error) {
                 errorMessage += ": " + formatError(error);
@@ -133,9 +133,9 @@ define(
                 this.getSpace(),
                 getKey(domainObject.getId()),
                 domainObject.getModel()
-            ]).then(function(result){
+            ]).then(function (result) {
                 return rejectIfFalsey(result, self.$q);
-            }).catch(function(error){
+            }).catch(function (error) {
                 return notifyOnError(error, domainObject, self.notificationService, self.$q);
             });
         };

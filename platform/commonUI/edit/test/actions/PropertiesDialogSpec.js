@@ -30,14 +30,22 @@ define(
 
             beforeEach(function () {
                 type = {
-                    getProperties: function () { return properties; }
+                    getProperties: function () {
+                        return properties;
+                    }
                 };
                 model = { x: "initial value" };
                 properties = ["x", "y", "z"].map(function (k) {
                     return {
-                        getValue: function (model) { return model[k]; },
-                        setValue: function (model, v) { model[k] = v; },
-                        getDefinition: function () { return { control: 'textfield '}; }
+                        getValue: function (model) {
+                            return model[k];
+                        },
+                        setValue: function (model, v) {
+                            model[k] = v;
+                        },
+                        getDefinition: function () {
+                            return { control: 'textfield '};
+                        }
                     };
                 });
 

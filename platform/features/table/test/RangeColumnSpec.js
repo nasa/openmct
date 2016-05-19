@@ -40,7 +40,7 @@ define(
                 testDatum = { testKey: 123, otherKey: 456 };
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
-                    [ "formatDomainValue", "formatRangeValue" ]
+                    ["formatDomainValue", "formatRangeValue"]
                 );
                 testMetadata = {
                     key: "testKey",
@@ -48,7 +48,7 @@ define(
                 };
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getModel", "getCapability" ]
+                    ["getModel", "getCapability"]
                 );
                 mockFormatter.formatRangeValue.andReturn(TEST_RANGE_VALUE);
 

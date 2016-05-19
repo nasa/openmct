@@ -71,7 +71,7 @@ define(
                 // Prepare the form; a single row
                 buttonForm = {
                     name: structure.title,
-                    sections: [ { rows: [ row ] } ]
+                    sections: [{ rows: [row] }]
                 };
             }
 

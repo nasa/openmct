@@ -41,7 +41,7 @@ define(
              */
             function filterRegions(inspector) {
                 //Dupe so we're not modifying the type definition.
-                return inspector.regions && inspector.regions.filter(function(region) {
+                return inspector.regions && inspector.regions.filter(function (region) {
                     return policyService.allow('region', region, domainObject);
                 });
             }

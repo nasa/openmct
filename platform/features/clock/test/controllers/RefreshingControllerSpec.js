@@ -45,11 +45,11 @@ define(
             it("refreshes the represented object on every tick", function () {
                 var mockDomainObject = jasmine.createSpyObj(
                         'domainObject',
-                        [ 'getCapability' ]
+                        ['getCapability']
                     ),
                     mockPersistence = jasmine.createSpyObj(
                         'persistence',
-                        [ 'persist', 'refresh' ]
+                        ['persist', 'refresh']
                     );
 
                 mockDomainObject.getCapability.andCallFake(function (c) {

@@ -72,7 +72,7 @@ define(
                 mockDomainObject.getModel.andReturn({});
                 mockDomainObject.hasCapability.andReturn(true);
                 mockDomainObject.useCapability.andReturn(true);
-                mockDomainObject.getCapability.andCallFake(function(capability){
+                mockDomainObject.getCapability.andCallFake(function (capability) {
                     return mockCapabilities[capability];
                 });
 

@@ -92,7 +92,9 @@ define(
             // Always return a static value; used to represent plain
             // metadata as a single dependency in Angular.
             function staticFunction(value) {
-                return function () { return value; };
+                return function () {
+                    return value;
+                };
             }
 
             // Utility function; create the second argument for Angular's

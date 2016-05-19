@@ -38,23 +38,23 @@ define(
             beforeEach(function () {
                 mockLocation = jasmine.createSpyObj(
                     "$location",
-                    [ "path" ]
+                    ["path"]
                 );
                 mockNavigationService = jasmine.createSpyObj(
                     "navigationService",
-                    [ "setNavigation", "getNavigation", "addListener", "removeListener" ]
+                    ["setNavigation", "getNavigation", "addListener", "removeListener"]
                 );
                 mockLog = jasmine.createSpyObj(
                     "$log",
-                    [ "error", "warn", "info", "debug" ]
+                    ["error", "warn", "info", "debug"]
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability", "hasCapability", "useCapability" ]
+                    ["getId", "getModel", "getCapability", "hasCapability", "useCapability"]
                 );
                 mockType = jasmine.createSpyObj(
                     "type",
-                    [ "hasFeature" ]
+                    ["hasFeature"]
                 );
                 mockEditor = jasmine.createSpyObj(
                     "editorCapability",
@@ -66,7 +66,7 @@ define(
                     editor: mockEditor
                 };
 
-                mockDomainObject.getCapability.andCallFake( function (name) {
+                mockDomainObject.getCapability.andCallFake(function (name) {
                     return capabilities[name];
                 });
                 mockDomainObject.hasCapability.andReturn(true);

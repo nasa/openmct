@@ -40,7 +40,7 @@ define(
             beforeEach(function () {
                 mockModelService = jasmine.createSpyObj(
                     "modelService",
-                    [ "getModels" ]
+                    ["getModels"]
                 );
 
                 testModels = {
@@ -61,14 +61,18 @@ define(
             it("provides models for any IDs which are missing", function () {
                 var models;
                 decorator.getModels(['testId', 'otherId'])
-                    .then(function (m) { models = m; });
+                    .then(function (m) {
+                        models = m;
+                    });
                 expect(models.otherId).toBeDefined();
             });
 
             it("does not overwrite existing models", function () {
                 var models;
                 decorator.getModels(['testId', 'otherId'])
-                    .then(function (m) { models = m; });
+                    .then(function (m) {
+                        models = m;
+                    });
                 expect(models.testId).toEqual({ someKey: "some value" });
             });
 

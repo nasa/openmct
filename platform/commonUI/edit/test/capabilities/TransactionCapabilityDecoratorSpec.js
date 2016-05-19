@@ -33,18 +33,18 @@ define(
                 mockCapabilityService,
                 provider;
 
-            beforeEach(function() {
+            beforeEach(function () {
                 mockQ = {};
                 mockTransactionService = {};
                 mockCapabilityService = jasmine.createSpyObj("capabilityService", ["getCapabilities"]);
                 mockCapabilityService.getCapabilities.andReturn({
-                    persistence: function() {}
+                    persistence: function () {}
                 });
 
                 provider = new TransactionCapabilityDecorator(mockQ, mockTransactionService, mockCapabilityService);
 
             });
-            it("decorates the persistence capability", function() {
+            it("decorates the persistence capability", function () {
                 var capabilities = provider.getCapabilities();
                 expect(capabilities.persistence({}) instanceof TransactionalPersistenceCapability).toBe(true);
             });

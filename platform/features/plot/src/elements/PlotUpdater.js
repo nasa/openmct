@@ -71,7 +71,7 @@ define(
 
         // Used in the reduce step of updateExtrema
         function reduceExtrema(a, b) {
-            return [ Math.min(a[0], b[0]), Math.max(a[1], b[1]) ];
+            return [Math.min(a[0], b[0]), Math.max(a[1], b[1])];
         }
 
         // Convert a domain/range extrema to plot dimensions
@@ -173,9 +173,9 @@ define(
                 }).reduce(reduceExtrema);
 
                 // Calculate best-fit dimensions
-                this.dimensions = [ this.domainExtrema, this.rangeExtrema ]
+                this.dimensions = [this.domainExtrema, this.rangeExtrema]
                     .map(dimensionsOf);
-                this.origin = [ this.domainExtrema, this.rangeExtrema ]
+                this.origin = [this.domainExtrema, this.rangeExtrema]
                     .map(originOf);
 
                 // Enforce some minimum visible area

@@ -101,7 +101,7 @@ define(
             });
 
             it("allows series insertion", function () {
-                testSeries = [ [ 50, 42 ], [ 100, 200 ], [ 150, 12321 ] ];
+                testSeries = [[50, 42], [100, 200], [150, 12321]];
                 line.addSeries(mockSeries);
                 // Should have managed insertion index choices to get to...
                 expect(testDomainBuffer).toEqual([50, 100, 150]);
@@ -109,7 +109,7 @@ define(
             });
 
             it("splits series insertion when necessary", function () {
-                testSeries = [ [ 50, 42 ], [ 100, 200 ], [ 150, 12321 ] ];
+                testSeries = [[50, 42], [100, 200], [150, 12321]];
                 line.addPoint(75, 1);
                 line.addSeries(mockSeries);
                 // Should have managed insertion index choices to get to...

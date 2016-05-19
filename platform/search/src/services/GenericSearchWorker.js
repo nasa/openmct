@@ -118,7 +118,7 @@
                     match.matchCount += 100;
                 } else if (match.item.vector.lowerCaseName ===
                            query.inputLowerCase) {
-                   match.matchCount += 50;
+                    match.matchCount += 50;
                 }
                 return match;
             })

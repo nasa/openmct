@@ -41,11 +41,11 @@ define(
                 mockTelemetryObjects = ['a', 'b', 'c'].map(function (id, i) {
                     var mockTelemetryObject = jasmine.createSpyObj(
                             'object-' + id,
-                            [ 'getId', 'getCapability', 'getModel' ]
+                            ['getId', 'getCapability', 'getModel']
                         ),
                         mockLimitCapability = jasmine.createSpyObj(
                             'limit-' + id,
-                            [ 'evaluate' ]
+                            ['evaluate']
                         );
                     testData[id] = { id: id, value: i };
                     mockTelemetryObject.getId.andReturn(id);

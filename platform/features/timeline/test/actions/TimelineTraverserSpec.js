@@ -82,9 +82,9 @@ define([
 
         beforeEach(function () {
             testModels = {
-                a: { composition: [ 'b', 'c' ]},
-                b: { composition: [ 'c' ] },
-                c: { relationships: { modes: [ 'd' ] } },
+                a: { composition: ['b', 'c']},
+                b: { composition: ['c'] },
+                c: { relationships: { modes: ['d'] } },
                 d: {},
                 unreachable: {}
             };

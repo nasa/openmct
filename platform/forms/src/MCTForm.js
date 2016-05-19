@@ -58,7 +58,7 @@ define(
                 template: formTemplate,
 
                 // Use FormController to populate/respond to changes in scope
-                controller: [ '$scope', FormController ],
+                controller: ['$scope', FormController],
 
                 // Initial an isolate scope
                 scope: {

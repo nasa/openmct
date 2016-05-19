@@ -43,14 +43,14 @@ define(
                 expect(graph.getPointCount()).toEqual(16);
 
                 // Should get two values at every time stamp, for step-like appearance
-                [ 5, 15, 40, 50, 100, 120, 150, 180].forEach(function (v, i) {
+                [5, 15, 40, 50, 100, 120, 150, 180].forEach(function (v, i) {
                     expect(graph.getDomainValue(i * 2)).toEqual(v);
                     expect(graph.getDomainValue(i * 2 + 1)).toEqual(v);
                 });
 
                 // Should also repeat values at subsequent indexes, but offset differently,
                 // for horizontal spans between steps
-                [ 0, 42, 72, 42, 20, -22, 0, -10].forEach(function (v, i) {
+                [0, 42, 72, 42, 20, -22, 0, -10].forEach(function (v, i) {
                     expect(graph.getRangeValue(i * 2)).toEqual(v);
                     // Offset backwards; wrap around end of the series
                     expect(graph.getRangeValue((16 + i * 2 - 1) % 16)).toEqual(v);

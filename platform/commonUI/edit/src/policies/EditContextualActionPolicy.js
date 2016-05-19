@@ -56,7 +56,7 @@ define(
                 actionMetadata = action.getMetadata ? action.getMetadata() : {};
 
             if (navigatedObject.hasCapability("editor") && navigatedObject.getCapability("editor").isEditContextRoot()) {
-                if (selectedObject.hasCapability("editor") && selectedObject.getCapability("editor").inEditContext()){
+                if (selectedObject.hasCapability("editor") && selectedObject.getCapability("editor").inEditContext()) {
                     return this.editModeBlacklist.indexOf(actionMetadata.key) === -1;
                 } else {
                     //Target is in the context menu

@@ -37,11 +37,11 @@ define(
             beforeEach(function () {
                 mockNavigationService = jasmine.createSpyObj(
                     'navigationService',
-                    [ 'getNavigation' ]
+                    ['getNavigation']
                 );
                 mockRootScope = jasmine.createSpyObj(
                     '$rootScope',
-                    [ '$watch' ]
+                    ['$watch']
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',

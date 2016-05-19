@@ -32,7 +32,7 @@ define(
                 mockPolicyService,
                 controller;
 
-            beforeEach(function(){
+            beforeEach(function () {
                 mockTypeDefinition = {
                     inspector:
                         {
@@ -62,13 +62,13 @@ define(
                 };
             });
 
-            it("filters out regions disallowed by region policy", function() {
+            it("filters out regions disallowed by region policy", function () {
                 mockPolicyService.allow.andReturn(false);
                 controller = new InspectorController(mockScope, mockPolicyService);
                 expect(mockScope.regions.length).toBe(0);
             });
 
-            it("does not filter out regions allowed by region policy", function() {
+            it("does not filter out regions allowed by region policy", function () {
                 mockPolicyService.allow.andReturn(true);
                 controller = new InspectorController(mockScope, mockPolicyService);
                 expect(mockScope.regions.length).toBe(2);

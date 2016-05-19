@@ -63,7 +63,7 @@ define([
         beforeEach(function () {
             mockGestureService = jasmine.createSpyObj(
                 'gestureService',
-                [ 'attachGestures' ]
+                ['attachGestures']
             );
 
             mockGestureHandle = jasmine.createSpyObj('gestures', ['destroy']);
@@ -100,15 +100,15 @@ define([
 
             function makeGenericCapabilities() {
                 var mockContext =
-                        jasmine.createSpyObj('context', [ 'getPath' ]),
+                        jasmine.createSpyObj('context', ['getPath']),
                     mockType =
-                        jasmine.createSpyObj('type', [ 'getGlyph' ]),
+                        jasmine.createSpyObj('type', ['getGlyph']),
                     mockLocation =
-                        jasmine.createSpyObj('location', [ 'isLink' ]),
+                        jasmine.createSpyObj('location', ['isLink']),
                     mockMutation =
-                        jasmine.createSpyObj('mutation', [ 'listen' ]),
+                        jasmine.createSpyObj('mutation', ['listen']),
                     mockStatus =
-                        jasmine.createSpyObj('status', [ 'listen', 'list' ]);
+                        jasmine.createSpyObj('status', ['listen', 'list']);
 
                 mockStatus.list.andReturn([]);
 
@@ -231,7 +231,7 @@ define([
                         calledBackInner = false;
 
                     newCapabilities.composition =
-                        jasmine.createSpyObj('composition', [ 'invoke' ]);
+                        jasmine.createSpyObj('composition', ['invoke']);
                     newCapabilities.composition.invoke
                         .andReturn(Promise.resolve([mockGrandchild]));
                     mockComposition.push(mockNewChild);
@@ -274,7 +274,7 @@ define([
                 beforeEach(function () {
                     var mockStatus = mockComposition[1].getCapability('status');
 
-                    testStatuses = [ 'foo' ];
+                    testStatuses = ['foo'];
 
                     mockStatus.list.andReturn(testStatuses);
                     mockStatus.listen.mostRecentCall.args[0](testStatuses);

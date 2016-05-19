@@ -22,7 +22,7 @@
 
 
 define(
-    [ "./CopyTask" ],
+    ["./CopyTask"],
     function (CopyTask) {
 
         /**

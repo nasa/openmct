@@ -27,10 +27,10 @@ define(
     ["../../src/gestures/DragGesture", "../../src/gestures/GestureConstants"],
     function (DragGesture, GestureConstants) {
 
-        var JQLITE_FUNCTIONS = [ "on", "off", "attr", "removeAttr" ],
-            LOG_FUNCTIONS = [ "error", "warn", "info", "debug"],
-            DND_FUNCTIONS = [ "setData", "getData", "removeData" ],
-            DOMAIN_OBJECT_METHODS = [ "getId", "getModel", "getCapability", "hasCapability", "useCapability"],
+        var JQLITE_FUNCTIONS = ["on", "off", "attr", "removeAttr"],
+            LOG_FUNCTIONS = ["error", "warn", "info", "debug"],
+            DND_FUNCTIONS = ["setData", "getData", "removeData"],
+            DOMAIN_OBJECT_METHODS = ["getId", "getModel", "getCapability", "hasCapability", "useCapability"],
             TEST_ID = "test-id";
 
 

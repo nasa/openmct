@@ -65,7 +65,7 @@ define(
          * Get the current state of the toggle.
          * @return {boolean} true if active
          */
-        ClickAwayController.prototype.isActive =function () {
+        ClickAwayController.prototype.isActive = function () {
             return this.state;
         };
 

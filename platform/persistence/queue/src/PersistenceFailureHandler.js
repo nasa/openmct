@@ -84,9 +84,11 @@ define(
                     var model = models[failure.id];
                     return failure.domainObject.useCapability(
                         "mutation",
-                        function () { return model; },
-                        model.modified
-                    );
+                        function () {
+                            return model;
+                        },
+                                               model.modified
+                                           );
                 }
 
                 // Cache the object models we might want to save

@@ -36,20 +36,20 @@ define(
             beforeEach(function () {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability" ]
+                    ["getId", "getModel", "getCapability"]
                 );
                 mockPanZoomStack = jasmine.createSpyObj(
                     "panZoomStack",
-                    [ "getPanZoom" ]
+                    ["getPanZoom"]
                 );
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
-                    [ "formatDomainValue", "formatRangeValue" ]
+                    ["formatDomainValue", "formatRangeValue"]
                 );
 
                 mockPanZoomStack.getPanZoom.andReturn({
-                    origin: [ 0, 0 ],
-                    dimensions: [ 100, 100 ]
+                    origin: [0, 0],
+                    dimensions: [100, 100]
                 });
 
                 factory = new SubPlotFactory(mockFormatter);

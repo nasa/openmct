@@ -99,7 +99,7 @@ define(
 
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ '$watch', '$on' ]
+                    ['$watch', '$on']
                 );
                 mockLoader = jasmine.createSpyObj('objectLoader', ['load']);
                 mockDomainObject = mockA;

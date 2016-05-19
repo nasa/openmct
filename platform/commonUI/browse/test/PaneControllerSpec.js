@@ -42,11 +42,11 @@ define(
             }
 
             beforeEach(function () {
-                mockScope = jasmine.createSpyObj("$scope", [ "$on" ]);
+                mockScope = jasmine.createSpyObj("$scope", ["$on"]);
                 mockDomainObjects = ['a', 'b'].map(function (id) {
                     var mockDomainObject = jasmine.createSpyObj(
                         'domainObject-' + id,
-                        [ 'getId', 'getModel', 'getCapability' ]
+                        ['getId', 'getModel', 'getCapability']
                     );
 
                     mockDomainObject.getId.andReturn(id);
@@ -56,7 +56,7 @@ define(
                 });
                 mockAgentService = jasmine.createSpyObj(
                     "agentService",
-                    [ "isMobile", "isPhone", "isTablet", "isPortrait", "isLandscape" ]
+                    ["isMobile", "isPhone", "isTablet", "isPortrait", "isLandscape"]
                 );
                 mockWindow = jasmine.createSpyObj("$window", ["open"]);
             });

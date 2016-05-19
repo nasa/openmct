@@ -33,11 +33,11 @@ define(
                 },
                 viewB = {
                     key: "b",
-                    needs: [ "someCapability" ]
+                    needs: ["someCapability"]
                 },
                 viewC = {
                     key: "c",
-                    needs: [ "someCapability" ],
+                    needs: ["someCapability"],
                     delegation: true
                 },
                 capabilities = {},

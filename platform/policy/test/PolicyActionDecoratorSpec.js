@@ -90,7 +90,7 @@ define(
                     return candidate.someKey !== 'b';
                 });
                 expect(decorator.getActions(testContext))
-                    .toEqual([ testActions[0], testActions[2] ]);
+                    .toEqual([testActions[0], testActions[2]]);
             });
 
         });

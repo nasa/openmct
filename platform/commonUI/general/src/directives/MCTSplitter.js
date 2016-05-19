@@ -59,7 +59,7 @@ define(
                     },
                     // Grab the event when the user is done moving
                     // the splitter and pass it on
-                    endMove: function() {
+                    endMove: function () {
                         mctSplitPane.toggleClass('resizing');
                     }
                 };

@@ -61,7 +61,7 @@ define(['csv'], function (CSV) {
                 (Object.keys((rows[0] || {})).sort()),
             filename = (options && options.filename) || "export.csv",
             csvText = new CSV(rows, { header: headers }).encode(),
-            blob = new Blob([ csvText ] , { type: "text/csv" });
+            blob = new Blob([csvText], { type: "text/csv" });
         this.saveAs(blob, filename);
     };
 

@@ -33,7 +33,7 @@ define(
                 chart;
 
             beforeEach(function () {
-                mockCanvas = jasmine.createSpyObj("canvas", [ "getContext" ]);
+                mockCanvas = jasmine.createSpyObj("canvas", ["getContext"]);
                 mock2d = jasmine.createSpyObj(
                     "2d",
                     [
@@ -72,8 +72,8 @@ define(
             });
 
             it("allows lines to be drawn", function () {
-                var testBuffer = [ 0, 1, 3, 8 ],
-                    testColor = [ 0.25, 0.33, 0.66, 1.0 ],
+                var testBuffer = [0, 1, 3, 8],
+                    testColor = [0.25, 0.33, 0.66, 1.0],
                     testPoints = 2;
                 chart.drawLine(testBuffer, testColor, testPoints);
                 expect(mock2d.beginPath).toHaveBeenCalled();
@@ -84,7 +84,7 @@ define(
             it("allows squares to be drawn", function () {
                 var testMin = [0, 1],
                     testMax = [10, 10],
-                    testColor = [ 0.25, 0.33, 0.66, 1.0 ];
+                    testColor = [0.25, 0.33, 0.66, 1.0];
 
                 chart.drawSquare(testMin, testMax, testColor);
                 expect(mock2d.fillRect).toHaveBeenCalled();

@@ -36,15 +36,15 @@ define(
             beforeEach(function () {
                 mockAction = jasmine.createSpyObj(
                     "action",
-                    [ "perform", "getMetadata" ]
+                    ["perform", "getMetadata"]
                 );
                 mockActionService = jasmine.createSpyObj(
                     "actionService",
-                    [ "getActions" ]
+                    ["getActions"]
                 );
                 mockLog = jasmine.createSpyObj(
                     "$log",
-                    [ "error", "warn", "info", "debug" ]
+                    ["error", "warn", "info", "debug"]
                 );
 
                 mockActionService.getActions.andReturn([mockAction]);

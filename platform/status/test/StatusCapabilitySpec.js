@@ -34,15 +34,15 @@ define(
 
             beforeEach(function () {
                 testId = "some-id";
-                testStatusFlags = [ 'a', 'b', 'c' ];
+                testStatusFlags = ['a', 'b', 'c'];
 
                 mockStatusService = jasmine.createSpyObj(
                     'statusService',
-                    [ 'listen', 'setStatus', 'listStatuses' ]
+                    ['listen', 'setStatus', 'listStatuses']
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getId', 'getCapability', 'getModel' ]
+                    ['getId', 'getCapability', 'getModel']
                 );
                 mockUnlisten = jasmine.createSpy('unlisten');
 

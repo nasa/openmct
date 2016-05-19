@@ -32,7 +32,7 @@ define([
         beforeEach(function () {
             mockGestureService = jasmine.createSpyObj(
                 'gestureService',
-                [ 'attachGestures' ]
+                ['attachGestures']
             );
             mockParse = jasmine.createSpy('$parse');
             mockExpr = jasmine.createSpy('expr');

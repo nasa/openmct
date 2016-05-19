@@ -38,15 +38,15 @@ define(
                 mockInstantiate = jasmine.createSpy("instantiate");
                 mockIdentifierService = jasmine.createSpyObj(
                     'identifierService',
-                    [ 'parse', 'generate' ]
+                    ['parse', 'generate']
                 );
                 mockIdentifier = jasmine.createSpyObj(
                     'identifier',
-                    [ 'getSpace', 'getKey', 'getDefinedSpace' ]
+                    ['getSpace', 'getKey', 'getDefinedSpace']
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getId', 'getCapability', 'getModel' ]
+                    ['getId', 'getCapability', 'getModel']
                 );
 
                 mockInjector.get.andCallFake(function (key) {

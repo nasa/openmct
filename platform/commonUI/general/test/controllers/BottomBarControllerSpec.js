@@ -35,11 +35,13 @@ define(
             beforeEach(function () {
                 mockIndicator = jasmine.createSpyObj(
                     "indicator",
-                    [ "getGlyph", "getText" ]
+                    ["getGlyph", "getText"]
                 );
 
                 testIndicatorA = {};
-                testIndicatorB = function () { return mockIndicator; };
+                testIndicatorB = function () {
+                    return mockIndicator;
+                };
                 testIndicatorC = { template: "someTemplate" };
 
                 testIndicators = [

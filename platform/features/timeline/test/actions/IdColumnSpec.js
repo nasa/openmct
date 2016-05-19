@@ -42,7 +42,7 @@ define(
                     testId = "foo";
                     mockDomainObject = jasmine.createSpyObj(
                         'domainObject',
-                        [ 'getId', 'getModel', 'getCapability' ]
+                        ['getId', 'getModel', 'getCapability']
                     );
                     mockDomainObject.getId.andReturn(testId);
                 });

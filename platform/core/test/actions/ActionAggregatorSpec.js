@@ -32,7 +32,7 @@ define(
                 aggregator;
 
             function createMockActionProvider(actions, i) {
-                var spy = jasmine.createSpyObj("agg" + i, [ "getActions" ]);
+                var spy = jasmine.createSpyObj("agg" + i, ["getActions"]);
                 spy.getActions.andReturn(actions);
                 return spy;
             }

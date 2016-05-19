@@ -27,9 +27,9 @@ define(
     ["../../src/gestures/GestureProvider"],
     function (GestureProvider) {
 
-        var JQLITE_FUNCTIONS = [ "on", "off", "attr", "removeAttr" ],
+        var JQLITE_FUNCTIONS = ["on", "off", "attr", "removeAttr"],
             GESTURE_KEYS = ["a", "b", "c", "d", "e"],
-            DOMAIN_OBJECT_METHODS = [ "getId", "getModel", "getCapability", "hasCapability", "useCapability"];
+            DOMAIN_OBJECT_METHODS = ["getId", "getModel", "getCapability", "hasCapability", "useCapability"];
 
         describe("The gesture provider", function () {
             var mockGestures,

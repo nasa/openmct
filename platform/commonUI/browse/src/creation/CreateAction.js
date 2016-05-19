@@ -101,7 +101,7 @@ define(
                         return editorCapability.save();
                     }, function () {
                         return editorCapability.cancel();
-                });
+                    });
             }
         };
 
@@ -118,7 +118,7 @@ define(
          * @returns {CreateActionMetadata} metadata about this action
          */
         CreateAction.prototype.getMetadata = function () {
-           return this.metadata;
+            return this.metadata;
         };
 
         return CreateAction;

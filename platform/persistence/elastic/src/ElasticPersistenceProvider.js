@@ -50,7 +50,7 @@ define(
          * @param {stirng} path the path to domain objects within ElasticSearch
          */
         function ElasticPersistenceProvider($http, $q, space, root, path) {
-            this.spaces = [ space ];
+            this.spaces = [space];
             this.revs = {};
             this.$http = $http;
             this.$q = $q;

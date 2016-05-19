@@ -30,17 +30,17 @@ define(
         describe("A view capability", function () {
             var mockViewService,
                 mockDomainObject,
-                views = [ {key: "someView"} ],
+                views = [{key: "someView"}],
                 view;
 
             beforeEach(function () {
                 mockViewService = jasmine.createSpyObj(
                     "viewService",
-                    [ "getViews" ]
+                    ["getViews"]
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability" ]
+                    ["getId", "getModel", "getCapability"]
                 );
                 mockViewService.getViews.andReturn(views);
                 view = new ViewCapability(mockViewService, mockDomainObject);

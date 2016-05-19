@@ -50,14 +50,14 @@ define(
                         $scope.rootObject =
                             (context && context.getRoot()) || $scope.rootObject;
                     }, 0);
-                } else if (!contextRoot){
+                } else if (!contextRoot) {
                     //If no context root is available, default to the root
                     // object
                     $scope.rootObject = undefined;
                     // Update the displayed tree on a timeout to avoid
                     // an infinite digest exception.
                     objectService.getObjects(['ROOT'])
-                        .then(function(objects){
+                        .then(function (objects) {
                             $timeout(function () {
                                 $scope.rootObject = objects.ROOT;
                             }, 0);

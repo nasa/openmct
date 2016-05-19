@@ -24,7 +24,7 @@ define(
     ["../../src/directives/MCTDrag"],
     function (MCTDrag) {
 
-        var JQLITE_METHODS = [ "on", "off", "find" ];
+        var JQLITE_METHODS = ["on", "off", "find"];
 
         describe("The mct-drag directive", function () {
             var mockDocument,
@@ -46,7 +46,7 @@ define(
                 mockDocument =
                     jasmine.createSpyObj("$document", JQLITE_METHODS);
                 mockScope =
-                    jasmine.createSpyObj("$scope", [ "$eval", "$apply" ]);
+                    jasmine.createSpyObj("$scope", ["$eval", "$apply"]);
                 mockElement =
                     jasmine.createSpyObj("element", JQLITE_METHODS);
                 mockBody =

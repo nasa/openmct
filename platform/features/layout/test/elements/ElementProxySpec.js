@@ -37,7 +37,7 @@ define(
                     width: 42,
                     height: 24
                 };
-                testElements = [ {}, {}, testElement, {} ];
+                testElements = [{}, {}, testElement, {}];
                 proxy = new ElementProxy(
                     testElement,
                     testElements.indexOf(testElement),

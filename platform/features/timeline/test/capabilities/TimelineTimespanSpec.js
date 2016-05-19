@@ -51,7 +51,7 @@ define(
                 mutationModel = JSON.parse(JSON.stringify(testModel));
 
                 mockMutation = jasmine.createSpyObj("mutation", ["mutate"]);
-                mockTimespans = [ 44000, 65000, 1100 ].map(makeMockTimespan);
+                mockTimespans = [44000, 65000, 1100].map(makeMockTimespan);
 
                 mockMutation.mutate.andCallFake(function (mutator) {
                     mutator(mutationModel);

@@ -26,7 +26,7 @@ define(
 
 
         // Drag handle dimensions
-        var DRAG_HANDLE_SIZE = [ 6, 6 ];
+        var DRAG_HANDLE_SIZE = [6, 6];
 
         /**
          * Template-displayable drag handle for an element in fixed

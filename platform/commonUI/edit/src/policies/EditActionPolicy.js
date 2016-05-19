@@ -45,7 +45,7 @@ define(
                 count = 0,
                 type, views;
 
-            if (!domainObject){
+            if (!domainObject) {
                 return count;
             }
 

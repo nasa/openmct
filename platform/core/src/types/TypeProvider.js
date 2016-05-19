@@ -179,7 +179,7 @@ define(
 
                     return def;
                 }
-                
+
                 return (self.typeMap[typeKey] =
                     self.typeMap[typeKey] || buildTypeDef(typeKey));
             }

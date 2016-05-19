@@ -37,7 +37,7 @@ define(
                     height: 24,
                     fill: "transparent"
                 };
-                testElements = [ {}, {}, testElement, {} ];
+                testElements = [{}, {}, testElement, {}];
                 proxy = new TextProxy(
                     testElement,
                     testElements.indexOf(testElement),

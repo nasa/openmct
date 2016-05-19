@@ -36,7 +36,7 @@ define(
 
                 mockTemplateLinker = jasmine.createSpyObj(
                     'templateLinker',
-                    [ 'getPath', 'load' ]
+                    ['getPath', 'load']
                 );
 
                 mockTemplateLinker.getPath.andCallFake(function (ext) {

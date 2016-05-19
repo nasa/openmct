@@ -44,15 +44,15 @@ define(
             beforeEach(function () {
                 mockLocation = jasmine.createSpyObj(
                     "$location",
-                    [ "path" ]
+                    ["path"]
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getCapability", "hasCapability" ]
+                    ["getCapability", "hasCapability"]
                 );
                 mockEditorCapability = jasmine.createSpyObj(
                     "editor",
-                    [ "save", "cancel" ]
+                    ["save", "cancel"]
                 );
                 mockUrlService = jasmine.createSpyObj(
                     "urlService",

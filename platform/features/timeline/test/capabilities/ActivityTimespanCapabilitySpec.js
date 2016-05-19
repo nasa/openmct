@@ -41,7 +41,7 @@ define(
                 mockQ = jasmine.createSpyObj('$q', ['when']);
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getModel', 'getCapability' ]
+                    ['getModel', 'getCapability']
                 );
 
                 mockQ.when.andCallFake(asPromise);

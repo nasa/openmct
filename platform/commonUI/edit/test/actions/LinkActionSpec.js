@@ -50,7 +50,7 @@ define(
 
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getCapability" ]
+                    ["getId", "getCapability"]
                 );
                 mockQ = { when: mockPromise };
                 mockParent = {
@@ -64,10 +64,10 @@ define(
                         return capabilities[k].invoke(v);
                     }
                 };
-                mockContext = jasmine.createSpyObj("context", [ "getParent" ]);
-                mockComposition = jasmine.createSpyObj("composition", [ "invoke", "add" ]);
-                mockPersistence = jasmine.createSpyObj("persistence", [ "persist" ]);
-                mockType = jasmine.createSpyObj("type", [ "hasFeature" ]);
+                mockContext = jasmine.createSpyObj("context", ["getParent"]);
+                mockComposition = jasmine.createSpyObj("composition", ["invoke", "add"]);
+                mockPersistence = jasmine.createSpyObj("persistence", ["persist"]);
+                mockType = jasmine.createSpyObj("type", ["hasFeature"]);
 
                 mockDomainObject.getId.andReturn("test");
                 mockDomainObject.getCapability.andReturn(mockContext);
@@ -82,7 +82,7 @@ define(
                     type: mockType
                 };
                 model = {
-                    composition: [ "a", "b", "c" ]
+                    composition: ["a", "b", "c"]
                 };
 
                 actionContext = {

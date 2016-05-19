@@ -39,7 +39,7 @@ define(
             function createMockProperty(name) {
                 var mockProperty = jasmine.createSpyObj(
                     "property" + name,
-                    [ "getDefinition", "getValue", "setValue" ]
+                    ["getDefinition", "getValue", "setValue"]
                 );
                 mockProperty.getDefinition.andReturn({
                     control: "textfield"
@@ -68,7 +68,7 @@ define(
                         "getCapability"
                     ]
                 );
-                mockProperties = [ "A", "B", "C" ].map(createMockProperty);
+                mockProperties = ["A", "B", "C"].map(createMockProperty);
                 mockPolicyService = jasmine.createSpyObj('policyService', ['allow']);
 
                 testModel = { someKey: "some value" };
@@ -144,8 +144,8 @@ define(
                     "A": "ValueA",
                     "B": "ValueB",
                     "C": "ValueC"
-                    },
-                    compareModel = wizard.createModel(formValue);
+                },
+                compareModel = wizard.createModel(formValue);
                 wizard.populateObjectFromInput(formValue);
                 expect(mockDomainObject.useCapability).toHaveBeenCalledWith('mutation', jasmine.any(Function));
                 expect(mockDomainObject.useCapability.mostRecentCall.args[1]()).toEqual(compareModel);
@@ -179,7 +179,7 @@ define(
             });
 
             it("creates a form model without a location if not requested", function () {
-                expect(wizard.getFormStructure(false).sections.some(function(section){
+                expect(wizard.getFormStructure(false).sections.some(function (section) {
                     return section.name === 'Location';
                 })).toEqual(false);
             });

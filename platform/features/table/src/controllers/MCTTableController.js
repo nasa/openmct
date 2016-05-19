@@ -89,8 +89,8 @@ define(
             //Use timeout to defer execution until next digest when any
             // pending UI changes have completed, eg. a new row in the table.
             if (this.$scope.autoScroll) {
-                this.$timeout(function (){
-                        self.scrollable[0].scrollTop = self.scrollable[0].scrollHeight;
+                this.$timeout(function () {
+                    self.scrollable[0].scrollTop = self.scrollable[0].scrollHeight;
                 });
             }
         };
@@ -125,10 +125,10 @@ define(
                 // Do a sequential search here. Only way of finding row is by
                 // object equality, so array is in effect unsorted.
                 indexInDisplayRows = this.$scope.displayRows.indexOf(row);
-                if (indexInDisplayRows !== -1) {
-                    this.$scope.displayRows.splice(indexInDisplayRows, 1);
-                    this.setVisibleRows();
-                }
+            if (indexInDisplayRows !== -1) {
+                this.$scope.displayRows.splice(indexInDisplayRows, 1);
+                this.setVisibleRows();
+            }
         };
 
         /**
@@ -222,7 +222,7 @@ define(
          * sorting.
          */
         MCTTableController.prototype.setHeaders = function (newHeaders) {
-            if (!newHeaders){
+            if (!newHeaders) {
                 return;
             }
 
@@ -234,8 +234,8 @@ define(
             // contain the column currently sorted on.
             if (this.$scope.enableSort &&
                 newHeaders.indexOf(this.$scope.sortColumn) === -1) {
-                    this.$scope.sortColumn = undefined;
-                    this.$scope.sortDirection = undefined;
+                this.$scope.sortColumn = undefined;
+                this.$scope.sortDirection = undefined;
             }
             this.setRows(this.$scope.rows);
         };
@@ -283,14 +283,14 @@ define(
                 self = this,
                 sortKey = this.$scope.sortColumn;
 
-            function binarySearch(searchArray, searchElement, min, max){
+            function binarySearch(searchArray, searchElement, min, max) {
                 var sampleAt = Math.floor((max - min) / 2) + min;
 
                 if (max < min) {
                     return min; // Element is not in array, min gives direction
                 }
 
-                switch(self.sortComparator(searchElement[sortKey].text,
+                switch (self.sortComparator(searchElement[sortKey].text,
                     searchArray[sampleAt][sortKey].text)) {
                     case -1:
                         return binarySearch(searchArray, searchElement, min,
@@ -310,9 +310,9 @@ define(
                 //Sort is enabled, perform binary search to find insertion point
                 index = binarySearch(array, element, 0, array.length - 1);
             }
-            if (index === -1){
+            if (index === -1) {
                 array.unshift(element);
-            } else if (index === array.length){
+            } else if (index === array.length) {
                 array.push(element);
             } else {
                 array.splice(index, 0, element);
@@ -342,7 +342,7 @@ define(
              * @returns {*} The value cast to a Number, or the original value if
              * a Number representation is not possible.
              */
-            function toNumber (value){
+            function toNumber(value) {
                 var val = !isNaN(Number(value)) && !isNaN(parseFloat(value)) ? Number(value) : value;
                 return val;
             }
@@ -410,7 +410,7 @@ define(
                         currentColumnLength,
                         largestColumn,
                         largestColumnLength;
-                    if (row[key]){
+                    if (row[key]) {
                         currentColumn = (row[key]).text;
                         currentColumnLength =
                             (currentColumn && currentColumn.length) ?

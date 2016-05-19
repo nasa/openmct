@@ -46,7 +46,7 @@ define(
             function link(scope, element, attrs, ctrl, transclude) {
                 var div = $compile(TEMPLATE)(scope),
                     rect = element.parent()[0].getBoundingClientRect(),
-                    position = [ rect.left, rect.top ],
+                    position = [rect.left, rect.top],
                     popup = popupService.display(div, position);
 
                 // TODO: Handle in CSS;

@@ -58,7 +58,7 @@ define(
                 mockComposition = [
                     mockChildOne
                 ];
-                mockCompositionCapability.then.andCallFake(function (callback){
+                mockCompositionCapability.then.andCallFake(function (callback) {
                     callback(mockComposition);
                 });
 
@@ -79,7 +79,7 @@ define(
                     'useCapability',
                     'getCapability'
                 ]);
-                mockDomainObject.useCapability.andCallFake(function(capability){
+                mockDomainObject.useCapability.andCallFake(function (capability) {
                     return mockUseCapabilities[capability]();
                 });
                 mockDomainObject.getCapability.andReturn(mockMutationCapability);

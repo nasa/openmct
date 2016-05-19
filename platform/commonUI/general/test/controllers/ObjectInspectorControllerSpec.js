@@ -39,35 +39,35 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$watch" ]
+                    ["$watch"]
                 );
                 mockScope.ngModel = {};
                 mockScope.ngModel.selectedObject = 'mock selected object';
-                
+
                 mockObjectService = jasmine.createSpyObj(
                     "objectService",
-                    [ "getObjects" ]
+                    ["getObjects"]
                 );
                 mockPromise = jasmine.createSpyObj(
                     "promise",
-                    [ "then" ]
+                    ["then"]
                 );
                 mockObjectService.getObjects.andReturn(mockPromise);
-                
+
                 mockDomainObject = jasmine.createSpyObj(
                     "selectedObject",
-                    [ "hasCapability", "getCapability", "useCapability", "getModel" ]
+                    ["hasCapability", "getCapability", "useCapability", "getModel"]
                 );
                 mockDomainObject.getModel.andReturn({location: 'somewhere'});
                 mockDomainObject.hasCapability.andReturn(true);
-                
+
                 mockContextCapability = jasmine.createSpyObj(
                     "context capability",
-                    [ "getParent" ]
+                    ["getParent"]
                 );
                 mockLocationCapability = jasmine.createSpyObj(
                     "location capability",
-                    [ "isLink" ]
+                    ["isLink"]
                 );
                 mockDomainObject.getCapability.andCallFake(function (param) {
                     if (param === 'location') {
@@ -76,9 +76,9 @@ define(
                         return mockContextCapability;
                     }
                 });
-                
+
                 controller = new ObjectInspectorController(mockScope, mockObjectService);
-                
+
                 // Change the selected object to trigger the watch call
                 mockScope.ngModel.selectedObject = mockDomainObject;
             });
@@ -94,13 +94,13 @@ define(
 
             it("if link, looks for primary parent objects", function () {
                 mockLocationCapability.isLink.andReturn(true);
-                
+
                 mockScope.$watch.mostRecentCall.args[1]();
                 expect(mockDomainObject.getModel).toHaveBeenCalled();
                 expect(mockObjectService.getObjects).toHaveBeenCalled();
                 mockPromise.then.mostRecentCall.args[0]({'somewhere': mockDomainObject});
             });
-            
+
             it("gets metadata", function () {
                 mockScope.$watch.mostRecentCall.args[1]();
                 expect(mockDomainObject.useCapability).toHaveBeenCalledWith('metadata');

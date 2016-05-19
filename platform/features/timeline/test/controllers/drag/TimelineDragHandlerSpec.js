@@ -81,15 +81,15 @@ define(
                 ['a', 'b', 'c', 'd', 'e', 'f'].forEach(function (id, index) {
                     mockTimespans[id] = jasmine.createSpyObj(
                         'timespan-' + id,
-                        [ 'getStart', 'getEnd', 'getDuration', 'setStart', 'setEnd', 'setDuration' ]
+                        ['getStart', 'getEnd', 'getDuration', 'setStart', 'setEnd', 'setDuration']
                     );
                     mockPersists[id] = jasmine.createSpyObj(
                         'persistence-' + id,
-                        [ 'persist' ]
+                        ['persist']
                     );
                     mockMutations[id] = jasmine.createSpyObj(
                         'mutation-' + id,
-                        [ 'mutate' ]
+                        ['mutate']
                     );
                     mockTimespans[id].getStart.andReturn(index * 1000);
                     mockTimespans[id].getDuration.andReturn(4000 + index);

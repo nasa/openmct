@@ -54,7 +54,7 @@ define(
                 // only define those in mocks.
                 mockAction = jasmine.createSpyObj(
                     'action',
-                    [ 'getMetadata' ]
+                    ['getMetadata']
                 );
                 mockAction.getMetadata.andReturn(testActionMetadata);
 

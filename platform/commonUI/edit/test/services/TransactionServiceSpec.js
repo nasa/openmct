@@ -30,7 +30,7 @@ define(
                 mockLog,
                 transactionService;
 
-            function fastPromise (val) {
+            function fastPromise(val) {
                 return {
                     then: function (callback) {
                         return fastPromise(callback(val));
@@ -75,8 +75,8 @@ define(
             describe("commit", function () {
                 var onCommits;
 
-                beforeEach(function() {
-                    onCommits = [0, 1, 2].map(function(val) {
+                beforeEach(function () {
+                    onCommits = [0, 1, 2].map(function (val) {
                             return jasmine.createSpy("onCommit" + val);
                         });
 
@@ -87,7 +87,7 @@ define(
                 it("commit calls all queued commit functions", function () {
                     expect(transactionService.onCommits.length).toBe(3);
                     transactionService.commit();
-                    onCommits.forEach( function (spy) {
+                    onCommits.forEach(function (spy) {
                         expect(spy).toHaveBeenCalled();
                     });
                 });
@@ -104,8 +104,8 @@ define(
             describe("cancel", function () {
                 var onCancels;
 
-                beforeEach(function() {
-                    onCancels = [0, 1, 2].map(function(val) {
+                beforeEach(function () {
+                    onCancels = [0, 1, 2].map(function (val) {
                         return jasmine.createSpy("onCancel" + val);
                     });
 
@@ -118,7 +118,7 @@ define(
                 it("cancel calls all queued cancel functions", function () {
                     expect(transactionService.onCancels.length).toBe(3);
                     transactionService.cancel();
-                    onCancels.forEach( function (spy) {
+                    onCancels.forEach(function (spy) {
                         expect(spy).toHaveBeenCalled();
                     });
                 });

@@ -69,7 +69,9 @@ define(
             function updateList(ids) {
                 function updateSelectedObjects(objects) {
                     // Look up from the
-                    function getObject(id) { return objects[id]; }
+                    function getObject(id) {
+                        return objects[id];
+                    }
                     self.selectedObjects =
                         ids.filter(getObject).map(getObject);
                 }

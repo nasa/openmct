@@ -45,7 +45,7 @@ define(
         /**
          * @private
          */
-        InspectorRegion.prototype.buildRegion = function() {
+        InspectorRegion.prototype.buildRegion = function () {
             var metadataRegion = {
                 name: 'metadata',
                 title: 'Metadata Region',

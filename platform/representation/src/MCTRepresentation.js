@@ -251,7 +251,7 @@ define(
                  * Add a listener to the object for status changes.
                  */
                 $scope.$watch("domainObject", function (domainObject, oldDomainObject) {
-                    if (domainObject !== oldDomainObject){
+                    if (domainObject !== oldDomainObject) {
                         listenForStatusChange(domainObject);
                     }
                 });
