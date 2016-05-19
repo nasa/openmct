@@ -30,7 +30,6 @@ define(
                 mockParent,
                 mockContext,
                 mockComposition,
-                mockPersistence,
                 mockType,
                 actionContext,
                 model,
@@ -66,7 +65,6 @@ define(
                 };
                 mockContext = jasmine.createSpyObj("context", [ "getParent" ]);
                 mockComposition = jasmine.createSpyObj("composition", [ "invoke", "add" ]);
-                mockPersistence = jasmine.createSpyObj("persistence", [ "persist" ]);
                 mockType = jasmine.createSpyObj("type", [ "hasFeature" ]);
 
                 mockDomainObject.getId.andReturn("test");
@@ -78,7 +76,6 @@ define(
 
                 capabilities = {
                     composition: mockComposition,
-                    persistence: mockPersistence,
                     type: mockType
                 };
                 model = {
@@ -98,11 +95,6 @@ define(
                 action.perform();
                 expect(mockComposition.add)
                     .toHaveBeenCalledWith(mockDomainObject);
-            });
-
-            it("persists changes afterward", function () {
-                action.perform();
-                expect(mockPersistence.persist).toHaveBeenCalled();
             });
 
         });
