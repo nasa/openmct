@@ -120,8 +120,8 @@ define([
             provider = this;
 
         mutationTopic.listen(function (mutatedObject) {
-            var status = mutatedObject.getCapability('status');
-            if (!status || !status.get('editing')) {
+            var editor = mutatedObject.getCapability('editor');
+            if (!editor || !editor.inEditContext()) {
                 provider.index(
                     mutatedObject.getId(),
                     mutatedObject.getModel()

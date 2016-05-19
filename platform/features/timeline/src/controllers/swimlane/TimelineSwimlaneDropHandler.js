@@ -39,9 +39,10 @@ define(
                 };
             }
 
-            // Check if we are in edit mode
+            // Check if we are in edit mode (also check parents)
             function inEditMode() {
-                return swimlane.domainObject.hasCapability("editor");
+                return swimlane.domainObject.hasCapability('editor') &&
+                    swimlane.domainObject.getCapability('editor').inEditContext();
             }
 
             // Boolean and (for reduce below)

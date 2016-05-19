@@ -36,6 +36,7 @@ define(
                 testViews,
                 testUrls,
                 mockRepresenters,
+                mockStatusCapability,
                 mockQ,
                 mockLinker,
                 mockLog,
@@ -118,6 +119,8 @@ define(
                 mockChangeTemplate = jasmine.createSpy('changeTemplate');
                 mockLog = jasmine.createSpyObj("$log", LOG_FUNCTIONS);
 
+                mockStatusCapability = jasmine.createSpyObj("statusCapability", ["listen"]);
+
                 mockScope = jasmine.createSpyObj("scope", [ "$watch", "$on" ]);
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
@@ -126,6 +129,10 @@ define(
                 mockLinker.link.andReturn(mockChangeTemplate);
                 mockLinker.getPath.andCallFake(function (ext) {
                     return testUrls[ext.key];
+                });
+
+                mockDomainObject.getCapability.andCallFake(function (c) {
+                    return c === 'status' && mockStatusCapability;
                 });
 
                 mctRepresentation = new MCTRepresentation(
@@ -229,7 +236,7 @@ define(
                 expect(mockLog.warn).toHaveBeenCalled();
             });
 
-            it("clears out obsolete peroperties from scope", function () {
+            it("clears out obsolete properties from scope", function () {
                 mockScope.key = "def";
                 mockScope.domainObject = mockDomainObject;
                 mockDomainObject.useCapability.andReturn("some value");
@@ -244,6 +251,21 @@ define(
                 // Trigger the watch again; should clear capability from scope
                 mockScope.$watch.calls[0].args[1]();
                 expect(mockScope.testCapability).toBeUndefined();
+            });
+
+            it("registers a status change listener", function () {
+                mockScope.$watch.calls[2].args[1](mockDomainObject);
+                expect(mockStatusCapability.listen).toHaveBeenCalled();
+            });
+
+            it("unlistens for status change on scope destruction", function () {
+                var mockUnlistener = jasmine.createSpy("unlisten");
+                mockStatusCapability.listen.andReturn(mockUnlistener);
+                mockScope.$watch.calls[2].args[1](mockDomainObject);
+                expect(mockStatusCapability.listen).toHaveBeenCalled();
+
+                mockScope.$on.calls[1].args[1]();
+                expect(mockUnlistener).toHaveBeenCalled();
             });
 
             describe("when a domain object has been observed", function () {
@@ -307,6 +329,7 @@ define(
                     mockScope.$watch.calls[0].args[1]();
                     expect(mockChangeTemplate.calls.length).toEqual(callCount);
                 });
+
             });
 
 

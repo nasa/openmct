@@ -25,94 +25,149 @@ define(
     function (EditorCapability) {
 
         describe("The editor capability", function () {
-            var mockPersistence,
-                mockEditableObject,
-                mockDomainObject,
-                mockCache,
-                mockCallback,
-                model,
+            var mockDomainObject,
+                capabilities,
+                mockParentObject,
+                mockTransactionService,
+                mockStatusCapability,
+                mockParentStatus,
+                mockContextCapability,
                 capability;
 
-            beforeEach(function () {
-                mockPersistence = jasmine.createSpyObj(
-                    "persistence",
-                    [ "persist" ]
-                );
-                mockEditableObject = {
-                    getModel: function () { return model; }
+            function fastPromise(val) {
+                return {
+                    then: function (callback) {
+                        return callback(val);
+                    }
                 };
+            }
+
+            beforeEach(function () {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability", "useCapability" ]
+                    ["getId", "getModel", "hasCapability", "getCapability", "useCapability"]
                 );
-                mockCache = jasmine.createSpyObj(
-                    "cache",
-                    [ "saveAll", "markClean" ]
+                mockParentObject = jasmine.createSpyObj(
+                    "domainObject",
+                    ["getId", "getModel", "hasCapability", "getCapability", "useCapability"]
                 );
-                mockCallback = jasmine.createSpy("callback");
+                mockTransactionService = jasmine.createSpyObj(
+                    "transactionService",
+                    [
+                        "startTransaction",
+                        "size",
+                        "commit",
+                        "cancel"
+                    ]
+                );
+                mockTransactionService.commit.andReturn(fastPromise());
+                mockTransactionService.cancel.andReturn(fastPromise());
 
-                mockDomainObject.getCapability.andReturn(mockPersistence);
+                mockStatusCapability = jasmine.createSpyObj(
+                    "statusCapability",
+                    ["get", "set"]
+                );
+                mockParentStatus = jasmine.createSpyObj(
+                    "statusCapability",
+                    ["get", "set"]
+                );
+                mockContextCapability = jasmine.createSpyObj(
+                    "contextCapability",
+                    ["getParent"]
+                );
+                mockContextCapability.getParent.andReturn(mockParentObject);
 
-                model = { someKey: "some value", x: 42 };
+                capabilities = {
+                    context: mockContextCapability,
+                    status: mockStatusCapability
+                };
+
+                mockDomainObject.hasCapability.andCallFake(function(name) {
+                    return capabilities[name] !== undefined;
+                });
+
+                mockDomainObject.getCapability.andCallFake(function (name) {
+                    return capabilities[name];
+                });
+
+                mockParentObject.getCapability.andReturn(mockParentStatus);
+                mockParentObject.hasCapability.andReturn(false);
 
                 capability = new EditorCapability(
-                    mockPersistence,
-                    mockEditableObject,
-                    mockDomainObject,
-                    mockCache
+                    mockTransactionService,
+                    mockDomainObject
                 );
             });
 
-            //TODO: Disabled for NEM Beta
-            xit("mutates the real domain object on nonrecursive save", function () {
-                capability.save(true).then(mockCallback);
+            it("starts a transaction when edit is invoked", function () {
+                capability.edit();
+                expect(mockTransactionService.startTransaction).toHaveBeenCalled();
+            });
 
-                // Wait for promise to resolve
-                waitsFor(function () {
-                    return mockCallback.calls.length > 0;
-                }, 250);
+            it("sets editing status on object", function () {
+                capability.edit();
+                expect(mockStatusCapability.set).toHaveBeenCalledWith("editing", true);
+            });
 
-                runs(function () {
-                    expect(mockDomainObject.useCapability)
-                        .toHaveBeenCalledWith("mutation", jasmine.any(Function));
-                    // We should get the model from the editable object back
-                    expect(
-                        mockDomainObject.useCapability.mostRecentCall.args[1]()
-                    ).toEqual(model);
+            it("uses editing status to determine editing context root", function () {
+                capability.edit();
+                mockStatusCapability.get.andReturn(false);
+                expect(capability.isEditContextRoot()).toBe(false);
+                mockStatusCapability.get.andReturn(true);
+                expect(capability.isEditContextRoot()).toBe(true);
+            });
+
+            it("inEditingContext returns true if parent object is being" +
+                " edited", function () {
+                mockStatusCapability.get.andReturn(false);
+                mockParentStatus.get.andReturn(false);
+                expect(capability.inEditContext()).toBe(false);
+                mockParentStatus.get.andReturn(true);
+                expect(capability.inEditContext()).toBe(true);
+            });
+
+            describe("save", function() {
+                beforeEach(function() {
+                    capability.edit();
+                    capability.save();
+                });
+                it("commits the transaction", function () {
+                    expect(mockTransactionService.commit).toHaveBeenCalled();
+                });
+                it("resets the edit state", function () {
+                    expect(mockStatusCapability.set).toHaveBeenCalledWith('editing', false);
                 });
             });
 
-            //TODO: Disabled for NEM Beta
-            xit("tells the cache to save others", function () {
-                capability.save().then(mockCallback);
-
-                // Wait for promise to resolve
-                waitsFor(function () {
-                    return mockCallback.calls.length > 0;
-                }, 250);
-
-                runs(function () {
-                    expect(mockCache.saveAll).toHaveBeenCalled();
+            describe("cancel", function() {
+                beforeEach(function() {
+                    capability.edit();
+                    capability.cancel();
+                });
+                it("cancels the transaction", function () {
+                    expect(mockTransactionService.cancel).toHaveBeenCalled();
+                });
+                it("resets the edit state", function () {
+                    expect(mockStatusCapability.set).toHaveBeenCalledWith('editing', false);
                 });
             });
 
-            //TODO: Disabled for NEM Beta
-            xit("has no interactions on cancel", function () {
-                capability.cancel().then(mockCallback);
+            describe("dirty", function() {
+                var model = {};
 
-                // Wait for promise to resolve
-                waitsFor(function () {
-                    return mockCallback.calls.length > 0;
-                }, 250);
-
-                runs(function () {
-                    expect(mockDomainObject.useCapability).not.toHaveBeenCalled();
-                    expect(mockCache.markClean).not.toHaveBeenCalled();
-                    expect(mockCache.saveAll).not.toHaveBeenCalled();
+                beforeEach(function() {
+                    mockDomainObject.getModel.andReturn(model);
+                    capability.edit();
+                    capability.cancel();
+                });
+                it("returns true if the object has been modified since it" +
+                    " was last persisted", function () {
+                    mockTransactionService.size.andReturn(0);
+                    expect(capability.dirty()).toBe(false);
+                    mockTransactionService.size.andReturn(1);
+                    expect(capability.dirty()).toBe(true);
                 });
             });
-
-
         });
     }
 );

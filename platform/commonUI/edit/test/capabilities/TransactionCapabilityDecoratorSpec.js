@@ -21,15 +21,34 @@
  *****************************************************************************/
 
 define(
-    ["../../src/objects/EditableDomainObject"],
-    function (EditableDomainObject) {
+    [
+        "../../src/capabilities/TransactionalPersistenceCapability",
+        "../../src/capabilities/TransactionCapabilityDecorator"
+    ],
+    function (TransactionalPersistenceCapability, TransactionCapabilityDecorator) {
 
-        describe("Editable domain object", function () {
-            var object;
+        describe("The transaction capability decorator", function () {
+            var mockQ,
+                mockTransactionService,
+                mockCapabilityService,
+                provider;
 
-            beforeEach(function () {
-                object = new EditableDomainObject();
+            beforeEach(function() {
+                mockQ = {};
+                mockTransactionService = {};
+                mockCapabilityService = jasmine.createSpyObj("capabilityService", ["getCapabilities"]);
+                mockCapabilityService.getCapabilities.andReturn({
+                    persistence: function() {}
+                });
+
+                provider = new TransactionCapabilityDecorator(mockQ, mockTransactionService, mockCapabilityService);
+
             });
+            it("decorates the persistence capability", function() {
+                var capabilities = provider.getCapabilities();
+                expect(capabilities.persistence({}) instanceof TransactionalPersistenceCapability).toBe(true);
+            });
+
         });
     }
 );

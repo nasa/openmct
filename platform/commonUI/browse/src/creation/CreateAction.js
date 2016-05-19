@@ -24,11 +24,8 @@
  * Module defining CreateAction. Created by vwoeltje on 11/10/14.
  */
 define(
-    [
-        './CreateWizard',
-        '../../../edit/src/objects/EditableDomainObject'
-    ],
-    function (CreateWizard, EditableDomainObject) {
+    [],
+    function () {
 
         /**
          * The Create Action is performed to create new instances of
@@ -86,22 +83,25 @@ define(
         CreateAction.prototype.perform = function () {
             var newModel = this.type.getInitialModel(),
                 parentObject = this.navigationService.getNavigation(),
-                newObject,
-                editableObject;
+                editorCapability,
+                newObject;
 
             newModel.type = this.type.getKey();
+            newModel.location = parentObject.getId();
             newObject = parentObject.useCapability('instantiation', newModel);
-            editableObject = new EditableDomainObject(newObject, this.$q);
-            editableObject.setOriginalObject(parentObject);
-            editableObject.getCapability('status').set('editing', true);
-            editableObject.useCapability('mutation', function(model){
-                model.location = parentObject.getId();
-            });
 
-            if (countEditableViews(editableObject) > 0 && editableObject.hasCapability('composition')) {
-                this.navigationService.setNavigation(editableObject);
+            editorCapability = newObject.getCapability("editor");
+
+            if (countEditableViews(newObject) > 0 && newObject.hasCapability('composition')) {
+                this.navigationService.setNavigation(newObject);
+                return newObject.getCapability("action").perform("edit");
             } else {
-                return editableObject.getCapability('action').perform('save');
+                editorCapability.edit();
+                return newObject.useCapability("action").perform("save").then(function () {
+                        return editorCapability.save();
+                    }, function () {
+                        return editorCapability.cancel();
+                });
             }
         };
 

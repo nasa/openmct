@@ -82,10 +82,17 @@ define(
             it("persists zoom changes in Edit mode", function () {
                 mockScope.domainObject = jasmine.createSpyObj(
                     'domainObject',
-                    ['hasCapability']
+                    ['hasCapability', 'getCapability']
                 );
                 mockScope.domainObject.hasCapability.andCallFake(function (c) {
                     return c === 'editor';
+                });
+                mockScope.domainObject.getCapability.andCallFake(function (c) {
+                    if (c === 'editor') {
+                        return {
+                            inEditContext: function () {return true;}
+                        };
+                    }
                 });
                 controller.zoom(1);
                 expect(mockScope.commit).toHaveBeenCalled();

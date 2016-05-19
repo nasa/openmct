@@ -24,8 +24,8 @@
  * Module defining EditAction. Created by vwoeltje on 11/14/14.
  */
 define(
-    ['../objects/EditableDomainObject'],
-    function (EditableDomainObject) {
+    [],
+    function () {
 
         // A no-op action to return in the event that the action cannot
         // be completed.
@@ -44,7 +44,7 @@ define(
          * @constructor
          * @implements {Action}
          */
-        function EditAction($location, navigationService, $log, $q, context) {
+        function EditAction($location, navigationService, $log, context) {
             var domainObject = (context || {}).domainObject;
 
             // We cannot enter Edit mode if we have no domain object to
@@ -63,7 +63,6 @@ define(
             this.domainObject = domainObject;
             this.$location = $location;
             this.navigationService = navigationService;
-            this.$q = $q;
         }
 
         /**
@@ -71,25 +70,12 @@ define(
          */
         EditAction.prototype.perform = function () {
             var self = this;
-            if (!this.domainObject.hasCapability("editor")) {
-                //TODO: This is only necessary because the drop gesture is
-                // wrapping the object itself, need to refactor this later.
-                // All responsibility for switching into edit mode should be
-                // in the edit action, and not duplicated in the gesture
-                this.domainObject = new EditableDomainObject(this.domainObject, this.$q);
-            }
-            this.navigationService.setNavigation(this.domainObject);
-            this.domainObject.getCapability('status').set('editing', true);
-
-            //Register a listener to automatically cancel this edit action
-            //if the user navigates away from this object.
-            function cancelEditing(navigatedTo){
-                if (!navigatedTo || navigatedTo.getId() !== self.domainObject.getId()) {
-                    self.domainObject.getCapability('editor').cancel();
-                    self.navigationService.removeListener(cancelEditing);
-                }
+            function cancelEditing(){
+                self.domainObject.getCapability('editor').cancel();
+                self.navigationService.removeListener(cancelEditing);
             }
             this.navigationService.addListener(cancelEditing);
+            this.domainObject.useCapability("editor");
         };
 
         /**
@@ -100,11 +86,13 @@ define(
          */
         EditAction.appliesTo = function (context) {
             var domainObject = (context || {}).domainObject,
-                type = domainObject && domainObject.getCapability('type'),
-                isEditMode = domainObject && domainObject.getDomainObject ? true : false;
+                type = domainObject && domainObject.getCapability('type');
 
-            // Only allow creatable types to be edited
-            return type && type.hasFeature('creation') && !isEditMode;
+            // Only allow editing of types that support it and are not already
+            // being edited
+            return type && type.hasFeature('creation') &&
+                domainObject.hasCapability('editor') &&
+                !domainObject.getCapability('editor').isEditContextRoot();
         };
 
         return EditAction;

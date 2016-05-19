@@ -78,10 +78,11 @@ define(
 
                 mockEditorCapability = jasmine.createSpyObj(
                     "editor",
-                    [ "save", "cancel" ]
+                    [ "save", "cancel", "isEditContextRoot" ]
                 );
                 mockEditorCapability.cancel.andReturn(mockPromise(undefined));
                 mockEditorCapability.save.andReturn(mockPromise(true));
+                mockEditorCapability.isEditContextRoot.andReturn(true);
                 capabilities.editor = mockEditorCapability;
 
                 mockActionCapability = jasmine.createSpyObj(
