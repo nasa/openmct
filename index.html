@@ -30,7 +30,11 @@
     </script>
     <script type="text/javascript">
         require(['main'], function (mct) {
-            mct.run();
+            require([
+                './example/imagery/bundle',
+                './example/eventGenerator/bundle',
+                './example/generator/bundle'
+            ], mct.run.bind(mct));
         });
     </script>
     <link rel="stylesheet" href="platform/commonUI/general/res/css/startup-base.css">

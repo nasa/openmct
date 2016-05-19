@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/representers/EditRepresenter"],
     function (EditRepresenter) {
-        "use strict";
 
         describe("The Edit mode representer", function () {
             var mockQ,
@@ -34,6 +32,7 @@ define(
                 mockDomainObject,
                 mockPersistence,
                 mockStatusCapability,
+                mockEditorCapability,
                 mockCapabilities,
                 representer;
 
@@ -60,11 +59,14 @@ define(
                 mockPersistence =
                     jasmine.createSpyObj("persistence", ["persist"]);
                 mockStatusCapability =
-                    jasmine.createSpyObj("statusCapability", ["get", "listen"]);
-                mockStatusCapability.get.andReturn(false);
+                    jasmine.createSpyObj("statusCapability", ["listen"]);
+                mockEditorCapability =
+                    jasmine.createSpyObj("editorCapability", ["isEditContextRoot"]);
+
                 mockCapabilities = {
                     'persistence': mockPersistence,
-                    'status': mockStatusCapability
+                    'status': mockStatusCapability,
+                    'editor': mockEditorCapability
                 };
 
                 mockDomainObject.getModel.andReturn({});
@@ -84,6 +86,7 @@ define(
 
             it("Sets edit view template on edit mode", function () {
                 mockStatusCapability.listen.mostRecentCall.args[0](['editing']);
+                mockEditorCapability.isEditContextRoot.andReturn(true);
                 expect(mockScope.viewObjectTemplate).toEqual('edit-object');
             });
 

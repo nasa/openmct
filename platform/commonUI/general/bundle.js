@@ -19,14 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     "./src/services/UrlService",
     "./src/services/PopupService",
     "./src/SplashScreenManager",
     "./src/StyleSheetLoader",
-    "./src/UnsupportedBrowserWarning",
     "./src/controllers/TimeRangeController",
     "./src/controllers/DateTimePickerController",
     "./src/controllers/DateTimeFieldController",
@@ -75,7 +73,6 @@ define([
     PopupService,
     SplashScreenManager,
     StyleSheetLoader,
-    UnsupportedBrowserWarning,
     TimeRangeController,
     DateTimePickerController,
     DateTimeFieldController,
@@ -120,7 +117,6 @@ define([
     datetimeFieldTemplate,
     legacyRegistry
 ) {
-    "use strict";
 
     legacyRegistry.register("platform/commonUI/general", {
         "name": "General UI elements",
@@ -151,13 +147,6 @@ define([
                         "stylesheets[]",
                         "$document",
                         "THEME"
-                    ]
-                },
-                {
-                    "implementation": UnsupportedBrowserWarning,
-                    "depends": [
-                        "notificationService",
-                        "agentService"
                     ]
                 },
                 {
@@ -268,8 +257,8 @@ define([
                     "key": "ClickAwayController",
                     "implementation": ClickAwayController,
                     "depends": [
-                        "$scope",
-                        "$document"
+                        "$document",
+                        "$timeout"
                     ]
                 },
                 {

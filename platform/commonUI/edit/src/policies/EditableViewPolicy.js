@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Policy controlling which views should be visible in Edit mode.
@@ -39,7 +37,7 @@ define(
             // If a view is flagged as non-editable, only allow it
             // while we're not in Edit mode.
             if ((view || {}).editable === false) {
-                return !domainObject.hasCapability('editor');
+                return !(domainObject.hasCapability('editor') && domainObject.getCapability('editor').inEditContext());
             }
 
             // Like all policies, allow by default.

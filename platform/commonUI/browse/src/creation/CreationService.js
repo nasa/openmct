@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining CreateService. Created by vwoeltje on 11/10/14.
@@ -27,12 +26,9 @@
 define(
     [],
     function () {
-        "use strict";
 
         var NON_PERSISTENT_WARNING =
-                "Tried to create an object in non-persistent container.",
-            NO_COMPOSITION_WARNING =
-                "Could not add to composition; no composition in ";
+                "Tried to create an object in non-persistent container.";
 
         /**
          * The creation service is responsible for instantiating and

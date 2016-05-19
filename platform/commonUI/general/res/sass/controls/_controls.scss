@@ -279,21 +279,13 @@ input[type="search"] {
         padding-right: 0.35em; // For context arrow. Done with em's so pad is relative to the scale of the text.
     }
 
+    .context-available-w {
+        z-index: 5;
+    }
+
     .context-available {
         font-size: 0.7em;
-        @include webkitProp(flex, '0 0 1');
-    }
-}
-
-body.desktop .object-header {
-    .context-available {
-        @include trans-prop-nice(opacity, 0.25s);
-        opacity: 0;
-    }
-    &:hover {
-        .context-available {
-            opacity: 1;
-        }
+        @include flex(0 0 1);
     }
 }
 

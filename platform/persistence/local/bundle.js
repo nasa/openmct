@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     "./src/LocalStoragePersistenceProvider",
@@ -30,7 +29,6 @@ define([
     LocalStorageIndicator,
     legacyRegistry
 ) {
-    "use strict";
 
     legacyRegistry.register("platform/persistence/local", {
         "extensions": {
@@ -40,6 +38,7 @@ define([
                     "type": "provider",
                     "implementation": LocalStoragePersistenceProvider,
                     "depends": [
+                        "$window",
                         "$q",
                         "PERSISTENCE_SPACE"
                     ]

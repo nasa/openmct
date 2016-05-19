@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 define(
     ['./DeviceMatchers'],
     function (DeviceMatchers) {
-        'use strict';
 
         /**
          * Runs at application startup and adds a subset of the following

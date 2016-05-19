@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./TimelineDragHandler', './TimelineSnapHandler', './TimelineDragHandleFactory'],
     function (TimelineDragHandler, TimelineSnapHandler, TimelineDragHandleFactory) {
-        "use strict";
 
         /**
          * Provides drag handles for the active selection in a timeline view.

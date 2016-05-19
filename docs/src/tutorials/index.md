@@ -1,4 +1,4 @@
-# Open MCT Web Tutorials
+# Open MCT Tutorials
 
 Victor Woeltjen
 victor.woeltjen@nasa.gov
@@ -23,9 +23,9 @@ been added or removed as part of the tutorial. In these cases, any lines added
 will be indicated with a '+' at the start of the line. Any lines removed will 
 be indicated with a '-'.
 
-## Setting Up Open MCT Web
+## Setting Up Open MCT
 
-In this section, we will cover the steps necessary to get a minimal Open MCT Web 
+In this section, we will cover the steps necessary to get a minimal Open MCT 
 developer environment up and running. Once we have this, we will be able to 
 proceed with writing plugins as described in this tutorial.
 
@@ -40,22 +40,22 @@ more recent versions, but this cannot be guaranteed.
 * Google Chrome v42: https://www.google.com/chrome/
 * A text editor.
 
-Open MCT Web can be run without any of these tools, provided suitable 
-alternatives are taken; see the [Open MCT Web Developer Guide](../guide/index.md) 
-for a more general overview of how to run and deploy a Open MCT Web application.
+Open MCT can be run without any of these tools, provided suitable 
+alternatives are taken; see the [Open MCT Developer Guide](../guide/index.md) 
+for a more general overview of how to run and deploy a Open MCT application.
 
-### Check out Open MCT Web Sources
+### Check out Open MCT Sources
 
-First step is to check out Open MCT Web from the source repository. 
+First step is to check out Open MCT from the source repository. 
 
 `git clone https://github.com/nasa/openmctweb.git openmctweb`
 
-This will create a copy of the Open MCT Web source code repository in the folder 
+This will create a copy of the Open MCT source code repository in the folder 
 `openmctweb` (relative to the path from which you ran the command.)
 If you have a repository URL, use that as the "path to repo" above. Alternately, 
-if you received Open MCT Web as a git bundle, the path to that bundle on the 
+if you received Open MCT as a git bundle, the path to that bundle on the 
 local filesystem can be used instead.
-At this point, it will also be useful to branch off of Open MCT Web v0.6.2 
+At this point, it will also be useful to branch off of Open MCT v0.6.2 
 (which was used when writing these tutorials) to begin adding plugins.
 
     cd openmctweb
@@ -64,12 +64,12 @@ At this point, it will also be useful to branch off of Open MCT Web v0.6.2
 
 ### Configuring Persistence
 
-In its default configuration, Open MCT Web will try to use ElasticSearch 
+In its default configuration, Open MCT will try to use ElasticSearch 
 (expected to be deployed at /elastic on the same HTTP server running Open MCT 
 Web) to persist user-created domain objects. We don't need that for these 
 tutorials, so we will replace the ElasticSearch plugin with the example 
 persistence plugin. This doesn't actually persist, so anything we create within 
-Open MCT Web will be lost on reload, but that's fine for purposes of these 
+Open MCT will be lost on reload, but that's fine for purposes of these 
 tutorials.
 
 To change this configuration, edit bundles.json (at the top level of the Open 
@@ -132,7 +132,7 @@ __bundles.json__
 	
 ### Run a Web Server
 
-The next step is to run a web server so that you can view the Open MCT Web 
+The next step is to run a web server so that you can view the Open MCT 
 client (including the plugins you add to it) in browser. Any web server can 
 be used for hosting OpenMCTWeb, and a trivial web server is provided in this 
 package for the purposes of running the tutorials. The provided web server 
@@ -144,11 +144,11 @@ To run the tutorial web server
 
 ### Viewing in Browser
 
-Once running, you should be able to view Open MCT Web from your browser at 
+Once running, you should be able to view Open MCT from your browser at 
 http://localhost:8080/ (assuming the web server is running on port 8080, 
 and OpenMCTWeb is installed at the server's root path). 
 [Google Chrome](https://www.google.com/chrome/) is recommended for these 
-tutorials, as Chrome is Open MCT Web's "test-to" browser. The browser cache 
+tutorials, as Chrome is Open MCT's "test-to" browser. The browser cache 
 can sometimes interfere with development (masking changes by 
 using older versions of sources); to avoid this, it is easiest to run Chrome 
 with Developer Tools expanded, and "Disable cache" selected from the Network 
@@ -158,7 +158,7 @@ tab, as shown below.
 
 # Tutorials
 
-These tutorials cover three of the common tasks in Open MCT Web:
+These tutorials cover three of the common tasks in Open MCT:
 
 * The "to-do list" tutorial illustrates how to add a new application feature.
 * The "bar graph" tutorial illustrates how to add a new telemetry visualization.
@@ -167,17 +167,17 @@ backend.
 
 ## To-do List
 
-The goal of this tutorial is to add a new application feature to Open MCT Web: 
+The goal of this tutorial is to add a new application feature to Open MCT: 
 To-do lists. Users should be able to create and manage these to track items that 
 they need to do. This is modelled after the to-do lists at http://todomvc.com/.
 
 ### Step 1-Create the Plugin
 
-The first step to adding a new feature to Open MCT Web is to create the plugin 
-which will expose that feature. A plugin in Open MCT Web is represented by what 
+The first step to adding a new feature to Open MCT is to create the plugin 
+which will expose that feature. A plugin in Open MCT is represented by what 
 is called a bundle; a bundle, in turn, is a directory which contains a file 
 bundle.json, which in turn describes where other relevant sources & resources 
-will be. The syntax of this file is described in more detail in the Open MCT Web 
+will be. The syntax of this file is described in more detail in the Open MCT 
 Developer Guide.
 
 We will create this file in the directory tutorials/todo (we can hereafter refer 
@@ -254,7 +254,7 @@ __bundles.json__
 ```    
 __bundles.json__
 
-At this point, we can reload Open MCT Web. We haven't introduced any new 
+At this point, we can reload Open MCT. We haven't introduced any new 
 functionality, so we don't see anything different, but if we run with logging 
 enabled ( http://localhost:8080/?log=info ) and check the browser console, we 
 should see:
@@ -265,11 +265,11 @@ should see:
 
 ### Step 2-Add a Domain Object Type
 
-Features in a Open MCT Web application are most commonly expressed as domain 
+Features in a Open MCT application are most commonly expressed as domain 
 objects and/or views thereof. A domain object is some thing that is relevant to 
-the work that the Open MCT Web application is meant to support. Domain objects 
+the work that the Open MCT application is meant to support. Domain objects 
 can be created, organized, edited, placed in layouts, and so forth. (For a 
-deeper explanation of domain objects, see the Open MCT Web Developer Guide.)
+deeper explanation of domain objects, see the Open MCT Developer Guide.)
 
 In the case of our to-do list feature, the to-do list itself is the thing we'll 
 want users to be able to create and edit. So, we will add that as a new type in 
@@ -303,7 +303,7 @@ Going through the properties we've defined:
 domain objects of this type.
 * The `name` of "To-Do List" is the human-readable name for this type, and will 
 be shown to users.
-* The `glyph` refers to a special character in Open MCT Web's custom font set; 
+* The `glyph` refers to a special character in Open MCT's custom font set; 
 this will be used as an icon.
 * The `description` is also human-readable, and will be used whenever a longer 
 explanation of what this type is should be shown.
@@ -312,7 +312,7 @@ this type. Including `creation` here means that we want users to be able to
 create this (in other cases, we may wish to expose things as domain objects 
 which aren't user-created, in which case we would omit this.)
 
-If we reload Open MCT Web, we see that our new domain object type appears in the 
+If we reload Open MCT, we see that our new domain object type appears in the 
 Create menu:
 
 ![To-Do List](images/todo.png)
@@ -324,10 +324,10 @@ because we haven't defined any yet.
 ### Step 3-Add a View
 
 In order to allow a to-do list to be used, we need to define and display its 
-contents. In Open MCT Web, the pattern that the user expects is that they'll 
+contents. In Open MCT, the pattern that the user expects is that they'll 
 click on an object in the left-hand tree, and see a visualization of it to the 
-right; in Open MCT Web, these visualizations are called views.
-A view in Open MCT Web is defined by an Angular template. We'll add that in the 
+right; in Open MCT, these visualizations are called views.
+A view in Open MCT is defined by an Angular template. We'll add that in the 
 directory `tutorials/todo/res/templates` (`res` is, by default, the directory 
 where bundle-related resources are kept, and `templates` is where HTML templates 
 are stored by convention.)
@@ -357,12 +357,12 @@ to filter down to either complete or incomplete tasks.
 of the domain object being viewed; this contains all of the persistent state 
 associated with that object. This model is effectively just a JSON document, so 
 we can choose what goes into it (so long as we take care not to collide with 
-platform-defined properties; see the Open MCT Web Developer Guide.) Here, we 
+platform-defined properties; see the Open MCT Developer Guide.) Here, we 
 assume that all tasks will be stored in a property `tasks`, and that each will be 
 an object containing a `description` (the readable summary of the task) and a 
 boolean `completed` flag.
 
-To expose this view in Open MCT Web, we need to declare it in our bundle 
+To expose this view in Open MCT, we need to declare it in our bundle 
 definition:
 
 ```diff
@@ -399,7 +399,7 @@ contains the following properties:
 * Its `key` is its machine-readable name; we've given it the same name here as 
 the domain object type, but could have chosen any unique name. 
 
-* The `type` property tells Open MCT Web that this view is only applicable to 
+* The `type` property tells Open MCT that this view is only applicable to 
 domain objects of that type. This means that we'll see this view for To-do Lists 
 that we create, but not for other domain objects (such as Folders.)
 
@@ -449,10 +449,10 @@ definition of that type.
 ```
 __tutorials/todo/bundle.json__
 
-Now, when To-do List objects are created in Open MCT Web, they will initially 
+Now, when To-do List objects are created in Open MCT, they will initially 
 have the state described by that model property.
 
-If we reload Open MCT Web, create a To-do List, and navigate to it in the tree, 
+If we reload Open MCT, create a To-do List, and navigate to it in the tree, 
 we should now see:
 
 ![To-Do List](images/todo-list.png)
@@ -527,7 +527,7 @@ first argument is falsy.)
 
 * `toggleCompletion` changes whether or not a task is complete. We make the 
 change via the domain object's `mutation` capability, and then persist the 
-change via its `persistence` capability. See the Open MCT Web Developer Guide 
+change via its `persistence` capability. See the Open MCT Developer Guide 
 for more information on these capabilities.
 
 * `showTask` is meant to be used to help decide if a task should be shown, based 
@@ -537,7 +537,7 @@ the use of the double-not !! to coerce the completed flag to a boolean, for
 equality testing.)
 
 Note that these functions make reference to `$scope.domainObject;` this is the 
-domain object being viewed, which is passed into the scope by Open MCT Web 
+domain object being viewed, which is passed into the scope by Open MCT 
 prior to our template being utilized.
 
 On its own, this controller merely exposes these functions; the next step is to 
@@ -640,7 +640,7 @@ if we go to My Items and come back.
 We now have a somewhat-functional view of our To-Do List, but we're still 
 missing some important functionality: Adding and removing tasks!
 
-This is a good place to discuss the user interface style of Open MCT Web. Open 
+This is a good place to discuss the user interface style of Open MCT. Open 
 MCT Web draws a distinction between "using" and "editing" a domain object; in 
 general, you can only make changes to a domain object while in Edit mode, which 
 is reachable from the button with a pencil icon. This distinction helps users 
@@ -732,14 +732,14 @@ What we've stated here is that the To-Do List's view will have a toolbar which
 contains two sections (which will be visually separated by a divider), each of 
 which contains one button. The first is a button labelled "Add Task" that will 
 invoke an `addTask` method; the second is a button with a glyph (which will appear 
-as a trash can in Open MCT Web's custom font set) which will invoke a `removeTask` 
-method. For more information on forms and tool bars in Open MCT Web, see the 
-Open MCT Web Developer Guide.
+as a trash can in Open MCT's custom font set) which will invoke a `removeTask` 
+method. For more information on forms and tool bars in Open MCT, see the 
+Open MCT Developer Guide.
 
-If we reload and run Open MCT Web, we won't see any tool bar when we switch over 
+If we reload and run Open MCT, we won't see any tool bar when we switch over 
 to Edit mode. This is because the aforementioned methods are expected to be 
 found on currently-selected elements; we haven't done anything with selections 
-in our view yet, so the Open MCT Web platform will filter this tool bar down to 
+in our view yet, so the Open MCT platform will filter this tool bar down to 
 all the applicable controls, which means no controls at all.
 
 To support selection, we will need to make some changes to our controller:
@@ -842,7 +842,7 @@ click the _Add Task_ button. This form is described declaratively, and populates
 an object that has the same format as tasks in the `tasks` array of our 
 To-Do List's model.
 * We've added an argument to the `TodoController`: The `dialogService`, which is 
-exposed by the Open MCT Web platform to handle showing dialogs.
+exposed by the Open MCT platform to handle showing dialogs.
 * Some utility functions for handling the actual adding and removing of tasks. 
 These use the `mutation` capability to modify the tasks in the To-Do List's 
 model. 
@@ -947,7 +947,7 @@ declare that dependency in its extension definition:
 ```
 __tutorials/todo/bundle.json__
 
-If we now reload Open MCT Web, we'll be able to see the new functionality we've 
+If we now reload Open MCT, we'll be able to see the new functionality we've 
 added. If we Create a new To-Do List, navigate to it, and click the button with 
 the Pencil icon in the top-right, we'll be in edit mode. We see, first, that our 
 "Add Task" button appears in the tool bar:
@@ -1136,7 +1136,7 @@ Here, we have defined classes and appearances for:
 * A message, which we will add next, to display when there are no tasks 
 (`example-message`).
 
-To include this CSS file in our running instance of Open MCT Web, we need to 
+To include this CSS file in our running instance of Open MCT, we need to 
 declare it in our bundle definition, this time as an extension of category 
 `stylesheets`:
 ```diff
@@ -1436,7 +1436,7 @@ The corresponding CSS file which styles and positions these elements:
 __tutorials/bargraph/res/css/bargraph.css__
 
 This is already enough that, if we add `"tutorials/bargraph"` to `bundles.json`, 
-we should be able to run Open MCT Web and see our Bar Graph as an available view 
+we should be able to run Open MCT and see our Bar Graph as an available view 
 for domain objects which provide telemetry (such as the example 
 _Sine Wave Generator_) as well as for _Telemetry Panel_ objects:
 
@@ -1502,7 +1502,7 @@ will help support some positioning in the template.
 to real-time telemetry updates. This will deal with most of the complexity of 
 dealing with telemetry (e.g. differentiating between individual telemetry points 
 and telemetry panels, monitoring latest values) and provide us with a useful 
-interface for populating our view. The the Open MCT Web Developer Guide for more 
+interface for populating our view. The the Open MCT Developer Guide for more 
 information on dealing with telemetry.
 
 Whenever the telemetry handler invokes its callbacks, we update the set of 
@@ -1594,7 +1594,7 @@ service we made use of.
 ```
 __tutorials/bargraph/bundle.json__
 
-When we reload Open MCT Web, we are now able to see that our bar graph view 
+When we reload Open MCT, we are now able to see that our bar graph view 
 correctly labels one bar per telemetry-providing domain object, as shown for 
 this Telemetry Panel containing four Sine Wave Generators.
 
@@ -1703,7 +1703,7 @@ __tutorials/bargraph/res/templates/bargraph.html__
 Here, we utilize the functions we just provided from the controller to position 
 the bar, using an ng-style attribute.
 
-When we reload Open MCT Web, our bar graph view now looks like:
+When we reload Open MCT, our bar graph view now looks like:
 
 ![Bar Plot](images/bar-plot-3.png)
 
@@ -1714,7 +1714,7 @@ sine waves, but what about other values? We want to provide the user with a
 means of configuring these boundaries.
 
 This is normally done via Edit mode. Since view configuration is a common 
-problem, the Open MCT Web platform exposes a configuration object - called 
+problem, the Open MCT platform exposes a configuration object - called 
 `configuration` - into our view's scope. We can populate it as we please, and 
 when we return to our view later, those changes will be persisted.
 
@@ -1884,14 +1884,14 @@ defaults (if needed), and expose its state into the scope.
 and `high` as entered by the user from the tool bar. This uses the 
 getter-setters we defined previously.
 
-If we reload Open MCT Web and go to a Bar Graph view in Edit mode, we now see 
+If we reload Open MCT and go to a Bar Graph view in Edit mode, we now see 
 that we can change these bounds from the tool bar.
 
 ![Bar plot](images/bar-plot-4.png)
 
 ## Telemetry Adapter
 
-The goal of this tutorial is to demonstrate how to integrate Open MCT Web 
+The goal of this tutorial is to demonstrate how to integrate Open MCT 
 with an existing telemetry system.
 
 A summary of the steps we will take:
@@ -1902,7 +1902,7 @@ A summary of the steps we will take:
 
 ### Step 0-Expose Your Telemetry
 
-As a precondition to integrating telemetry data into Open MCT Web, this 
+As a precondition to integrating telemetry data into Open MCT, this 
 information needs to be available over web-based interfaces. In practice, 
 this will most likely mean exposing data over HTTP, or over WebSockets.
 For purposes of this tutorial, a simple node server is provided to stand 
@@ -2080,7 +2080,7 @@ measurement.
 (Note that the term "measurement" is used to describe a distinct data series 
 within this system; in other systems, these have been called channels, 
 mnemonics, telemetry points, or other names. No preference is made here; 
-Open MCT Web is easily adapted to use the terminology appropriate to your 
+Open MCT is easily adapted to use the terminology appropriate to your 
 system.)
 Additionally, while running the server from the terminal we can toggle the 
 state of the "spacecraft" by hitting enter; this will turn the "thrusters" 
@@ -2162,9 +2162,9 @@ telemetry.
 __tutorial-server/dictionary.json__
 
 It should be noted that neither the interface for the example server nor the 
-dictionary format are expected by Open MCT Web; rather, these are intended to 
+dictionary format are expected by Open MCT; rather, these are intended to 
 stand in for some existing source of telemetry data to which we wish to adapt 
-Open MCT Web.
+Open MCT.
 
 We can run this example server by:
 
@@ -2181,11 +2181,11 @@ like https://www.npmjs.com/package/wscat :
     < {"type":"dictionary","value":{"name":"Example Spacecraft","identifier":"sc","subsystems":[{"name":"Propulsion","identifier":"prop","measurements":[{"name":"Fuel","identifier":"prop.fuel","units":"kilograms","type":"float"},{"name":"Thrusters","identifier":"prop.thrusters","units":"None","type":"string"}]},{"name":"Communications","identifier":"comms","measurements":[{"name":"Received","identifier":"comms.recd","units":"bytes","type":"integer"},{"name":"Sent","identifier":"comms.sent","units":"bytes","type":"integer"}]},{"name":"Power","identifier":"pwr","measurements":[{"name":"Generator Temperature","identifier":"pwr.temp","units":"C","type":"float"},{"name":"Generator Current","identifier":"pwr.c","units":"A","type":"float"},{"name":"Generator Voltage","identifier":"pwr.v","units":"V","type":"float"}]}]}}
 
 Now that the example server's interface is reasonably well-understood, a plugin 
-can be written to adapt Open MCT Web to utilize it.
+can be written to adapt Open MCT to utilize it.
 
 ### Step 1-Add a Top-level Object
 
-Since Open MCT Web uses an "object-first" approach to accessing data, before 
+Since Open MCT uses an "object-first" approach to accessing data, before 
 we'll be able to do anything with this new data source, we'll need to have a 
 way to explore the available measurements in the tree. In this step, we will 
 add a top-level object which will serve as a container; in the next step, we 
@@ -2276,7 +2276,7 @@ If we include this in our set of active bundles:
 
 __bundles.json__
 
-...we will be able to reload Open MCT Web and see that it is present:
+...we will be able to reload Open MCT and see that it is present:
 
 ![Telemetry](images/telemetry-1.png)
 
@@ -2287,7 +2287,7 @@ dictionary.
 
 In order to expose the telemetry dictionary, we first need to read it from the 
 server. Our first step will be to add a service that will handle interactions 
-with the server; this will not be used by Open MCT Web directly, but will be 
+with the server; this will not be used by Open MCT directly, but will be 
 used by subsequent components we add.
 
     /*global define,WebSocket*/
@@ -2340,7 +2340,7 @@ Once the dictionary has been loaded, we will want to represent its contents
 as domain objects. Specifically, we want subsystems to appear as objects 
 under My Spacecraft, and measurements to appear as objects within those 
 subsystems. This means that we need to convert the data from the dictionary 
-into domain object models, and expose these to Open MCT Web via a 
+into domain object models, and expose these to Open MCT via a 
 `modelService`.
 
     /*global define*/
@@ -2449,16 +2449,16 @@ also prefix it with `example_tlm`:. This accomplishes a few things:
     * We can easily tell whether an identifier is expected to be in the 
     dictionary or not.
     * We avoid naming collisions with other model providers.
-    * Finally, Open MCT Web uses the colon prefix as a hint that this domain 
+    * Finally, Open MCT uses the colon prefix as a hint that this domain 
     object will not be in the persistence store.
 * A couple of new types are introduced here (in the `type` field of the domain 
 object models we create); we will need to define these as extensions as well in 
 order for them to display correctly.
-* The `composition` field of each subsystem contained the Open MCT Web 
+* The `composition` field of each subsystem contained the Open MCT 
 identifiers of all the measurements in that subsystem. This `composition` field 
-will be used by Open MCT Web to determine what domain objects contain other 
+will be used by Open MCT to determine what domain objects contain other 
 domain objects (e.g. to populate the tree.)
-* The `telemetry` field of each measurement will be used by Open MCT Web to 
+* The `telemetry` field of each measurement will be used by Open MCT to 
 understand how to request and interpret telemetry data for this object. The 
 `key` is the machine-readable identifier for this measurement within the 
 telemetry system; the `ranges` provide metadata about the values for this data. 
@@ -2637,7 +2637,7 @@ overridden if defined anywhere else, allowing configuration bundles to specify
 different URLs for the WebSocket connection.
 * The initializer script is registered using the `runs` category of extension, 
 to ensure that this executes (and populates the contents of the top-level My 
-Spacecraft object) once Open MCT Web is started.
+Spacecraft object) once Open MCT is started.
     * This depends upon the `example.adapter` service we exposed above, as well 
     as Angular's `$q`; these services will be made available in the constructor 
     call.
@@ -2648,7 +2648,7 @@ this is registered under the extension category `components`.
     we exposed above, as well as Angular's `$q`; these services will be made 
     available in the constructor call.
 
-Now if we run Open MCT Web (assuming our example telemetry server is also 
+Now if we run Open MCT (assuming our example telemetry server is also 
 running) and expand our top-level node completely, we see the contents of our 
 dictionary:
 
@@ -2793,7 +2793,7 @@ that will resolve only when all histories have been packaged. Promise-chaining
 is used to ensure that the resolved value will be the fully-packaged data.
 	
 It is worth mentioning here that the `requests` we receive should look a little 
-familiar. When Open MCT Web generates a `request` object associated with a 
+familiar. When Open MCT generates a `request` object associated with a 
 domain object, it does so by merging together three JavaScript objects:
 
 * First, the `telemetry` property from that domain object's type definition.
@@ -2936,7 +2936,7 @@ back to see it. We can fix this by adding support for telemetry subscriptions.
 ### Step 4-Real-time Telemetry
 
 Finally, we want to utilize the server's ability to subscribe to telemetry 
-from Open MCT Web. To do this, first we want to expose some new methods for 
+from Open MCT. To do this, first we want to expose some new methods for 
 this from our server adapter:
 
 ```diff
@@ -3116,6 +3116,6 @@ we issue an unsubscribe request. (We don't take any care to avoid issuing
 multiple subscribe requests to the server, because we happen to know that the 
 server can handle this.)
 
-Running Open MCT Web again, we can still plot our historical telemetry - but 
+Running Open MCT again, we can still plot our historical telemetry - but 
 now we also see that it updates in real-time as more data comes in from the 
 server.

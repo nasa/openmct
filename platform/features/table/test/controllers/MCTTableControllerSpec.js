@@ -19,14 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,xit*/
 
 define(
     [
         "../../src/controllers/MCTTableController"
     ],
     function (MCTTableController) {
-        "use strict";
 
         describe('The MCTTable Controller', function() {
 
@@ -38,7 +36,7 @@ define(
 
             function promise(value) {
                 return {
-                    then: function (callback){
+                    then: function (callback) {
                         return promise(callback(value));
                     }
                 };
@@ -63,13 +61,18 @@ define(
                 ]);
                 mockElement.find.andReturn(mockElement);
                 mockElement.prop.andReturn(0);
+                mockElement[0] = {
+                    scrollTop: 0,
+                    scrollHeight: 500,
+                    offsetHeight: 1000
+                };
 
                 mockScope.displayHeaders = true;
                 mockTimeout = jasmine.createSpy('$timeout');
                 mockTimeout.andReturn(promise(undefined));
 
                 controller = new MCTTableController(mockScope, mockTimeout, mockElement);
-                spyOn(controller, 'setVisibleRows');
+                spyOn(controller, 'setVisibleRows').andCallThrough();
             });
 
             it('Reacts to changes to filters, headers, and rows', function() {
@@ -178,6 +181,16 @@ define(
                         expect(sortedRows[0].col2.text).toEqual('ghi');
                         expect(sortedRows[1].col2.text).toEqual('def');
                         expect(sortedRows[2].col2.text).toEqual('abc');
+                    });
+
+                    // https://github.com/nasa/openmct/issues/910
+                    it('updates visible rows in scope', function () {
+                        var oldRows;
+                        mockScope.rows = testRows;
+                        controller.setRows(testRows);
+                        oldRows = mockScope.visibleRows;
+                        mockScope.toggleSort('col2');
+                        expect(mockScope.visibleRows).not.toEqual(oldRows);
                     });
 
                     it('correctly sorts rows of differing types', function () {

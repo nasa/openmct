@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * Module defining MCTChart. Created by vwoeltje on 11/12/14.
@@ -27,7 +26,6 @@
 define(
     ["./GLChart", "./Canvas2DChart"],
     function (GLChart, Canvas2DChart) {
-        "use strict";
 
         var TEMPLATE = "<canvas style='position: absolute; background: none; width: 100%; height: 100%;'></canvas>";
 

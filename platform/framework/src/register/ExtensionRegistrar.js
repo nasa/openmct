@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining ExtensionRegistrar. Created by vwoeltje on 11/3/14.
@@ -27,7 +26,6 @@
 define(
     ['../Constants', './PartialConstructor'],
     function (Constants, PartialConstructor) {
-        "use strict";
 
         /**
          * Responsible for registering extensions with Angular.

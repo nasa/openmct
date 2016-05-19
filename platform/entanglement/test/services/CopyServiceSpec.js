@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect,spyOn */
 
 define(
     [
@@ -28,7 +27,6 @@ define(
         '../DomainObjectFactory'
     ],
     function (CopyService, domainObjectFactory) {
-        "use strict";
 
         function synchronousPromise(value) {
             if (value && value.then) {
@@ -126,10 +124,8 @@ define(
 
                 var mockQ,
                     mockDeferred,
-                    creationService,
                     createObjectPromise,
                     copyService,
-                    mockNow,
                     object,
                     newParent,
                     copyResult,
@@ -174,7 +170,7 @@ define(
                         'mockDeferred',
                         ['notify', 'resolve', 'reject']
                     );
-                    mockDeferred.notify.andCallFake(function(notification){});
+                    mockDeferred.notify.andCallFake(function(){});
                     mockDeferred.resolve.andCallFake(function(value){resolvedValue = value;});
                     mockDeferred.promise = {
                         then: function(callback){
@@ -273,8 +269,7 @@ define(
                 });
 
                 describe("on domainObject with composition", function () {
-                    var newObject,
-                        childObject,
+                    var childObject,
                         objectClone,
                         childObjectClone,
                         compositionPromise;

@@ -19,14 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
-/*jslint es5: true */
 
 
 define(
     ['../../../browse/src/creation/CreateWizard'],
     function (CreateWizard) {
-        'use strict';
 
         /**
          * The "Save" action; the action triggered by clicking Save from
@@ -138,8 +135,8 @@ define(
                 return copyService.perform(domainObject, parent, allowClone);
             }
 
-            function cancelEditingAfterClone(clonedObject) {
-                return domainObject.getCapability("editor").cancel()
+            function commitEditingAfterClone(clonedObject) {
+                return domainObject.getCapability("editor").save()
                     .then(resolveWith(clonedObject));
             }
 
@@ -147,7 +144,7 @@ define(
                 .then(doWizardSave)
                 .then(getParent)
                 .then(cloneIntoParent)
-                .then(cancelEditingAfterClone)
+                .then(commitEditingAfterClone)
                 .catch(resolveWith(false));
         };
 
@@ -160,7 +157,8 @@ define(
         SaveAsAction.appliesTo = function (context) {
             var domainObject = (context || {}).domainObject;
             return domainObject !== undefined &&
-                domainObject.hasCapability("editor") &&
+                domainObject.hasCapability('editor') &&
+                domainObject.getCapability('editor').isEditContextRoot() &&
                 domainObject.getModel().persisted === undefined;
         };
 

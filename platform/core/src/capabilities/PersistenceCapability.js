@@ -19,13 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
-/*jslint es5: true */
-
 
 define(
     function () {
-        'use strict';
 
         /**
          * Defines the `persistence` capability, used to trigger the
@@ -62,16 +58,6 @@ define(
             this.persistenceService = persistenceService;
             this.notificationService = notificationService;
             this.$q = $q;
-        }
-
-        // Utility function for creating promise-like objects which
-        // resolve synchronously when possible
-        function fastPromise(value) {
-            return (value || {}).then ? value : {
-                then: function (callback) {
-                    return fastPromise(callback(value));
-                }
-            };
         }
 
         function getKey(id) {
@@ -133,9 +119,8 @@ define(
                 model = domainObject.getModel(),
                 modified = model.modified,
                 persisted = model.persisted,
-                cacheService = this.cacheService,
                 persistenceService = this.persistenceService,
-                persistenceFn = model.persisted !== undefined ?
+                persistenceFn = persisted !== undefined ?
                     this.persistenceService.updateObject :
                     this.persistenceService.createObject;
 
@@ -167,8 +152,7 @@ define(
          *          when the update is complete
          */
         PersistenceCapability.prototype.refresh = function () {
-            var domainObject = this.domainObject,
-                model = domainObject.getModel();
+            var domainObject = this.domainObject;
 
             // Update a domain object's model upon refresh
             function updateModel(model) {
@@ -178,13 +162,10 @@ define(
                 }, modified);
             }
 
-            // Only update if we don't have unsaved changes
-            return (model.modified === model.persisted) ?
-                this.persistenceService.readObject(
+            return this.persistenceService.readObject(
                     this.getSpace(),
                     this.domainObject.getId()
-                ).then(updateModel) :
-                fastPromise(false);
+                ).then(updateModel);
         };
 
         /**

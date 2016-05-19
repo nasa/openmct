@@ -20,9 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define */
 define([], function () {
-    'use strict';
 
     /**
      * Disallow duplication when the object to be duplicated is not

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining ContextualDomainObject. Created by vwoeltje on 11/18/14.
@@ -27,7 +26,6 @@
 define(
     ["./ContextCapability"],
     function (ContextCapability) {
-        "use strict";
 
         /**
          * Wraps a domain object, such that it exposes a `context` capability.

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        'use strict';
 
         /**
          * Describes the time span of a timeline object.
@@ -65,12 +63,12 @@ define(
             }
 
             // Set the duration associated with this object
-            function setDuration(value) {
+            function setDuration() {
                 // No-op; duration is implicit
             }
 
             // Set the end time associated with this object
-            function setEnd(value) {
+            function setEnd() {
                 // No-op; end time is implicit
             }
 

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine,xit,xdescribe*/
 
 define(
     ["../../src/actions/EditAction"],
     function (EditAction) {
-        "use strict";
 
         describe("The Edit action", function () {
             var mockLocation,
@@ -32,7 +30,9 @@ define(
                 mockLog,
                 mockDomainObject,
                 mockType,
+                mockEditor,
                 actionContext,
+                capabilities,
                 action;
 
             beforeEach(function () {
@@ -42,7 +42,7 @@ define(
                 );
                 mockNavigationService = jasmine.createSpyObj(
                     "navigationService",
-                    [ "setNavigation", "getNavigation" ]
+                    [ "setNavigation", "getNavigation", "addListener", "removeListener" ]
                 );
                 mockLog = jasmine.createSpyObj(
                     "$log",
@@ -50,14 +50,26 @@ define(
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability" ]
+                    [ "getId", "getModel", "getCapability", "hasCapability", "useCapability" ]
                 );
                 mockType = jasmine.createSpyObj(
                     "type",
                     [ "hasFeature" ]
                 );
+                mockEditor = jasmine.createSpyObj(
+                    "editorCapability",
+                    ["edit", "isEditContextRoot", "cancel"]
+                );
 
-                mockDomainObject.getCapability.andReturn(mockType);
+                capabilities = {
+                    type: mockType,
+                    editor: mockEditor
+                };
+
+                mockDomainObject.getCapability.andCallFake( function (name) {
+                    return capabilities[name];
+                });
+                mockDomainObject.hasCapability.andReturn(true);
                 mockType.hasFeature.andReturn(true);
 
                 actionContext = { domainObject: mockDomainObject };
@@ -70,50 +82,33 @@ define(
                 );
             });
 
-            it("is only applicable when a domain object is present", function () {
+            it("is only applicable when an editable domain object is present", function () {
                 expect(EditAction.appliesTo(actionContext)).toBeTruthy();
                 expect(EditAction.appliesTo({})).toBeFalsy();
+
+                expect(mockDomainObject.hasCapability).toHaveBeenCalledWith('editor');
                 // Should have checked for creatability
                 expect(mockType.hasFeature).toHaveBeenCalledWith('creation');
             });
 
-            //TODO: Disabled for NEM Beta
-            xit("changes URL path to edit mode when performed", function () {
+            it("is only applicable to objects not already in edit mode", function () {
+                mockEditor.isEditContextRoot.andReturn(false);
+                expect(EditAction.appliesTo(actionContext)).toBe(true);
+                mockEditor.isEditContextRoot.andReturn(true);
+                expect(EditAction.appliesTo(actionContext)).toBe(false);
+            });
+
+            it ("cancels editing when user navigates away", function () {
                 action.perform();
-                expect(mockLocation.path).toHaveBeenCalledWith("/edit");
+                expect(mockNavigationService.addListener).toHaveBeenCalled();
+                mockNavigationService.addListener.mostRecentCall.args[0]();
+                expect(mockEditor.cancel).toHaveBeenCalled();
             });
 
-            //TODO: Disabled for NEM Beta
-            xit("ensures that the edited object is navigated-to", function () {
+            it ("invokes the Edit capability on the object", function () {
                 action.perform();
-                expect(mockNavigationService.setNavigation)
-                    .toHaveBeenCalledWith(mockDomainObject);
+                expect(mockDomainObject.useCapability).toHaveBeenCalledWith("editor");
             });
-
-            //TODO: Disabled for NEM Beta
-            xit("logs a warning if constructed when inapplicable", function () {
-                // Verify precondition (ensure warn wasn't called during setup)
-                expect(mockLog.warn).not.toHaveBeenCalled();
-
-                // Should not have hit an exception...
-                new EditAction(
-                    mockLocation,
-                    mockNavigationService,
-                    mockLog,
-                    {}
-                ).perform();
-
-                // ...but should have logged a warning
-                expect(mockLog.warn).toHaveBeenCalled();
-
-                // And should not have had other interactions
-                expect(mockLocation.path)
-                    .not.toHaveBeenCalled();
-                expect(mockNavigationService.setNavigation)
-                    .not.toHaveBeenCalled();
-            });
-
-
 
         });
     }

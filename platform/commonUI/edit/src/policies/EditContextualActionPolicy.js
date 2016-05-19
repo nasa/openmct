@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Policy controlling whether the context menu is visible when
@@ -36,6 +34,11 @@ define(
          * from context menu of non-editable objects, when navigated object
          * is being edited
          * @constructor
+         * @param editModeBlacklist A blacklist of actions disallowed from
+         * context menu when navigated object is being edited
+         * @param nonEditContextBlacklist A blacklist of actions disallowed
+         * from context menu of non-editable objects, when navigated object
+         * @implements {Policy.<Action, ActionContext>}
          */
         function EditContextualActionPolicy(navigationService, editModeBlacklist, nonEditContextBlacklist) {
             this.navigationService = navigationService;
@@ -47,18 +50,13 @@ define(
             this.nonEditContextBlacklist = nonEditContextBlacklist;
         }
 
-        function isParentEditable(object) {
-            var parent = object.hasCapability("context") && object.getCapability("context").getParent();
-            return !!parent && parent.hasCapability("editor");
-        }
-
         EditContextualActionPolicy.prototype.allow = function (action, context) {
             var selectedObject = context.domainObject,
                 navigatedObject = this.navigationService.getNavigation(),
                 actionMetadata = action.getMetadata ? action.getMetadata() : {};
 
-            if (navigatedObject.hasCapability('editor')) {
-                if (selectedObject.hasCapability('editor') || isParentEditable(selectedObject)){
+            if (navigatedObject.hasCapability("editor") && navigatedObject.getCapability("editor").isEditContextRoot()) {
+                if (selectedObject.hasCapability("editor") && selectedObject.getCapability("editor").inEditContext()){
                     return this.editModeBlacklist.indexOf(actionMetadata.key) === -1;
                 } else {
                     //Target is in the context menu

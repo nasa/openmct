@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * Module defining SearchAggregator. Created by shale on 07/16/2015.
@@ -29,7 +28,6 @@ define([
 ], function (
 
 ) {
-    "use strict";
 
     /**
      * Aggregates multiple search providers as a singular search provider.

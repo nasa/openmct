@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./AccessorMutator', './ResizeHandle'],
     function (AccessorMutator, ResizeHandle) {
-        "use strict";
 
         // Index deltas for changes in order
         var ORDERS = {

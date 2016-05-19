@@ -19,13 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 
 define(
     ['../../src/controllers/TimelineZoomController'],
     function (TimelineZoomController) {
-        'use strict';
 
         describe("The timeline zoom state controller", function () {
             var testConfiguration,
@@ -84,10 +82,17 @@ define(
             it("persists zoom changes in Edit mode", function () {
                 mockScope.domainObject = jasmine.createSpyObj(
                     'domainObject',
-                    ['hasCapability']
+                    ['hasCapability', 'getCapability']
                 );
                 mockScope.domainObject.hasCapability.andCallFake(function (c) {
                     return c === 'editor';
+                });
+                mockScope.domainObject.getCapability.andCallFake(function (c) {
+                    if (c === 'editor') {
+                        return {
+                            inEditContext: function () {return true;}
+                        };
+                    }
                 });
                 controller.zoom(1);
                 expect(mockScope.commit).toHaveBeenCalled();

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * A policy for determining whether a region part should be visible or
@@ -41,7 +39,7 @@ define(
             if (!regionPart.modes){
                 return true;
             }
-            if (domainObject.getCapability('status').get('editing')){
+            if (domainObject.hasCapability('editor') && domainObject.getCapability('editor').inEditContext()){
                 //If the domain object is in edit mode, only include a part
                 // if it is marked editable
                 return regionPart.modes.indexOf('edit') !== -1;

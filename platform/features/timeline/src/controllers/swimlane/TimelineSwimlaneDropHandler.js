@@ -19,21 +19,20 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Handles drop (from drag-and-drop) initiated changes to a swimlane.
          * @constructor
          */
         function TimelineSwimlaneDropHandler(swimlane) {
-            // Check if we are in edit mode
+            // Check if we are in edit mode (also check parents)
             function inEditMode() {
-                return swimlane.domainObject.hasCapability("editor");
+                return swimlane.domainObject.hasCapability('editor') &&
+                    swimlane.domainObject.getCapability('editor').inEditContext();
             }
 
             // Boolean and (for reduce below)

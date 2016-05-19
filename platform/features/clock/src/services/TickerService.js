@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
-    ['moment'],
-    function (moment) {
-        "use strict";
+    [],
+    function () {
 
         /**
          * Calls functions every second, as close to the actual second

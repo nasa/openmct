@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * Module defining MenuArrowController. Created by shale on 06/30/2015.
@@ -27,7 +26,6 @@
 define(
     [],
     function () {
-        "use strict";
         
         /**
          * A left-click on the menu arrow should display a 

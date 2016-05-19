@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,xit,expect,beforeEach,jasmine*/
 
 define(
     ['../../src/actions/PropertiesAction'],
     function (PropertiesAction) {
-        "use strict";
 
         describe("Properties action", function () {
             var capabilities, model, object, context, input, dialogService, action;

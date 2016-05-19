@@ -19,10 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([], function () {
-    "use strict";
 
     /**
      * Policy suppressing move actions among editable and non-editable
@@ -37,10 +35,13 @@ define([], function () {
     EditableMovePolicy.prototype.allow = function (action, context) {
         var domainObject = context.domainObject,
             selectedObject = context.selectedObject,
-            key = action.getMetadata().key;
+            key = action.getMetadata().key,
+            isDomainObjectEditing = domainObject.hasCapability('editor') &&
+                domainObject.getCapability('editor').inEditContext();
 
-        if (key === 'move' && domainObject.hasCapability('editor')) {
-            return !!selectedObject && selectedObject.hasCapability('editor');
+        if (key === 'move' && isDomainObjectEditing) {
+            return !!selectedObject && selectedObject.hasCapability('editor') &&
+                selectedObject.getCapability('editor').inEditContext();
         }
 
         // Like all policies, allow by default.

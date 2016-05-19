@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ["../../src/controllers/TimerFormatter"],
     function (TimerFormatter) {
-        "use strict";
 
         var MS_IN_SEC = 1000,
             MS_IN_MIN = MS_IN_SEC * 60,
@@ -45,10 +43,6 @@ define(
                     mins * MS_IN_MIN,
                     secs * MS_IN_SEC
                 ].reduce(sum, 0);
-            }
-
-            function twoDigits(n) {
-                return n < 10 ? ('0' + n) : n;
             }
 
             it("formats short-form values (no days)", function () {

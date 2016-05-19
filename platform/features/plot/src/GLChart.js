@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Float32Array*/
 
 /**
  * Module defining GLPlot. Created by vwoeltje on 11/12/14.
@@ -27,7 +26,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         // WebGL shader sources (for drawing plain colors)
         var FRAGMENT_SHADER = [

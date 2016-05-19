@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./AbstractStartTimerAction'],
     function (AbstractStartTimerAction) {
-        "use strict";
 
         /**
          * Implements the "Start" action for timers.
@@ -49,8 +47,8 @@ define(
 
         StartTimerAction.appliesTo = function (context) {
             var model =
-                (context.domainObject && context.domainObject.getModel())
-                || {};
+                (context.domainObject && context.domainObject.getModel()) ||
+                {};
 
             // We show this variant for timers which do not yet have
             // a target time.

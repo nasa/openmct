@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Provide points for a cumulative resource summary graph, using
@@ -57,7 +55,6 @@ define(
             function initializeValues() {
                 var values = [],
                     slope = 0,
-                    previous = 0,
                     i;
 
                 // Add a point (or points, if needed) reaching to the provided

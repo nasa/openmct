@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         // Set of connection states; changing among these states will be
         // reflected in the indicator's appearance.
@@ -76,7 +74,7 @@ define(
 
 
             // Callback if the HTTP request to Couch fails
-            function handleError(err) {
+            function handleError() {
                 self.state = DISCONNECTED;
             }
 

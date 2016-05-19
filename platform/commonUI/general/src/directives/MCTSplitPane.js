@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        'use strict';
 
         // Pixel width to allocate for the splitter itself
         var DEFAULT_ANCHOR = 'left',
@@ -96,13 +94,6 @@ define(
          * @constructor
          */
         function MCTSplitPane($parse, $log, $interval) {
-            var anchors = {
-                left: true,
-                right: true,
-                top: true,
-                bottom: true
-            };
-
             function controller($scope, $element, $attrs) {
                 var anchorKey = $attrs.anchor || DEFAULT_ANCHOR,
                     anchor,
@@ -164,7 +155,7 @@ define(
                 // Getter-setter for the pixel offset of the splitter,
                 // relative to the current edge.
                 function getSetPosition(value) {
-                    var min, max, prior = position;
+                    var prior = position;
                     if (typeof value === 'number') {
                         position = value;
                         enforceExtrema();

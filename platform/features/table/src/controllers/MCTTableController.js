@@ -1,9 +1,7 @@
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * A controller for the MCTTable directive. Populates scope with
@@ -109,7 +107,7 @@ define(
             if (this.filterRows([row]).length === 1) {
                 //Insert the row into the correct position in the array
                 this.insertSorted(this.$scope.displayRows, row);
-                
+
                 //Resize the columns , then update the rows visible in the table
                 this.resize([this.$scope.sizingRow, row])
                     .then(this.setVisibleRows.bind(this))
@@ -127,7 +125,7 @@ define(
                 // Do a sequential search here. Only way of finding row is by
                 // object equality, so array is in effect unsorted.
                 indexInDisplayRows = this.$scope.displayRows.indexOf(row);
-                if (indexInDisplayRows != -1) {
+                if (indexInDisplayRows !== -1) {
                     this.$scope.displayRows.splice(indexInDisplayRows, 1);
                     this.setVisibleRows();
                 }
@@ -167,17 +165,8 @@ define(
 
             //No need to scroll
             if (this.$scope.displayRows.length < this.maxDisplayRows) {
-                //Check whether need to resynchronize visible with display
-                // rows (if data added)
-                if (this.$scope.visibleRows.length !=
-                    this.$scope.displayRows.length){
-                    start = 0;
-                    end = this.$scope.displayRows.length;
-                } else {
-                    //Data is in sync, and no need to calculate scroll,
-                    // so do nothing.
-                    return;
-                }
+                start = 0;
+                end = this.$scope.displayRows.length;
             } else {
                 //rows has exceeded display maximum, so may be necessary to
                 // scroll

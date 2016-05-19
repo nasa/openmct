@@ -19,8 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
-/*jslint es5: true */
 
 /**
  * PersistenceCapabilitySpec. Created by vwoeltje on 11/6/14.
@@ -28,7 +26,6 @@
 define(
     ["../../src/capabilities/PersistenceCapability"],
     function (PersistenceCapability) {
-        "use strict";
 
         describe("The persistence capability", function () {
             var mockPersistenceService,
@@ -156,18 +153,6 @@ define(
                     mockPersistenceService.readObject.andReturn(asPromise(refreshModel));
                     persistence.refresh();
                     expect(model).toEqual(refreshModel);
-                });
-
-                it("does not overwrite unpersisted changes on refresh", function () {
-                    var refreshModel = {someOtherKey: "some other value"},
-                        mockCallback = jasmine.createSpy();
-                    model.modified = 2;
-                    model.persisted = 1;
-                    mockPersistenceService.readObject.andReturn(asPromise(refreshModel));
-                    persistence.refresh().then(mockCallback);
-                    expect(model).not.toEqual(refreshModel);
-                    // Should have also indicated that no changes were actually made
-                    expect(mockCallback).toHaveBeenCalledWith(false);
                 });
 
                 it("does not trigger error notification on successful" +

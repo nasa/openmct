@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./PersistenceFailureDialog', './PersistenceFailureConstants'],
     function (PersistenceFailureDialog, PersistenceFailureConstants) {
-        "use strict";
 
         /**
          * Handle failures to persist domain object models.

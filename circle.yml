@@ -1,18 +1,16 @@
 deployment:
   production:
     branch: master
-    commands:
-      - npm install canvas nomnoml
-      - ./build-docs.sh
-      - git push git@heroku.com:openmctweb-demo.git $CIRCLE_SHA1:refs/heads/master
-  openmctweb-staging-un:
-    branch: nem_prototype
     heroku:
-      appname: openmctweb-staging-un
+      appname: openmctweb-demo
+  openmct-demo:
+    branch: live_demo
+    heroku:
+      appname: openmct-demo
   openmctweb-staging-deux:
     branch: mobile
     heroku:
       appname: openmctweb-staging-deux
 test:
   post:
-    - npm run jshint --silent
+    - gulp lint

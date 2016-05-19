@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * This bundle implements the directives for representing domain objects
@@ -29,7 +28,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Defines the mct-representation directive. This may be used to
@@ -55,8 +53,7 @@ define(
          * @param {ViewDefinition[]} views an array of view extensions
          */
         function MCTRepresentation(representations, views, representers, $q, templateLinker, $log) {
-            var representationMap = {},
-                gestureMap = {};
+            var representationMap = {};
 
             // Assemble all representations and views
             // The distinction between views and representations is
@@ -84,7 +81,7 @@ define(
                 }
             }
 
-            function link($scope, element, attrs, ctrl, transclude) {
+            function link($scope, element, attrs) {
                 var activeRepresenters = representers.map(function (Representer) {
                         return new Representer($scope, element, attrs);
                     }),
@@ -94,6 +91,7 @@ define(
                     couldEdit = false,
                     lastIdPath = [],
                     lastKey,
+                    statusListener,
                     changeTemplate = templateLinker.link($scope, element);
 
                 // Populate scope with any capabilities indicated by the
@@ -170,7 +168,7 @@ define(
                         representation = lookup($scope.key, domainObject),
                         uses = ((representation || {}).uses || []),
                         canRepresent = !!(representation && domainObject),
-                        canEdit = !!(domainObject && domainObject.hasCapability('editor')),
+                        canEdit = !!(domainObject && domainObject.hasCapability('editor') && domainObject.getCapability('editor').inEditContext()),
                         idPath = getIdPath(domainObject),
                         key = $scope.key;
 
@@ -242,6 +240,25 @@ define(
                 // (to a different object)
                 $scope.$watch("domainObject", refresh);
 
+                function listenForStatusChange(object) {
+                    if (statusListener) {
+                        statusListener();
+                    }
+                    statusListener = object.getCapability("status").listen(refresh);
+                }
+
+                /**
+                 * Add a listener to the object for status changes.
+                 */
+                $scope.$watch("domainObject", function (domainObject, oldDomainObject) {
+                    if (domainObject !== oldDomainObject){
+                        listenForStatusChange(domainObject);
+                    }
+                });
+                if ($scope.domainObject) {
+                    listenForStatusChange($scope.domainObject);
+                }
+
                 // Finally, also update when there is a new version of that
                 // same domain object; these changes should be tracked in the
                 // model's "modified" field, by the mutation capability.
@@ -250,6 +267,11 @@ define(
                 // Make sure any resources allocated by representers also get
                 // released.
                 $scope.$on("$destroy", destroyRepresenters);
+                $scope.$on("$destroy", function () {
+                    if (statusListener) {
+                        statusListener();
+                    }
+                });
 
                 // Do one initial refresh, so that we don't need another
                 // digest iteration just to populate the scope. Failure to
