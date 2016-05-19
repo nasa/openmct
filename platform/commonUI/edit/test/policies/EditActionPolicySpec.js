@@ -34,7 +34,7 @@ define(
                 mockEditAction,
                 mockPropertiesAction,
                 mockTypeCapability,
-                mockStatusCapability,
+                mockEditorCapability,
                 capabilities,
                 plotView,
                 policy;
@@ -48,11 +48,10 @@ define(
                         'getCapability'
                     ]
                 );
-                mockStatusCapability = jasmine.createSpyObj('statusCapability', ['get']);
-                mockStatusCapability.get.andReturn(false);
+                mockEditorCapability = jasmine.createSpyObj('editorCapability', ['isEditContextRoot']);
                 mockTypeCapability = jasmine.createSpyObj('type', ['getKey']);
                 capabilities = {
-                    'status': mockStatusCapability,
+                    'editor': mockEditorCapability,
                     'type': mockTypeCapability
                 };
 
@@ -112,7 +111,7 @@ define(
             it("disallows the edit action when object is already being" +
                 " edited", function () {
                 testViews = [ editableView ];
-                mockStatusCapability.get.andReturn(true);
+                mockEditorCapability.isEditContextRoot.andReturn(true);
                 expect(policy.allow(mockEditAction, testContext)).toBe(false);
             });
 

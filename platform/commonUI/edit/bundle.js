@@ -40,6 +40,9 @@ define([
     "./src/policies/EditContextualActionPolicy",
     "./src/representers/EditRepresenter",
     "./src/representers/EditToolbarRepresenter",
+    "./src/capabilities/EditorCapability",
+    "./src/capabilities/TransactionCapabilityDecorator",
+    "./src/services/TransactionService",
     "text!./res/templates/library.html",
     "text!./res/templates/edit-object.html",
     "text!./res/templates/edit-action-buttons.html",
@@ -66,6 +69,9 @@ define([
     EditContextualActionPolicy,
     EditRepresenter,
     EditToolbarRepresenter,
+    EditorCapability,
+    TransactionCapabilityDecorator,
+    TransactionService,
     libraryTemplate,
     editObjectTemplate,
     editActionButtonsTemplate,
@@ -128,8 +134,7 @@ define([
                     "depends": [
                         "$location",
                         "navigationService",
-                        "$log",
-                        "$q"
+                        "$log"
                     ],
                     "description": "Edit this object.",
                     "category": "view-control",
@@ -191,10 +196,7 @@ define([
                     "implementation": CancelAction,
                     "name": "Cancel",
                     "description": "Discard changes made to these objects.",
-                    "depends": [
-                        "$injector",
-                        "navigationService"
-                    ]
+                    "depends": []
                 }
             ],
             "policies": [
@@ -261,6 +263,27 @@ define([
                     "template": topbarEditTemplate
                 }
             ],
+            "components": [
+                {
+                    "type": "decorator",
+                    "provides": "capabilityService",
+                    "implementation": TransactionCapabilityDecorator,
+                    "depends": [
+                        "$q",
+                        "transactionService"
+                    ],
+                    "priority": "fallback"
+                },
+                {
+                    "type": "provider",
+                    "provides": "transactionService",
+                    "implementation": TransactionService,
+                    "depends": [
+                        "$q",
+                        "$log"
+                    ]
+                }
+            ],
             "representers": [
                 {
                     "implementation": EditRepresenter,
@@ -282,7 +305,18 @@ define([
                     "key": "nonEditContextBlacklist",
                     "value": ["copy", "follow", "properties", "move", "link", "remove", "locate"]
                 }
-            ]
+            ],
+            "capabilities": [
+                {
+                    "key": "editor",
+                    "name": "Editor Capability",
+                    "description": "Provides transactional editing capabilities",
+                    "implementation": EditorCapability,
+                    "depends": [
+                        "transactionService"
+                    ]
+                }
+            ],
         }
     });
 });

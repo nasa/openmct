@@ -60,7 +60,7 @@ define(
             // during editing.
             function doSave() {
                 return domainObject.getCapability("editor").save()
-                    .then(resolveWith(domainObject.getOriginalObject()));
+                    .then(resolveWith(domainObject));
             }
 
             // Discard the current root view (which will be the editing
@@ -85,7 +85,8 @@ define(
         SaveAction.appliesTo = function (context) {
             var domainObject = (context || {}).domainObject;
             return domainObject !== undefined &&
-                domainObject.hasCapability("editor") &&
+                domainObject.hasCapability('editor') &&
+                domainObject.getCapability('editor').isEditContextRoot() &&
                 domainObject.getModel().persisted !== undefined;
         };
 

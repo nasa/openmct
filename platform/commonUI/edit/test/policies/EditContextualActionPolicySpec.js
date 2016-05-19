@@ -32,16 +32,22 @@ define(
                 context,
                 navigatedObject,
                 mockDomainObject,
+                mockEditorCapability,
                 metadata,
                 editModeBlacklist = ["copy", "follow", "window", "link", "locate"],
                 nonEditContextBlacklist = ["copy", "follow", "properties", "move", "link", "remove", "locate"];
 
             beforeEach(function () {
-                navigatedObject = jasmine.createSpyObj("navigatedObject", ["hasCapability"]);
+                mockEditorCapability = jasmine.createSpyObj("editorCapability", ["isEditContextRoot", "inEditContext"]);
+
+                navigatedObject = jasmine.createSpyObj("navigatedObject", ["hasCapability", "getCapability"]);
+                navigatedObject.getCapability.andReturn(mockEditorCapability);
                 navigatedObject.hasCapability.andReturn(false);
+
 
                 mockDomainObject = jasmine.createSpyObj("domainObject", ["hasCapability", "getCapability"]);
                 mockDomainObject.hasCapability.andReturn(false);
+                mockDomainObject.getCapability.andReturn(mockEditorCapability);
 
                 navigationService = jasmine.createSpyObj("navigationService", ["getNavigation"]);
                 navigationService.getNavigation.andReturn(navigatedObject);
@@ -62,6 +68,7 @@ define(
             it('Allows "window" action when navigated object in edit mode,' +
                 ' but selected object not in edit mode ', function() {
                 navigatedObject.hasCapability.andReturn(true);
+                mockEditorCapability.isEditContextRoot.andReturn(true);
                 metadata.key = "window";
                 expect(policy.allow(mockAction, context)).toBe(true);
             });
@@ -91,6 +98,8 @@ define(
             it('Disallows "move" action when navigated object in edit mode,' +
                 ' but selected object not in edit mode ', function() {
                 navigatedObject.hasCapability.andReturn(true);
+                mockEditorCapability.isEditContextRoot.andReturn(true);
+                mockEditorCapability.inEditContext.andReturn(false);
                 metadata.key = "move";
                 expect(policy.allow(mockAction, context)).toBe(false);
             });
@@ -99,6 +108,9 @@ define(
                 ' selected object in edit mode', function() {
                 navigatedObject.hasCapability.andReturn(true);
                 mockDomainObject.hasCapability.andReturn(true);
+                mockEditorCapability.isEditContextRoot.andReturn(true);
+                mockEditorCapability.inEditContext.andReturn(true);
+
                 metadata.key = "copy";
                 expect(policy.allow(mockAction, context)).toBe(false);
             });

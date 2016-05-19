@@ -28,6 +28,7 @@ define(
             var mockSwimlane,
                 mockOtherObject,
                 mockActionCapability,
+                mockEditorCapability,
                 mockPersistence,
                 mockContext,
                 mockAction,
@@ -35,6 +36,8 @@ define(
 
             beforeEach(function () {
                 var mockPromise = jasmine.createSpyObj('promise', ['then']);
+
+                mockEditorCapability = jasmine.createSpyObj('editorCapability', ['inEditContext']);
 
                 mockSwimlane = jasmine.createSpyObj(
                     "swimlane",
@@ -86,19 +89,22 @@ define(
                 mockSwimlane.domainObject.getCapability.andCallFake(function (c) {
                     return {
                         action: mockActionCapability,
-                        persistence: mockPersistence
+                        persistence: mockPersistence,
+                        editor: mockEditorCapability
                     }[c];
                 });
                 mockSwimlane.parent.domainObject.getCapability.andCallFake(function (c) {
                     return {
                         action: mockActionCapability,
-                        persistence: mockPersistence
+                        persistence: mockPersistence,
+                        editor: mockEditorCapability
                     }[c];
                 });
                 mockOtherObject.getCapability.andCallFake(function (c) {
                     return {
                         action: mockActionCapability,
-                        context: mockContext
+                        context: mockContext,
+                        editor: mockEditorCapability
                     }[c];
                 });
                 mockContext.getParent.andReturn(mockOtherObject);
@@ -109,13 +115,14 @@ define(
             });
 
             it("disallows drop outside of edit mode", function () {
+                mockEditorCapability.inEditContext.andReturn(true);
                 // Verify precondition
                 expect(handler.allowDropIn('d', mockSwimlane.domainObject))
                     .toBeTruthy();
                 expect(handler.allowDropAfter('d', mockSwimlane.domainObject))
                     .toBeTruthy();
                 // Act as if we're not in edit mode
-                mockSwimlane.domainObject.hasCapability.andReturn(false);
+                mockEditorCapability.inEditContext.andReturn(false);
                 // Now, they should be disallowed
                 expect(handler.allowDropIn('d', mockSwimlane.domainObject))
                     .toBeFalsy();

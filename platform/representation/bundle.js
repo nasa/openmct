@@ -86,10 +86,7 @@ define([
                     "implementation": DropGesture,
                     "depends": [
                         "dndService",
-                        "$q",
-                        "navigationService",
-                        "instantiate",
-                        "typeService"
+                        "$q"
                     ]
                 },
                 {

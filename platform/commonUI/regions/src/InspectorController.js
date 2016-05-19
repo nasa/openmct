@@ -46,7 +46,11 @@ define(
                 });
             }
 
-            $scope.regions = filterRegions(typeCapability.getDefinition().inspector || new InspectorRegion());
+            function setRegions() {
+                $scope.regions = filterRegions(typeCapability.getDefinition().inspector || new InspectorRegion());
+            }
+
+            setRegions();
         }
 
         return InspectorController;
