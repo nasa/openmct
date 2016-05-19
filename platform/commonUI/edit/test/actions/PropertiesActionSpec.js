@@ -41,7 +41,6 @@ define(
                         getProperties: function () { return []; },
                         hasFeature: jasmine.createSpy('hasFeature')
                     },
-                    persistence: jasmine.createSpyObj("persistence", ["persist"]),
                     mutation: jasmine.createSpy("mutation")
                 };
                 model = {};
@@ -66,23 +65,16 @@ define(
                 action = new PropertiesAction(dialogService, context);
             });
 
-            it("persists when an action is performed", function () {
-                action.perform();
-                expect(capabilities.persistence.persist)
-                    .toHaveBeenCalled();
-            });
-
-            it("does not persist any changes upon cancel", function () {
-                input = undefined;
-                action.perform();
-                expect(capabilities.persistence.persist)
-                    .not.toHaveBeenCalled();
-            });
-
             it("mutates an object when performed", function () {
                 action.perform();
                 expect(capabilities.mutation).toHaveBeenCalled();
                 capabilities.mutation.mostRecentCall.args[0]({});
+            });
+
+            it("does not muate object upon cancel", function () {
+                input = undefined;
+                action.perform();
+                expect(capabilities.mutation).not.toHaveBeenCalled();
             });
 
             it("is only applicable when a domain object is in context", function () {
