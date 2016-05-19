@@ -22,13 +22,14 @@
 #* at runtime from the About dialog for additional information.
 #*****************************************************************************
 
-# Script to build and deploy docs to github pages.
+# Script to build and deploy docs.
 
 OUTPUT_DIRECTORY="target/docs"
+# Docs, once built, are pushed to the private website repo
 REPOSITORY_URL="git@github.com:nasa/openmct-website.git"
 WEBSITE_DIRECTORY="website"
 
-BUILD_SHA=`git rev-parse head`
+BUILD_SHA=`git rev-parse HEAD`
 
 # A remote will be created for the git repository we are pushing to.
 # Don't worry, as this entire directory will get trashed inbetween builds.
@@ -55,6 +56,7 @@ git config user.name "BuildBot"
 
 echo "git add ."
 git add .
-echo "git commit -m \"Docs updated from build build $BUILD_SHA\""
-git commit -m "Docs updated from build build $BUILD_SHA"
+echo "git commit -m \"Docs updated from build $BUILD_SHA\""
+git commit -m "Docs updated from build $BUILD_SHA"
+# Push to the website repo
 git push

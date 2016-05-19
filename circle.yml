@@ -1,13 +1,11 @@
 deployment:
   production:
     branch: master
-    heroku:
-      appname: openmctweb-demo
-  website:
-    branch: openmct-website
     commands:
         - npm install canvas nomnoml
         - ./build-docs.sh
+    heroku:
+      appname: openmctweb-demo
   openmct-demo:
     branch: live_demo
     heroku:
