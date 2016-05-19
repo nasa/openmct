@@ -30,7 +30,6 @@ define(
                 mockScope,
                 testRepresentation,
                 mockDomainObject,
-                mockPersistence,
                 mockStatusCapability,
                 mockEditorCapability,
                 mockCapabilities,
@@ -56,15 +55,12 @@ define(
                     "useCapability",
                     "hasCapability"
                 ]);
-                mockPersistence =
-                    jasmine.createSpyObj("persistence", ["persist"]);
                 mockStatusCapability =
                     jasmine.createSpyObj("statusCapability", ["listen"]);
                 mockEditorCapability =
                     jasmine.createSpyObj("editorCapability", ["isEditContextRoot"]);
 
                 mockCapabilities = {
-                    'persistence': mockPersistence,
                     'status': mockStatusCapability,
                     'editor': mockEditorCapability
                 };
@@ -96,7 +92,7 @@ define(
                 expect(representer.listenHandle).toHaveBeenCalled();
             });
 
-            it("mutates and persists upon observed changes", function () {
+            it("mutates upon observed changes", function () {
                 mockScope.model = { someKey: "some value" };
                 mockScope.configuration = { someConfiguration: "something" };
 
@@ -107,9 +103,6 @@ define(
                     "mutation",
                     jasmine.any(Function)
                 );
-
-                // ... and should have persisted the mutation
-                expect(mockPersistence.persist).toHaveBeenCalled();
 
                 // Finally, check that the provided mutation function
                 // includes both model and configuratioon
