@@ -57,3 +57,4 @@ echo "git add ."
 git add .
 echo "git commit -m \"Docs updated from build build $BUILD_SHA\""
 git commit -m "Docs updated from build build $BUILD_SHA"
+git push
