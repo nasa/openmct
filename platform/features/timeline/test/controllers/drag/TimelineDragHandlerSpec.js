@@ -32,7 +32,6 @@ define(
                 mockDomainObjects,
                 mockTimespans,
                 mockMutations,
-                mockPersists,
                 mockCallback,
                 handler;
 
@@ -66,7 +65,6 @@ define(
                 mockDomainObject.useCapability.andReturn(asPromise(mockTimespans[id]));
                 mockDomainObject.getCapability.andCallFake(function (c) {
                     return {
-                        persistence: mockPersists[id],
                         mutation: mockMutations[id]
                     }[c];
                 });
@@ -76,16 +74,11 @@ define(
 
             beforeEach(function () {
                 mockTimespans = {};
-                mockPersists = {};
                 mockMutations = {};
                 ['a', 'b', 'c', 'd', 'e', 'f'].forEach(function (id, index) {
                     mockTimespans[id] = jasmine.createSpyObj(
                         'timespan-' + id,
                         [ 'getStart', 'getEnd', 'getDuration', 'setStart', 'setEnd', 'setDuration' ]
-                    );
-                    mockPersists[id] = jasmine.createSpyObj(
-                        'persistence-' + id,
-                        [ 'persist' ]
                     );
                     mockMutations[id] = jasmine.createSpyObj(
                         'mutation-' + id,
@@ -208,20 +201,6 @@ define(
                 expect(mockTimespans.b.setStart).toHaveBeenCalledWith(0);
                 expect(mockTimespans.c.setStart).toHaveBeenCalledWith(1000);
             });
-
-            it("persists mutated objects", function () {
-                handler.start('a', 20);
-                handler.end('b', 50);
-                handler.duration('c', 30);
-                handler.persist();
-                expect(mockPersists.a.persist).toHaveBeenCalled();
-                expect(mockPersists.b.persist).toHaveBeenCalled();
-                expect(mockPersists.c.persist).toHaveBeenCalled();
-                expect(mockPersists.d.persist).not.toHaveBeenCalled();
-                expect(mockPersists.e.persist).not.toHaveBeenCalled();
-                expect(mockPersists.f.persist).not.toHaveBeenCalled();
-            });
-
 
         });
     }
