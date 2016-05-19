@@ -139,20 +139,12 @@ define(
                     parentModel,
                     parentObject,
                     compositionPromise,
-                    persistencePromise,
                     addPromise,
-                    compositionCapability,
-                    persistenceCapability;
+                    compositionCapability;
 
                 beforeEach(function () {
                     compositionPromise = new ControlledPromise();
-                    persistencePromise = new ControlledPromise();
                     addPromise = new ControlledPromise();
-                    persistenceCapability = jasmine.createSpyObj(
-                        'persistenceCapability',
-                        ['persist']
-                    );
-                    persistenceCapability.persist.andReturn(persistencePromise);
                     compositionCapability = jasmine.createSpyObj(
                         'compositionCapability',
                         ['invoke', 'add']
@@ -172,7 +164,6 @@ define(
                                     return new ControlledPromise();
                                 }
                             },
-                            persistence: persistenceCapability,
                             composition: compositionCapability
                         }
                     });
@@ -197,15 +188,6 @@ define(
                         .toHaveBeenCalledWith(object);
                 });
 
-                it("persists parent", function () {
-                    linkService.perform(object, parentObject);
-                    expect(addPromise.then).toHaveBeenCalled();
-                    addPromise.resolve(linkedObject);
-                    expect(parentObject.getCapability)
-                        .toHaveBeenCalledWith('persistence');
-                    expect(persistenceCapability.persist).toHaveBeenCalled();
-                });
-
                 it("returns object representing new link", function () {
                     var returnPromise, whenComplete;
                     returnPromise = linkService.perform(object, parentObject);
@@ -213,7 +195,6 @@ define(
                     returnPromise.then(whenComplete);
 
                     addPromise.resolve(linkedObject);
-                    persistencePromise.resolve();
                     compositionPromise.resolve([linkedObject]);
                     expect(whenComplete).toHaveBeenCalledWith(linkedObject);
                 });
