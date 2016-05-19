@@ -55,8 +55,6 @@ define(
                         timespans[id] = timespan;
                         // And its mutation capability
                         mutations[id] = domainObject.getCapability('mutation');
-                        // Also cache the persistence capability for later
-                        persists[id] = domainObject.getCapability('persistence');
                         // And the composition, for bulk moves
                         compositions[id] = domainObject.getModel().composition || [];
                     });
