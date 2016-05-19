@@ -50,10 +50,6 @@ define(
                     'mutation',
                     ['mutate']
                 );
-                mockCapabilities.persistence = jasmine.createSpyObj(
-                    'persistence',
-                    ['persist']
-                );
                 mockCapabilities.type = jasmine.createSpyObj(
                     'type',
                     ['instanceOf']
@@ -115,11 +111,6 @@ define(
                     .toHaveBeenCalledWith(jasmine.any(Function));
                 mockCapabilities.mutation.mutate.mostRecentCall.args[0](testModel);
                 expect(testModel.relationships.modes).toEqual(['abc', 'xyz']);
-
-                // Verify that persistence is called when promise resolves
-                expect(mockCapabilities.persistence.persist).not.toHaveBeenCalled();
-                mockPromise.then.mostRecentCall.args[0]();
-                expect(mockCapabilities.persistence.persist).toHaveBeenCalled();
             });
 
             it("mutates modes when used as a setter", function () {
@@ -128,11 +119,6 @@ define(
                     .toHaveBeenCalledWith(jasmine.any(Function));
                 mockCapabilities.mutation.mutate.mostRecentCall.args[0](testModel);
                 expect(testModel.link).toEqual("http://www.noaa.gov");
-
-                // Verify that persistence is called when promise resolves
-                expect(mockCapabilities.persistence.persist).not.toHaveBeenCalled();
-                mockPromise.then.mostRecentCall.args[0]();
-                expect(mockCapabilities.persistence.persist).toHaveBeenCalled();
             });
 
             it("does not mutate modes when unchanged", function () {
