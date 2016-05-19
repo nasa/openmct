@@ -22,8 +22,6 @@
 /*global define*/
 
 define([], function () {
-    'use strict';
-
     /**
      * Listens for mutation on domain objects and triggers mutation when
      * it occurs.

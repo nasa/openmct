@@ -45,9 +45,6 @@ define(
                     [ 'getCapability', 'useCapability' ]
                 );
 
-                mockDomainObject.getCapability.andCallFake(function (c) {
-                    return (c === 'persistence') && mockPersistence;
-                });
                 mockDomainObject.useCapability.andCallFake(function (c, v) {
                     if (c === 'mutation') {
                         testModel = v(testModel) || testModel;

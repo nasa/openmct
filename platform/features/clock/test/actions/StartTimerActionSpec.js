@@ -27,7 +27,6 @@ define(
         describe("A timer's start action", function () {
             var mockNow,
                 mockDomainObject,
-                mockPersistence,
                 testModel,
                 testContext,
                 action;
