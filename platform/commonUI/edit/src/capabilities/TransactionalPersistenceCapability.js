@@ -93,6 +93,10 @@ define(
             return this.persistenceCapability.getSpace();
         };
 
+        TransactionalPersistenceCapability.prototype.persisted = function () {
+            return this.persistenceCapability.persisted();
+        };
+
         return TransactionalPersistenceCapability;
     }
 );
