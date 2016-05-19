@@ -43,11 +43,11 @@ fi
 npm run docs
 
 echo "git clone $REPOSITORY_URL website"
-git clone $REPOSITORY_URL website
+git clone $REPOSITORY_URL website || exit 1
 echo "cp -r $OUTPUT_DIRECTORY $WEBSITE_DIRECTORY/docs"
 cp -r $OUTPUT_DIRECTORY $WEBSITE_DIRECTORY/docs
 echo "cd $WEBSITE_DIRECTORY"
-cd $WEBSITE_DIRECTORY
+cd $WEBSITE_DIRECTORY || exit 1
 
 # Configure github for CircleCI user.
 git config user.email "buildbot@circleci.com"
@@ -57,5 +57,3 @@ echo "git add ."
 git add .
 echo "git commit -m \"Docs updated from build build $BUILD_SHA\""
 git commit -m "Docs updated from build build $BUILD_SHA"
-echo "git push"
-git push

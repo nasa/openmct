@@ -6,9 +6,8 @@ deployment:
   website:
     branch: openmct-website
     commands:
-        - git clone
-        - git push git@heroku.com:openmctweb-demo.git $CIRCLE_SHA1:refs/heads/master
-
+        - npm install canvas nomnoml
+        - ./build-docs.sh
   openmct-demo:
     branch: live_demo
     heroku:
