@@ -17,3 +17,8 @@ deployment:
 test:
   post:
     - gulp lint
+
+general:
+  branches:
+    ignore:
+      - gh-pages
