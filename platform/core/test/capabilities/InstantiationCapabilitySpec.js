@@ -73,16 +73,16 @@ define(
             });
 
             it("uses the instantiate service to create domain objects", function () {
-                var mockDomainObject = jasmine.createSpyObj('domainObject', [
+                var mockDomainObj = jasmine.createSpyObj('domainObject', [
                     'getId',
                     'getModel',
                     'getCapability',
                     'useCapability',
                     'hasCapability'
                 ]), testModel = { someKey: "some value" };
-                mockInstantiate.andReturn(mockDomainObject);
+                mockInstantiate.andReturn(mockDomainObj);
                 expect(instantiation.instantiate(testModel))
-                    .toBe(mockDomainObject);
+                    .toBe(mockDomainObj);
                 expect(mockInstantiate)
                     .toHaveBeenCalledWith({
                         someKey: "some value",

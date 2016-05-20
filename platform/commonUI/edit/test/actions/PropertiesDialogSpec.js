@@ -37,11 +37,11 @@ define(
                 model = { x: "initial value" };
                 properties = ["x", "y", "z"].map(function (k) {
                     return {
-                        getValue: function (model) {
-                            return model[k];
+                        getValue: function (m) {
+                            return m[k];
                         },
-                        setValue: function (model, v) {
-                            model[k] = v;
+                        setValue: function (m, v) {
+                            m[k] = v;
                         },
                         getDefinition: function () {
                             return { control: 'textfield '};

@@ -38,7 +38,7 @@ define(
                 };
             }
 
-            function mockProvider(key, index) {
+            function makeMockProvider(key, index) {
                 var provider = jasmine.createSpyObj(
                         "provider" + index,
                         ["requestTelemetry", "subscribe"]
@@ -57,7 +57,7 @@ define(
                 mockQ.all.andReturn(mockPromise([]));
 
                 mockUnsubscribes = [];
-                mockProviders = ["a", "b", "c"].map(mockProvider);
+                mockProviders = ["a", "b", "c"].map(makeMockProvider);
 
                 aggregator = new TelemetryAggregator(mockQ, mockProviders);
             });

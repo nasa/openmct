@@ -55,8 +55,8 @@ define([
             if (!!model.composition) {
                 mockDomainObject.useCapability.andCallFake(function (c) {
                     return c === 'composition' &&
-                        Promise.resolve(model.composition.map(function (id) {
-                            return mockDomainObjects[id];
+                        Promise.resolve(model.composition.map(function (cid) {
+                            return mockDomainObjects[cid];
                         }));
                 });
             }
@@ -68,8 +68,8 @@ define([
                 );
                 mockRelationships.getRelatedObjects.andCallFake(function (k) {
                     var ids = model.relationships[k] || [];
-                    return Promise.resolve(ids.map(function (id) {
-                        return mockDomainObjects[id];
+                    return Promise.resolve(ids.map(function (objId) {
+                        return mockDomainObjects[objId];
                     }));
                 });
                 mockDomainObject.getCapability.andCallFake(function (c) {

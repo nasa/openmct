@@ -152,7 +152,7 @@ define(
             });
 
             it("validates selection types using policy", function () {
-                var mockDomainObject = jasmine.createSpyObj(
+                var mockDomainObj = jasmine.createSpyObj(
                         'domainObject',
                         ['getCapability']
                     ),
@@ -166,8 +166,8 @@ define(
                     rows = structure.sections[sections.length - 1].rows,
                     locationRow = rows[rows.length - 1];
 
-                mockDomainObject.getCapability.andReturn(mockOtherType);
-                locationRow.validate(mockDomainObject);
+                mockDomainObj.getCapability.andReturn(mockOtherType);
+                locationRow.validate(mockDomainObj);
 
                 // Should check policy to see if the user-selected location
                 // can actually contain objects of this type

@@ -133,11 +133,11 @@ define(
                 self = this;
 
             // Initialize toolbar (expose object to parent scope)
-            function initialize(definition) {
+            function initialize(def) {
                 // If we have been asked to expose toolbar state...
                 if (self.attrs.toolbar) {
                     // Initialize toolbar object
-                    self.toolbar = new EditToolbar(definition, self.commit);
+                    self.toolbar = new EditToolbar(def, self.commit);
                     // Ensure toolbar state is exposed
                     self.exposeToolbar();
                 }

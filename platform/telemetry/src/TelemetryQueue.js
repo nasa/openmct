@@ -93,11 +93,11 @@ define(
 
             // Look up an object in the queue that does not have a value
             // assigned to this key (or, add a new one)
-            function getFreeObject(key) {
-                var index = counts[key] || 0, object;
+            function getFreeObject(k) {
+                var index = counts[k] || 0, object;
 
                 // Track the largest free position for this key
-                counts[key] = index + 1;
+                counts[k] = index + 1;
 
                 // If it's before the end of the queue, add it there
                 if (index < queue.length) {

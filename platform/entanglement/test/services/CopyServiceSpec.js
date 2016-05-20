@@ -458,17 +458,17 @@ define(
                     });
 
                     it("throws an error", function () {
-                        var copyService =
+                        var service =
                             new CopyService(mockQ, policyService);
 
                         function perform() {
-                            copyService.perform(object, newParent);
+                            service.perform(object, newParent);
                         }
 
-                        spyOn(copyService, "validate");
-                        copyService.validate.andReturn(true);
+                        spyOn(service, "validate");
+                        service.validate.andReturn(true);
                         expect(perform).not.toThrow();
-                        copyService.validate.andReturn(false);
+                        service.validate.andReturn(false);
                         expect(perform).toThrow();
                     });
                 });

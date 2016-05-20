@@ -159,8 +159,8 @@ define(
             }
 
             function lookupTypeDef(typeKey) {
-                function buildTypeDef(typeKey) {
-                    var typeDefs = typeDefinitions[typeKey] || [],
+                function buildTypeDef(typeKeyToBuild) {
+                    var typeDefs = typeDefinitions[typeKeyToBuild] || [],
                         inherits = typeDefs.map(function (typeDef) {
                             return asArray(typeDef.inherits || []);
                         }).reduce(function (a, b) {
@@ -175,7 +175,7 @@ define(
                     // Always provide a default name
                     def.model = def.model || {};
                     def.model.name = def.model.name ||
-                    ("Unnamed " + (def.name || "Object"));
+                        ("Unnamed " + (def.name || "Object"));
 
                     return def;
                 }

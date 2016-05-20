@@ -79,8 +79,8 @@ define(
                 // On any touch on the body, default body touches/events
                 // are prevented, the bubble is dismissed, and the touchstart
                 // body event is unbound, reallowing gestures
-                body.on('touchstart', function (event) {
-                    event.preventDefault();
+                body.on('touchstart', function (evt) {
+                    evt.preventDefault();
                     hideBubble();
                     body.unbind('touchstart');
                 });

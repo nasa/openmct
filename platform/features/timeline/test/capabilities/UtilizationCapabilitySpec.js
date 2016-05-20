@@ -69,8 +69,8 @@ define(
                             resources: function () {
                                 return Object.keys(costs).sort();
                             },
-                            cost: function (c) {
-                                return costs[c];
+                            cost: function (k) {
+                                return costs[k];
                             }
                         });
                     },

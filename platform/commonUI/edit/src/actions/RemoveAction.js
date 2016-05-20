@@ -75,8 +75,8 @@ define(
              * Invoke persistence on a domain object. This will be called upon
              * the removed object's parent (as its composition will have changed.)
              */
-            function doPersist(domainObject) {
-                var persistence = domainObject.getCapability('persistence');
+            function doPersist(domainObj) {
+                var persistence = domainObj.getCapability('persistence');
                 return persistence && persistence.persist();
             }
 

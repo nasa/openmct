@@ -32,15 +32,15 @@ define(
             /**
              * Set default values for optional parameters on a given scope
              */
-            function setDefaults($scope) {
-                if (typeof $scope.enableFilter === 'undefined') {
-                    $scope.enableFilter = true;
-                    $scope.filters = {};
+            function setDefaults(scope) {
+                if (typeof scope.enableFilter === 'undefined') {
+                    scope.enableFilter = true;
+                    scope.filters = {};
                 }
-                if (typeof $scope.enableSort === 'undefined') {
-                    $scope.enableSort = true;
-                    $scope.sortColumn = undefined;
-                    $scope.sortDirection = undefined;
+                if (typeof scope.enableSort === 'undefined') {
+                    scope.enableSort = true;
+                    scope.sortColumn = undefined;
+                    scope.sortDirection = undefined;
                 }
             }
 
@@ -485,13 +485,13 @@ define(
             /**
              * Returns true if row matches all filters.
              */
-            function matchRow(filters, row) {
-                return Object.keys(filters).every(function (key) {
+            function matchRow(filterMap, row) {
+                return Object.keys(filterMap).every(function (key) {
                     if (!row[key]) {
                         return false;
                     }
                     var testVal = String(row[key].text).toLowerCase();
-                    return testVal.indexOf(filters[key]) !== -1;
+                    return testVal.indexOf(filterMap[key]) !== -1;
                 });
             }
 

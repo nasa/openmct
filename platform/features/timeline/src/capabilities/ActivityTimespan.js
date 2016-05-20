@@ -52,25 +52,25 @@ define(
             // Set the start time associated with this object
             function setStart(value) {
                 var end = getEnd();
-                mutation.mutate(function (model) {
-                    model.start.timestamp = Math.max(value, 0);
+                mutation.mutate(function (m) {
+                    m.start.timestamp = Math.max(value, 0);
                     // Update duration to keep end time
-                    model.duration.timestamp = Math.max(end - value, 0);
+                    m.duration.timestamp = Math.max(end - value, 0);
                 }, model.modified);
             }
 
             // Set the duration associated with this object
             function setDuration(value) {
-                mutation.mutate(function (model) {
-                    model.duration.timestamp = Math.max(value, 0);
+                mutation.mutate(function (m) {
+                    m.duration.timestamp = Math.max(value, 0);
                 }, model.modified);
             }
 
             // Set the end time associated with this object
             function setEnd(value) {
                 var start = getStart();
-                mutation.mutate(function (model) {
-                    model.duration.timestamp = Math.max(value - start, 0);
+                mutation.mutate(function (m) {
+                    m.duration.timestamp = Math.max(value - start, 0);
                 }, model.modified);
             }
 

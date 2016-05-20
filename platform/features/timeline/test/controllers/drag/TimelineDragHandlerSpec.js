@@ -56,22 +56,22 @@ define(
             }
 
             function makeMockDomainObject(id, composition) {
-                var mockDomainObject = jasmine.createSpyObj(
+                var mockDomainObj = jasmine.createSpyObj(
                     'domainObject-' + id,
                     ['getId', 'getModel', 'getCapability', 'useCapability']
                 );
 
-                mockDomainObject.getId.andReturn(id);
-                mockDomainObject.getModel.andReturn({ composition: composition });
-                mockDomainObject.useCapability.andReturn(asPromise(mockTimespans[id]));
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockDomainObj.getId.andReturn(id);
+                mockDomainObj.getModel.andReturn({ composition: composition });
+                mockDomainObj.useCapability.andReturn(asPromise(mockTimespans[id]));
+                mockDomainObj.getCapability.andCallFake(function (c) {
                     return {
                         persistence: mockPersists[id],
                         mutation: mockMutations[id]
                     }[c];
                 });
 
-                return mockDomainObject;
+                return mockDomainObj;
             }
 
             beforeEach(function () {

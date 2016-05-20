@@ -50,8 +50,8 @@ define(
             var context = domainObject &&
                     domainObject.getCapability('context'),
                 objectPath = context ? context.getPath() : [],
-                ids = objectPath.map(function (domainObject) {
-                    return domainObject.getId();
+                ids = objectPath.map(function (domainObj) {
+                    return domainObj.getId();
                 });
 
             // Parses the path together. Starts with the

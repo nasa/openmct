@@ -124,8 +124,8 @@ define(
                     this.persistenceService.createObject;
 
             // Update persistence timestamp...
-            domainObject.useCapability("mutation", function (model) {
-                model.persisted = modified;
+            domainObject.useCapability("mutation", function (m) {
+                m.persisted = modified;
             }, modified);
 
             // ...and persist

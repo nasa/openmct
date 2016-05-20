@@ -75,11 +75,14 @@ define(
 
                 // Look up resources for a domain object
                 function lookupResources(swimlane) {
-                    var graphs = swimlane.domainObject.useCapability('graph');
+                    var graphPromise =
+                        swimlane.domainObject.useCapability('graph');
                     function getKeys(obj) {
                         return Object.keys(obj);
                     }
-                    return $q.when(graphs ? (graphs.then(getKeys)) : []);
+                    return $q.when(
+                        graphPromise ? (graphPromise.then(getKeys)) : []
+                    );
                 }
 
                 // Add all graph assignments appropriate for this swimlane
