@@ -43,6 +43,7 @@
                     <div class="t-swimlanes-holder l-swimlanes-holder"
                          mct-scroll-y="scroll.y">
                         <mct-include key="'timeline-tabular-swimlane-cols-tree'"
+                                     parameters="{ commit: commit }"
                                      ng-repeat="swimlane in timelineController.swimlanes()"
                                      ng-model="swimlane">
                         </mct-include>
