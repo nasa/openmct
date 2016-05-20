@@ -24,6 +24,7 @@ define ([
     'legacyRegistry'
 ], function (legacyRegistry) {
     var PREFIX = "msl-images:",
+        SOURCE = "msl-images",
         CAMERAS = {
             fhaz: "Front Hazard Avoidance Camera",
             rhaz: "Rear Hazard Avoidance Camera",
@@ -42,8 +43,9 @@ define ([
     MSLImageModelProvider.prototype.getModels = function (ids) {
         function modelFor(cam) {
             return {
-                type: "folder",
-                name: CAMERAS[cam]
+                type: "msl.image",
+                name: CAMERAS[cam],
+                telemetry: { key: cam }
             };
         }
 
@@ -56,6 +58,66 @@ define ([
             result[id] = modelFor(cam);
             return result;
         }, {}));
+    };
+
+
+    function MSLImageTelemetrySeries(photos) {
+        this.photos = photos;
+    }
+
+    MSLImageTelemetrySeries.prototype.getPointCount = function () {
+        return this.photos.length;
+    };
+
+    MSLImageTelemetrySeries.prototype.getDomainValue = function (i, key) {
+        return new Date(this.photos[i][key || 'earth_date']).valueOf();
+    };
+
+    MSLImageTelemetrySeries.prototype.getRangeValue = function (i, key) {
+        return this.photos[i][key || 'img_src'];
+    };
+
+
+    function MSLImageTelemetryProvider($q, $http) {
+        this.$q = $q;
+        this.$http = $http;
+    }
+
+
+    MSLImageTelemetryProvider.prototype.subscribe = function () {
+        return function () {};
+    };
+
+    MSLImageTelemetryProvider.prototype.requestTelemetry = function (requests) {
+        var $http = this.$http;
+
+        function issueRequest(request) {
+            var cam = request.key;
+            var url =
+                "https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=1000&camera=" +
+                cam +
+                "&api_key=DEMO_KEY";
+
+            return $http.get(url).then(function (result) {
+                return new MSLImageTelemetrySeries(result.data.photos);
+            });
+        }
+
+        function packageResponse(seriesArray) {
+            var result = {};
+            result[SOURCE] =
+                seriesArray.reduce(function (packaged, series, index) {
+                    packaged[requests[index].key] = series;
+                    return packaged;
+                }, {});
+            return result;
+        }
+
+        requests = requests.filter(function (request) {
+            return request.source === SOURCE;
+        });
+
+        return this.$q.all(requests.map(issueRequest)).then(packageResponse);
     };
 
 
@@ -80,6 +142,41 @@ define ([
                     "provides": "modelService",
                     "implementation": MSLImageModelProvider,
                     "depends": ["$q"]
+                },
+                {
+                    "type": "provider",
+                    "provides": "telemetryService",
+                    "implementation": MSLImageTelemetryProvider,
+                    "depends": ["$q", "$http"]
+                }
+            ],
+            "types": [
+                {
+                    "key": "msl.image",
+                    "name": "MSL Image",
+                    "description": "Images from Curiosity",
+                    "telemetry": {
+                        "source": SOURCE,
+                        "domains": [
+                            {
+                                "key": "earth_date",
+                                "name": "Earth date",
+                                "format": "utc"
+                            }
+                        ],
+                        "ranges": [
+                            {
+                                "key": "id",
+                                "name": "ID",
+                                "format": "number"
+                            },
+                            {
+                                "key": "img_src",
+                                "name": "Image",
+                                "format": "url"
+                            }
+                        ]
+                    }
                 }
             ]
         }
