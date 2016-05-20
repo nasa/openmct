@@ -23,7 +23,9 @@
 define ([
     'legacyRegistry'
 ], function (legacyRegistry) {
-    var PREFIX = "msl-images:",
+    var ROOT_ID = "msl:images",
+        TYPE = "msl.image",
+        PREFIX = "msl-images:",
         SOURCE = "msl-images",
         CAMERAS = {
             fhaz: "Front Hazard Avoidance Camera",
@@ -43,8 +45,9 @@ define ([
     MSLImageModelProvider.prototype.getModels = function (ids) {
         function modelFor(cam) {
             return {
-                type: "msl.image",
+                type: TYPE,
                 name: CAMERAS[cam],
+                location: ROOT_ID,
                 telemetry: { key: cam }
             };
         }
@@ -125,7 +128,7 @@ define ([
         "extensions": {
             "roots": [
                 {
-                    "id": "msl:images",
+                    "id": ROOT_ID,
                     "priority" : "preferred",
                     "model": {
                         "type": "folder",
@@ -152,7 +155,7 @@ define ([
             ],
             "types": [
                 {
-                    "key": "msl.image",
+                    "key": TYPE,
                     "name": "MSL Image",
                     "description": "Images from Curiosity",
                     "telemetry": {
