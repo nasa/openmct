@@ -38,7 +38,6 @@ define(
         function InfoGestureButton($document, agentService, infoService, element, domainObject) {
             var dismissBubble,
                 touchPosition,
-                scopeOff,
                 body = $document.find('body');
 
             function trackPosition(event) {
@@ -94,10 +93,6 @@ define(
                 element.on('click', showBubble);
             }
 
-            // Also make sure we dismiss bubble if representation is destroyed
-            // before the mouse actually leaves it
-            scopeOff = element.scope().$on('$destroy', hideBubble);
-
             return {
                 /**
                  * Detach any event handlers associated with this gesture.
@@ -109,7 +104,6 @@ define(
                     hideBubble();
                     // ...and detach listeners
                     element.off('click', showBubble);
-                    scopeOff();
                 }
             };
         }
