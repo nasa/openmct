@@ -16,7 +16,7 @@
         "define",
         "Promise"
     ],
-    "shadow": "inner",
+    "shadow": "outer",
     "strict": "implied",
     "undef": true,
     "unused": "vars"
