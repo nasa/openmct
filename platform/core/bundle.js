@@ -414,7 +414,7 @@ define([
             "runs": [
                 {
                     "implementation": PersistingMutationListener,
-                    "depends": [ "topic" ]
+                    "depends": ["topic"]
                 }
             ],
             "constants": [
