@@ -30,6 +30,8 @@ define(
                 mockTypeCapability,
                 mockTypeDefinition,
                 mockPolicyService,
+                mockStatusCapability,
+                capabilities = {},
                 controller;
 
             beforeEach(function(){
@@ -47,19 +49,29 @@ define(
                     'getDefinition'
                 ]);
                 mockTypeCapability.getDefinition.andReturn(mockTypeDefinition);
+                capabilities.type = mockTypeCapability;
+
+                mockStatusCapability = jasmine.createSpyObj('statusCapability', [
+                    'listen'
+                ]);
+                capabilities.status = mockStatusCapability;
 
                 mockDomainObject = jasmine.createSpyObj('domainObject', [
                     'getCapability'
                 ]);
-                mockDomainObject.getCapability.andReturn(mockTypeCapability);
+                mockDomainObject.getCapability.andCallFake(function (name) {
+                   return capabilities[name];
+                });
 
                 mockPolicyService = jasmine.createSpyObj('policyService', [
                    'allow'
                 ]);
 
-                mockScope = {
-                    domainObject: mockDomainObject
-                };
+                mockScope = jasmine.createSpyObj('$scope',
+                    ['$on']
+                );
+
+                mockScope.domainObject = mockDomainObject;
             });
 
             it("filters out regions disallowed by region policy", function() {
@@ -72,6 +84,25 @@ define(
                 mockPolicyService.allow.andReturn(true);
                 controller = new InspectorController(mockScope, mockPolicyService);
                 expect(mockScope.regions.length).toBe(2);
+            });
+
+            it("Responds to status changes", function() {
+                mockPolicyService.allow.andReturn(true);
+                controller = new InspectorController(mockScope, mockPolicyService);
+                expect(mockScope.regions.length).toBe(2);
+                expect(mockStatusCapability.listen).toHaveBeenCalled();
+                mockPolicyService.allow.andReturn(false);
+                mockStatusCapability.listen.mostRecentCall.args[0]();
+                expect(mockScope.regions.length).toBe(0);
+            });
+
+            it("Unregisters status listener", function() {
+                var mockListener = jasmine.createSpy('listener');
+                mockStatusCapability.listen.andReturn(mockListener);
+                controller = new InspectorController(mockScope, mockPolicyService);
+                expect(mockScope.$on).toHaveBeenCalledWith("$destroy", jasmine.any(Function));
+                mockScope.$on.mostRecentCall.args[1]();
+                expect(mockListener).toHaveBeenCalled();
             });
         });
     }
