@@ -40,12 +40,13 @@ define(
          */
         function DropGesture(dndService, $q, element, domainObject) {
             var actionCapability = domainObject.getCapability('action'),
-                scope = element.scope && element.scope(),
                 action; // Action for the drop, when it occurs
 
             function broadcastDrop(id, event) {
                 // Find the relevant scope...
-                var rect;
+                var rect,
+                    scope = element.scope && element.scope();
+                
                 if (scope && scope.$broadcast) {
                     // Get the representation's bounds, to convert
                     // drop position
