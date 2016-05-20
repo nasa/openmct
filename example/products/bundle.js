@@ -23,6 +23,42 @@
 define ([
     'legacyRegistry'
 ], function (legacyRegistry) {
+    var PREFIX = "msl-images:",
+        CAMERAS = {
+            fhaz: "Front Hazard Avoidance Camera",
+            rhaz: "Rear Hazard Avoidance Camera",
+            mast: "Mast Camera",
+            chemcam: "Chemistry and Camera Complex",
+            mahli: "Mars Hand Lens Imager",
+            mardi: "Mars Descent Imager",
+            navcam: "Navigation Camera"
+        };
+
+
+    function MSLImageModelProvider($q) {
+        this.$q = $q;
+    }
+
+    MSLImageModelProvider.prototype.getModels = function (ids) {
+        function modelFor(cam) {
+            return {
+                type: "folder",
+                name: CAMERAS[cam]
+            };
+        }
+
+        ids = ids.filter(function (id) {
+            return id.indexOf(PREFIX) === 0;
+        });
+
+        return this.$q.when(ids.reduce(function (result, id) {
+            var cam = id.split(":")[1];
+            result[id] = modelFor(cam);
+            return result;
+        }, {}));
+    };
+
+
     legacyRegistry.register("example/products", {
         "extensions": {
             "roots": [
@@ -32,16 +68,18 @@ define ([
                     "model": {
                         "type": "folder",
                         "name": "Mars Science Laboratory Images",
-                        "composition": [
-                            "msl:fhaz",
-                            "msl:rhaz",
-                            "msl:mast",
-                            "msl:chemcam",
-                            "msl:mahli",
-                            "msl:mardi",
-                            "msl:navcam"
-                        ]
+                        "composition": Object.keys(CAMERAS).map(function (cam) {
+                            return PREFIX + cam;
+                        })
                     }
+                }
+            ],
+            "components": [
+                {
+                    "type": "provider",
+                    "provides": "modelService",
+                    "implementation": MSLImageModelProvider,
+                    "depends": ["$q"]
                 }
             ]
         }
