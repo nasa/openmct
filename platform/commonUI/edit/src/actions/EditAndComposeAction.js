@@ -37,7 +37,8 @@ define(
         }
 
         EditAndComposeAction.prototype.perform = function () {
-            var self = this;
+            var self = this,
+                editAction = this.domainObject.getCapability('action').getActions("edit")[0];
 
             // Persist changes to the domain object
             function doPersist() {
@@ -54,8 +55,8 @@ define(
                         .then(doPersist);
             }
 
-            if (this.domainObject.getCapability('type').getKey() !== 'folder') {
-                this.domainObject.getCapability('action').perform('edit');
+            if (editAction) {
+                editAction.perform();
             }
 
             return this.selectedObject && doLink();
