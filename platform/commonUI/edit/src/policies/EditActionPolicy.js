@@ -81,17 +81,14 @@ define(
             var key = action.getMetadata().key,
                 category = (context || {}).category;
 
-            // Only worry about actions in the view-control category
-            if (category === 'view-control') {
-                // Restrict 'edit' to cases where there are editable
-                // views (similarly, restrict 'properties' to when
-                // the converse is true), and where the domain object is not
-                // already being edited.
-                if (key === 'edit') {
-                    return this.countEditableViews(context) > 0 && !isEditing(context);
-                } else if (key === 'properties') {
-                    return this.countEditableViews(context) < 1 && !isEditing(context);
-                }
+            // Restrict 'edit' to cases where there are editable
+            // views (similarly, restrict 'properties' to when
+            // the converse is true), and where the domain object is not
+            // already being edited.
+            if (key === 'edit') {
+                return this.countEditableViews(context) > 0 && !isEditing(context);
+            } else if (key === 'properties' && category === 'view-control') {
+                return this.countEditableViews(context) < 1 && !isEditing(context);
             }
 
             // Like all policies, allow by default.

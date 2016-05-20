@@ -253,21 +253,6 @@ define(
                 expect(mockScope.testCapability).toBeUndefined();
             });
 
-            it("registers a status change listener", function () {
-                mockScope.$watch.calls[2].args[1](mockDomainObject);
-                expect(mockStatusCapability.listen).toHaveBeenCalled();
-            });
-
-            it("unlistens for status change on scope destruction", function () {
-                var mockUnlistener = jasmine.createSpy("unlisten");
-                mockStatusCapability.listen.andReturn(mockUnlistener);
-                mockScope.$watch.calls[2].args[1](mockDomainObject);
-                expect(mockStatusCapability.listen).toHaveBeenCalled();
-
-                mockScope.$on.calls[1].args[1]();
-                expect(mockUnlistener).toHaveBeenCalled();
-            });
-
             describe("when a domain object has been observed", function () {
                 var mockContext,
                     mockContext2,

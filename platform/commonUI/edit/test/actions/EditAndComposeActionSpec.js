@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ["../../src/actions/LinkAction"],
-    function (LinkAction) {
+    ["../../src/actions/EditAndComposeAction"],
+    function (EditAndComposeAction) {
 
         describe("The Link action", function () {
             var mockQ,
@@ -31,6 +31,8 @@ define(
                 mockContext,
                 mockComposition,
                 mockPersistence,
+                mockActionCapability,
+                mockEditAction,
                 mockType,
                 actionContext,
                 model,
@@ -64,21 +66,26 @@ define(
                         return capabilities[k].invoke(v);
                     }
                 };
-                mockContext = jasmine.createSpyObj("context", ["getParent"]);
-                mockComposition = jasmine.createSpyObj("composition", ["invoke", "add"]);
-                mockPersistence = jasmine.createSpyObj("persistence", ["persist"]);
-                mockType = jasmine.createSpyObj("type", ["hasFeature"]);
+                mockContext = jasmine.createSpyObj("context", [ "getParent" ]);
+                mockComposition = jasmine.createSpyObj("composition", [ "invoke", "add" ]);
+                mockPersistence = jasmine.createSpyObj("persistence", [ "persist" ]);
+                mockType = jasmine.createSpyObj("type", [ "hasFeature", "getKey" ]);
+                mockActionCapability = jasmine.createSpyObj("actionCapability", [ "getActions"]);
+                mockEditAction = jasmine.createSpyObj("editAction", ["perform"]);
 
                 mockDomainObject.getId.andReturn("test");
                 mockDomainObject.getCapability.andReturn(mockContext);
                 mockContext.getParent.andReturn(mockParent);
                 mockType.hasFeature.andReturn(true);
+                mockType.getKey.andReturn("layout");
                 mockComposition.invoke.andReturn(mockPromise(true));
                 mockComposition.add.andReturn(mockPromise(true));
+                mockActionCapability.getActions.andReturn([]);
 
                 capabilities = {
                     composition: mockComposition,
                     persistence: mockPersistence,
+                    action: mockActionCapability,
                     type: mockType
                 };
                 model = {
@@ -90,7 +97,7 @@ define(
                     selectedObject: mockDomainObject
                 };
 
-                action = new LinkAction(actionContext);
+                action = new EditAndComposeAction(actionContext);
             });
 
 
@@ -103,6 +110,21 @@ define(
             it("persists changes afterward", function () {
                 action.perform();
                 expect(mockPersistence.persist).toHaveBeenCalled();
+            });
+
+            it("enables edit mode for objects that have an edit action", function () {
+                mockActionCapability.getActions.andReturn([mockEditAction]);
+                action.perform();
+                expect(mockEditAction.perform).toHaveBeenCalled();
+            });
+
+            it("Does not enable edit mode for objects that do not have an" +
+                " edit action", function () {
+                mockActionCapability.getActions.andReturn([]);
+                action.perform();
+                expect(mockEditAction.perform).not.toHaveBeenCalled();
+                expect(mockComposition.add)
+                    .toHaveBeenCalledWith(mockDomainObject);
             });
 
         });

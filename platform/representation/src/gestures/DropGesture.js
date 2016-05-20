@@ -54,9 +54,6 @@ define(
                     // ...and broadcast the event. This allows specific
                     // views to have post-drop behavior which depends on
                     // drop position.
-                    // Also broadcast the editableDomainObject to
-                    // avoid race condition against non-editable
-                    // version in EditRepresenter
                     scope.$broadcast(
                         GestureConstants.MCT_DROP_EVENT,
                         id,
@@ -93,21 +90,13 @@ define(
 
             function drop(e) {
                 var event = (e || {}).originalEvent || e,
-                    id = event.dataTransfer.getData(GestureConstants.MCT_DRAG_TYPE),
-                    domainObjectType = domainObject.getModel().type;
+                    id = event.dataTransfer.getData(GestureConstants.MCT_DRAG_TYPE);
 
                 // Handle the drop; add the dropped identifier to the
                 // destination domain object's composition, and persist
                 // the change.
                 if (id) {
                     e.preventDefault();
-
-                    //Use scope.apply, drop event is outside digest cycle
-                    scope.$apply(function () {
-                        if (domainObjectType !== 'folder') {
-                            domainObject.getCapability('action').perform('edit');
-                        }
-                    });
                     $q.when(action && action.perform()).then(function () {
                         broadcastDrop(id, event);
                     });
