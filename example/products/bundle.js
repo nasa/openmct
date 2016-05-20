@@ -158,6 +158,7 @@ define ([
                     "key": TYPE,
                     "name": "MSL Image",
                     "description": "Images from Curiosity",
+                    "glyph": "T",
                     "telemetry": {
                         "source": SOURCE,
                         "domains": [
