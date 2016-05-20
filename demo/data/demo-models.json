@@ -572,9 +572,7 @@
     "e68ca22c-3250-4907-bc9c-7d504940d95d": {
         "composition": [
             "b66be4e2-b918-42d2-ad0a-f70c7a6f4102",
-            "7cf47710-26ab-4689-b903-b0e6297ffe49",
-            "3711d99e-b6be-45b1-bbb2-d2a8c333aab6",
-            "dfac7fe1-c8ee-4534-988d-af22a2e67a70"
+            "7cf47710-26ab-4689-b903-b0e6297ffe49"
         ],
         "name": "Thermal Panel",
         "type": "demo.plot",
@@ -595,9 +593,7 @@
     "f3abd7ed-a20e-46b9-a92d-32e23ae13600": {
         "composition": [
             "4bfe7c56-88a1-4a0a-886d-ee2366af9a2f",
-            "2910cf8f-c1d9-4153-b3ab-0d18108f6cc4",
-            "abc420b8-86dc-4abd-99c4-80828d5f8476",
-            "dd39ba74-f1d1-4a63-8ac2-5e4194667e38"
+            "2910cf8f-c1d9-4153-b3ab-0d18108f6cc4"
         ],
         "name": "Power Panel",
         "type": "demo.plot",
