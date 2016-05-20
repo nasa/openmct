@@ -38,13 +38,13 @@ define(
                 overlayService;
 
             beforeEach(function () {
-                mockDocument = jasmine.createSpyObj("$document", [ "find" ]);
+                mockDocument = jasmine.createSpyObj("$document", ["find"]);
                 mockCompile = jasmine.createSpy("$compile");
-                mockRootScope = jasmine.createSpyObj("$rootScope", [ "$new" ]);
-                mockBody = jasmine.createSpyObj("body", [ "prepend" ]);
+                mockRootScope = jasmine.createSpyObj("$rootScope", ["$new"]);
+                mockBody = jasmine.createSpyObj("body", ["prepend"]);
                 mockTemplate = jasmine.createSpy("template");
-                mockElement = jasmine.createSpyObj("element", [ "remove" ]);
-                mockScope = jasmine.createSpyObj("scope", [ "$destroy" ]);
+                mockElement = jasmine.createSpyObj("element", ["remove"]);
+                mockScope = jasmine.createSpyObj("scope", ["$destroy"]);
 
                 mockDocument.find.andReturn(mockBody);
                 mockCompile.andReturn(mockTemplate);

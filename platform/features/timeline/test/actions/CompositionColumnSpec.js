@@ -44,10 +44,10 @@ define(
                 beforeEach(function () {
                     mockDomainObject = jasmine.createSpyObj(
                         'domainObject',
-                        [ 'getId', 'getModel', 'getCapability' ]
+                        ['getId', 'getModel', 'getCapability']
                     );
                     testModel = {
-                        composition: [ 'a', 'b', 'c', 'd', 'e', 'f' ]
+                        composition: ['a', 'b', 'c', 'd', 'e', 'f']
                     };
                     mockDomainObject.getModel.andReturn(testModel);
                 });
@@ -58,7 +58,7 @@ define(
                 });
 
                 it("returns nothing when composition is exceeded", function () {
-                    testModel.composition = [ 'foo' ];
+                    testModel.composition = ['foo'];
                     expect(column.value(mockDomainObject)).toEqual("");
                 });
 

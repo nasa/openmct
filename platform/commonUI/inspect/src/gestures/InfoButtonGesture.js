@@ -45,7 +45,7 @@ define(
                 // Record touch position, so bubble can be shown at latest
                 // touch position, also offset by 22px to left (accounts for
                 // a finger-sized touch on the info button)
-                touchPosition = [ event.clientX - 22, event.clientY ];
+                touchPosition = [event.clientX - 22, event.clientY];
             }
 
             // Hides the bubble and detaches the
@@ -79,8 +79,8 @@ define(
                 // On any touch on the body, default body touches/events
                 // are prevented, the bubble is dismissed, and the touchstart
                 // body event is unbound, reallowing gestures
-                body.on('touchstart', function (event) {
-                    event.preventDefault();
+                body.on('touchstart', function (evt) {
+                    evt.preventDefault();
                     hideBubble();
                     body.unbind('touchstart');
                 });

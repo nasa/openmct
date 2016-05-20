@@ -47,7 +47,7 @@ define(
          * @param {string} path the path to the CouchDB instance
          */
         function CouchPersistenceProvider($http, $q, space, path) {
-            this.spaces = [ space ];
+            this.spaces = [space];
             this.revs = {};
             this.$q = $q;
             this.$http = $http;
@@ -57,7 +57,9 @@ define(
         // Pull out a list of document IDs from CouchDB's
         // _all_docs response
         function getIdsFromAllDocs(allDocs) {
-            return allDocs.rows.map(function (r) { return r.id; });
+            return allDocs.rows.map(function (r) {
+                return r.id;
+            });
         }
 
         // Check the response to a create/update/delete request;

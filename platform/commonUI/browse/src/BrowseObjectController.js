@@ -33,7 +33,7 @@ define(
         function BrowseObjectController($scope, $location, $route) {
             var navigatedObject;
             function setViewForDomainObject(domainObject) {
-                
+
                 var locationViewKey = $location.search().view;
 
                 function selectViewIfMatching(view) {
@@ -70,7 +70,7 @@ define(
             $scope.$watch('domainObject', setViewForDomainObject);
             $scope.$watch('representation.selected.key', updateQueryParam);
 
-            $scope.doAction = function (action){
+            $scope.doAction = function (action) {
                 return $scope[action] && $scope[action]();
             };
 

@@ -105,8 +105,8 @@ define([
     function getIdPath(domainObject) {
         var context = domainObject && domainObject.getCapability('context');
 
-        function getId(domainObject) {
-            return domainObject.getId();
+        function getId(domainObj) {
+            return domainObj.getId();
         }
 
         return context ? context.getPath().map(getId) : [];

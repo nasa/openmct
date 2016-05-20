@@ -49,7 +49,7 @@ define(
             var rowData = [],
                 self = this;
 
-            this.handle.getTelemetryObjects().forEach(function (telemetryObject){
+            this.handle.getTelemetryObjects().forEach(function (telemetryObject) {
                 var series = self.handle.getSeries(telemetryObject) || {},
                     pointCount = series.getPointCount ? series.getPointCount() : 0,
                     i = 0;

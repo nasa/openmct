@@ -59,32 +59,32 @@ define(
             beforeEach(function () {
                 mockTypeService = jasmine.createSpyObj(
                     "typeService",
-                    [ "listTypes" ]
+                    ["listTypes"]
                 );
                 mockDialogService = jasmine.createSpyObj(
                     "dialogService",
-                    [ "getUserInput" ]
+                    ["getUserInput"]
                 );
                 mockNavigationService = jasmine.createSpyObj(
                     "navigationService",
-                    [ "setNavigation" ]
+                    ["setNavigation"]
                 );
                 mockPolicyService = jasmine.createSpyObj(
                     "policyService",
-                    [ "allow" ]
+                    ["allow"]
                 );
 
-                mockTypes = [ "A", "B", "C" ].map(createMockType);
+                mockTypes = ["A", "B", "C"].map(createMockType);
 
-                mockTypes.forEach(function(type){
+                mockTypes.forEach(function (type) {
                     mockPolicyMap[type.getName()] = true;
                 });
 
-                mockCreationPolicy = function(type){
+                mockCreationPolicy = function (type) {
                     return mockPolicyMap[type.getName()];
                 };
 
-                mockPolicyService.allow.andCallFake(function(category, type){
+                mockPolicyService.allow.andCallFake(function (category, type) {
                     return category === "creation" && mockCreationPolicy(type) ? true : false;
                 });
 

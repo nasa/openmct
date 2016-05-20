@@ -145,12 +145,12 @@ define(
 
                     instantiationCapability = jasmine.createSpyObj(
                         "instantiation",
-                        [ "invoke" ]
+                        ["invoke"]
                     );
 
                     persistenceCapability = jasmine.createSpyObj(
                         "persistenceCapability",
-                        [ "persist", "getSpace" ]
+                        ["persist", "getSpace"]
                     );
                     persistenceCapability.persist.andReturn(persistObjectPromise);
 
@@ -170,10 +170,12 @@ define(
                         'mockDeferred',
                         ['notify', 'resolve', 'reject']
                     );
-                    mockDeferred.notify.andCallFake(function(){});
-                    mockDeferred.resolve.andCallFake(function(value){resolvedValue = value;});
+                    mockDeferred.notify.andCallFake(function () {});
+                    mockDeferred.resolve.andCallFake(function (value) {
+                        resolvedValue = value;
+                    });
                     mockDeferred.promise = {
-                        then: function(callback){
+                        then: function (callback) {
                             return synchronousPromise(callback(resolvedValue));
                         }
                     };
@@ -187,12 +189,14 @@ define(
                     mockQ.all.andCallFake(function (promises) {
                         var result = {};
                         Object.keys(promises).forEach(function (k) {
-                            promises[k].then(function (v) { result[k] = v; });
+                            promises[k].then(function (v) {
+                                result[k] = v;
+                            });
                         });
                         return synchronousPromise(result);
                     });
                     mockQ.defer.andReturn(mockDeferred);
-                    
+
                 });
 
                 describe("on domain object without composition", function () {
@@ -238,7 +242,7 @@ define(
                         });
 
                         instantiationCapability.invoke.andCallFake(
-                            function(model){
+                            function (model) {
                                 objectCopy.model = model;
                                 return objectCopy;
                             }
@@ -254,7 +258,7 @@ define(
                         expect(persistenceCapability.persist)
                             .toHaveBeenCalled();
                     });
-                    
+
                     it("deep clones object model", function () {
                         var newModel = copyFinished.calls[0].args[0].getModel();
                         expect(newModel).toEqual(object.model);
@@ -279,7 +283,7 @@ define(
                             objectClones;
 
                         instantiationCapability.invoke.andCallFake(
-                            function(model){
+                            function (model) {
                                 var cloneToReturn = objectClones[invocationCount++];
                                 cloneToReturn.model = model;
                                 return cloneToReturn;
@@ -362,8 +366,8 @@ define(
                         copyService = new CopyService(mockQ, policyService);
                     });
 
-                    describe("the cloning process", function(){
-                        beforeEach(function() {
+                    describe("the cloning process", function () {
+                        beforeEach(function () {
                             copyResult = copyService.perform(object, newParent);
                             copyFinished = jasmine.createSpy('copyFinished');
                             copyResult.then(copyFinished);
@@ -379,23 +383,23 @@ define(
                             expect(copyFinished).toHaveBeenCalled();
                         });
 
-                        it ("correctly locates cloned objects", function() {
+                        it ("correctly locates cloned objects", function () {
                             expect(childObjectClone.getModel().location).toEqual(objectClone.getId());
                         });
                     });
 
-                    describe("when cloning non-creatable objects", function() {
+                    describe("when cloning non-creatable objects", function () {
                         beforeEach(function () {
-                            policyService.allow.andCallFake(function(category){
+                            policyService.allow.andCallFake(function (category) {
                                 //Return false for 'creation' policy
-                               return category !== 'creation';
+                                return category !== 'creation';
                             });
 
                             copyResult = copyService.perform(object, newParent);
                             copyFinished = jasmine.createSpy('copyFinished');
                             copyResult.then(copyFinished);
                         });
-                        it ("creates link instead of clone", function() {
+                        it ("creates link instead of clone", function () {
                             var copiedObject = copyFinished.calls[0].args[0];
                             expect(copiedObject).toBe(object);
                             expect(compositionCapability.add)
@@ -412,7 +416,7 @@ define(
                         }
 
                         it("does not create new instances of objects " +
-                            "rejected by the filter", function() {
+                            "rejected by the filter", function () {
                             copyService.perform(object, newParent, reject)
                                 .then(copyFinished);
                             expect(copyFinished.mostRecentCall.args[0])
@@ -420,7 +424,7 @@ define(
                         });
 
                         it("does create new instances of objects " +
-                            "accepted by the filter", function() {
+                            "accepted by the filter", function () {
                             copyService.perform(object, newParent, accept)
                                 .then(copyFinished);
                             expect(copyFinished.mostRecentCall.args[0])
@@ -454,17 +458,17 @@ define(
                     });
 
                     it("throws an error", function () {
-                        var copyService =
+                        var service =
                             new CopyService(mockQ, policyService);
 
                         function perform() {
-                            copyService.perform(object, newParent);
+                            service.perform(object, newParent);
                         }
 
-                        spyOn(copyService, "validate");
-                        copyService.validate.andReturn(true);
+                        spyOn(service, "validate");
+                        service.validate.andReturn(true);
                         expect(perform).not.toThrow();
-                        copyService.validate.andReturn(false);
+                        service.validate.andReturn(false);
                         expect(perform).toThrow();
                     });
                 });

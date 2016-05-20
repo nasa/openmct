@@ -34,7 +34,7 @@ define(
                 testMessage = { someKey: "some value"};
                 mockLog = jasmine.createSpyObj(
                     '$log',
-                    [ 'error', 'warn', 'info', 'debug' ]
+                    ['error', 'warn', 'info', 'debug']
                 );
                 mockCallback = jasmine.createSpy('callback');
                 topic = new Topic(mockLog);

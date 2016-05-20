@@ -88,7 +88,7 @@ define(
             });
 
             it("reflects changes to applicable metadata", function () {
-                axis.updateMetadata([ testMetadatas[1] ]);
+                axis.updateMetadata([testMetadatas[1]]);
                 expect(axis.options).toEqual([
                     { key: "t0", name: "T0" },
                     { key: "t2", name: "T2" }

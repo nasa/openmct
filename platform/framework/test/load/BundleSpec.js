@@ -78,14 +78,14 @@ define(
 
             it("reports all extensions that have been declared", function () {
                 var bundle = new Bundle(PATH, {
-                    extensions: { things: [ {}, {}, {} ] }
+                    extensions: { things: [{}, {}, {}] }
                 });
                 expect(bundle.getExtensions("things").length).toEqual(3);
             });
 
             it("reports an empty list for extensions that have not been declared", function () {
                 var bundle = new Bundle(PATH, {
-                    extensions: { things: [ {}, {}, {} ] }
+                    extensions: { things: [{}, {}, {}] }
                 });
                 expect(bundle.getExtensions("stuffs").length).toEqual(0);
             });

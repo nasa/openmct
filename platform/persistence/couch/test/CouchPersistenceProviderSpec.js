@@ -71,7 +71,7 @@ define(
             // return values match what is expected.
             it("lists all available documents", function () {
                 mockHttp.andReturn(mockPromise({
-                    data: { rows: [ { id: "a" }, { id: "b" }, { id: "c" } ] }
+                    data: { rows: [{ id: "a" }, { id: "b" }, { id: "c" }] }
                 }));
                 provider.listObjects().then(capture);
                 expect(mockHttp).toHaveBeenCalledWith({

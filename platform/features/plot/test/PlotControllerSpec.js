@@ -63,15 +63,15 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$watch", "$on", "$emit" ]
+                    ["$watch", "$on", "$emit"]
                 );
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
-                    [ "formatDomainValue", "formatRangeValue" ]
+                    ["formatDomainValue", "formatRangeValue"]
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability" ]
+                    ["getId", "getModel", "getCapability"]
                 );
                 mockHandler = jasmine.createSpyObj(
                     "telemetrySubscriber",
@@ -96,7 +96,9 @@ define(
                 );
 
                 mockHandler.handle.andReturn(mockHandle);
-                mockThrottle.andCallFake(function (fn) { return fn; });
+                mockThrottle.andCallFake(function (fn) {
+                    return fn;
+                });
                 mockHandle.getTelemetryObjects.andReturn([mockDomainObject]);
                 mockHandle.getMetadata.andReturn([{}]);
                 mockHandle.getDomainValue.andReturn(123);

@@ -64,7 +64,7 @@ define(
                     });
                 });
 
-                if (this.columns.length > 0){
+                if (this.columns.length > 0) {
                     self.addColumn(new NameColumn(), 0);
                 }
             }
@@ -91,7 +91,7 @@ define(
          * @returns {*|string}
          */
         TableConfiguration.prototype.getColumnTitle = function (column) {
-                return column.getTitle();
+            return column.getTitle();
         };
 
         /**
@@ -100,7 +100,7 @@ define(
          */
         TableConfiguration.prototype.getHeaders = function () {
             var self = this;
-            return this.columns.map(function (column, i){
+            return this.columns.map(function (column, i) {
                 return self.getColumnTitle(column) || 'Column ' + (i + 1);
             });
         };
@@ -115,11 +115,11 @@ define(
          */
         TableConfiguration.prototype.getRowValues = function (telemetryObject, datum) {
             var self = this;
-            return this.columns.reduce(function (rowObject, column, i){
+            return this.columns.reduce(function (rowObject, column, i) {
                 var columnTitle = self.getColumnTitle(column) || 'Column ' + (i + 1),
                     columnValue = column.getValue(telemetryObject, datum);
 
-                if (columnValue !== undefined && columnValue.text === undefined){
+                if (columnValue !== undefined && columnValue.text === undefined) {
                     columnValue.text = '';
                 }
                 // Don't replace something with nothing.
@@ -158,7 +158,7 @@ define(
                 config2Keys = Object.keys(config2);
 
             return (config1Keys.length !== config2Keys.length) ||
-                config1Keys.some(function(key){
+                config1Keys.some(function (key) {
                     return config1[key] !== config2[key];
                 });
         }

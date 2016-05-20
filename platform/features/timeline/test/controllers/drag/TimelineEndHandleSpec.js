@@ -33,15 +33,15 @@ define(
             beforeEach(function () {
                 mockDragHandler = jasmine.createSpyObj(
                     'dragHandler',
-                    [ 'end', 'persist' ]
+                    ['end', 'persist']
                 );
                 mockSnapHandler = jasmine.createSpyObj(
                     'snapHandler',
-                    [ 'snap' ]
+                    ['snap']
                 );
                 mockZoomController = jasmine.createSpyObj(
                     'zoom',
-                    [ 'toMillis', 'toPixels' ]
+                    ['toMillis', 'toPixels']
                 );
 
                 mockDragHandler.end.andReturn(12321);

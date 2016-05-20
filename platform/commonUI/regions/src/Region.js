@@ -67,7 +67,7 @@ define(
          * @param {number} [index] the position to insert the region. By default
          * will add to the end
          */
-        Region.prototype.addRegion = function (region, index){
+        Region.prototype.addRegion = function (region, index) {
             if (index) {
                 this.regions.splice(index, 0, region);
             } else {
@@ -82,11 +82,11 @@ define(
          * string, will remove the region with the matching name. If an
          * object, will attempt to remove that object from the Region
          */
-        Region.prototype.removeRegion = function (region){
+        Region.prototype.removeRegion = function (region) {
             if (typeof region === 'number') {
                 this.regions.splice(region, 1);
-            } else if (typeof region === 'string'){
-                this.regions = this.regions.filter(function(thisRegion) {
+            } else if (typeof region === 'string') {
+                this.regions = this.regions.filter(function (thisRegion) {
                     return thisRegion.name !== region;
                 });
             } else {

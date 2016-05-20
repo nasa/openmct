@@ -60,37 +60,37 @@ define(
             beforeEach(function () {
                 mockTypeService = jasmine.createSpyObj(
                     "typeService",
-                    [ "listTypes" ]
+                    ["listTypes"]
                 );
                 mockDialogService = jasmine.createSpyObj(
                     "dialogService",
-                    [ "getUserInput" ]
+                    ["getUserInput"]
                 );
                 mockPolicyService = jasmine.createSpyObj(
                     "policyService",
-                    [ "allow" ]
+                    ["allow"]
                 );
 
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getCapability" ]
+                    ["getCapability"]
                 );
 
                 //Mocking getCapability because AddActionProvider uses the
                 // type capability of the destination object.
                 mockDomainObject.getCapability.andReturn({});
 
-                mockTypes = [ "A", "B", "C" ].map(createMockType);
+                mockTypes = ["A", "B", "C"].map(createMockType);
 
-                mockTypes.forEach(function(type){
+                mockTypes.forEach(function (type) {
                     mockPolicyMap[type.getName()] = true;
                 });
 
-                mockCreationPolicy = function(type){
+                mockCreationPolicy = function (type) {
                     return mockPolicyMap[type.getName()];
                 };
 
-                mockCompositionPolicy = function(){
+                mockCompositionPolicy = function () {
                     return true;
                 };
 

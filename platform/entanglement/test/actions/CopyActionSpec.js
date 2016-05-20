@@ -51,7 +51,7 @@ define(
             beforeEach(function () {
                 policyService = jasmine.createSpyObj(
                     'policyService',
-                    [ 'allow' ]
+                    ['allow']
                 );
                 policyService.allow.andReturn(true);
 
@@ -105,12 +105,12 @@ define(
                     ]
                 );
 
-                abstractComposePromise.then.andCallFake(function(success, error, notify){
+                abstractComposePromise.then.andCallFake(function (success, error, notify) {
                     notify(progress);
                     success();
                 });
 
-                locationServicePromise.then.andCallFake(function(callback){
+                locationServicePromise.then.andCallFake(function (callback) {
                     callback(newParent);
                     return abstractComposePromise;
                 });
@@ -191,7 +191,7 @@ define(
                             .toHaveBeenCalledWith(selectedObject, newParent);
                     });
 
-                    it("notifies the user of progress", function(){
+                    it("notifies the user of progress", function () {
                         expect(notificationService.info).toHaveBeenCalled();
                     });
 

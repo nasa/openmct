@@ -60,14 +60,14 @@ define(
             var self = this;
 
             function onCommit() {
-                return self.persistenceCapability.persist().then(function(result) {
+                return self.persistenceCapability.persist().then(function (result) {
                     self.persistPending = false;
                     return result;
                 });
             }
 
             function onCancel() {
-                return self.persistenceCapability.refresh().then(function(result) {
+                return self.persistenceCapability.refresh().then(function (result) {
                     self.persistPending = false;
                     return result;
                 });

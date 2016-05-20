@@ -59,7 +59,7 @@ define(
 
             $scope.$watch('domainObject', setViewForDomainObject);
 
-            $scope.doAction = function (action){
+            $scope.doAction = function (action) {
                 return $scope[action] && $scope[action]();
             };
         }
@@ -74,8 +74,8 @@ define(
             var navigatedObject = this.scope.domainObject,
                 policyMessage;
 
-            this.policyService.allow("navigation", navigatedObject, undefined, function(message) {
-               policyMessage = message;
+            this.policyService.allow("navigation", navigatedObject, undefined, function (message) {
+                policyMessage = message;
             });
 
             return policyMessage;

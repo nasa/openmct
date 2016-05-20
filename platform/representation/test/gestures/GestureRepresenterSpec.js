@@ -33,11 +33,11 @@ define(
             beforeEach(function () {
                 mockGestureService = jasmine.createSpyObj(
                     "gestureService",
-                    [ "attachGestures" ]
+                    ["attachGestures"]
                 );
                 mockGestureHandle = jasmine.createSpyObj(
                     "gestureHandle",
-                    [ "destroy" ]
+                    ["destroy"]
                 );
 
                 mockElement = { someKey: "some value" };
@@ -62,7 +62,7 @@ define(
                 expect(mockGestureService.attachGestures).toHaveBeenCalledWith(
                     mockElement,
                     domainObject,
-                    [ "a", "b", "c" ]
+                    ["a", "b", "c"]
                 );
 
                 // Should not have been destroyed yet...

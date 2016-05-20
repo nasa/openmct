@@ -31,16 +31,22 @@ define(
             var mockLog,
                 provider;
 
-            function BasicCapability() { return; }
+            function BasicCapability() {
+                return;
+            }
             BasicCapability.key = "basic";
 
-            function ApplicableCapability() { return; }
+            function ApplicableCapability() {
+                return;
+            }
             ApplicableCapability.key = "applicable";
             ApplicableCapability.appliesTo = function (model) {
                 return !model.isNotApplicable;
             };
 
-            function KeylessCapability() { return; }
+            function KeylessCapability() {
+                return;
+            }
 
             beforeEach(function () {
                 mockLog = jasmine.createSpyObj(

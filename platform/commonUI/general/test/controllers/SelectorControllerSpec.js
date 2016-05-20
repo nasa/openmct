@@ -43,7 +43,7 @@ define(
             function makeMockObject(id) {
                 var mockObject = jasmine.createSpyObj(
                     'object-' + id,
-                    [ 'getId' ]
+                    ['getId']
                 );
                 mockObject.getId.andReturn(id);
                 return mockObject;
@@ -60,15 +60,15 @@ define(
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getCapability', 'hasCapability' ]
+                    ['getCapability', 'hasCapability']
                 );
                 mockType = jasmine.createSpyObj(
                     'type',
-                    [ 'instanceOf' ]
+                    ['instanceOf']
                 );
                 mockDomainObjects = {};
 
-                [ "ROOT", "abc", "def", "xyz" ].forEach(function (id) {
+                ["ROOT", "abc", "def", "xyz"].forEach(function (id) {
                     mockDomainObjects[id] = makeMockObject(id);
                 });
 
@@ -98,7 +98,7 @@ define(
             });
 
             it("watches for changes in controlled property", function () {
-                var testValue = [ "a", "b", 1, 2 ];
+                var testValue = ["a", "b", 1, 2];
                 // This test is sensitive to ordering of watch calls
                 expect(mockScope.$watchCollection.calls.length).toEqual(1);
                 // Make sure we're watching the correct object
@@ -131,7 +131,7 @@ define(
             });
 
             it("loads objects when the underlying list changes", function () {
-                var testIds = [ "abc", "def", "xyz" ];
+                var testIds = ["abc", "def", "xyz"];
                 // This test is sensitive to ordering of watch calls
                 expect(mockScope.$watchCollection.calls.length).toEqual(1);
                 // Make sure we're watching the correct object

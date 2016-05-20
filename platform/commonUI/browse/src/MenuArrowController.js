@@ -26,11 +26,11 @@
 define(
     [],
     function () {
-        
+
         /**
-         * A left-click on the menu arrow should display a 
-         * context menu. This controller launches the context 
-         * menu. 
+         * A left-click on the menu arrow should display a
+         * context menu. This controller launches the context
+         * menu.
          * @memberof platform/commonUI/browse
          * @constructor
          */

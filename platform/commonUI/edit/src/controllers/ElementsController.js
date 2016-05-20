@@ -30,7 +30,7 @@ define(
          * @constructor
          */
         function ElementsController($scope) {
-            function filterBy(text){
+            function filterBy(text) {
                 if (typeof text === 'undefined') {
                     return $scope.searchText;
                 } else {

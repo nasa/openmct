@@ -70,7 +70,7 @@ define(
          */
         EditAction.prototype.perform = function () {
             var self = this;
-            function cancelEditing(){
+            function cancelEditing() {
                 self.domainObject.getCapability('editor').cancel();
                 self.navigationService.removeListener(cancelEditing);
             }

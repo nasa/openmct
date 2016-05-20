@@ -154,12 +154,12 @@ define(
                 activeTemplateUrl = templateUrl;
             }
 
-            function changeTemplate(ext) {
-                ext = ext || {};
-                if (ext.templateUrl) {
-                    changeTemplateUrl(self.getPath(ext));
-                } else if (ext.template) {
-                    showTemplate(ext.template);
+            function changeTemplate(templateExt) {
+                templateExt = templateExt || {};
+                if (templateExt.templateUrl) {
+                    changeTemplateUrl(self.getPath(templateExt));
+                } else if (templateExt.template) {
+                    showTemplate(templateExt.template);
                 } else {
                     removeElement();
                 }

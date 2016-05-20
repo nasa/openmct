@@ -57,11 +57,11 @@ define(
                 testAttrs = { mctSwimlaneDrop: "mockSwimlane" };
                 mockSwimlane = jasmine.createSpyObj(
                     "swimlane",
-                    [ "allowDropIn", "allowDropAfter", "drop", "highlight", "highlightBottom" ]
+                    ["allowDropIn", "allowDropAfter", "drop", "highlight", "highlightBottom"]
                 );
                 mockElement[0] = jasmine.createSpyObj(
                     "realElement",
-                    [ "getBoundingClientRect" ]
+                    ["getBoundingClientRect"]
                 );
                 mockElement[0].offsetHeight = TEST_HEIGHT;
                 mockElement[0].getBoundingClientRect.andReturn({ top: TEST_TOP });

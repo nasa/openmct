@@ -35,19 +35,19 @@ define(
             beforeEach(function () {
                 mockDragHandler = jasmine.createSpyObj(
                     'dragHandler',
-                    [ 'start' ]
+                    ['start']
                 );
                 mockSnapHandler = jasmine.createSpyObj(
                     'snapHandler',
-                    [ 'snap' ]
+                    ['snap']
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getCapability', 'getId' ]
+                    ['getCapability', 'getId']
                 );
                 mockType = jasmine.createSpyObj(
                     'type',
-                    [ 'instanceOf' ]
+                    ['instanceOf']
                 );
 
                 mockDomainObject.getId.andReturn('test-id');

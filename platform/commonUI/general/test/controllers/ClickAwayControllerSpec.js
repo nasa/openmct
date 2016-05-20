@@ -32,7 +32,7 @@ define(
             beforeEach(function () {
                 mockDocument = jasmine.createSpyObj(
                     "$document",
-                    [ "on", "off" ]
+                    ["on", "off"]
                 );
                 mockTimeout = jasmine.createSpy('timeout');
                 controller = new ClickAwayController(

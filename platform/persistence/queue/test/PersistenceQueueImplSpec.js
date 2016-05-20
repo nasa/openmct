@@ -38,7 +38,7 @@ define(
             function makeMockDomainObject(id) {
                 var mockDomainObject = jasmine.createSpyObj(
                     'domainObject-' + id,
-                    [ 'getId' ]
+                    ['getId']
                 );
                 mockDomainObject.getId.andReturn(id);
                 return mockDomainObject;
@@ -47,7 +47,7 @@ define(
             function makeMockPersistence(id) {
                 var mockPersistence = jasmine.createSpyObj(
                     'persistence-' + id,
-                    [ 'persist' ]
+                    ['persist']
                 );
                 return mockPersistence;
             }

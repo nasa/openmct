@@ -40,7 +40,9 @@ define(
                 mockSorter = jasmine.createSpyObj("sorter", ["sort"]);
                 customRegistrars = {};
 
-                mockSorter.sort.andCallFake(function (v) { return v; });
+                mockSorter.sort.andCallFake(function (v) {
+                    return v;
+                });
 
                 registrar = new ExtensionRegistrar(
                     mockApp,
@@ -51,7 +53,7 @@ define(
             });
 
             it("registers extensions using the factory", function () {
-                registrar.registerExtensions({ things: [ {} ] });
+                registrar.registerExtensions({ things: [{}] });
                 expect(mockApp.factory).toHaveBeenCalled();
             });
 
@@ -60,7 +62,7 @@ define(
                 mockApp.factory.andCallFake(function (name, value) {
                     callbacks[name] = value[value.length - 1];
                 });
-                registrar.registerExtensions({ things: [ {} ] });
+                registrar.registerExtensions({ things: [{}] });
                 expect(callbacks["things[]"]).toBeDefined();
 
                 // Verify dependency echo behavior
@@ -68,9 +70,9 @@ define(
             });
 
             it("warns if multiple registrations are made for the same category of extension", function () {
-                registrar.registerExtensions({ things: [ {} ] });
+                registrar.registerExtensions({ things: [{}] });
                 expect(mockLog.warn).not.toHaveBeenCalled();
-                registrar.registerExtensions({ things: [ {} ] });
+                registrar.registerExtensions({ things: [{}] });
                 expect(mockLog.warn).toHaveBeenCalled();
             });
 
@@ -81,14 +83,14 @@ define(
                 });
                 // Nobody has registered tests[], but it looks like an extension dependency,
                 // so register it as an empty array.
-                registrar.registerExtensions({ things: [ { depends: [ "tests[]", "other" ] } ] });
+                registrar.registerExtensions({ things: [{ depends: ["tests[]", "other"] }] });
                 expect(lengths["tests[]"]).toEqual(1);
                 expect(lengths.other).toBeUndefined();
             });
 
             it("invokes custom registrars (not app.factory) when available", function () {
                 customRegistrars.things = jasmine.createSpy("things");
-                registrar.registerExtensions({ things: [ {} ] });
+                registrar.registerExtensions({ things: [{}] });
                 expect(mockApp.factory).not.toHaveBeenCalled();
                 expect(customRegistrars.things).toHaveBeenCalled();
             });
@@ -98,13 +100,15 @@ define(
                 var a = { a: 'a' }, b = { b: 'b' }, c = { c: 'c' };
 
                 // Fake sorting; just reverse the array
-                mockSorter.sort.andCallFake(function (v) { return v.reverse(); });
+                mockSorter.sort.andCallFake(function (v) {
+                    return v.reverse();
+                });
 
                 // Register the extensions
-                registrar.registerExtensions({ things: [ a, b, c ] });
+                registrar.registerExtensions({ things: [a, b, c] });
 
                 // Verify registration interactions occurred in reverse-order
-                [ c, b, a ].forEach(function (extension, index) {
+                [c, b, a].forEach(function (extension, index) {
                     expect(mockApp.factory.calls[index].args[1][0]())
                         .toEqual(extension);
                 });

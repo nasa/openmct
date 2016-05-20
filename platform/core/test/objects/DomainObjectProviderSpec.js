@@ -49,7 +49,7 @@ define(
             beforeEach(function () {
                 mockModelService = jasmine.createSpyObj(
                     "modelService",
-                    [ "getModels" ]
+                    ["getModels"]
                 );
                 mockInstantiate = jasmine.createSpy("instantiate");
 
@@ -64,7 +64,7 @@ define(
             });
 
             it("requests models from the model service", function () {
-                var ids = [ "a", "b", "c" ];
+                var ids = ["a", "b", "c"];
                 mockModelService.getModels.andReturn(mockPromise({}));
                 provider.getObjects(ids);
                 expect(mockModelService.getModels).toHaveBeenCalledWith(ids);
@@ -72,7 +72,7 @@ define(
 
 
             it("instantiates objects with provided models", function () {
-                var ids = [ "a", "b", "c"],
+                var ids = ["a", "b", "c"],
                     model = { someKey: "some value"},
                     result;
                 mockModelService.getModels.andReturn(mockPromise({ a: model }));

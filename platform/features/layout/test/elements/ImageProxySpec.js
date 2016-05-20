@@ -37,7 +37,7 @@ define(
                     height: 24,
                     url: "http://www.nasa.gov"
                 };
-                testElements = [ {}, {}, testElement, {} ];
+                testElements = [{}, {}, testElement, {}];
                 proxy = new ImageProxy(
                     testElement,
                     testElements.indexOf(testElement),

@@ -34,11 +34,11 @@ define(
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getId', 'getCapability' ]
+                    ['getId', 'getCapability']
                 );
                 mockContext = jasmine.createSpyObj(
                     'context',
-                    [ 'getTrueRoot' ]
+                    ['getTrueRoot']
                 );
 
                 mockDomainObject.getId.andReturn('test-id');

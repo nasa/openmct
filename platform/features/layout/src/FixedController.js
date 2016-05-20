@@ -24,7 +24,7 @@ define(
     ['./FixedProxy', './elements/ElementProxies', './FixedDragHandle'],
     function (FixedProxy, ElementProxies, FixedDragHandle) {
 
-        var DEFAULT_DIMENSIONS = [ 2, 1 ],
+        var DEFAULT_DIMENSIONS = [2, 1],
             DEFAULT_GRID_SIZE = [64, 16];
 
         /**
@@ -277,7 +277,7 @@ define(
                 if (e.defaultPrevented) {
                     return;
                 }
-                if (editableDomainObject){
+                if (editableDomainObject) {
                     $scope.setEditable(editableDomainObject);
                 }
                 e.preventDefault();

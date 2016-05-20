@@ -28,7 +28,7 @@ define(
     function () {
 
         /**
-         * The ObjectInspectorController gets and formats the data for 
+         * The ObjectInspectorController gets and formats the data for
          *  the inspector display
          *
          * @constructor
@@ -37,67 +37,67 @@ define(
             $scope.primaryParents = [];
             $scope.contextutalParents = [];
             //$scope.isLink = false;
-            
+
             // Gets an array of the contextual parents/anscestors of the selected object
             function getContextualPath() {
                 var currentObj = $scope.ngModel.selectedObject,
                     currentParent,
                     parents = [];
-                
+
                 currentParent = currentObj &&
                     currentObj.hasCapability('context') &&
                     currentObj.getCapability('context').getParent();
-                
+
                 while (currentParent && currentParent.getModel().type !== 'root' &&
                         currentParent.hasCapability('context')) {
-                    // Record this object 
+                    // Record this object
                     parents.unshift(currentParent);
-                    
-                    // Get the next one up the tree 
+
+                    // Get the next one up the tree
                     currentObj = currentParent;
                     currentParent = currentObj.getCapability('context').getParent();
                 }
-                
+
                 $scope.contextutalParents = parents;
             }
-            
-            // Gets an array of the parents/anscestors of the selected object's 
+
+            // Gets an array of the parents/anscestors of the selected object's
             //   primary location (locational of original non-link)
             function getPrimaryPath(current) {
                 var location;
-                
+
                 // If this the the initial call of this recursive function
                 if (!current) {
                     current = $scope.ngModel.selectedObject;
                     $scope.primaryParents = [];
                 }
-                
+
                 location = current.getModel().location;
-                
+
                 if (location && location !== 'root') {
                     objectService.getObjects([location]).then(function (obj) {
                         var next = obj[location];
-                        
+
                         $scope.primaryParents.unshift(next);
                         getPrimaryPath(next);
                     });
                 }
-                
+
             }
-            
+
             // Gets the metadata for the selected object
             function getMetadata() {
                 $scope.metadata = $scope.ngModel.selectedObject &&
                     $scope.ngModel.selectedObject.hasCapability('metadata') &&
                     $scope.ngModel.selectedObject.useCapability('metadata');
             }
-            
-            // Set scope variables when the selected object changes 
+
+            // Set scope variables when the selected object changes
             $scope.$watch('ngModel.selectedObject', function () {
                 $scope.isLink = $scope.ngModel.selectedObject &&
                     $scope.ngModel.selectedObject.hasCapability('location') &&
                     $scope.ngModel.selectedObject.getCapability('location').isLink();
-                
+
                 if ($scope.isLink) {
                     getPrimaryPath();
                     getContextualPath();
@@ -105,7 +105,7 @@ define(
                     $scope.primaryParents = [];
                     getContextualPath();
                 }
-                
+
                 getMetadata();
             });
         }

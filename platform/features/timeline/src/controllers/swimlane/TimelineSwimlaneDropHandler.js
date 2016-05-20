@@ -51,7 +51,7 @@ define(
             }
 
             // Check if pathA entirely contains pathB
-            function pathContains(swimlane, id) {
+            function pathContains(swimlaneToCheck, id) {
                 // Check if id at a specific index matches (for map below)
                 function matches(pathId) {
                     return pathId === id;
@@ -59,18 +59,18 @@ define(
 
                 // Path A contains Path B if it is longer, and all of
                 // B's ids match the ids in A.
-                return swimlane.idPath.map(matches).reduce(or, false);
+                return swimlaneToCheck.idPath.map(matches).reduce(or, false);
             }
 
             // Check if a swimlane contains a child with the specified id
-            function contains(swimlane, id) {
+            function contains(swimlaneToCheck, id) {
                 // Check if a child swimlane has a matching domain object id
                 function matches(child) {
                     return child.domainObject.getId() === id;
                 }
 
                 // Find any one child id that matches this id
-                return swimlane.children.map(matches).reduce(or, false);
+                return swimlaneToCheck.children.map(matches).reduce(or, false);
             }
 
             // Initiate mutation of a domain object

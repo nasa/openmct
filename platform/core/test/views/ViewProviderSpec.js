@@ -33,11 +33,11 @@ define(
                 },
                 viewB = {
                     key: "b",
-                    needs: [ "someCapability" ]
+                    needs: ["someCapability"]
                 },
                 viewC = {
                     key: "c",
-                    needs: [ "someCapability" ],
+                    needs: ["someCapability"],
                     delegation: true
                 },
                 capabilities = {},
@@ -109,7 +109,7 @@ define(
             it("restricts typed views to matching types", function () {
                 var testType = "testType",
                     testView = { key: "x", type: testType },
-                    provider = new ViewProvider([testView], mockLog);
+                    viewProvider = new ViewProvider([testView], mockLog);
 
                 // Include a "type" capability
                 capabilities.type = jasmine.createSpyObj(
@@ -120,21 +120,21 @@ define(
 
                 // Should be included when types match
                 capabilities.type.instanceOf.andReturn(true);
-                expect(provider.getViews(mockDomainObject))
+                expect(viewProvider.getViews(mockDomainObject))
                     .toEqual([testView]);
                 expect(capabilities.type.instanceOf)
                     .toHaveBeenCalledWith(testType);
 
                 // ...but not when they don't
                 capabilities.type.instanceOf.andReturn(false);
-                expect(provider.getViews(mockDomainObject))
+                expect(viewProvider.getViews(mockDomainObject))
                     .toEqual([]);
 
             });
 
             it("enforces view restrictions from types", function () {
                 var testView = { key: "x" },
-                    provider = new ViewProvider([testView], mockLog);
+                    viewProvider = new ViewProvider([testView], mockLog);
 
                 // Include a "type" capability
                 capabilities.type = jasmine.createSpyObj(
@@ -146,13 +146,13 @@ define(
                 // Should be included when view keys match
                 capabilities.type.getDefinition
                     .andReturn({ views: [testView.key]});
-                expect(provider.getViews(mockDomainObject))
+                expect(viewProvider.getViews(mockDomainObject))
                     .toEqual([testView]);
 
                 // ...but not when they don't
                 capabilities.type.getDefinition
                     .andReturn({ views: ["somethingElse"]});
-                expect(provider.getViews(mockDomainObject))
+                expect(viewProvider.getViews(mockDomainObject))
                     .toEqual([]);
             });
 

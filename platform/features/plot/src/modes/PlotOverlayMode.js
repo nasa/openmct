@@ -38,7 +38,7 @@ define(
                 telemetryObjects,
                 this.panZoomStack
             );
-            this.subplots = [ this.subplot ];
+            this.subplots = [this.subplot];
         }
 
         PlotOverlayMode.prototype.plotTelemetry = function (updater) {

@@ -52,11 +52,11 @@ define(
                 );
                 mockEditorCapability = jasmine.createSpyObj(
                     "editor",
-                    [ "save", "cancel", "isEditContextRoot" ]
+                    ["save", "cancel", "isEditContextRoot"]
                 );
                 mockActionCapability = jasmine.createSpyObj(
                     "actionCapability",
-                    [ "perform"]
+                    ["perform"]
                 );
                 capabilities.editor = mockEditorCapability;
                 capabilities.action = mockActionCapability;
@@ -90,7 +90,7 @@ define(
                 function () {
                     mockDomainObject.getModel.andReturn({persisted: undefined});
                     expect(SaveAction.appliesTo(actionContext)).toBe(false);
-            });
+                });
 
             it("uses the editor capability to save the object",
                 function () {

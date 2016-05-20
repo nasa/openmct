@@ -34,7 +34,7 @@ define(
                 mockComposition,
                 mockCompositionObjects;
 
-            function mockPromise(value){
+            function mockPromise(value) {
                 return {
                     then: function (thenFunc) {
                         return mockPromise(thenFunc(value));
@@ -42,12 +42,12 @@ define(
                 };
             }
 
-            function mockDomainObject(id){
+            function mockDomainObject(id) {
                 return {
-                    getId: function() {
+                    getId: function () {
                         return id;
                     },
-                    useCapability: function() {
+                    useCapability: function () {
                         return mockCompositionCapability;
                     }
                 };
@@ -56,11 +56,11 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$watch", "$watchCollection", "$on", "commit" ]
+                    ["$watch", "$watchCollection", "$on", "commit"]
                 );
                 mockEvent = jasmine.createSpyObj(
                     'event',
-                    [ 'preventDefault' ]
+                    ['preventDefault']
                 );
 
                 testModel = {};
@@ -238,7 +238,7 @@ define(
                 var styleB;
 
                 // Start with a very small frame size
-                testModel.layoutGrid = [ 1, 1 ];
+                testModel.layoutGrid = [1, 1];
 
                 // White-boxy; we know which watch is which
                 mockScope.$watch.calls[0].args[1](testModel.layoutGrid);
@@ -255,7 +255,7 @@ define(
                 var style;
 
                 // Start with a very small frame size
-                testModel.layoutGrid = [ 1, 1 ];
+                testModel.layoutGrid = [1, 1];
                 mockScope.$watch.calls[0].args[1](testModel.layoutGrid);
 
                 // Notify that a drop occurred

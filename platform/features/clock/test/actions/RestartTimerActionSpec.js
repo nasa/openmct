@@ -44,7 +44,7 @@ define(
                 mockNow = jasmine.createSpy('now');
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getCapability', 'useCapability', 'getModel' ]
+                    ['getCapability', 'useCapability', 'getModel']
                 );
                 mockPersistence = jasmine.createSpyObj(
                     'persistence',

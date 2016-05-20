@@ -61,12 +61,12 @@ define(
                 policy = new EditContextualActionPolicy(navigationService, editModeBlacklist, nonEditContextBlacklist);
             });
 
-            it('Allows all actions when navigated object not in edit mode', function() {
+            it('Allows all actions when navigated object not in edit mode', function () {
                 expect(policy.allow(mockAction, context)).toBe(true);
             });
 
             it('Allows "window" action when navigated object in edit mode,' +
-                ' but selected object not in edit mode ', function() {
+                ' but selected object not in edit mode ', function () {
                 navigatedObject.hasCapability.andReturn(true);
                 mockEditorCapability.isEditContextRoot.andReturn(true);
                 metadata.key = "window";
@@ -75,7 +75,7 @@ define(
 
             it('Allows "remove" action when navigated object in edit mode,' +
                 ' and selected object not editable, but its parent is.',
-                function() {
+                function () {
                     var mockParent = jasmine.createSpyObj("parentObject", ["hasCapability"]),
                         mockContextCapability = jasmine.createSpyObj("contextCapability", ["getParent"]);
 
@@ -93,10 +93,10 @@ define(
                     metadata.key = "remove";
 
                     expect(policy.allow(mockAction, context)).toBe(true);
-            });
+                });
 
             it('Disallows "move" action when navigated object in edit mode,' +
-                ' but selected object not in edit mode ', function() {
+                ' but selected object not in edit mode ', function () {
                 navigatedObject.hasCapability.andReturn(true);
                 mockEditorCapability.isEditContextRoot.andReturn(true);
                 mockEditorCapability.inEditContext.andReturn(false);
@@ -105,7 +105,7 @@ define(
             });
 
             it('Disallows copy action when navigated object and' +
-                ' selected object in edit mode', function() {
+                ' selected object in edit mode', function () {
                 navigatedObject.hasCapability.andReturn(true);
                 mockDomainObject.hasCapability.andReturn(true);
                 mockEditorCapability.isEditContextRoot.andReturn(true);

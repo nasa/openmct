@@ -40,7 +40,7 @@ define(
 
         PolicyActionDecorator.prototype.getActions = function (context) {
             var policyService = this.policyService;
-            
+
             // Check if an action is allowed by policy.
             function allow(action) {
                 return policyService.allow('action', action, context);

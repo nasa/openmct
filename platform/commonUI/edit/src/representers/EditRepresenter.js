@@ -119,7 +119,7 @@ define(
             // Ensure existing watches are released
             this.destroy();
 
-            function setEditing(){
+            function setEditing() {
                 scope.viewObjectTemplate = 'edit-object';
             }
 
@@ -128,15 +128,15 @@ define(
              * editable then change the view and inspector regions
              * object representation accordingly
              */
-            this.listenHandle = this.domainObject.getCapability('status').listen(function(statuses){
-                if (statuses.indexOf('editing') !== -1){
+            this.listenHandle = this.domainObject.getCapability('status').listen(function (statuses) {
+                if (statuses.indexOf('editing') !== -1) {
                     setEditing();
                 } else {
                     delete scope.viewObjectTemplate;
                 }
             });
 
-            if (representedObject.hasCapability('editor') && representedObject.getCapability('editor').isEditContextRoot()){
+            if (representedObject.hasCapability('editor') && representedObject.getCapability('editor').isEditContextRoot()) {
                 setEditing();
             }
         };

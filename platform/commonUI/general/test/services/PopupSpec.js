@@ -32,7 +32,7 @@ define(
 
             beforeEach(function () {
                 mockElement =
-                    jasmine.createSpyObj('element', [ 'css', 'remove' ]);
+                    jasmine.createSpyObj('element', ['css', 'remove']);
                 testStyles = { left: '12px', top: '14px' };
                 popup = new Popup(mockElement, testStyles);
             });

@@ -68,11 +68,11 @@ define(
                 };
                 mockDialogService = jasmine.createSpyObj(
                     "dialogService",
-                    [ "getUserInput" ]
+                    ["getUserInput"]
                 );
                 mockCreationService = jasmine.createSpyObj(
                     "creationService",
-                    [ "createObject" ]
+                    ["createObject"]
                 );
 
                 mockType.getKey.andReturn("test");

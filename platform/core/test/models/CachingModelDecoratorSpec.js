@@ -99,7 +99,7 @@ define(
             });
 
             it("ensures a single object instance, even for multiple concurrent calls", function () {
-                var promiseA, promiseB, mockCallback = jasmine.createSpy();
+                var promiseA, promiseB;
 
                 promiseA = fakePromise();
                 promiseB = fakePromise();
@@ -126,7 +126,7 @@ define(
             });
 
             it("is robust against updating with undefined values", function () {
-                var promiseA, promiseB, mockCallback = jasmine.createSpy();
+                var promiseA, promiseB;
 
                 promiseA = fakePromise();
                 promiseB = fakePromise();

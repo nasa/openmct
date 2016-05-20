@@ -29,7 +29,7 @@ define(
                 controller;
 
             beforeEach(function () {
-                mockScope = jasmine.createSpyObj("$scope", [ "$watch" ]);
+                mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 mockScope.$parent = {};
                 controller = new FormController(mockScope);
             });

@@ -55,7 +55,9 @@ define(
             });
 
             it("provides models from extension declarations", function () {
-                var mockPromise = { then: function () { return; } };
+                var mockPromise = { then: function () {
+                    return;
+                } };
                 mockQ.when.andReturn(mockPromise);
 
                 // Verify that we got the promise as the return value

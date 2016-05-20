@@ -34,15 +34,15 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     '$scope',
-                    [ '$watch' ]
+                    ['$watch']
                 );
                 mockDialogService = jasmine.createSpyObj(
                     'dialogService',
-                    [ 'getUserInput' ]
+                    ['getUserInput']
                 );
                 mockPromise = jasmine.createSpyObj(
                     'promise',
-                    [ 'then' ]
+                    ['then']
                 );
                 testStructure = {
                     name: "A Test",

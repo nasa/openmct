@@ -46,10 +46,10 @@ define(
             }
 
             beforeEach(function () {
-                initialOrigin = [ 4, 2 ];
-                initialDimensions = [ 600, 400 ];
-                otherOrigins = [ [8, 6], [12, 9] ];
-                otherDimensions = [ [400, 300], [200, 300] ];
+                initialOrigin = [4, 2];
+                initialDimensions = [600, 400];
+                otherOrigins = [[8, 6], [12, 9]];
+                otherDimensions = [[400, 300], [200, 300]];
                 panZoomStack =
                     new PlotPanZoomStack(initialOrigin, initialDimensions);
             });

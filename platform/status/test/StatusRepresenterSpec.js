@@ -50,7 +50,7 @@ define(
             }
 
             beforeEach(function () {
-                testStatusFlags = [ 'x', 'y', 'z' ];
+                testStatusFlags = ['x', 'y', 'z'];
 
                 mockScope = {};
                 mockElement = jasmine.createSpyObj('element', [
@@ -60,11 +60,11 @@ define(
                 testRepresentation = { key: "someKey" };
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getModel', 'getId', 'getCapability' ]
+                    ['getModel', 'getId', 'getCapability']
                 );
                 mockStatusCapability = jasmine.createSpyObj(
                     'status',
-                    [ 'list', 'get', 'set', 'listen' ]
+                    ['list', 'get', 'set', 'listen']
                 );
                 mockUnlisten = jasmine.createSpy();
 

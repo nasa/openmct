@@ -33,9 +33,9 @@ define(
                 indicator;
 
             beforeEach(function () {
-                mockHttp = jasmine.createSpyObj("$http", [ "get" ]);
+                mockHttp = jasmine.createSpyObj("$http", ["get"]);
                 mockInterval = jasmine.createSpy("$interval");
-                mockPromise = jasmine.createSpyObj("promise", [ "then" ]);
+                mockPromise = jasmine.createSpyObj("promise", ["then"]);
                 testPath = "/test/path";
                 testInterval = 12321; // Some number
 

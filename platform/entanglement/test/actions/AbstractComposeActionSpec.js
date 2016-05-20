@@ -45,7 +45,7 @@ define(
             beforeEach(function () {
                 policyService = jasmine.createSpyObj(
                     'policyService',
-                    [ 'allow' ]
+                    ['allow']
                 );
 
                 selectedObjectContextCapability = jasmine.createSpyObj(

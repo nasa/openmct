@@ -42,7 +42,7 @@ define(
                 mockQ = jasmine.createSpyObj('$q', ['when']);
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getId', 'getModel', 'useCapability' ]
+                    ['getId', 'getModel', 'useCapability']
                 );
 
                 testModel = {

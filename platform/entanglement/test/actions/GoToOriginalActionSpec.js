@@ -40,11 +40,11 @@ define(
             beforeEach(function () {
                 mockLocationCapability = jasmine.createSpyObj(
                     'location',
-                    [ 'isLink', 'isOriginal', 'getOriginal' ]
+                    ['isLink', 'isOriginal', 'getOriginal']
                 );
                 mockOriginalActionCapability = jasmine.createSpyObj(
                     'action',
-                    [ 'perform', 'getActions' ]
+                    ['perform', 'getActions']
                 );
                 originalPromise = new ControlledPromise();
                 mockLocationCapability.getOriginal.andReturn(originalPromise);

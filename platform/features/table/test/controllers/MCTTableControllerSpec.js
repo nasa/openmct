@@ -26,7 +26,7 @@ define(
     ],
     function (MCTTableController) {
 
-        describe('The MCTTable Controller', function() {
+        describe('The MCTTable Controller', function () {
 
             var controller,
                 mockScope,
@@ -42,7 +42,7 @@ define(
                 };
             }
 
-            beforeEach(function() {
+            beforeEach(function () {
                 watches = {};
 
                 mockScope = jasmine.createSpyObj('scope', [
@@ -50,7 +50,7 @@ define(
                    '$on',
                    '$watchCollection'
                 ]);
-                mockScope.$watchCollection.andCallFake(function(event, callback) {
+                mockScope.$watchCollection.andCallFake(function (event, callback) {
                     watches[event] = callback;
                 });
 
@@ -75,15 +75,15 @@ define(
                 spyOn(controller, 'setVisibleRows').andCallThrough();
             });
 
-            it('Reacts to changes to filters, headers, and rows', function() {
+            it('Reacts to changes to filters, headers, and rows', function () {
                 expect(mockScope.$watchCollection).toHaveBeenCalledWith('filters', jasmine.any(Function));
                 expect(mockScope.$watch).toHaveBeenCalledWith('headers', jasmine.any(Function));
                 expect(mockScope.$watch).toHaveBeenCalledWith('rows', jasmine.any(Function));
             });
 
-            describe('rows', function() {
+            describe('rows', function () {
                 var testRows = [];
-                beforeEach(function() {
+                beforeEach(function () {
                     testRows = [
                         {
                             'col1': {'text': 'row1 col1 match'},
@@ -104,30 +104,30 @@ define(
                     mockScope.rows = testRows;
                 });
 
-                it('Filters results based on filter input', function() {
-                   var filters = {},
-                       filteredRows;
+                it('Filters results based on filter input', function () {
+                    var filters = {},
+                        filteredRows;
 
-                   mockScope.filters = filters;
+                    mockScope.filters = filters;
 
-                   filteredRows = controller.filterRows(testRows);
-                   expect(filteredRows.length).toBe(3);
-                   filters.col1 = 'row1';
-                   filteredRows = controller.filterRows(testRows);
-                   expect(filteredRows.length).toBe(1);
-                   filters.col1 = 'match';
-                   filteredRows = controller.filterRows(testRows);
-                   expect(filteredRows.length).toBe(2);
+                    filteredRows = controller.filterRows(testRows);
+                    expect(filteredRows.length).toBe(3);
+                    filters.col1 = 'row1';
+                    filteredRows = controller.filterRows(testRows);
+                    expect(filteredRows.length).toBe(1);
+                    filters.col1 = 'match';
+                    filteredRows = controller.filterRows(testRows);
+                    expect(filteredRows.length).toBe(2);
                 });
 
-                it('Sets rows on scope when rows change', function() {
+                it('Sets rows on scope when rows change', function () {
                     controller.setRows(testRows);
                     expect(mockScope.displayRows.length).toBe(3);
                     expect(mockScope.displayRows).toEqual(testRows);
                 });
 
-                it('Supports adding rows individually', function() {
-                    var addRowFunc = mockScope.$on.calls[mockScope.$on.calls.length-2].args[1],
+                it('Supports adding rows individually', function () {
+                    var addRowFunc = mockScope.$on.calls[mockScope.$on.calls.length - 2].args[1],
                         row4 = {
                             'col1': {'text': 'row3 col1'},
                             'col2': {'text': 'ghi'},
@@ -140,8 +140,8 @@ define(
                     expect(mockScope.displayRows.length).toBe(4);
                 });
 
-                it('Supports removing rows individually', function() {
-                    var removeRowFunc = mockScope.$on.calls[mockScope.$on.calls.length-1].args[1];
+                it('Supports removing rows individually', function () {
+                    var removeRowFunc = mockScope.$on.calls[mockScope.$on.calls.length - 1].args[1];
                     controller.setRows(testRows);
                     expect(mockScope.displayRows.length).toBe(3);
                     removeRowFunc(undefined, 2);
@@ -149,10 +149,10 @@ define(
                     expect(controller.setVisibleRows).toHaveBeenCalled();
                 });
 
-                describe('sorting', function() {
+                describe('sorting', function () {
                     var sortedRows;
 
-                    it('Sorts rows ascending', function() {
+                    it('Sorts rows ascending', function () {
                         mockScope.sortColumn = 'col1';
                         mockScope.sortDirection = 'asc';
 
@@ -164,7 +164,7 @@ define(
 
                     });
 
-                    it('Sorts rows descending', function() {
+                    it('Sorts rows descending', function () {
                         mockScope.sortColumn = 'col1';
                         mockScope.sortDirection = 'desc';
 
@@ -173,7 +173,7 @@ define(
                         expect(sortedRows[1].col1.text).toEqual('row2 col1 match');
                         expect(sortedRows[2].col1.text).toEqual('row1 col1 match');
                     });
-                    it('Sorts rows descending based on selected sort column', function() {
+                    it('Sorts rows descending based on selected sort column', function () {
                         mockScope.sortColumn = 'col2';
                         mockScope.sortDirection = 'desc';
 
@@ -218,9 +218,9 @@ define(
                         expect(sortedRows[1].col2.text).toEqual('def');
                         expect(sortedRows[2].col2.text).toEqual('abc');
 
-                        expect(sortedRows[sortedRows.length-3].col2.text).toEqual('456');
-                        expect(sortedRows[sortedRows.length-2].col2.text).toEqual('123');
-                        expect(sortedRows[sortedRows.length-1].col2.text).toEqual('');
+                        expect(sortedRows[sortedRows.length - 3].col2.text).toEqual('456');
+                        expect(sortedRows[sortedRows.length - 2].col2.text).toEqual('123');
+                        expect(sortedRows[sortedRows.length - 1].col2.text).toEqual('');
                     });
 
                     describe('The sort comparator', function () {
@@ -245,7 +245,7 @@ define(
                             row5,
                             row6;
 
-                        beforeEach(function() {
+                        beforeEach(function () {
                             row4 = {
                                 'col1': {'text': 'row5 col1'},
                                 'col2': {'text': 'xyz'},
@@ -264,33 +264,33 @@ define(
                         });
 
                         it('Adds new rows at the correct sort position when' +
-                            ' sorted ', function() {
+                            ' sorted ', function () {
                             mockScope.sortColumn = 'col2';
                             mockScope.sortDirection = 'desc';
 
                             mockScope.displayRows = controller.sortRows(testRows.slice(0));
 
                             mockScope.rows.push(row4);
-                            controller.addRow(undefined, mockScope.rows.length-1);
+                            controller.addRow(undefined, mockScope.rows.length - 1);
                             expect(mockScope.displayRows[0].col2.text).toEqual('xyz');
 
                             mockScope.rows.push(row5);
-                            controller.addRow(undefined, mockScope.rows.length-1);
+                            controller.addRow(undefined, mockScope.rows.length - 1);
                             expect(mockScope.displayRows[4].col2.text).toEqual('aaa');
 
                             mockScope.rows.push(row6);
-                            controller.addRow(undefined, mockScope.rows.length-1);
+                            controller.addRow(undefined, mockScope.rows.length - 1);
                             expect(mockScope.displayRows[2].col2.text).toEqual('ggg');
 
                             //Add a duplicate row
                             mockScope.rows.push(row6);
-                            controller.addRow(undefined, mockScope.rows.length-1);
+                            controller.addRow(undefined, mockScope.rows.length - 1);
                             expect(mockScope.displayRows[2].col2.text).toEqual('ggg');
                             expect(mockScope.displayRows[3].col2.text).toEqual('ggg');
                         });
 
                         it('Adds new rows at the correct sort position when' +
-                            ' sorted and filtered', function() {
+                            ' sorted and filtered', function () {
                             mockScope.sortColumn = 'col2';
                             mockScope.sortDirection = 'desc';
                             mockScope.filters = {'col2': 'a'};//Include only
@@ -300,12 +300,12 @@ define(
                             mockScope.displayRows = controller.filterRows(testRows);
 
                             mockScope.rows.push(row5);
-                            controller.addRow(undefined, mockScope.rows.length-1);
+                            controller.addRow(undefined, mockScope.rows.length - 1);
                             expect(mockScope.displayRows.length).toBe(2);
                             expect(mockScope.displayRows[1].col2.text).toEqual('aaa');
 
                             mockScope.rows.push(row6);
-                            controller.addRow(undefined, mockScope.rows.length-1);
+                            controller.addRow(undefined, mockScope.rows.length - 1);
                             expect(mockScope.displayRows.length).toBe(2);
                             //Row was not added because does not match filter
                         });
@@ -319,16 +319,16 @@ define(
                             mockScope.displayRows = testRows.slice(0);
 
                             mockScope.rows.push(row5);
-                            controller.addRow(undefined, mockScope.rows.length-1);
+                            controller.addRow(undefined, mockScope.rows.length - 1);
                             expect(mockScope.displayRows[3].col2.text).toEqual('aaa');
 
                             mockScope.rows.push(row6);
-                            controller.addRow(undefined, mockScope.rows.length-1);
+                            controller.addRow(undefined, mockScope.rows.length - 1);
                             expect(mockScope.displayRows[4].col2.text).toEqual('ggg');
                         });
 
                         it('Resizes columns if length of any columns in new' +
-                            ' row exceeds corresponding existing column', function() {
+                            ' row exceeds corresponding existing column', function () {
                             var row7 = {
                                 'col1': {'text': 'row6 col1'},
                                 'col2': {'text': 'some longer string'},
@@ -342,7 +342,7 @@ define(
                             mockScope.displayRows = testRows.slice(0);
 
                             mockScope.rows.push(row7);
-                            controller.addRow(undefined, mockScope.rows.length-1);
+                            controller.addRow(undefined, mockScope.rows.length - 1);
                             expect(controller.$scope.sizingRow.col2).toEqual({text: 'some longer string'});
                         });
 

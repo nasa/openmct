@@ -43,7 +43,9 @@ define(
                 ];
                 mockPolicies = testPolicies.map(function (p) {
                     var mockPolicy = jasmine.createSpyObj("policy", ['allow']);
-                    mockPolicy.allow.andCallFake(function () { return p.result; });
+                    mockPolicy.allow.andCallFake(function () {
+                        return p.result;
+                    });
                     return mockPolicy;
                 });
                 mockPolicyConstructors = testPolicies.map(function (p, i) {

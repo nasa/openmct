@@ -61,7 +61,9 @@ define(
                 mockTimespan.getDuration.andReturn(50);
                 mockTimespan.getEnd.andReturn(150);
 
-                mockToPixels.andCallFake(function (t) { return t * 10; });
+                mockToPixels.andCallFake(function (t) {
+                    return t * 10;
+                });
 
                 controller = new TimelineGanttController(TEST_MAX_OFFSCREEN);
             });

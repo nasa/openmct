@@ -29,7 +29,7 @@ define(
          */
         function TimelineZoomController($scope, ZOOM_CONFIGURATION) {
             // Prefer to start with the middle index
-            var zoomLevels = ZOOM_CONFIGURATION.levels || [ 1000 ],
+            var zoomLevels = ZOOM_CONFIGURATION.levels || [1000],
                 zoomIndex = Math.floor(zoomLevels.length / 2),
                 tickWidth = ZOOM_CONFIGURATION.width || 200,
                 duration = 86400000; // Default duration in view

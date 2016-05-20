@@ -30,11 +30,11 @@ define(
                 graph;
 
             beforeEach(function () {
-                points = [ 0, 10, -10, -100, 20, 100, 0 ];
+                points = [0, 10, -10, -100, 20, 100, 0];
 
                 mockGraph = jasmine.createSpyObj(
                     'graph',
-                    [ 'getPointCount', 'getDomainValue', 'getRangeValue' ]
+                    ['getPointCount', 'getDomainValue', 'getRangeValue']
                 );
 
                 mockGraph.getPointCount.andReturn(points.length * 2);

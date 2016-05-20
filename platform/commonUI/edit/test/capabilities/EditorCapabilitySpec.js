@@ -82,7 +82,7 @@ define(
                     status: mockStatusCapability
                 };
 
-                mockDomainObject.hasCapability.andCallFake(function(name) {
+                mockDomainObject.hasCapability.andCallFake(function (name) {
                     return capabilities[name] !== undefined;
                 });
 
@@ -126,8 +126,8 @@ define(
                 expect(capability.inEditContext()).toBe(true);
             });
 
-            describe("save", function() {
-                beforeEach(function() {
+            describe("save", function () {
+                beforeEach(function () {
                     capability.edit();
                     capability.save();
                 });
@@ -139,8 +139,8 @@ define(
                 });
             });
 
-            describe("cancel", function() {
-                beforeEach(function() {
+            describe("cancel", function () {
+                beforeEach(function () {
                     capability.edit();
                     capability.cancel();
                 });
@@ -152,10 +152,10 @@ define(
                 });
             });
 
-            describe("dirty", function() {
+            describe("dirty", function () {
                 var model = {};
 
-                beforeEach(function() {
+                beforeEach(function () {
                     mockDomainObject.getModel.andReturn(model);
                     capability.edit();
                     capability.cancel();

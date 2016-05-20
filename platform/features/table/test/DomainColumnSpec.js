@@ -38,11 +38,11 @@ define(
             beforeEach(function () {
                 mockDataSet = jasmine.createSpyObj(
                     "data",
-                    [ "getDomainValue" ]
+                    ["getDomainValue"]
                 );
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
-                    [ "formatDomainValue", "formatRangeValue" ]
+                    ["formatDomainValue", "formatRangeValue"]
                 );
                 testMetadata = {
                     key: "testKey",

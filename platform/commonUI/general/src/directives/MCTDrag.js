@@ -76,7 +76,7 @@ define(
                 // based on a new mouse event object.
                 function updatePosition(event) {
                     // Get the current position, as an array
-                    var currentPosition = [ event.pageX, event.pageY ];
+                    var currentPosition = [event.pageX, event.pageY];
 
                     // Track the initial position, if one hasn't been observed
                     initialPosition = initialPosition || currentPosition;

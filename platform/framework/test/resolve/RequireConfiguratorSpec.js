@@ -31,7 +31,7 @@ define(
             beforeEach(function () {
                 mockRequire = jasmine.createSpyObj(
                     "requirejs",
-                    [ "config" ]
+                    ["config"]
                 );
                 configurator = new RequireConfigurator(mockRequire);
             });

@@ -38,15 +38,15 @@ define(
                 mockInstantiate = jasmine.createSpy("instantiate");
                 mockIdentifierService = jasmine.createSpyObj(
                     'identifierService',
-                    [ 'parse', 'generate' ]
+                    ['parse', 'generate']
                 );
                 mockIdentifier = jasmine.createSpyObj(
                     'identifier',
-                    [ 'getSpace', 'getKey', 'getDefinedSpace' ]
+                    ['getSpace', 'getKey', 'getDefinedSpace']
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getId', 'getCapability', 'getModel' ]
+                    ['getId', 'getCapability', 'getModel']
                 );
 
                 mockInjector.get.andCallFake(function (key) {
@@ -73,16 +73,16 @@ define(
             });
 
             it("uses the instantiate service to create domain objects", function () {
-                var mockDomainObject = jasmine.createSpyObj('domainObject', [
+                var mockDomainObj = jasmine.createSpyObj('domainObject', [
                     'getId',
                     'getModel',
                     'getCapability',
                     'useCapability',
                     'hasCapability'
                 ]), testModel = { someKey: "some value" };
-                mockInstantiate.andReturn(mockDomainObject);
+                mockInstantiate.andReturn(mockDomainObj);
                 expect(instantiation.instantiate(testModel))
-                    .toBe(mockDomainObject);
+                    .toBe(mockDomainObj);
                 expect(mockInstantiate)
                     .toHaveBeenCalledWith({
                         someKey: "some value",

@@ -62,8 +62,8 @@ define([
         var self = this,
             domainObject = this.activeObject;
 
-        function addNode(domainObject, index) {
-            self.nodeViews[index].model(domainObject);
+        function addNode(domainObj, index) {
+            self.nodeViews[index].model(domainObj);
         }
 
         function addNodes(domainObjects) {

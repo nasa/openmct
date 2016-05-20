@@ -44,7 +44,7 @@ define(
         CancelAction.prototype.perform = function () {
             var domainObject = this.domainObject;
 
-            function returnToBrowse () {
+            function returnToBrowse() {
                 var parent;
 
                 //If the object existed already, navigate to refresh view

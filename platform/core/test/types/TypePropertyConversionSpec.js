@@ -28,7 +28,7 @@ define(
 
             it("allows non-conversion when parameter is 'identity'", function () {
                 var conversion = new TypePropertyConversion("identity");
-                [ 42, "42", { a: 42 } ].forEach(function (v) {
+                [42, "42", { a: 42 }].forEach(function (v) {
                     expect(conversion.toFormValue(v)).toBe(v);
                     expect(conversion.toModelValue(v)).toBe(v);
                 });

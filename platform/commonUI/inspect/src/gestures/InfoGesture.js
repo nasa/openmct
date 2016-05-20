@@ -71,7 +71,7 @@ define(
         InfoGesture.prototype.trackPosition = function (event) {
             // Record mouse position, so bubble can be shown at latest
             // mouse position (not just where the mouse entered)
-            this.mousePosition = [ event.clientX, event.clientY ];
+            this.mousePosition = [event.clientX, event.clientY];
         };
 
         InfoGesture.prototype.hideBubble = function () {

@@ -58,7 +58,7 @@ define(
             $scope.$watch('domainObject', function (domainObject) {
                 //When a domain object becomes available, check whether the
                 // view should auto-scroll to the bottom.
-                if (domainObject && hasStringTelemetry(domainObject)){
+                if (domainObject && hasStringTelemetry(domainObject)) {
                     $scope.autoScroll = true;
                 }
             });
@@ -70,11 +70,11 @@ define(
          * Overrides method on TelemetryTableController providing handling
          * for realtime data.
          */
-        RealtimeTableController.prototype.addRealtimeData = function() {
+        RealtimeTableController.prototype.addRealtimeData = function () {
             var self = this,
                 datum,
                 row;
-            this.handle.getTelemetryObjects().forEach(function (telemetryObject){
+            this.handle.getTelemetryObjects().forEach(function (telemetryObject) {
                 datum = self.handle.getDatum(telemetryObject);
                 if (datum) {
                     //Populate row values from telemetry datum

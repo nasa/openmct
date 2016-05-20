@@ -41,13 +41,13 @@ define(
          * @constructor
          */
         function BrowseController(
-            $scope, 
-            $route, 
-            $location, 
-            $window, 
-            objectService, 
-            navigationService, 
-            urlService, 
+            $scope,
+            $route,
+            $location,
+            $window,
+            objectService,
+            navigationService,
+            urlService,
             policyService,
             defaultPath
         ) {
@@ -80,12 +80,12 @@ define(
             function setNavigation(domainObject) {
                 var navigationAllowed = true;
 
-                if (domainObject === $scope.navigatedObject){
+                if (domainObject === $scope.navigatedObject) {
                     //do nothing;
                     return;
                 }
 
-                policyService.allow("navigation", $scope.navigatedObject, domainObject, function(message){
+                policyService.allow("navigation", $scope.navigatedObject, domainObject, function (message) {
                     navigationAllowed = $window.confirm(message + "\r\n\r\n" +
                         " Are you sure you want to continue?");
                 });

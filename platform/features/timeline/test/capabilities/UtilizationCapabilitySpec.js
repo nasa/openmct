@@ -69,8 +69,8 @@ define(
                             resources: function () {
                                 return Object.keys(costs).sort();
                             },
-                            cost: function (c) {
-                                return costs[c];
+                            cost: function (k) {
+                                return costs[k];
                             }
                         });
                     },
@@ -84,15 +84,15 @@ define(
                 mockQ = jasmine.createSpyObj('$q', ['when', 'all']);
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getId', 'getModel', 'getCapability', 'useCapability' ]
+                    ['getId', 'getModel', 'getCapability', 'useCapability']
                 );
                 mockRelationship = jasmine.createSpyObj(
                     'relationship',
-                    [ 'getRelatedObjects' ]
+                    ['getRelatedObjects']
                 );
                 mockComposition = jasmine.createSpyObj(
                     'composition',
-                    [ 'invoke' ]
+                    ['invoke']
                 );
                 mockCallback = jasmine.createSpy('callback');
 

@@ -60,16 +60,20 @@ define(
                 var result;
 
                 resolver.resolveBundles([
-                    new Bundle("x", { extensions: { tests: [ {}, {}, {} ] } }),
-                    new Bundle("y", { extensions: { tests: [ {}, {} ], others: [ {}, {} ] } }),
-                    new Bundle("z", { extensions: { others: [ {} ] } })
-                ]).then(function (v) { result = v; });
+                    new Bundle("x", { extensions: { tests: [{}, {}, {}] } }),
+                    new Bundle("y", { extensions: { tests: [{}, {}], others: [{}, {}] } }),
+                    new Bundle("z", { extensions: { others: [{}] } })
+                ]).then(function (v) {
+                    result = v;
+                });
 
                 waitsFor(
-                    function () { return result !== undefined; },
-                    "promise resolution",
-                    250
-                );
+                    function () {
+                        return result !== undefined;
+                    },
+                                       "promise resolution",
+                                       250
+                                   );
 
                 // Should get back the result from the resolver, and
                 // should be binned by extension category.
@@ -81,9 +85,9 @@ define(
 
             it("configures require before loading implementations", function () {
                 var bundles = [
-                    new Bundle("x", { extensions: { tests: [ {}, {}, {} ] } }),
-                    new Bundle("y", { extensions: { tests: [ {}, {} ], others: [ {}, {} ] } }),
-                    new Bundle("z", { extensions: { others: [ {} ] } })
+                    new Bundle("x", { extensions: { tests: [{}, {}, {}] } }),
+                    new Bundle("y", { extensions: { tests: [{}, {}], others: [{}, {}] } }),
+                    new Bundle("z", { extensions: { others: [{}] } })
                 ];
 
                 resolver.resolveBundles(bundles);
