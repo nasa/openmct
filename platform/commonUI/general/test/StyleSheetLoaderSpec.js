@@ -47,7 +47,7 @@ define(
 
                 mockPlainDocument =
                     jasmine.createSpyObj("document", ["createElement"]);
-                mockDocument = [ mockPlainDocument ];
+                mockDocument = [mockPlainDocument];
                 mockDocument.find = jasmine.createSpy("$document.find");
                 mockHead = jasmine.createSpyObj("head", ["append"]);
                 mockElement = jasmine.createSpyObj("link", ["setAttribute"]);

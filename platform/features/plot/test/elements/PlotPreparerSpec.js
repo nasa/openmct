@@ -34,7 +34,7 @@ define(
             function makeMockData(scale) {
                 var mockData = jasmine.createSpyObj(
                     "data" + scale,
-                    [ "getPointCount", "getDomainValue", "getRangeValue" ]
+                    ["getPointCount", "getDomainValue", "getRangeValue"]
                 );
                 mockData.getPointCount.andReturn(1000);
                 mockData.getDomainValue.andCallFake(function (i) {

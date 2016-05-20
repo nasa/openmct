@@ -44,7 +44,7 @@ define(
 
             beforeEach(function () {
                 testBundles = {
-                    "bundles.json": [ "bundle/a", "bundle/b"],
+                    "bundles.json": ["bundle/a", "bundle/b"],
                     "bundle/a/bundle.json": {"someValue": 6},
                     "bundle/b/bundle.json": {"someValue": 7}
                 };
@@ -54,7 +54,7 @@ define(
                 mockLog = jasmine.createSpyObj("$log", ["error", "warn", "info", "debug"]);
                 mockRegistry = jasmine.createSpyObj(
                     'legacyRegistry',
-                    [ 'list', 'contains', 'get' ]
+                    ['list', 'contains', 'get']
                 );
                 mockRegistry.list.andReturn([]);
                 mockRegistry.contains.andReturn(false);

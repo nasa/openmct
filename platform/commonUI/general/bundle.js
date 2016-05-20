@@ -380,7 +380,7 @@ define([
                 {
                     "key": "mctTree",
                     "implementation": MCTTree,
-                    "depends": [ '$parse', 'gestureService' ]
+                    "depends": ['$parse', 'gestureService']
                 }
             ],
             "constants": [

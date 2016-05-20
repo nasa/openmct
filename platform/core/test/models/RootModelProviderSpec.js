@@ -57,7 +57,9 @@ define(
                 };
             }
 
-            function capture(value) { captured = value; }
+            function capture(value) {
+                captured = value;
+            }
 
 
             beforeEach(function () {

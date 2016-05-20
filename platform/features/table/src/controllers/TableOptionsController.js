@@ -59,7 +59,7 @@ define(
                 });
             }
 
-            $scope.$watch('domainObject', function(domainObject) {
+            $scope.$watch('domainObject', function (domainObject) {
                 unlisten();
                 self.populateForm(domainObject.getModel());
 
@@ -72,10 +72,10 @@ define(
              * Maintain a configuration object on scope that stores column
              * configuration. On change, synchronize with object model.
              */
-            $scope.$watchCollection('configuration.table.columns', function (columns){
-                if (columns){
+            $scope.$watchCollection('configuration.table.columns', function (columns) {
+                if (columns) {
                     self.domainObject.useCapability('mutation', function (model) {
-                       model.configuration.table.columns = columns;
+                        model.configuration.table.columns = columns;
                     });
                     self.domainObject.getCapability('persistence').persist();
                 }
@@ -92,13 +92,13 @@ define(
             var columnsDefinition = (((model.configuration || {}).table || {}).columns || {}),
                 rows = [];
             this.$scope.columnsForm = {
-                'name':'Columns',
+                'name': 'Columns',
                 'sections': [{
                     'name': 'Columns',
                     'rows': rows
                 }]};
 
-            Object.keys(columnsDefinition).forEach(function (key){
+            Object.keys(columnsDefinition).forEach(function (key) {
                 rows.push({
                     'name': key,
                     'control': 'checkbox',

@@ -57,20 +57,20 @@ define(
                 failureHandler = this.failureHandler;
 
             // Handle a group of persistence invocations
-            function persistGroup(ids, persistences, domainObjects, queue) {
+            function persistGroup(groupIds, persistenceCaps, domainObjs, pQueue) {
                 var failures = [];
 
                 // Try to persist a specific domain object
                 function tryPersist(id) {
                     // Look up its persistence capability from the provided
                     // id->persistence object.
-                    var persistence = persistences[id],
-                        domainObject = domainObjects[id];
+                    var persistence = persistenceCaps[id],
+                        domainObject = domainObjs[id];
 
                     // Put a domain object back in the queue
                     // (e.g. after Overwrite)
                     function requeue() {
-                        return queue.put(domainObject, persistence);
+                        return pQueue.put(domainObject, persistence);
                     }
 
                     // Handle success
@@ -103,7 +103,7 @@ define(
                 }
 
                 // Try to persist everything, then handle any failures
-                return $q.all(ids.map(tryPersist)).then(handleFailure);
+                return $q.all(groupIds.map(tryPersist)).then(handleFailure);
             }
 
             return persistGroup(ids, persistences, domainObjects, queue);

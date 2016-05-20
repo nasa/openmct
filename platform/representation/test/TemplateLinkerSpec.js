@@ -25,8 +25,8 @@ define(
     ["../src/TemplateLinker"],
     function (TemplateLinker) {
 
-        var JQLITE_METHODS = [ 'replaceWith', 'empty', 'html', 'contents' ],
-            SCOPE_METHODS = [ '$on', '$new', '$destroy' ];
+        var JQLITE_METHODS = ['replaceWith', 'empty', 'html', 'contents'],
+            SCOPE_METHODS = ['$on', '$new', '$destroy'];
 
         describe("TemplateLinker", function () {
             var mockTemplateRequest,

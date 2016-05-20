@@ -34,11 +34,11 @@ define(
                 'isTouch'
             ],
             TEST_PERMUTATIONS = [
-                [ 'isMobile', 'isPhone', 'isTouch', 'isPortrait' ],
-                [ 'isMobile', 'isPhone', 'isTouch', 'isLandscape' ],
-                [ 'isMobile', 'isTablet', 'isTouch', 'isPortrait' ],
-                [ 'isMobile', 'isTablet', 'isTouch', 'isLandscape' ],
-                [ 'isTouch' ],
+                ['isMobile', 'isPhone', 'isTouch', 'isPortrait'],
+                ['isMobile', 'isPhone', 'isTouch', 'isLandscape'],
+                ['isMobile', 'isTablet', 'isTouch', 'isPortrait'],
+                ['isMobile', 'isTablet', 'isTouch', 'isLandscape'],
+                ['isTouch'],
                 []
             ];
 
@@ -54,11 +54,11 @@ define(
                 );
                 mockDocument = jasmine.createSpyObj(
                     '$document',
-                    [ 'find' ]
+                    ['find']
                 );
                 mockBody = jasmine.createSpyObj(
                     'body',
-                    [ 'addClass' ]
+                    ['addClass']
                 );
                 mockDocument.find.andCallFake(function (sel) {
                     return sel === 'body' && mockBody;

@@ -42,7 +42,9 @@ define(
                     candidates;
 
                 // Filter an id for inclustion
-                function include(id) { return id !== exclude; }
+                function include(id) {
+                    return id !== exclude;
+                }
 
                 // Evaluate a candidate timestamp as a snap-to location
                 function evaluate(candidate) {

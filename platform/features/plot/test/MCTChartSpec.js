@@ -55,7 +55,7 @@ define(
 
                 // mct-chart uses GLChart, so it needs WebGL API
                 mockCanvas =
-                    jasmine.createSpyObj("canvas", [ "getContext", "addEventListener" ]);
+                    jasmine.createSpyObj("canvas", ["getContext", "addEventListener"]);
                 mockGL = jasmine.createSpyObj(
                     "gl",
                     [
@@ -122,7 +122,7 @@ define(
             it("issues one draw call per line", function () {
                 mctChart.link(mockScope, mockElement);
                 mockScope.$watchCollection.mostRecentCall.args[1]({
-                    lines: [ {}, {}, {} ]
+                    lines: [{}, {}, {}]
                 });
                 expect(mockGL.drawArrays.calls.length).toEqual(3);
             });

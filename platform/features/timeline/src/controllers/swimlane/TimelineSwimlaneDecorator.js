@@ -44,9 +44,9 @@ define(
                 if (arguments.length > 0 && Array.isArray(value)) {
                     if ((model.relationships || {})[ACTIVITY_RELATIONSHIP] !== value) {
                         // Update the relationships
-                        mutator.mutate(function (model) {
-                            model.relationships = model.relationships || {};
-                            model.relationships[ACTIVITY_RELATIONSHIP] = value;
+                        mutator.mutate(function (m) {
+                            m.relationships = m.relationships || {};
+                            m.relationships[ACTIVITY_RELATIONSHIP] = value;
                         });
                     }
                 }
@@ -60,8 +60,8 @@ define(
                 if (arguments.length > 0 && (typeof value === 'string') &&
                         value !== model.link) {
                     // Update the link
-                    mutator.mutate(function (model) {
-                        model.link = value;
+                    mutator.mutate(function (m) {
+                        m.link = value;
                     });
                 }
                 return model.link;

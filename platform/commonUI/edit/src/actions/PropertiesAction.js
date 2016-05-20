@@ -57,10 +57,10 @@ define(
                 });
             }
 
-            function showDialog(type) {
+            function showDialog(objType) {
                 // Create a dialog object to generate the form structure, etc.
                 var dialog =
-                    new PropertiesDialog(type, domainObject.getModel());
+                    new PropertiesDialog(objType, domainObject.getModel());
 
                 // Show the dialog
                 return dialogService.getUserInput(

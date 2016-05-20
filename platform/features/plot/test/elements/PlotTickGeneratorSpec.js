@@ -35,16 +35,16 @@ define(
             beforeEach(function () {
                 mockPanZoomStack = jasmine.createSpyObj(
                     "panZoomStack",
-                    [ "getPanZoom" ]
+                    ["getPanZoom"]
                 );
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
-                    [ "formatDomainValue", "formatRangeValue" ]
+                    ["formatDomainValue", "formatRangeValue"]
                 );
 
                 mockPanZoomStack.getPanZoom.andReturn({
-                    origin: [ 0, 0 ],
-                    dimensions: [ 100, 100 ]
+                    origin: [0, 0],
+                    dimensions: [100, 100]
                 });
 
                 generator =

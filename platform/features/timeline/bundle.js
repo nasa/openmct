@@ -91,7 +91,7 @@ define([
                     "name": "Export Timeline as CSV",
                     "category": "contextual",
                     "implementation": ExportTimelineAsCSVAction,
-                    "depends": [ "exportService", "notificationService" ]
+                    "depends": ["exportService", "notificationService"]
                 }
             ],
             "constants": [

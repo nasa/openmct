@@ -36,7 +36,7 @@ define(
                     glyph: 't',
                     inherits: ['test-parent-1', 'test-parent-2'],
                     features: ['test-feature-1'],
-                    properties: [ {} ],
+                    properties: [{}],
                     model: {someKey: "some value"}
                 };
                 type = new TypeImpl(testTypeDef);
@@ -74,10 +74,14 @@ define(
 
             it("supports instance-of checks by type object", function () {
                 expect(type.instanceOf({
-                    getKey: function () { return 'test-parent-1'; }
+                    getKey: function () {
+                        return 'test-parent-1';
+                    }
                 })).toBeTruthy();
                 expect(type.instanceOf({
-                    getKey: function () { return 'some-other-type'; }
+                    getKey: function () {
+                        return 'some-other-type';
+                    }
                 })).toBeFalsy();
             });
 

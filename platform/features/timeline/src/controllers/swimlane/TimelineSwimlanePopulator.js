@@ -61,8 +61,8 @@ define(
                     swimlane;
 
                 // For the recursive step
-                function populate(childSubgraph, index) {
-                    populateSwimlanes(childSubgraph, swimlane, index);
+                function populate(childSubgraph, nextIndex) {
+                    populateSwimlanes(childSubgraph, swimlane, nextIndex);
                 }
 
                 // Make sure we have a valid object instance...

@@ -37,8 +37,8 @@ define(
             beforeEach(function () {
                 registered = {};
 
-                mockApp = jasmine.createSpyObj("app", [ "service" ]);
-                mockLog = jasmine.createSpyObj("$log", [ "error", "warn", "info", "debug" ]);
+                mockApp = jasmine.createSpyObj("app", ["service"]);
+                mockLog = jasmine.createSpyObj("$log", ["error", "warn", "info", "debug"]);
 
                 mockApp.service.andCallFake(function (name, value) {
                     var factory = value[value.length - 1];
@@ -66,11 +66,21 @@ define(
             it("allows composite services to be registered", function () {
                 // Prepare components that look like resolved extensions
                 var components, name;
-                function MyDecorator() { return {}; }
-                function MyOtherDecorator() { return {}; }
-                function MyProvider() { return {}; }
-                function MyOtherProvider() { return {}; }
-                function MyAggregator() { return {}; }
+                function MyDecorator() {
+                    return {};
+                }
+                function MyOtherDecorator() {
+                    return {};
+                }
+                function MyProvider() {
+                    return {};
+                }
+                function MyOtherProvider() {
+                    return {};
+                }
+                function MyAggregator() {
+                    return {};
+                }
 
                 components = [
                     MyDecorator,
@@ -85,11 +95,13 @@ define(
                 MyProvider.type = "provider";
                 MyOtherProvider.type = "provider";
                 MyAggregator.type = "aggregator";
-                components.forEach(function (c) { c.provides = "testService"; });
+                components.forEach(function (c) {
+                    c.provides = "testService";
+                });
 
                 // Add some test dependencies, to check prepending
-                MyOtherDecorator.depends = [ "someOtherService" ];
-                MyAggregator.depends = [ "tests[]" ];
+                MyOtherDecorator.depends = ["someOtherService"];
+                MyAggregator.depends = ["tests[]"];
 
                 // Register!
                 compositor.registerCompositeServices(components);
@@ -117,16 +129,24 @@ define(
             it("allows registered composite services to be instantiated", function () {
                 // Prepare components that look like resolved extensions
                 var components, name;
-                function MyProvider() { return {}; }
-                function MyOtherProvider() { return {}; }
-                function MyAggregator() { return {}; }
+                function MyProvider() {
+                    return {};
+                }
+                function MyOtherProvider() {
+                    return {};
+                }
+                function MyAggregator() {
+                    return {};
+                }
 
-                components = [ MyProvider, MyAggregator, MyOtherProvider ];
+                components = [MyProvider, MyAggregator, MyOtherProvider];
 
                 MyProvider.type = "provider";
                 MyOtherProvider.type = "provider";
                 MyAggregator.type = "aggregator";
-                components.forEach(function (c) { c.provides = "testService"; });
+                components.forEach(function (c) {
+                    c.provides = "testService";
+                });
 
                 // Register!
                 compositor.registerCompositeServices(components);
@@ -149,11 +169,17 @@ define(
             it("warns and skips components with no service type", function () {
                 // Prepare components that look like resolved extensions
                 var components;
-                function MyProvider() { return {}; }
-                function MyDecorator() { return {}; }
-                function MyAggregator() { return {}; }
+                function MyProvider() {
+                    return {};
+                }
+                function MyDecorator() {
+                    return {};
+                }
+                function MyAggregator() {
+                    return {};
+                }
 
-                components = [ MyProvider, MyAggregator, MyDecorator ];
+                components = [MyProvider, MyAggregator, MyDecorator];
 
                 MyProvider.type = "provider";
                 MyDecorator.type = "decorator";
@@ -175,9 +201,11 @@ define(
             it("warns about and skips aggregators with zero providers", function () {
                 // Prepare components that look like resolved extensions
                 var components;
-                function MyAggregator() { return {}; }
+                function MyAggregator() {
+                    return {};
+                }
 
-                components = [ MyAggregator ];
+                components = [MyAggregator];
 
                 MyAggregator.type = "aggregator";
                 MyAggregator.provides = "testService";
@@ -195,9 +223,11 @@ define(
             it("warns about and skips decorators with nothing to decorate", function () {
                 // Prepare components that look like resolved extensions
                 var components;
-                function MyDecorator() { return {}; }
+                function MyDecorator() {
+                    return {};
+                }
 
-                components = [ MyDecorator ];
+                components = [MyDecorator];
 
                 MyDecorator.type = "decorator";
                 MyDecorator.provides = "testService";

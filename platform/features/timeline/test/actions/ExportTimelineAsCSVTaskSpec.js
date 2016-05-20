@@ -34,7 +34,7 @@ define(
             beforeEach(function () {
                 mockExportService = jasmine.createSpyObj(
                     'exportService',
-                    [ 'exportCSV' ]
+                    ['exportCSV']
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',

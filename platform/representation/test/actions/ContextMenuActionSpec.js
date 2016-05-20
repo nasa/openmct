@@ -28,8 +28,8 @@ define(
     ["../../src/actions/ContextMenuAction"],
     function (ContextMenuAction) {
 
-        var JQLITE_FUNCTIONS = [ "on", "off", "find", "append", "remove" ],
-            DOMAIN_OBJECT_METHODS = [ "getId", "getModel", "getCapability", "hasCapability", "useCapability" ];
+        var JQLITE_FUNCTIONS = ["on", "off", "find", "append", "remove"],
+            DOMAIN_OBJECT_METHODS = ["getId", "getModel", "getCapability", "hasCapability", "useCapability"];
 
 
         describe("The 'context menu' action", function () {
@@ -93,7 +93,7 @@ define(
                 action.perform();
                 expect(mockPopupService.display).toHaveBeenCalledWith(
                     mockMenu,
-                    [ mockEvent.pageX, mockEvent.pageY ],
+                    [mockEvent.pageX, mockEvent.pageY],
                     jasmine.any(Object)
                 );
             });
@@ -104,7 +104,7 @@ define(
             });
 
             it("adds classes to menus based on position", function () {
-                var booleans = [ false, true ];
+                var booleans = [false, true];
 
                 booleans.forEach(function (goLeft) {
                     booleans.forEach(function (goUp) {

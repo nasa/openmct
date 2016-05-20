@@ -96,7 +96,7 @@ define(
                     });
                 }
             }
-            
+
             // Recalculate swimlane state on changes
             $scope.$watch("domainObject", swimlanePopulator.populate);
 

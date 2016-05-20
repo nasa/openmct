@@ -60,7 +60,7 @@ define(
 
                 mockObjectService = jasmine.createSpyObj(
                     "objectService",
-                    [ "getObjects" ]
+                    ["getObjects"]
                 );
 
                 mockInjector = {
@@ -85,7 +85,7 @@ define(
             });
 
             it("requests ids found in model's composition from the object service", function () {
-                var ids = [ "a", "b", "c", "xyz" ];
+                var ids = ["a", "b", "c", "xyz"];
 
                 mockDomainObject.getModel.andReturn({ relationships: { xyz: ids } });
 
@@ -96,7 +96,7 @@ define(
 
             it("provides a list of relationship types", function () {
                 mockDomainObject.getModel.andReturn({ relationships: {
-                    abc: [ 'a', 'b' ],
+                    abc: ['a', 'b'],
                     def: "not an array, should be ignored",
                     xyz: []
                 } });

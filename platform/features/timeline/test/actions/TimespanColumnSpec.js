@@ -36,11 +36,11 @@ define(
                 };
                 mockTimespan = jasmine.createSpyObj(
                     'timespan',
-                    [ 'getStart', 'getEnd' ]
+                    ['getStart', 'getEnd']
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'useCapability', 'hasCapability' ]
+                    ['useCapability', 'hasCapability']
                 );
                 mockTimespan.getStart.andReturn(testTimes.start);
                 mockTimespan.getEnd.andReturn(testTimes.end);
@@ -52,7 +52,7 @@ define(
                 });
             });
 
-            [ "start", "end" ].forEach(function (bound) {
+            ["start", "end"].forEach(function (bound) {
                 describe("when referring to " + bound + " times", function () {
                     var name = bound.charAt(0).toUpperCase() + bound.slice(1);
 

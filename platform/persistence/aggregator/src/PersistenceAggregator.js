@@ -61,7 +61,9 @@ define(
             }
 
             this.providerMapPromise = $q.all(providers.map(addToMap))
-                .then(function () { return providerMap; });
+                .then(function () {
+                    return providerMap;
+                });
         }
 
         PersistenceAggregator.prototype.listSpaces = function () {

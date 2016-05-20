@@ -30,7 +30,7 @@ define(
                 mockDialogService,
                 controller;
 
-            beforeEach(function(){
+            beforeEach(function () {
                 mockNotificationService = jasmine.createSpy("notificationService");
                 mockScope = jasmine.createSpy("$scope");
                 mockDialogService = jasmine.createSpyObj(
@@ -43,12 +43,12 @@ define(
                 controller = new NotificationIndicatorController(mockScope, mockNotificationService, mockDialogService);
             });
 
-            it("exposes the highest notification severity to the template", function() {
+            it("exposes the highest notification severity to the template", function () {
                 expect(mockScope.highest).toBeTruthy();
                 expect(mockScope.highest.severity).toBe("error");
             });
 
-            it("invokes the dialog service to show list of messages", function() {
+            it("invokes the dialog service to show list of messages", function () {
                 expect(mockScope.showNotificationsList).toBeDefined();
                 mockScope.showNotificationsList();
                 expect(mockDialogService.getDialogResponse).toHaveBeenCalled();
@@ -60,7 +60,7 @@ define(
                 expect(mockDialogService.dismiss).toHaveBeenCalled();
             });
 
-            it("provides a means of dismissing the message list", function() {
+            it("provides a means of dismissing the message list", function () {
                 expect(mockScope.showNotificationsList).toBeDefined();
                 mockScope.showNotificationsList();
                 expect(mockDialogService.getDialogResponse).toHaveBeenCalled();

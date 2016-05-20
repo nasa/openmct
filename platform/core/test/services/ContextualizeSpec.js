@@ -44,7 +44,7 @@ define(
 
                 mockLog = jasmine.createSpyObj(
                     "$log",
-                    [ "error", "warn", "info", "debug" ]
+                    ["error", "warn", "info", "debug"]
                 );
 
                 mockDomainObject =

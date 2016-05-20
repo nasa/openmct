@@ -42,7 +42,7 @@ define(
             var actionCapability = domainObject.getCapability('action'),
                 scope = element.scope && element.scope(),
                 action; // Action for the drop, when it occurs
-            
+
             function broadcastDrop(id, event) {
                 // Find the relevant scope...
                 var rect;

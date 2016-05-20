@@ -40,20 +40,20 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$watch" ]
+                    ["$watch"]
                 );
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getCapability" ]
+                    ["getCapability"]
                 );
                 mockRootObject = jasmine.createSpyObj(
                     "rootObject",
-                    [ "getCapability" ]
+                    ["getCapability"]
                 );
                 mockContext = jasmine.createSpyObj(
                     "context",
-                    [ "getRoot" ]
+                    ["getRoot"]
                 );
                 mockObjectService = jasmine.createSpyObj(
                     "objectService",
@@ -73,18 +73,18 @@ define(
 
                 controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
             });
-                describe("when context is available", function () {
+            describe("when context is available", function () {
 
-                    beforeEach(function () {
+                beforeEach(function () {
                         mockContext.getRoot.andReturn(mockRootObject);
                         controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
                     });
 
-                    it("adds a treeModel to scope", function () {
+                it("adds a treeModel to scope", function () {
                         expect(mockScope.treeModel).toBeDefined();
                     });
 
-                    it("watches for changes to treeModel", function () {
+                it("watches for changes to treeModel", function () {
                         // This is what the embedded tree representation
                         // will be modifying.
                         expect(mockScope.$watch).toHaveBeenCalledWith(
@@ -93,7 +93,7 @@ define(
                         );
                     });
 
-                    it("changes its own model on embedded model updates", function () {
+                it("changes its own model on embedded model updates", function () {
                         // Need to pass on selection changes as updates to
                         // the control's value
                         mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
@@ -107,7 +107,7 @@ define(
                             .toHaveBeenCalledWith("context");
                     });
 
-                    it("rejects changes which fail validation", function () {
+                it("rejects changes which fail validation", function () {
                         mockScope.structure = { validate: jasmine.createSpy('validate') };
                         mockScope.structure.validate.andReturn(false);
 
@@ -120,10 +120,10 @@ define(
                         expect(mockScope.ngModel.someField).not.toEqual(mockDomainObject);
                     });
 
-                    it("treats a lack of a selection as invalid", function () {
+                it("treats a lack of a selection as invalid", function () {
                         mockScope.ngModelController = jasmine.createSpyObj(
                             'ngModelController',
-                            [ '$setValidity' ]
+                            ['$setValidity']
                         );
 
                         mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
@@ -136,14 +136,14 @@ define(
                         expect(mockScope.ngModelController.$setValidity)
                             .toHaveBeenCalledWith(jasmine.any(String), false);
                     });
-                });
-                describe("when no context is available", function () {
+            });
+            describe("when no context is available", function () {
                     var defaultRoot = "DEFAULT_ROOT";
 
                     beforeEach(function () {
                         mockContext.getRoot.andReturn(undefined);
-                        getObjectsPromise.then.andCallFake(function(callback){
-                            callback({'ROOT':defaultRoot});
+                        getObjectsPromise.then.andCallFake(function (callback) {
+                            callback({'ROOT': defaultRoot});
                         });
                         controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
                     });

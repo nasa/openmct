@@ -57,7 +57,7 @@ define(
             it("sets properties by path", function () {
                 var definition = {
                         key: "someKey",
-                        property: [ "some", "property" ]
+                        property: ["some", "property"]
                     },
                     model = {},
                     property = new TypeProperty(definition);
@@ -68,7 +68,7 @@ define(
             it("gets properties by path", function () {
                 var definition = {
                         key: "someKey",
-                        property: [ "some", "property" ]
+                        property: ["some", "property"]
                     },
                     model = { some: { property: "some value" } },
                     property = new TypeProperty(definition);
@@ -78,7 +78,7 @@ define(
             it("stops looking for properties when a path is invalid", function () {
                 var definition = {
                         key: "someKey",
-                        property: [ "some", "property" ]
+                        property: ["some", "property"]
                     },
                     property = new TypeProperty(definition);
                 expect(property.getValue(undefined)).toBeUndefined();
@@ -97,7 +97,7 @@ define(
             it("provides empty arrays for values that are array-like", function () {
                 var definition = {
                         property: "someProperty",
-                        items: [ {}, {}, {} ]
+                        items: [{}, {}, {}]
                     },
                     model = {},
                     property = new TypeProperty(definition);
@@ -108,7 +108,7 @@ define(
             it("detects and ignores empty arrays on setValue", function () {
                 var definition = {
                         property: "someProperty",
-                        items: [ {}, {}, {} ]
+                        items: [{}, {}, {}]
                     },
                     model = {},
                     property = new TypeProperty(definition);

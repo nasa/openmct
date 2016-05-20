@@ -46,10 +46,10 @@ define(
                     then: function (callback) {
                         return asPromise(callback(value));
                     },
-                    catch: function(callback) {
+                    catch: function (callback) {
                         //Define a default 'happy' catch, that skips over the
                         // catch callback
-                        return doCatch ? asPromise(callback(value)): asPromise(value);
+                        return doCatch ? asPromise(callback(value)) : asPromise(value);
                     }
                 };
             }
@@ -60,16 +60,16 @@ define(
 
                 mockPersistenceService = jasmine.createSpyObj(
                     "persistenceService",
-                    [ "updateObject", "readObject", "createObject", "deleteObject" ]
+                    ["updateObject", "readObject", "createObject", "deleteObject"]
                 );
 
                 mockIdentifierService = jasmine.createSpyObj(
                     'identifierService',
-                    [ 'parse', 'generate' ]
+                    ['parse', 'generate']
                 );
                 mockIdentifier = jasmine.createSpyObj(
                     'identifier',
-                    [ 'getSpace', 'getKey', 'getDefinedSpace' ]
+                    ['getSpace', 'getKey', 'getDefinedSpace']
                 );
                 mockQ = jasmine.createSpyObj(
                     "$q",
@@ -81,12 +81,16 @@ define(
                 );
                 mockCacheService = jasmine.createSpyObj(
                     "cacheService",
-                    [ "get", "put", "remove", "all" ]
+                    ["get", "put", "remove", "all"]
                 );
 
                 mockDomainObject = {
-                    getId: function () { return id; },
-                    getModel: function () { return model; },
+                    getId: function () {
+                        return id;
+                    },
+                    getModel: function () {
+                        return model;
+                    },
                     useCapability: jasmine.createSpy()
                 };
                 // Simulate mutation capability
@@ -107,7 +111,7 @@ define(
                 );
             });
 
-            describe("successful persistence", function() {
+            describe("successful persistence", function () {
                 beforeEach(function () {
                     mockPersistenceService.updateObject.andReturn(happyPromise);
                     mockPersistenceService.createObject.andReturn(happyPromise);
@@ -163,9 +167,9 @@ define(
                 });
             });
 
-            describe("unsuccessful persistence", function() {
+            describe("unsuccessful persistence", function () {
                 var sadPromise = {
-                        then: function(callback){
+                        then: function (callback) {
                             return asPromise(callback(0), true);
                         }
                     };

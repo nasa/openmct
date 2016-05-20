@@ -44,12 +44,12 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$on", "$watch" ]
+                    ["$on", "$watch"]
                 );
                 mockRoute = { current: { params: {} } };
                 mockLocation = jasmine.createSpyObj(
                     "$location",
-                    [ "path", "search" ]
+                    ["path", "search"]
                 );
                 mockUnlisten = jasmine.createSpy("unlisten");
 
@@ -69,7 +69,7 @@ define(
                 // Allows the path index to be checked
                 // prior to setting $route.current
                 mockLocation.path.andReturn("/browse/");
-                
+
                 // Exercise the Angular workaround
                 mockScope.$on.mostRecentCall.args[1]();
                 expect(mockUnlisten).toHaveBeenCalled();

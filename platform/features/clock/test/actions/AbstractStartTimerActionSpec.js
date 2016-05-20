@@ -42,7 +42,7 @@ define(
                 mockNow = jasmine.createSpy('now');
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getCapability', 'useCapability' ]
+                    ['getCapability', 'useCapability']
                 );
 
                 mockDomainObject.useCapability.andCallFake(function (c, v) {

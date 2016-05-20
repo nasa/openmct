@@ -29,9 +29,9 @@ define(
     ['./LayoutDrag'],
     function (LayoutDrag) {
 
-        var DEFAULT_DIMENSIONS = [ 12, 8 ],
-            DEFAULT_GRID_SIZE = [ 32, 32 ],
-            MINIMUM_FRAME_SIZE = [ 320, 180 ];
+        var DEFAULT_DIMENSIONS = [12, 8],
+            DEFAULT_GRID_SIZE = [32, 32],
+            MINIMUM_FRAME_SIZE = [320, 180];
 
         /**
          * The LayoutController is responsible for supporting the
@@ -66,7 +66,7 @@ define(
                 if (e.defaultPrevented) {
                     return;
                 }
-                if (editableDomainObject){
+                if (editableDomainObject) {
                     $scope.setEditable(editableDomainObject);
                 }
                 // Ensure that configuration field is populated
@@ -103,12 +103,12 @@ define(
                 //Keep a track of how many composition callbacks have been made
                 var thisCount = ++callbackCount;
 
-                $scope.domainObject.useCapability('composition').then(function(composition){
+                $scope.domainObject.useCapability('composition').then(function (composition) {
                     var ids;
 
                     //Is this callback for the most recent composition
                     // request? If not, discard it. Prevents race condition
-                    if (thisCount === callbackCount){
+                    if (thisCount === callbackCount) {
                         ids = composition.map(function (object) {
                                 return object.getId();
                             }) || [];

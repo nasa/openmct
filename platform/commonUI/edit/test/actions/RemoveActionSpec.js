@@ -54,19 +54,19 @@ define(
             beforeEach(function () {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getCapability" ]
+                    ["getId", "getCapability"]
                 );
                 mockChildObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getCapability" ]
+                    ["getId", "getCapability"]
                 );
                 mockGrandchildObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getCapability" ]
+                    ["getId", "getCapability"]
                 );
                 mockRootObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getCapability" ]
+                    ["getId", "getCapability"]
                 );
                 mockQ = { when: mockPromise };
                 mockParent = {
@@ -80,12 +80,12 @@ define(
                         return capabilities[k].invoke(v);
                     }
                 };
-                mockContext = jasmine.createSpyObj("context", [ "getParent" ]);
-                mockChildContext = jasmine.createSpyObj("context", [ "getParent" ]);
-                mockGrandchildContext = jasmine.createSpyObj("context", [ "getParent" ]);
-                mockRootContext = jasmine.createSpyObj("context", [ "getParent" ]);
-                mockMutation = jasmine.createSpyObj("mutation", [ "invoke" ]);
-                mockType = jasmine.createSpyObj("type", [ "hasFeature" ]);
+                mockContext = jasmine.createSpyObj("context", ["getParent"]);
+                mockChildContext = jasmine.createSpyObj("context", ["getParent"]);
+                mockGrandchildContext = jasmine.createSpyObj("context", ["getParent"]);
+                mockRootContext = jasmine.createSpyObj("context", ["getParent"]);
+                mockMutation = jasmine.createSpyObj("mutation", ["invoke"]);
+                mockType = jasmine.createSpyObj("type", ["hasFeature"]);
                 mockNavigationService = jasmine.createSpyObj(
                     "navigationService",
                     [
@@ -96,8 +96,8 @@ define(
                     ]
                 );
                 mockNavigationService.getNavigation.andReturn(mockDomainObject);
-                
-                
+
+
                 mockDomainObject.getId.andReturn("test");
                 mockDomainObject.getCapability.andReturn(mockContext);
                 mockContext.getParent.andReturn(mockParent);
@@ -108,7 +108,7 @@ define(
                     type: mockType
                 };
                 model = {
-                    composition: [ "a", "test", "b" ]
+                    composition: ["a", "test", "b"]
                 };
 
                 actionContext = { domainObject: mockDomainObject };
@@ -150,56 +150,56 @@ define(
                 // mock domain object's id.
                 expect(result.composition).toEqual(["a", "b"]);
             });
-            
+
             it("removes parent of object currently navigated to", function () {
                 // Navigates to child object
                 mockNavigationService.getNavigation.andReturn(mockChildObject);
-                
+
                 // Test is id of object being removed
                 // Child object has different id
                 mockDomainObject.getId.andReturn("test");
                 mockChildObject.getId.andReturn("not test");
-                
+
                 // Sets context for the child and domainObject
                 mockDomainObject.getCapability.andReturn(mockContext);
                 mockChildObject.getCapability.andReturn(mockChildContext);
-                
+
                 // Parents of child and domainObject are set
                 mockContext.getParent.andReturn(mockParent);
                 mockChildContext.getParent.andReturn(mockDomainObject);
-                
+
                 mockType.hasFeature.andReturn(true);
-                
+
                 action.perform();
-                
+
                 // Expects navigation to parent of domainObject (removed object)
                 expect(mockNavigationService.setNavigation).toHaveBeenCalledWith(mockParent);
             });
-            
+
             it("checks if removing object not in ascendent path (reaches ROOT)", function () {
                 // Navigates to grandchild of ROOT
                 mockNavigationService.getNavigation.andReturn(mockGrandchildObject);
-                
+
                 // domainObject (grandparent) is set as ROOT, child and grandchild
                 // are set objects not being removed
                 mockDomainObject.getId.andReturn("test 1");
                 mockRootObject.getId.andReturn("ROOT");
                 mockChildObject.getId.andReturn("not test 2");
                 mockGrandchildObject.getId.andReturn("not test 3");
-                
+
                 // Sets context for the grandchild, child, and domainObject
                 mockRootObject.getCapability.andReturn(mockRootContext);
                 mockChildObject.getCapability.andReturn(mockChildContext);
                 mockGrandchildObject.getCapability.andReturn(mockGrandchildContext);
-                
+
                 // Parents of grandchild and child are set
                 mockChildContext.getParent.andReturn(mockRootObject);
                 mockGrandchildContext.getParent.andReturn(mockChildObject);
-                
+
                 mockType.hasFeature.andReturn(true);
-                
+
                 action.perform();
-                
+
                 // Expects no navigation to occur
                 expect(mockNavigationService.setNavigation).not.toHaveBeenCalled();
             });

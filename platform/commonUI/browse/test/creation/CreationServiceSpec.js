@@ -61,23 +61,23 @@ define(
                 mockQ = { when: mockPromise, reject: mockReject };
                 mockLog = jasmine.createSpyObj(
                     "$log",
-                    [ "error", "warn", "info", "debug" ]
+                    ["error", "warn", "info", "debug"]
                 );
                 mockParentObject = jasmine.createSpyObj(
                     "parentObject",
-                    [ "getId", "getCapability", "useCapability" ]
+                    ["getId", "getCapability", "useCapability"]
                 );
                 mockNewObject = jasmine.createSpyObj(
                     "newObject",
-                    [ "getId", "getCapability", "useCapability" ]
+                    ["getId", "getCapability", "useCapability"]
                 );
                 mockMutationCapability = jasmine.createSpyObj(
                     "mutation",
-                    [ "invoke" ]
+                    ["invoke"]
                 );
                 mockPersistenceCapability = jasmine.createSpyObj(
                     "persistence",
-                    [ "persist", "getSpace" ]
+                    ["persist", "getSpace"]
                 );
                 mockCompositionCapability = jasmine.createSpyObj(
                     "composition",
@@ -100,7 +100,7 @@ define(
                 };
                 mockNewPersistenceCapability = jasmine.createSpyObj(
                     "new-persistence",
-                    [ "persist", "getSpace" ]
+                    ["persist", "getSpace"]
                 );
 
                 mockParentObject.getCapability.andCallFake(function (key) {

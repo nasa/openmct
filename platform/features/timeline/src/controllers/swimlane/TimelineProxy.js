@@ -34,8 +34,8 @@ define(
             var actionMap = {};
 
             // Populate available Create actions for this domain object
-            function populateActionMap(domainObject) {
-                var actionCapability = domainObject.getCapability('action'),
+            function populateActionMap(object) {
+                var actionCapability = object.getCapability('action'),
                     actions = actionCapability ?
                             actionCapability.getActions('add') : [];
                 actions.forEach(function (action) {

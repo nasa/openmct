@@ -88,7 +88,7 @@ define(
                     enableFilter: "=?",
                     enableSort: "=?",
                     autoScroll: "=?"
-                },
+                }
             };
         }
 

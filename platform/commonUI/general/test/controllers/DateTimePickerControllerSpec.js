@@ -48,7 +48,7 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$apply", "$watch", "$watchCollection" ]
+                    ["$apply", "$watch", "$watchCollection"]
                 );
                 mockScope.ngModel = {};
                 mockScope.field = "testField";

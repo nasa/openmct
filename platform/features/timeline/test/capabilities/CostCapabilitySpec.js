@@ -31,7 +31,7 @@ define(
             beforeEach(function () {
                 var mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getModel', 'getId' ]
+                    ['getModel', 'getId']
                 );
 
                 testModel = {

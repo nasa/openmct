@@ -44,7 +44,7 @@ define({
      * positioning.
      * @memberof platform/representation.GestureConstants
      */
-    MCT_MENU_DIMENSIONS: [ 170, 200 ],
+    MCT_MENU_DIMENSIONS: [170, 200],
     /**
      * Identifier for drop events.
      * @memberof platform/representation.GestureConstants

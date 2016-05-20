@@ -22,7 +22,7 @@
 /*global define*/
 define(
     [],
-    function() {
+    function () {
         /**
          * Implements an application-wide transaction state. Once a
          * transaction is started, calls to
@@ -103,7 +103,7 @@ define(
                     this.$log.error("Error committing transaction.");
                 }
             }
-            return this.$q.all(promises).then( function () {
+            return this.$q.all(promises).then(function () {
                 self.transaction = false;
 
                 self.onCommits = [];
@@ -145,4 +145,4 @@ define(
         };
 
         return TransactionService;
-});
+    });

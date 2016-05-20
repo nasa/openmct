@@ -24,8 +24,8 @@ define(
     ['../../src/elements/ElementFactory'],
     function (ElementFactory) {
 
-        var DIALOG_ELEMENTS = [ 'image', 'text' ],
-            NON_DIALOG_ELEMENTS = [ 'box', 'line' ];
+        var DIALOG_ELEMENTS = ['image', 'text'],
+            NON_DIALOG_ELEMENTS = ['box', 'line'];
 
         describe("The fixed position element factory", function () {
             var mockDialogService,
@@ -35,11 +35,11 @@ define(
             beforeEach(function () {
                 mockDialogService = jasmine.createSpyObj(
                     'dialogService',
-                    [ 'getUserInput' ]
+                    ['getUserInput']
                 );
                 mockPromise = jasmine.createSpyObj(
                     'promise',
-                    [ 'then' ]
+                    ['then']
                 );
 
                 mockDialogService.getUserInput.andReturn(mockPromise);

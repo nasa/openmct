@@ -38,7 +38,9 @@ define(
             beforeEach(function () {
                 capabilities = {
                     type: {
-                        getProperties: function () { return []; },
+                        getProperties: function () {
+                            return [];
+                        },
                         hasFeature: jasmine.createSpy('hasFeature')
                     },
                     mutation: jasmine.createSpy("mutation")
@@ -46,11 +48,21 @@ define(
                 model = {};
                 input = {};
                 object = {
-                    getId: function () { return 'test-id'; },
-                    getCapability: function (k) { return capabilities[k]; },
-                    getModel: function () { return model; },
-                    useCapability: function (k, v) { return capabilities[k](v); },
-                    hasCapability: function () { return true; }
+                    getId: function () {
+                        return 'test-id';
+                    },
+                    getCapability: function (k) {
+                        return capabilities[k];
+                    },
+                    getModel: function () {
+                        return model;
+                    },
+                    useCapability: function (k, v) {
+                        return capabilities[k](v);
+                    },
+                    hasCapability: function () {
+                        return true;
+                    }
                 };
                 context = { someKey: "some value", domainObject: object };
                 dialogService = {

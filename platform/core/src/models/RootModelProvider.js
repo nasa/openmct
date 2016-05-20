@@ -46,7 +46,9 @@ define(
          */
         function RootModelProvider(roots, $q, $log) {
             // Pull out identifiers to used as ROOT's
-            var ids = roots.map(function (root) { return root.id; });
+            var ids = roots.map(function (root) {
+                return root.id;
+            });
 
             // Assign an initial location to root models
             roots.forEach(function (root) {

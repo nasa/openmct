@@ -51,7 +51,7 @@ define([
         beforeEach(function () {
             mockScope = jasmine.createSpyObj(
                 '$scope',
-                [ '$watch' ]
+                ['$watch']
             );
             mockScope.ngModel = {};
             mockScope.ngModel.input = 'test input';
@@ -61,11 +61,11 @@ define([
 
             mockSearchService = jasmine.createSpyObj(
                 'searchService',
-                [ 'query' ]
+                ['query']
             );
             mockPromise = jasmine.createSpyObj(
                 'promise',
-                [ 'then' ]
+                ['then']
             );
             mockSearchService.query.andReturn(mockPromise);
 
@@ -73,11 +73,11 @@ define([
 
             mockSearchResult = jasmine.createSpyObj(
                 'searchResult',
-                [ '' ]
+                ['']
             );
             mockDomainObject = jasmine.createSpyObj(
                 'domainObject',
-                [ 'getModel' ]
+                ['getModel']
             );
             mockSearchResult.object = mockDomainObject;
             mockDomainObject.getModel.andReturn({name: 'Mock Object', type: 'mock.type'});

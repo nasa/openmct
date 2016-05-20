@@ -67,7 +67,7 @@ define(
          * implies that there is no range data displayed either
          * @returns {boolean} true if domain data exists for the current pan/zoom level
          */
-        SubPlot.prototype.hasDomainData = function() {
+        SubPlot.prototype.hasDomainData = function () {
             return this.panZoomStack &&
                 this.panZoomStack.getDimensions()[0] > 0;
         };
@@ -109,7 +109,7 @@ define(
         // associated with conversion to a 32-bit floating point
         // format (which is needed in the chart area itself, by WebGL.)
         SubPlot.prototype.toDisplayable = function (position) {
-            return [ position[0] - this.domainOffset, position[1] ];
+            return [position[0] - this.domainOffset, position[1]];
         };
 
         // Update the current hover coordinates
@@ -145,7 +145,7 @@ define(
                     end: this.toDisplayable(
                         this.mousePositionToDomainRange(this.mousePosition)
                     ),
-                    color: [1, 1, 1, 0.5 ]
+                    color: [1, 1, 1, 0.5]
                 }] : undefined;
         };
 
@@ -189,7 +189,7 @@ define(
                 this.panZoomStack
             );
 
-            delta = [ current[0] - start[0], current[1] - start[1] ];
+            delta = [current[0] - start[0], current[1] - start[1]];
             nextOrigin = [
                 this.panStartBounds.origin[0] - delta[0],
                 this.panStartBounds.origin[1] - delta[1]

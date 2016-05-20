@@ -28,8 +28,8 @@ define(
     ["../../src/gestures/ContextMenuGesture"],
     function (ContextMenuGesture) {
 
-        var JQLITE_FUNCTIONS = [ "on", "off", "find", "append", "remove" ],
-            DOMAIN_OBJECT_METHODS = [ "getId", "getModel", "getCapability", "hasCapability", "useCapability"];
+        var JQLITE_FUNCTIONS = ["on", "off", "find", "append", "remove"],
+            DOMAIN_OBJECT_METHODS = ["getId", "getModel", "getCapability", "hasCapability", "useCapability"];
 
 
         describe("The 'context menu' gesture", function () {
@@ -55,15 +55,15 @@ define(
                 mockEvent = jasmine.createSpyObj("event", ["preventDefault"]);
                 mockContextMenuAction = jasmine.createSpyObj(
                     "action",
-                    [ "perform", "getActions" ]
+                    ["perform", "getActions"]
                 );
-                
+
                 mockActionContext = {domainObject: mockDomainObject, event: mockEvent};
                 mockDomainObject.getCapability.andReturn(mockContextMenuAction);
                 mockContextMenuAction.perform.andReturn(jasmine.any(Function));
                 mockAgentService.isMobile.andReturn(false);
-                
-                
+
+
                 gesture = new ContextMenuGesture(mockTimeout, mockAgentService, mockElement, mockDomainObject);
 
                 // Capture the contextmenu callback
@@ -90,7 +90,7 @@ define(
                     mockDomainObject.calls
                 );
             });
-            
+
             it("attaches a callback for context menu events on mobile", function () {
                 // Mock touch event and set to mobile device
                 mockTouchEvent = jasmine.createSpyObj("event", ["preventDefault", "touches"]);
@@ -98,21 +98,21 @@ define(
                 mockTouch.length = 1;
                 mockTouchEvent.touches.andReturn(mockTouch);
                 mockAgentService.isMobile.andReturn(true);
-                
+
                 // Then create new (mobile) gesture
                 gesture = new ContextMenuGesture(mockTimeout, mockAgentService, mockElement, mockDomainObject);
-                
+
                 // Set calls for the touchstart and touchend gestures
                 fireTouchStartGesture = mockElement.on.calls[1].args[1];
                 fireTouchEndGesture =  mockElement.on.mostRecentCall.args[1];
-                
+
                 // Fire touchstart and expect touch start to begin
                 fireTouchStartGesture(mockTouchEvent);
                 expect(mockElement.on).toHaveBeenCalledWith(
                     "touchstart",
                     jasmine.any(Function)
                 );
-                
+
                 // Expect timeout to begin and then fireTouchEnd
                 expect(mockTimeout).toHaveBeenCalled();
                 mockTimeout.mostRecentCall.args[0]();

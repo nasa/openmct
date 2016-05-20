@@ -27,7 +27,9 @@
 define(
     function () {
 
-        function identity(x) { return x; }
+        function identity(x) {
+            return x;
+        }
 
         /**
          * The PlotPreparer is responsible for handling data sets and

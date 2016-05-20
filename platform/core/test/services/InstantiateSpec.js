@@ -45,7 +45,7 @@ define(
                 );
                 mockIdentifierService = jasmine.createSpyObj(
                     'identifierService',
-                    [ 'parse', 'generate' ]
+                    ['parse', 'generate']
                 );
                 mockCapabilityConstructor = jasmine.createSpy('capability');
                 mockCapabilityInstance = {};
@@ -61,7 +61,7 @@ define(
 
                 mockCacheService = jasmine.createSpyObj(
                     'cacheService',
-                    [ 'get', 'put', 'remove', 'all' ]
+                    ['get', 'put', 'remove', 'all']
                 );
 
                 testModel = { someKey: "some value" };

@@ -45,9 +45,9 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$on", "$broadcast", "$watch" ]
+                    ["$on", "$broadcast", "$watch"]
                 );
-                mockQ = jasmine.createSpyObj("$q", [ "all", "when" ]);
+                mockQ = jasmine.createSpyObj("$q", ["all", "when"]);
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockLog = jasmine.createSpyObj("$log", ["warn", "info", "debug"]);
 
@@ -64,7 +64,7 @@ define(
 
                 mockTelemetry = jasmine.createSpyObj(
                     "telemetry",
-                    [ "requestData", "subscribe", "getMetadata" ]
+                    ["requestData", "subscribe", "getMetadata"]
                 );
                 mockUnsubscribe = jasmine.createSpy("unsubscribe");
 

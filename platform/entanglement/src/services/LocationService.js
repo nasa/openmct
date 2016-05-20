@@ -77,8 +77,8 @@ define(
 
                     return dialogService
                         .getUserInput(formStructure, formState)
-                        .then(function (formState) {
-                            return formState.location;
+                        .then(function (userFormState) {
+                            return userFormState.location;
                         });
                 }
             };

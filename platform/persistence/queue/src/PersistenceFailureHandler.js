@@ -68,7 +68,7 @@ define(
             }
 
             // Retry persistence (overwrite) for this set of failed attempts
-            function retry(failures) {
+            function retry(failuresToRetry) {
                 var models = {};
 
                 // Cache a copy of the model
@@ -84,23 +84,25 @@ define(
                     var model = models[failure.id];
                     return failure.domainObject.useCapability(
                         "mutation",
-                        function () { return model; },
-                        model.modified
-                    );
+                        function () {
+                            return model;
+                        },
+                                               model.modified
+                                           );
                 }
 
                 // Cache the object models we might want to save
-                failures.forEach(cacheModel);
+                failuresToRetry.forEach(cacheModel);
 
                 // Strategy here:
                 // * Cache all of the models we might want to save (above)
                 // * Refresh all domain objects (so they are latest versions)
                 // * Re-insert the cached domain object models
                 // * Invoke persistence again
-                return $q.all(failures.map(refresh)).then(function () {
-                    return $q.all(failures.map(remutate));
+                return $q.all(failuresToRetry.map(refresh)).then(function () {
+                    return $q.all(failuresToRetry.map(remutate));
                 }).then(function () {
-                    return $q.all(failures.map(persist));
+                    return $q.all(failuresToRetry.map(persist));
                 });
             }
 
@@ -112,8 +114,8 @@ define(
             }
 
             // Discard changes associated with a failed save
-            function discardAll(failures) {
-                return $q.all(failures.map(discard));
+            function discardAll(failuresToDiscard) {
+                return $q.all(failuresToDiscard.map(discard));
             }
 
             // Handle user input (did they choose to overwrite?)

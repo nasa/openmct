@@ -73,7 +73,9 @@ define(
             // loadBundleDefinition, so at this point they are safe
             // to discard.
             function filterBundles(array) {
-                return array.filter(function (x) { return x !== undefined; });
+                return array.filter(function (x) {
+                    return x !== undefined;
+                });
             }
 
             // Load a definition for a bundle

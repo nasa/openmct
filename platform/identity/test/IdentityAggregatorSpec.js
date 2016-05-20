@@ -54,7 +54,7 @@ define(
                 mockProviders = ['a', 'b', 'c'].map(function (id) {
                     var mockProvider = jasmine.createSpyObj(
                         'provider-' + id,
-                        [ 'getUser' ]
+                        ['getUser']
                     );
 
                     mockProvider.getUser.andReturn(new Promise(function (r) {
@@ -115,7 +115,7 @@ define(
             });
 
             it("returns undefined when no providers expose users", function () {
-                testUsers = [ undefined, undefined, undefined ];
+                testUsers = [undefined, undefined, undefined];
 
                 aggregator.getUser().then(mockCallback);
 

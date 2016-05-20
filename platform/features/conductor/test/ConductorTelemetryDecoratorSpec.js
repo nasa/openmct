@@ -36,7 +36,7 @@ define(
             beforeEach(function () {
                 mockTelemetryService = jasmine.createSpyObj(
                     'telemetryService',
-                    [ 'requestTelemetry', 'subscribe' ]
+                    ['requestTelemetry', 'subscribe']
                 );
                 mockConductorService = jasmine.createSpyObj(
                     'conductorService',
@@ -49,7 +49,7 @@ define(
                 );
                 mockSeries = jasmine.createSpyObj(
                     'series',
-                    [ 'getPointCount', 'getDomainValue', 'getRangeValue' ]
+                    ['getPointCount', 'getDomainValue', 'getRangeValue']
                 );
 
                 mockTelemetryService.requestTelemetry.andReturn(mockPromise);

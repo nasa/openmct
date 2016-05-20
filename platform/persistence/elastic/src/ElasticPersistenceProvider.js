@@ -50,7 +50,7 @@ define(
          * @param {stirng} path the path to domain objects within ElasticSearch
          */
         function ElasticPersistenceProvider($http, $q, space, root, path) {
-            this.spaces = [ space ];
+            this.spaces = [space];
             this.revs = {};
             this.$http = $http;
             this.$q = $q;
@@ -92,8 +92,8 @@ define(
             if ((response || {}).status === CONFLICT) {
                 error.key = "revision";
                 // Load the updated model, then reject the promise
-                return this.get(key).then(function (response) {
-                    error.model = response[SRC];
+                return this.get(key).then(function (res) {
+                    error.model = res[SRC];
                     return $q.reject(error);
                 });
             }

@@ -39,7 +39,7 @@ define(
 
             function promise(value) {
                 return {
-                    then: function (callback){
+                    then: function (callback) {
                         return promise(callback(value));
                     }
                 };
@@ -53,13 +53,13 @@ define(
                     '$watchCollection'
                 ]);
 
-                mockScope.$on.andCallFake(function (expression, callback){
+                mockScope.$on.andCallFake(function (expression, callback) {
                     watches[expression] = callback;
                 });
-                mockScope.$watch.andCallFake(function (expression, callback){
-                   watches[expression] = callback;
+                mockScope.$watch.andCallFake(function (expression, callback) {
+                    watches[expression] = callback;
                 });
-                mockScope.$watchCollection.andCallFake(function (expression, callback){
+                mockScope.$watchCollection.andCallFake(function (expression, callback) {
                     watches[expression] = callback;
                 });
 
@@ -80,7 +80,7 @@ define(
                 mockTable.columns = [];
                 mockTable.buildColumnConfiguration.andReturn(mockConfiguration);
 
-                mockDomainObject= jasmine.createSpyObj('domainObject', [
+                mockDomainObject = jasmine.createSpyObj('domainObject', [
                     'getCapability',
                     'useCapability',
                     'getModel'
@@ -118,7 +118,7 @@ define(
                 expect(mockTelemetryHandle.request).toHaveBeenCalled();
             });
 
-            it('Unsubscribes from telemetry when scope is destroyed',function () {
+            it('Unsubscribes from telemetry when scope is destroyed', function () {
                 controller.handle = mockTelemetryHandle;
                 watches.$destroy();
                 expect(mockTelemetryHandle.unsubscribe).toHaveBeenCalled();
@@ -139,7 +139,7 @@ define(
                 });
             });
 
-            it('updates the rows on scope when historical telemetry is received', function (){
+            it('updates the rows on scope when historical telemetry is received', function () {
                 var mockSeries = {
                         getPointCount: function () {
                             return 5;
@@ -154,7 +154,7 @@ define(
                     mockRow = {'domain': 'Domain Value', 'range': 'Range' +
                     ' Value'};
 
-                mockTelemetryHandle.makeDatum.andCallFake(function (){
+                mockTelemetryHandle.makeDatum.andCallFake(function () {
                     return mockRow;
                 });
                 mockTable.getRowValues.andReturn(mockRow);
@@ -167,7 +167,7 @@ define(
                 expect(controller.$scope.rows[0]).toBe(mockRow);
             });
 
-            it('filters the visible columns based on configuration', function (){
+            it('filters the visible columns based on configuration', function () {
                 controller.filterColumns();
                 expect(controller.$scope.headers.length).toBe(3);
                 expect(controller.$scope.headers[2]).toEqual('domain1');
@@ -178,9 +178,9 @@ define(
                 expect(controller.$scope.headers[2]).toBeUndefined();
             });
 
-            describe('creates event listeners', function (){
+            describe('creates event listeners', function () {
                 beforeEach(function () {
-                    spyOn(controller,'subscribe');
+                    spyOn(controller, 'subscribe');
                     spyOn(controller, 'filterColumns');
                 });
 

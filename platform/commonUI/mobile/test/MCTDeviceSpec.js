@@ -24,7 +24,7 @@ define(
     ['../src/MCTDevice'],
     function (MCTDevice) {
 
-        var JQLITE_METHODS = [ 'replaceWith' ];
+        var JQLITE_METHODS = ['replaceWith'];
 
         describe("The mct-device directive", function () {
             var mockAgentService,
@@ -41,7 +41,7 @@ define(
             beforeEach(function () {
                 mockAgentService = jasmine.createSpyObj(
                     "agentService",
-                    [ "isMobile", "isPhone", "isTablet", "isPortrait", "isLandscape" ]
+                    ["isMobile", "isPhone", "isTablet", "isPortrait", "isLandscape"]
                 );
                 mockTransclude = jasmine.createSpy("$transclude");
                 mockElement = jasmine.createSpyObj(name, JQLITE_METHODS);

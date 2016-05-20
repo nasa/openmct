@@ -37,19 +37,19 @@ define(
             beforeEach(function () {
                 mockAction = jasmine.createSpyObj(
                     "action",
-                    [ "perform", "getMetadata" ]
+                    ["perform", "getMetadata"]
                 );
                 mockActionService = jasmine.createSpyObj(
                     "actionService",
-                    [ "getActions" ]
+                    ["getActions"]
                 );
                 mockQ = jasmine.createSpyObj(
                     "$q",
-                    [ "when" ]
+                    ["when"]
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability", "hasCapability", "useCapability" ]
+                    ["getId", "getModel", "getCapability", "hasCapability", "useCapability"]
                 );
 
                 mockActionService.getActions.andReturn([mockAction, {}]);
@@ -76,7 +76,7 @@ define(
             });
 
             it("promises the result of performed actions", function () {
-                var mockPromise = jasmine.createSpyObj("promise", [ "then" ]);
+                var mockPromise = jasmine.createSpyObj("promise", ["then"]);
                 mockQ.when.andReturn(mockPromise);
                 mockAction.perform.andReturn("the action's result");
 

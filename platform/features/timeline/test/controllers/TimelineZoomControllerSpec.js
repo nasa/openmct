@@ -90,7 +90,9 @@ define(
                 mockScope.domainObject.getCapability.andCallFake(function (c) {
                     if (c === 'editor') {
                         return {
-                            inEditContext: function () {return true;}
+                            inEditContext: function () {
+                                return true;
+                            }
                         };
                     }
                 });

@@ -177,10 +177,6 @@ define(
                     // representation to store local variables into.
                     $scope.representation = {};
 
-                    // Change templates (passing in undefined to clear
-                    // if we don't have enough info to show a template.)
-                    changeTemplate(canRepresent ? representation : undefined);
-
                     // Any existing representers are no longer valid; release them.
                     destroyRepresenters();
 
@@ -226,6 +222,10 @@ define(
                         // next change object/key pair changes
                         toClear = uses.concat(['model']);
                     }
+
+                    // Change templates (passing in undefined to clear
+                    // if we don't have enough info to show a template.)
+                    changeTemplate(canRepresent ? representation : undefined);
                 }
 
                 // Update the representation when the key changes (e.g. if a

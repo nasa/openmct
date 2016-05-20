@@ -75,7 +75,7 @@ define([
             this.activeGestures = this.gestureService.attachGestures(
                 this.elements(),
                 domainObject,
-                [ 'info', 'menu', 'drag' ]
+                ['info', 'menu', 'drag']
             );
         }
     };

@@ -70,7 +70,9 @@ define(
                 mockQ.all.andCallFake(function (fakePromises) {
                     var result = [];
                     fakePromises.forEach(function (p) {
-                        p.then(function (v) { result.push(v); });
+                        p.then(function (v) {
+                            result.push(v);
+                        });
                     });
                     return fakePromise(result);
                 });

@@ -71,7 +71,9 @@ define(
                 mockQ.all.andCallFake(function (values) {
                     return values.map(function (v) {
                         var r;
-                        asPromise(v).then(function (value) { r = value; });
+                        asPromise(v).then(function (value) {
+                            r = value;
+                        });
                         return r;
                     });
                 });

@@ -52,7 +52,7 @@ define(
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getCapability", "useCapability", "hasCapability", "getId" ]
+                    ["getCapability", "useCapability", "hasCapability", "getId"]
                 );
                 mockCallback = jasmine.createSpy("callback");
                 mockTelemetry = jasmine.createSpyObj(
@@ -67,7 +67,7 @@ define(
                 mockUnlisten = jasmine.createSpy("unlisten");
                 mockSeries = jasmine.createSpyObj(
                     "series",
-                    [ "getPointCount", "getDomainValue", "getRangeValue" ]
+                    ["getPointCount", "getDomainValue", "getRangeValue"]
                 );
 
                 mockQ.when.andCallFake(mockPromise);
@@ -223,7 +223,7 @@ define(
                 subscription.promiseTelemetryObjects().then(mockCallback2);
 
                 expect(mockCallback2)
-                    .toHaveBeenCalledWith([ mockDomainObject ]);
+                    .toHaveBeenCalledWith([mockDomainObject]);
             });
 
             it("reinitializes on mutation", function () {
@@ -252,8 +252,8 @@ define(
                 mockSeries.getDomainValue.andCallFake(lookup);
                 mockSeries.getRangeValue.andCallFake(lookup);
 
-                testMetadata.domains = [ { key: 'a' }, { key: 'b'} ];
-                testMetadata.ranges = [ { key: 'c' }, { key: 'd'} ];
+                testMetadata.domains = [{ key: 'a' }, { key: 'b'}];
+                testMetadata.ranges = [{ key: 'c' }, { key: 'd'}];
 
                 mockTelemetry.subscribe.mostRecentCall.args[0](mockSeries);
                 mockTimeout.mostRecentCall.args[0]();

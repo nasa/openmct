@@ -34,7 +34,7 @@ define(
 
                 mockDragHandler = jasmine.createSpyObj(
                     'dragHandler',
-                    [ 'start', 'end', 'ids' ]
+                    ['start', 'end', 'ids']
                 );
 
                 mockDragHandler.ids.andReturn(['a', 'b', 'c', 'd']);

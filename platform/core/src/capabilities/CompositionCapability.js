@@ -81,7 +81,7 @@ define(
                 return mutationResult && self.invoke().then(findObject);
             }
 
-            function addIdToModel(model) {
+            function addIdToModel(objModel) {
                 // Pick a specific index if needed.
                 index = isNaN(index) ? composition.length : index;
                 // Also, don't put past the end of the array
@@ -89,11 +89,11 @@ define(
 
                 // Remove the existing instance of the id
                 if (oldIndex !== -1) {
-                    model.composition.splice(oldIndex, 1);
+                    objModel.composition.splice(oldIndex, 1);
                 }
 
                 // ...and add it back at the appropriate index.
-                model.composition.splice(index, 0, id);
+                objModel.composition.splice(index, 0, id);
             }
 
             // If no index has been specified already and the id is already

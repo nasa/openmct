@@ -82,7 +82,7 @@ define(
                 parentContext =
                     parentObject && parentObject.getCapability('context'),
                 parentPath = parentContext ?
-                        parentContext.getPath() : [ this.parentObject ];
+                        parentContext.getPath() : [this.parentObject];
 
             return parentPath.concat([this.domainObject]);
         };

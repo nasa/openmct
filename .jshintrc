@@ -5,7 +5,7 @@
     "eqeqeq": true,
     "forin": true,
     "freeze": true,
-    "funcscope": true,
+    "funcscope": false,
     "futurehostile": true,
     "latedef": true,
     "noarg": true,
@@ -16,6 +16,7 @@
         "define",
         "Promise"
     ],
+    "shadow": "outer",
     "strict": "implied",
     "undef": true,
     "unused": "vars"

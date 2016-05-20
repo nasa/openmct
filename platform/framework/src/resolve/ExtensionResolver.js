@@ -58,11 +58,11 @@ define(
             var loader = this.loader,
                 $log = this.$log;
 
-            function loadImplementation(extension) {
-                var implPromise = extension.hasImplementationValue() ?
-                            Promise.resolve(extension.getImplementationValue()) :
-                            loader.load(extension.getImplementationPath()),
-                    definition = extension.getDefinition();
+            function loadImplementation(ext) {
+                var implPromise = ext.hasImplementationValue() ?
+                            Promise.resolve(ext.getImplementationValue()) :
+                            loader.load(ext.getImplementationPath()),
+                    definition = ext.getDefinition();
 
                 // Wrap a constructor function (to avoid modifying the original)
                 function constructorFor(impl) {
@@ -94,7 +94,7 @@ define(
                     result.definition = definition;
 
                     // Log that this load was successful
-                    $log.info("Resolved " + extension.getLogName());
+                    $log.info("Resolved " + ext.getLogName());
 
                     return result;
                 }
@@ -105,7 +105,7 @@ define(
                     // Build up a log message from parts
                     var message = [
                         "Could not load implementation for extension ",
-                        extension.getLogName(),
+                        ext.getLogName(),
                         " due to ",
                         err.message
                     ].join("");
@@ -113,16 +113,16 @@ define(
                     // Log that the extension was not loaded
                     $log.warn(message);
 
-                    return extension.getDefinition();
+                    return ext.getDefinition();
                 }
 
-                if (!extension.hasImplementationValue()) {
+                if (!ext.hasImplementationValue()) {
                     // Log that loading has begun
                     $log.info([
                         "Loading implementation ",
-                        extension.getImplementationPath(),
+                        ext.getImplementationPath(),
                         " for extension ",
-                        extension.getLogName()
+                        ext.getLogName()
                     ].join(""));
                 }
 

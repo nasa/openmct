@@ -58,16 +58,16 @@ define(
             beforeEach(function () {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability" ]
+                    ["getId", "getModel", "getCapability"]
                 );
                 mockSubPlotFactory = jasmine.createSpyObj(
                     "subPlotFactory",
-                    [ "createSubPlot" ]
+                    ["createSubPlot"]
                 );
                 // Prepared telemetry data
                 mockPrepared = jasmine.createSpyObj(
                     "prepared",
-                    [ "getDomainOffset", "getOrigin", "getDimensions", "getLineBuffers" ]
+                    ["getDomainOffset", "getOrigin", "getDimensions", "getLineBuffers"]
                 );
 
                 mockSubPlotFactory.createSubPlot.andCallFake(createMockSubPlot);

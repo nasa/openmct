@@ -37,18 +37,20 @@ define(
                 aggregator;
 
             beforeEach(function () {
-                mockQ = jasmine.createSpyObj("$q", [ "all" ]);
+                mockQ = jasmine.createSpyObj("$q", ["all"]);
                 mockProviders = modelList.map(function (models, i) {
                     var mockProvider = jasmine.createSpyObj(
                         "mockProvider" + i,
-                        [ "getModels" ]
+                        ["getModels"]
                     );
                     mockProvider.getModels.andReturn(models);
                     return mockProvider;
                 });
 
                 mockQ.all.andReturn({
-                    then: function (c) { return c(modelList); }
+                    then: function (c) {
+                        return c(modelList);
+                    }
                 });
 
                 aggregator = new ModelAggregator(mockQ, mockProviders);

@@ -34,7 +34,7 @@ define(
                 capabilities = {},
                 controller;
 
-            beforeEach(function(){
+            beforeEach(function () {
                 mockTypeDefinition = {
                     inspector:
                         {
@@ -60,7 +60,7 @@ define(
                     'getCapability'
                 ]);
                 mockDomainObject.getCapability.andCallFake(function (name) {
-                   return capabilities[name];
+                    return capabilities[name];
                 });
 
                 mockPolicyService = jasmine.createSpyObj('policyService', [
@@ -74,19 +74,19 @@ define(
                 mockScope.domainObject = mockDomainObject;
             });
 
-            it("filters out regions disallowed by region policy", function() {
+            it("filters out regions disallowed by region policy", function () {
                 mockPolicyService.allow.andReturn(false);
                 controller = new InspectorController(mockScope, mockPolicyService);
                 expect(mockScope.regions.length).toBe(0);
             });
 
-            it("does not filter out regions allowed by region policy", function() {
+            it("does not filter out regions allowed by region policy", function () {
                 mockPolicyService.allow.andReturn(true);
                 controller = new InspectorController(mockScope, mockPolicyService);
                 expect(mockScope.regions.length).toBe(2);
             });
 
-            it("Responds to status changes", function() {
+            it("Responds to status changes", function () {
                 mockPolicyService.allow.andReturn(true);
                 controller = new InspectorController(mockScope, mockPolicyService);
                 expect(mockScope.regions.length).toBe(2);
@@ -96,7 +96,7 @@ define(
                 expect(mockScope.regions.length).toBe(0);
             });
 
-            it("Unregisters status listener", function() {
+            it("Unregisters status listener", function () {
                 var mockListener = jasmine.createSpy('listener');
                 mockStatusCapability.listen.andReturn(mockListener);
                 controller = new InspectorController(mockScope, mockPolicyService);

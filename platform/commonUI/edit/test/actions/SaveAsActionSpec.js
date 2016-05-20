@@ -38,7 +38,7 @@ define(
                 capabilities = {},
                 action;
 
-            function noop () {}
+            function noop() {}
 
             function mockPromise(value) {
                 return (value || {}).then ? value :
@@ -49,7 +49,7 @@ define(
                         catch: function (callback) {
                             return mockPromise(callback(value));
                         }
-                }   ;
+                    }   ;
             }
 
             beforeEach(function () {
@@ -78,7 +78,7 @@ define(
 
                 mockEditorCapability = jasmine.createSpyObj(
                     "editor",
-                    [ "save", "cancel", "isEditContextRoot" ]
+                    ["save", "cancel", "isEditContextRoot"]
                 );
                 mockEditorCapability.cancel.andReturn(mockPromise(undefined));
                 mockEditorCapability.save.andReturn(mockPromise(true));
@@ -130,7 +130,7 @@ define(
                 action.createWizard.andReturn({
                     getFormStructure: noop,
                     getInitialFormValue: noop,
-                    populateObjectFromInput: function() {
+                    populateObjectFromInput: function () {
                         return mockDomainObject;
                     }
                 });

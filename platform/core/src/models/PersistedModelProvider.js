@@ -82,9 +82,9 @@ define(
             }
 
             // Package the result as id->model
-            function packageResult(parsedIds, models) {
+            function packageResult(parsedIdsToPackage, models) {
                 var result = {};
-                parsedIds.forEach(function (parsedId, index) {
+                parsedIdsToPackage.forEach(function (parsedId, index) {
                     var id = parsedId.id;
                     if (models[index]) {
                         result[id] = models[index];
@@ -93,11 +93,11 @@ define(
                 return result;
             }
 
-            function loadModels(parsedIds) {
-                return $q.all(parsedIds.map(loadModel))
+            function loadModels(parsedIdsToLoad) {
+                return $q.all(parsedIdsToLoad.map(loadModel))
                     .then(function (models) {
                         return packageResult(
-                            parsedIds,
+                            parsedIdsToLoad,
                             models.map(addPersistedTimestamp)
                         );
                     });

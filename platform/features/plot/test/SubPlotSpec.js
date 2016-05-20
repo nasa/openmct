@@ -40,7 +40,7 @@ define(
             beforeEach(function () {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability" ]
+                    ["getId", "getModel", "getCapability"]
                 );
                 mockPanZoomStack = jasmine.createSpyObj(
                     "panZoomStack",
@@ -57,16 +57,16 @@ define(
                 );
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
-                    [ "formatDomainValue", "formatRangeValue" ]
+                    ["formatDomainValue", "formatRangeValue"]
                 );
                 mockElement = jasmine.createSpyObj(
                     "element",
-                    [ "getBoundingClientRect" ]
+                    ["getBoundingClientRect"]
                 );
 
-                testOrigin = [ 5, 10 ];
-                testDimensions = [ 3000, 1000 ];
-                testDomainObjects = [ mockDomainObject, mockDomainObject ];
+                testOrigin = [5, 10];
+                testDimensions = [3000, 1000];
+                testDomainObjects = [mockDomainObject, mockDomainObject];
 
                 mockPanZoomStack.getOrigin.andReturn(testOrigin);
                 mockPanZoomStack.getDimensions.andReturn(testDimensions);
@@ -163,7 +163,7 @@ define(
                 mockPanZoomStack.getDimensions.andReturn([0,0]);
                 expect(subplot.hasDomainData()).toEqual(false);
             });
-            
+
             it("disallows marquee zoom when start and end Marquee is at the same position", function () {
                 expect(mockPanZoomStack.pushPanZoom).not.toHaveBeenCalled();
 
