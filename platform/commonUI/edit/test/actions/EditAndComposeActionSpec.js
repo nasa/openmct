@@ -66,11 +66,11 @@ define(
                         return capabilities[k].invoke(v);
                     }
                 };
-                mockContext = jasmine.createSpyObj("context", [ "getParent" ]);
-                mockComposition = jasmine.createSpyObj("composition", [ "invoke", "add" ]);
-                mockPersistence = jasmine.createSpyObj("persistence", [ "persist" ]);
-                mockType = jasmine.createSpyObj("type", [ "hasFeature", "getKey" ]);
-                mockActionCapability = jasmine.createSpyObj("actionCapability", [ "getActions"]);
+                mockContext = jasmine.createSpyObj("context", ["getParent"]);
+                mockComposition = jasmine.createSpyObj("composition", ["invoke", "add"]);
+                mockPersistence = jasmine.createSpyObj("persistence", ["persist"]);
+                mockType = jasmine.createSpyObj("type", ["hasFeature", "getKey"]);
+                mockActionCapability = jasmine.createSpyObj("actionCapability", ["getActions"]);
                 mockEditAction = jasmine.createSpyObj("editAction", ["perform"]);
 
                 mockDomainObject.getId.andReturn("test");

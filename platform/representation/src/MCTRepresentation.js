@@ -235,7 +235,7 @@ define(
                 // Also update when the represented domain object changes
                 // (to a different object)
                 $scope.$watch("domainObject", refresh);
-                
+
                 // Finally, also update when there is a new version of that
                 // same domain object; these changes should be tracked in the
                 // model's "modified" field, by the mutation capability.
