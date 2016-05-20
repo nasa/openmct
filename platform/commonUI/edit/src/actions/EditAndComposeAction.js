@@ -31,13 +31,14 @@ define(
          * @memberof platform/commonUI/edit
          * @implements {Action}
          */
-        function LinkAction(context) {
+        function EditAndComposeAction(context) {
             this.domainObject = (context || {}).domainObject;
             this.selectedObject = (context || {}).selectedObject;
         }
 
-        LinkAction.prototype.perform = function () {
-            var self = this;
+        EditAndComposeAction.prototype.perform = function () {
+            var self = this,
+                editAction = this.domainObject.getCapability('action').getActions("edit")[0];
 
             // Link these objects
             function doLink() {
@@ -46,9 +47,13 @@ define(
                 return composition && composition.add(self.selectedObject);
             }
 
+            if (editAction) {
+                editAction.perform();
+            }
+
             return this.selectedObject && doLink();
         };
 
-        return LinkAction;
+        return EditAndComposeAction;
     }
 );

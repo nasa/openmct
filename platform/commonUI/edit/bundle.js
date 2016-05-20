@@ -26,7 +26,7 @@ define([
     "./src/controllers/ElementsController",
     "./src/controllers/EditObjectController",
     "./src/directives/MCTBeforeUnload",
-    "./src/actions/LinkAction",
+    "./src/actions/EditAndComposeAction",
     "./src/actions/EditAction",
     "./src/actions/PropertiesAction",
     "./src/actions/RemoveAction",
@@ -55,7 +55,7 @@ define([
     ElementsController,
     EditObjectController,
     MCTBeforeUnload,
-    LinkAction,
+    EditAndComposeAction,
     EditAction,
     PropertiesAction,
     RemoveAction,
@@ -126,7 +126,7 @@ define([
             "actions": [
                 {
                     "key": "compose",
-                    "implementation": LinkAction
+                    "implementation": EditAndComposeAction
                 },
                 {
                     "key": "edit",

@@ -32,7 +32,8 @@ define(
          */
         function InspectorController($scope, policyService) {
             var domainObject = $scope.domainObject,
-                typeCapability = domainObject.getCapability('type');
+                typeCapability = domainObject.getCapability('type'),
+                statusListener;
 
             /**
              * Filters region parts to only those allowed by region policies
@@ -49,6 +50,11 @@ define(
             function setRegions() {
                 $scope.regions = filterRegions(typeCapability.getDefinition().inspector || new InspectorRegion());
             }
+
+            statusListener = domainObject.getCapability("status").listen(setRegions);
+            $scope.$on("$destroy", function () {
+                statusListener();
+            });
 
             setRegions();
         }
