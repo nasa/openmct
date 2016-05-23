@@ -83,25 +83,29 @@ define(
         CreateAction.prototype.perform = function () {
             var newModel = this.type.getInitialModel(),
                 parentObject = this.navigationService.getNavigation(),
-                editorCapability,
-                newObject;
+                newObject,
+                editAction,
+                editorCapability;
+
+            function onSave() {
+                return editorCapability.save();
+            }
+
+            function onCancel() {
+                return editorCapability.cancel();
+            }
 
             newModel.type = this.type.getKey();
             newModel.location = parentObject.getId();
             newObject = parentObject.useCapability('instantiation', newModel);
+            editorCapability = newObject.hasCapability('editor') && newObject.getCapability("editor");
 
-            editorCapability = newObject.getCapability("editor");
-
-            if (countEditableViews(newObject) > 0 && newObject.hasCapability('composition')) {
-                this.navigationService.setNavigation(newObject);
-                return newObject.getCapability("action").perform("edit");
-            } else {
+            editAction = newObject.getCapability("action").getActions("edit")[0];
+            if (editAction) {
+                return editAction.perform("edit");
+            } else if (editorCapability) {
                 editorCapability.edit();
-                return newObject.useCapability("action").perform("save").then(function () {
-                        return editorCapability.save();
-                    }, function () {
-                        return editorCapability.cancel();
-                    });
+                return newObject.useCapability("action").perform("save").then(onSave, onCancel);
             }
         };
 
