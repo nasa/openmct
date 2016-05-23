@@ -104,6 +104,13 @@
         <div class="split-pane-component l-timeline-pane t-pane-h l-pane-top t-timeline-gantt l-timeline-gantt s-timeline-gantt">
             <div class="l-hover-btns-holder s-hover-btns-holder t-btns-zoom">
                 <a class="t-btn l-btn s-btn"
+                   ng-click="zoomController.fit()"
+                   ng-show="true"
+                   title="Zoom to fit">
+                    <span class="ui-symbol icon zoom-in">I</span>
+                </a>
+
+                <a class="t-btn l-btn s-btn"
                    ng-click="zoomController.zoom(-1, scroll)"
                    ng-show="true"
                    title="Zoom in">

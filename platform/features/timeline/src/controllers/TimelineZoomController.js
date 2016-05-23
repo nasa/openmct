@@ -32,6 +32,7 @@ define(
             var zoomLevels = ZOOM_CONFIGURATION.levels || [1000],
                 zoomIndex = Math.floor(zoomLevels.length / 2),
                 tickWidth = ZOOM_CONFIGURATION.width || 200,
+                bounds = { x: 0, width: tickWidth },
                 duration = 86400000; // Default duration in view
 
             // Round a duration to a larger value, to ensure space for editing
@@ -40,6 +41,14 @@ define(
                 var sz = zoomLevels[zoomLevels.length - 1];
                 value *= 1.25; // Add 25% padding to start
                 return Math.ceil(value / sz) * sz;
+            }
+
+            function toMillis(pixels) {
+                return (pixels / tickWidth) * zoomLevels[zoomIndex];
+            }
+
+            function toPixels(millis) {
+                return tickWidth * millis / zoomLevels[zoomIndex];
             }
 
             // Get/set zoom level
@@ -66,6 +75,27 @@ define(
                 }
             }
 
+            function initializeZoomFromTimespan(timespan) {
+                var duration = timespan.getDuration();
+                zoomIndex = 0;
+                while (toMillis(bounds.width) < duration &&
+                        zoomIndex < zoomLevels.length) {
+                    zoomIndex += 1;
+                }
+                bounds.x = toPixels(timespan.getStart());
+            }
+
+            function initializeZoom(domainObject) {
+                if (domainObject) {
+                    domainObject.useCapability('timespan')
+                        .then(initializeZoomFromTimespan);
+                }
+            }
+
+            $scope.$watch("scroll", function (scroll) {
+                bounds = scroll;
+            });
+            $scope.$watch("domainObject", initializeZoom);
             $scope.$watch("configuration.zoomLevel", setZoomLevel);
 
             return {
@@ -80,7 +110,7 @@ define(
                  * @returns {number} current zoom level (as the size of a
                  *          major tick mark, in pixels)
                  */
-                zoom: function (amount, bounds) {
+                zoom: function (amount) {
                     // Update the zoom level if called with an argument
                     if (arguments.length > 0 && !isNaN(amount)) {
                         var center = this.toMillis(bounds.x + bounds.width / 2);
@@ -90,22 +120,24 @@ define(
                     }
                     return zoomLevels[zoomIndex];
                 },
+                fit: function () {
+                    if ($scope.domainObject) {
+                        initializeZoom($scope.domainObject);
+                        storeZoom();
+                    }
+                },
                 /**
                  * Get the width, in pixels, of a specific time duration at
                  * the current zoom level.
                  * @returns {number} the number of pixels
                  */
-                toPixels: function (millis) {
-                    return tickWidth * millis / zoomLevels[zoomIndex];
-                },
+                toPixels: toPixels,
                 /**
                  * Get the time duration, in milliseconds, occupied by the
                  * width (specified in pixels) at the current zoom level.
                  * @returns {number} the number of pixels
                  */
-                toMillis: function (pixels) {
-                    return (pixels / tickWidth) * zoomLevels[zoomIndex];
-                },
+                toMillis: toMillis,
                 /**
                  * Get or set the current displayed duration. If used as a
                  * setter, this will typically be rounded up to ensure extra
