@@ -80,11 +80,13 @@ define(
                  * @returns {number} current zoom level (as the size of a
                  *          major tick mark, in pixels)
                  */
-                zoom: function (amount) {
+                zoom: function (amount, bounds) {
                     // Update the zoom level if called with an argument
                     if (arguments.length > 0 && !isNaN(amount)) {
+                        var center = this.toMillis(bounds.x + bounds.width / 2);
                         setZoomLevel(zoomIndex + amount);
                         storeZoom(zoomIndex);
+                        bounds.x = this.toPixels(center) - bounds.width / 2;
                     }
                     return zoomLevels[zoomIndex];
                 },
