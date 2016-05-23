@@ -15,8 +15,8 @@ deployment:
     heroku:
       appname: openmctweb-staging-deux
 test:
-  post:
-    - gulp lint
+  override:
+    - gulp verify
 
 general:
   branches:
