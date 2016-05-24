@@ -32,7 +32,7 @@ define(
 
             beforeEach(function () {
                 testConfiguration = {
-                    levels: [ 1000, 2000, 3500 ],
+                    levels: [1000, 2000, 3500],
                     width: 12321
                 };
                 mockScope = jasmine.createSpyObj("$scope", ['$watch']);
