@@ -32,11 +32,7 @@ define(
 
             beforeEach(function () {
                 testConfiguration = {
-                    levels: [
-                        1000,
-                        2000,
-                        3500
-                    ],
+                    levels: [ 1000, 2000, 3500 ],
                     width: 12321
                 };
                 mockScope = jasmine.createSpyObj("$scope", ['$watch']);
@@ -72,6 +68,63 @@ define(
             it("allows zoom to be changed", function () {
                 controller.zoom(1);
                 expect(controller.zoom()).toEqual(3500);
+            });
+
+            it("observes scroll bounds", function () {
+                expect(mockScope.$watch)
+                    .toHaveBeenCalledWith("scroll", jasmine.any(Function));
+            });
+
+            describe("when watches have fired", function () {
+                var mockDomainObject,
+                    mockPromise,
+                    mockTimespan,
+                    testStart,
+                    testEnd;
+
+                beforeEach(function () {
+                    testStart = 3000;
+                    testEnd = 5500;
+
+                    mockDomainObject = jasmine.createSpyObj('domainObject', [
+                        'getId',
+                        'getModel',
+                        'getCapability',
+                        'useCapability'
+                    ]);
+                    mockPromise = jasmine.createSpyObj('promise', ['then']);
+                    mockTimespan = jasmine.createSpyObj('timespan', [
+                        'getStart',
+                        'getEnd',
+                        'getDuration'
+                    ]);
+
+                    mockDomainObject.useCapability.andCallFake(function (c) {
+                        return c === 'timespan' && mockPromise;
+                    });
+                    mockPromise.then.andCallFake(function (callback) {
+                        callback(mockTimespan);
+                    });
+                    mockTimespan.getStart.andReturn(testStart);
+                    mockTimespan.getEnd.andReturn(testEnd);
+                    mockTimespan.getDuration.andReturn(testEnd - testStart);
+
+                    mockScope.scroll = { x: 0, width: 20000 };
+                    mockScope.domainObject = mockDomainObject;
+
+                    mockScope.$watch.calls.forEach(function (call) {
+                        call.args[1](mockScope[call.args[0]]);
+                    });
+                });
+
+                it("zooms to fit the timeline", function () {
+                    var x1 = mockScope.scroll.x,
+                        x2 = mockScope.scroll.x + mockScope.scroll.width;
+                    expect(Math.round(controller.toMillis(x1)))
+                        .toEqual(testStart);
+                    expect(Math.round(controller.toMillis(x2)))
+                        .toBeGreaterThan(testEnd);
+                });
             });
 
         });

@@ -66,7 +66,7 @@ define(
                 var duration = timespan.getDuration();
                 zoomIndex = 0;
                 while (toMillis(bounds.width) < duration &&
-                        zoomIndex < zoomLevels.length) {
+                        zoomIndex < zoomLevels.length - 1) {
                     zoomIndex += 1;
                 }
                 bounds.x = toPixels(timespan.getStart());
