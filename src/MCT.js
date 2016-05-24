@@ -50,7 +50,6 @@ define(function () {
 
     /**
      * Get all currently registered types.
-     * @return
      */
     MCT.prototype.types = function () {
 
