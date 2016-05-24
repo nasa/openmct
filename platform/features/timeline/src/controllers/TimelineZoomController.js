@@ -63,9 +63,9 @@ define(
             }
 
             function initializeZoomFromTimespan(timespan) {
-                var duration = timespan.getDuration();
+                var timelineDuration = timespan.getDuration();
                 zoomIndex = 0;
-                while (toMillis(bounds.width) < duration &&
+                while (toMillis(bounds.width) < timelineDuration &&
                         zoomIndex < zoomLevels.length - 1) {
                     zoomIndex += 1;
                 }
