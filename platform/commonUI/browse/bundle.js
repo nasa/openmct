@@ -309,9 +309,7 @@ define([
                     "type": "provider",
                     "implementation": CreateActionProvider,
                     "depends": [
-                        "$q",
                         "typeService",
-                        "navigationService",
                         "policyService"
                     ]
                 },

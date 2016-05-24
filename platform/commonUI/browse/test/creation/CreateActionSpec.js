@@ -31,8 +31,10 @@ define(
             var mockType,
                 mockParent,
                 mockContext,
-                mockDialogService,
-                mockCreationService,
+                mockDomainObject,
+                capabilities = {},
+                mockEditAction,
+                mockSaveAction,
                 action;
 
             function mockPromise(value) {
@@ -60,20 +62,61 @@ define(
                     [
                         "getId",
                         "getModel",
-                        "getCapability"
+                        "getCapability",
+                        "useCapability"
                     ]
                 );
+                mockDomainObject = jasmine.createSpyObj(
+                    "domainObject",
+                    [
+                        "getId",
+                        "getModel",
+                        "getCapability",
+                        "hasCapability",
+                        "useCapability"
+                    ]
+                );
+                mockDomainObject.hasCapability.andCallFake(function (name) {
+                   return !!capabilities[name];
+                });
+                mockDomainObject.getCapability.andCallFake(function (name) {
+                   return capabilities[name];
+                });
+                mockSaveAction = jasmine.createSpyObj(
+                    "saveAction",
+                    [
+                        "perform"
+                    ]
+                );
+
+                capabilities.action = jasmine.createSpyObj(
+                    "actionCapability",
+                    [
+                        "getActions",
+                        "perform"
+                    ]
+                );
+
+                capabilities.editor = jasmine.createSpyObj(
+                    "editorCapability",
+                    [
+                        "edit",
+                        "save",
+                        "cancel"
+                    ]
+                );
+
+                mockEditAction = jasmine.createSpyObj(
+                    "editAction",
+                    [
+                        "perform"
+                    ]
+                );
+
                 mockContext = {
                     domainObject: mockParent
                 };
-                mockDialogService = jasmine.createSpyObj(
-                    "dialogService",
-                    ["getUserInput"]
-                );
-                mockCreationService = jasmine.createSpyObj(
-                    "creationService",
-                    ["createObject"]
-                );
+                mockParent.useCapability.andReturn(mockDomainObject);
 
                 mockType.getKey.andReturn("test");
                 mockType.getGlyph.andReturn("T");
@@ -82,14 +125,10 @@ define(
                 mockType.getProperties.andReturn([]);
                 mockType.getInitialModel.andReturn({});
 
-                mockDialogService.getUserInput.andReturn(mockPromise({}));
-
                 action = new CreateAction(
                     mockType,
                     mockParent,
-                    mockContext,
-                    mockDialogService,
-                    mockCreationService
+                    mockContext
                 );
             });
 
@@ -101,28 +140,49 @@ define(
                 expect(metadata.glyph).toEqual("T");
             });
 
-            //TODO: Disabled for NEM Beta
-            xit("invokes the creation service when performed", function () {
-                action.perform();
-                expect(mockCreationService.createObject).toHaveBeenCalledWith(
-                    { type: "test" },
-                    mockParent
-                );
-            });
-
-            //TODO: Disabled for NEM Beta
-            xit("does not create an object if the user cancels", function () {
-                mockDialogService.getUserInput.andReturn({
-                    then: function (callback, fail) {
-                        fail();
-                    }
+            describe("the perform function", function () {
+                beforeEach(function () {
+                    capabilities.action.getActions.andReturn([mockEditAction]);
                 });
 
-                action.perform();
+                it("uses the instantiation capability when performed", function () {
+                    action.perform();
+                    expect(mockParent.useCapability).toHaveBeenCalledWith("instantiation", jasmine.any(Object));
+                });
 
-                expect(mockCreationService.createObject)
-                    .not.toHaveBeenCalled();
+                it("uses the edit action if available", function () {
+                    action.perform();
+                    expect(mockEditAction.perform).toHaveBeenCalled();
+                });
 
+                it("uses the save action if object does not have an edit action" +
+                    " available", function () {
+                    capabilities.action.getActions.andReturn([]);
+                    capabilities.action.perform.andReturn(mockPromise(undefined));
+                    action.perform();
+                    expect(capabilities.action.perform).toHaveBeenCalledWith("save");
+                });
+
+                describe("uses to editor capability", function () {
+                    var promise = jasmine.createSpyObj("promise", ["then"]);
+                   beforeEach(function () {
+                       capabilities.action.getActions.andReturn([]);
+                       capabilities.action.perform.andReturn(promise);
+                   });
+
+                    it("to save the edit if user saves dialog", function () {
+                        action.perform();
+                        expect(promise.then).toHaveBeenCalled();
+                        promise.then.mostRecentCall.args[0]();
+                        expect(capabilities.editor.save).toHaveBeenCalled();
+                    });
+
+                    it("to cancel the edit if user cancels dialog", function () {
+                        action.perform();
+                        promise.then.mostRecentCall.args[1]();
+                        expect(capabilities.editor.cancel).toHaveBeenCalled();
+                    });
+                });
             });
 
         });
