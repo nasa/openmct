@@ -74,34 +74,6 @@ define(
                 expect(controller.zoom()).toEqual(3500);
             });
 
-            it("does not normally persist zoom changes", function () {
-                controller.zoom(1);
-                expect(mockScope.commit).not.toHaveBeenCalled();
-            });
-
-            it("persists zoom changes in Edit mode", function () {
-                mockScope.domainObject = jasmine.createSpyObj(
-                    'domainObject',
-                    ['hasCapability', 'getCapability']
-                );
-                mockScope.domainObject.hasCapability.andCallFake(function (c) {
-                    return c === 'editor';
-                });
-                mockScope.domainObject.getCapability.andCallFake(function (c) {
-                    if (c === 'editor') {
-                        return {
-                            inEditContext: function () {
-                                return true;
-                            }
-                        };
-                    }
-                });
-                controller.zoom(1);
-                expect(mockScope.commit).toHaveBeenCalled();
-                expect(mockScope.configuration.zoomLevel)
-                    .toEqual(jasmine.any(Number));
-            });
-
         });
 
     }
