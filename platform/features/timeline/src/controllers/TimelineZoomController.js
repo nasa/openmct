@@ -38,7 +38,8 @@ define(
             // Round a duration to a larger value, to ensure space for editing
             function roundDuration(value) {
                 // Ensure there's always an extra day or so
-                var sz = zoomLevels[zoomLevels.length - 1];
+                var tickCount = bounds.width / tickWidth,
+                    sz = zoomLevels[zoomLevels.length - 1] * tickCount;
                 value *= 1.25; // Add 25% padding to start
                 return Math.ceil(value / sz) * sz;
             }
