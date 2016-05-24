@@ -72,9 +72,9 @@ define(
                 bounds.x = toPixels(timespan.getStart());
             }
 
-            function initializeZoom(domainObject) {
-                if (domainObject) {
-                    domainObject.useCapability('timespan')
+            function initializeZoom() {
+                if ($scope.domainObject) {
+                    $scope.domainObject.useCapability('timespan')
                         .then(initializeZoomFromTimespan);
                 }
             }
@@ -109,11 +109,7 @@ define(
                  * Set the zoom level to fit the bounds of the timeline
                  * being viewed.
                  */
-                fit: function () {
-                    if ($scope.domainObject) {
-                        initializeZoom($scope.domainObject);
-                    }
-                },
+                fit: initializeZoom,
                 /**
                  * Get the width, in pixels, of a specific time duration at
                  * the current zoom level.
