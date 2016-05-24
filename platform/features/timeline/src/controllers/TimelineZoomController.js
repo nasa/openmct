@@ -62,19 +62,6 @@ define(
                 }
             }
 
-            // Persist current zoom level
-            function storeZoom() {
-                var isEditMode = $scope.commit &&
-                    $scope.domainObject &&
-                    $scope.domainObject.hasCapability('editor') &&
-                    $scope.domainObject.getCapability('editor').inEditContext();
-                if (isEditMode) {
-                    $scope.configuration = $scope.configuration || {};
-                    $scope.configuration.zoomLevel = zoomIndex;
-                    $scope.commit();
-                }
-            }
-
             function initializeZoomFromTimespan(timespan) {
                 var duration = timespan.getDuration();
                 zoomIndex = 0;
@@ -96,7 +83,6 @@ define(
                 bounds = scroll;
             });
             $scope.$watch("domainObject", initializeZoom);
-            $scope.$watch("configuration.zoomLevel", setZoomLevel);
 
             return {
                 /**
@@ -115,15 +101,17 @@ define(
                     if (arguments.length > 0 && !isNaN(amount)) {
                         var center = this.toMillis(bounds.x + bounds.width / 2);
                         setZoomLevel(zoomIndex + amount);
-                        storeZoom(zoomIndex);
                         bounds.x = this.toPixels(center) - bounds.width / 2;
                     }
                     return zoomLevels[zoomIndex];
                 },
+                /**
+                 * Set the zoom level to fit the bounds of the timeline
+                 * being viewed.
+                 */
                 fit: function () {
                     if ($scope.domainObject) {
                         initializeZoom($scope.domainObject);
-                        storeZoom();
                     }
                 },
                 /**
