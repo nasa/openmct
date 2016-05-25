@@ -194,21 +194,6 @@ define(
                     .toHaveBeenCalledWith(testViews[1]);
             });
 
-            it("exposes configuration before changing templates", function () {
-                var observedConfiguration;
-
-                mockChangeTemplate.andCallFake(function () {
-                    observedConfiguration = mockScope.configuration;
-                });
-
-                mockScope.key = "xyz";
-                mockScope.domainObject = mockDomainObject;
-                fireWatch('key', mockScope.key);
-                fireWatch('domainObject', mockDomainObject);
-
-                expect(observedConfiguration).toBeDefined();
-            });
-
             it("does not load templates until there is an object", function () {
                 mockScope.key = "xyz";
 
