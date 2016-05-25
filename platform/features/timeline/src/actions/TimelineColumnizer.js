@@ -74,6 +74,7 @@ define([
             columnNames = {},
             columns = [],
             foundTimespan = false,
+            idMap,
             i;
 
         function addMetadataProperty(property) {
@@ -92,7 +93,12 @@ define([
             });
         }
 
-        columns.push(new IdColumn());
+        idMap = domainObjects.reduce(function (map, domainObject, index) {
+            map[domainObject.getId()] = index + 1;
+            return map;
+        }, {});
+
+        columns.push(new IdColumn(idMap));
 
         domainObjects.forEach(function (domainObject) {
             var model = domainObject.getModel(),
@@ -128,11 +134,11 @@ define([
         });
 
         for (i = 0; i < maxComposition; i += 1) {
-            columns.push(new CompositionColumn(i));
+            columns.push(new CompositionColumn(i, idMap));
         }
 
         for (i = 0; i < maxRelationships; i += 1) {
-            columns.push(new ModeColumn(i));
+            columns.push(new ModeColumn(i, idMap));
         }
 
         this.domainObjects = domainObjects;

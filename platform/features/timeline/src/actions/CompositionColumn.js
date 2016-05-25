@@ -30,8 +30,9 @@ define([], function () {
      * @constructor
      * @implements {platform/features/timeline.TimelineCSVColumn}
      */
-    function CompositionColumn(index) {
+    function CompositionColumn(index, idMap) {
         this.index = index;
+        this.idMap = idMap;
     }
 
     CompositionColumn.prototype.name = function () {
@@ -41,7 +42,9 @@ define([], function () {
     CompositionColumn.prototype.value = function (domainObject) {
         var model = domainObject.getModel(),
             composition = model.composition || [];
-        return (composition[this.index]) || "";
+
+        return composition.length > this.index ?
+            this.idMap[composition[this.index]] : "";
     };
 
     return CompositionColumn;

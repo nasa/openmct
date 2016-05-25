@@ -27,15 +27,16 @@ define([], function () {
      * @constructor
      * @implements {platform/features/timeline.TimelineCSVColumn}
      */
-    function IdColumn() {
+    function IdColumn(idMap) {
+        this.idMap = idMap;
     }
 
     IdColumn.prototype.name = function () {
-        return "Identifier";
+        return "Index";
     };
 
     IdColumn.prototype.value = function (domainObject) {
-        return domainObject.getId();
+        return this.idMap[domainObject.getId()];
     };
 
     return IdColumn;

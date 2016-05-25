@@ -29,8 +29,9 @@ define([], function () {
      *        element associated with this column
      * @implements {platform/features/timeline.TimelineCSVColumn}
      */
-    function ModeColumn(index) {
+    function ModeColumn(index, idMap) {
         this.index = index;
+        this.idMap = idMap;
     }
 
     ModeColumn.prototype.name = function () {
@@ -39,8 +40,9 @@ define([], function () {
 
     ModeColumn.prototype.value = function (domainObject) {
         var model = domainObject.getModel(),
-            composition = (model.relationships || {}).modes || [];
-        return (composition[this.index]) || "";
+            modes = (model.relationships || {}).modes || [];
+        return modes.length > this.index ?
+            this.idMap[modes[this.index]] : "";
     };
 
     return ModeColumn;
