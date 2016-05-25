@@ -52,9 +52,10 @@ define([
      */
     ExportTimelineAsCSVTask.prototype.run = function () {
         var exportService = this.exportService;
+        var resources = this.resources;
 
         function doExport(objects) {
-            var exporter = new TimelineColumnizer(objects, this.resources),
+            var exporter = new TimelineColumnizer(objects, resources),
                 options = { headers: exporter.headers() };
             return exporter.rows().then(function (rows) {
                 return exportService.exportCSV(rows, options);
