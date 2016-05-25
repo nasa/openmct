@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect */
 
 define(
     [
@@ -29,7 +28,6 @@ define(
         '../ControlledPromise'
     ],
     function (GoToOriginalAction, domainObjectFactory, ControlledPromise) {
-        'use strict';
 
         describe("The 'go to original' action", function () {
             var testContext,
@@ -42,11 +40,11 @@ define(
             beforeEach(function () {
                 mockLocationCapability = jasmine.createSpyObj(
                     'location',
-                    [ 'isLink', 'isOriginal', 'getOriginal' ]
+                    ['isLink', 'isOriginal', 'getOriginal']
                 );
                 mockOriginalActionCapability = jasmine.createSpyObj(
                     'action',
-                    [ 'perform', 'getActions' ]
+                    ['perform', 'getActions']
                 );
                 originalPromise = new ControlledPromise();
                 mockLocationCapability.getOriginal.andReturn(originalPromise);

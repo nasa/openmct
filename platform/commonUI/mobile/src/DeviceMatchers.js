@@ -19,9 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 define(function () {
-    "use strict";
 
     /**
      * An object containing key-value pairs, where keys are symbolic of

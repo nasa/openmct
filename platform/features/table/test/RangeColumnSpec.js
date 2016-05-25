@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,xit*/
 
 /**
  * MergeModelsSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../src/RangeColumn"],
     function (RangeColumn) {
-        "use strict";
 
         var TEST_RANGE_VALUE = "some formatted range value";
 
@@ -42,7 +40,7 @@ define(
                 testDatum = { testKey: 123, otherKey: 456 };
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
-                    [ "formatDomainValue", "formatRangeValue" ]
+                    ["formatDomainValue", "formatRangeValue"]
                 );
                 testMetadata = {
                     key: "testKey",
@@ -50,7 +48,7 @@ define(
                 };
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getModel", "getCapability" ]
+                    ["getModel", "getCapability"]
                 );
                 mockFormatter.formatRangeValue.andReturn(TEST_RANGE_VALUE);
 

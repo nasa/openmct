@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ["../../src/controllers/RefreshingController"],
     function (RefreshingController) {
-        "use strict";
 
 
 
@@ -47,11 +45,11 @@ define(
             it("refreshes the represented object on every tick", function () {
                 var mockDomainObject = jasmine.createSpyObj(
                         'domainObject',
-                        [ 'getCapability' ]
+                        ['getCapability']
                     ),
                     mockPersistence = jasmine.createSpyObj(
                         'persistence',
-                        [ 'persist', 'refresh' ]
+                        ['persist', 'refresh']
                     );
 
                 mockDomainObject.getCapability.andCallFake(function (c) {

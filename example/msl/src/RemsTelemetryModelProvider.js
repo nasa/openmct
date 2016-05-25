@@ -45,11 +45,12 @@ define(
             function buildTaxonomy(dictionary){
                 var models = {};
 
-                function addMeasurement(measurement){
+                function addMeasurement(measurement, parent){
                     var format = FORMAT_MAPPINGS[measurement.type];
                     models[makeId(measurement)] = {
                         type: "msl.measurement",
                         name: measurement.name,
+                        location: parent,
                         telemetry: {
                             key: measurement.identifier,
                             ranges: [{
@@ -62,17 +63,24 @@ define(
                     };
                 }
 
-                function addInstrument(subsystem) {
-                    var measurements = (subsystem.measurements || []);
-                    models[makeId(subsystem)] = {
+                function addInstrument(subsystem, spacecraftId) {
+                    var measurements = (subsystem.measurements || []),
+                        instrumentId = makeId(subsystem);
+
+                    models[instrumentId] = {
                         type: "msl.instrument",
                         name: subsystem.name,
+                        location: spacecraftId,
                         composition: measurements.map(makeId)
                     };
-                    measurements.forEach(addMeasurement);
+                    measurements.forEach(function(measurement) {
+                        addMeasurement(measurement, instrumentId);
+                    });
                 }
 
-                (dictionary.instruments || []).forEach(addInstrument);
+                (dictionary.instruments || []).forEach(function(instrument) {
+                    addInstrument(instrument, "msl:curiosity");
+                });
                 return models;
             }
 

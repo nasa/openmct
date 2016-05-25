@@ -19,14 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 define(
-    ['../TimelineFormatter'],
-    function (TimelineFormatter) {
-        "use strict";
-
-
-        var FORMATTER = new TimelineFormatter();
+    [],
+    function () {
 
         /**
          * Controls the pan-zoom state of a timeline view.
@@ -34,7 +29,7 @@ define(
          */
         function TimelineZoomController($scope, ZOOM_CONFIGURATION) {
             // Prefer to start with the middle index
-            var zoomLevels = ZOOM_CONFIGURATION.levels || [ 1000 ],
+            var zoomLevels = ZOOM_CONFIGURATION.levels || [1000],
                 zoomIndex = Math.floor(zoomLevels.length / 2),
                 tickWidth = ZOOM_CONFIGURATION.width || 200,
                 duration = 86400000; // Default duration in view
@@ -62,7 +57,8 @@ define(
             function storeZoom() {
                 var isEditMode = $scope.commit &&
                     $scope.domainObject &&
-                    $scope.domainObject.hasCapability('editor');
+                    $scope.domainObject.hasCapability('editor') &&
+                    $scope.domainObject.getCapability('editor').inEditContext();
                 if (isEditMode) {
                     $scope.configuration = $scope.configuration || {};
                     $scope.configuration.zoomLevel = zoomIndex;
@@ -115,7 +111,6 @@ define(
                  * @returns {number} duration, in milliseconds
                  */
                 duration: function (value) {
-                    var prior = duration;
                     if (arguments.length > 0) {
                         duration = roundDuration(value);
                     }

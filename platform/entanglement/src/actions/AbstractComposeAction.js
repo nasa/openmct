@@ -20,10 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define */
 define(
     function () {
-        "use strict";
 
         /**
          * Common interface exposed by services which support move, copy,
@@ -128,11 +126,11 @@ define(
 
             label = this.verb + " To";
 
-            validateLocation = function (newParent) {
+            validateLocation = function (newParentObj) {
                 var newContext = self.cloneContext();
                 newContext.selectedObject =  object;
-                newContext.domainObject = newParent;
-                return composeService.validate(object, newParent) &&
+                newContext.domainObject = newParentObj;
+                return composeService.validate(object, newParentObj) &&
                     self.policyService.allow("action", self, newContext);
             };
 
@@ -141,8 +139,8 @@ define(
                 label,
                 validateLocation,
                 currentParent
-            ).then(function (newParent) {
-                return composeService.perform(object, newParent);
+            ).then(function (newParentObj) {
+                return composeService.perform(object, newParentObj);
             });
         };
 

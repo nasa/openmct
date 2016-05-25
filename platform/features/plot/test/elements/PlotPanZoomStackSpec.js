@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * MergeModelsSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/elements/PlotPanZoomStack"],
     function (PlotPanZoomStack) {
-        "use strict";
 
         describe("A plot pan-zoom stack", function () {
             var panZoomStack,
@@ -48,10 +46,10 @@ define(
             }
 
             beforeEach(function () {
-                initialOrigin = [ 4, 2 ];
-                initialDimensions = [ 600, 400 ];
-                otherOrigins = [ [8, 6], [12, 9] ];
-                otherDimensions = [ [400, 300], [200, 300] ];
+                initialOrigin = [4, 2];
+                initialDimensions = [600, 400];
+                otherOrigins = [[8, 6], [12, 9]];
+                otherDimensions = [[400, 300], [200, 300]];
                 panZoomStack =
                     new PlotPanZoomStack(initialOrigin, initialDimensions);
             });

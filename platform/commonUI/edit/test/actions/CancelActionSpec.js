@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine,xit,xdescribe*/
 
 define(
     ["../../src/actions/CancelAction"],
     function (CancelAction) {
-        "use strict";
 
         //TODO: Disabled for NEM Beta
         xdescribe("The Cancel action", function () {
@@ -46,15 +44,15 @@ define(
             beforeEach(function () {
                 mockLocation = jasmine.createSpyObj(
                     "$location",
-                    [ "path" ]
+                    ["path"]
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getCapability", "hasCapability" ]
+                    ["getCapability", "hasCapability"]
                 );
                 mockEditorCapability = jasmine.createSpyObj(
                     "editor",
-                    [ "save", "cancel" ]
+                    ["save", "cancel"]
                 );
                 mockUrlService = jasmine.createSpyObj(
                     "urlService",

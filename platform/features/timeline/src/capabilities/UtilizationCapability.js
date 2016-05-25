@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Provide the resource utilization over time for a timeline
@@ -122,13 +120,13 @@ define(
             }
 
             // Look up a specific object's resource utilization
-            function lookupUtilization(domainObject) {
-                return domainObject.useCapability('utilization');
+            function lookupUtilization(object) {
+                return object.useCapability('utilization');
             }
 
             // Look up a specific object's resource utilization keys
-            function lookupUtilizationResources(domainObject) {
-                var utilization = domainObject.getCapability('utilization');
+            function lookupUtilizationResources(object) {
+                var utilization = object.getCapability('utilization');
                 return utilization && utilization.resources();
             }
 

@@ -2,7 +2,7 @@
 
 ## Test Levels
 
-Testing for Open MCT Web includes:
+Testing for Open MCT includes:
 
 * _Smoke testing_: Brief, informal testing to verify that no major issues
   or regressions are present in the software, or in specific features of

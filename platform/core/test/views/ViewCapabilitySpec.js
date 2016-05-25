@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * ViewCapabilitySpec. Created by vwoeltje on 11/6/14.
@@ -27,22 +26,21 @@
 define(
     ["../../src/views/ViewCapability"],
     function (ViewCapability) {
-        "use strict";
 
         describe("A view capability", function () {
             var mockViewService,
                 mockDomainObject,
-                views = [ {key: "someView"} ],
+                views = [{key: "someView"}],
                 view;
 
             beforeEach(function () {
                 mockViewService = jasmine.createSpyObj(
                     "viewService",
-                    [ "getViews" ]
+                    ["getViews"]
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability" ]
+                    ["getId", "getModel", "getCapability"]
                 );
                 mockViewService.getViews.andReturn(views);
                 view = new ViewCapability(mockViewService, mockDomainObject);

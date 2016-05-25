@@ -20,14 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect */
 
 define(
     [
         '../../src/services/LocatingObjectDecorator'
     ],
     function (LocatingObjectDecorator) {
-        "use strict";
 
         describe("LocatingObjectDecorator", function () {
             var mockContextualize,
@@ -78,7 +76,9 @@ define(
                 mockQ.all.andCallFake(function (promises) {
                     var result = {};
                     Object.keys(promises).forEach(function (k) {
-                        promises[k].then(function (v) { result[k] = v; });
+                        promises[k].then(function (v) {
+                            result[k] = v;
+                        });
                     });
                     return testPromise(result);
                 });
@@ -90,7 +90,7 @@ define(
                 Object.keys(testModels).forEach(function (id) {
                     testObjects[id] = jasmine.createSpyObj(
                         "domainObject-" + id,
-                        [ "getId", "getModel", "getCapability" ]
+                        ["getId", "getModel", "getCapability"]
                     );
                     testObjects[id].getId.andReturn(id);
                     testObjects[id].getModel.andReturn(testModels[id]);

@@ -19,42 +19,49 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
-
 
 define(
-    ['./EditableLookupCapability'],
-    function (EditableLookupCapability) {
-        'use strict';
+    [],
+    function () {
+
 
         /**
-         * Wrapper for the "composition" capability;
-         * ensures that any domain objects reachable in Edit mode
-         * are also wrapped as EditableDomainObjects.
-         *
-         * Meant specifically for use by EditableDomainObject and the
-         * associated cache; the constructor signature is particular
-         * to a pattern used there and may contain unused arguments.
+         * Add one domain object to another's composition.
          * @constructor
          * @memberof platform/commonUI/edit
-         * @implements {CompositionCapability}
+         * @implements {Action}
          */
-        return function EditableCompositionCapability(
-            contextCapability,
-            editableObject,
-            domainObject,
-            cache
-        ) {
-            // This is a "lookup" style capability (it looks up other
-            // domain objects), but we do not want to return the same
-            // specific value every time (composition may change)
-            return new EditableLookupCapability(
-                contextCapability,
-                editableObject,
-                domainObject,
-                cache,
-                false // Not idempotent
-            );
+        function EditAndComposeAction(context) {
+            this.domainObject = (context || {}).domainObject;
+            this.selectedObject = (context || {}).selectedObject;
+        }
+
+        EditAndComposeAction.prototype.perform = function () {
+            var self = this,
+                editAction = this.domainObject.getCapability('action').getActions("edit")[0];
+
+            // Persist changes to the domain object
+            function doPersist() {
+                var persistence =
+                    self.domainObject.getCapability('persistence');
+                return persistence.persist();
+            }
+
+            // Link these objects
+            function doLink() {
+                var composition = self.domainObject &&
+                        self.domainObject.getCapability('composition');
+                return composition && composition.add(self.selectedObject)
+                        .then(doPersist);
+            }
+
+            if (editAction) {
+                editAction.perform();
+            }
+
+            return this.selectedObject && doLink();
         };
+
+        return EditAndComposeAction;
     }
 );

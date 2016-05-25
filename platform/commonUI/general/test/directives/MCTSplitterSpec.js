@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../../src/directives/MCTSplitter"],
     function (MCTSplitter) {
-        'use strict';
 
         describe("The mct-splitter directive", function () {
             var mctSplitter;
@@ -50,16 +48,16 @@ define(
                 beforeEach(function () {
                     mockScope = jasmine.createSpyObj(
                         '$scope',
-                        [ '$on', '$watch' ]
+                        ['$on', '$watch']
                     );
                     mockElement = jasmine.createSpyObj(
                         'element',
-                        [ 'addClass' ]
+                        ['addClass']
                     );
                     testAttrs = {};
                     mockSplitPane = jasmine.createSpyObj(
                         'mctSplitPane',
-                        [ 'position', 'toggleClass', 'anchor' ]
+                        ['position', 'toggleClass', 'anchor']
                     );
 
                     mctSplitter.link(
@@ -94,7 +92,7 @@ define(
                     });
 
                     it("repositions during drag", function () {
-                        mockScope.splitter.move([ 10, 0 ]);
+                        mockScope.splitter.move([10, 0]);
                         expect(mockSplitPane.position)
                             .toHaveBeenCalledWith(testPosition + 10);
                     });

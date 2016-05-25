@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,xit*/
 
 define(
     [
@@ -27,7 +26,6 @@ define(
         "../src/DomainColumn"
     ],
     function (Table, DomainColumn) {
-        "use strict";
 
         describe("A table", function () {
             var mockDomainObject,
@@ -46,10 +44,10 @@ define(
                         'formatDomainValue',
                         'formatRangeValue'
                     ]);
-                mockTelemetryFormatter.formatDomainValue.andCallFake(function(valueIn){
+                mockTelemetryFormatter.formatDomainValue.andCallFake(function (valueIn) {
                     return valueIn;
                 });
-                mockTelemetryFormatter.formatRangeValue.andCallFake(function(valueIn){
+                mockTelemetryFormatter.formatRangeValue.andCallFake(function (valueIn) {
                     return valueIn;
                 });
 
@@ -89,7 +87,7 @@ define(
                 expect(table.columns[2]).toBe(thirdColumn);
             });
 
-            describe("Building columns from telemetry metadata", function() {
+            describe("Building columns from telemetry metadata", function () {
                 var metadata = [{
                     ranges: [
                         {
@@ -115,21 +113,21 @@ define(
                     ]
                 }];
 
-                beforeEach(function() {
-                    table.buildColumns(metadata);
+                beforeEach(function () {
+                    table.populateColumns(metadata);
                 });
 
-                it("populates the columns attribute", function() {
+                it("populates columns", function () {
                     expect(table.columns.length).toBe(5);
                 });
 
-                it("Build columns populates columns with domains to the left", function() {
+                it("Build columns populates columns with domains to the left", function () {
                     expect(table.columns[1] instanceof DomainColumn).toBeTruthy();
                     expect(table.columns[2] instanceof DomainColumn).toBeTruthy();
                     expect(table.columns[3] instanceof DomainColumn).toBeFalsy();
                 });
 
-                it("Produces headers for each column based on title", function() {
+                it("Produces headers for each column based on title", function () {
                     var headers,
                         firstColumn = table.columns[0];
 
@@ -140,16 +138,16 @@ define(
                 });
 
                 it("Provides a default configuration with all columns" +
-                    " visible", function() {
-                    var configuration = table.getColumnConfiguration();
+                    " visible", function () {
+                    var configuration = table.buildColumnConfiguration();
 
                     expect(configuration).toBeDefined();
-                    expect(Object.keys(configuration).every(function(key){
+                    expect(Object.keys(configuration).every(function (key) {
                         return configuration[key];
                     }));
                 });
 
-                it("Column configuration exposes persisted configuration", function() {
+                it("Column configuration exposes persisted configuration", function () {
                     var tableConfig,
                         modelConfig = {
                         table: {
@@ -160,7 +158,7 @@ define(
                     };
                     mockModel.configuration = modelConfig;
 
-                    tableConfig = table.getColumnConfiguration();
+                    tableConfig = table.buildColumnConfiguration();
 
                     expect(tableConfig).toBeDefined();
                     expect(tableConfig['Range 1']).toBe(false);
@@ -170,7 +168,7 @@ define(
                     var datum,
                         rowValues;
 
-                    beforeEach(function() {
+                    beforeEach(function () {
                         datum = {
                             'range1': 'range 1 value',
                             'range2': 'range 2 value',
@@ -180,14 +178,14 @@ define(
                         rowValues = table.getRowValues(mockDomainObject, datum);
                     });
 
-                    it("Returns a value for every column", function() {
+                    it("Returns a value for every column", function () {
                         expect(rowValues['Range 1'].text).toBeDefined();
                         expect(rowValues['Range 1'].text).toEqual('range 1' +
                             ' value');
                     });
 
                     it("Uses the telemetry formatter to appropriately format" +
-                        " telemetry values", function() {
+                        " telemetry values", function () {
                         expect(mockTelemetryFormatter.formatRangeValue).toHaveBeenCalled();
                     });
                 });

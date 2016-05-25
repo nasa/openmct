@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining MutationCapability. Created by vwoeltje on 11/12/14.
@@ -27,7 +26,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         var GENERAL_TOPIC = "mutation",
             TOPIC_PREFIX = "mutation:";
@@ -126,9 +124,9 @@ define(
                 clone = JSON.parse(JSON.stringify(model)),
                 useTimestamp = arguments.length > 1;
 
-            function notifyListeners(model) {
+            function notifyListeners(newModel) {
                 generalTopic.notify(domainObject);
-                specificTopic.notify(model);
+                specificTopic.notify(newModel);
             }
 
             // Function to handle copying values to the actual

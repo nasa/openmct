@@ -19,14 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,xit*/
 
 define(
     [
-        "../../src/controllers/RTTelemetryTableController"
+        "../../src/controllers/RealtimeTableController"
     ],
     function (TableController) {
-        "use strict";
 
         describe('The real-time table controller', function () {
             var mockScope,
@@ -42,7 +40,7 @@ define(
 
             function promise(value) {
                 return {
-                    then: function (callback){
+                    then: function (callback) {
                         return promise(callback(value));
                     }
                 };
@@ -59,13 +57,13 @@ define(
                     '$digest',
                     '$broadcast'
                 ]);
-                mockScope.$on.andCallFake(function (expression, callback){
+                mockScope.$on.andCallFake(function (expression, callback) {
                     watches[expression] = callback;
                 });
-                mockScope.$watch.andCallFake(function (expression, callback){
-                   watches[expression] = callback;
+                mockScope.$watch.andCallFake(function (expression, callback) {
+                    watches[expression] = callback;
                 });
-                mockScope.$watchCollection.andCallFake(function (expression, callback){
+                mockScope.$watchCollection.andCallFake(function (expression, callback) {
                     watches[expression] = callback;
                 });
 
@@ -77,17 +75,17 @@ define(
 
                 mockTable = jasmine.createSpyObj('table',
                     [
-                        'buildColumns',
-                        'getColumnConfiguration',
+                        'populateColumns',
+                        'buildColumnConfiguration',
                         'getRowValues',
                         'saveColumnConfiguration'
                     ]
                 );
                 mockTable.columns = [];
-                mockTable.getColumnConfiguration.andReturn(mockConfiguration);
+                mockTable.buildColumnConfiguration.andReturn(mockConfiguration);
                 mockTable.getRowValues.andReturn(mockTableRow);
 
-                mockDomainObject= jasmine.createSpyObj('domainObject', [
+                mockDomainObject = jasmine.createSpyObj('domainObject', [
                     'getCapability',
                     'useCapability',
                     'getModel'
@@ -95,7 +93,7 @@ define(
                 mockDomainObject.getModel.andReturn({});
                 mockDomainObject.getCapability.andReturn(
                     {
-                        getMetadata: function (){
+                        getMetadata: function () {
                             return {ranges: [{format: 'string'}]};
                         }
                     });
@@ -107,13 +105,16 @@ define(
                     'unsubscribe',
                     'getDatum',
                     'promiseTelemetryObjects',
-                    'getTelemetryObjects'
+                    'getTelemetryObjects',
+                    'request'
                 ]);
+
                 // Arbitrary array with non-zero length, contents are not
                 // used by mocks
                 mockTelemetryHandle.getTelemetryObjects.andReturn([{}]);
                 mockTelemetryHandle.promiseTelemetryObjects.andReturn(promise(undefined));
                 mockTelemetryHandle.getDatum.andReturn({});
+                mockTelemetryHandle.request.andReturn(promise(undefined));
 
                 mockTelemetryHandler = jasmine.createSpyObj('telemetryHandler', [
                     'handle'
@@ -131,7 +132,7 @@ define(
             });
 
             describe('receives new telemetry', function () {
-                beforeEach(function() {
+                beforeEach(function () {
                     controller.subscribe();
                     mockScope.rows = [];
                 });
@@ -150,7 +151,7 @@ define(
                     }
                     mockTelemetryHandler.handle.mostRecentCall.args[1]();
                     expect(mockScope.rows.length).toBe(controller.maxRows);
-                    expect(mockScope.rows[mockScope.rows.length-1]).toBe(mockTableRow);
+                    expect(mockScope.rows[mockScope.rows.length - 1]).toBe(mockTableRow);
                     expect(mockScope.rows[0].row).toBe(1);
                 });
             });

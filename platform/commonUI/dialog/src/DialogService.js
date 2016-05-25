@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle implements the dialog service, which can be used to
@@ -29,7 +28,6 @@
 define(
     [],
     function () {
-        "use strict";
         /**
          * The dialog service is responsible for handling window-modal
          * communication with the user, such as displaying forms for user
@@ -157,8 +155,8 @@ define(
          * @returns {boolean} true if dialog is currently visible, false
          * otherwise
          */
-        DialogService.prototype.canShowDialog = function(dialogModel){
-            if (this.dialogVisible){
+        DialogService.prototype.canShowDialog = function (dialogModel) {
+            if (this.dialogVisible) {
                 // Only one dialog should be shown at a time.
                 // The application design should be such that
                 // we never even try to do this.
@@ -226,7 +224,7 @@ define(
          * @param {typeClass} string tells overlayService that this overlay should use appropriate CSS class
          * @returns {boolean}
          */
-        DialogService.prototype.showBlockingMessage = function(dialogModel) {
+        DialogService.prototype.showBlockingMessage = function (dialogModel) {
             if (this.canShowDialog(dialogModel)) {
                 // Add the overlay using the OverlayService, which
                 // will handle actual insertion into the DOM

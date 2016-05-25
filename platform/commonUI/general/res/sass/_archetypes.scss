@@ -145,3 +145,8 @@
 .flex-justify-end {
     @include justify-content(flex-end);
 }
+
+/********************************************* POPUPS */
+.t-popup {
+    z-index: 75;
+}

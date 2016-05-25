@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * A controller for banner notifications. Banner notifications are a
@@ -42,7 +40,7 @@ define(
         function BannerController($scope, notificationService, dialogService) {
             $scope.active = notificationService.active;
 
-            $scope.action = function (action, $event){
+            $scope.action = function (action, $event) {
                 /*
                  Prevents default 'maximize' behaviour when clicking on
                   notification button
@@ -50,19 +48,19 @@ define(
                 $event.stopPropagation();
                 return action();
             };
-            $scope.dismiss = function(notification, $event) {
+            $scope.dismiss = function (notification, $event) {
                 $event.stopPropagation();
                 notification.dismissOrMinimize();
             };
-            $scope.maximize = function(notification) {
-                if (notification.model.severity !== "info"){
+            $scope.maximize = function (notification) {
+                if (notification.model.severity !== "info") {
 
-                    notification.model.cancel = function(){
+                    notification.model.cancel = function () {
                         dialogService.dismiss();
                     };
                     //If the notification is dismissed by the user, close
                     // the dialog.
-                    notification.onDismiss(function(){
+                    notification.onDismiss(function () {
                         dialogService.dismiss();
                     });
 

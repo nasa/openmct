@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine,xit*/
 
 define(
     ["../../src/policies/ImageryViewPolicy"],
     function (ImageryViewPolicy) {
-        "use strict";
 
         describe("Imagery view policy", function () {
             var testView,
@@ -53,24 +51,24 @@ define(
             });
 
             it("allows the imagery view for domain objects with image telemetry", function () {
-                testMetadata.ranges = [ { key: "foo", format: "imageUrl" } ];
+                testMetadata.ranges = [{ key: "foo", format: "imageUrl" }];
                 expect(policy.allow(testView, mockDomainObject)).toBeTruthy();
             });
 
             it("disallows the imagery view for domain objects without image telemetry", function () {
-                testMetadata.ranges = [ { key: "foo", format: "somethingElse" } ];
+                testMetadata.ranges = [{ key: "foo", format: "somethingElse" }];
                 expect(policy.allow(testView, mockDomainObject)).toBeFalsy();
             });
 
             it("disallows the imagery view for domain objects without telemetry", function () {
-                testMetadata.ranges = [ { key: "foo", format: "imageUrl" } ];
+                testMetadata.ranges = [{ key: "foo", format: "imageUrl" }];
                 mockDomainObject.getCapability.andReturn(undefined);
                 expect(policy.allow(testView, mockDomainObject)).toBeFalsy();
             });
 
             it("allows other views", function () {
                 testView.key = "somethingElse";
-                testMetadata.ranges = [ { key: "foo", format: "somethingElse" } ];
+                testMetadata.ranges = [{ key: "foo", format: "somethingElse" }];
                 expect(policy.allow(testView, mockDomainObject)).toBeTruthy();
             });
 

@@ -19,122 +19,100 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        'use strict';
-
 
         /**
-         * Implements "save" and "cancel" as capabilities of
-         * the object. In editing mode, user is seeing/using
-         * a copy of the object (an EditableDomainObject)
-         * which is disconnected from persistence; the Save
-         * and Cancel actions can use this capability to
-         * propagate changes from edit mode to the underlying
-         * actual persistable object.
-         *
-         * Meant specifically for use by EditableDomainObject and the
-         * associated cache; the constructor signature is particular
-         * to a pattern used there and may contain unused arguments.
+         * A capability that implements an editing 'session' for a domain
+         * object. An editing session is initiated via a call to .edit().
+         * Once initiated, any persist operations will be queued pending a
+         * subsequent call to [.save()](@link #save) or [.cancel()](@link
+         * #cancel).
+         * @param transactionService
+         * @param domainObject
          * @constructor
-         * @memberof platform/commonUI/edit
          */
         function EditorCapability(
-            persistenceCapability,
-            editableObject,
-            domainObject,
-            cache
+            transactionService,
+            domainObject
         ) {
-            this.editableObject = editableObject;
+            this.transactionService = transactionService;
             this.domainObject = domainObject;
-            this.cache = cache;
-        }
-
-        // Simulate Promise.resolve (or $q.when); the former
-        // causes a delayed reaction from Angular (since it
-        // does not trigger a digest) and the latter is not
-        // readily accessible, since we're a few classes
-        // removed from the layer which gets dependency
-        // injection.
-        function resolvePromise(value) {
-            return (value && value.then) ? value : {
-                then: function (callback) {
-                    return resolvePromise(callback(value));
-                }
-            };
         }
 
         /**
-         * Save any changes that have been made to this domain object
-         * (as well as to others that might have been retrieved and
-         * modified during the editing session)
-         * @param {boolean} nonrecursive if true, save only this
-         *        object (and not other objects with associated changes)
-         * @returns {Promise} a promise that will be fulfilled after
-         *          persistence has completed.
-         * @memberof platform/commonUI/edit.EditorCapability#
+         * Initiate an editing session. This will start a transaction during
+         * which any persist operations will be deferred until either save()
+         * or cancel() are called.
          */
-        EditorCapability.prototype.save = function (nonrecursive) {
-            var domainObject = this.domainObject,
-                editableObject = this.editableObject,
-                self = this,
-                cache = this.cache,
-                returnPromise;
+        EditorCapability.prototype.edit = function () {
+            this.transactionService.startTransaction();
+            this.domainObject.getCapability('status').set('editing', true);
+        };
 
-            // Update the underlying, "real" domain object's model
-            // with changes made to the copy used for editing.
-            function doMutate() {
-                return domainObject.useCapability('mutation', function () {
-                    return editableObject.getModel();
-                });
-            }
+        function isEditContextRoot(domainObject) {
+            return domainObject.getCapability('status').get('editing');
+        }
 
-            // Persist the underlying domain object
-            function doPersist() {
-                return domainObject.getCapability('persistence').persist();
-            }
+        function isEditing(domainObject) {
+            return isEditContextRoot(domainObject) ||
+                domainObject.hasCapability('context') &&
+                isEditing(domainObject.getCapability('context').getParent());
+        }
 
-            editableObject.getCapability("status").set("editing", false);
+        /**
+         * Determines whether this object, or any of its ancestors are
+         * currently being edited.
+         * @returns boolean
+         */
+        EditorCapability.prototype.inEditContext = function () {
+            return isEditing(this.domainObject);
+        };
 
-            if (nonrecursive) {
-                returnPromise = resolvePromise(doMutate())
-                    .then(doPersist)
-                    .then(function(){
-                        self.cancel();
-                    });
-            } else {
-                returnPromise = resolvePromise(cache.saveAll());
-            }
-            //Return the original (non-editable) object
-            return returnPromise.then(function() {
-                return domainObject.getOriginalObject ? domainObject.getOriginalObject() : domainObject;
+        /**
+         * Is this the root editing object (ie. the object that the user
+         * clicked 'edit' on)?
+         * @returns {*}
+         */
+        EditorCapability.prototype.isEditContextRoot = function () {
+            return isEditContextRoot(this.domainObject);
+        };
+
+        /**
+         * Save any changes from this editing session. This will flush all
+         * pending persists and end the current transaction
+         * @returns {*}
+         */
+        EditorCapability.prototype.save = function () {
+            var domainObject = this.domainObject;
+            return this.transactionService.commit().then(function () {
+                domainObject.getCapability('status').set('editing', false);
+            });
+        };
+
+        EditorCapability.prototype.invoke = EditorCapability.prototype.edit;
+
+        /**
+         * Cancel the current editing session. This will discard any pending
+         * persist operations
+         * @returns {*}
+         */
+        EditorCapability.prototype.cancel = function () {
+            var domainObject = this.domainObject;
+            return this.transactionService.cancel().then(function () {
+                domainObject.getCapability("status").set("editing", false);
+                return domainObject;
             });
         };
 
         /**
-         * Cancel editing; Discard any changes that have been made to
-         * this domain object (as well as to others that might have
-         * been retrieved and modified during the editing session)
-         * @returns {Promise} a promise that will be fulfilled after
-         *          cancellation has completed.
-         * @memberof platform/commonUI/edit.EditorCapability#
-         */
-        EditorCapability.prototype.cancel = function () {
-            this.editableObject.getCapability("status").set("editing", false);
-            this.cache.markClean();
-            return resolvePromise(undefined);
-        };
-
-        /**
-         * Check if there are any unsaved changes.
-         * @returns {boolean} true if there are unsaved changes
-         * @memberof platform/commonUI/edit.EditorCapability#
+         * @returns {boolean} true if there have been any domain model
+         * modifications since the last persist, false otherwise.
          */
         EditorCapability.prototype.dirty = function () {
-            return this.cache.dirty();
+            return this.transactionService.size() > 0;
         };
 
         return EditorCapability;

@@ -19,13 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 
 define(
     ["../src/TemplatePrefetcher"],
     function (TemplatePrefetcher) {
-        'use strict';
 
         describe("TemplatePrefetcher", function () {
             var mockTemplateLinker,
@@ -38,7 +36,7 @@ define(
 
                 mockTemplateLinker = jasmine.createSpyObj(
                     'templateLinker',
-                    [ 'getPath', 'load' ]
+                    ['getPath', 'load']
                 );
 
                 mockTemplateLinker.getPath.andCallFake(function (ext) {

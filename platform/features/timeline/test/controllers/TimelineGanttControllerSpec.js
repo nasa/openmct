@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../src/controllers/TimelineGanttController'],
     function (TimelineGanttController) {
-        "use strict";
 
         var TEST_MAX_OFFSCREEN = 50;
 
@@ -63,7 +61,9 @@ define(
                 mockTimespan.getDuration.andReturn(50);
                 mockTimespan.getEnd.andReturn(150);
 
-                mockToPixels.andCallFake(function (t) { return t * 10; });
+                mockToPixels.andCallFake(function (t) {
+                    return t * 10;
+                });
 
                 controller = new TimelineGanttController(TEST_MAX_OFFSCREEN);
             });

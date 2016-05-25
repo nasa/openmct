@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./Popup'],
     function (Popup) {
-        "use strict";
 
         /**
          * Displays popup elements at specific positions within the document.
@@ -80,11 +78,10 @@ define(
             var $document = this.$document,
                 $window = this.$window,
                 body = $document.find('body'),
-                winDim = [ $window.innerWidth, $window.innerHeight ],
+                winDim = [$window.innerWidth, $window.innerHeight],
                 styles = { position: 'absolute' },
                 margin,
-                offset,
-                bubble;
+                offset;
 
             function adjustNegatives(value, index) {
                 return value < 0 ? (value + winDim[index]) : value;
@@ -96,7 +93,7 @@ define(
                 options.offsetX !== undefined ? options.offsetX : 0,
                 options.offsetY !== undefined ? options.offsetY : 0
             ];
-            margin = [ options.marginX, options.marginY ].map(function (m, i) {
+            margin = [options.marginX, options.marginY].map(function (m, i) {
                 return m === undefined ? (winDim[i] / 2) : m;
             }).map(adjustNegatives);
 

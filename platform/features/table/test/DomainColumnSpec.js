@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,xit*/
 
 /**
  * MergeModelsSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../src/DomainColumn"],
     function (DomainColumn) {
-        "use strict";
 
         var TEST_DOMAIN_VALUE = "some formatted domain value";
 
@@ -40,11 +38,11 @@ define(
             beforeEach(function () {
                 mockDataSet = jasmine.createSpyObj(
                     "data",
-                    [ "getDomainValue" ]
+                    ["getDomainValue"]
                 );
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
-                    [ "formatDomainValue", "formatRangeValue" ]
+                    ["formatDomainValue", "formatRangeValue"]
                 );
                 testMetadata = {
                     key: "testKey",

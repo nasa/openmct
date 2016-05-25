@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Provides data to populate resource graphs associated
@@ -37,10 +35,10 @@ define(
                 getPointCount: function () {
                     return 0;
                 },
-                getDomainValue: function (index) {
+                getDomainValue: function () {
                     return 0;
                 },
-                getRangeValue: function (index) {
+                getRangeValue: function () {
                     return 0;
                 }
             };

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../../src/controllers/drag/TimelineDragHandleFactory'],
     function (TimelineDragHandleFactory) {
-        'use strict';
 
         describe("A Timeline drag handle factory", function () {
             var mockDragHandler,
@@ -37,19 +35,19 @@ define(
             beforeEach(function () {
                 mockDragHandler = jasmine.createSpyObj(
                     'dragHandler',
-                    [ 'start' ]
+                    ['start']
                 );
                 mockSnapHandler = jasmine.createSpyObj(
                     'snapHandler',
-                    [ 'snap' ]
+                    ['snap']
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getCapability', 'getId' ]
+                    ['getCapability', 'getId']
                 );
                 mockType = jasmine.createSpyObj(
                     'type',
-                    [ 'instanceOf' ]
+                    ['instanceOf']
                 );
 
                 mockDomainObject.getId.andReturn('test-id');

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * MergeModelsSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/elements/PlotPanZoomStackGroup"],
     function (PlotPanZoomStackGroup) {
-        "use strict";
 
         var COUNT = 8;
 
@@ -51,7 +49,7 @@ define(
 
             it("synchronizes pan-zoom stack depth", function () {
                 expect(group.getDepth()).toEqual(1);
-                group.getPanZoomStack(1).pushPanZoom([ 10, 20 ], [ 30, 40 ]);
+                group.getPanZoomStack(1).pushPanZoom([10, 20], [30, 40]);
                 stacks.forEach(function (stack) {
                     expect(stack.getDepth()).toEqual(2);
                 });
@@ -60,11 +58,11 @@ define(
             it("synchronizes domain but not range", function () {
                 // Set up different initial states
                 stacks.forEach(function (stack, i) {
-                    stack.pushPanZoom([ i, i ], [ i, i ]);
+                    stack.pushPanZoom([i, i], [i, i]);
                 });
 
                 // Push a new pan-zoom state onto one of the stacks
-                group.getPanZoomStack(1).pushPanZoom([ 99, 99 ], [ 42, 42 ]);
+                group.getPanZoomStack(1).pushPanZoom([99, 99], [42, 42]);
 
                 // Should changed domain values for all stacks, but
                 // only changed range values for stack 1
@@ -87,7 +85,7 @@ define(
             it("clears pan-zoom on request", function () {
                 // Set up different initial states
                 stacks.forEach(function (stack, i) {
-                    stack.pushPanZoom([ i, i ], [ i, i ]);
+                    stack.pushPanZoom([i, i], [i, i]);
                 });
 
                 // Verify that we have a greater depth
@@ -106,7 +104,7 @@ define(
             it("pops pan-zoom on request", function () {
                 // Set up different initial states
                 stacks.forEach(function (stack, i) {
-                    stack.pushPanZoom([ i, i ], [ i, i ]);
+                    stack.pushPanZoom([i, i], [i, i]);
                 });
 
                 // Verify that we have a greater depth

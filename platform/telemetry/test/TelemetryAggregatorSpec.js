@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../src/TelemetryAggregator"],
     function (TelemetryAggregator) {
-        "use strict";
 
         describe("The telemetry aggregator", function () {
             var mockQ,
@@ -40,10 +38,10 @@ define(
                 };
             }
 
-            function mockProvider(key, index) {
+            function makeMockProvider(key, index) {
                 var provider = jasmine.createSpyObj(
                         "provider" + index,
-                        [ "requestTelemetry", "subscribe" ]
+                        ["requestTelemetry", "subscribe"]
                     ),
                     unsubscribe = jasmine.createSpy("unsubscribe" + index);
                 provider.requestTelemetry.andReturn({ someKey: key });
@@ -55,11 +53,11 @@ define(
             }
 
             beforeEach(function () {
-                mockQ = jasmine.createSpyObj("$q", [ "all" ]);
+                mockQ = jasmine.createSpyObj("$q", ["all"]);
                 mockQ.all.andReturn(mockPromise([]));
 
                 mockUnsubscribes = [];
-                mockProviders = [ "a", "b", "c" ].map(mockProvider);
+                mockProviders = ["a", "b", "c"].map(makeMockProvider);
 
                 aggregator = new TelemetryAggregator(mockQ, mockProviders);
             });

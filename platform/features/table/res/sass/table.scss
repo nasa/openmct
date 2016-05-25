@@ -19,46 +19,44 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
-define(
-    [],
-    function () {
-        "use strict";
+.sizing-table {
+    min-width: 100%;
+    z-index: -1;
+    visibility: hidden;
+    position: absolute;
 
-
-        /**
-         * Add one domain object to another's composition.
-         * @constructor
-         * @memberof platform/commonUI/edit
-         * @implements {Action}
-         */
-        function LinkAction(context) {
-            this.domainObject = (context || {}).domainObject;
-            this.selectedObject = (context || {}).selectedObject;
-        }
-
-        LinkAction.prototype.perform = function () {
-            var self = this;
-
-            // Persist changes to the domain object
-            function doPersist() {
-                var persistence =
-                    self.domainObject.getCapability('persistence');
-                return persistence.persist();
-            }
-
-            // Link these objects
-            function doLink() {
-                var composition = self.domainObject &&
-                        self.domainObject.getCapability('composition');
-                return composition && composition.add(self.selectedObject)
-                        .then(doPersist);
-            }
-
-            return this.selectedObject && doLink();
-        };
-
-        return LinkAction;
+    //Add some padding to allow for decorations such as limits indicator
+    td {
+        padding-right: 15px;
+        padding-left: 10px;
+        white-space: nowrap;
     }
-);
+}
+.mct-table {
+    table-layout: fixed;
+    thead {
+        display: block;
+        tr {
+            display: block;
+            white-space: nowrap;
+            th {
+                display: inline-block;
+                box-sizing: border-box;
+            }
+        }
+    }
+    tbody {
+        tr {
+            position: absolute;
+            white-space: nowrap;
+            display: block;
+        }
+        td {
+            white-space: nowrap;
+            overflow: hidden;
+            box-sizing: border-box;
+            display: inline-block;
+        }
+    }
+}

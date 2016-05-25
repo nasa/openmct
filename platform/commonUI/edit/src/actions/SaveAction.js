@@ -19,14 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
-/*jslint es5: true */
-
 
 define(
     [],
     function () {
-        'use strict';
 
         /**
          * The "Save" action; the action triggered by clicking Save from
@@ -52,7 +48,7 @@ define(
         SaveAction.prototype.perform = function () {
             var domainObject = this.domainObject;
 
-            function resolveWith(object){
+            function resolveWith(object) {
                 return function () {
                     return object;
                 };
@@ -64,7 +60,7 @@ define(
             // during editing.
             function doSave() {
                 return domainObject.getCapability("editor").save()
-                    .then(resolveWith(domainObject.getOriginalObject()));
+                    .then(resolveWith(domainObject));
             }
 
             // Discard the current root view (which will be the editing
@@ -89,7 +85,8 @@ define(
         SaveAction.appliesTo = function (context) {
             var domainObject = (context || {}).domainObject;
             return domainObject !== undefined &&
-                domainObject.hasCapability("editor") &&
+                domainObject.hasCapability('editor') &&
+                domainObject.getCapability('editor').isEditContextRoot() &&
                 domainObject.getModel().persisted !== undefined;
         };
 

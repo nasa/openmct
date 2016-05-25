@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ["../SubPlot", "../elements/PlotPalette", "../elements/PlotPanZoomStack"],
     function (SubPlot, PlotPalette, PlotPanZoomStack) {
-        "use strict";
 
         /**
          * Handles plotting in Overlaid mode. In overlaid mode, there
@@ -40,7 +38,7 @@ define(
                 telemetryObjects,
                 this.panZoomStack
             );
-            this.subplots = [ this.subplot ];
+            this.subplots = [this.subplot];
         }
 
         PlotOverlayMode.prototype.plotTelemetry = function (updater) {

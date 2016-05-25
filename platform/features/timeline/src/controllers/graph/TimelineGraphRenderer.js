@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Float32Array*/
 
 define(
     [],
     function () {
-        'use strict';
 
         /**
          * Responsible for preparing data for display by

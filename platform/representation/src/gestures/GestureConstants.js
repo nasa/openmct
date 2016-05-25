@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Constants used by domain object gestures.
@@ -45,7 +44,7 @@ define({
      * positioning.
      * @memberof platform/representation.GestureConstants
      */
-    MCT_MENU_DIMENSIONS: [ 170, 200 ],
+    MCT_MENU_DIMENSIONS: [170, 200],
     /**
      * Identifier for drop events.
      * @memberof platform/representation.GestureConstants

@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define, window, requirejs*/
+/*global requirejs*/
 
 requirejs.config({
     "paths": {
@@ -41,10 +41,13 @@ requirejs.config({
             "exports": "angular"
         },
         "angular-route": {
-            "deps": [ "angular" ]
+            "deps": ["angular"]
         },
         "moment-duration-format": {
-            "deps": [ "moment" ]
+            "deps": ["moment"]
+        },
+        "screenfull": {
+            "exports": "screenfull"
         },
         "zepto": {
             "exports": "Zepto"
@@ -89,14 +92,8 @@ define([
     './platform/entanglement/bundle',
     './platform/search/bundle',
     './platform/status/bundle',
-    './platform/commonUI/regions/bundle',
-
-    './example/imagery/bundle',
-    './example/eventGenerator/bundle',
-    './example/generator/bundle'
+    './platform/commonUI/regions/bundle'
 ], function (Main, legacyRegistry) {
-    'use strict';
-
     return {
         legacyRegistry: legacyRegistry,
         run: function () {

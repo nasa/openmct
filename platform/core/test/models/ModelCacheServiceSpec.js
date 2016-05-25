@@ -19,17 +19,15 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(['../../src/models/ModelCacheService'], function (ModelCacheService) {
-    'use strict';
     describe("ModelCacheService", function () {
         var testIds,
             testModels,
             cacheService;
 
         beforeEach(function () {
-            testIds = [ 'a', 'b', 'c', 'd' ];
+            testIds = ['a', 'b', 'c', 'd'];
             testModels = testIds.reduce(function (models, id) {
                 models[id] = { someKey: "some value for " + id };
                 return models;

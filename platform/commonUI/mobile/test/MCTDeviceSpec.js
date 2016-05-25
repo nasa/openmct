@@ -19,14 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ['../src/MCTDevice'],
     function (MCTDevice) {
-        "use strict";
 
-        var JQLITE_METHODS = [ 'replaceWith' ];
+        var JQLITE_METHODS = ['replaceWith'];
 
         describe("The mct-device directive", function () {
             var mockAgentService,
@@ -43,7 +41,7 @@ define(
             beforeEach(function () {
                 mockAgentService = jasmine.createSpyObj(
                     "agentService",
-                    [ "isMobile", "isPhone", "isTablet", "isPortrait", "isLandscape" ]
+                    ["isMobile", "isPhone", "isTablet", "isPortrait", "isLandscape"]
                 );
                 mockTransclude = jasmine.createSpy("$transclude");
                 mockElement = jasmine.createSpyObj(name, JQLITE_METHODS);

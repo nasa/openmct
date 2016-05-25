@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ['../../src/gestures/InfoGesture'],
     function (InfoGesture) {
-        "use strict";
 
         describe("The info gesture", function () {
             var mockTimeout,
@@ -54,19 +52,19 @@ define(
                 mockAgentService = jasmine.createSpyObj('agentService', ['isMobile']);
                 mockInfoService = jasmine.createSpyObj(
                     'infoService',
-                    [ 'display' ]
+                    ['display']
                 );
                 mockElement = jasmine.createSpyObj(
                     'element',
-                    [ 'on', 'off', 'scope', 'css' ]
+                    ['on', 'off', 'scope', 'css']
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getId', 'getCapability', 'useCapability', 'getModel' ]
+                    ['getId', 'getCapability', 'useCapability', 'getModel']
                 );
-                mockScope = jasmine.createSpyObj('$scope', [ '$on' ]);
+                mockScope = jasmine.createSpyObj('$scope', ['$on']);
                 mockOff = jasmine.createSpy('$off');
-                testMetadata = [ { name: "Test name", value: "Test value" } ];
+                testMetadata = [{ name: "Test name", value: "Test value" }];
                 mockPromise = jasmine.createSpyObj('promise', ['then']);
                 mockHide = jasmine.createSpy('hide');
 
@@ -103,7 +101,7 @@ define(
                     jasmine.any(String),
                     "Test Object",
                     testMetadata,
-                    [ 1977, 42 ]
+                    [1977, 42]
                 );
             });
 
@@ -132,7 +130,7 @@ define(
                     jasmine.any(String),
                     "Test Object",
                     testMetadata,
-                    [ 1984, 11 ]
+                    [1984, 11]
                 );
             });
 

@@ -19,8 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
-/*jslint es5: true */
 
 /**
  * PersistenceCapabilitySpec. Created by vwoeltje on 11/6/14.
@@ -28,7 +26,6 @@
 define(
     ["../../src/capabilities/PersistenceCapability"],
     function (PersistenceCapability) {
-        "use strict";
 
         describe("The persistence capability", function () {
             var mockPersistenceService,
@@ -49,10 +46,10 @@ define(
                     then: function (callback) {
                         return asPromise(callback(value));
                     },
-                    catch: function(callback) {
+                    catch: function (callback) {
                         //Define a default 'happy' catch, that skips over the
                         // catch callback
-                        return doCatch ? asPromise(callback(value)): asPromise(value);
+                        return doCatch ? asPromise(callback(value)) : asPromise(value);
                     }
                 };
             }
@@ -63,16 +60,16 @@ define(
 
                 mockPersistenceService = jasmine.createSpyObj(
                     "persistenceService",
-                    [ "updateObject", "readObject", "createObject", "deleteObject" ]
+                    ["updateObject", "readObject", "createObject", "deleteObject"]
                 );
 
                 mockIdentifierService = jasmine.createSpyObj(
                     'identifierService',
-                    [ 'parse', 'generate' ]
+                    ['parse', 'generate']
                 );
                 mockIdentifier = jasmine.createSpyObj(
                     'identifier',
-                    [ 'getSpace', 'getKey', 'getDefinedSpace' ]
+                    ['getSpace', 'getKey', 'getDefinedSpace']
                 );
                 mockQ = jasmine.createSpyObj(
                     "$q",
@@ -84,12 +81,16 @@ define(
                 );
                 mockCacheService = jasmine.createSpyObj(
                     "cacheService",
-                    [ "get", "put", "remove", "all" ]
+                    ["get", "put", "remove", "all"]
                 );
 
                 mockDomainObject = {
-                    getId: function () { return id; },
-                    getModel: function () { return model; },
+                    getId: function () {
+                        return id;
+                    },
+                    getModel: function () {
+                        return model;
+                    },
                     useCapability: jasmine.createSpy()
                 };
                 // Simulate mutation capability
@@ -110,7 +111,7 @@ define(
                 );
             });
 
-            describe("successful persistence", function() {
+            describe("successful persistence", function () {
                 beforeEach(function () {
                     mockPersistenceService.updateObject.andReturn(happyPromise);
                     mockPersistenceService.createObject.andReturn(happyPromise);
@@ -158,18 +159,6 @@ define(
                     expect(model).toEqual(refreshModel);
                 });
 
-                it("does not overwrite unpersisted changes on refresh", function () {
-                    var refreshModel = {someOtherKey: "some other value"},
-                        mockCallback = jasmine.createSpy();
-                    model.modified = 2;
-                    model.persisted = 1;
-                    mockPersistenceService.readObject.andReturn(asPromise(refreshModel));
-                    persistence.refresh().then(mockCallback);
-                    expect(model).not.toEqual(refreshModel);
-                    // Should have also indicated that no changes were actually made
-                    expect(mockCallback).toHaveBeenCalledWith(false);
-                });
-
                 it("does not trigger error notification on successful" +
                     " persistence", function () {
                     persistence.persist();
@@ -178,9 +167,9 @@ define(
                 });
             });
 
-            describe("unsuccessful persistence", function() {
+            describe("unsuccessful persistence", function () {
                 var sadPromise = {
-                        then: function(callback){
+                        then: function (callback) {
                             return asPromise(callback(0), true);
                         }
                     };

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * StaticModelProviderSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/models/StaticModelProvider"],
     function (StaticModelProvider) {
-        "use strict";
 
         describe("The static model provider", function () {
             var models = [
@@ -57,7 +55,9 @@ define(
             });
 
             it("provides models from extension declarations", function () {
-                var mockPromise = { then: function () { return; } };
+                var mockPromise = { then: function () {
+                    return;
+                } };
                 mockQ.when.andReturn(mockPromise);
 
                 // Verify that we got the promise as the return value

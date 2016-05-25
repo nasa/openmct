@@ -19,13 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
 /*global self*/
 
 /**
  * Module defining GenericSearchWorker. Created by shale on 07/21/2015.
  */
 (function () {
-    "use strict";
 
     // An array of objects composed of domain object IDs and models
     // {id: domainObject's ID, model: domainObject's model}
@@ -118,7 +118,7 @@
                     match.matchCount += 100;
                 } else if (match.item.vector.lowerCaseName ===
                            query.inputLowerCase) {
-                   match.matchCount += 50;
+                    match.matchCount += 50;
                 }
                 return match;
             })

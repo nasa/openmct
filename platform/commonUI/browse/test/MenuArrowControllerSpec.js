@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * MenuArrowControllerSpec. Created by shale on 07/02/2015.
@@ -27,8 +26,7 @@
 define(
     ["../src/MenuArrowController"],
     function (MenuArrowController) {
-        "use strict";
-        
+
         describe("The menu arrow controller ", function () {
             var mockScope,
                 mockDomainObject,
@@ -36,43 +34,43 @@ define(
                 mockContextMenuAction,
                 mockActionContext,
                 controller;
-            
+
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "" ]
+                    [""]
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getCapability" ]
+                    ["getCapability"]
                 );
                 mockEvent = jasmine.createSpyObj(
                     "event",
-                    [ "preventDefault" ]
+                    ["preventDefault"]
                 );
                 mockContextMenuAction = jasmine.createSpyObj(
                     "action",
-                    [ "perform", "getActions" ]
+                    ["perform", "getActions"]
                 );
                 mockActionContext = jasmine.createSpyObj(
                     "actionContext",
-                    [ "" ]
+                    [""]
                 );
-                
+
                 mockActionContext.domainObject = mockDomainObject;
                 mockActionContext.event = mockEvent;
                 mockScope.domainObject = mockDomainObject;
                 mockDomainObject.getCapability.andReturn(mockContextMenuAction);
                 mockContextMenuAction.perform.andReturn(jasmine.any(Function));
-                
+
                 controller = new MenuArrowController(mockScope);
             });
-            
+
             it("calls the context menu action when clicked", function () {
                 // Simulate a click on the menu arrow
                 controller.showMenu(mockEvent);
-                
-                // Expect the menu action to be performed 
+
+                // Expect the menu action to be performed
                 expect(mockDomainObject.getCapability).toHaveBeenCalledWith('action');
                 expect(mockContextMenuAction.perform).toHaveBeenCalled();
             });

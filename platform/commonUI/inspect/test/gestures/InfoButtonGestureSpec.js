@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ['../../src/gestures/InfoButtonGesture'],
     function (InfoButtonGesture) {
-        "use strict";
 
         describe("The info button gesture", function () {
             var mockTimeout,
@@ -46,28 +44,28 @@ define(
             beforeEach(function () {
                 mockTimeout = jasmine.createSpy('$timeout');
                 mockDocument = jasmine.createSpyObj('$document', ['find']);
-                mockBody = jasmine.createSpyObj('body', [ 'on', 'off', 'scope', 'css', 'unbind' ]);
+                mockBody = jasmine.createSpyObj('body', ['on', 'off', 'scope', 'css', 'unbind']);
                 mockDocument.find.andReturn(mockBody);
                 mockAgentService = jasmine.createSpyObj('agentService', ['isMobile', 'isPhone']);
                 mockInfoService = jasmine.createSpyObj(
                     'infoService',
-                    [ 'display' ]
+                    ['display']
                 );
                 mockElement = jasmine.createSpyObj(
                     'element',
-                    [ 'on', 'off', 'scope', 'css' ]
+                    ['on', 'off', 'scope', 'css']
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getId', 'getCapability', 'useCapability', 'getModel' ]
+                    ['getId', 'getCapability', 'useCapability', 'getModel']
                 );
 
                 mockEvent = jasmine.createSpyObj("event", ["preventDefault", "stopPropagation"]);
                 mockEvent.pageX = 0;
                 mockEvent.pageY = 0;
-                mockScope = jasmine.createSpyObj('$scope', [ '$on' ]);
+                mockScope = jasmine.createSpyObj('$scope', ['$on']);
                 mockOff = jasmine.createSpy('$off');
-                testMetadata = [ { name: "Test name", value: "Test value" } ];
+                testMetadata = [{ name: "Test name", value: "Test value" }];
                 mockHide = jasmine.createSpy('hide');
 
                 mockDomainObject.getModel.andReturn({ name: "Test Object" });

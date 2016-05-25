@@ -19,28 +19,26 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../../src/controllers/ClickAwayController"],
     function (ClickAwayController) {
-        "use strict";
 
         describe("The click-away controller", function () {
-            var mockScope,
-                mockDocument,
+            var mockDocument,
+                mockTimeout,
                 controller;
 
             beforeEach(function () {
-                mockScope = jasmine.createSpyObj(
-                    "$scope",
-                    [ "$apply" ]
-                );
                 mockDocument = jasmine.createSpyObj(
                     "$document",
-                    [ "on", "off" ]
+                    ["on", "off"]
                 );
-                controller = new ClickAwayController(mockScope, mockDocument);
+                mockTimeout = jasmine.createSpy('timeout');
+                controller = new ClickAwayController(
+                    mockDocument,
+                    mockTimeout
+                );
             });
 
             it("is initially inactive", function () {
@@ -79,10 +77,12 @@ define(
             });
 
             it("deactivates and detaches listener on document click", function () {
-                var callback;
+                var callback, timeout;
                 controller.setState(true);
                 callback = mockDocument.on.mostRecentCall.args[1];
                 callback();
+                timeout = mockTimeout.mostRecentCall.args[0];
+                timeout();
                 expect(controller.isActive()).toEqual(false);
                 expect(mockDocument.off).toHaveBeenCalledWith("mouseup", callback);
             });

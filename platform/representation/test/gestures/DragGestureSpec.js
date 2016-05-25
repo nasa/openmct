@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * DragGestureSpec. Created by vwoeltje on 11/6/14.
@@ -27,12 +26,11 @@
 define(
     ["../../src/gestures/DragGesture", "../../src/gestures/GestureConstants"],
     function (DragGesture, GestureConstants) {
-        "use strict";
 
-        var JQLITE_FUNCTIONS = [ "on", "off", "attr", "removeAttr" ],
-            LOG_FUNCTIONS = [ "error", "warn", "info", "debug"],
-            DND_FUNCTIONS = [ "setData", "getData", "removeData" ],
-            DOMAIN_OBJECT_METHODS = [ "getId", "getModel", "getCapability", "hasCapability", "useCapability"],
+        var JQLITE_FUNCTIONS = ["on", "off", "attr", "removeAttr"],
+            LOG_FUNCTIONS = ["error", "warn", "info", "debug"],
+            DND_FUNCTIONS = ["setData", "getData", "removeData"],
+            DOMAIN_OBJECT_METHODS = ["getId", "getModel", "getCapability", "hasCapability", "useCapability"],
             TEST_ID = "test-id";
 
 

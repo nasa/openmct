@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * TypeCapabilitySpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/types/TypeCapability"],
     function (TypeCapability) {
-        "use strict";
 
         describe("The type capability", function () {
             var mockTypeService,
@@ -38,11 +36,11 @@ define(
             beforeEach(function () {
                 mockTypeService = jasmine.createSpyObj(
                     "typeService",
-                    [ "getType" ]
+                    ["getType"]
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability" ]
+                    ["getId", "getModel", "getCapability"]
                 );
                 mockType = { someKey: "some value" };
 

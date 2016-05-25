@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/controllers/EditObjectController"],
     function (EditObjectController) {
-        "use strict";
 
         describe("The Edit mode controller", function () {
             var mockScope,
@@ -54,15 +52,15 @@ define(
                 );
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$on", "$watch" ]
+                    ["$on", "$watch"]
                 );
                 mockObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability", "hasCapability", "useCapability" ]
+                    ["getId", "getModel", "getCapability", "hasCapability", "useCapability"]
                 );
                 mockType = jasmine.createSpyObj(
                     "type",
-                    [ "hasFeature" ]
+                    ["hasFeature"]
                 );
                 mockStatusCapability = jasmine.createSpyObj('statusCapability',
                     ["get"]
@@ -95,15 +93,14 @@ define(
             });
 
             it("exposes a warning message for unload", function () {
-                var obj = mockObject,
-                    errorMessage = "Unsaved changes";
+                var errorMessage = "Unsaved changes";
 
                 // Normally, should be undefined
                 expect(controller.getUnloadWarning()).toBeUndefined();
 
                 // Override the policy service to prevent navigation
-                mockPolicyService.allow.andCallFake(function(category, object, context, callback){
-                   callback(errorMessage);
+                mockPolicyService.allow.andCallFake(function (category, object, context, callback) {
+                    callback(errorMessage);
                 });
 
                 // Should have some warning message here now

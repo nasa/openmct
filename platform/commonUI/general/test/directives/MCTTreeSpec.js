@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,beforeEach,jasmine,it,expect*/
 
 define([
     '../../src/directives/MCTTree'
@@ -33,7 +32,7 @@ define([
         beforeEach(function () {
             mockGestureService = jasmine.createSpyObj(
                 'gestureService',
-                [ 'attachGestures' ]
+                ['attachGestures']
             );
             mockParse = jasmine.createSpy('$parse');
             mockExpr = jasmine.createSpy('expr');

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Filters out actions based on policy.
@@ -42,7 +40,7 @@ define(
 
         PolicyActionDecorator.prototype.getActions = function (context) {
             var policyService = this.policyService;
-            
+
             // Check if an action is allowed by policy.
             function allow(action) {
                 return policyService.allow('action', action, context);

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * ActionProviderSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/actions/ActionProvider"],
     function (ActionProvider) {
-        "use strict";
 
         describe("The action provider", function () {
             var mockLog,
@@ -35,29 +33,41 @@ define(
                 actionProvider;
 
             function SimpleAction() {
-                return { perform: function () { return "simple"; } };
+                return { perform: function () {
+                    return "simple";
+                } };
             }
 
             function CategorizedAction() {
-                return { perform: function () { return "categorized"; } };
+                return { perform: function () {
+                    return "categorized";
+                } };
             }
             CategorizedAction.category = "someCategory";
 
             function KeyedAction() {
-                return { perform: function () { return "keyed"; } };
+                return { perform: function () {
+                    return "keyed";
+                } };
             }
             KeyedAction.key = "someKey";
 
             function CategorizedKeyedAction() {
-                return { perform: function () { return "both"; } };
+                return { perform: function () {
+                    return "both";
+                } };
             }
             CategorizedKeyedAction.key = "someKey";
             CategorizedKeyedAction.category = "someCategory";
 
             function MetadataAction() {
                 return {
-                    perform: function () { return "metadata"; },
-                    getMetadata: function () { return "custom metadata"; }
+                    perform: function () {
+                        return "metadata";
+                    },
+                    getMetadata: function () {
+                        return "custom metadata";
+                    }
                 };
             }
             MetadataAction.key = "metadata";
@@ -154,7 +164,7 @@ define(
                     }
 
                     provided = new ActionProvider(
-                        [ SimpleAction, BadAction ],
+                        [SimpleAction, BadAction],
                         mockLog
                     ).getActions();
                 });

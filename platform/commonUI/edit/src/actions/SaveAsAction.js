@@ -19,14 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
-/*jslint es5: true */
 
 
 define(
     ['../../../browse/src/creation/CreateWizard'],
     function (CreateWizard) {
-        'use strict';
 
         /**
          * The "Save" action; the action triggered by clicking Save from
@@ -45,7 +42,7 @@ define(
             context
         ) {
             this.domainObject = (context || {}).domainObject;
-            this.injectObjectService = function(){
+            this.injectObjectService = function () {
                 this.objectService = $injector.get("objectService");
             };
             this.policyService = policyService;
@@ -68,7 +65,7 @@ define(
         /**
          * @private
          */
-        SaveAsAction.prototype.getObjectService = function(){
+        SaveAsAction.prototype.getObjectService = function () {
             // Lazily acquire object service (avoids cyclical dependency)
             if (!this.objectService) {
                 this.injectObjectService();
@@ -76,7 +73,7 @@ define(
             return this.objectService;
         };
 
-        function resolveWith(object){
+        function resolveWith(object) {
             return function () {
                 return object;
             };
@@ -119,13 +116,13 @@ define(
                     ).then(wizard.populateObjectFromInput.bind(wizard));
             }
 
-            function fetchObject(objectId){
-                return self.getObjectService().getObjects([objectId]).then(function(objects){
+            function fetchObject(objectId) {
+                return self.getObjectService().getObjects([objectId]).then(function (objects) {
                     return objects[objectId];
                 });
             }
 
-            function getParent(object){
+            function getParent(object) {
                 return fetchObject(object.getModel().location);
             }
 
@@ -138,8 +135,8 @@ define(
                 return copyService.perform(domainObject, parent, allowClone);
             }
 
-            function cancelEditingAfterClone(clonedObject) {
-                return domainObject.getCapability("editor").cancel()
+            function commitEditingAfterClone(clonedObject) {
+                return domainObject.getCapability("editor").save()
                     .then(resolveWith(clonedObject));
             }
 
@@ -147,7 +144,7 @@ define(
                 .then(doWizardSave)
                 .then(getParent)
                 .then(cloneIntoParent)
-                .then(cancelEditingAfterClone)
+                .then(commitEditingAfterClone)
                 .catch(resolveWith(false));
         };
 
@@ -160,7 +157,8 @@ define(
         SaveAsAction.appliesTo = function (context) {
             var domainObject = (context || {}).domainObject;
             return domainObject !== undefined &&
-                domainObject.hasCapability("editor") &&
+                domainObject.hasCapability('editor') &&
+                domainObject.getCapability('editor').isEditContextRoot() &&
                 domainObject.getModel().persisted === undefined;
         };
 

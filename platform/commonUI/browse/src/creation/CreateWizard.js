@@ -19,11 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     function () {
-        'use strict';
 
         /**
          * A class for capturing user input data from an object creation
@@ -113,12 +111,12 @@ define(
          * @param formValue
          * @returns {DomainObject}
          */
-        CreateWizard.prototype.populateObjectFromInput = function(formValue) {
+        CreateWizard.prototype.populateObjectFromInput = function (formValue) {
             var parent = this.getLocation(formValue),
                 formModel = this.createModel(formValue);
 
             formModel.location = parent.getId();
-            this.domainObject.useCapability("mutation", function(){
+            this.domainObject.useCapability("mutation", function () {
                 return formModel;
             });
             return this.domainObject;

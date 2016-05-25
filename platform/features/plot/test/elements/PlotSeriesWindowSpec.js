@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../../src/elements/PlotSeriesWindow"],
     function (PlotSeriesWindow) {
-        "use strict";
 
         describe("A plot's window on a telemetry series", function () {
             var mockSeries,
@@ -33,11 +31,11 @@ define(
 
             beforeEach(function () {
                 testSeries = [
-                    [ 0, 42 ],
-                    [ 10, 1 ],
-                    [ 20, 4 ],
-                    [ 30, 9 ],
-                    [ 40, 3 ]
+                    [0, 42],
+                    [10, 1],
+                    [20, 4],
+                    [30, 9],
+                    [40, 3]
                 ];
 
                 mockSeries = jasmine.createSpyObj(

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining EditActionController. Created by vwoeltje on 11/17/14.
@@ -27,7 +26,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         var ACTION_CONTEXT = { category: 'conclude-editing' };
 

@@ -19,28 +19,25 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/gestures/GestureRepresenter"],
     function (GestureRepresenter) {
-        "use strict";
 
         describe("A gesture representer", function () {
             var mockGestureService,
                 mockGestureHandle,
-                mockScope,
                 mockElement,
                 representer;
 
             beforeEach(function () {
                 mockGestureService = jasmine.createSpyObj(
                     "gestureService",
-                    [ "attachGestures" ]
+                    ["attachGestures"]
                 );
                 mockGestureHandle = jasmine.createSpyObj(
                     "gestureHandle",
-                    [ "destroy" ]
+                    ["destroy"]
                 );
 
                 mockElement = { someKey: "some value" };
@@ -65,7 +62,7 @@ define(
                 expect(mockGestureService.attachGestures).toHaveBeenCalledWith(
                     mockElement,
                     domainObject,
-                    [ "a", "b", "c" ]
+                    ["a", "b", "c"]
                 );
 
                 // Should not have been destroyed yet...

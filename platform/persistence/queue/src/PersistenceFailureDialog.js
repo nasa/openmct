@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./PersistenceFailureConstants'],
     function (PersistenceFailureConstants) {
-        "use strict";
 
         var OVERWRITE_CANCEL_OPTIONS = [
                 {
@@ -36,7 +34,7 @@ define(
                     key: "cancel"
                 }
             ],
-            OK_OPTIONS = [ { name: "OK", key: "ok" } ];
+            OK_OPTIONS = [{ name: "OK", key: "ok" }];
 
         /**
          * Populates a `dialogModel` to pass to `dialogService.getUserChoise`

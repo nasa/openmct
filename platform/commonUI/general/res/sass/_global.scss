@@ -63,9 +63,10 @@ input, textarea {
 	font-family: Helvetica, Arial, sans-serif;
 }
 
-input[type="text"] {
+input[type="text"],
+input[type="search"] {
 	vertical-align: baseline;
-	padding: 3px 5px !important;
+	padding: 3px 5px;
 }
 
 h1, h2, h3 {
@@ -84,7 +85,11 @@ p {
 	margin-bottom: $interiorMarginLg;
 }
 
-ol, ul { padding-left: 0; }
+ol, ul {
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+}
 
 mct-container {
 	display: block;

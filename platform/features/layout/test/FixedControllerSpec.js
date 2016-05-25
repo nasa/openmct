@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine,xit*/
 
 define(
     ["../src/FixedController"],
     function (FixedController) {
-        "use strict";
 
         describe("The Fixed Position controller", function () {
             var mockScope,
@@ -66,7 +64,7 @@ define(
             function makeMockDomainObject(id) {
                 var mockObject = jasmine.createSpyObj(
                     'domainObject-' + id,
-                    [ 'getId', 'getModel', 'getCapability' ]
+                    ['getId', 'getModel', 'getCapability']
                 );
                 mockObject.getId.andReturn(id);
                 mockObject.getModel.andReturn({ name: "Point " + id});
@@ -76,11 +74,11 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     '$scope',
-                    [ "$on", "$watch", "commit" ]
+                    ["$on", "$watch", "commit"]
                 );
                 mockHandler = jasmine.createSpyObj(
                     'telemetryHandler',
-                    [ 'handle' ]
+                    ['handle']
                 );
                 mockQ = jasmine.createSpyObj('$q', ['when']);
                 mockDialogService = jasmine.createSpyObj(
@@ -89,11 +87,11 @@ define(
                 );
                 mockFormatter = jasmine.createSpyObj(
                     'telemetryFormatter',
-                    [ 'formatDomainValue', 'formatRangeValue' ]
+                    ['formatDomainValue', 'formatRangeValue']
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getId', 'getModel', 'getCapability' ]
+                    ['getId', 'getModel', 'getCapability']
                 );
                 mockHandle = jasmine.createSpyObj(
                     'subscription',
@@ -108,10 +106,10 @@ define(
                 );
                 mockEvent = jasmine.createSpyObj(
                     'event',
-                    [ 'preventDefault' ]
+                    ['preventDefault']
                 );
 
-                testGrid = [ 123, 456 ];
+                testGrid = [123, 456];
                 testModel = {
                     composition: ['a', 'b', 'c'],
                     layoutGrid: testGrid
@@ -138,7 +136,7 @@ define(
                 mockScope.configuration = testConfiguration;
                 mockScope.selection = jasmine.createSpyObj(
                     'selection',
-                    [ 'select', 'get', 'selected', 'deselect', 'proxy' ]
+                    ['select', 'get', 'selected', 'deselect', 'proxy']
                 );
 
                 controller = new FixedController(
@@ -420,7 +418,7 @@ define(
                 expect(controller.selected().style).toEqual(oldStyle);
 
                 // Drag a little
-                controller.moveHandle().continueDrag([ 1000, 100 ]);
+                controller.moveHandle().continueDrag([1000, 100]);
 
                 // Style should have been updated
                 expect(controller.selected().style).not.toEqual(oldStyle);

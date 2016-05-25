@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine,xit,xdescribe*/
 
 /**
  * DropGestureSpec. Created by vwoeltje on 11/6/14.
@@ -27,12 +26,11 @@
 define(
     ["../../src/gestures/DropGesture"],
     function (DropGesture) {
-        "use strict";
 
 
         // Methods to mock
-        var JQLITE_FUNCTIONS = [ "on", "off", "attr", "removeAttr", "scope" ],
-            DOMAIN_OBJECT_METHODS = [ "getId", "getModel", "getCapability", "hasCapability", "useCapability"],
+        var JQLITE_FUNCTIONS = ["on", "off", "attr", "removeAttr", "scope"],
+            DOMAIN_OBJECT_METHODS = ["getId", "getModel", "getCapability", "hasCapability", "useCapability"],
             TEST_ID = "test-id",
             DROP_ID = "drop-id";
 
@@ -71,9 +69,9 @@ define(
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
                 mockDraggedObject = jasmine.createSpyObj("draggedObject", DOMAIN_OBJECT_METHODS);
-                mockPersistence = jasmine.createSpyObj("persistence", [ "persist" ]);
+                mockPersistence = jasmine.createSpyObj("persistence", ["persist"]);
                 mockEvent = jasmine.createSpyObj("event", ["preventDefault"]);
-                mockEvent.dataTransfer = jasmine.createSpyObj("dataTransfer", [ "getData" ]);
+                mockEvent.dataTransfer = jasmine.createSpyObj("dataTransfer", ["getData"]);
                 mockScope = jasmine.createSpyObj("$scope", ["$broadcast"]);
                 mockUnwrappedElement = jasmine.createSpyObj("unwrapped", ["getBoundingClientRect"]);
                 mockAction = jasmine.createSpyObj('action', ['getActions']);
@@ -132,11 +130,11 @@ define(
                 expect(mockEvent.preventDefault).toHaveBeenCalled();
                 expect(mockEvent.dataTransfer.dropEffect).toBeDefined();
             });
-            
+
             it("invokes compose on drop in edit mode", function () {
                 // Set the mockDomainObject to have the editor capability
                 mockDomainObject.hasCapability.andReturn(true);
-                
+
                 callbacks.dragover(mockEvent);
                 expect(mockAction.getActions).toHaveBeenCalledWith({
                     key: 'compose',
@@ -145,14 +143,14 @@ define(
                 callbacks.drop(mockEvent);
                 expect(mockCompose.perform).toHaveBeenCalled();
             });
-            
-            
+
+
             it("does not invoke compose on drop in browse mode for non-folders", function () {
                 // Set the mockDomainObject to not have the editor capability
                 mockDomainObject.hasCapability.andReturn(false);
                 // Set the mockDomainObject to not have a type of folder
                 mockDomainObject.getModel.andReturn({type: 'notAFolder'});
-                
+
                 callbacks.dragover(mockEvent);
                 expect(mockAction.getActions).toHaveBeenCalledWith({
                     key: 'compose',
@@ -161,8 +159,8 @@ define(
                 callbacks.drop(mockEvent);
                 expect(mockCompose.perform).not.toHaveBeenCalled();
             });
-            
-            
+
+
             it("invokes compose on drop in browse mode for folders", function () {
                 // Set the mockDomainObject to not have the editor capability
                 mockDomainObject.hasCapability.andReturn(false);
@@ -177,11 +175,11 @@ define(
                 callbacks.drop(mockEvent);
                 expect(mockCompose.perform).toHaveBeenCalled();
             });
-            
+
             it("broadcasts drop position (in edit mode)", function () {
                 // Set the mockDomainObject to have the editor capability
                 mockDomainObject.hasCapability.andReturn(true);
-                
+
                 testRect.left = 42;
                 testRect.top = 36;
                 mockEvent.pageX = 52;

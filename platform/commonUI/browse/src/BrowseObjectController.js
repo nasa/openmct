@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Controller for the `browse-object` representation of a domain
@@ -35,7 +33,7 @@ define(
         function BrowseObjectController($scope, $location, $route) {
             var navigatedObject;
             function setViewForDomainObject(domainObject) {
-                
+
                 var locationViewKey = $location.search().view;
 
                 function selectViewIfMatching(view) {
@@ -72,7 +70,7 @@ define(
             $scope.$watch('domainObject', setViewForDomainObject);
             $scope.$watch('representation.selected.key', updateQueryParam);
 
-            $scope.doAction = function (action){
+            $scope.doAction = function (action) {
                 return $scope[action] && $scope[action]();
             };
 

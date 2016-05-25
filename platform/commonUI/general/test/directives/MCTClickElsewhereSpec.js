@@ -19,14 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/directives/MCTClickElsewhere"],
     function (MCTClickElsewhere) {
-        "use strict";
 
-        var JQLITE_METHODS = [ "on", "off", "find", "parent" ];
+        var JQLITE_METHODS = ["on", "off", "find", "parent"];
 
         describe("The mct-click-elsewhere directive", function () {
             var mockDocument,
@@ -50,7 +48,7 @@ define(
                 mockDocument =
                     jasmine.createSpyObj("$document", JQLITE_METHODS);
                 mockScope =
-                    jasmine.createSpyObj("$scope", [ "$eval", "$apply", "$on" ]);
+                    jasmine.createSpyObj("$scope", ["$eval", "$apply", "$on"]);
                 mockElement =
                     jasmine.createSpyObj("element", JQLITE_METHODS);
                 mockBody =

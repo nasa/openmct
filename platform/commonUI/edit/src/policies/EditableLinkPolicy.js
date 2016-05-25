@@ -19,10 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([], function () {
-    "use strict";
 
     /**
      * Policy suppressing links when the linked-to domain object is in
@@ -37,11 +35,12 @@ define([], function () {
     }
 
     EditableLinkPolicy.prototype.allow = function (action, context) {
-        var key = action.getMetadata().key;
+        var key = action.getMetadata().key,
+            object;
 
         if (key === 'link') {
-            return !((context.selectedObject || context.domainObject)
-                .hasCapability('editor'));
+            object = context.selectedObject || context.domainObject;
+            return !(object.hasCapability("editor") && object.getCapability("editor").inEditContext());
         }
 
         // Like all policies, allow by default.

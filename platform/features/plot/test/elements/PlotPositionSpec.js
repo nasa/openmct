@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * MergeModelsSpec. Created by vwoeltje on 11/6/14.
@@ -27,17 +26,16 @@
 define(
     ["../../src/elements/PlotPosition"],
     function (PlotPosition) {
-        "use strict";
 
         describe("A plot position", function () {
             var mockPanZoom,
-                testOrigin = [ 10, 20 ],
-                testDimensions = [ 800, 10 ];
+                testOrigin = [10, 20],
+                testDimensions = [800, 10];
 
             beforeEach(function () {
                 mockPanZoom = jasmine.createSpyObj(
                     "panZoomStack",
-                    [ "getPanZoom" ]
+                    ["getPanZoom"]
                 );
                 mockPanZoom.getPanZoom.andReturn({
                     origin: testOrigin,

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach*/
 
 /**
  * BundleSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/load/Bundle", "../../src/Constants"],
     function (Bundle, Constants) { // Verify against constants, too
-        "use strict";
 
         describe("A bundle", function () {
             var PATH = "some/path",
@@ -80,14 +78,14 @@ define(
 
             it("reports all extensions that have been declared", function () {
                 var bundle = new Bundle(PATH, {
-                    extensions: { things: [ {}, {}, {} ] }
+                    extensions: { things: [{}, {}, {}] }
                 });
                 expect(bundle.getExtensions("things").length).toEqual(3);
             });
 
             it("reports an empty list for extensions that have not been declared", function () {
                 var bundle = new Bundle(PATH, {
-                    extensions: { things: [ {}, {}, {} ] }
+                    extensions: { things: [{}, {}, {}] }
                 });
                 expect(bundle.getExtensions("stuffs").length).toEqual(0);
             });

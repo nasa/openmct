@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle implements the notification service, which can be used to
@@ -34,7 +33,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * A representation of a user action. Options are provided to
@@ -120,7 +118,7 @@ define(
         function NotificationService($timeout, topic, DEFAULT_AUTO_DISMISS, MINIMIZE_TIMEOUT) {
             this.notifications = [];
             this.$timeout = $timeout;
-            this.highest ={ severity: "info" };
+            this.highest = { severity: "info" };
             this.DEFAULT_AUTO_DISMISS = DEFAULT_AUTO_DISMISS;
             this.MINIMIZE_TIMEOUT = MINIMIZE_TIMEOUT;
             this.topic = topic;
@@ -145,7 +143,7 @@ define(
             //Check this is a known notification
             var index = service.notifications.indexOf(notification);
 
-            if (service.active.timeout){
+            if (service.active.timeout) {
                 /*
                  Method can be called manually (clicking dismiss) or
                  automatically from an auto-timeout. this.active.timeout
@@ -159,10 +157,10 @@ define(
             }
 
             if (index >= 0) {
-                notification.model.minimized=true;
+                notification.model.minimized = true;
                 //Add a brief timeout before showing the next notification
                 // in order to allow the minimize animation to run through.
-                service.$timeout(function() {
+                service.$timeout(function () {
                     service.setActiveNotification(service.selectNextNotification());
                 }, service.MINIMIZE_TIMEOUT);
             }
@@ -182,7 +180,7 @@ define(
             //Check this is a known notification
             var index = service.notifications.indexOf(notification);
 
-            if (service.active.timeout){
+            if (service.active.timeout) {
                 /* Method can be called manually (clicking dismiss) or
                  * automatically from an auto-timeout. this.active.timeout
                  * acts as a semaphore to prevent race conditions. Cancel any
@@ -221,7 +219,7 @@ define(
          * Returns the notification that is currently visible in the banner area
          * @returns {Notification}
          */
-        NotificationService.prototype.getActiveNotification = function (){
+        NotificationService.prototype.getActiveNotification = function () {
             return this.active.notification;
         };
 
@@ -283,8 +281,8 @@ define(
                     "alert": 2,
                     "error": 3
                 };
-            this.highest.severity = this.notifications.reduce(function(previous, notification){
-                if (severity[notification.model.severity] > severity[previous]){
+            this.highest.severity = this.notifications.reduce(function (previous, notification) {
+                if (severity[notification.model.severity] > severity[previous]) {
                     return notification.model.severity;
                 } else {
                     return previous;
@@ -310,23 +308,23 @@ define(
 
             notification = {
                 model: notificationModel,
-                minimize: function() {
+                minimize: function () {
                     self.minimize(self, notification);
                 },
-                dismiss: function(){
+                dismiss: function () {
                     self.dismiss(self, notification);
                     topic.notify();
                 },
-                dismissOrMinimize: function(){
+                dismissOrMinimize: function () {
                     self.dismissOrMinimize(notification);
                 },
-                onDismiss: function(callback) {
+                onDismiss: function (callback) {
                     topic.listen(callback);
                 }
             };
 
             notificationModel.severity = notificationModel.severity || "info";
-            if (notificationModel.autoDismiss === true){
+            if (notificationModel.autoDismiss === true) {
                 notificationModel.autoDismiss = this.DEFAULT_AUTO_DISMISS;
             }
 
@@ -339,7 +337,7 @@ define(
                 notificationModel.options = notificationModel.options || [];
                 notificationModel.options.unshift({
                     label: "Dismiss",
-                    callback: function() {
+                    callback: function () {
                         notification.dismiss();
                     }
                 });
@@ -352,10 +350,10 @@ define(
             /*
             Check if there is already an active (ie. visible) notification
              */
-            if (!this.active.notification){
+            if (!this.active.notification) {
                 this.setActiveNotification(notification);
 
-            } else if (!this.active.timeout){
+            } else if (!this.active.timeout) {
                 /*
                  If there is already an active notification, time it out. If it's
                  already got a timeout in progress (either because it has had
@@ -381,17 +379,16 @@ define(
          */
         NotificationService.prototype.setActiveNotification =
             function (notification) {
+                var timeout;
 
-                var self = this,
-                    timeout;
                 this.active.notification = notification;
                 /*
                 If autoDismiss has been specified, OR there are other
                  notifications queued for display, setup a timeout to
                   dismiss the dialog.
                  */
-                if (notification && (notification.model.autoDismiss
-                    || this.selectNextNotification())) {
+                if (notification && (notification.model.autoDismiss ||
+                    this.selectNextNotification())) {
 
                     timeout = notification.model.autoDismiss || this.DEFAULT_AUTO_DISMISS;
                     this.active.timeout = this.$timeout(function () {
@@ -400,7 +397,7 @@ define(
                 } else {
                     delete this.active.timeout;
                 }
-        };
+            };
 
         /**
          * Used internally by the NotificationService
@@ -409,17 +406,17 @@ define(
          */
         NotificationService.prototype.selectNextNotification = function () {
             var notification,
-                i=0;
+                i = 0;
 
             /*
             Loop through the notifications queue and find the first one that
             has not already been minimized (manually or otherwise).
              */
-            for (; i< this.notifications.length; i++) {
+            for (; i < this.notifications.length; i++) {
                 notification = this.notifications[i];
 
-                if (!notification.model.minimized
-                    && notification!== this.active.notification) {
+                if (!notification.model.minimized &&
+                    notification !== this.active.notification) {
 
                     return notification;
                 }

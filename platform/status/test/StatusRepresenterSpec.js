@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../src/StatusRepresenter", "../src/StatusConstants"],
     function (StatusRepresenter, StatusConstants) {
-        "use strict";
 
         describe("The status representer", function () {
             var mockScope,
@@ -52,7 +50,7 @@ define(
             }
 
             beforeEach(function () {
-                testStatusFlags = [ 'x', 'y', 'z' ];
+                testStatusFlags = ['x', 'y', 'z'];
 
                 mockScope = {};
                 mockElement = jasmine.createSpyObj('element', [
@@ -62,11 +60,11 @@ define(
                 testRepresentation = { key: "someKey" };
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getModel', 'getId', 'getCapability' ]
+                    ['getModel', 'getId', 'getCapability']
                 );
                 mockStatusCapability = jasmine.createSpyObj(
                     'status',
-                    [ 'list', 'get', 'set', 'listen' ]
+                    ['list', 'get', 'set', 'listen']
                 );
                 mockUnlisten = jasmine.createSpy();
 

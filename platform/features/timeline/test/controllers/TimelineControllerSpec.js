@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../src/controllers/TimelineController'],
     function (TimelineController) {
-        'use strict';
 
         var DOMAIN_OBJECT_METHODS = [
             'getModel',
@@ -101,7 +99,7 @@ define(
 
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ '$watch', '$on' ]
+                    ['$watch', '$on']
                 );
                 mockLoader = jasmine.createSpyObj('objectLoader', ['load']);
                 mockDomainObject = mockA;

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine,Float32Array*/
 
 /**
  * MergeModelsSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/elements/PlotUpdater"],
     function (PlotUpdater) {
-        "use strict";
 
         describe("A plot updater", function () {
             var mockSubscription,
@@ -41,19 +39,19 @@ define(
             function makeMockDomainObject(id) {
                 var mockDomainObject = jasmine.createSpyObj(
                     "object-" + id,
-                    [ "getId", "getCapability", "getModel" ]
+                    ["getId", "getCapability", "getModel"]
                 );
                 mockDomainObject.getId.andReturn(id);
                 return mockDomainObject;
             }
 
             beforeEach(function () {
-                var ids = [ 'a', 'b', 'c' ],
+                var ids = ['a', 'b', 'c'],
                     mockObjects = ids.map(makeMockDomainObject);
 
                 mockSubscription = jasmine.createSpyObj(
                     "subscription",
-                    [ "getDomainValue", "getRangeValue", "getTelemetryObjects" ]
+                    ["getDomainValue", "getRangeValue", "getTelemetryObjects"]
                 );
                 mockSeries = jasmine.createSpyObj(
                     'series',

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./TypeImpl', './MergeModels'],
     function (TypeImpl, mergeModels) {
-        'use strict';
 
         /**
          * Provides domain object types that are available/recognized within
@@ -161,8 +159,8 @@ define(
             }
 
             function lookupTypeDef(typeKey) {
-                function buildTypeDef(typeKey) {
-                    var typeDefs = typeDefinitions[typeKey] || [],
+                function buildTypeDef(typeKeyToBuild) {
+                    var typeDefs = typeDefinitions[typeKeyToBuild] || [],
                         inherits = typeDefs.map(function (typeDef) {
                             return asArray(typeDef.inherits || []);
                         }).reduce(function (a, b) {
@@ -177,11 +175,11 @@ define(
                     // Always provide a default name
                     def.model = def.model || {};
                     def.model.name = def.model.name ||
-                    ("Unnamed " + (def.name || "Object"));
+                        ("Unnamed " + (def.name || "Object"));
 
                     return def;
                 }
-                
+
                 return (self.typeMap[typeKey] =
                     self.typeMap[typeKey] || buildTypeDef(typeKey));
             }

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./TimerFormatter'],
     function (TimerFormatter) {
-        "use strict";
 
         var FORMATTER = new TimerFormatter();
 
@@ -40,8 +38,7 @@ define(
          *        time (typically wrapping `Date.now`)
          */
         function TimerController($scope, $window, now) {
-            var timerObject,
-                formatter,
+            var formatter,
                 active = true,
                 relativeTimestamp,
                 lastTimestamp,

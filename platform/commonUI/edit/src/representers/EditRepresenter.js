@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * The EditRepresenter is responsible for implementing
@@ -93,14 +91,8 @@ define(
                 }
             }
 
-            function setEditable(editableDomainObject) {
-                self.domainObject = editableDomainObject;
-                scope.model = editableDomainObject.getModel();
-            }
-
             // Place the "commit" method in the scope
             scope.commit = commit;
-            scope.setEditable = setEditable;
 
             // Clean up when the scope is destroyed
             scope.$on("$destroy", function () {
@@ -111,8 +103,8 @@ define(
 
         // Handle a specific representation of a specific domain object
         EditRepresenter.prototype.represent = function represent(representation, representedObject) {
-            var scope = this.scope,
-                self = this;
+            var scope = this.scope;
+
             // Track the key, to know which view configuration to save to.
             this.key = (representation || {}).key;
             // Track the represented object
@@ -121,7 +113,7 @@ define(
             // Ensure existing watches are released
             this.destroy();
 
-            function setEditing(){
+            function setEditing() {
                 scope.viewObjectTemplate = 'edit-object';
             }
 
@@ -130,15 +122,15 @@ define(
              * editable then change the view and inspector regions
              * object representation accordingly
              */
-            this.listenHandle = this.domainObject.getCapability('status').listen(function(statuses){
-                if (statuses.indexOf('editing')!=-1){
+            this.listenHandle = this.domainObject.getCapability('status').listen(function (statuses) {
+                if (statuses.indexOf('editing') !== -1) {
                     setEditing();
                 } else {
                     delete scope.viewObjectTemplate;
                 }
             });
 
-            if (representedObject.getCapability('status').get('editing')){
+            if (representedObject.hasCapability('editor') && representedObject.getCapability('editor').isEditContextRoot()) {
                 setEditing();
             }
         };

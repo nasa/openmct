@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../../src/controllers/swimlane/TimelineProxy'],
     function (TimelineProxy) {
-        'use strict';
 
         describe("The Timeline's selection proxy", function () {
             var mockDomainObject,
@@ -40,16 +38,16 @@ define(
                 );
                 mockSelection = jasmine.createSpyObj(
                     'selection',
-                    [ 'get' ]
+                    ['get']
                 );
                 mockActionCapability = jasmine.createSpyObj(
                     'action',
-                    [ 'getActions' ]
+                    ['getActions']
                 );
                 mockActions = ['a', 'b', 'c'].map(function (type) {
                     var mockAction = jasmine.createSpyObj(
                         'action-' + type,
-                        [ 'perform', 'getMetadata' ]
+                        ['perform', 'getMetadata']
                     );
                     mockAction.getMetadata.andReturn({ type: type });
                     return mockAction;

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * DelegationCapabilitySpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/capabilities/DelegationCapability"],
     function (DelegationCapability) {
-        "use strict";
 
         describe("The delegation capability", function () {
             var captured,
@@ -38,7 +36,11 @@ define(
                 object = {},
                 delegation;
 
-            function capture(k) { return function (v) { captured[k] = v; }; }
+            function capture(k) {
+                return function (v) {
+                    captured[k] = v;
+                };
+            }
             function TestDomainObject(caps, id) {
                 return {
                     getId: function () {
@@ -69,12 +71,16 @@ define(
             beforeEach(function () {
                 captured = {};
                 typeDef = {};
-                typeDef.delegates = [ "foo" ];
-                type = { getDefinition: function () { return typeDef; } };
+                typeDef.delegates = ["foo"];
+                type = { getDefinition: function () {
+                    return typeDef;
+                } };
                 children = [];
                 capabilities = {
                     type: type,
-                    composition: { invoke: function () { return mockPromise(children); } }
+                    composition: { invoke: function () {
+                        return mockPromise(children);
+                    } }
                 };
                 object = new TestDomainObject(capabilities);
 

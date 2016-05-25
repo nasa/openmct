@@ -19,11 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     function () {
-        'use strict';
 
         /**
          * Decorates the `telemetryService` such that requests are
@@ -59,14 +57,11 @@ define(
         };
 
         ConductorTelemetryDecorator.prototype.requestTelemetry = function (requests) {
-            var self = this;
             return this.telemetryService
                 .requestTelemetry(this.amendRequests(requests));
         };
 
         ConductorTelemetryDecorator.prototype.subscribe = function (callback, requests) {
-            var self = this;
-
             return this.telemetryService
                 .subscribe(callback, this.amendRequests(requests));
         };

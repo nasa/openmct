@@ -20,14 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect,spyOn */
 define(
     [
         '../../src/policies/CrossSpacePolicy',
         '../DomainObjectFactory'
     ],
     function (CrossSpacePolicy, domainObjectFactory) {
-        "use strict";
 
         describe("CrossSpacePolicy", function () {
             var mockAction,
@@ -56,7 +54,7 @@ define(
                 // only define those in mocks.
                 mockAction = jasmine.createSpyObj(
                     'action',
-                    [ 'getMetadata' ]
+                    ['getMetadata']
                 );
                 mockAction.getMetadata.andReturn(testActionMetadata);
 

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine */
 
 define(
     ['../src/NotificationService'],
     function (NotificationService) {
-        "use strict";
 
         describe("The notification service ", function () {
             var notificationService,
@@ -36,7 +34,7 @@ define(
                 mockTopicObject,
                 errorModel;
 
-            beforeEach(function(){
+            beforeEach(function () {
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockTopicFunction = jasmine.createSpy("topic");
                 mockTopicObject = jasmine.createSpyObj("topicObject", ["listen", "notify"]);
@@ -56,14 +54,14 @@ define(
             });
 
             it("gets a new success notification, making" +
-                " the notification active", function() {
+                " the notification active", function () {
                 var activeNotification;
                 notificationService.notify(successModel);
                 activeNotification = notificationService.getActiveNotification();
                 expect(activeNotification.model).toBe(successModel);
             });
 
-            it("notifies listeners on dismissal of notification", function() {
+            it("notifies listeners on dismissal of notification", function () {
                 var notification,
                     dismissListener = jasmine.createSpy("ondismiss");
                 notification = notificationService.notify(successModel);
@@ -77,7 +75,7 @@ define(
             });
 
             it("allows specification of an info notification given just a" +
-                " title, making the notification active", function() {
+                " title, making the notification active", function () {
                 var activeNotification,
                     notificationTitle = "Test info notification";
                 notificationService.info(notificationTitle);
@@ -87,7 +85,7 @@ define(
             });
 
             it("gets a new success notification with" +
-                " numerical auto-dismiss specified. ", function() {
+                " numerical auto-dismiss specified. ", function () {
                 var activeNotification;
                 successModel.autoDismiss = 1000;
                 notificationService.notify(successModel);
@@ -101,7 +99,7 @@ define(
             });
 
             it("gets a new notification with" +
-                " boolean auto-dismiss specified. ", function() {
+                " boolean auto-dismiss specified. ", function () {
                 var activeNotification;
                 successModel.autoDismiss = true;
                 notificationService.notify(successModel);
@@ -114,7 +112,7 @@ define(
                 expect(activeNotification).toBeUndefined();
             });
 
-            it("allows minimization of notifications", function() {
+            it("allows minimization of notifications", function () {
                 var notification,
                     activeNotification;
 
@@ -130,7 +128,7 @@ define(
                 expect(notificationService.notifications.length).toBe(1);
             });
 
-            it("allows dismissal of notifications", function() {
+            it("allows dismissal of notifications", function () {
                 var notification,
                     activeNotification;
 
@@ -145,9 +143,9 @@ define(
                 expect(notificationService.notifications.length).toBe(0);
             });
 
-            describe(" gets called with multiple notifications", function(){
+            describe(" gets called with multiple notifications", function () {
                 it("auto-dismisses the previously active notification, making" +
-                    " the new notification active", function() {
+                    " the new notification active", function () {
                     var activeNotification;
                     //First pre-load with a info message
                     notificationService.notify(successModel);
@@ -167,7 +165,7 @@ define(
                     activeNotification = notificationService.getActiveNotification();
                     expect(activeNotification.model).toBe(errorModel);
                 });
-                it("auto-minimizes an active error notification", function() {
+                it("auto-minimizes an active error notification", function () {
                     var activeNotification;
                     //First pre-load with an error message
                     notificationService.notify(errorModel);
@@ -189,7 +187,7 @@ define(
                     expect(errorModel.minimized).toEqual(true);
                 });
                 it("auto-minimizes errors when a number of them arrive in" +
-                    " short succession ", function() {
+                    " short succession ", function () {
                     var activeNotification,
                         error2 = {
                             title: "Second Mock Error Notification",

@@ -19,13 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 
 define(
     ["../src/BrowseObjectController"],
     function (BrowseObjectController) {
-        "use strict";
 
         describe("The browse object controller", function () {
             var mockScope,
@@ -46,12 +44,12 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$on", "$watch" ]
+                    ["$on", "$watch"]
                 );
                 mockRoute = { current: { params: {} } };
                 mockLocation = jasmine.createSpyObj(
                     "$location",
-                    [ "path", "search" ]
+                    ["path", "search"]
                 );
                 mockUnlisten = jasmine.createSpy("unlisten");
 
@@ -71,7 +69,7 @@ define(
                 // Allows the path index to be checked
                 // prior to setting $route.current
                 mockLocation.path.andReturn("/browse/");
-                
+
                 // Exercise the Angular workaround
                 mockScope.$on.mostRecentCall.args[1]();
                 expect(mockUnlisten).toHaveBeenCalled();

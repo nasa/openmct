@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../src/CompositionPolicy"],
     function (CompositionPolicy) {
-        "use strict";
         describe("Composition policy", function () {
             var mockInjector,
                 mockTypeService,
@@ -36,11 +34,11 @@ define(
                 mockInjector = jasmine.createSpyObj('$injector', ['get']);
                 mockTypeService = jasmine.createSpyObj(
                     'typeService',
-                    [ 'listTypes' ]
+                    ['listTypes']
                 );
                 mockCapabilityService = jasmine.createSpyObj(
                     'capabilityService',
-                    [ 'getCapabilities' ]
+                    ['getCapabilities']
                 );
                 // Both types can only contain b, let's say
                 mockTypes = ['a', 'b'].map(function (type) {

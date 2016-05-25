@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * Defines MergedModel, which allows a deep merge of domain object
@@ -28,7 +27,6 @@
  */
 define(
     function () {
-        'use strict';
 
         /**
          * Utility function for merging domain object models (or any
@@ -60,14 +58,14 @@ define(
          *   corresponding keys in the recursive step.
          *
          *
-         * @param a the first object to be merged
-         * @param b the second object to be merged
+         * @param modelA the first object to be merged
+         * @param modelB the second object to be merged
          * @param merger the merger, as described above
-         * @returns {*} the result of merging `a` and `b`
+         * @returns {*} the result of merging `modelA` and `modelB`
          * @constructor
          * @memberof platform/core
          */
-        function mergeModels(a, b, merger) {
+        function mergeModels(modelA, modelB, merger) {
             var mergeFunction;
 
             function mergeArrays(a, b) {
@@ -95,11 +93,11 @@ define(
             }
 
             mergeFunction = (merger && Function.isFunction(merger)) ? merger :
-                    (Array.isArray(a) && Array.isArray(b)) ? mergeArrays :
-                            (a instanceof Object && b instanceof Object) ? mergeObjects :
+                    (Array.isArray(modelA) && Array.isArray(modelB)) ? mergeArrays :
+                            (modelA instanceof Object && modelB instanceof Object) ? mergeObjects :
                                     mergeOther;
 
-            return mergeFunction(a, b);
+            return mergeFunction(modelA, modelB);
         }
 
         return mergeModels;

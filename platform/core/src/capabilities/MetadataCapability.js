@@ -1,9 +1,7 @@
-/*global define*/
 
 define(
     ['moment'],
     function (moment) {
-        "use strict";
 
         /**
          * A piece of information about a domain object.

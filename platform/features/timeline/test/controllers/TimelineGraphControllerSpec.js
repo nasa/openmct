@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../src/controllers/TimelineGraphController'],
     function (TimelineGraphController) {
-        'use strict';
 
         describe("The Timeline graph controller", function () {
             var mockScope,
@@ -34,7 +32,7 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     '$scope',
-                    [ '$watchCollection' ]
+                    ['$watchCollection']
                 );
                 testResources = [
                     { key: 'abc', name: "Some name" },
@@ -60,7 +58,7 @@ define(
 
                 // Supply new parameters
                 mockScope.$watchCollection.mostRecentCall.args[1]({
-                    graphs: [ mockGraphA, mockGraphB ],
+                    graphs: [mockGraphA, mockGraphB],
                     origin: 9,
                     duration: 144
                 });

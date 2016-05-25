@@ -19,27 +19,33 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,xit,expect,beforeEach*/
 
 define(
     ["../../src/actions/PropertiesDialog"],
     function (PropertiesDialog) {
-        "use strict";
 
         describe("Properties dialog", function () {
 
-            var type, properties, domainObject, model, dialog;
+            var type, properties, model, dialog;
 
             beforeEach(function () {
                 type = {
-                    getProperties: function () { return properties; }
+                    getProperties: function () {
+                        return properties;
+                    }
                 };
                 model = { x: "initial value" };
                 properties = ["x", "y", "z"].map(function (k) {
                     return {
-                        getValue: function (model) { return model[k]; },
-                        setValue: function (model, v) { model[k] = v; },
-                        getDefinition: function () { return { control: 'textfield '}; }
+                        getValue: function (m) {
+                            return m[k];
+                        },
+                        setValue: function (m, v) {
+                            m[k] = v;
+                        },
+                        getDefinition: function () {
+                            return { control: 'textfield '};
+                        }
                     };
                 });
 

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../src/capabilities/CumulativeGraph'],
     function (CumulativeGraph) {
-        'use strict';
 
         describe("A cumulative resource graph", function () {
             var mockGraph,
@@ -32,11 +30,11 @@ define(
                 graph;
 
             beforeEach(function () {
-                points = [ 0, 10, -10, -100, 20, 100, 0 ];
+                points = [0, 10, -10, -100, 20, 100, 0];
 
                 mockGraph = jasmine.createSpyObj(
                     'graph',
-                    [ 'getPointCount', 'getDomainValue', 'getRangeValue' ]
+                    ['getPointCount', 'getDomainValue', 'getRangeValue']
                 );
 
                 mockGraph.getPointCount.andReturn(points.length * 2);

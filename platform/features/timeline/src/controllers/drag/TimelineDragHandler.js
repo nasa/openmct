@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Handles business logic (mutation of objects, retrieval of start/end
@@ -49,19 +47,19 @@ define(
             }
 
             // Get the timespan associated with this domain object
-            function populateCapabilityMaps(domainObject) {
-                var id = domainObject.getId(),
-                    timespanPromise = domainObject.useCapability('timespan');
+            function populateCapabilityMaps(object) {
+                var id = object.getId(),
+                    timespanPromise = object.useCapability('timespan');
                 if (timespanPromise) {
                     timespanPromise.then(function (timespan) {
                         // Cache that timespan
                         timespans[id] = timespan;
                         // And its mutation capability
-                        mutations[id] = domainObject.getCapability('mutation');
+                        mutations[id] = object.getCapability('mutation');
                         // Also cache the persistence capability for later
-                        persists[id] = domainObject.getCapability('persistence');
+                        persists[id] = object.getCapability('persistence');
                         // And the composition, for bulk moves
-                        compositions[id] = domainObject.getModel().composition || [];
+                        compositions[id] = object.getModel().composition || [];
                     });
                 }
             }
@@ -201,8 +199,8 @@ define(
                         minStart;
 
                     // Update start & end, in that order
-                    function updateStartEnd(id) {
-                        var timespan = timespans[id], start, end;
+                    function updateStartEnd(spanId) {
+                        var timespan = timespans[spanId], start, end;
                         if (timespan) {
                             // Get start/end so we don't get fooled by our
                             // own adjustments
@@ -212,7 +210,7 @@ define(
                             timespan.setStart(start + delta);
                             timespan.setEnd(end + delta);
                             // Mark as dirty for subsequent persistence
-                            dirty[toId(id)] = true;
+                            dirty[toId(spanId)] = true;
                         }
                     }
 
@@ -230,12 +228,12 @@ define(
                     }
 
                     // Find the minimum start time
-                    minStart = Object.keys(ids).map(function (id) {
+                    minStart = Object.keys(ids).map(function (spanId) {
                         // Get the start time; default to +Inf if not
                         // found, since this will not survive a min
                         // test if any real timespans are present
-                        return timespans[id] ?
-                                timespans[id].getStart() :
+                        return timespans[spanId] ?
+                                timespans[spanId].getStart() :
                                 Number.POSITIVE_INFINITY;
                     }).reduce(function (a, b) {
                         // Reduce with a minimum test

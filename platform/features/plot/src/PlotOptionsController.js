@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./PlotOptionsForm'],
     function (PlotOptionsForm) {
-        "use strict";
 
         /**
          * Notes on implementation of plot options
@@ -59,7 +57,7 @@ define(
              Listen for changes to the domain object and update the object's
              children.
              */
-            this.mutationListener = this.domainObject.getCapability('mutation').listen(function(model) {
+            this.mutationListener = this.domainObject.getCapability('mutation').listen(function (model) {
                 if (self.hasCompositionChanged(self.composition, model.composition)) {
                     self.updateChildren();
                 }
@@ -72,7 +70,7 @@ define(
             $scope.xAxisForm = this.plotOptionsForm.xAxisForm;
             $scope.yAxisForm = this.plotOptionsForm.yAxisForm;
 
-            $scope.$on("$destroy", function() {
+            $scope.$on("$destroy", function () {
                 //Clean up any listeners on destruction of controller
                 self.mutationListener();
             });
@@ -84,10 +82,10 @@ define(
              * Setup a number of watches for changes to form values. On
              * change, update the model configuration via mutation
              */
-            $scope.$watchCollection('configuration.plot.yAxis', function(newValue, oldValue){
+            $scope.$watchCollection('configuration.plot.yAxis', function (newValue, oldValue) {
                 self.updateConfiguration(newValue, oldValue);
             });
-            $scope.$watchCollection('configuration.plot.xAxis', function(newValue, oldValue){
+            $scope.$watchCollection('configuration.plot.xAxis', function (newValue, oldValue) {
                 self.updateConfiguration(newValue, oldValue);
             });
 
@@ -100,8 +98,8 @@ define(
          * child objects)
          * @private
          */
-        PlotOptionsController.prototype.clearSeriesWatches = function() {
-            this.watches.forEach(function(watch) {
+        PlotOptionsController.prototype.clearSeriesWatches = function () {
+            this.watches.forEach(function (watch) {
                 watch();
             });
             this.watches = [];
@@ -111,16 +109,16 @@ define(
          * Attach watches for each object in the plot's composition
          * @private
          */
-        PlotOptionsController.prototype.watchSeries = function() {
+        PlotOptionsController.prototype.watchSeries = function () {
             var self = this;
 
             this.clearSeriesWatches();
 
-            (self.$scope.children || []).forEach(function(child, index){
+            (self.$scope.children || []).forEach(function (child, index) {
                 self.watches.push(
                     self.$scope.$watchCollection(
                         'configuration.plot.series[' + index + ']',
-                        function(newValue, oldValue){
+                        function (newValue, oldValue) {
                             self.updateConfiguration(newValue, oldValue);
                         }
                     )
@@ -134,13 +132,13 @@ define(
          *
          * @private
          */
-        PlotOptionsController.prototype.hasCompositionChanged = function(oldComposition, newComposition){
+        PlotOptionsController.prototype.hasCompositionChanged = function (oldComposition, newComposition) {
             // Framed slightly strangely, but the boolean logic is
             // easier to follow for the unchanged case.
             var isUnchanged = oldComposition === newComposition ||
                     (
                         oldComposition.length === newComposition.length &&
-                        oldComposition.every( function (currentValue, index) {
+                        oldComposition.every(function (currentValue, index) {
                             return newComposition[index] && currentValue === newComposition[index];
                         })
                     );
@@ -165,12 +163,12 @@ define(
          * plot options model
          * @private
          */
-        PlotOptionsController.prototype.updateChildren = function() {
+        PlotOptionsController.prototype.updateChildren = function () {
             var self = this;
-            this.domainObject.useCapability('composition').then(function(children){
+            this.domainObject.useCapability('composition').then(function (children) {
                 self.$scope.children = children;
                 self.composition = self.domainObject.getModel().composition;
-                children.forEach(function(child, index){
+                children.forEach(function (child, index) {
                     self.configuration.plot.series[index] =
                         self.configuration.plot.series[index] || {'id': child.getId()};
                 });
@@ -183,9 +181,9 @@ define(
          * object
          * @private
          */
-        PlotOptionsController.prototype.updateConfiguration = function() {
+        PlotOptionsController.prototype.updateConfiguration = function () {
             var self = this;
-            this.domainObject.useCapability('mutation', function(model){
+            this.domainObject.useCapability('mutation', function (model) {
                 model.configuration = model.configuration || {};
                 model.configuration.plot = self.configuration.plot;
             });

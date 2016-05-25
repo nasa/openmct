@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,runs*/
 
 define(
     ["../../src/resolve/RequireConfigurator", "../../src/load/Bundle"],
     function (RequireConfigurator, Bundle) {
-        "use strict";
 
         describe("The RequireJS configurator", function () {
             var mockRequire,
@@ -33,7 +31,7 @@ define(
             beforeEach(function () {
                 mockRequire = jasmine.createSpyObj(
                     "requirejs",
-                    [ "config" ]
+                    ["config"]
                 );
                 configurator = new RequireConfigurator(mockRequire);
             });

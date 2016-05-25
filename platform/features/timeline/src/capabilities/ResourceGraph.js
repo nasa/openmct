@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         // Utility function to copy an array, sorted by a specific field
         function sort(array, field) {
@@ -74,13 +72,13 @@ define(
 
             // If there are sequences of points with the same timestamp,
             // allow only the first and last.
-            function filterPoint(value, index, values) {
+            function filterPoint(value, index, vals) {
                 // Allow the first or last point as a base case; aside from
                 // that, allow only points that have different timestamps
                 // from their predecessor or successor.
-                return (index === 0) || (index === values.length - 1) ||
-                    (value.domain !== values[index - 1].domain) ||
-                    (value.domain !== values[index + 1].domain);
+                return (index === 0) || (index === vals.length - 1) ||
+                    (value.domain !== vals[index - 1].domain) ||
+                    (value.domain !== vals[index + 1].domain);
             }
 
             // Add a step up or down (Step 3c above)

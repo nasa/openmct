@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define([
     "../../src/actions/TimelineTraverser"
 ], function (TimelineTraverser) {
-    'use strict';
 
     describe("TimelineTraverser", function () {
         var testModels,
@@ -57,8 +55,8 @@ define([
             if (!!model.composition) {
                 mockDomainObject.useCapability.andCallFake(function (c) {
                     return c === 'composition' &&
-                        Promise.resolve(model.composition.map(function (id) {
-                            return mockDomainObjects[id];
+                        Promise.resolve(model.composition.map(function (cid) {
+                            return mockDomainObjects[cid];
                         }));
                 });
             }
@@ -70,8 +68,8 @@ define([
                 );
                 mockRelationships.getRelatedObjects.andCallFake(function (k) {
                     var ids = model.relationships[k] || [];
-                    return Promise.resolve(ids.map(function (id) {
-                        return mockDomainObjects[id];
+                    return Promise.resolve(ids.map(function (objId) {
+                        return mockDomainObjects[objId];
                     }));
                 });
                 mockDomainObject.getCapability.andCallFake(function (c) {
@@ -84,9 +82,9 @@ define([
 
         beforeEach(function () {
             testModels = {
-                a: { composition: [ 'b', 'c' ]},
-                b: { composition: [ 'c' ] },
-                c: { relationships: { modes: [ 'd' ] } },
+                a: { composition: ['b', 'c']},
+                b: { composition: ['c'] },
+                c: { relationships: { modes: ['d'] } },
                 d: {},
                 unreachable: {}
             };

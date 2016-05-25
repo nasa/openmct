@@ -19,9 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define, window, requirejs*/
 
 define(['src/BundleRegistry'], function (BundleRegistry) {
-    'use strict';
     return new BundleRegistry();
 });

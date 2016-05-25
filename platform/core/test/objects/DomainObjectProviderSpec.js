@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine,xit,xdescribe*/
 
 /**
  * DomainObjectProviderSpec. Created by vwoeltje on 11/6/14.
@@ -30,7 +29,6 @@ define(
         "../../src/objects/DomainObjectImpl"
     ],
     function (DomainObjectProvider, DomainObjectImpl) {
-        "use strict";
 
         describe("The domain object provider", function () {
             var mockModelService,
@@ -48,16 +46,10 @@ define(
                 };
             }
 
-            function mockAll(mockPromises) {
-                return mockPromise(mockPromises.map(function (p) {
-                    return mockPromise(p).testValue;
-                }));
-            }
-
             beforeEach(function () {
                 mockModelService = jasmine.createSpyObj(
                     "modelService",
-                    [ "getModels" ]
+                    ["getModels"]
                 );
                 mockInstantiate = jasmine.createSpy("instantiate");
 
@@ -72,7 +64,7 @@ define(
             });
 
             it("requests models from the model service", function () {
-                var ids = [ "a", "b", "c" ];
+                var ids = ["a", "b", "c"];
                 mockModelService.getModels.andReturn(mockPromise({}));
                 provider.getObjects(ids);
                 expect(mockModelService.getModels).toHaveBeenCalledWith(ids);
@@ -80,7 +72,7 @@ define(
 
 
             it("instantiates objects with provided models", function () {
-                var ids = [ "a", "b", "c"],
+                var ids = ["a", "b", "c"],
                     model = { someKey: "some value"},
                     result;
                 mockModelService.getModels.andReturn(mockPromise({ a: model }));

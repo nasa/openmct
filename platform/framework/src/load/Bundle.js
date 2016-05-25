@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['../Constants', './Extension'],
     function (Constants, Extension) {
-        "use strict";
 
 
         /**
@@ -108,8 +106,8 @@ define(
          */
         Bundle.prototype.getSourcePath = function (sourceFile) {
             var subpath = sourceFile ?
-                [ this.definition.sources, sourceFile ] :
-                [ this.definition.sources ];
+                [this.definition.sources, sourceFile] :
+                [this.definition.sources];
 
             return this.resolvePath(subpath);
         };
@@ -126,8 +124,8 @@ define(
          */
         Bundle.prototype.getResourcePath = function (resourceFile) {
             var subpath = resourceFile ?
-                [ this.definition.resources, resourceFile ] :
-                [ this.definition.resources ];
+                [this.definition.resources, resourceFile] :
+                [this.definition.resources];
 
             return this.resolvePath(subpath);
         };
@@ -144,8 +142,8 @@ define(
          */
         Bundle.prototype.getLibraryPath = function (libraryFile) {
             var subpath = libraryFile ?
-                [ this.definition.libraries, libraryFile ] :
-                [ this.definition.libraries ];
+                [this.definition.libraries, libraryFile] :
+                [this.definition.libraries];
 
             return this.resolvePath(subpath);
         };

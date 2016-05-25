@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/representers/EditToolbarRepresenter"],
     function (EditToolbarRepresenter) {
-        "use strict";
 
         describe("The Edit mode toolbar representer", function () {
             var mockScope,
@@ -36,13 +34,13 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     '$scope',
-                    [ '$on', '$watch', '$watchCollection', "commit" ]
+                    ['$on', '$watch', '$watchCollection', "commit"]
                 );
                 mockElement = {};
                 testAttrs = { toolbar: 'testToolbar' };
                 mockScope.$parent = jasmine.createSpyObj(
                     '$parent',
-                    [ '$watch', '$watchCollection' ]
+                    ['$watch', '$watchCollection']
                 );
                 mockUnwatch = jasmine.createSpy('unwatch');
 
@@ -94,7 +92,7 @@ define(
 
                 // Provide a view which has a toolbar
                 representer.represent({
-                    toolbar: { sections: [ { items: [ { property: 'k' } ] } ] }
+                    toolbar: { sections: [{ items: [{ property: 'k' }] }] }
                 });
 
                 // Update the selection
@@ -122,7 +120,7 @@ define(
 
                 // Provide a view which has a toolbar
                 representer.represent({
-                    toolbar: { sections: [ { items: [ { property: 'k' } ] } ] }
+                    toolbar: { sections: [{ items: [{ property: 'k' }] }] }
                 });
 
                 // Update the selection

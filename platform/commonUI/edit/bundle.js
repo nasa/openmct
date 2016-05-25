@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     "./src/controllers/EditActionController",
@@ -27,7 +26,7 @@ define([
     "./src/controllers/ElementsController",
     "./src/controllers/EditObjectController",
     "./src/directives/MCTBeforeUnload",
-    "./src/actions/LinkAction",
+    "./src/actions/EditAndComposeAction",
     "./src/actions/EditAction",
     "./src/actions/PropertiesAction",
     "./src/actions/RemoveAction",
@@ -41,6 +40,9 @@ define([
     "./src/policies/EditContextualActionPolicy",
     "./src/representers/EditRepresenter",
     "./src/representers/EditToolbarRepresenter",
+    "./src/capabilities/EditorCapability",
+    "./src/capabilities/TransactionCapabilityDecorator",
+    "./src/services/TransactionService",
     "text!./res/templates/library.html",
     "text!./res/templates/edit-object.html",
     "text!./res/templates/edit-action-buttons.html",
@@ -53,7 +55,7 @@ define([
     ElementsController,
     EditObjectController,
     MCTBeforeUnload,
-    LinkAction,
+    EditAndComposeAction,
     EditAction,
     PropertiesAction,
     RemoveAction,
@@ -67,6 +69,9 @@ define([
     EditContextualActionPolicy,
     EditRepresenter,
     EditToolbarRepresenter,
+    EditorCapability,
+    TransactionCapabilityDecorator,
+    TransactionService,
     libraryTemplate,
     editObjectTemplate,
     editActionButtonsTemplate,
@@ -74,7 +79,6 @@ define([
     topbarEditTemplate,
     legacyRegistry
 ) {
-    "use strict";
 
     legacyRegistry.register("platform/commonUI/edit", {
         "extensions": {
@@ -122,7 +126,7 @@ define([
             "actions": [
                 {
                     "key": "compose",
-                    "implementation": LinkAction
+                    "implementation": EditAndComposeAction
                 },
                 {
                     "key": "edit",
@@ -130,8 +134,7 @@ define([
                     "depends": [
                         "$location",
                         "navigationService",
-                        "$log",
-                        "$q"
+                        "$log"
                     ],
                     "description": "Edit this object.",
                     "category": "view-control",
@@ -193,10 +196,7 @@ define([
                     "implementation": CancelAction,
                     "name": "Cancel",
                     "description": "Discard changes made to these objects.",
-                    "depends": [
-                        "$injector",
-                        "navigationService"
-                    ]
+                    "depends": []
                 }
             ],
             "policies": [
@@ -207,7 +207,7 @@ define([
                 {
                     "category": "action",
                     "implementation": EditContextualActionPolicy,
-                    "depends": ["navigationService"]
+                    "depends": ["navigationService", "editModeBlacklist", "nonEditContextBlacklist"]
                 },
                 {
                     "category": "action",
@@ -263,6 +263,27 @@ define([
                     "template": topbarEditTemplate
                 }
             ],
+            "components": [
+                {
+                    "type": "decorator",
+                    "provides": "capabilityService",
+                    "implementation": TransactionCapabilityDecorator,
+                    "depends": [
+                        "$q",
+                        "transactionService"
+                    ],
+                    "priority": "fallback"
+                },
+                {
+                    "type": "provider",
+                    "provides": "transactionService",
+                    "implementation": TransactionService,
+                    "depends": [
+                        "$q",
+                        "$log"
+                    ]
+                }
+            ],
             "representers": [
                 {
                     "implementation": EditRepresenter,
@@ -273,6 +294,27 @@ define([
                 },
                 {
                     "implementation": EditToolbarRepresenter
+                }
+            ],
+            "constants": [
+                {
+                    "key": "editModeBlacklist",
+                    "value": ["copy", "follow", "window", "link", "locate"]
+                },
+                {
+                    "key": "nonEditContextBlacklist",
+                    "value": ["copy", "follow", "properties", "move", "link", "remove", "locate"]
+                }
+            ],
+            "capabilities": [
+                {
+                    "key": "editor",
+                    "name": "Editor Capability",
+                    "description": "Provides transactional editing capabilities",
+                    "implementation": EditorCapability,
+                    "depends": [
+                        "transactionService"
+                    ]
                 }
             ]
         }

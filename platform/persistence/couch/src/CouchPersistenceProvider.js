@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle implements a persistence service which uses CouchDB to
@@ -29,7 +28,6 @@
 define(
     ["./CouchDocument"],
     function (CouchDocument) {
-        'use strict';
 
         // JSLint doesn't like dangling _'s, but CouchDB uses these, so
         // hide this behind variables.
@@ -49,46 +47,42 @@ define(
          * @param {string} path the path to the CouchDB instance
          */
         function CouchPersistenceProvider($http, $q, space, path) {
-            this.spaces = [ space ];
+            this.spaces = [space];
             this.revs = {};
             this.$q = $q;
             this.$http = $http;
             this.path = path;
         }
 
-        function bind(fn, thisArg) {
-            return function () {
-                return fn.apply(thisArg, arguments);
-            };
-        }
-
         // Pull out a list of document IDs from CouchDB's
         // _all_docs response
         function getIdsFromAllDocs(allDocs) {
-            return allDocs.rows.map(function (r) { return r.id; });
+            return allDocs.rows.map(function (r) {
+                return r.id;
+            });
         }
 
         // Check the response to a create/update/delete request;
         // track the rev if it's valid, otherwise return false to
         // indicate that the request failed.
-        function checkResponse(response) {
+        CouchPersistenceProvider.prototype.checkResponse = function (response) {
             if (response && response.ok) {
                 this.revs[response.id] = response.rev;
                 return response.ok;
             } else {
                 return false;
             }
-        }
+        };
 
         // Get a domain object model out of CouchDB's response
-        function getModel(response) {
+        CouchPersistenceProvider.prototype.getModel = function (response) {
             if (response && response.model) {
                 this.revs[response[ID]] = response[REV];
                 return response.model;
             } else {
                 return undefined;
             }
-        }
+        };
 
         // Issue a request using $http; get back the plain JS object
         // from the expected JSON response
@@ -118,30 +112,30 @@ define(
             return this.$q.when(this.spaces);
         };
 
-        CouchPersistenceProvider.prototype.listObjects = function (space) {
-            return this.get("_all_docs").then(bind(getIdsFromAllDocs, this));
+        CouchPersistenceProvider.prototype.listObjects = function () {
+            return this.get("_all_docs").then(getIdsFromAllDocs.bind(this));
         };
 
         CouchPersistenceProvider.prototype.createObject = function (space, key, value) {
             return this.put(key, new CouchDocument(key, value))
-                .then(bind(checkResponse, this));
+                .then(this.checkResponse.bind(this));
         };
 
 
         CouchPersistenceProvider.prototype.readObject = function (space, key) {
-            return this.get(key).then(bind(getModel, this));
+            return this.get(key).then(this.getModel.bind(this));
         };
 
         CouchPersistenceProvider.prototype.updateObject = function (space, key, value) {
             var rev = this.revs[key];
             return this.put(key, new CouchDocument(key, value, rev))
-                .then(bind(checkResponse, this));
+                .then(this.checkResponse.bind(this));
         };
 
         CouchPersistenceProvider.prototype.deleteObject = function (space, key, value) {
             var rev = this.revs[key];
             return this.put(key, new CouchDocument(key, value, rev, true))
-                .then(bind(checkResponse, this));
+                .then(this.checkResponse.bind(this));
         };
 
         return CouchPersistenceProvider;

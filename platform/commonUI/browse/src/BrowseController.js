@@ -19,18 +19,14 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise, confirm*/
 
 /**
  * This bundle implements Browse mode.
  * @namespace platform/commonUI/browse
  */
 define(
-    [
-        '../../../representation/src/gestures/GestureConstants'
-    ],
-    function (GestureConstants) {
-        "use strict";
+    [],
+    function () {
 
         var ROOT_ID = "ROOT";
 
@@ -45,13 +41,13 @@ define(
          * @constructor
          */
         function BrowseController(
-            $scope, 
-            $route, 
-            $location, 
-            $window, 
-            objectService, 
-            navigationService, 
-            urlService, 
+            $scope,
+            $route,
+            $location,
+            $window,
+            objectService,
+            navigationService,
+            urlService,
             policyService,
             defaultPath
         ) {
@@ -84,12 +80,12 @@ define(
             function setNavigation(domainObject) {
                 var navigationAllowed = true;
 
-                if (domainObject === $scope.navigatedObject){
+                if (domainObject === $scope.navigatedObject) {
                     //do nothing;
                     return;
                 }
 
-                policyService.allow("navigation", $scope.navigatedObject, domainObject, function(message){
+                policyService.allow("navigation", $scope.navigatedObject, domainObject, function (message) {
                     navigationAllowed = $window.confirm(message + "\r\n\r\n" +
                         " Are you sure you want to continue?");
                 });

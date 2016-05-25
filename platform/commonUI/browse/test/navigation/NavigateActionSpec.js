@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * MCTRepresentationSpec. Created by vwoeltje on 11/6/14.
@@ -27,12 +26,10 @@
 define(
     ["../../src/navigation/NavigateAction"],
     function (NavigateAction) {
-        "use strict";
 
         describe("The navigate action", function () {
             var mockNavigationService,
                 mockQ,
-                actionContext,
                 mockDomainObject,
                 action;
 
@@ -47,12 +44,12 @@ define(
             beforeEach(function () {
                 mockNavigationService = jasmine.createSpyObj(
                     "navigationService",
-                    [ "setNavigation" ]
+                    ["setNavigation"]
                 );
                 mockQ = { when: mockPromise };
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability" ]
+                    ["getId", "getModel", "getCapability"]
                 );
 
                 action = new NavigateAction(

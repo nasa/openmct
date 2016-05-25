@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ['../../src/elements/TextProxy'],
     function (TextProxy) {
-        "use strict";
 
         describe("A fixed position text proxy", function () {
             var testElement,
@@ -39,7 +37,7 @@ define(
                     height: 24,
                     fill: "transparent"
                 };
-                testElements = [ {}, {}, testElement, {} ];
+                testElements = [{}, {}, testElement, {}];
                 proxy = new TextProxy(
                     testElement,
                     testElements.indexOf(testElement),

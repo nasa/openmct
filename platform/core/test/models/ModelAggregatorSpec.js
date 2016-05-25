@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * ModelAggregatorSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/models/ModelAggregator"],
     function (ModelAggregator) {
-        "use strict";
 
         describe("The model aggregator", function () {
             var mockQ,
@@ -39,18 +37,20 @@ define(
                 aggregator;
 
             beforeEach(function () {
-                mockQ = jasmine.createSpyObj("$q", [ "all" ]);
+                mockQ = jasmine.createSpyObj("$q", ["all"]);
                 mockProviders = modelList.map(function (models, i) {
                     var mockProvider = jasmine.createSpyObj(
                         "mockProvider" + i,
-                        [ "getModels" ]
+                        ["getModels"]
                     );
                     mockProvider.getModels.andReturn(models);
                     return mockProvider;
                 });
 
                 mockQ.all.andReturn({
-                    then: function (c) { return c(modelList); }
+                    then: function (c) {
+                        return c(modelList);
+                    }
                 });
 
                 aggregator = new ModelAggregator(mockQ, mockProviders);

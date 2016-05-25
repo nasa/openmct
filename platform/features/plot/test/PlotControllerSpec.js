@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,xit,beforeEach,waitsFor,jasmine*/
 
 /**
  * MergeModelsSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../src/PlotController"],
     function (PlotController) {
-        "use strict";
 
         describe("The plot controller", function () {
             var mockScope,
@@ -65,15 +63,15 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$watch", "$on", "$emit" ]
+                    ["$watch", "$on", "$emit"]
                 );
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
-                    [ "formatDomainValue", "formatRangeValue" ]
+                    ["formatDomainValue", "formatRangeValue"]
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability" ]
+                    ["getId", "getModel", "getCapability"]
                 );
                 mockHandler = jasmine.createSpyObj(
                     "telemetrySubscriber",
@@ -98,7 +96,9 @@ define(
                 );
 
                 mockHandler.handle.andReturn(mockHandle);
-                mockThrottle.andCallFake(function (fn) { return fn; });
+                mockThrottle.andCallFake(function (fn) {
+                    return fn;
+                });
                 mockHandle.getTelemetryObjects.andReturn([mockDomainObject]);
                 mockHandle.getMetadata.andReturn([{}]);
                 mockHandle.getDomainValue.andReturn(123);

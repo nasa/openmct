@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../../src/controllers/BottomBarController"],
     function (BottomBarController) {
-        "use strict";
 
         describe("The bottom bar controller", function () {
             var testIndicators,
@@ -37,11 +35,13 @@ define(
             beforeEach(function () {
                 mockIndicator = jasmine.createSpyObj(
                     "indicator",
-                    [ "getGlyph", "getText" ]
+                    ["getGlyph", "getText"]
                 );
 
                 testIndicatorA = {};
-                testIndicatorB = function () { return mockIndicator; };
+                testIndicatorB = function () {
+                    return mockIndicator;
+                };
                 testIndicatorC = { template: "someTemplate" };
 
                 testIndicators = [

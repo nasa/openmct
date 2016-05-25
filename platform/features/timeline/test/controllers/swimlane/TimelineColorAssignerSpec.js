@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../../src/controllers/swimlane/TimelineColorAssigner'],
     function (TimelineColorAssigner) {
-        'use strict';
 
         describe("The Timeline legend color assigner", function () {
             var testConfiguration,
@@ -51,10 +49,14 @@ define(
                 var colors = {}, i, ids = [];
 
                 // Add item to set
-                function set(c) { colors[c] = true; }
+                function set(c) {
+                    colors[c] = true;
+                }
 
                 // Generate ids
-                for (i = 0; i < 30; i += 1) { ids.push("id" + i); }
+                for (i = 0; i < 30; i += 1) {
+                    ids.push("id" + i);
+                }
 
                 // Assign colors to each id, then retrieve colors,
                 // storing into the set

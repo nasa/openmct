@@ -19,24 +19,22 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         var BASE_COLORS = [
-                [ 136, 32, 32 ],
-                [ 224, 64, 64 ],
-                [ 240, 160, 72 ],
-                [ 255, 248, 96 ],
-                [ 128, 240, 72 ],
-                [ 128, 248, 248 ],
-                [ 88, 144, 224 ],
-                [ 0, 72, 240 ],
-                [ 136, 80, 240 ],
-                [ 224, 96, 248 ]
+                [136, 32, 32],
+                [224, 64, 64],
+                [240, 160, 72],
+                [255, 248, 96],
+                [128, 240, 72],
+                [128, 248, 248],
+                [88, 144, 224],
+                [0, 72, 240],
+                [136, 80, 240],
+                [224, 96, 248]
             ],
             GRADIENTS = [0.75, 0.50, 0.25, -0.25, -0.50, -0.75],
             GROUPS = [];
@@ -57,7 +55,7 @@ define(
         }
 
         function initializeGroups() {
-            var i, group;
+            var group;
 
             // Ten grayscale colors
             group = [];

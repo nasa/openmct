@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,runs,jasmine*/
 
 /**
  * BundleLoaderSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/load/BundleLoader"],
     function (BundleLoader) {
-        "use strict";
 
         describe("The bundle loader", function () {
             var loader,
@@ -46,7 +44,7 @@ define(
 
             beforeEach(function () {
                 testBundles = {
-                    "bundles.json": [ "bundle/a", "bundle/b"],
+                    "bundles.json": ["bundle/a", "bundle/b"],
                     "bundle/a/bundle.json": {"someValue": 6},
                     "bundle/b/bundle.json": {"someValue": 7}
                 };
@@ -56,7 +54,7 @@ define(
                 mockLog = jasmine.createSpyObj("$log", ["error", "warn", "info", "debug"]);
                 mockRegistry = jasmine.createSpyObj(
                     'legacyRegistry',
-                    [ 'list', 'contains', 'get' ]
+                    ['list', 'contains', 'get']
                 );
                 mockRegistry.list.andReturn([]);
                 mockRegistry.contains.andReturn(false);

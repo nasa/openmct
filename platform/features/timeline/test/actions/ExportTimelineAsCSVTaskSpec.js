@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../src/actions/ExportTimelineAsCSVTask'],
     function (ExportTimelineAsCSVTask) {
-        'use strict';
 
         // Note that most responsibility is delegated to helper
         // classes, so testing here is minimal.
@@ -36,7 +34,7 @@ define(
             beforeEach(function () {
                 mockExportService = jasmine.createSpyObj(
                     'exportService',
-                    [ 'exportCSV' ]
+                    ['exportCSV']
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',

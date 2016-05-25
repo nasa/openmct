@@ -19,13 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 
 define(
     ["../src/PersistenceQueueHandler"],
     function (PersistenceQueueHandler) {
-        "use strict";
 
         var TEST_ERROR = { someKey: "some value" };
 
@@ -49,7 +47,7 @@ define(
             function makeMockPersistence(id) {
                 var mockPersistence = jasmine.createSpyObj(
                     'persistence-' + id,
-                    [ 'persist', 'refresh' ]
+                    ['persist', 'refresh']
                 );
                 mockPersistence.persist.andReturn(asPromise(true));
                 return mockPersistence;
@@ -58,7 +56,7 @@ define(
             function makeMockDomainObject(id) {
                 var mockDomainObject = jasmine.createSpyObj(
                     'domainObject-' + id,
-                    [ 'getId' ]
+                    ['getId']
                 );
                 mockDomainObject.getId.andReturn(id);
                 return mockDomainObject;

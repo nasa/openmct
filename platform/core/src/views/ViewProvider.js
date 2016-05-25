@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining ViewProvider. Created by vwoeltje on 11/10/14.
@@ -27,7 +26,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Provides definitions for views that are available for specific
@@ -107,15 +105,15 @@ define(
             // Check if an object has all capabilities designated as `needs`
             // for a view. Exposing a capability via delegation is taken to
             // satisfy this filter if `allowDelegation` is true.
-            function capabilitiesMatch(domainObject, capabilities, allowDelegation) {
-                var delegation = domainObject.getCapability("delegation");
+            function capabilitiesMatch(domainObj, capabilities, allowDelegation) {
+                var delegation = domainObj.getCapability("delegation");
 
                 allowDelegation = allowDelegation && (delegation !== undefined);
 
                 // Check if an object has (or delegates, if allowed) a
                 // capability.
                 function hasCapability(c) {
-                    return domainObject.hasCapability(c) ||
+                    return domainObj.hasCapability(c) ||
                         (allowDelegation && delegation.doesDelegateCapability(c));
                 }
 
@@ -130,13 +128,13 @@ define(
 
             // Check if a view and domain object type can be paired;
             // both can restrict the others they accept.
-            function viewMatchesType(view, type) {
-                var views = type && (type.getDefinition() || {}).views,
+            function viewMatchesType(view, objType) {
+                var views = objType && (objType.getDefinition() || {}).views,
                     matches = true;
 
                 // View is restricted to a certain type
                 if (view.type) {
-                    matches = matches && type && type.instanceOf(view.type);
+                    matches = matches && objType && objType.instanceOf(view.type);
                 }
 
                 // Type wishes to restrict its specific views

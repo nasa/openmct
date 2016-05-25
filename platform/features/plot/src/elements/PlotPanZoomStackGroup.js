@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./PlotPanZoomStack'],
     function (PlotPanZoomStack) {
-        "use strict";
 
         /**
          * A plot pan zoom stack group provides a collection of individual
@@ -52,8 +50,8 @@ define(
                         // For other stacks, do a push, but repeat
                         // their current range axis bounds.
                         stack.pushPanZoom(
-                            [ origin[0], stack.getOrigin()[1] ],
-                            [ dimensions[0], stack.getDimensions()[1] ]
+                            [origin[0], stack.getOrigin()[1]],
+                            [dimensions[0], stack.getDimensions()[1]]
                         );
                     }
                 });

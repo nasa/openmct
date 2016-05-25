@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../src/TelemetryCapability"],
     function (TelemetryCapability) {
-        "use strict";
 
         describe("The telemetry capability", function () {
             var mockInjector,
@@ -51,11 +49,11 @@ define(
                 mockLog = jasmine.createSpyObj("$log", ["warn", "info", "debug"]);
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getCapability", "getModel" ]
+                    ["getId", "getCapability", "getModel"]
                 );
                 mockTelemetryService = jasmine.createSpyObj(
                     "telemetryService",
-                    [ "requestTelemetry", "subscribe" ]
+                    ["requestTelemetry", "subscribe"]
                 );
                 mockReject = jasmine.createSpyObj("reject", ["then"]);
                 mockUnsubscribe = jasmine.createSpy("unsubscribe");
@@ -121,7 +119,9 @@ define(
             it("provides an empty series when telemetry is missing", function () {
                 var series;
                 mockTelemetryService.requestTelemetry.andReturn(mockPromise({}));
-                telemetry.requestData({}).then(function (s) { series = s; });
+                telemetry.requestData({}).then(function (s) {
+                    series = s;
+                });
                 expect(series.getPointCount()).toEqual(0);
             });
 
@@ -149,7 +149,9 @@ define(
 
 
             it("warns if no telemetry service can be injected", function () {
-                mockInjector.get.andCallFake(function () { throw ""; });
+                mockInjector.get.andCallFake(function () {
+                    throw "";
+                });
 
                 // Verify precondition
                 expect(mockLog.warn).not.toHaveBeenCalled();

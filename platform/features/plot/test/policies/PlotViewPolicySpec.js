@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine,xit*/
 
 define(
     ["../../src/policies/PlotViewPolicy"],
     function (PlotViewPolicy) {
-        "use strict";
 
         describe("Plot view policy", function () {
             var testView,
@@ -53,23 +51,23 @@ define(
             });
 
             it("allows the imagery view for domain objects with numeric telemetry", function () {
-                testMetadata.ranges = [ { key: "foo", format: "number" } ];
+                testMetadata.ranges = [{ key: "foo", format: "number" }];
                 expect(policy.allow(testView, mockDomainObject)).toBeTruthy();
             });
 
             it("allows the imagery view for domain objects with unspecified telemetry", function () {
-                testMetadata.ranges = [ { key: "foo"  } ];
+                testMetadata.ranges = [{ key: "foo"  }];
                 expect(policy.allow(testView, mockDomainObject)).toBeTruthy();
             });
 
             it("disallows the imagery view for domain objects without image telemetry", function () {
-                testMetadata.ranges = [ { key: "foo", format: "somethingElse" } ];
+                testMetadata.ranges = [{ key: "foo", format: "somethingElse" }];
                 expect(policy.allow(testView, mockDomainObject)).toBeFalsy();
             });
 
             it("allows other views", function () {
                 testView.key = "somethingElse";
-                testMetadata.ranges = [ { key: "foo", format: "somethingElse" } ];
+                testMetadata.ranges = [{ key: "foo", format: "somethingElse" }];
                 expect(policy.allow(testView, mockDomainObject)).toBeTruthy();
             });
 

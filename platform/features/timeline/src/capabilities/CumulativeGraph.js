@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Provide points for a cumulative resource summary graph, using
@@ -55,22 +53,21 @@ define(
 
             // Initialize the data values
             function initializeValues() {
-                var values = [],
+                var vals = [],
                     slope = 0,
-                    previous = 0,
                     i;
 
                 // Add a point (or points, if needed) reaching to the provided
                 // domain and/or range value
                 function addPoint(domain, range) {
-                    var previous = values[values.length - 1],
+                    var previous = vals[vals.length - 1],
                         delta = domain - previous.domain, // time delta
                         change = delta * slope * rate, // change
                         next = previous.range + change;
 
                     // Crop to minimum boundary...
                     if (next < minimum) {
-                        values.push({
+                        vals.push({
                             domain: intercept(
                                 previous.domain,
                                 previous.range,
@@ -84,7 +81,7 @@ define(
 
                     // ...and maximum boundary
                     if (next > maximum) {
-                        values.push({
+                        vals.push({
                             domain: intercept(
                                 previous.domain,
                                 previous.range,
@@ -98,19 +95,19 @@ define(
 
                     // Add the new data value
                     if (delta > 0) {
-                        values.push({ domain: domain, range: next });
+                        vals.push({ domain: domain, range: next });
                     }
 
                     slope = range;
                 }
 
-                values.push({ domain: 0, range: initial });
+                vals.push({ domain: 0, range: initial });
 
                 for (i = 0; i < graph.getPointCount(); i += 1) {
                     addPoint(graph.getDomainValue(i), graph.getRangeValue(i));
                 }
 
-                return values;
+                return vals;
             }
 
             function convertToPercent(point) {

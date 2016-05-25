@@ -20,12 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define */
 
 define(
-    [ "./CopyTask" ],
+    ["./CopyTask"],
     function (CopyTask) {
-        "use strict";
 
         /**
          * CopyService provides an interface for deep copying objects from one
@@ -85,11 +83,11 @@ define(
 
             // Combines caller-provided filter (if any) with the
             // baseline behavior of respecting creation policy.
-            function filterWithPolicy(domainObject) {
-                return (!filter || filter(domainObject)) &&
+            function filterWithPolicy(domainObj) {
+                return (!filter || filter(domainObj)) &&
                     policyService.allow(
                         "creation",
-                        domainObject.getCapability("type")
+                        domainObj.getCapability("type")
                     );
             }
 

@@ -20,14 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect,Promise,waitsFor,runs */
 
 define(
     [
         '../src/IdentityCreationDecorator'
     ],
     function (IdentityCreationDecorator) {
-        "use strict";
 
         describe("IdentityCreationDecorator", function () {
             var mockIdentityService,

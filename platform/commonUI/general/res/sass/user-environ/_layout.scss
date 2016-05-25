@@ -194,7 +194,7 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
     .holder.holder-treeview-elements {
         top: $bodyMargin;
         right: 0;
-        bottom: $bodyMargin;
+        bottom: $interiorMargin;
         left: $bodyMargin;
         .create-btn-holder {
             &.s-status-editing {
@@ -215,17 +215,17 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
         left: 0;
         .holder-object {
             top: $bodyMargin;
-            bottom: $bodyMargin;
+            bottom: $interiorMargin;
         }
         .holder-inspector {
             top: $bodyMargin;
-            bottom: $bodyMargin;
+            bottom: $interiorMargin;
             left: $bodyMargin;
             right: $bodyMargin;
         }
         .holder-elements {
             top: 0;
-            bottom: $bodyMargin;
+            bottom: $interiorMargin;
             left: $bodyMargin;
             right: $bodyMargin;
         }

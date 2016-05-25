@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine,xit,xdescribe*/
 
 define(
     ["../../src/actions/SaveAction"],
     function (SaveAction) {
-        "use strict";
 
         describe("The Save action", function () {
             var mockDomainObject,
@@ -54,11 +52,11 @@ define(
                 );
                 mockEditorCapability = jasmine.createSpyObj(
                     "editor",
-                    [ "save", "cancel" ]
+                    ["save", "cancel", "isEditContextRoot"]
                 );
                 mockActionCapability = jasmine.createSpyObj(
                     "actionCapability",
-                    [ "perform"]
+                    ["perform"]
                 );
                 capabilities.editor = mockEditorCapability;
                 capabilities.action = mockActionCapability;
@@ -73,7 +71,7 @@ define(
                 });
                 mockDomainObject.getModel.andReturn({persisted: 0});
                 mockEditorCapability.save.andReturn(mockPromise(true));
-                mockDomainObject.getOriginalObject.andReturn(mockDomainObject);
+                mockEditorCapability.isEditContextRoot.andReturn(true);
 
                 action = new SaveAction(actionContext);
 
@@ -92,13 +90,20 @@ define(
                 function () {
                     mockDomainObject.getModel.andReturn({persisted: undefined});
                     expect(SaveAction.appliesTo(actionContext)).toBe(false);
-            });
+                });
 
             it("uses the editor capability to save the object",
                 function () {
                     action.perform();
                     expect(mockEditorCapability.save).toHaveBeenCalled();
                 });
+
+            it("navigates to the object after saving",
+                function () {
+                    action.perform();
+                    expect(mockActionCapability.perform).toHaveBeenCalledWith("navigate");
+                });
+
         });
     }
 );

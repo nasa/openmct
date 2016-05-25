@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * ActionCapabilitySpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/actions/ActionCapability"],
     function (ActionCapability) {
-        "use strict";
 
         describe("The action capability", function () {
             var mockQ,
@@ -39,19 +37,19 @@ define(
             beforeEach(function () {
                 mockAction = jasmine.createSpyObj(
                     "action",
-                    [ "perform", "getMetadata" ]
+                    ["perform", "getMetadata"]
                 );
                 mockActionService = jasmine.createSpyObj(
                     "actionService",
-                    [ "getActions" ]
+                    ["getActions"]
                 );
                 mockQ = jasmine.createSpyObj(
                     "$q",
-                    [ "when" ]
+                    ["when"]
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability", "hasCapability", "useCapability" ]
+                    ["getId", "getModel", "getCapability", "hasCapability", "useCapability"]
                 );
 
                 mockActionService.getActions.andReturn([mockAction, {}]);
@@ -78,7 +76,7 @@ define(
             });
 
             it("promises the result of performed actions", function () {
-                var mockPromise = jasmine.createSpyObj("promise", [ "then" ]);
+                var mockPromise = jasmine.createSpyObj("promise", ["then"]);
                 mockQ.when.andReturn(mockPromise);
                 mockAction.perform.andReturn("the action's result");
 

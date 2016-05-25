@@ -20,11 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect,spyOn */
 define(
     ['../src/PersistenceAggregator'],
     function (PersistenceAggregator) {
-        'use strict';
 
         var PERSISTENCE_SERVICE_METHODS = [
                 'listSpaces',
@@ -72,7 +70,9 @@ define(
                 mockQ.all.andCallFake(function (fakePromises) {
                     var result = [];
                     fakePromises.forEach(function (p) {
-                        p.then(function (v) { result.push(v); });
+                        p.then(function (v) {
+                            result.push(v);
+                        });
                     });
                     return fakePromise(result);
                 });

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./TelemetryQueue', './TelemetryTable', './TelemetryDelegator'],
     function (TelemetryQueue, TelemetryTable, TelemetryDelegator) {
-        "use strict";
 
         /**
          * A pool of telemetry values.
@@ -86,8 +84,8 @@ define(
             // Look up domain objects which have telemetry capabilities.
             // This will either be the object in view, or object that
             // this object delegates its telemetry capability to.
-            function promiseRelevantObjects(domainObject) {
-                return delegator.promiseTelemetryObjects(domainObject);
+            function promiseRelevantObjects(domainObj) {
+                return delegator.promiseTelemetryObjects(domainObj);
             }
 
             function updateValuesFromPool() {
@@ -116,16 +114,16 @@ define(
 
 
             // Look up metadata associated with an object's telemetry
-            function lookupMetadata(domainObject) {
+            function lookupMetadata(domainObj) {
                 var telemetryCapability =
-                    domainObject.getCapability("telemetry");
+                    domainObj.getCapability("telemetry");
                 return telemetryCapability &&
                         telemetryCapability.getMetadata();
             }
 
             // Update the latest telemetry data for a specific
             // domain object. This will notify listeners.
-            function update(domainObject, series) {
+            function update(domainObj, series) {
                 var count = series && series.getPointCount();
 
                 // Only schedule notification if there isn't already
@@ -138,21 +136,21 @@ define(
 
                 // Update the latest-value table
                 if (count > 0) {
-                    pool.put(domainObject.getId(), {
+                    pool.put(domainObj.getId(), {
                         domain: series.getDomainValue(count - 1),
                         range: series.getRangeValue(count - 1),
-                        datum: self.makeDatum(domainObject, series, count - 1)
+                        datum: self.makeDatum(domainObj, series, count - 1)
                     });
                 }
             }
 
             // Prepare a subscription to a specific telemetry-providing
             // domain object.
-            function subscribe(domainObject) {
+            function subscribe(domainObj) {
                 var telemetryCapability =
-                    domainObject.getCapability("telemetry");
+                    domainObj.getCapability("telemetry");
                 return telemetryCapability.subscribe(function (telemetry) {
-                    update(domainObject, telemetry);
+                    update(domainObj, telemetry);
                 });
             }
 

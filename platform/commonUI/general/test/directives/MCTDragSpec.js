@@ -19,14 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/directives/MCTDrag"],
     function (MCTDrag) {
-        "use strict";
 
-        var JQLITE_METHODS = [ "on", "off", "find" ];
+        var JQLITE_METHODS = ["on", "off", "find"];
 
         describe("The mct-drag directive", function () {
             var mockDocument,
@@ -48,7 +46,7 @@ define(
                 mockDocument =
                     jasmine.createSpyObj("$document", JQLITE_METHODS);
                 mockScope =
-                    jasmine.createSpyObj("$scope", [ "$eval", "$apply" ]);
+                    jasmine.createSpyObj("$scope", ["$eval", "$apply"]);
                 mockElement =
                     jasmine.createSpyObj("element", JQLITE_METHODS);
                 mockBody =

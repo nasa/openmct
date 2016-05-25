@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle implements a persistence service which uses ElasticSearch to
@@ -29,7 +28,6 @@
 define(
     [],
     function () {
-        'use strict';
 
         // JSLint doesn't like underscore-prefixed properties,
         // so hide them here.
@@ -52,18 +50,12 @@ define(
          * @param {stirng} path the path to domain objects within ElasticSearch
          */
         function ElasticPersistenceProvider($http, $q, space, root, path) {
-            this.spaces = [ space ];
+            this.spaces = [space];
             this.revs = {};
             this.$http = $http;
             this.$q = $q;
             this.root = root;
             this.path = path;
-        }
-
-        function bind(fn, thisArg) {
-            return function () {
-                return fn.apply(thisArg, arguments);
-            };
         }
 
         // Issue a request using $http; get back the plain JS object
@@ -100,8 +92,8 @@ define(
             if ((response || {}).status === CONFLICT) {
                 error.key = "revision";
                 // Load the updated model, then reject the promise
-                return this.get(key).then(function (response) {
-                    error.model = response[SRC];
+                return this.get(key).then(function (res) {
+                    error.model = res[SRC];
                     return $q.reject(error);
                 });
             }
@@ -110,14 +102,14 @@ define(
         };
 
         // Get a domain object model out of ElasticSearch's response
-        function getModel(response) {
+        ElasticPersistenceProvider.prototype.getModel = function (response) {
             if (response && response[SRC]) {
                 this.revs[response[ID]] = response[REV];
                 return response[SRC];
             } else {
                 return undefined;
             }
-        }
+        };
 
         // Check the response to a create/update/delete request;
         // track the rev if it's valid, otherwise return false to
@@ -143,23 +135,24 @@ define(
 
 
         ElasticPersistenceProvider.prototype.createObject = function (space, key, value) {
-            return this.put(key, value).then(bind(this.checkResponse, this));
+            return this.put(key, value).then(this.checkResponse.bind(this));
         };
 
         ElasticPersistenceProvider.prototype.readObject = function (space, key) {
-            return this.get(key).then(bind(getModel, this));
+            return this.get(key).then(this.getModel.bind(this));
         };
 
         ElasticPersistenceProvider.prototype.updateObject = function (space, key, value) {
+            var self = this;
             function checkUpdate(response) {
-                return this.checkResponse(response, key);
+                return self.checkResponse(response, key);
             }
             return this.put(key, value, { version: this.revs[key] })
-                .then(bind(checkUpdate, this));
+                .then(checkUpdate);
         };
 
-        ElasticPersistenceProvider.prototype.deleteObject = function (space, key, value) {
-            return this.del(key).then(bind(this.checkResponse, this));
+        ElasticPersistenceProvider.prototype.deleteObject = function (space, key) {
+            return this.del(key).then(this.checkResponse.bind(this));
         };
 
         return ElasticPersistenceProvider;

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * MergeModelsSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/elements/PlotAxis"],
     function (PlotAxis) {
-        "use strict";
 
         describe("A plot axis", function () {
             var testMetadatas,
@@ -90,7 +88,7 @@ define(
             });
 
             it("reflects changes to applicable metadata", function () {
-                axis.updateMetadata([ testMetadatas[1] ]);
+                axis.updateMetadata([testMetadatas[1]]);
                 expect(axis.options).toEqual([
                     { key: "t0", name: "T0" },
                     { key: "t2", name: "T2" }

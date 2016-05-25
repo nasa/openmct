@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining ContextCapability. Created by vwoeltje on 11/17/14.
@@ -27,7 +26,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * The `context` capability of a domain object (retrievable with
@@ -84,7 +82,7 @@ define(
                 parentContext =
                     parentObject && parentObject.getCapability('context'),
                 parentPath = parentContext ?
-                        parentContext.getPath() : [ this.parentObject ];
+                        parentContext.getPath() : [this.parentObject];
 
             return parentPath.concat([this.domainObject]);
         };

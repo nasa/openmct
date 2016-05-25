@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../src/actions/TimelineColumnizer'],
@@ -51,7 +50,7 @@ define(
             beforeEach(function () {
                 var mockTimespan = jasmine.createSpyObj(
                     'timespan',
-                    [ 'getStart', 'getEnd' ]
+                    ['getStart', 'getEnd']
                 );
 
                 testMetadata = [
@@ -60,8 +59,8 @@ define(
                 ];
 
                 mockDomainObjects = [
-                    { composition: [ 'a', 'b', 'c' ] },
-                    { relationships: { modes: [ 'x', 'y' ] } },
+                    { composition: ['a', 'b', 'c'] },
+                    { relationships: { modes: ['x', 'y'] } },
                     { }
                 ].map(makeMockDomainObject);
 

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Describes a swimlane in a timeline view. This will be
@@ -49,9 +47,7 @@ define(
                 depth = parent ? (parent.depth + 1) : 0,
                 timespan,
                 path = (!parent || !parent.parent) ? "" : parent.path +
-                        //(parent.path.length > 0 ? " / " : "") +
-                        parent.domainObject.getModel().name +
-	                    " > ";
+                        parent.domainObject.getModel().name + " > ";
 
             // Look up timespan for this object
             domainObject.useCapability('timespan').then(function (t) {

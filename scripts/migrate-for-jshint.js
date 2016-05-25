@@ -19,15 +19,31 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
-define(
-    ["../../src/objects/EditableDomainObject"],
-    function (EditableDomainObject) {
-        "use strict";
+// Converts all templateUrl references in bundle.js files to
+// plain template references, loading said templates with the
+// RequireJS text plugin.
 
-        describe("Editable domain object", function () {
+var glob = require('glob'),
+    fs = require('fs');
 
-        });
+function migrate(file) {
+    var sourceCode = fs.readFileSync(file, 'utf8'),
+        lines = sourceCode.split('\n')
+            .filter(function (line) {
+                return !(/^\W*['"]use strict['"];\W*$/.test(line));
+            })
+            .filter(function (line) {
+                return line.indexOf("/*global") !== 0;
+            });
+    fs.writeFileSync(file, lines.join('\n'));
+}
+
+glob('@(src|platform)/**/*.js', {}, function (err, files) {
+    if (err) {
+        console.log(err);
+        return;
     }
-);
+
+    files.forEach(migrate);
+});

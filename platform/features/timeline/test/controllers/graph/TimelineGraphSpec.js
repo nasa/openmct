@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../../src/controllers/graph/TimelineGraph'],
     function (TimelineGraph) {
-        'use strict';
 
         describe("A Timeline's resource graph", function () {
             var mockDomainObjects,
@@ -44,9 +42,9 @@ define(
 
             beforeEach(function () {
                 testColors = {
-                    a: [ 0, 1, 0 ],
-                    b: [ 1, 0, 1 ],
-                    c: [ 1, 0, 0 ]
+                    a: [0, 1, 0],
+                    b: [1, 0, 1],
+                    c: [1, 0, 0]
                 };
 
                 mockGraphs = [];
@@ -55,11 +53,11 @@ define(
                 ['a', 'b', 'c'].forEach(function (k, i) {
                     var mockGraph = jasmine.createSpyObj(
                             'utilization-' + k,
-                            [ 'getPointCount', 'getDomainValue', 'getRangeValue' ]
+                            ['getPointCount', 'getDomainValue', 'getRangeValue']
                         );
                     mockDomainObjects[k] = jasmine.createSpyObj(
                         'domainObject-' + k,
-                        [ 'getCapability', 'useCapability' ]
+                        ['getCapability', 'useCapability']
                     );
                     mockDomainObjects[k].useCapability.andReturn(asPromise({
                         testResource: mockGraph
@@ -74,7 +72,7 @@ define(
 
                 mockRenderer = jasmine.createSpyObj(
                     'renderer',
-                    [ 'render', 'decode' ]
+                    ['render', 'decode']
                 );
 
                 mockRenderer.render.andCallFake(function (utilization) {

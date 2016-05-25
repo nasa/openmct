@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['../capabilities/ContextualDomainObject'],
     function (ContextualDomainObject) {
-        "use strict";
 
         /**
          * Wrap a domain object such that it has a `context` capability

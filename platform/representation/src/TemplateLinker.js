@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * The `templateLinker` service is intended for internal use by
@@ -156,12 +154,12 @@ define(
                 activeTemplateUrl = templateUrl;
             }
 
-            function changeTemplate(ext) {
-                ext = ext || {};
-                if (ext.templateUrl) {
-                    changeTemplateUrl(self.getPath(ext));
-                } else if (ext.template) {
-                    showTemplate(ext.template);
+            function changeTemplate(templateExt) {
+                templateExt = templateExt || {};
+                if (templateExt.templateUrl) {
+                    changeTemplateUrl(self.getPath(templateExt));
+                } else if (templateExt.template) {
+                    showTemplate(templateExt.template);
                 } else {
                     removeElement();
                 }

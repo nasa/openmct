@@ -19,15 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 define(
     [],
     function () {
-        "use strict";
 
         // Utility functions for reducing truth arrays
-        function and(a, b) { return a && b; }
-        function or(a, b) { return a || b; }
+        function and(a, b) {
+            return a && b;
+        }
+        function or(a, b) {
+            return a || b;
+        }
 
 
         /**
@@ -221,7 +223,7 @@ define(
 
             // Update value for this property in all elements of the
             // selection which have this property.
-            function updateProperties(property, value) {
+            function updateProperties(property, val) {
                 var changed = false;
 
                 // Update property in a selected element
@@ -231,12 +233,12 @@ define(
                         // Check if this is a setter, or just assignable
                         if (typeof selected[property] === 'function') {
                             changed =
-                                changed || (selected[property]() !== value);
-                            selected[property](value);
+                                changed || (selected[property]() !== val);
+                            selected[property](val);
                         } else {
                             changed =
-                                changed || (selected[property] !== value);
-                            selected[property] = value;
+                                changed || (selected[property] !== val);
+                            selected[property] = val;
                         }
                     }
                 }

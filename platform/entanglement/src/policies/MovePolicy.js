@@ -20,9 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define */
 define([], function () {
-    'use strict';
 
     /**
      * Disallow moves when either the parent or the child are not

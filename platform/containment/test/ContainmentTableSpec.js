@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../src/ContainmentTable"],
     function (ContainmentTable) {
-        "use strict";
         describe("Composition policy's containment table", function () {
             var mockTypeService,
                 mockCapabilityService,
@@ -34,11 +32,11 @@ define(
             beforeEach(function () {
                 mockTypeService = jasmine.createSpyObj(
                     'typeService',
-                    [ 'listTypes' ]
+                    ['listTypes']
                 );
                 mockCapabilityService = jasmine.createSpyObj(
                     'capabilityService',
-                    [ 'getCapabilities' ]
+                    ['getCapabilities']
                 );
                 // Both types can only contain b, let's say
                 mockTypes = ['a', 'b', 'c'].map(function (type, index) {
@@ -50,7 +48,7 @@ define(
                     mockType.getDefinition.andReturn({
                         // First two contain objects with capability 'b';
                         // third one defines no containership rules
-                        contains: (index < 2) ? [ { has: 'b' } ] : undefined
+                        contains: (index < 2) ? [{ has: 'b' }] : undefined
                     });
                     // Return a model to drive apparant capabilities
                     mockType.getInitialModel.andReturn({ id: type });

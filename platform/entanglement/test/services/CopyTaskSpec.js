@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect,spyOn */
 
 define(
     [
@@ -28,7 +27,6 @@ define(
         '../DomainObjectFactory'
     ],
     function (CopyTask, domainObjectFactory) {
-        'use strict';
 
         var ID_A = "some-string-with-vaguely-uuidish-uniqueness",
             ID_B = "some-other-similarly-unique-string";
@@ -102,11 +100,11 @@ define(
                 cloneIds = {};
 
                 testModel = {
-                    composition: [ ID_A, ID_B ],
+                    composition: [ID_A, ID_B],
                     someObj: {},
-                    someArr: [ ID_A, ID_B ],
+                    someArr: [ID_A, ID_B],
                     objArr: [{"id": ID_A}, {"id": ID_B}],
-                    singleElementArr: [ ID_A ]
+                    singleElementArr: [ID_A]
                 };
                 testModel.someObj[ID_A] = "some value";
                 testModel.someObj.someProperty = ID_B;
@@ -122,7 +120,7 @@ define(
                 mockQ = jasmine.createSpyObj('$q', ['when', 'defer', 'all']);
                 mockDeferred = jasmine.createSpyObj(
                     'deferred',
-                    [ 'notify', 'resolve', 'reject' ]
+                    ['notify', 'resolve', 'reject']
                 );
 
                 mockFilter.andReturn(true);
@@ -132,7 +130,9 @@ define(
                 mockQ.all.andCallFake(function (promises) {
                     return synchronousPromise(promises.map(function (promise) {
                         var value;
-                        promise.then(function (v) { value = v; });
+                        promise.then(function (v) {
+                            value = v;
+                        });
                         return value;
                     }));
                 });
@@ -189,8 +189,7 @@ define(
 
             describe("copies object trees with multiple references to the" +
                 " same object", function () {
-                var model,
-                    mockDomainObjectB,
+                var mockDomainObjectB,
                     mockComposingObject,
                     composingObjectModel,
                     domainObjectClone,
@@ -254,9 +253,7 @@ define(
                 it(" and correctly updates child identifiers in object" +
                     " arrays within models ", function () {
                     var childA_ID = task.clones[0].getId(),
-                        childB_ID = task.clones[1].getId(),
-                        childC_ID = task.clones[3].getId(),
-                        childD_ID = task.clones[4].getId();
+                        childB_ID = task.clones[1].getId();
 
                     expect(domainObjectClone.model.objArr[0].id).not.toBe(ID_A);
                     expect(domainObjectClone.model.objArr[0].id).toBe(childA_ID);

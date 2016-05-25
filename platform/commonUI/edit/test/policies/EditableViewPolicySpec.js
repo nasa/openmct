@@ -19,16 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/policies/EditableViewPolicy"],
     function (EditableViewPolicy) {
-        "use strict";
 
         describe("The editable view policy", function () {
-            var testView,
-                mockDomainObject,
+            var mockDomainObject,
                 testMode,
                 policy;
 
@@ -36,8 +33,13 @@ define(
                 testMode = true; // Act as if we're in Edit mode by default
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    ['hasCapability']
+                    ['hasCapability', 'getCapability']
                 );
+                mockDomainObject.getCapability.andReturn({
+                    inEditContext: function () {
+                       return true;
+                   }
+                });
                 mockDomainObject.hasCapability.andCallFake(function (c) {
                     return (c === 'editor') && testMode;
                 });

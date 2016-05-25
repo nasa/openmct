@@ -19,15 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ['../../src/elements/ElementFactory'],
     function (ElementFactory) {
-        "use strict";
 
-        var DIALOG_ELEMENTS = [ 'image', 'text' ],
-            NON_DIALOG_ELEMENTS = [ 'box', 'line' ];
+        var DIALOG_ELEMENTS = ['image', 'text'],
+            NON_DIALOG_ELEMENTS = ['box', 'line'];
 
         describe("The fixed position element factory", function () {
             var mockDialogService,
@@ -37,11 +35,11 @@ define(
             beforeEach(function () {
                 mockDialogService = jasmine.createSpyObj(
                     'dialogService',
-                    [ 'getUserInput' ]
+                    ['getUserInput']
                 );
                 mockPromise = jasmine.createSpyObj(
                     'promise',
-                    [ 'then' ]
+                    ['then']
                 );
 
                 mockDialogService.getUserInput.andReturn(mockPromise);

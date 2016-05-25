@@ -19,11 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 define(
     [],
     function () {
-        'use strict';
 
         /**
          * Controller for the `dialog-button` control type. Provides
@@ -73,7 +71,7 @@ define(
                 // Prepare the form; a single row
                 buttonForm = {
                     name: structure.title,
-                    sections: [ { rows: [ row ] } ]
+                    sections: [{ rows: [row] }]
                 };
             }
 

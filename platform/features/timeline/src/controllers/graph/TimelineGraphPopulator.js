@@ -19,11 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 define(
     ['./TimelineGraph', './TimelineGraphRenderer'],
     function (TimelineGraph, TimelineGraphRenderer) {
-        'use strict';
 
         /**
          * Responsible for determining which resource graphs
@@ -77,11 +75,14 @@ define(
 
                 // Look up resources for a domain object
                 function lookupResources(swimlane) {
-                    var graphs = swimlane.domainObject.useCapability('graph');
+                    var graphPromise =
+                        swimlane.domainObject.useCapability('graph');
                     function getKeys(obj) {
                         return Object.keys(obj);
                     }
-                    return $q.when(graphs ? (graphs.then(getKeys)) : []);
+                    return $q.when(
+                        graphPromise ? (graphPromise.then(getKeys)) : []
+                    );
                 }
 
                 // Add all graph assignments appropriate for this swimlane

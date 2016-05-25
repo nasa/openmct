@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../../src/controllers/TimeRangeController", "moment"],
     function (TimeRangeController, moment) {
-        "use strict";
 
         var SEC = 1000,
             MIN = 60 * SEC,
@@ -58,16 +56,16 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$apply", "$watch", "$watchCollection" ]
+                    ["$apply", "$watch", "$watchCollection"]
                 );
                 mockFormatService = jasmine.createSpyObj(
                     "formatService",
-                    [ "getFormat" ]
+                    ["getFormat"]
                 );
                 testDefaultFormat = 'utc';
                 mockFormat = jasmine.createSpyObj(
                     "format",
-                    [ "validate", "format", "parse" ]
+                    ["validate", "format", "parse"]
                 );
 
                 mockFormatService.getFormat.andReturn(mockFormat);

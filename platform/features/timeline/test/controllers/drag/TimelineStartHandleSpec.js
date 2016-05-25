@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../../src/controllers/drag/TimelineStartHandle', '../../../src/TimelineConstants'],
     function (TimelineStartHandle, TimelineConstants) {
-        'use strict';
 
         describe("A Timeline start drag handle", function () {
             var mockDragHandler,
@@ -35,15 +33,15 @@ define(
             beforeEach(function () {
                 mockDragHandler = jasmine.createSpyObj(
                     'dragHandler',
-                    [ 'start', 'persist' ]
+                    ['start', 'persist']
                 );
                 mockSnapHandler = jasmine.createSpyObj(
                     'snapHandler',
-                    [ 'snap' ]
+                    ['snap']
                 );
                 mockZoomController = jasmine.createSpyObj(
                     'zoom',
-                    [ 'toMillis', 'toPixels' ]
+                    ['toMillis', 'toPixels']
                 );
 
                 mockDragHandler.start.andReturn(12321);

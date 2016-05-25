@@ -19,11 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     function () {
-        'use strict';
 
 
         var conversions = {
@@ -35,8 +33,12 @@ define(
                     }
                 },
                 identity: {
-                    toModelValue: function (v) { return v; },
-                    toFormValue: function (v) { return v; }
+                    toModelValue: function (v) {
+                        return v;
+                    },
+                    toFormValue: function (v) {
+                        return v;
+                    }
                 }
             },
             ARRAY_SUFFIX = '[]';

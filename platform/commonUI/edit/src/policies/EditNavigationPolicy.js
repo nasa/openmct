@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Policy controlling whether navigation events should proceed
@@ -40,15 +38,14 @@ define(
         /**
          * @private
          */
-        EditNavigationPolicy.prototype.isDirty = function(domainObject) {
+        EditNavigationPolicy.prototype.isDirty = function (domainObject) {
             var navigatedObject = domainObject,
                 editorCapability = navigatedObject &&
-                    navigatedObject.getCapability("editor"),
-                statusCapability = navigatedObject &&
-                    navigatedObject.getCapability("status");
+                    navigatedObject.getCapability("editor");
 
-            return statusCapability && statusCapability.get('editing')
-                && editorCapability && editorCapability.dirty();
+            return editorCapability &&
+                editorCapability.isEditContextRoot() &&
+                editorCapability.dirty();
         };
 
         /**

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Notes on implementation of plot options
@@ -51,21 +49,42 @@ define(
 
             this.$scope = $scope;
             this.domainObject = $scope.domainObject;
+            this.listeners = [];
 
             $scope.columnsForm = {};
 
-            this.domainObject.getCapability('mutation').listen(function (model) {
-               self.populateForm(model);
+            function unlisten() {
+                self.listeners.forEach(function (listener) {
+                    listener();
+                });
+            }
+
+            $scope.$watch('domainObject', function (domainObject) {
+                unlisten();
+                self.populateForm(domainObject.getModel());
+
+                self.listeners.push(self.domainObject.getCapability('mutation').listen(function (model) {
+                    self.populateForm(model);
+                }));
             });
 
-            $scope.$watchCollection('configuration.table.columns', function (columns){
-                if (columns){
+            /**
+             * Maintain a configuration object on scope that stores column
+             * configuration. On change, synchronize with object model.
+             */
+            $scope.$watchCollection('configuration.table.columns', function (columns) {
+                if (columns) {
                     self.domainObject.useCapability('mutation', function (model) {
-                       model.configuration.table.columns = columns;
+                        model.configuration.table.columns = columns;
                     });
                     self.domainObject.getCapability('persistence').persist();
                 }
             });
+
+            /**
+             * Destroy all mutation listeners
+             */
+            $scope.$on('$destroy', unlisten);
 
         }
 
@@ -73,20 +92,20 @@ define(
             var columnsDefinition = (((model.configuration || {}).table || {}).columns || {}),
                 rows = [];
             this.$scope.columnsForm = {
-                'name':'Columns',
+                'name': 'Columns',
                 'sections': [{
                     'name': 'Columns',
                     'rows': rows
                 }]};
 
-            Object.keys(columnsDefinition).forEach(function (key){
+            Object.keys(columnsDefinition).forEach(function (key) {
                 rows.push({
                     'name': key,
                     'control': 'checkbox',
                     'key': key
                 });
             });
-            this.$scope.configuration = JSON.parse(JSON.stringify(model.configuration));
+            this.$scope.configuration = JSON.parse(JSON.stringify(model.configuration || {}));
         };
 
         return TableOptionsController;

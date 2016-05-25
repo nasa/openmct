@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../../src/controllers/swimlane/TimelineSwimlaneDecorator'],
     function (TimelineSwimlaneDecorator) {
-        'use strict';
 
         describe("A Timeline swimlane decorator", function () {
             var mockSwimlane,
@@ -45,7 +43,7 @@ define(
 
                 mockSwimlane.domainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getCapability', 'getModel' ]
+                    ['getCapability', 'getModel']
                 );
 
                 mockCapabilities.mutation = jasmine.createSpyObj(
@@ -160,11 +158,11 @@ define(
             it("fires the 'remove' action when remove is called", function () {
                 var mockChild = jasmine.createSpyObj(
                         'childObject',
-                        [ 'getCapability', 'getModel' ]
+                        ['getCapability', 'getModel']
                     ),
                     mockAction = jasmine.createSpyObj(
                         'action',
-                        [ 'perform' ]
+                        ['perform']
                     );
 
                 mockChild.getCapability.andCallFake(function (c) {

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../src/TelemetryController"],
     function (TelemetryController) {
-        "use strict";
 
         describe("The telemetry controller", function () {
             var mockScope,
@@ -47,9 +45,9 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$on", "$broadcast", "$watch" ]
+                    ["$on", "$broadcast", "$watch"]
                 );
-                mockQ = jasmine.createSpyObj("$q", [ "all", "when" ]);
+                mockQ = jasmine.createSpyObj("$q", ["all", "when"]);
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockLog = jasmine.createSpyObj("$log", ["warn", "info", "debug"]);
 
@@ -66,7 +64,7 @@ define(
 
                 mockTelemetry = jasmine.createSpyObj(
                     "telemetry",
-                    [ "requestData", "subscribe", "getMetadata" ]
+                    ["requestData", "subscribe", "getMetadata"]
                 );
                 mockUnsubscribe = jasmine.createSpy("unsubscribe");
 

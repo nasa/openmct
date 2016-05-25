@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining BundleLoader.js. Created by vwoeltje on 10/31/14.
@@ -27,7 +26,6 @@
 define(
     ['../Constants', './Bundle'],
     function (Constants, Bundle) {
-        "use strict";
 
         var INVALID_ARGUMENT_MESSAGE = "Malformed loadBundles argument; " +
             "expected string or array",
@@ -75,7 +73,9 @@ define(
             // loadBundleDefinition, so at this point they are safe
             // to discard.
             function filterBundles(array) {
-                return array.filter(function (x) { return x !== undefined; });
+                return array.filter(function (x) {
+                    return x !== undefined;
+                });
             }
 
             // Load a definition for a bundle

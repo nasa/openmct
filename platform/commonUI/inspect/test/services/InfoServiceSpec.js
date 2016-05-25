@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
-    ['../../src/services/InfoService', '../../src/InfoConstants'],
-    function (InfoService, InfoConstants) {
-        "use strict";
+    ['../../src/services/InfoService'],
+    function (InfoService) {
 
         describe("The info service", function () {
             var mockCompile,
@@ -81,7 +79,7 @@ define(
                 service.display('', '', {}, [123, 456]);
                 expect(mockPopupService.display).toHaveBeenCalledWith(
                     mockElements[0],
-                    [ 123, 456 ],
+                    [123, 456],
                     jasmine.any(Object)
                 );
             });
@@ -104,16 +102,16 @@ define(
                 service.display('', '', {}, [123, 456]);
                 expect(mockPopupService.display).toHaveBeenCalledWith(
                     mockElements[0],
-                    [ 0, -25 ],
+                    [0, -25],
                     jasmine.any(Object)
                 );
             });
 
-            [ false, true ].forEach(function (goesLeft) {
-                [ false, true].forEach(function (goesUp) {
+            [false, true].forEach(function (goesLeft) {
+                [false, true].forEach(function (goesUp) {
                     var vertical = goesUp ? "up" : "down",
                         horizontal = goesLeft ? "left" : "right",
-                        location = [ vertical, horizontal].join('-');
+                        location = [vertical, horizontal].join('-');
                     describe("when bubble goes " + location, function () {
                         var expectedLocation = [
                                 goesUp ? "bottom" : "top",
@@ -125,7 +123,7 @@ define(
                             mockPopup.goesDown.andReturn(!goesUp);
                             mockPopup.goesLeft.andReturn(goesLeft);
                             mockPopup.goesRight.andReturn(!goesLeft);
-                            service.display('', '', {}, [ 10, 10 ]);
+                            service.display('', '', {}, [10, 10]);
                         });
 
                         it("positions the arrow in the " + expectedLocation, function () {

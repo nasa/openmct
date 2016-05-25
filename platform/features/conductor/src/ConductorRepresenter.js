@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         var TEMPLATE = [
                 "<mct-include key=\"'time-conductor'\" ",
@@ -146,7 +144,7 @@ define(
         };
 
         // Handle a specific representation of a specific domain object
-        ConductorRepresenter.prototype.represent = function represent(representation, representedObject) {
+        ConductorRepresenter.prototype.represent = function represent(representation) {
             this.destroy();
 
             if (this.views.indexOf(representation) !== -1 && !GLOBAL_SHOWING) {

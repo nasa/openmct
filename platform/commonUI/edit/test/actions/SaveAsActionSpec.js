@@ -19,12 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine,xit,xdescribe*/
+/*global describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/actions/SaveAsAction"],
     function (SaveAsAction) {
-        "use strict";
 
         describe("The Save As action", function () {
             var mockDomainObject,
@@ -39,7 +38,7 @@ define(
                 capabilities = {},
                 action;
 
-            function noop () {}
+            function noop() {}
 
             function mockPromise(value) {
                 return (value || {}).then ? value :
@@ -50,7 +49,7 @@ define(
                         catch: function (callback) {
                             return mockPromise(callback(value));
                         }
-                }   ;
+                    }   ;
             }
 
             beforeEach(function () {
@@ -79,10 +78,11 @@ define(
 
                 mockEditorCapability = jasmine.createSpyObj(
                     "editor",
-                    [ "save", "cancel" ]
+                    ["save", "cancel", "isEditContextRoot"]
                 );
                 mockEditorCapability.cancel.andReturn(mockPromise(undefined));
                 mockEditorCapability.save.andReturn(mockPromise(true));
+                mockEditorCapability.isEditContextRoot.andReturn(true);
                 capabilities.editor = mockEditorCapability;
 
                 mockActionCapability = jasmine.createSpyObj(
@@ -130,7 +130,7 @@ define(
                 action.createWizard.andReturn({
                     getFormStructure: noop,
                     getInitialFormValue: noop,
-                    populateObjectFromInput: function() {
+                    populateObjectFromInput: function () {
                         return mockDomainObject;
                     }
                 });

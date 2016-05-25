@@ -19,16 +19,14 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
-    
+
     'legacyRegistry'
 ], function (
-    
+
     legacyRegistry
 ) {
-    "use strict";
 
     legacyRegistry.register("platform/framework", {
         "name": "Open MCT Web Framework Component",

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * CoreCapabilityProviderSpec. Created by vwoeltje on 11/6/14.
@@ -27,22 +26,27 @@
 define(
     ["../../src/capabilities/CoreCapabilityProvider"],
     function (CoreCapabilityProvider) {
-        "use strict";
 
         describe("The core capability provider", function () {
             var mockLog,
                 provider;
 
-            function BasicCapability() { return; }
+            function BasicCapability() {
+                return;
+            }
             BasicCapability.key = "basic";
 
-            function ApplicableCapability() { return; }
+            function ApplicableCapability() {
+                return;
+            }
             ApplicableCapability.key = "applicable";
             ApplicableCapability.appliesTo = function (model) {
                 return !model.isNotApplicable;
             };
 
-            function KeylessCapability() { return; }
+            function KeylessCapability() {
+                return;
+            }
 
             beforeEach(function () {
                 mockLog = jasmine.createSpyObj(

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * MergeModelsSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../src/SubPlotFactory"],
     function (SubPlotFactory) {
-        "use strict";
 
         describe("The sub-plot factory", function () {
             var mockDomainObject,
@@ -38,20 +36,20 @@ define(
             beforeEach(function () {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability" ]
+                    ["getId", "getModel", "getCapability"]
                 );
                 mockPanZoomStack = jasmine.createSpyObj(
                     "panZoomStack",
-                    [ "getPanZoom" ]
+                    ["getPanZoom"]
                 );
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
-                    [ "formatDomainValue", "formatRangeValue" ]
+                    ["formatDomainValue", "formatRangeValue"]
                 );
 
                 mockPanZoomStack.getPanZoom.andReturn({
-                    origin: [ 0, 0 ],
-                    dimensions: [ 100, 100 ]
+                    origin: [0, 0],
+                    dimensions: [100, 100]
                 });
 
                 factory = new SubPlotFactory(mockFormatter);

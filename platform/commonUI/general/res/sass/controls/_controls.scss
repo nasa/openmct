@@ -29,7 +29,7 @@
     .accordion-head {
         $op: 0.2;
         border-radius: $basicCr * 0.75;
-        box-sizing: "border-box";
+        box-sizing: border-box;
         background: rgba($colorBodyFg, $op);
         cursor: pointer;
         font-size: 0.75em;
@@ -279,21 +279,13 @@ input[type="search"] {
         padding-right: 0.35em; // For context arrow. Done with em's so pad is relative to the scale of the text.
     }
 
+    .context-available-w {
+        z-index: 5;
+    }
+
     .context-available {
         font-size: 0.7em;
-        @include webkitProp(flex, '0 0 1');
-    }
-}
-
-body.desktop .object-header {
-    .context-available {
-        @include trans-prop-nice(opacity, 0.25s);
-        opacity: 0;
-    }
-    &:hover {
-        .context-available {
-            opacity: 1;
-        }
+        @include flex(0 0 1);
     }
 }
 
@@ -404,11 +396,11 @@ body.desktop .object-header {
         left: auto;
     }
     .knob-l {
-        @include border-left-radius($sliderKnobW);
+        @include border-left-radius($sliderKnobR);
         cursor: w-resize;
     }
     .knob-r {
-        @include border-right-radius($sliderKnobW);
+        @include border-right-radius($sliderKnobR);
         cursor: e-resize;
     }
     .range {
@@ -434,7 +426,6 @@ body.desktop .object-header {
     @include user-select(none);
     font-size: 0.8rem;
     padding: $interiorMarginLg !important;
-    width: 230px;
     .l-month-year-pager {
         $pagerW: 20px;
         height: $r1H;
@@ -521,6 +512,19 @@ body.desktop .object-header {
                 .sub {
                     color: inherit;
                 }
+            }
+        }
+    }
+}
+
+@include phone {
+    .l-datetime-picker {
+        padding: $interiorMargin !important;
+    }
+    .l-calendar {
+        ul.l-cal-row {
+            li {
+                padding: 2px $interiorMargin;
             }
         }
     }

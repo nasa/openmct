@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * LoggingActionDecoratorSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/actions/LoggingActionDecorator"],
     function (LoggingActionDecorator) {
-        "use strict";
 
         describe("The logging action decorator", function () {
             var mockLog,
@@ -38,15 +36,15 @@ define(
             beforeEach(function () {
                 mockAction = jasmine.createSpyObj(
                     "action",
-                    [ "perform", "getMetadata" ]
+                    ["perform", "getMetadata"]
                 );
                 mockActionService = jasmine.createSpyObj(
                     "actionService",
-                    [ "getActions" ]
+                    ["getActions"]
                 );
                 mockLog = jasmine.createSpyObj(
                     "$log",
-                    [ "error", "warn", "info", "debug" ]
+                    ["error", "warn", "info", "debug"]
                 );
 
                 mockActionService.getActions.andReturn([mockAction]);

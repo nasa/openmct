@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [
@@ -32,7 +31,6 @@ define(
         TimelineGraphPopulator,
         TimelineDragPopulator
     ) {
-        'use strict';
 
         /**
          * Controller for the Timeline view.
@@ -98,7 +96,7 @@ define(
                     });
                 }
             }
-            
+
             // Recalculate swimlane state on changes
             $scope.$watch("domainObject", swimlanePopulator.populate);
 

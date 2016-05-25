@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle implements the policy service.
@@ -28,7 +27,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * A policy is a participant in decision-making policies. Policies

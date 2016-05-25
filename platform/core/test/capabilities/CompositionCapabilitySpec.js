@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * CompositionCapabilitySpec. Created by vwoeltje on 11/6/14.
@@ -30,7 +29,6 @@ define(
         "../../src/capabilities/ContextualDomainObject"
     ],
     function (CompositionCapability, ContextualDomainObject) {
-        "use strict";
 
         var DOMAIN_OBJECT_METHODS = [
             "getId",
@@ -66,7 +64,7 @@ define(
 
                 mockObjectService = jasmine.createSpyObj(
                     "objectService",
-                    [ "getObjects" ]
+                    ["getObjects"]
                 );
 
                 mockInjector = {
@@ -99,7 +97,7 @@ define(
             });
 
             it("requests ids found in model's composition from the object service", function () {
-                var ids = [ "a", "b", "c", "xyz" ];
+                var ids = ["a", "b", "c", "xyz"];
 
                 mockDomainObject.getModel.andReturn({ composition: ids });
 
@@ -116,7 +114,9 @@ define(
                 mockObjectService.getObjects.andReturn(mockPromise({x: mockChild}));
                 mockChild.getCapability.andReturn(undefined);
 
-                composition.invoke().then(function (c) { result = c; });
+                composition.invoke().then(function (c) {
+                    result = c;
+                });
 
                 // Should have been added by a wrapper
                 expect(result[0].getCapability('context')).toBeDefined();
@@ -155,7 +155,7 @@ define(
 
             it("does not re-add IDs which are already present", function () {
                 var result,
-                    testModel = { composition: [ 'a' ] },
+                    testModel = { composition: ['a'] },
                     mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
 
                 mockDomainObject.getModel.andReturn(testModel);
@@ -186,7 +186,7 @@ define(
 
             it("can add objects at a specified index", function () {
                 var result,
-                    testModel = { composition: [ 'a', 'b', 'c' ] },
+                    testModel = { composition: ['a', 'b', 'c'] },
                     mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
 
                 mockDomainObject.getModel.andReturn(testModel);

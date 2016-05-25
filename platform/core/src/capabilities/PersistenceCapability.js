@@ -19,13 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
-/*jslint es5: true */
-
 
 define(
     function () {
-        'use strict';
 
         /**
          * Defines the `persistence` capability, used to trigger the
@@ -64,16 +60,6 @@ define(
             this.$q = $q;
         }
 
-        // Utility function for creating promise-like objects which
-        // resolve synchronously when possible
-        function fastPromise(value) {
-            return (value || {}).then ? value : {
-                then: function (callback) {
-                    return fastPromise(callback(value));
-                }
-            };
-        }
-
         function getKey(id) {
             var parts = id.split(":");
             return parts.length > 1 ? parts.slice(1).join(":") : id;
@@ -83,18 +69,18 @@ define(
          * Checks if the value returned is falsey, and if so returns a
          * rejected promise
          */
-        function rejectIfFalsey(value, $q){
-            if (!value){
+        function rejectIfFalsey(value, $q) {
+            if (!value) {
                 return $q.reject("Error persisting object");
             } else {
                 return value;
             }
         }
 
-        function formatError(error){
+        function formatError(error) {
             if (error && error.message) {
                 return error.message;
-            } else if (error && typeof error === "string"){
+            } else if (error && typeof error === "string") {
                 return error;
             } else {
                 return "unknown error";
@@ -105,7 +91,7 @@ define(
          * Display a notification message if an error has occurred during
          * persistence.
          */
-        function notifyOnError(error, domainObject, notificationService, $q){
+        function notifyOnError(error, domainObject, notificationService, $q) {
             var errorMessage = "Unable to persist " + domainObject.getModel().name;
             if (error) {
                 errorMessage += ": " + formatError(error);
@@ -132,15 +118,14 @@ define(
                 domainObject = this.domainObject,
                 model = domainObject.getModel(),
                 modified = model.modified,
-                cacheService = this.cacheService,
                 persistenceService = this.persistenceService,
                 persistenceFn = model.persisted !== undefined ?
                     this.persistenceService.updateObject :
                     this.persistenceService.createObject;
 
             // Update persistence timestamp...
-            domainObject.useCapability("mutation", function (model) {
-                model.persisted = modified;
+            domainObject.useCapability("mutation", function (m) {
+                m.persisted = modified;
             }, modified);
 
             // ...and persist
@@ -148,9 +133,9 @@ define(
                 this.getSpace(),
                 getKey(domainObject.getId()),
                 domainObject.getModel()
-            ]).then(function(result){
+            ]).then(function (result) {
                 return rejectIfFalsey(result, self.$q);
-            }).catch(function(error){
+            }).catch(function (error) {
                 return notifyOnError(error, domainObject, self.notificationService, self.$q);
             });
         };
@@ -162,8 +147,7 @@ define(
          *          when the update is complete
          */
         PersistenceCapability.prototype.refresh = function () {
-            var domainObject = this.domainObject,
-                model = domainObject.getModel();
+            var domainObject = this.domainObject;
 
             // Update a domain object's model upon refresh
             function updateModel(model) {
@@ -173,13 +157,10 @@ define(
                 }, modified);
             }
 
-            // Only update if we don't have unsaved changes
-            return (model.modified === model.persisted) ?
-                this.persistenceService.readObject(
+            return this.persistenceService.readObject(
                     this.getSpace(),
                     this.domainObject.getId()
-                ).then(updateModel) :
-                fastPromise(false);
+                ).then(updateModel);
         };
 
         /**

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../src/StatusCapability"],
     function (StatusCapability) {
-        "use strict";
 
         describe("The status capability", function () {
             var mockStatusService,
@@ -36,15 +34,15 @@ define(
 
             beforeEach(function () {
                 testId = "some-id";
-                testStatusFlags = [ 'a', 'b', 'c' ];
+                testStatusFlags = ['a', 'b', 'c'];
 
                 mockStatusService = jasmine.createSpyObj(
                     'statusService',
-                    [ 'listen', 'setStatus', 'listStatuses' ]
+                    ['listen', 'setStatus', 'listStatuses']
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getId', 'getCapability', 'getModel' ]
+                    ['getId', 'getCapability', 'getModel']
                 );
                 mockUnlisten = jasmine.createSpy('unlisten');
 

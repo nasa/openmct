@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * A class for encapsulating structure and behaviour of the plot
@@ -39,7 +37,7 @@ define(
              Defined below are the form structures for the plot options.
              */
             this.xAxisForm = {
-                'name':'x-axis',
+                'name': 'x-axis',
                 'sections': [{
                     'name': 'x-axis',
                     'rows': [
@@ -48,30 +46,30 @@ define(
                             'control': 'select',
                             'key': 'key',
                             'options': [
-                                {'name':'SCET', 'value': 'scet'},
-                                {'name':'SCLK', 'value': 'sclk'},
-                                {'name':'LST', 'value': 'lst'}
+                                {'name': 'SCET', 'value': 'scet'},
+                                {'name': 'SCLK', 'value': 'sclk'},
+                                {'name': 'LST', 'value': 'lst'}
                             ]
                         }
                     ]
-            }]};
+                }]};
 
             this.yAxisForm = {
-                'name':'y-axis',
-                'sections': [{
-                // Will need to be repeated for each y-axis, with a
-                // distinct name for each. Ideally the name of the axis
-                // itself.
                 'name': 'y-axis',
-                'rows': [
+                'sections': [{
+                    // Will need to be repeated for each y-axis, with a
+                    // distinct name for each. Ideally the name of the axis
+                    // itself.
+                    'name': 'y-axis',
+                    'rows': [
                     {
                         'name': 'Range',
                         'control': 'select',
                         'key': 'key',
                         'options': [
-                            {'name':'EU', 'value': 'eu'},
-                            {'name':'DN', 'value': 'dn'},
-                            {'name':'Status', 'value': 'status'}
+                            {'name': 'EU', 'value': 'eu'},
+                            {'name': 'DN', 'value': 'dn'},
+                            {'name': 'Status', 'value': 'status'}
                         ]
                     },
                     {
@@ -97,7 +95,7 @@ define(
                 }]
             };
             this.plotSeriesForm = {
-                'name':'Series Options',
+                'name': 'Series Options',
                 'sections': [
                     {
                         rows: [
@@ -108,7 +106,7 @@ define(
                         }]
                     },
                     {
-                        'rows':[
+                        'rows': [
                             {
                                 'name': 'Markers',
                                 'control': 'checkbox',
@@ -118,7 +116,7 @@ define(
                         ]
                     },
                     {
-                        'rows':[
+                        'rows': [
                             {
                                 'name': 'No Line',
                                 'control': 'radio',

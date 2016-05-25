@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * MCTRepresentationSpec. Created by vwoeltje on 11/6/14.
@@ -27,17 +26,17 @@
 define(
     ["../src/MCTRepresentation"],
     function (MCTRepresentation) {
-        "use strict";
 
-        var JQLITE_FUNCTIONS = [ "on", "off", "attr", "removeAttr" ],
-            LOG_FUNCTIONS = [ "error", "warn", "info", "debug"],
-            DOMAIN_OBJECT_METHODS = [ "getId", "getModel", "getCapability", "hasCapability", "useCapability"];
+        var JQLITE_FUNCTIONS = ["on", "off", "attr", "removeAttr"],
+            LOG_FUNCTIONS = ["error", "warn", "info", "debug"],
+            DOMAIN_OBJECT_METHODS = ["getId", "getModel", "getCapability", "hasCapability", "useCapability"];
 
         describe("The mct-representation directive", function () {
             var testRepresentations,
                 testViews,
                 testUrls,
                 mockRepresenters,
+                mockStatusCapability,
                 mockQ,
                 mockLinker,
                 mockLog,
@@ -77,7 +76,7 @@ define(
                         key: "def",
                         bundle: { path: "d", resources: "e" },
                         templateUrl: "f/template.html",
-                        uses: [ "testCapability", "otherTestCapability" ]
+                        uses: ["testCapability", "otherTestCapability"]
                     }
                 ];
 
@@ -86,7 +85,7 @@ define(
                         key: "uvw",
                         bundle: { path: "u", resources: "v" },
                         templateUrl: "w/template.html",
-                        gestures: [ "testGesture", "otherTestGesture" ]
+                        gestures: ["testGesture", "otherTestGesture"]
                     },
                     {
                         key: "xyz",
@@ -106,7 +105,7 @@ define(
                     var constructor = jasmine.createSpy("Representer" + name),
                         representer = jasmine.createSpyObj(
                             "representer" + name,
-                            [ "represent", "destroy" ]
+                            ["represent", "destroy"]
                         );
                     constructor.andReturn(representer);
                     return constructor;
@@ -120,7 +119,9 @@ define(
                 mockChangeTemplate = jasmine.createSpy('changeTemplate');
                 mockLog = jasmine.createSpyObj("$log", LOG_FUNCTIONS);
 
-                mockScope = jasmine.createSpyObj("scope", [ "$watch", "$on" ]);
+                mockStatusCapability = jasmine.createSpyObj("statusCapability", ["listen"]);
+
+                mockScope = jasmine.createSpyObj("scope", ["$watch", "$on"]);
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
 
@@ -128,6 +129,10 @@ define(
                 mockLinker.link.andReturn(mockChangeTemplate);
                 mockLinker.getPath.andCallFake(function (ext) {
                     return testUrls[ext.key];
+                });
+
+                mockDomainObject.getCapability.andCallFake(function (c) {
+                    return c === 'status' && mockStatusCapability;
                 });
 
                 mctRepresentation = new MCTRepresentation(
@@ -189,6 +194,21 @@ define(
                     .toHaveBeenCalledWith(testViews[1]);
             });
 
+            it("exposes configuration before changing templates", function () {
+                var observedConfiguration;
+
+                mockChangeTemplate.andCallFake(function () {
+                    observedConfiguration = mockScope.configuration;
+                });
+
+                mockScope.key = "xyz";
+                mockScope.domainObject = mockDomainObject;
+                fireWatch('key', mockScope.key);
+                fireWatch('domainObject', mockDomainObject);
+
+                expect(observedConfiguration).toBeDefined();
+            });
+
             it("does not load templates until there is an object", function () {
                 mockScope.key = "xyz";
 
@@ -231,7 +251,7 @@ define(
                 expect(mockLog.warn).toHaveBeenCalled();
             });
 
-            it("clears out obsolete peroperties from scope", function () {
+            it("clears out obsolete properties from scope", function () {
                 mockScope.key = "def";
                 mockScope.domainObject = mockDomainObject;
                 mockDomainObject.useCapability.andReturn("some value");
@@ -309,6 +329,7 @@ define(
                     mockScope.$watch.calls[0].args[1]();
                     expect(mockChangeTemplate.calls.length).toEqual(callCount);
                 });
+
             });
 
 

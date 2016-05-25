@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * MCTIncudeSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../src/OverlayService"],
     function (OverlayService) {
-        "use strict";
 
         describe("The overlay service", function () {
             var mockDocument,
@@ -40,13 +38,13 @@ define(
                 overlayService;
 
             beforeEach(function () {
-                mockDocument = jasmine.createSpyObj("$document", [ "find" ]);
+                mockDocument = jasmine.createSpyObj("$document", ["find"]);
                 mockCompile = jasmine.createSpy("$compile");
-                mockRootScope = jasmine.createSpyObj("$rootScope", [ "$new" ]);
-                mockBody = jasmine.createSpyObj("body", [ "prepend" ]);
+                mockRootScope = jasmine.createSpyObj("$rootScope", ["$new"]);
+                mockBody = jasmine.createSpyObj("body", ["prepend"]);
                 mockTemplate = jasmine.createSpy("template");
-                mockElement = jasmine.createSpyObj("element", [ "remove" ]);
-                mockScope = jasmine.createSpyObj("scope", [ "$destroy" ]);
+                mockElement = jasmine.createSpyObj("element", ["remove"]);
+                mockScope = jasmine.createSpyObj("scope", ["$destroy"]);
 
                 mockDocument.find.andReturn(mockBody);
                 mockCompile.andReturn(mockTemplate);

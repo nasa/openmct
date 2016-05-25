@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * MergeModelsSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/elements/PlotLineBuffer"],
     function (PlotLineBuffer) {
-        "use strict";
 
         var TEST_INITIAL_SIZE = 10,
             TEST_MAX_SIZE = 40,
@@ -40,8 +38,8 @@ define(
                 buffer;
 
             beforeEach(function () {
-                testDomainValues = [ 1, 3, 7, 9, 14, 15 ];
-                testRangeValues = [ 8, 0, 3, 9, 8, 11 ];
+                testDomainValues = [1, 3, 7, 9, 14, 15];
+                testRangeValues = [8, 0, 3, 9, 8, 11];
                 mockSeries = jasmine.createSpyObj(
                     "series",
                     ['getPointCount', 'getDomainValue', 'getRangeValue']
@@ -72,7 +70,7 @@ define(
                 // that domain offset was adjusted for.
                 expect(
                     Array.prototype.slice.call(buffer.getBuffer()).slice(0, 12)
-                ).toEqual([ -41, 8, -39, 0, -35, 3, -33, 9, -28, 8, -27, 11]);
+                ).toEqual([-41, 8, -39, 0, -35, 3, -33, 9, -28, 8, -27, 11]);
                 expect(buffer.getLength()).toEqual(6);
             });
 
@@ -86,8 +84,8 @@ define(
             });
 
             it("allows insertion in the middle", function () {
-                var head = [ -41, 8, -39, 0, -35, 3 ],
-                    tail = [ -33, 9, -28, 8, -27, 11];
+                var head = [-41, 8, -39, 0, -35, 3],
+                    tail = [-33, 9, -28, 8, -27, 11];
                 buffer.insert(mockSeries, 3);
                 expect(
                     Array.prototype.slice.call(buffer.getBuffer()).slice(0, 24)
@@ -100,7 +98,7 @@ define(
                 expect(buffer.getLength()).toEqual(4);
                 expect(
                     Array.prototype.slice.call(buffer.getBuffer()).slice(0, 8)
-                ).toEqual([ -35, 3, -33, 9, -28, 8, -27, 11]);
+                ).toEqual([-35, 3, -33, 9, -28, 8, -27, 11]);
             });
 
             it("expands buffer when needed to accommodate more data", function () {

@@ -19,18 +19,16 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,xit,expect,beforeEach*/
 
 define(
     ['../../src/types/TypePropertyConversion'],
     function (TypePropertyConversion) {
-        "use strict";
 
         describe("Type property conversion", function () {
 
             it("allows non-conversion when parameter is 'identity'", function () {
                 var conversion = new TypePropertyConversion("identity");
-                [ 42, "42", { a: 42 } ].forEach(function (v) {
+                [42, "42", { a: 42 }].forEach(function (v) {
                     expect(conversion.toFormValue(v)).toBe(v);
                     expect(conversion.toModelValue(v)).toBe(v);
                 });

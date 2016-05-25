@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../src/capabilities/CostCapability'],
     function (CostCapability) {
-        'use strict';
 
         describe("A subsystem mode's cost capability", function () {
             var testModel,
@@ -33,7 +31,7 @@ define(
             beforeEach(function () {
                 var mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getModel', 'getId' ]
+                    ['getModel', 'getId']
                 );
 
                 testModel = {

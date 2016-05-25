@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../src/TelemetrySubscriber"],
     function (TelemetrySubscriber) {
-        "use strict";
 
         describe("The telemetry subscriber", function () {
             // TelemetrySubscriber just provides a factory
@@ -42,7 +40,7 @@ define(
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getCapability", "useCapability", "hasCapability" ]
+                    ["getCapability", "useCapability", "hasCapability"]
                 );
                 mockCallback = jasmine.createSpy("callback");
                 mockPromise = jasmine.createSpyObj("promise", ["then"]);

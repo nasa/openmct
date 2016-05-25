@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine,xit,xdescribe*/
 
 /**
  * MCTRepresentationSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../src/BrowseController"],
     function (BrowseController) {
-        "use strict";
 
         describe("The browse controller", function () {
             var mockScope,
@@ -80,12 +78,12 @@ define(
 
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$on", "$watch" ]
+                    ["$on", "$watch"]
                 );
                 mockRoute = { current: { params: {} } };
                 mockLocation = jasmine.createSpyObj(
                     "$location",
-                    [ "path" ]
+                    ["path"]
                 );
                 mockUrlService = jasmine.createSpyObj(
                     "urlService",
@@ -93,7 +91,7 @@ define(
                 );
                 mockObjectService = jasmine.createSpyObj(
                     "objectService",
-                    [ "getObjects" ]
+                    ["getObjects"]
                 );
                 mockNavigationService = jasmine.createSpyObj(
                     "navigationService",
@@ -106,15 +104,15 @@ define(
                 );
                 mockRootObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getCapability", "getModel", "useCapability" ]
+                    ["getId", "getCapability", "getModel", "useCapability"]
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getCapability", "getModel", "useCapability" ]
+                    ["getId", "getCapability", "getModel", "useCapability"]
                 );
                 mockNextObject = jasmine.createSpyObj(
                     "nextObject",
-                    [ "getId", "getCapability", "getModel", "useCapability" ]
+                    ["getId", "getCapability", "getModel", "useCapability"]
                 );
 
                 mockObjectService.getObjects.andReturn(mockPromise({
@@ -257,7 +255,7 @@ define(
                 " object", function () {
                 mockScope.navigatedObject = mockDomainObject;
                 mockWindow.confirm.andReturn(false);
-                mockPolicyService.allow.andCallFake(function(category, object, context, callback){
+                mockPolicyService.allow.andCallFake(function (category, object, context, callback) {
                     callback("unsaved changes");
                     return false;
                 });

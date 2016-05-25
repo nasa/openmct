@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining AddActionProvider.js. Created by ahenry on 01/21/16.
@@ -27,7 +26,6 @@
 define(
     ["./AddAction"],
     function (AddAction) {
-        "use strict";
 
         /**
          * The AddActionProvider is an ActionProvider which introduces

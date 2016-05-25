@@ -20,11 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define */
 
 define(
     function () {
-        "use strict";
 
         /**
          * LinkService provides an interface for linking objects to additional
@@ -69,7 +67,9 @@ define(
                 .then(function (objectInNewContext) {
                     return parentObject.getCapability('persistence')
                         .persist()
-                        .then(function () { return objectInNewContext; });
+                        .then(function () {
+                            return objectInNewContext;
+                        });
                 });
         };
 

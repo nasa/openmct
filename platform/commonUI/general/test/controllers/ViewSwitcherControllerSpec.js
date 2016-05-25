@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * MCTRepresentationSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/controllers/ViewSwitcherController"],
     function (ViewSwitcherController) {
-        "use strict";
 
         describe("The view switcher controller", function () {
             var mockScope,
@@ -35,9 +33,11 @@ define(
                 controller;
 
             beforeEach(function () {
-                mockScope = jasmine.createSpyObj("$scope", [ "$watch" ]);
+                mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 mockTimeout = jasmine.createSpy("$timeout");
-                mockTimeout.andCallFake(function (cb) { cb(); });
+                mockTimeout.andCallFake(function (cb) {
+                    cb();
+                });
                 mockScope.ngModel = {};
                 controller = new ViewSwitcherController(mockScope, mockTimeout);
             });

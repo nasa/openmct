@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining AddAction. Created by ahenry on 01/21/16.
@@ -29,7 +28,6 @@ define(
         './CreateWizard'
     ],
     function (CreateWizard) {
-        "use strict";
 
         /**
          * The Add Action is performed to create new instances of
@@ -83,13 +81,13 @@ define(
 
             newModel.type = this.type.getKey();
             newObject = parentObject.getCapability('instantiation').instantiate(newModel);
-            newObject.useCapability('mutation', function(model){
+            newObject.useCapability('mutation', function (model) {
                 model.location = parentObject.getId();
             });
 
             wizard = new CreateWizard(newObject, this.parent, this.policyService);
 
-            function populateObjectFromInput (formValue) {
+            function populateObjectFromInput(formValue) {
                 return wizard.populateObjectFromInput(formValue, newObject);
             }
 
@@ -101,7 +99,7 @@ define(
                     });
             }
 
-            function addToParent (populatedObject) {
+            function addToParent(populatedObject) {
                 parentObject.getCapability('composition').add(populatedObject);
                 return persistAndReturn(parentObject);
             }
@@ -127,7 +125,7 @@ define(
          * @returns {AddActionMetadata} metadata about this action
          */
         AddAction.prototype.getMetadata = function () {
-           return this.metadata;
+            return this.metadata;
         };
 
         return AddAction;

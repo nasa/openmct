@@ -19,13 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 
 define(
     ["../../src/services/DndService"],
     function (DndService) {
-        "use strict";
 
         describe("The drag-and-drop service", function () {
             var service;
@@ -37,7 +35,9 @@ define(
 
             it("allows setting of arbitrary objects", function () {
                 var foo = {
-                    bar: function () { return 42; }
+                    bar: function () {
+                        return 42;
+                    }
                 };
 
                 service.setData('xyz', foo);

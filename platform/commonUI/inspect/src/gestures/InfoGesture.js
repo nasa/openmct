@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * The `info` gesture displays domain object metadata in a
@@ -73,7 +71,7 @@ define(
         InfoGesture.prototype.trackPosition = function (event) {
             // Record mouse position, so bubble can be shown at latest
             // mouse position (not just where the mouse entered)
-            this.mousePosition = [ event.clientX, event.clientY ];
+            this.mousePosition = [event.clientX, event.clientY];
         };
 
         InfoGesture.prototype.hideBubble = function () {

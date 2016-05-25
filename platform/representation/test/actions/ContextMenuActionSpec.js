@@ -19,20 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 
 /**
  * Module defining ContextMenuActionSpec. Created by shale on 07/02/2015.
  */
 define(
-    ["../../src/actions/ContextMenuAction", "../../src/gestures/GestureConstants"],
-    function (ContextMenuAction, GestureConstants) {
-        "use strict";
+    ["../../src/actions/ContextMenuAction"],
+    function (ContextMenuAction) {
 
-        var JQLITE_FUNCTIONS = [ "on", "off", "find", "append", "remove" ],
-            DOMAIN_OBJECT_METHODS = [ "getId", "getModel", "getCapability", "hasCapability", "useCapability" ],
-            MENU_DIMENSIONS = GestureConstants.MCT_MENU_DIMENSIONS;
+        var JQLITE_FUNCTIONS = ["on", "off", "find", "append", "remove"],
+            DOMAIN_OBJECT_METHODS = ["getId", "getModel", "getCapability", "hasCapability", "useCapability"];
 
 
         describe("The 'context menu' action", function () {
@@ -96,7 +93,7 @@ define(
                 action.perform();
                 expect(mockPopupService.display).toHaveBeenCalledWith(
                     mockMenu,
-                    [ mockEvent.pageX, mockEvent.pageY ],
+                    [mockEvent.pageX, mockEvent.pageY],
                     jasmine.any(Object)
                 );
             });
@@ -107,7 +104,7 @@ define(
             });
 
             it("adds classes to menus based on position", function () {
-                var booleans = [ false, true ];
+                var booleans = [false, true];
 
                 booleans.forEach(function (goLeft) {
                     booleans.forEach(function (goUp) {

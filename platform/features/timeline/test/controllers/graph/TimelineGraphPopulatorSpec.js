@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../../src/controllers/graph/TimelineGraphPopulator'],
     function (TimelineGraphPopulator) {
-        'use strict';
 
         describe("A Timeline's resource graph populator", function () {
             var mockSwimlanes,
@@ -50,9 +48,9 @@ define(
 
             beforeEach(function () {
                 testResources = {
-                    a: [ 'xyz', 'abc' ],
-                    b: [ 'xyz' ],
-                    c: [ 'xyz', 'abc', 'def', 'ghi' ]
+                    a: ['xyz', 'abc'],
+                    b: ['xyz'],
+                    c: ['xyz', 'abc', 'def', 'ghi']
                 };
 
                 mockQ = jasmine.createSpyObj('$q', ['when', 'all']);
@@ -60,16 +58,16 @@ define(
                 mockSwimlanes = ['a', 'b', 'c'].map(function (k) {
                     var mockSwimlane = jasmine.createSpyObj(
                             'swimlane-' + k,
-                            [ 'graph', 'color' ]
+                            ['graph', 'color']
                         ),
                         mockGraph = jasmine.createSpyObj(
                             'graph-' + k,
-                            [ 'getPointCount', 'getDomainValue', 'getRangeValue' ]
+                            ['getPointCount', 'getDomainValue', 'getRangeValue']
                         );
                     mockSwimlane.graph.andReturn(true);
                     mockSwimlane.domainObject = jasmine.createSpyObj(
                         'domainObject-' + k,
-                        [ 'getCapability', 'hasCapability', 'useCapability', 'getId' ]
+                        ['getCapability', 'hasCapability', 'useCapability', 'getId']
                     );
                     mockSwimlane.color.andReturn('#' + k);
                     // Provide just enough information about graphs to support

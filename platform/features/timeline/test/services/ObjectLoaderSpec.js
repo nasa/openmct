@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../src/services/ObjectLoader'],
     function (ObjectLoader) {
-        "use strict";
 
         describe("The domain object loader", function () {
             var mockQ,
@@ -56,7 +54,7 @@ define(
             function addDomainObject(id, children, capabilities) {
                 var mockDomainObject = jasmine.createSpyObj(
                     'object-' + id,
-                    [ 'useCapability', 'hasCapability', 'getId' ]
+                    ['useCapability', 'hasCapability', 'getId']
                 );
 
                 mockDomainObject.getId.andReturn(id);
@@ -74,7 +72,7 @@ define(
             }
 
             beforeEach(function () {
-                mockQ = jasmine.createSpyObj('$q', [ 'when', 'all' ]);
+                mockQ = jasmine.createSpyObj('$q', ['when', 'all']);
                 mockCallback = jasmine.createSpy('callback');
                 mockDomainObjects = {};
                 testCompositions = {};
@@ -84,8 +82,12 @@ define(
                 mockQ.when.andCallFake(asPromise);
                 mockQ.all.andCallFake(function (values) {
                     var result = [];
-                    function addResult(v) { result.push(v); }
-                    function promiseResult(v) { asPromise(v).then(addResult); }
+                    function addResult(v) {
+                        result.push(v);
+                    }
+                    function promiseResult(v) {
+                        asPromise(v).then(addResult);
+                    }
                     values.forEach(promiseResult);
                     return asPromise(result);
                 });

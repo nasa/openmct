@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining UrlService.
@@ -27,7 +26,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * The url service handles calls for url paths
@@ -52,8 +50,8 @@ define(
             var context = domainObject &&
                     domainObject.getCapability('context'),
                 objectPath = context ? context.getPath() : [],
-                ids = objectPath.map(function (domainObject) {
-                    return domainObject.getId();
+                ids = objectPath.map(function (domainObj) {
+                    return domainObj.getId();
                 });
 
             // Parses the path together. Starts with the

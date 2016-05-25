@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Float32Array*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Contains the buffer used to draw a plot.
@@ -37,7 +35,7 @@ define(
         function PlotLineBuffer(domainOffset, initialSize, maxSize) {
             this.buffer = new Float32Array(initialSize * 2);
             this.rangeExtrema =
-                [ Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY ];
+                [Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY];
             this.length = 0;
             this.domainOffset = domainOffset;
             this.initialSize = initialSize;

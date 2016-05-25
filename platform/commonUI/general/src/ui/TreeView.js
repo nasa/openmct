@@ -19,14 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     'zepto',
     './TreeNodeView',
     'text!../../res/templates/tree/wait-node.html'
 ], function ($, TreeNodeView, spinnerTemplate) {
-    'use strict';
 
     function TreeView(gestureService, selectFn) {
         this.ul = $('<ul class="tree"></ul>');
@@ -64,8 +62,8 @@ define([
         var self = this,
             domainObject = this.activeObject;
 
-        function addNode(domainObject, index) {
-            self.nodeViews[index].model(domainObject);
+        function addNode(domainObj, index) {
+            self.nodeViews[index].model(domainObj);
         }
 
         function addNodes(domainObjects) {

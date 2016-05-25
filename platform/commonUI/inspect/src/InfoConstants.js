@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle provides support for object inspection (specifically, metadata
@@ -41,7 +40,7 @@ define({
         offsetX: 0,
         offsetY: -26
     },
-    BUBBLE_MOBILE_POSITION: [ 0, -25 ],
+    BUBBLE_MOBILE_POSITION: [0, -25],
     // Max width and margins allowed for bubbles;
     // defined in /platform/commonUI/general/res/sass/_constants.scss
     BUBBLE_MARGIN_LR: 10,

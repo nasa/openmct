@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * The PersistenceQueue is used by the QueuingPersistenceCapability
@@ -68,8 +66,8 @@ define(
 
             // Check if the queue's size has stopped increasing)
             function quiescent() {
-                return Object.keys(self.persistences).length
-                        === self.lastObservedSize;
+                return Object.keys(self.persistences).length ===
+                    self.lastObservedSize;
             }
 
             // Persist all queued objects

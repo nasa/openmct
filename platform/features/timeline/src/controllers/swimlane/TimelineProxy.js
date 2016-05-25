@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Selection proxy for the Timeline view. Implements
@@ -36,8 +34,8 @@ define(
             var actionMap = {};
 
             // Populate available Create actions for this domain object
-            function populateActionMap(domainObject) {
-                var actionCapability = domainObject.getCapability('action'),
+            function populateActionMap(object) {
+                var actionCapability = object.getCapability('action'),
                     actions = actionCapability ?
                             actionCapability.getActions('add') : [];
                 actions.forEach(function (action) {

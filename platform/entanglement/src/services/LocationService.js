@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define */
 
 /**
  * This bundle implements actions which control the location of objects
@@ -29,7 +28,6 @@
  */
 define(
     function () {
-        "use strict";
 
         /**
          * The LocationService allows for easily prompting the user for a
@@ -79,8 +77,8 @@ define(
 
                     return dialogService
                         .getUserInput(formStructure, formState)
-                        .then(function (formState) {
-                            return formState.location;
+                        .then(function (userFormState) {
+                            return userFormState.location;
                         });
                 }
             };

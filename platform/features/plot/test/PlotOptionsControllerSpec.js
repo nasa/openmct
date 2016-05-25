@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine,xit*/
 
 define(
     ['../src/PlotOptionsController'],
     function (PlotOptionsController) {
-        "use strict";
 
         describe("The Plot Options controller", function () {
             var plotOptionsController,
@@ -34,7 +32,6 @@ define(
                 mockCompositionCapability,
                 mockComposition,
                 mockUnlisten,
-                mockFormUnlisten,
                 mockChildOne,
                 mockChildTwo,
                 model,
@@ -61,7 +58,7 @@ define(
                 mockComposition = [
                     mockChildOne
                 ];
-                mockCompositionCapability.then.andCallFake(function (callback){
+                mockCompositionCapability.then.andCallFake(function (callback) {
                     callback(mockComposition);
                 });
 
@@ -82,7 +79,7 @@ define(
                     'useCapability',
                     'getCapability'
                 ]);
-                mockDomainObject.useCapability.andCallFake(function(capability){
+                mockDomainObject.useCapability.andCallFake(function (capability) {
                     return mockUseCapabilities[capability]();
                 });
                 mockDomainObject.getCapability.andReturn(mockMutationCapability);
@@ -123,7 +120,7 @@ define(
 
             it("on changes in form values, updates the object model", function () {
                 var scopeConfiguration = mockScope.configuration,
-                    model = mockDomainObject.getModel();
+                    objModel = mockDomainObject.getModel();
 
                 scopeConfiguration.plot.yAxis.autoScale = true;
                 scopeConfiguration.plot.yAxis.key = 'eu';
@@ -133,10 +130,10 @@ define(
                 mockScope.$watchCollection.calls[0].args[1]();
                 expect(mockDomainObject.useCapability).toHaveBeenCalledWith('mutation', jasmine.any(Function));
 
-                mockDomainObject.useCapability.mostRecentCall.args[1](model);
-                expect(model.configuration.plot.yAxis.autoScale).toBe(true);
-                expect(model.configuration.plot.yAxis.key).toBe('eu');
-                expect(model.configuration.plot.xAxis.key).toBe('lst');
+                mockDomainObject.useCapability.mostRecentCall.args[1](objModel);
+                expect(objModel.configuration.plot.yAxis.autoScale).toBe(true);
+                expect(objModel.configuration.plot.yAxis.key).toBe('eu');
+                expect(objModel.configuration.plot.xAxis.key).toBe('lst');
 
             });
 

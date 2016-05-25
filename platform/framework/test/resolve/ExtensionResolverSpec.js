@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,jasmine,waitsFor,runs*/
 
 /**
  * ExtensionResolverSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/resolve/ExtensionResolver", "../../src/load/Bundle"],
     function (ExtensionResolver, Bundle) {
-        "use strict";
 
         describe("", function () {
             var mockLoader,
@@ -35,7 +33,9 @@ define(
                 resolver;
 
             // Test implementation, to load from the mock loader
-            function Constructor() { return { someKey: "some value" }; }
+            function Constructor() {
+                return { someKey: "some value" };
+            }
             Constructor.someProperty = "some static value";
 
             beforeEach(function () {
@@ -54,18 +54,22 @@ define(
             it("requests implementations from the implementation loader", function () {
                 var bundle = new Bundle("w", {
                         sources: "x",
-                        extensions: { tests: [ { implementation: "y/z.js" } ] }
+                        extensions: { tests: [{ implementation: "y/z.js" }] }
                     }),
                     extension = bundle.getExtensions("tests")[0],
                     result;
 
-                resolver.resolve(extension).then(function (v) { result = v; });
+                resolver.resolve(extension).then(function (v) {
+                    result = v;
+                });
 
                 waitsFor(
-                    function () { return result !== undefined; },
-                    "promise resolution",
-                    250
-                );
+                    function () {
+                        return result !== undefined;
+                    },
+                                       "promise resolution",
+                                       250
+                                   );
 
                 runs(function () {
                     // Verify that the right file was requested
@@ -81,22 +85,26 @@ define(
             it("issues a warning and defaults to plain definition if load fails", function () {
                 var bundle = new Bundle("w", {
                         sources: "x",
-                        extensions: { tests: [ {
+                        extensions: { tests: [{
                             someOtherKey: "some other value",
                             implementation: "y/z.js"
-                        } ] }
+                        }] }
                     }),
                     extension = bundle.getExtensions("tests")[0],
                     result;
 
                 mockLoader.load.andReturn(Promise.reject(new Error("test error")));
-                resolver.resolve(extension).then(function (v) { result = v; });
+                resolver.resolve(extension).then(function (v) {
+                    result = v;
+                });
 
                 waitsFor(
-                    function () { return result !== undefined; },
-                    "promise resolution",
-                    250
-                );
+                    function () {
+                        return result !== undefined;
+                    },
+                                       "promise resolution",
+                                       250
+                                   );
 
                 runs(function () {
                     // Should have gotten a warning
@@ -111,18 +119,22 @@ define(
             it("ensures implementation properties are exposed", function () {
                 var bundle = new Bundle("w", {
                         sources: "x",
-                        extensions: { tests: [ { implementation: "y/z.js" } ] }
+                        extensions: { tests: [{ implementation: "y/z.js" }] }
                     }),
                     extension = bundle.getExtensions("tests")[0],
                     result;
 
-                resolver.resolve(extension).then(function (v) { result = v; });
+                resolver.resolve(extension).then(function (v) {
+                    result = v;
+                });
 
                 waitsFor(
-                    function () { return result !== undefined; },
-                    "promise resolution",
-                    250
-                );
+                    function () {
+                        return result !== undefined;
+                    },
+                                       "promise resolution",
+                                       250
+                                   );
 
                 runs(function () {
                     // Verify that the right file was requested

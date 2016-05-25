@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * MergeModelsSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/elements/PlotTickGenerator"],
     function (PlotTickGenerator) {
-        "use strict";
 
         describe("A plot tick generator", function () {
             var mockPanZoomStack,
@@ -37,16 +35,16 @@ define(
             beforeEach(function () {
                 mockPanZoomStack = jasmine.createSpyObj(
                     "panZoomStack",
-                    [ "getPanZoom" ]
+                    ["getPanZoom"]
                 );
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
-                    [ "formatDomainValue", "formatRangeValue" ]
+                    ["formatDomainValue", "formatRangeValue"]
                 );
 
                 mockPanZoomStack.getPanZoom.andReturn({
-                    origin: [ 0, 0 ],
-                    dimensions: [ 100, 100 ]
+                    origin: [0, 0],
+                    dimensions: [100, 100]
                 });
 
                 generator =

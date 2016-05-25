@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 define(
     ['../../browse/src/InspectorRegion'],
     function (InspectorRegion) {
-        "use strict";
 
         /**
          * The InspectorController adds region data for a domain object's type
@@ -34,7 +32,8 @@ define(
          */
         function InspectorController($scope, policyService) {
             var domainObject = $scope.domainObject,
-                typeCapability = domainObject.getCapability('type');
+                typeCapability = domainObject.getCapability('type'),
+                statusListener;
 
             /**
              * Filters region parts to only those allowed by region policies
@@ -43,12 +42,21 @@ define(
              */
             function filterRegions(inspector) {
                 //Dupe so we're not modifying the type definition.
-                return inspector.regions && inspector.regions.filter(function(region) {
+                return inspector.regions && inspector.regions.filter(function (region) {
                     return policyService.allow('region', region, domainObject);
                 });
             }
 
-            $scope.regions = filterRegions(typeCapability.getDefinition().inspector || new InspectorRegion());
+            function setRegions() {
+                $scope.regions = filterRegions(typeCapability.getDefinition().inspector || new InspectorRegion());
+            }
+
+            statusListener = domainObject.getCapability("status").listen(setRegions);
+            $scope.$on("$destroy", function () {
+                statusListener();
+            });
+
+            setRegions();
         }
 
         return InspectorController;

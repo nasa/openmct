@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [
@@ -34,7 +33,6 @@ define(
         TimelineColorAssigner,
         TimelineProxy
     ) {
-        'use strict';
 
         /**
          * Populates and maintains a list of swimlanes for a given
@@ -63,8 +61,8 @@ define(
                     swimlane;
 
                 // For the recursive step
-                function populate(childSubgraph, index) {
-                    populateSwimlanes(childSubgraph, swimlane, index);
+                function populate(childSubgraph, nextIndex) {
+                    populateSwimlanes(childSubgraph, swimlane, nextIndex);
                 }
 
                 // Make sure we have a valid object instance...

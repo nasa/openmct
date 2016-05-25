@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,runs*/
 
 /**
  * ImplementationLoaderSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/resolve/ImplementationLoader"],
     function (ImplementationLoader) {
-        "use strict";
 
         describe("The implementation loader", function () {
             var required,
@@ -55,17 +53,21 @@ define(
                 var result;
 
                 // Load and get the result
-                loader.load("xyz.js").then(function (v) { result = v; });
+                loader.load("xyz.js").then(function (v) {
+                    result = v;
+                });
 
                 expect(result).toBeUndefined();
 
                 required.fulfill("test result");
 
                 waitsFor(
-                    function () { return result !== undefined; },
-                    "promise resolution",
-                    250
-                );
+                    function () {
+                        return result !== undefined;
+                    },
+                                       "promise resolution",
+                                       250
+                                   );
 
                 runs(function () {
                     expect(result).toEqual("test result");
@@ -78,19 +80,25 @@ define(
 
                 // Load and get the result
                 loader.load("xyz.js").then(
-                    function (v) { result = v; },
-                    function (v) { rejection = v; }
-                );
+                    function (v) {
+                        result = v;
+                    },
+                    function (v) {
+                        rejection = v;
+                    }
+                                   );
 
                 expect(result).toBeUndefined();
 
                 required.reject("test result");
 
                 waitsFor(
-                    function () { return rejection !== undefined; },
-                    "promise resolution",
-                    250
-                );
+                    function () {
+                        return rejection !== undefined;
+                    },
+                                       "promise resolution",
+                                       250
+                                   );
 
                 runs(function () {
                     expect(result).toBeUndefined();

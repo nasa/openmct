@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * ViewProviderSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/views/ViewProvider"],
     function (ViewProvider) {
-        "use strict";
 
         describe("The view provider", function () {
             var viewA = {
@@ -35,11 +33,11 @@ define(
                 },
                 viewB = {
                     key: "b",
-                    needs: [ "someCapability" ]
+                    needs: ["someCapability"]
                 },
                 viewC = {
                     key: "c",
-                    needs: [ "someCapability" ],
+                    needs: ["someCapability"],
                     delegation: true
                 },
                 capabilities = {},
@@ -111,7 +109,7 @@ define(
             it("restricts typed views to matching types", function () {
                 var testType = "testType",
                     testView = { key: "x", type: testType },
-                    provider = new ViewProvider([testView], mockLog);
+                    viewProvider = new ViewProvider([testView], mockLog);
 
                 // Include a "type" capability
                 capabilities.type = jasmine.createSpyObj(
@@ -122,22 +120,21 @@ define(
 
                 // Should be included when types match
                 capabilities.type.instanceOf.andReturn(true);
-                expect(provider.getViews(mockDomainObject))
+                expect(viewProvider.getViews(mockDomainObject))
                     .toEqual([testView]);
                 expect(capabilities.type.instanceOf)
                     .toHaveBeenCalledWith(testType);
 
                 // ...but not when they don't
                 capabilities.type.instanceOf.andReturn(false);
-                expect(provider.getViews(mockDomainObject))
+                expect(viewProvider.getViews(mockDomainObject))
                     .toEqual([]);
 
             });
 
             it("enforces view restrictions from types", function () {
-                var testType = "testType",
-                    testView = { key: "x" },
-                    provider = new ViewProvider([testView], mockLog);
+                var testView = { key: "x" },
+                    viewProvider = new ViewProvider([testView], mockLog);
 
                 // Include a "type" capability
                 capabilities.type = jasmine.createSpyObj(
@@ -149,13 +146,13 @@ define(
                 // Should be included when view keys match
                 capabilities.type.getDefinition
                     .andReturn({ views: [testView.key]});
-                expect(provider.getViews(mockDomainObject))
+                expect(viewProvider.getViews(mockDomainObject))
                     .toEqual([testView]);
 
                 // ...but not when they don't
                 capabilities.type.getDefinition
                     .andReturn({ views: ["somethingElse"]});
-                expect(provider.getViews(mockDomainObject))
+                expect(viewProvider.getViews(mockDomainObject))
                     .toEqual([]);
             });
 

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * ContextCapability. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../../src/capabilities/ContextCapability"],
     function (ContextCapability) {
-        "use strict";
 
         var DOMAIN_OBJECT_METHODS = [
             "getId",
@@ -48,7 +46,7 @@ define(
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
                 mockParent = jasmine.createSpyObj("parent", DOMAIN_OBJECT_METHODS);
                 mockGrandparent = jasmine.createSpyObj("grandparent", DOMAIN_OBJECT_METHODS);
-                mockContext = jasmine.createSpyObj("context", [ "getParent", "getRoot", "getPath" ]);
+                mockContext = jasmine.createSpyObj("context", ["getParent", "getRoot", "getPath"]);
 
                 mockParent.getCapability.andReturn(mockContext);
                 mockContext.getParent.andReturn(mockGrandparent);

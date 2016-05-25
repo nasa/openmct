@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../src/StatusService"],
     function (StatusService) {
-        "use strict";
 
         describe("The status service", function () {
             var mockTopic,
@@ -42,7 +40,7 @@ define(
                 mockTopic = jasmine.createSpy('topic');
                 mockTopicInstance = jasmine.createSpyObj(
                     'topicInstance',
-                    [ 'notify', 'listen' ]
+                    ['notify', 'listen']
                 );
                 mockUnlisten = jasmine.createSpy('unlisten');
                 mockCallback = jasmine.createSpy('callback');
@@ -77,7 +75,7 @@ define(
             it("notifies listeners of changes", function () {
                 statusService.setStatus(testId, testStatus, true);
                 expect(mockTopicInstance.notify)
-                    .toHaveBeenCalledWith([ testStatus ]);
+                    .toHaveBeenCalledWith([testStatus]);
                 statusService.setStatus(testId, testStatus, false);
                 expect(mockTopicInstance.notify)
                     .toHaveBeenCalledWith([ ]);

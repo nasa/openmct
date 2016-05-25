@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine,xit*/
 
 define(
     ["../../src/directives/MCTBackgroundImage"],
     function (MCTBackgroundImage) {
-        "use strict";
 
         describe("The mct-background-image directive", function () {
             var mockDocument,
@@ -38,7 +36,7 @@ define(
                     jasmine.createSpyObj('document', ['createElement'])
                 ];
                 mockScope = jasmine.createSpyObj('scope', ['$watch']);
-                mockElement = jasmine.createSpyObj('element', [ 'css' ]);
+                mockElement = jasmine.createSpyObj('element', ['css']);
                 testImage = {};
 
                 mockDocument[0].createElement.andReturn(testImage);

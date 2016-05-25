@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,Blob,FileReader*/
 
 define(
     ["./ExportService", "csv"],
     function (ExportService, CSV) {
-        'use strict';
 
         describe("ExportService", function () {
             var mockSaveAs,
@@ -47,7 +45,7 @@ define(
                 mockSaveAs.andCallFake(function (blob) {
                     var reader = new FileReader();
                     reader.onloadend = function () {
-                       csvContents = new CSV(reader.result).parse();
+                        csvContents = new CSV(reader.result).parse();
                     };
                     reader.readAsText(blob);
                 });
@@ -88,7 +86,7 @@ define(
                 var testHeaders;
 
                 beforeEach(function () {
-                    testHeaders = [ 'a', 'b' ];
+                    testHeaders = ['a', 'b'];
                     exportService
                         .exportCSV(testRows, { headers: testHeaders });
                     waitsFor(finishedReadingCSV);

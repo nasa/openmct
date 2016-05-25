@@ -19,18 +19,15 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ['../src/FormatProvider'],
     function (FormatProvider) {
-        'use strict';
 
-        var KEYS = [ 'a', 'b', 'c' ];
+        var KEYS = ['a', 'b', 'c'];
 
         describe("The FormatProvider", function () {
             var mockFormats,
-                mockLog,
                 mockFormatInstances,
                 provider;
 
@@ -38,12 +35,14 @@ define(
                 mockFormatInstances = KEYS.map(function (k) {
                     return jasmine.createSpyObj(
                         'format-' + k,
-                        [ 'parse', 'validate', 'format' ]
+                        ['parse', 'validate', 'format']
                     );
                 });
                 // Return constructors
                 mockFormats = KEYS.map(function (k, i) {
-                    function MockFormat() { return mockFormatInstances[i]; }
+                    function MockFormat() {
+                        return mockFormatInstances[i];
+                    }
                     MockFormat.key = k;
                     return MockFormat;
                 });

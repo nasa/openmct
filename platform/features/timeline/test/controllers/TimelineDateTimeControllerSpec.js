@@ -20,12 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ["../../src/controllers/TimelineDateTimeController"],
     function (TimelineDateTimeController) {
-        "use strict";
 
         describe("The date-time controller for timeline creation", function () {
             var mockScope,

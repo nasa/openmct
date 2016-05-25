@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ["./PlotOverlayMode", "./PlotStackMode"],
     function (PlotOverlayMode, PlotStackMode) {
-        "use strict";
 
         var STACKED = {
                 key: "stacked",
@@ -91,7 +89,7 @@ define(
          */
         function PlotModeOptions(telemetryObjects, subPlotFactory) {
             this.options = telemetryObjects.length > 1 ?
-                    [ OVERLAID, STACKED ] : [ OVERLAID ];
+                    [OVERLAID, STACKED] : [OVERLAID];
             this.mode = this.options[0]; // Initial selection (overlaid)
             this.telemetryObjects = telemetryObjects;
             this.subPlotFactory = subPlotFactory;

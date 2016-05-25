@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * MCTIncudeSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../src/DialogService"],
     function (DialogService) {
-        "use strict";
 
         describe("The dialog service", function () {
             var mockOverlayService,
@@ -40,23 +38,23 @@ define(
             beforeEach(function () {
                 mockOverlayService = jasmine.createSpyObj(
                     "overlayService",
-                    [ "createOverlay" ]
+                    ["createOverlay"]
                 );
                 mockQ = jasmine.createSpyObj(
                     "$q",
-                    [ "defer" ]
+                    ["defer"]
                 );
                 mockLog = jasmine.createSpyObj(
                     "$log",
-                    [ "warn", "info", "debug" ]
+                    ["warn", "info", "debug"]
                 );
                 mockOverlay = jasmine.createSpyObj(
                     "overlay",
-                    [ "dismiss" ]
+                    ["dismiss"]
                 );
                 mockDeferred = jasmine.createSpyObj(
                     "deferred",
-                    [ "resolve", "reject"]
+                    ["resolve", "reject"]
                 );
                 mockDeferred.promise = "mock promise";
 
@@ -122,7 +120,7 @@ define(
             });
 
             it("invokes the overlay service with the correct parameters when" +
-                " a blocking dialog is requested", function() {
+                " a blocking dialog is requested", function () {
                 var dialogModel = {};
                 expect(dialogService.showBlockingMessage(dialogModel)).toBe(true);
                 expect(mockOverlayService.createOverlay).toHaveBeenCalledWith(

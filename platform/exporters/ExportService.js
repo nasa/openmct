@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Blob*/
 
 /**
  * @namespace platform/exporters
@@ -62,7 +61,7 @@ define(['csv'], function (CSV) {
                 (Object.keys((rows[0] || {})).sort()),
             filename = (options && options.filename) || "export.csv",
             csvText = new CSV(rows, { header: headers }).encode(),
-            blob = new Blob([ csvText ] , { type: "text/csv" });
+            blob = new Blob([csvText], { type: "text/csv" });
         this.saveAs(blob, filename);
     };
 

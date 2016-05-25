@@ -19,13 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,beforeEach,jasmine,it,expect*/
+/*global describe,beforeEach,jasmine,it,expect*/
 
 define([
     '../../src/ui/TreeView',
     'zepto'
 ], function (TreeView, $) {
-    'use strict';
 
     describe("TreeView", function () {
         var mockGestureService,
@@ -37,7 +36,7 @@ define([
             treeView;
 
         function makeMockDomainObject(id, model, capabilities) {
-            var mockDomainObject = jasmine.createSpyObj(
+            var mockDomainObj = jasmine.createSpyObj(
                 'domainObject-' + id,
                 [
                     'getId',
@@ -47,24 +46,24 @@ define([
                     'useCapability'
                 ]
             );
-            mockDomainObject.getId.andReturn(id);
-            mockDomainObject.getModel.andReturn(model);
-            mockDomainObject.hasCapability.andCallFake(function (c) {
+            mockDomainObj.getId.andReturn(id);
+            mockDomainObj.getModel.andReturn(model);
+            mockDomainObj.hasCapability.andCallFake(function (c) {
                 return !!(capabilities[c]);
             });
-            mockDomainObject.getCapability.andCallFake(function (c) {
+            mockDomainObj.getCapability.andCallFake(function (c) {
                 return capabilities[c];
             });
-            mockDomainObject.useCapability.andCallFake(function (c) {
+            mockDomainObj.useCapability.andCallFake(function (c) {
                 return capabilities[c] && capabilities[c].invoke();
             });
-            return mockDomainObject;
+            return mockDomainObj;
         }
 
         beforeEach(function () {
             mockGestureService = jasmine.createSpyObj(
                 'gestureService',
-                [ 'attachGestures' ]
+                ['attachGestures']
             );
 
             mockGestureHandle = jasmine.createSpyObj('gestures', ['destroy']);
@@ -100,31 +99,23 @@ define([
             var mockComposition;
 
             function makeGenericCapabilities() {
-                var mockContext =
-                        jasmine.createSpyObj('context', [ 'getPath' ]),
-                    mockType =
-                        jasmine.createSpyObj('type', [ 'getGlyph' ]),
-                    mockLocation =
-                        jasmine.createSpyObj('location', [ 'isLink' ]),
-                    mockMutation =
-                        jasmine.createSpyObj('mutation', [ 'listen' ]),
-                    mockStatus =
-                        jasmine.createSpyObj('status', [ 'listen', 'list' ]);
+                var mockStatus =
+                        jasmine.createSpyObj('status', ['listen', 'list']);
 
                 mockStatus.list.andReturn([]);
 
                 return {
-                    context: mockContext,
-                    type: mockType,
-                    mutation: mockMutation,
-                    location: mockLocation,
+                    context: jasmine.createSpyObj('context', ['getPath']),
+                    type: jasmine.createSpyObj('type', ['getGlyph']),
+                    location: jasmine.createSpyObj('location', ['isLink']),
+                    mutation: jasmine.createSpyObj('mutation', ['listen']),
                     status: mockStatus
                 };
             }
 
             function waitForCompositionCallback() {
                 var calledBack = false;
-                testCapabilities.composition.invoke().then(function (c) {
+                testCapabilities.composition.invoke().then(function () {
                     calledBack = true;
                 });
                 waitsFor(function () {
@@ -134,11 +125,11 @@ define([
 
             beforeEach(function () {
                 mockComposition = ['a', 'b', 'c'].map(function (id) {
-                    var testCapabilities = makeGenericCapabilities(),
+                    var testCaps = makeGenericCapabilities(),
                         mockChild =
-                            makeMockDomainObject(id, {}, testCapabilities);
+                            makeMockDomainObject(id, {}, testCaps);
 
-                    testCapabilities.context.getPath
+                    testCaps.context.getPath
                         .andReturn([mockDomainObject, mockChild]);
 
                     return mockChild;
@@ -208,11 +199,11 @@ define([
 
             describe("when a context-less object is selected", function () {
                 beforeEach(function () {
-                    var testCapabilities = makeGenericCapabilities(),
-                        mockDomainObject =
-                            makeMockDomainObject('xyz', {}, testCapabilities);
-                    delete testCapabilities.context;
-                    treeView.value(mockDomainObject);
+                    var testCaps = makeGenericCapabilities(),
+                        mockDomainObj =
+                            makeMockDomainObject('xyz', {}, testCaps);
+                    delete testCaps.context;
+                    treeView.value(mockDomainObj);
                 });
 
                 it("clears all selection state", function () {
@@ -232,7 +223,7 @@ define([
                         calledBackInner = false;
 
                     newCapabilities.composition =
-                        jasmine.createSpyObj('composition', [ 'invoke' ]);
+                        jasmine.createSpyObj('composition', ['invoke']);
                     newCapabilities.composition.invoke
                         .andReturn(Promise.resolve([mockGrandchild]));
                     mockComposition.push(mockNewChild);
@@ -275,7 +266,7 @@ define([
                 beforeEach(function () {
                     var mockStatus = mockComposition[1].getCapability('status');
 
-                    testStatuses = [ 'foo' ];
+                    testStatuses = ['foo'];
 
                     mockStatus.list.andReturn(testStatuses);
                     mockStatus.listen.mostRecentCall.args[0](testStatuses);

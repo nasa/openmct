@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../../src/controllers/swimlane/TimelineSwimlanePopulator'],
     function (TimelineSwimlanePopulator) {
-        'use strict';
 
         describe("A Timeline swimlane populator", function () {
             var mockLoader,
@@ -44,16 +42,16 @@ define(
             }
 
             function makeMockDomainObject(id, composition) {
-                var mockDomainObject = jasmine.createSpyObj(
+                var mockDomainObj = jasmine.createSpyObj(
                     'domainObject-' + id,
                     ['getId', 'getModel', 'getCapability', 'useCapability']
                 );
 
-                mockDomainObject.getId.andReturn(id);
-                mockDomainObject.getModel.andReturn({ composition: composition });
-                mockDomainObject.useCapability.andReturn(asPromise(false));
+                mockDomainObj.getId.andReturn(id);
+                mockDomainObj.getModel.andReturn({ composition: composition });
+                mockDomainObj.useCapability.andReturn(asPromise(false));
 
-                return mockDomainObject;
+                return mockDomainObj;
             }
 
             function subgraph(domainObject, objects) {

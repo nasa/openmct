@@ -20,10 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define */
 define(
     function () {
-        "use strict";
 
         /**
          * Implements the "Set Primary Location" action, which sets a
@@ -50,8 +48,8 @@ define(
 
         SetPrimaryLocationAction.appliesTo = function (context) {
             var domainObject = context.domainObject;
-            return domainObject && domainObject.hasCapability("location")
-                && (domainObject.getModel().location === undefined);
+            return domainObject && domainObject.hasCapability("location") &&
+                (domainObject.getModel().location === undefined);
         };
 
         return SetPrimaryLocationAction;

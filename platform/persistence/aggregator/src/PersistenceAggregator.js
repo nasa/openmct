@@ -20,12 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,window*/
 
 define(
     [],
     function () {
-        'use strict';
 
         // Return values to use when a persistence space is unknown,
         // and there is no appropriate provider to route to.
@@ -63,7 +61,9 @@ define(
             }
 
             this.providerMapPromise = $q.all(providers.map(addToMap))
-                .then(function () { return providerMap; });
+                .then(function () {
+                    return providerMap;
+                });
         }
 
         PersistenceAggregator.prototype.listSpaces = function () {

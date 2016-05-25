@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     [
@@ -27,7 +26,6 @@ define(
         '../../src/TimelineFormatter'
     ],
     function (TimelineTableController, TimelineFormatter) {
-        "use strict";
 
         describe("The timeline table controller", function () {
             var formatter, controller;
@@ -40,7 +38,7 @@ define(
             // This controller's job is just to expose the formatter
             // in scope, so simply verify that the two agree.
             it("formats durations", function () {
-                [ 0, 100, 4123, 93600, 748801230012].forEach(function (n) {
+                [0, 100, 4123, 93600, 748801230012].forEach(function (n) {
                     expect(controller.niceTime(n))
                         .toEqual(formatter.format(n));
                 });

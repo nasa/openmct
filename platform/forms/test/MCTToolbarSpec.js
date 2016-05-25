@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../src/MCTToolbar"],
     function (MCTToolbar) {
-        "use strict";
 
         describe("The mct-toolbar directive", function () {
             var mockScope,
@@ -36,7 +34,7 @@ define(
             }
 
             beforeEach(function () {
-                mockScope = jasmine.createSpyObj("$scope", [ "$watch" ]);
+                mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 mockScope.$parent = {};
                 mctToolbar = new MCTToolbar();
             });

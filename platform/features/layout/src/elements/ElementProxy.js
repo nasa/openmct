@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     ['./AccessorMutator', './ResizeHandle'],
     function (AccessorMutator, ResizeHandle) {
-        "use strict";
 
         // Index deltas for changes in order
         var ORDERS = {
@@ -56,7 +54,7 @@ define(
          * @param {Array} elements the full array of elements
          */
         function ElementProxy(element, index, elements) {
-            this.resizeHandles = [ new ResizeHandle(element, 1, 1) ];
+            this.resizeHandles = [new ResizeHandle(element, 1, 1)];
 
             /**
              * The element as stored in the view configuration.

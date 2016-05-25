@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../../src/controllers/drag/TimelineSnapHandler'],
     function (TimelineSnapHandler) {
-        'use strict';
 
         describe("A Timeline snap handler", function () {
             var mockDragHandler,
@@ -36,7 +34,7 @@ define(
 
                 mockDragHandler = jasmine.createSpyObj(
                     'dragHandler',
-                    [ 'start', 'end', 'ids' ]
+                    ['start', 'end', 'ids']
                 );
 
                 mockDragHandler.ids.andReturn(['a', 'b', 'c', 'd']);

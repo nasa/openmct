@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * This bundle provides various general-purpose UI elements, including
@@ -29,7 +28,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * The StyleSheetLoader adds links to style sheets exposed from

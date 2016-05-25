@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * A PlotPosition converts from pixel coordinates to domain-range
@@ -62,7 +60,7 @@ define(
                 // Note that range is reversed from the y-axis in pixel space
                 //(positive range points up, positive pixel-y points down)
                 this.position =
-                    [ x / width, (height - y) / height ].map(convert);
+                    [x / width, (height - y) / height].map(convert);
             }
         }
 

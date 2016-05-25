@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * Edit the properties of a domain object. Shows a dialog
@@ -29,7 +28,6 @@
 define(
     ['./PropertiesDialog'],
     function (PropertiesDialog) {
-        'use strict';
 
         /**
          * Implements the "Edit Properties" action, which prompts the user
@@ -65,10 +63,10 @@ define(
                 });
             }
 
-            function showDialog(type) {
+            function showDialog(objType) {
                 // Create a dialog object to generate the form structure, etc.
                 var dialog =
-                    new PropertiesDialog(type, domainObject.getModel());
+                    new PropertiesDialog(objType, domainObject.getModel());
 
                 // Show the dialog
                 return dialogService.getUserInput(

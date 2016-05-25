@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * Module defining ElasticSearchProvider. Created by shale on 07/16/2015.
@@ -29,7 +28,6 @@ define([
 ], function (
 
 ) {
-    "use strict";
 
     var ID_PROPERTY = '_id',
         SOURCE_PROPERTY = '_source',
@@ -75,7 +73,7 @@ define([
             })
             .then(function success(succesResponse) {
                 return provider.parseResponse(succesResponse);
-            }, function error(errorResponse) {
+            }, function error() {
                 // Gracefully fail.
                 return {
                     hits: [],

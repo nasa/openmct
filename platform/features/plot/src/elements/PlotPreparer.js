@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Float32Array*/
 
 /**
  * Prepares data to be rendered in a GL Plot. Handles
@@ -27,9 +26,10 @@
  */
 define(
     function () {
-        'use strict';
 
-        function identity(x) { return x; }
+        function identity(x) {
+            return x;
+        }
 
         /**
          * The PlotPreparer is responsible for handling data sets and

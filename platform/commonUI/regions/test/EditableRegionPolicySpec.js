@@ -19,18 +19,16 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine */
 
 define(
     ['../src/EditableRegionPolicy'],
     function (EditableRegionPolicy) {
-        "use strict";
 
         describe("The editable region policy ", function () {
 
             var editableRegionPolicy,
                 mockDomainObject,
-                mockStatusCapability,
+                mockEditorCapability,
                 mockBrowseRegionPart = {
                     modes: 'browse'
                 },
@@ -39,34 +37,35 @@ define(
                 },
                 mockAllModesRegionPart = {};
 
-            beforeEach(function(){
+            beforeEach(function () {
                 editableRegionPolicy = new EditableRegionPolicy();
 
-                mockStatusCapability = jasmine.createSpyObj("statusCapability", [
-                   "get"
+                mockEditorCapability = jasmine.createSpyObj("editorCapability", [
+                   "inEditContext"
                 ]);
                 mockDomainObject = jasmine.createSpyObj("domainObject", [
-                    "getCapability"
+                    "hasCapability", "getCapability"
                 ]);
-                mockDomainObject.getCapability.andReturn(mockStatusCapability);
+                mockDomainObject.hasCapability.andReturn(true);
+                mockDomainObject.getCapability.andReturn(mockEditorCapability);
             });
 
-            it("includes only browse region parts for object not in edit mode", function() {
-                mockStatusCapability.get.andReturn(false);
+            it("includes only browse region parts for object not in edit mode", function () {
+                mockEditorCapability.inEditContext.andReturn(false);
                 expect(editableRegionPolicy.allow(mockBrowseRegionPart, mockDomainObject)).toBe(true);
                 expect(editableRegionPolicy.allow(mockEditRegionPart, mockDomainObject)).toBe(false);
             });
 
-            it("includes only edit region parts for object in edit mode", function() {
-                mockStatusCapability.get.andReturn(true);
+            it("includes only edit region parts for object in edit mode", function () {
+                mockEditorCapability.inEditContext.andReturn(true);
                 expect(editableRegionPolicy.allow(mockBrowseRegionPart, mockDomainObject)).toBe(false);
                 expect(editableRegionPolicy.allow(mockEditRegionPart, mockDomainObject)).toBe(true);
             });
 
-            it("includes region parts with no mode specification", function() {
-                mockStatusCapability.get.andReturn(false);
+            it("includes region parts with no mode specification", function () {
+                mockEditorCapability.inEditContext.andReturn(false);
                 expect(editableRegionPolicy.allow(mockAllModesRegionPart, mockDomainObject)).toBe(true);
-                mockStatusCapability.get.andReturn(true);
+                mockEditorCapability.inEditContext.andReturn(true);
                 expect(editableRegionPolicy.allow(mockAllModesRegionPart, mockDomainObject)).toBe(true);
             });
 

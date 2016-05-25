@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ['../../src/filters/ReverseFilter'],
     function (ReverseFilter) {
-        'use strict';
 
         describe("The reverse filter", function () {
             var reverse;

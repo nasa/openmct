@@ -20,12 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect,spyOn */
 define([
     '../../src/policies/CopyPolicy',
     '../DomainObjectFactory'
 ], function (CopyPolicy, domainObjectFactory) {
-    'use strict';
 
     describe("CopyPolicy", function () {
         var testMetadata,

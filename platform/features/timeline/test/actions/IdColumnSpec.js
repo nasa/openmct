@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../src/actions/IdColumn'],
@@ -43,7 +42,7 @@ define(
                     testId = "foo";
                     mockDomainObject = jasmine.createSpyObj(
                         'domainObject',
-                        [ 'getId', 'getModel', 'getCapability' ]
+                        ['getId', 'getModel', 'getCapability']
                     );
                     mockDomainObject.getId.andReturn(testId);
                 });

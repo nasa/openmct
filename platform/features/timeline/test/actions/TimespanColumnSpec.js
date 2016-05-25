@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
     ['../../src/actions/TimespanColumn', '../../src/TimelineFormatter'],
@@ -37,11 +36,11 @@ define(
                 };
                 mockTimespan = jasmine.createSpyObj(
                     'timespan',
-                    [ 'getStart', 'getEnd' ]
+                    ['getStart', 'getEnd']
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'useCapability', 'hasCapability' ]
+                    ['useCapability', 'hasCapability']
                 );
                 mockTimespan.getStart.andReturn(testTimes.start);
                 mockTimespan.getEnd.andReturn(testTimes.end);
@@ -53,7 +52,7 @@ define(
                 });
             });
 
-            [ "start", "end" ].forEach(function (bound) {
+            ["start", "end"].forEach(function (bound) {
                 describe("when referring to " + bound + " times", function () {
                     var name = bound.charAt(0).toUpperCase() + bound.slice(1);
 

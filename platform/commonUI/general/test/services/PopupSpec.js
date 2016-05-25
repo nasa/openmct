@@ -19,13 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 
 define(
     ["../../src/services/Popup"],
     function (Popup) {
-        'use strict';
 
         describe("Popup", function () {
             var mockElement,
@@ -34,7 +32,7 @@ define(
 
             beforeEach(function () {
                 mockElement =
-                    jasmine.createSpyObj('element', [ 'css', 'remove' ]);
+                    jasmine.createSpyObj('element', ['css', 'remove']);
                 testStyles = { left: '12px', top: '14px' };
                 popup = new Popup(mockElement, testStyles);
             });

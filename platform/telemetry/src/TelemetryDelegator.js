@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Used to handle telemetry delegation associated with a
@@ -47,7 +45,7 @@ define(
          */
         TelemetryDelegator.prototype.promiseTelemetryObjects = function (domainObject) {
             var $q = this.$q;
-            
+
             // If object has been cleared, there are no relevant
             // telemetry-providing domain objects.
             if (!domainObject) {
@@ -61,7 +59,7 @@ define(
                 "telemetry"
             )).then(function (result) {
                 var head = domainObject.hasCapability("telemetry") ?
-                        [ domainObject ] : [],
+                        [domainObject] : [],
                     tail = result || [];
                 return head.concat(tail);
             });

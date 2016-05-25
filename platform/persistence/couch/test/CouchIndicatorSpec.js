@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../src/CouchIndicator"],
     function (CouchIndicator) {
-        "use strict";
 
         describe("The CouchDB status indicator", function () {
             var mockHttp,
@@ -35,9 +33,9 @@ define(
                 indicator;
 
             beforeEach(function () {
-                mockHttp = jasmine.createSpyObj("$http", [ "get" ]);
+                mockHttp = jasmine.createSpyObj("$http", ["get"]);
                 mockInterval = jasmine.createSpy("$interval");
-                mockPromise = jasmine.createSpyObj("promise", [ "then" ]);
+                mockPromise = jasmine.createSpyObj("promise", ["then"]);
                 testPath = "/test/path";
                 testInterval = 12321; // Some number
 

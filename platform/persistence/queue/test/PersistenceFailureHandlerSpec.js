@@ -19,13 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 
 define(
     ["../src/PersistenceFailureHandler", "../src/PersistenceFailureConstants"],
     function (PersistenceFailureHandler, Constants) {
-        "use strict";
 
         describe("The persistence failure handler", function () {
             var mockQ,
@@ -106,7 +104,7 @@ define(
                 // User chooses overwrite
                 mockPromise.then.mostRecentCall.args[0](false);
                 // Should refresh, but not remutate, and requeue all objects
-                mockFailures.forEach(function (mockFailure, i) {
+                mockFailures.forEach(function (mockFailure) {
                     expect(mockFailure.persistence.refresh).toHaveBeenCalled();
                     expect(mockFailure.requeue).not.toHaveBeenCalled();
                     expect(mockFailure.domainObject.useCapability).not.toHaveBeenCalled();

@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine,xit,xdescribe*/
 
 define(
     ["../../src/policies/EditActionPolicy"],
     function (EditActionPolicy) {
-        "use strict";
 
         describe("The Edit action policy", function () {
             var editableView,
@@ -36,7 +34,7 @@ define(
                 mockEditAction,
                 mockPropertiesAction,
                 mockTypeCapability,
-                mockStatusCapability,
+                mockEditorCapability,
                 capabilities,
                 plotView,
                 policy;
@@ -50,21 +48,20 @@ define(
                         'getCapability'
                     ]
                 );
-                mockStatusCapability = jasmine.createSpyObj('statusCapability', ['get']);
-                mockStatusCapability.get.andReturn(false);
+                mockEditorCapability = jasmine.createSpyObj('editorCapability', ['isEditContextRoot']);
                 mockTypeCapability = jasmine.createSpyObj('type', ['getKey']);
                 capabilities = {
-                    'status': mockStatusCapability,
+                    'editor': mockEditorCapability,
                     'type': mockTypeCapability
                 };
 
                 mockEditAction = jasmine.createSpyObj('edit', ['getMetadata']);
                 mockPropertiesAction = jasmine.createSpyObj('edit', ['getMetadata']);
 
-                mockDomainObject.getCapability.andCallFake(function(capability){
+                mockDomainObject.getCapability.andCallFake(function (capability) {
                     return capabilities[capability];
                 });
-                mockDomainObject.hasCapability.andCallFake(function(capability){
+                mockDomainObject.hasCapability.andCallFake(function (capability) {
                     return !!capabilities[capability];
                 });
 
@@ -91,42 +88,42 @@ define(
             });
 
             it("allows the edit action when there are editable views", function () {
-                testViews = [ editableView ];
+                testViews = [editableView];
                 expect(policy.allow(mockEditAction, testContext)).toBe(true);
             });
 
             it("allows the edit properties action when there are no editable views", function () {
-                testViews = [ nonEditableView, nonEditableView ];
+                testViews = [nonEditableView, nonEditableView];
                 expect(policy.allow(mockPropertiesAction, testContext)).toBe(true);
             });
 
             it("disallows the edit action when there are no editable views", function () {
-                testViews = [ nonEditableView, nonEditableView ];
+                testViews = [nonEditableView, nonEditableView];
                 expect(policy.allow(mockEditAction, testContext)).toBe(false);
             });
 
             it("disallows the edit properties action when there are" +
                 " editable views", function () {
-                testViews = [ editableView ];
+                testViews = [editableView];
                 expect(policy.allow(mockPropertiesAction, testContext)).toBe(false);
             });
 
             it("disallows the edit action when object is already being" +
                 " edited", function () {
-                testViews = [ editableView ];
-                mockStatusCapability.get.andReturn(true);
+                testViews = [editableView];
+                mockEditorCapability.isEditContextRoot.andReturn(true);
                 expect(policy.allow(mockEditAction, testContext)).toBe(false);
             });
 
             it("allows editing of panels in plot view", function () {
-                testViews = [ plotView ];
+                testViews = [plotView];
                 mockTypeCapability.getKey.andReturn('telemetry.panel');
 
                 expect(policy.allow(mockEditAction, testContext)).toBe(true);
             });
 
             it("disallows editing of plot view when object not a panel type", function () {
-                testViews = [ plotView ];
+                testViews = [plotView];
                 mockTypeCapability.getKey.andReturn('something.else');
 
                 expect(policy.allow(mockEditAction, testContext)).toBe(false);
@@ -134,7 +131,7 @@ define(
 
 
             it("allows the edit properties outside of the 'view-control' category", function () {
-                testViews = [ nonEditableView ];
+                testViews = [nonEditableView];
                 testContext.category = "something-else";
                 expect(policy.allow(mockPropertiesAction, testContext)).toBe(true);
             });

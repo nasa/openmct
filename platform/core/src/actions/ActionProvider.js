@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining ActionProvider. Created by vwoeltje on 11/7/14.
@@ -27,7 +26,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * An ActionProvider (implementing ActionService) provides actions
@@ -83,8 +81,8 @@ define(
             // additionally fills in the action's getMetadata method
             // with the extension definition (if no getMetadata
             // method was supplied.)
-            function instantiateAction(Action, context) {
-                var action = new Action(context),
+            function instantiateAction(Action, ctxt) {
+                var action = new Action(ctxt),
                     metadata;
 
                 // Provide a getMetadata method that echos
@@ -92,7 +90,7 @@ define(
                 // unless the action has defined its own.
                 if (!action.getMetadata) {
                     metadata = Object.create(Action.definition || {});
-                    metadata.context = context;
+                    metadata.context = ctxt;
                     action.getMetadata = function () {
                         return metadata;
                     };
@@ -105,14 +103,14 @@ define(
             // applicable in a given context, according to the static
             // appliesTo method of given actions (if defined), and
             // instantiate those applicable actions.
-            function createIfApplicable(actions, context) {
+            function createIfApplicable(actions, ctxt) {
                 function isApplicable(Action) {
-                    return Action.appliesTo ? Action.appliesTo(context) : true;
+                    return Action.appliesTo ? Action.appliesTo(ctxt) : true;
                 }
 
                 function instantiate(Action) {
                     try {
-                        return instantiateAction(Action, context);
+                        return instantiateAction(Action, ctxt);
                     } catch (e) {
                         $log.error([
                             "Could not instantiate action",

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,runs*/
 
 /**
  * FrameworkInitializerSpec. Created by vwoeltje on 11/6/14.
@@ -27,7 +26,6 @@
 define(
     ["../src/FrameworkInitializer"],
     function (FrameworkInitializer) {
-        "use strict";
 
         describe("The framework initializer", function () {
             var initializer;
@@ -52,13 +50,17 @@ define(
             it("calls injected stages in order", function () {
                 var result;
 
-                initializer.runApplication([]).then(function (v) { result = v; });
+                initializer.runApplication([]).then(function (v) {
+                    result = v;
+                });
 
                 waitsFor(
-                    function () { return result !== undefined; },
-                    "promise resolution",
-                    250
-                );
+                    function () {
+                        return result !== undefined;
+                    },
+                                       "promise resolution",
+                                       250
+                                   );
 
                 runs(function () {
                     expect(result).toEqual(

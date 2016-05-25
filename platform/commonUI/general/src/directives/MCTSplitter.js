@@ -19,24 +19,16 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        'use strict';
 
         // Pixel width to allocate for the splitter itself
         var SPLITTER_TEMPLATE = "<div class='abs'" +
                 "mct-drag-down=\"splitter.startMove()\" " +
                 "mct-drag=\"splitter.move(delta)\" " +
-                "mct-drag-up=\"splitter.endMove()\"></div>",
-            OFFSETS_BY_EDGE = {
-                left: "offsetLeft",
-                right: "offsetRight",
-                top: "offsetTop",
-                bottom: "offsetBottom"
-            };
+                "mct-drag-up=\"splitter.endMove()\"></div>";
 
         /**
          * Implements `mct-splitter` directive.
@@ -52,7 +44,6 @@ define(
                 scope.splitter = {
                     // Begin moving this splitter
                     startMove: function () {
-                        var splitter = element[0];
                         initialPosition = mctSplitPane.position();
                         mctSplitPane.toggleClass('resizing');
                     },
@@ -68,7 +59,7 @@ define(
                     },
                     // Grab the event when the user is done moving
                     // the splitter and pass it on
-                    endMove: function() {
+                    endMove: function () {
                         mctSplitPane.toggleClass('resizing');
                     }
                 };

@@ -19,25 +19,22 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../src/MCTForm"],
     function (MCTForm) {
-        "use strict";
 
         describe("The mct-form directive", function () {
             var mockScope,
                 mctForm;
 
             function installController() {
-                var controllerProperty = mctForm.controller,
-                    Controller = mctForm.controller[1];
+                var Controller = mctForm.controller[1];
                 return new Controller(mockScope);
             }
 
             beforeEach(function () {
-                mockScope = jasmine.createSpyObj("$scope", [ "$watch" ]);
+                mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 mockScope.$parent = {};
                 mctForm = new MCTForm();
             });

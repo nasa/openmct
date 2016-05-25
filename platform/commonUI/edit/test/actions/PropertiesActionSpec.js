@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,xit,expect,beforeEach,jasmine*/
 
 define(
     ['../../src/actions/PropertiesAction'],
     function (PropertiesAction) {
-        "use strict";
 
         describe("Properties action", function () {
             var capabilities, model, object, context, input, dialogService, action;
@@ -40,7 +38,9 @@ define(
             beforeEach(function () {
                 capabilities = {
                     type: {
-                        getProperties: function () { return []; },
+                        getProperties: function () {
+                            return [];
+                        },
                         hasFeature: jasmine.createSpy('hasFeature')
                     },
                     persistence: jasmine.createSpyObj("persistence", ["persist"]),
@@ -49,11 +49,21 @@ define(
                 model = {};
                 input = {};
                 object = {
-                    getId: function () { return 'test-id'; },
-                    getCapability: function (k) { return capabilities[k]; },
-                    getModel: function () { return model; },
-                    useCapability: function (k, v) { return capabilities[k](v); },
-                    hasCapability: function () { return true; }
+                    getId: function () {
+                        return 'test-id';
+                    },
+                    getCapability: function (k) {
+                        return capabilities[k];
+                    },
+                    getModel: function () {
+                        return model;
+                    },
+                    useCapability: function (k, v) {
+                        return capabilities[k](v);
+                    },
+                    hasCapability: function () {
+                        return true;
+                    }
                 };
                 context = { someKey: "some value", domainObject: object };
                 dialogService = {

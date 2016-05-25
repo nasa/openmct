@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * This bundle implements directives for displaying and handling forms for
@@ -29,7 +28,6 @@
 define(
     ["./controllers/FormController", "text!../res/templates/form.html"],
     function (FormController, formTemplate) {
-        "use strict";
 
         /**
          * The mct-form directive allows generation of displayable
@@ -60,7 +58,7 @@ define(
                 template: formTemplate,
 
                 // Use FormController to populate/respond to changes in scope
-                controller: [ '$scope', FormController ],
+                controller: ['$scope', FormController],
 
                 // Initial an isolate scope
                 scope: {

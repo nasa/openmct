@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * This bundle implements Edit mode.
@@ -28,7 +27,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Controller which is responsible for populating the scope for
@@ -61,7 +59,7 @@ define(
 
             $scope.$watch('domainObject', setViewForDomainObject);
 
-            $scope.doAction = function (action){
+            $scope.doAction = function (action) {
                 return $scope[action] && $scope[action]();
             };
         }
@@ -76,8 +74,8 @@ define(
             var navigatedObject = this.scope.domainObject,
                 policyMessage;
 
-            this.policyService.allow("navigation", navigatedObject, undefined, function(message) {
-               policyMessage = message;
+            this.policyService.allow("navigation", navigatedObject, undefined, function (message) {
+                policyMessage = message;
             });
 
             return policyMessage;

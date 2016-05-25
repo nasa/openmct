@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 /**
  * Module defining CoreCapabilityProvider. Created by vwoeltje on 11/7/14.
@@ -27,7 +26,6 @@
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * A capability provides an interface with dealing with some
@@ -64,9 +62,9 @@ define(
             }
 
             // Package capabilities as key-value pairs
-            function packageCapabilities(capabilities) {
+            function packageCapabilities(caps) {
                 var result = {};
-                capabilities.forEach(function (capability) {
+                caps.forEach(function (capability) {
                     if (capability.key) {
                         result[capability.key] =
                             result[capability.key] || capability;

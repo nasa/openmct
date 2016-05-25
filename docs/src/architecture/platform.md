@@ -1,6 +1,6 @@
 # Overview
 
-The Open MCT Web platform utilizes the [framework layer](Framework.md)
+The Open MCT platform utilizes the [framework layer](Framework.md)
 to provide an extensible baseline for applications which includes:
 
 * A common user interface (and user interface paradigm) for dealing with
@@ -16,7 +16,7 @@ building application, the platform adds more specificity by defining
 additional extension types and allowing for integration with back end
 components.
 
-The run-time architecture of an Open MCT Web application can be categorized
+The run-time architecture of an Open MCT application can be categorized
 into certain high-level tiers:
 
 ```nomnoml
@@ -29,7 +29,7 @@ into certain high-level tiers:
 [Browser APIs]->[Back-end]
 ```
 
-Applications built using Open MCT Web may add or configure functionality
+Applications built using Open MCT may add or configure functionality
 in __any of these tiers__.
 
 * _DOM_: The rendered HTML document, composed from HTML templates which
@@ -60,7 +60,7 @@ in __any of these tiers__.
   functionality needed to support the information model. This includes
   exposing underlying sets of extensions and mediating with the
   back-end.
-* _Back-end_: The back-end is out of the scope of Open MCT Web, except
+* _Back-end_: The back-end is out of the scope of Open MCT, except
   for the interfaces which are utilized by adapters participating in the
   service infrastructure. Includes the underlying persistence stores, telemetry 
   streams, and so forth which the Open MCT Web client is being used to interact 
@@ -70,15 +70,15 @@ in __any of these tiers__.
 
 Once the
 [application has been initialized](Framework.md#application-initialization)
-Open MCT Web primarily operates in an event-driven paradigm; various
+Open MCT primarily operates in an event-driven paradigm; various
 events (mouse clicks, timers firing, receiving responses to XHRs) trigger
 the invocation of functions, typically in the presentation layer for
 user actions or in the service infrastructure for server responses.
 
-The "main point of entry" into an initialized Open MCT Web application
+The "main point of entry" into an initialized Open MCT application
 is effectively the
 [route](https://docs.angularjs.org/api/ngRoute/service/$route#example)
-which is associated with the URL used to access Open MCT Web (or a
+which is associated with the URL used to access Open MCT (or a
 default route.) This route will be associated with a template which
 will be displayed; this template will include references to directives
 and controllers which will be interpreted by Angular and used to
@@ -107,11 +107,11 @@ both the information model and the service infrastructure.
 
 # Presentation Layer
 
-The presentation layer of Open MCT Web is responsible for providing
+The presentation layer of Open MCT is responsible for providing
 information to display within templates, and for handling interactions
 which are initiated from templated DOM elements. AngularJS acts as
 an intermediary between the web page as the user sees it, and the
-presentation layer implemented as Open MCT Web extensions.
+presentation layer implemented as Open MCT extensions.
 
 ```nomnoml
 [Presentation Layer|
@@ -143,12 +143,12 @@ to primitives from AngularJS:
   attributes and tags.
 * [_Routes_](https://docs.angularjs.org/api/ngRoute/service/$route#example)
   are used to associate specific URLs (including the fragment identifier)
-  with specific application states. (In Open MCT Web, these are used to
+  with specific application states. (In Open MCT, these are used to
   describe the mode of usage - e.g. browse or edit - as well as to
   identify the object being used.)
 * [_Templates_](https://docs.angularjs.org/guide/templates) are partial
   HTML documents that will be rendered and kept up-to-date by AngularJS.
-  Open MCT Web introduces a custom `mct-include` directive which acts
+  Open MCT introduces a custom `mct-include` directive which acts
   as a wrapper around `ng-include` to allow templates to be referred
   to by symbolic names.
 
@@ -189,10 +189,10 @@ to displaying domain objects.
 ]
 ```
 
-Domain objects are the most fundamental component of Open MCT Web's
+Domain objects are the most fundamental component of Open MCT's
 information model. A domain object is some distinct thing relevant to a
 user's work flow, such as a telemetry channel, display, or similar.
-Open MCT Web is a tool for viewing, browsing, manipulating, and otherwise
+Open MCT is a tool for viewing, browsing, manipulating, and otherwise
 interacting with a graph of domain objects.
 
 A domain object should be conceived of as the union of the following:
@@ -254,7 +254,7 @@ Concrete examples of capabilities which follow this pattern
 
 # Service Infrastructure
 
-Most services exposed by the Open MCT Web platform follow the
+Most services exposed by the Open MCT platform follow the
 [composite services](Framework.md#composite-services) to permit
 a higher degree of flexibility in how a service can be modified
 or customized for specific applications.
@@ -327,7 +327,7 @@ A short summary of the roles of these services:
 [DomainObjectProvider]o-[CapabilityService]
 ```
 
-As domain objects are central to Open MCT Web's information model,
+As domain objects are central to Open MCT's information model,
 acquiring domain objects is equally important.
 
 ```nomnoml
@@ -338,7 +338,7 @@ acquiring domain objects is equally important.
 [<state> Instantiate DomainObject]->[<end> End]
 ```
 
-Open MCT Web includes an implementation of an `ObjectService` which
+Open MCT includes an implementation of an `ObjectService` which
 satisfies this capability by:
 
 * Consulting the [Model Service](#model-service) to acquire domain object
@@ -437,9 +437,9 @@ objects (this allows failures to be recognized and handled in groups.)
 The telemetry service is responsible for acquiring telemetry data.
 
 Notably, the platform does not include any providers for
-`TelemetryService`; applications built on Open MCT Web will need to
+`TelemetryService`; applications built on Open MCT will need to
 implement a provider for this service if they wish to expose telemetry
-data. This is usually the most important step for integrating Open MCT Web
+data. This is usually the most important step for integrating Open MCT
 into an existing telemetry system.
 
 Requests for telemetry data are usually initiated in the
@@ -721,6 +721,6 @@ disallow.
 ```
 
 The type service provides metadata about the different types of domain
-objects that exist within an Open MCT Web application. The platform
+objects that exist within an Open MCT application. The platform
 implementation reads these types in from extension category `types`
 and wraps them in a JavaScript interface.

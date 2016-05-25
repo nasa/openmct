@@ -19,14 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/directives/MCTPopup"],
     function (MCTPopup) {
-        "use strict";
 
-        var JQLITE_METHODS = [ "on", "off", "find", "parent", "css", "append" ];
+        var JQLITE_METHODS = ["on", "off", "find", "parent", "css", "append"];
 
         describe("The mct-popup directive", function () {
             var mockCompile,
@@ -42,14 +40,6 @@ define(
                 testRect,
                 mctPopup;
 
-            function testEvent(x, y) {
-                return {
-                    pageX: x,
-                    pageY: y,
-                    preventDefault: jasmine.createSpy("preventDefault")
-                };
-            }
-
             beforeEach(function () {
                 mockCompile =
                     jasmine.createSpy("$compile");
@@ -58,7 +48,7 @@ define(
                 mockPopup =
                     jasmine.createSpyObj("popup", ["dismiss"]);
                 mockScope =
-                    jasmine.createSpyObj("$scope", [ "$eval", "$apply", "$on" ]);
+                    jasmine.createSpyObj("$scope", ["$eval", "$apply", "$on"]);
                 mockElement =
                     jasmine.createSpyObj("element", JQLITE_METHODS);
                 mockBody =
@@ -108,7 +98,7 @@ define(
                 it("displays as a popup", function () {
                     expect(mockPopupService.display).toHaveBeenCalledWith(
                         mockNewElement,
-                        [ testRect.left, testRect.top ]
+                        [testRect.left, testRect.top]
                     );
                 });
 

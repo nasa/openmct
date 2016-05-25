@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        'use strict';
 
         /**
          * The ObjectLoader is a utility service for loading subgraphs
@@ -43,13 +41,13 @@ define(
                     filter;
 
                 // Check object existence (for criterion-less filtering)
-                function exists(domainObject) {
-                    return !!domainObject;
+                function exists(object) {
+                    return !!object;
                 }
 
                 // Check for capability matching criterion
-                function hasCapability(domainObject) {
-                    return domainObject && domainObject.hasCapability(criterion);
+                function hasCapability(object) {
+                    return object && object.hasCapability(criterion);
                 }
 
                 // For the recursive step...
@@ -63,8 +61,8 @@ define(
                 }
 
                 // Avoid infinite recursion
-                function notVisiting(domainObject) {
-                    return !visiting[domainObject.getId()];
+                function notVisiting(object) {
+                    return !visiting[object.getId()];
                 }
 
                 // Put the composition of this domain object into the result

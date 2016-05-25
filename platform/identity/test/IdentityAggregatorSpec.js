@@ -19,18 +19,15 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,runs,jasmine*/
 
 define(
     ["../src/IdentityAggregator"],
     function (IdentityAggregator) {
-        "use strict";
 
         describe("The identity aggregator", function () {
             var mockProviders,
                 mockQ,
                 resolves,
-                mockPromise,
                 mockCallback,
                 testUsers,
                 aggregator;
@@ -57,7 +54,7 @@ define(
                 mockProviders = ['a', 'b', 'c'].map(function (id) {
                     var mockProvider = jasmine.createSpyObj(
                         'provider-' + id,
-                        [ 'getUser' ]
+                        ['getUser']
                     );
 
                     mockProvider.getUser.andReturn(new Promise(function (r) {
@@ -118,7 +115,7 @@ define(
             });
 
             it("returns undefined when no providers expose users", function () {
-                testUsers = [ undefined, undefined, undefined ];
+                testUsers = [undefined, undefined, undefined];
 
                 aggregator.getUser().then(mockCallback);
 

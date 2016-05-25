@@ -19,12 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
     function () {
-        "use strict";
 
         /**
          * Policy controlling when the `edit` and/or `properties` actions
@@ -47,7 +45,7 @@ define(
                 count = 0,
                 type, views;
 
-            if (!domainObject){
+            if (!domainObject) {
                 return count;
             }
 
@@ -74,26 +72,23 @@ define(
          */
         function isEditing(context) {
             var domainObject = (context || {}).domainObject;
-            return domainObject
-                && domainObject.hasCapability('status')
-                && domainObject.getCapability('status').get('editing');
+            return domainObject &&
+                domainObject.hasCapability('editor') &&
+                domainObject.getCapability('editor').isEditContextRoot();
         }
 
         EditActionPolicy.prototype.allow = function (action, context) {
             var key = action.getMetadata().key,
                 category = (context || {}).category;
 
-            // Only worry about actions in the view-control category
-            if (category === 'view-control') {
-                // Restrict 'edit' to cases where there are editable
-                // views (similarly, restrict 'properties' to when
-                // the converse is true), and where the domain object is not
-                // already being edited.
-                if (key === 'edit') {
-                    return this.countEditableViews(context) > 0 && !isEditing(context);
-                } else if (key === 'properties') {
-                    return this.countEditableViews(context) < 1 && !isEditing(context);
-                }
+            // Restrict 'edit' to cases where there are editable
+            // views (similarly, restrict 'properties' to when
+            // the converse is true), and where the domain object is not
+            // already being edited.
+            if (key === 'edit') {
+                return this.countEditableViews(context) > 0 && !isEditing(context);
+            } else if (key === 'properties' && category === 'view-control') {
+                return this.countEditableViews(context) < 1 && !isEditing(context);
             }
 
             // Like all policies, allow by default.

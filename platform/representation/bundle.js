@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     "./src/MCTInclude",
@@ -48,7 +47,6 @@ define([
     TemplatePrefetcher,
     legacyRegistry
 ) {
-    "use strict";
 
     legacyRegistry.register("platform/representation", {
         "extensions": {
@@ -88,10 +86,7 @@ define([
                     "implementation": DropGesture,
                     "depends": [
                         "dndService",
-                        "$q",
-                        "navigationService",
-                        "instantiate",
-                        "typeService"
+                        "$q"
                     ]
                 },
                 {

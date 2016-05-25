@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect */
 
 define(
     [
@@ -29,7 +28,6 @@ define(
         '../DomainObjectFactory'
     ],
     function (MoveAction, MockMoveService, domainObjectFactory) {
-        "use strict";
 
         describe("Move Action", function () {
 
@@ -47,7 +45,7 @@ define(
             beforeEach(function () {
                 policyService = jasmine.createSpyObj(
                     'policyService',
-                    [ 'allow' ]
+                    ['allow']
                 );
                 policyService.allow.andReturn(true);
 

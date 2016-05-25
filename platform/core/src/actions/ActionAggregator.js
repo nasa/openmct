@@ -19,11 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
 define(
     function () {
-        "use strict";
 
         /**
          * Actions are reusable processes/behaviors performed by users within

@@ -19,19 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
     ["../../src/controllers/DateTimeController"],
     function (DateTimeController) {
-        "use strict";
 
         describe("The date-time controller", function () {
             var mockScope,
                 controller;
 
             beforeEach(function () {
-                mockScope = jasmine.createSpyObj("$scope", [ "$watch" ]);
+                mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 controller = new DateTimeController(mockScope);
             });
 
