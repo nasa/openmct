@@ -85,14 +85,6 @@ define([
             }
         }
 
-        function addCostProperties(costCapability) {
-            costCapability.resources().forEach(function (key) {
-                if (costKeys.indexOf(key) === -1) {
-                    costKeys.push(key);
-                }
-            });
-        }
-
         idMap = domainObjects.reduce(function (map, domainObject, index) {
             map[domainObject.getId()] = index + 1;
             return map;

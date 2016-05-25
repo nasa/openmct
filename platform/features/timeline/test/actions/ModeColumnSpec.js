@@ -23,7 +23,7 @@
 define(
     ['../../src/actions/ModeColumn'],
     function (ModeColumn) {
-        var TEST_IDS = ['a', 'b', 'c', 'd', 'e', 'f']
+        var TEST_IDS = ['a', 'b', 'c', 'd', 'e', 'f'];
 
         describe("ModeColumn", function () {
             var testIndex,
