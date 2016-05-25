@@ -23,7 +23,7 @@
 
 define([], function () {
     /**
-     * Listens for mutation on domain objects and triggers mutation when
+     * Listens for mutation on domain objects and triggers persistence when
      * it occurs.
      * @param {Topic} topic the `topic` service; used to listen for mutation
      * @memberof platform/core
