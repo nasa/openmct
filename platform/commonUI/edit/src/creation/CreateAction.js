@@ -43,11 +43,8 @@ define(
          *        override this)
          * @param {ActionContext} context the context in which the
          *        action is being performed
-         * @param {NavigationService} navigationService the navigation service,
-         *        which handles changes in navigation. It allows the object
-         *        being browsed/edited to be set.
          */
-        function CreateAction(type, parent, context, $q, navigationService) {
+        function CreateAction(type, parent, context) {
             this.metadata = {
                 key: 'create',
                 glyph: type.getGlyph(),
@@ -56,24 +53,8 @@ define(
                 description: type.getDescription(),
                 context: context
             };
-
             this.type = type;
             this.parent = parent;
-            this.navigationService = navigationService;
-            this.$q = $q;
-        }
-
-        // Get a count of views which are not flagged as non-editable.
-        function countEditableViews(domainObject) {
-            var views = domainObject && domainObject.useCapability('view'),
-                count = 0;
-
-            // A view is editable unless explicitly flagged as not
-            (views || []).forEach(function (view) {
-                count += (view.editable !== false) ? 1 : 0;
-            });
-
-            return count;
         }
 
         /**
@@ -82,26 +63,31 @@ define(
          */
         CreateAction.prototype.perform = function () {
             var newModel = this.type.getInitialModel(),
-                parentObject = this.navigationService.getNavigation(),
-                editorCapability,
-                newObject;
+                newObject,
+                editAction,
+                editorCapability;
+
+            function onSave() {
+                return editorCapability.save();
+            }
+
+            function onCancel() {
+                return editorCapability.cancel();
+            }
 
             newModel.type = this.type.getKey();
-            newModel.location = parentObject.getId();
-            newObject = parentObject.useCapability('instantiation', newModel);
+            newModel.location = this.parent.getId();
+            newObject = this.parent.useCapability('instantiation', newModel);
+            editorCapability = newObject.hasCapability('editor') && newObject.getCapability("editor");
 
-            editorCapability = newObject.getCapability("editor");
-
-            if (countEditableViews(newObject) > 0 && newObject.hasCapability('composition')) {
-                this.navigationService.setNavigation(newObject);
-                return newObject.getCapability("action").perform("edit");
-            } else {
+            editAction = newObject.getCapability("action").getActions("edit")[0];
+            //If an edit action is available, perform it
+            if (editAction) {
+                return editAction.perform();
+            } else if (editorCapability) {
+                //otherwise, use the save action
                 editorCapability.edit();
-                return newObject.useCapability("action").perform("save").then(function () {
-                        return editorCapability.save();
-                    }, function () {
-                        return editorCapability.cancel();
-                    });
+                return newObject.getCapability("action").perform("save").then(onSave, onCancel);
             }
         };
 

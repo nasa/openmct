@@ -22,7 +22,7 @@
 
 
 define(
-    ['../../../browse/src/creation/CreateWizard'],
+    ['../creation/CreateWizard'],
     function (CreateWizard) {
 
         /**
