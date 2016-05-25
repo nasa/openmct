@@ -46,7 +46,7 @@ define(
                 // Find the relevant scope...
                 var rect,
                     scope = element.scope && element.scope();
-                
+
                 if (scope && scope.$broadcast) {
                     // Get the representation's bounds, to convert
                     // drop position
