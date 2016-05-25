@@ -94,13 +94,6 @@ define(
                 it("include one row per domain object", function () {
                     expect(rows.length).toEqual(mockDomainObjects.length);
                 });
-
-                it("includes identifiers for each domain object", function () {
-                    rows.forEach(function (row, index) {
-                        var id = mockDomainObjects[index].getId();
-                        expect(row.indexOf(id)).not.toEqual(-1);
-                    });
-                });
             });
 
             describe("headers", function () {
