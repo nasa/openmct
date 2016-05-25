@@ -68,6 +68,14 @@ define(
                 };
             }
 
+            function fireWatch(expr, value) {
+                mockScope.$watch.calls.forEach(function (call) {
+                    if (call.args[0] === expr) {
+                        call.args[1](value);
+                    }
+                });
+            }
+
 
             beforeEach(function () {
                 var mockA, mockB, mockUtilization, mockPromise, mockGraph, testCapabilities;
@@ -141,9 +149,15 @@ define(
                 expect(mockScope.scroll.y).toEqual(0);
             });
 
+            it("watches for a configuration object", function () {
+                expect(mockScope.$watch).toHaveBeenCalledWith(
+                    "configuration",
+                    jasmine.any(Function)
+                );
+            });
+
             it("repopulates when modifications are made", function () {
-                var fnWatchCall,
-                    strWatchCall;
+                var fnWatchCall;
 
                 // Find the $watch that was given a function
                 mockScope.$watch.calls.forEach(function (call) {
@@ -151,16 +165,11 @@ define(
                         // white-box: we know the first call is
                         // the one we're looking for
                         fnWatchCall = fnWatchCall || call;
-                    } else if (typeof call.args[0] === 'string') {
-                        strWatchCall = strWatchCall || call;
                     }
                 });
 
                 // Make sure string watch was for domainObject
-                expect(strWatchCall.args[0]).toEqual('domainObject');
-                // Initially populate
-                strWatchCall.args[1](mockDomainObject);
-
+                fireWatch('domainObject', mockDomainObject);
                 // There should be to swimlanes
                 expect(controller.swimlanes().length).toEqual(2);
 
@@ -182,23 +191,23 @@ define(
                 // order of $watch calls in TimelineController.
 
                 // Initially populate
-                mockScope.$watch.calls[0].args[1](mockDomainObject);
+                fireWatch('domainObject', mockDomainObject);
 
                 // Verify precondition - no graphs
                 expect(controller.graphs().length).toEqual(0);
 
                 // Execute the watch function for graph state
-                tmp = mockScope.$watch.calls[2].args[0]();
+                tmp = mockScope.$watch.calls[3].args[0]();
 
                 // Change graph state
                 testConfiguration.graph = { a: true, b: true };
 
                 // Verify that this would have triggered a watch
-                expect(mockScope.$watch.calls[2].args[0]())
+                expect(mockScope.$watch.calls[3].args[0]())
                     .not.toEqual(tmp);
 
                 // Run the function the watch would have triggered
-                mockScope.$watch.calls[2].args[1]();
+                mockScope.$watch.calls[3].args[1]();
 
                 // Should have some graphs now
                 expect(controller.graphs().length).toEqual(2);
@@ -211,7 +220,7 @@ define(
                 mockZoom.duration.andReturn(12345);
 
                 // Initially populate
-                mockScope.$watch.calls[0].args[1](mockDomainObject);
+                fireWatch('domainObject', mockDomainObject);
 
                 expect(controller.width(mockZoom)).toEqual(54321);
                 // Verify interactions; we took zoom's duration for our start/end,
