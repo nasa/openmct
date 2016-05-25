@@ -41,11 +41,23 @@ define([], function () {
     UtilizationColumn.prototype.value = function (domainObject) {
         var resource = this.resource;
 
+        function getCost(utilization) {
+            var seconds = (utilization.end - utilization.start) / 1000;
+            return seconds * utilization.value;
+        }
+
         function getUtilizationValue(utilizations) {
             utilizations = utilizations.filter(function (utilization) {
-                return key === resource.key;
+                return utilization.key === resource.key;
             });
-            return utilizations.length === 1 ? utilizations[0].value : "";
+
+            if (utilizations.length === 0) {
+                return "";
+            }
+
+            return utilizations.map(getCost).reduce(function (a, b) {
+                return a + b;
+            }, 0);
         }
 
         return !domainObject.hasCapability('utilization') ?
