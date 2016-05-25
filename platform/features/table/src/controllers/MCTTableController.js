@@ -47,7 +47,7 @@ define(
             setDefaults($scope);
 
             $scope.exportAsCSV = function () {
-                var headers = $scope.headers;
+                var headers = $scope.displayHeaders;
                 exportService.exportCSV($scope.displayRows.map(function (row) {
                     return headers.reduce(function (r, header) {
                         r[header] = row[header].text;
