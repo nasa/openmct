@@ -29,7 +29,7 @@
     .accordion-head {
         $op: 0.2;
         border-radius: $basicCr * 0.75;
-        box-sizing: "border-box";
+        box-sizing: border-box;
         background: rgba($colorBodyFg, $op);
         cursor: pointer;
         font-size: 0.75em;
@@ -396,11 +396,11 @@ input[type="search"] {
         left: auto;
     }
     .knob-l {
-        @include border-left-radius($sliderKnobW);
+        @include border-left-radius($sliderKnobR);
         cursor: w-resize;
     }
     .knob-r {
-        @include border-right-radius($sliderKnobW);
+        @include border-right-radius($sliderKnobR);
         cursor: e-resize;
     }
     .range {
@@ -426,7 +426,6 @@ input[type="search"] {
     @include user-select(none);
     font-size: 0.8rem;
     padding: $interiorMarginLg !important;
-    width: 230px;
     .l-month-year-pager {
         $pagerW: 20px;
         height: $r1H;
@@ -513,6 +512,19 @@ input[type="search"] {
                 .sub {
                     color: inherit;
                 }
+            }
+        }
+    }
+}
+
+@include phone {
+    .l-datetime-picker {
+        padding: $interiorMargin !important;
+    }
+    .l-calendar {
+        ul.l-cal-row {
+            li {
+                padding: 2px $interiorMargin;
             }
         }
     }
