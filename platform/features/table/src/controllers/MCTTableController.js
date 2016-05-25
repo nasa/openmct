@@ -46,6 +46,10 @@ define(
 
             setDefaults($scope);
 
+            $scope.exportAsCSV = function () {
+                window.alert("Export!");
+            };
+
             $scope.toggleSort = function (key) {
                 if (!$scope.enableSort) {
                     return;
