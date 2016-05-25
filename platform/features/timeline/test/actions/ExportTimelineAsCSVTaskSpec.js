@@ -52,6 +52,7 @@ define(
 
                 task = new ExportTimelineAsCSVTask(
                     mockExportService,
+                    [],
                     mockDomainObject
                 );
             });
