@@ -43,6 +43,15 @@ define([
     "./src/capabilities/EditorCapability",
     "./src/capabilities/TransactionCapabilityDecorator",
     "./src/services/TransactionService",
+    "./src/creation/CreateMenuController",
+    "./src/creation/LocatorController",
+    "./src/creation/CreationPolicy",
+    "./src/creation/CreateActionProvider",
+    "./src/creation/AddActionProvider",
+    "./src/creation/CreationService",
+    "text!./res/templates/create/locator.html",
+    "text!./res/templates/create/create-button.html",
+    "text!./res/templates/create/create-menu.html",
     "text!./res/templates/library.html",
     "text!./res/templates/edit-object.html",
     "text!./res/templates/edit-action-buttons.html",
@@ -72,6 +81,15 @@ define([
     EditorCapability,
     TransactionCapabilityDecorator,
     TransactionService,
+    CreateMenuController,
+    LocatorController,
+    CreationPolicy,
+    CreateActionProvider,
+    AddActionProvider,
+    CreationService,
+    locatorTemplate,
+    createButtonTemplate,
+    createMenuTemplate,
     libraryTemplate,
     editObjectTemplate,
     editActionButtonsTemplate,
@@ -112,7 +130,23 @@ define([
                         "$location",
                         "policyService"
                     ]
-                }
+                },
+                {
+                    "key": "CreateMenuController",
+                    "implementation": CreateMenuController,
+                    "depends": [
+                        "$scope"
+                    ]
+                },
+                {
+                    "key": "LocatorController",
+                    "implementation": LocatorController,
+                    "depends": [
+                        "$scope",
+                        "$timeout",
+                        "objectService"
+                    ]
+                },
             ],
             "directives": [
                 {
@@ -221,8 +255,11 @@ define([
                     "category": "navigation",
                     "message": "There are unsaved changes.",
                     "implementation": EditNavigationPolicy
+                },
+                {
+                    "implementation": CreationPolicy,
+                    "category": "creation"
                 }
-
             ],
             "templates": [
                 {
@@ -261,7 +298,18 @@ define([
                 {
                     "key": "topbar-edit",
                     "template": topbarEditTemplate
-                }
+                },
+                {
+                    "key": "create-button",
+                    "template": createButtonTemplate
+                },
+                {
+                    "key": "create-menu",
+                    "template": createMenuTemplate,
+                    "uses": [
+                        "action"
+                    ]
+                },
             ],
             "components": [
                 {
@@ -282,7 +330,40 @@ define([
                         "$q",
                         "$log"
                     ]
+                },
+                {
+                    "key": "CreateActionProvider",
+                    "provides": "actionService",
+                    "type": "provider",
+                    "implementation": CreateActionProvider,
+                    "depends": [
+                        "typeService",
+                        "policyService"
+                    ]
+                },
+                {
+                    "key": "AddActionProvider",
+                    "provides": "actionService",
+                    "type": "provider",
+                    "implementation": AddActionProvider,
+                    "depends": [
+                        "$q",
+                        "typeService",
+                        "dialogService",
+                        "policyService"
+                    ]
+                },
+                {
+                    "key": "CreationService",
+                    "provides": "creationService",
+                    "type": "provider",
+                    "implementation": CreationService,
+                    "depends": [
+                        "$q",
+                        "$log"
+                    ]
                 }
+
             ],
             "representers": [
                 {
@@ -315,6 +396,12 @@ define([
                     "depends": [
                         "transactionService"
                     ]
+                }
+            ],
+            "controls": [
+                {
+                    "key": "locator",
+                    "template": locatorTemplate
                 }
             ]
         }

@@ -29,13 +29,10 @@ define(
 
         describe("The create action provider", function () {
             var mockTypeService,
-                mockDialogService,
-                mockNavigationService,
                 mockPolicyService,
                 mockCreationPolicy,
                 mockPolicyMap = {},
                 mockTypes,
-                mockQ,
                 provider;
 
             function createMockType(name) {
@@ -61,14 +58,6 @@ define(
                     "typeService",
                     ["listTypes"]
                 );
-                mockDialogService = jasmine.createSpyObj(
-                    "dialogService",
-                    ["getUserInput"]
-                );
-                mockNavigationService = jasmine.createSpyObj(
-                    "navigationService",
-                    ["setNavigation"]
-                );
                 mockPolicyService = jasmine.createSpyObj(
                     "policyService",
                     ["allow"]
@@ -91,9 +80,7 @@ define(
                 mockTypeService.listTypes.andReturn(mockTypes);
 
                 provider = new CreateActionProvider(
-                    mockQ,
                     mockTypeService,
-                    mockNavigationService,
                     mockPolicyService
                 );
             });

@@ -133,7 +133,7 @@ define([
                         "telemetry"
                     ],
                     "delegation": true,
-                    "editable": true
+                    "editable": false
                 },
                 {
                     "name": "Real-time Table",
@@ -144,7 +144,7 @@ define([
                         "telemetry"
                     ],
                     "delegation": true,
-                    "editable": true
+                    "editable": false
                 }
             ],
             "directives": [

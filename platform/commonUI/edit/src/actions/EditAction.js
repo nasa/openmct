@@ -74,6 +74,12 @@ define(
                 self.domainObject.getCapability('editor').cancel();
                 self.navigationService.removeListener(cancelEditing);
             }
+            //If this is not the currently navigated object, then navigate
+            // to it.
+            if (this.navigationService.getNavigation() !== this.domainObject) {
+                this.navigationService.setNavigation(this.domainObject);
+            }
+
             this.navigationService.addListener(cancelEditing);
             this.domainObject.useCapability("editor");
         };

@@ -56,7 +56,10 @@ define(
             // A view is editable unless explicitly flagged as not
             (views || []).forEach(function (view) {
                 if (view.editable === true ||
-                    (view.key === 'plot' && type.getKey() === 'telemetry.panel')) {
+                    (view.key === 'plot' && type.getKey() === 'telemetry.panel') ||
+                    (view.key === 'table' && type.getKey() === 'table') ||
+                    (view.key === 'rt-table' && type.getKey() === 'rttable')
+                    ) {
                     count++;
                 }
             });
