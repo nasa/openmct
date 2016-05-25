@@ -77,10 +77,10 @@ define(
                     ]
                 );
                 mockDomainObject.hasCapability.andCallFake(function (name) {
-                   return !!capabilities[name];
+                    return !!capabilities[name];
                 });
                 mockDomainObject.getCapability.andCallFake(function (name) {
-                   return capabilities[name];
+                    return capabilities[name];
                 });
                 mockSaveAction = jasmine.createSpyObj(
                     "saveAction",
@@ -165,10 +165,10 @@ define(
 
                 describe("uses to editor capability", function () {
                     var promise = jasmine.createSpyObj("promise", ["then"]);
-                   beforeEach(function () {
-                       capabilities.action.getActions.andReturn([]);
-                       capabilities.action.perform.andReturn(promise);
-                   });
+                    beforeEach(function () {
+                        capabilities.action.getActions.andReturn([]);
+                        capabilities.action.perform.andReturn(promise);
+                    });
 
                     it("to save the edit if user saves dialog", function () {
                         action.perform();
