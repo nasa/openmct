@@ -92,6 +92,7 @@ define([
                     "category": "contextual",
                     "implementation": ExportTimelineAsCSVAction,
                     "depends": [
+                        "$log",
                         "exportService",
                         "notificationService",
                         "resources[]"

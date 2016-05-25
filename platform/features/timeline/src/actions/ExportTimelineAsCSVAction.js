@@ -34,11 +34,13 @@ define(["./ExportTimelineAsCSVTask"], function (ExportTimelineAsCSVTask) {
      * @memberof {platform/features/timeline}
      */
     function ExportTimelineAsCSVAction(
+        $log,
         exportService,
         notificationService,
         resources,
         context
     ) {
+        this.$log = $log;
         this.task = new ExportTimelineAsCSVTask(
             exportService,
             resources,
@@ -52,13 +54,15 @@ define(["./ExportTimelineAsCSVTask"], function (ExportTimelineAsCSVTask) {
             notification = notificationService.notify({
                 title: "Exporting CSV",
                 unknownProgress: true
-            });
+            }),
+            $log = this.$log;
 
         return this.task.run()
             .then(function () {
                 notification.dismiss();
             })
-            .catch(function () {
+            .catch(function (err) {
+                $log.warn(err);
                 notification.dismiss();
                 notificationService.error("Error exporting CSV");
             });
