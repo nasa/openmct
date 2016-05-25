@@ -141,6 +141,13 @@ define(
                 expect(mockScope.scroll.y).toEqual(0);
             });
 
+            it("watches for a configuration object", function () {
+                expect(mockScope.$watch).toHaveBeenCalledWith(
+                    "configuration",
+                    jasmine.any(Function)
+                );
+            });
+
             it("repopulates when modifications are made", function () {
                 var fnWatchCall,
                     strWatchCall;
