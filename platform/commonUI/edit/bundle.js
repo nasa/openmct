@@ -146,7 +146,7 @@ define([
                         "$timeout",
                         "objectService"
                     ]
-                },
+                }
             ],
             "directives": [
                 {
@@ -309,7 +309,7 @@ define([
                     "uses": [
                         "action"
                     ]
-                },
+                }
             ],
             "components": [
                 {
