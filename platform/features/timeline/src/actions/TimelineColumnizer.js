@@ -25,13 +25,15 @@ define([
     "./ModeColumn",
     "./CompositionColumn",
     "./MetadataColumn",
-    "./TimespanColumn"
+    "./TimespanColumn",
+    "./UtilizationColumn"
 ], function (
     IdColumn,
     ModeColumn,
     CompositionColumn,
     MetadataColumn,
-    TimespanColumn
+    TimespanColumn,
+    UtilizationColumn
 ) {
 
     /**
