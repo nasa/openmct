@@ -557,8 +557,7 @@ define([
                 {
                     "key": "comms",
                     "name": "Comms",
-                    "units": "Kbps",
-                    "foo": "Kb"
+                    "units": "Kbps"
                 },
                 {
                     "key": "battery",

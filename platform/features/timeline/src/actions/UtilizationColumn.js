@@ -34,6 +34,14 @@ define([], function () {
         this.resource = resource;
     }
 
+    UtilizationColumn.prototype.getUnits = function () {
+        var instantaneousUnits = this.resource.units;
+        return {
+            "Kbps": "Kb",
+            "Watts": "joules",
+        }[instantaneousUnits] || "unknown units";
+    };
+
     UtilizationColumn.prototype.name = function () {
         return this.resource.name;
     };
@@ -57,7 +65,7 @@ define([], function () {
 
             return utilizations.map(getCost).reduce(function (a, b) {
                 return a + b;
-            }, 0);
+            }, 0) + " (" + this.getUnits() + ")";
         }
 
         return !domainObject.hasCapability('utilization') ?
