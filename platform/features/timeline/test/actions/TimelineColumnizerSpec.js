@@ -75,7 +75,7 @@ define(
                     return c === 'metadata' && testMetadata;
                 });
 
-                exporter = new TimelineColumnizer(mockDomainObjects);
+                exporter = new TimelineColumnizer(mockDomainObjects, []);
             });
 
             describe("rows", function () {
