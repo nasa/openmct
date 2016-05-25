@@ -24,7 +24,15 @@ define(
     ["../../src/directives/MCTPopup"],
     function (MCTPopup) {
 
-        var JQLITE_METHODS = ["on", "off", "find", "parent", "css", "append"];
+        var JQLITE_METHODS = [
+            "on",
+            "off",
+            "find",
+            "parent",
+            "css",
+            "addClass",
+            "append"
+        ];
 
         describe("The mct-popup directive", function () {
             var mockCompile,
