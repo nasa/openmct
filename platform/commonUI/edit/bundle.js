@@ -253,7 +253,7 @@ define([
                 },
                 {
                     "category": "navigation",
-                    "message": "There are unsaved changes.",
+                    "message": "Continuing will cause the loss of any unsaved changes.",
                     "implementation": EditNavigationPolicy
                 },
                 {
