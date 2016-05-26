@@ -20,6 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <div class="t-timeline-gantt l-timeline-gantt s-timeline-gantt"
+     ng-class="{ sm: gantt.width(timespan, parameters.scroll, parameters.toPixels) < 25 }"
      title="{{model.name}}"
      ng-controller="TimelineGanttController as gantt"
      ng-style="timespan ? {

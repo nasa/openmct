@@ -52,6 +52,9 @@
                     // Tree area with item title
                     right: auto; // Set this to auto and uncomment width below when additional tabular columns are added
                     width: $timelineTabularTitleW;
+                    .l-swimlanes-holder {
+                        bottom: $scrollbarTrackSize;
+                    }
                 }
                 &.l-tabular-r {
                     // Start, end, duration, activity modes columns
@@ -67,6 +70,7 @@
             &.l-timeline-gantt {
                 .l-swimlanes-holder {
                     @include scrollV(scroll);
+                    bottom: $scrollbarTrackSize;
                 }
             }
 	        &.l-timeline-resource-legend {

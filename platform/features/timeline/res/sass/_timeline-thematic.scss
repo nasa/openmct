@@ -32,20 +32,10 @@
 }
 
 .s-timeline-gantt {
-    $br: $controlCr;
     .bar {
         color: $colorGanttBarFg;
         @include activityBg($colorGanttBarBg);
-        border-radius: $br;
         box-shadow: $shdwGanttBar;
-        &.expanded {
-            @include border-top-radius($br);
-            @include border-bottom-radius(0);
-        }
-        &.leaf {
-            @include border-top-radius(0);
-            @include border-bottom-radius($br);
-        }
         .s-toggle {
             color: $colorGanttToggle;
         }
