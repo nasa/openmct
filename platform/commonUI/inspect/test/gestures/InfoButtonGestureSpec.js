@@ -137,6 +137,11 @@ define(
                 );
             });
 
+            // https://github.com/nasa/openmct/issues/948
+            it("does not try to access scope", function () {
+                expect(mockElement.scope).not.toHaveBeenCalled();
+            });
+
         });
     }
 );
