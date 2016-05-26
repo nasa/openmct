@@ -42,7 +42,7 @@ define(
                 'parent'
             ];
 
-        xdescribe("ConductorRepresenter", function () {
+        describe("ConductorRepresenter", function () {
             var mockThrottle,
                 mockConductorService,
                 mockCompile,
