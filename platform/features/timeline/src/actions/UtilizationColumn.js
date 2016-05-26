@@ -62,10 +62,10 @@ define([], function () {
             }, 0);
         }
 
-        return !domainObject.hasCapability('utilization') ?
-            "" :
+        return domainObject.hasCapability('utilization') ?
             domainObject.getCapability('utilization').internal()
-                .then(getUtilizationValue);
+                .then(getUtilizationValue) :
+            "";
     };
 
     return UtilizationColumn;
