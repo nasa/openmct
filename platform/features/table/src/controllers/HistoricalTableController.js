@@ -35,11 +35,46 @@ define(
          * @param telemetryFormatter
          * @constructor
          */
-        function HistoricalTableController($scope, telemetryHandler, telemetryFormatter) {
+        function HistoricalTableController($scope, telemetryHandler, telemetryFormatter, $timeout, $q) {
+            this.$timeout = $timeout;
+            this.$q = $q;
             TableController.call(this, $scope, telemetryHandler, telemetryFormatter);
+            $scope.loading = true;
         }
 
         HistoricalTableController.prototype = Object.create(TableController.prototype);
+
+        function fastPromise(value) {
+            if (value && value.then) {
+                return value;
+            } else {
+                return {
+                    then: function (callback) {
+                        return fastPromise(callback(value));
+                    }
+                };
+            }
+        }
+
+        /**
+         * @private
+         */
+        HistoricalTableController.prototype.yieldingLoop = function (index, max, forEach, yieldAfter) {
+            var self = this;
+
+            if (index < max) {
+                forEach(index);
+                if (index % yieldAfter === 0) {
+                    return this.$timeout(function () {
+                        return self.yieldingLoop(++index, max, forEach, yieldAfter);
+                    });
+                } else {
+                    return self.yieldingLoop(++index, max, forEach, yieldAfter);
+                }
+            } else {
+                return this.$q.when(undefined);
+            }
+        };
 
         /**
          * Populates historical data on scope when it becomes available from
@@ -49,18 +84,27 @@ define(
             var rowData = [],
                 self = this;
 
-            this.handle.getTelemetryObjects().forEach(function (telemetryObject) {
+            this.$scope.loading = true;
+
+            function processTelemetryObject(telemetryObject) {
                 var series = self.handle.getSeries(telemetryObject) || {},
                     pointCount = series.getPointCount ? series.getPointCount() : 0,
                     i = 0;
 
-                for (; i < pointCount; i++) {
+                return self.yieldingLoop(i, pointCount, function (index) {
                     rowData.push(self.table.getRowValues(telemetryObject,
-                        self.handle.makeDatum(telemetryObject, series, i)));
-                }
-            });
+                        self.handle.makeDatum(telemetryObject, series, index)));
+                }, 1000);
+            }
 
-            this.$scope.rows = rowData;
+            this.handle.getTelemetryObjects().reduce(function (promise, telemetryObject) {
+                return promise.then(function () {
+                    return processTelemetryObject(telemetryObject);
+                });
+            }, self.$q.when(undefined)).then(function () {
+                self.$scope.rows = rowData;
+                self.$scope.loading = false;
+            });
         };
 
         return HistoricalTableController;
