@@ -52,11 +52,11 @@ define(
             this.domainObject.getCapability('status').set('editing', true);
         };
 
-        function isEditContextRoot (domainObject) {
+        function isEditContextRoot(domainObject) {
             return domainObject.getCapability('status').get('editing');
         }
 
-        function isEditing (domainObject) {
+        function isEditing(domainObject) {
             return isEditContextRoot(domainObject) ||
                 domainObject.hasCapability('context') &&
                 isEditing(domainObject.getCapability('context').getParent());
@@ -87,7 +87,7 @@ define(
          */
         EditorCapability.prototype.save = function () {
             var domainObject = this.domainObject;
-            return this.transactionService.commit().then(function() {
+            return this.transactionService.commit().then(function () {
                 domainObject.getCapability('status').set('editing', false);
             });
         };
@@ -101,7 +101,7 @@ define(
          */
         EditorCapability.prototype.cancel = function () {
             var domainObject = this.domainObject;
-            return this.transactionService.cancel().then(function(){
+            return this.transactionService.cancel().then(function () {
                 domainObject.getCapability("status").set("editing", false);
                 return domainObject;
             });

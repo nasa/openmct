@@ -36,7 +36,7 @@ define(
                     jasmine.createSpyObj('document', ['createElement'])
                 ];
                 mockScope = jasmine.createSpyObj('scope', ['$watch']);
-                mockElement = jasmine.createSpyObj('element', [ 'css' ]);
+                mockElement = jasmine.createSpyObj('element', ['css']);
                 testImage = {};
 
                 mockDocument[0].createElement.andReturn(testImage);

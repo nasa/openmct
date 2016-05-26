@@ -27,9 +27,9 @@ define(
     ["../src/MCTRepresentation"],
     function (MCTRepresentation) {
 
-        var JQLITE_FUNCTIONS = [ "on", "off", "attr", "removeAttr" ],
-            LOG_FUNCTIONS = [ "error", "warn", "info", "debug"],
-            DOMAIN_OBJECT_METHODS = [ "getId", "getModel", "getCapability", "hasCapability", "useCapability"];
+        var JQLITE_FUNCTIONS = ["on", "off", "attr", "removeAttr"],
+            LOG_FUNCTIONS = ["error", "warn", "info", "debug"],
+            DOMAIN_OBJECT_METHODS = ["getId", "getModel", "getCapability", "hasCapability", "useCapability"];
 
         describe("The mct-representation directive", function () {
             var testRepresentations,
@@ -76,7 +76,7 @@ define(
                         key: "def",
                         bundle: { path: "d", resources: "e" },
                         templateUrl: "f/template.html",
-                        uses: [ "testCapability", "otherTestCapability" ]
+                        uses: ["testCapability", "otherTestCapability"]
                     }
                 ];
 
@@ -85,7 +85,7 @@ define(
                         key: "uvw",
                         bundle: { path: "u", resources: "v" },
                         templateUrl: "w/template.html",
-                        gestures: [ "testGesture", "otherTestGesture" ]
+                        gestures: ["testGesture", "otherTestGesture"]
                     },
                     {
                         key: "xyz",
@@ -105,7 +105,7 @@ define(
                     var constructor = jasmine.createSpy("Representer" + name),
                         representer = jasmine.createSpyObj(
                             "representer" + name,
-                            [ "represent", "destroy" ]
+                            ["represent", "destroy"]
                         );
                     constructor.andReturn(representer);
                     return constructor;
@@ -121,7 +121,7 @@ define(
 
                 mockStatusCapability = jasmine.createSpyObj("statusCapability", ["listen"]);
 
-                mockScope = jasmine.createSpyObj("scope", [ "$watch", "$on" ]);
+                mockScope = jasmine.createSpyObj("scope", ["$watch", "$on"]);
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
 
@@ -251,21 +251,6 @@ define(
                 // Trigger the watch again; should clear capability from scope
                 mockScope.$watch.calls[0].args[1]();
                 expect(mockScope.testCapability).toBeUndefined();
-            });
-
-            it("registers a status change listener", function () {
-                mockScope.$watch.calls[2].args[1](mockDomainObject);
-                expect(mockStatusCapability.listen).toHaveBeenCalled();
-            });
-
-            it("unlistens for status change on scope destruction", function () {
-                var mockUnlistener = jasmine.createSpy("unlisten");
-                mockStatusCapability.listen.andReturn(mockUnlistener);
-                mockScope.$watch.calls[2].args[1](mockDomainObject);
-                expect(mockStatusCapability.listen).toHaveBeenCalled();
-
-                mockScope.$on.calls[1].args[1]();
-                expect(mockUnlistener).toHaveBeenCalled();
             });
 
             describe("when a domain object has been observed", function () {

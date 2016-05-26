@@ -178,8 +178,8 @@ define([
         });
 
         if (Array.isArray(model.composition)) {
-            model.composition.forEach(function (id) {
-                provider.scheduleForIndexing(id);
+            model.composition.forEach(function (idToIndex) {
+                provider.scheduleForIndexing(idToIndex);
             });
         }
     };

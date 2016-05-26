@@ -48,16 +48,16 @@ define(
                 beforeEach(function () {
                     mockScope = jasmine.createSpyObj(
                         '$scope',
-                        [ '$on', '$watch' ]
+                        ['$on', '$watch']
                     );
                     mockElement = jasmine.createSpyObj(
                         'element',
-                        [ 'addClass' ]
+                        ['addClass']
                     );
                     testAttrs = {};
                     mockSplitPane = jasmine.createSpyObj(
                         'mctSplitPane',
-                        [ 'position', 'toggleClass', 'anchor' ]
+                        ['position', 'toggleClass', 'anchor']
                     );
 
                     mctSplitter.link(
@@ -92,7 +92,7 @@ define(
                     });
 
                     it("repositions during drag", function () {
-                        mockScope.splitter.move([ 10, 0 ]);
+                        mockScope.splitter.move([10, 0]);
                         expect(mockSplitPane.position)
                             .toHaveBeenCalledWith(testPosition + 10);
                     });

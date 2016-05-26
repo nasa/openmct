@@ -24,24 +24,15 @@ define([
     "./src/BrowseController",
     "./src/PaneController",
     "./src/BrowseObjectController",
-    "./src/creation/CreateMenuController",
-    "./src/creation/LocatorController",
     "./src/MenuArrowController",
     "./src/navigation/NavigationService",
-    "./src/creation/CreationPolicy",
     "./src/navigation/NavigateAction",
     "./src/navigation/OrphanNavigationHandler",
     "./src/windowing/NewTabAction",
     "./src/windowing/FullscreenAction",
-    "./src/creation/CreateActionProvider",
-    "./src/creation/AddActionProvider",
-    "./src/creation/CreationService",
     "./src/windowing/WindowTitler",
     "text!./res/templates/browse.html",
-    "text!./res/templates/create/locator.html",
     "text!./res/templates/browse-object.html",
-    "text!./res/templates/create/create-button.html",
-    "text!./res/templates/create/create-menu.html",
     "text!./res/templates/items/grid-item.html",
     "text!./res/templates/browse/object-header.html",
     "text!./res/templates/menu-arrow.html",
@@ -54,24 +45,15 @@ define([
     BrowseController,
     PaneController,
     BrowseObjectController,
-    CreateMenuController,
-    LocatorController,
     MenuArrowController,
     NavigationService,
-    CreationPolicy,
     NavigateAction,
     OrphanNavigationHandler,
     NewTabAction,
     FullscreenAction,
-    CreateActionProvider,
-    AddActionProvider,
-    CreationService,
     WindowTitler,
     browseTemplate,
-    locatorTemplate,
     browseObjectTemplate,
-    createButtonTemplate,
-    createMenuTemplate,
     gridItemTemplate,
     objectHeaderTemplate,
     menuArrowTemplate,
@@ -139,33 +121,11 @@ define([
                     ]
                 },
                 {
-                    "key": "CreateMenuController",
-                    "implementation": CreateMenuController,
-                    "depends": [
-                        "$scope"
-                    ]
-                },
-                {
-                    "key": "LocatorController",
-                    "implementation": LocatorController,
-                    "depends": [
-                        "$scope",
-                        "$timeout",
-                        "objectService"
-                    ]
-                },
-                {
                     "key": "MenuArrowController",
                     "implementation": MenuArrowController,
                     "depends": [
                         "$scope"
                     ]
-                }
-            ],
-            "controls": [
-                {
-                    "key": "locator",
-                    "template": locatorTemplate
                 }
             ],
             "representations": [
@@ -181,17 +141,6 @@ define([
                     ],
                     "uses": [
                         "view"
-                    ]
-                },
-                {
-                    "key": "create-button",
-                    "template": createButtonTemplate
-                },
-                {
-                    "key": "create-menu",
-                    "template": createMenuTemplate,
-                    "uses": [
-                        "action"
                     ]
                 },
                 {
@@ -246,12 +195,6 @@ define([
                     "implementation": NavigationService
                 }
             ],
-            "policies": [
-                {
-                    "implementation": CreationPolicy,
-                    "category": "creation"
-                }
-            ],
             "actions": [
                 {
                     "key": "navigate",
@@ -302,42 +245,6 @@ define([
                     ],
                     "type": "folder",
                     "editable": false
-                }
-            ],
-            "components": [
-                {
-                    "key": "CreateActionProvider",
-                    "provides": "actionService",
-                    "type": "provider",
-                    "implementation": CreateActionProvider,
-                    "depends": [
-                        "$q",
-                        "typeService",
-                        "navigationService",
-                        "policyService"
-                    ]
-                },
-                {
-                    "key": "AddActionProvider",
-                    "provides": "actionService",
-                    "type": "provider",
-                    "implementation": AddActionProvider,
-                    "depends": [
-                        "$q",
-                        "typeService",
-                        "dialogService",
-                        "policyService"
-                    ]
-                },
-                {
-                    "key": "CreationService",
-                    "provides": "creationService",
-                    "type": "provider",
-                    "implementation": CreationService,
-                    "depends": [
-                        "$q",
-                        "$log"
-                    ]
                 }
             ],
             "runs": [

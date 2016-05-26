@@ -41,10 +41,10 @@ requirejs.config({
             "exports": "angular"
         },
         "angular-route": {
-            "deps": [ "angular" ]
+            "deps": ["angular"]
         },
         "moment-duration-format": {
-            "deps": [ "moment" ]
+            "deps": ["moment"]
         },
         "screenfull": {
             "exports": "screenfull"

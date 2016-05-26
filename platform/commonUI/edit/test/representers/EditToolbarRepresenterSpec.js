@@ -34,13 +34,13 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     '$scope',
-                    [ '$on', '$watch', '$watchCollection', "commit" ]
+                    ['$on', '$watch', '$watchCollection', "commit"]
                 );
                 mockElement = {};
                 testAttrs = { toolbar: 'testToolbar' };
                 mockScope.$parent = jasmine.createSpyObj(
                     '$parent',
-                    [ '$watch', '$watchCollection' ]
+                    ['$watch', '$watchCollection']
                 );
                 mockUnwatch = jasmine.createSpy('unwatch');
 
@@ -92,7 +92,7 @@ define(
 
                 // Provide a view which has a toolbar
                 representer.represent({
-                    toolbar: { sections: [ { items: [ { property: 'k' } ] } ] }
+                    toolbar: { sections: [{ items: [{ property: 'k' }] }] }
                 });
 
                 // Update the selection
@@ -120,7 +120,7 @@ define(
 
                 // Provide a view which has a toolbar
                 representer.represent({
-                    toolbar: { sections: [ { items: [ { property: 'k' } ] } ] }
+                    toolbar: { sections: [{ items: [{ property: 'k' }] }] }
                 });
 
                 // Update the selection

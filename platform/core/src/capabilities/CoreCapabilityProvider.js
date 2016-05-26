@@ -62,9 +62,9 @@ define(
             }
 
             // Package capabilities as key-value pairs
-            function packageCapabilities(capabilities) {
+            function packageCapabilities(caps) {
                 var result = {};
-                capabilities.forEach(function (capability) {
+                caps.forEach(function (capability) {
                     if (capability.key) {
                         result[capability.key] =
                             result[capability.key] || capability;

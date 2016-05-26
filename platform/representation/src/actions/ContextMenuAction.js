@@ -59,8 +59,12 @@ define(
             this.agentService = agentService;
             this.actionContext = actionContext;
             this.popupService = popupService;
-            this.getDocument = function () { return $document; };
-            this.getRootScope = function () { return $rootScope; };
+            this.getDocument = function () {
+                return $document;
+            };
+            this.getRootScope = function () {
+                return $rootScope;
+            };
         }
 
         ContextMenuAction.prototype.perform = function () {

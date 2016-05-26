@@ -29,13 +29,10 @@ define(
 
         describe("The create action provider", function () {
             var mockTypeService,
-                mockDialogService,
-                mockNavigationService,
                 mockPolicyService,
                 mockCreationPolicy,
                 mockPolicyMap = {},
                 mockTypes,
-                mockQ,
                 provider;
 
             function createMockType(name) {
@@ -59,41 +56,31 @@ define(
             beforeEach(function () {
                 mockTypeService = jasmine.createSpyObj(
                     "typeService",
-                    [ "listTypes" ]
-                );
-                mockDialogService = jasmine.createSpyObj(
-                    "dialogService",
-                    [ "getUserInput" ]
-                );
-                mockNavigationService = jasmine.createSpyObj(
-                    "navigationService",
-                    [ "setNavigation" ]
+                    ["listTypes"]
                 );
                 mockPolicyService = jasmine.createSpyObj(
                     "policyService",
-                    [ "allow" ]
+                    ["allow"]
                 );
 
-                mockTypes = [ "A", "B", "C" ].map(createMockType);
+                mockTypes = ["A", "B", "C"].map(createMockType);
 
-                mockTypes.forEach(function(type){
+                mockTypes.forEach(function (type) {
                     mockPolicyMap[type.getName()] = true;
                 });
 
-                mockCreationPolicy = function(type){
+                mockCreationPolicy = function (type) {
                     return mockPolicyMap[type.getName()];
                 };
 
-                mockPolicyService.allow.andCallFake(function(category, type){
+                mockPolicyService.allow.andCallFake(function (category, type) {
                     return category === "creation" && mockCreationPolicy(type) ? true : false;
                 });
 
                 mockTypeService.listTypes.andReturn(mockTypes);
 
                 provider = new CreateActionProvider(
-                    mockQ,
                     mockTypeService,
-                    mockNavigationService,
                     mockPolicyService
                 );
             });

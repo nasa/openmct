@@ -46,13 +46,10 @@ define(
             function link(scope, element, attrs, ctrl, transclude) {
                 var div = $compile(TEMPLATE)(scope),
                     rect = element.parent()[0].getBoundingClientRect(),
-                    position = [ rect.left, rect.top ],
+                    position = [rect.left, rect.top],
                     popup = popupService.display(div, position);
 
-                // TODO: Handle in CSS;
-                //       https://github.com/nasa/openmctweb/issues/298
-                div.css('z-index', 75);
-
+                div.addClass('t-popup');
                 transclude(function (clone) {
                     div.append(clone);
                 });

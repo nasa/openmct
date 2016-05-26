@@ -49,10 +49,14 @@ define(
                 var colors = {}, i, ids = [];
 
                 // Add item to set
-                function set(c) { colors[c] = true; }
+                function set(c) {
+                    colors[c] = true;
+                }
 
                 // Generate ids
-                for (i = 0; i < 30; i += 1) { ids.push("id" + i); }
+                for (i = 0; i < 30; i += 1) {
+                    ids.push("id" + i);
+                }
 
                 // Assign colors to each id, then retrieve colors,
                 // storing into the set

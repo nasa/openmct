@@ -37,22 +37,22 @@ define(
         function TelemetryQueue() {
             // General approach here:
             // * Maintain a queue as an array of objects containing key-value
-            //   pairs. Putting values into the queue will assign to the 
-            //   earliest-available queue position for the associated key 
+            //   pairs. Putting values into the queue will assign to the
+            //   earliest-available queue position for the associated key
             //   (appending to the array if necessary.)
             // * Maintain a set of counts for each key, such that determining
             //   the next available queue position is easy; O(1) insertion.
-            // * When retrieving objects, pop off the queue and decrement 
+            // * When retrieving objects, pop off the queue and decrement
             //   counts. This provides O(n+k) or O(k) retrieval for a queue
             //   of length n with k unique keys; this depends on whether
             //   the browser's implementation of Array.prototype.shift is
             //   O(n) or O(1).
-            
+
             // Graphically (indexes at top, keys along side, values as *'s),
             // if we have a queue that looks like:
             //   0 1 2 3 4
             // a * * * * *
-            // b * * 
+            // b * *
             // c * * *
             //
             // And we put a new value for b, we expect:
@@ -93,11 +93,11 @@ define(
 
             // Look up an object in the queue that does not have a value
             // assigned to this key (or, add a new one)
-            function getFreeObject(key) {
-                var index = counts[key] || 0, object;
+            function getFreeObject(k) {
+                var index = counts[k] || 0, object;
 
                 // Track the largest free position for this key
-                counts[key] = index + 1;
+                counts[k] = index + 1;
 
                 // If it's before the end of the queue, add it there
                 if (index < queue.length) {

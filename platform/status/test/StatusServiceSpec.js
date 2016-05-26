@@ -40,7 +40,7 @@ define(
                 mockTopic = jasmine.createSpy('topic');
                 mockTopicInstance = jasmine.createSpyObj(
                     'topicInstance',
-                    [ 'notify', 'listen' ]
+                    ['notify', 'listen']
                 );
                 mockUnlisten = jasmine.createSpy('unlisten');
                 mockCallback = jasmine.createSpy('callback');
@@ -75,7 +75,7 @@ define(
             it("notifies listeners of changes", function () {
                 statusService.setStatus(testId, testStatus, true);
                 expect(mockTopicInstance.notify)
-                    .toHaveBeenCalledWith([ testStatus ]);
+                    .toHaveBeenCalledWith([testStatus]);
                 statusService.setStatus(testId, testStatus, false);
                 expect(mockTopicInstance.notify)
                     .toHaveBeenCalledWith([ ]);

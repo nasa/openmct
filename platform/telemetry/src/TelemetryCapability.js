@@ -27,7 +27,9 @@ define(
     [],
     function () {
 
-        var ZERO = function () { return 0; },
+        var ZERO = function () {
+            return 0;
+        },
             EMPTY_SERIES = {
                 getPointCount: ZERO,
                 getDomainValue: ZERO,

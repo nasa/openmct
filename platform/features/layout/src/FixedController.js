@@ -24,7 +24,7 @@ define(
     ['./FixedProxy', './elements/ElementProxies', './FixedDragHandle'],
     function (FixedProxy, ElementProxies, FixedDragHandle) {
 
-        var DEFAULT_DIMENSIONS = [ 2, 1 ],
+        var DEFAULT_DIMENSIONS = [2, 1],
             DEFAULT_GRID_SIZE = [64, 16];
 
         /**
@@ -271,15 +271,13 @@ define(
             }
 
             // Position a panel after a drop event
-            function handleDrop(e, id, position, editableDomainObject) {
+            function handleDrop(e, id, position) {
                 // Don't handle this event if it has already been handled
                 // color is set to "" to let the CSS theme determine the default color
                 if (e.defaultPrevented) {
                     return;
                 }
-                if (editableDomainObject){
-                    $scope.setEditable(editableDomainObject);
-                }
+
                 e.preventDefault();
                 // Store the position of this element.
                 addElement({

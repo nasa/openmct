@@ -94,7 +94,7 @@ define(
                     return candidate.someKey !== 'b';
                 });
                 expect(decorator.getViews(mockDomainObject))
-                    .toEqual([ testViews[0], testViews[2] ]);
+                    .toEqual([testViews[0], testViews[2]]);
             });
 
         });

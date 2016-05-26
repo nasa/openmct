@@ -36,7 +36,7 @@ define(
                 mockInjector = jasmine.createSpyObj('$injector', ['get']);
                 mockPolicyService = jasmine.createSpyObj(
                     'policyService',
-                    [ 'allow' ]
+                    ['allow']
                 );
                 mockTypes = ['a', 'b'].map(function (type) {
                     var mockType = jasmine.createSpyObj('type-' + type, ['getKey']);

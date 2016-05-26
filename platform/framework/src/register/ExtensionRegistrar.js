@@ -92,7 +92,9 @@ define(
             // Always return a static value; used to represent plain
             // metadata as a single dependency in Angular.
             function staticFunction(value) {
-                return function () { return value; };
+                return function () {
+                    return value;
+                };
             }
 
             // Utility function; create the second argument for Angular's
@@ -162,15 +164,15 @@ define(
 
             // Examine a group of resolved dependencies to determine
             // which extension categories still need to be satisfied.
-            function findEmptyExtensionDependencies(extensionGroup) {
+            function findEmptyExtensionDependencies(extGroup) {
                 var needed = {},
-                    categories = Object.keys(extensionGroup),
+                    categories = Object.keys(extGroup),
                     allExtensions = [];
 
                 // Build up an array of all extensions
                 categories.forEach(function (category) {
                     allExtensions =
-                        allExtensions.concat(extensionGroup[category]);
+                        allExtensions.concat(extGroup[category]);
                 });
 
                 // Track all extension dependencies exposed therefrom
@@ -195,10 +197,9 @@ define(
             // Register any extension categories that are depended-upon but
             // have not been declared anywhere; such dependencies are then
             // satisfied by an empty array, instead of not at all.
-            function registerEmptyDependencies(extensionGroup) {
-                findEmptyExtensionDependencies(
-                    extensionGroup
-                ).forEach(function (name) {
+            function registerEmptyDependencies(extGroup) {
+                findEmptyExtensionDependencies(extGroup)
+                    .forEach(function (name) {
                         $log.info("Registering empty extension category " + name);
                         app.factory(name, [staticFunction([])]);
                     });

@@ -29,7 +29,7 @@ define(
             var region,
                 part2 = new Region({'name': 'part2'});
 
-            beforeEach(function(){
+            beforeEach(function () {
                 region = new Region();
                 region.regions = [
                     new Region({name: 'part1'}),
@@ -39,27 +39,27 @@ define(
             });
 
             it("adding a region at a specified index adds it in that" +
-                " position", function() {
+                " position", function () {
 
-                region.addRegion(part2, 1);
+                    region.addRegion(part2, 1);
 
-                expect(region.regions.length).toBe(4);
-                expect(region.regions[1]).toBe(part2);
-            });
+                    expect(region.regions.length).toBe(4);
+                    expect(region.regions[1]).toBe(part2);
+                });
 
-            it("adding a region without an index adds it at the end", function() {
+            it("adding a region without an index adds it at the end", function () {
                 var partN = new Region({'name': 'partN'});
 
                 region.addRegion(partN);
 
                 expect(region.regions.length).toBe(4);
-                expect(region.regions[region.regions.length-1]).toBe(partN);
+                expect(region.regions[region.regions.length - 1]).toBe(partN);
             });
 
-            describe("removing a region", function(){
+            describe("removing a region", function () {
                 var partName = "part2";
 
-                beforeEach(function(){
+                beforeEach(function () {
                     region.regions = [
                         new Region({name: 'part1'}),
                         part2,
@@ -68,7 +68,7 @@ define(
                     ];
                 });
 
-                it("with a string matches on region name", function() {
+                it("with a string matches on region name", function () {
                     expect(region.regions.length).toBe(4);
                     expect(region.regions.indexOf(part2)).toBe(1);
 
@@ -78,7 +78,7 @@ define(
                     expect(region.regions.indexOf(part2)).toBe(-1);
                 });
 
-                it("with a number removes by index", function() {
+                it("with a number removes by index", function () {
                     expect(region.regions.length).toBe(4);
                     expect(region.regions.indexOf(part2)).toBe(1);
 
@@ -89,7 +89,7 @@ define(
                 });
 
 
-                it("with object matches that object", function() {
+                it("with object matches that object", function () {
                     expect(region.regions.length).toBe(4);
                     expect(region.regions.indexOf(part2)).toBe(1);
 

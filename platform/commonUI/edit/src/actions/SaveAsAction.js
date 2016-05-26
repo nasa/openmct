@@ -22,7 +22,7 @@
 
 
 define(
-    ['../../../browse/src/creation/CreateWizard'],
+    ['../creation/CreateWizard'],
     function (CreateWizard) {
 
         /**
@@ -42,7 +42,7 @@ define(
             context
         ) {
             this.domainObject = (context || {}).domainObject;
-            this.injectObjectService = function(){
+            this.injectObjectService = function () {
                 this.objectService = $injector.get("objectService");
             };
             this.policyService = policyService;
@@ -65,7 +65,7 @@ define(
         /**
          * @private
          */
-        SaveAsAction.prototype.getObjectService = function(){
+        SaveAsAction.prototype.getObjectService = function () {
             // Lazily acquire object service (avoids cyclical dependency)
             if (!this.objectService) {
                 this.injectObjectService();
@@ -73,7 +73,7 @@ define(
             return this.objectService;
         };
 
-        function resolveWith(object){
+        function resolveWith(object) {
             return function () {
                 return object;
             };
@@ -116,13 +116,13 @@ define(
                     ).then(wizard.populateObjectFromInput.bind(wizard));
             }
 
-            function fetchObject(objectId){
-                return self.getObjectService().getObjects([objectId]).then(function(objects){
+            function fetchObject(objectId) {
+                return self.getObjectService().getObjects([objectId]).then(function (objects) {
                     return objects[objectId];
                 });
             }
 
-            function getParent(object){
+            function getParent(object) {
                 return fetchObject(object.getModel().location);
             }
 

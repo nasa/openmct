@@ -176,7 +176,7 @@ define(
                     "telemetry"
                 )).then(function (result) {
                     var head = domainObject.hasCapability("telemetry") ?
-                            [ domainObject ] : [],
+                            [domainObject] : [],
                         tail = result || [];
                     return head.concat(tail);
                 });

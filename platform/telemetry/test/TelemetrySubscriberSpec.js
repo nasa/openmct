@@ -40,7 +40,7 @@ define(
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getCapability", "useCapability", "hasCapability" ]
+                    ["getCapability", "useCapability", "hasCapability"]
                 );
                 mockCallback = jasmine.createSpy("callback");
                 mockPromise = jasmine.createSpyObj("promise", ["then"]);

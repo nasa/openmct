@@ -44,7 +44,7 @@ define(
                 beforeEach(function () {
                     mockDomainObject = jasmine.createSpyObj(
                         'domainObject',
-                        [ 'getId', 'getModel', 'getCapability', 'useCapability' ]
+                        ['getId', 'getModel', 'getCapability', 'useCapability']
                     );
                     testMetadata = [
                         { name: "Something else", value: 123 },

@@ -45,7 +45,7 @@ define(
                     }
                 ];
 
-                mockScope = jasmine.createSpyObj("$scope", [ "$watch" ]);
+                mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 mockLinker = jasmine.createSpyObj("templateLinker", ["link"]);
                 mockChangeTemplate = jasmine.createSpy('changeTemplate');
                 mockLinker.link.andReturn(mockChangeTemplate);

@@ -38,7 +38,7 @@ define(
         /**
          * @private
          */
-        EditNavigationPolicy.prototype.isDirty = function(domainObject) {
+        EditNavigationPolicy.prototype.isDirty = function (domainObject) {
             var navigatedObject = domainObject,
                 editorCapability = navigatedObject &&
                     navigatedObject.getCapability("editor");

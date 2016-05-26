@@ -36,7 +36,9 @@ define(
                 testConfiguration;
 
             function asPromise(v) {
-                return { then: function (cb) { cb(v); } };
+                return { then: function (cb) {
+                    cb(v);
+                } };
             }
 
             beforeEach(function () {

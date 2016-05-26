@@ -124,9 +124,9 @@ define(
                 clone = JSON.parse(JSON.stringify(model)),
                 useTimestamp = arguments.length > 1;
 
-            function notifyListeners(model) {
+            function notifyListeners(newModel) {
                 generalTopic.notify(domainObject);
-                specificTopic.notify(model);
+                specificTopic.notify(newModel);
             }
 
             // Function to handle copying values to the actual

@@ -31,11 +31,11 @@ define(
 
             beforeEach(function () {
                 testSeries = [
-                    [ 0, 42 ],
-                    [ 10, 1 ],
-                    [ 20, 4 ],
-                    [ 30, 9 ],
-                    [ 40, 3 ]
+                    [0, 42],
+                    [10, 1],
+                    [20, 4],
+                    [30, 9],
+                    [40, 3]
                 ];
 
                 mockSeries = jasmine.createSpyObj(

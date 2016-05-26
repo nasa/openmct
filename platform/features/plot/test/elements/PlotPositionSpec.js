@@ -29,13 +29,13 @@ define(
 
         describe("A plot position", function () {
             var mockPanZoom,
-                testOrigin = [ 10, 20 ],
-                testDimensions = [ 800, 10 ];
+                testOrigin = [10, 20],
+                testDimensions = [800, 10];
 
             beforeEach(function () {
                 mockPanZoom = jasmine.createSpyObj(
                     "panZoomStack",
-                    [ "getPanZoom" ]
+                    ["getPanZoom"]
                 );
                 mockPanZoom.getPanZoom.andReturn({
                     origin: testOrigin,

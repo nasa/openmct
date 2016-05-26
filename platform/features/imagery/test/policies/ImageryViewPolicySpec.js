@@ -51,24 +51,24 @@ define(
             });
 
             it("allows the imagery view for domain objects with image telemetry", function () {
-                testMetadata.ranges = [ { key: "foo", format: "imageUrl" } ];
+                testMetadata.ranges = [{ key: "foo", format: "imageUrl" }];
                 expect(policy.allow(testView, mockDomainObject)).toBeTruthy();
             });
 
             it("disallows the imagery view for domain objects without image telemetry", function () {
-                testMetadata.ranges = [ { key: "foo", format: "somethingElse" } ];
+                testMetadata.ranges = [{ key: "foo", format: "somethingElse" }];
                 expect(policy.allow(testView, mockDomainObject)).toBeFalsy();
             });
 
             it("disallows the imagery view for domain objects without telemetry", function () {
-                testMetadata.ranges = [ { key: "foo", format: "imageUrl" } ];
+                testMetadata.ranges = [{ key: "foo", format: "imageUrl" }];
                 mockDomainObject.getCapability.andReturn(undefined);
                 expect(policy.allow(testView, mockDomainObject)).toBeFalsy();
             });
 
             it("allows other views", function () {
                 testView.key = "somethingElse";
-                testMetadata.ranges = [ { key: "foo", format: "somethingElse" } ];
+                testMetadata.ranges = [{ key: "foo", format: "somethingElse" }];
                 expect(policy.allow(testView, mockDomainObject)).toBeTruthy();
             });
 

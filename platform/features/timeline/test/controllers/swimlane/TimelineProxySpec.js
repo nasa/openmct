@@ -38,16 +38,16 @@ define(
                 );
                 mockSelection = jasmine.createSpyObj(
                     'selection',
-                    [ 'get' ]
+                    ['get']
                 );
                 mockActionCapability = jasmine.createSpyObj(
                     'action',
-                    [ 'getActions' ]
+                    ['getActions']
                 );
                 mockActions = ['a', 'b', 'c'].map(function (type) {
                     var mockAction = jasmine.createSpyObj(
                         'action-' + type,
-                        [ 'perform', 'getMetadata' ]
+                        ['perform', 'getMetadata']
                     );
                     mockAction.getMetadata.andReturn({ type: type });
                     return mockAction;

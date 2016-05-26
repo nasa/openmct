@@ -69,7 +69,7 @@ define(
             });
 
             it("detects display orientation", function () {
-                var agentService = new AgentService(testWindow);
+                agentService = new AgentService(testWindow);
                 testWindow.innerWidth = 1024;
                 testWindow.innerHeight = 400;
                 expect(agentService.isPortrait()).toBeFalsy();

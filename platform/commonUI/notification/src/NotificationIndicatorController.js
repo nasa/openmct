@@ -42,7 +42,7 @@ define(
             /**
              * Launch a dialog showing a list of current notifications.
              */
-            $scope.showNotificationsList = function(){
+            $scope.showNotificationsList = function () {
                 dialogService.getDialogResponse('overlay-message-list', {
                     dialog: {
                         title: "Messages",
@@ -50,11 +50,11 @@ define(
                         // from the notifications
                         messages: notificationService.notifications
                     },
-                    cancel: function(){
+                    cancel: function () {
                         dialogService.dismiss();
                     }
                 });
-                
+
             };
         }
         return NotificationIndicatorController;

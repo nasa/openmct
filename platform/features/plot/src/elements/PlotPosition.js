@@ -60,7 +60,7 @@ define(
                 // Note that range is reversed from the y-axis in pixel space
                 //(positive range points up, positive pixel-y points down)
                 this.position =
-                    [ x / width, (height - y) / height ].map(convert);
+                    [x / width, (height - y) / height].map(convert);
             }
         }
 

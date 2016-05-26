@@ -40,7 +40,7 @@ define(
 
             function promise(value) {
                 return {
-                    then: function (callback){
+                    then: function (callback) {
                         return promise(callback(value));
                     }
                 };
@@ -57,13 +57,13 @@ define(
                     '$digest',
                     '$broadcast'
                 ]);
-                mockScope.$on.andCallFake(function (expression, callback){
+                mockScope.$on.andCallFake(function (expression, callback) {
                     watches[expression] = callback;
                 });
-                mockScope.$watch.andCallFake(function (expression, callback){
-                   watches[expression] = callback;
+                mockScope.$watch.andCallFake(function (expression, callback) {
+                    watches[expression] = callback;
                 });
-                mockScope.$watchCollection.andCallFake(function (expression, callback){
+                mockScope.$watchCollection.andCallFake(function (expression, callback) {
                     watches[expression] = callback;
                 });
 
@@ -85,7 +85,7 @@ define(
                 mockTable.buildColumnConfiguration.andReturn(mockConfiguration);
                 mockTable.getRowValues.andReturn(mockTableRow);
 
-                mockDomainObject= jasmine.createSpyObj('domainObject', [
+                mockDomainObject = jasmine.createSpyObj('domainObject', [
                     'getCapability',
                     'useCapability',
                     'getModel'
@@ -93,7 +93,7 @@ define(
                 mockDomainObject.getModel.andReturn({});
                 mockDomainObject.getCapability.andReturn(
                     {
-                        getMetadata: function (){
+                        getMetadata: function () {
                             return {ranges: [{format: 'string'}]};
                         }
                     });
@@ -132,7 +132,7 @@ define(
             });
 
             describe('receives new telemetry', function () {
-                beforeEach(function() {
+                beforeEach(function () {
                     controller.subscribe();
                     mockScope.rows = [];
                 });
@@ -151,7 +151,7 @@ define(
                     }
                     mockTelemetryHandler.handle.mostRecentCall.args[1]();
                     expect(mockScope.rows.length).toBe(controller.maxRows);
-                    expect(mockScope.rows[mockScope.rows.length-1]).toBe(mockTableRow);
+                    expect(mockScope.rows[mockScope.rows.length - 1]).toBe(mockTableRow);
                     expect(mockScope.rows[0].row).toBe(1);
                 });
             });

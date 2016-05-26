@@ -54,7 +54,7 @@ define(
          * @param {Array} elements the full array of elements
          */
         function ElementProxy(element, index, elements) {
-            this.resizeHandles = [ new ResizeHandle(element, 1, 1) ];
+            this.resizeHandles = [new ResizeHandle(element, 1, 1)];
 
             /**
              * The element as stored in the view configuration.

@@ -70,7 +70,7 @@ define(
                     ['getConductor']
                 );
                 mockCompile = jasmine.createSpy('$compile');
-                testViews = [ { someKey: "some value" } ];
+                testViews = [{ someKey: "some value" }];
                 mockScope = jasmine.createSpyObj('scope', SCOPE_METHODS);
                 mockElement = jasmine.createSpyObj('element', ELEMENT_METHODS);
                 mockElement.parent.andReturn(mockElement);

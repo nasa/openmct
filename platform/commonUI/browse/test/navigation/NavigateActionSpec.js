@@ -44,12 +44,12 @@ define(
             beforeEach(function () {
                 mockNavigationService = jasmine.createSpyObj(
                     "navigationService",
-                    [ "setNavigation" ]
+                    ["setNavigation"]
                 );
                 mockQ = { when: mockPromise };
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability" ]
+                    ["getId", "getModel", "getCapability"]
                 );
 
                 action = new NavigateAction(

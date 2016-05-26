@@ -57,8 +57,8 @@ define(
 
             // Set the start time associated with this object
             function setStart(value) {
-                mutation.mutate(function (model) {
-                    model.start.timestamp = Math.max(value, 0);
+                mutation.mutate(function (m) {
+                    m.start.timestamp = Math.max(value, 0);
                 }, model.modified);
             }
 

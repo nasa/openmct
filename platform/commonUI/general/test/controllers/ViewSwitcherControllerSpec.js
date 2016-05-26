@@ -33,9 +33,11 @@ define(
                 controller;
 
             beforeEach(function () {
-                mockScope = jasmine.createSpyObj("$scope", [ "$watch" ]);
+                mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 mockTimeout = jasmine.createSpy("$timeout");
-                mockTimeout.andCallFake(function (cb) { cb(); });
+                mockTimeout.andCallFake(function (cb) {
+                    cb();
+                });
                 mockScope.ngModel = {};
                 controller = new ViewSwitcherController(mockScope, mockTimeout);
             });

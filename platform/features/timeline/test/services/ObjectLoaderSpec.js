@@ -54,7 +54,7 @@ define(
             function addDomainObject(id, children, capabilities) {
                 var mockDomainObject = jasmine.createSpyObj(
                     'object-' + id,
-                    [ 'useCapability', 'hasCapability', 'getId' ]
+                    ['useCapability', 'hasCapability', 'getId']
                 );
 
                 mockDomainObject.getId.andReturn(id);
@@ -72,7 +72,7 @@ define(
             }
 
             beforeEach(function () {
-                mockQ = jasmine.createSpyObj('$q', [ 'when', 'all' ]);
+                mockQ = jasmine.createSpyObj('$q', ['when', 'all']);
                 mockCallback = jasmine.createSpy('callback');
                 mockDomainObjects = {};
                 testCompositions = {};
@@ -82,8 +82,12 @@ define(
                 mockQ.when.andCallFake(asPromise);
                 mockQ.all.andCallFake(function (values) {
                     var result = [];
-                    function addResult(v) { result.push(v); }
-                    function promiseResult(v) { asPromise(v).then(addResult); }
+                    function addResult(v) {
+                        result.push(v);
+                    }
+                    function promiseResult(v) {
+                        asPromise(v).then(addResult);
+                    }
                     values.forEach(promiseResult);
                     return asPromise(result);
                 });

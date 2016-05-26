@@ -34,8 +34,8 @@ define(
                 controller = new ElementsController(mockScope);
             });
 
-            function getModel (model) {
-                return function() {
+            function getModel(model) {
+                return function () {
                     return model;
                 };
             }

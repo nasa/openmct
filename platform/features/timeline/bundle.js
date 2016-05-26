@@ -91,7 +91,7 @@ define([
                     "name": "Export Timeline as CSV",
                     "category": "contextual",
                     "implementation": ExportTimelineAsCSVAction,
-                    "depends": [ "exportService", "notificationService" ]
+                    "depends": ["exportService", "notificationService"]
                 }
             ],
             "constants": [
@@ -127,7 +127,16 @@ define([
                             14400000,
                             28800000,
                             43200000,
-                            86400000
+                            86400000,
+                            86400000 * 2,
+                            86400000 * 5,
+                            86400000 * 10,
+                            86400000 * 20,
+                            86400000 * 30,
+                            86400000 * 60,
+                            86400000 * 120,
+                            86400000 * 240,
+                            86400000 * 365
                         ],
                         "width": 200
                     }

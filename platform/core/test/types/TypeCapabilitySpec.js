@@ -36,11 +36,11 @@ define(
             beforeEach(function () {
                 mockTypeService = jasmine.createSpyObj(
                     "typeService",
-                    [ "getType" ]
+                    ["getType"]
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability" ]
+                    ["getId", "getModel", "getCapability"]
                 );
                 mockType = { someKey: "some value" };
 

@@ -44,11 +44,11 @@ define(
                 beforeEach(function () {
                     mockDomainObject = jasmine.createSpyObj(
                         'domainObject',
-                        [ 'getId', 'getModel', 'getCapability' ]
+                        ['getId', 'getModel', 'getCapability']
                     );
                     testModel = {
                         relationships: {
-                            modes: [ 'a', 'b', 'c', 'd', 'e', 'f' ]
+                            modes: ['a', 'b', 'c', 'd', 'e', 'f']
                         }
                     };
                     mockDomainObject.getModel.andReturn(testModel);
@@ -60,7 +60,7 @@ define(
                 });
 
                 it("returns nothing when relationships are exceeded", function () {
-                    testModel.relationships.modes = [ 'foo' ];
+                    testModel.relationships.modes = ['foo'];
                     expect(column.value(mockDomainObject)).toEqual("");
                 });
 

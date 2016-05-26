@@ -21,11 +21,11 @@
  *****************************************************************************/
 
 define([
-    
+
     "text!./res/markup.html",
     'legacyRegistry'
 ], function (
-    
+
     markupTemplate,
     legacyRegistry
 ) {

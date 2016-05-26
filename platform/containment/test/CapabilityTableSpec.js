@@ -32,11 +32,11 @@ define(
             beforeEach(function () {
                 mockTypeService = jasmine.createSpyObj(
                     'typeService',
-                    [ 'listTypes' ]
+                    ['listTypes']
                 );
                 mockCapabilityService = jasmine.createSpyObj(
                     'capabilityService',
-                    [ 'getCapabilities' ]
+                    ['getCapabilities']
                 );
                 // Both types can only contain b, let's say
                 mockTypes = ['a', 'b'].map(function (type) {

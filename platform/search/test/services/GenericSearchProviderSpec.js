@@ -333,7 +333,7 @@ define([
                         }]
                     });
 
-                    expect(provider.pendingQueries[143]).not.toBeDefined();
+                expect(provider.pendingQueries[143]).not.toBeDefined();
 
             });
 

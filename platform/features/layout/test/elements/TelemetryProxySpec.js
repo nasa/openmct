@@ -38,7 +38,7 @@ define(
                     height: 24,
                     id: "test-id"
                 };
-                testElements = [ {}, {}, testElement, {} ];
+                testElements = [{}, {}, testElement, {}];
                 proxy = new TelemetryProxy(
                     testElement,
                     testElements.indexOf(testElement),

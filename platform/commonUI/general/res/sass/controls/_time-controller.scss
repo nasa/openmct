@@ -10,25 +10,24 @@
 	$knobHOffset: 0px;
 	$knobM: ($sliderKnobW + $knobHOffset) * -1;
 	$rangeValPad: $interiorMargin;
-	$rangeValOffset: $sliderKnobW;
-	$timeRangeSliderLROffset: 130px + $sliderKnobW + $rangeValOffset;
-	$r1H: nth($ueTimeControlH,1);
+	$rangeValOffset: $sliderKnobW + $interiorMargin;
+	$timeRangeSliderLROffset: 150px + ($sliderKnobW * 2);
+	$r1H: nth($ueTimeControlH,1); // Not currently used
 	$r2H: nth($ueTimeControlH,2);
 	$r3H: nth($ueTimeControlH,3);
 
-    display: block;
-	height: $r1H + $r2H + $r3H + ($interiorMargin * 2);
     min-width: $minW;
     font-size: 0.8rem;
-
 
 	.l-time-range-inputs-holder,
 	.l-time-range-slider-holder,
 	.l-time-range-ticks-holder
 	{
-		@include absPosDefault(0, visible);
 		box-sizing: border-box;
-		top: auto;
+        position: relative;
+        &:not(:first-child) {
+            margin-top: $interiorMargin;
+        }
 	}
 	.l-time-range-slider,
 	.l-time-range-ticks {
@@ -37,14 +36,21 @@
 	}
 
 	.l-time-range-inputs-holder {
-		height: $r1H; bottom: $r2H + $r3H + ($interiorMarginSm * 2);
-		padding-top: $interiorMargin;
 		border-top: 1px solid $colorInteriorBorder;
+        padding-top: $interiorMargin;
+        &.l-flex-row,
+        .l-flex-row {
+            @include align-items(center);
+            .flex-elem {
+                height: auto;
+                line-height: normal;
+            }
+        }
 		.type-icon {
 			font-size: 120%;
 			vertical-align: middle;
 		}
-		.l-time-range-input,
+		.l-time-range-input-w,
 		.l-time-range-inputs-elem {
 			margin-right: $interiorMargin;
 			.lbl {
@@ -52,13 +58,27 @@
 			}
 			.ui-symbol.icon {
 				font-size: 11px;
-				width: 11px;
 			}
 		}
+        .l-time-range-input-w {
+            // Wraps a datetime text input field
+            position: relative;
+            input[type="text"] {
+                width: 200px;
+                &.picker-icon {
+                    padding-right: 20px;
+                }
+            }
+            .icon-calendar {
+                position: absolute;
+                right: 5px;
+                top: 5px;
+            }
+        }
 	}
 
 	.l-time-range-slider-holder {
-		height: $r2H; bottom: $r3H + ($interiorMarginSm * 1);
+		height: $r2H;
 		.range-holder {
 			box-shadow: none;
 			background: none;
@@ -73,24 +93,13 @@
 					width: $myW;
 					height: auto;
 					z-index: 2;
-					&:before,
-					&:after {
-						background-color: $myC;
-						content: "";
-						position: absolute;
-					}
 					&:before {
 						// Vert line
+                        background-color: $myC;
+                        position: absolute;
+                        content: "";
 						top: 0; right: auto; bottom: -10px; left: floor($myW/2) - 1;
-						width: 2px;
-					}
-					&:after {
-						// Circle element
-						border-radius: $myW;
-						@include transform(translateY(-50%));
-						top: 50%; right: 0; bottom: auto; left: 0;
-						width: auto;
-						height: $myW;
+						width: 1px;
 					}
 				}
 				&:hover .toi-line {
@@ -126,9 +135,9 @@
 					@include webkitProp(transform, translateX(-50%));
 					color: $colorPlotLabelFg;
 					display: inline-block;
-					font-size: 0.9em;
+					font-size: 0.7rem;
 					position: absolute;
-					top: 8px;
+					top: 5px;
 					white-space: nowrap;
 					z-index: 2;
 				}
@@ -138,16 +147,29 @@
 
 	.knob {
 		z-index: 2;
+        &:before {
+            $mTB: 2px;
+            $grippyW: 3px;
+            $mLR: ($sliderKnobW - $grippyW)/2;
+            @include bgStripes($c: pullForward($sliderColorKnob, 20%), $a: 1, $bgsize: 4px, $angle: 0deg);
+            content: '';
+            display: block;
+            position: absolute;
+            top: $mTB; right: $mLR; bottom: $mTB; left: $mLR;
+        }
 		.range-value {
 			@include trans-prop-nice-fade(.25s);
-			padding: 0 $rangeValOffset;
+            font-size: 0.7rem;
 			position: absolute;
 			height: $r2H;
 			line-height: $r2H;
-			white-space: nowrap;
+            white-space: nowrap;
+            z-index: 1;
 		}
-		&:hover .range-value {
-			color: $sliderColorKnobHov;
+		&:hover {
+            .range-value {
+                color: $sliderColorKnobHov;
+            }
 		}
 		&.knob-l {
 			margin-left: $knobM;
@@ -170,7 +192,7 @@
 	.l-time-domain-selector {
 		position: absolute;
 		right: 0px;
-		bottom: 46px;
+		top: $interiorMargin;
 	}
 
 }
@@ -181,174 +203,64 @@
 	padding: 1px 1px 0 $interiorMargin;
 }
 
+/******************************************************************** MOBILE */
+
 @include phoneandtablet {
-	.l-time-controller, .l-time-range-inputs-holder {
-		min-width: 0px;
-	}
-
-	.l-time-controller {
-
-		.l-time-domain-selector {
-			select {
-				height: 25px;
-				margin-bottom: 0px;
-			}
-		}
-
-		.l-time-range-slider-holder, .l-time-range-ticks-holder {
-			display: none;
-		}
-
-		.time-range-start, .time-range-end, {
-			width: 100%;
-		}
-
-		.l-time-range-inputs-holder {
-			.l-time-range-input {
-				display: block;
-				.s-btn {
-					padding-right: 18px;
-					white-space: nowrap;
-					input {
-						width: 100%;
-					}
-				}
-			}
-			.l-time-range-inputs-elem {
-
-			}
-		}
-	}
+    .l-time-controller {
+        min-width: 0;
+        .l-time-range-slider-holder,
+        .l-time-range-ticks-holder {
+            display: none;
+        }
+    }
 }
 
 @include phone {
-	.l-time-controller {
-		height: 48px;
-
-		.l-time-range-inputs-holder {
-			bottom: 24px;
-		}
-
-		.l-time-domain-selector {
-			width: 33%;
-			bottom: -9px;
-		}
-
-		.l-time-range-inputs-holder {
-			.l-time-range-input {
-				margin-bottom: 5px;
-				.s-btn {
-					width: 66%;
-				}
-			}
-			.l-time-range-inputs-elem {
-				&.ui-symbol {
-					display: none;
-				}
-
-				&.lbl {
-					width: 33%;
-					right: 0px;
-					top: 5px;
-					display: block;
-					height: 25px;
-					margin: 0;
-					line-height: 25px;
-					position: absolute;
-				}
-			}
-		}
-	}
+    .l-time-controller {
+        .l-time-range-inputs-holder {
+            &.l-flex-row,
+            .l-flex-row {
+                @include align-items(flex-start);
+            }
+            .l-time-range-inputs-elem {
+                &.type-icon {
+                    margin-top: 3px;
+                }
+            }
+            .t-inputs-w {
+                @include flex-direction(column);
+                .l-time-range-input-w:not(:first-child) {
+                    &:not(:first-child) {
+                        margin-top: $interiorMargin;
+                    }
+                    margin-right: 0;
+                }
+                .l-time-range-inputs-elem {
+                    &.lbl { display: none; }
+                }
+            }
+        }
+    }
 }
 
-
-@include tablet {
-	.l-time-controller {
-		height: 17px;
-
-		.l-time-range-inputs-holder {
-			bottom: -7px;
-			left: -5px;
-		}
-
-		.l-time-domain-selector {
-			width: 23%;
-			right: -4px;
-			bottom: -10px;
-		}
-
-		.l-time-range-inputs-holder {
-			.l-time-range-input {
-				float: left;
-				.s-btn {
-					width: 100%;
-					padding-left: 4px;
-				}
-			}
-		}
-	}
-}
-
-@include tabletLandscape {
-	.l-time-controller {
-		height: 17px;
-
-		.l-time-range-inputs-holder {
-			bottom: -7px;
-		}
-
-		.l-time-domain-selector {
-			width: 23%;
-			right: auto;
-			bottom: -10px;
-			left: 391px;
-		}
-
-		.l-time-range-inputs-holder {
-			.l-time-range-inputs-elem {
-				&.ui-symbol, &.lbl {
-					display: block;
-					float: left;
-					line-height: 25px;
-				}
-			}
-		}
-	}
-
-	.pane-tree-hidden .l-time-controller {
-		.l-time-domain-selector {
-			left: 667px;
-		}
-		.l-time-range-inputs-holder {
-			padding-left: 277px;
-		}
-	}
-}
-@include tabletPortrait {
-	.l-time-controller {
-		height: 17px;
-
-		.l-time-range-inputs-holder {
-			bottom: -7px;
-			left: -5px;
-		}
-
-		.l-time-domain-selector {
-			width: 23%;
-			right: -4px;
-			bottom: -10px;
-		}
-
-		.l-time-range-inputs-holder {
-			.l-time-range-input {
-				width: 38%;
-				float: left;
-			}
-			.l-time-range-inputs-elem {
-				&.ui-symbol, &.lbl {
-					display: none;
-				}
-			}
-		}
-	}
+@include phonePortrait {
+    .l-time-controller {
+        .l-time-range-inputs-holder {
+            .t-inputs-w {
+                @include flex(1 1 auto);
+                padding-top: 25px; // Make room for the ever lovin' Time Domain Selector
+                .flex-elem {
+                    @include flex(1 1 auto);
+                    width: 100%;
+                }
+                input[type="text"] {
+                    width: 100%;
+                }
+            }
+        }
+    }
+    .l-time-domain-selector {
+        right: auto;
+        left: 20px;
+    }
 }

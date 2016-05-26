@@ -35,7 +35,7 @@ define(
                         bundle: { path: "x", resources: "y" },
                         template: "<span>bar</span>",
                         key: "xyz",
-                        attributes: [ "someAttr", "someOtherAttr" ]
+                        attributes: ["someAttr", "someOtherAttr"]
                     }
                 ],
                 mctContainer;

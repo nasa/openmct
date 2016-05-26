@@ -32,7 +32,7 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     '$scope',
-                    [ '$watchCollection' ]
+                    ['$watchCollection']
                 );
                 testResources = [
                     { key: 'abc', name: "Some name" },
@@ -58,7 +58,7 @@ define(
 
                 // Supply new parameters
                 mockScope.$watchCollection.mostRecentCall.args[1]({
-                    graphs: [ mockGraphA, mockGraphB ],
+                    graphs: [mockGraphA, mockGraphB],
                     origin: 9,
                     duration: 144
                 });

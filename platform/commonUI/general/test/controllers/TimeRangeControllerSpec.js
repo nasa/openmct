@@ -56,16 +56,16 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$apply", "$watch", "$watchCollection" ]
+                    ["$apply", "$watch", "$watchCollection"]
                 );
                 mockFormatService = jasmine.createSpyObj(
                     "formatService",
-                    [ "getFormat" ]
+                    ["getFormat"]
                 );
                 testDefaultFormat = 'utc';
                 mockFormat = jasmine.createSpyObj(
                     "format",
-                    [ "validate", "format", "parse" ]
+                    ["validate", "format", "parse"]
                 );
 
                 mockFormatService.getFormat.andReturn(mockFormat);

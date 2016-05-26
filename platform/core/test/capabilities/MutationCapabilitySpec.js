@@ -35,8 +35,12 @@ define(
                 topic,
                 mockNow,
                 domainObject = {
-                    getId: function () { return "test-id"; },
-                    getModel: function () { return testModel; }
+                    getId: function () {
+                        return "test-id";
+                    },
+                    getModel: function () {
+                        return testModel;
+                    }
                 },
                 mutation;
 

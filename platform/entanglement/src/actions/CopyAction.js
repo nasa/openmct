@@ -69,7 +69,7 @@ define(
          * @param totalObjects
          * @param processed
          */
-        CopyAction.prototype.progress = function(phase, totalObjects, processed){
+        CopyAction.prototype.progress = function (phase, totalObjects, processed) {
             /*
              Copy has two distinct phases. In the first phase a copy plan is
              made in memory. During this phase of execution, the user is
@@ -78,7 +78,7 @@ define(
              In the second phase, the copying is taking place, and the user
              is shown non-invasive banner notifications at the bottom of the screen.
              */
-            if (phase.toLowerCase() === 'preparing' && !this.dialog){
+            if (phase.toLowerCase() === 'preparing' && !this.dialog) {
                 this.dialog = this.dialogService.showBlockingMessage({
                     title: "Preparing to copy objects",
                     unknownProgress: true,
@@ -105,15 +105,15 @@ define(
          * the AbstractComposeAction, but extends it to support notification
          * updates of progress on copy.
          */
-        CopyAction.prototype.perform = function() {
+        CopyAction.prototype.perform = function () {
             var self = this;
 
-            function success(){
+            function success() {
                 self.notification.dismiss();
                 self.notificationService.info("Copying complete.");
             }
 
-            function error(errorDetails){
+            function error(errorDetails) {
                 var errorMessage = {
                     title: "Error copying objects.",
                     severity: "error",
@@ -121,7 +121,7 @@ define(
                     minimized: true, // want the notification to be minimized initially (don't show banner)
                     options: [{
                         label: "OK",
-                        callback: function() {
+                        callback: function () {
                             self.dialogService.dismiss();
                         }
                     }]
@@ -138,7 +138,7 @@ define(
                 self.dialogService.showBlockingMessage(errorMessage);
 
             }
-            function notification(details){
+            function notification(details) {
                 self.progress(details.phase, details.totalObjects, details.processed);
             }
 

@@ -34,7 +34,7 @@ define(
             }
 
             beforeEach(function () {
-                mockScope = jasmine.createSpyObj("$scope", [ "$watch" ]);
+                mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 mockScope.$parent = {};
                 mctToolbar = new MCTToolbar();
             });

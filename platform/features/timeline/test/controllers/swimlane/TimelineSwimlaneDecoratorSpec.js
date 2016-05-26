@@ -43,7 +43,7 @@ define(
 
                 mockSwimlane.domainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getCapability', 'getModel' ]
+                    ['getCapability', 'getModel']
                 );
 
                 mockCapabilities.mutation = jasmine.createSpyObj(
@@ -158,11 +158,11 @@ define(
             it("fires the 'remove' action when remove is called", function () {
                 var mockChild = jasmine.createSpyObj(
                         'childObject',
-                        [ 'getCapability', 'getModel' ]
+                        ['getCapability', 'getModel']
                     ),
                     mockAction = jasmine.createSpyObj(
                         'action',
-                        [ 'perform' ]
+                        ['perform']
                     );
 
                 mockChild.getCapability.andCallFake(function (c) {

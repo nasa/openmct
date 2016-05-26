@@ -100,11 +100,11 @@ define(
                 cloneIds = {};
 
                 testModel = {
-                    composition: [ ID_A, ID_B ],
+                    composition: [ID_A, ID_B],
                     someObj: {},
-                    someArr: [ ID_A, ID_B ],
+                    someArr: [ID_A, ID_B],
                     objArr: [{"id": ID_A}, {"id": ID_B}],
-                    singleElementArr: [ ID_A ]
+                    singleElementArr: [ID_A]
                 };
                 testModel.someObj[ID_A] = "some value";
                 testModel.someObj.someProperty = ID_B;
@@ -120,7 +120,7 @@ define(
                 mockQ = jasmine.createSpyObj('$q', ['when', 'defer', 'all']);
                 mockDeferred = jasmine.createSpyObj(
                     'deferred',
-                    [ 'notify', 'resolve', 'reject' ]
+                    ['notify', 'resolve', 'reject']
                 );
 
                 mockFilter.andReturn(true);
@@ -130,7 +130,9 @@ define(
                 mockQ.all.andCallFake(function (promises) {
                     return synchronousPromise(promises.map(function (promise) {
                         var value;
-                        promise.then(function (v) { value = v; });
+                        promise.then(function (v) {
+                            value = v;
+                        });
                         return value;
                     }));
                 });

@@ -24,7 +24,7 @@ define(
     ['../src/FixedDragHandle'],
     function (FixedDragHandle) {
 
-        var TEST_GRID_SIZE = [ 13, 33 ];
+        var TEST_GRID_SIZE = [13, 33];
 
         describe("A fixed position drag handle", function () {
             var mockElementHandle,
@@ -35,7 +35,7 @@ define(
             beforeEach(function () {
                 mockElementHandle = jasmine.createSpyObj(
                     'elementHandle',
-                    [ 'x', 'y' ]
+                    ['x', 'y']
                 );
                 mockUpdate = jasmine.createSpy('update');
                 mockCommit = jasmine.createSpy('commit');
@@ -61,13 +61,13 @@ define(
 
             it("allows handles to be dragged", function () {
                 handle.startDrag();
-                handle.continueDrag([ 16, 8 ]);
+                handle.continueDrag([16, 8]);
 
                 // Should update x/y, snapped to grid
                 expect(mockElementHandle.x).toHaveBeenCalledWith(7);
                 expect(mockElementHandle.y).toHaveBeenCalledWith(8);
 
-                handle.continueDrag([ -16, -35 ]);
+                handle.continueDrag([-16, -35]);
 
                 // Should have interpreted relative to initial state
                 expect(mockElementHandle.x).toHaveBeenCalledWith(5);

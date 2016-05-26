@@ -33,7 +33,7 @@ define(
                 glChart;
 
             beforeEach(function () {
-                mockCanvas = jasmine.createSpyObj("canvas", [ "getContext" ]);
+                mockCanvas = jasmine.createSpyObj("canvas", ["getContext"]);
                 mockGL = jasmine.createSpyObj(
                     "gl",
                     [
@@ -98,8 +98,8 @@ define(
             });
 
             it("allows lines to be drawn", function () {
-                var testBuffer = [ 0, 1, 3, 8 ],
-                    testColor = [ 0.25, 0.33, 0.66, 1.0 ],
+                var testBuffer = [0, 1, 3, 8],
+                    testColor = [0.25, 0.33, 0.66, 1.0],
                     testPoints = 2;
                 glChart.drawLine(testBuffer, testColor, testPoints);
                 expect(mockGL.bufferData).toHaveBeenCalledWith(
@@ -116,7 +116,7 @@ define(
             it("allows squares to be drawn", function () {
                 var testMin = [0, 1],
                     testMax = [10, 10],
-                    testColor = [ 0.25, 0.33, 0.66, 1.0 ];
+                    testColor = [0.25, 0.33, 0.66, 1.0];
 
                 glChart.drawSquare(testMin, testMax, testColor);
 

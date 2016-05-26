@@ -35,7 +35,9 @@ define(
 
             it("allows setting of arbitrary objects", function () {
                 var foo = {
-                    bar: function () { return 42; }
+                    bar: function () {
+                        return 42;
+                    }
                 };
 
                 service.setData('xyz', foo);

@@ -36,20 +36,20 @@ define(
             beforeEach(function () {
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getId', 'getModel', 'getCapability', 'hasCapability' ]
+                    ['getId', 'getModel', 'getCapability', 'hasCapability']
                 );
-                mockType = jasmine.createSpyObj('type', [ 'instanceOf' ]);
+                mockType = jasmine.createSpyObj('type', ['instanceOf']);
                 mockExportService = jasmine.createSpyObj(
                     'exportService',
-                    [ 'exportCSV' ]
+                    ['exportCSV']
                 );
                 mockNotificationService = jasmine.createSpyObj(
                     'notificationService',
-                    [ 'notify', 'error' ]
+                    ['notify', 'error']
                 );
                 mockNotification = jasmine.createSpyObj(
                     'notification',
-                    [ 'dismiss' ]
+                    ['dismiss']
                 );
 
                 mockNotificationService.notify.andReturn(mockNotification);

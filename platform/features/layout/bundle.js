@@ -71,9 +71,6 @@ define([
                     "uses": [
                         "composition"
                     ],
-                    "gestures": [
-                        "drop"
-                    ],
                     "toolbar": {
                         "sections": [
                             {

@@ -96,7 +96,9 @@ define(
                     });
                 }
             }
-            
+
+            $scope.$watch("configuration", swimlanePopulator.configure);
+
             // Recalculate swimlane state on changes
             $scope.$watch("domainObject", swimlanePopulator.populate);
 

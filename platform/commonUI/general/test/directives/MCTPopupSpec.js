@@ -24,7 +24,15 @@ define(
     ["../../src/directives/MCTPopup"],
     function (MCTPopup) {
 
-        var JQLITE_METHODS = [ "on", "off", "find", "parent", "css", "append" ];
+        var JQLITE_METHODS = [
+            "on",
+            "off",
+            "find",
+            "parent",
+            "css",
+            "addClass",
+            "append"
+        ];
 
         describe("The mct-popup directive", function () {
             var mockCompile,
@@ -48,7 +56,7 @@ define(
                 mockPopup =
                     jasmine.createSpyObj("popup", ["dismiss"]);
                 mockScope =
-                    jasmine.createSpyObj("$scope", [ "$eval", "$apply", "$on" ]);
+                    jasmine.createSpyObj("$scope", ["$eval", "$apply", "$on"]);
                 mockElement =
                     jasmine.createSpyObj("element", JQLITE_METHODS);
                 mockBody =
@@ -98,7 +106,7 @@ define(
                 it("displays as a popup", function () {
                     expect(mockPopupService.display).toHaveBeenCalledWith(
                         mockNewElement,
-                        [ testRect.left, testRect.top ]
+                        [testRect.left, testRect.top]
                     );
                 });
 

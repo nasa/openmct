@@ -78,12 +78,12 @@ define(
 
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$on", "$watch" ]
+                    ["$on", "$watch"]
                 );
                 mockRoute = { current: { params: {} } };
                 mockLocation = jasmine.createSpyObj(
                     "$location",
-                    [ "path" ]
+                    ["path"]
                 );
                 mockUrlService = jasmine.createSpyObj(
                     "urlService",
@@ -91,7 +91,7 @@ define(
                 );
                 mockObjectService = jasmine.createSpyObj(
                     "objectService",
-                    [ "getObjects" ]
+                    ["getObjects"]
                 );
                 mockNavigationService = jasmine.createSpyObj(
                     "navigationService",
@@ -104,15 +104,15 @@ define(
                 );
                 mockRootObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getCapability", "getModel", "useCapability" ]
+                    ["getId", "getCapability", "getModel", "useCapability"]
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getCapability", "getModel", "useCapability" ]
+                    ["getId", "getCapability", "getModel", "useCapability"]
                 );
                 mockNextObject = jasmine.createSpyObj(
                     "nextObject",
-                    [ "getId", "getCapability", "getModel", "useCapability" ]
+                    ["getId", "getCapability", "getModel", "useCapability"]
                 );
 
                 mockObjectService.getObjects.andReturn(mockPromise({
@@ -255,7 +255,7 @@ define(
                 " object", function () {
                 mockScope.navigatedObject = mockDomainObject;
                 mockWindow.confirm.andReturn(false);
-                mockPolicyService.allow.andCallFake(function(category, object, context, callback){
+                mockPolicyService.allow.andCallFake(function (category, object, context, callback) {
                     callback("unsaved changes");
                     return false;
                 });

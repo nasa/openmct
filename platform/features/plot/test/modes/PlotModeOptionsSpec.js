@@ -34,11 +34,11 @@ define(
             beforeEach(function () {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability" ]
+                    ["getId", "getModel", "getCapability"]
                 );
                 mockSubPlotFactory = jasmine.createSpyObj(
                     "subPlotFactory",
-                    [ "createSubPlot" ]
+                    ["createSubPlot"]
                 );
             });
 

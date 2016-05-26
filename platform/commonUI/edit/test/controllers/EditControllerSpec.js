@@ -52,15 +52,15 @@ define(
                 );
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$on", "$watch" ]
+                    ["$on", "$watch"]
                 );
                 mockObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability", "hasCapability", "useCapability" ]
+                    ["getId", "getModel", "getCapability", "hasCapability", "useCapability"]
                 );
                 mockType = jasmine.createSpyObj(
                     "type",
-                    [ "hasFeature" ]
+                    ["hasFeature"]
                 );
                 mockStatusCapability = jasmine.createSpyObj('statusCapability',
                     ["get"]
@@ -99,8 +99,8 @@ define(
                 expect(controller.getUnloadWarning()).toBeUndefined();
 
                 // Override the policy service to prevent navigation
-                mockPolicyService.allow.andCallFake(function(category, object, context, callback){
-                   callback(errorMessage);
+                mockPolicyService.allow.andCallFake(function (category, object, context, callback) {
+                    callback(errorMessage);
                 });
 
                 // Should have some warning message here now

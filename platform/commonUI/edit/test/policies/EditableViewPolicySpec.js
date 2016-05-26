@@ -36,7 +36,7 @@ define(
                     ['hasCapability', 'getCapability']
                 );
                 mockDomainObject.getCapability.andReturn({
-                   inEditContext: function () {
+                    inEditContext: function () {
                        return true;
                    }
                 });

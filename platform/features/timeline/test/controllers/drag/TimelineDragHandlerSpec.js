@@ -56,22 +56,22 @@ define(
             }
 
             function makeMockDomainObject(id, composition) {
-                var mockDomainObject = jasmine.createSpyObj(
+                var mockDomainObj = jasmine.createSpyObj(
                     'domainObject-' + id,
                     ['getId', 'getModel', 'getCapability', 'useCapability']
                 );
 
-                mockDomainObject.getId.andReturn(id);
-                mockDomainObject.getModel.andReturn({ composition: composition });
-                mockDomainObject.useCapability.andReturn(asPromise(mockTimespans[id]));
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockDomainObj.getId.andReturn(id);
+                mockDomainObj.getModel.andReturn({ composition: composition });
+                mockDomainObj.useCapability.andReturn(asPromise(mockTimespans[id]));
+                mockDomainObj.getCapability.andCallFake(function (c) {
                     return {
                         persistence: mockPersists[id],
                         mutation: mockMutations[id]
                     }[c];
                 });
 
-                return mockDomainObject;
+                return mockDomainObj;
             }
 
             beforeEach(function () {
@@ -81,15 +81,15 @@ define(
                 ['a', 'b', 'c', 'd', 'e', 'f'].forEach(function (id, index) {
                     mockTimespans[id] = jasmine.createSpyObj(
                         'timespan-' + id,
-                        [ 'getStart', 'getEnd', 'getDuration', 'setStart', 'setEnd', 'setDuration' ]
+                        ['getStart', 'getEnd', 'getDuration', 'setStart', 'setEnd', 'setDuration']
                     );
                     mockPersists[id] = jasmine.createSpyObj(
                         'persistence-' + id,
-                        [ 'persist' ]
+                        ['persist']
                     );
                     mockMutations[id] = jasmine.createSpyObj(
                         'mutation-' + id,
-                        [ 'mutate' ]
+                        ['mutate']
                     );
                     mockTimespans[id].getStart.andReturn(index * 1000);
                     mockTimespans[id].getDuration.andReturn(4000 + index);

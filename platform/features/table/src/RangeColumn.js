@@ -56,7 +56,7 @@ define(
 
             return {
                 cssClass: alarm && alarm.cssClass,
-                text: typeof(value) === 'undefined' ? undefined : this.telemetryFormatter.formatRangeValue(value)
+                text: typeof (value) === 'undefined' ? undefined : this.telemetryFormatter.formatRangeValue(value)
             };
         };
 

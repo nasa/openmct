@@ -45,30 +45,34 @@ define(
                 mockQ = jasmine.createSpyObj('$q', ['when', 'all']);
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getModel', 'getCapability', 'useCapability' ]
+                    ['getModel', 'getCapability', 'useCapability']
                 );
                 mockChildA = jasmine.createSpyObj(
                     'childA',
-                    [ 'getModel', 'useCapability', 'hasCapability' ]
+                    ['getModel', 'useCapability', 'hasCapability']
                 );
                 mockChildB = jasmine.createSpyObj(
                     'childA',
-                    [ 'getModel', 'useCapability', 'hasCapability' ]
+                    ['getModel', 'useCapability', 'hasCapability']
                 );
                 mockTimespanA = jasmine.createSpyObj(
                     'timespanA',
-                    [ 'getEnd' ]
+                    ['getEnd']
                 );
                 mockTimespanB = jasmine.createSpyObj(
                     'timespanB',
-                    [ 'getEnd' ]
+                    ['getEnd']
                 );
 
                 mockQ.when.andCallFake(asPromise);
                 mockQ.all.andCallFake(function (values) {
                     var result = [];
-                    function addResult(v) { result.push(v); }
-                    function promiseResult(v) { asPromise(v).then(addResult); }
+                    function addResult(v) {
+                        result.push(v);
+                    }
+                    function promiseResult(v) {
+                        asPromise(v).then(addResult);
+                    }
                     values.forEach(promiseResult);
                     return asPromise(result);
                 });
@@ -83,7 +87,7 @@ define(
                 });
                 mockDomainObject.useCapability.andCallFake(function (c) {
                     if (c === 'composition') {
-                        return asPromise([ mockChildA, mockChildB ]);
+                        return asPromise([mockChildA, mockChildB]);
                     }
                 });
                 mockChildA.hasCapability.andReturn(true);

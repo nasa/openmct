@@ -47,9 +47,7 @@ define(
                 depth = parent ? (parent.depth + 1) : 0,
                 timespan,
                 path = (!parent || !parent.parent) ? "" : parent.path +
-                        //(parent.path.length > 0 ? " / " : "") +
-                        parent.domainObject.getModel().name +
-	                    " > ";
+                        parent.domainObject.getModel().name + " > ";
 
             // Look up timespan for this object
             domainObject.useCapability('timespan').then(function (t) {

@@ -67,7 +67,9 @@ define(
                 .then(function (objectInNewContext) {
                     return parentObject.getCapability('persistence')
                         .persist()
-                        .then(function () { return objectInNewContext; });
+                        .then(function () {
+                            return objectInNewContext;
+                        });
                 });
         };
 

@@ -21,19 +21,16 @@
  *****************************************************************************/
 
 /**
- * Module defining AddAction. Created by ahenry on 01/21/16.
+ * Module defining CreateAction. Created by vwoeltje on 11/10/14.
  */
 define(
-    [
-        './CreateWizard'
-    ],
-    function (CreateWizard) {
+    [],
+    function () {
 
         /**
-         * The Add Action is performed to create new instances of
-         * domain objects of a specific type that are subobjects of an
-         * object being edited. This is the action that is performed when a
-         * user uses the Add menu option.
+         * The Create Action is performed to create new instances of
+         * domain objects of a specific type. This is the action that
+         * is performed when a user uses the Create menu.
          *
          * @memberof platform/commonUI/browse
          * @implements {Action}
@@ -46,88 +43,70 @@ define(
          *        override this)
          * @param {ActionContext} context the context in which the
          *        action is being performed
-         * @param {DialogService} dialogService
          */
-        function AddAction(type, parent, context, $q, dialogService, policyService) {
+        function CreateAction(type, parent, context) {
             this.metadata = {
-                key: 'add',
+                key: 'create',
                 glyph: type.getGlyph(),
                 name: type.getName(),
                 type: type.getKey(),
                 description: type.getDescription(),
                 context: context
             };
-
             this.type = type;
             this.parent = parent;
-            this.$q = $q;
-            this.dialogService = dialogService;
-            this.policyService = policyService;
         }
 
         /**
-         *
          * Create a new object of the given type.
          * This will prompt for user input first.
-         *
-         * @returns {Promise} that will be resolved with the object that the
-         * action was originally invoked on (ie. the 'parent')
          */
-        AddAction.prototype.perform = function () {
+        CreateAction.prototype.perform = function () {
             var newModel = this.type.getInitialModel(),
                 newObject,
-                parentObject = this.parent,
-                wizard;
+                editAction,
+                editorCapability;
+
+            function onSave() {
+                return editorCapability.save();
+            }
+
+            function onCancel() {
+                return editorCapability.cancel();
+            }
 
             newModel.type = this.type.getKey();
-            newObject = parentObject.getCapability('instantiation').instantiate(newModel);
-            newObject.useCapability('mutation', function(model){
-                model.location = parentObject.getId();
-            });
+            newModel.location = this.parent.getId();
+            newObject = this.parent.useCapability('instantiation', newModel);
+            editorCapability = newObject.hasCapability('editor') && newObject.getCapability("editor");
 
-            wizard = new CreateWizard(newObject, this.parent, this.policyService);
-
-            function populateObjectFromInput (formValue) {
-                return wizard.populateObjectFromInput(formValue, newObject);
+            editAction = newObject.getCapability("action").getActions("edit")[0];
+            //If an edit action is available, perform it
+            if (editAction) {
+                return editAction.perform();
+            } else if (editorCapability) {
+                //otherwise, use the save action
+                editorCapability.edit();
+                return newObject.getCapability("action").perform("save").then(onSave, onCancel);
             }
-
-            function persistAndReturn(domainObject) {
-                return domainObject.getCapability('persistence')
-                    .persist()
-                    .then(function () {
-                        return domainObject;
-                    });
-            }
-
-            function addToParent (populatedObject) {
-                parentObject.getCapability('composition').add(populatedObject);
-                return persistAndReturn(parentObject);
-            }
-
-            return this.dialogService
-                .getUserInput(wizard.getFormStructure(false), wizard.getInitialFormValue())
-                .then(populateObjectFromInput)
-                .then(persistAndReturn)
-                .then(addToParent);
-
         };
 
 
         /**
-         * Metadata associated with a Add action.
-         * @typedef {ActionMetadata} AddActionMetadata
+         * Metadata associated with a Create action.
+         * @typedef {ActionMetadata} CreateActionMetadata
          * @property {string} type the key for the type of domain object
          *           to be created
          */
 
         /**
          * Get metadata about this action.
-         * @returns {AddActionMetadata} metadata about this action
+         * @returns {CreateActionMetadata} metadata about this action
          */
-        AddAction.prototype.getMetadata = function () {
-           return this.metadata;
+        CreateAction.prototype.getMetadata = function () {
+            return this.metadata;
         };
 
-        return AddAction;
+        return CreateAction;
     }
 );

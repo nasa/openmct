@@ -36,10 +36,10 @@ define(
         }
 
         EditableRegionPolicy.prototype.allow = function (regionPart, domainObject) {
-            if (!regionPart.modes){
+            if (!regionPart.modes) {
                 return true;
             }
-            if (domainObject.hasCapability('editor') && domainObject.getCapability('editor').inEditContext()){
+            if (domainObject.hasCapability('editor') && domainObject.getCapability('editor').inEditContext()) {
                 //If the domain object is in edit mode, only include a part
                 // if it is marked editable
                 return regionPart.modes.indexOf('edit') !== -1;

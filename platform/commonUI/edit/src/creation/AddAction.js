@@ -21,16 +21,19 @@
  *****************************************************************************/
 
 /**
- * Module defining CreateAction. Created by vwoeltje on 11/10/14.
+ * Module defining AddAction. Created by ahenry on 01/21/16.
  */
 define(
-    [],
-    function () {
+    [
+        './CreateWizard'
+    ],
+    function (CreateWizard) {
 
         /**
-         * The Create Action is performed to create new instances of
-         * domain objects of a specific type. This is the action that
-         * is performed when a user uses the Create menu.
+         * The Add Action is performed to create new instances of
+         * domain objects of a specific type that are subobjects of an
+         * object being edited. This is the action that is performed when a
+         * user uses the Add menu option.
          *
          * @memberof platform/commonUI/browse
          * @implements {Action}
@@ -43,13 +46,11 @@ define(
          *        override this)
          * @param {ActionContext} context the context in which the
          *        action is being performed
-         * @param {NavigationService} navigationService the navigation service,
-         *        which handles changes in navigation. It allows the object
-         *        being browsed/edited to be set.
+         * @param {DialogService} dialogService
          */
-        function CreateAction(type, parent, context, $q, navigationService) {
+        function AddAction(type, parent, context, $q, dialogService, policyService) {
             this.metadata = {
-                key: 'create',
+                key: 'add',
                 glyph: type.getGlyph(),
                 name: type.getName(),
                 type: type.getKey(),
@@ -59,68 +60,74 @@ define(
 
             this.type = type;
             this.parent = parent;
-            this.navigationService = navigationService;
             this.$q = $q;
-        }
-
-        // Get a count of views which are not flagged as non-editable.
-        function countEditableViews(domainObject) {
-            var views = domainObject && domainObject.useCapability('view'),
-                count = 0;
-
-            // A view is editable unless explicitly flagged as not
-            (views || []).forEach(function (view) {
-                count += (view.editable !== false) ? 1 : 0;
-            });
-
-            return count;
+            this.dialogService = dialogService;
+            this.policyService = policyService;
         }
 
         /**
+         *
          * Create a new object of the given type.
          * This will prompt for user input first.
+         *
+         * @returns {Promise} that will be resolved with the object that the
+         * action was originally invoked on (ie. the 'parent')
          */
-        CreateAction.prototype.perform = function () {
+        AddAction.prototype.perform = function () {
             var newModel = this.type.getInitialModel(),
-                parentObject = this.navigationService.getNavigation(),
-                editorCapability,
-                newObject;
+                newObject,
+                parentObject = this.parent,
+                wizard;
 
             newModel.type = this.type.getKey();
-            newModel.location = parentObject.getId();
-            newObject = parentObject.useCapability('instantiation', newModel);
+            newObject = parentObject.getCapability('instantiation').instantiate(newModel);
+            newObject.useCapability('mutation', function (model) {
+                model.location = parentObject.getId();
+            });
 
-            editorCapability = newObject.getCapability("editor");
+            wizard = new CreateWizard(newObject, this.parent, this.policyService);
 
-            if (countEditableViews(newObject) > 0 && newObject.hasCapability('composition')) {
-                this.navigationService.setNavigation(newObject);
-                return newObject.getCapability("action").perform("edit");
-            } else {
-                editorCapability.edit();
-                return newObject.useCapability("action").perform("save").then(function () {
-                        return editorCapability.save();
-                    }, function () {
-                        return editorCapability.cancel();
-                });
+            function populateObjectFromInput(formValue) {
+                return wizard.populateObjectFromInput(formValue, newObject);
             }
+
+            function persistAndReturn(domainObject) {
+                return domainObject.getCapability('persistence')
+                    .persist()
+                    .then(function () {
+                        return domainObject;
+                    });
+            }
+
+            function addToParent(populatedObject) {
+                parentObject.getCapability('composition').add(populatedObject);
+                return persistAndReturn(parentObject);
+            }
+
+            return this.dialogService
+                .getUserInput(wizard.getFormStructure(false), wizard.getInitialFormValue())
+                .then(populateObjectFromInput)
+                .then(persistAndReturn)
+                .then(addToParent);
+
         };
 
 
         /**
-         * Metadata associated with a Create action.
-         * @typedef {ActionMetadata} CreateActionMetadata
+         * Metadata associated with a Add action.
+         * @typedef {ActionMetadata} AddActionMetadata
          * @property {string} type the key for the type of domain object
          *           to be created
          */
 
         /**
          * Get metadata about this action.
-         * @returns {CreateActionMetadata} metadata about this action
+         * @returns {AddActionMetadata} metadata about this action
          */
-        CreateAction.prototype.getMetadata = function () {
-           return this.metadata;
+        AddAction.prototype.getMetadata = function () {
+            return this.metadata;
         };
 
-        return CreateAction;
+        return AddAction;
     }
 );

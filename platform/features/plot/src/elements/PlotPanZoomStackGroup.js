@@ -50,8 +50,8 @@ define(
                         // For other stacks, do a push, but repeat
                         // their current range axis bounds.
                         stack.pushPanZoom(
-                            [ origin[0], stack.getOrigin()[1] ],
-                            [ dimensions[0], stack.getDimensions()[1] ]
+                            [origin[0], stack.getOrigin()[1]],
+                            [dimensions[0], stack.getDimensions()[1]]
                         );
                     }
                 });

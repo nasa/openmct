@@ -43,8 +43,7 @@ define(
             var swimlanes = [],
                 start = Number.POSITIVE_INFINITY,
                 end = Number.NEGATIVE_INFINITY,
-                colors = (configuration.colors || {}),
-                assigner = new TimelineColorAssigner(colors),
+                assigner,
                 lastDomainObject;
 
             // Track extremes of start/end times
@@ -61,8 +60,8 @@ define(
                     swimlane;
 
                 // For the recursive step
-                function populate(childSubgraph, index) {
-                    populateSwimlanes(childSubgraph, swimlane, index);
+                function populate(childSubgraph, nextIndex) {
+                    populateSwimlanes(childSubgraph, swimlane, nextIndex);
                 }
 
                 // Make sure we have a valid object instance...
@@ -152,8 +151,15 @@ define(
                 recalculateSwimlanes(lastDomainObject);
             }
 
+            function initialize() {
+                var colors = (configuration.colors || {});
+                assigner = new TimelineColorAssigner(colors);
+                configuration.colors = colors;
+                recalculateSwimlanes(lastDomainObject);
+            }
+
             // Ensure colors are exposed in configuration
-            configuration.colors = colors;
+            initialize();
 
             return {
                 /**
@@ -188,6 +194,15 @@ define(
                  */
                 end: function () {
                     return end;
+                },
+                /**
+                 * Pass a new configuration object (to retrieve and store
+                 * swimlane configuration)
+                 * @param newConfig
+                 */
+                configure: function (newConfig) {
+                    configuration = newConfig;
+                    initialize();
                 }
             };
         }

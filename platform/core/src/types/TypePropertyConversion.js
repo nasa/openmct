@@ -33,8 +33,12 @@ define(
                     }
                 },
                 identity: {
-                    toModelValue: function (v) { return v; },
-                    toFormValue: function (v) { return v; }
+                    toModelValue: function (v) {
+                        return v;
+                    },
+                    toFormValue: function (v) {
+                        return v;
+                    }
                 }
             },
             ARRAY_SUFFIX = '[]';

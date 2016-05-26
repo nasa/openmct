@@ -48,7 +48,7 @@ define(
         SaveAction.prototype.perform = function () {
             var domainObject = this.domainObject;
 
-            function resolveWith(object){
+            function resolveWith(object) {
                 return function () {
                     return object;
                 };

@@ -45,7 +45,7 @@ define(
          */
         TelemetryDelegator.prototype.promiseTelemetryObjects = function (domainObject) {
             var $q = this.$q;
-            
+
             // If object has been cleared, there are no relevant
             // telemetry-providing domain objects.
             if (!domainObject) {
@@ -59,7 +59,7 @@ define(
                 "telemetry"
             )).then(function (result) {
                 var head = domainObject.hasCapability("telemetry") ?
-                        [ domainObject ] : [],
+                        [domainObject] : [],
                     tail = result || [];
                 return head.concat(tail);
             });

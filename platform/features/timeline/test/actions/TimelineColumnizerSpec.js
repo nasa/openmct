@@ -50,7 +50,7 @@ define(
             beforeEach(function () {
                 var mockTimespan = jasmine.createSpyObj(
                     'timespan',
-                    [ 'getStart', 'getEnd' ]
+                    ['getStart', 'getEnd']
                 );
 
                 testMetadata = [
@@ -59,8 +59,8 @@ define(
                 ];
 
                 mockDomainObjects = [
-                    { composition: [ 'a', 'b', 'c' ] },
-                    { relationships: { modes: [ 'x', 'y' ] } },
+                    { composition: ['a', 'b', 'c'] },
+                    { relationships: { modes: ['x', 'y'] } },
                     { }
                 ].map(makeMockDomainObject);
 

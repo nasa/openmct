@@ -40,7 +40,7 @@ define(
 
                 mockLocationCapability = jasmine.createSpyObj(
                     'location',
-                    [ 'setPrimaryLocation', 'getContextualLocation' ]
+                    ['setPrimaryLocation', 'getContextualLocation']
                 );
 
                 mockLocationCapability.getContextualLocation.andReturn(testId);

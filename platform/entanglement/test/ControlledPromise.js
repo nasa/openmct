@@ -39,8 +39,8 @@ define(
          * Resolve the promise, passing the supplied value to all resolve
          * handlers.
          */
-        ControlledPromise.prototype.resolve = function(value) {
-            this.resolveHandlers.forEach(function(handler) {
+        ControlledPromise.prototype.resolve = function (value) {
+            this.resolveHandlers.forEach(function (handler) {
                 handler(value);
             });
         };
@@ -49,8 +49,8 @@ define(
          * Reject the promise, passing the supplied value to all rejection
          * handlers.
          */
-        ControlledPromise.prototype.reject = function(value) {
-            this.rejectHandlers.forEach(function(handler) {
+        ControlledPromise.prototype.reject = function (value) {
+            this.rejectHandlers.forEach(function (handler) {
                 handler(value);
             });
         };
@@ -63,11 +63,11 @@ define(
             var returnPromise = new ControlledPromise();
 
             if (onResolve) {
-                this.resolveHandlers.push(function(resolveWith) {
+                this.resolveHandlers.push(function (resolveWith) {
                     var chainResult = onResolve(resolveWith);
                     if (chainResult && chainResult.then) {
                         // chainResult is a promise, resolve when it resolves.
-                        chainResult.then(function(pipedResult) {
+                        chainResult.then(function (pipedResult) {
                             return returnPromise.resolve(pipedResult);
                         });
                     } else {
@@ -77,10 +77,10 @@ define(
             }
 
             if (onReject) {
-                this.rejectHandlers.push(function(rejectWith) {
+                this.rejectHandlers.push(function (rejectWith) {
                     var chainResult = onReject(rejectWith);
                     if (chainResult && chainResult.then) {
-                        chainResult.then(function(pipedResult) {
+                        chainResult.then(function (pipedResult) {
                             returnPromise.reject(pipedResult);
                         });
                     } else {

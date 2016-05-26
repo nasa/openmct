@@ -21,23 +21,31 @@
  *****************************************************************************/
 
 define(
-    [],
-    function () {
+    ["../../src/creation/CreationPolicy"],
+    function (CreationPolicy) {
 
-        /**
-         * A policy for determining whether objects of a given type can be
-         * created.
-         * @constructor
-         * @implements {Policy}
-         * @memberof platform/commonUI/browse
-         */
-        function CreationPolicy() {
-        }
+        describe("The creation policy", function () {
+            var mockType,
+                policy;
 
-        CreationPolicy.prototype.allow = function (type) {
-            return type.hasFeature("creation");
-        };
+            beforeEach(function () {
+                mockType = jasmine.createSpyObj(
+                    'type',
+                    ['hasFeature']
+                );
 
-        return CreationPolicy;
+                policy = new CreationPolicy();
+            });
+
+            it("allows creation of types with the creation feature", function () {
+                mockType.hasFeature.andReturn(true);
+                expect(policy.allow(mockType)).toBeTruthy();
+            });
+
+            it("disallows creation of types without the creation feature", function () {
+                mockType.hasFeature.andReturn(false);
+                expect(policy.allow(mockType)).toBeFalsy();
+            });
+        });
     }
 );

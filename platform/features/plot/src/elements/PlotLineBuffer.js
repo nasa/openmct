@@ -35,7 +35,7 @@ define(
         function PlotLineBuffer(domainOffset, initialSize, maxSize) {
             this.buffer = new Float32Array(initialSize * 2);
             this.rangeExtrema =
-                [ Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY ];
+                [Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY];
             this.length = 0;
             this.domainOffset = domainOffset;
             this.initialSize = initialSize;
