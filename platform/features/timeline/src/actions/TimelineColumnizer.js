@@ -65,6 +65,7 @@ define([
      *
      * @param {DomainObject[]} domainObjects the objects to include
      *        in the exported data
+     * @param {Array} resources an array of `resources` extensions
      * @constructor
      * @memberof {platform/features/timeline}
      */
