@@ -1,16 +1,22 @@
 .l-timeline-gantt {
+    min-width: 2px;
+    overflow: hidden;
 	position: absolute;
 	top: $timelineSwimlaneGanttVM; bottom: $timelineSwimlaneGanttVM;
 
 	.bar {
 		@include ellipsize();
 		height: $activityBarH;
-		line-height: $activityBarH + 2;
+		line-height: $activityBarH;
 		padding: 0 $interiorMargin;
 
 		span {
-			display: inline;
+            $iconW: 20px;
+            @include absPosDefault();
+            display: block;
 			&.s-activity-type {
+                right: auto; width: $iconW;
+                text-align: center;
 				&.timeline {
 					&:before {
 						content:"S";
@@ -23,7 +29,9 @@
 				}
 			}
 			&.s-title {
-				text-shadow: rgba(black, 0.1) 0 1px 2px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                left: $iconW;
 			}
 			&.duration {
 				left: auto;
@@ -52,6 +60,10 @@
 			}
 		}
 	}
+    &.sm .bar span {
+        // Hide icon and label if width is too small
+        display: none;
+    }
 }
 
 .edit-mode .s-timeline-gantt,
