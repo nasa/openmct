@@ -27,6 +27,9 @@ define([], function () {
      * @constructor
      * @param {number} index the zero-based index of the composition
      *        element associated with this column
+     * @param idMap an object containing key value pairs, where keys
+     *        are domain object identifiers and values are whatever
+     *        should appear in CSV output in their place
      * @implements {platform/features/timeline.TimelineCSVColumn}
      */
     function ModeColumn(index, idMap) {

@@ -23,8 +23,11 @@
 define([], function () {
 
     /**
-     * A column showing domain object identifiers.
+     * A column showing identifying domain objects.
      * @constructor
+     * @param idMap an object containing key value pairs, where keys
+     *        are domain object identifiers and values are whatever
+     *        should appear in CSV output in their place
      * @implements {platform/features/timeline.TimelineCSVColumn}
      */
     function IdColumn(idMap) {
