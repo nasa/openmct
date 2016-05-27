@@ -24,9 +24,26 @@ define([
 
         var viewFactory = type.view(this.regions.main);
         if (viewFactory) {
+            var viewKey = key + "." + this.regions.main;
+
             this.legacyBundle.extensions.views =
                 this.legacyBundle.extensions.views || [];
+            this.legacyBundle.extensions.views.push({
+                name: "A view",
+                key: "adapted-view",
+                template: '<mct-view key="\'' +
+                    viewKey +
+                    '\'" ' +
+                    'mct-object="domainObject">' +
+                    '</mct-view>'
+            });
 
+            this.legacyBundle.extensions.newViews =
+                this.legacyBundle.extensions.newViews || [];
+            this.legacyBundle.extensions.newViews.push({
+                factory: viewFactory,
+                key: viewKey
+            });
         }
     };
 
