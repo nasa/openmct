@@ -52,18 +52,6 @@ define(
 
         HistoricalTableController.prototype = Object.create(TableController.prototype);
 
-        function fastPromise(value) {
-            if (value && value.then) {
-                return value;
-            } else {
-                return {
-                    then: function (callback) {
-                        return fastPromise(callback(value));
-                    }
-                };
-            }
-        }
-
         /**
          * Cancels outstanding processing
          * @private
