@@ -20,24 +20,67 @@ define([
         });
 
         todoType.view(mct.regions.main, function (domainObject) {
-            var view = new mct.View();
+            var view = new mct.View({
+                state: function () {
+                    return {
+                        filter: "all"
+                    };
+                },
+                elements: $.bind(null, todoTemplate),
+                initialize: function (elements, render) {
+                    var $els = $(elements);
+                    var $buttons = {
+                        all: $els.find('.example-todo-button-all'),
+                        incomplete: $els.find('.example-todo-button-incomplete'),
+                        complete: $els.find('.example-todo-button-complete')
+                    };
+                    Object.keys($buttons).forEach(function (k) {
+                        $buttons[k].on('click', function () {
+                            state.filter = k;
+                            render();
+                        });
+                    });
+                },
+                render: function (elements, domainObject, state) {
+                    var $els = $(elements);
+                    var tasks = domainObject.getModel().tasks;
+                    var $message = $els.find('.example-message');
+                    var $list = $els.find('example-todo-task-list');
+                    var $buttons = {
+                        all: $els.find('.example-todo-button-all'),
+                        incomplete: $els.find('.example-todo-button-incomplete'),
+                        complete: $els.find('.example-todo-button-complete')
+                    };
+                    var filters = {
+                        all: function (task) {
+                            return true;
+                        },
+                        incomplete: function (task) {
+                            return !task.completed;
+                        },
+                        complete: function (task) {
+                            return task.completed;
+                        }
+                    };
 
-            function render() {
-                var domainObject = view.model();
-                var $els = $(view.elements());
-                var tasks = domainObject.getModel().tasks;
-                var $message = $els.find('.example-message');
-                var $buttons = {
-                    all: $els.find('.example-todo-button-all'),
-                    incomplete: $els.find('.example-todo-button-incomplete'),
-                    complete: $els.find('.example-todo-button-complete')
-                };
+                    Object.keys($buttons).forEach(function (k) {
+                        $buttons[k].toggleClass('selected', state.filter === k);
+                    });
 
-                $message.toggle(tasks.length < 1);
-            }
+                    tasks = tasks.filter(filters[state.filter]);
 
-            view.elements($(todoTemplate));
-            view.on('model', render);
+                    $list.empty();
+                    tasks.forEach(function (task) {
+                        var $taskEls = $(taskTemplate);
+                        $taskEls.find('.example-task-checked')
+                            .prop('checked', task.completed);
+                        $taskEls.find('.example-task-description')
+                            .text(task.description);
+                    });
+
+                    $message.toggle(tasks.length < 1);
+                }
+            });
             view.model(domainObject);
             return view;
         });
