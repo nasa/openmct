@@ -21,11 +21,22 @@ define([
         this.legacyBundle.extensions.types =
             this.legacyBundle.extensions.types || [];
         this.legacyBundle.extensions.types.push(legacyDef);
+
+        var viewFactory = type.view(this.regions.main);
+        if (viewFactory) {
+            this.legacyBundle.extensions.views =
+                this.legacyBundle.extensions.views || [];
+
+        }
     };
 
     MCT.prototype.start = function () {
         legacyRegistry.register('adapter', this.legacyBundle);
         this.emit('start');
+    };
+
+    MCT.prototype.regions = {
+        main: "MAIN"
     };
 
     return MCT;
