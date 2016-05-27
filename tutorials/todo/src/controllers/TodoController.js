@@ -45,10 +45,10 @@ define(function () {
             showCompleted = completed;
         };
 
-        +       // Check if current visibility settings match
-            +       $scope.checkVisibility = function (all, completed) {
-            +           return showAll ? all : (completed === showCompleted);
-            +       };
+        // Check if current visibility settings match
+        $scope.checkVisibility = function (all, completed) {
+            return showAll ? all : (completed === showCompleted);
+        };
 
         // Toggle the completion state of a task
         $scope.toggleCompletion = function (taskIndex) {
