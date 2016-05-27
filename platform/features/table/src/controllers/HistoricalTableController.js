@@ -25,6 +25,7 @@ define(
         './TelemetryTableController'
     ],
     function (TableController) {
+        var BATCH_SIZE = 1000;
 
         /**
          * Extends TelemetryTableController and adds real-time streaming
@@ -35,11 +36,18 @@ define(
          * @param telemetryFormatter
          * @constructor
          */
-        function HistoricalTableController($scope, telemetryHandler, telemetryFormatter, $timeout, $q) {
+        function HistoricalTableController($scope, telemetryHandler, telemetryFormatter, $timeout) {
+            var self = this;
+
             this.$timeout = $timeout;
-            this.$q = $q;
+            this.timeouts = [];
+            this.batchSize = BATCH_SIZE;
+
+            $scope.$on("$destroy", function () {
+                self.cancelAllTimeouts();
+            });
+
             TableController.call(this, $scope, telemetryHandler, telemetryFormatter);
-            $scope.loading = true;
         }
 
         HistoricalTableController.prototype = Object.create(TableController.prototype);
@@ -57,54 +65,77 @@ define(
         }
 
         /**
+         * Cancels outstanding processing
          * @private
          */
-        HistoricalTableController.prototype.yieldingLoop = function (index, max, forEach, yieldAfter) {
-            var self = this;
-
-            if (index < max) {
-                forEach(index);
-                if (index % yieldAfter === 0) {
-                    return this.$timeout(function () {
-                        return self.yieldingLoop(++index, max, forEach, yieldAfter);
-                    });
-                } else {
-                    return self.yieldingLoop(++index, max, forEach, yieldAfter);
-                }
-            } else {
-                return this.$q.when(undefined);
-            }
+        HistoricalTableController.prototype.cancelAllTimeouts = function() {
+            this.timeouts.forEach(function (timeout) {
+              clearTimeout(timeout);
+            });
+            this.timeouts = [];
         };
 
         /**
-         * Populates historical data on scope when it becomes available from
-         * the telemetry API
+         * Will yield execution of a long running process, allowing
+         * execution of UI and other activities
+         * @private
+         * @param callback the function to execute after yielding
+         * @returns {number}
          */
+        HistoricalTableController.prototype.yield = function(callback) {
+            return setTimeout(callback, 0);
+        };
+
+        /**
+        * Populates historical data on scope when it becomes available from
+        * the telemetry API
+        */
         HistoricalTableController.prototype.addHistoricalData = function () {
             var rowData = [],
-                self = this;
+                self = this,
+                telemetryObjects = this.handle.getTelemetryObjects();
 
-            this.$scope.loading = true;
+            this.cancelAllTimeouts();
 
-            function processTelemetryObject(telemetryObject) {
-                var series = self.handle.getSeries(telemetryObject) || {},
-                    pointCount = series.getPointCount ? series.getPointCount() : 0,
-                    i = 0;
+            function processTelemetryObject(offset) {
+                var telemetryObject = telemetryObjects[offset],
+                    series = self.handle.getSeries(telemetryObject) || {},
+                    pointCount = series.getPointCount ? series.getPointCount() : 0;
 
-                return self.yieldingLoop(i, pointCount, function (index) {
-                    rowData.push(self.table.getRowValues(telemetryObject,
-                        self.handle.makeDatum(telemetryObject, series, index)));
-                }, 1000);
+                function processBatch(start, end, done) {
+                    var i;
+
+                    if (start < pointCount) {
+                        for (i = start; i < end; i++) {
+                            rowData.push(self.table.getRowValues(telemetryObject,
+                                self.handle.makeDatum(telemetryObject, series, i)));
+                        }
+                        self.timeouts.push(self.yield(function () {
+                            processBatch(end, end + self.batchSize, done);
+                        }));
+                    } else {
+                        offset++;
+                        if (offset < telemetryObjects.length) {
+                            processTelemetryObject(offset);
+                        } else {
+                            // Apply digest. Digest may not be necessary here, so
+                            // using $timeout instead of $scope.$apply to avoid
+                            // in progress error
+                            self.$timeout(function () {
+                                self.$scope.loading = false;
+                                self.$scope.rows = rowData;
+                            });
+                        }
+                    }
+                }
+                processBatch(0, self.batchSize);
             }
 
-            this.handle.getTelemetryObjects().reduce(function (promise, telemetryObject) {
-                return promise.then(function () {
-                    return processTelemetryObject(telemetryObject);
-                });
-            }, self.$q.when(undefined)).then(function () {
-                self.$scope.rows = rowData;
-                self.$scope.loading = false;
-            });
+            if (telemetryObjects.length > 0) {
+                this.$scope.loading = true;
+                processTelemetryObject(0);
+            }
+
         };
 
         return HistoricalTableController;
