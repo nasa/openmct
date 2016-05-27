@@ -13,6 +13,7 @@ define([
     Object.keys(api).forEach(function (k) {
         MCT.prototype[k] = api[k];
     });
+    MCT.prototype.MCT = MCT;
 
     MCT.prototype.type = function (key, type) {
         var legacyDef = type.toLegacyDefinition();
