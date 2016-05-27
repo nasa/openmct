@@ -9,7 +9,7 @@ define([
         "name": "To-do Plugin",
         "description": "Allows creating and editing to-do lists.",
         "extensions": {
-            "views": [
+            "xviews": [
                 {
                     "key": "example.todo",
                     "type": "example.todo",
