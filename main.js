@@ -64,6 +64,8 @@ define([
     'legacyRegistry',
     './src/MCT',
 
+    './src/adapter/bundle',
+
     './platform/framework/bundle',
     './platform/core/bundle',
     './platform/representation/bundle',

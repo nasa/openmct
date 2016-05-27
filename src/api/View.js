@@ -16,7 +16,7 @@ define(['EventEmitter'], function (EventEmitter) {
             this.elements(definition.elements());
         }
         if (definition.initialize) {
-            definition.initialize(this.elements(), render);
+            definition.initialize(this.elements(), state, render);
         }
         this.on('model', render);
     }

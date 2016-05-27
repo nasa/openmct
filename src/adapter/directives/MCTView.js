@@ -1,4 +1,4 @@
-define(function () {
+define(['angular'], function (angular) {
     function MCTView(newViews) {
         var factories = {};
 
@@ -7,7 +7,7 @@ define(function () {
         });
 
         return {
-            restrict: 'A',
+            restrict: 'E',
             link: function (scope, element, attrs) {
                 var key = undefined;
                 var mctObject = undefined;
@@ -21,13 +21,24 @@ define(function () {
                     }
 
                     var view = factories[key](mctObject);
-                    var elements = view.elements;
+                    var elements = view.elements();
                     element.empty();
                     element.append(elements);
                 }
 
+                function setKey(k) {
+                    key = k;
+                    maybeShow();
+                }
+
+                function setObject(obj) {
+                    mctObject = obj;
+                    maybeShow();
+                }
+
                 scope.$watch('key', setKey);
                 scope.$watch('mctObject', setObject);
+
             },
             scope: {
                 key: "=",

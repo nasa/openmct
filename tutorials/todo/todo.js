@@ -27,7 +27,7 @@ define([
                     };
                 },
                 elements: $.bind(null, todoTemplate),
-                initialize: function (elements, render) {
+                initialize: function (elements, state, render) {
                     var $els = $(elements);
                     var $buttons = {
                         all: $els.find('.example-todo-button-all'),

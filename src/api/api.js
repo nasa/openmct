@@ -1,9 +1,12 @@
 define([
-    './Type'
+    './Type',
+    './View'
 ], function (
-    Type
+    Type,
+    View
 ) {
     return {
-        Type: Type
+        Type: Type,
+        View: View
     };
 });
