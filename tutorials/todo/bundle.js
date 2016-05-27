@@ -9,18 +9,6 @@ define([
         "name": "To-do Plugin",
         "description": "Allows creating and editing to-do lists.",
         "extensions": {
-            "types": [
-                {
-                    "key": "example.todo",
-                    "name": "To-Do List",
-                    "glyph": "2",
-                    "description": "A list of things that need to be done.",
-                    "features": ["creation"],
-                    "model": {
-                        "tasks": []
-                    }
-                }
-            ],
             "views": [
                 {
                     "key": "example.todo",
