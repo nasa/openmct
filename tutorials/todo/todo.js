@@ -14,7 +14,9 @@ define([
                 description: "A list of things that need to be done."
             },
             initialize: function (model) {
-                model.tasks = [];
+                model.tasks = [
+                    { description: "This is a task." }
+                ];
             },
             creatable: true
         });
@@ -45,7 +47,7 @@ define([
                     var $els = $(elements);
                     var tasks = domainObject.getModel().tasks;
                     var $message = $els.find('.example-message');
-                    var $list = $els.find('example-todo-task-list');
+                    var $list = $els.find('.example-todo-task-list');
                     var $buttons = {
                         all: $els.find('.example-todo-button-all'),
                         incomplete: $els.find('.example-todo-button-incomplete'),
@@ -66,7 +68,6 @@ define([
                     Object.keys($buttons).forEach(function (k) {
                         $buttons[k].toggleClass('selected', state.filter === k);
                     });
-
                     tasks = tasks.filter(filters[state.filter]);
 
                     $list.empty();
@@ -76,6 +77,7 @@ define([
                             .prop('checked', task.completed);
                         $taskEls.find('.example-task-description')
                             .text(task.description);
+                        $list.append($taskEls);
                     });
 
                     $message.toggle(tasks.length < 1);
