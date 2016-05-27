@@ -24,10 +24,12 @@ define(
     ['../../src/actions/IdColumn'],
     function (IdColumn) {
         describe("IdColumn", function () {
-            var column;
+            var testIdMap,
+                column;
 
             beforeEach(function () {
-                column = new IdColumn();
+                testIdMap = { "foo": "bar" };
+                column = new IdColumn(testIdMap);
             });
 
             it("has a name", function () {
@@ -47,9 +49,9 @@ define(
                     mockDomainObject.getId.andReturn(testId);
                 });
 
-                it("provides a domain object's identifier", function () {
+                it("provides a value mapped from domain object's identifier", function () {
                     expect(column.value(mockDomainObject))
-                        .toEqual(testId);
+                        .toEqual(testIdMap[testId]);
                 });
             });
 

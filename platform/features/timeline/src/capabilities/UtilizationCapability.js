@@ -194,6 +194,13 @@ define(
                  */
                 resources: promiseResourceKeys,
                 /**
+                 * Get the resource utilization associated with this object
+                 * directly, not including any resource utilization associated
+                 * with contained objects.
+                 * @returns {Promise.<Array>}
+                 */
+                internal: promiseInternalUtilization,
+                /**
                  * Get the resource utilization associated with this
                  * object. Results are not sorted. This requires looking
                  * at contained objects, which in turn must happen
