@@ -54,7 +54,7 @@ define([
                         complete: $els.find('.example-todo-button-complete')
                     };
                     var filters = {
-                        all: function (task) {
+                        all: function () {
                             return true;
                         },
                         incomplete: function (task) {
@@ -71,12 +71,20 @@ define([
                     tasks = tasks.filter(filters[state.filter]);
 
                     $list.empty();
-                    tasks.forEach(function (task) {
+                    tasks.forEach(function (task, index) {
                         var $taskEls = $(taskTemplate);
-                        $taskEls.find('.example-task-checked')
-                            .prop('checked', task.completed);
+                        var $checkbox = $taskEls.find('.example-task-checked');
+                        $checkbox.prop('checked', task.completed);
                         $taskEls.find('.example-task-description')
                             .text(task.description);
+
+                        $checkbox.on('change', function () {
+                            var checked = !!$checkbox.prop('checked');
+                            mct.verbs.mutate(domainObject, function (model) {
+                                model.tasks[index].completed = checked;
+                            });
+                        });
+
                         $list.append($taskEls);
                     });
 

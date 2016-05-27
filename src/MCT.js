@@ -56,5 +56,11 @@ define([
         main: "MAIN"
     };
 
+    MCT.prototype.verbs = {
+        mutate: function (domainObject, mutator) {
+            return domainObject.useCapability('mutation', mutator);
+        }
+    };
+
     return MCT;
 });
