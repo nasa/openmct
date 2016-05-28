@@ -21,78 +21,84 @@ define([
             creatable: true
         });
 
-        todoType.view(mct.regions.main, function (domainObject) {
-            var view = new mct.View({
-                state: function () {
-                    return {
-                        filter: "all"
-                    };
+        function TodoView(domainObject) {
+            mct.View.apply(this);
+            this.filterValue = "all";
+            this.elements($(todoTemplate));
+
+            var $els = $(this.elements());
+            this.$buttons = {
+                all: $els.find('.example-todo-button-all'),
+                incomplete: $els.find('.example-todo-button-incomplete'),
+                complete: $els.find('.example-todo-button-complete')
+            };
+
+            this.initialize();
+            this.on('model', this.render.bind(this));
+            this.model(domainObject);
+        }
+
+        TodoView.prototype = Object.create(mct.View.prototype);
+
+        TodoView.prototype.setFilter = function (value) {
+            this.filterValue = value;
+            this.render();
+        };
+
+        TodoView.prototype.initialize = function () {
+            Object.keys(this.$buttons).forEach(function (k) {
+                this.$buttons[k].on('click', this.setFilter.bind(this, k));
+            }, this);
+        };
+
+        TodoView.prototype.render = function () {
+            var $els = $(this.elements());
+            var domainObject = this.model();
+            var tasks = domainObject.getModel().tasks;
+            var $message = $els.find('.example-message');
+            var $list = $els.find('.example-todo-task-list');
+            var $buttons = this.$buttons;
+            var filters = {
+                all: function () {
+                    return true;
                 },
-                elements: $.bind(null, todoTemplate),
-                initialize: function (elements, state, render) {
-                    var $els = $(elements);
-                    var $buttons = {
-                        all: $els.find('.example-todo-button-all'),
-                        incomplete: $els.find('.example-todo-button-incomplete'),
-                        complete: $els.find('.example-todo-button-complete')
-                    };
-                    Object.keys($buttons).forEach(function (k) {
-                        $buttons[k].on('click', function () {
-                            state.filter = k;
-                            render();
-                        });
-                    });
+                incomplete: function (task) {
+                    return !task.completed;
                 },
-                render: function (elements, domainObject, state) {
-                    var $els = $(elements);
-                    var tasks = domainObject.getModel().tasks;
-                    var $message = $els.find('.example-message');
-                    var $list = $els.find('.example-todo-task-list');
-                    var $buttons = {
-                        all: $els.find('.example-todo-button-all'),
-                        incomplete: $els.find('.example-todo-button-incomplete'),
-                        complete: $els.find('.example-todo-button-complete')
-                    };
-                    var filters = {
-                        all: function () {
-                            return true;
-                        },
-                        incomplete: function (task) {
-                            return !task.completed;
-                        },
-                        complete: function (task) {
-                            return task.completed;
-                        }
-                    };
-
-                    Object.keys($buttons).forEach(function (k) {
-                        $buttons[k].toggleClass('selected', state.filter === k);
-                    });
-                    tasks = tasks.filter(filters[state.filter]);
-
-                    $list.empty();
-                    tasks.forEach(function (task, index) {
-                        var $taskEls = $(taskTemplate);
-                        var $checkbox = $taskEls.find('.example-task-checked');
-                        $checkbox.prop('checked', task.completed);
-                        $taskEls.find('.example-task-description')
-                            .text(task.description);
-
-                        $checkbox.on('change', function () {
-                            var checked = !!$checkbox.prop('checked');
-                            mct.verbs.mutate(domainObject, function (model) {
-                                model.tasks[index].completed = checked;
-                            });
-                        });
-
-                        $list.append($taskEls);
-                    });
-
-                    $message.toggle(tasks.length < 1);
+                complete: function (task) {
+                    return task.completed;
                 }
+            };
+            var filterValue = this.filterValue;
+
+            Object.keys($buttons).forEach(function (k) {
+                $buttons[k].toggleClass('selected', filterValue === k);
             });
-            view.model(domainObject);
-            return view;
+            tasks = tasks.filter(filters[filterValue]);
+
+            $list.empty();
+            tasks.forEach(function (task, index) {
+                var $taskEls = $(taskTemplate);
+                var $checkbox = $taskEls.find('.example-task-checked');
+                $checkbox.prop('checked', task.completed);
+                $taskEls.find('.example-task-description')
+                    .text(task.description);
+
+                $checkbox.on('change', function () {
+                    var checked = !!$checkbox.prop('checked');
+                    mct.verbs.mutate(domainObject, function (model) {
+                        model.tasks[index].completed = checked;
+                    });
+                });
+
+                $list.append($taskEls);
+            });
+
+            $message.toggle(tasks.length < 1);
+        };
+
+        todoType.view(mct.regions.main, function (domainObject) {
+            return new TodoView(domainObject);
         });
 
         mct.type('example.todo', todoType);
