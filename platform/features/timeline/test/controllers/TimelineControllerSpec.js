@@ -214,23 +214,6 @@ define(
 
             });
 
-            it("reports full scrollable width using zoom controller", function () {
-                var mockZoom = jasmine.createSpyObj('zoom', ['toPixels', 'duration']);
-                mockZoom.toPixels.andReturn(54321);
-                mockZoom.duration.andReturn(12345);
-
-                // Initially populate
-                fireWatch('domainObject', mockDomainObject);
-
-                expect(controller.width(mockZoom)).toEqual(54321);
-                // Verify interactions; we took zoom's duration for our start/end,
-                // and converted it to pixels.
-                // First, check that we used the start/end (from above)
-                expect(mockZoom.duration).toHaveBeenCalledWith(12321 - 42);
-                // Next, verify that the result was passed to toPixels
-                expect(mockZoom.toPixels).toHaveBeenCalledWith(12345);
-            });
-
             it("provides drag handles", function () {
                 // TimelineDragPopulator et al are tested for these,
                 // so just verify that handles are indeed exposed.

@@ -47,12 +47,6 @@ define(
                 expect(controller.zoom()).toEqual(2000);
             });
 
-            it("allows duration to be changed", function () {
-                var initial = controller.duration();
-                controller.duration(initial * 3.33);
-                expect(controller.duration() > initial).toBeTruthy();
-            });
-
             it("handles time-to-pixel conversions", function () {
                 var zoomLevel = controller.zoom();
                 expect(controller.toPixels(zoomLevel)).toEqual(12321);
