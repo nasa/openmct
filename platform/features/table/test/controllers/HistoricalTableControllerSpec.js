@@ -34,6 +34,7 @@ define(
                 mockDomainObject,
                 mockTable,
                 mockConfiguration,
+                mockAngularTimeout,
                 watches,
                 controller;
 
@@ -62,6 +63,8 @@ define(
                 mockScope.$watchCollection.andCallFake(function (expression, callback) {
                     watches[expression] = callback;
                 });
+
+                mockAngularTimeout = jasmine.createSpy('$timeout');
 
                 mockConfiguration = {
                     'range1': true,
@@ -107,7 +110,7 @@ define(
                 ]);
                 mockTelemetryHandler.handle.andReturn(mockTelemetryHandle);
 
-                controller = new TableController(mockScope, mockTelemetryHandler, mockTelemetryFormatter);
+                controller = new TableController(mockScope, mockTelemetryHandler, mockTelemetryFormatter, mockAngularTimeout);
                 controller.table = mockTable;
                 controller.handle = mockTelemetryHandle;
             });
@@ -163,6 +166,9 @@ define(
 
                 controller.addHistoricalData(mockDomainObject, mockSeries);
 
+                expect(mockAngularTimeout).toHaveBeenCalled();
+                mockAngularTimeout.mostRecentCall.args[0]();
+
                 expect(controller.$scope.rows.length).toBe(5);
                 expect(controller.$scope.rows[0]).toBe(mockRow);
             });
@@ -198,7 +204,7 @@ define(
                     ' object composition changes', function () {
                     controller.registerChangeListeners();
                     expect(watches['domainObject.getModel().composition']).toBeDefined();
-                    watches['domainObject.getModel().composition']();
+                    watches['domainObject.getModel().composition']([], []);
                     expect(controller.subscribe).toHaveBeenCalled();
                 });
 
@@ -218,6 +224,89 @@ define(
                     expect(controller.filterColumns).toHaveBeenCalled();
                 });
 
+            });
+            describe('Yields thread', function () {
+                var mockSeries,
+                    mockRow,
+                    mockWindowTimeout = {};
+
+                beforeEach(function () {
+                    mockSeries = {
+                        getPointCount: function () {
+                            return 5;
+                        },
+                        getDomainValue: function () {
+                            return 'Domain Value';
+                        },
+                        getRangeValue: function () {
+                            return 'Range Value';
+                        }
+                    };
+                    mockRow = {'domain': 'Domain Value', 'range': 'Range Value'};
+
+                    mockTelemetryHandle.makeDatum.andCallFake(function () {
+                        return mockRow;
+                    });
+                    mockTable.getRowValues.andReturn(mockRow);
+                    mockTelemetryHandle.getTelemetryObjects.andReturn([mockDomainObject]);
+                    mockTelemetryHandle.getSeries.andReturn(mockSeries);
+
+                    jasmine.getGlobal().setTimeout = jasmine.createSpy("setTimeout");
+                    jasmine.getGlobal().setTimeout.andReturn(mockWindowTimeout);
+                    jasmine.getGlobal().clearTimeout = jasmine.createSpy("clearTimeout");
+
+                });
+                it('only when necessary', function () {
+
+                    controller.batchSize = 1000;
+                    controller.addHistoricalData(mockDomainObject, mockSeries);
+
+                    expect(mockAngularTimeout).toHaveBeenCalled();
+                    mockAngularTimeout.mostRecentCall.args[0]();
+
+                    expect(controller.$scope.rows.length).toBe(5);
+                    expect(controller.$scope.rows[0]).toBe(mockRow);
+
+                    expect(jasmine.getGlobal().setTimeout).not.toHaveBeenCalled();
+
+                });
+                it('when row count exceeds batch size', function () {
+                    controller.batchSize = 3;
+                    controller.addHistoricalData(mockDomainObject, mockSeries);
+
+                    expect(jasmine.getGlobal().setTimeout).toHaveBeenCalled();
+                    jasmine.getGlobal().setTimeout.mostRecentCall.args[0]();
+
+                    expect(mockAngularTimeout).toHaveBeenCalled();
+                    mockAngularTimeout.mostRecentCall.args[0]();
+
+                    expect(controller.$scope.rows.length).toBe(5);
+                    expect(controller.$scope.rows[0]).toBe(mockRow);
+                });
+                it('cancelling any outstanding timeouts', function () {
+                    controller.batchSize = 3;
+                    controller.addHistoricalData(mockDomainObject, mockSeries);
+
+                    expect(jasmine.getGlobal().setTimeout).toHaveBeenCalled();
+                    jasmine.getGlobal().setTimeout.mostRecentCall.args[0]();
+
+                    controller.addHistoricalData(mockDomainObject, mockSeries);
+
+                    expect(jasmine.getGlobal().clearTimeout).toHaveBeenCalledWith(mockWindowTimeout);
+                });
+                it('cancels timeout on scope destruction', function () {
+                    controller.batchSize = 3;
+                    controller.addHistoricalData(mockDomainObject, mockSeries);
+
+                    expect(jasmine.getGlobal().setTimeout).toHaveBeenCalled();
+                    jasmine.getGlobal().setTimeout.mostRecentCall.args[0]();
+
+                    //Call destroy function
+                    expect(mockScope.$on).toHaveBeenCalledWith("$destroy", jasmine.any(Function));
+                    mockScope.$on.mostRecentCall.args[1]();
+                    expect(jasmine.getGlobal().clearTimeout).toHaveBeenCalledWith(mockWindowTimeout);
+
+                });
             });
         });
     }

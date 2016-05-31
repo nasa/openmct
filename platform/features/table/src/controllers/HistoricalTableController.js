@@ -40,39 +40,17 @@ define(
             var self = this;
 
             this.$timeout = $timeout;
-            this.timeouts = [];
+            this.timeoutHandle = undefined;
             this.batchSize = BATCH_SIZE;
 
             $scope.$on("$destroy", function () {
-                self.cancelAllTimeouts();
+                clearTimeout(self.timeoutHandle);
             });
 
             TableController.call(this, $scope, telemetryHandler, telemetryFormatter);
         }
 
         HistoricalTableController.prototype = Object.create(TableController.prototype);
-
-        /**
-         * Cancels outstanding processing
-         * @private
-         */
-        HistoricalTableController.prototype.cancelAllTimeouts = function() {
-            this.timeouts.forEach(function (timeout) {
-              clearTimeout(timeout);
-            });
-            this.timeouts = [];
-        };
-
-        /**
-         * Will yield execution of a long running process, allowing
-         * execution of UI and other activities
-         * @private
-         * @param callback the function to execute after yielding
-         * @returns {number}
-         */
-        HistoricalTableController.prototype.yield = function(callback) {
-            return setTimeout(callback, 0);
-        };
 
         /**
         * Populates historical data on scope when it becomes available from
@@ -83,32 +61,39 @@ define(
                 self = this,
                 telemetryObjects = this.handle.getTelemetryObjects();
 
-            this.cancelAllTimeouts();
-
             function processTelemetryObject(offset) {
                 var telemetryObject = telemetryObjects[offset],
                     series = self.handle.getSeries(telemetryObject) || {},
                     pointCount = series.getPointCount ? series.getPointCount() : 0;
 
-                function processBatch(start, end, done) {
+                function processBatch(start, end) {
                     var i;
+                    end = Math.min(pointCount, end);
 
-                    if (start < pointCount) {
-                        for (i = start; i < end; i++) {
-                            rowData.push(self.table.getRowValues(telemetryObject,
-                                self.handle.makeDatum(telemetryObject, series, i)));
-                        }
-                        self.timeouts.push(self.yield(function () {
-                            processBatch(end, end + self.batchSize, done);
-                        }));
+                    clearTimeout(self.timeoutHandle);
+                    delete self.timeoutHandle;
+
+                    //The row offset (ie. batch start point) does not exceed the rows available
+                    for (i = start; i < end; i++) {
+                        rowData.push(self.table.getRowValues(telemetryObject,
+                            self.handle.makeDatum(telemetryObject, series, i)));
+                    }
+                    if (end < pointCount) {
+                        //Yield if necessary
+                        self.timeoutHandle = setTimeout(function () {
+                            processBatch(end, end + self.batchSize);
+                        }, 0);
                     } else {
+                        //All rows for this object have been processed, so check if there are more objects to process
                         offset++;
                         if (offset < telemetryObjects.length) {
+                            //More telemetry object to process
                             processTelemetryObject(offset);
                         } else {
-                            // Apply digest. Digest may not be necessary here, so
-                            // using $timeout instead of $scope.$apply to avoid
-                            // in progress error
+                            // No more objects to process. Apply rows to scope
+                            // Apply digest. Digest may be in progress (if batch small
+                            // enough to not require yield), so using $timeout instead
+                            // of $scope.$apply to avoid in progress error
                             self.$timeout(function () {
                                 self.$scope.loading = false;
                                 self.$scope.rows = rowData;

@@ -83,7 +83,7 @@ define(
          * @private
          */
         TelemetryTableController.prototype.registerChangeListeners = function () {
-            var self=this;
+            var self = this;
             this.unregisterChangeListeners();
 
             // When composition changes, re-subscribe to the various
