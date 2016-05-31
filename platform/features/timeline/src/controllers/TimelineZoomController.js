@@ -122,7 +122,7 @@ define(
                  */
                 width: function (timestamp) {
                     var pixels = Math.ceil(toPixels(timestamp * (1 + PADDING)));
-                    return Math.max(bounds.width, pixels)
+                    return Math.max(bounds.width, pixels);
                 }
             };
         }
