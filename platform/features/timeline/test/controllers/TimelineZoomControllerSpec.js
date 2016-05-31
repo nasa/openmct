@@ -119,6 +119,27 @@ define(
                     expect(Math.round(controller.toMillis(x2)))
                         .toBeGreaterThan(testEnd);
                 });
+
+                it("provides a width which is not less than scroll area width", function () {
+                    var testPixel = mockScope.scroll.width / 4,
+                        testMillis = controller.toMillis(testPixel);
+                    expect(controller.width(testMillis))
+                        .toEqual(mockScope.scroll.width);
+                });
+
+                it("provides a width with some margin past timestamp", function () {
+                    var testPixel = mockScope.scroll.width * 4,
+                        testMillis = controller.toMillis(testPixel);
+                    expect(controller.width(testMillis))
+                        .toBeGreaterThan(controller.toPixels(testMillis));
+                });
+
+                it("provides a width which does not greatly exceed timestamp", function () {
+                    var testPixel = mockScope.scroll.width * 4,
+                        testMillis = controller.toMillis(testPixel);
+                    expect(controller.width(testMillis))
+                        .toBeLessThan(controller.toPixels(testMillis * 2));
+                });
             });
 
         });
