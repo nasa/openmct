@@ -163,3 +163,13 @@ table {
 		}
 	}
 }
+
+/********************************************************** SPECIFIC TABULAR VIEWS */
+.t-tabular {
+    &.t-historical {
+        $btnExportH: 25px;
+        .l-view-section {
+            top: $btnExportH + $interiorMargin;
+        }
+    }
+}
