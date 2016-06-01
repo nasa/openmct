@@ -67,10 +67,17 @@ define(
             }
 
             function onCancel() {
-                return self.persistenceCapability.refresh().then(function (result) {
+                if (self.domainObject.getModel().persisted) {
+                    //Fetch clean model from persistence
+                    return self.persistenceCapability.refresh().then(function (result) {
+                        self.persistPending = false;
+                        return result;
+                    });
+                } else {
                     self.persistPending = false;
-                    return result;
-                });
+                    //Model is undefined in persistence, so return undefined.
+                    return self.$q.when(undefined);
+                }
             }
 
             if (this.transactionService.isActive()) {

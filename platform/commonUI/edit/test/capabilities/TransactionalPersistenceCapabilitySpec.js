@@ -57,6 +57,15 @@ define(
                 );
                 mockPersistence.persist.andReturn(fastPromise());
                 mockPersistence.refresh.andReturn(fastPromise());
+
+                mockDomainObject = jasmine.createSpyObj(
+                    "domainObject",
+                    [
+                        "getModel"
+                    ]
+                );
+                mockDomainObject.getModel.andReturn({persisted: 1});
+
                 capability = new TransactionalPersistenceCapability(mockQ, mockTransactionService, mockPersistence, mockDomainObject);
             });
 
@@ -74,6 +83,20 @@ define(
                 expect(mockTransactionService.addToTransaction).toHaveBeenCalled();
                 mockTransactionService.addToTransaction.mostRecentCall.args[0]();
                 expect(mockPersistence.persist).toHaveBeenCalled();
+                mockTransactionService.addToTransaction.mostRecentCall.args[1]();
+                expect(mockPersistence.refresh).toHaveBeenCalled();
+            });
+
+            it("if transaction is active, cancel call is queued that refreshes model when appropriate", function () {
+                mockTransactionService.isActive.andReturn(true);
+                capability.persist();
+                expect(mockTransactionService.addToTransaction).toHaveBeenCalled();
+
+                mockDomainObject.getModel.andReturn({});
+                mockTransactionService.addToTransaction.mostRecentCall.args[1]();
+                expect(mockPersistence.refresh).not.toHaveBeenCalled();
+
+                mockDomainObject.getModel.andReturn({persisted: 1});
                 mockTransactionService.addToTransaction.mostRecentCall.args[1]();
                 expect(mockPersistence.refresh).toHaveBeenCalled();
             });
