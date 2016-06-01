@@ -25,13 +25,15 @@ define([
     "./ModeColumn",
     "./CompositionColumn",
     "./MetadataColumn",
-    "./TimespanColumn"
+    "./TimespanColumn",
+    "./UtilizationColumn"
 ], function (
     IdColumn,
     ModeColumn,
     CompositionColumn,
     MetadataColumn,
-    TimespanColumn
+    TimespanColumn,
+    UtilizationColumn
 ) {
 
     /**
@@ -63,15 +65,17 @@ define([
      *
      * @param {DomainObject[]} domainObjects the objects to include
      *        in the exported data
+     * @param {Array} resources an array of `resources` extensions
      * @constructor
      * @memberof {platform/features/timeline}
      */
-    function TimelineColumnizer(domainObjects) {
+    function TimelineColumnizer(domainObjects, resources) {
         var maxComposition = 0,
             maxRelationships = 0,
             columnNames = {},
             columns = [],
             foundTimespan = false,
+            idMap,
             i;
 
         function addMetadataProperty(property) {
@@ -82,7 +86,12 @@ define([
             }
         }
 
-        columns.push(new IdColumn());
+        idMap = domainObjects.reduce(function (map, domainObject, index) {
+            map[domainObject.getId()] = index + 1;
+            return map;
+        }, {});
+
+        columns.push(new IdColumn(idMap));
 
         domainObjects.forEach(function (domainObject) {
             var model = domainObject.getModel(),
@@ -113,12 +122,16 @@ define([
             columns.push(new TimespanColumn(false));
         }
 
+        resources.forEach(function (resource) {
+            columns.push(new UtilizationColumn(resource));
+        });
+
         for (i = 0; i < maxComposition; i += 1) {
-            columns.push(new CompositionColumn(i));
+            columns.push(new CompositionColumn(i, idMap));
         }
 
         for (i = 0; i < maxRelationships; i += 1) {
-            columns.push(new ModeColumn(i));
+            columns.push(new ModeColumn(i, idMap));
         }
 
         this.domainObjects = domainObjects;

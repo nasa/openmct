@@ -288,8 +288,9 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
 
     .left {
         padding-right: $interiorMarginLg;
-        .l-back:not(.s-status-editing) {
+        .l-back {
             margin-right: $interiorMarginLg;
+            &.s-status-editing { display: none; }
         }
     }
 }

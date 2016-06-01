@@ -23,13 +23,20 @@
 define(
     ['../../src/actions/ModeColumn'],
     function (ModeColumn) {
+        var TEST_IDS = ['a', 'b', 'c', 'd', 'e', 'f'];
+
         describe("ModeColumn", function () {
             var testIndex,
+                testIdMap,
                 column;
 
             beforeEach(function () {
                 testIndex = 3;
-                column = new ModeColumn(testIndex);
+                testIdMap = TEST_IDS.reduce(function (map, id, index) {
+                    map[id] = index;
+                    return map;
+                }, {});
+                column = new ModeColumn(testIndex, testIdMap);
             });
 
             it("includes a one-based index in its name", function () {
@@ -48,15 +55,15 @@ define(
                     );
                     testModel = {
                         relationships: {
-                            modes: ['a', 'b', 'c', 'd', 'e', 'f']
+                            modes: TEST_IDS
                         }
                     };
                     mockDomainObject.getModel.andReturn(testModel);
                 });
 
-                it("returns a corresponding identifier", function () {
+                it("returns a corresponding value from the map", function () {
                     expect(column.value(mockDomainObject))
-                        .toEqual(testModel.relationships.modes[testIndex]);
+                        .toEqual(testIdMap[testModel.relationships.modes[testIndex]]);
                 });
 
                 it("returns nothing when relationships are exceeded", function () {

@@ -21,32 +21,52 @@
  *****************************************************************************/
 
 define([], function () {
-
     /**
-     * A column showing relationships to activity modes.
+     * A column showing utilization costs associated with activities.
      * @constructor
-     * @param {number} index the zero-based index of the composition
-     *        element associated with this column
-     * @param idMap an object containing key value pairs, where keys
-     *        are domain object identifiers and values are whatever
-     *        should appear in CSV output in their place
+     * @param {string} key the key for the particular cost
      * @implements {platform/features/timeline.TimelineCSVColumn}
      */
-    function ModeColumn(index, idMap) {
-        this.index = index;
-        this.idMap = idMap;
+    function UtilizationColumn(resource) {
+        this.resource = resource;
     }
 
-    ModeColumn.prototype.name = function () {
-        return "Activity Mode " + (this.index + 1);
+    UtilizationColumn.prototype.name = function () {
+        var units = {
+            "Kbps": "Kb",
+            "watts": "watt-seconds"
+        }[this.resource.units] || "unknown units";
+
+        return this.resource.name + " (" + units + ")";
     };
 
-    ModeColumn.prototype.value = function (domainObject) {
-        var model = domainObject.getModel(),
-            modes = (model.relationships || {}).modes || [];
-        return modes.length > this.index ?
-            this.idMap[modes[this.index]] : "";
+    UtilizationColumn.prototype.value = function (domainObject) {
+        var resource = this.resource;
+
+        function getCost(utilization) {
+            var seconds = (utilization.end - utilization.start) / 1000;
+            return seconds * utilization.value;
+        }
+
+        function getUtilizationValue(utilizations) {
+            utilizations = utilizations.filter(function (utilization) {
+                return utilization.key === resource.key;
+            });
+
+            if (utilizations.length === 0) {
+                return "";
+            }
+
+            return utilizations.map(getCost).reduce(function (a, b) {
+                return a + b;
+            }, 0);
+        }
+
+        return domainObject.hasCapability('utilization') ?
+            domainObject.getCapability('utilization').internal()
+                .then(getUtilizationValue) :
+            "";
     };
 
-    return ModeColumn;
+    return UtilizationColumn;
 });
