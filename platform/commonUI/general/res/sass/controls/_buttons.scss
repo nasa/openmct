@@ -109,6 +109,14 @@ $pad: $interiorMargin * $baseRatio;
             content: "\000039";
         }
     }
+
+    &.t-export {
+        &:before {
+            @extend .ui-symbol;
+            @extend .icon;
+            content:'\e623';
+        }
+    }
 }
 
 .s-icon-btn {
