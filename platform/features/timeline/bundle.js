@@ -472,6 +472,7 @@ define([
                     "implementation": TimelineZoomController,
                     "depends": [
                         "$scope",
+                        "$timeout",
                         "TIMELINE_ZOOM_CONFIGURATION"
                     ]
                 },
