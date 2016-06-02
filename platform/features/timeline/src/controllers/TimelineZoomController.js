@@ -33,8 +33,6 @@ define(
             var zoomLevels = ZOOM_CONFIGURATION.levels || [1000],
                 zoomIndex = Math.floor(zoomLevels.length / 2),
                 tickWidth = ZOOM_CONFIGURATION.width || 200,
-                desiredScroll = 0,
-                achievedDesiredScroll,
                 bounds = { x: 0, width: tickWidth }; // Default duration in view
 
             function toMillis(pixels) {
@@ -57,11 +55,8 @@ define(
             }
 
             function setScroll(x) {
-                desiredScroll = x;
-                achievedDesiredScroll = false;
                 $timeout(function () {
-                    $scope.scroll.x = desiredScroll;
-                    achievedDesiredScroll = true;
+                    $scope.scroll.x = x;
                 }, 0);
             }
 
