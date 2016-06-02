@@ -28,7 +28,6 @@ define(
         describe("The timeline zoom state controller", function () {
             var testConfiguration,
                 mockScope,
-                mockTimeout,
                 controller;
 
             beforeEach(function () {
@@ -38,10 +37,8 @@ define(
                 };
                 mockScope = jasmine.createSpyObj("$scope", ['$watch']);
                 mockScope.commit = jasmine.createSpy('commit');
-                mockTimeout = jasmine.createSpy('$timeout');
                 controller = new TimelineZoomController(
                     mockScope,
-                    mockTimeout,
                     testConfiguration
                 );
             });

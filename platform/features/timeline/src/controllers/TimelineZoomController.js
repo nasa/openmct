@@ -28,12 +28,11 @@ define(
          * Controls the pan-zoom state of a timeline view.
          * @constructor
          */
-        function TimelineZoomController($scope, $timeout, ZOOM_CONFIGURATION) {
+        function TimelineZoomController($scope, ZOOM_CONFIGURATION) {
             // Prefer to start with the middle index
             var zoomLevels = ZOOM_CONFIGURATION.levels || [1000],
                 zoomIndex = Math.floor(zoomLevels.length / 2),
                 tickWidth = ZOOM_CONFIGURATION.width || 200,
-                width = tickWidth,
                 bounds = { x: 0, width: tickWidth }; // Default duration in view
 
             function toMillis(pixels) {
@@ -63,12 +62,6 @@ define(
                     zoomIndex += 1;
                 }
                 bounds.x = toPixels(timespan.getStart());
-
-                // Physical width may be insufficient for scroll;
-                // if so, try again on a timeout!
-                if (bounds.x + bounds.width > width) {
-                    $timeout(initializeZoomFromTimespan.bind(null, timespan));
-                }
             }
 
             function initializeZoom() {
@@ -129,8 +122,7 @@ define(
                  */
                 width: function (timestamp) {
                     var pixels = Math.ceil(toPixels(timestamp * (1 + PADDING)));
-                    width = Math.max(bounds.width, pixels);
-                    return width;
+                    return Math.max(bounds.width * 2, pixels);
                 }
             };
         }
