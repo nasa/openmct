@@ -38,6 +38,7 @@ define(
                 };
                 mockScope = jasmine.createSpyObj("$scope", ['$watch']);
                 mockScope.commit = jasmine.createSpy('commit');
+                mockScope.scroll = { x: 0, width: 1000 };
                 mockTimeout = jasmine.createSpy('$timeout');
                 controller = new TimelineZoomController(
                     mockScope,
@@ -65,11 +66,6 @@ define(
             it("allows zoom to be changed", function () {
                 controller.zoom(1);
                 expect(controller.zoom()).toEqual(3500);
-            });
-
-            it("observes scroll bounds", function () {
-                expect(mockScope.$watch)
-                    .toHaveBeenCalledWith("scroll", jasmine.any(Function));
             });
 
             describe("when watches have fired", function () {
@@ -111,6 +107,10 @@ define(
 
                     mockScope.$watch.calls.forEach(function (call) {
                         call.args[1](mockScope[call.args[0]]);
+                    });
+
+                    mockTimeout.calls.forEach(function (call) {
+                        call.args[0]();
                     });
                 });
 
