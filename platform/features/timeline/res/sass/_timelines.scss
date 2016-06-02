@@ -58,7 +58,7 @@
                 }
                 &.l-tabular-r {
                     // Start, end, duration, activity modes columns
-                    @include scrollH();
+                    @include scrollH(scroll);
                     left: $timelineTabularTitleW;
 	                .l-width {
 		                @include absPosDefault(0, visible);
