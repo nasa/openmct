@@ -32,8 +32,7 @@ define(
             // Prefer to start with the middle index
             var zoomLevels = ZOOM_CONFIGURATION.levels || [1000],
                 zoomIndex = Math.floor(zoomLevels.length / 2),
-                tickWidth = ZOOM_CONFIGURATION.width || 200,
-                bounds = { x: 0, width: tickWidth }; // Default duration in view
+                tickWidth = ZOOM_CONFIGURATION.width || 200;
 
             function toMillis(pixels) {
                 return (pixels / tickWidth) * zoomLevels[zoomIndex];
@@ -63,7 +62,7 @@ define(
             function initializeZoomFromTimespan(timespan) {
                 var timelineDuration = timespan.getDuration();
                 zoomIndex = 0;
-                while (toMillis(bounds.width) < timelineDuration &&
+                while (toMillis($scope.scroll.width) < timelineDuration &&
                         zoomIndex < zoomLevels.length - 1) {
                     zoomIndex += 1;
                 }
@@ -77,9 +76,6 @@ define(
                 }
             }
 
-            $scope.$watch("scroll", function (scroll) {
-                bounds = scroll;
-            });
             $scope.$watch("domainObject", initializeZoom);
 
             return {
@@ -97,8 +93,7 @@ define(
                 zoom: function (amount) {
                     // Update the zoom level if called with an argument
                     if (arguments.length > 0 && !isNaN(amount)) {
-                        //var x = achievedDesiredScroll ?
-                        //    bounds.x : desiredScroll;
+                        var bounds = $scope.scroll;
                         var center = this.toMillis(bounds.x + bounds.width / 2);
                         setZoomLevel(zoomIndex + amount);
                         setScroll(this.toPixels(center) - bounds.width / 2);
@@ -130,7 +125,7 @@ define(
                  */
                 width: function (timestamp) {
                     var pixels = Math.ceil(toPixels(timestamp * (1 + PADDING)));
-                    return Math.max(bounds.width, pixels);
+                    return Math.max($scope.scroll.width, pixels);
                 }
             };
         }
