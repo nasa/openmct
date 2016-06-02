@@ -34,6 +34,7 @@ define(
                 zoomIndex = Math.floor(zoomLevels.length / 2),
                 tickWidth = ZOOM_CONFIGURATION.width || 200,
                 width = tickWidth,
+                desiredScroll = 0,
                 bounds = { x: 0, width: tickWidth }; // Default duration in view
 
             function toMillis(pixels) {
@@ -55,6 +56,15 @@ define(
                 }
             }
 
+            function setScroll() {
+                bounds.x = desiredScroll;
+                // Physical width may be insufficient for scroll;
+                // if so, try again on a timeout!
+                if (bounds.x + bounds.width > width) {
+                    $timeout(setScroll, 0);
+                }
+            }
+
             function initializeZoomFromTimespan(timespan) {
                 var timelineDuration = timespan.getDuration();
                 zoomIndex = 0;
@@ -62,13 +72,8 @@ define(
                         zoomIndex < zoomLevels.length - 1) {
                     zoomIndex += 1;
                 }
-                bounds.x = toPixels(timespan.getStart());
-
-                // Physical width may be insufficient for scroll;
-                // if so, try again on a timeout!
-                if (bounds.x + bounds.width > width) {
-                    $timeout(initializeZoomFromTimespan.bind(null, timespan));
-                }
+                desiredScroll = toPixels(timespan.getStart());
+                setScroll();
             }
 
             function initializeZoom() {
@@ -100,7 +105,9 @@ define(
                     if (arguments.length > 0 && !isNaN(amount)) {
                         var center = this.toMillis(bounds.x + bounds.width / 2);
                         setZoomLevel(zoomIndex + amount);
-                        bounds.x = this.toPixels(center) - bounds.width / 2;
+                        desiredScroll =
+                            this.toPixels(center) - bounds.width / 2;
+                        setScroll();
                     }
                     return zoomLevels[zoomIndex];
                 },
