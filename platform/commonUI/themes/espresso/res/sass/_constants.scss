@@ -183,8 +183,9 @@ $scrollbarThumbColorOverlay: lighten($colorOvrBg, 10%);
 $scrollbarThumbColorOverlayHov: lighten($scrollbarThumbColorOverlay, 2%);
 
 // Splitter
-$splitterD: 25px; // splitterD and HandleD should both be odd, or even
+$splitterD: 25px; // splitterD and $splitterHandleD should both be odd, or even
 $splitterHandleD: 1px;
+$splitterDSm: 17px; // Smaller splitter, used inside elements like a Timeline view
 $colorSplitterBg: rgba(#fff, 0.1); //pullForward($colorBodyBg, 5%);
 $splitterShdw: rgba(black, 0.4) 0 0 3px;
 $splitterEndCr: none;
