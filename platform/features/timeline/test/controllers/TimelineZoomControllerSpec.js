@@ -47,12 +47,6 @@ define(
                 expect(controller.zoom()).toEqual(2000);
             });
 
-            it("allows duration to be changed", function () {
-                var initial = controller.duration();
-                controller.duration(initial * 3.33);
-                expect(controller.duration() > initial).toBeTruthy();
-            });
-
             it("handles time-to-pixel conversions", function () {
                 var zoomLevel = controller.zoom();
                 expect(controller.toPixels(zoomLevel)).toEqual(12321);
@@ -124,6 +118,27 @@ define(
                         .toEqual(testStart);
                     expect(Math.round(controller.toMillis(x2)))
                         .toBeGreaterThan(testEnd);
+                });
+
+                it("provides a width which is not less than scroll area width", function () {
+                    var testPixel = mockScope.scroll.width / 4,
+                        testMillis = controller.toMillis(testPixel);
+                    expect(controller.width(testMillis))
+                        .toEqual(mockScope.scroll.width);
+                });
+
+                it("provides a width with some margin past timestamp", function () {
+                    var testPixel = mockScope.scroll.width * 4,
+                        testMillis = controller.toMillis(testPixel);
+                    expect(controller.width(testMillis))
+                        .toBeGreaterThan(controller.toPixels(testMillis));
+                });
+
+                it("provides a width which does not greatly exceed timestamp", function () {
+                    var testPixel = mockScope.scroll.width * 4,
+                        testMillis = controller.toMillis(testPixel);
+                    expect(controller.width(testMillis))
+                        .toBeLessThan(controller.toPixels(testMillis * 2));
                 });
             });
 

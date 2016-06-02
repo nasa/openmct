@@ -22,6 +22,7 @@
 define(
     [],
     function () {
+        var PADDING = 0.25;
 
         /**
          * Controls the pan-zoom state of a timeline view.
@@ -32,17 +33,7 @@ define(
             var zoomLevels = ZOOM_CONFIGURATION.levels || [1000],
                 zoomIndex = Math.floor(zoomLevels.length / 2),
                 tickWidth = ZOOM_CONFIGURATION.width || 200,
-                bounds = { x: 0, width: tickWidth },
-                duration = 86400000; // Default duration in view
-
-            // Round a duration to a larger value, to ensure space for editing
-            function roundDuration(value) {
-                // Ensure there's always an extra day or so
-                var tickCount = bounds.width / tickWidth,
-                    sz = zoomLevels[zoomLevels.length - 1] * tickCount;
-                value *= 1.25; // Add 25% padding to start
-                return Math.ceil(value / sz) * sz;
-            }
+                bounds = { x: 0, width: tickWidth }; // Default duration in view
 
             function toMillis(pixels) {
                 return (pixels / tickWidth) * zoomLevels[zoomIndex];
@@ -124,16 +115,14 @@ define(
                  */
                 toMillis: toMillis,
                 /**
-                 * Get or set the current displayed duration. If used as a
-                 * setter, this will typically be rounded up to ensure extra
-                 * space is available at the right.
-                 * @returns {number} duration, in milliseconds
+                 * Get the pixel width necessary to fit the specified
+                 * timestamp, expressed as an offset in milliseconds from
+                 * the start of the timeline.
+                 * @param {number} timestamp the time to display
                  */
-                duration: function (value) {
-                    if (arguments.length > 0) {
-                        duration = roundDuration(value);
-                    }
-                    return duration;
+                width: function (timestamp) {
+                    var pixels = Math.ceil(toPixels(timestamp * (1 + PADDING)));
+                    return Math.max(bounds.width, pixels);
                 }
             };
         }
