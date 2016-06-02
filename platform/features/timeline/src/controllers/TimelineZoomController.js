@@ -33,8 +33,8 @@ define(
             var zoomLevels = ZOOM_CONFIGURATION.levels || [1000],
                 zoomIndex = Math.floor(zoomLevels.length / 2),
                 tickWidth = ZOOM_CONFIGURATION.width || 200,
-                width = tickWidth,
                 desiredScroll = 0,
+                achievedDesiredScroll,
                 bounds = { x: 0, width: tickWidth }; // Default duration in view
 
             function toMillis(pixels) {
@@ -56,13 +56,13 @@ define(
                 }
             }
 
-            function setScroll() {
-                bounds.x = desiredScroll;
-                // Physical width may be insufficient for scroll;
-                // if so, try again on a timeout!
-                if (bounds.x + bounds.width > width) {
-                    $timeout(setScroll, 0);
-                }
+            function setScroll(x) {
+                desiredScroll = x;
+                achievedDesiredScroll = false;
+                $timeout(function () {
+                    $scope.scroll.x = desiredScroll;
+                    achievedDesiredScroll = true;
+                }, 0);
             }
 
             function initializeZoomFromTimespan(timespan) {
@@ -72,8 +72,7 @@ define(
                         zoomIndex < zoomLevels.length - 1) {
                     zoomIndex += 1;
                 }
-                desiredScroll = toPixels(timespan.getStart());
-                setScroll();
+                setScroll(toPixels(timespan.getStart()));
             }
 
             function initializeZoom() {
@@ -103,11 +102,11 @@ define(
                 zoom: function (amount) {
                     // Update the zoom level if called with an argument
                     if (arguments.length > 0 && !isNaN(amount)) {
+                        //var x = achievedDesiredScroll ?
+                        //    bounds.x : desiredScroll;
                         var center = this.toMillis(bounds.x + bounds.width / 2);
                         setZoomLevel(zoomIndex + amount);
-                        desiredScroll =
-                            this.toPixels(center) - bounds.width / 2;
-                        setScroll();
+                        setScroll(this.toPixels(center) - bounds.width / 2);
                     }
                     return zoomLevels[zoomIndex];
                 },
@@ -136,8 +135,7 @@ define(
                  */
                 width: function (timestamp) {
                     var pixels = Math.ceil(toPixels(timestamp * (1 + PADDING)));
-                    width = Math.max(bounds.width, pixels);
-                    return width;
+                    return Math.max(bounds.width, pixels);
                 }
             };
         }
