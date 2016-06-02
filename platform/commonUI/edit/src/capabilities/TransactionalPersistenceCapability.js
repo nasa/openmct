@@ -67,7 +67,7 @@ define(
             }
 
             function onCancel() {
-                if (self.domainObject.getModel().persisted) {
+                if (self.domainObject.getModel().persisted !== undefined) {
                     //Fetch clean model from persistence
                     return self.persistenceCapability.refresh().then(function (result) {
                         self.persistPending = false;
