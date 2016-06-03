@@ -124,7 +124,7 @@ define(
                     var testPixel = mockScope.scroll.width / 4,
                         testMillis = controller.toMillis(testPixel);
                     expect(controller.width(testMillis))
-                        .not.toBeLessThan(mockScope.scroll.width);
+                        .toEqual(mockScope.scroll.width);
                 });
 
                 it("provides a width with some margin past timestamp", function () {
