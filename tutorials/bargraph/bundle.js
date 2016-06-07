@@ -5,7 +5,7 @@ define([
     legacyRegistry,
     BarGraphController
     ) {
-    legacyRegistry.register("tutorials/todo", {
+    legacyRegistry.register("tutorials/bargraph", {
         "name": "Bar Graph",
         "description": "Provides the Bar Graph view of telemetry elements.",
         "extensions": {
@@ -17,6 +17,7 @@ define([
                     "templateUrl": "templates/bargraph.html",
                     "needs": [ "telemetry" ],
                     "delegation": true,
+                    "editable": true,
                     "toolbar": {
                         "sections": [
                             {
