@@ -72,6 +72,17 @@ define(
                     if ($scope.ngBlur) {
                         $scope.ngBlur();
                     }
+
+                    // If picker is active, dismiss it when valid value has been selected
+                    // This 'if' is to avoid unnecessary validation if picker is not active
+                    if ($scope.picker.active) {
+                        if ($scope.structure.validate && $scope.structure.validate($scope.ngModel[$scope.field])) {
+                            $scope.picker.active = false;
+                        } else if (!$scope.structure.validate) {
+                            //If picker visible, but no validation function, hide picker
+                            $scope.picker.active = false;
+                        }
+                    }
                 }
             }
 
@@ -93,7 +104,6 @@ define(
             $scope.$watch('ngModel[field]', updateFromModel);
             $scope.$watch('pickerModel.value', updateFromPicker);
             $scope.$watch('textValue', updateFromView);
-
         }
 
         return DateTimeFieldController;
