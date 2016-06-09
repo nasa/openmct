@@ -21,109 +21,131 @@
  *****************************************************************************/
 
 define([
-    "./BoundsHolder"
-], function (BoundsHolder) {
+    "EventEmitter",
+    "./UTCTimeSystem",
+    "./modes/RelativeMode",
+    "./modes/FixedMode"
+], function (EventEmitter, UTCTimeSystem, RelativeMode, FixedMode) {
 
-    function TimeConductor(Topic) {
+    /**
+     * A class for setting and querying time conductor state.
+     *
+     * @event TimeConductor:refresh The time conductor has changed, and its values should be re-queried
+     * @event TimeConductor:bounds The start time, end time, or both have been updated
+     * @event TimeConductor:timeOfInterest The Time of Interest has moved.
+     * @constructor
+     */
+    function TimeConductor() {
+        EventEmitter.call(this);
 
-        // Modes and event types
-        /**
-         * Start and End point modes. One of FIXED or RELATIVE.
-         * @readonly
-         * @enum {Number}
-         */
-        this.EventTypes = {
-            USER: 1,
-            TICK: 2,
-            EITHER: 3
+        //The Time System
+        this.system = new UTCTimeSystem();
+        //The Time Of Interest
+        this.toi = undefined;
+
+        this.boundsVal = {
+            start: undefined,
+            end: undefined
         };
 
-        /**
-         * Start and End point modes. One of FIXED or RELATIVE.
-         * @enum {Number}
-         */
-        this.Modes = {
-            FIXED: 1,
-            RELATIVE: 2
-        }
+        //Default to fixed mode
+        this.modeVal = new FixedMode();
+    }
 
-        // Member variables
-        this.toi = undefined;
-        this.system = undefined;
-        this.startModeValue = undefined;
-        this.endModeValue = undefined;
-        this.bounds = {
-            inner: new TimeConductorBounds(this),
-            outer: new TimeConductorBounds(this)
-        }
+    TimeConductor.prototype = Object.create(EventEmitter.prototype);
 
-        this.topic = new Topic();
+    /**
+     * Validate the given bounds. This can be used for pre-validation of
+     * bounds, for example by views validating user inputs.
+     * @param bounds The start and end time of the conductor.
+     * @returns {string | true} A validation error, or true if valid
+     */
+    TimeConductor.prototype.validateBounds = function (bounds) {
+        if (!bounds.start ||
+            !bounds.end ||
+            isNaN(bounds.start) ||
+            isNaN(bounds.end)
+        ) {
+            return "Start and end must be specified as integer values";
+        } else if (bounds.start > bounds.end){
+            return "Specified start date exceeds end bound";
+        }
+        return true;
+    };
+
+    function throwOnError(validationResult) {
+        if (validationResult !== true) {
+            throw validationResult;
+        }
     }
 
     /**
-     * Set the mode of the start points of the inner and outer bounds.
-     * @param newMode {BoundsHolder.Modes} specifies the new start mode, and any options. Mode is one of RELATIVE or FIXED
-     * @returns {BoundsHolder.Modes|*} The currently set bounds start mode.
+     * Set the mode of the time conductor.
+     * @param {FixedMode | RealtimeMode} newMode
+     * @fires TimeConductor#refresh
+     * @returns {FixedMode | RealtimeMode}
      */
-    TimeConductor.prototype.startMode = function(newMode) {
+    TimeConductor.prototype.mode = function (newMode) {
         if (arguments.length > 0) {
-            this.startModeValue = newMode;
-            //Notify listeners
-            this.topic.notify(this);
+            this.modeVal = newMode;
+            this.emit('refresh', this);
+            newMode.initialize();
         }
-        return this.startModeValue;
+        return this.modeVal;
     };
 
     /**
-     * Set the mode of the end points of the inner and outer bounds.
-     * @param newMode {BoundsHolder.Modes} the new end mode. One of FIXED or RELATIVE. An end mode of RELATIVE sets delta
-     * relative to 'now'. A delta value of zero is follow time.
-     * @returns {BoundsHolder.Modes|*} The currently set bounds end mode.
+     * @typedef {Object} TimeConductorBounds
+     * @property {number} start The start time displayed by the time conductor in ms since epoch. Epoch determined by current time system
+     * @property {number} end The end time displayed by the time conductor in ms since epoch.
      */
-    TimeConductor.prototype.endMode = function (newMode) {
+    /**
+     * Set the start and end time of the time conductor. Basic validation of bounds is performed.
+     *
+     * @param {TimeConductorBounds} newBounds
+     * @param {TimeConductorBounds} should this change trigger a refresh?
+     * @throws {string} Validation error
+     * @fires TimeConductor#bounds
+     * @returns {TimeConductorBounds}
+     */
+    TimeConductor.prototype.bounds = function (newBounds, refresh) {
         if (arguments.length > 0) {
-            this.endModeValue = newMode;
-            this.topic.notify(this);
+            throwOnError(this.validateBounds(newBounds));
+            this.boundsVal = newBounds;
+            this.emit('bounds', this.boundsVal);
+            if (refresh) {
+                this.emit('refresh');
+            }
         }
-        return this.endModeValue;
+        return this.boundsVal;
     };
 
     /**
-     * Get or set the time of interest.
+     * Set the time system of the TimeConductor. Time systems determine units, epoch, and other aspects of time representation.
+     * @param newTimeSystem
+     * @fires TimeConductor#refresh
+     * @returns {TimeSystem} The currently applied time system
+     */
+    TimeConductor.prototype.timeSystem = function (newTimeSystem) {
+        if (arguments.length > 0) {
+            this.system = newTimeSystem;
+            this.emit('refresh', this);
+        }
+        return this.system;
+    };
+
+    /**
+     * The Time of Interest is the temporal focus of the current view. It can be manipulated by the user from the time
+     * conductor or from other views.
      * @param newTOI
      * @returns {*}
      */
     TimeConductor.prototype.timeOfInterest = function (newTOI) {
         if (arguments.length > 0) {
             this.toi = newTOI;
-            this.topic.notify(this);
+            this.emit('toi');
         }
         return this.toi;
-    };
-
-    /**
-     * Get or set the time system used.
-     * @param newSystem
-     * @returns {*}
-     */
-    TimeConductor.prototype.timeSystem = function (newSystem) {
-        if (arguments.length > 0) {
-            this.system = newSystem;
-            this.topic.notify(this);
-        }
-        return this.system;
-    };
-
-    /**
-     * Listen for changes to properties directly on the TimeConductor itself. For changes to bounds,
-     * [attach listeners to the bounds themselves]{@link TimeConductorBounds.listen}
-     * @param listener A callback function to call when the value of a property on the TimeConductor changes. The
-     * callback will be invoked with the TimeConductor passed as a parameter
-     * @see {@link TimeConductorBounds.listen}
-     * @returns {Function} a deregister function for the listener
-     */
-    TimeConductor.prototype.listen = function (listener) {
-        return this.topic.listen(listener);
     };
 
     return TimeConductor;
