@@ -28,7 +28,7 @@ define(
          * Controls the pan-zoom state of a timeline view.
          * @constructor
          */
-        function TimelineZoomController($scope, $timeout, ZOOM_CONFIGURATION) {
+        function TimelineZoomController($scope, $window, ZOOM_CONFIGURATION) {
             // Prefer to start with the middle index
             var zoomLevels = ZOOM_CONFIGURATION.levels || [1000],
                 zoomIndex = Math.floor(zoomLevels.length / 2),
@@ -54,9 +54,10 @@ define(
             }
 
             function setScroll(x) {
-                $timeout(function () {
+                $window.requestAnimationFrame(function () {
                     $scope.scroll.x = x;
-                }, 0);
+                    $scope.$apply();
+                });
             }
 
             function initializeZoomFromTimespan(timespan) {
