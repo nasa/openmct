@@ -81,6 +81,7 @@ define(
             if (phase.toLowerCase() === 'preparing' && !this.dialog) {
                 this.dialog = this.dialogService.showBlockingMessage({
                     title: "Preparing to copy objects",
+                    hint: "Do not navigate away from this page or close this browser tab while this message is displayed.",
                     unknownProgress: true,
                     severity: "info"
                 });
