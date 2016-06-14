@@ -101,6 +101,7 @@ define(
                 });
                 mockIdentifierService.parse.andReturn(mockIdentifier);
                 mockIdentifier.getSpace.andReturn(SPACE);
+                mockIdentifier.getKey.andReturn(id);
                 persistence = new PersistenceCapability(
                     mockCacheService,
                     mockPersistenceService,
