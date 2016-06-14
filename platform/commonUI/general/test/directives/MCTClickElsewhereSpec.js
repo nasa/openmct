@@ -104,6 +104,8 @@ define(
                 });
 
                 it("triggers an evaluation of its related Angular expression", function () {
+                    expect(mockScope.$apply).toHaveBeenCalled();
+                    mockScope.$apply.mostRecentCall.args[0]();
                     expect(mockScope.$eval)
                         .toHaveBeenCalledWith(testAttrs.mctClickElsewhere);
                 });
