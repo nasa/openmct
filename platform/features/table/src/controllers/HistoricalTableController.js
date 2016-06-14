@@ -44,7 +44,9 @@ define(
             this.batchSize = BATCH_SIZE;
 
             $scope.$on("$destroy", function () {
-                clearTimeout(self.timeoutHandle);
+                if (self.timeoutHandle) {
+                    self.$timeout.cancel(self.timeoutHandle);
+                }
             });
 
             TableController.call(this, $scope, telemetryHandler, telemetryFormatter);
@@ -53,62 +55,63 @@ define(
         HistoricalTableController.prototype = Object.create(TableController.prototype);
 
         /**
+         * Set provided row data on scope, and cancel loading spinner
+         * @private
+         */
+        HistoricalTableController.prototype.doneProcessing = function (rowData) {
+            this.$scope.rows = rowData;
+            this.$scope.loading = false;
+        };
+
+        /**
+         * Processes an array of objects, formatting the telemetry available
+         * for them and setting it on scope when done
+         * @private
+         */
+        HistoricalTableController.prototype.processTelemetryObjects = function (objects, offset, start, rowData) {
+            var telemetryObject = objects[offset],
+                series,
+                i = start,
+                pointCount,
+                end;
+
+            //No more objects to process
+            if (!telemetryObject) {
+                return this.doneProcessing(rowData);
+            }
+
+            series = this.handle.getSeries(telemetryObject);
+
+            pointCount = series.getPointCount();
+            end = Math.min(start + this.batchSize, pointCount);
+
+            //Process rows in a batch with size not exceeding a maximum length
+            for (; i < end; i++) {
+                rowData.push(this.table.getRowValues(telemetryObject,
+                    this.handle.makeDatum(telemetryObject, series, i)));
+            }
+
+            //Done processing all rows for this object.
+            if (end >= pointCount) {
+                offset++;
+                end = 0;
+            }
+
+            // Done processing either a batch or an object, yield process
+            // before continuing processing
+            this.timeoutHandle = this.$timeout(this.processTelemetryObjects.bind(this, objects, offset, end, rowData));
+        };
+
+        /**
         * Populates historical data on scope when it becomes available from
         * the telemetry API
         */
         HistoricalTableController.prototype.addHistoricalData = function () {
-            var rowData = [],
-                self = this,
-                telemetryObjects = this.handle.getTelemetryObjects();
-
-            function processTelemetryObject(offset) {
-                var telemetryObject = telemetryObjects[offset],
-                    series = self.handle.getSeries(telemetryObject) || {},
-                    pointCount = series.getPointCount ? series.getPointCount() : 0;
-
-                function processBatch(start, end) {
-                    var i;
-                    end = Math.min(pointCount, end);
-
-                    clearTimeout(self.timeoutHandle);
-                    delete self.timeoutHandle;
-
-                    //The row offset (ie. batch start point) does not exceed the rows available
-                    for (i = start; i < end; i++) {
-                        rowData.push(self.table.getRowValues(telemetryObject,
-                            self.handle.makeDatum(telemetryObject, series, i)));
-                    }
-                    if (end < pointCount) {
-                        //Yield if necessary
-                        self.timeoutHandle = setTimeout(function () {
-                            processBatch(end, end + self.batchSize);
-                        }, 0);
-                    } else {
-                        //All rows for this object have been processed, so check if there are more objects to process
-                        offset++;
-                        if (offset < telemetryObjects.length) {
-                            //More telemetry object to process
-                            processTelemetryObject(offset);
-                        } else {
-                            // No more objects to process. Apply rows to scope
-                            // Apply digest. Digest may be in progress (if batch small
-                            // enough to not require yield), so using $timeout instead
-                            // of $scope.$apply to avoid in progress error
-                            self.$timeout(function () {
-                                self.$scope.loading = false;
-                                self.$scope.rows = rowData;
-                            });
-                        }
-                    }
-                }
-                processBatch(0, self.batchSize);
+            if (this.timeoutHandle) {
+                this.$timeout.cancel(this.timeoutHandle);
             }
 
-            if (telemetryObjects.length > 0) {
-                this.$scope.loading = true;
-                processTelemetryObject(0);
-            }
-
+            this.timeoutHandle = this.$timeout(this.processTelemetryObjects.bind(this, this.handle.getTelemetryObjects(), 0, 0, []));
         };
 
         return HistoricalTableController;

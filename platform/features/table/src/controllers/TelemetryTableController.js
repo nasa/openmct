@@ -140,6 +140,7 @@ define(
             if (this.handle) {
                 this.handle.unsubscribe();
             }
+            this.$scope.loading = true;
 
             this.handle = this.$scope.domainObject && this.telemetryHandler.handle(
                     this.$scope.domainObject,

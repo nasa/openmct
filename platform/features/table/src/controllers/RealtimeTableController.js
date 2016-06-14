@@ -91,6 +91,7 @@ define(
                         self.$scope.rows.length - 1);
                 }
             });
+            this.$scope.loading = false;
         };
 
         return RealtimeTableController;
