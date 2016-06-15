@@ -60,11 +60,6 @@ define(
             this.$q = $q;
         }
 
-        function getKey(id) {
-            var parts = id.split(":");
-            return parts.length > 1 ? parts.slice(1).join(":") : id;
-        }
-
         /**
          * Checks if the value returned is falsey, and if so returns a
          * rejected promise
@@ -131,7 +126,7 @@ define(
             // ...and persist
             return persistenceFn.apply(persistenceService, [
                 this.getSpace(),
-                getKey(domainObject.getId()),
+                this.getKey(),
                 domainObject.getModel()
             ]).then(function (result) {
                 return rejectIfFalsey(result, self.$q);
@@ -159,7 +154,7 @@ define(
 
             return this.persistenceService.readObject(
                     this.getSpace(),
-                    this.domainObject.getId()
+                    this.getKey()
                 ).then(updateModel);
         };
 
@@ -176,6 +171,17 @@ define(
         PersistenceCapability.prototype.getSpace = function () {
             var id = this.domainObject.getId();
             return this.identifierService.parse(id).getSpace();
+        };
+
+
+        /**
+         * Get the key for this domain object in the given space.
+         *
+         * @returns {string} the key of the object in it's space.
+         */
+        PersistenceCapability.prototype.getKey = function () {
+            var id = this.domainObject.getId();
+            return this.identifierService.parse(id).getKey();
         };
 
         return PersistenceCapability;
