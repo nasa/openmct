@@ -237,29 +237,9 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
     top: $ueTopBarH + $interiorMarginLg;
 }
 
-.l-object-wrapper {
-    @extend .abs;
-
-    .object-holder-main {
-        @extend .abs;
-    }
-    .l-edit-controls {
-        //@include trans-prop-nice((opacity, height), 0.25s);
-        border-bottom: 1px solid $colorInteriorBorder;
-        line-height: $ueEditToolBarH;
-        height: 0px;
-        opacity: 0;
-        .tool-bar {
-            right: $interiorMargin;
-        }
-    }
-}
-
 .l-object-wrapper-inner {
     @include trans-prop-nice-resize(0.25s);
 }
-
-
 
 .object-browse-bar .s-btn,
 .top-bar .buttons-main .s-btn,
@@ -377,19 +357,50 @@ body.desktop {
 
 .s-status-editing {
     .l-object-wrapper {
-        @include pulseBorder($colorEditAreaFg, $dur: 1s, $opacity0: 0.3);
-        border-radius: $controlCr;
+        $t2Dur: $browseToEditAnimMs;
+        $t1Dur: $t2Dur / 2;
+        $pulseDur: $editBorderPulseMs;
+        $bC0: rgba($colorEditAreaFg, 0.5);
+        $bC100: rgba($colorEditAreaFg, 1);
+
         background-color: $colorEditAreaBg;
-        border-color: $colorEditAreaFg;
-        border-width: 2px;
-        border-style: dotted;
-        .l-object-wrapper-inner {
-            @include absPosDefault(3px, hidden);
+        border-radius: $controlCr;
+        border: 1px dotted $bC0;
+
+        // Transition 1
+        @include keyframes(wrapperIn) {
+            from { border: 0px dotted transparent; padding: 0; }
+            to { border: 1px dotted $bC0; padding: 5px; }
         }
+
+        // Do last
+        @include keyframes(pulseNew) {
+            from  { border-color: $bC0; }
+            to { border-color: $bC100; }
+        }
+
+        @include animation-name(wrapperIn, pulseNew);
+        @include animation-duration($t1Dur, $pulseDur);
+        @include animation-delay(0s, $t1Dur + $t2Dur);
+        @include animation-direction(normal, alternate);
+        @include animation-fill-mode(both, none);
+        @include animation-iteration-count(1, infinite);
+        @include animation-timing-function(ease-in-out, linear);
+
+
         .l-edit-controls {
-            height: $ueEditToolBarH + $interiorMargin;
-            margin-bottom: $interiorMargin;
-            opacity: 1;
+            height: 0;
+            border-bottom: 1px solid $colorInteriorBorder;
+            overflow: hidden;
+            // Transition 2: reveal edit controls
+            @include keyframes(editIn) {
+                from { border-bottom: 0px solid transparent; height: 0; margin-bottom: 0; }
+                to { border-bottom: 1px solid $colorInteriorBorder; height: $ueEditToolBarH + $interiorMargin; margin-bottom: $interiorMargin; }
+            }
+            @include animToParams(editIn, $dur: $t2Dur, $delay: $t1Dur);
+            .tool-bar {
+                right: $interiorMargin;
+            }
         }
     }
 }

@@ -29,10 +29,12 @@
                                 !structure.validate(ngModel[field])),
                         'picker-icon': structure.format === 'utc' || !structure.format
                      }">
-    </input><a class="ui-symbol icon icon-calendar"
-       ng-if="structure.format === 'utc' || !structure.format"
-       ng-click="picker.active = !picker.active">
-    </a>
+    </input>
+    <a class="ui-symbol icon icon-calendar"
+       ng-if="!picker.active && (structure.format === 'utc' || !structure.format)"
+       ng-click="picker.active = !picker.active"></a>
+    <!-- If picker active show icon with no onclick to prevent double registration of clicks -->
+    <a class="ui-symbol icon icon-calendar" ng-if="picker.active"></a>
     <mct-popup ng-if="picker.active">
         <div mct-click-elsewhere="picker.active = false">
             <mct-control key="'datetime-picker'"

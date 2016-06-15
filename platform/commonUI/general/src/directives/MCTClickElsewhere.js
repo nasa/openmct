@@ -51,7 +51,9 @@ define(
                         yMax = yMin + rect.height;
 
                     if (x < xMin || x > xMax || y < yMin || y > yMax) {
-                        scope.$eval(attrs.mctClickElsewhere);
+                        scope.$apply(function () {
+                            scope.$eval(attrs.mctClickElsewhere);
+                        });
                     }
                 }
 

@@ -124,6 +124,8 @@ $dirImgs: $dirCommonRes + 'images/';
 
 /************************** TIMINGS */
 $controlFadeMs: 100ms;
+$browseToEditAnimMs: 400ms;
+$editBorderPulseMs: 500ms;
 
 /************************** LIMITS */
 $glyphLimit: '\e603';

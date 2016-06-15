@@ -30,23 +30,21 @@ define(
         var TEST_DOMAIN_VALUE = "some formatted domain value";
 
         describe("A domain column", function () {
-            var mockDataSet,
+            var mockDatum,
                 testMetadata,
                 mockFormatter,
                 column;
 
             beforeEach(function () {
-                mockDataSet = jasmine.createSpyObj(
-                    "data",
-                    ["getDomainValue"]
-                );
+
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
                     ["formatDomainValue", "formatRangeValue"]
                 );
                 testMetadata = {
                     key: "testKey",
-                    name: "Test Name"
+                    name: "Test Name",
+                    format: "Test Format"
                 };
                 mockFormatter.formatDomainValue.andReturn(TEST_DOMAIN_VALUE);
 
@@ -57,24 +55,24 @@ define(
                 expect(column.getTitle()).toEqual("Test Name");
             });
 
-            xit("looks up data from a data set", function () {
-                column.getValue(undefined, mockDataSet, 42);
-                expect(mockDataSet.getDomainValue)
-                    .toHaveBeenCalledWith(42, "testKey");
-            });
+            describe("when given a datum", function () {
+                beforeEach(function () {
+                    mockDatum = {
+                        testKey: "testKeyValue"
+                    };
+                });
 
-            xit("formats domain values as time", function () {
-                mockDataSet.getDomainValue.andReturn(402513731000);
+                it("looks up data from the given datum", function () {
+                    expect(column.getValue(undefined, mockDatum))
+                        .toEqual({ text: TEST_DOMAIN_VALUE });
+                });
 
-                // Should have just given the value the formatter gave
-                expect(column.getValue(undefined, mockDataSet, 42).text)
-                    .toEqual(TEST_DOMAIN_VALUE);
+                it("uses formatter to format domain values as requested", function () {
+                    column.getValue(undefined, mockDatum);
+                    expect(mockFormatter.formatDomainValue)
+                        .toHaveBeenCalledWith("testKeyValue", "Test Format");
+                });
 
-                // Make sure that service interactions were as expected
-                expect(mockFormatter.formatDomainValue)
-                    .toHaveBeenCalledWith(402513731000);
-                expect(mockFormatter.formatRangeValue)
-                    .not.toHaveBeenCalled();
             });
 
         });

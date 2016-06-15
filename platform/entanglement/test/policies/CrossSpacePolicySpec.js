@@ -70,27 +70,25 @@ define(
                 policy = new CrossSpacePolicy();
             });
 
-            ['move', 'copy'].forEach(function (key) {
-                describe("for " + key + " actions", function () {
-                    beforeEach(function () {
-                        testActionMetadata.key = key;
-                    });
+            describe("for move actions", function () {
+                beforeEach(function () {
+                    testActionMetadata.key = 'move';
+                });
 
-                    it("allows same-space changes", function () {
-                        expect(policy.allow(mockAction, sameSpaceContext))
-                            .toBe(true);
-                    });
+                it("allows same-space changes", function () {
+                    expect(policy.allow(mockAction, sameSpaceContext))
+                        .toBe(true);
+                });
 
-                    it("disallows cross-space changes", function () {
-                        expect(policy.allow(mockAction, crossSpaceContext))
-                            .toBe(false);
-                    });
+                it("disallows cross-space changes", function () {
+                    expect(policy.allow(mockAction, crossSpaceContext))
+                        .toBe(false);
+                });
 
-                    it("allows actions with no selectedObject", function () {
-                        expect(policy.allow(mockAction, {
-                            domainObject: makeObject('a')
-                        })).toBe(true);
-                    });
+                it("allows actions with no selectedObject", function () {
+                    expect(policy.allow(mockAction, {
+                        domainObject: makeObject('a')
+                    })).toBe(true);
                 });
             });
 

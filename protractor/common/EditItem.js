@@ -34,8 +34,8 @@ var EditItem = (function () {
     EditItem.prototype.EditButton = function () {
         return element.all(by.css('[ng-click="parameters.action.perform()"]')).filter(function (arg) {
             return arg.getAttribute("title").then(function (title){
-                //expect(title).toEqual("Edit this object.");
-                return title == 'Edit this object.';
+                //expect(title).toEqual("Edit");
+                return title == 'Edit';
             })
         });
     };

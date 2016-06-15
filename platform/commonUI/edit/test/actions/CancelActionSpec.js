@@ -24,12 +24,11 @@ define(
     ["../../src/actions/CancelAction"],
     function (CancelAction) {
 
-        //TODO: Disabled for NEM Beta
-        xdescribe("The Cancel action", function () {
-            var mockLocation,
-                mockDomainObject,
-                mockEditorCapability,
-                mockUrlService,
+        describe("The Cancel action", function () {
+            var mockDomainObject,
+                mockParentObject,
+                capabilities = {},
+                parentCapabilities = {},
                 actionContext,
                 action;
 
@@ -42,61 +41,109 @@ define(
             }
 
             beforeEach(function () {
-                mockLocation = jasmine.createSpyObj(
-                    "$location",
-                    ["path"]
-                );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    ["getCapability", "hasCapability"]
+                    [
+                        "getCapability",
+                        "hasCapability",
+                        "getModel"
+                    ]
                 );
-                mockEditorCapability = jasmine.createSpyObj(
+                mockDomainObject.getModel.andReturn({});
+
+                mockParentObject = jasmine.createSpyObj(
+                    "parentObject",
+                    [
+                        "getCapability"
+                    ]
+                );
+                mockParentObject.getCapability.andCallFake(function (name) {
+                    return parentCapabilities[name];
+                });
+
+                capabilities.editor = jasmine.createSpyObj(
                     "editor",
-                    ["save", "cancel"]
+                    ["save", "cancel", "isEditContextRoot"]
                 );
-                mockUrlService = jasmine.createSpyObj(
-                    "urlService",
-                    ["urlForLocation"]
+                capabilities.action = jasmine.createSpyObj(
+                    "actionCapability",
+                    [
+                        "perform"
+                    ]
+                );
+                capabilities.location = jasmine.createSpyObj(
+                    "locationCapability",
+                    [
+                        "getOriginal"
+                    ]
+                );
+                capabilities.location.getOriginal.andReturn(mockPromise(mockDomainObject));
+                capabilities.context = jasmine.createSpyObj(
+                    "contextCapability",
+                    [
+                        "getParent"
+                    ]
+                );
+                capabilities.context.getParent.andReturn(mockParentObject);
+
+                parentCapabilities.action = jasmine.createSpyObj(
+                    "actionCapability",
+                    [
+                        "perform"
+                    ]
                 );
 
                 actionContext = {
                     domainObject: mockDomainObject
                 };
 
-                mockDomainObject.hasCapability.andReturn(true);
-                mockDomainObject.getCapability.andReturn(mockEditorCapability);
-                mockEditorCapability.cancel.andReturn(mockPromise(true));
+                mockDomainObject.getCapability.andCallFake(function (name) {
+                    return capabilities[name];
+                });
 
-                action = new CancelAction(mockLocation, mockUrlService, actionContext);
+                mockDomainObject.hasCapability.andCallFake(function (name) {
+                    return !!capabilities[name];
+                });
+
+                capabilities.editor.cancel.andReturn(mockPromise(true));
+
+                action = new CancelAction(actionContext);
 
             });
 
-            it("only applies to domain object with an editor capability", function () {
+            it("only applies to domain object that is being edited", function () {
+                capabilities.editor.isEditContextRoot.andReturn(true);
                 expect(CancelAction.appliesTo(actionContext)).toBeTruthy();
                 expect(mockDomainObject.hasCapability).toHaveBeenCalledWith("editor");
 
+                capabilities.editor.isEditContextRoot.andReturn(false);
+                expect(CancelAction.appliesTo(actionContext)).toBeFalsy();
+
                 mockDomainObject.hasCapability.andReturn(false);
-                mockDomainObject.getCapability.andReturn(undefined);
                 expect(CancelAction.appliesTo(actionContext)).toBeFalsy();
             });
 
-            it("invokes the editor capability's save functionality when performed", function () {
-                // Verify precondition
-                expect(mockEditorCapability.cancel).not.toHaveBeenCalled();
+            it("invokes the editor capability's cancel functionality when" +
+                " performed", function () {
                 action.perform();
 
                 // Should have called cancel
-                expect(mockEditorCapability.cancel).toHaveBeenCalled();
+                expect(capabilities.editor.cancel).toHaveBeenCalled();
 
                 // Definitely shouldn't call save!
-                expect(mockEditorCapability.save).not.toHaveBeenCalled();
+                expect(capabilities.editor.save).not.toHaveBeenCalled();
             });
 
-            it("returns to browse when performed", function () {
+            it("navigates to object if existing", function () {
+                mockDomainObject.getModel.andReturn({persisted: 1});
                 action.perform();
-                expect(mockLocation.path).toHaveBeenCalledWith(
-                    mockUrlService.urlForLocation("browse", mockDomainObject)
-                );
+                expect(capabilities.action.perform).toHaveBeenCalledWith("navigate");
+            });
+
+            it("navigates to parent if new", function () {
+                mockDomainObject.getModel.andReturn({persisted: undefined});
+                action.perform();
+                expect(parentCapabilities.action.perform).toHaveBeenCalledWith("navigate");
             });
         });
     }

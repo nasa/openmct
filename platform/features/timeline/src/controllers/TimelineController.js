@@ -79,15 +79,6 @@ define(
                 graphPopulator.populate(swimlanePopulator.get());
             }
 
-            // Get pixel width for right pane, using zoom controller
-            function width(zoomController) {
-                var start = swimlanePopulator.start(),
-                    end = swimlanePopulator.end();
-                return zoomController.toPixels(zoomController.duration(
-                    Math.max(end - start, MINIMUM_DURATION)
-                ));
-            }
-
             // Refresh resource graphs
             function refresh() {
                 if (graphPopulator) {
@@ -121,10 +112,10 @@ define(
             // Expose active set of swimlanes
             return {
                 /**
-                 * Get the width, in pixels, of the timeline area
-                 * @returns {number} width, in pixels
+                 * Get the end of the displayed timeline, in milliseconds.
+                 * @returns {number} the end of the displayed timeline
                  */
-                width: width,
+                end: swimlanePopulator.end.bind(swimlanePopulator),
                 /**
                  * Get the swimlanes which should currently be displayed.
                  * @returns {TimelineSwimlane[]} the swimlanes

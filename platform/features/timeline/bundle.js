@@ -472,6 +472,7 @@ define([
                     "implementation": TimelineZoomController,
                     "depends": [
                         "$scope",
+                        "$window",
                         "TIMELINE_ZOOM_CONFIGURATION"
                     ]
                 },

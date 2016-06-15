@@ -61,8 +61,7 @@ define(
                         {
                             x: event.pageX - rect.left,
                             y: event.pageY - rect.top
-                        },
-                        domainObject
+                        }
                     );
                 }
             }

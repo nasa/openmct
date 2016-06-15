@@ -28,6 +28,7 @@ define(
         describe("The timeline zoom state controller", function () {
             var testConfiguration,
                 mockScope,
+                mockWindow,
                 controller;
 
             beforeEach(function () {
@@ -35,22 +36,22 @@ define(
                     levels: [1000, 2000, 3500],
                     width: 12321
                 };
-                mockScope = jasmine.createSpyObj("$scope", ['$watch']);
+                mockScope =
+                    jasmine.createSpyObj("$scope", ['$watch', '$apply']);
                 mockScope.commit = jasmine.createSpy('commit');
+                mockScope.scroll = { x: 0, width: 1000 };
+                mockWindow = {
+                    requestAnimationFrame: jasmine.createSpy('raf')
+                };
                 controller = new TimelineZoomController(
                     mockScope,
+                    mockWindow,
                     testConfiguration
                 );
             });
 
             it("starts off at a middle zoom level", function () {
                 expect(controller.zoom()).toEqual(2000);
-            });
-
-            it("allows duration to be changed", function () {
-                var initial = controller.duration();
-                controller.duration(initial * 3.33);
-                expect(controller.duration() > initial).toBeTruthy();
             });
 
             it("handles time-to-pixel conversions", function () {
@@ -68,11 +69,6 @@ define(
             it("allows zoom to be changed", function () {
                 controller.zoom(1);
                 expect(controller.zoom()).toEqual(3500);
-            });
-
-            it("observes scroll bounds", function () {
-                expect(mockScope.$watch)
-                    .toHaveBeenCalledWith("scroll", jasmine.any(Function));
             });
 
             describe("when watches have fired", function () {
@@ -115,6 +111,10 @@ define(
                     mockScope.$watch.calls.forEach(function (call) {
                         call.args[1](mockScope[call.args[0]]);
                     });
+
+                    mockWindow.requestAnimationFrame.calls.forEach(function (call) {
+                        call.args[0]();
+                    });
                 });
 
                 it("zooms to fit the timeline", function () {
@@ -124,6 +124,27 @@ define(
                         .toEqual(testStart);
                     expect(Math.round(controller.toMillis(x2)))
                         .toBeGreaterThan(testEnd);
+                });
+
+                it("provides a width which is not less than scroll area width", function () {
+                    var testPixel = mockScope.scroll.width / 4,
+                        testMillis = controller.toMillis(testPixel);
+                    expect(controller.width(testMillis))
+                        .not.toBeLessThan(mockScope.scroll.width);
+                });
+
+                it("provides a width with some margin past timestamp", function () {
+                    var testPixel = mockScope.scroll.width * 4,
+                        testMillis = controller.toMillis(testPixel);
+                    expect(controller.width(testMillis))
+                        .toBeGreaterThan(controller.toPixels(testMillis));
+                });
+
+                it("provides a width which does not greatly exceed timestamp", function () {
+                    var testPixel = mockScope.scroll.width * 4,
+                        testMillis = controller.toMillis(testPixel);
+                    expect(controller.width(testMillis))
+                        .toBeLessThan(controller.toPixels(testMillis * 2));
                 });
             });
 

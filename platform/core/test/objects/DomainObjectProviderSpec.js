@@ -82,16 +82,6 @@ define(
                 expect(result.a.getModel()).toEqual(model);
             });
 
-            //TODO: Disabled for NEM Beta
-            xit("provides a new, fully constituted domain object for a" +
-                " provided model", function () {
-                var model = { someKey: "some value"},
-                    result;
-                result = provider.newObject("a", model);
-                expect(result.getId()).toEqual("a");
-                expect(result.getModel()).toEqual(model);
-            });
-
         });
     }
 );

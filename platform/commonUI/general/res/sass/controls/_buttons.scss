@@ -36,15 +36,7 @@ $pad: $interiorMargin * $baseRatio;
     padding: 0 $pad;
     font-size: 0.7rem;
     vertical-align: top;
-
-    .icon {
-        font-size: 0.8rem;
-        color: $colorKey;
-    }
-
-    .title-label {
-        vertical-align: top;
-    }
+    @include btnSubtle($colorBtnBg, $colorBtnBgHov, $colorBtnFg, $colorBtnIcon);
 
 	&.lg {
 		font-size: 1rem;
@@ -58,19 +50,13 @@ $pad: $interiorMargin * $baseRatio;
         padding: 0 ($pad / $baseRatio) / 2;
     }
 
-    &.major {
+    &.major,
+    &.key-edit {
         $bg: $colorBtnMajorBg;
         $hc: lighten($bg, 10%);
         @include btnSubtle($bg, $hc, $colorBtnMajorFg, $colorBtnMajorFg);
     }
 
-    &:not(.major) {
-        // bg, bgHov, fg, ic
-        @include btnSubtle($colorBtnBg, $colorBtnBgHov, $colorBtnFg, $colorBtnIcon);
-    }
-    &.pause-play {
-
-    }
     &.t-save:before {
         content:'\e612';
         font-family: symbolsfont;
@@ -114,8 +100,17 @@ $pad: $interiorMargin * $baseRatio;
         &:before {
             @extend .ui-symbol;
             @extend .icon;
-            content:'\e623';
+            content: '\e623';
         }
+    }
+
+    .icon {
+        font-size: 0.8rem;
+        color: $colorKey;
+    }
+
+    .title-label {
+        vertical-align: top;
     }
 }
 
@@ -283,4 +278,3 @@ body.desktop .mini-tab-icon {
         color: $colorPausedBg !important;
     }
 }
-
