@@ -96,6 +96,14 @@ $pad: $interiorMargin * $baseRatio;
         }
     }
 
+    &.t-export {
+        &:before {
+            @extend .ui-symbol;
+            @extend .icon;
+            content: '\e623';
+        }
+    }
+
     .icon {
         font-size: 0.8rem;
         color: $colorKey;
