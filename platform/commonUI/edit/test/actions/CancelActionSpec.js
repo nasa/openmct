@@ -125,6 +125,9 @@ define(
 
             it("invokes the editor capability's cancel functionality when" +
                 " performed", function () {
+                mockDomainObject.getModel.andReturn({persisted: 1});
+                //Return true from navigate action
+                capabilities.action.perform.andReturn(mockPromise(true));
                 action.perform();
 
                 // Should have called cancel
@@ -134,13 +137,15 @@ define(
                 expect(capabilities.editor.save).not.toHaveBeenCalled();
             });
 
-            it("navigates to object if existing", function () {
+            it("navigates to object if existing using navigate action", function () {
                 mockDomainObject.getModel.andReturn({persisted: 1});
+                //Return true from navigate action
+                capabilities.action.perform.andReturn(mockPromise(true));
                 action.perform();
                 expect(capabilities.action.perform).toHaveBeenCalledWith("navigate");
             });
 
-            it("navigates to parent if new", function () {
+            it("navigates to parent if new using navigate action", function () {
                 mockDomainObject.getModel.andReturn({persisted: undefined});
                 action.perform();
                 expect(parentCapabilities.action.perform).toHaveBeenCalledWith("navigate");
