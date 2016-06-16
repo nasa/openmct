@@ -93,11 +93,9 @@ define([
                         "$scope",
                         "$route",
                         "$location",
-                        "$window",
                         "objectService",
                         "navigationService",
                         "urlService",
-                        "policyService",
                         "DEFAULT_PATH"
                     ]
                 },
@@ -201,7 +199,9 @@ define([
                     "implementation": NavigateAction,
                     "depends": [
                         "navigationService",
-                        "$q"
+                        "$q",
+                        "policyService",
+                        "$window"
                     ]
                 },
                 {

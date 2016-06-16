@@ -33,10 +33,12 @@ define(
          * @constructor
          * @implements {Action}
          */
-        function NavigateAction(navigationService, $q, context) {
+        function NavigateAction(navigationService, $q, policyService, $window, context) {
             this.domainObject = context.domainObject;
             this.$q = $q;
             this.navigationService = navigationService;
+            this.policyService = policyService;
+            this.$window = $window;
         }
 
         /**
@@ -45,9 +47,20 @@ define(
          *          navigation has been updated
          */
         NavigateAction.prototype.perform = function () {
+            var self = this,
+                navigationAllowed = true;
+
+            function allow() {
+                self.policyService.allow("navigation", self.navigationService.getNavigation(), self.domainObject, function (message) {
+                    navigationAllowed = self.$window.confirm(message + "\r\n\r\n" +
+                        " Are you sure you want to continue?");
+                });
+                return navigationAllowed;
+            }
+
             // Set navigation, and wrap like a promise
             return this.$q.when(
-                this.navigationService.setNavigation(this.domainObject)
+                allow() && this.navigationService.setNavigation(this.domainObject)
             );
         };
 
