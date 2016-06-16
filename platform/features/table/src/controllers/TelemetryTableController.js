@@ -83,16 +83,24 @@ define(
          * @private
          */
         TelemetryTableController.prototype.registerChangeListeners = function () {
+            var self = this;
             this.unregisterChangeListeners();
 
             // When composition changes, re-subscribe to the various
             // telemetry subscriptions
             this.changeListeners.push(this.$scope.$watchCollection(
-                'domainObject.getModel().composition', this.subscribe.bind(this)));
+                'domainObject.getModel().composition',
+                function (newVal, oldVal) {
+                    if (newVal !== oldVal) {
+                        self.subscribe();
+                    }
+                })
+            );
 
             //Change of bounds in time conductor
             this.changeListeners.push(this.$scope.$on('telemetry:display:bounds',
-                this.subscribe.bind(this)));
+                this.subscribe.bind(this))
+            );
         };
 
         /**
@@ -132,6 +140,7 @@ define(
             if (this.handle) {
                 this.handle.unsubscribe();
             }
+            this.$scope.loading = true;
 
             this.handle = this.$scope.domainObject && this.telemetryHandler.handle(
                     this.$scope.domainObject,
