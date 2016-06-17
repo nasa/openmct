@@ -31,10 +31,15 @@
     <script type="text/javascript">
         require(['main'], function (mct) {
             require([
+                './tutorials/todo/todo',
+                './tutorials/todo/bundle',
                 './example/imagery/bundle',
                 './example/eventGenerator/bundle',
                 './example/generator/bundle'
-            ], mct.run.bind(mct));
+            ], function (todoPlugin) {
+                todoPlugin(mct);
+                mct.start();
+            })
         });
     </script>
     <link rel="stylesheet" href="platform/commonUI/general/res/css/startup-base.css">
