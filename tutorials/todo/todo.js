@@ -97,11 +97,10 @@ define([
             $message.toggle(tasks.length < 1);
         };
 
-        todoType.view(mct.regions.main, function (domainObject) {
-            return new TodoView(domainObject);
-        });
-
         mct.type('example.todo', todoType);
+        mct.view(mct.regions.main, function (domainObject) {
+            return todoType.check(domainObject) && new TodoView(domainObject);
+        });
 
         return mct;
     };

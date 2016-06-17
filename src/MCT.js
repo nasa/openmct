@@ -1,8 +1,14 @@
 define([
     'EventEmitter',
     'legacyRegistry',
+    'uuid',
     './api/api'
-], function (EventEmitter, legacyRegistry, api) {
+], function (
+    EventEmitter,
+    legacyRegistry,
+    uuid,
+    api
+) {
     function MCT() {
         EventEmitter.call(this);
         this.legacyBundle = { extensions: {} };
@@ -16,7 +22,41 @@ define([
     MCT.prototype.MCT = MCT;
 
     MCT.prototype.view = function (region, factory) {
+        var viewKey = region + uuid();
+        var adaptedViewKey = "adapted-view-" + viewKey;
 
+        this.legacyBundle.extensions.views =
+            this.legacyBundle.extensions.views || [];
+        this.legacyBundle.extensions.views.push({
+            name: "A view",
+            key: adaptedViewKey,
+            template: '<mct-view key="\'' +
+                viewKey +
+                '\'" ' +
+                'mct-object="domainObject">' +
+                '</mct-view>'
+        });
+
+        this.legacyBundle.extensions.policies =
+            this.legacyBundle.extensions.policies || [];
+        this.legacyBundle.extensions.policies.push({
+            category: "view",
+            implementation: function Policy() {
+                this.allow = function (view, domainObject) {
+                    if (view.key === adaptedViewKey) {
+                        return !!factory(domainObject);
+                    }
+                    return true;
+                };
+            }
+        });
+
+        this.legacyBundle.extensions.newViews =
+            this.legacyBundle.extensions.newViews || [];
+        this.legacyBundle.extensions.newViews.push({
+            factory: factory,
+            key: viewKey
+        });
     };
 
     MCT.prototype.type = function (key, type) {
@@ -26,29 +66,7 @@ define([
             this.legacyBundle.extensions.types || [];
         this.legacyBundle.extensions.types.push(legacyDef);
 
-        var viewFactory = type.view(this.regions.main);
-        if (viewFactory) {
-            var viewKey = key + "." + this.regions.main;
-
-            this.legacyBundle.extensions.views =
-                this.legacyBundle.extensions.views || [];
-            this.legacyBundle.extensions.views.push({
-                name: "A view",
-                key: "adapted-view",
-                template: '<mct-view key="\'' +
-                    viewKey +
-                    '\'" ' +
-                    'mct-object="domainObject">' +
-                    '</mct-view>'
-            });
-
-            this.legacyBundle.extensions.newViews =
-                this.legacyBundle.extensions.newViews || [];
-            this.legacyBundle.extensions.newViews.push({
-                factory: viewFactory,
-                key: viewKey
-            });
-        }
+        type.key = key;
     };
 
     MCT.prototype.start = function () {
