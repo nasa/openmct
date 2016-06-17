@@ -108,7 +108,14 @@ define([
         }
 
         TodoToolbarView.prototype.show = function (container) {
-            $(container).append($(toolbarTemplate));
+            var $els = $(toolbarTemplate);
+            var $add = $els.find('a.example-add');
+            var $remove = $els.find('a.example-remove');
+
+            $(container).append($els);
+
+            $add.on('click', window.alert.bind(window, "Add!"));
+            $remove.on('click', window.alert.bind(window, "Remove!"));
         };
 
         TodoToolbarView.prototype.destroy = function () {
