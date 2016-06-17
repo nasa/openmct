@@ -2,12 +2,14 @@ define([
     'EventEmitter',
     'legacyRegistry',
     'uuid',
-    './api/api'
+    './api/api',
+    'text!./adapter/templates/edit-object-replacement.html'
 ], function (
     EventEmitter,
     legacyRegistry,
     uuid,
-    api
+    api,
+    editObjectTemplate
 ) {
     function MCT() {
         EventEmitter.call(this);
@@ -21,15 +23,20 @@ define([
     });
     MCT.prototype.MCT = MCT;
 
+    MCT.prototype.legacyExtension = function (category, extension) {
+        this.legacyBundle.extensions[category] =
+            this.legacyBundle.extensions[category] || [];
+        this.legacyBundle.extensions[category].push(extension);
+    };
+
     MCT.prototype.view = function (region, factory) {
         var viewKey = region + uuid();
         var adaptedViewKey = "adapted-view-" + viewKey;
 
-        this.legacyBundle.extensions.views =
-            this.legacyBundle.extensions.views || [];
-        this.legacyBundle.extensions.views.push({
+        this.legacyExtension('views', {
             name: "A view",
             key: adaptedViewKey,
+            editable: true,
             template: '<mct-view key="\'' +
                 viewKey +
                 '\'" ' +
@@ -37,9 +44,7 @@ define([
                 '</mct-view>'
         });
 
-        this.legacyBundle.extensions.policies =
-            this.legacyBundle.extensions.policies || [];
-        this.legacyBundle.extensions.policies.push({
+        this.legacyExtension('policies', {
             category: "view",
             implementation: function Policy() {
                 this.allow = function (view, domainObject) {
@@ -51,10 +56,9 @@ define([
             }
         });
 
-        this.legacyBundle.extensions.newViews =
-            this.legacyBundle.extensions.newViews || [];
-        this.legacyBundle.extensions.newViews.push({
+        this.legacyExtension('newViews', {
             factory: factory,
+            region: region,
             key: viewKey
         });
     };
@@ -62,11 +66,15 @@ define([
     MCT.prototype.type = function (key, type) {
         var legacyDef = type.toLegacyDefinition();
         legacyDef.key = key;
-        this.legacyBundle.extensions.types =
-            this.legacyBundle.extensions.types || [];
-        this.legacyBundle.extensions.types.push(legacyDef);
-
         type.key = key;
+
+        this.legacyExtension('types', legacyDef);
+        this.legacyExtension('representations', {
+            key: "edit-object",
+            priority: "preferred",
+            template: editObjectTemplate,
+            type: key
+        });
     };
 
     MCT.prototype.start = function () {
@@ -75,7 +83,8 @@ define([
     };
 
     MCT.prototype.regions = {
-        main: "MAIN"
+        main: "MAIN",
+        toolbar: "TOOLBAR"
     };
 
     MCT.prototype.verbs = {
