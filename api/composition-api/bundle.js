@@ -22,25 +22,26 @@
 /*global define*/
 
 define([
-    './TelemetryAPI',
+    './CompositionAPI',
     'legacyRegistry'
 ], function (
-    TelemetryAPI,
+    CompositionAPI,
     legacyRegistry
 ) {
-    legacyRegistry.register('api/telemetry-api', {
-        name: 'Telemetry API',
-        description: 'The public Telemetry API',
+    legacyRegistry.register('api/composition-api', {
+        name: 'Composition API',
+        description: 'The public Composition API',
         extensions: {
             runs: [
                 {
-                    key: "TelemetryAPI",
-                    implementation: TelemetryAPI,
+                    key: "CompositionAPI",
+                    priority: "mandatory",
+                    implementation: CompositionAPI,
                     depends: [
-                        'formatService'
                     ]
                 }
             ]
         }
     });
+
 });

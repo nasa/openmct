@@ -16,17 +16,22 @@ define([
                         console.log(composition)
                     })
             });
-
     */
 
     var Objects = {},
         ROOT_REGISTRY = [],
-        PROVIDER_REGISTRY = [];
+        PROVIDER_REGISTRY = {},
+        FALLBACK_PROVIDER;
 
     window.MCT = window.MCT || {};
     window.MCT.objects = Objects;
 
-    function parseKey(key) {
+    // take a key string and turn it into a key object
+    // 'scratch:root' ==> {namespace: 'scratch', identifier: 'root'}
+    function parseKeyString(key) {
+        if (typeof key === 'object') {
+            return key;
+        }
         var namespace = '',
             identifier = key;
         for (var i = 0, escaped = false, len=key.length; i < len; i++) {
@@ -42,20 +47,40 @@ define([
         };
     };
 
-    function makeKey(namespace, identifier) {
-        if (arguments.length === 1) {
-            identifier = namespace.identifier;
-            namespace = namespace.namespace;
+    // take a key and turn it into a key string
+    // {namespace: 'scratch', identifier: 'root'} ==> 'scratch:root'
+    function makeKeyString(key) {
+        if (typeof key === 'string') {
+            return key;
         }
-        if (!namespace) {
-            return identifier
+        if (!key.namespace) {
+            return key.identifier;
         }
         return [
-            namespace.replace(':', '\\:'),
-            identifier.replace(':', '\\:')
+            key.namespace.replace(':', '\\:'),
+            key.identifier.replace(':', '\\:')
         ].join(':');
     };
 
+    // Converts composition to use key strings instead of keys
+    function toOldFormat(model) {
+        delete model.key;
+        if (model.composition) {
+            model.composition = model.composition.map(makeKeyString);
+        }
+        return model;
+    };
+
+    // converts composition to use keys instead of key strings
+    function toNewFormat(model, key) {
+        model.key = key;
+        if (model.composition) {
+            model.composition = model.composition.map(parseKeyString);
+        }
+        return model;
+    };
+
+    // Root provider is hardcoded in; can't be skipped.
     var RootProvider = {
         'get': function () {
             return Promise.resolve({
@@ -66,30 +91,26 @@ define([
         }
     };
 
+    // Retrieve the provider for a given key.
     function getProvider(key) {
         if (key.identifier === 'ROOT') {
             return RootProvider;
         }
-        return PROVIDER_REGISTRY.filter(function (p) {
-            return p.appliesTo(key);
-        })[0];
+        return PROVIDER_REGISTRY[key.namespace] || FALLBACK_PROVIDER;
     };
 
-    Objects.addProvider = function (provider) {
-        PROVIDER_REGISTRY.push(provider);
+    Objects.addProvider = function (namespace, provider) {
+        PROVIDER_REGISTRY[namespace] = provider;
     };
 
     [
-        'create',
         'save',
         'delete',
         'get'
     ].forEach(function (method) {
         Objects[method] = function () {
             var key = arguments[0],
-                keyParts = parseKey(key),
-                provider = getProvider(keyParts),
-                args = [keyParts].concat([].slice.call(arguments, 1));
+                provider = getProvider(key);
 
             if (!provider) {
                 throw new Error('No Provider Matched');
@@ -99,26 +120,20 @@ define([
                 throw new Error('Provider does not support [' + method + '].');
             }
 
-            return provider[method].apply(provider, args);
+            return provider[method].apply(provider, arguments);
         };
     });
 
-    Objects.getComposition = function (object) {
-        if (!object.composition) {
-            throw new Error('object has no composition!');
-        }
-        return Promise.all(object.composition.map(Objects.get, Objects));
+    Objects.addRoot = function (key) {
+        ROOT_REGISTRY.unshift(key);
     };
 
-    Objects.addRoot = function (keyParts) {
-        var key = makeKey(keyParts);
-        ROOT_REGISTRY.push(key);
-    };
-
-    Objects.removeRoot = function (keyParts) {
-        var key = makeKey(keyParts);
+    Objects.removeRoot = function (key) {
         ROOT_REGISTRY = ROOT_REGISTRY.filter(function (k) {
-            return k !== key;
+            return (
+                k.identifier !== key.identifier ||
+                k.namespace !== key.namespace
+            );
         });
     };
 
@@ -127,60 +142,42 @@ define([
         this.instantiate = instantiate;
     }
 
-    ObjectServiceProvider.prototype.appliesTo = function (keyParts) {
-        return true;
-    };
-
-    ObjectServiceProvider.prototype.create = function (keyParts, object) {
-        var key = makeKey(keyParts),
-            object = this.instantiate(object, key);
+    ObjectServiceProvider.prototype.save = function (object) {
+        var key = object.key,
+            keyString = makeKeyString(key),
+            newObject = this.instantiate(toOldFormat(object), keyString);
 
         return object.getCapability('persistence')
                 .persist()
                 .then(function () {
-                    return object;
+                    return toNewFormat(object, key);
                 });
     };
 
-    ObjectServiceProvider.prototype.save = function (keyParts, object) {
-        var key = makeKey(keyParts);
-        return this.objectService.getObjects([key])
-            .then(function (results) {
-                var obj = results[key];
-                obj.getCapability('mutation').mutate(function (model) {
-                    _.extend(model, object);
-                });
-                return obj.getCapability('persistence')
-                    .persist()
-                    .then(function () {
-                        return object;
-                    });
-            });
-    };
-
-    ObjectServiceProvider.prototype.delete = function (keyParts, object) {
+    ObjectServiceProvider.prototype.delete = function (object) {
         // TODO!
     };
 
-    ObjectServiceProvider.prototype.get = function (keyParts) {
-        var key = makeKey(keyParts);
-        return this.objectService.getObjects([key])
+    ObjectServiceProvider.prototype.get = function (key) {
+        var keyString = makeKeyString(key);
+        return this.objectService.getObjects([keyString])
             .then(function (results) {
-                var model = results[key].getModel();
-                if (model.composition) {
-                    model.composition = model.composition.map(parseKey);
-                }
-                return model;
+                var model = JSON.parse(JSON.stringify(results[keyString].getModel()));
+                return toNewFormat(model, key);
             });
     };
 
-    function ObjectAPI(ROOTS, instantiate, objectService) {
+    // Injects new object API as a decorator so that it hijacks all requests.
+    // Object providers implemented on new API should just work, old API should just work, many things may break.
+    function ObjectAPIInjector(ROOTS, instantiate, objectService) {
         this.getObjects = function (keys) {
             var results = {},
-                promises = keys.map(function (key) {
+                promises = keys.map(function (keyString) {
+                    var key = parseKeyString(keyString);
                     return Objects.get(key)
                         .then(function (object) {
-                            results[key] = instantiate(object, key);
+                            object = toOldFormat(object)
+                            results[keyString] = instantiate(object, keyString);
                         });
                 });
 
@@ -190,14 +187,14 @@ define([
                 });
         };
 
-        PROVIDER_REGISTRY.push(new ObjectServiceProvider(objectService, instantiate));
+        FALLBACK_PROVIDER = new ObjectServiceProvider(objectService, instantiate);
 
         ROOTS.forEach(function (r) {
-            ROOT_REGISTRY.push(r.id);
+            ROOT_REGISTRY.push(parseKeyString(r.id));
         });
 
         return this;
     }
 
-    return ObjectAPI;
+    return ObjectAPIInjector;
 });

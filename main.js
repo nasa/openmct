@@ -94,6 +94,7 @@ define([
     './platform/commonUI/regions/bundle',
     './api/telemetry-api/bundle',
     './api/object-api/bundle',
+    './api/composition-api/bundle',
     './example/scratchpad/bundle',
 
     './example/imagery/bundle',
@@ -101,56 +102,6 @@ define([
     './example/generator/bundle'
 ], function (Main, legacyRegistry) {
     'use strict';
-
-    MCT.objects.addRoot({
-        namespace: 'magic',
-        identifier: 'groot'
-    });
-
-    var GROOT_BITS = [
-        {
-            key: {
-                namespace: 'magic',
-                identifier: 'groot-one'
-            },
-            name: 'groot!'
-        },
-        {
-            key: {
-                namespace: 'magic',
-                identifier: 'groot-two'
-            },
-            name: 'groot?'
-        },
-        {
-            key: {
-                namespace: 'magic',
-                identifier: 'groot-three'
-            },
-            name: 'groot groot groot!'
-        }
-    ];
-
-    MCT.objects.addProvider({
-        appliesTo: function (key) {
-            return key.namespace === 'magic';
-        },
-        get: function (key) {
-            if (key.identifier === 'groot') {
-                return Promise.resolve({
-                    'name': 'grootman!',
-                    'type': 'folder',
-                    'composition': GROOT_BITS.map(function (gb) {
-                        return gb.key
-                    })
-                });
-            }
-            return GROOT_BITS.filter(function (gb) {
-                return (gb.key.identifier === key.identifier);
-            })[0];
-        }
-    });
-
 
     return {
         legacyRegistry: legacyRegistry,
