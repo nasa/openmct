@@ -115,14 +115,16 @@ define([
             $(container).append($els);
 
             $add.on('click', function () {
-                mct.dialog({
+                var view = {
                     show: function (container) {
                         $(container).append($('<span>Dialog!</span>'));
                     },
                     destroy: function () {
 
                     }
-                }).then(
+                };
+
+                mct.dialog(view, "Add a Task").then(
                     window.alert.bind(window, 'resolve'),
                     window.alert.bind(window, 'reject')
                 );

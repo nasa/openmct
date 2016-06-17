@@ -1,25 +1,30 @@
-define(['text!./dialog.html', 'zepto'], function (overlayTemplate, $) {
-    function Dialog(view) {
+define(['text!./dialog.html', 'zepto'], function (dialogTemplate, $) {
+    function Dialog(view, title) {
         this.view = view;
+        this.title = title;
     }
 
     Dialog.prototype.show = function () {
         var $body = $('body');
-        var $overlay = $(overlayTemplate);
-        var $contents = $overlay.find('.contents .editor');
-        var $close = $overlay.find('.close');
+        var $dialog = $(dialogTemplate);
+        var $contents = $dialog.find('.contents .editor');
+        var $close = $dialog.find('.close');
 
-        var $ok = $overlay.find('.ok');
-        var $cancel = $overlay.find('.cancel');
+        var $ok = $dialog.find('.ok');
+        var $cancel = $dialog.find('.cancel');
 
         var view = this.view;
 
         function dismiss() {
-            $overlay.remove();
+            $dialog.remove();
             view.destroy();
         }
 
-        $body.append($overlay);
+        if (this.title) {
+            $dialog.find('.title').text(this.title);
+        }
+
+        $body.append($dialog);
         this.view.show($contents[0]);
 
         return new Promise(function (resolve, reject) {

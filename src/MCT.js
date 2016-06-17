@@ -85,8 +85,8 @@ define([
         });
     };
 
-    MCT.prototype.dialog = function (view) {
-        return new Dialog(view).show();
+    MCT.prototype.dialog = function (view, title) {
+        return new Dialog(view, title).show();
     };
 
     MCT.prototype.start = function () {
