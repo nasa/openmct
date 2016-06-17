@@ -1,0 +1,29 @@
+<div ng-controller="TodoController" class="example-todo">
+    <div class="example-button-group">
+        <a ng-class="{ selected: checkVisibility(true) }"
+           ng-click="setVisibility(true)">All</a>
+        <a ng-class="{ selected: checkVisibility(false, false) }"
+           ng-click="setVisibility(false, false)">Incomplete</a>
+        <a ng-class="{ selected: checkVisibility(false, true) }"
+           ng-click="setVisibility(false, true)">Complete</a>
+    </div>
+
+    <ul>
+        <li ng-repeat="task in model.tasks"
+            ng-class="{ 'example-task-completed': task.completed }"
+            ng-if="showTask(task)">
+
+            <input type="checkbox"
+                   ng-checked="task.completed"
+                   ng-click="toggleCompletion($index)">
+            <span ng-click="selectTask($index)"
+                  ng-class="{ selected: isSelected($index) }"
+                  class="example-task-description">
+                {{task.description}}
+            </span>
+        </li>
+    </ul>
+    <div ng-if="model.tasks.length < 1" class="example-message">
+        There are no tasks to show.
+    </div>
+</div>

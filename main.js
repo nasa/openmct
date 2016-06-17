@@ -28,6 +28,7 @@ requirejs.config({
         "angular-route": "bower_components/angular-route/angular-route.min",
         "csv": "bower_components/comma-separated-values/csv.min",
         "es6-promise": "bower_components/es6-promise/promise.min",
+        "EventEmitter": "bower_components/eventemitter3/index",
         "moment": "bower_components/moment/moment",
         "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
         "saveAs": "bower_components/FileSaver.js/FileSaver.min",
@@ -42,6 +43,9 @@ requirejs.config({
         },
         "angular-route": {
             "deps": ["angular"]
+        },
+        "EventEmitter": {
+            "exports": "EventEmitter"
         },
         "moment-duration-format": {
             "deps": ["moment"]
@@ -58,6 +62,9 @@ requirejs.config({
 define([
     './platform/framework/src/Main',
     'legacyRegistry',
+    './src/MCT',
+
+    './src/adapter/bundle',
 
     './platform/framework/bundle',
     './platform/core/bundle',
@@ -93,11 +100,14 @@ define([
     './platform/search/bundle',
     './platform/status/bundle',
     './platform/commonUI/regions/bundle'
-], function (Main, legacyRegistry) {
-    return {
-        legacyRegistry: legacyRegistry,
-        run: function () {
-            return new Main().run(legacyRegistry);
-        }
-    };
+], function (Main, legacyRegistry, MCT) {
+    var mct = new MCT();
+
+    mct.legacyRegistry = legacyRegistry;
+    mct.run = mct.start;
+    mct.on('start', function () {
+        return new Main().run(legacyRegistry);
+    });
+
+    return mct;
 });
