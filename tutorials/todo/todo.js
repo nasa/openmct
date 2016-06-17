@@ -2,8 +2,9 @@ define([
     "text!./todo.html",
     "text!./todo-task.html",
     "text!./todo-toolbar.html",
+    "text!./todo-dialog.html",
     "zepto"
-], function (todoTemplate, taskTemplate, toolbarTemplate, $) {
+], function (todoTemplate, taskTemplate, toolbarTemplate, dialogTemplate, $) {
     /**
      * @param {mct.MCT} mct
      */
@@ -111,23 +112,26 @@ define([
             var $els = $(toolbarTemplate);
             var $add = $els.find('a.example-add');
             var $remove = $els.find('a.example-remove');
+            var domainObject = this.domainObject;
 
             $(container).append($els);
 
             $add.on('click', function () {
-                var view = {
-                    show: function (container) {
-                        $(container).append($('<span>Dialog!</span>'));
-                    },
-                    destroy: function () {
+                var $dialog = $(dialogTemplate),
+                    view = {
+                        show: function (container) {
+                            $(container).append($dialog);
+                        },
+                        destroy: function () {}
+                    };
 
-                    }
-                };
-
-                mct.dialog(view, "Add a Task").then(
-                    window.alert.bind(window, 'resolve'),
-                    window.alert.bind(window, 'reject')
-                );
+                mct.dialog(view, "Add a Task").then(function () {
+                    var description = $dialog.find('input').val();
+                    mct.verbs.mutate(domainObject, function (model) {
+                        model.tasks.push({ description: description });
+                        console.log(model);
+                    });
+                });
             });
             $remove.on('click', window.alert.bind(window, "Remove!"));
         };
