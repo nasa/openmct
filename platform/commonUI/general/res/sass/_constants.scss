@@ -49,7 +49,7 @@ $uePaneMiniTabCollapsedW: 11px;
 $ueEditLeftPaneW: 75%;
 $treeSearchInputBarH: 25px;
 $ueTimeControlH: (33px, 18px, 20px);
-// Panes
+/*************** Panes */
 $ueBrowseLeftPaneTreeMinW: 150px;
 $ueBrowseLeftPaneTreeMaxW: 35%;
 $ueBrowseLeftPaneTreeW: 25%;
@@ -57,48 +57,59 @@ $ueBrowseRightPaneInspectMinW: 200px;
 $ueBrowseRightPaneInspectMaxW: 35%;
 $ueBrowseRightPaneInspectW: 20%;
 $ueDesktopMinW: 600px;
-
-// Overlay
+/*************** Overlay */
 $ovrTopBarH: 45px;
 $ovrFooterH: 24px;
 $overlayMargin: 25px;
-// Items
+/*************** Items */
 $ueBrowseGridItemLg: 200px;
 $ueBrowseGridItemTopBarH: 20px;
 $ueBrowseGridItemBottomBarH: 30px;
 $itemPadLR: 5px;
-// Tree
+/*************** Tree */
 $treeVCW: 10px;
 $treeTypeIconH: 1.4em; // was 16px
 $treeTypeIconHPx: 16px;
 $treeTypeIconW: 18px;
 $treeContextTriggerW: 20px;
-// Tabular
+/*************** Tabular */
 $tabularHeaderH: 22px; //18px
 $tabularTdPadLR: $itemPadLR;
 $tabularTdPadTB: 3px;
-// Imagery
+/*************** Imagery */
 $imageMainControlBarH: 25px;
 $imageThumbsD: 120px;
 $imageThumbsWrapperH: $imageThumbsD * 1.4;
 $imageThumbPad: 1px;
-// Ticks
+/*************** Ticks */
 $ticksH: 25px;
 $tickLblVMargin: 3px;
 $tickLblH: 15px;
 $tickLblW: 50px;
 $tickH: $ticksH - $tickLblVMargin - $tickLblH;
 $tickW: 1px;
-// Bubbles
+/*************** Plots */
+$plotYBarW: 60px;
+$plotYLabelMinH: 20px;
+$plotYLabelW: 10px;
+$plotXBarH: 32px;
+$plotLegendH: 20px;
+$plotSwatchD: 8px;
+// 1: Top, 2: right, 3: bottom, 4: left
+$plotDisplayArea: ($plotLegendH + $interiorMargin, 0, $plotXBarH + $interiorMargin, $plotYBarW);
+/* Based on current implementation of ~ 5 ticks per plot element;
+Include legend, plot-display-area and X ticks */
+$plotMinH: $plotLegendH + ($interiorMargin * 2) + ($plotYLabelMinH * 5) + nth($plotDisplayArea,3);
+/*************** Bubbles */
 $bubbleArwSize: 10px;
 $bubblePad: $interiorMargin;
 $bubbleMinW: 100px;
 $bubbleMaxW: 300px;
-// Forms
+/*************** Forms */
 $reqSymbolW: 15px;
 $reqSymbolM: $interiorMargin * 2;
 $reqSymbolFontSize: 0.7em;
-// Wait Spinner Defaults
+/*************** Wait Spinner Defaults */
 $waitSpinnerD: 32px;
 $waitSpinnerTreeD: 20px;
 $waitSpinnerBorderW: 5px;
