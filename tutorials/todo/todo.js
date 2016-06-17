@@ -93,9 +93,9 @@ define([
             tasks.forEach(function (task, index) {
                 var $taskEls = $(taskTemplate);
                 var $checkbox = $taskEls.find('.example-task-checked');
+                var $desc = $taskEls.find('.example-task-description');
                 $checkbox.prop('checked', task.completed);
-                $taskEls.find('.example-task-description')
-                    .text(task.description);
+                $desc.text(task.description);
 
                 $checkbox.on('change', function () {
                     var checked = !!$checkbox.prop('checked');
@@ -103,6 +103,16 @@ define([
                         model.tasks[index].completed = checked;
                     });
                 });
+
+                $desc.on('click', function () {
+                    mct.verbs.mutate(domainObject, function (model) {
+                        model.selected = index;
+                    });
+                });
+
+                if (domainObject.getModel().selected === index) {
+                    $desc.addClass('selected');
+                }
 
                 $list.append($taskEls);
             });
