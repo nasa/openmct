@@ -127,6 +127,8 @@ define([
         }
 
         TodoToolbarView.prototype.show = function (container) {
+            this.destroy();
+
             var $els = $(toolbarTemplate);
             var $add = $els.find('a.example-add');
             var $remove = $els.find('a.example-remove');
@@ -151,7 +153,17 @@ define([
                     });
                 });
             });
-            $remove.on('click', window.alert.bind(window, "Remove!"));
+            $remove.on('click', function () {
+                var index = domainObject.getModel().selected;
+                if (index !== undefined) {
+                    mct.verbs.mutate(domainObject, function (model) {
+                        model.tasks = model.tasks.filter(function (t, i) {
+                            return i !== index;
+                        });
+                        delete model.selected;
+                    });
+                }
+            });
         };
 
         TodoToolbarView.prototype.destroy = function () {
