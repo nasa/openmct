@@ -31,18 +31,24 @@ define([
 
     MCT.prototype.view = function (region, factory) {
         var viewKey = region + uuid();
-        var adaptedViewKey = "adapted-view-" + viewKey;
+        var adaptedViewKey = "adapted-view-" + region;
 
-        this.legacyExtension('views', {
-            name: "A view",
-            key: adaptedViewKey,
-            editable: true,
-            template: '<mct-view key="\'' +
-                viewKey +
-                '\'" ' +
-                'mct-object="domainObject">' +
-                '</mct-view>'
-        });
+        this.legacyExtension(
+            region === this.regions.main ? 'views' : 'representations',
+            {
+                name: "A view",
+                key: adaptedViewKey,
+                editable: true,
+                template: '<mct-view region="\'' +
+                    region +
+                    '\'" ' +
+                    'key="\'' +
+                    viewKey +
+                    '\'" ' +
+                    'mct-object="domainObject">' +
+                    '</mct-view>'
+            }
+        );
 
         this.legacyExtension('policies', {
             category: "view",
