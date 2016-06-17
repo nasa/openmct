@@ -1,8 +1,9 @@
 define([
     "text!./todo.html",
     "text!./todo-task.html",
+    "text!./todo-toolbar.html",
     "zepto"
-], function (todoTemplate, taskTemplate, $) {
+], function (todoTemplate, taskTemplate, toolbarTemplate, $) {
     /**
      * @param {mct.MCT} mct
      */
@@ -100,9 +101,26 @@ define([
             $message.toggle(tasks.length < 1);
         };
 
+
+
+        function TodoToolbarView(domainObject) {
+            this.domainObject = domainObject;
+        }
+
+        TodoToolbarView.prototype.show = function (container) {
+            $(container).append($(toolbarTemplate));
+        };
+
+        TodoToolbarView.prototype.destroy = function () {
+
+        };
+
         mct.type('example.todo', todoType);
         mct.view(mct.regions.main, function (domainObject) {
             return todoType.check(domainObject) && new TodoView(domainObject);
+        });
+        mct.view(mct.regions.toolbar, function (domainObject) {
+            return todoType.check(domainObject) && new TodoToolbarView(domainObject);
         });
 
         return mct;
