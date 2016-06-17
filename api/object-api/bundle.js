@@ -32,12 +32,15 @@ define([
         name: 'Object API',
         description: 'The public Objects API',
         extensions: {
-            runs: [
+            components: [
                 {
-                    key: "ObjectAPI",
+                    provides: "objectService",
+                    type: "decorator",
+                    priority: "mandatory",
                     implementation: ObjectAPI,
                     depends: [
-                        'objectService'
+                        "roots[]",
+                        "instantiate"
                     ]
                 }
             ]
