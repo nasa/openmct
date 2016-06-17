@@ -391,7 +391,6 @@ body.desktop {
         .l-edit-controls {
             height: 0;
             border-bottom: 1px solid $colorInteriorBorder;
-            overflow: hidden;
             // Transition 2: reveal edit controls
             @include keyframes(editIn) {
                 from { border-bottom: 0px solid transparent; height: 0; margin-bottom: 0; }
