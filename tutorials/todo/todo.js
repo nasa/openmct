@@ -122,7 +122,10 @@ define([
                     destroy: function () {
 
                     }
-                });
+                }).then(
+                    window.alert.bind(window, 'resolve'),
+                    window.alert.bind(window, 'reject')
+                );
             });
             $remove.on('click', window.alert.bind(window, "Remove!"));
         };
