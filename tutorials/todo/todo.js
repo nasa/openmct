@@ -114,7 +114,16 @@ define([
 
             $(container).append($els);
 
-            $add.on('click', window.alert.bind(window, "Add!"));
+            $add.on('click', function () {
+                mct.dialog({
+                    show: function (container) {
+                        $(container).append($('<span>Dialog!</span>'));
+                    },
+                    destroy: function () {
+
+                    }
+                });
+            });
             $remove.on('click', window.alert.bind(window, "Remove!"));
         };
 

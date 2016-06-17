@@ -3,13 +3,15 @@ define([
     'legacyRegistry',
     'uuid',
     './api/api',
-    'text!./adapter/templates/edit-object-replacement.html'
+    'text!./adapter/templates/edit-object-replacement.html',
+    './ui/Dialog'
 ], function (
     EventEmitter,
     legacyRegistry,
     uuid,
     api,
-    editObjectTemplate
+    editObjectTemplate,
+    Dialog
 ) {
     function MCT() {
         EventEmitter.call(this);
@@ -81,6 +83,10 @@ define([
             template: editObjectTemplate,
             type: key
         });
+    };
+
+    MCT.prototype.dialog = function (view) {
+        return new Dialog(view).show();
     };
 
     MCT.prototype.start = function () {
