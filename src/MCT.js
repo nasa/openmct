@@ -15,6 +15,10 @@ define([
     });
     MCT.prototype.MCT = MCT;
 
+    MCT.prototype.view = function (region, factory) {
+
+    };
+
     MCT.prototype.type = function (key, type) {
         var legacyDef = type.toLegacyDefinition();
         legacyDef.key = key;

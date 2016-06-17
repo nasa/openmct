@@ -15,15 +15,7 @@ define(function () {
      */
     function Type(definition) {
         this.definition = definition;
-        this.views = {};
     }
-
-    Type.prototype.view = function (region, factory) {
-        if (arguments.length > 1) {
-            this.views[region] = factory;
-        }
-        return this.views[region];
-    };
 
     /**
      * Get a definition for this type that can be registered using the
