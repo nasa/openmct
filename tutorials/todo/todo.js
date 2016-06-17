@@ -22,23 +22,26 @@ define([
         });
 
         function TodoView(domainObject) {
-            mct.View.apply(this);
+            this.domainObject = domainObject;
             this.filterValue = "all";
-            this.elements($(todoTemplate));
-
-            var $els = $(this.elements());
-            this.$buttons = {
-                all: $els.find('.example-todo-button-all'),
-                incomplete: $els.find('.example-todo-button-incomplete'),
-                complete: $els.find('.example-todo-button-complete')
-            };
-
-            this.initialize();
-            this.on('model', this.render.bind(this));
-            this.model(domainObject);
         }
 
-        TodoView.prototype = Object.create(mct.View.prototype);
+        TodoView.prototype.show = function (container) {
+            this.$els = $(todoTemplate);
+            this.$buttons = {
+                all: this.$els.find('.example-todo-button-all'),
+                incomplete: this.$els.find('.example-todo-button-incomplete'),
+                complete: this.$els.find('.example-todo-button-complete')
+            };
+
+            $(container).empty().append(this.$els);
+
+            this.initialize();
+            this.render();
+        };
+
+        TodoView.prototype.destroy = function () {
+        };
 
         TodoView.prototype.setFilter = function (value) {
             this.filterValue = value;
@@ -52,8 +55,8 @@ define([
         };
 
         TodoView.prototype.render = function () {
-            var $els = $(this.elements());
-            var domainObject = this.model();
+            var $els = this.$els;
+            var domainObject = this.domainObject;
             var tasks = domainObject.getModel().tasks;
             var $message = $els.find('.example-message');
             var $list = $els.find('.example-todo-task-list');

@@ -21,9 +21,7 @@ define(['angular'], function (angular) {
                     }
 
                     var view = factories[key](mctObject);
-                    var elements = view.elements();
-                    element.empty();
-                    element.append(elements);
+                    view.show(element[0]);
                 }
 
                 function setKey(k) {
