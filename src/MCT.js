@@ -106,6 +106,10 @@ define([
                     var persistence = domainObject.getCapability('persistence');
                     return persistence.persist();
                 });
+        },
+        observe: function (domainObject, callback) {
+            var mutation = domainObject.getCapability('mutation');
+            return mutation.listen(callback);
         }
     };
 

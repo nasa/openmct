@@ -29,6 +29,8 @@ define([
         }
 
         TodoView.prototype.show = function (container) {
+            this.destroy();
+
             this.$els = $(todoTemplate);
             this.$buttons = {
                 all: this.$els.find('.example-todo-button-all'),
@@ -40,9 +42,15 @@ define([
 
             this.initialize();
             this.render();
+
+            mct.verbs.observe(this.domainObject, this.render.bind(this));
         };
 
         TodoView.prototype.destroy = function () {
+            if (this.unlisten) {
+                this.unlisten();
+                this.unlisten = undefined;
+            }
         };
 
         TodoView.prototype.setFilter = function (value) {
