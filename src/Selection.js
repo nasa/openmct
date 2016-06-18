@@ -4,6 +4,8 @@ define(['EventEmitter'], function (EventEmitter) {
         this.selectedValues = [];
     }
 
+    Selection.prototype = Object.create(EventEmitter.prototype);
+
     Selection.prototype.select = function (value) {
         this.selectedValues.push(value);
         this.emit('change');
