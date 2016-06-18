@@ -80,11 +80,10 @@ var GrootProvider = {
     }
 };
 
-MCT.objects.addRoot(ROOT_KEY);
+mct.Objects.addRoot(ROOT_KEY);
 
-MCT.objects.addProvider('groot', GrootProvider);
+mct.Objects.addProvider('groot', GrootProvider);
 
-MCT.run();
 ```
 
 ### Making a custom provider:
