@@ -155,13 +155,6 @@ define(
                     expect(mockScope.rows[0].row).toBe(1);
                 });
             });
-
-            it('enables autoscroll for event telemetry', function () {
-                controller.subscribe();
-                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
-                expect(mockScope.autoScroll).toBe(true);
-            });
-
         });
     }
 );

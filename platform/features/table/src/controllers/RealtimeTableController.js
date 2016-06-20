@@ -38,30 +38,7 @@ define(
         function RealtimeTableController($scope, telemetryHandler, telemetryFormatter) {
             TableController.call(this, $scope, telemetryHandler, telemetryFormatter);
 
-            $scope.autoScroll = false;
             this.maxRows = 100000;
-
-            /*
-             * Determine if auto-scroll should be enabled. Is enabled
-             * automatically when telemetry type is string
-             */
-            function hasStringTelemetry(domainObject) {
-                var telemetry = domainObject &&
-                        domainObject.getCapability('telemetry'),
-                    metadata = telemetry ? telemetry.getMetadata() : {},
-                    ranges = metadata.ranges || [];
-
-                return ranges.some(function (range) {
-                    return range.format === 'string';
-                });
-            }
-            $scope.$watch('domainObject', function (domainObject) {
-                //When a domain object becomes available, check whether the
-                // view should auto-scroll to the bottom.
-                if (domainObject && hasStringTelemetry(domainObject)) {
-                    $scope.autoScroll = true;
-                }
-            });
         }
 
         RealtimeTableController.prototype = Object.create(TableController.prototype);
