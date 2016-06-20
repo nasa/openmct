@@ -3,8 +3,9 @@ define([
     "text!./todo-task.html",
     "text!./todo-toolbar.html",
     "text!./todo-dialog.html",
+    "../../src/api/events/EventDecorator",
     "zepto"
-], function (todoTemplate, taskTemplate, toolbarTemplate, dialogTemplate, $) {
+], function (todoTemplate, taskTemplate, toolbarTemplate, dialogTemplate, eventDecorator, $) {
     /**
      * @param {mct.MCT} mct
      */
@@ -44,6 +45,10 @@ define([
             this.render();
 
             mct.verbs.observe(this.domainObject, this.render.bind(this));
+
+            mct.events.mutation(this.domainObject).on("*", function (value) {
+                console.log("model changed");
+            });
         };
 
         TodoView.prototype.destroy = function () {
@@ -70,6 +75,8 @@ define([
             var tasks = domainObject.getModel().tasks;
             var $message = $els.find('.example-message');
             var $list = $els.find('.example-todo-task-list');
+            var $description = $els.find('.example-todo-description');
+            var $descInput = $els.find('.example-todo-description-input');
             var $buttons = this.$buttons;
             var filters = {
                 all: function () {
@@ -83,6 +90,7 @@ define([
                 }
             };
             var filterValue = this.filterValue;
+            var model = domainObject.model;
 
             Object.keys($buttons).forEach(function (k) {
                 $buttons[k].toggleClass('selected', filterValue === k);
@@ -96,7 +104,6 @@ define([
                 $checkbox.prop('checked', task.completed);
                 $taskEls.find('.example-task-description')
                     .text(task.description);
-
                 $checkbox.on('change', function () {
                     var checked = !!$checkbox.prop('checked');
                     mct.verbs.mutate(domainObject, function (model) {
@@ -107,10 +114,18 @@ define([
                 $list.append($taskEls);
             });
 
+            $descInput.on('change', function(){
+                model.description = $descInput.val();
+            });
+            mct.events.mutation(domainObject).on('description', function(newValue){
+                $description.text(newValue);
+            });
+            mct.events.mutation(domainObject).on('*', function(newValue){
+                console.log('something changed: ' + newValue);
+            });
+
             $message.toggle(tasks.length < 1);
         };
-
-
 
         function TodoToolbarView(domainObject) {
             this.domainObject = domainObject;
@@ -150,9 +165,11 @@ define([
 
         mct.type('example.todo', todoType);
         mct.view(mct.regions.main, function (domainObject) {
+            domainObject = eventDecorator(mct, domainObject);
             return todoType.check(domainObject) && new TodoView(domainObject);
         });
         mct.view(mct.regions.toolbar, function (domainObject) {
+            domainObject = eventDecorator(mct, domainObject);
             return todoType.check(domainObject) && new TodoToolbarView(domainObject);
         });
 
