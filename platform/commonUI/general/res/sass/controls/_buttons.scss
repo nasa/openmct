@@ -51,7 +51,8 @@ $pad: $interiorMargin * $baseRatio;
     }
 
     &.major,
-    &.key-edit {
+    &.key-edit,
+    &.key-properties {
         $bg: $colorBtnMajorBg;
         $hc: lighten($bg, 10%);
         @include btnSubtle($bg, $hc, $colorBtnMajorFg, $colorBtnMajorFg);
