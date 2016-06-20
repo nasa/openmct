@@ -41,8 +41,15 @@ if [ -d $OUTPUT_DIRECTORY ]; then
     rm -rf $OUTPUT_DIRECTORY || exit 1
 fi
 
+# We like to keep those dependencies out of the "package.json" file because
+# they have dependencies that don't reliably install, and tend to be system
+# configuration dependent.
+npm i nomnoml canvas
+
+# Generating the new documentation files.
 npm run docs
 
+# Adding them to the website.
 echo "git clone $REPOSITORY_URL website"
 git clone $REPOSITORY_URL website || exit 1
 echo "cp -r $OUTPUT_DIRECTORY $WEBSITE_DIRECTORY/docs"
