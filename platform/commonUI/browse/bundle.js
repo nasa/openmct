@@ -23,6 +23,7 @@
 define([
     "./src/BrowseController",
     "./src/PaneController",
+    "./src/InspectorPaneController",
     "./src/BrowseObjectController",
     "./src/MenuArrowController",
     "./src/navigation/NavigationService",
@@ -44,6 +45,7 @@ define([
 ], function (
     BrowseController,
     PaneController,
+    InspectorPaneController,
     BrowseObjectController,
     MenuArrowController,
     NavigationService,
@@ -123,6 +125,17 @@ define([
                     "implementation": MenuArrowController,
                     "depends": [
                         "$scope"
+                    ]
+                },
+                {
+                    "key": "InspectorPaneController",
+                    "implementation": InspectorPaneController,
+                    "priority": "preferred",
+                    "depends": [
+                        "$scope",
+                        "agentService",
+                        "$window",
+                        "navigationService"
                     ]
                 }
             ],
