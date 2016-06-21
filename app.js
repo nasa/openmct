@@ -42,6 +42,10 @@
         process.exit(0);
     }
 
+    // Disabling the "X-Powered-By" header to avoid fingerprinting.
+    // http://expressjs.com/en/advanced/best-practice-security.html#at-a-minimum-disable-x-powered-by-header
+    app.disable('x-powered-by');
+
     // Override bundles.json for HTTP requests
     app.use('/' + BUNDLE_FILE, function (req, res) {
         var bundles;
