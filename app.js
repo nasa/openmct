@@ -42,6 +42,8 @@
         process.exit(0);
     }
 
+    app.disable('x-powered-by');
+
     // Override bundles.json for HTTP requests
     app.use('/' + BUNDLE_FILE, function (req, res) {
         var bundles;
