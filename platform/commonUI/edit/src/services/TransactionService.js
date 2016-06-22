@@ -153,7 +153,7 @@ define(
 
             return function () {
                 while (oldOnCancels.length > 0) {
-                    var onCancel = this.onCancels.pop();
+                    var onCancel = oldOnCancels.pop();
                     try {
                         onCancel();
                     } catch (error) {
