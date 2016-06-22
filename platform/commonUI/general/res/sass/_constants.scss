@@ -97,9 +97,8 @@ $plotLegendH: 20px;
 $plotSwatchD: 8px;
 // 1: Top, 2: right, 3: bottom, 4: left
 $plotDisplayArea: ($plotLegendH + $interiorMargin, 0, $plotXBarH + $interiorMargin, $plotYBarW);
-/* Based on current implementation of ~ 5 ticks per plot element;
-Include legend, plot-display-area and X ticks */
-$plotMinH: $plotLegendH + ($interiorMargin * 2) + ($plotYLabelMinH * 5) + nth($plotDisplayArea,3);
+/* min plot height is based on user testing to find minimum useful height */
+$plotMinH: 95px;
 /*************** Bubbles */
 $bubbleArwSize: 10px;
 $bubblePad: $interiorMargin;
