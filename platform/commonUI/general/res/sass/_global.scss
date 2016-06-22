@@ -22,16 +22,32 @@
 /************************** FONTS */
 @font-face {
 	/*
-    * Use https://icomoon.io/app with /platform/commonUI/general/res/fonts/symbols/icomoon.io-WTD-symbols-project.json
+    * Use https://icomoon.io/app with icomoon-project-openmct-symbols-16px.json
+    * to generate font files
     */
 	font-family: 'symbolsfont';
-	src: url($dirCommonRes + 'fonts/symbols/wtdsymbols.eot');
-	src: url($dirCommonRes + 'fonts/symbols/wtdsymbols.eot?#iefix') format('embedded-opentype'),
-	url($dirCommonRes + 'fonts/symbols/wtdsymbols.woff') format('woff'),
-	url($dirCommonRes + 'fonts/symbols/wtdsymbols.ttf') format('truetype'),
-	url($dirCommonRes + 'fonts/symbols/wtdsymbols.svg#armataregular') format('svg');
+	src: url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.eot');
+	src: url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.eot?#iefix') format('embedded-opentype'),
+	url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.woff') format('woff'),
+	url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.ttf') format('truetype'),
+	url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.svg') format('svg');
 	font-weight: normal;
 	font-style: normal;
+}
+
+@font-face {
+    /*
+    * Use https://icomoon.io/app with icomoon-project-openmct-symbols-12px.json
+    * to generate font files
+    */
+    font-family: 'symbolsfont 12px';
+    src: url($dirCommonRes + 'fonts/symbols/openmct-symbols-12px.eot');
+    src: url($dirCommonRes + 'fonts/symbols/openmct-symbols-12px.eot?#iefix') format('embedded-opentype'),
+    url($dirCommonRes + 'fonts/symbols/openmct-symbols-12px.woff') format('woff'),
+    url($dirCommonRes + 'fonts/symbols/openmct-symbols-12px.ttf') format('truetype'),
+    url($dirCommonRes + 'fonts/symbols/openmct-symbols-12px.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
 }
 
 /************************** HTML ENTITIES */
