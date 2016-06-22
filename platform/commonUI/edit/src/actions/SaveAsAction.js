@@ -39,6 +39,7 @@ define(
             dialogService,
             creationService,
             copyService,
+            transactionService,
             context
         ) {
             this.domainObject = (context || {}).domainObject;
@@ -49,6 +50,7 @@ define(
             this.dialogService = dialogService;
             this.creationService = creationService;
             this.copyService = copyService;
+            this.transactionService = transactionService;
         }
 
         /**
@@ -105,7 +107,9 @@ define(
         SaveAsAction.prototype.save = function () {
             var self = this,
                 domainObject = this.domainObject,
-                copyService = this.copyService;
+                copyService = this.copyService,
+                transactionService = this.transactionService,
+                cancelOldTransaction;
 
             function doWizardSave(parent) {
                 var wizard = self.createWizard(parent);
@@ -140,11 +144,23 @@ define(
                     .then(resolveWith(clonedObject));
             }
 
+            function restartTransaction(object) {
+                cancelOldTransaction = transactionService.restartTransaction();
+                return object;
+            }
+
+            function doCancelOldTransaction(object) {
+                cancelOldTransaction();
+                return object;
+            }
+
             return getParent(domainObject)
                 .then(doWizardSave)
                 .then(getParent)
+                .then(restartTransaction)
                 .then(cloneIntoParent)
                 .then(commitEditingAfterClone)
+                .then(doCancelOldTransaction)
                 .catch(resolveWith(false));
         };
 
