@@ -75,8 +75,6 @@ define([
             var tasks = domainObject.getModel().tasks;
             var $message = $els.find('.example-message');
             var $list = $els.find('.example-todo-task-list');
-            var $description = $els.find('.example-todo-description');
-            var $descInput = $els.find('.example-todo-description-input');
             var $buttons = this.$buttons;
             var filters = {
                 all: function () {
@@ -97,34 +95,28 @@ define([
             });
             tasks = tasks.filter(filters[filterValue]);
 
-            $list.empty();
-            tasks.forEach(function (task, index) {
-                var $taskEls = $(taskTemplate);
-                var $checkbox = $taskEls.find('.example-task-checked');
-                $checkbox.prop('checked', task.completed);
-                $taskEls.find('.example-task-description')
-                    .text(task.description);
-                $checkbox.on('change', function () {
-                    var checked = !!$checkbox.prop('checked');
-                    mct.verbs.mutate(domainObject, function (model) {
-                        model.tasks[index].completed = checked;
+            function renderTasks() {
+                $list.empty();
+                domainObject.getModel().tasks.forEach(function (task, index) {
+                    var $taskEls = $(taskTemplate);
+                    var $checkbox = $taskEls.find('.example-task-checked');
+                    $checkbox.prop('checked', task.completed);
+                    $taskEls.find('.example-task-description')
+                        .text(task.description);
+                    $checkbox.on('change', function () {
+                        var checked = !!$checkbox.prop('checked');
+                        domainObject.getModel().tasks[index].completed = checked;
                     });
+
+                    $list.append($taskEls);
                 });
+            }
 
-                $list.append($taskEls);
-            });
-
-            $descInput.on('change', function(){
-                model.description = $descInput.val();
-            });
-            mct.events.mutation(domainObject).on('description', function(newValue){
-                $description.text(newValue);
-            });
-            mct.events.mutation(domainObject).on('*', function(newValue){
-                console.log('something changed: ' + newValue);
-            });
+            renderTasks();
 
             $message.toggle(tasks.length < 1);
+
+            mct.events.mutation(domainObject).on("model.tasks.length", renderTasks);
         };
 
         function TodoToolbarView(domainObject) {
@@ -150,10 +142,11 @@ define([
 
                 mct.dialog(view, "Add a Task").then(function () {
                     var description = $dialog.find('input').val();
-                    mct.verbs.mutate(domainObject, function (model) {
+                    domainObject.getModel().tasks.push({ description: description });
+                    /*mct.verbs.mutate(domainObject, function (model) {
                         model.tasks.push({ description: description });
                         console.log(model);
-                    });
+                    });*/
                 });
             });
             $remove.on('click', window.alert.bind(window, "Remove!"));
@@ -165,8 +158,7 @@ define([
 
         mct.type('example.todo', todoType);
         mct.view(mct.regions.main, function (domainObject) {
-            domainObject = eventDecorator(mct, domainObject);
-            return todoType.check(domainObject) && new TodoView(domainObject);
+            return todoType.check(domainObject) && new TodoView(eventDecorator(mct, domainObject));
         });
         mct.view(mct.regions.toolbar, function (domainObject) {
             domainObject = eventDecorator(mct, domainObject);
