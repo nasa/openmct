@@ -141,9 +141,13 @@ define(
         };
 
         /**
+         * Clear and restart the active transaction.
+         *
          * This neither cancels nor commits the active transaction;
          * instead, it returns a function that can be used to cancel that
          * transaction.
+         *
+         * @returns {Function} a function to cancel the prior transaction
          */
         TransactionService.prototype.restartTransaction = function () {
             var oldOnCancels = this.onCancels;
@@ -168,4 +172,5 @@ define(
         };
 
         return TransactionService;
-    });
+    }
+);
