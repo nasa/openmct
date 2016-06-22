@@ -105,7 +105,8 @@ define(
         SaveAsAction.prototype.save = function () {
             var self = this,
                 domainObject = this.domainObject,
-                copyService = this.copyService;
+                copyService = this.copyService,
+                toUndirty = [];
 
             function doWizardSave(parent) {
                 var wizard = self.createWizard(parent);
@@ -127,12 +128,26 @@ define(
             }
 
             function allowClone(objectToClone) {
-                return (objectToClone.getId() === domainObject.getId()) ||
-                    objectToClone.getCapability('location').isOriginal();
+                var allowed =
+                    (objectToClone.getId() === domainObject.getId()) ||
+                        objectToClone.getCapability('location').isOriginal();
+                if (allowed) {
+                    toUndirty.push(objectToClone);
+                }
+                return allowed;
             }
 
             function cloneIntoParent(parent) {
                 return copyService.perform(domainObject, parent, allowClone);
+            }
+
+            function undirty(domainObject) {
+                return domainObject.getCapability('persistence').refresh();
+            }
+
+            function undirtyOriginals(object) {
+                return Promise.all(toUndirty.map(undirty))
+                    .then(resolveWith(object));
             }
 
             function commitEditingAfterClone(clonedObject) {
@@ -144,6 +159,7 @@ define(
                 .then(doWizardSave)
                 .then(getParent)
                 .then(cloneIntoParent)
+                .then(undirtyOriginals)
                 .then(commitEditingAfterClone)
                 .catch(resolveWith(false));
         };

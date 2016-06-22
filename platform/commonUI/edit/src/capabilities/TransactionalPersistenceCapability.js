@@ -49,6 +49,7 @@ define(
             this.domainObject = domainObject;
             this.$q = $q;
             this.persistPending = false;
+            this.removeFromTransaction = undefined;
         }
 
         /**
@@ -75,6 +76,7 @@ define(
                     });
                 } else {
                     self.persistPending = false;
+                    self.removeFromTransaction = undefined;
                     //Model is undefined in persistence, so return undefined.
                     return self.$q.when(undefined);
                 }
@@ -82,7 +84,8 @@ define(
 
             if (this.transactionService.isActive()) {
                 if (!this.persistPending) {
-                    this.transactionService.addToTransaction(onCommit, onCancel);
+                    this.removeFromTransaction = this.transactionService
+                        .addToTransaction(onCommit, onCancel);
                     this.persistPending = true;
                 }
                 //Need to return a promise from this function
@@ -93,6 +96,11 @@ define(
         };
 
         TransactionalPersistenceCapability.prototype.refresh = function () {
+            if (this.persistPending) {
+                this.persistPending = false;
+                this.removeFromTransaction();
+                this.removeFromTransaction = undefined;
+            }
             return this.persistenceCapability.refresh();
         };
 
