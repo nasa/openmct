@@ -180,14 +180,14 @@ body.desktop .mini-tab {
         // |<
         text-align: right;
         &:before {
-            content:'\3c'; // Collapse left icon e613
+            content:'\e903'; // Collapse left icon e613
             right: $iconInnerLR;
         }
         &.collapsed {
             @include border-left-radius(0);
             text-align: left;
             &:before {
-                content:'\3e';
+                content:'\e904';
                 left: $iconInnerLR;
             }
             &:hover:before { left: $arwAnimOffsetX; }
@@ -197,14 +197,14 @@ body.desktop .mini-tab {
         // >|
         text-align: left;
         &:before {
-            content:'\3e'; // Collapse right icon e614
+            content:'\e904'; // Collapse right icon e614
             left: $iconInnerLR;
         }
         &.collapsed {
             @include border-right-radius(0);
             &:before {
                 text-align: right;
-                content:'\3c';
+                content:'\e903';
                 right: $iconInnerLR;
             }
             &:hover:before { right: $arwAnimOffsetX; }

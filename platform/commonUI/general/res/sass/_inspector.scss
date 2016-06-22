@@ -159,7 +159,7 @@
         }
         &:not(.last) .t-object-label .t-title-label:after {
             color: pushBack($colorInspectorFg, 15%);
-            content: '\3e';
+            content: '\e904';
             display: inline-block;
             font-family: symbolsfont;
             font-size: 8px;

@@ -1,0 +1,9 @@
+@mixin glyph($unicode) {
+    &:before { content: $unicode; }
+}
+
+.ui-symbol,
+.icon {
+    &.mobile-info { @include glyph('\e920'); }
+    &.context-available { @include glyph('\e902'); }
+}

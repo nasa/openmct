@@ -107,12 +107,11 @@
 
 		.menu-icon {
             // 'v' invoke menu icon
-            &:before { content: '\76'; }
+            &:before { content: '\e902'; }
 			font-size: 0.8em;
 			padding-right: $iconEdgeM;
 			right: $iconEdgeM;
 			text-align: right;
-
 			&:hover {
 				color: pullForward($colorInputIcon, 10%);
 			}

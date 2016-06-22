@@ -441,14 +441,14 @@ input[type="search"] {
             &.prev {
                 right: auto;
                 &:before {
-                    content: "\3c";
+                    content: "\e903";
                 }
             }
             &.next {
                 left: auto;
                 text-align: right;
                 &:before {
-                    content: "\3e";
+                    content: "\e903";
                 }
             }
         }

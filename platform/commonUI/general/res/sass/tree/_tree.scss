@@ -56,7 +56,7 @@ ul.tree {
             &:before {
                 position: absolute;
                 @include trans-prop-nice(transform, 100ms);
-                content: "\3e";
+                content: "\e904";
                 @include transform-origin(center);
             }
             &.expanded:before {

@@ -233,7 +233,7 @@
 @mixin messageBlock($iconW: 32px) {
     .type-icon.message-type {
         @include txtShdw($shdwStatusIc);
-        &:before { content:"\e608"; }
+        &:before { content:"\e920"; }
         color: $colorStatusDefault;
         font-size: $iconW;
         padding: 1px;
@@ -241,15 +241,15 @@
     }
 
     .message-severity-info .type-icon.message-type {
-        &:before { content:"\e608"; }
+        &:before { content:"\e920"; }
         color: $colorStatusInfo;
     }
     .message-severity-alert .type-icon.message-type {
-        &:before { content:"\e610"; }
+        &:before { content:"\e911"; }
         color: $colorStatusAlert;
     }
     .message-severity-error .type-icon.message-type {
-        &:before { content:"\21"; }
+        &:before { content:"\e900"; }
         color: $colorStatusError;
     }
 }
