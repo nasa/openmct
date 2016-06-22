@@ -148,6 +148,7 @@ define(
          * transaction.
          *
          * @returns {Function} a function to cancel the prior transaction
+         * @private
          */
         TransactionService.prototype.restartTransaction = function () {
             var oldOnCancels = this.onCancels;
