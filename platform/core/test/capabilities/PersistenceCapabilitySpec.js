@@ -74,7 +74,7 @@ define(
                 );
                 mockQ = jasmine.createSpyObj(
                     "$q",
-                    ["reject"]
+                    ["reject", "when"]
                 );
                 mockNofificationService = jasmine.createSpyObj(
                     "notificationService",
@@ -103,6 +103,7 @@ define(
                 mockIdentifierService.parse.andReturn(mockIdentifier);
                 mockIdentifier.getSpace.andReturn(SPACE);
                 mockIdentifier.getKey.andReturn(key);
+                mockQ.when.andCallFake(asPromise);
                 persistence = new PersistenceCapability(
                     mockCacheService,
                     mockPersistenceService,
@@ -156,6 +157,7 @@ define(
                 });
                 it("refreshes the domain object model from persistence", function () {
                     var refreshModel = {someOtherKey: "some other value"};
+                    model.persisted = 1;
                     mockPersistenceService.readObject.andReturn(asPromise(refreshModel));
                     persistence.refresh();
                     expect(model).toEqual(refreshModel);
