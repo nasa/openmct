@@ -141,8 +141,8 @@ define(
                 return copyService.perform(domainObject, parent, allowClone);
             }
 
-            function undirty(domainObject) {
-                return domainObject.getCapability('persistence').refresh();
+            function undirty(object) {
+                return object.getCapability('persistence').refresh();
             }
 
             function undirtyOriginals(object) {
