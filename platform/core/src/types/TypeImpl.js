@@ -148,6 +148,10 @@ define(
             return this.typeDef.glyph;
         };
 
+        TypeImpl.prototype.getCssClass = function () {
+            return this.typeDef.cssclass;
+        };
+
         TypeImpl.prototype.getProperties = function () {
             return (this.typeDef.properties || []).map(function (propertyDef) {
                 return new TypeProperty(propertyDef);

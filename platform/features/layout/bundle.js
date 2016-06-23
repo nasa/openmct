@@ -57,6 +57,7 @@ define([
                     "key": "layout",
                     "name": "Display Layout",
                     "glyph": "\u004c",
+                    "cssclass": "icon-layout",
                     "type": "layout",
                     "template": layoutTemplate,
                     "editable": true,
@@ -77,7 +78,7 @@ define([
                                 "items": [
                                     {
                                         "method": "add",
-                                        "glyph": "\u002b",
+                                        "cssclass": "icon-plus",
                                         "control": "menu-button",
                                         "text": "Add",
                                         "options": [
@@ -109,8 +110,7 @@ define([
                                 "items": [
                                     {
                                         "method": "order",
-                                        "glyph": "á",
-                                        "cssclass": "i-layers",
+                                        "cssclass": "icon-layers",
                                         "control": "menu-button",
                                         "options": [
                                             {
@@ -260,6 +260,7 @@ define([
                     "key": "layout",
                     "name": "Display Layout",
                     "glyph": "\u004c",
+                    "cssclass": "icon-layout",
                     "description": "Assemble other objects and components together into a reusable screen layout. Working in a simple canvas workspace, simply drag in the objects you want, position and size them. Save your design and view or edit it at any time.",
                     "priority": 900,
                     "features": "creation",
@@ -292,6 +293,7 @@ define([
                     "key": "telemetry.panel",
                     "name": "Telemetry Panel",
                     "glyph": "t",
+                    "cssclass": "icon-telemetry-panel",
                     "description": "A panel for collecting telemetry elements.",
                     "priority": 899,
                     "delegates": [

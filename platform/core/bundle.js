@@ -264,6 +264,7 @@ define([
                     "key": "folder",
                     "name": "Folder",
                     "glyph": "\u0046",
+                    "cssclass": "icon-folder",
                     "features": "creation",
                     "description": "Create folders to organize other objects or links to objects.",
                     "priority": 1000,

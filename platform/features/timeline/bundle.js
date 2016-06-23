@@ -152,6 +152,7 @@ define([
                     "key": "timeline",
                     "name": "Timeline",
                     "glyph": "\u0053",
+                    "cssclass": "icon-timeline",
                     "description": "A time-oriented container that lets you enclose and organize other Timelines and Activities. The Timeline view provides both tabular and Gantt views as well as resource utilization graphing of Activities.",
                     "priority": 502,
                     "features": [
@@ -195,6 +196,7 @@ define([
                     "key": "activity",
                     "name": "Activity",
                     "glyph": "\u0061",
+                    "cssclass": "icon-activity",
                     "features": [
                         "creation"
                     ],
@@ -241,6 +243,7 @@ define([
                     "key": "mode",
                     "name": "Activity Mode",
                     "glyph": "\u0041",
+                    "cssclass": "icon-activity-mode",
                     "features": [
                         "creation"
                     ],
@@ -309,11 +312,13 @@ define([
                                             {
                                                 "name": "Timeline",
                                                 "glyph": "\u0053",
+                                                "cssclass": "icon-timeline",
                                                 "key": "timeline"
                                             },
                                             {
                                                 "name": "Activity",
                                                 "glyph": "\u0061",
+                                                "cssclass": "icon-activity",
                                                 "key": "activity"
                                             }
                                         ]

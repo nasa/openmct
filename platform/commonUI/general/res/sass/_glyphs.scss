@@ -5,17 +5,6 @@
     }
 }
 
-//[class*="icon-"]:before {
-//    font-family: 'symbolsfont';
-//}
-
-.ui-symbol,
-.icon {
-    // TO-DO: refactor markup to use "icon-" approach
-    &.mobile-info { @include glyph('\e920'); }
-    //&.context-available { @include glyph('\e902'); }
-}
-
 .icon-alert-rect {  @include glyph('\e900'); }
 .icon-alert-triangle {  @include glyph('\e901'); }
 .icon-arrow-down {  @include glyph('\e902'); }
