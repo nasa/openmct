@@ -121,6 +121,7 @@ $pad: $interiorMargin * $baseRatio;
         @extend .ui-symbol;
         content: '\e901';
         color: $colorKey;
+        margin-right: $interiorMargin;
     }
     &:hover:before {
         color: pullForward($c, 10%);

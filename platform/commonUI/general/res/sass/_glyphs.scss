@@ -1,5 +1,11 @@
 @mixin glyph($unicode) {
-    &:before { content: $unicode; }
+    &:before {
+        content: $unicode;
+    }
+}
+
+[class*="icon-"] {
+    @extend .ui-symbol;
 }
 
 .ui-symbol,
@@ -7,6 +13,11 @@
     &.mobile-info { @include glyph('\e920'); }
     &.context-available { @include glyph('\e902'); }
 }
+
+.icon-pencil {  @include glyph('\e1024'); }
+.icon-new-window {  @include glyph('\e1021'); }
+.icon-fullscreen-collapse {  @include glyph('\e1012'); }
+.icon-fullscreen-expand {  @include glyph('\e1013'); }
 
 /*************************************** MENUS */
 .icon-menu ul li {

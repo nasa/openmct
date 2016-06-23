@@ -218,7 +218,7 @@ define([
                         "$window"
                     ],
                     "group": "windowing",
-                    "glyph": "y",
+                    "cssclass": "icon-new-window",
                     "priority": "preferred"
                 },
                 {
@@ -226,7 +226,6 @@ define([
                     "implementation": FullscreenAction,
                     "category": "view-control",
                     "group": "windowing",
-                    "glyph": "z",
                     "priority": "default"
                 }
             ],

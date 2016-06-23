@@ -172,7 +172,8 @@ define([
                     ],
                     "description": "Edit",
                     "category": "view-control",
-                    "glyph": "p"
+                    "glyph": "p",
+                    "cssclass": "icon-pencil"
                 },
                 {
                     "key": "properties",
@@ -182,6 +183,7 @@ define([
                     ],
                     "implementation": PropertiesAction,
                     "glyph": "p",
+                    "cssclass": "icon-pencil",
                     "name": "Edit Properties...",
                     "description": "Edit properties of this object.",
                     "depends": [

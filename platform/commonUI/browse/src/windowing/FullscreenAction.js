@@ -51,7 +51,8 @@ define(
             // based on whether or not we are currently
             // full screen.
             var metadata = Object.create(FullscreenAction);
-            metadata.glyph = screenfull.isFullscreen ? "_" : "z";
+            //metadata.glyph = screenfull.isFullscreen ? "_" : "z";
+            metadata.cssclass = screenfull.isFullscreen ? "icon-fullscreen-expand" : "icon-fullscreen-collapse";
             metadata.description = screenfull.isFullscreen ?
                 EXIT_FULLSCREEN : ENTER_FULLSCREEN;
             metadata.group = "windowing";

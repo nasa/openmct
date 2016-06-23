@@ -33,22 +33,24 @@
 	&.type-icon {
 		color: $colorObjHdrIc;
 	}
-	&.icon {
-		color: $colorKey;
-        font-size: inherit;
-		&.alert {
-			color: $colorAlert;
-			&:hover {
-				color: lighten($colorAlert, $ltGamma);
-			}
-		}
-		&.major {
-			font-size: 1.65em;
-		}
-	}
 	&.icon-calendar:after {
 		content: "\e605";
 	}
+}
+
+[class^="i-"],
+.ui-symbol.icon {
+    color: $colorKey;
+    font-size: inherit;
+    &.alert {
+        color: $colorAlert;
+        &:hover {
+            color: lighten($colorAlert, $ltGamma);
+        }
+    }
+    &.major {
+        font-size: 1.65em;
+    }
 }
 
 .bar .ui-symbol {
