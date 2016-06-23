@@ -29,7 +29,7 @@
 	}
 
 	.icon {
-		font-size: 120%;
+		font-size: 16px; //120%;
 	}
 
 	.title-label {
@@ -86,7 +86,8 @@
 		li {
 			box-sizing: border-box;
 			border-top: 1px solid pullForward($colorMenuBg, 10%);
-			color: pullForward($colorMenuBg, 60%);
+            color: $colorMenuFg;
+			//color: pullForward($colorMenuBg, 60%);
 			line-height: $menuLineH;
 			padding: $interiorMarginSm $interiorMargin * 2 $interiorMarginSm ($interiorMargin * 2) + $treeTypeIconW;
 			position: relative;
@@ -97,31 +98,46 @@
 			&:hover {
 				background: $colorMenuHovBg;
 				color: $colorMenuHovFg;
-				.icon {
-					color: $colorMenuHovIc;
-				}
-			}
-			.type-icon {
-				left: $interiorMargin * 2;
 			}
 		}
 	}
 }
 
+.icon-menu {
+    @extend .menu;
+    ul li {
+        &:hover {
+            &:before {
+                color: $colorMenuHovIc;
+            }
+        }
+        &:before {
+            @extend .ui-symbol;
+            @extend .type-icon;
+            @extend .icon;
+            content: '';
+            display: inline-block;
+            left: $interiorMargin * 2;
+        }
+
+    }
+
+}
+
 .menu,
+.icon-menu,
 .context-menu,
 .super-menu,
 .s-menu-btn .menu {
 	pointer-events: auto;
 	ul li {
 		a {
-			color: $colorMenuFg;
+			// TO-DO: factor this <a> out
+            color: $colorMenuFg;
             display: block;
 		}
-		.icon {
-			color: $colorMenuIc;
-		}
-		.type-icon {
+        &:before {
+            color: $colorMenuIc;
 			left: $interiorMargin;
 		}
 	}

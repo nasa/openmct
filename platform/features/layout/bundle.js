@@ -110,26 +110,31 @@ define([
                                     {
                                         "method": "order",
                                         "glyph": "á",
+                                        "cssclass": "i-layers",
                                         "control": "menu-button",
                                         "options": [
                                             {
                                                 "name": "Move to Top",
                                                 "glyph": "\u00eb",
+                                                "cssclass": "i-layers-move-to-top",
                                                 "key": "top"
                                             },
                                             {
                                                 "name": "Move Up",
                                                 "glyph": "\u005e",
+                                                "cssclass": "i-layers-move-up",
                                                 "key": "up"
                                             },
                                             {
                                                 "name": "Move Down",
                                                 "glyph": "\u0076",
+                                                "cssclass": "i-layers-move-down",
                                                 "key": "down"
                                             },
                                             {
                                                 "name": "Move to Bottom",
                                                 "glyph": "\u00ee",
+                                                "cssclass": "i-layers-move-to-bottom",
                                                 "key": "bottom"
                                             }
                                         ]

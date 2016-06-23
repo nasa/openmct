@@ -539,8 +539,7 @@ textarea {
 }
 
 /******************************************************** MISC */
-.context-available,
-.s-icon-btn {
+.context-available {
     $c: $colorKey;
     color: $c;
     &:hover {

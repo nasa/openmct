@@ -54,7 +54,7 @@ $pad: $interiorMargin * $baseRatio;
     &.key-edit,
     &.key-properties {
         $bg: $colorBtnMajorBg;
-        $hc: lighten($bg, 10%);
+        $hc: pullForward($bg, 10%);
         @include btnSubtle($bg, $hc, $colorBtnMajorFg, $colorBtnMajorFg);
     }
 
@@ -115,8 +115,16 @@ $pad: $interiorMargin * $baseRatio;
 }
 
 .s-icon-btn {
-    @extend .ui-symbol;
-    // Color and styling additionally in _controls.scss
+    $c: $colorKey;
+    @extend .s-btn;
+    &:before {
+        @extend .ui-symbol;
+        content: '\e901';
+        color: $colorKey;
+    }
+    &:hover:before {
+        color: pullForward($c, 10%);
+    }
 }
 
 body.desktop .mini-tab {

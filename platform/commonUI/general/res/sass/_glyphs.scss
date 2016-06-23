@@ -7,3 +7,11 @@
     &.mobile-info { @include glyph('\e920'); }
     &.context-available { @include glyph('\e902'); }
 }
+
+/*************************************** MENUS */
+.icon-menu ul li {
+    &.i-layers-move-to-top { @include glyph('\e905'); }
+    &.i-layers-move-up { @include glyph('\e909'); }
+    &.i-layers-move-down { @include glyph('\e902'); }
+    &.i-layers-move-to-bottom { @include glyph('\e908'); }
+}
