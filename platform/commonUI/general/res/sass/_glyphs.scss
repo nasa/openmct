@@ -4,25 +4,107 @@
     }
 }
 
-[class*="icon-"] {
-    @extend .ui-symbol;
+[class*="icon-"]:before {
+    font-family: 'symbolsfont';
 }
 
 .ui-symbol,
 .icon {
+    // TO-DO: refactor markup to use "icon-" approach
     &.mobile-info { @include glyph('\e920'); }
     &.context-available { @include glyph('\e902'); }
 }
 
-.icon-pencil {  @include glyph('\e1024'); }
-.icon-new-window {  @include glyph('\e1021'); }
+.icon-alert-rect {  @include glyph('\e900'); }
+.icon-alert-triangle {  @include glyph('\e901'); }
+.icon-arrow-down {  @include glyph('\e902'); }
+.icon-arrow-left {  @include glyph('\e903'); }
+.icon-arrow-right {  @include glyph('\e904'); }
+.icon-arrow-double-up {  @include glyph('\e905'); }
+.icon-arrow-tall-up {  @include glyph('\e906'); }
+.icon-arrow-tall-down {  @include glyph('\e907'); }
+.icon-arrow-double-down {  @include glyph('\e908'); }
+.icon-arrow-up {  @include glyph('\e909'); }
+.icon-asterisk {  @include glyph('\e910'); }
+.icon-bell {  @include glyph('\e911'); }
+.icon-box {  @include glyph('\e912'); }
+.icon-box-with-arrow {  @include glyph('\e913'); }
+.icon-check {  @include glyph('\e914'); }
+.icon-connectivity {  @include glyph('\e915'); }
+.icon-database-in-brackets {  @include glyph('\e916'); }
+.icon-eye-open {  @include glyph('\e917'); }
+.icon-gear {  @include glyph('\e918'); }
+.icon-hourglass {  @include glyph('\e919'); }
+.icon-info {  @include glyph('\e920'); }
+.icon-link {  @include glyph('\e921'); }
+.icon-lock {  @include glyph('\e922'); }
+.icon-minus {  @include glyph('\e923'); }
+.icon-people {  @include glyph('\e924'); }
+.icon-person {  @include glyph('\e925'); }
+.icon-plus {  @include glyph('\e926'); }
+.icon-trash {  @include glyph('\e927'); }
+.icon-x {  @include glyph('\e928'); }
+.icon-arrows-out {  @include glyph('\e1000'); }
+.icon-arrows-right-left {  @include glyph('\e1001'); }
+.icon-arrows-up-down {  @include glyph('\e1002'); }
+.icon-box-with-dashed-lines {  @include glyph('\e1003'); }
+.icon-bullet {  @include glyph('\e1004'); }
+.icon-calendar {  @include glyph('\e1005'); }
+.icon-chain-links {  @include glyph('\e1006'); }
+.icon-collapse-pane-left {  @include glyph('\e1007'); }
+.icon-collapse-pane-right {  @include glyph('\e1008'); }
+.icon-download {  @include glyph('\e1009'); }
+.icon-duplicate {  @include glyph('\e1010'); }
+.icon-folder-new {  @include glyph('\e1011'); }
 .icon-fullscreen-collapse {  @include glyph('\e1012'); }
 .icon-fullscreen-expand {  @include glyph('\e1013'); }
-
-/*************************************** MENUS */
-.icon-menu ul li {
-    &.i-layers-move-to-top { @include glyph('\e905'); }
-    &.i-layers-move-up { @include glyph('\e909'); }
-    &.i-layers-move-down { @include glyph('\e902'); }
-    &.i-layers-move-to-bottom { @include glyph('\e908'); }
-}
+.icon-layers {  @include glyph('\e1014'); }
+.icon-line-horz {  @include glyph('\e1015'); }
+.icon-magnify {  @include glyph('\e1016'); }
+.icon-magnify-in {  @include glyph('\e1017'); }
+.icon-magnify-out {  @include glyph('\e1018'); }
+.icon-menu-hamburger {  @include glyph('\e1019'); }
+.icon-move {  @include glyph('\e1020'); }
+.icon-new-window {  @include glyph('\e1021'); }
+.icon-paint-bucket {  @include glyph('\e1022'); }
+.icon-pause {  @include glyph('\e1023'); }
+.icon-pencil {  @include glyph('\e1024'); }
+.icon-play {  @include glyph('\e1025'); }
+.icon-plot-resource {  @include glyph('\e1026'); }
+.icon-pointer-left {  @include glyph('\e1027'); }
+.icon-pointer-right {  @include glyph('\e1028'); }
+.icon-refresh {  @include glyph('\e1029'); }
+.icon-save {  @include glyph('\e1030'); }
+.icon-sine {  @include glyph('\e1031'); }
+.icon-T {  @include glyph('\e1032'); }
+.icon-thumbs-strip {  @include glyph('\e1033'); }
+.icon-two-parts-both {  @include glyph('\e1034'); }
+.icon-two-parts-one-only {  @include glyph('\e1035'); }
+.icon-x-in-circle {  @include glyph('\e1036'); }
+.icon-activity {  @include glyph('\e1100'); }
+.icon-activity-mode {  @include glyph('\e1101'); }
+.icon-autoflow-tabular {  @include glyph('\e1102'); }
+.icon-clock {  @include glyph('\e1103'); }
+.icon-database {  @include glyph('\e1104'); }
+.icon-database-query {  @include glyph('\e1105'); }
+.icon-dataset {  @include glyph('\e1106'); }
+.icon-datatable {  @include glyph('\e1107'); }
+.icon-dictionary {  @include glyph('\e1108'); }
+.icon-folder {  @include glyph('\e1109'); }
+.icon-image {  @include glyph('\e1110'); }
+.icon-layout {  @include glyph('\e1111'); }
+.icon-object {  @include glyph('\e1112'); }
+.icon-object-unknown {  @include glyph('\e1113'); }
+.icon-packet {  @include glyph('\e1114'); }
+.icon-page {  @include glyph('\e1115'); }
+.icon-session {  @include glyph('\e1116'); }
+.icon-tabular {  @include glyph('\e1117'); }
+.icon-tabular-lad {  @include glyph('\e1118'); }
+.icon-tabular-lad-set {  @include glyph('\e1119'); }
+.icon-tabular-realtime {  @include glyph('\e1120'); }
+.icon-tabular-scrolling {  @include glyph('\e1121'); }
+.icon-telemetry {  @include glyph('\e1122'); }
+.icon-telemetry-panel {  @include glyph('\e1123'); }
+.icon-timeline {  @include glyph('\e1124'); }
+.icon-timer {  @include glyph('\e1125'); }
+.icon-topic {  @include glyph('\e1126'); }

@@ -83,22 +83,22 @@ define([
                                         "options": [
                                             {
                                                 "name": "Box",
-                                                "glyph": "\u00e0",
+                                                "cssclass": "icon-box",
                                                 "key": "fixed.box"
                                             },
                                             {
                                                 "name": "Line",
-                                                "glyph": "\u00e2",
+                                                "cssclass": "icon-line-horz",
                                                 "key": "fixed.line"
                                             },
                                             {
                                                 "name": "Text",
-                                                "glyph": "\u00e4",
+                                                "cssclass": "icon-T",
                                                 "key": "fixed.text"
                                             },
                                             {
                                                 "name": "Image",
-                                                "glyph": "\u00e3",
+                                                "cssclass": "icon-image",
                                                 "key": "fixed.image"
                                             }
                                         ]
@@ -115,26 +115,22 @@ define([
                                         "options": [
                                             {
                                                 "name": "Move to Top",
-                                                "glyph": "\u00eb",
-                                                "cssclass": "i-layers-move-to-top",
+                                                "cssclass": "icon-arrow-double-up",
                                                 "key": "top"
                                             },
                                             {
                                                 "name": "Move Up",
-                                                "glyph": "\u005e",
-                                                "cssclass": "i-layers-move-up",
+                                                "cssclass": "icon-arrow-up",
                                                 "key": "up"
                                             },
                                             {
                                                 "name": "Move Down",
-                                                "glyph": "\u0076",
-                                                "cssclass": "i-layers-move-down",
+                                                "cssclass": "icon-arrow-down",
                                                 "key": "down"
                                             },
                                             {
                                                 "name": "Move to Bottom",
-                                                "glyph": "\u00ee",
-                                                "cssclass": "i-layers-move-to-bottom",
+                                                "cssclass": "icon-arrow-double-down",
                                                 "key": "bottom"
                                             }
                                         ]

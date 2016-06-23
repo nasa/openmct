@@ -98,30 +98,19 @@
 			&:hover {
 				background: $colorMenuHovBg;
 				color: $colorMenuHovFg;
+                &:before {
+                    color: $colorMenuHovIc;
+                }
 			}
+            &:before {
+                @extend .ui-symbol;
+                @extend .type-icon;
+                @extend .icon;
+                display: inline-block;
+                left: $interiorMargin * 2;
+            }
 		}
 	}
-}
-
-.icon-menu {
-    @extend .menu;
-    ul li {
-        &:hover {
-            &:before {
-                color: $colorMenuHovIc;
-            }
-        }
-        &:before {
-            @extend .ui-symbol;
-            @extend .type-icon;
-            @extend .icon;
-            content: '';
-            display: inline-block;
-            left: $interiorMargin * 2;
-        }
-
-    }
-
 }
 
 .menu,
