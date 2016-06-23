@@ -1,18 +1,19 @@
 @mixin glyph($unicode) {
     &:before {
         content: $unicode;
+        font-family: 'symbolsfont';
     }
 }
 
-[class*="icon-"]:before {
-    font-family: 'symbolsfont';
-}
+//[class*="icon-"]:before {
+//    font-family: 'symbolsfont';
+//}
 
 .ui-symbol,
 .icon {
     // TO-DO: refactor markup to use "icon-" approach
     &.mobile-info { @include glyph('\e920'); }
-    &.context-available { @include glyph('\e902'); }
+    //&.context-available { @include glyph('\e902'); }
 }
 
 .icon-alert-rect {  @include glyph('\e900'); }

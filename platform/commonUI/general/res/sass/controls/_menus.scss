@@ -43,11 +43,7 @@
 	}
 
 	&.create-btn {
-		&:before {
-			content:'\2b';
-			display: inline;
-			font-family: symbolsfont;
-		}
+        @extend .icon-plus;
 		.title-label {
 			font-size: 1rem;
 		}
@@ -56,9 +52,9 @@
 	.menu {
 		left: 0;
 		text-align: left;
-		.ui-symbol.icon {
-			width: 12px;
-		}
+		//.ui-symbol.icon {
+		//	width: 12px;
+		//}
 	}
 }
 
@@ -77,6 +73,7 @@
 }
 
 .menu {
+    // TO-DO: reduce size of icons
 	@extend .s-menu;
 	display: block;
 	position: absolute;

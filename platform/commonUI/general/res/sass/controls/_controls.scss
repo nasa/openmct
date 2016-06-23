@@ -289,6 +289,11 @@ input[type="search"] {
     }
 }
 
+.s-back {
+    // Nav to parent arrow
+    @extend .icon-pointer-left;
+}
+
 /******************************************************** PROGRESS BAR */
 @include keyframes(progress) {
     100% { background-position: $progressBarStripeW center; }
@@ -540,6 +545,7 @@ textarea {
 
 /******************************************************** MISC */
 .context-available {
+    @extend .icon-arrow-down;
     $c: $colorKey;
     color: $c;
     &:hover {

@@ -50,18 +50,14 @@ $pad: $interiorMargin * $baseRatio;
         padding: 0 ($pad / $baseRatio) / 2;
     }
 
-    &.major,
-    &.key-edit,
-    &.key-properties {
+    &.major {
         $bg: $colorBtnMajorBg;
         $hc: pullForward($bg, 10%);
         @include btnSubtle($bg, $hc, $colorBtnMajorFg, $colorBtnMajorFg);
     }
 
-    &.t-save:before {
-        content:'\e612';
-        font-family: symbolsfont;
-        margin-right: $interiorMarginSm;
+    &.t-save {
+        @extend .icon-save;
     }
     &.t-save-as:before {
         content:'\e612';
@@ -69,14 +65,12 @@ $pad: $interiorMargin * $baseRatio;
         margin-right: $interiorMarginSm;
     }
     &.t-cancel {
+        @extend .icon-x;
         .title-label { display: none; }
-        &:before {
-            content:'\78';
-            font-family: symbolsfont;
-        }
     }
 
     &.pause-play {
+        // TO-DO: glyph refactoring
         .icon:before {
             content: "\0000F1";
         }
@@ -98,11 +92,7 @@ $pad: $interiorMargin * $baseRatio;
     }
 
     &.t-export {
-        &:before {
-            @extend .ui-symbol;
-            @extend .icon;
-            content: '\e623';
-        }
+        @extend .icon-download;
     }
 
     .icon {
@@ -115,6 +105,7 @@ $pad: $interiorMargin * $baseRatio;
 }
 
 .s-icon-btn {
+    // TO-DO: glyph refactoring
     $c: $colorKey;
     @extend .s-btn;
     &:before {
@@ -189,7 +180,8 @@ body.desktop .mini-tab {
         // |<
         text-align: right;
         &:before {
-            content:'\e903'; // Collapse left icon e613
+            //content:'\e903'; // Collapse left icon e613
+            content: '\e903';
             right: $iconInnerLR;
         }
         &.collapsed {
@@ -246,9 +238,9 @@ body.desktop .mini-tab-icon {
         display: inherit;
     }
 
-    &:before {
-        content: '\78'; // X icon
-    }
+    //&:before {
+    //    content: '\78'; // X icon
+    //}
 
     &:hover {
         color: $colorKey;
