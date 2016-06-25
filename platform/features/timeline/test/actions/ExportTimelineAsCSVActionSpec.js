@@ -24,7 +24,8 @@ define(
     ['../../src/actions/ExportTimelineAsCSVAction'],
     function (ExportTimelineAsCSVAction) {
         describe("ExportTimelineAsCSVAction", function () {
-            var mockExportService,
+            var mockLog,
+                mockExportService,
                 mockNotificationService,
                 mockNotification,
                 mockDomainObject,
@@ -39,6 +40,13 @@ define(
                     ['getId', 'getModel', 'getCapability', 'hasCapability']
                 );
                 mockType = jasmine.createSpyObj('type', ['instanceOf']);
+
+                mockLog = jasmine.createSpyObj('$log', [
+                    'warn',
+                    'error',
+                    'info',
+                    'debug'
+                ]);
                 mockExportService = jasmine.createSpyObj(
                     'exportService',
                     ['exportCSV']
@@ -63,8 +71,10 @@ define(
                 testContext = { domainObject: mockDomainObject };
 
                 action = new ExportTimelineAsCSVAction(
+                    mockLog,
                     mockExportService,
                     mockNotificationService,
+                    [],
                     testContext
                 );
             });
@@ -129,8 +139,11 @@ define(
                 });
 
                 describe("and an error occurs", function () {
+                    var testError;
+
                     beforeEach(function () {
-                        testPromise.reject();
+                        testError = { someProperty: "some value" };
+                        testPromise.reject(testError);
                         waitsFor(function () {
                             return mockCallback.calls.length > 0;
                         });
@@ -144,6 +157,10 @@ define(
                     it("shows an error message", function () {
                         expect(mockNotificationService.error)
                             .toHaveBeenCalledWith(jasmine.any(String));
+                    });
+
+                    it("logs the root cause", function () {
+                        expect(mockLog.warn).toHaveBeenCalledWith(testError);
                     });
                 });
             });

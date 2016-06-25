@@ -23,6 +23,13 @@
 .l-timeline-holder {
     @include absPosDefault();
 
+    &.split-layout {
+        >.splitter {
+            // Top of splitter within Timelines should be 0
+            top: 0;
+        }
+    }
+
     .l-header {
         @include user-select(none);
         cursor: default;
@@ -58,7 +65,7 @@
                 }
                 &.l-tabular-r {
                     // Start, end, duration, activity modes columns
-                    @include scrollH();
+                    @include scrollH(scroll);
                     left: $timelineTabularTitleW;
 	                .l-width {
 		                @include absPosDefault(0, visible);
@@ -303,11 +310,6 @@
 			}
 		}
 	}
-
-    .splitter {
-        // Top of splitter within Timelines should be 0
-        top: 0;
-    }
 
 	// Ticks
 	.l-ticks,

@@ -348,7 +348,6 @@
 	display: inline-block;
 	font-family: 'symbolsfont';
 	margin-left: $interiorMarginSm;
-	vertical-align: top;
 }
 
 @mixin nice-textarea($bg: $colorBodyBg, $fg: $colorBodyFg) {

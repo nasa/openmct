@@ -24,6 +24,10 @@
 	height: 100%;
 }
 
+.tabular-holder {
+    @include absPosDefault();
+}
+
 .tabular,
 table {
 	box-sizing: border-box;
@@ -162,4 +166,41 @@ table {
 			min-width: 150px;
 		}
 	}
+}
+
+/********************************************************** SPECIFIC TABULAR VIEWS */
+.tabular-holder {
+    &.t-exportable {
+        $btnExportH: 25px;
+        .l-view-section {
+            top: $btnExportH + $interiorMargin;
+        }
+    }
+}
+
+.child-frame {
+    .tabular-holder {
+        &.t-exportable {
+            $btnExportH: $btnFrameH;
+            .s-btn.t-export {
+                @include trans-prop-nice(opacity, $dur: 50ms);
+                opacity: 0;
+            }
+            .l-view-section {
+                @include trans-prop-nice(top, $dur: 150ms, $delay: 50ms);
+                top: 0;
+            }
+            &:hover {
+                .s-btn.t-export {
+                    @include trans-prop-nice(opacity, 150ms, 100ms);
+                    opacity: 1;
+                }
+                .l-view-section {
+                    @include trans-prop-nice(top, $dur: 150ms);
+                    top: $btnExportH + $interiorMargin;
+                }
+            }
+        }
+    }
+
 }

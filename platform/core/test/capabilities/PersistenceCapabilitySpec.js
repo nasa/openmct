@@ -35,7 +35,8 @@ define(
                 mockNofificationService,
                 mockCacheService,
                 mockQ,
-                id = "object id",
+                key = "persistence key",
+                id = "object identifier",
                 model,
                 SPACE = "some space",
                 persistence,
@@ -101,6 +102,7 @@ define(
                 });
                 mockIdentifierService.parse.andReturn(mockIdentifier);
                 mockIdentifier.getSpace.andReturn(SPACE);
+                mockIdentifier.getKey.andReturn(key);
                 persistence = new PersistenceCapability(
                     mockCacheService,
                     mockPersistenceService,
@@ -124,7 +126,7 @@ define(
 
                     expect(mockPersistenceService.createObject).toHaveBeenCalledWith(
                         SPACE,
-                        id,
+                        key,
                         model
                     );
                 });
@@ -138,7 +140,7 @@ define(
 
                     expect(mockPersistenceService.updateObject).toHaveBeenCalledWith(
                         SPACE,
-                        id,
+                        key,
                         model
                     );
                 });

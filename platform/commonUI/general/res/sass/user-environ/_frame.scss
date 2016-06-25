@@ -54,7 +54,8 @@
 			height: $ohH;
 			line-height: $ohH;
 			padding: 0 $interiorMargin;
-			> span {
+			> span,
+            &:before {
 				font-size: 0.65rem;
 			}
 		}

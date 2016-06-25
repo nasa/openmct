@@ -25,6 +25,7 @@ define(
         './TelemetryTableController'
     ],
     function (TableController) {
+        var BATCH_SIZE = 1000;
 
         /**
          * Extends TelemetryTableController and adds real-time streaming
@@ -35,32 +36,82 @@ define(
          * @param telemetryFormatter
          * @constructor
          */
-        function HistoricalTableController($scope, telemetryHandler, telemetryFormatter) {
+        function HistoricalTableController($scope, telemetryHandler, telemetryFormatter, $timeout) {
+            var self = this;
+
+            this.$timeout = $timeout;
+            this.timeoutHandle = undefined;
+            this.batchSize = BATCH_SIZE;
+
+            $scope.$on("$destroy", function () {
+                if (self.timeoutHandle) {
+                    self.$timeout.cancel(self.timeoutHandle);
+                }
+            });
+
             TableController.call(this, $scope, telemetryHandler, telemetryFormatter);
         }
 
         HistoricalTableController.prototype = Object.create(TableController.prototype);
 
         /**
-         * Populates historical data on scope when it becomes available from
-         * the telemetry API
+         * Set provided row data on scope, and cancel loading spinner
+         * @private
          */
-        HistoricalTableController.prototype.addHistoricalData = function () {
-            var rowData = [],
-                self = this;
-
-            this.handle.getTelemetryObjects().forEach(function (telemetryObject) {
-                var series = self.handle.getSeries(telemetryObject) || {},
-                    pointCount = series.getPointCount ? series.getPointCount() : 0,
-                    i = 0;
-
-                for (; i < pointCount; i++) {
-                    rowData.push(self.table.getRowValues(telemetryObject,
-                        self.handle.makeDatum(telemetryObject, series, i)));
-                }
-            });
-
+        HistoricalTableController.prototype.doneProcessing = function (rowData) {
             this.$scope.rows = rowData;
+            this.$scope.loading = false;
+        };
+
+        /**
+         * Processes an array of objects, formatting the telemetry available
+         * for them and setting it on scope when done
+         * @private
+         */
+        HistoricalTableController.prototype.processTelemetryObjects = function (objects, offset, start, rowData) {
+            var telemetryObject = objects[offset],
+                series,
+                i = start,
+                pointCount,
+                end;
+
+            //No more objects to process
+            if (!telemetryObject) {
+                return this.doneProcessing(rowData);
+            }
+
+            series = this.handle.getSeries(telemetryObject);
+
+            pointCount = series.getPointCount();
+            end = Math.min(start + this.batchSize, pointCount);
+
+            //Process rows in a batch with size not exceeding a maximum length
+            for (; i < end; i++) {
+                rowData.push(this.table.getRowValues(telemetryObject,
+                    this.handle.makeDatum(telemetryObject, series, i)));
+            }
+
+            //Done processing all rows for this object.
+            if (end >= pointCount) {
+                offset++;
+                end = 0;
+            }
+
+            // Done processing either a batch or an object, yield process
+            // before continuing processing
+            this.timeoutHandle = this.$timeout(this.processTelemetryObjects.bind(this, objects, offset, end, rowData));
+        };
+
+        /**
+        * Populates historical data on scope when it becomes available from
+        * the telemetry API
+        */
+        HistoricalTableController.prototype.addHistoricalData = function () {
+            if (this.timeoutHandle) {
+                this.$timeout.cancel(this.timeoutHandle);
+            }
+
+            this.timeoutHandle = this.$timeout(this.processTelemetryObjects.bind(this, this.handle.getTelemetryObjects(), 0, 0, []));
         };
 
         return HistoricalTableController;

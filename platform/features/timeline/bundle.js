@@ -91,7 +91,12 @@ define([
                     "name": "Export Timeline as CSV",
                     "category": "contextual",
                     "implementation": ExportTimelineAsCSVAction,
-                    "depends": ["exportService", "notificationService"]
+                    "depends": [
+                        "$log",
+                        "exportService",
+                        "notificationService",
+                        "resources[]"
+                    ]
                 }
             ],
             "constants": [
@@ -467,6 +472,7 @@ define([
                     "implementation": TimelineZoomController,
                     "depends": [
                         "$scope",
+                        "$window",
                         "TIMELINE_ZOOM_CONFIGURATION"
                     ]
                 },

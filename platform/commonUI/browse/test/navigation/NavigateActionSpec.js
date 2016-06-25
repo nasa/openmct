@@ -31,6 +31,8 @@ define(
             var mockNavigationService,
                 mockQ,
                 mockDomainObject,
+                mockPolicyService,
+                mockWindow,
                 action;
 
             function mockPromise(value) {
@@ -44,25 +46,70 @@ define(
             beforeEach(function () {
                 mockNavigationService = jasmine.createSpyObj(
                     "navigationService",
-                    ["setNavigation"]
+                    [
+                        "setNavigation",
+                        "getNavigation"
+                    ]
                 );
+                mockNavigationService.getNavigation.andReturn({});
                 mockQ = { when: mockPromise };
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     ["getId", "getModel", "getCapability"]
                 );
 
+                mockPolicyService = jasmine.createSpyObj("policyService",
+                    [
+                        "allow"
+                    ]);
+                mockWindow = jasmine.createSpyObj("$window",
+                    [
+                        "confirm"
+                    ]);
+
                 action = new NavigateAction(
                     mockNavigationService,
                     mockQ,
+                    mockPolicyService,
+                    mockWindow,
                     { domainObject: mockDomainObject }
                 );
             });
 
-            it("invokes the navigate service when performed", function () {
+            it("invokes the policy service to determine if navigation" +
+                " allowed", function () {
                 action.perform();
-                expect(mockNavigationService.setNavigation)
-                    .toHaveBeenCalledWith(mockDomainObject);
+                expect(mockPolicyService.allow)
+                    .toHaveBeenCalledWith("navigation", jasmine.any(Object), jasmine.any(Object), jasmine.any(Function));
+            });
+
+            it("prompts user if policy rejection", function () {
+                action.perform();
+                expect(mockPolicyService.allow).toHaveBeenCalled();
+                mockPolicyService.allow.mostRecentCall.args[3]();
+                expect(mockWindow.confirm).toHaveBeenCalled();
+            });
+
+            describe("shows a prompt", function () {
+                beforeEach(function () {
+                    // Ensure the allow callback is called synchronously
+                    mockPolicyService.allow.andCallFake(function () {
+                        return arguments[3]();
+                    });
+                });
+                it("does not navigate on prompt rejection", function () {
+                    mockWindow.confirm.andReturn(false);
+                    action.perform();
+                    expect(mockNavigationService.setNavigation)
+                        .not.toHaveBeenCalled();
+                });
+
+                it("does navigate on prompt acceptance", function () {
+                    mockWindow.confirm.andReturn(true);
+                    action.perform();
+                    expect(mockNavigationService.setNavigation)
+                        .toHaveBeenCalled();
+                });
             });
 
             it("is only applicable when a domain object is in context", function () {

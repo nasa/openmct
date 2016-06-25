@@ -27,6 +27,7 @@ define([
     "./src/MenuArrowController",
     "./src/navigation/NavigationService",
     "./src/navigation/NavigateAction",
+    "./src/navigation/OrphanNavigationHandler",
     "./src/windowing/NewTabAction",
     "./src/windowing/FullscreenAction",
     "./src/windowing/WindowTitler",
@@ -47,6 +48,7 @@ define([
     MenuArrowController,
     NavigationService,
     NavigateAction,
+    OrphanNavigationHandler,
     NewTabAction,
     FullscreenAction,
     WindowTitler,
@@ -91,11 +93,9 @@ define([
                         "$scope",
                         "$route",
                         "$location",
-                        "$window",
                         "objectService",
                         "navigationService",
                         "urlService",
-                        "policyService",
                         "DEFAULT_PATH"
                     ]
                 },
@@ -199,7 +199,9 @@ define([
                     "implementation": NavigateAction,
                     "depends": [
                         "navigationService",
-                        "$q"
+                        "$q",
+                        "policyService",
+                        "$window"
                     ]
                 },
                 {
@@ -252,6 +254,14 @@ define([
                         "navigationService",
                         "$rootScope",
                         "$document"
+                    ]
+                },
+                {
+                    "implementation": OrphanNavigationHandler,
+                    "depends": [
+                        "throttle",
+                        "topic",
+                        "navigationService"
                     ]
                 }
             ],

@@ -37,9 +37,8 @@ define(
                 mockUrlService,
                 mockDomainObject,
                 mockNextObject,
-                mockWindow,
-                mockPolicyService,
                 testDefaultRoot,
+                mockActionCapability,
                 controller;
 
             function mockPromise(value) {
@@ -55,25 +54,14 @@ define(
                     mockScope,
                     mockRoute,
                     mockLocation,
-                    mockWindow,
                     mockObjectService,
                     mockNavigationService,
                     mockUrlService,
-                    mockPolicyService,
                     testDefaultRoot
                 );
             }
 
             beforeEach(function () {
-                mockWindow = jasmine.createSpyObj('$window', [
-                   "confirm"
-                ]);
-                mockWindow.confirm.andReturn(true);
-
-                mockPolicyService = jasmine.createSpyObj('policyService', [
-                    'allow'
-                ]);
-
                 testDefaultRoot = "some-root-level-domain-object";
 
                 mockScope = jasmine.createSpyObj(
@@ -127,6 +115,8 @@ define(
                 mockNextObject.useCapability.andReturn(undefined);
                 mockNextObject.getId.andReturn("next");
                 mockDomainObject.getId.andReturn(testDefaultRoot);
+
+                mockActionCapability = jasmine.createSpyObj('actionCapability', ['perform']);
 
                 instantiateController();
             });
@@ -211,8 +201,13 @@ define(
                 mockContext.getPath.andReturn(
                     [mockRootObject, mockDomainObject, mockNextObject]
                 );
+
+                //Return true from navigate action
+                mockActionCapability.perform.andReturn(mockPromise(true));
+
                 mockNextObject.getCapability.andCallFake(function (c) {
-                    return c === 'context' && mockContext;
+                    return (c === 'context' && mockContext) ||
+                        (c === 'action' && mockActionCapability);
                 });
                 mockScope.$on.andReturn(mockUnlisten);
                 // Provide a navigation change
@@ -225,6 +220,7 @@ define(
                 mockLocation.path.andReturn("/browse/");
 
                 mockNavigationService.setNavigation.andReturn(true);
+                mockActionCapability.perform.andReturn(mockPromise(true));
 
                 // Exercise the Angular workaround
                 mockNavigationService.addListener.mostRecentCall.args[0]();
@@ -243,6 +239,9 @@ define(
                 mockScope.navigatedObject = mockDomainObject;
                 mockNavigationService.setNavigation.andReturn(true);
 
+                mockActionCapability.perform.andReturn(mockPromise(true));
+                mockNextObject.getCapability.andReturn(mockActionCapability);
+
                 //Simulate a change in selected tree object
                 mockScope.treeModel = {selectedObject: mockDomainObject};
                 mockScope.$watch.mostRecentCall.args[1](mockNextObject);
@@ -254,11 +253,10 @@ define(
             it("after failed navigation event resets the selected tree" +
                 " object", function () {
                 mockScope.navigatedObject = mockDomainObject;
-                mockWindow.confirm.andReturn(false);
-                mockPolicyService.allow.andCallFake(function (category, object, context, callback) {
-                    callback("unsaved changes");
-                    return false;
-                });
+
+                //Return false from navigation action
+                mockActionCapability.perform.andReturn(mockPromise(false));
+                mockNextObject.getCapability.andReturn(mockActionCapability);
 
                 //Simulate a change in selected tree object
                 mockScope.treeModel = {selectedObject: mockDomainObject};

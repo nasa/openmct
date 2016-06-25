@@ -72,10 +72,10 @@ define(
              * Maintain a configuration object on scope that stores column
              * configuration. On change, synchronize with object model.
              */
-            $scope.$watchCollection('configuration.table.columns', function (columns) {
-                if (columns) {
+            $scope.$watchCollection('configuration.table.columns', function (newColumns, oldColumns) {
+                if (newColumns !== oldColumns) {
                     self.domainObject.useCapability('mutation', function (model) {
-                        model.configuration.table.columns = columns;
+                        model.configuration.table.columns = newColumns;
                     });
                     self.domainObject.getCapability('persistence').persist();
                 }

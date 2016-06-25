@@ -27,11 +27,15 @@ define([], function () {
      * in a domain object's composition.
      * @param {number} index the zero-based index of the composition
      *        element associated with this column
+     * @param idMap an object containing key value pairs, where keys
+     *        are domain object identifiers and values are whatever
+     *        should appear in CSV output in their place
      * @constructor
      * @implements {platform/features/timeline.TimelineCSVColumn}
      */
-    function CompositionColumn(index) {
+    function CompositionColumn(index, idMap) {
         this.index = index;
+        this.idMap = idMap;
     }
 
     CompositionColumn.prototype.name = function () {
@@ -41,7 +45,9 @@ define([], function () {
     CompositionColumn.prototype.value = function (domainObject) {
         var model = domainObject.getModel(),
             composition = model.composition || [];
-        return (composition[this.index]) || "";
+
+        return composition.length > this.index ?
+            this.idMap[composition[this.index]] : "";
     };
 
     return CompositionColumn;

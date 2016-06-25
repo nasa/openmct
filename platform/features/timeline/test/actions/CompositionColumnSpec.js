@@ -23,13 +23,20 @@
 define(
     ['../../src/actions/CompositionColumn'],
     function (CompositionColumn) {
+        var TEST_IDS = ['a', 'b', 'c', 'd', 'e', 'f'];
+
         describe("CompositionColumn", function () {
             var testIndex,
+                testIdMap,
                 column;
 
             beforeEach(function () {
                 testIndex = 3;
-                column = new CompositionColumn(testIndex);
+                testIdMap = TEST_IDS.reduce(function (map, id, index) {
+                    map[id] = index;
+                    return map;
+                }, {});
+                column = new CompositionColumn(testIndex, testIdMap);
             });
 
             it("includes a one-based index in its name", function () {
@@ -46,15 +53,13 @@ define(
                         'domainObject',
                         ['getId', 'getModel', 'getCapability']
                     );
-                    testModel = {
-                        composition: ['a', 'b', 'c', 'd', 'e', 'f']
-                    };
+                    testModel = { composition: TEST_IDS };
                     mockDomainObject.getModel.andReturn(testModel);
                 });
 
-                it("returns a corresponding identifier", function () {
+                it("returns a corresponding value from the map", function () {
                     expect(column.value(mockDomainObject))
-                        .toEqual(testModel.composition[testIndex]);
+                        .toEqual(testIdMap[testModel.composition[testIndex]]);
                 });
 
                 it("returns nothing when composition is exceeded", function () {

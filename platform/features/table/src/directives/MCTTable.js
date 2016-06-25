@@ -81,7 +81,13 @@ define(
             return {
                 restrict: "E",
                 template: TableTemplate,
-                controller: ['$scope', '$timeout', '$element', MCTTableController],
+                controller: [
+                    '$scope',
+                    '$timeout',
+                    '$element',
+                    'exportService',
+                    MCTTableController
+                ],
                 scope: {
                     headers: "=",
                     rows: "=",

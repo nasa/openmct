@@ -170,7 +170,7 @@ define([
                         "navigationService",
                         "$log"
                     ],
-                    "description": "Edit this object.",
+                    "description": "Edit",
                     "category": "view-control",
                     "glyph": "p"
                 },

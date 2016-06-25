@@ -128,7 +128,7 @@
             <div style="overflow: hidden; position: absolute; left: 0; top: 0; right: 0; height: 30px;" mct-scroll-x="scroll.x">
                 <mct-include key="'timeline-ticks'"
                              parameters="{
-                                         fullWidth: timelineController.width(zoomController),
+                                         fullWidth: zoomController.width(timelineController.end()),
                                          start: scroll.x,
                                          width: scroll.width,
                                          step: zoomController.toPixels(zoomController.zoom()),
@@ -141,7 +141,7 @@
                  mct-scroll-x="scroll.x"
                  mct-scroll-y="scroll.y">
                 <div class="l-width-control"
-                     ng-style="{ width: timelineController.width(zoomController) + 'px' }">
+                     ng-style="{ width: zoomController.width(timelineController.end()) + 'px' }">
                     <div class="t-swimlane s-swimlane l-swimlane"
                          ng-repeat="swimlane in timelineController.swimlanes()"
                          ng-class="{
@@ -197,7 +197,7 @@
             <div mct-scroll-x="scroll.x"
                  class="t-pane-r-scroll-h-control l-scroll-control s-scroll-control">
                 <div class="l-width-control"
-                     ng-style="{ width: timelineController.width(zoomController) + 'px' }">
+                     ng-style="{ width: zoomController.width(timelineController.end()) + 'px' }">
                 </div>
             </div>
         </div>

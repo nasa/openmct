@@ -1,13 +1,10 @@
 .l-image-main-wrapper,
-.l-image-main,
-.l-image-main-controlbar,
 .l-image-thumbs-wrapper {
 	@include absPosDefault(0, false);
 }
 
 /*************************************** MAIN LAYOUT */
 .l-image-main-wrapper {
-	//@include test();
 	@if $enableImageryThumbs == true {
 		bottom: $interiorMargin*2 +  $imageThumbsWrapperH;
 	}
@@ -15,16 +12,14 @@
 	min-width: 150px;
 	.l-image-main {
 		background-color: $colorPlotBg;
-		bottom: $imageMainControlBarH + $interiorMargin;
+        margin-bottom: $interiorMargin;
 	}
 	.l-image-main-controlbar {
-		top: auto;
-		height: $imageMainControlBarH;
+        &.l-flex-row { @include align-items(center); }
 	}
 }
 
 .l-image-thumbs-wrapper {
-	//@include test(red);
 	top: auto;
 	height: $imageThumbsWrapperH;
 }
@@ -44,24 +39,17 @@
 	background-repeat: no-repeat;
 }
 
-.l-image-main {
-	//cursor: crosshair;
-}
-
 .l-image-main-controlbar {
-	//@include test();
 	font-size: 0.8em;
-	line-height: $imageMainControlBarH;
+	line-height: inherit;
 	.left, .right {
 		direction: rtl;
 		overflow: hidden;
 	}
 	.left {
-		//@include test(red);
 		text-align: left;
 	}
 	.right {
-		//@include test(green);
 		z-index: 2;
 	}
 	.l-date,
@@ -71,7 +59,6 @@
 	.l-mag {
 		direction: ltr;
 		display: inline-block;
-		//white-space: nowrap;
 		&:before {
 			content: "\000049";
 		}

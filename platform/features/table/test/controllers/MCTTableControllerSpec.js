@@ -32,7 +32,8 @@ define(
                 mockScope,
                 watches,
                 mockTimeout,
-                mockElement;
+                mockElement,
+                mockExportService;
 
             function promise(value) {
                 return {
@@ -67,11 +68,20 @@ define(
                     offsetHeight: 1000
                 };
 
+                mockExportService = jasmine.createSpyObj('exportService', [
+                    'exportCSV'
+                ]);
+
                 mockScope.displayHeaders = true;
                 mockTimeout = jasmine.createSpy('$timeout');
                 mockTimeout.andReturn(promise(undefined));
 
-                controller = new MCTTableController(mockScope, mockTimeout, mockElement);
+                controller = new MCTTableController(
+                    mockScope,
+                    mockTimeout,
+                    mockElement,
+                    mockExportService
+                );
                 spyOn(controller, 'setVisibleRows').andCallThrough();
             });
 
@@ -147,6 +157,22 @@ define(
                     removeRowFunc(undefined, 2);
                     expect(mockScope.displayRows.length).toBe(2);
                     expect(controller.setVisibleRows).toHaveBeenCalled();
+                });
+
+                it("can be exported as CSV", function () {
+                    controller.setRows(testRows);
+                    controller.setHeaders(Object.keys(testRows[0]));
+                    mockScope.exportAsCSV();
+                    expect(mockExportService.exportCSV)
+                        .toHaveBeenCalled();
+                    mockExportService.exportCSV.mostRecentCall.args[0]
+                        .forEach(function (row, i) {
+                            Object.keys(row).forEach(function (k) {
+                                expect(row[k]).toEqual(
+                                    mockScope.displayRows[i][k].text
+                                );
+                            });
+                        });
                 });
 
                 describe('sorting', function () {

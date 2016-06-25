@@ -34,8 +34,7 @@ define(
             TEST_ID = "test-id",
             DROP_ID = "drop-id";
 
-        //TODO: Disabled for NEM Beta
-        xdescribe("The drop gesture", function () {
+        describe("The drop gesture", function () {
             var mockDndService,
                 mockQ,
                 mockElement,
@@ -143,23 +142,6 @@ define(
                 callbacks.drop(mockEvent);
                 expect(mockCompose.perform).toHaveBeenCalled();
             });
-
-
-            it("does not invoke compose on drop in browse mode for non-folders", function () {
-                // Set the mockDomainObject to not have the editor capability
-                mockDomainObject.hasCapability.andReturn(false);
-                // Set the mockDomainObject to not have a type of folder
-                mockDomainObject.getModel.andReturn({type: 'notAFolder'});
-
-                callbacks.dragover(mockEvent);
-                expect(mockAction.getActions).toHaveBeenCalledWith({
-                    key: 'compose',
-                    selectedObject: mockDraggedObject
-                });
-                callbacks.drop(mockEvent);
-                expect(mockCompose.perform).not.toHaveBeenCalled();
-            });
-
 
             it("invokes compose on drop in browse mode for folders", function () {
                 // Set the mockDomainObject to not have the editor capability

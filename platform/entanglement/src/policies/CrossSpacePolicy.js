@@ -24,10 +24,7 @@ define(
     [],
     function () {
 
-        var DISALLOWED_ACTIONS = [
-            "move",
-            "copy"
-        ];
+        var DISALLOWED_ACTIONS = ["move"];
 
         /**
          * This policy prevents performing move/copy/link actions across

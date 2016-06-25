@@ -183,12 +183,12 @@ $scrollbarThumbColorOverlay: darken($colorOvrBg, 50%);
 $scrollbarThumbColorOverlayHov: $scrollbarThumbColorHov;
 
 // Splitter
-$splitterD: 24px;
+$splitterD: 16px; // splitterD and $splitterHandleD should both be odd, or even
 $splitterHandleD: 2px;
 $colorSplitterBg: pullForward($colorBodyBg, 10%);
 $splitterShdw: none;
 $splitterEndCr: none;
-$colorSplitterHover: none;
+$colorSplitterHover: pullForward($colorBodyBg, 30%);
 $colorSplitterActive: $colorKey;
 
 // Mobile
