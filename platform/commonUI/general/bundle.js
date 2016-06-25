@@ -204,6 +204,7 @@ define([
                     "implementation": TimeRangeController,
                     "depends": [
                         "$scope",
+                        "$timeout",
                         "formatService",
                         "DEFAULT_TIME_FORMAT",
                         "now"

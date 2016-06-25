@@ -53,7 +53,7 @@ define([
      *        format has been otherwise specified
      * @param {Function} now a function to return current system time
      */
-    function TimeRangeController($scope, formatService, defaultFormat, now) {
+    function TimeRangeController($scope, $timeout, formatService, defaultFormat, now) {
         this.$scope = $scope;
         this.formatService = formatService;
         this.defaultFormat = defaultFormat;
@@ -66,6 +66,7 @@ define([
         this.formatter = formatService.getFormat(defaultFormat);
         this.formStartChanged = false;
         this.formEndChanged = false;
+        this.$timeout = $timeout;
 
         this.$scope.ticks = [];
 
@@ -259,18 +260,23 @@ define([
     };
 
     TimeRangeController.prototype.updateBoundsFromForm = function () {
-        if (this.formStartChanged) {
-            this.$scope.ngModel.outer.start =
-                this.$scope.ngModel.inner.start =
-                this.$scope.formModel.start;
-            this.formStartChanged = false;
-        }
-        if (this.formEndChanged) {
-            this.$scope.ngModel.outer.end =
-                this.$scope.ngModel.inner.end =
-                this.$scope.formModel.end;
-            this.formEndChanged = false;
-        }
+        var self = this;
+
+        //Allow Angular to trigger watches and determine whether values have changed.
+        this.$timeout(function () {
+            if (self.formStartChanged) {
+                self.$scope.ngModel.outer.start =
+                    self.$scope.ngModel.inner.start =
+                        self.$scope.formModel.start;
+                self.formStartChanged = false;
+            }
+            if (self.formEndChanged) {
+                self.$scope.ngModel.outer.end =
+                    self.$scope.ngModel.inner.end =
+                        self.$scope.formModel.end;
+                self.formEndChanged = false;
+            }
+        });
     };
 
     TimeRangeController.prototype.onFormStartChange = function (
