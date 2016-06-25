@@ -100,7 +100,9 @@ define(
                 mockDialogService = jasmine.createSpyObj(
                     "dialogService",
                     [
-                        "getUserInput"
+                        "getUserInput",
+                        "showBlockingMessage",
+                        "dismiss"
                     ]
                 );
                 mockDialogService.getUserInput.andReturn(mockPromise(undefined));
@@ -167,6 +169,19 @@ define(
             it("prompts the user for object details", function () {
                 action.perform();
                 expect(mockDialogService.getUserInput).toHaveBeenCalled();
+            });
+
+            it("shows a blocking dialog while waiting for save", function () {
+                mockEditorCapability.save.andReturn(new Promise(function () {}));
+                action.perform();
+                expect(mockDialogService.showBlockingMessage).toHaveBeenCalled();
+                expect(mockDialogService.dismiss).not.toHaveBeenCalled();
+            });
+
+            it("hides the blocking dialog after saving", function () {
+                action.perform();
+                expect(mockDialogService.showBlockingMessage).toHaveBeenCalled();
+                expect(mockDialogService.dismiss).toHaveBeenCalled();
             });
 
         });
