@@ -28,6 +28,7 @@ define(
             var mockDomainObject,
                 mockEditorCapability,
                 actionContext,
+                dialogService,
                 mockActionCapability,
                 capabilities = {},
                 action;
@@ -35,6 +36,9 @@ define(
             function mockPromise(value) {
                 return {
                     then: function (callback) {
+                        return mockPromise(callback(value));
+                    },
+                    catch: function (callback) {
                         return mockPromise(callback(value));
                     }
                 };
@@ -64,6 +68,10 @@ define(
                 actionContext = {
                     domainObject: mockDomainObject
                 };
+                dialogService = jasmine.createSpyObj(
+                    "dialogService",
+                    ["showBlockingMessage", "dismiss"]
+                );
 
                 mockDomainObject.hasCapability.andReturn(true);
                 mockDomainObject.getCapability.andCallFake(function (capability) {
@@ -73,8 +81,7 @@ define(
                 mockEditorCapability.save.andReturn(mockPromise(true));
                 mockEditorCapability.isEditContextRoot.andReturn(true);
 
-                action = new SaveAction(actionContext);
-
+                action = new SaveAction(dialogService, actionContext);
             });
 
             it("only applies to domain object with an editor capability", function () {
@@ -103,6 +110,19 @@ define(
                     action.perform();
                     expect(mockActionCapability.perform).toHaveBeenCalledWith("navigate");
                 });
+
+            it("shows a dialog while saving", function () {
+                mockEditorCapability.save.andReturn(new Promise(function () {}));
+                action.perform();
+                expect(dialogService.showBlockingMessage).toHaveBeenCalled();
+                expect(dialogService.dismiss).not.toHaveBeenCalled();
+            });
+
+            it("hides a dialog when saving is complete", function () {
+                action.perform();
+                expect(dialogService.showBlockingMessage).toHaveBeenCalled();
+                expect(dialogService.dismiss).toHaveBeenCalled();
+            });
 
         });
     }
