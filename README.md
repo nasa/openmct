@@ -87,6 +87,10 @@ installed and then run the following commands:
 
 Documentation will be generated in `target/docs`.
 
+### Run the app
+
+Please see [tutorial](https://github.com/nasa/openmct/blob/master/docs/src/tutorials/index.md)
+
 # Glossary
 
 Certain terms are used throughout Open MCT with consistent meanings
