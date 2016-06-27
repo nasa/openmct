@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    [],
-    function () {
+    ['./SaveInProgressDialog'],
+    function (SaveInProgressDialog) {
 
         /**
          * The "Save" action; the action triggered by clicking Save from
@@ -33,9 +33,11 @@ define(
          * @memberof platform/commonUI/edit
          */
         function SaveAction(
+            dialogService,
             context
         ) {
             this.domainObject = (context || {}).domainObject;
+            this.dialogService = dialogService;
         }
 
         /**
@@ -46,7 +48,8 @@ define(
          * @memberof platform/commonUI/edit.SaveAction#
          */
         SaveAction.prototype.perform = function () {
-            var domainObject = this.domainObject;
+            var domainObject = this.domainObject,
+                dialog = new SaveInProgressDialog(this.dialogService);
 
             function resolveWith(object) {
                 return function () {
@@ -72,8 +75,17 @@ define(
                 return object;
             }
 
-            //return doSave().then(returnToBrowse);
-            return doSave().then(returnToBrowse);
+            function hideBlockingDialog(object) {
+                dialog.hide();
+                return object;
+            }
+
+            dialog.show();
+
+            return doSave()
+                .then(hideBlockingDialog)
+                .then(returnToBrowse)
+                .catch(hideBlockingDialog);
         };
 
         /**

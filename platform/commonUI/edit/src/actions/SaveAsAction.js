@@ -21,9 +21,14 @@
  *****************************************************************************/
 
 
-define(
-    ['../creation/CreateWizard'],
-    function (CreateWizard) {
+define([
+    '../creation/CreateWizard',
+    './SaveInProgressDialog'
+],
+    function (
+        CreateWizard,
+        SaveInProgressDialog
+    ) {
 
         /**
          * The "Save" action; the action triggered by clicking Save from
@@ -109,7 +114,8 @@ define(
                 domainObject = this.domainObject,
                 copyService = this.copyService,
                 transactionService = this.transactionService,
-                cancelOldTransaction;
+                cancelOldTransaction,
+                dialog = new SaveInProgressDialog(this.dialogService);
 
             function doWizardSave(parent) {
                 var wizard = self.createWizard(parent);
@@ -118,6 +124,16 @@ define(
                     .getUserInput(wizard.getFormStructure(true),
                         wizard.getInitialFormValue()
                     ).then(wizard.populateObjectFromInput.bind(wizard));
+            }
+
+            function showBlockingDialog(object) {
+                dialog.show();
+                return object;
+            }
+
+            function hideBlockingDialog(object) {
+                dialog.hide();
+                return object;
             }
 
             function fetchObject(objectId) {
@@ -154,15 +170,23 @@ define(
                 return object;
             }
 
+            function onFailure() {
+                hideBlockingDialog();
+                return false;
+            }
+
             return getParent(domainObject)
                 .then(doWizardSave)
+                .then(showBlockingDialog)
                 .then(getParent)
                 .then(restartTransaction)
                 .then(cloneIntoParent)
                 .then(commitEditingAfterClone)
                 .then(doCancelOldTransaction)
-                .catch(resolveWith(false));
+                .then(hideBlockingDialog)
+                .catch(onFailure);
         };
+
 
         /**
          * Check if this action is applicable in a given context.

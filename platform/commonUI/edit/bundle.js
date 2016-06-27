@@ -206,7 +206,9 @@ define([
                     "implementation": SaveAction,
                     "name": "Save",
                     "description": "Save changes made to these objects.",
-                    "depends": [],
+                    "depends": [
+                        "dialogService"
+                    ],
                     "priority": "mandatory"
                 },
                 {
