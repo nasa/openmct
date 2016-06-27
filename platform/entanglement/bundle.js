@@ -67,6 +67,7 @@ define([
                     "name": "Move",
                     "description": "Move object to another location.",
                     "glyph": "f",
+                    "cssclass": "icon-move",
                     "category": "contextual",
                     "implementation": MoveAction,
                     "depends": [
@@ -80,6 +81,7 @@ define([
                     "name": "Duplicate",
                     "description": "Duplicate object to another location.",
                     "glyph": "+",
+                    "cssclass": "icon-duplicate",
                     "category": "contextual",
                     "implementation": CopyAction,
                     "depends": [
@@ -96,6 +98,7 @@ define([
                     "name": "Create Link",
                     "description": "Create Link to object in another location.",
                     "glyph": "è",
+                    "cssclass": "icon-link",
                     "category": "contextual",
                     "implementation": LinkAction,
                     "depends": [
@@ -108,7 +111,7 @@ define([
                     "key": "follow",
                     "name": "Go To Original",
                     "description": "Go to the original, un-linked instance of this object.",
-                    "glyph": "ô",
+                    "glyph": "",
                     "category": "contextual",
                     "implementation": GoToOriginalAction
                 },

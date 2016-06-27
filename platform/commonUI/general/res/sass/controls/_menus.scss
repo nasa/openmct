@@ -120,11 +120,12 @@
 		a.menu-item-a {
             color: $colorMenuFg;
             display: block;
-            &:before {
-                color: $colorMenuIc;
-                left: $interiorMargin;
-            }
 		}
+        &:before,
+        a.menu-item-a:before {
+            color: $colorMenuIc;
+            left: $interiorMargin;
+        }
 	}
 }
 

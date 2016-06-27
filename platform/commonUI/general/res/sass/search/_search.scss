@@ -29,9 +29,7 @@
 
 .clear-icon {
     // 'x' in circle icon
-    &:before {
-        content: '\e607';
-    }
+    @extend .icon-x-in-circle;
 }
 
 .holder-search {
@@ -41,6 +39,7 @@
 		$textInputHeight: 19px; // This is equal to the default value, 19px
 		$iconEdgeM: 4px;
 		$iconD: $treeSearchInputBarH - ($iconEdgeM*2);
+        @extend .icon-magnify;
 		font-size: 0.8em;
 		position: relative;
 
@@ -76,8 +75,6 @@
 
 		&:before {
             // Magnify glass icon
-            content:'\4d';
-            font-family: symbolsfont;
             left: $interiorMarginSm;
             @include trans-prop-nice(color, 250ms);
             pointer-events: none;

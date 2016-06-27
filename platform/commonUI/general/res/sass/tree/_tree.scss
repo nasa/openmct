@@ -151,7 +151,7 @@ mct-representation {
             @extend .ui-symbol;
             @include pulse($dur: 1s, $opacity0: 0.25);
             color: $colorItemTreeEditingFg;
-            content: '\70';
+            content: $glyph-icon-pencil;
             margin-right: $interiorMarginSm;
         }
         .t-object-label {

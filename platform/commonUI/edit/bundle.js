@@ -195,6 +195,7 @@ define([
                     "category": "contextual",
                     "implementation": RemoveAction,
                     "glyph": "Z",
+                    "cssclass": "icon-trash",
                     "name": "Remove",
                     "description": "Remove this object from its containing object.",
                     "depends": [

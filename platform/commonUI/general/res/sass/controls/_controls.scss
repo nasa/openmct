@@ -166,8 +166,8 @@ label.radio.custom {
     }
 }
 
-label.checkbox.custom input:checked ~ em:before { content: "\32"; }
-label.radio.custom input:checked ~ em:before { content: "\e619"; }
+label.checkbox.custom input:checked ~ em:before { content: $glyph-icon-check; }
+label.radio.custom input:checked ~ em:before { content: $glyph-icon-bullet; }
 
 .s-menu-btn label.checkbox.custom {
     margin-left: 5px;
