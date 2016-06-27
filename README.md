@@ -1,4 +1,4 @@
-# Open MCT
+# Open MCT [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
 Open MCT is a web-based platform for mission operations user interface
 software.
@@ -7,7 +7,7 @@ software.
 
 A bundle is a group of software components (including source code, declared
 as AMD modules, as well as resources such as images and HTML templates)
-that are intended to be added or removed as a single unit. A plug-in for
+that is intended to be added or removed as a single unit. A plug-in for
 Open MCT will be expressed as a bundle; platform components are also
 expressed as bundles.
 
@@ -133,6 +133,6 @@ documentation, may presume an understanding of these terms.
   it, and it is thereafter considered the _navigated_ object (until the
   user makes another such choice.)
 * _space_: A name used to identify a persistence store. Interactions with
-  persistence with generally involve a `space` parameter in some form, to
+  persistence will generally involve a `space` parameter in some form, to
   distinguish multiple persistence stores from one another (for cases
   where there are multiple valid persistence locations available.)

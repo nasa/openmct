@@ -33,6 +33,7 @@ define(
             var mockScope,
                 mockFormatService,
                 testDefaultFormat,
+                mockTimeout,
                 mockNow,
                 mockFormat,
                 controller;
@@ -54,6 +55,10 @@ define(
             }
 
             beforeEach(function () {
+                mockTimeout = function (fn) {
+                    return fn();
+                };
+
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     ["$apply", "$watch", "$watchCollection"]
@@ -78,6 +83,7 @@ define(
 
                 controller = new TimeRangeController(
                     mockScope,
+                    mockTimeout,
                     mockFormatService,
                     testDefaultFormat,
                     mockNow

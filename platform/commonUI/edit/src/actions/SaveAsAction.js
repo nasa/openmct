@@ -21,9 +21,14 @@
  *****************************************************************************/
 
 
-define(
-    ['../creation/CreateWizard'],
-    function (CreateWizard) {
+define([
+    '../creation/CreateWizard',
+    './SaveInProgressDialog'
+],
+    function (
+        CreateWizard,
+        SaveInProgressDialog
+    ) {
 
         /**
          * The "Save" action; the action triggered by clicking Save from
@@ -105,7 +110,8 @@ define(
         SaveAsAction.prototype.save = function () {
             var self = this,
                 domainObject = this.domainObject,
-                copyService = this.copyService;
+                copyService = this.copyService,
+                dialog = new SaveInProgressDialog(this.dialogService);
 
             function doWizardSave(parent) {
                 var wizard = self.createWizard(parent);
@@ -114,6 +120,16 @@ define(
                     .getUserInput(wizard.getFormStructure(true),
                         wizard.getInitialFormValue()
                     ).then(wizard.populateObjectFromInput.bind(wizard));
+            }
+
+            function showBlockingDialog(object) {
+                dialog.show();
+                return object;
+            }
+
+            function hideBlockingDialog(object) {
+                dialog.hide();
+                return object;
             }
 
             function fetchObject(objectId) {
@@ -140,13 +156,21 @@ define(
                     .then(resolveWith(clonedObject));
             }
 
+            function onFailure() {
+                hideBlockingDialog();
+                return false;
+            }
+
             return getParent(domainObject)
                 .then(doWizardSave)
+                .then(showBlockingDialog)
                 .then(getParent)
                 .then(cloneIntoParent)
                 .then(commitEditingAfterClone)
-                .catch(resolveWith(false));
+                .then(hideBlockingDialog)
+                .catch(onFailure);
         };
+
 
         /**
          * Check if this action is applicable in a given context.
