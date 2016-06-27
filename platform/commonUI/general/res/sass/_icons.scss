@@ -88,9 +88,9 @@
     position: relative;
     &.l-icon-link {
         .t-item-icon-glyph {
-            &:before {
+            &:after {
                 color: $colorIconLink;
-                content: "\f4";
+                content: "\e921";
                 height: auto; width: auto;
                 position: absolute;
                 left: 0; top: 0; right: 0; bottom: 10%;

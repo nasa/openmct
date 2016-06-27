@@ -40,7 +40,7 @@ mct-representation,
     &.s-status-pending {
         .t-object-label {
             .t-item-icon {
-                &:before {
+                &:after {
                     @include spinner($waitSpinnerTreeBorderW,  $colorLoadingFg);
                     content: "";
                     height: $waitSpinnerTreeD; width: $waitSpinnerTreeD;
@@ -59,7 +59,7 @@ mct-representation,
 
 .selected mct-representation,
 .selected .rep-object-label {
-    .s-status-pending .t-object-label .t-item-icon:before {
+    .s-status-pending .t-object-label .t-item-icon:after {
         border-color: rgba($colorItemTreeSelectedFg, 0.25) !important;
         border-top-color: rgba($colorItemTreeSelectedFg, 1.0) !important;
     }

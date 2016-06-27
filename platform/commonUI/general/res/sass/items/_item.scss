@@ -91,7 +91,7 @@
                     font-size: $iconD * 0.95;
                     &.l-icon-link {
                         .t-item-icon-glyph {
-                            &:before {
+                            &:after {
                                 @include transform(scale(0.25));
                             }
                         }

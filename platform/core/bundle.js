@@ -275,11 +275,13 @@ define([
                 {
                     "key": "unknown",
                     "name": "Unknown Type",
-                    "glyph": "\u003f"
+                    "glyph": "\u003f",
+                    "cssclass": "icon-object-unknown"
                 },
                 {
                     "name": "Unknown Type",
-                    "glyph": "\u003f"
+                    "glyph": "\u003f",
+                    "cssclass": "icon-object-unknown"
                 }
             ],
             "capabilities": [
