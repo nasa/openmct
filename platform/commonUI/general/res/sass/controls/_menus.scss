@@ -117,14 +117,13 @@
 .s-menu-btn .menu {
 	pointer-events: auto;
 	ul li {
-		a {
-			// TO-DO: factor this <a> out
+		a.menu-item-a {
             color: $colorMenuFg;
             display: block;
-		}
-        &:before {
-            color: $colorMenuIc;
-			left: $interiorMargin;
+            &:before {
+                color: $colorMenuIc;
+                left: $interiorMargin;
+            }
 		}
 	}
 }
