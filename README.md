@@ -1,7 +1,43 @@
 # Open MCT
 
-Open MCT is a web-based platform for mission operations user interface
-software.
+Open MCT is a next-generation mission control framework being developed at the NASA Ames Research Center in Silicon Valley. Web-based, for desktop and mobile.
+
+##HOW IS NASA USING OPEN MCT?
+
+Software based on Open MCT is being used for mission planning and operations in the lead up to the [Resource Prospector mission](https://www.nasa.gov/resource-prospector) and at NASA's Jet Propulsion Laboratory to view data from the Curiosity Rover.
+
+##Features
+
+ - Support planning and operations of any system that produces telemetry
+ -  Support space missions
+ - Visualize Data
+   - Streaming Data
+   - Historical Data
+   - Imagery
+   - Timelines
+   - Procedures
+   - etc.
+
+##See Open MCT in Action
+[LIVE DEMO](https://openmct-demo.herokuapp.com/)
+![Demo](https://nasa.github.io/openmct/static/res/images/Open-MCT.Browse.Layout.Mars-Weather-1.jpg)
+
+##Getting Started
+
+1. Download or Clone OpenMCT
+ `git clone https://github.com/nasa/openmct.git`
+
+2. Install Development Dependencies
+    `npm install`
+
+3. Run on your local machine
+    `npm start`
+
+4. Open your web browser and go to http://localhost:8080/
+
+5. Wait for splash screen finish then you should be able to play with Open MCT.
+
+For more information on building and running Open MCT, please see our getting started guide - https://nasa.github.io/openmct/getting-started/
 
 ## Build
 
@@ -21,27 +57,6 @@ instance (e.g. by starting an HTTP server in that directory), including:
 * An `index.html` that runs Open MCT in its default configuration.
 
 Additional `gulp` tasks are defined in [the gulpfile](gulpfile.js).
-
-### Building Open MCT
-
-Once downloaded, Open MCT can be built with the following command:
-
-    npm install
-
-This will install various dependencies, build CSS from Sass files, run tests,
-and lint the source code.
-
-It's not necessary to do this after every code change, unless you are making
-changes to stylesheets, or you are running the minified version of the app
-(under `dist`).
-
-### Running Open MCT
-
-Once built, Open MCT can be run using the command:
-
-    npm start
-
-For more information on building and running Open MCT, please see our getting started guide - https://nasa.github.io/openmct/getting-started/
 
 ### Building Documentation
 
