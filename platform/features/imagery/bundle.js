@@ -42,6 +42,7 @@ define([
                     "name": "Imagery",
                     "key": "imagery",
                     "glyph": "ã",
+                    "cssclass": "icon-image",
                     "template": imageryTemplate,
                     "priority": "preferred",
                     "needs": [

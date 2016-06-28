@@ -28,12 +28,14 @@ define(
                 key: "stacked",
                 name: "Stacked",
                 glyph: "m",
+                cssclass: "icon-menu-hamburger",
                 Constructor: PlotStackMode
             },
             OVERLAID = {
                 key: "overlaid",
                 name: "Overlaid",
                 glyph: "6",
+                cssclass: "icon-sine",
                 Constructor: PlotOverlayMode
             };
 

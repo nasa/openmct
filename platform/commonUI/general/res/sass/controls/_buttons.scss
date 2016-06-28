@@ -38,6 +38,11 @@ $pad: $interiorMargin * $baseRatio;
     vertical-align: top;
     @include btnSubtle($colorBtnBg, $colorBtnBgHov, $colorBtnFg, $colorBtnIcon);
 
+    &:before {
+        // Icon when it's included
+        margin-right: $interiorMarginSm;
+    }
+
 	&.lg {
 		font-size: 1rem;
 	}
@@ -56,43 +61,17 @@ $pad: $interiorMargin * $baseRatio;
         @include btnSubtle($bg, $hc, $colorBtnMajorFg, $colorBtnMajorFg);
     }
 
-    &.t-save {
-        @extend .icon-save;
-    }
-    &.t-save-as:before {
-        content:'\e612';
-        font-family: symbolsfont;
-        margin-right: $interiorMarginSm;
-    }
-    &.t-cancel {
-        @extend .icon-x;
-        .title-label { display: none; }
+    &.no-label {
+        .label, .title-label { display: none; }
     }
 
     &.pause-play {
-        // TO-DO: glyph refactoring
-        .icon:before {
-            content: "\0000F1";
-        }
+        @extend .icon-pause;
         &.paused {
             @include btnSubtle($colorPausedBg, pushBack($colorPausedBg, 10%), $colorPausedFg, $colorPausedFg);
-            .icon {
-                @include pulse($dur: 1000ms);
-                :before {
-                    content: "\0000EF";
-                }
-            }
+            @extend .icon-play;
+            &:before { @include pulse($dur: 1000ms); }
         }
-    }
-
-    &.show-thumbs {
-        .icon:before {
-            content: "\000039";
-        }
-    }
-
-    &.t-export {
-        @extend .icon-download;
     }
 
     .icon {
@@ -105,7 +84,7 @@ $pad: $interiorMargin * $baseRatio;
 }
 
 .s-icon-btn {
-    // TO-DO: glyph refactoring
+    // TODO: glyph refactoring
     $c: $colorKey;
     @extend .s-btn;
     &:before {

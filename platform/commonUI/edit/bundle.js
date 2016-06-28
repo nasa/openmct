@@ -208,6 +208,7 @@ define([
                     "category": "conclude-editing",
                     "implementation": SaveAction,
                     "name": "Save",
+                    "cssclass": "icon-save",
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "dialogService"
@@ -218,7 +219,8 @@ define([
                     "key": "save",
                     "category": "conclude-editing",
                     "implementation": SaveAsAction,
-                    "name": "Save",
+                    "name": "Save As...",
+                    "cssclass": "icon-save",
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "$injector",
@@ -234,6 +236,7 @@ define([
                     "category": "conclude-editing",
                     "implementation": CancelAction,
                     "name": "Cancel",
+                    "cssclass": "icon-x no-label",
                     "description": "Discard changes made to these objects.",
                     "depends": []
                 }
