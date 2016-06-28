@@ -46,6 +46,7 @@ define([
                     "name": "Plot",
                     "key": "plot",
                     "glyph": "6",
+                    "cssclass": "icon-sine",
                     "template": plotTemplate,
                     "needs": [
                         "telemetry"

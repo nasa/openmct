@@ -137,6 +137,7 @@ define([
                     "category": "contextual",
                     "name": "Start",
                     "glyph": "ï",
+                    "cssclass": "icon-play",
                     "priority": "preferred"
                 },
                 {
@@ -148,6 +149,7 @@ define([
                     "category": "contextual",
                     "name": "Restart at 0",
                     "glyph": "r",
+                    "cssclass": "icon-refresh",
                     "priority": "preferred"
                 }
             ],

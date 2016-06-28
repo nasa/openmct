@@ -130,6 +130,7 @@ define([
                     "name": "Historical Table",
                     "key": "table",
                     "glyph": "\ue604",
+                    "cssclass": "icon-tabular",
                     "templateUrl": "templates/historical-table.html",
                     "needs": [
                         "telemetry"
@@ -141,6 +142,7 @@ define([
                     "name": "Real-time Table",
                     "key": "rt-table",
                     "glyph": "\ue620",
+                    "cssclass": "icon-tabular-realtime",
                     "templateUrl": "templates/rt-table.html",
                     "needs": [
                         "telemetry"

@@ -67,6 +67,7 @@ define([
                     "key": "fixed",
                     "name": "Fixed Position",
                     "glyph": "3",
+                    "cssclass": "icon-telemetry-panel",
                     "type": "telemetry.panel",
                     "template": fixedTemplate,
                     "uses": [
