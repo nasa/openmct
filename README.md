@@ -2,6 +2,8 @@
 
 Open MCT is a next-generation mission control framework being developed at the NASA Ames Research Center in Silicon Valley. Web-based, for desktop and mobile.
 
+[Official Site](https://nasa.github.io/openmct/)
+
 ##How is NASA Using Open MCT?
 
 Software based on Open MCT is being used for mission planning and operations in the lead up to the [Resource Prospector mission](https://www.nasa.gov/resource-prospector) and at NASA's Jet Propulsion Laboratory to view data from the Curiosity Rover.
