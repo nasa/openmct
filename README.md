@@ -2,7 +2,7 @@
 
 Open MCT is a next-generation mission control framework being developed at the NASA Ames Research Center in Silicon Valley. Web-based, for desktop and mobile.
 
-[Official Site](https://nasa.github.io/openmct/)
+Please visit our [Official Site](https://nasa.github.io/openmct/)
 
 ##How is NASA Using Open MCT?
 
@@ -21,12 +21,16 @@ Software based on Open MCT is being used for mission planning and operations in 
    - etc.
 
 ##See Open MCT in Action
+
+Do you want to see how Open MCT work? Try our demo.
 [LIVE DEMO](https://openmct-demo.herokuapp.com/)
 ![Demo](https://nasa.github.io/openmct/static/res/images/Open-MCT.Browse.Layout.Mars-Weather-1.jpg)
 
 ##Getting Started
 
-1. Download or Clone OpenMCT
+Here is how to run Open MCT in you local machine.
+
+1. Download or Clone Open MCT
  `git clone https://github.com/nasa/openmct.git`
 
 2. Install Development Dependencies
