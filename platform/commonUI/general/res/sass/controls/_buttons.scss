@@ -22,8 +22,7 @@
 $baseRatio: 1.5;
 $pad: $interiorMargin * $baseRatio;
 
-.s-btn,
-.s-icon-btn {
+.s-btn {
     @include user-select(none);
     cursor: pointer;
     text-decoration: none;
@@ -38,7 +37,7 @@ $pad: $interiorMargin * $baseRatio;
     vertical-align: top;
     @include btnSubtle($colorBtnBg, $colorBtnBgHov, $colorBtnFg, $colorBtnIcon);
 
-    &:before {
+    &.labeled:before {
         // Icon when it's included
         margin-right: $interiorMarginSm;
     }
@@ -80,21 +79,6 @@ $pad: $interiorMargin * $baseRatio;
 
     .title-label {
         vertical-align: top;
-    }
-}
-
-.s-icon-btn {
-    // TODO: glyph refactoring
-    $c: $colorKey;
-    @extend .s-btn;
-    &:before {
-        @extend .ui-symbol;
-        content: '\e901';
-        color: $colorKey;
-        margin-right: $interiorMargin;
-    }
-    &:hover:before {
-        color: pullForward($c, 10%);
     }
 }
 
