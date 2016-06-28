@@ -46,8 +46,7 @@ define(
                     key: "testuserid",
                     name: "A User"
                 });
-                // Should have a single character glyph
-                expect(indicator.getGlyph().length).toEqual(1);
+                expect(indicator.getCssClass()).toEqual("icon-person");
                 expect(indicator.getGlyphClass()).toBeUndefined();
                 expect(indicator.getText()).toEqual("A User");
                 expect(indicator.getDescription().indexOf("testuserid"))
@@ -55,7 +54,7 @@ define(
             });
 
             it("shows nothing while no user information is available", function () {
-                expect(indicator.getGlyph()).toBeUndefined();
+                expect(indicator.getCssClass()).toBeUndefined();
                 expect(indicator.getGlyphClass()).toBeUndefined();
                 expect(indicator.getText()).toBeUndefined();
                 expect(indicator.getDescription()).toBeUndefined();
@@ -63,7 +62,7 @@ define(
 
             it("shows nothing when there is no identity information", function () {
                 mockPromise.then.mostRecentCall.args[0](undefined);
-                expect(indicator.getGlyph()).toBeUndefined();
+                expect(indicator.getCssClass()).toBeUndefined();
                 expect(indicator.getGlyphClass()).toBeUndefined();
                 expect(indicator.getText()).toBeUndefined();
                 expect(indicator.getDescription()).toBeUndefined();

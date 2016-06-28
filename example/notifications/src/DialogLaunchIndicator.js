@@ -32,17 +32,15 @@ define(
          * launched for demonstration and testing purposes.
          * @constructor
          */
+
         function DialogLaunchIndicator() {
 
         }
 
         DialogLaunchIndicator.template = 'dialogLaunchTemplate';
 
-        DialogLaunchIndicator.prototype.getGlyph = function () {
-            return "i";
-        };
         DialogLaunchIndicator.prototype.getGlyphClass = function () {
-            return 'caution';
+            return 'ok';
         };
         DialogLaunchIndicator.prototype.getText = function () {
             return "Launch test dialog";

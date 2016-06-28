@@ -44,8 +44,8 @@ define(
             });
         }
 
-        ClockIndicator.prototype.getGlyph = function () {
-            return "C";
+        ClockIndicator.prototype.getCssClass = function () {
+            return "icon-clock";
         };
 
         ClockIndicator.prototype.getGlyphClass = function () {

@@ -59,8 +59,14 @@ define(
             update();
 
             return {
-                getGlyph: function () {
-                    return ".";
+                /**
+                 * Get the glyph CSS class (single character used as an icon)
+                 * to display in this indicator. This will return ".",
+                 * which should appear as a dataflow icon.
+                 * @returns {string} the character of the dataflow icon
+                 */
+                getCssClass: function () {
+                    return "icon-connectivity";
                 },
                 getGlyphClass: function () {
                     return undefined;

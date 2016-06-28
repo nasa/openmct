@@ -107,6 +107,7 @@ define([
                 return {
                     context: jasmine.createSpyObj('context', ['getPath']),
                     type: jasmine.createSpyObj('type', ['getGlyph']),
+                    cssclass: jasmine.createSpyObj('cssclass', ['getCssClass']),
                     location: jasmine.createSpyObj('location', ['isLink']),
                     mutation: jasmine.createSpyObj('mutation', ['listen']),
                     status: mockStatus

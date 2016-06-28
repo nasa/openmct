@@ -40,8 +40,8 @@ define(
         function LocalStorageIndicator() {
         }
 
-        LocalStorageIndicator.prototype.getGlyph = function () {
-            return "D";
+        LocalStorageIndicator.prototype.getCssClass = function () {
+            return "icon-database";
         };
         LocalStorageIndicator.prototype.getGlyphClass = function () {
             return 'caution';

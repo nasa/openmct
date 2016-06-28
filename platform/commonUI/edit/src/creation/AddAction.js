@@ -52,6 +52,7 @@ define(
             this.metadata = {
                 key: 'add',
                 glyph: type.getGlyph(),
+                cssclass: type.getCssClass(),
                 name: type.getName(),
                 type: type.getKey(),
                 description: type.getDescription(),

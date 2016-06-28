@@ -145,6 +145,7 @@ define(
         };
 
         TypeImpl.prototype.getGlyph = function () {
+            // TO-DO: remove this function
             return this.typeDef.glyph;
         };
 

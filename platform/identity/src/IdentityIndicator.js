@@ -43,8 +43,8 @@ define(
             });
         }
 
-        IdentityIndicator.prototype.getGlyph = function () {
-            return this.text && "P";
+        IdentityIndicator.prototype.getCssClass = function () {
+            return "icon-person";
         };
         IdentityIndicator.prototype.getGlyphClass = function () {
             return undefined;

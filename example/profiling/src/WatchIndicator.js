@@ -55,13 +55,13 @@ define(
 
             return {
                 /**
-                 * Get the glyph (single character used as an icon)
+                 * Get the glyph CSS class (single character used as an icon)
                  * to display in this indicator. This will return ".",
-                 * which should appear as a dataflow icon.
+                 * which should appear as a database icon.
                  * @returns {string} the character of the database icon
                  */
-                getGlyph: function () {
-                    return "E";
+                getCssClass: function () {
+                    return "icon-database";
                 },
                 /**
                  * Get the name of the CSS class to apply to the glyph.

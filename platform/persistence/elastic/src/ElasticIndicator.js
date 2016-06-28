@@ -81,8 +81,8 @@ define(
             $interval(updateIndicator, interval, 0, false);
         }
 
-        ElasticIndicator.prototype.getGlyph = function () {
-            return "D";
+        ElasticIndicator.prototype.getCssClass = function () {
+            return "icon-database";
         };
         ElasticIndicator.prototype.getGlyphClass = function () {
             return this.state.glyphClass;
