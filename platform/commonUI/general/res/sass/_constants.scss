@@ -138,6 +138,6 @@ $browseToEditAnimMs: 400ms;
 $editBorderPulseMs: 500ms;
 
 /************************** LIMITS */
-$glyphLimit: '\e901';
-$glyphLimitUpr: '\e905';
-$glyphLimitLwr: '\e908';
+$glyphLimit: $glyph-icon-alert-triangle;
+$glyphLimitUpr: $glyph-icon-arrow-double-up;
+$glyphLimitLwr: $glyph-icon-arrow-double-down;
