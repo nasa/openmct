@@ -23,13 +23,7 @@
 .clear-icon,
 .menu-icon {
     cursor: pointer;
-    font-family: symbolsfont;
     @include trans-prop-nice((opacity, color), 150ms);
-}
-
-.clear-icon {
-    // 'x' in circle icon
-    @extend .icon-x-in-circle;
 }
 
 .holder-search {
@@ -51,6 +45,7 @@
 		&:before,
 		.clear-icon,
 		.menu-icon {
+            // :before is magnify glass icon
 			box-sizing: border-box;
 			color: $colorInputIcon;
 			height: $iconD;
@@ -104,7 +99,6 @@
 
 		.menu-icon {
             // 'v' invoke menu icon
-            &:before { content: '\e902'; }
 			font-size: 0.8em;
 			padding-right: $iconEdgeM;
 			right: $iconEdgeM;

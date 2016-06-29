@@ -27,10 +27,10 @@
                type="text"
                ng-model="ngModel.input"
                ng-keyup="controller.search()"/>
-        <a class="clear-icon"
+        <a class="clear-icon icon-x-in-circle"
            ng-class="{show: !(ngModel.input === '' || ngModel.input === undefined)}"
            ng-click="ngModel.input = ''; controller.search()"></a>
-        <a class="menu-icon"
+        <a class="menu-icon context-available"
            ng-click="toggle.toggle()"></a>
         <mct-include key="'search-menu'"
                      class="menu-element search-menu-holder"

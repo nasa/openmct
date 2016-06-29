@@ -30,12 +30,6 @@
 
 .ui-symbol {
     font-family: 'symbolsfont';
-	&.type-icon {
-		color: $colorObjHdrIc;
-	}
-	&.icon-calendar:after {
-		content: "\e605";
-	}
 }
 
 .ui-symbol.icon {
@@ -67,14 +61,6 @@
 .tree-item .type-icon,
 .super-menu.menu .menu-item-a:before {
 	position: absolute;
-}
-
-.l-icon-alert {
-	display: none !important;
-	&:before {
-		color: $colorAlert;
-		content: "!";
-	}
 }
 
 .t-item-icon {
