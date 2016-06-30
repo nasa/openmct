@@ -112,6 +112,7 @@ define([
                     "name": "Go To Original",
                     "description": "Go to the original, un-linked instance of this object.",
                     "glyph": "",
+                    "cssclass": "",
                     "category": "contextual",
                     "implementation": GoToOriginalAction
                 },
@@ -120,6 +121,7 @@ define([
                     "name": "Set Primary Location",
                     "description": "Set a domain object's primary location.",
                     "glyph": "",
+                    "cssclass": "",
                     "category": "contextual",
                     "implementation": SetPrimaryLocationAction
                 }

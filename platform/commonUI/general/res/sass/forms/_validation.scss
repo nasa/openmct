@@ -22,10 +22,9 @@
 .validates {
     > .label {
         padding-right: $reqSymbolM; // Keep room for validation element
-        &::after {
+        &:before {
             position: absolute;
             right: $interiorMargin;
-            font-family: symbolsfont;
             font-size: $reqSymbolFontSize;
             height: 100%;
             line-height: 200%;
@@ -34,22 +33,28 @@
     }
     &.invalid,
     &.invalid.req {
-        > .label::after {
-            color: $colorFormInvalid;
-            content: "x";
+        > .label {
+            @extend .icon-x;
+            &:before {
+                color: $colorFormInvalid;
+            }
         }
     }
     &.valid,
     &.valid.req {
-        > .label::after {
-            color: $colorFormValid;
-            content: "2";
+        > .label {
+            @extend .icon-check;
+            &:before {
+                color: $colorFormValid;
+            }
         }
     }
     &.req {
-        > .label::after {
-            color: $colorFormRequired;
-            content: "*";
+        > .label {
+            @extend .icon-asterisk;
+            &:before {
+                color: $colorFormRequired;
+            }
         }
     }
 }

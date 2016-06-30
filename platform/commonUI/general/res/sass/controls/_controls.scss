@@ -444,17 +444,13 @@ input[type="search"] {
             width: $pagerW;
             @extend .ui-symbol;
             &.prev {
+                @extend .icon-arrow-left;
                 right: auto;
-                &:before {
-                    content: "\e903";
-                }
             }
             &.next {
+                @extend .icon-arrow-right;
                 left: auto;
                 text-align: right;
-                &:before {
-                    content: "\e903";
-                }
             }
         }
         .val {
