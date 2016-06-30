@@ -107,8 +107,8 @@ define(['EventEmitter'],
          * @fires TimeConductor#timeSystem
          * @returns {TimeSystem} The currently applied time system
          */
-        TimeConductor.prototype.timeSystem = function (newTimeSystem) {
-            if (arguments.length === 1) {
+        TimeConductor.prototype.timeSystem = function (newTimeSystem, bounds) {
+            if (arguments.length === 2) {
                 this.system = newTimeSystem;
                 /**
                  * @event TimeConductor#timeSystem The time system used by the time
@@ -121,8 +121,9 @@ define(['EventEmitter'],
                 // Do something with bounds here. Try and convert between
                 // time systems? Or just set defaults when time system changes?
                 // eg.
-                // this.bounds(this.system.DEFAULT_BOUNDS);
-                this.emit('bounds', this.bounds());
+                this.bounds(bounds);
+            } else if (arguments.length === 1) {
+                throw new Error('Must set bounds when changing time system');
             }
             return this.system;
         };
