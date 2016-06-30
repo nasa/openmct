@@ -101,8 +101,7 @@ define(
                     "dialogService",
                     [
                         "getUserInput",
-                        "showBlockingMessage",
-                        "dismiss"
+                        "showBlockingMessage"
                     ]
                 );
                 mockDialogService.getUserInput.andReturn(mockPromise(undefined));
@@ -171,17 +170,27 @@ define(
                 expect(mockDialogService.getUserInput).toHaveBeenCalled();
             });
 
-            it("shows a blocking dialog while waiting for save", function () {
-                mockEditorCapability.save.andReturn(new Promise(function () {}));
-                action.perform();
-                expect(mockDialogService.showBlockingMessage).toHaveBeenCalled();
-                expect(mockDialogService.dismiss).not.toHaveBeenCalled();
-            });
+            describe("a blocking dialog", function () {
+                var mockDialogHandle;
 
-            it("hides the blocking dialog after saving", function () {
-                action.perform();
-                expect(mockDialogService.showBlockingMessage).toHaveBeenCalled();
-                expect(mockDialogService.dismiss).toHaveBeenCalled();
+                beforeEach(function () {
+                    mockDialogHandle = jasmine.createSpyObj("dialogHandle", ["dismiss"]);
+                    mockDialogService.showBlockingMessage.andReturn(mockDialogHandle);
+                });
+
+                it("indicates that a save is taking place", function () {
+                    mockEditorCapability.save.andReturn(new Promise(function () {}));
+                    action.perform();
+                    expect(mockDialogService.showBlockingMessage).toHaveBeenCalled();
+                    expect(mockDialogHandle.dismiss).not.toHaveBeenCalled();
+                });
+
+                it("is hidden after saving", function () {
+                    action.perform();
+                    expect(mockDialogService.showBlockingMessage).toHaveBeenCalled();
+                    expect(mockDialogHandle.dismiss).toHaveBeenCalled();
+                });
+
             });
 
         });

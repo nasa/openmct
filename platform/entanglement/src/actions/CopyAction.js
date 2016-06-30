@@ -86,7 +86,9 @@ define(
                     severity: "info"
                 });
             } else if (phase.toLowerCase() === "copying") {
-                this.dialogService.dismiss();
+                if (this.dialog) {
+                    this.dialog.dismiss();
+                }
                 if (!this.notification) {
                     this.notification = this.notificationService
                         .notify({
@@ -115,7 +117,8 @@ define(
             }
 
             function error(errorDetails) {
-                var errorMessage = {
+                var errorDialog,
+                    errorMessage = {
                     title: "Error copying objects.",
                     severity: "error",
                     hint: errorDetails.message,
@@ -123,12 +126,12 @@ define(
                     options: [{
                         label: "OK",
                         callback: function () {
-                            self.dialogService.dismiss();
+                            errorDialog.dismiss();
                         }
                     }]
                 };
 
-                self.dialogService.dismiss();
+                self.dialog.dismiss();
                 if (self.notification) {
                     self.notification.dismiss(); // Clear the progress notification
                 }
@@ -136,7 +139,7 @@ define(
                 //Show a minimized notification of error for posterity
                 self.notificationService.notify(errorMessage);
                 //Display a blocking message
-                self.dialogService.showBlockingMessage(errorMessage);
+                errorDialog = self.dialogService.showBlockingMessage(errorMessage);
 
             }
             function notification(details) {

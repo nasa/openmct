@@ -70,7 +70,7 @@ define(
                 };
                 dialogService = jasmine.createSpyObj(
                     "dialogService",
-                    ["showBlockingMessage", "dismiss"]
+                    ["showBlockingMessage"]
                 );
 
                 mockDomainObject.hasCapability.andReturn(true);
@@ -111,17 +111,28 @@ define(
                     expect(mockActionCapability.perform).toHaveBeenCalledWith("navigate");
                 });
 
-            it("shows a dialog while saving", function () {
-                mockEditorCapability.save.andReturn(new Promise(function () {}));
-                action.perform();
-                expect(dialogService.showBlockingMessage).toHaveBeenCalled();
-                expect(dialogService.dismiss).not.toHaveBeenCalled();
-            });
+            describe("a blocking dialog", function () {
+                var mockDialogHandle;
 
-            it("hides a dialog when saving is complete", function () {
-                action.perform();
-                expect(dialogService.showBlockingMessage).toHaveBeenCalled();
-                expect(dialogService.dismiss).toHaveBeenCalled();
+                beforeEach(function () {
+                    mockDialogHandle = jasmine.createSpyObj("dialogHandle", ["dismiss"]);
+                    dialogService.showBlockingMessage.andReturn(mockDialogHandle);
+                });
+
+
+                it("shows a dialog while saving", function () {
+                    mockEditorCapability.save.andReturn(new Promise(function () {
+                    }));
+                    action.perform();
+                    expect(dialogService.showBlockingMessage).toHaveBeenCalled();
+                    expect(mockDialogHandle.dismiss).not.toHaveBeenCalled();
+                });
+
+                it("hides a dialog when saving is complete", function () {
+                    action.perform();
+                    expect(dialogService.showBlockingMessage).toHaveBeenCalled();
+                    expect(mockDialogHandle.dismiss).toHaveBeenCalled();
+                });
             });
 
         });
