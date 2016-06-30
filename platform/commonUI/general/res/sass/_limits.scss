@@ -1,4 +1,4 @@
-@mixin limitGlyph($iconColor, $glyph: $glyphLimit) {
+@mixin limitGlyph($iconColor, $glyph: $glyph-icon-alert-triangle) {
     &:before {
         color: $iconColor;
         content: $glyph;
@@ -21,8 +21,8 @@ tr[class*="s-limit"] {
     &.s-limit-yellow td:first-child {
         @include limitGlyph($colorLimitYellowIc);
     }
-    &.s-limit-upr td:first-child:before { content:$glyphLimitUpr; }
-    &.s-limit-lwr td:first-child:before { content:$glyphLimitLwr; }
+    &.s-limit-upr td:first-child:before { content: $glyph-icon-arrow-double-up; }
+    &.s-limit-lwr td:first-child:before { content: $glyph-icon-arrow-double-down; }
 }
 
 // Handle limit when applied directly to a non-tr element
@@ -34,6 +34,6 @@ tr[class*="s-limit"] {
     &.s-limit-yellow {
         @include limitGlyph($colorLimitYellowIc);
     }
-    &.s-limit-upr:before { content:$glyphLimitUpr; }
-    &.s-limit-lwr:before { content:$glyphLimitLwr; }
+    &.s-limit-upr:before { content: $glyph-icon-arrow-double-up; }
+    &.s-limit-lwr:before { content: $glyph-icon-arrow-double-down; }
 }

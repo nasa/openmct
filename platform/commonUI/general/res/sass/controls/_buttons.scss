@@ -82,130 +82,29 @@ $pad: $interiorMargin * $baseRatio;
     }
 }
 
-body.desktop .mini-tab {
-    // Meant to be used as pane hide/show control elements in concert with mct-splitter
-    $iconH: $uePaneMiniTabH;
-    $iconW: $uePaneMiniTabW;
-    $iconInnerLR: 0;
-    $arwD: 9px;
-    $arwOffsetX: 0px;
-    $arwAnimOffsetX: 2px + $iconInnerLR;
-    $cBg: pullForward($colorBodyBg, 15%);
-    $cFg: $cBg;
-
-
-    border-radius: $basicCr;
-    //@include boxShdw($shdwBtns);
-    box-sizing: border-box;
-    @include trans-prop-nice((color, background-color), 100ms);
-    color: $cFg;
-    cursor: pointer;
-    font-family: symbolsfont;
-    font-size: $arwD;
-    display: block;
-    position: absolute;
-    line-height: $iconH;
-    height: $iconH; width: $iconW;
-    text-align: center;
-
-    &.collapsed {
-        // State when the pane this element controls has been collapsed
-        @include btnSubtle($colorBtnBg, $colorKey, $colorBtnFg, $colorBtnIcon);
-        &:before { opacity: 0; }
-        &:after { opacity: 1; }
-        &:hover {
-            &:before { opacity: 1; }
-            &:after { opacity: 0; }
-        }
-
-    }
-
-    &:before,
-    &:after {
-        @include trans-prop-nice((left, right, opacity), 250ms);
-        display: block;
-        height: 100%;
-        position: absolute;
-    }
-
-    &:before {
-        // Always the arrow icon
-        width: $arwD;
-    }
-    &:after {
-        // Always icon; content is set in _layout.scss
-        width: 100%;
-        text-align: center;
-        opacity: 0;
-    }
-
-    &.anchor-left {
-        // |<
-        text-align: right;
-        &:before {
-            //content:'\e903'; // Collapse left icon e613
-            content: '\e903';
-            right: $iconInnerLR;
-        }
-        &.collapsed {
-            @include border-left-radius(0);
-            text-align: left;
-            &:before {
-                content:'\e904';
-                left: $iconInnerLR;
-            }
-            &:hover:before { left: $arwAnimOffsetX; }
-        }
-    }
-    &.anchor-right {
-        // >|
-        text-align: left;
-        &:before {
-            content:'\e904'; // Collapse right icon e614
-            left: $iconInnerLR;
-        }
-        &.collapsed {
-            @include border-right-radius(0);
-            &:before {
-                text-align: right;
-                content:'\e903';
-                right: $iconInnerLR;
-            }
-            &:hover:before { right: $arwAnimOffsetX; }
-        }
-    }
-}
-
 body.desktop .mini-tab-icon {
     // Meant to be used as pane hide/show control elements in concert with mct-splitter
-    $d: $uePaneMiniTabW;
-    color: pullForward($colorBodyBg, 15%);
+    // Font glyphs set in _layout.scss
+    background-color: $colorMiniTabBg;
+    color: $colorMiniTabFg;
     cursor: pointer;
     display: block;
-    font-family: symbolsfont;
-    font-size: $d;
+    font-family: 'symbolsfont';
+    font-size: $uePaneMiniTabFontSize;
     position: absolute;
-    height: $d; width: $d;
-    line-height: $d;
+    height: $uePaneMiniTabH; width: $uePaneMiniTabW;
+    line-height: $uePaneMiniTabH;
     overflow: hidden;
-    word-break: break-all;
-
-    &.collapsed {
-        $d: $uePaneMiniTabCollapsedW;
-        width: $d; font-size: $d;
-    }
+    text-align: center;
 
     &:before,
     &:after {
+        display: block;
         position: absolute;
-        display: inherit;
     }
 
-    //&:before {
-    //    content: '\78'; // X icon
-    //}
-
     &:hover {
+        background-color: $colorMiniTabBgHov;
         color: $colorKey;
     }
 }

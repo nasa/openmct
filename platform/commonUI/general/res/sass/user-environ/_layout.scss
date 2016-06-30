@@ -147,11 +147,8 @@
 }
 
 body.desktop .pane .mini-tab-icon.toggle-pane {
-    $d: $uePaneMiniTabH;
-    $paneExpandedOffset: $splitterD + $uePaneMiniTabW;
-    top: $bodyMargin;
-    height: $d;
-    line-height: $d;
+    $paneExpandedOffset: ceil($splitterD / 2);
+    top: $bodyMargin + ($ueTopBarH - $uePaneMiniTabH)/2;
     &:after {
         // Always the icon that shows when the pane is collapsed
         opacity: 0;
@@ -166,25 +163,41 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
     }
     &.toggle-tree.anchor-left {
         left: 0;
-        @include transform(translateX(-1 * $paneExpandedOffset));
+        @include transform(translateX(-1 * ($uePaneMiniTabW + $paneExpandedOffset)));
+        &:before {
+            content: $glyph-icon-arrow-left;
+        }
         &:after {
-            content: '\6d'; // Menu 'hamburger' icon
+            content: $glyph-icon-arrow-right;
         }
         &.collapsed {
+            border-bottom-right-radius: $controlCr;
+            border-top-right-radius: $controlCr;
             left: 0;
-            @include transform(translateX((-1 * $ueCollapsedPaneEdgeM) + $interiorMargin));
+            @include transform(translateX(-1 * $ueCollapsedPaneEdgeM));
         }
-        &:not(.collapsed):before {
-            @include trans-prop-nice(opacity, 200ms, 200ms);
+        &:not(.collapsed) {
+            border-bottom-left-radius: $controlCr;
+            border-top-left-radius: $controlCr;
         }
     }
     &.toggle-inspect.anchor-right {
-        right: $bodyMargin;
+        left: 0;
+        &:before {
+            content: $glyph-icon-arrow-right;
+        }
         &:after {
-            content: '\e615'; // Eye icon
+            content: $glyph-icon-arrow-left;
         }
         &.collapsed {
-            right: $interiorMargin;
+            border-bottom-left-radius: $controlCr;
+            border-top-left-radius: $controlCr;
+            left: auto;
+            right: 0;
+        }
+        &:not(.collapsed) {
+            border-bottom-right-radius: $controlCr;
+            border-top-right-radius: $controlCr;
         }
     }
 }
@@ -220,7 +233,7 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
         .holder-inspector {
             top: $bodyMargin;
             bottom: $interiorMargin;
-            left: $bodyMargin;
+            left: $bodyMargin + $interiorMargin;
             right: $bodyMargin;
         }
         .holder-elements {

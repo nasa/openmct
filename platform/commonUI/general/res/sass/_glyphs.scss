@@ -1,7 +1,7 @@
-@mixin glyph($unicode) {
+@mixin glyph($unicode, $family: 'symbolsfont') {
     &:before {
         content: $unicode;
-        font-family: 'symbolsfont';
+        font-family: $family;
     }
 }
 
@@ -101,7 +101,7 @@ $glyph-icon-timeline: '\e1124';
 $glyph-icon-timer: '\e1125';
 $glyph-icon-topic: '\e1126';
 
-/************************** CLASSES */
+/************************** 16 PX CLASSES */
 
 .icon-alert-rect {  @include glyph($glyph-icon-alert-rect); }
 .icon-alert-triangle {  @include glyph($glyph-icon-alert-triangle); }
@@ -197,8 +197,9 @@ $glyph-icon-topic: '\e1126';
 .icon-timer {  @include glyph($glyph-icon-timer); }
 .icon-topic {  @include glyph($glyph-icon-topic); }
 
-/************************** LIMITS */
+/************************** 12 PX CLASSES */
 
-$glyphLimit: $glyph-icon-alert-triangle;
-$glyphLimitUpr: $glyph-icon-arrow-double-up;
-$glyphLimitLwr: $glyph-icon-arrow-double-down;
+.icon-eye-open-12px {  @include glyph($glyph-icon-eye-open,'symbolsfont-12px'); }
+.icon-collapse-pane-left-12px {  @include glyph($glyph-icon-collapse-pane-left,'symbolsfont-12px'); }
+.icon-collapse-pane-right-12px {  @include glyph($glyph-icon-collapse-pane-right,'symbolsfont-12px'); }
+.icon-folder-12px {  @include glyph($glyph-icon-folder,'symbolsfont-12px'); }

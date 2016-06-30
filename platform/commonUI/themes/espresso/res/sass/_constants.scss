@@ -168,7 +168,7 @@ $colorItemTreeSelectedBg: pushBack($colorKey, 15%);
 $colorItemTreeSelectedFg: pullForward($colorBodyFg, 20%);
 $colorItemTreeEditingBg: #344154;
 $colorItemTreeEditingFg: $colorEditAreaFg;
-$colorItemTreeVC: $colorBodyFg; //rgba(#fff, 0.3);
+$colorItemTreeVC: $colorBodyFg;
 $colorItemTreeVCHover: pullForward($colorItemTreeVC, 20%);
 $colorItemTreeSelectedVC: $colorItemTreeVC;
 $shdwItemTreeIcon: 0.6;
@@ -186,11 +186,17 @@ $scrollbarThumbColorOverlayHov: lighten($scrollbarThumbColorOverlay, 2%);
 $splitterD: 17px; // splitterD and $splitterHandleD should both be odd, or even
 $splitterHandleD: 1px;
 $splitterDSm: 17px; // Smaller splitter, used inside elements like a Timeline view
-$colorSplitterBg: rgba(#fff, 0.1); //pullForward($colorBodyBg, 5%);
+$colorSplitterBaseBg: #fff;
+$colorSplitterBg: rgba($colorSplitterBaseBg, 0.2);
 $splitterShdw: rgba(black, 0.4) 0 0 3px;
 $splitterEndCr: none;
-$colorSplitterHover: pullForward($colorBodyBg, 40%);
+$colorSplitterHover: rgba($colorSplitterBaseBg, 0.5);
 $colorSplitterActive: $colorKey;
+
+// Minitabs
+$colorMiniTabBg: rgba($colorSplitterBaseBg, 0.2);
+$colorMiniTabFg: rgba($colorSplitterBaseBg, 0.5);
+$colorMiniTabBgHov: rgba($colorSplitterBaseBg, 0.5);
 
 // Mobile
 $colorMobilePaneLeft: darken($colorBodyBg, 5%);
