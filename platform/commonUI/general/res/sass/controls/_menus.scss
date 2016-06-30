@@ -150,7 +150,8 @@
 				}
 			}
 		}
-		.type-icon {
+		&:before {
+            // Type icon
 			left: 25px;
 		}
 	}
