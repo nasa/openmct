@@ -1,8 +1,8 @@
 {
 	"metadata": {
 		"name": "openmct-symbols-12px",
-		"lastOpened": 1466626311637,
-		"created": 1466611580361
+		"lastOpened": 1467322505818,
+		"created": 1467322503679
 	},
 	"iconSets": [
 		{
@@ -13,23 +13,23 @@
 					"prevSize": 12,
 					"code": 59671,
 					"name": "icon12-eye-open",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
-					"order": 2,
-					"id": 1,
+					"order": 7,
+					"id": 5,
 					"prevSize": 12,
 					"code": 921607,
 					"name": "icon12-pane-collapse-left",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
-					"order": 3,
-					"id": 0,
+					"order": 8,
+					"id": 4,
 					"prevSize": 12,
 					"code": 921608,
 					"name": "icon12-pane-collapse-right",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 6,
@@ -37,14 +37,14 @@
 					"prevSize": 12,
 					"code": 921865,
 					"name": "icon12-folder",
-					"tempChar": ""
+					"tempChar": ""
 				}
 			],
 			"id": 0,
 			"metadata": {
 				"name": "openmct-symbols-12px",
 				"importSize": {
-					"width": 384,
+					"width": 320,
 					"height": 384
 				},
 				"designer": "Charles Hacskaylo"
@@ -66,60 +66,66 @@
 					],
 					"colorPermutations": {
 						"1161751": [
-							0,
-							0
+							{
+								"f": 0
+							},
+							{
+								"f": 0
+							}
 						]
 					}
 				},
 				{
-					"id": 1,
+					"id": 5,
 					"paths": [
 						"M0 0h170.667v1024h-170.667v-1024z",
-						"M1024 256h-426.667v-256l-341.333 341.333 341.333 341.333v-256h426.667v-170.667z"
+						"M853.333 256h-256v-256l-341.333 426.667 341.333 426.667v-256h256v-341.333z"
 					],
 					"attrs": [
 						{
-							"fill": "rgb(0, 161, 75)"
+							"opacity": 1
 						},
 						{
-							"fill": "rgb(0, 161, 75)"
+							"opacity": 1
 						}
 					],
 					"isMulticolor": false,
+					"width": 853,
 					"grid": 0,
 					"tags": [
 						"icon12-pane-collapse-left"
 					],
 					"colorPermutations": {
 						"1161751": [
-							1,
-							1
+							{},
+							{}
 						]
 					}
 				},
 				{
-					"id": 0,
+					"id": 4,
 					"paths": [
-						"M853.333 0h170.667v1024h-170.667v-1024z",
-						"M0 256h426.667v-256l341.333 341.333-341.333 341.333v-256h-426.667v-170.667z"
+						"M682.667 0h170.667v1024h-170.667v-1024z",
+						"M0 256h256v-256l341.333 426.667-341.333 426.667v-256h-256v-341.333z"
 					],
 					"attrs": [
 						{
-							"fill": "rgb(0, 161, 75)"
+							"opacity": 1
 						},
 						{
-							"fill": "rgb(0, 161, 75)"
+							"opacity": 1
 						}
 					],
 					"isMulticolor": false,
+					"width": 853,
 					"grid": 0,
 					"tags": [
 						"icon12-pane-collapse-right"
 					],
 					"colorPermutations": {
 						"1161751": [
-							1,
-							1
+							{},
+							{}
 						]
 					}
 				},
@@ -137,8 +143,12 @@
 					],
 					"colorPermutations": {
 						"1161751": [
-							0,
-							0
+							{
+								"f": 0
+							},
+							{
+								"f": 0
+							}
 						]
 					}
 				}
