@@ -1,8 +1,10 @@
 define([
     "text!./todo.html",
     "text!./todo-task.html",
+    "text!./todo-toolbar.html",
+    "text!./todo-dialog.html",
     "zepto"
-], function (todoTemplate, taskTemplate, $) {
+], function (todoTemplate, taskTemplate, toolbarTemplate, dialogTemplate, $) {
     /**
      * @param {mct.MCT} mct
      */
@@ -27,6 +29,8 @@ define([
         }
 
         TodoView.prototype.show = function (container) {
+            this.destroy();
+
             this.$els = $(todoTemplate);
             this.$buttons = {
                 all: this.$els.find('.example-todo-button-all'),
@@ -38,9 +42,15 @@ define([
 
             this.initialize();
             this.render();
+
+            mct.verbs.observe(this.domainObject, this.render.bind(this));
         };
 
         TodoView.prototype.destroy = function () {
+            if (this.unlisten) {
+                this.unlisten();
+                this.unlisten = undefined;
+            }
         };
 
         TodoView.prototype.setFilter = function (value) {
@@ -100,9 +110,50 @@ define([
             $message.toggle(tasks.length < 1);
         };
 
+
+
+        function TodoToolbarView(domainObject) {
+            this.domainObject = domainObject;
+        }
+
+        TodoToolbarView.prototype.show = function (container) {
+            var $els = $(toolbarTemplate);
+            var $add = $els.find('a.example-add');
+            var $remove = $els.find('a.example-remove');
+            var domainObject = this.domainObject;
+
+            $(container).append($els);
+
+            $add.on('click', function () {
+                var $dialog = $(dialogTemplate),
+                    view = {
+                        show: function (container) {
+                            $(container).append($dialog);
+                        },
+                        destroy: function () {}
+                    };
+
+                mct.dialog(view, "Add a Task").then(function () {
+                    var description = $dialog.find('input').val();
+                    mct.verbs.mutate(domainObject, function (model) {
+                        model.tasks.push({ description: description });
+                        console.log(model);
+                    });
+                });
+            });
+            $remove.on('click', window.alert.bind(window, "Remove!"));
+        };
+
+        TodoToolbarView.prototype.destroy = function () {
+
+        };
+
         mct.type('example.todo', todoType);
         mct.view(mct.regions.main, function (domainObject) {
             return todoType.check(domainObject) && new TodoView(domainObject);
+        });
+        mct.view(mct.regions.toolbar, function (domainObject) {
+            return todoType.check(domainObject) && new TodoToolbarView(domainObject);
         });
 
         return mct;
