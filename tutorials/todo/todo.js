@@ -184,17 +184,13 @@ define([
             this.$remove = undefined;
         };
 
-        var todoView = new View();
-        var todoToolbarView = new View();
+        var todoView = new mct.View();
+        var todoToolbarView = new mct.View();
 
         todoView.show = function (container, domainObject) {
             var renderer = new TodoRenderer(domainObject);
             renderer.show(container);
             return renderer.destroy.bind(renderer);
-        };
-
-        todoView.test = function () {
-            return todoType.test(domainObject);
         };
 
         todoToolbarView.show = function (container, domainObject) {
@@ -203,10 +199,7 @@ define([
             return renderer.destroy.bind(renderer);
         };
 
-        todoToolbarView.test = function () {
-            return todoType.test(domainObject);
-        };
-
+        todoView.test = todoToolbarView.test = todoType.test.bind(todoType);
 
         mct.type('example.todo', todoType);
         mct.view(mct.regions.main, todoView);

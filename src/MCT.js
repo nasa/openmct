@@ -61,8 +61,8 @@ define([
         this.legacyExtension('policies', {
             category: "view",
             implementation: function Policy() {
-                this.allow = function (view, domainObject) {
-                    if (view.key === adaptedViewKey) {
+                this.allow = function (v, domainObject) {
+                    if (v.key === adaptedViewKey) {
                         return view.test(domainObject);
                     }
                     return true;
