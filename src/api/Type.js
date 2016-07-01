@@ -18,6 +18,16 @@ define(function () {
     }
 
     /**
+     * Check if a domain object is an instance of this type.
+     * @param domainObject
+     * @returns {boolean} true if the domain object is of this type
+     */
+    Type.prototype.check = function (domainObject) {
+        // Depends on assignment from MCT.
+        return domainObject.getModel().type === this.key;
+    };
+
+    /**
      * Get a definition for this type that can be registered using the
      * legacy bundle format.
      * @private
