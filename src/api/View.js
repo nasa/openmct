@@ -20,5 +20,19 @@ define(function () {
     View.prototype.destroy = function () {
     };
 
+    /**
+     * Check if this view is capable of showing this object. Users of
+     * views should use this method before showing
+     *
+     * Subclasses should override this method to control the applicability
+     * of this view to other objects.
+     *
+     * @param {*} object the value to be shown in this view
+     * @returns {boolean} true if this view can display this object
+     */
+    View.prototype.test = function (object) {
+        return false;
+    };
+
     return View;
 });
