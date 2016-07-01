@@ -21,12 +21,12 @@ define([
             creatable: true
         });
 
-        function TodoView(domainObject) {
+        function TodoRenderer(domainObject) {
             this.domainObject = domainObject;
             this.filterValue = "all";
         }
 
-        TodoView.prototype.show = function (container) {
+        TodoRenderer.prototype.show = function (container) {
             this.$els = $(todoTemplate);
             this.$buttons = {
                 all: this.$els.find('.example-todo-button-all'),
@@ -40,18 +40,18 @@ define([
             this.render();
         };
 
-        TodoView.prototype.setFilter = function (value) {
+        TodoRenderer.prototype.setFilter = function (value) {
             this.filterValue = value;
             this.render();
         };
 
-        TodoView.prototype.initialize = function () {
+        TodoRenderer.prototype.initialize = function () {
             Object.keys(this.$buttons).forEach(function (k) {
                 this.$buttons[k].on('click', this.setFilter.bind(this, k));
             }, this);
         };
 
-        TodoView.prototype.render = function () {
+        TodoRenderer.prototype.render = function () {
             var $els = this.$els;
             var domainObject = this.domainObject;
             var tasks = domainObject.getModel().tasks;
@@ -100,7 +100,7 @@ define([
         var todoView = new View();
 
         todoView.show = function (container, domainObject) {
-            var renderer = new TodoView(domainObject);
+            var renderer = new TodoRenderer(domainObject);
             renderer.show(container);
             return renderer.destroy.bind(renderer);
         };
