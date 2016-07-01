@@ -3,9 +3,8 @@ define([
     "text!./todo-task.html",
     "text!./todo-toolbar.html",
     "text!./todo-dialog.html",
-    "../../src/api/events/EventDecorator",
     "zepto"
-], function (todoTemplate, taskTemplate, toolbarTemplate, dialogTemplate, eventDecorator, $) {
+], function (todoTemplate, taskTemplate, toolbarTemplate, dialogTemplate, $) {
     /**
      * @param {mct.MCT} mct
      */
@@ -27,6 +26,7 @@ define([
         function TodoView(domainObject) {
             this.domainObject = domainObject;
             this.filterValue = "all";
+            this.render = this.render.bind(this);
         }
 
         TodoView.prototype.show = function (container) {
@@ -44,9 +44,7 @@ define([
             this.initialize();
             this.render();
 
-            mct.events.mutation(this.domainObject).on("*", function (value) {
-                console.log("model changed");
-            });
+            mct.Objects.observe(this.domainObject).on("*", this.render.bind(this));
         };
 
         TodoView.prototype.destroy = function () {
@@ -86,42 +84,51 @@ define([
                 }
             };
             var filterValue = this.filterValue;
-            var model = domainObject.model;
+            var selected = mct.selection.selected();
 
             Object.keys($buttons).forEach(function (k) {
                 $buttons[k].toggleClass('selected', filterValue === k);
             });
             tasks = tasks.filter(filters[filterValue]);
 
-            function renderTasks() {
-                $list.empty();
-                domainObject.getModel().tasks.forEach(function (task, index) {
-                    var $taskEls = $(taskTemplate);
-                    var $checkbox = $taskEls.find('.example-task-checked');
-                    $checkbox.prop('checked', task.completed);
-                    $taskEls.find('.example-task-description')
-                        .text(task.description);
-                    $checkbox.on('change', function () {
-                        var checked = !!$checkbox.prop('checked');
-                        domainObject.getModel().tasks[index].completed = checked;
+            $list.empty();
+            tasks.forEach(function (task, index) {
+                var $taskEls = $(taskTemplate);
+                var $checkbox = $taskEls.find('.example-task-checked');
+                var $desc = $taskEls.find('.example-task-description');
+                $checkbox.prop('checked', task.completed);
+                $desc.text(task.description);
+
+                $checkbox.on('change', function () {
+                    var checked = !!$checkbox.prop('checked');
+                    mct.Objects.mutate(domainObject, function (model) {
+                        model.tasks[index].completed = checked;
                     });
-
-                    $list.append($taskEls);
                 });
-            }
 
-            renderTasks();
+                $desc.on('click', function () {
+                    mct.selection.clear();
+                    mct.selection.select({ index: index });
+                });
+
+                if (selected.length > 0 && selected[0].index === index) {
+                    $desc.addClass('selected');
+                }
+
+                $list.append($taskEls);
+            });
 
             $message.toggle(tasks.length < 1);
-
-            mct.Objects.observe(domainObject).on("*", renderTasks);
         };
 
         function TodoToolbarView(domainObject) {
             this.domainObject = domainObject;
+            this.handleSelectionChange = this.handleSelectionChange.bind(this);
         }
 
         TodoToolbarView.prototype.show = function (container) {
+            this.destroy();
+
             var $els = $(toolbarTemplate);
             var $add = $els.find('a.example-add');
             var $remove = $els.find('a.example-remove');
@@ -147,20 +154,39 @@ define([
                 });
             });
             $remove.on('click', function () {
-
+                var index = mct.selection.selected()[0].index;
+                if (index !== undefined) {
+                    mct.Objects.mutate(domainObject, function (model) {
+                        model.tasks = model.tasks.filter(function (t, i) {
+                            return i !== index;
+                        });
+                        delete model.selected;
+                        mct.selection.clear();
+                    });
+                }
             });
+            this.$remove = $remove;
+            this.handleSelectionChange();
+            mct.selection.on('change', this.handleSelectionChange);
+        };
+
+        TodoToolbarView.prototype.handleSelectionChange = function () {
+            var selected = mct.selection.selected();
+            if (this.$remove) {
+                this.$remove.toggle(selected.length > 0);
+            }
         };
 
         TodoToolbarView.prototype.destroy = function () {
-
+            mct.selection.off('change', this.handleSelectionChange);
+            this.$remove = undefined;
         };
 
         mct.type('example.todo', todoType);
         mct.view(mct.regions.main, function (domainObject) {
-            return todoType.check(domainObject) && new TodoView(eventDecorator(mct, domainObject));
+            return todoType.check(domainObject) && new TodoView(domainObject);
         });
         mct.view(mct.regions.toolbar, function (domainObject) {
-            domainObject = eventDecorator(mct, domainObject);
             return todoType.check(domainObject) && new TodoToolbarView(domainObject);
         });
 
