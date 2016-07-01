@@ -2,14 +2,14 @@ define([
     'eventemitter2',
     'zepto'
 ], function (EventEmitter, $) {
-    function Container(element) {
+    function Region(element) {
         this.empty = true;
         this.$element = $(element);
     }
 
-    Container.prototype = Object.create(EventEmitter.prototype);
+    Region.prototype = Object.create(EventEmitter.prototype);
 
-    Container.prototype.clear = function () {
+    Region.prototype.clear = function () {
         if (!this.empty) {
             this.empty = true;
             this.$element.empty();
@@ -17,10 +17,10 @@ define([
         }
     };
 
-    Container.prototype.show = function (elements) {
+    Region.prototype.show = function (elements) {
         this.clear();
         this.$element.append($(elements));
     };
 
-    return Container;
+    return Region;
 });

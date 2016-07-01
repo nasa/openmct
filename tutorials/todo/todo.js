@@ -187,7 +187,7 @@ define([
         var todoView = new mct.View();
         var todoToolbarView = new mct.View();
 
-        todoView.show = function (container, domainObject) {
+        todoView.populate = function (region, domainObject) {
             var renderer = new TodoRenderer(domainObject);
             renderer.show(container);
             return renderer.destroy.bind(renderer);
@@ -199,7 +199,10 @@ define([
             return renderer.destroy.bind(renderer);
         };
 
-        todoView.test = todoToolbarView.test = todoType.test.bind(todoType);
+        todoView.test = todoToolbarView.test = function (region, domainObject) {
+            return region instanceof mct.regions.MainRegion &&
+                todoType.test(domainObject);
+        };
 
         mct.type('example.todo', todoType);
         mct.view(mct.regions.main, todoView);

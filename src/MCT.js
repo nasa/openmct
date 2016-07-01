@@ -6,6 +6,7 @@ define([
     'text!./adapter/templates/edit-object-replacement.html',
     './ui/Dialog',
     './Selection',
+    './api/regions',
     './api/objects/bundle'
 ], function (
     EventEmitter,
@@ -14,7 +15,8 @@ define([
     api,
     editObjectTemplate,
     Dialog,
-    Selection
+    Selection,
+    regions
 ) {
     function MCT() {
         EventEmitter.call(this);
@@ -108,10 +110,7 @@ define([
         this.emit('start');
     };
 
-    MCT.prototype.regions = {
-        main: "MAIN",
-        toolbar: "TOOLBAR"
-    };
+    MCT.prototype.regions = regions;
 
     MCT.prototype.verbs = {
         mutate: function (domainObject, mutator) {
