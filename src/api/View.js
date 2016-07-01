@@ -6,13 +6,12 @@ define(function () {
      * Show this view in the specified container. If this view is already
      * showing elsewhere, it will be removed from that location.
      *
-     * @param {HTMLElement} container the element to populate
+     * @param {mct.Region} region the region to populate
      * @param {*} object the object to be shown in this view
      * @returns {Function} a function to call to release any resources
      *          associated with this view
      */
-    View.prototype.show = function (container, object) {
-        return function () {};
+    View.prototype.populate = function (region, object) {
     };
 
     /**
@@ -22,10 +21,11 @@ define(function () {
      * Subclasses should override this method to control the applicability
      * of this view to other objects.
      *
+     * @param {mct.Region} region the region to populate
      * @param {*} object the object to be shown in this view
      * @returns {boolean} true if this view can display this object
      */
-    View.prototype.test = function (object) {
+    View.prototype.canPopulate = function (region, object) {
         return false;
     };
 
