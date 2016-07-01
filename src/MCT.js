@@ -1,8 +1,13 @@
 define([
     'EventEmitter',
     'legacyRegistry',
-    './api/api'
-], function (EventEmitter, legacyRegistry, api) {
+    './api/api',
+    './api/objects/bundle'
+], function (
+    EventEmitter,
+    legacyRegistry,
+    api
+) {
     function MCT() {
         EventEmitter.call(this);
         this.legacyBundle = { extensions: {} };
