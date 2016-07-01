@@ -31,12 +31,14 @@
     <script type="text/javascript">
         require(['main'], function (mct) {
             require([
+                './tutorials/grootprovider/groots',
                 './tutorials/todo/todo',
                 './tutorials/todo/bundle',
                 './example/imagery/bundle',
                 './example/eventGenerator/bundle',
-                './example/generator/bundle'
-            ], function (todoPlugin) {
+                './example/generator/bundle',
+            ], function (grootify, todoPlugin) {
+                grootify(mct);
                 todoPlugin(mct);
                 mct.start();
             })

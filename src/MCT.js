@@ -2,7 +2,8 @@ define([
     'EventEmitter',
     'legacyRegistry',
     'uuid',
-    './api/api'
+    './api/api',
+    './api/objects/bundle'
 ], function (
     EventEmitter,
     legacyRegistry,
