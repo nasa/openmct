@@ -85,3 +85,44 @@ domainObject.model.configuration.positions = [{"123-1234-1232-123": [100, 200]}]
 domainObject.set("configuration")
     .set("layout")
     .set("positions", [{"123-1234-1232-123": [100, 200]}]);
+    
+    
+var myObject = {
+    prop1: "val1",
+    prop2: "val2",
+    arrProp: ["one", "two", "three"],
+    objProp: {
+        prop3: "val3",
+        prop4: "val4",
+        prop5: "val5"
+    }
+}
+
+// Could limit initially to only changes on the immediate target
+MCT.objects.mutate(myObject, function (model) {
+    model.prop1 = "val1 modified";
+    model.arrProp.push("four");
+    model.objProp.prop3 = "val3 modified";
+    model.objProp.prop6 = "new property";
+    return model;
+});
+
+MCT.events.mutation(myObject).on("*", function (object) {
+    // Triggered only once via mutation block, but with Proxy would be 
+    // triggered multiple times.
+    // Triggered when anything on the parent or any embedded objects
+    // are mutated
+});
+
+MCT.events.mutation(myObject).on("prop1", function (newPropVal, oldPropVal) { 
+});
+
+MCT.events.mutation(myObject).on("prop2", function (newPropVal, oldPropVal) { 
+});
+
+MCT.events.mutation(myObject).on("arrProp", function (newArrProp, oldArrProp) { 
+});
+
+MCT.events.mutation(myObject).on("objProp", function (newObjProp, oldObjProp) {
+    //triggered when anything is added or removed
+});

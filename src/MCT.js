@@ -104,19 +104,5 @@ define([
 
     MCT.prototype.events = new Events();
 
-    MCT.prototype.verbs = {
-        mutate: function (domainObject, mutator) {
-            return domainObject.useCapability('mutation', mutator)
-                .then(function () {
-                    var persistence = domainObject.getCapability('persistence');
-                    return persistence.persist();
-                });
-        },
-        observe: function (domainObject, callback) {
-            var mutation = domainObject.getCapability('mutation');
-            return mutation.listen(callback);
-        }
-    };
-
     return MCT;
 });

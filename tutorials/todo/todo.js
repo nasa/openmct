@@ -44,8 +44,6 @@ define([
             this.initialize();
             this.render();
 
-            mct.verbs.observe(this.domainObject, this.render.bind(this));
-
             mct.events.mutation(this.domainObject).on("*", function (value) {
                 console.log("model changed");
             });
@@ -116,7 +114,7 @@ define([
 
             $message.toggle(tasks.length < 1);
 
-            mct.events.mutation(domainObject).on("model.tasks.length", renderTasks);
+            mct.Objects.observe(domainObject).on("*", renderTasks);
         };
 
         function TodoToolbarView(domainObject) {
@@ -142,14 +140,15 @@ define([
 
                 mct.dialog(view, "Add a Task").then(function () {
                     var description = $dialog.find('input').val();
-                    domainObject.getModel().tasks.push({ description: description });
-                    /*mct.verbs.mutate(domainObject, function (model) {
+                    mct.Objects.mutate(domainObject, function(model) {
                         model.tasks.push({ description: description });
-                        console.log(model);
-                    });*/
+                        return model;
+                    });
                 });
             });
-            $remove.on('click', window.alert.bind(window, "Remove!"));
+            $remove.on('click', function () {
+
+            });
         };
 
         TodoToolbarView.prototype.destroy = function () {
