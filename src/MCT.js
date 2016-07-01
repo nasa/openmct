@@ -5,7 +5,7 @@ define([
     './api/api',
     'text!./adapter/templates/edit-object-replacement.html',
     './ui/Dialog',
-    './api/events/Events',
+    './Selection',
     './api/objects/bundle'
 ], function (
     EventEmitter,
@@ -14,11 +14,14 @@ define([
     api,
     editObjectTemplate,
     Dialog,
-    Events
+    Selection
 ) {
     function MCT() {
         EventEmitter.call(this);
         this.legacyBundle = { extensions: {} };
+
+        this.selection = new Selection();
+        this.on('navigation', this.selection.clear.bind(this.selection));
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -93,6 +96,14 @@ define([
     };
 
     MCT.prototype.start = function () {
+        this.legacyExtension('runs', {
+            depends: ['navigationService'],
+            implementation: function (navigationService) {
+                navigationService
+                    .addListener(this.emit.bind(this, 'navigation'));
+            }.bind(this)
+        });
+
         legacyRegistry.register('adapter', this.legacyBundle);
         this.emit('start');
     };
@@ -101,8 +112,6 @@ define([
         main: "MAIN",
         toolbar: "TOOLBAR"
     };
-
-    MCT.prototype.events = new Events();
 
     return MCT;
 });
