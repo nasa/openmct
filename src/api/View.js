@@ -12,6 +12,7 @@ define(function () {
      *          associated with this view
      */
     View.prototype.show = function (container, object) {
+        return function () {};
     };
 
     /**
