@@ -40,9 +40,6 @@ define([
             this.render();
         };
 
-        TodoView.prototype.destroy = function () {
-        };
-
         TodoView.prototype.setFilter = function (value) {
             this.filterValue = value;
             this.render();
@@ -100,10 +97,20 @@ define([
             $message.toggle(tasks.length < 1);
         };
 
+        var todoView = new View();
+
+        todoView.show = function (container, domainObject) {
+            var renderer = new TodoView(domainObject);
+            renderer.show(container);
+            return renderer.destroy.bind(renderer);
+        };
+
+        todoView.test = function () {
+            return todoType.test(domainObject);
+        };
+
         mct.type('example.todo', todoType);
-        mct.view(mct.regions.main, function (domainObject) {
-            return todoType.check(domainObject) && new TodoView(domainObject);
-        });
+        mct.view(mct.regions.main, todoView);
 
         return mct;
     };

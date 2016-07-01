@@ -22,7 +22,7 @@ define(function () {
      * @param domainObject
      * @returns {boolean} true if the domain object is of this type
      */
-    Type.prototype.check = function (domainObject) {
+    Type.prototype.test = function (domainObject) {
         // Depends on assignment from MCT.
         return domainObject.getModel().type === this.key;
     };
