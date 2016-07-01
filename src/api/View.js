@@ -7,27 +7,21 @@ define(function () {
      * showing elsewhere, it will be removed from that location.
      *
      * @param {HTMLElement} container the element to populate
+     * @param {*} object the object to be shown in this view
+     * @returns {Function} a function to call to release any resources
+     *          associated with this view
      */
-    View.prototype.show = function (container) {
-    };
-
-    /**
-     * Release any resources associated with this view.
-     *
-     * Subclasses should override this method to release any resources
-     * they obtained during a `show` call.
-     */
-    View.prototype.destroy = function () {
+    View.prototype.show = function (container, object) {
     };
 
     /**
      * Check if this view is capable of showing this object. Users of
-     * views should use this method before showing
+     * views should use this method before calling `show`.
      *
      * Subclasses should override this method to control the applicability
      * of this view to other objects.
      *
-     * @param {*} object the value to be shown in this view
+     * @param {*} object the object to be shown in this view
      * @returns {boolean} true if this view can display this object
      */
     View.prototype.test = function (object) {
