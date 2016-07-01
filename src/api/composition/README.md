@@ -28,6 +28,8 @@ composition providers are anything that meets the following interface:
 * `provider.remove(domainObject, childObject)` -> immediately removes objects
 * `provider.load(domainObject)` -> returns promise for array of children
 
+TODO: need to figure out how to make the provider event listeners invisible to the provider.
+
 There is a default composition provider which handles loading composition for 
 any object with a `composition` property.  If you want specialized composition 
 loading behavior, implement your own composition provider and register it with
