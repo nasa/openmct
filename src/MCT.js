@@ -4,7 +4,8 @@ define([
     'uuid',
     './api/api',
     'text!./adapter/templates/edit-object-replacement.html',
-    './ui/Dialog'
+    './ui/Dialog',
+    './api/objects/bundle'
 ], function (
     EventEmitter,
     legacyRegistry,
