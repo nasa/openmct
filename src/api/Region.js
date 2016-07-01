@@ -1,5 +1,5 @@
 define([
-    'eventemitter2',
+    'EventEmitter',
     'zepto'
 ], function (EventEmitter, $) {
     function Region(element) {

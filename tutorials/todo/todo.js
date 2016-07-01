@@ -29,7 +29,7 @@ define([
             this.render = this.render.bind(this);
         }
 
-        TodoRenderer.prototype.show = function (container) {
+        TodoRenderer.prototype.show = function (region) {
             this.destroy();
 
             this.$els = $(todoTemplate);
@@ -39,7 +39,7 @@ define([
                 complete: this.$els.find('.example-todo-button-complete')
             };
 
-            $(container).empty().append(this.$els);
+            region.show(this.$els);
 
             this.initialize();
             this.render();
@@ -129,7 +129,7 @@ define([
             this.handleSelectionChange = this.handleSelectionChange.bind(this);
         }
 
-        TodoToolbarRenderer.prototype.show = function (container) {
+        TodoToolbarRenderer.prototype.show = function (region) {
             this.destroy();
 
             var $els = $(toolbarTemplate);
@@ -137,7 +137,7 @@ define([
             var $remove = $els.find('a.example-remove');
             var domainObject = this.domainObject;
 
-            $(container).append($els);
+            region.show($els);
 
             $add.on('click', function () {
                 var $dialog = $(dialogTemplate),
@@ -189,14 +189,14 @@ define([
 
         todoView.populate = function (region, domainObject) {
             var renderer = new TodoRenderer(domainObject);
-            renderer.show(container);
-            return renderer.destroy.bind(renderer);
+            renderer.show(region);
+            region.on('clear', renderer.destroy.bind(renderer));
         };
 
-        todoToolbarView.show = function (container, domainObject) {
+        todoToolbarView.show = function (region, domainObject) {
             var renderer = new TodoToolbarRenderer(domainObject);
-            renderer.show(container);
-            return renderer.destroy.bind(renderer);
+            renderer.show(region);
+            region.on('clear', renderer.destroy.bind(renderer));
         };
 
         todoView.test = todoToolbarView.test = function (region, domainObject) {
