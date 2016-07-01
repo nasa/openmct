@@ -2,17 +2,20 @@ define([
     './Type',
     './TimeConductor',
     './View',
-    './objects/ObjectAPI'
+    './objects/ObjectAPI',
+    './composition/CompositionAPI'
 ], function (
     Type,
     TimeConductor,
     View,
-    ObjectAPI
+    ObjectAPI,
+    CompositionAPI
 ) {
     return {
         Type: Type,
         TimeConductor: new TimeConductor(),
         View: View,
-        Objects: ObjectAPI
+        Objects: ObjectAPI,
+        Composition: CompositionAPI
     };
 });
