@@ -3,16 +3,25 @@ define([
     'legacyRegistry',
     'uuid',
     './api/api',
+    'text!./adapter/templates/edit-object-replacement.html',
+    './ui/Dialog',
+    './Selection',
     './api/objects/bundle'
 ], function (
     EventEmitter,
     legacyRegistry,
     uuid,
-    api
+    api,
+    editObjectTemplate,
+    Dialog,
+    Selection
 ) {
     function MCT() {
         EventEmitter.call(this);
         this.legacyBundle = { extensions: {} };
+
+        this.selection = new Selection();
+        this.on('navigation', this.selection.clear.bind(this.selection));
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -22,25 +31,34 @@ define([
     });
     MCT.prototype.MCT = MCT;
 
+    MCT.prototype.legacyExtension = function (category, extension) {
+        this.legacyBundle.extensions[category] =
+            this.legacyBundle.extensions[category] || [];
+        this.legacyBundle.extensions[category].push(extension);
+    };
+
     MCT.prototype.view = function (region, factory) {
         var viewKey = region + uuid();
-        var adaptedViewKey = "adapted-view-" + viewKey;
+        var adaptedViewKey = "adapted-view-" + region;
 
-        this.legacyBundle.extensions.views =
-            this.legacyBundle.extensions.views || [];
-        this.legacyBundle.extensions.views.push({
-            name: "A view",
-            key: adaptedViewKey,
-            template: '<mct-view key="\'' +
-                viewKey +
-                '\'" ' +
-                'mct-object="domainObject">' +
-                '</mct-view>'
-        });
+        this.legacyExtension(
+            region === this.regions.main ? 'views' : 'representations',
+            {
+                name: "A view",
+                key: adaptedViewKey,
+                editable: true,
+                template: '<mct-view region="\'' +
+                    region +
+                    '\'" ' +
+                    'key="\'' +
+                    viewKey +
+                    '\'" ' +
+                    'mct-object="domainObject">' +
+                    '</mct-view>'
+            }
+        );
 
-        this.legacyBundle.extensions.policies =
-            this.legacyBundle.extensions.policies || [];
-        this.legacyBundle.extensions.policies.push({
+        this.legacyExtension('policies', {
             category: "view",
             implementation: function Policy() {
                 this.allow = function (view, domainObject) {
@@ -52,10 +70,9 @@ define([
             }
         });
 
-        this.legacyBundle.extensions.newViews =
-            this.legacyBundle.extensions.newViews || [];
-        this.legacyBundle.extensions.newViews.push({
+        this.legacyExtension('newViews', {
             factory: factory,
+            region: region,
             key: viewKey
         });
     };
@@ -63,20 +80,37 @@ define([
     MCT.prototype.type = function (key, type) {
         var legacyDef = type.toLegacyDefinition();
         legacyDef.key = key;
-        this.legacyBundle.extensions.types =
-            this.legacyBundle.extensions.types || [];
-        this.legacyBundle.extensions.types.push(legacyDef);
-
         type.key = key;
+
+        this.legacyExtension('types', legacyDef);
+        this.legacyExtension('representations', {
+            key: "edit-object",
+            priority: "preferred",
+            template: editObjectTemplate,
+            type: key
+        });
+    };
+
+    MCT.prototype.dialog = function (view, title) {
+        return new Dialog(view, title).show();
     };
 
     MCT.prototype.start = function () {
+        this.legacyExtension('runs', {
+            depends: ['navigationService'],
+            implementation: function (navigationService) {
+                navigationService
+                    .addListener(this.emit.bind(this, 'navigation'));
+            }.bind(this)
+        });
+
         legacyRegistry.register('adapter', this.legacyBundle);
         this.emit('start');
     };
 
     MCT.prototype.regions = {
-        main: "MAIN"
+        main: "MAIN",
+        toolbar: "TOOLBAR"
     };
 
     MCT.prototype.verbs = {
@@ -86,6 +120,10 @@ define([
                     var persistence = domainObject.getCapability('persistence');
                     return persistence.persist();
                 });
+        },
+        observe: function (domainObject, callback) {
+            var mutation = domainObject.getCapability('mutation');
+            return mutation.listen(callback);
         }
     };
 

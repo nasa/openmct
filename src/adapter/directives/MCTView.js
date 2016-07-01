@@ -3,24 +3,21 @@ define(['angular'], function (angular) {
         var factories = {};
 
         newViews.forEach(function (newView) {
-            factories[newView.key] = newView.factory;
+            factories[newView.region] = factories[newView.region] || {};
+            factories[newView.region][newView.key] = newView.factory;
         });
 
         return {
             restrict: 'E',
             link: function (scope, element, attrs) {
-                var key = undefined;
-                var mctObject = undefined;
+                var key, mctObject, region;
 
                 function maybeShow() {
-                    if (!factories[key]) {
-                        return;
-                    }
-                    if (!mctObject) {
+                    if (!factories[region] || !factories[region][key] || !mctObject) {
                         return;
                     }
 
-                    var view = factories[key](mctObject);
+                    var view = factories[region][key](mctObject);
                     view.show(element[0]);
                 }
 
@@ -34,12 +31,19 @@ define(['angular'], function (angular) {
                     maybeShow();
                 }
 
+                function setRegion(r) {
+                    region = r;
+                    maybeShow();
+                }
+
                 scope.$watch('key', setKey);
+                scope.$watch('region', setRegion);
                 scope.$watch('mctObject', setObject);
 
             },
             scope: {
                 key: "=",
+                region: "=",
                 mctObject: "="
             }
         };

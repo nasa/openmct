@@ -1,8 +1,10 @@
 define([
     "text!./todo.html",
     "text!./todo-task.html",
+    "text!./todo-toolbar.html",
+    "text!./todo-dialog.html",
     "zepto"
-], function (todoTemplate, taskTemplate, $) {
+], function (todoTemplate, taskTemplate, toolbarTemplate, dialogTemplate, $) {
     /**
      * @param {mct.MCT} mct
      */
@@ -24,9 +26,12 @@ define([
         function TodoRenderer(domainObject) {
             this.domainObject = domainObject;
             this.filterValue = "all";
+            this.render = this.render.bind(this);
         }
 
         TodoRenderer.prototype.show = function (container) {
+            this.destroy();
+
             this.$els = $(todoTemplate);
             this.$buttons = {
                 all: this.$els.find('.example-todo-button-all'),
@@ -38,12 +43,24 @@ define([
 
             this.initialize();
             this.render();
+
+            mct.verbs.observe(this.domainObject, this.render);
+            mct.selection.on('change', this.render);
+        };
+
+
+        TodoRenderer.prototype.destroy = function () {
+            if (this.unlisten) {
+                this.unlisten();
+                this.unlisten = undefined;
+            }
         };
 
         TodoRenderer.prototype.setFilter = function (value) {
             this.filterValue = value;
             this.render();
         };
+
 
         TodoRenderer.prototype.initialize = function () {
             Object.keys(this.$buttons).forEach(function (k) {
@@ -70,6 +87,7 @@ define([
                 }
             };
             var filterValue = this.filterValue;
+            var selected = mct.selection.selected();
 
             Object.keys($buttons).forEach(function (k) {
                 $buttons[k].toggleClass('selected', filterValue === k);
@@ -80,9 +98,9 @@ define([
             tasks.forEach(function (task, index) {
                 var $taskEls = $(taskTemplate);
                 var $checkbox = $taskEls.find('.example-task-checked');
+                var $desc = $taskEls.find('.example-task-description');
                 $checkbox.prop('checked', task.completed);
-                $taskEls.find('.example-task-description')
-                    .text(task.description);
+                $desc.text(task.description);
 
                 $checkbox.on('change', function () {
                     var checked = !!$checkbox.prop('checked');
@@ -91,13 +109,83 @@ define([
                     });
                 });
 
+                $desc.on('click', function () {
+                    mct.selection.clear();
+                    mct.selection.select({ index: index });
+                });
+
+                if (selected.length > 0 && selected[0].index === index) {
+                    $desc.addClass('selected');
+                }
+
                 $list.append($taskEls);
             });
 
             $message.toggle(tasks.length < 1);
         };
 
+        function TodoToolbarRenderer(domainObject) {
+            this.domainObject = domainObject;
+            this.handleSelectionChange = this.handleSelectionChange.bind(this);
+        }
+
+        TodoToolbarRenderer.prototype.show = function (container) {
+            this.destroy();
+
+            var $els = $(toolbarTemplate);
+            var $add = $els.find('a.example-add');
+            var $remove = $els.find('a.example-remove');
+            var domainObject = this.domainObject;
+
+            $(container).append($els);
+
+            $add.on('click', function () {
+                var $dialog = $(dialogTemplate),
+                    view = {
+                        show: function (container) {
+                            $(container).append($dialog);
+                        },
+                        destroy: function () {}
+                    };
+
+                mct.dialog(view, "Add a Task").then(function () {
+                    var description = $dialog.find('input').val();
+                    mct.verbs.mutate(domainObject, function (model) {
+                        model.tasks.push({ description: description });
+                    });
+                });
+            });
+            $remove.on('click', function () {
+                var index = mct.selection.selected()[0].index;
+                if (index !== undefined) {
+                    mct.verbs.mutate(domainObject, function (model) {
+                        model.tasks = model.tasks.filter(function (t, i) {
+                            return i !== index;
+                        });
+                        delete model.selected;
+                        mct.selection.clear();
+                    });
+                }
+            });
+            this.$remove = $remove;
+            this.handleSelectionChange();
+            mct.selection.on('change', this.handleSelectionChange);
+        };
+
+        TodoToolbarRenderer.prototype.handleSelectionChange = function () {
+            var selected = mct.selection.selected();
+            if (this.$remove) {
+                this.$remove.toggle(selected.length > 0);
+            }
+        };
+
+        TodoToolbarRenderer.prototype.destroy = function () {
+            mct.selection.off('change', this.handleSelectionChange);
+            this.$remove = undefined;
+        };
+
         var todoView = new View();
+        var todoToolbarView = new View();
 
         todoView.show = function (container, domainObject) {
             var renderer = new TodoRenderer(domainObject);
@@ -109,8 +197,20 @@ define([
             return todoType.test(domainObject);
         };
 
+        todoToolbarView.show = function (container, domainObject) {
+            var renderer = new TodoToolbarRenderer(domainObject);
+            renderer.show(container);
+            return renderer.destroy.bind(renderer);
+        };
+
+        todoToolbarView.test = function () {
+            return todoType.test(domainObject);
+        };
+
+
         mct.type('example.todo', todoType);
         mct.view(mct.regions.main, todoView);
+        mct.view(mct.regions.toolbar, todoToolbarView);
 
         return mct;
     };
