@@ -17,8 +17,8 @@ define(['angular'], function (angular) {
                         return;
                     }
 
-                    var view = factories[region][key](mctObject);
-                    view.show(element[0]);
+                    var view = factories[region][key];
+                    view.show(element[0], mctObject);
                 }
 
                 function setKey(k) {

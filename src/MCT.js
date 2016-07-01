@@ -37,7 +37,7 @@ define([
         this.legacyBundle.extensions[category].push(extension);
     };
 
-    MCT.prototype.view = function (region, factory) {
+    MCT.prototype.view = function (region, view) {
         var viewKey = region + uuid();
         var adaptedViewKey = "adapted-view-" + region;
 
@@ -63,7 +63,7 @@ define([
             implementation: function Policy() {
                 this.allow = function (view, domainObject) {
                     if (view.key === adaptedViewKey) {
-                        return !!factory(domainObject);
+                        return view.test(domainObject);
                     }
                     return true;
                 };
@@ -71,7 +71,7 @@ define([
         });
 
         this.legacyExtension('newViews', {
-            factory: factory,
+            factory: view,
             region: region,
             key: viewKey
         });
