@@ -5,7 +5,8 @@ define([
     './api/api',
     'text!./adapter/templates/edit-object-replacement.html',
     './ui/Dialog',
-    './Selection'
+    './Selection',
+    './api/objects/bundle'
 ], function (
     EventEmitter,
     legacyRegistry,

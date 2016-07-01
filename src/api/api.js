@@ -1,12 +1,15 @@
 define([
     './Type',
-    './View'
+    './View',
+    './objects/ObjectAPI'
 ], function (
     Type,
-    View
+    View,
+    ObjectAPI
 ) {
     return {
         Type: Type,
-        View: View
+        View: View,
+        Objects: ObjectAPI
     };
 });
