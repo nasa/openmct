@@ -56,6 +56,9 @@ requirejs.config({
         },
         "zepto": {
             "exports": "Zepto"
+        },
+        "lodash": {
+            "exports": "lodash"
         }
     }
 });

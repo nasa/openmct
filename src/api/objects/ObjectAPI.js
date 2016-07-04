@@ -1,11 +1,13 @@
 define([
     'lodash',
     'EventEmitter',
-    './object-utils'
+    './object-utils',
+    './MutableObject'
 ], function (
     _,
     EventEmitter,
-    utils
+    utils,
+    MutableObject
 ) {
 
     /**
@@ -26,13 +28,11 @@ define([
         ROOT_REGISTRY = [],
         PROVIDER_REGISTRY = {},
         FALLBACK_PROVIDER,
-        eventEmitter = new EventEmitter();;
+        eventEmitter = new EventEmitter();
 
     Objects._supersecretSetFallbackProvider = function (p) {
         FALLBACK_PROVIDER = p;
     };
-
-
 
     // Root provider is hardcoded in; can't be skipped.
     var RootProvider = {
@@ -51,7 +51,7 @@ define([
             return RootProvider;
         }
         return PROVIDER_REGISTRY[key.namespace] || FALLBACK_PROVIDER;
-    };
+    }
 
     Objects.addProvider = function (namespace, provider) {
         PROVIDER_REGISTRY[namespace] = provider;
@@ -91,37 +91,8 @@ define([
         });
     };
 
-    function objectDiffCalculator() {
-        //TODO: Calculate diffs
-        return [];
-    }
-
-    function qualifiedEventName(domainObject, eventName) {
-        return [domainObject.getId(), eventName].join(':');
-    }
-
-    Objects.observe = function (domainObject) {
-        return {
-            on: function(eventName, callback) {
-                if (eventName === '*') {
-                    //Transitional API, use existing capability
-                    return domainObject.getCapability("mutation").listen(callback);
-                }
-                return eventEmitter.on(qualifiedEventName(domainObject, eventName), callback);
-            }
-        }
-    };
-
-    Objects.mutate = function (domainObject, mutateFn){
-        var beforeModel = JSON.parse(JSON.stringify(domainObject.getModel()));
-        //Capability based for now. Will modify with ability to calculate diffs
-        domainObject.getCapability("mutation").mutate(mutateFn).then(function () {
-            //TODO: Calculate diffs and trigger events based on diff paths
-            var afterModel = domainObject.getModel();
-            objectDiffCalculator(beforeModel, afterModel).forEach( function (diff) {
-                eventEmitter.emit(qualifiedEventName(domainObject, diff.path), diff.afterValue, diff.beforeValue);
-            });
-        });
+    Objects.getMutable = function (object) {
+        return new MutableObject(eventEmitter, object);
     };
 
     return Objects;
