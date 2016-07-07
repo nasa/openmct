@@ -101,22 +101,6 @@ define(['./MutableObject'], function (MutableObject) {
 
         });
 
-        it('Fires container change event when object property changes', function () {
-            var newString = 'updated'
-            mutableObject.set('objectProperty.prop1', newString);
-            expect(eventEmitter.emit).toHaveBeenCalledWith([identifier, 'objectProperty'].join(':'), domainObject.objectProperty);
-            expect(eventEmitter.emit).toHaveBeenCalledWith([identifier, 'objectProperty.prop1'].join(':'), newString);
-
-            mutableObject.set('objectProperty.prop3.propA', newString);
-            expect(eventEmitter.emit).toHaveBeenCalledWith([identifier, 'objectProperty.prop3'].join(':'), domainObject.objectProperty.prop3);
-            expect(eventEmitter.emit).toHaveBeenCalledWith([identifier, 'objectProperty.prop3.propA'].join(':'), newString);
-
-            mutableObject.set('arrayProperty.1', newString);
-            expect(eventEmitter.emit).toHaveBeenCalledWith([identifier, 'arrayProperty'].join(':'), arrayProperty);
-            expect(eventEmitter.emit).toHaveBeenCalledWith([identifier, 'arrayProperty.1'].join(':'), newString);
-
-        });
-
         it('Fires wildcard event when any property changes', function () {
             var newString = 'updated'
             mutableObject.set('objectProperty.prop3.propA', newString);
