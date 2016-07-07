@@ -61,8 +61,7 @@ var gulp = require('gulp'),
                 endFile: "src/end.frag"
             },
             mainConfigFile: paths.main,
-            wrapShim: true,
-            optimize: "none"
+            wrapShim: true
         },
         karma: {
             configFile: path.resolve(__dirname, 'karma.conf.js'),
