@@ -109,6 +109,7 @@ define([
         if (!domElement) { domElement = document.body; }
         var appDiv = document.createElement('div');
         appDiv.setAttribute('ng-view', '');
+        appDiv.className = 'user-environ';
         domElement.appendChild(appDiv);
         mct.start();
     };
