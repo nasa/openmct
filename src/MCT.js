@@ -5,6 +5,7 @@ define([
     './api/api',
     'text!./adapter/templates/edit-object-replacement.html',
     './ui/Dialog',
+    './Selection',
     './api/objects/bundle'
 ], function (
     EventEmitter,
@@ -12,11 +13,15 @@ define([
     uuid,
     api,
     editObjectTemplate,
-    Dialog
+    Dialog,
+    Selection
 ) {
     function MCT() {
         EventEmitter.call(this);
         this.legacyBundle = { extensions: {} };
+
+        this.selection = new Selection();
+        this.on('navigation', this.selection.clear.bind(this.selection));
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -91,6 +96,14 @@ define([
     };
 
     MCT.prototype.start = function () {
+        this.legacyExtension('runs', {
+            depends: ['navigationService'],
+            implementation: function (navigationService) {
+                navigationService
+                    .addListener(this.emit.bind(this, 'navigation'));
+            }.bind(this)
+        });
+
         legacyRegistry.register('adapter', this.legacyBundle);
         this.emit('start');
     };
@@ -98,20 +111,6 @@ define([
     MCT.prototype.regions = {
         main: "MAIN",
         toolbar: "TOOLBAR"
-    };
-
-    MCT.prototype.verbs = {
-        mutate: function (domainObject, mutator) {
-            return domainObject.useCapability('mutation', mutator)
-                .then(function () {
-                    var persistence = domainObject.getCapability('persistence');
-                    return persistence.persist();
-                });
-        },
-        observe: function (domainObject, callback) {
-            var mutation = domainObject.getCapability('mutation');
-            return mutation.listen(callback);
-        }
     };
 
     return MCT;
