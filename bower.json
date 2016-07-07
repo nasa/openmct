@@ -20,6 +20,7 @@
     "FileSaver.js": "^0.0.2",
     "zepto": "^1.1.6",
     "eventemitter3": "^1.2.0",
-    "lodash": "3.10.1"
+    "lodash": "3.10.1",
+    "almond": "~0.3.2"
   }
 }
