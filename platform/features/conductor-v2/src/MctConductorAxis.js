@@ -37,41 +37,34 @@ define(
          * @constructor
          * @memberof platform/forms
          */
-        function MCTConductorAxis($timeout) {
+        function MCTConductorAxis(conductor) {
 
             function link(scope, element, attrs, ngModelController) {
-                $timeout(function () {
-                    var target = element[0].firstChild,
-                        width = target.offsetWidth,
-                        height = target.offsetHeight,
-                        padding = 1;
+                var target = element[0].firstChild,
+                    height = target.offsetHeight,
+                    padding = 1;
 
-                    var vis = d3.select(target)
-                                .append('svg:svg')
-                                //.attr('viewBox', '0 0 ' + width + ' ' +
-                                // height)
-                                .attr('width', '100%')
-                                .attr('height', height);
-                                //.attr('preserveAspectRatio', 'xMidYMid meet');
+                var vis = d3.select(target)
+                            .append('svg:svg')
+                            .attr('width', '100%')
+                            .attr('height', height);
+                var xScale = d3.scaleTime();
+                var xAxis = d3.axisTop();
+                // draw x axis with labels and move to the bottom of the chart area
+                var axisElement = vis.append("g")
+                    .attr("transform", "translate(0," + (height - padding) + ")");
 
-                    // define the x scale (horizontal)
-                    var mindate = new Date(2012,0,1),
-                        maxdate = new Date(2016,0,1);
-
-                    var xScale = d3.scaleTime()
-                        .domain([mindate, maxdate])
+                function setBounds(start, end) {
+                    var width = target.offsetWidth;
+                    xScale.domain([new Date(start), new Date(end)])
                         .range([padding, width - padding * 2]);
-
-                    var xAxis = d3.axisTop()
-                        .scale(xScale);
-
-                    // draw x axis with labels and move to the bottom of the chart area
-                    var axisElement = vis.append("g")
-                        .attr("class", "xaxis")   // give it a class so it can be used to select only xaxis labels  below
-                        .attr("transform", "translate(0," + (height - padding) + ")");
-
+                    xAxis.scale(xScale);
                     axisElement.call(xAxis);
-                }, 1000);
+                }
+
+                conductor.on('bounds', function (bounds) {
+                    setBounds(bounds.start, bounds.end);
+                });
             }
 
             return {

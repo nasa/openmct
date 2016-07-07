@@ -25,8 +25,6 @@
         stroke: #A0A0A0;
     }
 
-    .l-axis-holder svg>g
-
 </style>
 <!-- Parent holder for time conductor. follow-mode | fixed-mode -->
 <div class="follow-mode"
@@ -43,7 +41,7 @@
                                      validate: tcController.validateStart
                                  }"
                                  ng-model="formModel"
-                                 ng-blur="tcController.updateBoundsFromForm()"
+                                 ng-blur="tcController.updateBoundsFromForm(formModel)"
                                  field="'start'"
                                  class="time-range-start">
                     </mct-control>
@@ -56,7 +54,7 @@
                                      validate: tcController.validateEnd
                                  }"
                                  ng-model="formModel"
-                                 ng-blur="trCtrl.updateBoundsFromForm()"
+                                 ng-blur="tcController.updateBoundsFromForm(formModel)"
                                  field="'end'"
                                  class="time-range-end">
                     </mct-control>

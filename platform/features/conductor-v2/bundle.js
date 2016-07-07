@@ -52,6 +52,7 @@ define([
                     "implementation": TimeConductorController,
                     "depends": [
                         "$scope",
+                        "$timeout",
                         "timeConductor"
                     ]
                 }
@@ -60,7 +61,9 @@ define([
                 {
                     "key": "mctConductorAxis",
                     "implementation": MCTConductorAxis,
-                    "depends": ["$timeout"]
+                    "depends": [
+                        "timeConductor"
+                    ]
                 }
             ],
             "representations": [

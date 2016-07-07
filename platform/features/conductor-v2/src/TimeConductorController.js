@@ -24,31 +24,53 @@ define(
     [],
     function () {
 
-        function TimeConductorController($scope, conductor) {
+        var SIX_HOURS = 6 * 60 * 60 * 1000;
+
+        function TimeConductorController($scope, $timeout, conductor) {
+            var now = Date.now();
+            var self = this;
+
             this.$scope = $scope;
             this.conductor = conductor;
 
-            /*
-                Stuff to put on scope
-                - parameters
-                - formModel
-            */
-            this.$scope.formModel = {
-                start: '2012-01-01 00:00:00.000Z',
-                end: '2016-01-01 00:00:00.000Z'
-            };
+            $scope.formModel = {};
+
+            conductor.on('bounds', function (bounds) {
+                $scope.formModel = {
+                    start: bounds.start,
+                    end: bounds.end
+                };
+            });
+
+            //Temporary workaround for resizing issue
+            $timeout(function() {
+                //Set the time conductor to some default
+                conductor.bounds({start: now - SIX_HOURS, end: now});
+            }, 1000);
+
+            Object.keys(TimeConductorController.prototype).filter(function (key){
+                return typeof TimeConductorController.prototype[key] === 'function';
+            }).forEach(function (key) {
+                self[key] = self[key].bind(self);
+            });
         }
 
-        TimeConductorController.prototype.validateStart = function () {
-            return true;
+        TimeConductorController.prototype.validateStart = function (start) {
+            var bounds = this.conductor.bounds();
+            return this.conductor.validateBounds({start: start, end: bounds.end}) === true;
         };
 
-        TimeConductorController.prototype.validateEnd = function () {
-            return true;
+        TimeConductorController.prototype.validateEnd = function (end) {
+            var bounds = this.conductor.bounds();
+            return this.conductor.validateBounds({start: bounds.start, end: end}) === true;
         };
 
-        TimeConductorController.prototype.updateBoundsFromForm = function () {
+        TimeConductorController.prototype.updateBoundsFromForm = function (formModel) {
+            var newBounds = {start: formModel.start, end: formModel.end};
 
+            if (this.conductor.validateBounds(newBounds) === true) {
+                this.conductor.bounds(newBounds);
+            }
         };
 
         return TimeConductorController;
