@@ -6,7 +6,8 @@ define([
     'text!./adapter/templates/edit-object-replacement.html',
     './ui/Dialog',
     './Selection',
-    './api/objects/bundle'
+    './api/objects/bundle',
+    './api/objects/object-utils'
 ], function (
     EventEmitter,
     legacyRegistry,
@@ -14,7 +15,9 @@ define([
     api,
     editObjectTemplate,
     Dialog,
-    Selection
+    Selection,
+    objectAPIBundle,
+    objectUtils
 ) {
     function MCT() {
         EventEmitter.call(this);
@@ -63,7 +66,8 @@ define([
             implementation: function Policy() {
                 this.allow = function (view, domainObject) {
                     if (view.key === adaptedViewKey) {
-                        return !!factory(domainObject);
+                        newDO = objectUtils.toNewFormat(domainObject.getModel());
+                        return !!factory(newDO);
                     }
                     return true;
                 };
@@ -74,6 +78,13 @@ define([
             factory: factory,
             region: region,
             key: viewKey
+        });
+        
+        this.legacyExtension('services', {
+            key: 'PublicAPI',
+            implementation: function () {
+                return this;
+            }.bind(this)
         });
     };
 

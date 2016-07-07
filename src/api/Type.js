@@ -24,7 +24,7 @@ define(function () {
      */
     Type.prototype.check = function (domainObject) {
         // Depends on assignment from MCT.
-        return domainObject.getModel().type === this.key;
+        return domainObject.type === this.key;
     };
 
     /**
