@@ -6,8 +6,153 @@
   <script src="dist/main.js"></script>
 </head>
 <body>
-  <script>
+<script>
+  
+    // First, we're going to create the Todo List type, so that users can create
+    // todo lists.
+  
+    MCT.type('example.todo', new MCT.Type({
+        metadata: {
+            label: "To-Do List",
+            glyph: "2",
+            description: "A list of things that need to be done."
+        },
+        initialize: function (model) {
+            model.tasks = [
+                { description: "This is a task." }
+            ];
+        },
+        creatable: true
+    }));
+    
+    /* 
+    Refresh the page, and you should be able to create new Todo Lists.  
+    unfortunately, when you navigate to a Todo list, you see a blank page. let's
+    fix that by adding a main view for that todo list.  
+    
+    If you're wondering why this is commented out, well, it's because we'll 
+    write a new version later.
+    */
+    
+    // MCT.view(MCT.regions.main, function (domainObject) {
+    //     if (domainObject.type !== 'example.todo') {
+    //         return false; // Views choose what they want to apply to.
+    //     }
+    //
+    //     function renderTask(task) {
+    //         return [
+    //             '<li>',
+    //             '<input type="checkbox"' + (task.complete ? ' checked="true"' : '') + '>',
+    //             '<span>' + task.description + '</span>',
+    //             '</li>'
+    //         ].join('');
+    //     };
+    //
+    //     function renderTaskList() {
+    //         return [
+    //             '<ul>',
+    //             domainObject.tasks.map(renderTask).join(''),
+    //             '</ul>'
+    //         ].join('');
+    //     };
+    //
+    //     return {
+    //         show: function (container) {
+    //             container.innerHTML = renderTaskList();
+    //         }
+    //     };
+    // });
+    
+    /*
+     Refresh the page and you should see a todo list with checkboxes!  Now let's
+     Allow you to add tasks by mutating the object.  We'll add a toolbar view to
+     do this.
+    */
+    
+    MCT.view(MCT.regions.toolbar, function (domainObject) {
+        if (domainObject.type !== 'example.todo') {
+            return false; // Views choose what they want to apply to.
+        }
+        
+        var mutableObject = MCT.Objects.getMutable(domainObject);
+        
+        function addTask(event) {
+            var description = prompt('Task description');
+            var tasks = mutableObject.get('tasks');
+            tasks.push({
+                description: description,
+                complete: false
+            });
+            mutableObject.set('tasks', tasks);
+            console.log(mutableObject);
+        }
+        
+        return {
+            show: function (container) {
+                container.addEventListener('click', addTask);
+                container.innerHTML = '<button>Add Task</button>';
+            },
+            destroy: function (container) {
+                container.removeEventListener('click', addTask);
+            }
+        }
+    });
+    
+    /*
+     Refresh the page, edit the todo list, and you'll have a button that allows
+     you to add tasks!  Unfortunately, new tasks don't show in the list.  Why?
+     Well, if your view should update on mutation, you need to set up the correct 
+     listeners.  Let's update the TodoView we made earlier:
+    */
+    
+    MCT.view(MCT.regions.main, function (domainObject) {
+        if (domainObject.type !== 'example.todo') {
+            return false; // Views choose what they want to apply to.
+        }
+        
+        var mutableObject = MCT.Objects.getMutable(domainObject);
+        
+        function renderTask(task) {
+            return [
+                '<li>',
+                '<input type="checkbox"' + (task.complete ? ' checked="true"' : '') + '>',
+                '<span>' + task.description + '</span>',
+                '</li>'
+            ].join('');
+        }
+        
+        function renderTaskList(tasks) {
+            return [
+                '<ul>',
+                tasks.map(renderTask).join(''),
+                '</ul>'
+            ].join('');
+        }
+        
+        function onCheckboxChange(event) {
+            console.log('event!', event);
+            var checkbox = event.target;
+            var taskEl = checkbox.parentNode;
+            var taskList = taskEl.parentNode;
+            var taskIndex = [].slice.apply(taskList.children).indexOf(taskEl);
+            mutableObject.set('tasks[' + taskIndex + '].complete', checkbox.checked);
+        }
+        
+        return {
+            show: function (container) {
+                container.innerHTML = renderTaskList(domainObject.tasks);
+                mutableObject.on('tasks', function (tasks) {
+                    container.innerHTML = renderTaskList(tasks);
+                });
+                container.addEventListener('change', onCheckboxChange);
+            },
+            destroy: function () {
+                mutableObject.stopListening();
+            }
+        };
+    });
+  
     MCT.run();
-  </script>
+</script>
 </body>
 </html>
