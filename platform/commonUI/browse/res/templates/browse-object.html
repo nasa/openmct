@@ -43,7 +43,7 @@
             </mct-representation>
         </div>
     </div>
-    <div class="holder l-flex-col flex-elem grows l-object-wrapper">
+    <div class="holder l-flex-col flex-elem grows l-object-wrapper l-controls-visible l-time-controller-visible">
         <div class="holder l-flex-col flex-elem grows l-object-wrapper-inner">
             <!-- Toolbar and Save/Cancel buttons -->
             <div class="l-edit-controls flex-elem l-flex-row flex-align-end">
@@ -59,4 +59,9 @@
             </mct-representation>
         </div>
     </div>
+    <!-- put time conductor in here? -->
+    <mct-representation mct-object="domainObject"
+                        key="'time-conductor'"
+                        class="abs holder flex-elem flex-fixed l-time-controller">
+    </mct-representation>
 </div>
