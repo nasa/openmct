@@ -19,13 +19,12 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<style>
+<!--<style>
     .super-menu.mode-selector-menu {
         width: 400px;
     }
     .super-menu.mode-selector-menu {
         height: 200px;
-        bottom: 0px;
     }
     .super-menu.mode-selector-menu .menu-item-description .desc-area.icon {
         height: 20%;
@@ -35,13 +34,13 @@
     .super-menu .mode-selector-menu .menu-item-description .desc-area.description {
         height: 60%;
     }
-</style>
+</style>-->
 <span ng-controller="ClickAwayController as modeController">
     <div class="s-menu-btn"
          ng-click="modeController.toggle()">
 		<span class="title-label">Fixed Time Span</span>
     </div>
-    <div class="menu super-menu mode-selector-menu"
+    <div class="menu super-menu mini mode-selector-menu"
          ng-show="modeController.isActive()">
         <mct-representation mct-object="domainObject"
                             key="'mode-menu'">
