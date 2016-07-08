@@ -20,10 +20,10 @@
  at runtime from the About dialog for additional information.
 -->
 <div ng-controller="TimeRangeController as trCtrl" class="l-flex-col">
-    <form class="l-time-range-inputs-holder l-flex-row flex-elem"
+    <form class="l-time-conductor-inputs-holder l-flex-row flex-elem"
           ng-submit="trCtrl.updateBoundsFromForm()">
         <span class="l-time-range-inputs-elem ui-symbol type-icon flex-elem">&#x43;</span>
-        <span class="l-time-range-inputs-elem t-inputs-w l-flex-row flex-elem">
+        <span class="l-time-range-inputs-elem l-flex-row flex-elem">
             <span class="l-time-range-input-w flex-elem">
                 <mct-control key="'datetime-field'"
                              structure="{
@@ -86,7 +86,7 @@
         </div>
     </div>
 
-    <div class="l-time-range-ticks-holder flex-elem">
+    <div class="l-time-conductor-ticks flex-elem">
         <div class="l-time-range-ticks">
             <div
                 ng-repeat="tick in ticks track by $index"

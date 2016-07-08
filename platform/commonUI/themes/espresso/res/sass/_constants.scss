@@ -52,7 +52,7 @@ $colorGridLines: rgba(#fff, 0.05);
 $colorInvokeMenu: #fff;
 $colorObjHdrTxt: $colorBodyFg;
 $colorObjHdrIc: pullForward($colorObjHdrTxt, 20%);
-$colorTick: rgba(white, 0.2);
+$colorTick: pullForward($colorBodyBg, 20%);
 
 // Menu colors
 $colorMenuBg: pullForward($colorBodyBg, 23%);

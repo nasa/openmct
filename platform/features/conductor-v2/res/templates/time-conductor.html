@@ -1,91 +1,62 @@
-<style>
-    .time-system .menu{
-        bottom: 10px;
-    }
-    .l-data-availability {
-        width: 100%;
-        height: 20px;
-        background-color: #3b3b3b
-    }
-
-    .l-time-range-inputs-elem {
-        width: 100%;
-    }
-
-    .l-time-range-inputs-elem.l-flex-row {
-        justify-content: space-between;
-    }
-    .l-axis-holder {
-        height: 30px;
-        width: 100%;
-    }
-
-    .l-axis-holder svg, .l-axis-holder svg path,
-    .l-axis-holder svg line  {
-        stroke: #A0A0A0;
-    }
-
-</style>
 <!-- Parent holder for time conductor. follow-mode | fixed-mode -->
-<div class="follow-mode"
+<div class="l-time-conductor follow-mode"
      ng-controller="TimeConductorController as tcController" class="l-flex-col">
     <!-- Holds date selectors and ticks -->
-    <div class="l-conductor-dates">
-        <form class="l-time-range-inputs-holder l-flex-row flex-elem"
+
+    <!-- Holds ticks -->
+    <div class="l-time-conductor-ticks l-row-elem l-flex-row flex-elem no-margin">
+        <form class="abs l-time-conductor-inputs-holder"
               ng-submit="tcController.updateBoundsFromForm(formModel)">
-            <span class="l-time-range-inputs-elem t-inputs-w l-flex-row flex-elem">
-                <span class="l-time-range-input-w flex-elem start-date">
-                    <mct-control key="'datetime-field'"
-                                 structure="{
-                                     format: 'utc',
-                                     validate: tcController.validateStart
-                                 }"
-                                 ng-model="formModel"
-                                 ng-blur="tcController.updateBoundsFromForm(formModel)"
-                                 field="'start'"
-                                 class="time-range-start">
-                    </mct-control>
-                </span>
-                <span class="l-time-range-input-w flex-elem end-date"
-                      ng-controller="ToggleController as t2">
-                    <mct-control key="'datetime-field'"
-                                 structure="{
-                                     format: 'utc',
-                                     validate: tcController.validateEnd
-                                 }"
-                                 ng-model="formModel"
-                                 ng-blur="tcController.updateBoundsFromForm(formModel)"
-                                 field="'end'"
-                                 class="time-range-end">
-                    </mct-control>
-                </span>
-            </span>
+        <span class="l-time-range-input-w start-date">
+            <mct-control key="'datetime-field'"
+                         structure="{
+                             format: 'utc',
+                             validate: tcController.validateStart
+                         }"
+                         ng-model="formModel"
+                         ng-blur="tcController.updateBoundsFromForm(formModel)"
+                         field="'start'"
+                         class="time-range-start">
+            </mct-control>
+        </span>
+        <span class="l-time-range-input-w end-date"
+              ng-controller="ToggleController as t2">
+            <mct-control key="'datetime-field'"
+                         structure="{
+                             format: 'utc',
+                             validate: tcController.validateEnd
+                         }"
+                         ng-model="formModel"
+                         ng-blur="tcController.updateBoundsFromForm(formModel)"
+                         field="'end'"
+                         class="time-range-end">
+            </mct-control>
+        </span>
             <input type="submit" class="hidden">
         </form>
-
-    </div>
-    <div class="l-conductor-ticks">
         <mct-conductor-axis></mct-conductor-axis>
     </div>
+
     <!-- Holds data availability, time of interest -->
-    <div class="l-data-availability"></div>
+    <div class="l-data-visualization l-row-elem l-flex-row flex-elem"></div>
+
     <!-- Holds time system and session selectors, and zoom control -->
-    <div class="l-time-system-zoom">
+    <div class="l-time-system-zoom l-row-elem l-flex-row flex-elem">
         <mct-representation
             key="'mode-selector'"
             mct-object="domainObject"
-            class="holder flex-elem">
+            class="holder flex-elem menus-up mode-selector">
         </mct-representation>
         <mct-control
                 key="'menu-button'"
-                class="time-system"
+                class="holder flex-elem menus-up time-system"
                 ng-model="conductorModel.timeSystem"
                 structure="{
-                    text: 'utc',
+                    text: 'UTC',
                     options: [
-                        {name: 'utc', key:'utc', glyph:'\u0043'},
-                        {name: 'scet', key:'scet', glyph:'\u0043'},
-                        {name: 'sclk', key:'sclk', glyph:'\u0043'}
+                        {name: 'UTC', key:'utc', glyph:'\u0043'},
+                        {name: 'SCET', key:'scet', glyph:'\u0043'},
+                        {name: 'SCLK', key:'sclk', glyph:'\u0043'}
                 ]}">
         </mct-control>
     </div>
