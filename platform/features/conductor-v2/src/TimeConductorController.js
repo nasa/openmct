@@ -27,7 +27,7 @@ define(
         var SIX_HOURS = 6 * 60 * 60 * 1000;
 
         function TimeConductorController($scope, $timeout, conductor) {
-            var now = Date.now();
+            var now = Math.ceil(Date.now() / 1000) * 1000;
             var self = this;
 
             this.$scope = $scope;
