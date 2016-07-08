@@ -39,12 +39,13 @@
 <span ng-controller="ClickAwayController as modeController">
     <div class="s-menu-btn"
          ng-click="modeController.toggle()">
-		<span class="title-label">Fixed Time Span</span>
+		<span class="title-label">{{ngModel.selected}}</span>
     </div>
     <div class="menu super-menu mode-selector-menu"
          ng-show="modeController.isActive()">
         <mct-representation mct-object="domainObject"
-                            key="'mode-menu'">
+                            key="'mode-menu'"
+                            ng-model="ngModel">
         </mct-representation>
     </div>
 </span>

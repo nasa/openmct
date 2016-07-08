@@ -27,8 +27,8 @@
 
 </style>
 <!-- Parent holder for time conductor. follow-mode | fixed-mode -->
-<div class="follow-mode"
-     ng-controller="TimeConductorController as tcController" class="l-flex-col">
+<div ng-controller="TimeConductorController as tcController"
+     class="l-flex-col" ng-class="{'follow-mode': followMode}">
     <!-- Holds date selectors and ticks -->
     <div class="l-conductor-dates">
         <form class="l-time-range-inputs-holder l-flex-row flex-elem"
@@ -74,6 +74,7 @@
         <mct-representation
             key="'mode-selector'"
             mct-object="domainObject"
+            ng-model="modeModel"
             class="holder flex-elem">
         </mct-representation>
         <mct-control
