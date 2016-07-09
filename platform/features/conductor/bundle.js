@@ -53,7 +53,7 @@ define([
                     "provides": "telemetryService",
                     "implementation": ConductorTelemetryDecorator,
                     "depends": [
-                        "conductorService"
+                        "timeConductor"
                     ]
                 }
             ],

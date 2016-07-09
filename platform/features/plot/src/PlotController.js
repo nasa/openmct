@@ -65,6 +65,7 @@ define(
             $scope,
             telemetryFormatter,
             telemetryHandler,
+            conductor,
             throttle,
             PLOT_FIXED_DURATION
         ) {
@@ -125,6 +126,7 @@ define(
                     duration = PLOT_FIXED_DURATION;
 
                 updater = new PlotUpdater(handle, domain, range, duration);
+
                 lastDomain = domain;
                 lastRange = range;
 
@@ -227,13 +229,20 @@ define(
             }
 
             // Respond to a display bounds change (requery for data)
-            function changeDisplayBounds(event, bounds) {
-                var domainAxis = $scope.axes[0];
+            function changeDisplayBounds(bounds) {
+                //var domainAxis = $scope.axes[0];
 
-                domainAxis.chooseOption(bounds.domain);
-                updateDomainFormat();
+                //domainAxis.chooseOption(bounds.domain);
+                //updateDomainFormat();
                 setBasePanZoom(bounds);
-                requery();
+
+                // re-query historical. What do we do about ticks? Don't want
+                // to do a historical re-query on every tick. Need a
+                // forward-buffer I think...
+                // For now, if follow mode, don't requery
+                if (!conductor.follow()) {
+                    requery();
+                }
             }
 
             this.modeOptions = new PlotModeOptions([], subPlotFactory);
@@ -262,7 +271,8 @@ define(
             $scope.$watch('domainObject', subscribe);
 
             // Respond to external bounds changes
-            $scope.$on("telemetry:display:bounds", changeDisplayBounds);
+            //$scope.$on("telemetry:display:bounds", changeDisplayBounds);
+            conductor.on('bounds', changeDisplayBounds);
 
             // Unsubscribe when the plot is destroyed
             $scope.$on("$destroy", releaseSubscription);

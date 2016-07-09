@@ -164,9 +164,11 @@ define(
                 priorDomainDimensions = this.dimensions[0];
 
             if (bufferArray.length > 0) {
-                this.domainExtrema = bufferArray.map(function (lineBuffer) {
-                    return lineBuffer.getDomainExtrema();
-                }).reduce(reduceExtrema);
+                if (!this.domainExtrema) {
+                    this.domainExtrema = bufferArray.map(function (lineBuffer) {
+                        return lineBuffer.getDomainExtrema();
+                    }).reduce(reduceExtrema);
+                }
 
                 this.rangeExtrema = bufferArray.map(function (lineBuffer) {
                     return lineBuffer.getRangeExtrema();

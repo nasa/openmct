@@ -72,6 +72,7 @@ define([
                         "$scope",
                         "telemetryFormatter",
                         "telemetryHandler",
+                        "timeConductor",
                         "throttle",
                         "PLOT_FIXED_DURATION"
                     ]
