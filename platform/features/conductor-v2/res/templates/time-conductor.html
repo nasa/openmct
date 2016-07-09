@@ -1,9 +1,7 @@
 <!-- Parent holder for time conductor. follow-mode | fixed-mode -->
 <div class="l-time-conductor follow-mode"
      ng-controller="TimeConductorController as tcController" class="l-flex-col">
-    <!-- Holds date selectors and ticks -->
-
-    <!-- Holds ticks -->
+    <!-- Holds inputs and ticks -->
     <div class="l-time-conductor-ticks l-row-elem l-flex-row flex-elem no-margin">
         <form class="abs l-time-conductor-inputs-holder"
               ng-submit="tcController.updateBoundsFromForm(formModel)">

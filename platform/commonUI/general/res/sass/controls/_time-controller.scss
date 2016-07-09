@@ -42,17 +42,14 @@
             &.start-date {
                 @include background-image(linear-gradient(90deg, $colorBodyBg $inputW + $interiorMargin, transparent 100%));
             }
-
             &.end-date {
                 @include background-image(linear-gradient(270deg, $colorBodyBg $inputW + $interiorMargin, transparent 100%));
                 right: 0;
                 text-align: right;
             }
-
             input[type="text"] {
                 width: $inputW;
             }
-
             .icon-calendar {
                 position: absolute;
                 margin-left: -16px;
@@ -70,7 +67,6 @@
             position: relative;
             width: 100%;
         }
-
         .l-axis-holder {
             height: $r1H;
             position: relative;
@@ -78,36 +74,23 @@
             svg {
                 stroke: $c;
                 width: 100%; height: 100%;
+                > g {
+                    font-size: 0.8em;
+                }
                 path {display: none;}
                 line {stroke: $c;}
             }
         }
 	}
-
     .l-data-visualization {
         background: rgba($colorTick, 0.3);
         height: $r2H;
     }
-
 	.l-time-domain-selector {
 		position: absolute;
 		right: 0px;
 		top: $interiorMargin;
 	}
-
-/*    .super-menu.mode-selector-menu {
-        height: 200px; width: 400px;
-        .menu-item-description {
-            .desc-area.icon {
-                @include test();
-                $h: 50px;
-                //font-size: 3em;
-                //height: $h;
-                //line-height: $h;
-            }
-        }
-    }*/
-
 }
 
 .s-time-range-val {

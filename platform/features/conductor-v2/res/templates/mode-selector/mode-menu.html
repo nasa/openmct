@@ -26,14 +26,14 @@
                 <a
                    ng-mouseover="representation.activeMetadata = {
                         glyph: '\ue604',
-                        name: 'Fixed Time-Span',
-                        description: 'Display data that falls between two fixed dates'
+                        name: 'Fixed Timespan Mode',
+                        description: 'Query and explore data that falls between two fixed dates.'
                     }"
                    ng-mouseleave="representation.activeMetadata = undefined">
                     <span class="ui-symbol icon type-icon">
                         &#xe604;
                     </span>
-                    Fixed Time-span
+                    Fixed Timespan Mode
                 </a>
             </li>
             <li ng-click="representation.mode='realtime'">
@@ -41,27 +41,27 @@
                         ng-mouseover="representation.activeMetadata = {
                         glyph: '\u0043',
                         name: 'Real-time Mode',
-                        description: 'Monitor real-time streaming data as it comes in to the application. The Time Conductor will automatically advance itself based on a UTC clock.'
+                        description: 'Monitor real-time streaming data as it comes in. The Time Conductor will automatically advance itself based on a UTC clock.'
                     }"
                         ng-mouseleave="representation.activeMetadata = undefined">
                     <span class="ui-symbol icon type-icon">
                         &#x43;
                     </span>
-                    Real-time
+                    Real-time Mode
                 </a>
             </li>
             <li ng-click="representation.mode='latest'">
                 <a
                         ng-mouseover="representation.activeMetadata = {
                         glyph: '\u0044',
-                        name: 'Latest Available Data',
-                        description: 'Monitor real-time streaming data as it comes in to the application. In contrast to real-time mode the time conductor will only advance when data becomes available.'
+                        name: 'Latest Available Data Mode',
+                        description: 'Monitor real-time streaming data as it comes in. The Time Conductor will only advance when data becomes available.'
                     }"
                         ng-mouseleave="representation.activeMetadata = undefined">
                     <span class="ui-symbol icon type-icon">
                         &#x44;
                     </span>
-                    Latest Available Data
+                    Latest Available Data Mode
                 </a>
             </li>
         </ul>
