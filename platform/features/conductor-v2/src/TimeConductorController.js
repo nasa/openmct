@@ -66,20 +66,20 @@ define(
                     {
                         key: 'fixed',
                         glyph: '\ue604',
-                        name: 'Fixed Time-Span',
-                        description: 'Display data that falls between two fixed dates'
+                        name: 'Fixed Timespan Mode',
+                        description: 'Query and explore data that falls between two fixed datetimes.'
                     },
                     {
                         key: 'realtime',
                         glyph: '\u0043',
                         name: 'Real-time Mode',
-                        description: 'Monitor real-time streaming data as it comes in to the application. The Time Conductor will automatically advance itself based on a UTC clock.'
+                        description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will automatically advance themselves based on a UTC clock.'
                     },
                     {
                         key: 'latest',
                         glyph: '\u0044',
-                        name: 'Latest Available Data',
-                        description: 'Monitor real-time streaming data as it comes in to the application. In contrast to real-time mode the time conductor will only advance when data becomes available.'
+                        name: 'Latest Available Data Mode',
+                        description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'
                     }
                 ]
             }
