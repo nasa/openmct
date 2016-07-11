@@ -62,29 +62,26 @@ define(
 
             $scope.modeModel = {
                 selected: 'fixed',
-                options: [
-                    {
-                        key: 'fixed',
+                options: {
+                    'fixed': {
                         glyph: '\ue604',
-                        label: 'Fixed Timespan',
+                        label: 'Fixed',
                         name: 'Fixed Timespan Mode',
                         description: 'Query and explore data that falls between two fixed datetimes.'
                     },
-                    {
-                        key: 'realtime',
+                    'realtime': {
                         glyph: '\u0043',
                         label: 'Real-time',
                         name: 'Real-time Mode',
                         description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will automatically advance themselves based on a UTC clock.'
                     },
-                    {
-                        key: 'latest',
+                    'latest': {
                         glyph: '\u0044',
                         label: 'LAD',
                         name: 'LAD Mode',
                         description: 'Latest Available Data mode monitors real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'
                     }
-                ]
+                }
             }
         }
 
@@ -92,6 +89,8 @@ define(
             var now = Math.ceil(Date.now() / 1000) * 1000;
             //Set the time conductor to some default
             this.conductor.bounds({start: now - SIX_HOURS, end: now});
+            this.$scope.modeModel.selected = 'fixed';
+            this.conductor.follow(false);
         };
 
         TimeConductorController.prototype.validateStart = function (start) {
