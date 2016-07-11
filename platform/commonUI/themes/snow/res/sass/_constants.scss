@@ -52,7 +52,7 @@ $colorGridLines: rgba(#000, 0.05);
 $colorInvokeMenu: #fff;
 $colorObjHdrTxt: $colorBodyFg;
 $colorObjHdrIc: pushBack($colorObjHdrTxt, 30%);
-$colorTick: rgba(black, 0.2);
+$colorTick: pullForward($colorBodyBg, 30%);
 
 // Menu colors
 $colorMenuBg: pushBack($colorBodyBg, 10%);
@@ -185,6 +185,7 @@ $scrollbarThumbColorOverlayHov: $scrollbarThumbColorHov;
 // Splitter
 $splitterD: 16px; // splitterD and $splitterHandleD should both be odd, or even
 $splitterHandleD: 2px;
+$splitterDSm: 16px; // Smaller splitter, used inside elements like a Timeline view
 $colorSplitterBg: pullForward($colorBodyBg, 10%);
 $splitterShdw: none;
 $splitterEndCr: none;
@@ -207,3 +208,6 @@ $colorAboutLink: #84b3ff;
 // Loading
 $colorLoadingFg: $colorAlt1;
 $colorLoadingBg: rgba($colorLoadingFg, 0.1);
+
+// Time Conductor
+$colorTimeCondKey: #0092b3;

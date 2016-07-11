@@ -202,7 +202,7 @@
                     margin-bottom: $interiorMargin * 2;
                 }
                 &.description {
-                    color: $colorCreateMenuText;
+                    color: pushBack($colorCreateMenuText, 20%);
                     font-size: 0.8em;
                     line-height: 1.5em;
                 }
@@ -211,14 +211,20 @@
 	}
 
     &.mini {
-        width: 350px;
-        height: 250px;
+        width: 400px;
+        height: 300px;
         .pane {
+            &.menu-items {
+                font-size: 0.8em;
+            }
             &.menu-item-description {
                 padding: $interiorMargin * 3;
                 .desc-area {
                     &.icon {
                         font-size: 4em;
+                    }
+                    &.title {
+                        font-size: 1em;
                     }
                 }
             }
