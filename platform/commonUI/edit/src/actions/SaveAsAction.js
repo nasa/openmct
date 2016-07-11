@@ -44,6 +44,7 @@ define([
             dialogService,
             creationService,
             copyService,
+            transactionService,
             context
         ) {
             this.domainObject = (context || {}).domainObject;
@@ -54,6 +55,7 @@ define([
             this.dialogService = dialogService;
             this.creationService = creationService;
             this.copyService = copyService;
+            this.transactionService = transactionService;
         }
 
         /**
@@ -111,6 +113,8 @@ define([
             var self = this,
                 domainObject = this.domainObject,
                 copyService = this.copyService,
+                transactionService = this.transactionService,
+                cancelOldTransaction,
                 dialog = new SaveInProgressDialog(this.dialogService);
 
             function doWizardSave(parent) {
@@ -156,6 +160,16 @@ define([
                     .then(resolveWith(clonedObject));
             }
 
+            function restartTransaction(object) {
+                cancelOldTransaction = transactionService.restartTransaction();
+                return object;
+            }
+
+            function doCancelOldTransaction(object) {
+                cancelOldTransaction();
+                return object;
+            }
+
             function onFailure() {
                 hideBlockingDialog();
                 return false;
@@ -165,8 +179,10 @@ define([
                 .then(doWizardSave)
                 .then(showBlockingDialog)
                 .then(getParent)
+                .then(restartTransaction)
                 .then(cloneIntoParent)
                 .then(commitEditingAfterClone)
+                .then(doCancelOldTransaction)
                 .then(hideBlockingDialog)
                 .catch(onFailure);
         };

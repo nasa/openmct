@@ -222,7 +222,8 @@ define([
                         "policyService",
                         "dialogService",
                         "creationService",
-                        "copyService"
+                        "copyService",
+                        "transactionService"
                     ],
                     "priority": "mandatory"
                 },
