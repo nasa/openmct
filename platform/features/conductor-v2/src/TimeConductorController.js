@@ -27,13 +27,16 @@ define(
         var SIX_HOURS = 6 * 60 * 60 * 1000;
 
         function TimeConductorController($scope, $timeout, conductor) {
-            var now = Date.now();
             var self = this;
 
             this.$scope = $scope;
+            this.$timeout = $timeout;
             this.conductor = conductor;
 
             $scope.formModel = {};
+            $scope.modeSelector = {
+                value: 'fixed'
+            };
 
             conductor.on('bounds', function (bounds) {
                 $scope.formModel = {
@@ -42,18 +45,51 @@ define(
                 };
             });
 
-            //Temporary workaround for resizing issue
-            $timeout(function() {
-                //Set the time conductor to some default
-                conductor.bounds({start: now - SIX_HOURS, end: now});
-            }, 1000);
+            conductor.on('follow', function (follow){
+                $scope.followMode = follow;
+            });
 
-            Object.keys(TimeConductorController.prototype).filter(function (key){
+            Object.keys(TimeConductorController.prototype).filter(function (key) {
                 return typeof TimeConductorController.prototype[key] === 'function';
             }).forEach(function (key) {
                 self[key] = self[key].bind(self);
             });
+
+            //Temporary workaround for resizing issue
+            $timeout(self.initialize, 1000);
+
+            $scope.$watch('modeModel.selected', this.switchMode);
+
+            $scope.modeModel = {
+                selected: 'fixed',
+                options: [
+                    {
+                        key: 'fixed',
+                        glyph: '\ue604',
+                        name: 'Fixed Time-Span',
+                        description: 'Display data that falls between two fixed dates'
+                    },
+                    {
+                        key: 'realtime',
+                        glyph: '\u0043',
+                        name: 'Real-time Mode',
+                        description: 'Monitor real-time streaming data as it comes in to the application. The Time Conductor will automatically advance itself based on a UTC clock.'
+                    },
+                    {
+                        key: 'latest',
+                        glyph: '\u0044',
+                        name: 'Latest Available Data',
+                        description: 'Monitor real-time streaming data as it comes in to the application. In contrast to real-time mode the time conductor will only advance when data becomes available.'
+                    }
+                ]
+            }
         }
+
+        TimeConductorController.prototype.initialize = function () {
+            var now = Math.ceil(Date.now() / 1000) * 1000;
+            //Set the time conductor to some default
+            this.conductor.bounds({start: now - SIX_HOURS, end: now});
+        };
 
         TimeConductorController.prototype.validateStart = function (start) {
             var bounds = this.conductor.bounds();
@@ -70,6 +106,43 @@ define(
 
             if (this.conductor.validateBounds(newBounds) === true) {
                 this.conductor.bounds(newBounds);
+            }
+        };
+
+        TimeConductorController.prototype.switchMode = function (newMode) {
+            if (this.mode) {
+                this.mode();
+            }
+            this.mode = TimeConductorController.modes[newMode].call(this, this.conductor);
+        };
+
+        TimeConductorController.modes = {
+            'fixed': function (conductor) {
+                conductor.follow(false);
+            },
+            'realtime': function (conductor) {
+                var tickInterval = 1000;
+                var $timeout = this.$timeout;
+                var timeoutPromise = $timeout(tick, tickInterval);
+
+                conductor.follow(true);
+
+                function tick() {
+                    var bounds = conductor.bounds();
+                    var interval = bounds.end - bounds.start;
+                    var now = Math.ceil(Date.now() / 1000) * 1000;
+                    conductor.bounds({start: now - interval, end: now});
+
+                    timeoutPromise = $timeout(tick, tickInterval)
+                }
+
+                return function destroy() {
+                    $timeout.cancel(timeoutPromise);
+                }
+            },
+            'latest': function (conductor) {
+                //Don't know what to do here yet...
+                conductor.follow(true);
             }
         };
 
