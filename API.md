@@ -42,7 +42,7 @@ Register a `typeInstance` with a given Type `key` (a `string`).  There can only 
 ### `MCT.Objects`
 Status: First Draft
 
-Allows you to register object providers, which allows you to integrate domain objects from various different sources.  Also implements methods for mutation and persistence of objects.  See (Object API)[src/api/objects/README.md] for more details.
+Allows you to register object providers, which allows you to integrate domain objects from various different sources.  Also implements methods for mutation and persistence of objects.  See [Object API](src/api/objects/README.md) for more details.
 
 ### `MCT.Composition`
 Status: First Draft

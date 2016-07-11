@@ -37,7 +37,7 @@ The object API provides methods for getting, saving, and deleting objects.  Plug
 
 ## Configuration Example: Adding a groot
 
-See the tutorial in tutorials/objectprovider/groot.html.
+See the tutorial in [object-provider.html](object-provider.html).
 
 ### Making a custom provider:
 
