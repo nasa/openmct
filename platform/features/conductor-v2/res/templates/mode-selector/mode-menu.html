@@ -22,8 +22,8 @@
 <div class="contents">
     <div class="pane left menu-items">
         <ul>
-            <li ng-repeat="option in ngModel.options"
-                ng-click="ngModel.selected=option.key">
+            <li ng-repeat="(selected, option) in ngModel.options"
+                ng-click="ngModel.selected=selected">
                 <a
                    ng-mouseover="representation.activeMetadata = option"
                    ng-mouseleave="representation.activeMetadata = undefined">
