@@ -89,6 +89,8 @@ define(
             var now = Math.ceil(Date.now() / 1000) * 1000;
             //Set the time conductor to some default
             this.conductor.bounds({start: now - SIX_HOURS, end: now});
+            this.$scope.modeModel.selected = 'fixed';
+            this.conductor.follow(false);
         };
 
         TimeConductorController.prototype.validateStart = function (start) {
