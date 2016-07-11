@@ -14,10 +14,14 @@
 	$r2H: nth($ueTimeControlH,2);
 	$r3H: nth($ueTimeControlH,3);
 
+    // Glyphs Todo: replace with refactored CSS approach when that is merged into master
+    $glyphIconFixed: '\e604';
+    $glyphIconRealtime: '\43';
+    $glyphIconLatest: '\44';
+
     border-top: 1px solid $colorInteriorBorder;
     padding-top: $interiorMargin;
     min-width: $minW;
-    font-size: 0.8rem;
     position: relative;
 
 	>.l-row-elem {
@@ -30,20 +34,30 @@
         }
 	}
 
+    .l-time-conductor-inputs-holder,
+    .l-time-conductor-ticks {
+        font-size: 0.8rem;
+    }
+
 	.l-time-conductor-inputs-holder {
-        $inputW: 200px;
+        $inputW: 180px;
         $ticksBlockerFadeW: 25px;
+        $iconCalendarW: 16px;
+        $wBgColor: $colorBodyBg;
+        //$wBgColor: green;
+        $wBgW: $inputW + $interiorMargin + $iconCalendarW;
+
         height: $r1H;
         z-index: 1;
         .l-time-range-input-w {
             // Wraps a datetime text input field
             position: absolute;
-            width: $inputW + $ticksBlockerFadeW;
+            width: $wBgW + $ticksBlockerFadeW;
             &.start-date {
-                @include background-image(linear-gradient(90deg, $colorBodyBg $inputW + $interiorMargin, transparent 100%));
+                @include background-image(linear-gradient(90deg, $wBgColor $wBgW, transparent 100%));
             }
             &.end-date {
-                @include background-image(linear-gradient(270deg, $colorBodyBg $inputW + $interiorMargin, transparent 100%));
+                @include background-image(linear-gradient(270deg, $wBgColor $wBgW, transparent 100%));
                 right: 0;
                 text-align: right;
             }
@@ -51,8 +65,6 @@
                 width: $inputW;
             }
             .icon-calendar {
-                position: absolute;
-                margin-left: -16px;
                 margin-top: 4px;
             }
         }
@@ -61,8 +73,8 @@
 	.l-time-conductor-ticks {
         $c: $colorTick;
 		height: $r1H;
-        margin-top: 0 !important;
         mct-conductor-axis {
+            @include transform(translateY(3px));
             display: block;
             position: relative;
             width: 100%;
@@ -72,10 +84,12 @@
             position: relative;
             width: 100%;
             svg {
-                stroke: $c;
+                text-rendering: geometricPrecision;
+                color: transparent;
+                fill: $c !important; // Todo: figure out why this isn't working
                 width: 100%; height: 100%;
                 > g {
-                    font-size: 0.8em;
+                    font-size: 0.9em;
                 }
                 path {display: none;}
                 line {stroke: $c;}
@@ -86,11 +100,44 @@
         background: rgba($colorTick, 0.3);
         height: $r2H;
     }
-	.l-time-domain-selector {
-		position: absolute;
-		right: 0px;
-		top: $interiorMargin;
-	}
+
+    .mode-selector .s-menu-btn {
+        &:before {
+            @extend .ui-symbol;
+            margin-right: $interiorMarginSm;
+            content: $glyphIconFixed;
+        }
+    }
+
+    // Realtime, latest modes
+    &.realtime-mode,
+    &.latest-mode {
+        .l-time-conductor-inputs-holder {
+            .l-time-range-input-w {
+                input:not(:hover) {
+                    background: transparent;
+                    box-shadow: none;
+                    border-radius: 0;
+                }
+                .icon-calendar {
+                    display: none;
+                }
+                &.end-date {
+                    display: none;
+                }
+            }
+        }
+
+        .l-data-visualization {
+            background: rgba($colorTimeCondKey, 0.5) !important
+        }
+        .mode-selector .s-menu-btn {
+            @include btnSubtle($colorTimeCondKey, pullForward($colorTimeCondKey, $ltGamma));
+        }
+    }
+
+    &.realtime-mode .mode-selector .s-menu-btn:before { content: $glyphIconRealtime; }
+    &.latest-mode .mode-selector .s-menu-btn:before { content: $glyphIconLatest; }
 }
 
 .s-time-range-val {

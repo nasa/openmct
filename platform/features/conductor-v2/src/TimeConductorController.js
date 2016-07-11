@@ -77,9 +77,9 @@ define(
                     },
                     'latest': {
                         glyph: '\u0044',
-                        label: 'Latest',
-                        name: 'Latest Available Data Mode',
-                        description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'
+                        label: 'LAD',
+                        name: 'LAD Mode',
+                        description: 'Latest Available Data mode monitors real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'
                     }
                 }
             }
