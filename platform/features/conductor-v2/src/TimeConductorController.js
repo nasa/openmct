@@ -66,20 +66,23 @@ define(
                     {
                         key: 'fixed',
                         glyph: '\ue604',
+                        label: 'Fixed Timespan',
                         name: 'Fixed Timespan Mode',
                         description: 'Query and explore data that falls between two fixed datetimes.'
                     },
                     {
                         key: 'realtime',
                         glyph: '\u0043',
+                        label: 'Real-time',
                         name: 'Real-time Mode',
                         description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will automatically advance themselves based on a UTC clock.'
                     },
                     {
                         key: 'latest',
                         glyph: '\u0044',
-                        name: 'Latest Available Data Mode',
-                        description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'
+                        label: 'LAD',
+                        name: 'LAD Mode',
+                        description: 'Latest Available Data mode monitors real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'
                     }
                 ]
             }
