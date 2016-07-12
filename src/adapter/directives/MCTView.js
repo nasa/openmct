@@ -1,4 +1,7 @@
-define(['angular'], function (angular) {
+define([
+    'angular',
+    '../../api/Region'
+], function (angular, Region) {
     function MCTView(newViews) {
         var factories = {};
 
@@ -10,15 +13,15 @@ define(['angular'], function (angular) {
         return {
             restrict: 'E',
             link: function (scope, element, attrs) {
-                var key, mctObject, region;
+                var key, mctObject, regionId, region;
 
                 function maybeShow() {
                     if (!factories[region] || !factories[region][key] || !mctObject) {
                         return;
                     }
 
-                    var view = factories[region][key];
-                    view.show(element[0], mctObject);
+                    var view = factories[region][key].create(mctObject);
+                    region.show(view);
                 }
 
                 function setKey(k) {
@@ -31,15 +34,16 @@ define(['angular'], function (angular) {
                     maybeShow();
                 }
 
-                function setRegion(r) {
-                    region = r;
+                function setRegionId(r) {
+                    regionId = r;
                     maybeShow();
                 }
 
-                scope.$watch('key', setKey);
-                scope.$watch('region', setRegion);
-                scope.$watch('mctObject', setObject);
+                region = new Region(element[0]);
 
+                scope.$watch('key', setKey);
+                scope.$watch('region', setRegionId);
+                scope.$watch('mctObject', setObject);
             },
             scope: {
                 key: "=",
