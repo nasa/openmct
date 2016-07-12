@@ -54,7 +54,7 @@ define(
                 var axisElement = vis.append("g")
                     .attr("transform", "translate(0," + (height - padding) + ")");
 
-                function setBounds(start, end) {
+                function setScale(start, end) {
                     var width = target.offsetWidth;
                     xScale.domain([new Date(start), new Date(end)])
                         .range([padding, width - padding * 2]);
@@ -62,16 +62,23 @@ define(
                     axisElement.call(xAxis);
                 }
 
+                scope.resize = function () {
+                    setScale(conductor.bounds().start, conductor.bounds().end);
+                };
+
                 conductor.on('bounds', function (bounds) {
-                    setBounds(bounds.start, bounds.end);
+                    setScale(bounds.start, bounds.end);
                 });
+
+                //Set initial scale.
+                setScale(conductor.bounds().start, conductor.bounds().end);
             }
 
             return {
                 // Only show at the element level
                 restrict: "E",
 
-                template: "<div class=\"l-axis-holder\"></div>",
+                template: "<div class=\"l-axis-holder\" mct-resize=\"resize()\"></div>",
 
                 // ngOptions is terminal, so we need to be higher priority
                 priority: 1000,

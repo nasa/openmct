@@ -69,9 +69,6 @@ define(
                 self[key] = self[key].bind(self);
             });
 
-            //Temporary workaround for resizing issue
-            $timeout(self.initialize, 1000);
-
             $scope.$watch('modeModel.selected', this.switchMode);
 
             $scope.modeModel = {
@@ -97,6 +94,14 @@ define(
                     }
                 }
             }
+
+            $scope.$on('$destroy', function() {
+                if (self.mode) {
+                    self.mode();
+                }
+            });
+
+            self.initialize();
         }
 
         TimeConductorController.prototype.initialize = function () {
@@ -167,15 +172,21 @@ define(
                 var tickInterval = 1000;
                 var conductor = this.conductor;
                 var $timeout = this.$timeout;
-                var timeoutPromise = $timeout(tick, tickInterval);
 
                 conductor.follow(true);
+                setToNowMinus(FIFTEEN_MINUTES);
+
+                var timeoutPromise = $timeout(tick, tickInterval);
+
+                function setToNowMinus(delta) {
+                    var now = Math.ceil(Date.now() / 1000) * 1000;
+                    conductor.bounds({start: now - delta, end: now});
+                }
 
                 function tick() {
                     var bounds = conductor.bounds();
-                    var interval = bounds.end - bounds.start;
-                    var now = Math.ceil(Date.now() / 1000) * 1000;
-                    conductor.bounds({start: now - interval, end: now});
+                    var delta = bounds.end - bounds.start;
+                    setToNowMinus(delta);
 
                     timeoutPromise = $timeout(tick, tickInterval)
                 }
@@ -184,7 +195,7 @@ define(
                     $timeout.cancel(timeoutPromise);
                 }
             },
-            'latest': function (conductor) {
+            'latest': function () {
                 //Don't know what to do here yet...
                 this.conductor.follow(true);
             }
