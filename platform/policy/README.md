@@ -1,6 +1,6 @@
 # Overview
 
-This bundle provides support for policy in Open MCT Web. Policy can be
+This bundle provides support for policy in Open MCT. Policy can be
 used to limit the applicability of certain actions, or more broadly,
 to provide an extension point for arbitrary decisions.
 
