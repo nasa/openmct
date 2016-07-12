@@ -15,8 +15,7 @@ define([], function () {
         this.clear();
         this.activeView = view;
         if (this.activeView) {
-            this.activeView.populate(this.element);
-            this.activeView.show();
+            this.activeView.show(this.element);
         }
     };
 
