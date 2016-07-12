@@ -1,25 +1,25 @@
 define([
-    'EventEmitter',
     'zepto'
-], function (EventEmitter, $) {
+], function ($) {
     function Region(element) {
-        this.empty = true;
+        this.activeView = undefined;
         this.$element = $(element);
     }
 
-    Region.prototype = Object.create(EventEmitter.prototype);
-
     Region.prototype.clear = function () {
-        if (!this.empty) {
-            this.empty = true;
-            this.$element.empty();
-            this.emit('clear');
+        if (this.activeView) {
+            this.activeView.destroy();
+            this.activeView = undefined;
         }
     };
 
-    Region.prototype.show = function (elements) {
+    Region.prototype.show = function (view) {
         this.clear();
-        this.$element.append($(elements));
+        this.activeView = view;
+        if (this.activeView) {
+            this.$element.append($(this.activeView.elements()));
+            this.activeView.show();
+        }
     };
 
     return Region;
