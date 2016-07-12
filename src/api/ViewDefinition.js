@@ -14,7 +14,6 @@ define(function () {
      * @returns {mct.ViewMetadata} metadata about this view
      */
     ViewDefinition.prototype.metadata = function (object) {
-
     };
 
     /**

@@ -1,9 +1,7 @@
-define([
-    'zepto'
-], function ($) {
+define([], function () {
     function Region(element) {
         this.activeView = undefined;
-        this.$element = $(element);
+        this.element = element;
     }
 
     Region.prototype.clear = function () {
@@ -17,7 +15,7 @@ define([
         this.clear();
         this.activeView = view;
         if (this.activeView) {
-            this.$element.append($(this.activeView.elements()));
+            this.activeView.populate(this.element);
             this.activeView.show();
         }
     };
