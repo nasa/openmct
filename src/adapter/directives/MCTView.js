@@ -16,12 +16,11 @@ define([
                 var key, mctObject, regionId, region;
 
                 function maybeShow() {
-                    if (!factories[region] || !factories[region][key] || !mctObject) {
+                    if (!factories[regionId] || !factories[regionId][key] || !mctObject) {
                         return;
                     }
 
-                    var view = factories[region][key].create(mctObject);
-                    region.show(view);
+                    region.show(factories[regionId][key].view(mctObject));
                 }
 
                 function setKey(k) {

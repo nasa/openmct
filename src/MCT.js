@@ -65,7 +65,7 @@ define([
             implementation: function Policy() {
                 this.allow = function (v, domainObject) {
                     if (v.key === adaptedViewKey) {
-                        return view.test(domainObject);
+                        return view.canView(domainObject);
                     }
                     return true;
                 };

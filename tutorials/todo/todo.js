@@ -206,11 +206,18 @@ define([
         };
 
         mct.type('example.todo', todoType);
-        mct.view(mct.regions.main, function (domainObject) {
-            return todoType.check(domainObject) && new TodoView(domainObject);
+        mct.view(mct.regions.main, {
+            view: function (domainObject) {
+                return new TodoView(domainObject);
+            },
+            canView: todoType.check.bind(todoType)
         });
-        mct.view(mct.regions.toolbar, function (domainObject) {
-            return todoType.check(domainObject) && new TodoToolbarView(domainObject);
+
+        mct.view(mct.regions.toolbar, {
+            view: function (domainObject) {
+                return new TodoToolbarView(domainObject);
+            },
+            canView: todoType.check.bind(todoType)
         });
 
         return mct;
