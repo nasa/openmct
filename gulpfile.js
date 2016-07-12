@@ -54,7 +54,12 @@ var gulp = require('gulp'),
     },
     options = {
         requirejsOptimize: {
-            name: paths.main.replace(/\.js$/, ''),
+            name: 'bower_components/almond/almond.js',
+            include: paths.main.replace('.js', ''),
+            wrap: {
+                startFile: "src/start.frag",
+                endFile: "src/end.frag"
+            },
             mainConfigFile: paths.main,
             wrapShim: true
         },
