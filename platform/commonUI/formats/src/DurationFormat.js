@@ -21,47 +21,40 @@
  *****************************************************************************/
 
 define([
-    "./src/FormatProvider",
-    "./src/UTCTimeFormat",
-    "./src/DurationFormat",
-    'legacyRegistry'
+    'moment'
 ], function (
-    FormatProvider,
-    UTCTimeFormat,
-    DurationFormat,
-    legacyRegistry
+    moment
 ) {
 
-    legacyRegistry.register("platform/commonUI/formats", {
-        "name": "Time services bundle",
-        "description": "Defines interfaces and provides default implementations for handling different time systems.",
-        "extensions": {
-            "components": [
-                {
-                    "provides": "formatService",
-                    "type": "provider",
-                    "implementation": FormatProvider,
-                    "depends": [
-                        "formats[]"
-                    ]
-                }
-            ],
-            "formats": [
-                {
-                    "key": "utc",
-                    "implementation": UTCTimeFormat
-                },
-                {
-                    "key": "duration",
-                    "implementation": DurationFormat
-                }
-            ],
-            "constants": [
-                {
-                    "key": "DEFAULT_TIME_FORMAT",
-                    "value": "utc"
-                }
-            ]
-        }
-    });
+    var DATE_FORMAT = "HH:mm:ss",
+        DATE_FORMATS = [
+            DATE_FORMAT
+        ];
+
+
+    /**
+     * Formatter for UTC timestamps. Interprets numeric values as
+     * milliseconds since the start of 1970. Displays only the utc time. Can
+     * be used, with care, for specifying time intervals.
+     *
+     * @implements {Format}
+     * @constructor
+     * @memberof platform/commonUI/formats
+     */
+    function DurationFormat() {
+    }
+
+    DurationFormat.prototype.format = function (value) {
+        return moment.utc(value).format(DATE_FORMAT);
+    };
+
+    DurationFormat.prototype.parse = function (text) {
+        return moment.duration(text).asMilliseconds();
+    };
+
+    DurationFormat.prototype.validate = function (text) {
+        return moment.utc(text, DATE_FORMATS).isValid();
+    };
+
+    return DurationFormat;
 });

@@ -1,4 +1,9 @@
 <!-- Parent holder for time conductor. follow-mode | fixed-mode -->
+<style>
+    .start-delta {
+        left: 180px;
+    }
+</style>
 <div ng-controller="TimeConductorController as tcController"
      class="l-time-conductor l-flex-col {{modeModel.selected}}-mode">
     <!-- Holds inputs and ticks -->
@@ -12,9 +17,38 @@
                              validate: tcController.validateStart
                          }"
                          ng-model="formModel"
-                         ng-blur="tcController.updateBoundsFromForm(formModel)"
+                         ng-mouseup="tcController.changing['start'] = true"
+                         ng-blur="tcController.changing['start'] = false; tcController.updateBoundsFromForm(formModel)"
                          field="'start'"
                          class="time-range-start">
+            </mct-control>
+        </span>
+        <span class="l-time-range-input-w start-delta"
+              ng-class="{'hide':(modeModel.selected === 'fixed')}">
+            <mct-control key="'datetime-field'"
+                         structure="{
+                            format: 'duration',
+                            validate: tcController.validateStartDelta
+                         }"
+                         ng-model="formModel"
+                         ng-mouseup="tcController.changing['startDelta'] = true"
+                         ng-blur="tcController.changing['startDelta'] = false; tcController.updateDeltasFromForm(formModel)"
+                         field="'startDelta'"
+                         class="time-delta-start">
+            </mct-control>
+        </span>
+        <span class="l-time-range-input-w end-delta"
+              ng-class="{'hide':(modeModel.selected === 'fixed')}">
+            <mct-control key="'time-field'"
+                         structure="{
+                            format: 'duration',
+                            validate: tcController.validateEndDelta
+                         }"
+                         ng-model="formModel"
+                         ng-mouseup="tcController.changing['endDelta'] = true"
+                         ng-blur="tcController.changing['endDelta'] = false; tcController.updateDeltasFromForm(formModel)"
+                         field="'endDelta'"
+                         class="time-delta-end">
             </mct-control>
         </span>
         <span class="l-time-range-input-w end-date"
@@ -25,7 +59,8 @@
                              validate: tcController.validateEnd
                          }"
                          ng-model="formModel"
-                         ng-blur="tcController.updateBoundsFromForm(formModel)"
+                         ng-mouseup="tcController.changing['end'] = true"
+                         ng-blur="tcController.changing['end'] = false; tcController.updateBoundsFromForm(formModel)"
                          field="'end'"
                          class="time-range-end">
             </mct-control>

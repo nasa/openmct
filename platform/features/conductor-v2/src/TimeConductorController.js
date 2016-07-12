@@ -32,17 +32,31 @@ define(
             this.$scope = $scope;
             this.$timeout = $timeout;
             this.conductor = conductor;
+            this.endDelta = 0;
 
-            $scope.formModel = {};
-            $scope.modeSelector = {
-                value: 'fixed'
+            this.changing = {
+                'start': false,
+                'startDelta': false,
+                'end': false,
+                'endDelta': false
             };
 
+            $scope.formModel = {};
+
             conductor.on('bounds', function (bounds) {
-                $scope.formModel = {
-                    start: bounds.start,
-                    end: bounds.end
-                };
+                if (!self.changing['start']) {
+                    $scope.formModel.start = bounds.start;
+                }
+                if (!self.changing['end']) {
+                    $scope.formModel.end = bounds.end;
+                }
+                if (!self.changing['startDelta']) {
+                    $scope.formModel.startDelta = bounds.end - bounds.start;
+                }
+
+                if (!self.changing['endDelta']) {
+                    $scope.formModel.endDelta = 0;
+                }
             });
 
             conductor.on('follow', function (follow){
@@ -89,6 +103,7 @@ define(
             var now = Math.ceil(Date.now() / 1000) * 1000;
             //Set the time conductor to some default
             this.conductor.bounds({start: now - SIX_HOURS, end: now});
+
             this.$scope.modeModel.selected = 'fixed';
             this.conductor.follow(false);
         };
@@ -111,19 +126,46 @@ define(
             }
         };
 
+        TimeConductorController.prototype.validateStartDelta = function (startDelta) {
+            return startDelta > 0;
+        };
+
+        TimeConductorController.prototype.validateEndDelta = function (endDelta) {
+            return endDelta >= 0;
+        };
+
+        TimeConductorController.prototype.validateDeltas = function (formModel) {
+            // Validate that start Delta is some non-zero value, and that end
+            // delta is zero or positive (ie. 'now' or some time in the future).
+            return this.validateStartDelta(formModel.startDelta) && this.validateEndDelta(formModel.endDelta);
+        };
+
+        TimeConductorController.prototype.updateDeltasFromForm = function (formModel) {
+
+            if (this.validateDeltas(formModel)) {
+                var oldBounds = this.conductor.bounds(),
+                    newBounds = {
+                        start: oldBounds.end - formModel.startDelta,
+                        end: oldBounds.end + formModel.endDelta
+                    };
+                this.conductor.bounds(newBounds);
+            }
+        };
+
         TimeConductorController.prototype.switchMode = function (newMode) {
             if (this.mode) {
                 this.mode();
             }
-            this.mode = TimeConductorController.modes[newMode].call(this, this.conductor);
+            this.mode = TimeConductorController.modes[newMode].call(this);
         };
 
         TimeConductorController.modes = {
-            'fixed': function (conductor) {
-                conductor.follow(false);
+            'fixed': function () {
+                this.conductor.follow(false);
             },
-            'realtime': function (conductor) {
+            'realtime': function () {
                 var tickInterval = 1000;
+                var conductor = this.conductor;
                 var $timeout = this.$timeout;
                 var timeoutPromise = $timeout(tick, tickInterval);
 
@@ -144,7 +186,7 @@ define(
             },
             'latest': function (conductor) {
                 //Don't know what to do here yet...
-                conductor.follow(true);
+                this.conductor.follow(true);
             }
         };
 
