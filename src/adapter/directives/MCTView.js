@@ -3,11 +3,11 @@ define([
     '../../api/Region'
 ], function (angular, Region) {
     function MCTView(newViews) {
-        var factories = {};
+        var definitions = {};
 
         newViews.forEach(function (newView) {
-            factories[newView.region] = factories[newView.region] || {};
-            factories[newView.region][newView.key] = newView.factory;
+            definitions[newView.region] = definitions[newView.region] || {};
+            definitions[newView.region][newView.key] = newView.factory;
         });
 
         return {
@@ -16,11 +16,11 @@ define([
                 var key, mctObject, regionId, region;
 
                 function maybeShow() {
-                    if (!factories[regionId] || !factories[regionId][key] || !mctObject) {
+                    if (!definitions[regionId] || !definitions[regionId][key] || !mctObject) {
                         return;
                     }
 
-                    region.show(factories[regionId][key].view(mctObject));
+                    region.show(definitions[regionId][key].view(mctObject));
                 }
 
                 function setKey(k) {
