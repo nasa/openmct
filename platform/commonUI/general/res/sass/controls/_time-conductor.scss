@@ -1,18 +1,18 @@
 @mixin toiLineHovEffects() {
-	&:before,
-	&:after {
-		background-color: $timeControllerToiLineColorHov;
-	}
+    &:before,
+    &:after {
+        background-color: $timeControllerToiLineColorHov;
+    }
 }
 
 .l-time-conductor {
-	$minW: 500px;
-	$knobHOffset: 0px;
-	$rangeValPad: $interiorMargin;
-	$rangeValOffset: $sliderKnobW + $interiorMargin;
-	$r1H: nth($ueTimeControlH,1);
-	$r2H: nth($ueTimeControlH,2);
-	$r3H: nth($ueTimeControlH,3);
+    $minW: 500px;
+    $knobHOffset: 0px;
+    $rangeValPad: $interiorMargin;
+    $rangeValOffset: $sliderKnobW + $interiorMargin;
+    $r1H: nth($ueTimeControlH, 1);
+    $r2H: nth($ueTimeControlH, 2);
+    $r3H: nth($ueTimeControlH, 3);
 
     // Glyphs Todo: replace with refactored CSS approach when that is merged into master
     $glyphIconFixed: '\e604';
@@ -24,57 +24,75 @@
     min-width: $minW;
     position: relative;
 
-	>.l-row-elem {
+    > .l-row-elem {
         // First order row elements
-		box-sizing: border-box;
+        box-sizing: border-box;
         width: 100%;
         position: relative;
-        &:not(:first-child) {
-            margin-top: $interiorMargin;
+    }
+
+    .mode-selector .s-menu-btn,
+    .time-delta {
+        &:before {
+            @extend .ui-symbol;
+            margin-right: $interiorMarginSm;
         }
-	}
+    }
+
+    .time-delta {
+        &:before {
+            color: $colorTimeCondKeyBg;
+        }
+    }
 
     .l-time-conductor-inputs-holder,
     .l-time-conductor-ticks {
         font-size: 0.8rem;
     }
 
-	.l-time-conductor-inputs-holder {
-        $inputW: 180px;
-        $ticksBlockerFadeW: 25px;
+    .l-time-conductor-inputs-holder {
+        $trInputW: 180px;
+        $hmInputW: 80px;
+        $ticksBlockerFadeW: 50px;
         $iconCalendarW: 16px;
         $wBgColor: $colorBodyBg;
-        //$wBgColor: green;
-        $wBgW: $inputW + $interiorMargin + $iconCalendarW;
 
         height: $r1H;
         z-index: 1;
-        .l-time-range-input-w {
+        .l-time-range-w {
             // Wraps a datetime text input field
+            height: 100%;
             position: absolute;
-            width: $wBgW + $ticksBlockerFadeW;
-            &.start-date {
-                @include background-image(linear-gradient(90deg, $wBgColor $wBgW, transparent 100%));
+            &.start-w {
+                @include background-image(linear-gradient(270deg, transparent, $wBgColor $ticksBlockerFadeW));
+                padding-right: $ticksBlockerFadeW;
             }
-            &.end-date {
-                @include background-image(linear-gradient(270deg, $wBgColor $wBgW, transparent 100%));
+            &.end-w {
+                @include background-image(linear-gradient(90deg, transparent, $wBgColor $ticksBlockerFadeW));
+                padding-left: $ticksBlockerFadeW;
                 right: 0;
                 text-align: right;
             }
             input[type="text"] {
-                width: $inputW;
+                @include trans-prop-nice(padding, 250ms);
+            }
+            .time-range-input input {
+                width: $trInputW;
+            }
+            .hrs-min-input input {
+                width: $hmInputW;
             }
             .icon-calendar {
                 margin-top: 4px;
             }
         }
-	}
+    }
 
-	.l-time-conductor-ticks {
+    .l-time-conductor-ticks {
         $c: $colorTick;
-		height: $r1H;
+        height: $r1H;
         mct-conductor-axis {
-            @include transform(translateY(3px));
+            //@include transform(translateY(1px));
             display: block;
             position: relative;
             width: 100%;
@@ -85,27 +103,30 @@
             width: 100%;
             svg {
                 text-rendering: geometricPrecision;
-                width: 100%; height: 100%;
+                width: 100%;
+                height: 100%;
                 > g {
                     font-size: 0.9em;
                 }
-                path {display: none;}
-                line {stroke: $c;}
-                text { fill: $c; }
+                path {
+                    display: none;
+                }
+                line {
+                    stroke: $c;
+                }
+                text {
+                    fill: $c;
+                }
             }
         }
-	}
+    }
     .l-data-visualization {
         background: rgba($colorTick, 0.3);
         height: $r2H;
     }
 
-    .mode-selector .s-menu-btn {
-        &:before {
-            @extend .ui-symbol;
-            margin-right: $interiorMarginSm;
-            content: $glyphIconFixed;
-        }
+    .l-time-conductor-controls {
+        margin-top: $interiorMargin;
     }
 
     // Realtime, latest modes
@@ -113,10 +134,19 @@
     &.latest-mode {
         .l-time-conductor-inputs-holder {
             .l-time-range-input-w {
-                input:not(:hover) {
+                input[type="text"]:not(.error) {
                     background: transparent;
                     box-shadow: none;
                     border-radius: 0;
+                    padding-left: 0;
+                    padding-right: 0;
+                    &:hover {
+                        @include nice-input();
+                        padding: $inputTextP;
+                    }
+                }
+                &.start-date {
+                    pointer-events: none;
                 }
                 .icon-calendar {
                     display: none;
@@ -128,21 +158,42 @@
         }
 
         .l-data-visualization {
-            background: rgba($colorTimeCondKey, 0.5) !important
+            background: rgba($colorTimeCondKeyBg, 0.5) !important
         }
         .mode-selector .s-menu-btn {
-            @include btnSubtle($colorTimeCondKey, pullForward($colorTimeCondKey, $ltGamma));
+            @include btnSubtle($colorTimeCondKeyBg, pullForward($colorTimeCondKeyBg, $ltGamma), $colorTimeCondKeyFg);
         }
     }
-
-    &.realtime-mode .mode-selector .s-menu-btn:before { content: $glyphIconRealtime; }
-    &.latest-mode .mode-selector .s-menu-btn:before { content: $glyphIconLatest; }
+    &.fixed-mode {
+        $i: $glyphIconFixed;
+        .mode-selector .s-menu-btn:before {
+            content: $i;
+        }
+    }
+    &.realtime-mode {
+        $i: $glyphIconRealtime;
+        .time-delta:before {
+            content: $i;
+        }
+        .mode-selector .s-menu-btn:before {
+            content: $i;
+        }
+    }
+    &.latest-mode {
+        $i: $glyphIconLatest;
+        .time-delta:before {
+            content: $i;
+        }
+        .mode-selector .s-menu-btn:before {
+            content: $i;
+        }
+    }
 }
 
 .s-time-range-val {
-	border-radius: $controlCr;
-	background-color: $colorInputBg;
-	padding: 1px 1px 0 $interiorMargin;
+    border-radius: $controlCr;
+    background-color: $colorInputBg;
+    padding: 1px 1px 0 $interiorMargin;
 }
 
 /******************************************************************** MOBILE */
@@ -178,7 +229,9 @@
                     margin-right: 0;
                 }
                 .l-time-range-inputs-elem {
-                    &.lbl { display: none; }
+                    &.lbl {
+                        display: none;
+                    }
                 }
             }
         }
