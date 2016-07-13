@@ -1,7 +1,7 @@
 define([
-    './regions/MainRegion'
-], function (MainRegion) {
+], function () {
     return {
-        MainRegion: MainRegion
+        main: "MAIN",
+        toolbar: "TOOLBAR"
     };
 });
