@@ -35,7 +35,6 @@
     .time-delta {
         &:before {
             @extend .ui-symbol;
-            margin-right: $interiorMarginSm;
         }
     }
 
@@ -52,7 +51,7 @@
 
     .l-time-conductor-inputs-holder {
         $trInputW: 180px;
-        $hmInputW: 80px;
+        $hmInputW: 60px;
         $ticksBlockerFadeW: 50px;
         $iconCalendarW: 16px;
         $wBgColor: $colorBodyBg;
@@ -92,7 +91,6 @@
         $c: $colorTick;
         height: $r1H;
         mct-conductor-axis {
-            //@include transform(translateY(1px));
             display: block;
             position: relative;
             width: 100%;
@@ -121,7 +119,7 @@
         }
     }
     .l-data-visualization {
-        background: rgba($colorTick, 0.3);
+        background: $colorTimeCondDataVisBg;
         height: $r2H;
     }
 
@@ -158,7 +156,7 @@
         }
 
         .l-data-visualization {
-            background: rgba($colorTimeCondKeyBg, 0.5) !important
+            background: $colorTimeCondDataVisRtBg !important
         }
         .mode-selector .s-menu-btn {
             @include btnSubtle($colorTimeCondKeyBg, pullForward($colorTimeCondKeyBg, $ltGamma), $colorTimeCondKeyFg);

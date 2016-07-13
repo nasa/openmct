@@ -212,3 +212,5 @@ $colorLoadingBg: rgba($colorBodyFg, 0.2);
 // Time Conductor
 $colorTimeCondKeyBg: #1d7a96;
 $colorTimeCondKeyFg: #fff;
+$colorTimeCondDataVisBg: pushBack($colorTick, 20%);
+$colorTimeCondDataVisRtBg: pushBack($colorTimeCondKeyBg, 30%);
