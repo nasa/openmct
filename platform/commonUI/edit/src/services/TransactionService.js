@@ -81,6 +81,15 @@ define(
                 //Log error because this is a programming error if it occurs.
                 this.$log.error("No transaction in progress");
             }
+
+            return function () {
+                this.onCommits = this.onCommits.filter(function (callback) {
+                    return callback !== onCommit;
+                });
+                this.onCancels = this.onCancels.filter(function (callback) {
+                    return callback !== onCancel;
+                });
+            }.bind(this);
         };
 
         /**

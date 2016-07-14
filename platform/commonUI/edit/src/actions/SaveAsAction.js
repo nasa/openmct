@@ -111,7 +111,8 @@ define([
             var self = this,
                 domainObject = this.domainObject,
                 copyService = this.copyService,
-                dialog = new SaveInProgressDialog(this.dialogService);
+                dialog = new SaveInProgressDialog(this.dialogService),
+                toUndirty = [];
 
             function doWizardSave(parent) {
                 var wizard = self.createWizard(parent);
@@ -143,12 +144,26 @@ define([
             }
 
             function allowClone(objectToClone) {
-                return (objectToClone.getId() === domainObject.getId()) ||
-                    objectToClone.getCapability('location').isOriginal();
+                var allowed =
+                    (objectToClone.getId() === domainObject.getId()) ||
+                        objectToClone.getCapability('location').isOriginal();
+                if (allowed) {
+                    toUndirty.push(objectToClone);
+                }
+                return allowed;
             }
 
             function cloneIntoParent(parent) {
                 return copyService.perform(domainObject, parent, allowClone);
+            }
+
+            function undirty(object) {
+                return object.getCapability('persistence').refresh();
+            }
+
+            function undirtyOriginals(object) {
+                return Promise.all(toUndirty.map(undirty))
+                    .then(resolveWith(object));
             }
 
             function commitEditingAfterClone(clonedObject) {
@@ -166,6 +181,7 @@ define([
                 .then(showBlockingDialog)
                 .then(getParent)
                 .then(cloneIntoParent)
+                .then(undirtyOriginals)
                 .then(commitEditingAfterClone)
                 .then(hideBlockingDialog)
                 .catch(onFailure);
