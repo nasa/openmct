@@ -1,6 +1,6 @@
 define([
     'angular',
-    '../../api/Region'
+    './Region'
 ], function (angular, Region) {
     function MCTView(newViews) {
         var definitions = {};
