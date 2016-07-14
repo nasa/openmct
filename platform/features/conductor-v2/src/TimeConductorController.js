@@ -66,6 +66,25 @@ define(
 
             $scope.$watch('modeModel.selected', this.switchMode);
 
+            $scope.$watch('timeSystem', function (newTimeSystem, oldTimeSystem) {
+                $scope.modeModel = {
+                    selected: 'fixed',
+                    options: {
+                        'fixed': {
+                            glyph: '\ue604',
+                            label: 'Fixed',
+                            name: 'Fixed Timespan Mode',
+                            description: 'Query and explore data that falls between two fixed datetimes.'
+                        },
+                    }
+                }
+                newTimeSystem.tickSources().forEach(function (tickSource) {
+                    var option = {};
+                    $scope.modeModel.options.push({
+                    });
+                });
+            });
+
             $scope.modeModel = {
                 selected: 'fixed',
                 options: {

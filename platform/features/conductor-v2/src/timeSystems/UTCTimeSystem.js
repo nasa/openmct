@@ -20,17 +20,22 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./TimeSystem'], function (TimeSystem) {
+define([
+    './TimeSystem',
+    './LocalClock',
+    '../../../../commonUI/formats/src/UTCTimeFormat'
+], function (TimeSystem, LocalClock, UTCTimeFormat) {
     var FIFTEEN_MINUTES = 15 * 60 * 1000;
+
     /**
      * @implements TimeSystem
      * @constructor
      */
-    function UTCTimeSystem () {
+    function UTCTimeSystem ($timeout) {
         TimeSystem.call(this);
 
-        this._formats = [];
-        this._tickSources = [];
+        this._formats = [new UTCTimeFormat()];
+        this._tickSources = [new LocalClock($timeout)];
     }
 
     UTCTimeSystem.prototype = Object.create(TimeSystem.prototype);
