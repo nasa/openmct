@@ -6,7 +6,6 @@ define([
     'text!./adapter/templates/edit-object-replacement.html',
     './ui/Dialog',
     './Selection',
-    './api/regions',
     './api/objects/bundle'
 ], function (
     EventEmitter,
@@ -15,8 +14,7 @@ define([
     api,
     editObjectTemplate,
     Dialog,
-    Selection,
-    regions
+    Selection
 ) {
     function MCT() {
         EventEmitter.call(this);
@@ -116,7 +114,10 @@ define([
         this.emit('start');
     };
 
-    MCT.prototype.regions = regions;
+    MCT.prototype.regions = {
+        main: "MAIN",
+        toolbar: "TOOLBAR"
+    };
 
     return MCT;
 });
