@@ -24,7 +24,6 @@
 define(
     [],
     function () {
-        var TRANSACTION_SET = {};
 
         /**
          * Wraps persistence capability to enable transactions. Transactions
