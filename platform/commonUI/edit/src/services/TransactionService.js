@@ -140,38 +140,9 @@ define(
             });
         };
 
-        /**
-         * Clear and restart the active transaction.
-         *
-         * This neither cancels nor commits the active transaction;
-         * instead, it returns a function that can be used to cancel that
-         * transaction.
-         *
-         * @returns {Function} a function to cancel the prior transaction
-         * @private
-         */
-        TransactionService.prototype.restartTransaction = function () {
-            var oldOnCancels = this.onCancels;
-
-            this.onCommits = [];
-            this.onCancels = [];
-
-            return function () {
-                while (oldOnCancels.length > 0) {
-                    var onCancel = oldOnCancels.pop();
-                    try {
-                        onCancel();
-                    } catch (error) {
-                        this.$log.error("Error cancelling transaction.");
-                    }
-                }
-            };
-        };
-
         TransactionService.prototype.size = function () {
             return this.onCommits.length;
         };
 
         return TransactionService;
-    }
-);
+    });
