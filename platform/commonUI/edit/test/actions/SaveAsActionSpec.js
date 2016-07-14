@@ -179,9 +179,15 @@ define(
             });
 
             it("hides the blocking dialog after saving", function () {
-                action.perform();
+                var mockCallback = jasmine.createSpy();
+                action.perform().then(mockCallback);
                 expect(mockDialogService.showBlockingMessage).toHaveBeenCalled();
-                expect(mockDialogService.dismiss).toHaveBeenCalled();
+                waitsFor(function () {
+                    return mockCallback.calls.length > 0;
+                });
+                runs(function () {
+                    expect(mockDialogService.dismiss).toHaveBeenCalled();
+                });
             });
 
         });
