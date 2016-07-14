@@ -8,69 +8,78 @@
     </div>
 
     <div class="flex-elem holder grows l-flex-col l-time-conductor-inner">
-    <!-- Holds inputs and ticks -->
-    <div class="l-time-conductor-ticks l-row-elem l-flex-row flex-elem no-margin">
-        <form class="abs l-time-conductor-inputs-holder"
-              ng-submit="tcController.updateBoundsFromForm(formModel)">
-        <span class="l-time-range-input-w start-date">
-            <mct-control key="'datetime-field'"
-                         structure="{
-                             format: 'utc',
-                             validate: tcController.validateStart
-                         }"
-                         ng-model="formModel"
-                         ng-mouseup="tcController.changing['start'] = true"
-                         ng-blur="tcController.changing['start'] = false; tcController.updateBoundsFromForm(formModel)"
-                         field="'start'"
-                         class="time-range-start">
-            </mct-control>
-        </span>
-        <span class="l-time-range-input-w start-delta"
-              ng-class="{'hide':(modeModel.selected === 'fixed')}">
-            <mct-control key="'datetime-field'"
-                         structure="{
-                            format: 'duration',
-                            validate: tcController.validateStartDelta
-                         }"
-                         ng-model="formModel"
-                         ng-mouseup="tcController.changing['startDelta'] = true"
-                         ng-blur="tcController.changing['startDelta'] = false; tcController.updateDeltasFromForm(formModel)"
-                         field="'startDelta'"
-                         class="time-delta-start">
-            </mct-control>
-        </span>
-        <span class="l-time-range-input-w end-delta"
-              ng-class="{'hide':(modeModel.selected === 'fixed')}">
-            <mct-control key="'datetime-field'"
-                         structure="{
-                            format: 'duration',
-                            validate: tcController.validateEndDelta
-                         }"
-                         ng-model="formModel"
-                         ng-mouseup="tcController.changing['endDelta'] = true"
-                         ng-blur="tcController.changing['endDelta'] = false; tcController.updateDeltasFromForm(formModel)"
-                         field="'endDelta'"
-                         class="time-delta-end">
-            </mct-control>
-        </span>
-        <span class="l-time-range-input-w end-date"
-              ng-controller="ToggleController as t2">
-            <mct-control key="'datetime-field'"
-                         structure="{
-                             format: 'utc',
-                             validate: tcController.validateEnd
-                         }"
-                         ng-model="formModel"
-                         ng-mouseup="tcController.changing['end'] = true"
-                         ng-blur="tcController.changing['end'] = false; tcController.updateBoundsFromForm(formModel)"
-                         field="'end'"
-                         class="time-range-end">
-            </mct-control>
-        </span>
-        <input type="submit" class="hidden">
-        </form>
-        <mct-conductor-axis></mct-conductor-axis>
-    </div>
+        <!-- Holds inputs and ticks -->
+        <div class="l-time-conductor-ticks l-row-elem l-flex-row flex-elem no-margin">
+            <form class="abs l-time-conductor-inputs-holder"
+                  ng-submit="tcController.updateBoundsFromForm(formModel)">
+                <span class="l-time-range-w start-w">
+                    <span class="l-time-range-input-w start-date">
+                        <mct-control key="'datetime-field'"
+                                     structure="{
+                                         format: 'utc',
+                                         validate: tcController.validateStart
+                                     }"
+                                     ng-model="formModel"
+                                     ng-mouseup="tcController.changing['start'] = true"
+                                     ng-blur="tcController.changing['start'] = false; tcController.updateBoundsFromForm(formModel)"
+                                     field="'start'"
+                                     class="time-range-input">
+                        </mct-control>
+                    </span>
+                    <span class="l-time-range-input-w time-delta start-delta"
+                          ng-class="{'hide':(modeModel.selected === 'fixed')}">
+                        -
+                        <mct-control key="'datetime-field'"
+                                     structure="{
+                                        format: 'duration',
+                                        validate: tcController.validateStartDelta
+                                     }"
+                                     ng-model="formModel"
+                                     ng-mouseup="tcController.changing['startDelta'] = true"
+                                     ng-blur="tcController.changing['startDelta'] = false; tcController.updateDeltasFromForm(formModel)"
+                                     field="'startDelta'"
+                                     class="hrs-min-input">
+                        </mct-control>
+                    </span>
+                </span>
+
+
+                <span class="l-time-range-w end-w">
+                    <span class="l-time-range-input-w time-delta end-delta"
+                          ng-class="{'hide':(modeModel.selected === 'fixed')}">
+                        +
+                        <mct-control key="'datetime-field'"
+                                     structure="{
+                                        format: 'duration',
+                                        validate: tcController.validateEndDelta
+                                     }"
+                                     ng-model="formModel"
+                                     ng-mouseup="tcController.changing['endDelta'] = true"
+                                     ng-blur="tcController.changing['endDelta'] = false; tcController.updateDeltasFromForm(formModel)"
+                                     field="'endDelta'"
+                                     class="hrs-min-input">
+                        </mct-control>
+                    </span>
+                    <span class="l-time-range-input-w end-date"
+                          ng-controller="ToggleController as t2">
+                        <mct-control key="'datetime-field'"
+                                     structure="{
+                                         format: 'utc',
+                                         validate: tcController.validateEnd
+                                     }"
+                                     ng-model="formModel"
+                                     ng-mouseup="tcController.changing['end'] = true"
+                                     ng-blur="tcController.changing['end'] = false; tcController.updateBoundsFromForm(formModel)"
+                                     field="'end'"
+                                     class="time-range-input">
+                        </mct-control>
+                    </span>
+                </span>
+
+                <input type="submit" class="hidden">
+            </form>
+            <mct-conductor-axis></mct-conductor-axis>
+        </div>
 
         <!-- Holds data availability, time of interest -->
         <div class="l-data-visualization l-row-elem l-flex-row flex-elem"></div>
