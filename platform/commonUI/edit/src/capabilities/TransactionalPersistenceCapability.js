@@ -24,6 +24,7 @@
 define(
     [],
     function () {
+        var PERSIST_PENDING_SET = {};
 
         /**
          * Wraps persistence capability to enable transactions. Transactions
@@ -48,9 +49,16 @@ define(
             this.persistenceCapability = persistenceCapability;
             this.domainObject = domainObject;
             this.$q = $q;
-            this.persistPending = false;
             this.removeFromTransaction = undefined;
         }
+
+        TransactionalPersistenceCapability.prototype.persistPending = function (state) {
+            var id = this.domainObject.getId();
+            if (arguments.length > 0) {
+                PERSIST_PENDING_SET[id] = state;
+            }
+            return PERSIST_PENDING_SET[id];
+        };
 
         /**
          * The wrapped persist function. If a transaction is active, persist
@@ -61,8 +69,11 @@ define(
             var self = this;
 
             function onCommit() {
+                if (!self.persistPending()) {
+                    return Promise.resolve(true);
+                }
                 return self.persistenceCapability.persist().then(function (result) {
-                    self.persistPending = false;
+                    self.persistPending(false);
                     return result;
                 });
             }
@@ -71,11 +82,11 @@ define(
                 if (self.domainObject.getModel().persisted !== undefined) {
                     //Fetch clean model from persistence
                     return self.persistenceCapability.refresh().then(function (result) {
-                        self.persistPending = false;
+                        self.persistPending(false);
                         return result;
                     });
                 } else {
-                    self.persistPending = false;
+                    self.persistPending(false);
                     self.removeFromTransaction = undefined;
                     //Model is undefined in persistence, so return undefined.
                     return self.$q.when(undefined);
@@ -83,10 +94,10 @@ define(
             }
 
             if (this.transactionService.isActive()) {
-                if (!this.persistPending) {
+                if (!self.persistPending()) {
                     this.removeFromTransaction = this.transactionService
                         .addToTransaction(onCommit, onCancel);
-                    this.persistPending = true;
+                    this.persistPending(true);
                 }
                 //Need to return a promise from this function
                 return this.$q.when(true);
@@ -96,8 +107,8 @@ define(
         };
 
         TransactionalPersistenceCapability.prototype.refresh = function () {
-            if (this.persistPending) {
-                this.persistPending = false;
+            if (this.persistPending()) {
+                this.persistPending(false);
                 this.removeFromTransaction();
                 this.removeFromTransaction = undefined;
             }
