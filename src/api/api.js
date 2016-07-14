@@ -12,7 +12,7 @@ define([
     return {
         Type: Type,
         TimeConductor: new TimeConductor(),
-        Objects: ObjectAPI,
-        View: View
+        View: View,
+        Objects: ObjectAPI
     };
 });
