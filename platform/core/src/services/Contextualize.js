@@ -68,7 +68,7 @@ define(
                 // Don't validate while editing; consistency is not
                 // necessarily expected due to unsaved changes.
                 var editor = domainObject.getCapability('editor');
-                if (editor && !editor.inEditContext()) {
+                if (!editor || !editor.inEditContext()) {
                     validate(domainObject.getId(), parentObject);
                 }
 
