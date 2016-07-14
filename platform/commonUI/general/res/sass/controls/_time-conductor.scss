@@ -5,8 +5,94 @@
     }
 }
 
-.l-time-conductor {
+@include keyframes(clock-hands) {
+    0% {
+        @include transform(translate(-50%, -50%) rotate(0deg));
+    }
+    100% {
+        @include transform(translate(-50%, -50%) rotate(360deg));
+    }
+}
+
+.l-time-conductor-holder {
     $minW: 500px;
+    border-top: 1px solid $colorInteriorBorder;
+    min-width: $minW;
+    padding-top: $interiorMargin;
+}
+
+.time-conductor-icon {
+    $c: $colorBtnBg; //$colorTimeCondKeyBg;
+    $d: 20px;
+    background: $c;
+    border-radius: 4px;
+    height: $d !important;
+    width: $d;
+    position: relative;
+    // Icon shape: brackets
+    &:before,
+    &:after {
+        content: '';
+        background: $colorBodyBg;
+        position: absolute;
+    }
+    &:before {
+        $in: 7px;
+        left: $in;
+        top: 0;
+        right: $in;
+        bottom: 0;
+
+    }
+    &:after {
+        $in: 4px;
+        left: $in;
+        top: $in;
+        right: $in;
+        bottom: $in;
+    }
+
+    // Clock hands
+    div[class*="hand"] {
+        $handW: 2px;
+        $handH: 8px;
+        @include transform(translate(-50%, -50%));
+        @include animation-iteration-count(infinite);
+        @include animation-timing-function(linear);
+        position: absolute;
+        height: $handW;
+        width: $handW;
+        left: 50%;
+        top: 50%;
+        z-index: 2;
+        &:before {
+            background-color: $c;
+            content: '';
+            display: block;
+            position: absolute;
+            width: 100%;
+            bottom: -1px;
+        }
+        &.hand-little {
+            z-index: 2;
+            @include animation-duration(12s);
+            &:before {
+                //background: red;
+                height: ceil($handH * 0.7);
+            }
+        }
+        &.hand-big {
+            z-index: 1;
+            @include animation-duration(1s);
+            &:before {
+                //background: green;
+                height: $handH;
+            }
+        }
+    }
+}
+
+.l-time-conductor {
     $knobHOffset: 0px;
     $rangeValPad: $interiorMargin;
     $rangeValOffset: $sliderKnobW + $interiorMargin;
@@ -19,9 +105,6 @@
     $glyphIconRealtime: '\43';
     $glyphIconLatest: '\44';
 
-    border-top: 1px solid $colorInteriorBorder;
-    padding-top: $interiorMargin;
-    min-width: $minW;
     position: relative;
 
     > .l-row-elem {
@@ -126,10 +209,28 @@
     .l-time-conductor-controls {
         margin-top: $interiorMargin;
     }
+    // Fixed
+    &.fixed-mode {
+        .time-conductor-icon div[class*="hand"] {
+            &.hand-little {
+                @include transform(rotate(120deg));
+            }
+        }
+    }
 
     // Realtime, latest modes
     &.realtime-mode,
     &.latest-mode {
+        .time-conductor-icon {
+            background: $colorTimeCondKeyBg;
+            div[class*="hand"] {
+                @include animation-name(clock-hands);
+                &:before {
+                    background: $colorTimeCondKeyBg;
+                }
+            }
+        }
+
         .l-time-conductor-inputs-holder {
             .l-time-range-input-w {
                 input[type="text"]:not(.error) {
