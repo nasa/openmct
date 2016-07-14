@@ -17,8 +17,8 @@
             glyph: "2",
             description: "A list of things that need to be done."
         },
-        initialize: function (model) {
-            model.tasks = [
+        initialize: function (object) {
+            object.tasks = [
                 { description: "This is a task." }
             ];
         },
@@ -84,7 +84,6 @@
                 complete: false
             });
             mutableObject.set('tasks', tasks);
-            console.log(mutableObject);
         }
 
         return {

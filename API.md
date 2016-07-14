@@ -69,5 +69,14 @@ Status: Not Implemented, Needs to be ported from old system.
 
 A registry for different time system definitions.  Based upon the previous time format system which utilized the "formats" extension category.  
 
+### `MCT.run([container])`
+Status: Stable Draft
 
+Run the MCT application, loading the application into the `container`, a DOM element.  If a container is not specified, the application is injected into the body of the page.
+
+### `MCT.install(plugin)`.
+Status: Not Implemented
+
+Install a plugin in MCT.  Must be called before calling `run`.  Plugins are functions which are invoked with the `MCT` instance as their first argument, and
+are expected to use the MCT public API to add functionality.
 

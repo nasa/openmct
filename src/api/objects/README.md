@@ -16,6 +16,10 @@ The above key would encode into the identifier, `elastic:myIdentifier`.
 
 When interacting with the API you will be dealing with key objects.
 
+## Roots
+
+"Roots" are objects that Open MCT will load at run time and form the basic entry point for users.  You can register new root objects by calling the 
+
 # Configuring the Object API
 
 The following methods should be used before calling run.  They allow you to 
