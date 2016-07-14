@@ -48,7 +48,7 @@ define(
                             .append('svg:svg')
                             .attr('width', '100%')
                             .attr('height', height);
-                var xScale = d3.scaleTime();
+                var xScale = d3.scaleUtc();
                 var xAxis = d3.axisTop();
                 // draw x axis with labels and move to the bottom of the chart area
                 var axisElement = vis.append("g")

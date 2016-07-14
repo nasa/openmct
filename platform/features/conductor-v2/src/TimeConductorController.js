@@ -32,16 +32,18 @@ define(
             this.$scope = $scope;
             this.$timeout = $timeout;
             this.conductor = conductor;
+            this.startDelta = FIFTEEN_MINUTES;
             this.endDelta = 0;
 
             this.changing = {
                 'start': false,
-                'startDelta': false,
-                'end': false,
-                'endDelta': false
+                'end': false
             };
 
-            $scope.formModel = {};
+            $scope.formModel = {
+                startDelta: this.startDelta,
+                endDelta: this.endDelta
+            };
 
             conductor.on('bounds', function (bounds) {
                 if (!self.changing['start']) {
@@ -49,13 +51,6 @@ define(
                 }
                 if (!self.changing['end']) {
                     $scope.formModel.end = bounds.end;
-                }
-                if (!self.changing['startDelta']) {
-                    $scope.formModel.startDelta = bounds.end - bounds.start;
-                }
-
-                if (!self.changing['endDelta']) {
-                    $scope.formModel.endDelta = 0;
                 }
             });
 
@@ -148,11 +143,17 @@ define(
         TimeConductorController.prototype.updateDeltasFromForm = function (formModel) {
 
             if (this.validateDeltas(formModel)) {
-                var oldBounds = this.conductor.bounds(),
-                    newBounds = {
-                        start: oldBounds.end - formModel.startDelta,
-                        end: oldBounds.end + formModel.endDelta
-                    };
+                //Calculate the previous 'true' end value (without delta)
+                var oldEnd = this.conductor.bounds().end - this.endDelta || 0;
+
+                this.startDelta = formModel.startDelta;
+                this.endDelta = formModel.endDelta;
+
+                var newBounds = {
+                    start: oldEnd - this.startDelta,
+                    end: oldEnd + this.endDelta
+                };
+
                 this.conductor.bounds(newBounds);
             }
         };
@@ -172,22 +173,20 @@ define(
                 var tickInterval = 1000;
                 var conductor = this.conductor;
                 var $timeout = this.$timeout;
+                var self = this;
 
                 conductor.follow(true);
-                setToNowMinus(FIFTEEN_MINUTES);
+                setBoundsToNow(self.startDelta, self.endDelta);
 
                 var timeoutPromise = $timeout(tick, tickInterval);
 
-                function setToNowMinus(delta) {
+                function setBoundsToNow(startDelta, endDelta) {
                     var now = Math.ceil(Date.now() / 1000) * 1000;
-                    conductor.bounds({start: now - delta, end: now});
+                    conductor.bounds({start: now - startDelta, end: now + endDelta});
                 }
 
                 function tick() {
-                    var bounds = conductor.bounds();
-                    var delta = bounds.end - bounds.start;
-                    setToNowMinus(delta);
-
+                    setBoundsToNow(self.startDelta, self.endDelta);
                     timeoutPromise = $timeout(tick, tickInterval)
                 }
 

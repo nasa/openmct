@@ -3,6 +3,9 @@
     .start-delta {
         left: 180px;
     }
+    .end-delta {
+        right: 0;
+    }
 </style>
 <div ng-controller="TimeConductorController as tcController"
      class="l-time-conductor l-flex-col {{modeModel.selected}}-mode">
@@ -39,7 +42,7 @@
         </span>
         <span class="l-time-range-input-w end-delta"
               ng-class="{'hide':(modeModel.selected === 'fixed')}">
-            <mct-control key="'time-field'"
+            <mct-control key="'datetime-field'"
                          structure="{
                             format: 'duration',
                             validate: tcController.validateEndDelta
