@@ -42,6 +42,7 @@ define([
     "./src/representers/EditToolbarRepresenter",
     "./src/capabilities/EditorCapability",
     "./src/capabilities/TransactionCapabilityDecorator",
+    "./src/services/TransactionManager",
     "./src/services/TransactionService",
     "./src/creation/CreateMenuController",
     "./src/creation/LocatorController",
@@ -80,6 +81,7 @@ define([
     EditToolbarRepresenter,
     EditorCapability,
     TransactionCapabilityDecorator,
+    TransactionManager,
     TransactionService,
     CreateMenuController,
     LocatorController,
@@ -320,7 +322,7 @@ define([
                     "implementation": TransactionCapabilityDecorator,
                     "depends": [
                         "$q",
-                        "transactionService"
+                        "transactionManager"
                     ],
                     "priority": "fallback"
                 },
@@ -404,6 +406,15 @@ define([
                 {
                     "key": "locator",
                     "template": locatorTemplate
+                }
+            ],
+            "services": [
+                {
+                    "key": "transactionManager",
+                    "implementation": TransactionManager,
+                    "depends": [
+                        "transactionService"
+                    ]
                 }
             ]
         }

@@ -34,30 +34,22 @@ define(
          * called.
          * @memberof platform/commonUI/edit/capabilities
          * @param $q
-         * @param transactionService
+         * @param transactionManager
          * @param persistenceCapability
          * @param domainObject
          * @constructor
          */
         function TransactionalPersistenceCapability(
             $q,
-            transactionService,
+            transactionManager,
             persistenceCapability,
             domainObject
         ) {
-            this.transactionService = transactionService;
+            this.transactionManager = transactionManager;
             this.persistenceCapability = persistenceCapability;
             this.domainObject = domainObject;
             this.$q = $q;
         }
-
-        TransactionalPersistenceCapability.prototype.transactionClearer = function (state) {
-            var id = this.domainObject.getId();
-            if (arguments.length > 0) {
-                TRANSACTION_SET[id] = state;
-            }
-            return TRANSACTION_SET[id];
-        };
 
         /**
          * The wrapped persist function. If a transaction is active, persist
@@ -65,38 +57,14 @@ define(
          * @returns {*}
          */
         TransactionalPersistenceCapability.prototype.persist = function () {
-            var self = this;
+            var wrappedPersistence = this.persistenceCapability;
 
-            function onCommit() {
-                if (!self.transactionClearer()) {
-                    return Promise.resolve(true);
-                }
-                return self.persistenceCapability.persist().then(function (result) {
-                    self.transactionClearer(undefined);
-                    return result;
-                });
-            }
-
-            function onCancel() {
-                if (self.domainObject.getModel().persisted !== undefined) {
-                    //Fetch clean model from persistence
-                    return self.persistenceCapability.refresh().then(function (result) {
-                        self.transactionClearer(undefined);
-                        return result;
-                    });
-                } else {
-                    self.transactionClearer(undefined);
-                    self.removeFromTransaction = undefined;
-                    //Model is undefined in persistence, so return undefined.
-                    return self.$q.when(undefined);
-                }
-            }
-
-            if (this.transactionService.isActive()) {
-                if (!self.transactionClearer()) {
-                    this.transactionClearer(this.transactionService
-                        .addToTransaction(onCommit, onCancel));
-                }
+            if (this.transactionManager.isActive()) {
+                this.transactionManager.addToTransaction(
+                    this.domainObject,
+                    wrappedPersistence.persist.bind(wrappedPersistence),
+                    wrappedPersistence.refresh.bind(wrappedPersistence)
+                );
                 //Need to return a promise from this function
                 return this.$q.when(true);
             } else {
@@ -105,10 +73,7 @@ define(
         };
 
         TransactionalPersistenceCapability.prototype.refresh = function () {
-            if (this.transactionClearer()) {
-                this.transactionClearer()();
-                this.transactionClearer(undefined);
-            }
+            this.transactionManager.clearTransactionsFor(this.domainObject);
             return this.persistenceCapability.refresh();
         };
 
