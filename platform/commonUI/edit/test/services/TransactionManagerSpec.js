@@ -26,9 +26,11 @@ define(
     function (TransactionManager) {
         describe("TransactionManager", function () {
             var mockTransactionService,
+                mockDomainObject,
                 mockOnCommit,
                 mockOnCancel,
                 mockRemoves,
+                mockPromise,
                 manager;
 
             beforeEach(function () {
@@ -39,6 +41,15 @@ define(
                 );
                 mockOnCommit = jasmine.createSpy('commit');
                 mockOnCancel = jasmine.createSpy('cancel');
+                mockDomainObject = jasmine.createSpyObj(
+                    'domainObject',
+                    [ 'getId', 'getModel', 'getCapability' ]
+                );
+                mockDomainObject.getId.andReturn('testId');
+                mockPromise = jasmine.createSpyObj('promise', ['then']);
+
+                mockOnCommit.andReturn(mockPromise);
+                mockOnCancel.andReturn(mockPromise);
 
                 mockTransactionService.addToTransaction.andCallFake(function () {
                     var mockRemove =
@@ -54,6 +65,71 @@ define(
                 [false, true].forEach(function (state) {
                     mockTransactionService.isActive.andReturn(state);
                     expect(manager.isActive()).toBe(state);
+                });
+            });
+
+            describe("when addToTransaction is called", function () {
+                beforeEach(function () {
+                    manager.addToTransaction(
+                        mockDomainObject,
+                        mockOnCommit,
+                        mockOnCancel
+                    );
+                });
+
+                it("adds callbacks to the active transaction", function () {
+                    expect(mockTransactionService.addToTransaction)
+                        .toHaveBeenCalledWith(
+                            jasmine.any(Function),
+                            jasmine.any(Function)
+                        );
+                });
+
+                it("invokes passed-in callbacks from its own callbacks", function () {
+                    expect(mockOnCommit).not.toHaveBeenCalled();
+                    mockTransactionService.addToTransaction
+                        .mostRecentCall.args[0]();
+                    expect(mockOnCommit).toHaveBeenCalled();
+
+                    expect(mockOnCancel).not.toHaveBeenCalled();
+                    mockTransactionService.addToTransaction
+                        .mostRecentCall.args[1]();
+                    expect(mockOnCancel).toHaveBeenCalled();
+                });
+
+                it("ignores subsequent calls for the same object", function () {
+                    manager.addToTransaction(
+                        mockDomainObject,
+                        jasmine.createSpy(),
+                        jasmine.createSpy()
+                    );
+                    expect(mockTransactionService.addToTransaction.calls.length)
+                        .toEqual(1);
+                });
+
+                it("accepts subsequent calls for other objects", function () {
+                    mockDomainObject.getId.andReturn('otherId');
+                    manager.addToTransaction(
+                        mockDomainObject,
+                        jasmine.createSpy(),
+                        jasmine.createSpy()
+                    );
+                    expect(mockTransactionService.addToTransaction.calls.length)
+                        .toEqual(2);
+                });
+
+                it("does not remove callbacks from the transaction", function () {
+                    expect(mockRemoves[0]).not.toHaveBeenCalled();
+                });
+
+                describe("and clearTransactionsFor is subsequently called", function () {
+                    beforeEach(function () {
+                        manager.clearTransactionsFor(mockDomainObject);
+                    });
+
+                    it("removes callbacks from the transaction", function () {
+                        expect(mockRemoves[0]).toHaveBeenCalled();
+                    });
                 });
             });
         });
