@@ -92,6 +92,18 @@ define(
                 expect(mockPersistence.refresh).toHaveBeenCalled();
             });
 
+            it("wraps getSpace", function () {
+                mockPersistence.getSpace.andReturn('foo');
+                expect(capability.getSpace()).toEqual('foo');
+            });
+
+            it("clears transactions and delegates refresh calls", function () {
+                capability.refresh();
+                expect(mockTransactionManager.clearTransactionsFor)
+                    .toHaveBeenCalledWith(mockDomainObject);
+                expect(mockPersistence.refresh)
+                    .toHaveBeenCalled();
+            });
 
         });
     }
