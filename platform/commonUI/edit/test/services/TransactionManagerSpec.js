@@ -37,13 +37,13 @@ define(
                 mockRemoves = [];
                 mockTransactionService = jasmine.createSpyObj(
                     "transactionService",
-                    [ "addToTransaction", "isActive" ]
+                    ["addToTransaction", "isActive"]
                 );
                 mockOnCommit = jasmine.createSpy('commit');
                 mockOnCancel = jasmine.createSpy('cancel');
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    [ 'getId', 'getModel', 'getCapability' ]
+                    ['getId', 'getModel', 'getCapability']
                 );
                 mockDomainObject.getId.andReturn('testId');
                 mockPromise = jasmine.createSpyObj('promise', ['then']);
