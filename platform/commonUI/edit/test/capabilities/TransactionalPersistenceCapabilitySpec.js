@@ -37,7 +37,7 @@ define(
 
         describe("The transactional persistence decorator", function () {
             var mockQ,
-                mockTransactionService,
+                mockTransactionManager,
                 mockPersistence,
                 mockDomainObject,
                 capability;
@@ -47,13 +47,13 @@ define(
                 mockQ.when.andCallFake(function (val) {
                     return fastPromise(val);
                 });
-                mockTransactionService = jasmine.createSpyObj(
+                mockTransactionManager = jasmine.createSpyObj(
                     "transactionService",
-                    ["isActive", "addToTransaction"]
+                    ["isActive", "addToTransaction", "clearTransactionsFor"]
                 );
                 mockPersistence = jasmine.createSpyObj(
                     "persistenceCapability",
-                    ["persist", "refresh"]
+                    ["persist", "refresh", "getSpace"]
                 );
                 mockPersistence.persist.andReturn(fastPromise());
                 mockPersistence.refresh.andReturn(fastPromise());
@@ -66,49 +66,32 @@ define(
                 );
                 mockDomainObject.getModel.andReturn({persisted: 1});
 
-                capability = new TransactionalPersistenceCapability(mockQ, mockTransactionService, mockPersistence, mockDomainObject);
+                capability = new TransactionalPersistenceCapability(
+                    mockQ,
+                    mockTransactionManager,
+                    mockPersistence,
+                    mockDomainObject
+                );
             });
 
             it("if no transaction is active, passes through to persistence" +
                 " provider", function () {
-                mockTransactionService.isActive.andReturn(false);
+                mockTransactionManager.isActive.andReturn(false);
                 capability.persist();
                 expect(mockPersistence.persist).toHaveBeenCalled();
             });
 
             it("if transaction is active, persist and cancel calls are" +
                 " queued", function () {
-                mockTransactionService.isActive.andReturn(true);
+                mockTransactionManager.isActive.andReturn(true);
                 capability.persist();
-                expect(mockTransactionService.addToTransaction).toHaveBeenCalled();
-                mockTransactionService.addToTransaction.mostRecentCall.args[0]();
+                expect(mockTransactionManager.addToTransaction).toHaveBeenCalled();
+                mockTransactionManager.addToTransaction.mostRecentCall.args[1]();
                 expect(mockPersistence.persist).toHaveBeenCalled();
-                mockTransactionService.addToTransaction.mostRecentCall.args[1]();
+                mockTransactionManager.addToTransaction.mostRecentCall.args[2]();
                 expect(mockPersistence.refresh).toHaveBeenCalled();
             });
 
-            it("if transaction is active, cancel call is queued that refreshes model when appropriate", function () {
-                mockTransactionService.isActive.andReturn(true);
-                capability.persist();
-                expect(mockTransactionService.addToTransaction).toHaveBeenCalled();
-
-                mockDomainObject.getModel.andReturn({});
-                mockTransactionService.addToTransaction.mostRecentCall.args[1]();
-                expect(mockPersistence.refresh).not.toHaveBeenCalled();
-
-                mockDomainObject.getModel.andReturn({persisted: 1});
-                mockTransactionService.addToTransaction.mostRecentCall.args[1]();
-                expect(mockPersistence.refresh).toHaveBeenCalled();
-            });
-
-            it("persist call is only added to transaction once", function () {
-                mockTransactionService.isActive.andReturn(true);
-                capability.persist();
-                expect(mockTransactionService.addToTransaction).toHaveBeenCalled();
-                capability.persist();
-                expect(mockTransactionService.addToTransaction.calls.length).toBe(1);
-
-            });
 
         });
     }
