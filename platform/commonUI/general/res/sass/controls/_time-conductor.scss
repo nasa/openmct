@@ -22,7 +22,7 @@
 }
 
 .time-conductor-icon {
-    $c: $colorBtnBg; //$colorTimeCondKeyBg;
+    $c: $colorObjHdrIc;
     $d: 20px;
     background: $c;
     border-radius: 4px;
@@ -193,6 +193,7 @@
                     display: none;
                 }
                 line {
+                    // Tick marks
                     stroke: $c;
                 }
                 text {
@@ -239,7 +240,8 @@
                     border-radius: 0;
                     padding-left: 0;
                     padding-right: 0;
-                    &:hover {
+                    &:hover,
+                    &:focus {
                         @include nice-input();
                         padding: $inputTextP;
                     }
@@ -255,6 +257,13 @@
                 }
             }
         }
+
+/*        .l-time-conductor-ticks .l-axis-holder {
+            svg {
+                line { color: $colorTimeCondKeyBg; };
+                text { fill: $colorTimeCondKeyBg; }
+            }
+        }*/
 
         .l-data-visualization {
             background: $colorTimeCondDataVisRtBg !important
