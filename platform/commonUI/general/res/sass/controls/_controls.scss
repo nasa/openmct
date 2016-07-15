@@ -455,14 +455,22 @@ input[type="range"] {
         @include sliderKnobRound();
     }
     &::-moz-range-thumb {
+        border: none;
         @include sliderKnobRound();
     }
     &::-ms-thumb {
+        border: none;
         @include sliderKnobRound();
     }
 
     // Track
     &::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 3px;
+        @include sliderTrack();
+    }
+
+    &::-moz-range-track {
         width: 100%;
         height: 3px;
         @include sliderTrack();
