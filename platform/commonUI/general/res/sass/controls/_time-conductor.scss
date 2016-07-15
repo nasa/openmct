@@ -119,7 +119,8 @@
     }
 
     .l-time-conductor-inputs-holder,
-    .l-time-conductor-ticks {
+    .l-time-conductor-ticks,
+    .l-time-conductor-zoom-w {
         font-size: 0.8rem;
     }
 
@@ -203,11 +204,16 @@
     .l-time-conductor-controls {
         align-items: center;
         margin-top: $interiorMargin;
-        .time-conductor-zoom {
-            //@include test();
-            min-width: 100px;
-            height: $r3H;
-            width: 25%;
+        .l-time-conductor-zoom-w {
+            @include justify-content(flex-end);
+            .time-conductor-zoom {
+                height: $r3H;
+                min-width: 100px;
+                width: 20%;
+            }
+            .time-conductor-zoom-current-range {
+                color: $colorTick;
+            }
         }
 
     }

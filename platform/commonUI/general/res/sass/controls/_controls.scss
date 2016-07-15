@@ -430,25 +430,35 @@ input[type="search"] {
     //border-radius: 50% !important;
 }
 
+@mixin sliderKnobRound() {
+    $h: 12px;
+    cursor: pointer;
+    width: $h;
+    height: $h;
+    margin-top: 1 + floor($h/2) * -1;
+    @include btnSubtle(pullForward($colorBtnBg, 10%));
+    border-radius: 50% !important;
+}
+
 input[type="range"] {
     // HTML5 range inputs
 
     -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
     background: transparent; /* Otherwise white in Chrome */
     &:focus {
-        outline: none; /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+        outline: none; /* Removes the blue border. */
     }
 
     // Thumb
     &::-webkit-slider-thumb {
         -webkit-appearance: none;
-        @include sliderKnob();
+        @include sliderKnobRound();
     }
     &::-moz-range-thumb {
-        @include sliderKnob();
+        @include sliderKnobRound();
     }
     &::-ms-thumb {
-        @include sliderKnob();
+        @include sliderKnobRound();
     }
 
     // Track
