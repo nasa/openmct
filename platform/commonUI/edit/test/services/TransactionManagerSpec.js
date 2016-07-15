@@ -26,7 +26,7 @@ define(
     function (TransactionManager) {
         describe("TransactionManager", function () {
             var mockTransactionService,
-                mockDomainObject,
+                testId,
                 mockOnCommit,
                 mockOnCancel,
                 mockRemoves,
@@ -41,11 +41,7 @@ define(
                 );
                 mockOnCommit = jasmine.createSpy('commit');
                 mockOnCancel = jasmine.createSpy('cancel');
-                mockDomainObject = jasmine.createSpyObj(
-                    'domainObject',
-                    ['getId', 'getModel', 'getCapability']
-                );
-                mockDomainObject.getId.andReturn('testId');
+                testId = 'test-id';
                 mockPromise = jasmine.createSpyObj('promise', ['then']);
 
                 mockOnCommit.andReturn(mockPromise);
@@ -71,7 +67,7 @@ define(
             describe("when addToTransaction is called", function () {
                 beforeEach(function () {
                     manager.addToTransaction(
-                        mockDomainObject,
+                        testId,
                         mockOnCommit,
                         mockOnCancel
                     );
@@ -99,7 +95,7 @@ define(
 
                 it("ignores subsequent calls for the same object", function () {
                     manager.addToTransaction(
-                        mockDomainObject,
+                        testId,
                         jasmine.createSpy(),
                         jasmine.createSpy()
                     );
@@ -108,9 +104,8 @@ define(
                 });
 
                 it("accepts subsequent calls for other objects", function () {
-                    mockDomainObject.getId.andReturn('otherId');
                     manager.addToTransaction(
-                        mockDomainObject,
+                        'other-id',
                         jasmine.createSpy(),
                         jasmine.createSpy()
                     );
@@ -124,7 +119,7 @@ define(
 
                 describe("and clearTransactionsFor is subsequently called", function () {
                     beforeEach(function () {
-                        manager.clearTransactionsFor(mockDomainObject);
+                        manager.clearTransactionsFor(testId);
                     });
 
                     it("removes callbacks from the transaction", function () {

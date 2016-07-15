@@ -40,9 +40,12 @@ define(
                 mockTransactionManager,
                 mockPersistence,
                 mockDomainObject,
+                testId,
                 capability;
 
             beforeEach(function () {
+                testId = "test-id";
+
                 mockQ = jasmine.createSpyObj("$q", ["when"]);
                 mockQ.when.andCallFake(function (val) {
                     return fastPromise(val);
@@ -60,11 +63,10 @@ define(
 
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [
-                        "getModel"
-                    ]
+                    ["getModel", "getId"]
                 );
                 mockDomainObject.getModel.andReturn({persisted: 1});
+                mockDomainObject.getId.andReturn(testId);
 
                 capability = new TransactionalPersistenceCapability(
                     mockQ,
@@ -100,7 +102,7 @@ define(
             it("clears transactions and delegates refresh calls", function () {
                 capability.refresh();
                 expect(mockTransactionManager.clearTransactionsFor)
-                    .toHaveBeenCalledWith(mockDomainObject);
+                    .toHaveBeenCalledWith(testId);
                 expect(mockPersistence.refresh)
                     .toHaveBeenCalled();
             });

@@ -60,7 +60,7 @@ define(
 
             if (this.transactionManager.isActive()) {
                 this.transactionManager.addToTransaction(
-                    this.domainObject,
+                    this.domainObject.getId(),
                     wrappedPersistence.persist.bind(wrappedPersistence),
                     wrappedPersistence.refresh.bind(wrappedPersistence)
                 );
@@ -72,7 +72,8 @@ define(
         };
 
         TransactionalPersistenceCapability.prototype.refresh = function () {
-            this.transactionManager.clearTransactionsFor(this.domainObject);
+            this.transactionManager
+                .clearTransactionsFor(this.domainObject.getId());
             return this.persistenceCapability.refresh();
         };
 

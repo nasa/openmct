@@ -46,11 +46,11 @@ define([], function () {
      * Check if callbacks associated with this domain object have already
      * been added to the active transaction.
      * @private
-     * @param {DomainObject} domainObject the object to check
+     * @param {string} id the identifier of the domain object to check
      * @returns {boolean} true if callbacks have been added
      */
-    TransactionManager.prototype.isScheduled = function (domainObject) {
-        return !!this.clearTransactionFns[domainObject.getId()];
+    TransactionManager.prototype.isScheduled = function (id) {
+        return !!this.clearTransactionFns[id];
     };
 
     /**
@@ -61,16 +61,16 @@ define([], function () {
      * If callbacks associated with this domain object have already been
      * added to the active transaction, this call will be ignored.
      *
-     * @param {DomainObject} domainObject the associated domain object
+     * @param {string} id the identifier of the associated domain object
      * @param {Function} onCommit behavior to invoke when committing transaction
      * @param {Function} onCancel behavior to invoke when cancelling transaction
      */
     TransactionManager.prototype.addToTransaction = function (
-        domainObject,
+        id,
         onCommit,
         onCancel
     ) {
-        var release = this.releaseClearFn.bind(this, domainObject);
+        var release = this.releaseClearFn.bind(this, id);
 
         function chain(promiseFn, nextFn) {
             return function () {
@@ -78,8 +78,8 @@ define([], function () {
             };
         }
 
-        if (!this.isScheduled(domainObject)) {
-            this.clearTransactionFns[domainObject.getId()] =
+        if (!this.isScheduled(id)) {
+            this.clearTransactionFns[id] =
                 this.transactionService.addToTransaction(
                     chain(onCommit, release),
                     chain(onCancel, release)
@@ -90,23 +90,23 @@ define([], function () {
     /**
      * Remove any callbacks associated with this domain object from the
      * active transaction.
-     * @param {DomainObject} domainObject the domain object
+     * @param {string} id the identifier for the domain object
      */
-    TransactionManager.prototype.clearTransactionsFor = function (domainObject) {
-        if (this.isScheduled(domainObject)) {
-            this.clearTransactionFns[domainObject.getId()]();
-            this.releaseClearFn(domainObject);
+    TransactionManager.prototype.clearTransactionsFor = function (id) {
+        if (this.isScheduled(id)) {
+            this.clearTransactionFns[id]();
+            this.releaseClearFn(id);
         }
     };
 
     /**
      * Release the cached "remove from transaction" function that has been
      * stored in association with this domain object.
-     * @param {DomainObject} domainObject the domain object
+     * @param {string} id the identifier for the domain object
      * @private
      */
-    TransactionManager.prototype.releaseClearFn = function (domainObject) {
-        delete this.clearTransactionFns[domainObject.getId()];
+    TransactionManager.prototype.releaseClearFn = function (id) {
+        delete this.clearTransactionFns[id];
     };
 
     return TransactionManager;
