@@ -129,6 +129,8 @@
     }
 
     .primary-pane {
+        // Clip element that have min-widths
+        overflow: hidden;
         // Need to lift up this pane to ensure that 'collapsed' panes don't block user interactions
         z-index: 4;
     }

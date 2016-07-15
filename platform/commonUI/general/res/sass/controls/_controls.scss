@@ -420,6 +420,45 @@ input[type="search"] {
     }
 }
 
+@mixin sliderKnob() {
+    $h: 16px;
+    cursor: pointer;
+    width: floor($h/1.75);
+    height: $h;
+    margin-top: 1 + floor($h/2) * -1;
+    @include btnSubtle(pullForward($colorBtnBg, 10%));
+    //border-radius: 50% !important;
+}
+
+input[type="range"] {
+    // HTML5 range inputs
+
+    -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+    background: transparent; /* Otherwise white in Chrome */
+    &:focus {
+        outline: none; /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+    }
+
+    // Thumb
+    &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        @include sliderKnob();
+    }
+    &::-moz-range-thumb {
+        @include sliderKnob();
+    }
+    &::-ms-thumb {
+        @include sliderKnob();
+    }
+
+    // Track
+    &::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 3px;
+        @include sliderTrack();
+    }
+}
+
 /******************************************************** DATETIME PICKER */
 .l-datetime-picker {
     $r1H: 15px;

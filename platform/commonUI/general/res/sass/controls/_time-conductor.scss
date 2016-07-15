@@ -20,6 +20,7 @@
     height: $d !important;
     width: $d;
     position: relative;
+    
     // Icon shape: brackets
     &:before,
     &:after {
@@ -76,7 +77,6 @@
             z-index: 1;
             @include animation-duration(1s);
             &:before {
-                //background: green;
                 height: $handH;
             }
         }
@@ -181,6 +181,7 @@
                     font-size: 0.9em;
                 }
                 path {
+                    // Line beneath ticks
                     display: none;
                 }
                 line {
@@ -188,6 +189,7 @@
                     stroke: $c;
                 }
                 text {
+                    // Tick labels
                     fill: $c;
                 }
             }
@@ -199,7 +201,15 @@
     }
 
     .l-time-conductor-controls {
+        align-items: center;
         margin-top: $interiorMargin;
+        .time-conductor-zoom {
+            //@include test();
+            min-width: 100px;
+            height: $r3H;
+            width: 25%;
+        }
+
     }
     // Fixed
     &.fixed-mode {
