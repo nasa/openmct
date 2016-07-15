@@ -34,7 +34,6 @@ define(
                 mockCopyService,
                 mockParent,
                 mockUrlService,
-                mockTransactionService,
                 actionContext,
                 capabilities = {},
                 action;
@@ -120,26 +119,11 @@ define(
                     ["urlForLocation"]
                 );
 
-                mockTransactionService = jasmine.createSpyObj(
-                    "transactionService",
-                    ["restartTransaction"]
-                );
-                mockTransactionService.restartTransaction
-                    .andReturn(jasmine.createSpy());
-
                 actionContext = {
                     domainObject: mockDomainObject
                 };
 
-                action = new SaveAsAction(
-                    undefined,
-                    undefined,
-                    mockDialogService,
-                    undefined,
-                    mockCopyService,
-                    mockTransactionService,
-                    actionContext
-                );
+                action = new SaveAsAction(undefined, undefined, mockDialogService, undefined, mockCopyService, actionContext);
 
                 spyOn(action, "getObjectService");
                 action.getObjectService.andReturn(mockObjectService);
@@ -195,9 +179,15 @@ define(
             });
 
             it("hides the blocking dialog after saving", function () {
-                action.perform();
+                var mockCallback = jasmine.createSpy();
+                action.perform().then(mockCallback);
                 expect(mockDialogService.showBlockingMessage).toHaveBeenCalled();
-                expect(mockDialogService.dismiss).toHaveBeenCalled();
+                waitsFor(function () {
+                    return mockCallback.calls.length > 0;
+                });
+                runs(function () {
+                    expect(mockDialogService.dismiss).toHaveBeenCalled();
+                });
             });
 
         });

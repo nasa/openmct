@@ -37,77 +37,74 @@ define(
 
         describe("The transactional persistence decorator", function () {
             var mockQ,
-                mockTransactionService,
+                mockTransactionManager,
                 mockPersistence,
                 mockDomainObject,
+                testId,
                 capability;
 
             beforeEach(function () {
+                testId = "test-id";
+
                 mockQ = jasmine.createSpyObj("$q", ["when"]);
                 mockQ.when.andCallFake(function (val) {
                     return fastPromise(val);
                 });
-                mockTransactionService = jasmine.createSpyObj(
+                mockTransactionManager = jasmine.createSpyObj(
                     "transactionService",
-                    ["isActive", "addToTransaction"]
+                    ["isActive", "addToTransaction", "clearTransactionsFor"]
                 );
                 mockPersistence = jasmine.createSpyObj(
                     "persistenceCapability",
-                    ["persist", "refresh"]
+                    ["persist", "refresh", "getSpace"]
                 );
                 mockPersistence.persist.andReturn(fastPromise());
                 mockPersistence.refresh.andReturn(fastPromise());
 
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [
-                        "getModel"
-                    ]
+                    ["getModel", "getId"]
                 );
                 mockDomainObject.getModel.andReturn({persisted: 1});
+                mockDomainObject.getId.andReturn(testId);
 
-                capability = new TransactionalPersistenceCapability(mockQ, mockTransactionService, mockPersistence, mockDomainObject);
+                capability = new TransactionalPersistenceCapability(
+                    mockQ,
+                    mockTransactionManager,
+                    mockPersistence,
+                    mockDomainObject
+                );
             });
 
             it("if no transaction is active, passes through to persistence" +
                 " provider", function () {
-                mockTransactionService.isActive.andReturn(false);
+                mockTransactionManager.isActive.andReturn(false);
                 capability.persist();
                 expect(mockPersistence.persist).toHaveBeenCalled();
             });
 
             it("if transaction is active, persist and cancel calls are" +
                 " queued", function () {
-                mockTransactionService.isActive.andReturn(true);
+                mockTransactionManager.isActive.andReturn(true);
                 capability.persist();
-                expect(mockTransactionService.addToTransaction).toHaveBeenCalled();
-                mockTransactionService.addToTransaction.mostRecentCall.args[0]();
+                expect(mockTransactionManager.addToTransaction).toHaveBeenCalled();
+                mockTransactionManager.addToTransaction.mostRecentCall.args[1]();
                 expect(mockPersistence.persist).toHaveBeenCalled();
-                mockTransactionService.addToTransaction.mostRecentCall.args[1]();
+                mockTransactionManager.addToTransaction.mostRecentCall.args[2]();
                 expect(mockPersistence.refresh).toHaveBeenCalled();
             });
 
-            it("if transaction is active, cancel call is queued that refreshes model when appropriate", function () {
-                mockTransactionService.isActive.andReturn(true);
-                capability.persist();
-                expect(mockTransactionService.addToTransaction).toHaveBeenCalled();
-
-                mockDomainObject.getModel.andReturn({});
-                mockTransactionService.addToTransaction.mostRecentCall.args[1]();
-                expect(mockPersistence.refresh).not.toHaveBeenCalled();
-
-                mockDomainObject.getModel.andReturn({persisted: 1});
-                mockTransactionService.addToTransaction.mostRecentCall.args[1]();
-                expect(mockPersistence.refresh).toHaveBeenCalled();
+            it("wraps getSpace", function () {
+                mockPersistence.getSpace.andReturn('foo');
+                expect(capability.getSpace()).toEqual('foo');
             });
 
-            it("persist call is only added to transaction once", function () {
-                mockTransactionService.isActive.andReturn(true);
-                capability.persist();
-                expect(mockTransactionService.addToTransaction).toHaveBeenCalled();
-                capability.persist();
-                expect(mockTransactionService.addToTransaction.calls.length).toBe(1);
-
+            it("clears transactions and delegates refresh calls", function () {
+                capability.refresh();
+                expect(mockTransactionManager.clearTransactionsFor)
+                    .toHaveBeenCalledWith(testId);
+                expect(mockPersistence.refresh)
+                    .toHaveBeenCalled();
             });
 
         });

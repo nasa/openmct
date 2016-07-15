@@ -33,22 +33,21 @@ define(
          * called.
          * @memberof platform/commonUI/edit/capabilities
          * @param $q
-         * @param transactionService
+         * @param transactionManager
          * @param persistenceCapability
          * @param domainObject
          * @constructor
          */
         function TransactionalPersistenceCapability(
             $q,
-            transactionService,
+            transactionManager,
             persistenceCapability,
             domainObject
         ) {
-            this.transactionService = transactionService;
+            this.transactionManager = transactionManager;
             this.persistenceCapability = persistenceCapability;
             this.domainObject = domainObject;
             this.$q = $q;
-            this.persistPending = false;
         }
 
         /**
@@ -57,34 +56,14 @@ define(
          * @returns {*}
          */
         TransactionalPersistenceCapability.prototype.persist = function () {
-            var self = this;
+            var wrappedPersistence = this.persistenceCapability;
 
-            function onCommit() {
-                return self.persistenceCapability.persist().then(function (result) {
-                    self.persistPending = false;
-                    return result;
-                });
-            }
-
-            function onCancel() {
-                if (self.domainObject.getModel().persisted !== undefined) {
-                    //Fetch clean model from persistence
-                    return self.persistenceCapability.refresh().then(function (result) {
-                        self.persistPending = false;
-                        return result;
-                    });
-                } else {
-                    self.persistPending = false;
-                    //Model is undefined in persistence, so return undefined.
-                    return self.$q.when(undefined);
-                }
-            }
-
-            if (this.transactionService.isActive()) {
-                if (!this.persistPending) {
-                    this.transactionService.addToTransaction(onCommit, onCancel);
-                    this.persistPending = true;
-                }
+            if (this.transactionManager.isActive()) {
+                this.transactionManager.addToTransaction(
+                    this.domainObject.getId(),
+                    wrappedPersistence.persist.bind(wrappedPersistence),
+                    wrappedPersistence.refresh.bind(wrappedPersistence)
+                );
                 //Need to return a promise from this function
                 return this.$q.when(true);
             } else {
@@ -93,6 +72,8 @@ define(
         };
 
         TransactionalPersistenceCapability.prototype.refresh = function () {
+            this.transactionManager
+                .clearTransactionsFor(this.domainObject.getId());
             return this.persistenceCapability.refresh();
         };
 

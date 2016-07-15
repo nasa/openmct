@@ -152,6 +152,10 @@ define(
                 }, modified);
             }
 
+            if (domainObject.getModel().persisted === undefined) {
+                return this.$q.when(true);
+            }
+
             return this.persistenceService.readObject(
                     this.getSpace(),
                     this.getKey()
