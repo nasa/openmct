@@ -65,7 +65,13 @@ define(
              *        which should appear as the contextual parent
              */
             return function (domainObject, parentObject) {
-                validate(domainObject.getId(), parentObject);
+                // Don't validate while editing; consistency is not
+                // necessarily expected due to unsaved changes.
+                var editor = domainObject.getCapability('editor');
+                if (!editor || !editor.inEditContext()) {
+                    validate(domainObject.getId(), parentObject);
+                }
+
                 return new ContextualDomainObject(domainObject, parentObject);
             };
         }

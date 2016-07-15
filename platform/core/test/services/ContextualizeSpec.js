@@ -36,6 +36,7 @@ define(
             var mockLog,
                 mockDomainObject,
                 mockParentObject,
+                mockEditor,
                 testParentModel,
                 contextualize;
 
@@ -52,10 +53,18 @@ define(
                 mockParentObject =
                     jasmine.createSpyObj('parentObject', DOMAIN_OBJECT_METHODS);
 
+                mockEditor =
+                    jasmine.createSpyObj('editor', ['inEditContext']);
+
                 mockDomainObject.getId.andReturn("abc");
                 mockDomainObject.getModel.andReturn({});
                 mockParentObject.getId.andReturn("parent");
                 mockParentObject.getModel.andReturn(testParentModel);
+
+                mockEditor.inEditContext.andReturn(false);
+                mockDomainObject.getCapability.andCallFake(function (c) {
+                    return c === 'editor' && mockEditor;
+                });
 
                 contextualize = new Contextualize(mockLog);
             });
@@ -82,6 +91,12 @@ define(
                 expect(mockLog.warn).toHaveBeenCalled();
             });
 
+            it("does not issue warnings for objects being edited", function () {
+                mockEditor.inEditContext.andReturn(true);
+                testParentModel.composition = ["xyz"];
+                contextualize(mockDomainObject, mockParentObject);
+                expect(mockLog.warn).not.toHaveBeenCalled();
+            });
 
         });
     }
