@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -179,9 +179,15 @@ define(
             });
 
             it("hides the blocking dialog after saving", function () {
-                action.perform();
+                var mockCallback = jasmine.createSpy();
+                action.perform().then(mockCallback);
                 expect(mockDialogService.showBlockingMessage).toHaveBeenCalled();
-                expect(mockDialogService.dismiss).toHaveBeenCalled();
+                waitsFor(function () {
+                    return mockCallback.calls.length > 0;
+                });
+                runs(function () {
+                    expect(mockDialogService.dismiss).toHaveBeenCalled();
+                });
             });
 
         });

@@ -1,7 +1,7 @@
 # API Refactoring
 
 This document summarizes a path toward implementing API changes
-from the [API Redesign](../proposals/APIRedesign.md) for Open MCT Web
+from the [API Redesign](../proposals/APIRedesign.md) for Open MCT
 v1.0.0.
 
 # Goals
@@ -161,7 +161,7 @@ be included in a straightforward fashion.
 
 Some goals for this build step:
 
-* Compile (and, preferably, optimize/minify) Open MCT Web
+* Compile (and, preferably, optimize/minify) Open MCT
   sources into a single `.js` file.
   * It is desirable to do the same for HTML sources, but
     may wish to defer this until a subsequent refactoring
@@ -170,7 +170,7 @@ Some goals for this build step:
   derivative projects in a straightforward fashion.
 
 Should also consider which dependency/packaging manager should
-be used by dependent projects to obtain Open MCT Web. Approaches
+be used by dependent projects to obtain Open MCT. Approaches
 include:
 
 1. Plain `npm`. Dependents then declare their dependency with
@@ -203,7 +203,7 @@ to use for asset generation/management and compilation/minification/etc.
 
 ## Step 3. Separate repositories
 
-Refactor existing applications built on Open MCT Web such that they
+Refactor existing applications built on Open MCT such that they
 are no longer forks, but instead separate projects with a dependency
 on the built artifacts from Step 2.
 
@@ -211,7 +211,7 @@ Note that this is achievable already using `bower` (see `warp-bower`
 branch at http://developer.nasa.gov/mct/warp for an example.)
 However, changes involved in switching to an imperative API and
 introducing a build process may change (and should simplify) the
-approach used to utilize Open MCT Web as a dependency, so these
+approach used to utilize Open MCT as a dependency, so these
 changes should be introduced first.
 
 ## Step 4. Design registration API
@@ -287,7 +287,7 @@ or separately in parallel) and should involve a tight cycle of:
    planning should be done to spread out the changes incrementally.
 
 By necessity, these changes may break functionality in applications
-built using Open MCT Web. On a case-by-case basis, should consider
+built using Open MCT. On a case-by-case basis, should consider
 providing temporary "legacy support" to allow downstream updates
 to occur as a separate task; the relevant trade here is between
 waste/effort required to maintain legacy support, versus the
@@ -299,11 +299,11 @@ across several repositories.
 
 Update bundles to remove any usages of legacy support for bundles
 (including that used by dependent projects.) Then, remove legacy
-support from Open MCT Web.
+support from Open MCT.
 
 ## Step 8. Release candidacy
 
-Once API changes are complete, Open MCT Web should enter a release
+Once API changes are complete, Open MCT should enter a release
 candidacy cycle. Important things to look at here:
 
 * Are changes really complete?
