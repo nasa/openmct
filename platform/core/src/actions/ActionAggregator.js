@@ -59,6 +59,7 @@ define(
          * @property {string} name human-readable name for this action
          * @property {string} description human-readable description
          * @property {string} glyph character to display as icon
+         * @property {string} cssclass CSS class for icon, supercedes glyph
          * @property {ActionContext} context the context in which the action
          *           will be performed.
          */

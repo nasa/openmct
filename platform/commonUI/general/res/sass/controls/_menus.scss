@@ -36,6 +36,17 @@
 		margin-left: $interiorMarginSm;
 	}
 
+    .color-swatch {
+        // Used in color menu buttons in toolbar
+        $d: 10px;
+        display: inline-block;
+        border: 1px solid rgba($colorBtnFg, 0.2);
+        height: $d; width: $d;
+        vertical-align: middle;
+        margin-left: $interiorMarginSm;
+        margin-top: -2px;
+    }
+
 	&:after {
 		// Adds the downward facing 'context available / invoke menu' arrow element
 		@include contextArrow();
@@ -52,9 +63,6 @@
 	.menu {
 		left: 0;
 		text-align: left;
-		//.ui-symbol.icon {
-		//	width: 12px;
-		//}
 	}
 }
 

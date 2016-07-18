@@ -139,22 +139,26 @@ define([
                                     {
                                         "property": "fill",
                                         "glyph": "",
+                                        "cssclass": "icon-paint-bucket",
                                         "control": "color"
                                     },
                                     {
                                         "property": "stroke",
                                         "glyph": "â",
+                                        "cssclass": "icon-line-horz",
                                         "control": "color"
                                     },
                                     {
                                         "property": "color",
                                         "glyph": "ä",
+                                        "cssclass": "icon-T",
                                         "mandatory": true,
                                         "control": "color"
                                     },
                                     {
                                         "property": "url",
                                         "glyph": "ã",
+                                        "cssclass": "icon-image",
                                         "control": "dialog-button",
                                         "title": "Image Properties",
                                         "dialog": {
