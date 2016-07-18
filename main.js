@@ -77,6 +77,7 @@ define([
     './platform/exporters/bundle',
     './platform/telemetry/bundle',
     './platform/features/clock/bundle',
+    './platform/features/fixed/bundle',
     './platform/features/imagery/bundle',
     './platform/features/layout/bundle',
     './platform/features/pages/bundle',
