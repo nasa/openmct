@@ -33,6 +33,7 @@ $pad: $interiorMargin * $baseRatio;
 
 .s-btn {
     box-sizing: border-box;
+    display: inline-block;
     padding: 0 $pad;
     font-size: 0.7rem;
     vertical-align: top;

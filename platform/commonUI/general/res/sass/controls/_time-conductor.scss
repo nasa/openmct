@@ -1,80 +1,171 @@
 @mixin toiLineHovEffects() {
-	&:before,
-	&:after {
-		background-color: $timeControllerToiLineColorHov;
-	}
+    &:before,
+    &:after {
+        background-color: $timeControllerToiLineColorHov;
+    }
+}
+
+.l-time-conductor-holder {
+    $minW: 500px;
+    border-top: 1px solid $colorInteriorBorder;
+    min-width: $minW;
+    padding-top: $interiorMargin;
+}
+
+.time-conductor-icon {
+    $c: $colorObjHdrIc;
+    $d: 20px;
+    background: $c;
+    border-radius: 4px;
+    height: $d !important;
+    width: $d;
+    position: relative;
+    
+    // Icon shape: brackets
+    &:before,
+    &:after {
+        content: '';
+        background: $colorBodyBg;
+        position: absolute;
+    }
+    &:before {
+        $in: 7px;
+        left: $in;
+        top: 0;
+        right: $in;
+        bottom: 0;
+
+    }
+    &:after {
+        $in: 4px;
+        left: $in;
+        top: $in;
+        right: $in;
+        bottom: $in;
+    }
+
+    // Clock hands
+    div[class*="hand"] {
+        $handW: 2px;
+        $handH: 8px;
+        @include transform(translate(-50%, -50%));
+        @include animation-iteration-count(infinite);
+        @include animation-timing-function(linear);
+        position: absolute;
+        height: $handW;
+        width: $handW;
+        left: 50%;
+        top: 50%;
+        z-index: 2;
+        &:before {
+            background-color: $c;
+            content: '';
+            display: block;
+            position: absolute;
+            width: 100%;
+            bottom: -1px;
+        }
+        &.hand-little {
+            z-index: 2;
+            @include animation-duration(12s);
+            &:before {
+                //background: red;
+                height: ceil($handH * 0.7);
+            }
+        }
+        &.hand-big {
+            z-index: 1;
+            @include animation-duration(1s);
+            &:before {
+                height: $handH;
+            }
+        }
+    }
 }
 
 .l-time-conductor {
-	$minW: 500px;
-	$knobHOffset: 0px;
-	$rangeValPad: $interiorMargin;
-	$rangeValOffset: $sliderKnobW + $interiorMargin;
-	$r1H: nth($ueTimeControlH,1);
-	$r2H: nth($ueTimeControlH,2);
-	$r3H: nth($ueTimeControlH,3);
+    $knobHOffset: 0px;
+    $rangeValPad: $interiorMargin;
+    $rangeValOffset: $sliderKnobW + $interiorMargin;
+    $r1H: nth($ueTimeControlH, 1);
+    $r2H: nth($ueTimeControlH, 2);
+    $r3H: nth($ueTimeControlH, 3);
 
     // Glyphs Todo: replace with refactored CSS approach when that is merged into master
     $glyphIconFixed: '\e604';
     $glyphIconRealtime: '\43';
     $glyphIconLatest: '\44';
 
-    border-top: 1px solid $colorInteriorBorder;
-    padding-top: $interiorMargin;
-    min-width: $minW;
     position: relative;
 
-	>.l-row-elem {
+    > .l-row-elem {
         // First order row elements
-		box-sizing: border-box;
+        box-sizing: border-box;
         width: 100%;
         position: relative;
-        &:not(:first-child) {
-            margin-top: $interiorMargin;
+    }
+
+    .mode-selector .s-menu-btn,
+    .time-delta {
+        &:before {
+            @extend .ui-symbol;
         }
-	}
+    }
+
+    .time-delta {
+        &:before {
+            color: $colorTimeCondKeyBg;
+        }
+    }
 
     .l-time-conductor-inputs-holder,
-    .l-time-conductor-ticks {
+    .l-time-conductor-ticks,
+    .l-time-conductor-zoom-w {
         font-size: 0.8rem;
     }
 
-	.l-time-conductor-inputs-holder {
-        $inputW: 180px;
-        $ticksBlockerFadeW: 25px;
+    .l-time-conductor-inputs-holder {
+        $trInputW: 180px;
+        $hmInputW: 60px;
+        $ticksBlockerFadeW: 50px;
         $iconCalendarW: 16px;
         $wBgColor: $colorBodyBg;
-        //$wBgColor: green;
-        $wBgW: $inputW + $interiorMargin + $iconCalendarW;
 
         height: $r1H;
         z-index: 1;
-        .l-time-range-input-w {
+        .l-time-range-w {
             // Wraps a datetime text input field
+            height: 100%;
             position: absolute;
-            width: $wBgW + $ticksBlockerFadeW;
-            &.start-date {
-                @include background-image(linear-gradient(90deg, $wBgColor $wBgW, transparent 100%));
+            &.start-w {
+                @include background-image(linear-gradient(270deg, transparent, $wBgColor $ticksBlockerFadeW));
+                padding-right: $ticksBlockerFadeW;
             }
-            &.end-date {
-                @include background-image(linear-gradient(270deg, $wBgColor $wBgW, transparent 100%));
+            &.end-w {
+                @include background-image(linear-gradient(90deg, transparent, $wBgColor $ticksBlockerFadeW));
+                padding-left: $ticksBlockerFadeW;
                 right: 0;
                 text-align: right;
             }
             input[type="text"] {
-                width: $inputW;
+                @include trans-prop-nice(padding, 250ms);
+            }
+            .time-range-input input {
+                width: $trInputW;
+            }
+            .hrs-min-input input {
+                width: $hmInputW;
             }
             .icon-calendar {
                 margin-top: 4px;
             }
         }
-	}
+    }
 
-	.l-time-conductor-ticks {
+    .l-time-conductor-ticks {
         $c: $colorTick;
-		height: $r1H;
+        height: $r1H;
         mct-conductor-axis {
-            @include transform(translateY(3px));
             display: block;
             position: relative;
             width: 100%;
@@ -85,39 +176,85 @@
             width: 100%;
             svg {
                 text-rendering: geometricPrecision;
-                color: transparent;
-                fill: $c !important; // Todo: figure out why this isn't working
-                width: 100%; height: 100%;
+                width: 100%;
+                height: 100%;
                 > g {
                     font-size: 0.9em;
                 }
-                path {display: none;}
-                line {stroke: $c;}
+                path {
+                    // Line beneath ticks
+                    display: none;
+                }
+                line {
+                    // Tick marks
+                    stroke: $c;
+                }
+                text {
+                    // Tick labels
+                    fill: $c;
+                }
             }
         }
-	}
+    }
     .l-data-visualization {
-        background: rgba($colorTick, 0.3);
+        background: $colorTimeCondDataVisBg;
         height: $r2H;
     }
 
-    .mode-selector .s-menu-btn {
-        &:before {
-            @extend .ui-symbol;
-            margin-right: $interiorMarginSm;
-            content: $glyphIconFixed;
+    .l-time-conductor-controls {
+        align-items: center;
+        margin-top: $interiorMargin;
+        .l-time-conductor-zoom-w {
+            @include justify-content(flex-end);
+            .time-conductor-zoom {
+                height: $r3H;
+                min-width: 100px;
+                width: 20%;
+            }
+            .time-conductor-zoom-current-range {
+                color: $colorTick;
+            }
+        }
+
+    }
+    // Fixed
+    &.fixed-mode {
+        .time-conductor-icon div[class*="hand"] {
+            &.hand-little {
+                @include transform(rotate(120deg));
+            }
         }
     }
 
     // Realtime, latest modes
     &.realtime-mode,
     &.latest-mode {
+        .time-conductor-icon {
+            background: $colorTimeCondKeyBg;
+            div[class*="hand"] {
+                @include animation-name(clock-hands);
+                &:before {
+                    background: $colorTimeCondKeyBg;
+                }
+            }
+        }
+
         .l-time-conductor-inputs-holder {
             .l-time-range-input-w {
-                input:not(:hover) {
+                input[type="text"]:not(.error) {
                     background: transparent;
                     box-shadow: none;
                     border-radius: 0;
+                    padding-left: 0;
+                    padding-right: 0;
+                    &:hover,
+                    &:focus {
+                        @include nice-input();
+                        padding: $inputTextP;
+                    }
+                }
+                &.start-date {
+                    pointer-events: none;
                 }
                 .icon-calendar {
                     display: none;
@@ -128,22 +265,50 @@
             }
         }
 
+        &.realtime-mode .time-conductor-icon div[class*="hand"] { @include animation-name(clock-hands); }
+        &.latest-mode .time-conductor-icon div[class*="hand"] {
+            @include animation-name(clock-hands-sticky);
+            &.hand-big { @include animation-duration(5s); }
+            &.hand-little { @include animation-duration(60s); }
+        }
+
         .l-data-visualization {
-            background: rgba($colorTimeCondKey, 0.5) !important
+            background: $colorTimeCondDataVisRtBg !important
         }
         .mode-selector .s-menu-btn {
-            @include btnSubtle($colorTimeCondKey, pullForward($colorTimeCondKey, $ltGamma));
+            @include btnSubtle($colorTimeCondKeyBg, pullForward($colorTimeCondKeyBg, $ltGamma), $colorTimeCondKeyFg);
         }
     }
-
-    &.realtime-mode .mode-selector .s-menu-btn:before { content: $glyphIconRealtime; }
-    &.latest-mode .mode-selector .s-menu-btn:before { content: $glyphIconLatest; }
+    &.fixed-mode {
+        $i: $glyphIconFixed;
+        .mode-selector .s-menu-btn:before {
+            content: $i;
+        }
+    }
+    &.realtime-mode {
+        $i: $glyphIconRealtime;
+        .time-delta:before {
+            content: $i;
+        }
+        .mode-selector .s-menu-btn:before {
+            content: $i;
+        }
+    }
+    &.latest-mode {
+        $i: $glyphIconLatest;
+        .time-delta:before {
+            content: $i;
+        }
+        .mode-selector .s-menu-btn:before {
+            content: $i;
+        }
+    }
 }
 
 .s-time-range-val {
-	border-radius: $controlCr;
-	background-color: $colorInputBg;
-	padding: 1px 1px 0 $interiorMargin;
+    border-radius: $controlCr;
+    background-color: $colorInputBg;
+    padding: 1px 1px 0 $interiorMargin;
 }
 
 /******************************************************************** MOBILE */
@@ -179,7 +344,9 @@
                     margin-right: 0;
                 }
                 .l-time-range-inputs-elem {
-                    &.lbl { display: none; }
+                    &.lbl {
+                        display: none;
+                    }
                 }
             }
         }

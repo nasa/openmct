@@ -48,7 +48,7 @@ $uePaneMiniTabW: 10px;
 $uePaneMiniTabCollapsedW: 11px;
 $ueEditLeftPaneW: 75%;
 $treeSearchInputBarH: 25px;
-$ueTimeControlH: (21px, 18px, 20px);
+$ueTimeControlH: (25px, 6px, 20px);
 /*************** Panes */
 $ueBrowseLeftPaneTreeMinW: 150px;
 $ueBrowseLeftPaneTreeMaxW: 35%;
@@ -108,6 +108,7 @@ $bubbleMaxW: 300px;
 $reqSymbolW: 15px;
 $reqSymbolM: $interiorMargin * 2;
 $reqSymbolFontSize: 0.7em;
+$inputTextP: 3px 5px;
 /*************** Wait Spinner Defaults */
 $waitSpinnerD: 32px;
 $waitSpinnerTreeD: 20px;

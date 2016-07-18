@@ -1,0 +1,91 @@
+@include keyframes(rotation) {
+    100% { @include transform(rotate(360deg)); }
+}
+
+@include keyframes(rotation-centered) {
+    0%   { @include transform(translate(-50%, -50%) rotate(0deg)); }
+    100% { @include transform(translate(-50%, -50%) rotate(360deg)); }
+}
+
+@include keyframes(clock-hands) {
+    0% { @include transform(translate(-50%, -50%) rotate(0deg)); }
+    100% { @include transform(translate(-50%, -50%) rotate(360deg));  }
+}
+
+@include keyframes(clock-hands-sticky) {
+    0% {
+        @include transform(translate(-50%, -50%) rotate(0deg));
+    }
+    7% {
+        @include transform(translate(-50%, -50%) rotate(0deg));
+    }
+    8% {
+        @include transform(translate(-50%, -50%) rotate(30deg));
+    }
+    15% {
+        @include transform(translate(-50%, -50%) rotate(30deg));
+    }
+    16% {
+        @include transform(translate(-50%, -50%) rotate(60deg));
+    }
+    24% {
+        @include transform(translate(-50%, -50%) rotate(60deg));
+    }
+    25% {
+        @include transform(translate(-50%, -50%) rotate(90deg));
+    }
+    32% {
+        @include transform(translate(-50%, -50%) rotate(90deg));
+    }
+    33% {
+        @include transform(translate(-50%, -50%) rotate(120deg));
+    }
+    40% {
+        @include transform(translate(-50%, -50%) rotate(120deg));
+    }
+    41% {
+        @include transform(translate(-50%, -50%) rotate(150deg));
+    }
+    49% {
+        @include transform(translate(-50%, -50%) rotate(150deg));
+    }
+    50% {
+        @include transform(translate(-50%, -50%) rotate(180deg));
+    }
+    57% {
+        @include transform(translate(-50%, -50%) rotate(180deg));
+    }
+    58% {
+        @include transform(translate(-50%, -50%) rotate(210deg));
+    }
+    65% {
+        @include transform(translate(-50%, -50%) rotate(210deg));
+    }
+    66% {
+        @include transform(translate(-50%, -50%) rotate(240deg));
+    }
+    74% {
+        @include transform(translate(-50%, -50%) rotate(240deg));
+    }
+    75% {
+        @include transform(translate(-50%, -50%) rotate(270deg));
+    }
+    82% {
+        @include transform(translate(-50%, -50%) rotate(270deg));
+    }
+    83% {
+        @include transform(translate(-50%, -50%) rotate(300deg));
+    }
+    90% {
+        @include transform(translate(-50%, -50%) rotate(300deg));
+    }
+    91% {
+        @include transform(translate(-50%, -50%) rotate(330deg));
+    }
+    99% {
+        @include transform(translate(-50%, -50%) rotate(330deg));
+    }
+    100% {
+        @include transform(translate(-50%, -50%) rotate(360deg));
+    }
+}

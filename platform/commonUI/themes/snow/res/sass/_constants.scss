@@ -210,4 +210,7 @@ $colorLoadingFg: $colorAlt1;
 $colorLoadingBg: rgba($colorLoadingFg, 0.1);
 
 // Time Conductor
-$colorTimeCondKey: #0092b3;
+$colorTimeCondKeyBg: #6178dc;
+$colorTimeCondKeyFg: #fff;
+$colorTimeCondDataVisBg: pullForward($colorBodyBg, 10%);
+$colorTimeCondDataVisRtBg: pushBack($colorTimeCondKeyBg, 30%);
