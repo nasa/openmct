@@ -28,14 +28,9 @@ define(
     function ($, d3) {
 
         /**
-         * The mct-control will dynamically include the control
-         * for a form element based on a symbolic key. Individual
-         * controls are defined under the extension category
-         * `controls`; this allows plug-ins to introduce new form
-         * control types while still making use of the form
-         * generator to ensure an overall consistent form style.
-         * @constructor
-         * @memberof platform/forms
+         * The mct-conductor-axis renders a horizontal axis with regular
+         * labelled 'ticks'. It requires 'start' and 'end' integer values to
+         * be specified as attributes.
          */
         function MCTConductorAxis(conductor) {
 
@@ -66,6 +61,7 @@ define(
                     setScale(conductor.bounds().start, conductor.bounds().end);
                 };
 
+                //On conductor bounds changes, redraw ticks
                 conductor.on('bounds', function (bounds) {
                     setScale(bounds.start, bounds.end);
                 });
@@ -84,14 +80,7 @@ define(
                 priority: 1000,
 
                 // Link function
-                link: link,
-
-                // Pass through Angular's normal input field attributes
-                scope: {
-                    // Used to choose which form control to use
-                    start: "=",
-                    end: "="
-                }
+                link: link
             };
         }
 

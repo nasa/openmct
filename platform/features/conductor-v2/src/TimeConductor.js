@@ -118,7 +118,8 @@ define(['EventEmitter'], function (EventEmitter) {
     TimeConductor.prototype.bounds = function (newBounds) {
         if (arguments.length > 0) {
             throwOnError(this.validateBounds(newBounds));
-            this.boundsVal = newBounds;
+            //Create a copy to avoid direct mutation of conductor bounds
+            this.boundsVal = JSON.parse(JSON.stringify(newBounds));
             /**
              * @event TimeConductor#bounds The start time, end time, or
              * both have been updated
@@ -126,7 +127,8 @@ define(['EventEmitter'], function (EventEmitter) {
              */
             this.emit('bounds', this.boundsVal);
         }
-        return this.boundsVal;
+        //Return a copy to prevent direct mutation of time conductor bounds.
+        return JSON.parse(JSON.stringify(this.boundsVal));
     };
 
     /**

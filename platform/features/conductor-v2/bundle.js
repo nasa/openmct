@@ -22,8 +22,9 @@
 
 define([
     "./src/TimeConductor",
-    "./src/TimeConductorController",
-    "./src/MCTConductorAxis",
+    "./src/ui/TimeConductorController",
+    "./src/ui/MCTConductorAxis",
+    "./src/timeSystems/UTCTimeSystem",
     "text!./res/templates/time-conductor.html",
     "text!./res/templates/mode-selector/mode-selector.html",
     "text!./res/templates/mode-selector/mode-menu.html",
@@ -32,6 +33,7 @@ define([
     TimeConductor,
     TimeConductorController,
     MCTConductorAxis,
+    UTCTimeSystem,
     timeConductorTemplate,
     modeSelectorTemplate,
     modeMenuTemplate,
@@ -52,8 +54,8 @@ define([
                     "implementation": TimeConductorController,
                     "depends": [
                         "$scope",
-                        "$timeout",
-                        "timeConductor"
+                        "timeConductor",
+                        "timeSystems[]"
                     ]
                 }
             ],
@@ -78,6 +80,12 @@ define([
                 {
                     "key": "mode-menu",
                     "template": modeMenuTemplate
+                }
+            ],
+            "timeSystems": [
+                {
+                    "implementation": UTCTimeSystem,
+                    "depends": ["$timeout"]
                 }
             ]
         }

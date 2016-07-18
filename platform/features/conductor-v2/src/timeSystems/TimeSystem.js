@@ -26,7 +26,16 @@ define([], function () {
      * @constructor
      */
     function TimeSystem () {
+        /**
+         * @typedef TimeSystemMetadata
+         * @property {string} key
+         * @property {string} name
+         * @property {string} description
+         *
+         * @type {TimeSystemMetadata}
+         */
         this.metadata = undefined;
+        this._tickSources = [];
     }
 
     TimeSystem.prototype.formats = function () {
@@ -37,7 +46,12 @@ define([], function () {
         throw new Error('Not implemented');
     };
 
-    TimeSystem.prototype.defaultBounds = function () {
+    /**
+     *
+     * @returns {TimeSystemDefault[]} At least one set of default values for
+     * this time system.
+     */
+    TimeSystem.prototype.defaults = function () {
         throw new Error('Not implemented');
     };
 

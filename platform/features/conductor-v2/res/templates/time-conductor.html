@@ -8,7 +8,7 @@
     }
 </style>
 <div ng-controller="TimeConductorController as tcController"
-     class="l-time-conductor l-flex-col {{modeModel.selected}}-mode">
+     class="l-time-conductor l-flex-col {{modeModel.selected.metadata.key}}-mode {{timeSystemModel.selected.metadata.key}}-time-system">
     <!-- Holds inputs and ticks -->
     <div class="l-time-conductor-ticks l-row-elem l-flex-row flex-elem no-margin">
         <form class="abs l-time-conductor-inputs-holder"
@@ -17,39 +17,37 @@
             <mct-control key="'datetime-field'"
                          structure="{
                              format: 'utc',
-                             validate: tcController.validateStart
+                             validate: tcController.validation.validateStart
                          }"
                          ng-model="formModel"
-                         ng-mouseup="tcController.changing['start'] = true"
-                         ng-blur="tcController.changing['start'] = false; tcController.updateBoundsFromForm(formModel)"
+                         ng-mouseup="changing['start'] = true"
+                         ng-blur="changing['start'] = false; tcController.updateBoundsFromForm(formModel)"
                          field="'start'"
                          class="time-range-start">
             </mct-control>
         </span>
         <span class="l-time-range-input-w start-delta"
-              ng-class="{'hide':(modeModel.selected === 'fixed')}">
+              ng-class="{'hide':(modeModel.selected.metadata.key === 'fixed')}">
             <mct-control key="'datetime-field'"
                          structure="{
                             format: 'duration',
-                            validate: tcController.validateStartDelta
+                            validate: tcController.validation.validateStartDelta
                          }"
                          ng-model="formModel"
-                         ng-mouseup="tcController.changing['startDelta'] = true"
-                         ng-blur="tcController.changing['startDelta'] = false; tcController.updateDeltasFromForm(formModel)"
+                         ng-blur="tcController.updateDeltasFromForm(formModel)"
                          field="'startDelta'"
                          class="time-delta-start">
             </mct-control>
         </span>
         <span class="l-time-range-input-w end-delta"
-              ng-class="{'hide':(modeModel.selected === 'fixed')}">
+              ng-class="{'hide':(modeModel.selected.metadata.key === 'fixed')}">
             <mct-control key="'datetime-field'"
                          structure="{
                             format: 'duration',
-                            validate: tcController.validateEndDelta
+                            validate: tcController.validation.validateEndDelta
                          }"
                          ng-model="formModel"
-                         ng-mouseup="tcController.changing['endDelta'] = true"
-                         ng-blur="tcController.changing['endDelta'] = false; tcController.updateDeltasFromForm(formModel)"
+                         ng-blur="tcController.updateDeltasFromForm(formModel)"
                          field="'endDelta'"
                          class="time-delta-end">
             </mct-control>
@@ -59,11 +57,11 @@
             <mct-control key="'datetime-field'"
                          structure="{
                              format: 'utc',
-                             validate: tcController.validateEnd
+                             validate: tcController.validation.validateEnd
                          }"
                          ng-model="formModel"
-                         ng-mouseup="tcController.changing['end'] = true"
-                         ng-blur="tcController.changing['end'] = false; tcController.updateBoundsFromForm(formModel)"
+                         ng-mouseup="changing['end'] = true"
+                         ng-blur="changing['end'] = false; tcController.updateBoundsFromForm(formModel)"
                          field="'end'"
                          class="time-range-end">
             </mct-control>
@@ -87,14 +85,11 @@
         <mct-control
                 key="'menu-button'"
                 class="holder flex-elem menus-up time-system"
-                ng-model="conductorModel.timeSystem"
                 structure="{
-                    text: 'UTC',
-                    options: [
-                        {name: 'UTC', key:'utc', glyph:'\u0043'},
-                        {name: 'SCET', key:'scet', glyph:'\u0043'},
-                        {name: 'SCLK', key:'sclk', glyph:'\u0043'}
-                ]}">
+                    text: timeSystemModel.selected.metadata.name,
+                    click: tcController.selectTimeSystem,
+                    options: timeSystemModel.options
+                }">
         </mct-control>
     </div>
 </div>

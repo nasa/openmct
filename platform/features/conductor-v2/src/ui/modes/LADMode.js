@@ -20,35 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-    /**
-     * A tick source is a timing of timing signals. Usage is simple, a
-     * listener registers a callback which is invoked when this source 'ticks'.
-     *
-     * @interface
-     * @constructor
-     */
-    function TickSource () {
-        this.listeners = [];
+define(
+    ['./FollowMode'],
+    function (FollowMode) {
+
+        /**
+         * Supports the 'Latest Available Data' mode of the time conductor.
+         * This is a special case of FollowMode that advances on 'data' type
+         * tick sources.
+         * @param conductor
+         * @param timeSystems
+         * @constructor
+         */
+        function LADMode(conductor, timeSystems) {
+            var metadata = {
+                key: 'latest',
+                glyph: '\u0044',
+                label: 'LAD',
+                name: 'LAD Mode',
+                description: 'Latest Available Data mode monitors real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'
+            };
+            var filteredTimeSystems = timeSystems.filter(function (timeSystem){
+                return timeSystem.tickSources().some(function (tickSource){
+                    return tickSource.type() === 'data';
+                });
+            });
+
+            FollowMode.call(this, metadata, conductor, filteredTimeSystems);
+        }
+
+        LADMode.prototype = Object.create(FollowMode.prototype);
+
+        return LADMode;
     }
-
-    /**
-     * @param callback Function to be called when this tick source ticks.
-     * @returns an 'unlisten' function that will remove the callback from
-     * the registered listeners
-     */
-    TickSource.prototype.listen = function (callback) {
-        throw new Error('Not implemented');
-    };
-
-    /**
-     * What does this source tick on? A clock, or data availability.
-     * Information is required to support time conductor modes.
-     * @returns {string} type One of 'clock' or 'data'
-     */
-    TickSource.prototype.type = function () {
-        throw new Error('Not implemented');
-    }
-
-    return TickSource;
-});
+);

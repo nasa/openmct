@@ -25,17 +25,25 @@ define([
     './LocalClock',
     '../../../../commonUI/formats/src/UTCTimeFormat'
 ], function (TimeSystem, LocalClock, UTCTimeFormat) {
-    var FIFTEEN_MINUTES = 15 * 60 * 1000;
+    var FIFTEEN_MINUTES = 15 * 60 * 1000,
+        DEFAULT_PERIOD = 1000;
 
     /**
+     * This time system supports UTC dates and provides a ticking clock source.
      * @implements TimeSystem
      * @constructor
      */
     function UTCTimeSystem ($timeout) {
         TimeSystem.call(this);
 
+        this.metadata = {
+            'key': 'utc',
+            'name': 'UTC',
+            'glyph': '\u0043'
+        };
+
         this._formats = [new UTCTimeFormat()];
-        this._tickSources = [new LocalClock($timeout)];
+        this._tickSources = [new LocalClock($timeout, DEFAULT_PERIOD)];
     }
 
     UTCTimeSystem.prototype = Object.create(TimeSystem.prototype);
@@ -48,9 +56,16 @@ define([
         return this._tickSources;
     };
 
-    UTCTimeSystem.prototype.defaultBounds = function () {
+    UTCTimeSystem.prototype.defaults = function () {
         var now = Math.ceil(Date.now() / 1000) * 1000;
-        return {start: now - FIFTEEN_MINUTES, end: now};
+        return [
+            {
+                key: 'utc-default',
+                name: 'UTC time system defaults',
+                deltas: {start: FIFTEEN_MINUTES, end: 0},
+                bounds: {start: now - FIFTEEN_MINUTES, end: now}
+            }
+        ];
     };
 
     return UTCTimeSystem;
