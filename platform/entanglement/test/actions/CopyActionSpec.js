@@ -44,6 +44,7 @@ define(
                 notificationService,
                 notification,
                 dialogService,
+                mockDialog,
                 mockLog,
                 abstractComposePromise,
                 progress = {phase: "copying", totalObjects: 10, processed: 1};
@@ -120,8 +121,11 @@ define(
                     .andReturn(locationServicePromise);
 
                 dialogService = jasmine.createSpyObj('dialogService',
-                    ['showBlockingMessage', 'dismiss']
+                    ['showBlockingMessage']
                 );
+
+                mockDialog = jasmine.createSpyObj("dialog", ["dismiss"]);
+                dialogService.showBlockingMessage.andReturn(mockDialog);
 
                 notification = jasmine.createSpyObj('notification',
                     ['dismiss', 'model']
