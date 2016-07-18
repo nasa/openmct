@@ -72,6 +72,14 @@
     }
 }
 
+.s-clickable-icon {
+    // Clickable icon elements that have hover
+    @extend .ui-symbol;
+    &:hover {
+        color: $colorKeyHov;
+    }
+}
+
 .l-composite-control {
     vertical-align: middle;
     &:not(.l-inline) {

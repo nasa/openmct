@@ -35,8 +35,8 @@
 
                     <div class="t-header l-header s-header">
                         <div class="l-cols">
-                            <span title="Resource Graphing: click a row to toggle" class="l-col l-col-icon l-plot-resource ui-symbol">&#x00e9;</span>
-                            <span title="Activity Links" class="l-col  l-col-icon l-col-link ui-symbol">&#x00e8;</span>
+                            <span title="Resource Graphing: click a row to toggle" class="l-col l-col-icon l-plot-resource icon-plot-resource"></span>
+                            <span title="Activity Links" class="l-col  l-col-icon l-col-link icon-chain-links"></span>
                             <span class="l-col l-title">Title</span>
                         </div>
                     </div>
@@ -103,25 +103,22 @@
         <!-- TOP PANE GANTT BARS -->
         <div class="split-pane-component l-timeline-pane t-pane-h l-pane-top t-timeline-gantt l-timeline-gantt s-timeline-gantt">
             <div class="l-hover-btns-holder s-hover-btns-holder t-btns-zoom">
-                <a class="t-btn l-btn s-btn"
+                <a class="t-btn l-btn s-btn icon-arrows-out"
                    ng-click="zoomController.fit()"
                    ng-show="true"
                    title="Zoom to fit">
-                    <span class="ui-symbol icon zoom-in">I</span>
                 </a>
 
-                <a class="t-btn l-btn s-btn"
+                <a class="t-btn l-btn s-btn icon-magnify-in"
                    ng-click="zoomController.zoom(-1)"
                    ng-show="true"
                    title="Zoom in">
-                    <span class="ui-symbol icon zoom-in">X</span>
                 </a>
 
-                <a class="t-btn l-btn s-btn"
+                <a class="t-btn l-btn s-btn icon-magnify-out"
                    ng-click="zoomController.zoom(1)"
                    ng-show="true"
                    title="Zoom out">
-                    <span class="ui-symbol icon zoom-out">Y</span>
                 </a>
             </div>
 

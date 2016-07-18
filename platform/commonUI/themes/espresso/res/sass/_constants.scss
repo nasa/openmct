@@ -6,6 +6,7 @@ $colorFooterBg: #000;
 $colorKey: #0099cc;
 $colorKeySelectedBg: #005177;
 $colorKeyFg: #fff;
+$colorKeyHov: pullForward($colorKey, 20%);
 $colorEditAreaBg: #31363e;
 $colorEditAreaFg: #587ab5;
 $colorInteriorBorder: rgba($colorBodyFg, 0.1);

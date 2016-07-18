@@ -266,9 +266,6 @@
 				width: $timelineColIconW;
                 text-align: center;
                 padding: 0;
-				.ui-symbol {
-					color: $colorKey;
-				}
 			}
 
 			&.l-plot-resource {
@@ -302,6 +299,16 @@
 		.l-header .l-cols {
 			top: $timelineTopPaneHeaderElemMargin; bottom: $timelineTopPaneHeaderElemMargin;
 		}
+
+        .l-swimlanes-holder .l-cols {
+            .l-col-icon,
+            .l-col-icon a {
+                color: $colorKey;
+            }
+            .t-toggle .inactive {
+                color: pullForward(rgba($colorBodyFg, 0.2));
+            }
+        }
 
 		.l-pane-l {
 			// Left pane of the tabular area

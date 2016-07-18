@@ -29,9 +29,7 @@
                } : {}">
 
     <div class="bar">
-		<span class="s-activity-type ui-symbol">
-            {{type.getGlyph()}}
-        </span>
+		<span class="s-activity-type {{type.getCssClass()}}"></span>
 		<span class="s-title">
             {{model.name}}
         </span>
