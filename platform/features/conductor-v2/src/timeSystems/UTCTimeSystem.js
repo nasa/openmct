@@ -22,8 +22,7 @@
 
 define([
     './TimeSystem',
-    './LocalClock',
-    '../../../../commonUI/formats/src/UTCTimeFormat'
+    './LocalClock'
 ], function (TimeSystem, LocalClock, UTCTimeFormat) {
     var FIFTEEN_MINUTES = 15 * 60 * 1000,
         DEFAULT_PERIOD = 1000;
@@ -36,13 +35,20 @@ define([
     function UTCTimeSystem ($timeout) {
         TimeSystem.call(this);
 
+        /**
+         * Some metadata, which will be used to identify the time system in
+         * the UI
+         * @type {{key: string, name: string, glyph: string}}
+         */
         this.metadata = {
             'key': 'utc',
             'name': 'UTC',
             'glyph': '\u0043'
         };
 
-        this._formats = [new UTCTimeFormat()];
+        //Time formats are defined as extensions. Include the key
+        // for the corresponding time format here
+        this._formats = ['utc'];
         this._tickSources = [new LocalClock($timeout, DEFAULT_PERIOD)];
     }
 

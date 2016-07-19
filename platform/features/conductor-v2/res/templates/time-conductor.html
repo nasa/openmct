@@ -16,7 +16,7 @@
                     <span class="l-time-range-input-w start-date">
                         <mct-control key="'datetime-field'"
                                      structure="{
-                                         format: 'utc',
+                                         format: timeSystemModel.format,
                                          validate: tcController.validation.validateStart
                                      }"
                                      ng-model="formModel"
@@ -59,7 +59,7 @@
                           ng-controller="ToggleController as t2">
                         <mct-control key="'datetime-field'"
                                      structure="{
-                                         format: 'utc',
+                                         format: timeSystemModel.format,
                                          validate: tcController.validation.validateEnd
                                      }"
                                      ng-model="formModel"

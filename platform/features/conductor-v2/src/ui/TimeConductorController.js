@@ -72,6 +72,7 @@ define(
         TimeConductorController.prototype.initializeScope = function ($scope) {
             $scope.timeSystemModel = {
                 selected: undefined,
+                format: undefined,
                 options: []
             };
             $scope.modeModel = {
@@ -155,13 +156,17 @@ define(
                 }
                 newMode.initialize();
 
+                var timeSystem = newMode.selectedTimeSystem();
+
                 this.$scope.modeModel.selected = newMode;
 
                 //Synchronize scope with time system on mode
                 this.$scope.timeSystemModel.options = newMode.timeSystems().map(function (timeSystem) {
                     return timeSystem.metadata;
                 });
-                this.$scope.timeSystemModel.selected = newMode.selectedTimeSystem();
+                this.$scope.timeSystemModel.selected = timeSystem;
+                //Use default format
+                this.$scope.timeSystemModel.format = timeSystem.formats()[0];
                 this.setDefaultsFromTimeSystem(newMode.selectedTimeSystem());
             }
         };
