@@ -82,6 +82,8 @@ define([
                                         "cssclass": "icon-plus",
                                         "control": "menu-button",
                                         "text": "Add",
+                                        "title": "Add",
+                                        "description": "Add new items",
                                         "options": [
                                             {
                                                 "name": "Box",
@@ -113,6 +115,8 @@ define([
                                         "method": "order",
                                         "cssclass": "icon-layers",
                                         "control": "menu-button",
+                                        "title": "Layering",
+                                        "description": "Move the selected object above or below other objects",
                                         "options": [
                                             {
                                                 "name": "Move to Top",
@@ -140,18 +144,24 @@ define([
                                         "property": "fill",
                                         "glyph": "",
                                         "cssclass": "icon-paint-bucket",
+                                        "title": "Fill color",
+                                        "description": "Set fill color",
                                         "control": "color"
                                     },
                                     {
                                         "property": "stroke",
                                         "glyph": "â",
                                         "cssclass": "icon-line-horz",
+                                        "title": "Border color",
+                                        "description": "Set border color",
                                         "control": "color"
                                     },
                                     {
                                         "property": "color",
                                         "glyph": "ä",
                                         "cssclass": "icon-T",
+                                        "title": "Text color",
+                                        "description": "Set text color",
                                         "mandatory": true,
                                         "control": "color"
                                     },
@@ -161,6 +171,7 @@ define([
                                         "cssclass": "icon-image",
                                         "control": "dialog-button",
                                         "title": "Image Properties",
+                                        "description": "Edit image properties",
                                         "dialog": {
                                             "control": "textfield",
                                             "name": "Image URL",
@@ -170,8 +181,10 @@ define([
                                     {
                                         "property": "text",
                                         "glyph": "G",
+                                        "cssclass": "icon-gear",
                                         "control": "dialog-button",
                                         "title": "Text Properties",
+                                        "description": "Edit text properties",
                                         "dialog": {
                                             "control": "textfield",
                                             "name": "Text",
@@ -181,14 +194,18 @@ define([
                                     {
                                         "method": "showTitle",
                                         "glyph": "ç",
+                                        "cssclass": "icon-two-parts-both",
                                         "control": "button",
-                                        "description": "Show telemetry element title."
+                                        "title": "Show title",
+                                        "description": "Show telemetry element title"
                                     },
                                     {
                                         "method": "hideTitle",
                                         "glyph": "å",
+                                        "cssclass": "icon-two-parts-one-only",
                                         "control": "button",
-                                        "description": "Hide telemetry element title."
+                                        "title": "Hide title",
+                                        "description": "Hide telemetry element title"
                                     }
                                 ]
                             },
@@ -197,7 +214,10 @@ define([
                                     {
                                         "method": "remove",
                                         "control": "button",
-                                        "glyph": "Z"
+                                        "glyph": "Z",
+                                        "cssclass": "icon-trash",
+                                        "title": "Delete",
+                                        "description": "Delete the selected item"
                                     }
                                 ]
                             }

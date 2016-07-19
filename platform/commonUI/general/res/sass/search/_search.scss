@@ -43,7 +43,7 @@
 		}
 		
 		&:before,
-		.clear-icon,
+		.clear-input,
 		.menu-icon {
             // :before is magnify glass icon
 			box-sizing: border-box;
@@ -51,9 +51,9 @@
 			height: $iconD;
             width: $iconD;
 			line-height: $iconD;
-			position: absolute;
-			text-align: center;
-			top: $iconEdgeM;
+            position: absolute;
+            text-align: center;
+            top: $iconEdgeM;
 		}
 
 		.search-input {
@@ -81,7 +81,8 @@
 			color: pullForward($colorInputIcon, 10%);
 		}
 
-		.clear-icon {
+		.clear-input {
+            // Hiding for now with addition of Cancel button
 			right: $iconD + $interiorMargin;
 
 			// Icon is visible only when there is text input
@@ -116,20 +117,25 @@
 		}
 	}
 
+    .results-msg {
+        font-size: 0.8rem;
+    }
+
 	.active-filter-display {
 		$s: 0.7em;
 		$p: $interiorMargin;
 		box-sizing: border-box;
 		line-height: 130%;
-		padding-left: $s * 2.25;
+		//padding-left: $s * 2.25;
 		font-size: $s;
 
-		.clear-filters-icon {
+		.clear-filters {
 			color: $colorInputIcon;
 			opacity: 1;
-			font-size: 0.8em;
-			position: absolute;
-			left: 1px;
+			font-size: 0.9em;
+            margin-right: $interiorMarginSm;
+			//position: absolute;
+			//left: 1px;
 			cursor: pointer;
 		}
 	}

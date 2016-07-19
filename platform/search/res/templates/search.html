@@ -27,7 +27,7 @@
                type="text"
                ng-model="ngModel.input"
                ng-keyup="controller.search()"/>
-        <a class="clear-icon icon-x-in-circle"
+        <a class="clear-icon clear-input icon-x-in-circle"
            ng-class="{show: !(ngModel.input === '' || ngModel.input === undefined)}"
            ng-click="ngModel.input = ''; controller.search()"></a>
         <a class="menu-icon context-available"
@@ -42,7 +42,7 @@
     <div class="active-filter-display flex-elem holder"
          ng-class="{off: ngModel.filtersString === '' || ngModel.filtersString === undefined || !ngModel.search}"
          ng-controller="SearchMenuController as menuController">
-        <a class="clear-icon clear-filters-icon"
+        <a class="clear-icon clear-filters icon-x-in-circle"
            ng-click="ngModel.checkAll = true; menuController.checkAll()"></a>Filtered by: {{ ngModel.filtersString }}
     </div>
     <div class="search-results flex-elem holder grows vscroll"

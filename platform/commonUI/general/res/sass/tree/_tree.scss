@@ -45,6 +45,11 @@ ul.tree {
     padding: 0 $interiorMarginSm;
 	position: relative;
 
+    .flex-elem {
+        height: inherit !important;
+        line-height: inherit !important;
+    }
+
 	.view-control {
 		color: $colorItemTreeVC;
         font-size: 0.75em;
