@@ -66,7 +66,8 @@ define([
             implementation: function Policy() {
                 this.allow = function (view, domainObject) {
                     if (view.key === adaptedViewKey) {
-                        newDO = objectUtils.toNewFormat(domainObject.getModel());
+                        var model = domainObject.getModel();
+                        var newDO = objectUtils.toNewFormat(model);
                         return !!factory(newDO);
                     }
                     return true;
