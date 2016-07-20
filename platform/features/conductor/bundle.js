@@ -47,6 +47,11 @@ define([
                     ]
                 }
             ],
+            "stylesheets": [
+                {
+                    "stylesheetUrl": "css/time-conductor.css"
+                }
+            ],
             "components": [
                 {
                     "type": "decorator",
