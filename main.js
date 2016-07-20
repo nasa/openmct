@@ -90,6 +90,7 @@ define([
     './platform/features/pages/bundle',
     './platform/features/plot/bundle',
     './platform/features/timeline/bundle',
+    //'./platform/features/conductor/bundle',
     './platform/features/conductor-v2/bundle',
     './platform/features/conductor-v2-compatibility/bundle',
     './platform/features/table/bundle',
