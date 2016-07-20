@@ -259,7 +259,8 @@ $ueTimeConductorH: (33px, 18px, 20px);
                     margin-top: 3px;
                 }
             }
-            .t-inputs-w {
+            .t-inputs-w,
+            .l-time-range-inputs-elem {
                 @include flex-direction(column);
                 .l-time-range-input-w:not(:first-child) {
                     &:not(:first-child) {
@@ -278,7 +279,8 @@ $ueTimeConductorH: (33px, 18px, 20px);
 @include phonePortrait {
     .l-time-controller {
         .l-time-range-inputs-holder {
-            .t-inputs-w {
+            .t-inputs-w,
+            .l-time-range-inputs-elem {
                 @include flex(1 1 auto);
                 padding-top: 25px; // Make room for the ever lovin' Time Domain Selector
                 .flex-elem {
