@@ -68,6 +68,11 @@ define([
                     ]
                 }
             ],
+            "stylesheets": [
+                {
+                    "stylesheetUrl": "css/time-conductor.css"
+                }
+            ],
             "representations": [
                 {
                     "key": "time-conductor",
