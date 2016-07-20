@@ -152,7 +152,7 @@ $ueTimeConductorH: (25px, 6px, 20px);
     }
 
     .l-time-conductor-inputs-holder,
-    .l-time-conductor-ticks,
+    .l-time-conductor-inputs-and-ticks,
     .l-time-conductor-zoom-w {
         font-size: 0.8rem;
     }
@@ -165,6 +165,8 @@ $ueTimeConductorH: (25px, 6px, 20px);
         $wBgColor: $colorBodyBg;
 
         height: $r1H;
+        position: absolute;
+        top: 0; right: 0; bottom: 0; left: 0;
         z-index: 1;
         .l-time-range-w {
             // Wraps a datetime text input field
@@ -195,7 +197,7 @@ $ueTimeConductorH: (25px, 6px, 20px);
         }
     }
 
-    .l-time-conductor-ticks {
+    .l-time-conductor-inputs-and-ticks {
         $c: $colorTick;
         height: $r1H;
         mct-conductor-axis {
@@ -286,14 +288,19 @@ $ueTimeConductorH: (25px, 6px, 20px);
                         padding: $inputTextP;
                     }
                 }
-                &.start-date {
-                    pointer-events: none;
-                }
                 .icon-calendar {
                     display: none;
                 }
-                &.end-date {
+                &.start-date {
                     display: none;
+                }
+                &.end-date {
+                    pointer-events: none;
+                    input[type="text"] {
+                        color: $colorTimeCondKeyBg;
+                        margin-right: $interiorMargin;
+                        text-align: right;
+                    }
                 }
             }
         }
@@ -346,64 +353,62 @@ $ueTimeConductorH: (25px, 6px, 20px);
 
 /******************************************************************** MOBILE */
 
-@include phoneandtablet {
-    .l-time-conductor {
-        min-width: 0;
-        .l-time-range-slider-holder,
-        .l-time-conductor-ticks {
-            display: none;
-        }
-    }
-}
+//@include phoneandtablet {}
 
 @include phone {
     .l-time-conductor {
-        .l-time-conductor-inputs-holder {
-            &.l-flex-row,
-            .l-flex-row {
-                @include align-items(flex-start);
-            }
-            .l-time-range-inputs-elem {
-                &.type-icon {
-                    margin-top: 3px;
-                }
-            }
-            .l-time-conductor-inputs-holder {
-                @include flex-direction(column);
-                .l-time-range-input-w:not(:first-child) {
-                    &:not(:first-child) {
-                        margin-top: $interiorMargin;
-                    }
-                    margin-right: 0;
-                }
-                .l-time-range-inputs-elem {
-                    &.lbl {
-                        display: none;
-                    }
-                }
-            }
-        }
+        min-width: 0;
+        .l-time-conductor-inputs-and-ticks mct-conductor-axis { display: none; }
+        //TODO: mode menu smaller, hide right side
     }
 }
 
 @include phonePortrait {
     .l-time-conductor {
-        .l-time-conductor-inputs-holder {
+        .l-data-visualization,
+        .l-time-conductor-zoom-w,
+        .time-delta {
+            display: none;
+        }
+
+        .l-time-conductor-inputs-and-ticks {
+            height: auto !important;
             .l-time-conductor-inputs-holder {
-                @include flex(1 1 auto);
-                padding-top: 25px; // Make room for the ever lovin' Time Domain Selector
-                .flex-elem {
-                    @include flex(1 1 auto);
-                    width: 100%;
-                }
-                input[type="text"] {
-                    width: 100%;
+                position: relative;
+                height: auto !important;
+
+                .l-time-range-w {
+                    background-image: none !important;
+                    display: block;
+                    height: auto !important;
+                    padding: 0 !important;
+                    position: relative;
+                    text-align: left;
+                    &:not(:first-child) {
+                        margin-top: $interiorMargin;
+                    }
                 }
             }
         }
-    }
-    .l-time-domain-selector {
-        right: auto;
-        left: 20px;
+
+        // Realtime, latest modes
+        &.realtime-mode,
+        &.latest-mode {
+            // TODO: hide all of start-w
+            .l-time-conductor-inputs-and-ticks {
+                .l-time-range-w {
+                    &.start-w {
+                        display: none;
+                    }
+                    &.end-w {
+                        margin-top: 0;
+                        .end-date input[type="text"] {
+                            margin: 0;
+                            text-align: left;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
