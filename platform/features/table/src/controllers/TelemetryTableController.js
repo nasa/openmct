@@ -96,11 +96,6 @@ define(
                     }
                 })
             );
-
-            //Change of bounds in time conductor
-            this.changeListeners.push(this.$scope.$on('telemetry:display:bounds',
-                this.subscribe.bind(this))
-            );
         };
 
         /**
