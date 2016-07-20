@@ -14,6 +14,7 @@
                   ng-submit="tcController.updateBoundsFromForm(formModel)">
                 <span class="l-time-range-w start-w">
                     <span class="l-time-range-input-w start-date">
+                        <span class="title"></span>
                         <mct-control key="'datetime-field'"
                                      structure="{
                                          format: timeSystemModel.format,
@@ -44,6 +45,7 @@
                 <span class="l-time-range-w end-w">
                     <span class="l-time-range-input-w end-date"
                           ng-controller="ToggleController as t2">
+                        <span class="title"></span>
                         <mct-control key="'datetime-field'"
                                      structure="{
                                          format: timeSystemModel.format,
