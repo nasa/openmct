@@ -29,6 +29,9 @@ $colorBtnMajorBg: $colorKey;
 $colorBtnMajorBgHov: #007fbc;
 $colorBtnMajorFg: $colorKeyFg;
 $colorBtnMajorFgHov: pushBack($colorBtnMajorFg, $hoverRatioPercent);
+$colorClickIcon: pullForward($colorBodyBg, 10%);
+$colorClickIconActive: $colorKey;
+$colorClickIconHov: rgba($colorClickIconActive, 0.4);
 $colorInvokeMenu: #000;
 $contrastInvokeMenuPercent: 40%;
 $shdwBtns: none;
@@ -110,8 +113,8 @@ $progressBarStripeW: 20px;
 $shdwStatusIc: rgba(white, 0.8) 0 0px 5px;
 
 // Selects
-$colorSelectBg: #ddd;
-$colorSelectFg: $colorBodyFg;
+$colorSelectBg: $colorBtnBg;
+$colorSelectFg: $colorBtnFg;
 
 // Limits and staleness colors//
 $colorTelemFresh: pullForward($colorBodyFg, 20%);
@@ -138,7 +141,7 @@ $colorFieldHintOverlay: pullForward($colorOvrBg, 40%);
 
 // Items
 $colorItemBg: #ddd;
-$colorItemBgHov: pullForward($colorItemBg, $hoverRatioPercent);
+$colorItemBgHov: pullForward($colorItemBg, $hoverRatioPercent * 0.7);
 $colorItemFg: $colorBodyFg;
 $colorItemFgDetails: pushBack($colorItemFg, 15%);
 $colorItemIc: $colorKey;

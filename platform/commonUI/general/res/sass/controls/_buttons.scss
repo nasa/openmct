@@ -35,7 +35,7 @@ $pad: $interiorMargin * $baseRatio;
     padding: 0 $pad;
     font-size: 0.7rem;
     vertical-align: top;
-    @include btnSubtle($colorBtnBg, $colorBtnBgHov, $colorBtnFg, $colorBtnIcon);
+    @include btnSubtle($bg: $colorBtnBg, $bgHov: $colorBtnBgHov, $fg: $colorBtnFg, $ic: $colorBtnIcon);
 
     &.labeled:before {
         // Icon when it's included
@@ -65,7 +65,7 @@ $pad: $interiorMargin * $baseRatio;
     &.pause-play {
         @extend .icon-pause;
         &.paused {
-            @include btnSubtle($colorPausedBg, pushBack($colorPausedBg, 10%), $colorPausedFg, $colorPausedFg);
+            @include btnSubtle($bg: $colorPausedBg, $bgHov: pushBack($colorPausedBg, 10%), $fg: $colorPausedFg, $ic: $colorPausedFg);
             @extend .icon-play;
             &:before { @include pulse($dur: 1000ms); }
         }
