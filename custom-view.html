@@ -34,33 +34,34 @@
     write a new version later.
     */
 
-    // MCT.view(MCT.regions.main, function (domainObject) {
-    //     if (domainObject.type !== 'example.todo') {
-    //         return false; // Views choose what they want to apply to.
+    // MCT.view(MCT.regions.main, {
+    //     canView: function (domainObject) {
+    //         return domainObject.type === 'example.todo';
+    //     },
+    //     view: function (domainObject) {
+    //         function renderTask(task) {
+    //             return [
+    //                 '<li>',
+    //                 '<input type="checkbox"' + (task.complete ? ' checked="true"' : '') + '>',
+    //                 '<span>' + task.description + '</span>',
+    //                 '</li>'
+    //             ].join('');
+    //         };
+    //
+    //         function renderTaskList() {
+    //             return [
+    //                 '<ul>',
+    //                 domainObject.tasks.map(renderTask).join(''),
+    //                 '</ul>'
+    //             ].join('');
+    //         };
+    //
+    //         return {
+    //             show: function (container) {
+    //                 container.innerHTML = renderTaskList();
+    //             }
+    //         };
     //     }
-    //
-    //     function renderTask(task) {
-    //         return [
-    //             '<li>',
-    //             '<input type="checkbox"' + (task.complete ? ' checked="true"' : '') + '>',
-    //             '<span>' + task.description + '</span>',
-    //             '</li>'
-    //         ].join('');
-    //     };
-    //
-    //     function renderTaskList() {
-    //         return [
-    //             '<ul>',
-    //             domainObject.tasks.map(renderTask).join(''),
-    //             '</ul>'
-    //         ].join('');
-    //     };
-    //
-    //     return {
-    //         show: function (container) {
-    //             container.innerHTML = renderTaskList();
-    //         }
-    //     };
     // });
 
     /*
@@ -69,30 +70,31 @@
      do this.
     */
 
-    MCT.view(MCT.regions.toolbar, function (domainObject) {
-        if (domainObject.type !== 'example.todo') {
-            return false; // Views choose what they want to apply to.
-        }
+    MCT.view(MCT.regions.toolbar, {
+        canView: function (domainObject) {
+            return domainObject.type === 'example.todo';
+        },
+        view: function (domainObject) {
+            var mutableObject = MCT.Objects.getMutable(domainObject);
 
-        var mutableObject = MCT.Objects.getMutable(domainObject);
+            function addTask(event) {
+                var description = prompt('Task description');
+                var tasks = mutableObject.get('tasks');
+                tasks.push({
+                    description: description,
+                    complete: false
+                });
+                mutableObject.set('tasks', tasks);
+            }
 
-        function addTask(event) {
-            var description = prompt('Task description');
-            var tasks = mutableObject.get('tasks');
-            tasks.push({
-                description: description,
-                complete: false
-            });
-            mutableObject.set('tasks', tasks);
-        }
-
-        return {
-            show: function (container) {
-                container.addEventListener('click', addTask);
-                container.innerHTML = '<button>Add Task</button>';
-            },
-            destroy: function (container) {
-                container.removeEventListener('click', addTask);
+            return {
+                show: function (container) {
+                    container.addEventListener('click', addTask);
+                    container.innerHTML = '<button>Add Task</button>';
+                },
+                destroy: function (container) {
+                    container.removeEventListener('click', addTask);
+                }
             }
         }
     });
@@ -104,51 +106,53 @@
      listeners.  Let's update the TodoView we made earlier:
     */
 
-    MCT.view(MCT.regions.main, function (domainObject) {
-        if (domainObject.type !== 'example.todo') {
-            return false; // Views choose what they want to apply to.
-        }
+    MCT.view(MCT.regions.main, {
+        canView: function(domainObject) {
+            return domainObject.type === 'example.todo'
+        },
+        view: function (domainObject) {
 
-        var mutableObject = MCT.Objects.getMutable(domainObject);
+            var mutableObject = MCT.Objects.getMutable(domainObject);
 
-        function renderTask(task) {
-            return [
-                '<li>',
-                '<input type="checkbox"' + (task.complete ? ' checked="true"' : '') + '>',
-                '<span>' + task.description + '</span>',
-                '</li>'
-            ].join('');
-        }
-
-        function renderTaskList(tasks) {
-            return [
-                '<ul>',
-                tasks.map(renderTask).join(''),
-                '</ul>'
-            ].join('');
-        }
-
-        function onCheckboxChange(event) {
-            console.log('event!', event);
-            var checkbox = event.target;
-            var taskEl = checkbox.parentNode;
-            var taskList = taskEl.parentNode;
-            var taskIndex = [].slice.apply(taskList.children).indexOf(taskEl);
-            mutableObject.set('tasks[' + taskIndex + '].complete', checkbox.checked);
-        }
-
-        return {
-            show: function (container) {
-                container.innerHTML = renderTaskList(domainObject.tasks);
-                mutableObject.on('tasks', function (tasks) {
-                    container.innerHTML = renderTaskList(tasks);
-                });
-                container.addEventListener('change', onCheckboxChange);
-            },
-            destroy: function () {
-                mutableObject.stopListening();
+            function renderTask(task) {
+                return [
+                    '<li>',
+                    '<input type="checkbox"' + (task.complete ? ' checked="true"' : '') + '>',
+                    '<span>' + task.description + '</span>',
+                    '</li>'
+                ].join('');
             }
-        };
+
+            function renderTaskList(tasks) {
+                return [
+                    '<ul>',
+                    tasks.map(renderTask).join(''),
+                    '</ul>'
+                ].join('');
+            }
+
+            function onCheckboxChange(event) {
+                console.log('event!', event);
+                var checkbox = event.target;
+                var taskEl = checkbox.parentNode;
+                var taskList = taskEl.parentNode;
+                var taskIndex = [].slice.apply(taskList.children).indexOf(taskEl);
+                mutableObject.set('tasks[' + taskIndex + '].complete', checkbox.checked);
+            }
+
+            return {
+                show: function (container) {
+                    container.innerHTML = renderTaskList(domainObject.tasks);
+                    mutableObject.on('tasks', function (tasks) {
+                        container.innerHTML = renderTaskList(tasks);
+                    });
+                    container.addEventListener('change', onCheckboxChange);
+                },
+                destroy: function () {
+                    mutableObject.stopListening();
+                }
+            };
+        }
     });
 
     MCT.run();

@@ -65,27 +65,28 @@
         }
     });
 
-    MCT.view(MCT.regions.main, function (domainObject) {
-        if (domainObject.type !== 'example.todo') {
-            return false; // Views choose what they want to apply to.
-        }
+    MCT.view(MCT.regions.main, {
+        canView: function (domainObject) {
+            return domainObject.type === 'example.todo';
+        },
+        view: function (domainObject) {
+            var mutableObject = MCT.Objects.getMutable(domainObject);
 
-        var mutableObject = MCT.Objects.getMutable(domainObject);
-
-        return {
-            show: function (container) {
-                ReactDOM.render(
-                    <TaskList tasks={domainObject.tasks}/>,
-                    container
-                );
-                mutableObject.on('tasks', function (tasks) {
+            return {
+                show: function (container) {
                     ReactDOM.render(
-                        <TaskList tasks={tasks}/>,
+                        <TaskList tasks={domainObject.tasks}/>,
                         container
                     );
-                });
-            }
-        };
+                    mutableObject.on('tasks', function (tasks) {
+                        ReactDOM.render(
+                            <TaskList tasks={tasks}/>,
+                            container
+                        );
+                    });
+                }
+            };
+        }
     });
 
     /*
@@ -102,30 +103,31 @@
         }
     });
 
-    MCT.view(MCT.regions.toolbar, function (domainObject) {
-        if (domainObject.type !== 'example.todo') {
-            return false; // Views choose what they want to apply to.
-        }
+    MCT.view(MCT.regions.toolbar, {
+        canView: function (domainObject) {
+            return domainObject.type === 'example.todo';
+        },
+        view: function (domainObject) {
+            var mutableObject = MCT.Objects.getMutable(domainObject);
 
-        var mutableObject = MCT.Objects.getMutable(domainObject);
+            function addTask(event) {
+                var description = prompt('Task description');
+                var tasks = mutableObject.get('tasks');
+                tasks.push({
+                    description: description,
+                    complete: false
+                });
+                mutableObject.set('tasks', tasks);
+            }
 
-        function addTask(event) {
-            var description = prompt('Task description');
-            var tasks = mutableObject.get('tasks');
-            tasks.push({
-                description: description,
-                complete: false
-            });
-            mutableObject.set('tasks', tasks);
-        }
-
-        return {
-            show: function (container) {
-                ReactDOM.render(
-                    <TaskToolbar addTask={addTask}/>,
-                    container
-                );
-            },
+            return {
+                show: function (container) {
+                    ReactDOM.render(
+                        <TaskToolbar addTask={addTask}/>,
+                        container
+                    );
+                },
+            }
         }
     });
 
