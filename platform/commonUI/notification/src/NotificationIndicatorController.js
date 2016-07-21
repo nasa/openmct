@@ -49,9 +49,6 @@ define(
                         //Launch the message list dialog with the models
                         // from the notifications
                         messages: notificationService.notifications
-                    },
-                    cancel: function () {
-                        dialogService.dismiss();
                     }
                 });
 

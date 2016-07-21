@@ -39,25 +39,28 @@ define(
             this.overlayService = overlayService;
             this.$q = $q;
             this.$log = $log;
-            this.overlay = undefined;
-            this.dialogVisible = false;
+            this.activeOverlay = undefined;
         }
 
-        // Stop showing whatever overlay is currently active
-        // (e.g. because the user hit cancel)
-        DialogService.prototype.dismiss = function () {
-            var overlay = this.overlay;
-            if (overlay) {
-                overlay.dismiss();
+        /**
+         * @private
+         */
+        DialogService.prototype.dismissOverlay = function (overlay) {
+            //Dismiss the overlay
+            overlay.dismiss();
+
+            //If dialog is the current active one, dismiss it
+            if (overlay === this.activeOverlay) {
+                this.activeOverlay = undefined;
             }
-            this.dialogVisible = false;
         };
 
         DialogService.prototype.getDialogResponse = function (key, model, resultGetter, typeClass) {
             // We will return this result as a promise, because user
             // input is asynchronous.
             var deferred = this.$q.defer(),
-                self = this;
+                self = this,
+                overlay;
 
             // Confirm function; this will be passed in to the
             // overlay-dialog template and associated with a
@@ -65,9 +68,7 @@ define(
             function confirm(value) {
                 // Pass along the result
                 deferred.resolve(resultGetter ? resultGetter() : value);
-
-                // Stop showing the dialog
-                self.dismiss();
+                self.dismissOverlay(overlay);
             }
 
             // Cancel function; this will be passed in to the
@@ -75,7 +76,7 @@ define(
             // Cancel or X button click
             function cancel() {
                 deferred.reject();
-                self.dismiss();
+                self.dismissOverlay(overlay);
             }
 
             // Add confirm/cancel callbacks
@@ -85,15 +86,11 @@ define(
             if (this.canShowDialog(model)) {
                 // Add the overlay using the OverlayService, which
                 // will handle actual insertion into the DOM
-                this.overlay = this.overlayService.createOverlay(
+                overlay = this.activeOverlay = this.overlayService.createOverlay(
                     key,
                     model,
                     typeClass || "t-dialog"
                 );
-
-                // Track that a dialog is already visible, to
-                // avoid spawning multiple dialogs at once.
-                this.dialogVisible = true;
             } else {
                 deferred.reject();
             }
@@ -156,7 +153,7 @@ define(
          * otherwise
          */
         DialogService.prototype.canShowDialog = function (dialogModel) {
-            if (this.dialogVisible) {
+            if (this.activeOverlay) {
                 // Only one dialog should be shown at a time.
                 // The application design should be such that
                 // we never even try to do this.
@@ -181,6 +178,11 @@ define(
          * text for this action
          * @property {function} callback a function to be called when the
          * button is clicked
+         */
+
+        /**
+         * @typedef DialogHandle
+         * @property {function} dismiss a function to dismiss the given dialog
          */
 
         /**
@@ -222,21 +224,26 @@ define(
          * the user can take if necessary
          * @param {DialogModel} dialogModel defines options for the dialog
          * @param {typeClass} string tells overlayService that this overlay should use appropriate CSS class
-         * @returns {boolean}
+         * @returns {boolean | {DialogHandle}}
          */
         DialogService.prototype.showBlockingMessage = function (dialogModel) {
             if (this.canShowDialog(dialogModel)) {
                 // Add the overlay using the OverlayService, which
                 // will handle actual insertion into the DOM
-                this.overlay = this.overlayService.createOverlay(
-                    "overlay-blocking-message",
-                    dialogModel,
-                    "t-dialog-sm"
-                );
-                // Track that a dialog is already visible, to
-                // avoid spawning multiple dialogs at once.
-                this.dialogVisible = true;
-                return true;
+                var self = this,
+                    overlay = this.overlayService.createOverlay(
+                        "overlay-blocking-message",
+                        dialogModel,
+                        "t-dialog-sm"
+                    );
+
+                this.activeOverlay = overlay;
+
+                return {
+                    dismiss: function () {
+                        self.dismissOverlay(overlay);
+                    }
+                };
             } else {
                 return false;
             }

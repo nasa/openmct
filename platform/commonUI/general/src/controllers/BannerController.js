@@ -54,17 +54,17 @@ define(
             };
             $scope.maximize = function (notification) {
                 if (notification.model.severity !== "info") {
-
+                    var dialog;
                     notification.model.cancel = function () {
-                        dialogService.dismiss();
+                        dialog.dismiss();
                     };
                     //If the notification is dismissed by the user, close
                     // the dialog.
                     notification.onDismiss(function () {
-                        dialogService.dismiss();
+                        dialog.dismiss();
                     });
 
-                    dialogService.showBlockingMessage(notification.model);
+                    dialog = dialogService.showBlockingMessage(notification.model);
                 }
             };
         }

@@ -34,7 +34,7 @@ define(
          * @param $scope the scope in which this controller is active
          * @param $document the document element, injected by Angular
          */
-        function ClickAwayController($document, $timeout) {
+        function ClickAwayController($document, $scope) {
             var self = this;
 
             this.state = false;
@@ -44,7 +44,7 @@ define(
             // `clickaway` action occurs after `toggle` if `toggle` is
             // triggered by a click/mouseup.
             this.clickaway = function () {
-                $timeout(function () {
+                $scope.$apply(function () {
                     self.deactivate();
                 });
             };

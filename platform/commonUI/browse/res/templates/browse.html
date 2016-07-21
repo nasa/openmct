@@ -57,7 +57,7 @@
                    ng-class="{ collapsed : !modelPaneTree.visible() }"></a>
 
                 <div class='holder holder-object-and-inspector abs' id='content-area'
-                     ng-controller="PaneController as modelPaneInspect"
+                     ng-controller="InspectorPaneController as modelPaneInspect"
                      ng-class="modelPaneInspect.visible() ? 'pane-inspect-showing' : 'pane-inspect-hidden'">
 
                     <mct-split-pane class='l-object-and-inspector contents abs' anchor='right'>

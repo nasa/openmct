@@ -122,12 +122,51 @@ define(
             it("invokes the overlay service with the correct parameters when" +
                 " a blocking dialog is requested", function () {
                 var dialogModel = {};
-                expect(dialogService.showBlockingMessage(dialogModel)).toBe(true);
+                expect(dialogService.showBlockingMessage(dialogModel)).not.toBe(false);
                 expect(mockOverlayService.createOverlay).toHaveBeenCalledWith(
                     "overlay-blocking-message",
                     dialogModel,
                     "t-dialog-sm"
                 );
+            });
+
+            describe("the blocking message dialog", function () {
+                var dialogModel = {};
+                var dialogHandle;
+
+                beforeEach(function () {
+                    dialogHandle = dialogService.showBlockingMessage(dialogModel);
+                });
+
+                it("returns a handle to the dialog", function () {
+                    expect(dialogHandle).not.toBe(undefined);
+                });
+
+                it("dismissing the dialog dismisses the overlay", function () {
+                    dialogHandle.dismiss();
+                    expect(mockOverlay.dismiss).toHaveBeenCalled();
+                });
+
+                it("individual dialogs can be dismissed", function () {
+                    var secondDialogHandle,
+                        secondMockOverlay;
+
+                    dialogHandle.dismiss();
+
+                    secondMockOverlay = jasmine.createSpyObj(
+                        "overlay",
+                        ["dismiss"]
+                    );
+                    mockOverlayService.createOverlay.andReturn(secondMockOverlay);
+                    secondDialogHandle = dialogService.showBlockingMessage(dialogModel);
+
+                    //Dismiss the first dialog. It should only dismiss if it
+                    // is active
+                    dialogHandle.dismiss();
+                    expect(secondMockOverlay.dismiss).not.toHaveBeenCalled();
+                    secondDialogHandle.dismiss();
+                    expect(secondMockOverlay.dismiss).toHaveBeenCalled();
+                });
             });
 
         });
