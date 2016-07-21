@@ -227,13 +227,18 @@ define(
             }
 
             // Respond to a display bounds change (requery for data)
-            function changeDisplayBounds(event, bounds) {
-                var domainAxis = $scope.axes[0];
+            function changeDisplayBounds(event, bounds, follow) {
+                //'hack' for follow mode
+                if (follow === true){
+                    setBasePanZoom(bounds);
+                } else {
+                    var domainAxis = $scope.axes[0];
 
-                domainAxis.chooseOption(bounds.domain);
-                updateDomainFormat();
-                setBasePanZoom(bounds);
-                requery();
+                    domainAxis.chooseOption(bounds.domain);
+                    updateDomainFormat();
+                    setBasePanZoom(bounds);
+                    requery();
+                }
             }
 
             this.modeOptions = new PlotModeOptions([], subPlotFactory);
