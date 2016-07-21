@@ -82,9 +82,10 @@ Status: Stable Draft
 
 Run the MCT application, loading the application into the `container`, a DOM element.  If a container is not specified, the application is injected into the body of the page.
 
-### `MCT.install(plugin)`.
-Status: Not Implemented
+### `MCT.install(plugin)`
+Status: Stable Draft
 
-Install a plugin in MCT.  Must be called before calling `run`.  Plugins are functions which are invoked with the `MCT` instance as their first argument, and
-are expected to use the MCT public API to add functionality.
+Install a plugin in MCT.  Must be called before calling `run`.  Plugins are functions which are invoked with the `MCT` instance as their first argument, and are expected to use the MCT public API to add functionality.
+
+For an example of writing a plugin, check out [plugin-example.html](plugin-example.html)
 

@@ -12,13 +12,27 @@ define([
         }
         var namespace = '',
             identifier = key;
-        for (var i = 0, escaped = false, len=key.length; i < len; i++) {
-            if (key[i] === ":" && !escaped) {
-                namespace = key.slice(0, i);
-                identifier = key.slice(i + 1);
-                break;
+        for (var i = 0, escaped = false, len=key.length; i < key.length; i++) {
+            if (escaped) {
+                escaped = false;
+            } else {
+                if (key[i] === "\\") {
+                    escaped = true;
+                    continue;
+                }
+                if (key[i] === ":") {
+                    // namespace = key.slice(0, i);
+                    identifier = key.slice(i + 1);
+                    break;
+                }
             }
+            namespace += key[i];
         }
+
+        if (key === namespace) {
+            namespace = '';
+        }
+
         return {
             namespace: namespace,
             identifier: identifier

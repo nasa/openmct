@@ -126,6 +126,16 @@ define([
         this.emit('start');
     };
 
+    /**
+     * Install a plugin in MCT.
+     *
+     * @param `Function` plugin -- a plugin install function which will be
+     *     invoked with the mct instance.
+     */
+    MCT.prototype.install = function (plugin) {
+        plugin(this);
+    };
+
     MCT.prototype.regions = {
         main: "MAIN",
         toolbar: "TOOLBAR"
