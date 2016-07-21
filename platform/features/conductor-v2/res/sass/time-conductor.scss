@@ -45,40 +45,27 @@
 
 .time-conductor-icon {
     $c: $colorObjHdrIc;
-    $d: 20px;
-    background: $c;
-    border-radius: 4px;
+    $d: 18px;
     height: $d !important;
     width: $d;
     position: relative;
 
-    // Icon shape: brackets
-    &:before,
-    &:after {
-        content: '';
-        background: $colorBodyBg;
-        position: absolute;
-    }
     &:before {
-        $in: 7px;
-        left: $in;
-        top: 0;
-        right: $in;
-        bottom: 0;
-
-    }
-    &:after {
-        $in: 4px;
-        left: $in;
-        top: $in;
-        right: $in;
-        bottom: $in;
+        @extend .ui-symbol;
+        color: $c;
+        content: '\e624';
+        font-size: $d;
+        line-height: normal;
+        display: block;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
     }
 
     // Clock hands
     div[class*="hand"] {
         $handW: 2px;
-        $handH: 8px;
+        $handH: $d * 0.4; //8px;
         @include transform(translate(-50%, -50%));
         @include animation-iteration-count(infinite);
         @include animation-timing-function(linear);
@@ -260,15 +247,11 @@
         }
     }
 
-    .l-data-visualization {
-        background: $colorTimeCondDataVisRtBg !important
-    }
-
     // Real-time, latest modes
     &.realtime-mode,
     &.latest-mode {
         .time-conductor-icon {
-            background: $colorTimeCondKeyBg;
+            &:before { color: $colorTimeCondKeyBg; }
             div[class*="hand"] {
                 @include animation-name(clock-hands);
                 &:before {
@@ -306,6 +289,10 @@
                     }
                 }
             }
+        }
+
+        .l-data-visualization {
+            background: $colorTimeCondDataVisRtBg !important
         }
 
         .mode-selector .s-menu-btn {
@@ -383,8 +370,15 @@
 @include phone {
     .l-time-conductor {
         min-width: 0;
-        .l-time-conductor-inputs-and-ticks mct-conductor-axis {
-            display: none;
+        .l-time-conductor-inputs-and-ticks {
+            .l-time-conductor-inputs-holder {
+                .l-time-range-w {
+                    background-image: none !important;
+                }
+            }
+            mct-conductor-axis {
+                display: none;
+            }
         }
     }
 }
@@ -413,6 +407,14 @@
                     &:not(:first-child) {
                         margin-top: $interiorMargin;
                     }
+                }
+            }
+        }
+
+        // Fixed mode
+        &.fixed-mode {
+            .l-time-conductor-inputs-and-ticks {
+                .l-time-range-w {
                     .title {
                         width: 30px;
                     }
@@ -425,9 +427,6 @@
         &.latest-mode {
             .l-time-conductor-inputs-and-ticks {
                 .l-time-range-w {
-                    .title {
-                        width: 30px;
-                    }
                     &.start-w {
                         display: none;
                     }
