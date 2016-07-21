@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <title>Groot Tutorial</title>
+  <script src="dist/main.js"></script>
+</head>
+<body>
+<script>
+
+    // First, we need a source of objects, so we're going to define a few
+    // objects that we wish to expose.  The first object is a folder which
+    // contains the other objects.
+
+
+    var GROOT_ROOT = {
+        name: 'I am groot',
+        type: 'folder',
+        composition: [
+            {
+                namespace: 'groot',
+                identifier: 'arms'
+            },
+            {
+                namespace: 'groot',
+                identifier: 'legs'
+            },
+            {
+                namespace: 'groot',
+                identifier: 'torso'
+            }
+        ]
+    };
+
+    // Now, we will define an object provider.  This will allow us to fetch the
+    // GROOT_ROOT object, plus any other objects in the `groot` namespace.
+    // For more info, see the Object API documentation.
+
+    MCT.Objects.addProvider('groot', {
+        // we'll only define a get function, objects from this provider will
+        // not be mutable.
+        get: function (key) {
+            if (key.identifier === 'groot') {
+                return Promise.resolve(GROOT_ROOT);
+            }
+            return Promise.resolve({
+                name: 'Groot\'s ' + key.identifier
+            });
+        }
+    });
+
+    // Finally, we need to add a "ROOT."  This is an identifier for an object
+    // that Open MCT will load at run time and show at the top-level of the
+    // navigation tree.
+
+    MCT.Objects.addRoot({
+        namespace: 'groot',
+        identifier: 'groot'
+    });
+
+    MCT.run();
+</script>
+</body>
+</html>

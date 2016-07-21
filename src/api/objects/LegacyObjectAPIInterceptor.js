@@ -30,7 +30,7 @@ define([
         var keyString = utils.makeKeyString(key);
         return this.objectService.getObjects([keyString])
             .then(function (results) {
-                var model = JSON.parse(JSON.stringify(results[keyString].getModel()));
+                var model = results[keyString].getModel();
                 return utils.toNewFormat(model, key);
             });
     };

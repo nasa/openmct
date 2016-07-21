@@ -1,8 +1,13 @@
 define([
     'angular',
-    './Region'
-], function (angular, Region) {
-    function MCTView(newViews) {
+    './Region',
+    '../../api/objects/object-utils'
+], function (
+    angular,
+    Region,
+    objectUtils
+) {
+    function MCTView(newViews, PublicAPI) {
         var definitions = {};
 
         newViews.forEach(function (newView) {
@@ -29,8 +34,12 @@ define([
                 }
 
                 function setObject(obj) {
-                    mctObject = obj;
-                    maybeShow();
+                    mctObject = undefined;
+                    PublicAPI.Objects.get(objectUtils.parseKeyString(obj.getId()))
+                        .then(function (mobj) {
+                            mctObject = mobj;
+                            maybeShow();
+                        });
                 }
 
                 function setRegionId(r) {

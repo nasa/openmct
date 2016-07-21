@@ -8,7 +8,10 @@ define([
                 {
                     key: "mctView",
                     implementation: MCTView,
-                    depends: ["newViews[]"]
+                    depends: [
+                        "newViews[]",
+                        "PublicAPI"
+                    ]
                 }
             ]
         }

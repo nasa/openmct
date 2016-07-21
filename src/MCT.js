@@ -6,7 +6,8 @@ define([
     'text!./adapter/templates/edit-object-replacement.html',
     './ui/Dialog',
     './Selection',
-    './api/objects/bundle'
+    './api/objects/bundle',
+    './api/objects/object-utils'
 ], function (
     EventEmitter,
     legacyRegistry,
@@ -14,7 +15,9 @@ define([
     api,
     editObjectTemplate,
     Dialog,
-    Selection
+    Selection,
+    objectAPIBundle,
+    objectUtils
 ) {
     function MCT() {
         EventEmitter.call(this);
@@ -67,9 +70,11 @@ define([
         this.legacyExtension('policies', {
             category: "view",
             implementation: function Policy() {
-                this.allow = function (v, domainObject) {
-                    if (v.key === adaptedViewKey) {
-                        return definition.canView(domainObject);
+                this.allow = function (view, domainObject) {
+                    if (view.key === adaptedViewKey) {
+                        var model = domainObject.getModel();
+                        var newDO = objectUtils.toNewFormat(model);
+                        return definition.canView(newDO);
                     }
                     return true;
                 };
@@ -80,6 +85,13 @@ define([
             factory: definition,
             region: region,
             key: viewKey
+        });
+
+        this.legacyExtension('services', {
+            key: 'PublicAPI',
+            implementation: function () {
+                return this;
+            }.bind(this)
         });
     };
 
@@ -112,6 +124,16 @@ define([
 
         legacyRegistry.register('adapter', this.legacyBundle);
         this.emit('start');
+    };
+
+    /**
+     * Install a plugin in MCT.
+     *
+     * @param `Function` plugin -- a plugin install function which will be
+     *     invoked with the mct instance.
+     */
+    MCT.prototype.install = function (plugin) {
+        plugin(this);
     };
 
     MCT.prototype.regions = {
