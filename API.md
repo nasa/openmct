@@ -49,15 +49,23 @@ Status: First Draft
 
 Objects can contain other objects, and the Composition API allows you to fetch the composition of any given domain object, or implement custom methods for defining composition as necessary.  
 
-### `MCT.view(region, factory)`
+### `MCT.view(region, definition)`
 Status: First Draft
 
 Register a view factory for a specific region.  View factories receive an instance of a domain object and return a `View` for that object, or return undefined if they do not know how to generate a view for that object.
 
-* `ViewFactory`: a function that receives an instance of a domain object, and returns a `View` object if it is capable of viewing that object.  It should return a falsy value if it is not capable of generating a view for the given object.
-* `View`: a view is an `object` containing a number of lifecycle methods:
-  * `view.show(container)`:  instantiate a view (a set of dom elements) and attach it to the container.
-  * `view.destroy(container)`:  remove any listeners and expect your dom elements to be destroyed.
+* `ViewDefinition`: an object with the following properties:
+    * `canView(domainObject)`: should return truthy if the view is valid for a given domain object, falsy if it is not capable of generating a view for that object.
+    * `view(domainObject)`: should instantate and return a `View` for the given object.
+    * `metadata()`: a function that returns metadata about this view.  Optional.
+* `View`: an object containing a number of lifecycle methods:
+    * `view.show(container)`:  instantiate a view (a set of dom elements) and attach it to the container.
+    * `view.destroy(container)`:  remove any listeners and expect your dom elements to be destroyed.
+    
+For a basic introduction to views & types, check out these tutorials: 
+
+* [custom-view](custom-view.html) -- Implementing a custom view with vanilla javascript.
+* [custom-view-react](custom-view-react.html) -- Implementing a custom view with React.
 
 ### `MCT.conductor`
 Status: First Draft
