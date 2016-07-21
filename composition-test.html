@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <title>Implementing a composition provider</title>
+  <script src="dist/main.js"></script>
+</head>
+<body>
+<script>
+
+    var widgetParts = ['foo', 'bar', 'baz', 'bing', 'frobnak']
+
+    function fabricateName() {
+        return [
+            widgetParts[Math.floor(Math.random() * widgetParts.length)],
+            widgetParts[Math.floor(Math.random() * widgetParts.length)],
+            Math.floor(Math.random() * 1000)
+        ].join('_');
+    }
+
+    MCT.type('example.widget-factory', new MCT.Type({
+        metadata: {
+            label: "Widget Factory",
+            glyph: "s",
+            description: "A factory for making widgets"
+        },
+        initialize: function (object) {
+            object.widgetCount = 5;
+            object.composition = [];
+        },
+        creatable: true,
+        form: [
+            {
+                name: "Widget Count",
+                control: "textfield",
+                key: "widgetCount",
+                property: "widgetCount",
+                required: true
+            }
+        ]
+    }));
+
+    MCT.Composition.addProvider({
+        appliesTo: function (domainObject) {
+            return domainObject.type === 'example.widget-factory';
+        },
+        load: function (domainObject) {
+            var widgets = [];
+            while (widgets.length < domainObject.widgetCount) {
+                widgets.push({
+                    name: fabricateName(),
+                    key: {
+                        namespace: 'widget-factory',
+                        id: widgets.length
+                    }
+                });
+            }
+            return Promise.resolve(widgets);
+        }
+    });
+
+    MCT.run();
+</script>
+</body>
+</html>
