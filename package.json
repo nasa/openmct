@@ -14,6 +14,7 @@
     "gulp": "^3.9.0",
     "gulp-jscs": "^3.0.2",
     "gulp-jshint": "^2.0.0",
+    "gulp-jshint-html-reporter": "^0.1.3",
     "gulp-rename": "^1.2.2",
     "gulp-replace-task": "^0.11.0",
     "gulp-requirejs-optimize": "^0.3.1",
