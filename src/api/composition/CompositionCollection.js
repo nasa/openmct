@@ -12,18 +12,20 @@ define([
         EventEmitter.call(this);
         this.domainObject = domainObject;
         this.provider = provider;
-        this.provider.on(
-            this.domainObject,
-            'add',
-            this.onProviderAdd,
-            this
-        );
-        this.provider.on(
-            this.domainObject,
-            'remove',
-            this.onProviderRemove,
-            this
-        );
+        if (this.provider.on) {
+            this.provider.on(
+                this.domainObject,
+                'add',
+                this.onProviderAdd,
+                this
+            );
+            this.provider.on(
+                this.domainObject,
+                'remove',
+                this.onProviderRemove,
+                this
+            );
+        }
     };
 
     CompositionCollection.prototype = Object.create(EventEmitter.prototype);
@@ -72,6 +74,7 @@ define([
                     this.add(c, true);
                 }, this);
                 this.emit('load');
+                return this._children.slice();
             }.bind(this));
     };
 
@@ -92,8 +95,10 @@ define([
     };
 
     CompositionCollection.prototype.destroy = function () {
-        this.provider.off('add', this.onProviderAdd, this);
-        this.provider.off('remove', this.onProviderRemove, this);
+        if (this.provider.off) {
+            this.provider.off('add', this.onProviderAdd, this);
+            this.provider.off('remove', this.onProviderRemove, this);
+        }
     };
 
     return CompositionCollection
