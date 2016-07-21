@@ -13,15 +13,6 @@ define([
     /**
         Object API.  Intercepts the existing object API while also exposing
         A new Object API.
-
-        MCT.objects.get('mine')
-            .then(function (root) {
-                console.log(root);
-                MCT.objects.getComposition(root)
-                    .then(function (composition) {
-                        console.log(composition)
-                    })
-            });
     */
 
     var Objects = {},
