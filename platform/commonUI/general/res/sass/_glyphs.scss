@@ -36,6 +36,7 @@ $glyph-icon-person: '\e925';
 $glyph-icon-plus: '\e926';
 $glyph-icon-trash: '\e927';
 $glyph-icon-x: '\e928';
+$glyph-icon-brackets: '\e929';
 $glyph-icon-arrows-out: '\e1000';
 $glyph-icon-arrows-right-left: '\e1001';
 $glyph-icon-arrows-up-down: '\e1002';
@@ -132,6 +133,7 @@ $glyph-icon-topic: '\e1126';
 .icon-plus {  @include glyph($glyph-icon-plus); }
 .icon-trash {  @include glyph($glyph-icon-trash); }
 .icon-x {  @include glyph($glyph-icon-x); }
+.icon-brackets {  @include glyph($glyph-icon-brackets); }
 .icon-arrows-out {  @include glyph($glyph-icon-arrows-out); }
 .icon-arrows-right-left {  @include glyph($glyph-icon-arrows-right-left); }
 .icon-arrows-up-down {  @include glyph($glyph-icon-arrows-up-down); }
