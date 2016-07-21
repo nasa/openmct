@@ -1,23 +1,37 @@
-define(function () {
+define([], function () {
+
+    /**
+     * A View is used to provide displayable content, and to react to
+     * associated life cycle events.
+     *
+     * @interface
+     */
     function View() {
+
     }
 
     /**
-     * Show this view in the specified container. If this view is already
-     * showing elsewhere, it will be removed from that location.
+     * Populate the supplied DOM element with the contents of this view.
      *
-     * @param {HTMLElement} container the element to populate
+     * View implementations should use this method to attach any
+     * listeners or acquire other resources that are necessary to keep
+     * the contents of this view up-to-date.
+     *
+     * @param {HTMLElement} container the DOM element to populate
      */
     View.prototype.show = function (container) {
+
     };
 
     /**
      * Release any resources associated with this view.
      *
-     * Subclasses should override this method to release any resources
-     * they obtained during a `show` call.
+     * View implementations should use this method to detach any
+     * listeners or release other resources that are no longer necessary
+     * once a view is no longer used.
      */
     View.prototype.destroy = function () {
+
     };
 
     return View;

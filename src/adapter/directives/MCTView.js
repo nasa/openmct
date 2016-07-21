@@ -1,24 +1,26 @@
-define(['angular'], function (angular) {
+define([
+    'angular',
+    './Region'
+], function (angular, Region) {
     function MCTView(newViews) {
-        var factories = {};
+        var definitions = {};
 
         newViews.forEach(function (newView) {
-            factories[newView.region] = factories[newView.region] || {};
-            factories[newView.region][newView.key] = newView.factory;
+            definitions[newView.region] = definitions[newView.region] || {};
+            definitions[newView.region][newView.key] = newView.factory;
         });
 
         return {
             restrict: 'E',
             link: function (scope, element, attrs) {
-                var key, mctObject, region;
+                var key, mctObject, regionId, region;
 
                 function maybeShow() {
-                    if (!factories[region] || !factories[region][key] || !mctObject) {
+                    if (!definitions[regionId] || !definitions[regionId][key] || !mctObject) {
                         return;
                     }
 
-                    var view = factories[region][key](mctObject);
-                    view.show(element[0]);
+                    region.show(definitions[regionId][key].view(mctObject));
                 }
 
                 function setKey(k) {
@@ -31,15 +33,16 @@ define(['angular'], function (angular) {
                     maybeShow();
                 }
 
-                function setRegion(r) {
-                    region = r;
+                function setRegionId(r) {
+                    regionId = r;
                     maybeShow();
                 }
 
-                scope.$watch('key', setKey);
-                scope.$watch('region', setRegion);
-                scope.$watch('mctObject', setObject);
+                region = new Region(element[0]);
 
+                scope.$watch('key', setKey);
+                scope.$watch('region', setRegionId);
+                scope.$watch('mctObject', setObject);
             },
             scope: {
                 key: "=",

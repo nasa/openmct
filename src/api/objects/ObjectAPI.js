@@ -1,9 +1,13 @@
 define([
     'lodash',
-    './object-utils'
+    'EventEmitter',
+    './object-utils',
+    './MutableObject'
 ], function (
     _,
-    utils
+    EventEmitter,
+    utils,
+    MutableObject
 ) {
 
     /**
@@ -23,13 +27,12 @@ define([
     var Objects = {},
         ROOT_REGISTRY = [],
         PROVIDER_REGISTRY = {},
-        FALLBACK_PROVIDER;
+        FALLBACK_PROVIDER,
+        eventEmitter = new EventEmitter();
 
     Objects._supersecretSetFallbackProvider = function (p) {
         FALLBACK_PROVIDER = p;
     };
-
-
 
     // Root provider is hardcoded in; can't be skipped.
     var RootProvider = {
@@ -48,7 +51,7 @@ define([
             return RootProvider;
         }
         return PROVIDER_REGISTRY[key.namespace] || FALLBACK_PROVIDER;
-    };
+    }
 
     Objects.addProvider = function (namespace, provider) {
         PROVIDER_REGISTRY[namespace] = provider;
@@ -86,6 +89,10 @@ define([
                 k.namespace !== key.namespace
             );
         });
+    };
+
+    Objects.getMutable = function (object) {
+        return new MutableObject(eventEmitter, object);
     };
 
     return Objects;

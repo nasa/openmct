@@ -56,6 +56,9 @@ requirejs.config({
         },
         "zepto": {
             "exports": "Zepto"
+        },
+        "lodash": {
+            "exports": "lodash"
         }
     }
 });
@@ -105,7 +108,14 @@ define([
     var mct = new MCT();
 
     mct.legacyRegistry = legacyRegistry;
-    mct.run = mct.start;
+    mct.run = function (domElement) {
+        if (!domElement) { domElement = document.body; }
+        var appDiv = document.createElement('div');
+        appDiv.setAttribute('ng-view', '');
+        appDiv.className = 'user-environ';
+        domElement.appendChild(appDiv);
+        mct.start();
+    };
     mct.on('start', function () {
         return new Main().run(legacyRegistry);
     });
