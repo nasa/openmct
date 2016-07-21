@@ -62,7 +62,7 @@ define([
                 self.initialize();
                 self.objectChanged(object);
 
-                mct.selection.on('change', this.render);
+                mct.selection.on('change', self.render);
             });
         };
 
@@ -70,6 +70,7 @@ define([
             if (this.mutableObject) {
                 this.mutableObject.stopListening();
             }
+            mct.selection.off('change', this.render);
         };
 
         TodoView.prototype.setFilter = function (value) {
@@ -81,8 +82,6 @@ define([
             Object.keys(this.$buttons).forEach(function (k) {
                 this.$buttons[k].on('click', this.setFilter.bind(this, k));
             }, this);
-
-            mct.selection.on('change', this.render);
         };
 
         TodoView.prototype.render = function () {
@@ -190,21 +189,6 @@ define([
                 self.handleSelectionChange();
                 mct.selection.on('change', self.handleSelectionChange);
             });
-            $remove.on('click', function () {
-                var index = mct.selection.selected()[0].index;
-                if (index !== undefined) {
-                    mct.verbs.mutate(domainObject, function (model) {
-                        model.tasks = model.tasks.filter(function (t, i) {
-                            return i !== index;
-                        });
-                        delete model.selected;
-                        mct.selection.clear();
-                    });
-                }
-            });
-            this.$remove = $remove;
-            this.handleSelectionChange();
-            mct.selection.on('change', this.handleSelectionChange);
         };
 
         TodoToolbarView.prototype.handleSelectionChange = function () {
