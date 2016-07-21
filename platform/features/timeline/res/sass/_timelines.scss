@@ -306,7 +306,7 @@
                 color: $colorKey;
             }
             .t-toggle .inactive {
-                color: pullForward(rgba($colorBodyFg, 0.2));
+                color: $colorBtnBg;
             }
         }
 

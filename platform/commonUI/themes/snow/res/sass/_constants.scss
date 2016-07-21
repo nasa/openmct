@@ -22,6 +22,7 @@ $smallCr: 3px;
 $colorBtnBg: pullForward($colorBodyBg, $contrastRatioPercent);
 $colorBtnBgHov: pullForward($colorBtnBg, $hoverRatioPercent);
 $colorBtnFg: #fff;
+$colorBtnFgHov: pullForward($colorBtnFg, $hoverRatioPercent);
 $colorBtnMajorBg: $colorKey;
 $colorBtnMajorFg: $colorKeyFg;
 $colorBtnIcon: #eee;

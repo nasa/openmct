@@ -316,8 +316,9 @@
   @if $bgHovColor != none {
       &:not(.disabled):hover {
           background: $bgHovColor; // was just background, and background-image before that
-          >.icon {
-              color: lighten($ic, $ltGamma);
+          >.icon,
+          &:before {
+              color: pullForward($ic, $ltGamma);
           }
       }
   }

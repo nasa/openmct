@@ -75,8 +75,8 @@
 .s-clickable-icon {
     // Clickable icon elements that have hover
     @extend .ui-symbol;
-    &:hover {
-        color: $colorKeyHov;
+    &.inactive:hover {
+        color: $colorBtnBgHov !important;
     }
 }
 
