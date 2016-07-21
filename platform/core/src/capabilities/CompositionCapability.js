@@ -23,8 +23,10 @@
 /**
  * Module defining CompositionCapability. Created by vwoeltje on 11/7/14.
  */
-define(
-    function () {
+define([
+    '../../../../src/api/objects/object-utils',
+    '../../../../src/api/composition/CompositionAPI',
+], function (objectUtils, CompositionAPI) {
 
         /**
          * Composition capability. A domain object's composition is the set of
@@ -40,8 +42,8 @@ define(
          */
         function CompositionCapability($injector, contextualize, domainObject) {
             // Get a reference to the object service from $injector
-            this.injectObjectService = function () {
-                this.objectService = $injector.get("objectService");
+            this.getDependencies = function () {
+                this.instantiate = $injector.get("instantiate");
             };
 
             this.contextualize = contextualize;
@@ -119,33 +121,24 @@ define(
                 contextualize = this.contextualize,
                 ids;
 
-            // Then filter out non-existent objects,
-            // and wrap others (such that they expose a
-            // "context" capability)
-            function contextualizeObjects(objects) {
-                return ids.filter(function (id) {
-                    return objects[id];
-                }).map(function (id) {
-                    return contextualize(objects[id], domainObject);
-                });
-            }
-
             // Lazily acquire object service (avoids cyclical dependency)
-            if (!this.objectService) {
-                this.injectObjectService();
+            if (!this.instantiate) {
+                this.getDependencies();
             }
 
-            // Make a new request if we haven't made one, or if the
-            // object has been modified.
-            if (!this.lastPromise || this.lastModified !== model.modified) {
-                ids = model.composition || [];
-                this.lastModified = model.modified;
-                // Load from the underlying object service
-                this.lastPromise = this.objectService.getObjects(ids)
-                    .then(contextualizeObjects);
-            }
+            var parentDO = objectUtils.toNewFormat(model, domainObject.getId());
+            var collection = CompositionAPI(parentDO);
 
-            return this.lastPromise;
+            return collection.load()
+                .then(function (children) {
+                    return children.map(function (child) {
+                        var keyString = objectUtils.makeKeyString(child.key);
+                        var oldModel = objectUtils.toOldFormat(child);
+                        var newDO = this.instantiate(child, keyString);
+                        return contextualize(newDO, domainObject);
+                    }, this);
+                }.bind(this));
+
         };
 
         /**
@@ -156,7 +149,7 @@ define(
          * @returns {boolean} true if this object has a composition
          */
         CompositionCapability.appliesTo = function (model) {
-            return Array.isArray((model || {}).composition);
+            return !!CompositionAPI(objectUtils.toNewFormat(model, model.id));
         };
 
         return CompositionCapability;
