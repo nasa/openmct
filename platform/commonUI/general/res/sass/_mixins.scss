@@ -308,20 +308,29 @@
 	display: inline-block;
 }
 
-@mixin btnBase($bg: $colorBodyBg, $bgHovColor: none, $fg: $colorBodyFg, $ic: $colorBtnIcon) {
+@mixin btnBase($bg: $colorBtnBg, $bgHov: $colorBtnBgHov, $fg: $colorBtnFg, $fgHov: $colorBtnFgHov, $ic: $colorBtnIcon, $icHov: $colorBtnIconHov) {
 	@include user-select(none);
-	.icon {
+    color: $fg;
+	.icon,
+    &:before {
 		color: $ic;
 	}
-  @if $bgHovColor != none {
+  @if $bgHov != none {
       &:not(.disabled):hover {
-          background: $bgHovColor; // was just background, and background-image before that
+          background: $bgHov;
+          color: $fgHov;
           >.icon,
           &:before {
-              color: pullForward($ic, $ltGamma);
+              color: $icHov;
           }
       }
   }
+}
+
+@mixin btnSubtle($bg: $colorBtnBg, $bgHov: $colorBtnBgHov, $fg: $colorBtnFg, $fgHov: $colorBtnFgHov, $ic: $colorBtnIcon, $icHov: $colorBtnIconHov) {
+    @include containerSubtle($bg, $fg);
+    @include btnBase($bgHov: $bgHov, $fg: $fg, $fgHov: $fgHov, $ic: $ic, $icHov: $icHov);
+    text-shadow: $shdwItemText;
 }
 
 @mixin input-base($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.6) 0 1px 3px) {

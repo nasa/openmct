@@ -55,9 +55,7 @@ $pad: $interiorMargin * $baseRatio;
     }
 
     &.major {
-        $bg: $colorBtnMajorBg;
-        $hc: pullForward($bg, 10%);
-        @include btnSubtle($bg, $hc, $colorBtnMajorFg, $colorBtnMajorFg);
+        @include btnSubtle($bg: $colorBtnMajorBg, $bgHov: $colorBtnMajorBgHov, $fg: $colorBtnMajorFg, $fgHov: $colorBtnMajorFgHov, $ic: $colorBtnMajorFg, $icHov: $colorBtnMajorFgHov);
     }
 
     &.no-label {
