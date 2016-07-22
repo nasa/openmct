@@ -74,16 +74,14 @@
 
 .s-clickable-icon {
     // Clickable icon elements that have hover
+    // .s-toggles means the element is capable of having .active applied to it
     @extend .ui-symbol;
     color: $colorClickIcon;
-    &.active {
-        color: $colorClickIconActive;
-        //&:hover {
-        //    color: rgba($colorClickIconActive, 0.7);
-        //}
-    }
-     &:hover {
-        color: $colorClickIconHov;
+    &:hover { color: $colorClickIconHov; }
+    &.s-toggles {
+        color: rgba($colorClickIcon, 0.5) !important;
+        &.active { color: $colorClickIconActive !important; }
+        &:hover { color: rgba($colorClickIconHov, 0.5) !important; }
     }
 }
 

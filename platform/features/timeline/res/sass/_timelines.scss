@@ -302,11 +302,8 @@
 
         .l-swimlanes-holder .l-cols {
             .l-col-icon,
-            .l-col-icon a {
+            .l-col-icon a:not(.s-toggles) {
                 color: $colorKey;
-            }
-            .t-toggle .inactive {
-                color: $colorBtnBg;
             }
         }
 
