@@ -27,6 +27,9 @@ define([
     "./src/controllers/TableOptionsController",
     '../../commonUI/regions/src/Region',
     '../../commonUI/browse/src/InspectorRegion',
+    "text!./res/templates/table-options-edit.html",
+    "text!./res/templates/rt-table.html",
+    "text!./res/templates/historical-table.html",
     "legacyRegistry"
 ], function (
     MCTTable,
@@ -35,6 +38,9 @@ define([
     TableOptionsController,
     Region,
     InspectorRegion,
+    tableOptionsEditTemplate,
+    rtTableTemplate,
+    historicalTableTemplate,
     legacyRegistry
 ) {
     /**
@@ -128,7 +134,7 @@ define([
                     "name": "Historical Table",
                     "key": "table",
                     "glyph": "\ue604",
-                    "templateUrl": "templates/historical-table.html",
+                    "template": historicalTableTemplate,
                     "needs": [
                         "telemetry"
                     ],
@@ -139,7 +145,7 @@ define([
                     "name": "Real-time Table",
                     "key": "rt-table",
                     "glyph": "\ue620",
-                    "templateUrl": "templates/rt-table.html",
+                    "template": rtTableTemplate,
                     "needs": [
                         "telemetry"
                     ],
@@ -157,7 +163,7 @@ define([
             "representations": [
                 {
                     "key": "table-options-edit",
-                    "templateUrl": "templates/table-options-edit.html"
+                    "template": tableOptionsEditTemplate
                 }
             ],
             "stylesheets": [
