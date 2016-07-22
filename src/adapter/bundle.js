@@ -1,11 +1,13 @@
 define([
     'legacyRegistry',
     './directives/MCTView',
-    './services/Instantiate'
+    './services/Instantiate',
+    './capabilities/APICapabilityDecorator'
 ], function (
     legacyRegistry,
     MCTView,
-    Instantiate
+    Instantiate,
+    APICapabilityDecorator
 ) {
     legacyRegistry.register('src/adapter', {
         "extensions": {
@@ -28,6 +30,15 @@ define([
                         "capabilityService",
                         "identifierService",
                         "cacheService"
+                    ]
+                }
+            ],
+            components: [
+                {
+                    type: "decorator",
+                    provides: "capabilityService",
+                    implementation: APICapabilityDecorator,
+                    depends: [
                     ]
                 }
             ]
