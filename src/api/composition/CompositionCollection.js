@@ -96,8 +96,18 @@ define([
 
     CompositionCollection.prototype.destroy = function () {
         if (this.provider.off) {
-            this.provider.off('add', this.onProviderAdd, this);
-            this.provider.off('remove', this.onProviderRemove, this);
+            this.provider.off(
+                this.domainObject,
+                'add',
+                this.onProviderAdd,
+                this
+            );
+            this.provider.off(
+                this.domainObject,
+                'remove',
+                this.onProviderRemove,
+                this
+            );
         }
     };
 

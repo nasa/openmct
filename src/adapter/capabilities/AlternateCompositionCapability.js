@@ -88,6 +88,7 @@ define([
             var collection = CompositionAPI(newFormatDO);
             return collection.load()
                 .then(function (children) {
+                    collection.destroy();
                     return children.map(this.contextualizeChild, this);
                 }.bind(this));
         };
