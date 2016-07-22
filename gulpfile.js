@@ -21,21 +21,13 @@
  *****************************************************************************/
 
 /*global require,__dirname*/
+
 var gulp = require('gulp'),
-    requirejsOptimize = require('gulp-requirejs-optimize'),
     sourcemaps = require('gulp-sourcemaps'),
-    rename = require('gulp-rename'),
-    sass = require('gulp-sass'),
-    bourbon = require('node-bourbon'),
-    jshint = require('gulp-jshint'),
-    jscs = require('gulp-jscs'),
-    replace = require('gulp-replace-task'),
-    karma = require('karma'),
     path = require('path'),
     fs = require('fs'),
     git = require('git-rev-sync'),
     moment = require('moment'),
-    merge = require('merge-stream'),
     project = require('./package.json'),
     _ = require('lodash'),
     paths = {
@@ -64,7 +56,6 @@ var gulp = require('gulp'),
             singleRun: true
         },
         sass: {
-            includePaths: bourbon.includePaths,
             sourceComments: true
         },
         replace: {
@@ -78,6 +69,8 @@ var gulp = require('gulp'),
     };
 
 gulp.task('scripts', function () {
+    var requirejsOptimize = require('gulp-requirejs-optimize');
+    var replace = require('gulp-replace-task');
     return gulp.src(paths.main)
         .pipe(sourcemaps.init())
         .pipe(requirejsOptimize(options.requirejsOptimize))
@@ -87,10 +80,16 @@ gulp.task('scripts', function () {
 });
 
 gulp.task('test', function (done) {
+    var karma = require('karma');
     new karma.Server(options.karma, done).start();
 });
 
 gulp.task('stylesheets', function () {
+    var sass = require('gulp-sass');
+    var rename = require('gulp-rename');
+    var bourbon = require('node-bourbon');
+    options.sass.includePaths = bourbon.includePaths;
+
     return gulp.src(paths.scss, {base: '.'})
         .pipe(sourcemaps.init())
         .pipe(sass(options.sass).on('error', sass.logError))
@@ -104,6 +103,9 @@ gulp.task('stylesheets', function () {
 });
 
 gulp.task('lint', function () {
+    var jshint = require('gulp-jshint');
+    var merge = require('merge-stream');
+
     var nonspecs = paths.specs.map(function (glob) {
             return "!" + glob;
         }),
@@ -118,6 +120,8 @@ gulp.task('lint', function () {
 });
 
 gulp.task('checkstyle', function () {
+    var jscs = require('gulp-jscs');
+
     return gulp.src(paths.scripts)
         .pipe(jscs())
         .pipe(jscs.reporter())
@@ -125,6 +129,8 @@ gulp.task('checkstyle', function () {
 });
 
 gulp.task('fixstyle', function () {
+    var jscs = require('gulp-jscs');
+
     return gulp.src(paths.scripts, { base: '.' })
         .pipe(jscs({ fix: true }))
         .pipe(gulp.dest('.'));
@@ -136,7 +142,7 @@ gulp.task('assets', ['stylesheets'], function () {
 });
 
 gulp.task('watch', function () {
-    gulp.watch(paths.scss, ['stylesheets']);
+    return gulp.watch(paths.scss, ['stylesheets', 'assets']);
 });
 
 gulp.task('serve', function () {
@@ -144,7 +150,7 @@ gulp.task('serve', function () {
     var app = require('./app.js');
 });
 
-gulp.task('develop', ['serve', 'stylesheets', 'watch']);
+gulp.task('develop', ['serve', 'install', 'watch']);
 
 gulp.task('install', [ 'assets', 'scripts' ]);
 
