@@ -85,8 +85,8 @@ define(
                         'timer.restart': mockRestart
                     }[k]];
                 });
-                mockStart.getMetadata.andReturn({ glyph: "S", name: "Start" });
-                mockRestart.getMetadata.andReturn({ glyph: "R", name: "Restart" });
+                mockStart.getMetadata.andReturn({ cssclass: "icon-play", name: "Start" });
+                mockRestart.getMetadata.andReturn({ cssclass: "icon-refresh", name: "Restart" });
                 mockScope.domainObject = mockDomainObject;
 
                 testModel = {};
@@ -144,14 +144,14 @@ define(
                 expect(controller.text()).toEqual("0D 00:00:00");
             });
 
-            it("shows glyph & name for the applicable start/restart action", function () {
+            it("shows cssclass & name for the applicable start/restart action", function () {
                 invokeWatch('domainObject', mockDomainObject);
-                expect(controller.buttonGlyph()).toEqual("S");
+                expect(controller.buttonCssClass()).toEqual("icon-play");
                 expect(controller.buttonText()).toEqual("Start");
 
                 testModel.timestamp = 12321;
                 invokeWatch('model.modified', 1);
-                expect(controller.buttonGlyph()).toEqual("R");
+                expect(controller.buttonCssClass()).toEqual("icon-refresh");
                 expect(controller.buttonText()).toEqual("Restart");
             });
 
