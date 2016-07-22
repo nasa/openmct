@@ -1,0 +1,35 @@
+<div class="example-bargraph" ng-controller="BarGraphController">
+    <div class="example-tick-labels">
+        <div ng-repeat="value in [low, middle, high] track by $index"
+             class="example-tick-label"
+             style="bottom: {{ toPercent(value) }}%">
+            {{value}}
+        </div>
+    </div>
+
+    <div class="example-graph-area">
+        <div ng-repeat="telemetryObject in telemetryObjects"
+             style="left: {{barWidth * $index}}%; width: {{barWidth}}%"
+             class="example-bar-holder">
+            <div class="example-bar"
+                 ng-style="{
+                     bottom: getBottom(telemetryObject) + '%',
+                     top: getTop(telemetryObject) + '%'
+                 }">
+            </div>
+        </div>
+        <div style="bottom: {{ toPercent(middle) }}%"
+             class="example-graph-tick">
+        </div>
+    </div>
+
+    <div class="example-bar-labels">
+        <div ng-repeat="telemetryObject in telemetryObjects"
+             style="left: {{barWidth * $index}}%; width: {{barWidth}}%"
+             class="example-bar-holder example-label">
+            <mct-representation key="'label'"
+                                mct-object="telemetryObject">
+            </mct-representation>
+        </div>
+    </div>
+</div>
