@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 @import "bourbon";
-
 @import "../../../../commonUI/general/res/sass/constants";
 @import "../../../../commonUI/general/res/sass/mixins";
 @import "../../../../commonUI/general/res/sass/mobile/constants";
@@ -28,8 +27,7 @@
 @import "../../../../commonUI/themes/espresso/res/sass/constants";
 @import "../../../../commonUI/themes/espresso/res/sass/mixins";
 @import "../../../../commonUI/general/res/sass/icons";
-
-$ueTimeConductorH: (25px, 6px, 20px);
+@import "constants";
 
 @mixin toiLineHovEffects() {
     &:before,
@@ -47,40 +45,27 @@ $ueTimeConductorH: (25px, 6px, 20px);
 
 .time-conductor-icon {
     $c: $colorObjHdrIc;
-    $d: 20px;
-    background: $c;
-    border-radius: 4px;
+    $d: 18px;
     height: $d !important;
     width: $d;
     position: relative;
 
-    // Icon shape: brackets
-    &:before,
-    &:after {
-        content: '';
-        background: $colorBodyBg;
-        position: absolute;
-    }
     &:before {
-        $in: 7px;
-        left: $in;
-        top: 0;
-        right: $in;
-        bottom: 0;
-
-    }
-    &:after {
-        $in: 4px;
-        left: $in;
-        top: $in;
-        right: $in;
-        bottom: $in;
+        @extend .ui-symbol;
+        color: $c;
+        content: '\e624';
+        font-size: $d;
+        line-height: normal;
+        display: block;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
     }
 
     // Clock hands
     div[class*="hand"] {
         $handW: 2px;
-        $handH: 8px;
+        $handH: $d * 0.4; //8px;
         @include transform(translate(-50%, -50%));
         @include animation-iteration-count(infinite);
         @include animation-timing-function(linear);
@@ -152,42 +137,54 @@ $ueTimeConductorH: (25px, 6px, 20px);
     }
 
     .l-time-conductor-inputs-holder,
-    .l-time-conductor-ticks,
+    .l-time-conductor-inputs-and-ticks,
     .l-time-conductor-zoom-w {
         font-size: 0.8rem;
     }
 
     .l-time-conductor-inputs-holder {
-        $trInputW: 180px;
-        $hmInputW: 60px;
         $ticksBlockerFadeW: 50px;
         $iconCalendarW: 16px;
         $wBgColor: $colorBodyBg;
 
         height: $r1H;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
         z-index: 1;
         .l-time-range-w {
             // Wraps a datetime text input field
             height: 100%;
             position: absolute;
+            .title {
+                display: inline-block;
+                margin-right: $interiorMarginSm;
+            }
             &.start-w {
                 @include background-image(linear-gradient(270deg, transparent, $wBgColor $ticksBlockerFadeW));
                 padding-right: $ticksBlockerFadeW;
+                .title:before {
+                    content: 'Start';
+                }
             }
             &.end-w {
                 @include background-image(linear-gradient(90deg, transparent, $wBgColor $ticksBlockerFadeW));
                 padding-left: $ticksBlockerFadeW;
                 right: 0;
-                text-align: right;
+                .title:before {
+                    content: 'End';
+                }
             }
             input[type="text"] {
                 @include trans-prop-nice(padding, 250ms);
             }
-            .time-range-input input {
-                width: $trInputW;
+            .time-range-input input[type="text"] {
+                width: $timeCondInputTimeSysDefW;
             }
-            .hrs-min-input input {
-                width: $hmInputW;
+            .hrs-min-input input[type="text"] {
+                width: $timeCondInputDeltaDefW;
             }
             .icon-calendar {
                 margin-top: 4px;
@@ -195,7 +192,7 @@ $ueTimeConductorH: (25px, 6px, 20px);
         }
     }
 
-    .l-time-conductor-ticks {
+    .l-time-conductor-inputs-and-ticks {
         $c: $colorTick;
         height: $r1H;
         mct-conductor-axis {
@@ -248,22 +245,13 @@ $ueTimeConductorH: (25px, 6px, 20px);
                 color: $colorTick;
             }
         }
-
-    }
-    // Fixed
-    &.fixed-mode {
-        .time-conductor-icon div[class*="hand"] {
-            &.hand-little {
-                @include transform(rotate(120deg));
-            }
-        }
     }
 
-    // Realtime, latest modes
+    // Real-time, latest modes
     &.realtime-mode,
     &.latest-mode {
         .time-conductor-icon {
-            background: $colorTimeCondKeyBg;
+            &:before { color: $colorTimeCondKeyBg; }
             div[class*="hand"] {
                 @include animation-name(clock-hands);
                 &:before {
@@ -286,71 +274,94 @@ $ueTimeConductorH: (25px, 6px, 20px);
                         padding: $inputTextP;
                     }
                 }
-                &.start-date {
-                    pointer-events: none;
-                }
                 .icon-calendar {
                     display: none;
                 }
-                &.end-date {
+                &.start-date {
                     display: none;
                 }
+                &.end-date {
+                    pointer-events: none;
+                    input[type="text"] {
+                        color: pullForward($colorTimeCondKeyBg, 5%);
+                        margin-right: $interiorMargin;
+                        tab-index: -1;
+                    }
+                }
             }
-        }
-
-        &.realtime-mode .time-conductor-icon div[class*="hand"] { @include animation-name(clock-hands); }
-        &.latest-mode .time-conductor-icon div[class*="hand"] {
-            @include animation-name(clock-hands-sticky);
-            &.hand-big { @include animation-duration(5s); }
-            &.hand-little { @include animation-duration(60s); }
         }
 
         .l-data-visualization {
             background: $colorTimeCondDataVisRtBg !important
         }
+
         .mode-selector .s-menu-btn {
             @include btnSubtle($colorTimeCondKeyBg, pullForward($colorTimeCondKeyBg, $ltGamma), $colorTimeCondKeyFg);
         }
     }
+
+    // Fixed mode
     &.fixed-mode {
         $i: $glyphIconFixed;
+        .time-conductor-icon div[class*="hand"] {
+            &.hand-little {
+                @include transform(rotate(120deg));
+            }
+        }
         .mode-selector .s-menu-btn:before {
             content: $i;
         }
     }
+
+    // Realtime mode
     &.realtime-mode {
         $i: $glyphIconRealtime;
+        .time-conductor-icon div[class*="hand"] {
+            @include animation-name(clock-hands);
+        }
         .time-delta:before {
             content: $i;
+        }
+        .l-time-conductor-inputs-holder .l-time-range-w.end-w .title:before {
+            content: 'Now';
         }
         .mode-selector .s-menu-btn:before {
             content: $i;
         }
     }
+
+    // LAD mode
     &.latest-mode {
         $i: $glyphIconLatest;
+        .time-conductor-icon div[class*="hand"] {
+            @include animation-name(clock-hands-sticky);
+            &.hand-big {
+                @include animation-duration(5s);
+            }
+            &.hand-little {
+                @include animation-duration(60s);
+            }
+        }
         .time-delta:before {
             content: $i;
+        }
+        .l-time-conductor-inputs-holder .l-time-range-w.end-w .title:before {
+            content: 'LAD';
         }
         .mode-selector .s-menu-btn:before {
             content: $i;
         }
     }
-}
-
-.s-time-range-val {
-    border-radius: $controlCr;
-    background-color: $colorInputBg;
-    padding: 1px 1px 0 $interiorMargin;
 }
 
 /******************************************************************** MOBILE */
 
 @include phoneandtablet {
-    .l-time-conductor {
-        min-width: 0;
-        .l-time-range-slider-holder,
-        .l-time-conductor-ticks {
+    .l-time-conductor-holder { min-width: 0 !important; }
+    .super-menu.mini {
+        width: 200px;
+        height: 100px;
+        .pane.menu-item-description {
             display: none;
         }
     }
@@ -358,29 +369,15 @@ $ueTimeConductorH: (25px, 6px, 20px);
 
 @include phone {
     .l-time-conductor {
-        .l-time-conductor-inputs-holder {
-            &.l-flex-row,
-            .l-flex-row {
-                @include align-items(flex-start);
-            }
-            .l-time-range-inputs-elem {
-                &.type-icon {
-                    margin-top: 3px;
-                }
-            }
+        min-width: 0;
+        .l-time-conductor-inputs-and-ticks {
             .l-time-conductor-inputs-holder {
-                @include flex-direction(column);
-                .l-time-range-input-w:not(:first-child) {
-                    &:not(:first-child) {
-                        margin-top: $interiorMargin;
-                    }
-                    margin-right: 0;
+                .l-time-range-w {
+                    background-image: none !important;
                 }
-                .l-time-range-inputs-elem {
-                    &.lbl {
-                        display: none;
-                    }
-                }
+            }
+            mct-conductor-axis {
+                display: none;
             }
         }
     }
@@ -388,22 +385,60 @@ $ueTimeConductorH: (25px, 6px, 20px);
 
 @include phonePortrait {
     .l-time-conductor {
-        .l-time-conductor-inputs-holder {
+        .l-data-visualization,
+        .l-time-conductor-zoom-w,
+        .time-delta {
+            display: none;
+        }
+
+        .l-time-conductor-inputs-and-ticks {
+            height: auto !important;
             .l-time-conductor-inputs-holder {
-                @include flex(1 1 auto);
-                padding-top: 25px; // Make room for the ever lovin' Time Domain Selector
-                .flex-elem {
-                    @include flex(1 1 auto);
-                    width: 100%;
-                }
-                input[type="text"] {
-                    width: 100%;
+                position: relative;
+                height: auto !important;
+
+                .l-time-range-w {
+                    background-image: none !important;
+                    display: block;
+                    height: auto !important;
+                    padding: 0 !important;
+                    position: relative;
+                    text-align: left;
+                    &:not(:first-child) {
+                        margin-top: $interiorMargin;
+                    }
                 }
             }
         }
-    }
-    .l-time-domain-selector {
-        right: auto;
-        left: 20px;
+
+        // Fixed mode
+        &.fixed-mode {
+            .l-time-conductor-inputs-and-ticks {
+                .l-time-range-w {
+                    .title {
+                        width: 30px;
+                    }
+                }
+            }
+        }
+
+        // Real-time, latest modes
+        &.realtime-mode,
+        &.latest-mode {
+            .l-time-conductor-inputs-and-ticks {
+                .l-time-range-w {
+                    &.start-w {
+                        display: none;
+                    }
+                    &.end-w {
+                        margin-top: 0;
+                        .end-date input[type="text"] {
+                            margin: 0;
+                            text-align: left;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

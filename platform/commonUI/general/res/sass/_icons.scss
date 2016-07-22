@@ -30,6 +30,7 @@
 
 .ui-symbol {
     font-family: 'symbolsfont';
+    -webkit-font-smoothing: antialiased;
 	&.type-icon {
 		color: $colorObjHdrIc;
 	}

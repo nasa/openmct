@@ -9,11 +9,12 @@
 
     <div class="flex-elem holder grows l-flex-col l-time-conductor-inner">
         <!-- Holds inputs and ticks -->
-        <div class="l-time-conductor-ticks l-row-elem l-flex-row flex-elem no-margin">
-            <form class="abs l-time-conductor-inputs-holder"
+        <div class="l-time-conductor-inputs-and-ticks l-row-elem flex-elem no-margin">
+            <form class="l-time-conductor-inputs-holder"
                   ng-submit="tcController.updateBoundsFromForm(formModel)">
                 <span class="l-time-range-w start-w">
                     <span class="l-time-range-input-w start-date">
+                        <span class="title"></span>
                         <mct-control key="'datetime-field'"
                                      structure="{
                                          format: timeSystemModel.format,
@@ -28,6 +29,7 @@
                     </span>
                         <span class="l-time-range-input-w time-delta start-delta"
                           ng-class="{'hide':(modeModel.selected.metadata.key === 'fixed')}">
+                            -
                         <mct-control key="'datetime-field'"
                                      structure="{
                                         format: 'duration',
@@ -41,22 +43,9 @@
                     </span>
                 </span>
                 <span class="l-time-range-w end-w">
-                    <span class="l-time-range-input-w time-delta end-delta"
-                          ng-class="{'hide':(modeModel.selected.metadata.key === 'fixed')}">
-
-                        <mct-control key="'datetime-field'"
-                                     structure="{
-                                        format: 'duration',
-                                        validate: tcController.validation.validateEndDelta
-                                     }"
-                                     ng-model="formModel"
-                                     ng-blur="tcController.updateDeltasFromForm(formModel)"
-                                     field="'endDelta'"
-                                     class="hrs-min-input">
-                        </mct-control>
-                    </span>
                     <span class="l-time-range-input-w end-date"
                           ng-controller="ToggleController as t2">
+                        <span class="title"></span>
                         <mct-control key="'datetime-field'"
                                      structure="{
                                          format: timeSystemModel.format,
@@ -69,6 +58,20 @@
                                      class="time-range-input">
                         </mct-control>
                     </span>
+                    <span class="l-time-range-input-w time-delta end-delta"
+                          ng-class="{'hide':(modeModel.selected.metadata.key === 'fixed')}">
+                            +
+                        <mct-control key="'datetime-field'"
+                                     structure="{
+                                        format: 'duration',
+                                        validate: tcController.validation.validateEndDelta
+                                     }"
+                                     ng-model="formModel"
+                                     ng-blur="tcController.updateDeltasFromForm(formModel)"
+                                     field="'endDelta'"
+                                     class="hrs-min-input">
+                        </mct-control>
+                    </span>
                 </span>
 
                 <input type="submit" class="hidden">
@@ -77,7 +80,7 @@
         </div>
 
         <!-- Holds data availability, time of interest -->
-        <div class="l-data-visualization l-row-elem l-flex-row flex-elem"></div>
+        <div class="l-data-visualization l-row-elem flex-elem"></div>
 
         <!-- Holds time system and session selectors, and zoom control -->
         <div class="l-time-conductor-controls l-row-elem l-flex-row flex-elem">
