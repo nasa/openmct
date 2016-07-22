@@ -39,6 +39,7 @@ define([
                     provides: "capabilityService",
                     implementation: APICapabilityDecorator,
                     depends: [
+                        "$injector"
                     ]
                 }
             ]
