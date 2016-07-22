@@ -23,14 +23,10 @@ define([
             capabilities.mutation =
                 synchronizeMutationCapability(capabilities.mutation);
         }
-        try {
         if (AlternateCompositionCapability.appliesTo(model)) {
             capabilities.composition = function (domainObject) {
                 return new AlternateCompositionCapability(this.$injector, domainObject)
             }.bind(this);
-        }
-        } catch (e) {
-            console.log('error?!', e);
         }
 
         return capabilities;
