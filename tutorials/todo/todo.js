@@ -58,8 +58,11 @@ define([
 
                 $(container).empty().append(self.$els);
 
+
                 self.initialize();
-                self.objectChanged(object)
+                self.objectChanged(object);
+
+                mct.selection.on('change', self.render);
             });
         };
 
@@ -67,6 +70,7 @@ define([
             if (this.mutableObject) {
                 this.mutableObject.stopListening();
             }
+            mct.selection.off('change', this.render);
         };
 
         TodoView.prototype.setFilter = function (value) {
@@ -78,8 +82,6 @@ define([
             Object.keys(this.$buttons).forEach(function (k) {
                 this.$buttons[k].on('click', this.setFilter.bind(this, k));
             }, this);
-
-            mct.selection.on('change', this.render);
         };
 
         TodoView.prototype.render = function () {
@@ -139,7 +141,6 @@ define([
         function TodoToolbarView(domainObject) {
             this.domainObject = domainObject;
             this.mutableObject = undefined;
-
             this.handleSelectionChange = this.handleSelectionChange.bind(this);
         }
 
