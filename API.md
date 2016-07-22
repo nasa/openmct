@@ -73,6 +73,22 @@ Status: First Draft
 
 The time conductor is an API that facilitates time synchronization across multiple components.  Components that would like to be "time aware" may attach listeners to the time conductor API to allow them to remain synchronized with other components.  For more information ont he time conductor API, please look at the API draft here: https://github.com/nasa/openmct/blob/66220b89ca568075f107505ba414de9457dc0427/platform/features/conductor-redux/src/README.md
 
+### `MCT.selection`
+Status: First Draft
+
+Tracks the application's selection state (which elements of a view has a user selected?)
+
+One or more JavaScript objects may be selected at any given time. User code is responsible for any necessary type-checking.
+
+The following methods are exposed from this object:
+
+* `select(value)`: Add `value` to the current selection.
+* `deselect(value)`: Remove `value` from the current selection.
+* `selected()`: Get array of all selected objects.
+* `clear()`: Deselect all selected objects.
+
+MCT.selection is an EventEmitter; a `change` event is emitted whenever the selection changes.
+
 ### `MCT.systems`
 Status: Not Implemented, Needs to be ported from old system.
 
