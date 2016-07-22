@@ -64,7 +64,8 @@ define([
                     "key": "mctConductorAxis",
                     "implementation": MCTConductorAxis,
                     "depends": [
-                        "timeConductor"
+                        "timeConductor",
+                        "formatService"
                     ]
                 }
             ],

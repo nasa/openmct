@@ -32,7 +32,7 @@ define(
          * labelled 'ticks'. It requires 'start' and 'end' integer values to
          * be specified as attributes.
          */
-        function MCTConductorAxis(conductor) {
+        function MCTConductorAxis(conductor, formatService) {
 
             function link(scope, element, attrs, ngModelController) {
                 var target = element[0].firstChild,
@@ -57,9 +57,42 @@ define(
                     axisElement.call(xAxis);
                 }
 
+                // Calculates the precision of date for formatting. Relies on
+                // D3's behavior to tick on round units
+                function threshold(date){
+                    var ms = date.getTime();
+                    return [
+                        365 * 24 * 60 * 60 * 1000,          // years
+                        (365 / 12) * 24 * 60 * 60 * 1000,   // months
+                        7 * 24 * 60 * 60 * 1000,            // weeks
+                        24 * 60 * 60 * 1000,                // days
+                        60 * 60 * 1000,                     // hours
+                        60 * 1000,                          // minutes
+                        1000,                               // seconds
+                        1                                   // ms
+                    ].filter(function (boundary) {
+                        return ms % boundary === 0;
+                    })[0];
+                }
+
+                function changeTimeSystem(timeSystem) {
+                    var key = timeSystem.formats()[0];
+                    if (key !== undefined) {
+                        var format =  formatService.getFormat(key);
+
+                        //Define a custom format function
+                        xAxis.tickFormat(function (date) {
+                            return format.format(date, threshold(date));
+                        });
+                        axisElement.call(xAxis);
+                    }
+                }
+
                 scope.resize = function () {
                     setScale(conductor.bounds().start, conductor.bounds().end);
                 };
+
+                conductor.on('timeSystem', changeTimeSystem);
 
                 //On conductor bounds changes, redraw ticks
                 conductor.on('bounds', function (bounds) {
@@ -68,6 +101,10 @@ define(
 
                 //Set initial scale.
                 setScale(conductor.bounds().start, conductor.bounds().end);
+
+                if (conductor.timeSystem() !== undefined) {
+                    changeTimeSystem(conductor.timeSystem());
+                }
             }
 
             return {

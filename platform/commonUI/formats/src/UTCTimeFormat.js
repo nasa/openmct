@@ -34,6 +34,12 @@ define([
             "YYYY-MM-DD"
         ];
 
+    var MS = 1,
+        SECONDS = 1000 * MS,
+        MINUTES = 60 * SECONDS,
+        HOURS = 60 * MINUTES,
+        DAYS = 24 * HOURS,
+        MONTHS = (365 / 12) * DAYS;
 
     /**
      * Formatter for UTC timestamps. Interprets numeric values as
@@ -46,7 +52,51 @@ define([
     function UTCTimeFormat() {
     }
 
-    UTCTimeFormat.prototype.format = function (value) {
+    /**
+     * Returns an appropriate time format based on the provided value and
+     * the threshold required.
+     * @private
+     */
+    function getScaledFormat (d, threshold) {
+        //Adapted from D3 formatting rules
+        if (!(d instanceof Date)){
+            d = new Date(moment.utc(d));
+        }
+        return [
+            [".SSS", function(d) { return d.getMilliseconds() >= threshold; }],
+            [":ss", function(d) { return d.getSeconds() * SECONDS >= threshold; }],
+            ["HH:mm", function(d) { return d.getMinutes() * MINUTES >= threshold; }],
+            ["HH", function(d) { return d.getHours() * HOURS >= threshold; }],
+            ["ddd DD", function(d) {
+                return d.getDay() * DAYS >= threshold &&
+                    d.getDate() != 1;
+            }],
+            ["MMM DD", function(d) { return d.getDate() != 1; }],
+            ["MMMM", function(d) {
+                return d.getMonth() * MONTHS >= threshold;
+            }],
+            ["YYYY", function() { return true; }]
+        ].filter(function (row){
+            return row[1](d);
+        })[0][0];
+    };
+
+    /**
+     *
+     * @param value
+     * @param {number} [threshold] Optionally provides context to the
+     * format request, allowing for scale-appropriate formatting. This value
+     * should be the minimum unit to be represented by this format, in ms. For
+     * example, to display seconds, a threshold of 1 * 1000 should be provided.
+     * @returns {string} the formatted date
+     */
+    UTCTimeFormat.prototype.format = function (value, threshold) {
+        if (threshold !== undefined){
+            var scaledFormat = getScaledFormat(value, threshold);
+            if (scaledFormat) {
+                return moment.utc(value).format(scaledFormat);
+            }
+        }
         return moment.utc(value).format(DATE_FORMAT) + "Z";
     };
 
