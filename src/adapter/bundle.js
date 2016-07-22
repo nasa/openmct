@@ -1,7 +1,12 @@
 define([
     'legacyRegistry',
-    './directives/MCTView'
-], function (legacyRegistry, MCTView) {
+    './directives/MCTView',
+    './services/Instantiate'
+], function (
+    legacyRegistry,
+    MCTView,
+    Instantiate
+) {
     legacyRegistry.register('src/adapter', {
         "extensions": {
             "directives": [
@@ -11,6 +16,18 @@ define([
                     depends: [
                         "newViews[]",
                         "PublicAPI"
+                    ]
+                }
+            ],
+            services: [
+                {
+                    key: "instantiate",
+                    priority: "mandatory",
+                    implementation: Instantiate,
+                    depends: [
+                        "capabilityService",
+                        "identifierService",
+                        "cacheService"
                     ]
                 }
             ]

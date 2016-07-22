@@ -21,26 +21,12 @@
  *****************************************************************************/
 
 define(
-    ['../objects/DomainObjectImpl'],
+    ['../../../platform/core/src/objects/DomainObjectImpl'],
     function (DomainObjectImpl) {
 
         /**
-         * The `instantiate` service allows new domain object instances to be
-         * created. These objects are not persisted to any back-end or
-         * placed anywhere in the object hierarchy by default.
-         *
-         * Usage: `instantiate(model, [id])`
-         *
-         * ...returns a new instance of a domain object with the specified
-         * model. An identifier may be provided; if omitted, one will be
-         * generated instead.
-         *
-         * @constructor
-         * @memberof platform/core
-         * @param {CapabilityService} capabilityService the service which will
-         *        provide instantiated domain objects with their capabilities
-         * @param {IdentifierService} identifierService service to generate
-         *        new identifiers
+         * Overrides platform version of instantiate, passes Id with model such
+         * that capability detection can utilize new format domain objects.
          */
         function Instantiate(
             capabilityService,
@@ -48,8 +34,11 @@ define(
             cacheService
         ) {
             return function (model, id) {
-                var capabilities = capabilityService.getCapabilities(model);
                 id = id || identifierService.generate();
+                var old_id = model.id;
+                model.id = id;
+                var capabilities = capabilityService.getCapabilities(model);
+                model.id = old_id;
                 cacheService.put(id, model);
                 return new DomainObjectImpl(id, model, capabilities);
             };
