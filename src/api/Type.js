@@ -37,6 +37,7 @@ define(function () {
         def.name = this.definition.metadata.label;
         def.glyph = this.definition.metadata.glyph;
         def.description = this.definition.metadata.description;
+        def.properties = this.definition.form;
 
         if (this.definition.initialize) {
             def.model = {};

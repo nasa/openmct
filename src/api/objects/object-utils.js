@@ -74,10 +74,15 @@ define([
         return model;
     };
 
+    var equals = function (a, b) {
+        return makeKeyString(a.key) === makeKeyString(b.key);
+    };
+
     return {
         toOldFormat: toOldFormat,
         toNewFormat: toNewFormat,
         makeKeyString: makeKeyString,
-        parseKeyString: parseKeyString
+        parseKeyString: parseKeyString,
+        equals: equals
     };
 });

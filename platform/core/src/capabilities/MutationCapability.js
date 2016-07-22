@@ -167,10 +167,7 @@ define(
          * @memberof platform/core.MutationCapability#
          */
         MutationCapability.prototype.listen = function (listener) {
-            return this.specificMutationTopic.listen(function (newModel) {
-                this.domainObject.model = JSON.parse(JSON.stringify(newModel));
-                listener(newModel);
-            }.bind(this));
+            return this.specificMutationTopic.listen(listener);
         };
 
         /**

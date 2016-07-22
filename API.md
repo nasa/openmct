@@ -33,6 +33,7 @@ Returns a `typeInstance`.  `options` is an object supporting the following prope
   * `description`: `string`, a human readible description of the object and what it is for.
 * `initialize`: `function` which initializes new instances of this type.  it is called with an object, should add any default properties to that object.
 * `creatable`: `boolean`, if true, this object will be visible in the create menu.
+* `form`: `Array` an array of form fields, as defined... somewhere!  Generates a property sheet that is visible while editing this object.
 
 ### `MCT.type(typeKey, typeInstance)`
 Status: First Draft
