@@ -6,7 +6,6 @@ define([
     'text!./adapter/templates/edit-object-replacement.html',
     './ui/Dialog',
     './Selection',
-    './api/objects/bundle',
     './api/objects/object-utils'
 ], function (
     EventEmitter,
@@ -16,7 +15,6 @@ define([
     editObjectTemplate,
     Dialog,
     Selection,
-    objectAPIBundle,
     objectUtils
 ) {
     function MCT() {
@@ -123,6 +121,7 @@ define([
         });
 
         legacyRegistry.register('adapter', this.legacyBundle);
+        legacyRegistry.enable('adapter');
         this.emit('start');
     };
 
