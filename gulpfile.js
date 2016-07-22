@@ -41,16 +41,12 @@ var gulp = require('gulp'),
     paths = {
         main: 'main.js',
         dist: 'dist',
-        assets: 'dist/assets',
         scss: ['./platform/**/*.scss', './example/**/*.scss'],
+        assets: [
+            './{example,platform}/**/*.{css,css.map,png,svg,ico,woff,eot,ttf}'
+        ],
         scripts: [ 'main.js', 'platform/**/*.js', 'src/**/*.js' ],
         specs: [ 'platform/**/*Spec.js', 'src/**/*Spec.js' ],
-        static: [
-            'index.html',
-            'platform/**/*',
-            'example/**/*',
-            'bower_components/**/*'
-        ]
     },
     options = {
         requirejsOptimize: {
@@ -134,8 +130,8 @@ gulp.task('fixstyle', function () {
         .pipe(gulp.dest('.'));
 });
 
-gulp.task('static', ['stylesheets'], function () {
-    return gulp.src(paths.static, { base: '.' })
+gulp.task('assets', ['stylesheets'], function () {
+    return gulp.src(paths.assets)
         .pipe(gulp.dest(paths.dist));
 });
 
@@ -150,7 +146,7 @@ gulp.task('serve', function () {
 
 gulp.task('develop', ['serve', 'stylesheets', 'watch']);
 
-gulp.task('install', [ 'static', 'scripts' ]);
+gulp.task('install', [ 'assets', 'scripts' ]);
 
 gulp.task('verify', [ 'lint', 'test', 'checkstyle' ]);
 

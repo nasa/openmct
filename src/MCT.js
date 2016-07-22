@@ -39,6 +39,16 @@ define([
     };
 
     /**
+     * Set path to where assets are hosted.  This should be the path to main.js.
+     */
+    MCT.prototype.setAssetPath = function (path) {
+        this.legacyExtension('constants', {
+            key: "ASSETS_PATH",
+            value: path
+        });
+    };
+
+    /**
      * Register a new type of view.
      *
      * @param region the region identifier (see mct.regions)
