@@ -67,7 +67,7 @@
 	// Used in grid-item.html, tree-item, inspector location
 	@extend .ui-symbol;
     @extend .icon;
-    line-height: normal; // This is Ok for the symbolsfont
+    line-height: inherit; // This is Ok for the symbolsfont
     position: relative;
     &.l-icon-link {
         .t-item-icon-glyph {
