@@ -44,10 +44,7 @@ define(
         }
 
         IdentityIndicator.prototype.getCssClass = function () {
-            return "icon-person";
-        };
-        IdentityIndicator.prototype.getGlyphClass = function () {
-            return undefined;
+            return this.text && "icon-person";
         };
         IdentityIndicator.prototype.getText = function () {
             return this.text;

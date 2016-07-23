@@ -56,9 +56,6 @@ define(
                 getText: function () {
                     return latest;
                 },
-                getGlyphClass: function () {
-                    return "";
-                },
                 getDescription: function () {
                     return "";
                 }

@@ -68,7 +68,7 @@ define(
                 getCssClass: function () {
                     return "icon-connectivity";
                 },
-                getGlyphClass: function () {
+                getCssClass: function () {
                     return undefined;
                 },
                 getText: function () {
