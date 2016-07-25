@@ -239,6 +239,7 @@ define(
                     setBasePanZoom(bounds);
                     requery();
                 }
+                self.updateStatus($scope.domainObject, follow);
             }
 
             this.modeOptions = new PlotModeOptions([], subPlotFactory);
@@ -367,6 +368,12 @@ define(
             // Placeholder; this should reflect request state
             // when requesting historical telemetry
             return this.pending;
+        };
+
+        PlotController.prototype.updateStatus = function (domainObject, follow) {
+            if (domainObject.hasCapability('status')) {
+                domainObject.getCapability('status').set('timeconductor-unsynced', follow && this.isZoomed());
+            }
         };
 
         return PlotController;

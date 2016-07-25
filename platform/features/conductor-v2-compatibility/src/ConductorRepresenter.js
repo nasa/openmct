@@ -35,6 +35,7 @@ define(
 
             this.boundsListener = this.boundsListener.bind(this);
             this.timeSystemListener = this.timeSystemListener.bind(this);
+            this.followListener = this.followListener.bind(this);
         }
 
         ConductorRepresenter.prototype.boundsListener = function (bounds) {
@@ -51,7 +52,11 @@ define(
                 start: bounds.start,
                 end: bounds.end,
                 domain: timeSystem.metadata.key
-            });
+            }, this.conductor.follow());
+        };
+
+        ConductorRepresenter.prototype.followListener = function () {
+            this.boundsListener(this.conductor.bounds());
         };
 
         // Handle a specific representation of a specific domain object
@@ -61,6 +66,7 @@ define(
 
                 this.conductor.on("bounds", this.boundsListener);
                 this.conductor.on("timeSystem", this.timeSystemListener);
+                this.conductor.on("follow", this.followListener)
             }
         };
 
