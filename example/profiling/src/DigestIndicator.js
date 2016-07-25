@@ -60,16 +60,13 @@ define(
 
             return {
                 /**
-                 * Get the glyph CSS class (single character used as an icon)
-                 * to display in this indicator. This will return ".",
-                 * which should appear as a dataflow icon.
-                 * @returns {string} the character of the dataflow icon
+                 * Get the CSS class that defines the icon
+                 * to display in this indicator. This will appear
+                 * as a dataflow icon.
+                 * @returns {string} the cssclass of the dataflow icon
                  */
                 getCssClass: function () {
                     return "icon-connectivity";
-                },
-                getCssClass: function () {
-                    return undefined;
                 },
                 getText: function () {
                     return displayed + " digests/sec";
