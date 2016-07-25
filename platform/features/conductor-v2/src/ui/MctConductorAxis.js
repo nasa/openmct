@@ -57,39 +57,23 @@ define(
                     axisElement.call(xAxis);
                 }
 
-                // Calculates the precision of date for formatting. Relies on
-                // D3's behavior to tick on round units
-                function threshold(date){
-                    var ms = date.getTime();
-                    return [
-                        365 * 24 * 60 * 60 * 1000,          // years
-                        (365 / 12) * 24 * 60 * 60 * 1000,   // months
-                        7 * 24 * 60 * 60 * 1000,            // weeks
-                        24 * 60 * 60 * 1000,                // days
-                        60 * 60 * 1000,                     // hours
-                        60 * 1000,                          // minutes
-                        1000,                               // seconds
-                        1                                   // ms
-                    ].filter(function (boundary) {
-                        return ms % boundary === 0;
-                    })[0];
-                }
-
                 function changeTimeSystem(timeSystem) {
                     var key = timeSystem.formats()[0];
                     if (key !== undefined) {
                         var format =  formatService.getFormat(key);
+                        var b = conductor.bounds();
 
                         //Define a custom format function
                         xAxis.tickFormat(function (date) {
-                            return format.format(date, threshold(date));
+                            return format.format(date, {min: b.start, max: b.end});
                         });
                         axisElement.call(xAxis);
                     }
                 }
 
                 scope.resize = function () {
-                    setScale(conductor.bounds().start, conductor.bounds().end);
+                    var b = conductor.bounds();
+                    setScale(b.start, b.end);
                 };
 
                 conductor.on('timeSystem', changeTimeSystem);
@@ -98,9 +82,9 @@ define(
                 conductor.on('bounds', function (bounds) {
                     setScale(bounds.start, bounds.end);
                 });
-
                 //Set initial scale.
-                setScale(conductor.bounds().start, conductor.bounds().end);
+                var bounds = conductor.bounds();
+                setScale(bounds.start, bounds.end);
 
                 if (conductor.timeSystem() !== undefined) {
                     changeTimeSystem(conductor.timeSystem());
