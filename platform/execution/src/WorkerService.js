@@ -42,11 +42,19 @@ define(
             function addWorker(worker) {
                 var key = worker.key;
                 if (!workerUrls[key]) {
-                    workerUrls[key] = [
-                        worker.bundle.path,
-                        worker.bundle.sources,
-                        worker.scriptUrl
-                    ].join("/");
+                    if (worker.scriptUrl) {
+                        workerUrls[key] = [
+                            worker.bundle.path,
+                            worker.bundle.sources,
+                            worker.scriptUrl
+                        ].join("/");
+                    } else if (worker.scriptText) {
+                        var blob = new Blob(
+                            [worker.scriptText],
+                            {type: 'application/javascript'}
+                        );
+                        workerUrls[key] = URL.createObjectURL(blob);
+                    }
                     sharedWorkers[key] = worker.shared;
                 }
             }

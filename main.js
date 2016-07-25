@@ -65,49 +65,12 @@ requirejs.config({
 
 define([
     './platform/framework/src/Main',
-    'legacyRegistry',
-    './src/MCT',
-
-    './src/adapter/bundle',
-
-    './platform/framework/bundle',
-    './platform/core/bundle',
-    './platform/representation/bundle',
-    './platform/commonUI/about/bundle',
-    './platform/commonUI/browse/bundle',
-    './platform/commonUI/edit/bundle',
-    './platform/commonUI/dialog/bundle',
-    './platform/commonUI/formats/bundle',
-    './platform/commonUI/general/bundle',
-    './platform/commonUI/inspect/bundle',
-    './platform/commonUI/mobile/bundle',
-    './platform/commonUI/themes/espresso/bundle',
-    './platform/commonUI/notification/bundle',
-    './platform/containment/bundle',
-    './platform/execution/bundle',
-    './platform/exporters/bundle',
-    './platform/telemetry/bundle',
-    './platform/features/clock/bundle',
-    './platform/features/imagery/bundle',
-    './platform/features/layout/bundle',
-    './platform/features/pages/bundle',
-    './platform/features/plot/bundle',
-    './platform/features/timeline/bundle',
-    './platform/features/table/bundle',
-    './platform/forms/bundle',
-    './platform/identity/bundle',
-    './platform/persistence/aggregator/bundle',
-    './platform/persistence/local/bundle',
-    './platform/persistence/queue/bundle',
-    './platform/policy/bundle',
-    './platform/entanglement/bundle',
-    './platform/search/bundle',
-    './platform/status/bundle',
-    './platform/commonUI/regions/bundle'
-], function (Main, legacyRegistry, MCT) {
+    './src/defaultRegistry',
+    './src/MCT'
+], function (Main, defaultRegistry, MCT) {
     var mct = new MCT();
 
-    mct.legacyRegistry = legacyRegistry;
+    mct.legacyRegistry = defaultRegistry;
     mct.run = function (domElement) {
         if (!domElement) { domElement = document.body; }
         var appDiv = document.createElement('div');
@@ -117,7 +80,7 @@ define([
         mct.start();
     };
     mct.on('start', function () {
-        return new Main().run(legacyRegistry);
+        return new Main().run(defaultRegistry);
     });
 
     return mct;

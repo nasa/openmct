@@ -28,6 +28,7 @@ define([
     "text!./res/templates/search-item.html",
     "text!./res/templates/search.html",
     "text!./res/templates/search-menu.html",
+    "text!./src/services/GenericSearchWorker.js",
     'legacyRegistry'
 ], function (
     SearchController,
@@ -37,6 +38,7 @@ define([
     searchItemTemplate,
     searchTemplate,
     searchMenuTemplate,
+    searchWorkerText,
     legacyRegistry
 ) {
 
@@ -114,7 +116,7 @@ define([
             "workers": [
                 {
                     "key": "genericSearchWorker",
-                    "scriptUrl": "services/GenericSearchWorker.js"
+                    "scriptText": searchWorkerText
                 }
             ]
         }

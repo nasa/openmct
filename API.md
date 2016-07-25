@@ -106,3 +106,9 @@ Install a plugin in MCT.  Must be called before calling `run`.  Plugins are func
 
 For an example of writing a plugin, check out [plugin-example.html](plugin-example.html)
 
+### `MCT.setAssetPath(path)`
+
+Sets the path (absolute or relative) at which the Open MCT static files are being hosted.  The default value is '.'.  
+
+Note that this API is transitional and will be removed in a future version.
+
