@@ -21,8 +21,8 @@
  *****************************************************************************/
 /*global define*/
 define(
-    [],
-    function () {
+    ['./Transaction'],
+    function (Transaction) {
         /**
          * Implements an application-wide transaction state. Once a
          * transaction is started, calls to
@@ -37,10 +37,7 @@ define(
         function TransactionService($q, $log) {
             this.$q = $q;
             this.$log = $log;
-            this.transaction = false;
-
-            this.onCommits = [];
-            this.onCancels = [];
+            this.transaction = undefined;
         }
 
         /**
@@ -54,14 +51,14 @@ define(
                 //Log error because this is a programming error if it occurs.
                 this.$log.error("Transaction already in progress");
             }
-            this.transaction = true;
+            this.transaction = new Transaction(this.$log);
         };
 
         /**
          * @returns {boolean} If true, indicates that a transaction is in progress
          */
         TransactionService.prototype.isActive = function () {
-            return this.transaction;
+            return !!this.transaction;
         };
 
         /**
@@ -73,23 +70,11 @@ define(
          */
         TransactionService.prototype.addToTransaction = function (onCommit, onCancel) {
             if (this.transaction) {
-                this.onCommits.push(onCommit);
-                if (onCancel) {
-                    this.onCancels.push(onCancel);
-                }
+                return this.transaction.add(onCommit, onCancel);
             } else {
                 //Log error because this is a programming error if it occurs.
                 this.$log.error("No transaction in progress");
             }
-
-            return function () {
-                this.onCommits = this.onCommits.filter(function (callback) {
-                    return callback !== onCommit;
-                });
-                this.onCancels = this.onCancels.filter(function (callback) {
-                    return callback !== onCancel;
-                });
-            }.bind(this);
         };
 
         /**
@@ -100,24 +85,9 @@ define(
          * completed. Will reject if any commit operations fail
          */
         TransactionService.prototype.commit = function () {
-            var self = this,
-                promises = [],
-                onCommit;
-
-            while (this.onCommits.length > 0) { // ...using a while in case some onCommit adds to transaction
-                onCommit = this.onCommits.pop();
-                try { // ...also don't want to fail mid-loop...
-                    promises.push(onCommit());
-                } catch (e) {
-                    this.$log.error("Error committing transaction.");
-                }
-            }
-            return this.$q.all(promises).then(function () {
-                self.transaction = false;
-
-                self.onCommits = [];
-                self.onCancels = [];
-            });
+            var transaction = this.transaction;
+            this.transaction = undefined;
+            return transaction && transaction.commit();
         };
 
         /**
@@ -129,28 +99,13 @@ define(
          * @returns {*}
          */
         TransactionService.prototype.cancel = function () {
-            var self = this,
-                results = [],
-                onCancel;
-
-            while (this.onCancels.length > 0) {
-                onCancel = this.onCancels.pop();
-                try {
-                    results.push(onCancel());
-                } catch (error) {
-                    this.$log.error("Error committing transaction.");
-                }
-            }
-            return this.$q.all(results).then(function () {
-                self.transaction = false;
-
-                self.onCommits = [];
-                self.onCancels = [];
-            });
+            var transaction = this.transaction;
+            this.transaction = undefined;
+            return transaction && transaction.cancel();
         };
 
         TransactionService.prototype.size = function () {
-            return this.onCommits.length;
+            return this.transaction ? this.transaction.size() : 0;
         };
 
         return TransactionService;
