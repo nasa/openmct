@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2009-2015, United States Government
+ * Open MCT, Copyright (c) 2009-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -35,11 +35,13 @@ define([
      * @constructor
      * @memberof {platform/features/timeline}
      * @param exportService the service used to export as CSV
+     * @param resources the `resources` extension category
      * @param {DomainObject} domainObject the timeline being exported
      */
-    function ExportTimelineAsCSVTask(exportService, domainObject) {
+    function ExportTimelineAsCSVTask(exportService, resources, domainObject) {
         this.domainObject = domainObject;
         this.exportService = exportService;
+        this.resources = resources;
     }
 
     /**
@@ -50,9 +52,10 @@ define([
      */
     ExportTimelineAsCSVTask.prototype.run = function () {
         var exportService = this.exportService;
+        var resources = this.resources;
 
         function doExport(objects) {
-            var exporter = new TimelineColumnizer(objects),
+            var exporter = new TimelineColumnizer(objects, resources),
                 options = { headers: exporter.headers() };
             return exporter.rows().then(function (rows) {
                 return exportService.exportCSV(rows, options);

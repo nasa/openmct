@@ -14,7 +14,7 @@ $colorAHov: #fff;
 $contrastRatioPercent: 7%;
 $hoverRatioPercent: 10%;
 $basicCr: 3px;
-$controlCr: 3px;
+$controlCr: 2px;
 $smallCr: 2px;
 
 // Buttons and Controls
@@ -32,11 +32,12 @@ $sliderColorBase: $colorKey;
 $sliderColorRangeHolder: rgba(black, 0.1);
 $sliderColorRange: rgba($sliderColorBase, 0.3);
 $sliderColorRangeHov: rgba($sliderColorBase, 0.5);
-$sliderColorKnob: rgba($sliderColorBase, 0.6);
-$sliderColorKnobHov: $sliderColorBase;
+$sliderColorKnob: $sliderColorBase;
+$sliderColorKnobHov: pullForward($sliderColorKnob, $ltGamma);
 $sliderColorRangeValHovBg: rgba($sliderColorBase, 0.1);
 $sliderColorRangeValHovFg: $colorKeyFg;
-$sliderKnobW: nth($ueTimeControlH,2)/2;
+$sliderKnobW: 15px;
+$sliderKnobR: 2px;
 $timeControllerToiLineColor: #00c2ff;
 $timeControllerToiLineColorHov: #fff;
 
@@ -69,8 +70,10 @@ $colorCreateMenuText: $colorMenuFg;
 $colorCheck: $colorKey;
 $colorFormRequired: $colorAlt1;
 $colorFormValid: #33cc33;
-$colorFormError: #cc0000;
+$colorFormError: #990000;
 $colorFormInvalid: #ff3300;
+$colorFormFieldErrorBg: $colorFormError;
+$colorFormFieldErrorFg: rgba(#fff, 0.6);
 $colorFormLines: rgba(#fff, 0.1);
 $colorFormSectionHeader: rgba(#fff, 0.1);
 $colorInputBg: rgba(#000, 0.1);
@@ -180,12 +183,13 @@ $scrollbarThumbColorOverlay: lighten($colorOvrBg, 10%);
 $scrollbarThumbColorOverlayHov: lighten($scrollbarThumbColorOverlay, 2%);
 
 // Splitter
-$splitterD: 25px; // splitterD and HandleD should both be odd, or even
+$splitterD: 17px; // splitterD and $splitterHandleD should both be odd, or even
 $splitterHandleD: 1px;
+$splitterDSm: 17px; // Smaller splitter, used inside elements like a Timeline view
 $colorSplitterBg: rgba(#fff, 0.1); //pullForward($colorBodyBg, 5%);
 $splitterShdw: rgba(black, 0.4) 0 0 3px;
 $splitterEndCr: none;
-$colorSplitterHover: pullForward($colorBodyBg, 15%);
+$colorSplitterHover: pullForward($colorBodyBg, 40%);
 $colorSplitterActive: $colorKey;
 
 // Mobile

@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -24,12 +24,11 @@ define(
     ["../../src/actions/CancelAction"],
     function (CancelAction) {
 
-        //TODO: Disabled for NEM Beta
-        xdescribe("The Cancel action", function () {
-            var mockLocation,
-                mockDomainObject,
-                mockEditorCapability,
-                mockUrlService,
+        describe("The Cancel action", function () {
+            var mockDomainObject,
+                mockParentObject,
+                capabilities = {},
+                parentCapabilities = {},
                 actionContext,
                 action;
 
@@ -42,61 +41,114 @@ define(
             }
 
             beforeEach(function () {
-                mockLocation = jasmine.createSpyObj(
-                    "$location",
-                    ["path"]
-                );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    ["getCapability", "hasCapability"]
+                    [
+                        "getCapability",
+                        "hasCapability",
+                        "getModel"
+                    ]
                 );
-                mockEditorCapability = jasmine.createSpyObj(
+                mockDomainObject.getModel.andReturn({});
+
+                mockParentObject = jasmine.createSpyObj(
+                    "parentObject",
+                    [
+                        "getCapability"
+                    ]
+                );
+                mockParentObject.getCapability.andCallFake(function (name) {
+                    return parentCapabilities[name];
+                });
+
+                capabilities.editor = jasmine.createSpyObj(
                     "editor",
-                    ["save", "cancel"]
+                    ["save", "cancel", "isEditContextRoot"]
                 );
-                mockUrlService = jasmine.createSpyObj(
-                    "urlService",
-                    ["urlForLocation"]
+                capabilities.action = jasmine.createSpyObj(
+                    "actionCapability",
+                    [
+                        "perform"
+                    ]
+                );
+                capabilities.location = jasmine.createSpyObj(
+                    "locationCapability",
+                    [
+                        "getOriginal"
+                    ]
+                );
+                capabilities.location.getOriginal.andReturn(mockPromise(mockDomainObject));
+                capabilities.context = jasmine.createSpyObj(
+                    "contextCapability",
+                    [
+                        "getParent"
+                    ]
+                );
+                capabilities.context.getParent.andReturn(mockParentObject);
+
+                parentCapabilities.action = jasmine.createSpyObj(
+                    "actionCapability",
+                    [
+                        "perform"
+                    ]
                 );
 
                 actionContext = {
                     domainObject: mockDomainObject
                 };
 
-                mockDomainObject.hasCapability.andReturn(true);
-                mockDomainObject.getCapability.andReturn(mockEditorCapability);
-                mockEditorCapability.cancel.andReturn(mockPromise(true));
+                mockDomainObject.getCapability.andCallFake(function (name) {
+                    return capabilities[name];
+                });
 
-                action = new CancelAction(mockLocation, mockUrlService, actionContext);
+                mockDomainObject.hasCapability.andCallFake(function (name) {
+                    return !!capabilities[name];
+                });
+
+                capabilities.editor.cancel.andReturn(mockPromise(true));
+
+                action = new CancelAction(actionContext);
 
             });
 
-            it("only applies to domain object with an editor capability", function () {
+            it("only applies to domain object that is being edited", function () {
+                capabilities.editor.isEditContextRoot.andReturn(true);
                 expect(CancelAction.appliesTo(actionContext)).toBeTruthy();
                 expect(mockDomainObject.hasCapability).toHaveBeenCalledWith("editor");
 
+                capabilities.editor.isEditContextRoot.andReturn(false);
+                expect(CancelAction.appliesTo(actionContext)).toBeFalsy();
+
                 mockDomainObject.hasCapability.andReturn(false);
-                mockDomainObject.getCapability.andReturn(undefined);
                 expect(CancelAction.appliesTo(actionContext)).toBeFalsy();
             });
 
-            it("invokes the editor capability's save functionality when performed", function () {
-                // Verify precondition
-                expect(mockEditorCapability.cancel).not.toHaveBeenCalled();
+            it("invokes the editor capability's cancel functionality when" +
+                " performed", function () {
+                mockDomainObject.getModel.andReturn({persisted: 1});
+                //Return true from navigate action
+                capabilities.action.perform.andReturn(mockPromise(true));
                 action.perform();
 
                 // Should have called cancel
-                expect(mockEditorCapability.cancel).toHaveBeenCalled();
+                expect(capabilities.editor.cancel).toHaveBeenCalled();
 
                 // Definitely shouldn't call save!
-                expect(mockEditorCapability.save).not.toHaveBeenCalled();
+                expect(capabilities.editor.save).not.toHaveBeenCalled();
             });
 
-            it("returns to browse when performed", function () {
+            it("navigates to object if existing using navigate action", function () {
+                mockDomainObject.getModel.andReturn({persisted: 1});
+                //Return true from navigate action
+                capabilities.action.perform.andReturn(mockPromise(true));
                 action.perform();
-                expect(mockLocation.path).toHaveBeenCalledWith(
-                    mockUrlService.urlForLocation("browse", mockDomainObject)
-                );
+                expect(capabilities.action.perform).toHaveBeenCalledWith("navigate");
+            });
+
+            it("navigates to parent if new using navigate action", function () {
+                mockDomainObject.getModel.andReturn({persisted: undefined});
+                action.perform();
+                expect(parentCapabilities.action.perform).toHaveBeenCalledWith("navigate");
             });
         });
     }

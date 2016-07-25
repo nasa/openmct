@@ -1,9 +1,9 @@
 <!--
- Open MCT Web, Copyright (c) 2014-2015, United States Government
+ Open MCT, Copyright (c) 2014-2016, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
- Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ Open MCT is licensed under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,32 +14,32 @@
  License for the specific language governing permissions and limitations
  under the License.
 
- Open MCT Web includes source code licensed under additional open source
+ Open MCT includes source code licensed under additional open source
  licenses. See the Open Source Licenses file (LICENSES.md) included with
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<span class="s-btn"
-      ng-controller="DateTimeFieldController">
+<span ng-controller="DateTimeFieldController">
     <input type="text"
            ng-model="textValue"
            ng-blur="restoreTextValue(); ngBlur()"
            ng-class="{
                         error: textInvalid ||
                             (structure.validate &&
-                                !structure.validate(ngModel[field]))
+                                !structure.validate(ngModel[field])),
+                        'picker-icon': structure.format === 'utc' || !structure.format
                      }">
     </input>
     <a class="ui-symbol icon icon-calendar"
-       ng-if="structure.format === 'utc' || !structure.format"
-       ng-click="picker.active = !picker.active">
-    </a>
+       ng-if="!picker.active && (structure.format === 'utc' || !structure.format)"
+       ng-click="picker.active = !picker.active"></a>
+    <!-- If picker active show icon with no onclick to prevent double registration of clicks -->
+    <a class="ui-symbol icon icon-calendar" ng-if="picker.active"></a>
     <mct-popup ng-if="picker.active">
         <div mct-click-elsewhere="picker.active = false">
             <mct-control key="'datetime-picker'"
                          ng-model="pickerModel"
-                         field="'value'"
-                         options="{ hours: true }">
+                         field="'value'">
             </mct-control>
         </div>
     </mct-popup>

@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -29,7 +29,7 @@
     .accordion-head {
         $op: 0.2;
         border-radius: $basicCr * 0.75;
-        box-sizing: "border-box";
+        box-sizing: border-box;
         background: rgba($colorBodyFg, $op);
         cursor: pointer;
         font-size: 0.75em;
@@ -396,11 +396,11 @@ input[type="search"] {
         left: auto;
     }
     .knob-l {
-        @include border-left-radius($sliderKnobW);
+        @include border-left-radius($sliderKnobR);
         cursor: w-resize;
     }
     .knob-r {
-        @include border-right-radius($sliderKnobW);
+        @include border-right-radius($sliderKnobR);
         cursor: e-resize;
     }
     .range {
@@ -426,7 +426,6 @@ input[type="search"] {
     @include user-select(none);
     font-size: 0.8rem;
     padding: $interiorMarginLg !important;
-    width: 230px;
     .l-month-year-pager {
         $pagerW: 20px;
         height: $r1H;
@@ -513,6 +512,19 @@ input[type="search"] {
                 .sub {
                     color: inherit;
                 }
+            }
+        }
+    }
+}
+
+@include phone {
+    .l-datetime-picker {
+        padding: $interiorMargin !important;
+    }
+    .l-calendar {
+        ul.l-cal-row {
+            li {
+                padding: 2px $interiorMargin;
             }
         }
     }

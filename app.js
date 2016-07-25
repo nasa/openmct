@@ -42,6 +42,8 @@
         process.exit(0);
     }
 
+    app.disable('x-powered-by');
+
     // Override bundles.json for HTTP requests
     app.use('/' + BUNDLE_FILE, function (req, res) {
         var bundles;
@@ -75,6 +77,8 @@
     // Expose everything else as static files
     app.use(express['static'](options.directory));
 
-    // Finally, open the HTTP server
-    app.listen(options.port);
+    // Finally, open the HTTP server and log the instance to the console
+    app.listen(options.port, function() {
+        console.log('Open MCT application running at localhost:' + options.port)
+    });
 }());

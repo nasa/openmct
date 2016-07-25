@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -37,54 +37,74 @@ define(
 
         describe("The transactional persistence decorator", function () {
             var mockQ,
-                mockTransactionService,
+                mockTransactionManager,
                 mockPersistence,
                 mockDomainObject,
+                testId,
                 capability;
 
             beforeEach(function () {
+                testId = "test-id";
+
                 mockQ = jasmine.createSpyObj("$q", ["when"]);
                 mockQ.when.andCallFake(function (val) {
                     return fastPromise(val);
                 });
-                mockTransactionService = jasmine.createSpyObj(
+                mockTransactionManager = jasmine.createSpyObj(
                     "transactionService",
-                    ["isActive", "addToTransaction"]
+                    ["isActive", "addToTransaction", "clearTransactionsFor"]
                 );
                 mockPersistence = jasmine.createSpyObj(
                     "persistenceCapability",
-                    ["persist", "refresh"]
+                    ["persist", "refresh", "getSpace"]
                 );
                 mockPersistence.persist.andReturn(fastPromise());
                 mockPersistence.refresh.andReturn(fastPromise());
-                capability = new TransactionalPersistenceCapability(mockQ, mockTransactionService, mockPersistence, mockDomainObject);
+
+                mockDomainObject = jasmine.createSpyObj(
+                    "domainObject",
+                    ["getModel", "getId"]
+                );
+                mockDomainObject.getModel.andReturn({persisted: 1});
+                mockDomainObject.getId.andReturn(testId);
+
+                capability = new TransactionalPersistenceCapability(
+                    mockQ,
+                    mockTransactionManager,
+                    mockPersistence,
+                    mockDomainObject
+                );
             });
 
             it("if no transaction is active, passes through to persistence" +
                 " provider", function () {
-                mockTransactionService.isActive.andReturn(false);
+                mockTransactionManager.isActive.andReturn(false);
                 capability.persist();
                 expect(mockPersistence.persist).toHaveBeenCalled();
             });
 
             it("if transaction is active, persist and cancel calls are" +
                 " queued", function () {
-                mockTransactionService.isActive.andReturn(true);
+                mockTransactionManager.isActive.andReturn(true);
                 capability.persist();
-                expect(mockTransactionService.addToTransaction).toHaveBeenCalled();
-                mockTransactionService.addToTransaction.mostRecentCall.args[0]();
+                expect(mockTransactionManager.addToTransaction).toHaveBeenCalled();
+                mockTransactionManager.addToTransaction.mostRecentCall.args[1]();
                 expect(mockPersistence.persist).toHaveBeenCalled();
-                mockTransactionService.addToTransaction.mostRecentCall.args[1]();
+                mockTransactionManager.addToTransaction.mostRecentCall.args[2]();
                 expect(mockPersistence.refresh).toHaveBeenCalled();
             });
 
-            it("persist call is only added to transaction once", function () {
-                mockTransactionService.isActive.andReturn(true);
-                capability.persist();
-                expect(mockTransactionService.addToTransaction).toHaveBeenCalled();
-                capability.persist();
-                expect(mockTransactionService.addToTransaction.calls.length).toBe(1);
+            it("wraps getSpace", function () {
+                mockPersistence.getSpace.andReturn('foo');
+                expect(capability.getSpace()).toEqual('foo');
+            });
 
+            it("clears transactions and delegates refresh calls", function () {
+                capability.refresh();
+                expect(mockTransactionManager.clearTransactionsFor)
+                    .toHaveBeenCalledWith(testId);
+                expect(mockPersistence.refresh)
+                    .toHaveBeenCalled();
             });
 
         });

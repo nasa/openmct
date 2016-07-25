@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -122,12 +122,51 @@ define(
             it("invokes the overlay service with the correct parameters when" +
                 " a blocking dialog is requested", function () {
                 var dialogModel = {};
-                expect(dialogService.showBlockingMessage(dialogModel)).toBe(true);
+                expect(dialogService.showBlockingMessage(dialogModel)).not.toBe(false);
                 expect(mockOverlayService.createOverlay).toHaveBeenCalledWith(
                     "overlay-blocking-message",
                     dialogModel,
                     "t-dialog-sm"
                 );
+            });
+
+            describe("the blocking message dialog", function () {
+                var dialogModel = {};
+                var dialogHandle;
+
+                beforeEach(function () {
+                    dialogHandle = dialogService.showBlockingMessage(dialogModel);
+                });
+
+                it("returns a handle to the dialog", function () {
+                    expect(dialogHandle).not.toBe(undefined);
+                });
+
+                it("dismissing the dialog dismisses the overlay", function () {
+                    dialogHandle.dismiss();
+                    expect(mockOverlay.dismiss).toHaveBeenCalled();
+                });
+
+                it("individual dialogs can be dismissed", function () {
+                    var secondDialogHandle,
+                        secondMockOverlay;
+
+                    dialogHandle.dismiss();
+
+                    secondMockOverlay = jasmine.createSpyObj(
+                        "overlay",
+                        ["dismiss"]
+                    );
+                    mockOverlayService.createOverlay.andReturn(secondMockOverlay);
+                    secondDialogHandle = dialogService.showBlockingMessage(dialogModel);
+
+                    //Dismiss the first dialog. It should only dismiss if it
+                    // is active
+                    dialogHandle.dismiss();
+                    expect(secondMockOverlay.dismiss).not.toHaveBeenCalled();
+                    secondDialogHandle.dismiss();
+                    expect(secondMockOverlay.dismiss).toHaveBeenCalled();
+                });
             });
 
         });

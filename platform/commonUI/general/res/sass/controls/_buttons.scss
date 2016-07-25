@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -36,15 +36,7 @@ $pad: $interiorMargin * $baseRatio;
     padding: 0 $pad;
     font-size: 0.7rem;
     vertical-align: top;
-
-    .icon {
-        font-size: 0.8rem;
-        color: $colorKey;
-    }
-
-    .title-label {
-        vertical-align: top;
-    }
+    @include btnSubtle($colorBtnBg, $colorBtnBgHov, $colorBtnFg, $colorBtnIcon);
 
 	&.lg {
 		font-size: 1rem;
@@ -58,19 +50,14 @@ $pad: $interiorMargin * $baseRatio;
         padding: 0 ($pad / $baseRatio) / 2;
     }
 
-    &.major {
+    &.major,
+    &.key-edit,
+    &.key-properties {
         $bg: $colorBtnMajorBg;
         $hc: lighten($bg, 10%);
         @include btnSubtle($bg, $hc, $colorBtnMajorFg, $colorBtnMajorFg);
     }
 
-    &:not(.major) {
-        // bg, bgHov, fg, ic
-        @include btnSubtle($colorBtnBg, $colorBtnBgHov, $colorBtnFg, $colorBtnIcon);
-    }
-    &.pause-play {
-
-    }
     &.t-save:before {
         content:'\e612';
         font-family: symbolsfont;
@@ -108,6 +95,22 @@ $pad: $interiorMargin * $baseRatio;
         .icon:before {
             content: "\000039";
         }
+    }
+
+    &.t-export {
+        &:before {
+            @extend .ui-symbol;
+            @extend .icon;
+            content: '\e623';
+        }
+    }
+
+    .icon {
+        font-size: 0.8rem;
+    }
+
+    .title-label {
+        vertical-align: top;
     }
 }
 
@@ -275,4 +278,3 @@ body.desktop .mini-tab-icon {
         color: $colorPausedBg !important;
     }
 }
-

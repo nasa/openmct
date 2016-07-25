@@ -17,6 +17,7 @@ deployment:
 test:
   post:
     - gulp lint
+    - gulp checkstyle
 
 general:
   branches:

@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -42,7 +42,17 @@ define([
     "./src/representers/EditToolbarRepresenter",
     "./src/capabilities/EditorCapability",
     "./src/capabilities/TransactionCapabilityDecorator",
+    "./src/services/TransactionManager",
     "./src/services/TransactionService",
+    "./src/creation/CreateMenuController",
+    "./src/creation/LocatorController",
+    "./src/creation/CreationPolicy",
+    "./src/creation/CreateActionProvider",
+    "./src/creation/AddActionProvider",
+    "./src/creation/CreationService",
+    "text!./res/templates/create/locator.html",
+    "text!./res/templates/create/create-button.html",
+    "text!./res/templates/create/create-menu.html",
     "text!./res/templates/library.html",
     "text!./res/templates/edit-object.html",
     "text!./res/templates/edit-action-buttons.html",
@@ -71,7 +81,17 @@ define([
     EditToolbarRepresenter,
     EditorCapability,
     TransactionCapabilityDecorator,
+    TransactionManager,
     TransactionService,
+    CreateMenuController,
+    LocatorController,
+    CreationPolicy,
+    CreateActionProvider,
+    AddActionProvider,
+    CreationService,
+    locatorTemplate,
+    createButtonTemplate,
+    createMenuTemplate,
     libraryTemplate,
     editObjectTemplate,
     editActionButtonsTemplate,
@@ -112,6 +132,22 @@ define([
                         "$location",
                         "policyService"
                     ]
+                },
+                {
+                    "key": "CreateMenuController",
+                    "implementation": CreateMenuController,
+                    "depends": [
+                        "$scope"
+                    ]
+                },
+                {
+                    "key": "LocatorController",
+                    "implementation": LocatorController,
+                    "depends": [
+                        "$scope",
+                        "$timeout",
+                        "objectService"
+                    ]
                 }
             ],
             "directives": [
@@ -136,7 +172,7 @@ define([
                         "navigationService",
                         "$log"
                     ],
-                    "description": "Edit this object.",
+                    "description": "Edit",
                     "category": "view-control",
                     "glyph": "p"
                 },
@@ -171,7 +207,9 @@ define([
                     "implementation": SaveAction,
                     "name": "Save",
                     "description": "Save changes made to these objects.",
-                    "depends": [],
+                    "depends": [
+                        "dialogService"
+                    ],
                     "priority": "mandatory"
                 },
                 {
@@ -218,10 +256,13 @@ define([
                 },
                 {
                     "category": "navigation",
-                    "message": "There are unsaved changes.",
+                    "message": "Continuing will cause the loss of any unsaved changes.",
                     "implementation": EditNavigationPolicy
+                },
+                {
+                    "implementation": CreationPolicy,
+                    "category": "creation"
                 }
-
             ],
             "templates": [
                 {
@@ -260,6 +301,17 @@ define([
                 {
                     "key": "topbar-edit",
                     "template": topbarEditTemplate
+                },
+                {
+                    "key": "create-button",
+                    "template": createButtonTemplate
+                },
+                {
+                    "key": "create-menu",
+                    "template": createMenuTemplate,
+                    "uses": [
+                        "action"
+                    ]
                 }
             ],
             "components": [
@@ -269,7 +321,7 @@ define([
                     "implementation": TransactionCapabilityDecorator,
                     "depends": [
                         "$q",
-                        "transactionService"
+                        "transactionManager"
                     ],
                     "priority": "fallback"
                 },
@@ -281,7 +333,40 @@ define([
                         "$q",
                         "$log"
                     ]
+                },
+                {
+                    "key": "CreateActionProvider",
+                    "provides": "actionService",
+                    "type": "provider",
+                    "implementation": CreateActionProvider,
+                    "depends": [
+                        "typeService",
+                        "policyService"
+                    ]
+                },
+                {
+                    "key": "AddActionProvider",
+                    "provides": "actionService",
+                    "type": "provider",
+                    "implementation": AddActionProvider,
+                    "depends": [
+                        "$q",
+                        "typeService",
+                        "dialogService",
+                        "policyService"
+                    ]
+                },
+                {
+                    "key": "CreationService",
+                    "provides": "creationService",
+                    "type": "provider",
+                    "implementation": CreationService,
+                    "depends": [
+                        "$q",
+                        "$log"
+                    ]
                 }
+
             ],
             "representers": [
                 {
@@ -311,6 +396,21 @@ define([
                     "name": "Editor Capability",
                     "description": "Provides transactional editing capabilities",
                     "implementation": EditorCapability,
+                    "depends": [
+                        "transactionService"
+                    ]
+                }
+            ],
+            "controls": [
+                {
+                    "key": "locator",
+                    "template": locatorTemplate
+                }
+            ],
+            "services": [
+                {
+                    "key": "transactionManager",
+                    "implementation": TransactionManager,
                     "depends": [
                         "transactionService"
                     ]

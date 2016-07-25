@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -48,8 +48,8 @@ $uePaneMiniTabW: 10px;
 $uePaneMiniTabCollapsedW: 11px;
 $ueEditLeftPaneW: 75%;
 $treeSearchInputBarH: 25px;
-$ueTimeControlH: (33px, 20px, 20px);
-// Panes
+$ueTimeControlH: (33px, 18px, 20px);
+/*************** Panes */
 $ueBrowseLeftPaneTreeMinW: 150px;
 $ueBrowseLeftPaneTreeMaxW: 35%;
 $ueBrowseLeftPaneTreeW: 25%;
@@ -57,48 +57,58 @@ $ueBrowseRightPaneInspectMinW: 200px;
 $ueBrowseRightPaneInspectMaxW: 35%;
 $ueBrowseRightPaneInspectW: 20%;
 $ueDesktopMinW: 600px;
-
-// Overlay
+/*************** Overlay */
 $ovrTopBarH: 45px;
 $ovrFooterH: 24px;
 $overlayMargin: 25px;
-// Items
+/*************** Items */
 $ueBrowseGridItemLg: 200px;
 $ueBrowseGridItemTopBarH: 20px;
 $ueBrowseGridItemBottomBarH: 30px;
 $itemPadLR: 5px;
-// Tree
+/*************** Tree */
 $treeVCW: 10px;
 $treeTypeIconH: 1.4em; // was 16px
 $treeTypeIconHPx: 16px;
 $treeTypeIconW: 18px;
 $treeContextTriggerW: 20px;
-// Tabular
+/*************** Tabular */
 $tabularHeaderH: 22px; //18px
 $tabularTdPadLR: $itemPadLR;
 $tabularTdPadTB: 3px;
-// Imagery
+/*************** Imagery */
 $imageMainControlBarH: 25px;
 $imageThumbsD: 120px;
 $imageThumbsWrapperH: $imageThumbsD * 1.4;
 $imageThumbPad: 1px;
-// Ticks
+/*************** Ticks */
 $ticksH: 25px;
 $tickLblVMargin: 3px;
 $tickLblH: 15px;
 $tickLblW: 50px;
 $tickH: $ticksH - $tickLblVMargin - $tickLblH;
 $tickW: 1px;
-// Bubbles
+/*************** Plots */
+$plotYBarW: 60px;
+$plotYLabelMinH: 20px;
+$plotYLabelW: 10px;
+$plotXBarH: 32px;
+$plotLegendH: 20px;
+$plotSwatchD: 8px;
+// 1: Top, 2: right, 3: bottom, 4: left
+$plotDisplayArea: ($plotLegendH + $interiorMargin, 0, $plotXBarH + $interiorMargin, $plotYBarW);
+/* min plot height is based on user testing to find minimum useful height */
+$plotMinH: 95px;
+/*************** Bubbles */
 $bubbleArwSize: 10px;
 $bubblePad: $interiorMargin;
 $bubbleMinW: 100px;
 $bubbleMaxW: 300px;
-// Forms
+/*************** Forms */
 $reqSymbolW: 15px;
 $reqSymbolM: $interiorMargin * 2;
 $reqSymbolFontSize: 0.7em;
-// Wait Spinner Defaults
+/*************** Wait Spinner Defaults */
 $waitSpinnerD: 32px;
 $waitSpinnerTreeD: 20px;
 $waitSpinnerBorderW: 5px;
@@ -124,6 +134,8 @@ $dirImgs: $dirCommonRes + 'images/';
 
 /************************** TIMINGS */
 $controlFadeMs: 100ms;
+$browseToEditAnimMs: 400ms;
+$editBorderPulseMs: 500ms;
 
 /************************** LIMITS */
 $glyphLimit: '\e603';

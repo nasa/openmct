@@ -32,11 +32,12 @@ $sliderColorBase: $colorKey;
 $sliderColorRangeHolder: rgba(black, 0.07);
 $sliderColorRange: rgba($sliderColorBase, 0.2);
 $sliderColorRangeHov: rgba($sliderColorBase, 0.4);
-$sliderColorKnob: rgba($sliderColorBase, 0.5);
+$sliderColorKnob: pushBack($sliderColorBase, 20%);
 $sliderColorKnobHov: rgba($sliderColorBase, 0.7);
-$sliderColorRangeValHovBg: $sliderColorRange; //rgba($sliderColorBase, 0.1);
+$sliderColorRangeValHovBg: $sliderColorRange;
 $sliderColorRangeValHovFg: $colorBodyFg;
-$sliderKnobW: nth($ueTimeControlH,2)/2;
+$sliderKnobW: 15px;
+$sliderKnobR: 2px;
 $timeControllerToiLineColor: $colorBodyFg;
 $timeControllerToiLineColorHov: #0052b5;
 
@@ -69,8 +70,10 @@ $colorCreateMenuText: $colorBodyFg;
 $colorCheck: $colorKey;
 $colorFormRequired: $colorKey;
 $colorFormValid: #33cc33;
-$colorFormError: #cc0000;
+$colorFormError: #990000;
 $colorFormInvalid: #ff2200;
+$colorFormFieldErrorBg: $colorFormError;
+$colorFormFieldErrorFg: rgba(#fff, 0.6);
 $colorFormLines: rgba(#000, 0.1);
 $colorFormSectionHeader: rgba(#000, 0.05);
 $colorInputBg: $colorGenBg;
@@ -180,12 +183,12 @@ $scrollbarThumbColorOverlay: darken($colorOvrBg, 50%);
 $scrollbarThumbColorOverlayHov: $scrollbarThumbColorHov;
 
 // Splitter
-$splitterD: 24px;
+$splitterD: 16px; // splitterD and $splitterHandleD should both be odd, or even
 $splitterHandleD: 2px;
 $colorSplitterBg: pullForward($colorBodyBg, 10%);
 $splitterShdw: none;
 $splitterEndCr: none;
-$colorSplitterHover: none;
+$colorSplitterHover: pullForward($colorBodyBg, 30%);
 $colorSplitterActive: $colorKey;
 
 // Mobile

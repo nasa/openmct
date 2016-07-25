@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2009-2015, United States Government
+ * Open MCT, Copyright (c) 2009-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -23,13 +23,20 @@
 define(
     ['../../src/actions/CompositionColumn'],
     function (CompositionColumn) {
+        var TEST_IDS = ['a', 'b', 'c', 'd', 'e', 'f'];
+
         describe("CompositionColumn", function () {
             var testIndex,
+                testIdMap,
                 column;
 
             beforeEach(function () {
                 testIndex = 3;
-                column = new CompositionColumn(testIndex);
+                testIdMap = TEST_IDS.reduce(function (map, id, index) {
+                    map[id] = index;
+                    return map;
+                }, {});
+                column = new CompositionColumn(testIndex, testIdMap);
             });
 
             it("includes a one-based index in its name", function () {
@@ -46,15 +53,13 @@ define(
                         'domainObject',
                         ['getId', 'getModel', 'getCapability']
                     );
-                    testModel = {
-                        composition: ['a', 'b', 'c', 'd', 'e', 'f']
-                    };
+                    testModel = { composition: TEST_IDS };
                     mockDomainObject.getModel.andReturn(testModel);
                 });
 
-                it("returns a corresponding identifier", function () {
+                it("returns a corresponding value from the map", function () {
                     expect(column.value(mockDomainObject))
-                        .toEqual(testModel.composition[testIndex]);
+                        .toEqual(testIdMap[testModel.composition[testIndex]]);
                 });
 
                 it("returns nothing when composition is exceeded", function () {

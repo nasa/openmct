@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2009-2015, United States Government
+ * Open MCT, Copyright (c) 2009-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -24,7 +24,8 @@ define(
     ['../../src/actions/ExportTimelineAsCSVAction'],
     function (ExportTimelineAsCSVAction) {
         describe("ExportTimelineAsCSVAction", function () {
-            var mockExportService,
+            var mockLog,
+                mockExportService,
                 mockNotificationService,
                 mockNotification,
                 mockDomainObject,
@@ -39,6 +40,13 @@ define(
                     ['getId', 'getModel', 'getCapability', 'hasCapability']
                 );
                 mockType = jasmine.createSpyObj('type', ['instanceOf']);
+
+                mockLog = jasmine.createSpyObj('$log', [
+                    'warn',
+                    'error',
+                    'info',
+                    'debug'
+                ]);
                 mockExportService = jasmine.createSpyObj(
                     'exportService',
                     ['exportCSV']
@@ -63,8 +71,10 @@ define(
                 testContext = { domainObject: mockDomainObject };
 
                 action = new ExportTimelineAsCSVAction(
+                    mockLog,
                     mockExportService,
                     mockNotificationService,
+                    [],
                     testContext
                 );
             });
@@ -129,8 +139,11 @@ define(
                 });
 
                 describe("and an error occurs", function () {
+                    var testError;
+
                     beforeEach(function () {
-                        testPromise.reject();
+                        testError = { someProperty: "some value" };
+                        testPromise.reject(testError);
                         waitsFor(function () {
                             return mockCallback.calls.length > 0;
                         });
@@ -144,6 +157,10 @@ define(
                     it("shows an error message", function () {
                         expect(mockNotificationService.error)
                             .toHaveBeenCalledWith(jasmine.any(String));
+                    });
+
+                    it("logs the root cause", function () {
+                        expect(mockLog.warn).toHaveBeenCalledWith(testError);
                     });
                 });
             });

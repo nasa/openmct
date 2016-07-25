@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -58,11 +58,6 @@ define(
             this.persistenceService = persistenceService;
             this.notificationService = notificationService;
             this.$q = $q;
-        }
-
-        function getKey(id) {
-            var parts = id.split(":");
-            return parts.length > 1 ? parts.slice(1).join(":") : id;
         }
 
         /**
@@ -136,7 +131,7 @@ define(
             // ...and persist
             return persistenceFn.apply(persistenceService, [
                 this.getSpace(),
-                getKey(domainObject.getId()),
+                this.getKey(),
                 domainObject.getModel()
             ]).then(function (result) {
                 return rejectIfFalsey(result, self.$q);
@@ -162,9 +157,13 @@ define(
                 }, modified);
             }
 
+            if (domainObject.getModel().persisted === undefined) {
+                return this.$q.when(true);
+            }
+
             return this.persistenceService.readObject(
                     this.getSpace(),
-                    this.domainObject.getId()
+                    this.getKey()
                 ).then(updateModel);
         };
 
@@ -183,6 +182,7 @@ define(
             return this.identifierService.parse(id).getSpace();
         };
 
+
         /**
          * Check if this domain object has been persisted at some
          * point.
@@ -190,6 +190,16 @@ define(
          */
         PersistenceCapability.prototype.persisted = function () {
             return this.domainObject.getModel().persisted !== undefined;
+        };
+
+        /**
+         * Get the key for this domain object in the given space.
+         *
+         * @returns {string} the key of the object in it's space.
+         */
+        PersistenceCapability.prototype.getKey = function () {
+            var id = this.domainObject.getId();
+            return this.identifierService.parse(id).getKey();
         };
 
         return PersistenceCapability;

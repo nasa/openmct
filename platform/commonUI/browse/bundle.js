@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -23,24 +23,17 @@
 define([
     "./src/BrowseController",
     "./src/PaneController",
+    "./src/InspectorPaneController",
     "./src/BrowseObjectController",
-    "./src/creation/CreateMenuController",
-    "./src/creation/LocatorController",
     "./src/MenuArrowController",
     "./src/navigation/NavigationService",
-    "./src/creation/CreationPolicy",
     "./src/navigation/NavigateAction",
+    "./src/navigation/OrphanNavigationHandler",
     "./src/windowing/NewTabAction",
     "./src/windowing/FullscreenAction",
-    "./src/creation/CreateActionProvider",
-    "./src/creation/AddActionProvider",
-    "./src/creation/CreationService",
     "./src/windowing/WindowTitler",
     "text!./res/templates/browse.html",
-    "text!./res/templates/create/locator.html",
     "text!./res/templates/browse-object.html",
-    "text!./res/templates/create/create-button.html",
-    "text!./res/templates/create/create-menu.html",
     "text!./res/templates/items/grid-item.html",
     "text!./res/templates/browse/object-header.html",
     "text!./res/templates/menu-arrow.html",
@@ -52,24 +45,17 @@ define([
 ], function (
     BrowseController,
     PaneController,
+    InspectorPaneController,
     BrowseObjectController,
-    CreateMenuController,
-    LocatorController,
     MenuArrowController,
     NavigationService,
-    CreationPolicy,
     NavigateAction,
+    OrphanNavigationHandler,
     NewTabAction,
     FullscreenAction,
-    CreateActionProvider,
-    AddActionProvider,
-    CreationService,
     WindowTitler,
     browseTemplate,
-    locatorTemplate,
     browseObjectTemplate,
-    createButtonTemplate,
-    createMenuTemplate,
     gridItemTemplate,
     objectHeaderTemplate,
     menuArrowTemplate,
@@ -109,11 +95,9 @@ define([
                         "$scope",
                         "$route",
                         "$location",
-                        "$window",
                         "objectService",
                         "navigationService",
                         "urlService",
-                        "policyService",
                         "DEFAULT_PATH"
                     ]
                 },
@@ -137,33 +121,22 @@ define([
                     ]
                 },
                 {
-                    "key": "CreateMenuController",
-                    "implementation": CreateMenuController,
-                    "depends": [
-                        "$scope"
-                    ]
-                },
-                {
-                    "key": "LocatorController",
-                    "implementation": LocatorController,
-                    "depends": [
-                        "$scope",
-                        "$timeout",
-                        "objectService"
-                    ]
-                },
-                {
                     "key": "MenuArrowController",
                     "implementation": MenuArrowController,
                     "depends": [
                         "$scope"
                     ]
-                }
-            ],
-            "controls": [
+                },
                 {
-                    "key": "locator",
-                    "template": locatorTemplate
+                    "key": "InspectorPaneController",
+                    "implementation": InspectorPaneController,
+                    "priority": "preferred",
+                    "depends": [
+                        "$scope",
+                        "agentService",
+                        "$window",
+                        "navigationService"
+                    ]
                 }
             ],
             "representations": [
@@ -179,17 +152,6 @@ define([
                     ],
                     "uses": [
                         "view"
-                    ]
-                },
-                {
-                    "key": "create-button",
-                    "template": createButtonTemplate
-                },
-                {
-                    "key": "create-menu",
-                    "template": createMenuTemplate,
-                    "uses": [
-                        "action"
                     ]
                 },
                 {
@@ -244,19 +206,15 @@ define([
                     "implementation": NavigationService
                 }
             ],
-            "policies": [
-                {
-                    "implementation": CreationPolicy,
-                    "category": "creation"
-                }
-            ],
             "actions": [
                 {
                     "key": "navigate",
                     "implementation": NavigateAction,
                     "depends": [
                         "navigationService",
-                        "$q"
+                        "$q",
+                        "policyService",
+                        "$window"
                     ]
                 },
                 {
@@ -302,42 +260,6 @@ define([
                     "editable": false
                 }
             ],
-            "components": [
-                {
-                    "key": "CreateActionProvider",
-                    "provides": "actionService",
-                    "type": "provider",
-                    "implementation": CreateActionProvider,
-                    "depends": [
-                        "$q",
-                        "typeService",
-                        "navigationService",
-                        "policyService"
-                    ]
-                },
-                {
-                    "key": "AddActionProvider",
-                    "provides": "actionService",
-                    "type": "provider",
-                    "implementation": AddActionProvider,
-                    "depends": [
-                        "$q",
-                        "typeService",
-                        "dialogService",
-                        "policyService"
-                    ]
-                },
-                {
-                    "key": "CreationService",
-                    "provides": "creationService",
-                    "type": "provider",
-                    "implementation": CreationService,
-                    "depends": [
-                        "$q",
-                        "$log"
-                    ]
-                }
-            ],
             "runs": [
                 {
                     "implementation": WindowTitler,
@@ -345,6 +267,14 @@ define([
                         "navigationService",
                         "$rootScope",
                         "$document"
+                    ]
+                },
+                {
+                    "implementation": OrphanNavigationHandler,
+                    "depends": [
+                        "throttle",
+                        "topic",
+                        "navigationService"
                     ]
                 }
             ],

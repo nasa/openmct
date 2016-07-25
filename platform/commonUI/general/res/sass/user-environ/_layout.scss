@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -194,7 +194,7 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
     .holder.holder-treeview-elements {
         top: $bodyMargin;
         right: 0;
-        bottom: $bodyMargin;
+        bottom: $interiorMargin;
         left: $bodyMargin;
         .create-btn-holder {
             &.s-status-editing {
@@ -215,17 +215,17 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
         left: 0;
         .holder-object {
             top: $bodyMargin;
-            bottom: $bodyMargin;
+            bottom: $interiorMargin;
         }
         .holder-inspector {
             top: $bodyMargin;
-            bottom: $bodyMargin;
+            bottom: $interiorMargin;
             left: $bodyMargin;
             right: $bodyMargin;
         }
         .holder-elements {
             top: 0;
-            bottom: $bodyMargin;
+            bottom: $interiorMargin;
             left: $bodyMargin;
             right: $bodyMargin;
         }
@@ -237,29 +237,9 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
     top: $ueTopBarH + $interiorMarginLg;
 }
 
-.l-object-wrapper {
-    @extend .abs;
-
-    .object-holder-main {
-        @extend .abs;
-    }
-    .l-edit-controls {
-        //@include trans-prop-nice((opacity, height), 0.25s);
-        border-bottom: 1px solid $colorInteriorBorder;
-        line-height: $ueEditToolBarH;
-        height: 0px;
-        opacity: 0;
-        .tool-bar {
-            right: $interiorMargin;
-        }
-    }
-}
-
 .l-object-wrapper-inner {
     @include trans-prop-nice-resize(0.25s);
 }
-
-
 
 .object-browse-bar .s-btn,
 .top-bar .buttons-main .s-btn,
@@ -288,8 +268,9 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
 
     .left {
         padding-right: $interiorMarginLg;
-        .l-back:not(.s-status-editing) {
+        .l-back {
             margin-right: $interiorMarginLg;
+            &.s-status-editing { display: none; }
         }
     }
 }
@@ -376,19 +357,49 @@ body.desktop {
 
 .s-status-editing {
     .l-object-wrapper {
-        @include pulseBorder($colorEditAreaFg, $dur: 1s, $opacity0: 0.3);
-        border-radius: $controlCr;
+        $t2Dur: $browseToEditAnimMs;
+        $t1Dur: $t2Dur / 2;
+        $pulseDur: $editBorderPulseMs;
+        $bC0: rgba($colorEditAreaFg, 0.5);
+        $bC100: rgba($colorEditAreaFg, 1);
+
         background-color: $colorEditAreaBg;
-        border-color: $colorEditAreaFg;
-        border-width: 2px;
-        border-style: dotted;
-        .l-object-wrapper-inner {
-            @include absPosDefault(3px, hidden);
+        border-radius: $controlCr;
+        border: 1px dotted $bC0;
+
+        // Transition 1
+        @include keyframes(wrapperIn) {
+            from { border: 0px dotted transparent; padding: 0; }
+            to { border: 1px dotted $bC0; padding: 5px; }
         }
+
+        // Do last
+        @include keyframes(pulseNew) {
+            from  { border-color: $bC0; }
+            to { border-color: $bC100; }
+        }
+
+        @include animation-name(wrapperIn, pulseNew);
+        @include animation-duration($t1Dur, $pulseDur);
+        @include animation-delay(0s, $t1Dur + $t2Dur);
+        @include animation-direction(normal, alternate);
+        @include animation-fill-mode(both, none);
+        @include animation-iteration-count(1, infinite);
+        @include animation-timing-function(ease-in-out, linear);
+
+
         .l-edit-controls {
-            height: $ueEditToolBarH + $interiorMargin;
-            margin-bottom: $interiorMargin;
-            opacity: 1;
+            height: 0;
+            border-bottom: 1px solid $colorInteriorBorder;
+            // Transition 2: reveal edit controls
+            @include keyframes(editIn) {
+                from { border-bottom: 0px solid transparent; height: 0; margin-bottom: 0; }
+                to { border-bottom: 1px solid $colorInteriorBorder; height: $ueEditToolBarH + $interiorMargin; margin-bottom: $interiorMargin; }
+            }
+            @include animToParams(editIn, $dur: $t2Dur, $delay: $t1Dur);
+            .tool-bar {
+                right: $interiorMargin;
+            }
         }
     }
 }

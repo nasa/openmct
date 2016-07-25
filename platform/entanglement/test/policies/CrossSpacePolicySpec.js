@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -70,27 +70,25 @@ define(
                 policy = new CrossSpacePolicy();
             });
 
-            ['move', 'copy'].forEach(function (key) {
-                describe("for " + key + " actions", function () {
-                    beforeEach(function () {
-                        testActionMetadata.key = key;
-                    });
+            describe("for move actions", function () {
+                beforeEach(function () {
+                    testActionMetadata.key = 'move';
+                });
 
-                    it("allows same-space changes", function () {
-                        expect(policy.allow(mockAction, sameSpaceContext))
-                            .toBe(true);
-                    });
+                it("allows same-space changes", function () {
+                    expect(policy.allow(mockAction, sameSpaceContext))
+                        .toBe(true);
+                });
 
-                    it("disallows cross-space changes", function () {
-                        expect(policy.allow(mockAction, crossSpaceContext))
-                            .toBe(false);
-                    });
+                it("disallows cross-space changes", function () {
+                    expect(policy.allow(mockAction, crossSpaceContext))
+                        .toBe(false);
+                });
 
-                    it("allows actions with no selectedObject", function () {
-                        expect(policy.allow(mockAction, {
-                            domainObject: makeObject('a')
-                        })).toBe(true);
-                    });
+                it("allows actions with no selectedObject", function () {
+                    expect(policy.allow(mockAction, {
+                        domainObject: makeObject('a')
+                    })).toBe(true);
                 });
             });
 

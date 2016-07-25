@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -37,9 +37,8 @@ define(
                 mockUrlService,
                 mockDomainObject,
                 mockNextObject,
-                mockWindow,
-                mockPolicyService,
                 testDefaultRoot,
+                mockActionCapability,
                 controller;
 
             function mockPromise(value) {
@@ -55,25 +54,14 @@ define(
                     mockScope,
                     mockRoute,
                     mockLocation,
-                    mockWindow,
                     mockObjectService,
                     mockNavigationService,
                     mockUrlService,
-                    mockPolicyService,
                     testDefaultRoot
                 );
             }
 
             beforeEach(function () {
-                mockWindow = jasmine.createSpyObj('$window', [
-                   "confirm"
-                ]);
-                mockWindow.confirm.andReturn(true);
-
-                mockPolicyService = jasmine.createSpyObj('policyService', [
-                    'allow'
-                ]);
-
                 testDefaultRoot = "some-root-level-domain-object";
 
                 mockScope = jasmine.createSpyObj(
@@ -127,6 +115,8 @@ define(
                 mockNextObject.useCapability.andReturn(undefined);
                 mockNextObject.getId.andReturn("next");
                 mockDomainObject.getId.andReturn(testDefaultRoot);
+
+                mockActionCapability = jasmine.createSpyObj('actionCapability', ['perform']);
 
                 instantiateController();
             });
@@ -211,8 +201,13 @@ define(
                 mockContext.getPath.andReturn(
                     [mockRootObject, mockDomainObject, mockNextObject]
                 );
+
+                //Return true from navigate action
+                mockActionCapability.perform.andReturn(mockPromise(true));
+
                 mockNextObject.getCapability.andCallFake(function (c) {
-                    return c === 'context' && mockContext;
+                    return (c === 'context' && mockContext) ||
+                        (c === 'action' && mockActionCapability);
                 });
                 mockScope.$on.andReturn(mockUnlisten);
                 // Provide a navigation change
@@ -225,6 +220,7 @@ define(
                 mockLocation.path.andReturn("/browse/");
 
                 mockNavigationService.setNavigation.andReturn(true);
+                mockActionCapability.perform.andReturn(mockPromise(true));
 
                 // Exercise the Angular workaround
                 mockNavigationService.addListener.mostRecentCall.args[0]();
@@ -243,6 +239,9 @@ define(
                 mockScope.navigatedObject = mockDomainObject;
                 mockNavigationService.setNavigation.andReturn(true);
 
+                mockActionCapability.perform.andReturn(mockPromise(true));
+                mockNextObject.getCapability.andReturn(mockActionCapability);
+
                 //Simulate a change in selected tree object
                 mockScope.treeModel = {selectedObject: mockDomainObject};
                 mockScope.$watch.mostRecentCall.args[1](mockNextObject);
@@ -254,11 +253,10 @@ define(
             it("after failed navigation event resets the selected tree" +
                 " object", function () {
                 mockScope.navigatedObject = mockDomainObject;
-                mockWindow.confirm.andReturn(false);
-                mockPolicyService.allow.andCallFake(function (category, object, context, callback) {
-                    callback("unsaved changes");
-                    return false;
-                });
+
+                //Return false from navigation action
+                mockActionCapability.perform.andReturn(mockPromise(false));
+                mockNextObject.getCapability.andReturn(mockActionCapability);
 
                 //Simulate a change in selected tree object
                 mockScope.treeModel = {selectedObject: mockDomainObject};

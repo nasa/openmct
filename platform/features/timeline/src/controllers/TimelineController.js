@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2009-2015, United States Government
+ * Open MCT, Copyright (c) 2009-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -79,15 +79,6 @@ define(
                 graphPopulator.populate(swimlanePopulator.get());
             }
 
-            // Get pixel width for right pane, using zoom controller
-            function width(zoomController) {
-                var start = swimlanePopulator.start(),
-                    end = swimlanePopulator.end();
-                return zoomController.toPixels(zoomController.duration(
-                    Math.max(end - start, MINIMUM_DURATION)
-                ));
-            }
-
             // Refresh resource graphs
             function refresh() {
                 if (graphPopulator) {
@@ -96,6 +87,8 @@ define(
                     });
                 }
             }
+
+            $scope.$watch("configuration", swimlanePopulator.configure);
 
             // Recalculate swimlane state on changes
             $scope.$watch("domainObject", swimlanePopulator.populate);
@@ -119,10 +112,10 @@ define(
             // Expose active set of swimlanes
             return {
                 /**
-                 * Get the width, in pixels, of the timeline area
-                 * @returns {number} width, in pixels
+                 * Get the end of the displayed timeline, in milliseconds.
+                 * @returns {number} the end of the displayed timeline
                  */
-                width: width,
+                end: swimlanePopulator.end.bind(swimlanePopulator),
                 /**
                  * Get the swimlanes which should currently be displayed.
                  * @returns {TimelineSwimlane[]} the swimlanes

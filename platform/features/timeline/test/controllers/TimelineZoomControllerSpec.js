@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2009-2015, United States Government
+ * Open MCT, Copyright (c) 2009-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -28,33 +28,30 @@ define(
         describe("The timeline zoom state controller", function () {
             var testConfiguration,
                 mockScope,
+                mockWindow,
                 controller;
 
             beforeEach(function () {
                 testConfiguration = {
-                    levels: [
-                        1000,
-                        2000,
-                        3500
-                    ],
+                    levels: [1000, 2000, 3500],
                     width: 12321
                 };
-                mockScope = jasmine.createSpyObj("$scope", ['$watch']);
+                mockScope =
+                    jasmine.createSpyObj("$scope", ['$watch', '$apply']);
                 mockScope.commit = jasmine.createSpy('commit');
+                mockScope.scroll = { x: 0, width: 1000 };
+                mockWindow = {
+                    requestAnimationFrame: jasmine.createSpy('raf')
+                };
                 controller = new TimelineZoomController(
                     mockScope,
+                    mockWindow,
                     testConfiguration
                 );
             });
 
             it("starts off at a middle zoom level", function () {
                 expect(controller.zoom()).toEqual(2000);
-            });
-
-            it("allows duration to be changed", function () {
-                var initial = controller.duration();
-                controller.duration(initial * 3.33);
-                expect(controller.duration() > initial).toBeTruthy();
             });
 
             it("handles time-to-pixel conversions", function () {
@@ -74,32 +71,81 @@ define(
                 expect(controller.zoom()).toEqual(3500);
             });
 
-            it("does not normally persist zoom changes", function () {
-                controller.zoom(1);
-                expect(mockScope.commit).not.toHaveBeenCalled();
-            });
+            describe("when watches have fired", function () {
+                var mockDomainObject,
+                    mockPromise,
+                    mockTimespan,
+                    testStart,
+                    testEnd;
 
-            it("persists zoom changes in Edit mode", function () {
-                mockScope.domainObject = jasmine.createSpyObj(
-                    'domainObject',
-                    ['hasCapability', 'getCapability']
-                );
-                mockScope.domainObject.hasCapability.andCallFake(function (c) {
-                    return c === 'editor';
+                beforeEach(function () {
+                    testStart = 3000;
+                    testEnd = 5500;
+
+                    mockDomainObject = jasmine.createSpyObj('domainObject', [
+                        'getId',
+                        'getModel',
+                        'getCapability',
+                        'useCapability'
+                    ]);
+                    mockPromise = jasmine.createSpyObj('promise', ['then']);
+                    mockTimespan = jasmine.createSpyObj('timespan', [
+                        'getStart',
+                        'getEnd',
+                        'getDuration'
+                    ]);
+
+                    mockDomainObject.useCapability.andCallFake(function (c) {
+                        return c === 'timespan' && mockPromise;
+                    });
+                    mockPromise.then.andCallFake(function (callback) {
+                        callback(mockTimespan);
+                    });
+                    mockTimespan.getStart.andReturn(testStart);
+                    mockTimespan.getEnd.andReturn(testEnd);
+                    mockTimespan.getDuration.andReturn(testEnd - testStart);
+
+                    mockScope.scroll = { x: 0, width: 20000 };
+                    mockScope.domainObject = mockDomainObject;
+
+                    mockScope.$watch.calls.forEach(function (call) {
+                        call.args[1](mockScope[call.args[0]]);
+                    });
+
+                    mockWindow.requestAnimationFrame.calls.forEach(function (call) {
+                        call.args[0]();
+                    });
                 });
-                mockScope.domainObject.getCapability.andCallFake(function (c) {
-                    if (c === 'editor') {
-                        return {
-                            inEditContext: function () {
-                                return true;
-                            }
-                        };
-                    }
+
+                it("zooms to fit the timeline", function () {
+                    var x1 = mockScope.scroll.x,
+                        x2 = mockScope.scroll.x + mockScope.scroll.width;
+                    expect(Math.round(controller.toMillis(x1)))
+                        .toEqual(testStart);
+                    expect(Math.round(controller.toMillis(x2)))
+                        .toBeGreaterThan(testEnd);
                 });
-                controller.zoom(1);
-                expect(mockScope.commit).toHaveBeenCalled();
-                expect(mockScope.configuration.zoomLevel)
-                    .toEqual(jasmine.any(Number));
+
+                it("provides a width which is not less than scroll area width", function () {
+                    var testPixel = mockScope.scroll.width / 4,
+                        testMillis = controller.toMillis(testPixel);
+                    expect(controller.width(testMillis))
+                        .not.toBeLessThan(mockScope.scroll.width);
+                });
+
+                it("provides a width with some margin past timestamp", function () {
+                    var testPixel = mockScope.scroll.width * 4,
+                        testMillis = controller.toMillis(testPixel);
+                    expect(controller.width(testMillis))
+                        .toBeGreaterThan(controller.toPixels(testMillis));
+                });
+
+                it("provides a width which does not greatly exceed timestamp", function () {
+                    var testPixel = mockScope.scroll.width * 4,
+                        testMillis = controller.toMillis(testPixel);
+                    expect(controller.width(testMillis))
+                        .toBeLessThan(controller.toPixels(testMillis * 2));
+                });
             });
 
         });

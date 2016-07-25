@@ -1,9 +1,9 @@
 <!--
- Open MCT Web, Copyright (c) 2014-2015, United States Government
+ Open MCT, Copyright (c) 2014-2016, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
- Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ Open MCT is licensed under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,47 +14,48 @@
  License for the specific language governing permissions and limitations
  under the License.
 
- Open MCT Web includes source code licensed under additional open source
+ Open MCT includes source code licensed under additional open source
  licenses. See the Open Source Licenses file (LICENSES.md) included with
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div ng-controller="TimeRangeController as trCtrl">
-    <form class="l-time-range-inputs-holder"
+<div ng-controller="TimeRangeController as trCtrl" class="l-flex-col">
+    <form class="l-time-range-inputs-holder l-flex-row flex-elem"
           ng-submit="trCtrl.updateBoundsFromForm()">
-        <span class="l-time-range-inputs-elem ui-symbol type-icon">&#x43;</span>
-        <span class="l-time-range-input">
-            <mct-control key="'datetime-field'"
-                         structure="{
-                             format: parameters.format,
-                             validate: trCtrl.validateStart
-                         }"
-                         ng-model="formModel"
-                         ng-blur="trCtrl.updateBoundsFromForm()"
-                         field="'start'"
-                         class="time-range-start">
-            </mct-control>
+        <span class="l-time-range-inputs-elem ui-symbol type-icon flex-elem">&#x43;</span>
+        <span class="l-time-range-inputs-elem t-inputs-w l-flex-row flex-elem">
+            <span class="l-time-range-input-w flex-elem">
+                <mct-control key="'datetime-field'"
+                             structure="{
+                                 format: parameters.format,
+                                 validate: trCtrl.validateStart
+                             }"
+                             ng-model="formModel"
+                             ng-blur="trCtrl.updateBoundsFromForm()"
+                             field="'start'"
+                             class="time-range-start">
+                </mct-control>
+            </span>
+
+            <span class="l-time-range-inputs-elem lbl flex-elem">to</span>
+
+            <span class="l-time-range-input-w flex-elem" ng-controller="ToggleController as t2">
+                <mct-control key="'datetime-field'"
+                             structure="{
+                                 format: parameters.format,
+                                 validate: trCtrl.validateEnd
+                             }"
+                             ng-model="formModel"
+                             ng-blur="trCtrl.updateBoundsFromForm()"
+                             field="'end'"
+                             class="time-range-end">
+                </mct-control>
+            </span>
         </span>
-
-        <span class="l-time-range-inputs-elem lbl">to</span>
-
-        <span class="l-time-range-input" ng-controller="ToggleController as t2">
-            <mct-control key="'datetime-field'"
-                         structure="{
-                             format: parameters.format,
-                             validate: trCtrl.validateEnd
-                         }"
-                         ng-model="formModel"
-                         ng-blur="trCtrl.updateBoundsFromForm()"
-                         field="'end'"
-                         class="time-range-end">
-            </mct-control>&nbsp;
-        </span>
-
         <input type="submit" class="hidden">
     </form>
 
-    <div class="l-time-range-slider-holder">
+    <div class="l-time-range-slider-holder flex-elem">
         <div class="l-time-range-slider">
             <div class="slider"
                  mct-resize="spanWidth = bounds.width">
@@ -85,7 +86,7 @@
         </div>
     </div>
 
-    <div class="l-time-range-ticks-holder">
+    <div class="l-time-range-ticks-holder flex-elem">
         <div class="l-time-range-ticks">
             <div
                 ng-repeat="tick in ticks track by $index"

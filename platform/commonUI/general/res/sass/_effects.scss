@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -39,15 +39,20 @@
     @include pulse($animName: pulse-subtle, $dur: 500ms, $opacity0: 0.7);
 }
 
-@mixin pulseBorder($c: red, $dur: 500ms, $iteration: infinite, $delay: 0s, $opacity0: 0, $opacity100: 1) {
-    @include keyframes(pulseBorder) {
-        0%   { border-color: rgba($c, $opacity0); }
-        100% { border-color: rgba($c, $opacity100); }
+@mixin animTo($animName, $propName, $propValStart, $propValEnd, $dur: 500ms, $delay: 0) {
+    @include keyframes($animName) {
+        from { #{propName}: $propValStart; }
+        to { #{$propName}: $propValEnd; }
     }
-    @include animation-name(pulseBorder);
+    @include animToParams($animName, $dur: 500ms, $delay: 0)
+}
+
+@mixin animToParams($animName, $dur: 500ms, $delay: 0) {
+    @include animation-name($animName);
     @include animation-duration($dur);
-    @include animation-direction(alternate);
-    @include animation-iteration-count($iteration);
-    @include animation-timing-function(ease);
     @include animation-delay($delay);
+    @include animation-fill-mode(both);
+    @include animation-direction(normal);
+    @include animation-iteration-count(1);
+    @include animation-timing-function(ease-in-out);
 }
