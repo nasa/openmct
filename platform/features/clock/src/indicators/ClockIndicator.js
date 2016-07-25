@@ -48,10 +48,6 @@ define(
             return "icon-clock";
         };
 
-        ClockIndicator.prototype.getGlyphClass = function () {
-            return "no-icon no-collapse float-right subtle";
-        };
-
         ClockIndicator.prototype.getText = function () {
             return this.text;
         };

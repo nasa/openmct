@@ -136,7 +136,6 @@ define([
                     ],
                     "category": "contextual",
                     "name": "Start",
-                    "glyph": "ï",
                     "cssclass": "icon-play",
                     "priority": "preferred"
                 },
@@ -148,7 +147,6 @@ define([
                     ],
                     "category": "contextual",
                     "name": "Restart at 0",
-                    "glyph": "r",
                     "cssclass": "icon-refresh",
                     "priority": "preferred"
                 }
@@ -157,7 +155,6 @@ define([
                 {
                     "key": "clock",
                     "name": "Clock",
-                    "glyph": "\u0043",
                     "cssclass": "icon-clock",
                     "description": "A UTC-based clock that supports a variety of display formats. Clocks can be added to Display Layouts.",
                     "priority": 101,
@@ -215,7 +212,6 @@ define([
                 {
                     "key": "timer",
                     "name": "Timer",
-                    "glyph": "\u00f5",
                     "cssclass": "icon-timer",
                     "description": "A timer that counts up or down to a datetime. Timers can be started, stopped and reset whenever needed, and support a variety of display formats. Each Timer displays the same value to all users. Timers can be added to Display Layouts.",
                     "priority": 100,

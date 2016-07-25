@@ -246,7 +246,7 @@ define([
                 {
                     "key": "items",
                     "name": "Items",
-                    "glyph": "9",
+                    "cssclass": "icon-thumbs-strip",
                     "description": "Grid of available items",
                     "template": itemsTemplate,
                     "uses": [

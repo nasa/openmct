@@ -313,7 +313,7 @@ define(
 
         /**
          * Get the current mode that is applicable to this plot. This
-         * will include key, name, and glyph fields.
+         * will include key, name, and cssclass fields.
          */
         PlotController.prototype.getMode = function () {
             return this.modeOptions.getMode();

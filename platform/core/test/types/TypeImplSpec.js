@@ -33,7 +33,6 @@ define(
                     key: 'test-type',
                     name: 'Test Type',
                     description: 'A type, for testing',
-                    glyph: 't',
                     cssclass: 'icon-telemetry-panel',
                     inherits: ['test-parent-1', 'test-parent-2'],
                     features: ['test-feature-1'],
@@ -55,11 +54,7 @@ define(
                 expect(type.getDescription()).toEqual('A type, for testing');
             });
 
-            it("exposes glyph from definition", function () {
-                expect(type.getGlyph()).toEqual('t');
-            });
-
-            it("exposes glyph CSS class from definition", function() {
+            it("exposes CSS class from definition", function() {
                 expect(type.getCssClass()).toEqual('icon-telemetry-panel');
             });
 

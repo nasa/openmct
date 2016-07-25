@@ -258,12 +258,11 @@ define([
                 {
                     "key": "root",
                     "name": "Root",
-                    "glyph": "\u0046"
+                    "cssclass": "icon-folder"
                 },
                 {
                     "key": "folder",
                     "name": "Folder",
-                    "glyph": "\u0046",
                     "cssclass": "icon-folder",
                     "features": "creation",
                     "description": "Create folders to organize other objects or links to objects.",
@@ -275,12 +274,10 @@ define([
                 {
                     "key": "unknown",
                     "name": "Unknown Type",
-                    "glyph": "\u003f",
                     "cssclass": "icon-object-unknown"
                 },
                 {
                     "name": "Unknown Type",
-                    "glyph": "\u003f",
                     "cssclass": "icon-object-unknown"
                 }
             ],

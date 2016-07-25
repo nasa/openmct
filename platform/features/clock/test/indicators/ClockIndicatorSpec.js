@@ -49,7 +49,6 @@ define(
 
             it("implements the Indicator interface", function () {
                 expect(indicator.getCssClass()).toEqual(jasmine.any(String));
-                expect(indicator.getGlyphClass()).toEqual(jasmine.any(String));
                 expect(indicator.getText()).toEqual(jasmine.any(String));
                 expect(indicator.getDescription()).toEqual(jasmine.any(String));
             });

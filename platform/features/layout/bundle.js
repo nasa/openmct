@@ -56,7 +56,6 @@ define([
                 {
                     "key": "layout",
                     "name": "Display Layout",
-                    "glyph": "\u004c",
                     "cssclass": "icon-layout",
                     "type": "layout",
                     "template": layoutTemplate,
@@ -66,7 +65,6 @@ define([
                 {
                     "key": "fixed",
                     "name": "Fixed Position",
-                    "glyph": "3",
                     "cssclass": "icon-telemetry-panel",
                     "type": "telemetry.panel",
                     "template": fixedTemplate,
@@ -142,7 +140,6 @@ define([
                                     },
                                     {
                                         "property": "fill",
-                                        "glyph": "",
                                         "cssclass": "icon-paint-bucket",
                                         "title": "Fill color",
                                         "description": "Set fill color",
@@ -150,7 +147,6 @@ define([
                                     },
                                     {
                                         "property": "stroke",
-                                        "glyph": "â",
                                         "cssclass": "icon-line-horz",
                                         "title": "Border color",
                                         "description": "Set border color",
@@ -158,7 +154,6 @@ define([
                                     },
                                     {
                                         "property": "color",
-                                        "glyph": "ä",
                                         "cssclass": "icon-T",
                                         "title": "Text color",
                                         "description": "Set text color",
@@ -167,7 +162,6 @@ define([
                                     },
                                     {
                                         "property": "url",
-                                        "glyph": "ã",
                                         "cssclass": "icon-image",
                                         "control": "dialog-button",
                                         "title": "Image Properties",
@@ -180,7 +174,6 @@ define([
                                     },
                                     {
                                         "property": "text",
-                                        "glyph": "G",
                                         "cssclass": "icon-gear",
                                         "control": "dialog-button",
                                         "title": "Text Properties",
@@ -193,7 +186,6 @@ define([
                                     },
                                     {
                                         "method": "showTitle",
-                                        "glyph": "ç",
                                         "cssclass": "icon-two-parts-both",
                                         "control": "button",
                                         "title": "Show title",
@@ -201,7 +193,6 @@ define([
                                     },
                                     {
                                         "method": "hideTitle",
-                                        "glyph": "å",
                                         "cssclass": "icon-two-parts-one-only",
                                         "control": "button",
                                         "title": "Hide title",
@@ -214,7 +205,6 @@ define([
                                     {
                                         "method": "remove",
                                         "control": "button",
-                                        "glyph": "Z",
                                         "cssclass": "icon-trash",
                                         "title": "Delete",
                                         "description": "Delete the selected item"
@@ -284,7 +274,6 @@ define([
                 {
                     "key": "layout",
                     "name": "Display Layout",
-                    "glyph": "\u004c",
                     "cssclass": "icon-layout",
                     "description": "Assemble other objects and components together into a reusable screen layout. Working in a simple canvas workspace, simply drag in the objects you want, position and size them. Save your design and view or edit it at any time.",
                     "priority": 900,
@@ -317,7 +306,6 @@ define([
                 {
                     "key": "telemetry.panel",
                     "name": "Telemetry Panel",
-                    "glyph": "t",
                     "cssclass": "icon-telemetry-panel",
                     "description": "A panel for collecting telemetry elements.",
                     "priority": 899,

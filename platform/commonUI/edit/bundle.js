@@ -174,7 +174,6 @@ define([
                     ],
                     "description": "Edit",
                     "category": "view-control",
-                    "glyph": "p",
                     "cssclass": "major icon-pencil"
                 },
                 {
@@ -184,7 +183,6 @@ define([
                         "view-control"
                     ],
                     "implementation": PropertiesAction,
-                    "glyph": "p",
                     "cssclass": "major icon-pencil",
                     "name": "Edit Properties...",
                     "description": "Edit properties of this object.",
@@ -196,7 +194,6 @@ define([
                     "key": "remove",
                     "category": "contextual",
                     "implementation": RemoveAction,
-                    "glyph": "Z",
                     "cssclass": "icon-trash",
                     "name": "Remove",
                     "description": "Remove this object from its containing object.",

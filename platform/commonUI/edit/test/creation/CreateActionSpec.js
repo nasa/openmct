@@ -120,7 +120,6 @@ define(
                 mockParent.useCapability.andReturn(mockDomainObject);
 
                 mockType.getKey.andReturn("test");
-                mockType.getGlyph.andReturn("T");
                 mockType.getCssClass.andReturn("icon-telemetry");
                 mockType.getDescription.andReturn("a test type");
                 mockType.getName.andReturn("Test");
@@ -139,7 +138,6 @@ define(
 
                 expect(metadata.name).toEqual("Test");
                 expect(metadata.description).toEqual("a test type");
-                expect(metadata.glyph).toEqual("T");
                 expect(metadata.cssclass).toEqual("icon-telemetry");
             });
 

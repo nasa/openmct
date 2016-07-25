@@ -43,18 +43,18 @@ define([
             {
                 "name":"Mars Science Laboratory",
                 "key": "msl.curiosity",
-                "glyph": "o"
+                "cssclass": "icon-object"
             },
             {
                 "name": "Instrument",
                 "key": "msl.instrument",
-                "glyph": "o",
+                "cssclass": "icon-object",
                 "model": {"composition": []}
             },
             {
                 "name": "Measurement",
                 "key": "msl.measurement",
-                "glyph": "\u0054",
+                "cssclass": "icon-telemetry",
                 "model": {"telemetry": {}},
                 "telemetry": {
                     "source": "rems.source",
