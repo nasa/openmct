@@ -2,7 +2,7 @@
 $colorBodyBg: #333;
 $colorBodyFg: #999;
 $colorGenBg: #222;
-$colorFooterBg: #000;
+$colorStatusBarBg: #000;
 $colorKey: #0099cc;
 $colorKeySelectedBg: #005177;
 $colorKeyFg: #fff;
@@ -29,6 +29,7 @@ $colorBtnMajorBg: $colorKey;
 $colorBtnMajorBgHov: pullForward($colorBtnMajorBg, $hoverRatioPercent);
 $colorBtnMajorFg: $colorKeyFg;
 $colorBtnMajorFgHov: pullForward($colorBtnMajorFg, $hoverRatioPercent);
+// TODO: make clickable icon initially use the key color; also, introduce a toggle-able icon with different color approach
 $colorClickIcon: $colorBodyFg;
 $colorClickIconActive: $colorKey;
 $colorClickIconHov: $colorClickIconActive;

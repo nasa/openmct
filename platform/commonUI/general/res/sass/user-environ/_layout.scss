@@ -82,7 +82,7 @@
         top: auto;
         height: $ueFooterH;
         line-height: $ueFooterH - ($interiorMargin * 2);
-        background: $colorFooterBg;
+        background: $colorStatusBarBg;
         color: lighten($colorBodyBg, 30%);
         font-size: .7rem;
         .status-holder {

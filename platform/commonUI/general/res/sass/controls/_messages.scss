@@ -62,6 +62,12 @@
     }
 }
 
+.subdued {
+    .status-indicator {
+        color: pullForward($colorStatusBarBg, 40%);
+    }
+}
+
 .status-block-holder {
     // Applied to mct-include element
     // Contains status.block elements

@@ -44,6 +44,10 @@ define(
             });
         }
 
+        ClockIndicator.prototype.getGlyphClass = function () {
+            return "no-collapse float-right subdued";
+        };
+
         ClockIndicator.prototype.getCssClass = function () {
             return "icon-clock";
         };
