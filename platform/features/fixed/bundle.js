@@ -36,7 +36,7 @@ define([
                 {
                     "key": "fixed-display",
                     "name": "Fixed Position Display",
-                    "cssclass": "icon-telemetry-panel",
+                    "cssclass": "icon-box-with-dashed-lines",
                     "type": "telemetry.fixed",
                     "template": fixedTemplate,
                     "uses": [
@@ -187,9 +187,11 @@ define([
                 {
                     "key": "telemetry.fixed",
                     "name": "Fixed Position Display",
-                    "cssclass": "icon-telemetry-panel",
-                    "description": "A panel for collecting telemetry" +
-                    " elements in a fixed position display.",
+                    "cssclass": "icon-box-with-dashed-lines",
+                    "description": "Collect and display telemetry elements in " +
+                    "alphanumeric format in a simple canvas workspace. " +
+                    "Elements can be positioned and sized. " +
+                    "Lines, boxes and images can be added as well.",
                     "priority": 899,
                     "delegates": [
                         "telemetry"

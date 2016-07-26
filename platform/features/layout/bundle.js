@@ -65,7 +65,7 @@ define([
                 {
                     "key": "fixed",
                     "name": "Fixed Position",
-                    "cssclass": "icon-telemetry-panel",
+                    "cssclass": "icon-box-with-dashed-lines",
                     "type": "telemetry.panel",
                     "template": fixedTemplate,
                     "uses": [

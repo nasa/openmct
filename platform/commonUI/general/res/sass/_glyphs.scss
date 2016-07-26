@@ -40,7 +40,7 @@ $glyph-icon-brackets: '\e929';
 $glyph-icon-arrows-out: '\e1000';
 $glyph-icon-arrows-right-left: '\e1001';
 $glyph-icon-arrows-up-down: '\e1002';
-$glyph-icon-box-with-dashed-lines: '\e1003';
+$glyph-icon-box-with-dashed-lines: '';
 $glyph-icon-bullet: '\e1004';
 $glyph-icon-calendar: '\e1005';
 $glyph-icon-chain-links: '\e1006';
@@ -90,17 +90,20 @@ $glyph-icon-object: '\e1112';
 $glyph-icon-object-unknown: '\e1113';
 $glyph-icon-packet: '\e1114';
 $glyph-icon-page: '\e1115';
-$glyph-icon-session: '\e1116';
-$glyph-icon-tabular: '\e1117';
-$glyph-icon-tabular-lad: '\e1118';
-$glyph-icon-tabular-lad-set: '\e1119';
-$glyph-icon-tabular-realtime: '\e1120';
-$glyph-icon-tabular-scrolling: '\e1121';
-$glyph-icon-telemetry: '\e1122';
-$glyph-icon-telemetry-panel: '\e1123';
-$glyph-icon-timeline: '\e1124';
-$glyph-icon-timer: '\e1125';
-$glyph-icon-topic: '\e1126';
+$glyph-icon-plot-overlay: '';
+$glyph-icon-plot-stacked: '';
+$glyph-icon-session: '\e1118';
+$glyph-icon-tabular: '\e1119';
+$glyph-icon-tabular-lad: '\e1120';
+$glyph-icon-tabular-lad-set: '\e1121';
+$glyph-icon-tabular-realtime: '\e1122';
+$glyph-icon-tabular-scrolling: '\e1123';
+$glyph-icon-telemetry: '\e1124';
+$glyph-icon-telemetry-panel: '\e1125';
+$glyph-icon-timeline: '\e1126';
+$glyph-icon-timer: '\e1127';
+$glyph-icon-topic: '\e1128';
+$glyph-icon-box-with-dashed-lines: '\e1129';
 
 /************************** 16 PX CLASSES */
 
@@ -137,7 +140,6 @@ $glyph-icon-topic: '\e1126';
 .icon-arrows-out {  @include glyph($glyph-icon-arrows-out); }
 .icon-arrows-right-left {  @include glyph($glyph-icon-arrows-right-left); }
 .icon-arrows-up-down {  @include glyph($glyph-icon-arrows-up-down); }
-.icon-box-with-dashed-lines {  @include glyph($glyph-icon-box-with-dashed-lines); }
 .icon-bullet {  @include glyph($glyph-icon-bullet); }
 .icon-calendar {  @include glyph($glyph-icon-calendar); }
 .icon-chain-links {  @include glyph($glyph-icon-chain-links); }
@@ -187,6 +189,8 @@ $glyph-icon-topic: '\e1126';
 .icon-object-unknown {  @include glyph($glyph-icon-object-unknown); }
 .icon-packet {  @include glyph($glyph-icon-packet); }
 .icon-page {  @include glyph($glyph-icon-page); }
+.icon-plot-overlay {  @include glyph($glyph-icon-plot-overlay); }
+.icon-plot-stacked {  @include glyph($glyph-icon-plot-stacked); }
 .icon-session {  @include glyph($glyph-icon-session); }
 .icon-tabular {  @include glyph($glyph-icon-tabular); }
 .icon-tabular-lad {  @include glyph($glyph-icon-tabular-lad); }
@@ -198,6 +202,7 @@ $glyph-icon-topic: '\e1126';
 .icon-timeline {  @include glyph($glyph-icon-timeline); }
 .icon-timer {  @include glyph($glyph-icon-timer); }
 .icon-topic {  @include glyph($glyph-icon-topic); }
+.icon-box-with-dashed-lines {  @include glyph($glyph-icon-box-with-dashed-lines); }
 
 /************************** 12 PX CLASSES */
 
