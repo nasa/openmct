@@ -21,8 +21,8 @@
  *****************************************************************************/
 /*global define*/
 define(
-    ['./Transaction'],
-    function (Transaction) {
+    ['./Transaction', './NestedTransaction'],
+    function (Transaction, NestedTransaction) {
         /**
          * Implements an application-wide transaction state. Once a
          * transaction is started, calls to
@@ -50,8 +50,10 @@ define(
         TransactionService.prototype.startTransaction = function () {
             if (this.transaction) {
                 this.transactionStack.push(this.transaction);
+                this.transaction = new NestedTransaction(this.transaction);
+            } else {
+                this.transaction = new Transaction(this.$log);
             }
-            this.transaction = new Transaction(this.$log);
         };
 
         /**
