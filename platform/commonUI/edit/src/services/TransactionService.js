@@ -38,6 +38,7 @@ define(
             this.$q = $q;
             this.$log = $log;
             this.transaction = undefined;
+            this.transactionStack = [];
         }
 
         /**
@@ -48,8 +49,7 @@ define(
          */
         TransactionService.prototype.startTransaction = function () {
             if (this.transaction) {
-                //Log error because this is a programming error if it occurs.
-                this.$log.error("Transaction already in progress");
+                this.transactionStack.push(this.transaction);
             }
             this.transaction = new Transaction(this.$log);
         };
@@ -86,7 +86,7 @@ define(
          */
         TransactionService.prototype.commit = function () {
             var transaction = this.transaction;
-            this.transaction = undefined;
+            this.transaction = this.transactionStack.pop();
             return transaction && transaction.commit();
         };
 
@@ -100,7 +100,7 @@ define(
          */
         TransactionService.prototype.cancel = function () {
             var transaction = this.transaction;
-            this.transaction = undefined;
+            this.transaction = this.transactionStack.pop();
             return transaction && transaction.cancel();
         };
 
