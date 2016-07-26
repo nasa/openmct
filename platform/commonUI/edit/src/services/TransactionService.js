@@ -89,7 +89,7 @@ define(
         TransactionService.prototype.commit = function () {
             var transaction = this.transaction;
             this.transaction = this.transactionStack.pop();
-            return transaction && transaction.commit();
+            return transaction ? transaction.commit() : Promise.reject();
         };
 
         /**
@@ -103,7 +103,7 @@ define(
         TransactionService.prototype.cancel = function () {
             var transaction = this.transaction;
             this.transaction = this.transactionStack.pop();
-            return transaction && transaction.cancel();
+            return transaction ? transaction.cancel() : Promise.reject();
         };
 
         TransactionService.prototype.size = function () {
