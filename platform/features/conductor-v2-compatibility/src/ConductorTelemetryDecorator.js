@@ -39,21 +39,26 @@ define(
         function ConductorTelemetryDecorator(conductor, telemetryService) {
             this.conductor = conductor;
             this.telemetryService = telemetryService;
+
+            this.amendRequests = ConductorTelemetryDecorator.prototype.amendRequests.bind(this);
+        }
+
+        function amendRequest(request, bounds, timeSystem) {
+            request = request || {};
+            request.start = bounds.start;
+            request.end = bounds.end;
+            request.domain = timeSystem.metadata.key;
+
+            return request;
         }
 
         ConductorTelemetryDecorator.prototype.amendRequests = function (requests) {
             var bounds = this.conductor.bounds(),
                 timeSystem = this.conductor.timeSystem();
 
-            function amendRequest(request) {
-                request = request || {};
-                request.start = bounds.start;
-                request.end = bounds.end;
-                request.domain = timeSystem.metadata.key;
-                return request;
-            }
-
-            return (requests || []).map(amendRequest);
+            return (requests || []).map(function (request) {
+                return amendRequest(request, bounds, timeSystem);
+            });
         };
 
         ConductorTelemetryDecorator.prototype.requestTelemetry = function (requests) {
@@ -62,8 +67,19 @@ define(
         };
 
         ConductorTelemetryDecorator.prototype.subscribe = function (callback, requests) {
-            return this.telemetryService
-                .subscribe(callback, requests);
+            var unsubscribeFunc = this.telemetryService.subscribe(callback, this.amendRequests(requests)),
+                conductor = this.conductor,
+                self = this;
+
+            function amendRequests() {
+                return self.amendRequests(requests);
+            }
+
+            conductor.on('bounds', amendRequests);
+            return function() {
+                unsubscribeFunc();
+                conductor.off('bounds', amendRequests);
+            }
         };
 
         return ConductorTelemetryDecorator;
