@@ -46,7 +46,7 @@ define(
         };
 
         FullscreenAction.prototype.getMetadata = function () {
-            // We override getMetadata, because the glyph and
+            // We override getMetadata, because the icon cssclass and
             // description need to be determined at run-time
             // based on whether or not we are currently
             // full screen.
