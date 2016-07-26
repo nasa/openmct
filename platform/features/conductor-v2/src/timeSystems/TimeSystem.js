@@ -38,10 +38,21 @@ define([], function () {
         this._tickSources = [];
     }
 
+    /**
+     * Time formats are defined as extensions. Time systems that implement
+     * this interface should provide an array of format keys supported by them.
+     *
+     * @returns {string[]} An array of time format keys
+     */
     TimeSystem.prototype.formats = function () {
         throw new Error('Not implemented');
     };
 
+    /**
+     * Returns the tick sources supported by this time system. Tick sources
+     * are event generators that can be used to advance the time conductor
+     * @returns {TickSource[]} The tick sources supported by this time system.
+     */
     TimeSystem.prototype.tickSources = function () {
         throw new Error('Not implemented');
     };

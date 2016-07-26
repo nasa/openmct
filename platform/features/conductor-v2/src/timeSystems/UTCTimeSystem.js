@@ -46,8 +46,6 @@ define([
             'glyph': '\u0043'
         };
 
-        //Time formats are defined as extensions. Include the key
-        // for the corresponding time format here
         this._formats = ['utc'];
         this._tickSources = [new LocalClock($timeout, DEFAULT_PERIOD)];
     }

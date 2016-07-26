@@ -22,8 +22,10 @@
 
 define([], function () {
     /**
-     * A tick source is a timing of timing signals. Usage is simple, a
-     * listener registers a callback which is invoked when this source 'ticks'.
+     * A tick source is an event generator such as a timing signal, or
+     * indicator of data availability, which can be used to advance the Time
+     * Conductor. Usage is simple, a listener registers a callback which is
+     * invoked when this source 'ticks'.
      *
      * @interface
      * @constructor
