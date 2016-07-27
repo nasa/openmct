@@ -191,20 +191,22 @@ $scrollbarThumbColorOverlay: darken($colorOvrBg, 50%);
 $scrollbarThumbColorOverlayHov: $scrollbarThumbColorHov;
 
 // Splitter
-$splitterD: 16px; // splitterD and $splitterHandleD should both be odd, or even
-$splitterHandleD: 2px;
+// All splitterD* values MUST both be either odd or even numbers
+$splitterD: 16px;
 $splitterDSm: 14px; // Smaller splitter, used inside elements like a Timeline view
+$splitterHandleD: 2px;
 $colorSplitterBaseBg: $colorBodyBg;
 $colorSplitterBg: pullForward($colorSplitterBaseBg, 15%);
 $splitterShdw: none;
 $splitterEndCr: none;
-$colorSplitterHover: pullForward($colorBodyBg, 30%);
+$colorSplitterHover: pullForward($colorSplitterBg, $hoverRatioPercent * 2);
 $colorSplitterActive: $colorKey;
 
 // Minitabs
 $colorMiniTabBg: $colorSplitterBg;
 $colorMiniTabFg: pullForward($colorMiniTabBg, 30%);
-$colorMiniTabBgHov: pullForward($colorMiniTabBg, 20%);
+$colorMiniTabBgHov: $colorSplitterHover;
+$colorMiniTabFgHov: #fff;
 
 // Mobile
 $colorMobilePaneLeft: darken($colorBodyBg, 2%);

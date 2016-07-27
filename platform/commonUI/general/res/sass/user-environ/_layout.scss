@@ -147,57 +147,45 @@
 }
 
 body.desktop .pane .mini-tab-icon.toggle-pane {
-    $paneExpandedOffset: ceil($splitterD / 2);
+    $paneExpandedOffset: splitterHandleInset($splitterD, $splitterHandleD) + $splitterHandleD + $uePaneMiniTabW;
+    //$paneExpandedOffset: ceil($splitterD / 2) + $splitterHandleDHalf + if($splitterHandleDHalf % 2 != 0, 0px, 0px); //$splitterHandleD; //ceil($splitterD / 2) + ceil($splitterHandleD / 2);
     top: $bodyMargin + ($ueTopBarH - $uePaneMiniTabH)/2;
-    &:after {
-        // Always the icon that shows when the pane is collapsed
-        opacity: 0;
+    /*
+    * The left anchor is able to move with its parent,
+    * but the right one can't and must have a anim
+    * or transition
+    */
+
+    &.toggle-tree.anchor-left.collapsed,
+    &.toggle-inspect.anchor-right:not(.collapsed) {
+        @extend .icon-arrow-right;
+        border-bottom-right-radius: $controlCr;
+        border-top-right-radius: $controlCr;
     }
-    &.collapsed {
-        &:before {
-            opacity: 0;
-        }
-        &:after {
-            opacity: 1;
-        }
+
+    &.toggle-tree.anchor-left:not(.collapsed),
+    &.toggle-inspect.anchor-right.collapsed {
+        @extend .icon-arrow-left;
+        border-bottom-left-radius: $controlCr;
+        border-top-left-radius: $controlCr;
     }
+
     &.toggle-tree.anchor-left {
         left: 0;
-        @include transform(translateX(-1 * ($uePaneMiniTabW + $paneExpandedOffset)));
-        &:before {
-            content: $glyph-icon-arrow-left;
-        }
-        &:after {
-            content: $glyph-icon-arrow-right;
-        }
+        @include transform(translateX(-1 * $paneExpandedOffset));
         &.collapsed {
-            border-bottom-right-radius: $controlCr;
-            border-top-right-radius: $controlCr;
-            left: 0;
             @include transform(translateX(-1 * $ueCollapsedPaneEdgeM));
         }
-        &:not(.collapsed) {
-            border-bottom-left-radius: $controlCr;
-            border-top-left-radius: $controlCr;
-        }
     }
+
     &.toggle-inspect.anchor-right {
-        left: 0;
-        &:before {
-            content: $glyph-icon-arrow-right;
-        }
-        &:after {
-            content: $glyph-icon-arrow-left;
+        right: 0;
+        @include transform(translateX($paneExpandedOffset));
+        &.flush-right {
+            @include transform(translateX(($uePaneMiniTabW + ceil($splitterD / 2))));
         }
         &.collapsed {
-            border-bottom-left-radius: $controlCr;
-            border-top-left-radius: $controlCr;
-            left: auto;
-            right: 0;
-        }
-        &:not(.collapsed) {
-            border-bottom-right-radius: $controlCr;
-            border-top-right-radius: $controlCr;
+            @include transform(translateX($ueCollapsedPaneEdgeM));
         }
     }
 }
