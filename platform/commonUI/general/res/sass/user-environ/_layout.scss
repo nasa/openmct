@@ -147,14 +147,9 @@
 }
 
 body.desktop .pane .mini-tab-icon.toggle-pane {
-    $paneExpandedOffset: splitterHandleInset($splitterD, $splitterHandleD) + $splitterHandleD + $uePaneMiniTabW;
-    //$paneExpandedOffset: ceil($splitterD / 2) + $splitterHandleDHalf + if($splitterHandleDHalf % 2 != 0, 0px, 0px); //$splitterHandleD; //ceil($splitterD / 2) + ceil($splitterHandleD / 2);
+    $hi: splitterHandleInset($splitterD, $splitterHandleD);
+    $paneExpandedOffset: $hi + $splitterHandleD + $uePaneMiniTabW;
     top: $bodyMargin + ($ueTopBarH - $uePaneMiniTabH)/2;
-    /*
-    * The left anchor is able to move with its parent,
-    * but the right one can't and must have a anim
-    * or transition
-    */
 
     &.toggle-tree.anchor-left.collapsed,
     &.toggle-inspect.anchor-right:not(.collapsed) {

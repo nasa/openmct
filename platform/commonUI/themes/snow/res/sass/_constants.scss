@@ -193,7 +193,7 @@ $scrollbarThumbColorOverlayHov: $scrollbarThumbColorHov;
 // Splitter
 // All splitterD* values MUST both be either odd or even numbers
 $splitterD: 16px;
-$splitterDSm: 14px; // Smaller splitter, used inside elements like a Timeline view
+$splitterDSm: 10px; // Smaller splitter, used inside elements like a Timeline view
 $splitterHandleD: 2px;
 $colorSplitterBaseBg: $colorBodyBg;
 $colorSplitterBg: pullForward($colorSplitterBaseBg, 15%);
