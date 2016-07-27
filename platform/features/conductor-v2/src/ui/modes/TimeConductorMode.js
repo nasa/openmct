@@ -33,9 +33,7 @@ define(
          * @constructor
          * @param {TimeConductorMetadata} metadata
          */
-        function TimeConductorMode(metadata, conductor, timeSystems) {
-            this.metadata = metadata;
-
+        function TimeConductorMode(conductor, timeSystems) {
             this.conductor = conductor;
             this._timeSystems = timeSystems;
         }

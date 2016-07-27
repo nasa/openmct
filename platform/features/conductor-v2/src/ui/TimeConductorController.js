@@ -23,11 +23,10 @@
 define(
     [
         './modes/FixedMode',
-        './modes/RealtimeMode',
-        './modes/LADMode',
+        './modes/FollowMode',
         './TimeConductorValidation'
     ],
-    function (FixedMode, RealtimeMode, LADMode, TimeConductorValidation) {
+    function (FixedMode, FollowMode, TimeConductorValidation) {
 
         function TimeConductorController($scope, conductor, timeSystems) {
 
@@ -45,12 +44,28 @@ define(
             this.timeSystems = timeSystems.map(function (timeSystemConstructor){
                 return timeSystemConstructor();
             });
-            // Populate a list of modes supported by the time conductor
-            this.modes = [
-                new FixedMode(this.conductor, this.timeSystems),
-                new RealtimeMode(this.conductor, this.timeSystems),
-                new LADMode(this.conductor, this.timeSystems)
-            ];
+
+            this.modes = {
+                'fixed': {
+                    glyph: '\ue604',
+                    label: 'Fixed',
+                    name: 'Fixed Timespan Mode',
+                    description: 'Query and explore data that falls between two fixed datetimes.'
+                },
+                'latest': {
+                    glyph: '\u0044',
+                    label: 'LAD',
+                    name: 'LAD Mode',
+                    description: 'Latest Available Data mode monitors real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'
+                },
+                'realtime': {
+                    glyph: '\u0043',
+                    label: 'Real-time',
+                    name: 'Real-time Mode',
+                    description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will automatically advance themselves based on a UTC clock.'
+                }
+            };
+            this.selectedMode = undefined;
 
             this.validation = new TimeConductorValidation(conductor);
             this.$scope = $scope;
@@ -63,14 +78,14 @@ define(
 
             //Set the time conductor mode to the first one in the list,
             // effectively initializing the time conductor
-            this.setMode(this.modes[0]);
+            this.setMode('fixed');
         }
 
         /**
          * @private
          */
         TimeConductorController.prototype.initializeScope = function ($scope) {
-
+            var self = this;
             /*
             Represents the various time system options, and the currently
             selected time system in the view. Additionally holds the
@@ -87,7 +102,7 @@ define(
              selected mode in the view
              */
             $scope.modeModel = {
-                selected: undefined,
+                selectedKey: undefined,
                 options: this.modes
             };
             /*
@@ -98,13 +113,12 @@ define(
                 end: 0
             };
 
-            $scope.$watch('modeModel.selected', this.setMode);
+            $scope.$watch('modeModel.selectedKey', this.setMode);
             $scope.$watch('timeSystem', this.setTimeSystem);
 
             $scope.$on('$destroy', function() {
-                var mode = $scope.modeModel.selected;
-                if (mode && mode.destroy) {
-                    mode.destroy();
+                if (self.selectedMode) {
+                    self.selectedMode.destroy();
                 }
             });
         };
@@ -142,7 +156,7 @@ define(
          * @see TimeConductorMode
          */
         TimeConductorController.prototype.updateDeltasFromForm = function (formModel) {
-            var mode = this.$scope.modeModel.selected,
+            var mode = this.selectedMode,
                 deltas = mode.deltas();
 
             if (deltas !== undefined && this.validation.validateDeltas(formModel)) {
@@ -160,17 +174,42 @@ define(
          */
         TimeConductorController.prototype.setMode = function (newMode, oldMode) {
             if (newMode !== oldMode) {
-                if (oldMode) {
-                    oldMode.destroy();
+                this.$scope.modeModel.selectedKey = newMode;
+
+                if (this.selectedMode) {
+                    this.selectedMode.destroy();
                 }
-                newMode.initialize();
+                switch (newMode) {
+                    case 'fixed':
+                        this.selectedMode = new FixedMode(this.conductor, this.timeSystems);
+                        break;
+                    case 'realtime':
+                        // Filter time systems to only those with clock tick
+                        // sources
+                        var realtimeSystems = this.timeSystems.filter(function (timeSystem){
+                            return timeSystem.tickSources().some(function (tickSource){
+                                return tickSource.type() === 'clock';
+                            });
+                        });
+                        this.selectedMode = new FollowMode(this.conductor, realtimeSystems);
+                        break;
+                    case 'latest':
+                        // Filter time systems to only those with clock tick
+                        // sources
+                        var ladSystems = this.timeSystems.filter(function (timeSystem){
+                            return timeSystem.tickSources().some(function (tickSource){
+                                return tickSource.type() === 'data';
+                            });
+                        });
+                        this.selectedMode = new FollowMode(this.conductor, ladSystems);
+                        break;
+                }
+                this.selectedMode.initialize();
 
-                var timeSystem = newMode.selectedTimeSystem();
-
-                this.$scope.modeModel.selected = newMode;
+                var timeSystem = this.selectedMode.selectedTimeSystem();
 
                 //Synchronize scope with time system on mode
-                this.$scope.timeSystemModel.options = newMode.timeSystems().map(function (timeSystem) {
+                this.$scope.timeSystemModel.options = this.selectedMode.timeSystems().map(function (timeSystem) {
                     return timeSystem.metadata;
                 });
                 this.$scope.timeSystemModel.selected = timeSystem;
@@ -221,7 +260,7 @@ define(
         TimeConductorController.prototype.setTimeSystem = function (newTimeSystem) {
             if (newTimeSystem && newTimeSystem !== this.$scope.timeSystemModel.selected) {
                 this.$scope.timeSystemModel.selected = newTimeSystem;
-                var mode = this.$scope.modeModel.selected;
+                var mode = this.selectedMode;
                 mode.selectedTimeSystem(newTimeSystem);
                 this.setDeltasFromTimeSystem(newTimeSystem);
             }

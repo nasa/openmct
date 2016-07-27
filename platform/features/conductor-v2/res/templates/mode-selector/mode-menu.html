@@ -22,15 +22,15 @@
 <div class="contents">
     <div class="pane left menu-items">
         <ul>
-            <li ng-repeat="option in ngModel.options"
-                ng-click="ngModel.selected=option">
+            <li ng-repeat="(key, metadata) in ngModel.options"
+                ng-click="ngModel.selectedKey=key">
                 <a
-                   ng-mouseover="representation.activeMetadata = option.metadata"
+                   ng-mouseover="representation.activeMetadata = metadata"
                    ng-mouseleave="representation.activeMetadata = undefined">
                     <span class="ui-symbol icon type-icon">
-                        {{option.metadata.glyph}}
+                        {{metadata.glyph}}
                     </span>
-                    {{option.metadata.name}}
+                    {{metadata.name}}
                 </a>
             </li>
         </ul>

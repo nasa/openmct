@@ -33,15 +33,7 @@ define(
          * @constructor
          */
         function FixedMode(conductor, timeSystems) {
-            var metadata = {
-                key: 'fixed',
-                glyph: '\ue604',
-                label: 'Fixed',
-                name: 'Fixed Timespan Mode',
-                description: 'Query and explore data that falls between two fixed datetimes.'
-            };
-
-            TimeConductorMode.call(this, metadata, conductor, timeSystems);
+            TimeConductorMode.call(this, conductor, timeSystems);
         }
 
         FixedMode.prototype = Object.create(TimeConductorMode.prototype);
