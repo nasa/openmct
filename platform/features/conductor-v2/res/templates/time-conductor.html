@@ -52,6 +52,7 @@
                                      }"
                                      ng-model="formModel"
                                      ng-blur="tcController.updateBoundsFromForm(formModel)"
+                                     ng-disabled="modeModel.selectedKey !== 'fixed'"
                                      field="'end'"
                                      class="time-range-input">
                         </mct-control>
