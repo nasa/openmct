@@ -34,13 +34,6 @@ define([
             "YYYY-MM-DD"
         ];
 
-    var MS = 1,
-        SECONDS = 1000 * MS,
-        MINUTES = 60 * SECONDS,
-        HOURS = 60 * MINUTES,
-        DAYS = 24 * HOURS,
-        MONTHS = (365 / 12) * DAYS;
-
     /**
      * @typedef Scale
      * @property {number} min the minimum scale value, in ms

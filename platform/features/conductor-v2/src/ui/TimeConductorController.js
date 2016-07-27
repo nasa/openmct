@@ -70,22 +70,32 @@ define(
          * @private
          */
         TimeConductorController.prototype.initializeScope = function ($scope) {
+
+            /*
+            Represents the various time system options, and the currently
+            selected time system in the view. Additionally holds the
+            default format from the selected time system for convenience
+            of access from the template.
+             */
             $scope.timeSystemModel = {
                 selected: undefined,
                 format: undefined,
                 options: []
             };
+            /*
+             Represents the various modes, and the currently
+             selected mode in the view
+             */
             $scope.modeModel = {
                 selected: undefined,
                 options: this.modes
             };
+            /*
+            Time Conductor bounds in the form
+             */
             $scope.formModel = {
                 start: 0,
                 end: 0
-            };
-            $scope.changing = {
-                'start': false,
-                'end': false
             };
 
             $scope.$watch('modeModel.selected', this.setMode);
@@ -105,12 +115,8 @@ define(
          * @param bounds
          */
         TimeConductorController.prototype.setBounds = function (bounds) {
-            if (!this.$scope.changing['start']) {
-                this.$scope.formModel.start = bounds.start;
-            }
-            if (!this.$scope.changing['end']) {
-                this.$scope.formModel.end = bounds.end;
-            }
+            this.$scope.formModel.start = bounds.start;
+            this.$scope.formModel.end = bounds.end;
         };
 
         /**
@@ -119,7 +125,10 @@ define(
          * @param formModel
          */
         TimeConductorController.prototype.updateBoundsFromForm = function (formModel) {
-            var newBounds = {start: formModel.start, end: formModel.end};
+            var newBounds = {
+                start: formModel.start,
+                end: formModel.end
+            };
 
             if (this.conductor.validateBounds(newBounds) === true) {
                 this.conductor.bounds(newBounds);
@@ -151,7 +160,7 @@ define(
          */
         TimeConductorController.prototype.setMode = function (newMode, oldMode) {
             if (newMode !== oldMode) {
-                if (oldMode && oldMode.destroy) {
+                if (oldMode) {
                     oldMode.destroy();
                 }
                 newMode.initialize();
@@ -167,14 +176,14 @@ define(
                 this.$scope.timeSystemModel.selected = timeSystem;
                 //Use default format
                 this.$scope.timeSystemModel.format = timeSystem.formats()[0];
-                this.setDefaultsFromTimeSystem(newMode.selectedTimeSystem());
+                this.setDeltasFromTimeSystem(timeSystem);
             }
         };
 
         /**
          * @private
          */
-        TimeConductorController.prototype.setDefaultsFromTimeSystem = function (timeSystem) {
+        TimeConductorController.prototype.setDeltasFromTimeSystem = function (timeSystem) {
             var defaults = timeSystem.defaults()[0];
             var deltas = defaults.deltas;
 
@@ -214,7 +223,7 @@ define(
                 this.$scope.timeSystemModel.selected = newTimeSystem;
                 var mode = this.$scope.modeModel.selected;
                 mode.selectedTimeSystem(newTimeSystem);
-                this.setDefaultsFromTimeSystem(newTimeSystem);
+                this.setDeltasFromTimeSystem(newTimeSystem);
             }
         };
 

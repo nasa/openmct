@@ -21,8 +21,7 @@
                                          validate: tcController.validation.validateStart
                                      }"
                                      ng-model="formModel"
-                                     ng-mouseup="changing['start'] = true"
-                                     ng-blur="changing['start'] = false; tcController.updateBoundsFromForm(formModel)"
+                                     ng-blur="tcController.updateBoundsFromForm(formModel)"
                                      field="'start'"
                                      class="time-range-input">
                         </mct-control>
@@ -52,8 +51,7 @@
                                          validate: tcController.validation.validateEnd
                                      }"
                                      ng-model="formModel"
-                                     ng-mouseup="changing['end'] = true"
-                                     ng-blur="changing['end'] = false; tcController.updateBoundsFromForm(formModel)"
+                                     ng-blur="tcController.updateBoundsFromForm(formModel)"
                                      field="'end'"
                                      class="time-range-input">
                         </mct-control>

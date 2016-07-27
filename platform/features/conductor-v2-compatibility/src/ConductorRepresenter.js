@@ -24,6 +24,18 @@ define(
     [],
     function () {
 
+        /**
+         * Representer that provides a compatibility layer between the new
+         * time conductor and existing representations / views. Listens to
+         * the v2 time conductor API and generates v1 style events using the
+         * Angular event bus. This is transitional code code and will be
+         * removed.
+         *
+         * Deprecated immediately as this is temporary code
+         *
+         * @deprecated
+         * @constructor
+         */
         function ConductorRepresenter(
             conductor,
             scope,

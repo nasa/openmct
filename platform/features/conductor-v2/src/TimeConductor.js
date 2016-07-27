@@ -72,12 +72,6 @@ define(['EventEmitter'], function (EventEmitter) {
         return true;
     };
 
-    function throwOnError(validationResult) {
-        if (validationResult !== true) {
-            throw new Error(validationResult);
-        }
-    }
-
     /**
      * Get or set the follow mode of the time conductor. In follow mode the
      * time conductor ticks, regularly updating the bounds from a timing
@@ -117,7 +111,10 @@ define(['EventEmitter'], function (EventEmitter) {
      */
     TimeConductor.prototype.bounds = function (newBounds) {
         if (arguments.length > 0) {
-            throwOnError(this.validateBounds(newBounds));
+            var validationResult = this.validateBounds(newBounds);
+            if (validationResult !== true){
+                throw new Error(validationResult);
+            }
             //Create a copy to avoid direct mutation of conductor bounds
             this.boundsVal = JSON.parse(JSON.stringify(newBounds));
             /**
