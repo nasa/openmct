@@ -19,7 +19,7 @@ define([
                     implementation: MCTView,
                     depends: [
                         "newViews[]",
-                        "PublicAPI"
+                        "mct"
                     ]
                 }
             ],
