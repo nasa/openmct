@@ -47,7 +47,8 @@ define([
                 {
                     type: "decorator",
                     provides: "actionService",
-                    implementation: ActionDialogDecorator
+                    implementation: ActionDialogDecorator,
+                    depends: [ "mct" ]
                 }
             ]
         }
