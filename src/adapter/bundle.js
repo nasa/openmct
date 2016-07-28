@@ -48,7 +48,7 @@ define([
                     type: "decorator",
                     provides: "actionService",
                     implementation: ActionDialogDecorator,
-                    depends: [ "mct" ]
+                    depends: [ "mct", "newViews[]" ]
                 }
             ]
         }
