@@ -22,7 +22,7 @@
 $baseRatio: 1.5;
 $pad: $interiorMargin * $baseRatio;
 
-.s-btn {
+.s-button {
     @include user-select(none);
     cursor: pointer;
     text-decoration: none;
@@ -30,7 +30,7 @@ $pad: $interiorMargin * $baseRatio;
     line-height: $btnStdH;
 }
 
-.s-btn {
+.s-button {
     box-sizing: border-box;
     padding: 0 $pad;
     font-size: 0.7rem;
@@ -107,32 +107,32 @@ body.desktop .mini-tab-icon {
 
 .l-btn-set {
     // Buttons that have a very tight conceptual grouping - no internal space between them.
-    // Structure: .btn-set > mct-representation class=first|last > .s-btn
-    font-size: 0; // Remove space between s-btn elements due to white space in markup
+    // Structure: .btn-set > mct-representation class=first|last > .s-button
+    font-size: 0; // Remove space between s-button elements due to white space in markup
 
-    .s-btn {
+    .s-button {
         border-radius: 0;
         margin-left: 1px;
     }
 
     .first {
-        .s-btn,
-        &.s-btn {
+        .s-button,
+        &.s-button {
             @include border-left-radius($controlCr);
             margin-left: 0;
         }
     }
 
     .last {
-        .s-btn,
-        &.s-btn {
+        .s-button,
+        &.s-button {
             @include border-right-radius($controlCr);
         }
     }
 }
 
 .paused {
-    &:not(.s-btn) {
+    &:not(.s-button) {
         border-color: $colorPausedBg !important;
         color: $colorPausedBg !important;
     }

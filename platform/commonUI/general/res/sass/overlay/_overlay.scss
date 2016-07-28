@@ -87,7 +87,7 @@
 
     .bottom-bar {
         text-align: right;
-        .s-btn {
+        .s-button {
             $bg: $colorOvrBtnBg;
             &:not(.major) {
                 @include btnSubtle($bg, pullForward($bg, 10%), $colorOvrBtnFg, $colorOvrBtnFg);

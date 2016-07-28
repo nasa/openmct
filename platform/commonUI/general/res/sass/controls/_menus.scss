@@ -22,7 +22,7 @@
 /******************************************************** MENU BUTTONS */
 .s-menu-btn {
 	// Formerly .btn-menu
-	@extend .s-btn;
+	@extend .s-button;
 	span.l-click-area {
 		// In markup, this element should not enclose anything.
 		@extend .abs;

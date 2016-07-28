@@ -175,7 +175,7 @@ table {
     .tabular-holder {
         &.t-exportable {
             $btnExportH: $btnFrameH;
-            .s-btn.t-export {
+            .s-button.t-export {
                 @include trans-prop-nice(opacity, $dur: 50ms);
                 opacity: 0;
             }
@@ -184,7 +184,7 @@ table {
                 top: 0;
             }
             &:hover {
-                .s-btn.t-export {
+                .s-button.t-export {
                     @include trans-prop-nice(opacity, 150ms, 100ms);
                     opacity: 1;
                 }

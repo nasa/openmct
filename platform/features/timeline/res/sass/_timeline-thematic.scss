@@ -112,7 +112,7 @@
         $l: 5%;
         @include user-select(none);
         @include background-image(linear-gradient(-90deg, rgba($bg, $bga), rgba($bg, $bga) 70%, rgba($bg, 0) 100%));
-        .s-btn {
+        .s-button {
             height: 16px;
             line-height: 16px;
             .icon {
