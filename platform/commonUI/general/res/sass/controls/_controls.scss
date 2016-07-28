@@ -306,11 +306,6 @@ input[type="search"] {
     }
 }
 
-.s-back {
-    // Nav to parent arrow
-    @extend .icon-pointer-left;
-}
-
 /******************************************************** PROGRESS BAR */
 @include keyframes(progress) {
     100% { background-position: $progressBarStripeW center; }
