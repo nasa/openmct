@@ -6,7 +6,7 @@ $colorStatusBarBg: #000;
 $colorKey: #0099cc;
 $colorKeySelectedBg: #005177;
 $colorKeyFg: #fff;
-$colorKeyHov: pullForward($colorKey, 20%);
+$colorKeyHov: #00c0f6;
 $colorEditAreaBg: #31363e;
 $colorEditAreaFg: #587ab5;
 $colorInteriorBorder: rgba($colorBodyFg, 0.1);
@@ -29,10 +29,11 @@ $colorBtnMajorBg: $colorKey;
 $colorBtnMajorBgHov: pullForward($colorBtnMajorBg, $hoverRatioPercent);
 $colorBtnMajorFg: $colorKeyFg;
 $colorBtnMajorFgHov: pullForward($colorBtnMajorFg, $hoverRatioPercent);
-// TODO: make clickable icon initially use the key color; also, introduce a toggle-able icon with different color approach
-$colorClickIcon: $colorBodyFg;
-$colorClickIconActive: $colorKey;
-$colorClickIconHov: $colorClickIconActive;
+$colorClickIcon: $colorKey;
+$colorClickIconHov: $colorKeyHov;
+$colorToggleIcon: rgba($colorBodyFg, 0.5);
+$colorToggleIconActive: $colorKey;
+$colorToggleIconHov: rgba($colorToggleIconActive, 0.5);
 $colorInvokeMenu: #fff;
 $contrastInvokeMenuPercent: 20%;
 $shdwBtns: rgba(black, 0.2) 0 1px 2px;
@@ -204,6 +205,8 @@ $colorSplitterHover: pullForward($colorSplitterBg, $hoverRatioPercent);
 $colorSplitterActive: $colorKey;
 
 // Minitabs
+$uePaneMiniTabH: 24px;
+$uePaneMiniTabW: 8px;
 $colorMiniTabBg: $colorSplitterBg;
 $colorMiniTabFg: pushBack($colorMiniTabBg, 10%);
 $colorMiniTabBgHov: $colorSplitterHover;

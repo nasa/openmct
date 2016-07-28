@@ -95,10 +95,8 @@ body.desktop .mini-tab-icon {
     overflow: hidden;
     text-align: center;
 
-    &:before,
-    &:after {
-        display: block;
-        position: absolute;
+    &:before {
+        display: inline-block;
     }
 
     &:hover {

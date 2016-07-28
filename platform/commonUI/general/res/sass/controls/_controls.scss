@@ -74,15 +74,19 @@
 
 .s-clickable-icon {
     // Clickable icon elements that have hover
-    // .s-toggles means the element is capable of having .active applied to it
     @extend .ui-symbol;
     color: $colorClickIcon;
-    &:hover { color: $colorClickIconHov; }
-    &.s-toggles {
-        color: rgba($colorClickIcon, 0.5) !important;
-        &.active { color: $colorClickIconActive !important; }
-        &:hover { color: rgba($colorClickIconHov, 0.5) !important; }
+    &:hover {
+        color: $colorClickIconHov;
     }
+}
+
+.s-toggle-icon {
+    // Has default (in-active) and .active states
+    @extend .s-clickable-icon;
+    color: $colorToggleIcon;
+    &:hover { color: rgba($colorToggleIconHov, 0.5); }
+    &.active { color: $colorToggleIconActive; }
 }
 
 .l-composite-control {
@@ -555,10 +559,9 @@ textarea {
 /******************************************************** MISC */
 .context-available {
     @extend .icon-arrow-down;
-    $c: $colorKey;
-    color: $c;
+    color: $colorKey;
     &:hover {
-        color: lighten($c, 10%);
+        color: $colorKeyHov;
     }
 }
 

@@ -300,13 +300,6 @@
 			top: $timelineTopPaneHeaderElemMargin; bottom: $timelineTopPaneHeaderElemMargin;
 		}
 
-        .l-swimlanes-holder .l-cols {
-            .l-col-icon,
-            .l-col-icon a:not(.s-toggles) {
-                color: $colorKey;
-            }
-        }
-
 		.l-pane-l {
 			// Left pane of the tabular area
 			.l-cols {
