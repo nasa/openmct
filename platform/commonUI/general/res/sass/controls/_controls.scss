@@ -72,7 +72,7 @@
     }
 }
 
-.s-clickable-icon {
+.s-icon-button {
     // Clickable icon elements that have hover
     @extend .ui-symbol;
     color: $colorClickIcon;
@@ -83,7 +83,7 @@
 
 .s-toggle-icon {
     // Has default (in-active) and .active states
-    @extend .s-clickable-icon;
+    @extend .s-icon-button;
     color: $colorToggleIcon;
     &:hover { color: rgba($colorToggleIconHov, 0.5); }
     &.active { color: $colorToggleIconActive; }
