@@ -21,7 +21,16 @@ define([
 ) {
     function MCT() {
         EventEmitter.call(this);
-        this.legacyBundle = { extensions: {} };
+        this.legacyBundle = { extensions: {
+            services: [
+                {
+                    key: "mct",
+                    implementation: function () {
+                        return this;
+                    }.bind(this)
+                }
+            ]
+        } };
 
         this.selection = new Selection();
         this.on('navigation', this.selection.clear.bind(this.selection));
@@ -85,13 +94,6 @@ define([
             factory: definition,
             region: region,
             key: viewKey
-        });
-
-        this.legacyExtension('services', {
-            key: 'PublicAPI',
-            implementation: function () {
-                return this;
-            }.bind(this)
         });
     };
 
