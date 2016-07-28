@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /******************************************************** MENU BUTTONS */
-.s-menu-btn {
+.s-menu-button {
 	// Formerly .btn-menu
 	@extend .s-button;
 	span.l-click-area {
@@ -53,7 +53,7 @@
 		color: rgba($colorInvokeMenu, percentToDecimal($contrastInvokeMenuPercent));
 	}
 
-	&.create-btn {
+	&.create-button {
         @extend .icon-plus;
 		.title-label {
 			font-size: 1rem;
@@ -122,7 +122,7 @@
 .icon-menu,
 .context-menu,
 .super-menu,
-.s-menu-btn .menu {
+.s-menu-button .menu {
 	pointer-events: auto;
 	ul li {
 		a.menu-item-a {
