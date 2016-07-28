@@ -138,6 +138,7 @@ define([
 
     MCT.prototype.regions = {
         main: "MAIN",
+        properties: "PROPERTIES",
         toolbar: "TOOLBAR"
     };
 
