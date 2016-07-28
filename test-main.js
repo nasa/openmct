@@ -23,13 +23,14 @@
 /*global require,window*/
 var allTestFiles = [];
 var TEST_REGEXP = /(Spec)\.js$/;
+var SRC_REGEXP = /^\/base\/(src|platform).*\.js$/;
 
 var pathToModule = function(path) {
     return path.replace(/^\/base\//, '').replace(/\.js$/, '');
 };
 
 Object.keys(window.__karma__.files).forEach(function(file) {
-    if (TEST_REGEXP.test(file)) {
+    if (TEST_REGEXP.test(file) || SRC_REGEXP.test(file)) {
         // Normalize paths to RequireJS module names.
         allTestFiles.push(pathToModule(file));
     }
@@ -37,6 +38,11 @@ Object.keys(window.__karma__.files).forEach(function(file) {
 
 // Force es6-promise to load.
 allTestFiles.unshift('es6-promise');
+
+// Drop legacyRegistry, since it is at a different path by RequireJS config
+allTestFiles = allTestFiles.filter(function (file) {
+    return file.indexOf('legacyRegistry') === -1;
+});
 
 requirejs.config({
     // Karma serves files from the basePath defined in karma.conf.js
