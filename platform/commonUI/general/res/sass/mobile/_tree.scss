@@ -30,22 +30,21 @@ body.touch {
     }
 	.tree-item,
 	.search-result-item {
+        @include containerSubtle($bg: pullForward($colorMobilePaneLeft, 2%), $gradRatio: 2%);
 		height: $mobileTreeItemH !important;
 		line-height: $mobileTreeItemH !important;
-		margin-bottom: 0px !important;
 		.view-control {
-            font-size: 1.2em;
-            margin-right: 0;
-            order: 2;
-            width: $mobileTreeItemH;
+            font-size: 1em;
+            margin-right: $interiorMargin;
+            width: ceil($mobileTreeItemH * 0.75);
             &.has-children {
                 &:before {
-                    content: "\7d";
+                    content: $glyph-icon-arrow-down;
                     left: 50%;
-                    @include transform(translateX(-50%) rotate(270deg));
+                    @include transform(translateX(-50%) rotate(-90deg));
                 }
                 &.expanded:before {
-                    @include transform(translateX(-50%) rotate(90deg));
+                    @include transform(translateX(-50%) rotate(0deg));
                 }
             }
 		}

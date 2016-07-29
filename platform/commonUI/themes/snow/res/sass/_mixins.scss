@@ -1,4 +1,4 @@
-@mixin containerSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $hover: false) {
+@mixin containerSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $gradRatio: 5%) {
 	@include containerBase($bg, $fg);
 	@include boxShdw($shdwBtns);
 }

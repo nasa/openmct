@@ -304,7 +304,7 @@
 	border-radius: $controlCr;
 	box-sizing: border-box;
 	color: $fg;
-	display: inline-block;
+	//display: inline-block;
 }
 
 @mixin btnBase($bg: $colorBtnBg, $bgHov: $colorBtnBgHov, $fg: $colorBtnFg, $fgHov: $colorBtnFgHov, $ic: $colorBtnIcon, $icHov: $colorBtnIconHov) {
@@ -353,7 +353,7 @@
 
 @mixin contextArrow() {
 	text-shadow: none;
-	content: '\e902';
+	content: $glyph-icon-arrow-down;
 	display: inline-block;
 	font-family: 'symbolsfont';
 	margin-left: $interiorMarginSm;

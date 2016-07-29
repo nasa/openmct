@@ -24,18 +24,16 @@ $pad: $interiorMargin * $baseRatio;
 
 .s-button {
     @include user-select(none);
+    @include btnSubtle($bg: $colorBtnBg, $bgHov: $colorBtnBgHov, $fg: $colorBtnFg, $ic: $colorBtnIcon);
+    box-sizing: border-box;
     cursor: pointer;
+    display: inline-block;
+    font-size: 0.7rem;
     text-decoration: none;
     height: $btnStdH;
     line-height: $btnStdH;
-}
-
-.s-button {
-    box-sizing: border-box;
     padding: 0 $pad;
-    font-size: 0.7rem;
     vertical-align: top;
-    @include btnSubtle($bg: $colorBtnBg, $bgHov: $colorBtnBgHov, $fg: $colorBtnFg, $ic: $colorBtnIcon);
 
     &.labeled:before {
         // Icon when it's included

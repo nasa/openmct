@@ -236,9 +236,11 @@ input[type="search"] {
 /******************************************************** SELECTS */
 .select {
     @include btnSubtle($bg: $colorSelectBg);
+    @extend .icon-arrow-down; // Context arrow
     @if $shdwBtns != none {
         margin: 0 0 2px 0; // Needed to avoid dropshadow from being clipped by parent containers
     }
+    display: inline-block;
     padding: 0 $interiorMargin;
     overflow: hidden;
     position: relative;
@@ -256,10 +258,11 @@ input[type="search"] {
             margin: $interiorMargin 0; // Firefox
         }
     }
-    &:after {
-        @include contextArrow();
+    &:before {
+        //@include contextArrow();
         pointer-events: none;
         color: rgba($colorSelectFg, percentToDecimal($contrastInvokeMenuPercent));
+        display: block;
         position: absolute;
         right: $interiorMargin; top: 0;
     }

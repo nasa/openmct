@@ -84,8 +84,8 @@ ul.tree {
 	}
 
 	&.selected {
-		background: $colorItemTreeSelectedBg;
-		color: $colorItemTreeSelectedFg;
+		background: $colorItemTreeSelectedBg !important;
+		color: $colorItemTreeSelectedFg !important;
 		.view-control {
 			color: $colorItemTreeSelectedVC;
 		}
