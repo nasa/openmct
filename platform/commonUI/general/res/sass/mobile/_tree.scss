@@ -30,7 +30,6 @@ body.touch {
     }
 	.tree-item,
 	.search-result-item {
-        @include containerSubtle($bg: pullForward($colorMobilePaneLeft, 2%), $gradRatio: 2%);
 		height: $mobileTreeItemH !important;
 		line-height: $mobileTreeItemH !important;
 		.view-control {
@@ -55,4 +54,15 @@ body.touch {
             }
 		}
 	}
+
+    .pane.treeview {
+        .tree-item,
+        .search-result-item {
+            @include containerSubtle($bg: $colorMobilePaneLeftTreeItemBg, $gradRatio: 2%);
+        }
+    }
+
+    .selector-list .tree-item {
+        @include containerBase($bg: $colorMobileSelectListTreeItemBg);
+    }
 }

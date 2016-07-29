@@ -214,6 +214,8 @@ $colorMiniTabFgHov: #fff;
 
 // Mobile
 $colorMobilePaneLeft: darken($colorBodyBg, 5%);
+$colorMobilePaneLeftTreeItemBg: pullForward($colorMobilePaneLeft, 3%);
+$colorMobileSelectListTreeItemBg: rgba(#fff, 0.05);
 
 // Datetime Picker
 $colorCalCellHovBg: $colorKey;
