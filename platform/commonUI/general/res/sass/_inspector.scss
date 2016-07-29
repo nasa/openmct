@@ -107,7 +107,7 @@
         background-color: $colorInspectorSectionHeaderBg;
         color: $colorInspectorSectionHeaderFg;
         margin-bottom: $interiorMargin;
-        padding: $formTBPad $formLRPad;
+        padding: floor($formTBPad * .75) $formLRPad;
         text-transform: uppercase;
     }
 

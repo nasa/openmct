@@ -136,18 +136,13 @@
     }
 }
 
-.no-validate {
-    .form .form-row >.label {
-        padding-right: 0;
-        &:after {
-            display: none;
-        }
-    }
-}
-
 .hint,
 .s-hint {
 	font-size: 0.9em;
+    .req {
+        color: $colorFormRequired;
+        font-size: 0.7rem;
+    }
 }
 
 .l-result {
