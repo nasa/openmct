@@ -27,13 +27,13 @@ define(
         var STACKED = {
                 key: "stacked",
                 name: "Stacked",
-                cssclass: "icon-menu-hamburger",
+                cssclass: "icon-plot-stacked",
                 Constructor: PlotStackMode
             },
             OVERLAID = {
                 key: "overlaid",
                 name: "Overlaid",
-                cssclass: "icon-sine",
+                cssclass: "icon-plot-overlay",
                 Constructor: PlotOverlayMode
             };
 
