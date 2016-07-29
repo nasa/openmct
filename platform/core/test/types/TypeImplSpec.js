@@ -54,7 +54,7 @@ define(
                 expect(type.getDescription()).toEqual('A type, for testing');
             });
 
-            it("exposes CSS class from definition", function() {
+            it("exposes CSS class from definition", function () {
                 expect(type.getCssClass()).toEqual('icon-telemetry-panel');
             });
 
