@@ -42,6 +42,7 @@ define([
     "./src/directives/MCTContainer",
     "./src/directives/MCTDrag",
     "./src/directives/MCTClickElsewhere",
+    "./src/directives/MCTRefresh",
     "./src/directives/MCTResize",
     "./src/directives/MCTPopup",
     "./src/directives/MCTScroll",
@@ -90,6 +91,7 @@ define([
     MCTContainer,
     MCTDrag,
     MCTClickElsewhere,
+    MCTRefresh,
     MCTResize,
     MCTPopup,
     MCTScroll,
@@ -331,6 +333,10 @@ define([
                     "depends": [
                         "$document"
                     ]
+                },
+                {
+                    "key": "mctRefresh",
+                    "implementation": MCTRefresh
                 },
                 {
                     "key": "mctResize",

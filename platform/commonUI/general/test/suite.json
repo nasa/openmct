@@ -16,6 +16,7 @@
     "directives/MCTContainer",
     "directives/MCTDrag",
     "directives/MCTPopup",
+    "directives/MCTRefresh",
     "directives/MCTResize",
     "directives/MCTScroll",
     "directives/MCTSplitPane",
