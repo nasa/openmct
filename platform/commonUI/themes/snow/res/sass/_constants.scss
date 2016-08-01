@@ -208,9 +208,3 @@ $colorAboutLink: #84b3ff;
 // Loading
 $colorLoadingFg: $colorAlt1;
 $colorLoadingBg: rgba($colorLoadingFg, 0.1);
-
-// Time Conductor
-$colorTimeCondKeyBg: #6178dc;
-$colorTimeCondKeyFg: #fff;
-$colorTimeCondDataVisBg: pullForward($colorBodyBg, 10%);
-$colorTimeCondDataVisRtBg: pushBack($colorTimeCondKeyBg, 30%);
