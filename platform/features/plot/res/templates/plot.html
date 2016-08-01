@@ -87,33 +87,27 @@
             <!-- TODO: Move into correct position; make part of group; infer from set of actions -->
             <div class="l-local-controls gl-plot-local-controls t-plot-display-controls"
                  ng-if="$first">
-                <a class="s-btn"
+                <a class="s-button icon-arrow-left"
                    ng-click="plot.stepBackPanZoom()"
                    ng-show="plot.isZoomed()"
                    title="Restore previous pan/zoom">
-                    <span class="ui-symbol icon">&lt;</span>
                 </a>
-                <a class="s-btn"
+                <a class="s-button icon-arrows-out"
                    ng-click="plot.unzoom()"
                    ng-show="plot.isZoomed()"
                    title="Reset pan/zoom">
-                    <span class="ui-symbol icon">I</span>
                 </a>
-                <div class="menu-element s-menu-btn menus-to-left"
+                <div class="menu-element s-menu-button menus-to-left {{plot.getMode().cssclass}}"
                      ng-if="plot.getModeOptions().length > 1"
                      ng-controller="ClickAwayController as toggle">
                     <span class="l-click-area" ng-click="toggle.toggle()"></span>
-                    <span class="ui-symbol icon type-icon">{{plot.getMode().glyph}}</span>
                     <span>{{plot.getMode().name}}</span>
                     <div class="menu" ng-show="toggle.isActive()">
                         <ul>
-                            <li ng-repeat="option in plot.getModeOptions()">
-                                <a href="" ng-click="plot.setMode(option); toggle.setState(false)">
-                                    <span class="ui-symbol type-icon icon">
-                                        {{option.glyph}}
-                                    </span>
+                            <li ng-repeat="option in plot.getModeOptions()"
+                                ng-click="plot.setMode(option); toggle.setState(false)"
+                                class="{{option.cssclass}}">
                                     {{option.name}}
-                                </a>
                             </li>
                         </ul>
                     </div>

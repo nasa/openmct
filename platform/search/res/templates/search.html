@@ -27,10 +27,10 @@
                type="text"
                ng-model="ngModel.input"
                ng-keyup="controller.search()"/>
-        <a class="clear-icon"
+        <a class="clear-icon clear-input icon-x-in-circle"
            ng-class="{show: !(ngModel.input === '' || ngModel.input === undefined)}"
            ng-click="ngModel.input = ''; controller.search()"></a>
-        <a class="menu-icon"
+        <a class="menu-icon context-available"
            ng-click="toggle.toggle()"></a>
         <mct-include key="'search-menu'"
                      class="menu-element search-menu-holder"
@@ -42,7 +42,7 @@
     <div class="active-filter-display flex-elem holder"
          ng-class="{off: ngModel.filtersString === '' || ngModel.filtersString === undefined || !ngModel.search}"
          ng-controller="SearchMenuController as menuController">
-        <a class="clear-icon clear-filters-icon"
+        <a class="clear-icon clear-filters icon-x-in-circle"
            ng-click="ngModel.checkAll = true; menuController.checkAll()"></a>Filtered by: {{ ngModel.filtersString }}
     </div>
     <div class="search-results flex-elem holder grows vscroll"
@@ -53,7 +53,7 @@
                             ng-model="ngModel"
                             class="l-flex-row flex-elem grows">
         </mct-representation>
-        <a class="load-more-button s-btn vsm" ng-if="controller.areMore()" ng-click="controller.loadMore()">More Results</a>
+        <a class="load-more-button s-button vsm" ng-if="controller.areMore()" ng-click="controller.loadMore()">More Results</a>
     </div>
 
 </div>

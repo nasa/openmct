@@ -26,7 +26,6 @@
     // Main width is used to provide a good click area, and is always transparent
     // :after will be a positioned and colored element that is the handle
 
-    //@include test(red);
     display: block;
     position: absolute;
     z-index: 3;
@@ -37,6 +36,7 @@
         @include absPosDefault(0);
         background: $colorSplitterBg;
         display: block;
+        z-index: 4;
 
         @if $splitterEndCr != 'none' {
             border-radius: $splitterEndCr;
@@ -61,7 +61,7 @@
 }
 
 .split-layout {
-    $inset: splitterHandleInset($splitterD,$splitterHandleD);
+    $inset: splitterHandleInset($splitterD, $splitterHandleD);
     &.horizontal {
         // Slides vertically up and down, splitting the element horizontally
         overflow: hidden; // Suppress overall scroll; each internal pane handles its own overflow
@@ -102,22 +102,32 @@
             cursor: col-resize;
             top: 0;
             bottom: 0;
-            &:not(.flush-right) {
-                width: $splitterD;
-                &:after {
-                    left: $inset; right: $inset;
-                }
+            width: $splitterD;
+            &:after {
+                left: $inset; right: $inset;
+                //width: $splitterHandleD;
             }
             &.flush-right {
                 width: ceil($splitterD / 2);
                 &:after {
-                    background-color: transparent;
-                    left: auto; right: 0; width: $splitterHandleD;
+                    width: $splitterHandleD;
+                    left: auto; right: 0;
                 }
                 &.edge-shdw {
                     @include background-image(linear-gradient(90deg, rgba(black, 0) 40%, rgba(black, 0.05) 70%, rgba(black, 0.2) 100%));
                 }
             }
+        }
+    }
+    &.splitter-sm {
+        $inset: splitterHandleInset($splitterDSm, $splitterHandleD);
+        .horizontal >.splitter {
+            height: $splitterDSm;
+            &:after { top: $inset; bottom: $inset; }
+        }
+        .vertical >.splitter {
+            width: $splitterDSm;
+            &:after { left: $inset; right: $inset; }
         }
     }
 }

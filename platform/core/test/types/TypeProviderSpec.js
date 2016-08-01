@@ -30,18 +30,18 @@ define(
                 testTypeDefinitions = [
                     {
                         key: 'basic',
-                        glyph: "X",
+                        cssclass: "icon-magnify-in",
                         name: "Basic Type"
                     },
                     {
                         key: 'multi1',
-                        glyph: "Z",
+                        cssclass: "icon-trash",
                         description: "Multi1 Description",
                         capabilities: ['a1', 'b1']
                     },
                     {
                         key: 'multi2',
-                        glyph: "Y",
+                        cssclass: "icon-magnify-out",
                         capabilities: ['a2', 'b2', 'c2']
                     },
                     {
@@ -70,7 +70,7 @@ define(
             it("looks up non-inherited types by name", function () {
                 captured.type = provider.getType('basic');
 
-                expect(captured.type.getGlyph()).toEqual("X");
+                expect(captured.type.getCssClass()).toEqual("icon-magnify-in");
                 expect(captured.type.getName()).toEqual("Basic Type");
                 expect(captured.type.getDescription()).toBeUndefined();
             });
@@ -78,7 +78,7 @@ define(
             it("supports single inheritance", function () {
                 captured.type = provider.getType('single-subtype');
 
-                expect(captured.type.getGlyph()).toEqual("X");
+                expect(captured.type.getCssClass()).toEqual("icon-magnify-in");
                 expect(captured.type.getName()).toEqual("Basic Subtype");
                 expect(captured.type.getDescription()).toEqual("A test subtype");
             });
@@ -86,7 +86,7 @@ define(
             it("supports multiple inheritance", function () {
                 captured.type = provider.getType('multi-subtype');
 
-                expect(captured.type.getGlyph()).toEqual("Y");
+                expect(captured.type.getCssClass()).toEqual("icon-magnify-out");
                 expect(captured.type.getName()).toEqual("Multi-parent Subtype");
                 expect(captured.type.getDescription()).toEqual("Multi1 Description");
             });

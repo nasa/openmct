@@ -231,7 +231,7 @@ define([
                         "$window"
                     ],
                     "group": "windowing",
-                    "glyph": "y",
+                    "cssclass": "icon-new-window",
                     "priority": "preferred"
                 },
                 {
@@ -239,7 +239,6 @@ define([
                     "implementation": FullscreenAction,
                     "category": "view-control",
                     "group": "windowing",
-                    "glyph": "z",
                     "priority": "default"
                 }
             ],
@@ -247,7 +246,7 @@ define([
                 {
                     "key": "items",
                     "name": "Items",
-                    "glyph": "9",
+                    "cssclass": "icon-thumbs-strip",
                     "description": "Grid of available items",
                     "template": itemsTemplate,
                     "uses": [

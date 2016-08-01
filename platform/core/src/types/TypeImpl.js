@@ -56,13 +56,13 @@ define(
          * @method Type#getDescription
          */
         /**
-         * Get the glyph associated with this type. Glyphs are
-         * single-character strings which will appear as icons (when
+         * Get the cssclass associated with this type. cssclass is a
+         * string which will appear as an icon (when
          * displayed in an appropriate font) which visually
          * distinguish types from one another.
          *
-         * @returns {string} the glyph to be displayed
-         * @method Type#getGlyph
+         * @returns {string} the cssclass for this type
+         * @method Type#getCssClass
          */
         /**
          * Get an array of properties associated with objects of
@@ -144,8 +144,8 @@ define(
             return this.typeDef.description;
         };
 
-        TypeImpl.prototype.getGlyph = function () {
-            return this.typeDef.glyph;
+        TypeImpl.prototype.getCssClass = function () {
+            return this.typeDef.cssclass;
         };
 
         TypeImpl.prototype.getProperties = function () {

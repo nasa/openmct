@@ -50,10 +50,13 @@ define(
                 if (formatter && !isNaN(timeDelta)) {
                     self.textValue = formatter(timeDelta);
                     self.signValue = timeDelta < 0 ? "-" :
-                            timeDelta >= 1000 ? "+" : "";
+                        timeDelta >= 1000 ? "+" : "";
+                    self.signCssClass = timeDelta < 0 ? "icon-minus" :
+                        timeDelta >= 1000 ? "icon-plus" : "";
                 } else {
                     self.textValue = "";
                     self.signValue = "";
+                    self.signCssClass = "";
                 }
             }
 
@@ -126,12 +129,13 @@ define(
         }
 
         /**
-         * Get the glyph to display for the start/restart button.
-         * @returns {string} glyph to display
+         * Get the CSS class to display the right icon
+         * for the start/restart button.
+         * @returns {string} cssclass to display
          */
-        TimerController.prototype.buttonGlyph = function () {
+        TimerController.prototype.buttonCssClass = function () {
             return this.relevantAction ?
-                    this.relevantAction.getMetadata().glyph : "";
+                    this.relevantAction.getMetadata().cssclass : "";
         };
 
         /**
@@ -162,6 +166,15 @@ define(
          */
         TimerController.prototype.sign = function () {
             return this.signValue;
+        };
+
+        /**
+         * Get the sign (+ or -) of the current timer value, as
+         * a CSS class.
+         * @returns {string} sign of the current timer value
+         */
+        TimerController.prototype.signClass = function () {
+            return this.signCssClass;
         };
 
         /**

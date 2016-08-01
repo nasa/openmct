@@ -51,6 +51,7 @@ define(
                     [
                         "getKey",
                         "getGlyph",
+                        "getCssClass",
                         "getName",
                         "getDescription",
                         "getProperties",
@@ -119,7 +120,7 @@ define(
                 mockParent.useCapability.andReturn(mockDomainObject);
 
                 mockType.getKey.andReturn("test");
-                mockType.getGlyph.andReturn("T");
+                mockType.getCssClass.andReturn("icon-telemetry");
                 mockType.getDescription.andReturn("a test type");
                 mockType.getName.andReturn("Test");
                 mockType.getProperties.andReturn([]);
@@ -137,7 +138,7 @@ define(
 
                 expect(metadata.name).toEqual("Test");
                 expect(metadata.description).toEqual("a test type");
-                expect(metadata.glyph).toEqual("T");
+                expect(metadata.cssclass).toEqual("icon-telemetry");
             });
 
             describe("the perform function", function () {

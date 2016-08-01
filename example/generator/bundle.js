@@ -86,7 +86,7 @@ define([
                 {
                     "key": "generator",
                     "name": "Sine Wave Generator",
-                    "glyph": "\u0054",
+                    "cssclass": "icon-telemetry",
                     "description": "For development use. Generates example streaming telemetry data using a simple sine wave algorithm.",
                     "priority": 10,
                     "features": "creation",

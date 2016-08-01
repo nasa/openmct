@@ -49,7 +49,7 @@ define([
                 {
                     "key": "imagery",
                     "name": "Example Imagery",
-                    "glyph": "\u00e3",
+                    "cssclass": "icon-image",
                     "features": "creation",
                     "description": "For development use. Creates example imagery data that mimics a live imagery stream.",
                     "priority": 10,

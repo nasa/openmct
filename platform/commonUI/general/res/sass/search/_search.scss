@@ -23,15 +23,7 @@
 .clear-icon,
 .menu-icon {
     cursor: pointer;
-    font-family: symbolsfont;
     @include trans-prop-nice((opacity, color), 150ms);
-}
-
-.clear-icon {
-    // 'x' in circle icon
-    &:before {
-        content: '\e607';
-    }
 }
 
 .holder-search {
@@ -41,6 +33,7 @@
 		$textInputHeight: 19px; // This is equal to the default value, 19px
 		$iconEdgeM: 4px;
 		$iconD: $treeSearchInputBarH - ($iconEdgeM*2);
+        @extend .icon-magnify;
 		font-size: 0.8em;
 		position: relative;
 
@@ -50,16 +43,17 @@
 		}
 		
 		&:before,
-		.clear-icon,
+		.clear-input,
 		.menu-icon {
+            // :before is magnify glass icon
 			box-sizing: border-box;
 			color: $colorInputIcon;
 			height: $iconD;
             width: $iconD;
 			line-height: $iconD;
-			position: absolute;
-			text-align: center;
-			top: $iconEdgeM;
+            position: absolute;
+            text-align: center;
+            top: $iconEdgeM;
 		}
 
 		.search-input {
@@ -76,8 +70,6 @@
 
 		&:before {
             // Magnify glass icon
-            content:'\4d';
-            font-family: symbolsfont;
             left: $interiorMarginSm;
             @include trans-prop-nice(color, 250ms);
             pointer-events: none;
@@ -89,7 +81,8 @@
 			color: pullForward($colorInputIcon, 10%);
 		}
 
-		.clear-icon {
+		.clear-input {
+            // Hiding for now with addition of Cancel button
 			right: $iconD + $interiorMargin;
 
 			// Icon is visible only when there is text input
@@ -107,12 +100,10 @@
 
 		.menu-icon {
             // 'v' invoke menu icon
-            &:before { content: '\76'; }
 			font-size: 0.8em;
 			padding-right: $iconEdgeM;
 			right: $iconEdgeM;
 			text-align: right;
-
 			&:hover {
 				color: pullForward($colorInputIcon, 10%);
 			}
@@ -126,20 +117,25 @@
 		}
 	}
 
+    .results-msg {
+        font-size: 0.8rem;
+    }
+
 	.active-filter-display {
 		$s: 0.7em;
 		$p: $interiorMargin;
 		box-sizing: border-box;
 		line-height: 130%;
-		padding-left: $s * 2.25;
+		//padding-left: $s * 2.25;
 		font-size: $s;
 
-		.clear-filters-icon {
+		.clear-filters {
 			color: $colorInputIcon;
 			opacity: 1;
-			font-size: 0.8em;
-			position: absolute;
-			left: 1px;
+			font-size: 0.9em;
+            margin-right: $interiorMarginSm;
+			//position: absolute;
+			//left: 1px;
 			cursor: pointer;
 		}
 	}

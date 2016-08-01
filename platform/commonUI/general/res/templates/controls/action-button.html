@@ -19,13 +19,10 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<a class="s-btn key-{{parameters.action.getMetadata().key}}"
+<a class="s-button key-{{parameters.action.getMetadata().key}} {{parameters.action.getMetadata().cssclass}}"
    ng-class="{ labeled: parameters.labeled }"
    title="{{parameters.action.getMetadata().description}}"
    ng-click="parameters.action.perform()">
-    <span class="ui-symbol icon">
-        {{parameters.action.getMetadata().glyph}}
-    </span>
     <span class="title-label" ng-if="parameters.labeled">
         {{parameters.action.getMetadata().name}}
     </span>

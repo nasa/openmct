@@ -22,17 +22,12 @@
 <div class="menu-element context-menu-wrapper mobile-disable-select" ng-controller="ContextMenuController">
     <div class="menu context-menu">
         <ul>
-
             <li ng-repeat="menuAction in menuActions"
                 ng-click="menuAction.perform()"
                 title="{{menuAction.getMetadata().description}}"
-                >
-                <span class="ui-symbol icon type-icon">
-                    {{menuAction.getMetadata().glyph}}
-                </span>
+                class="{{menuAction.getMetadata().cssclass}}">
                 {{menuAction.getMetadata().name}}
             </li>
-
         </ul>
     </div>
 </div>

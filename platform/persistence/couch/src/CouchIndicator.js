@@ -95,8 +95,8 @@ define(
             $interval(updateIndicator, interval);
         }
 
-        CouchIndicator.prototype.getGlyph = function () {
-            return "D";
+        CouchIndicator.prototype.getCssClass = function () {
+            return "icon-database";
         };
 
         CouchIndicator.prototype.getGlyphClass = function () {

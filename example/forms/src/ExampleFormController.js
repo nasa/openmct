@@ -78,27 +78,26 @@ define(
                         items: [
                             {
                                 control: "button",
-                                glyph: "1",
-                                description: "Button A",
+                                csslass: "icon-save",
                                 click: function () {
-                                    window.alert("A");
+                                    window.alert("Save");
                                 }
                             },
                             {
                                 control: "button",
-                                glyph: "2",
+                                csslass: "icon-x",
                                 description: "Button B",
                                 click: function () {
-                                    window.alert("B");
+                                    window.alert("Cancel");
                                 }
                             },
                             {
                                 control: "button",
-                                glyph: "3",
+                                csslass: "icon-trash",
                                 description: "Button C",
                                 disabled: true,
                                 click: function () {
-                                    window.alert("C");
+                                    window.alert("Delete");
                                 }
                             }
                         ]

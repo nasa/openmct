@@ -25,7 +25,7 @@
         background: $colorOvrBlocker;
         z-index: 100;
     }
-    .clk-icon.close {
+    .close {
         font-size: 0.8rem;
         position: absolute;
         top: $interiorMarginLg;
@@ -87,7 +87,7 @@
 
     .bottom-bar {
         text-align: right;
-        .s-btn {
+        .s-button {
             $bg: $colorOvrBtnBg;
             &:not(.major) {
                 @include btnSubtle($bg, pullForward($bg, 10%), $colorOvrBtnFg, $colorOvrBtnFg);

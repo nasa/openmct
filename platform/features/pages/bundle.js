@@ -36,7 +36,7 @@ define([
                 {
                     "key": "example.page",
                     "name": "Web Page",
-                    "glyph": "\u00ea",
+                    "cssclass": "icon-page",
                     "description": "Embed a web page or web-based image in a resizeable window component. Can be added to Display Layouts. Note that the URL being embedded must allow iframing.",
                     "priority": 50,
                     "features": [

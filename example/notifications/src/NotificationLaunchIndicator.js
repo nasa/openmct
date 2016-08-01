@@ -26,17 +26,21 @@ define(
     function () {
         "use strict";
 
+        /**
+         * A tool for manually invoking notifications. When included this
+         * indicator will allow for notifications of different types to be
+         * launched for demonstration and testing purposes.
+         * @constructor
+         */
+
         function NotificationLaunchIndicator() {
 
         }
 
         NotificationLaunchIndicator.template = 'notificationLaunchTemplate';
 
-        NotificationLaunchIndicator.prototype.getGlyph = function () {
-            return "i";
-        };
         NotificationLaunchIndicator.prototype.getGlyphClass = function () {
-            return 'caution';
+            return 'ok';
         };
         NotificationLaunchIndicator.prototype.getText = function () {
             return "Launch notification";

@@ -81,7 +81,7 @@ define([
                 {
                     "key": "plot",
                     "name": "Example Telemetry Plot",
-                    "glyph": "\u0074",
+                    "cssclass": "icon-telemetry-panel",
                     "description": "For development use. A plot for displaying telemetry.",
                     "priority": 10,
                     "delegates": [

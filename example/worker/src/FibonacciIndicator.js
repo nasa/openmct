@@ -50,14 +50,11 @@ define(
             requestNext();
 
             return {
-                getGlyph: function () {
-                    return "?";
+                getCssClass: function () {
+                    return "icon-object-unknown";
                 },
                 getText: function () {
                     return latest;
-                },
-                getGlyphClass: function () {
-                    return "";
                 },
                 getDescription: function () {
                     return "";

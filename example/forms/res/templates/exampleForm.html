@@ -20,12 +20,14 @@
  at runtime from the About dialog for additional information.
 -->
 <div ng-controller="ExampleFormController">
-    <mct-toolbar structure="toolbar" ng-model="state" name="aToolbar">
-    </mct-toolbar>
+    <mct-toolbar structure="toolbar"
+                 ng-model="state"
+                 name="aToolbar"></mct-toolbar>
 
-    <mct-form structure="form" ng-model="state" name="aForm">
-    </mct-form>
-
+    <mct-form structure="form"
+              ng-model="state"
+              class="validates"
+              name="aForm"></mct-form>
 
     <ul>
         <li>Dirty: {{aForm.$dirty}}</li>
@@ -33,11 +35,8 @@
     </ul>
 
     <pre>
-
-
-    <textarea>
-    {{state | json}}
-    </textarea>
-
+        <textarea>
+            {{state | json}}
+        </textarea>
     </pre>
 </div>

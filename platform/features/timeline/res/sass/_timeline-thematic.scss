@@ -52,8 +52,8 @@
     .l-pane-l {
         // Left pane of the tabular area
         .l-cols {
-            .s-label .ui-symbol.icon {
-                color: $colorGanttBarTabularFgIcon;
+            .t-object-label .t-item-icon {
+                color: pullForward($colorGanttBarBg, 10%);
             }
         }
     }
@@ -104,7 +104,7 @@
     }
 
     .s-ticks {
-        @include bgTicks($timelineColorAlt1);
+        @include bgTicks(   $timelineColorAlt1);
     }
     .s-hover-btns-holder {
         $bg: $timelineHeaderColorBg;
@@ -112,7 +112,7 @@
         $l: 5%;
         @include user-select(none);
         @include background-image(linear-gradient(-90deg, rgba($bg, $bga), rgba($bg, $bga) 70%, rgba($bg, 0) 100%));
-        .s-btn {
+        .s-button {
             height: 16px;
             line-height: 16px;
             .icon {

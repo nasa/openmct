@@ -19,25 +19,20 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="s-menu-btn menu-element"
+<div class="s-menu-button menu-element {{ structure.cssclass }}"
      ng-controller="ClickAwayController as toggle">
 
     <span class="l-click-area" ng-click="toggle.toggle()"></span>
-
-    <span class="ui-symbol icon">{{structure.glyph}}</span>
     <span class="title-label" ng-if="structure.text">
         {{structure.text}}
     </span>
 
     <div class="menu" ng-show="toggle.isActive()">
         <ul>
-            <li ng-click="structure.click(option.key); toggle.setState(false)" ng-repeat="option in structure.options">
-                <a href="">
-                    <span class="ui-symbol type-icon icon">
-                        {{option.glyph}}
-                    </span>
+            <li ng-click="structure.click(option.key); toggle.setState(false)"
+                ng-repeat="option in structure.options"
+                class="{{ option.cssclass }}">
                     {{option.name}}
-                </a>
             </li>
         </ul>
     </div>

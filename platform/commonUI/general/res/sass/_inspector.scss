@@ -39,14 +39,6 @@
     .pane-header {
         color: pushBack($colorInspectorFg, 20%);
         font-size: 0.8rem;
-        &:before {
-            color: pushBack($colorInspectorFg, 10%);
-            content: '\e615'; // e615 Crosshair symbol
-            display: inline;
-            font-family: symbolsfont;
-            margin-right: $interiorMargin;
-            vertical-align: bottom;
-        }
     }
 
     .split-layout {
@@ -115,7 +107,7 @@
         background-color: $colorInspectorSectionHeaderBg;
         color: $colorInspectorSectionHeaderFg;
         margin-bottom: $interiorMargin;
-        padding: $formTBPad $formLRPad;
+        padding: floor($formTBPad * .75) $formLRPad;
         text-transform: uppercase;
     }
 
@@ -159,7 +151,7 @@
         }
         &:not(.last) .t-object-label .t-title-label:after {
             color: pushBack($colorInspectorFg, 15%);
-            content: '\3e';
+            content: '\e904';
             display: inline-block;
             font-family: symbolsfont;
             font-size: 8px;

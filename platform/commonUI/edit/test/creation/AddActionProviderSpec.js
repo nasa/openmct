@@ -45,6 +45,7 @@ define(
                     [
                         "getKey",
                         "getGlyph",
+                        "getCssClass",
                         "getName",
                         "getDescription",
                         "getProperties",

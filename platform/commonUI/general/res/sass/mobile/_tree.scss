@@ -32,28 +32,37 @@ body.touch {
 	.search-result-item {
 		height: $mobileTreeItemH !important;
 		line-height: $mobileTreeItemH !important;
-		margin-bottom: 0px !important;
 		.view-control {
-            font-size: 1.2em;
-            margin-right: 0;
-            order: 2;
-            width: $mobileTreeItemH;
+            font-size: 1em;
+            margin-right: $interiorMargin;
+            width: ceil($mobileTreeItemH * 0.75);
             &.has-children {
                 &:before {
-                    content: "\7d";
+                    content: $glyph-icon-arrow-down;
                     left: 50%;
-                    @include transform(translateX(-50%) rotate(270deg));
+                    @include transform(translateX(-50%) rotate(-90deg));
                 }
                 &.expanded:before {
-                    @include transform(translateX(-50%) rotate(90deg));
+                    @include transform(translateX(-50%) rotate(0deg));
                 }
             }
 		}
 		.t-object-label {
 			line-height: inherit;
-            .t-item-icon.l-icon-link .t-item-icon-glyph:before {
+            .t-item-icon.l-icon-link .t-item-icon-glyph:after {
                 bottom: 20%; // Shift up due to height of mobile menu items
             }
 		}
 	}
+
+    .pane.treeview {
+        .tree-item,
+        .search-result-item {
+            @include containerSubtle($bg: $colorMobilePaneLeftTreeItemBg, $gradRatio: 2%);
+        }
+    }
+
+    .selector-list .tree-item {
+        @include containerBase($bg: $colorMobileSelectListTreeItemBg);
+    }
 }

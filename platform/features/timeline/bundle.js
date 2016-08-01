@@ -151,7 +151,7 @@ define([
                 {
                     "key": "timeline",
                     "name": "Timeline",
-                    "glyph": "\u0053",
+                    "cssclass": "icon-timeline",
                     "description": "A time-oriented container that lets you enclose and organize other Timelines and Activities. The Timeline view provides both tabular and Gantt views as well as resource utilization graphing of Activities.",
                     "priority": 502,
                     "features": [
@@ -194,7 +194,7 @@ define([
                 {
                     "key": "activity",
                     "name": "Activity",
-                    "glyph": "\u0061",
+                    "cssclass": "icon-activity",
                     "features": [
                         "creation"
                     ],
@@ -240,7 +240,7 @@ define([
                 {
                     "key": "mode",
                     "name": "Activity Mode",
-                    "glyph": "\u0041",
+                    "cssclass": "icon-activity-mode",
                     "features": [
                         "creation"
                     ],
@@ -280,7 +280,7 @@ define([
                 {
                     "key": "values",
                     "name": "Values",
-                    "glyph": "\u0041",
+                    "cssclass": "icon-activity-mode",
                     "template": valuesTemplate,
                     "type": "mode",
                     "uses": [
@@ -291,7 +291,7 @@ define([
                 {
                     "key": "timeline",
                     "name": "Timeline",
-                    "glyph": "\u0053",
+                    "cssclass": "icon-timeline",
                     "type": "timeline",
                     "description": "A time-oriented container that lets you enclose and organize other Timelines and Activities. The Timeline view provides both tabular and Gantt views as well as resource utilization graphing of Activities.",
                     "template": timelineTemplate,
@@ -302,18 +302,17 @@ define([
                                 "items": [
                                     {
                                         "method": "add",
-                                        "glyph": "\u002b",
                                         "control": "menu-button",
                                         "text": "Add",
                                         "options": [
                                             {
                                                 "name": "Timeline",
-                                                "glyph": "\u0053",
+                                                "cssclass": "icon-timeline",
                                                 "key": "timeline"
                                             },
                                             {
                                                 "name": "Activity",
-                                                "glyph": "\u0061",
+                                                "cssclass": "icon-activity",
                                                 "key": "activity"
                                             }
                                         ]
@@ -323,13 +322,13 @@ define([
                             {
                                 "items": [
                                     {
-                                        "glyph": "\u00e9",
+                                        "cssclass": "icon-plot-resource",
                                         "description": "Graph Resource Utilization",
                                         "control": "button",
                                         "method": "toggleGraph"
                                     },
                                     {
-                                        "glyph": "\u0041",
+                                        "cssclass": "icon-activity-mode",
                                         "control": "dialog-button",
                                         "description": "Apply Activity Modes...",
                                         "title": "Apply Activity Modes",
@@ -342,7 +341,7 @@ define([
                                         "property": "modes"
                                     },
                                     {
-                                        "glyph": "\u00e8",
+                                        "cssclass": "icon-chain-links",
                                         "description": "Edit Activity Link",
                                         "title": "Activity Link",
                                         "control": "dialog-button",
@@ -355,7 +354,7 @@ define([
                                         "property": "link"
                                     },
                                     {
-                                        "glyph": "\u0047",
+                                        "cssclass": "icon-gear",
                                         "description": "Edit Properties...",
                                         "control": "button",
                                         "method": "properties"
@@ -368,7 +367,7 @@ define([
                                         "method": "remove",
                                         "description": "Remove Item",
                                         "control": "button",
-                                        "glyph": "\u005a"
+                                        "cssclass": "icon-trash"
                                     }
                                 ]
                             }

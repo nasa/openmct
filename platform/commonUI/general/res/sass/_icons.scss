@@ -30,25 +30,17 @@
 
 .ui-symbol {
     font-family: 'symbolsfont';
-	&.type-icon {
-		color: $colorObjHdrIc;
-	}
-	&.icon {
-		color: $colorKey;
-        font-size: inherit;
-		&.alert {
-			color: $colorAlert;
-			&:hover {
-				color: lighten($colorAlert, $ltGamma);
-			}
-		}
-		&.major {
-			font-size: 1.65em;
-		}
-	}
-	&.icon-calendar:after {
-		content: "\e605";
-	}
+}
+
+.ui-symbol.icon {
+    color: $colorKey;
+    font-size: inherit;
+    &.alert {
+        color: $colorAlert;
+        &:hover {
+            color: lighten($colorAlert, $ltGamma);
+        }
+    }
 }
 
 .bar .ui-symbol {
@@ -60,39 +52,31 @@
 	display: inline-block;
 }
 
-.s-menu-btn .invoke-menu,
+.s-menu-button .invoke-menu,
 .icon.major .invoke-menu {
 	margin-left: $interiorMarginSm;
 }
 
 .menu .type-icon,
 .tree-item .type-icon,
-.super-menu.menu .type-icon {
+.super-menu.menu .menu-item-a:before {
 	position: absolute;
-}
-
-.l-icon-alert {
-	display: none !important;
-	&:before {
-		color: $colorAlert;
-		content: "!";
-	}
 }
 
 .t-item-icon {
 	// Used in grid-item.html, tree-item, inspector location
 	@extend .ui-symbol;
     @extend .icon;
-    line-height: normal; // This is Ok for the symbolsfont
+    line-height: inherit;
     position: relative;
     &.l-icon-link {
         .t-item-icon-glyph {
-            &:before {
+            &:after {
                 color: $colorIconLink;
-                content: "\f4";
+                content: $glyph-icon-link;
                 height: auto; width: auto;
                 position: absolute;
-                left: 0; top: 0; right: 0; bottom: 10%;
+                left: 0; top: 0; right: 0; bottom: 20%;
                 @include transform-origin(bottom left);
                 @include transform(scale(0.3));
                 z-index: 2;

@@ -85,6 +85,7 @@
 .l-filter {
     $iconEdgeM: 4px;
     $iconD: $formInputH - ($iconEdgeM * 2);
+    @extend .icon-magnify;
     // Adds a magnifying glass before, holds an input and a clear button
     display: inline-block;
     position: relative;
@@ -106,7 +107,6 @@
 
     &:before {
         // Magnify glass icon
-        content:'\4d';
         left: $interiorMargin;
         @include trans-prop-nice(color, 250ms);
         pointer-events: none;
@@ -143,12 +143,5 @@
     // Make icon lighten when hovering over search bar
     &:hover:before {
         color: pullForward($colorInputIcon, 10%);
-    }
-
-    .clear-icon {
-        // 'x' in circle icon
-        &:before {
-            content: '\e607';
-        }
     }
 }

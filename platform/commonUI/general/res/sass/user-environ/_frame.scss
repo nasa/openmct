@@ -49,8 +49,8 @@
 		left: $myM;
 	}
 	&.frame-template {
-		.s-btn,
-		.s-menu-btn {
+		.s-button,
+		.s-menu-button {
 			height: $ohH;
 			line-height: $ohH;
 			padding: 0 $interiorMargin;
@@ -60,7 +60,7 @@
 			}
 		}
 
-		.s-menu-btn:after {
+		.s-menu-button:after {
 			font-size: 8px;
 		}
 

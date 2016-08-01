@@ -20,21 +20,32 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /******************************************************** MENU BUTTONS */
-.s-menu-btn {
+.s-menu-button {
 	// Formerly .btn-menu
-	@extend .s-btn;
+	@extend .s-button;
 	span.l-click-area {
 		// In markup, this element should not enclose anything.
 		@extend .abs;
 	}
 
 	.icon {
-		font-size: 120%;
+		font-size: 16px; //120%;
 	}
 
 	.title-label {
 		margin-left: $interiorMarginSm;
 	}
+
+    .color-swatch {
+        // Used in color menu buttons in toolbar
+        $d: 10px;
+        display: inline-block;
+        border: 1px solid rgba($colorBtnFg, 0.2);
+        height: $d; width: $d;
+        vertical-align: middle;
+        margin-left: $interiorMarginSm;
+        margin-top: -2px;
+    }
 
 	&:after {
 		// Adds the downward facing 'context available / invoke menu' arrow element
@@ -42,12 +53,8 @@
 		color: rgba($colorInvokeMenu, percentToDecimal($contrastInvokeMenuPercent));
 	}
 
-	&.create-btn {
-		&:before {
-			content:'\2b';
-			display: inline;
-			font-family: symbolsfont;
-		}
+	&.create-button {
+        @extend .icon-plus;
 		.title-label {
 			font-size: 1rem;
 		}
@@ -56,9 +63,6 @@
 	.menu {
 		left: 0;
 		text-align: left;
-		.ui-symbol.icon {
-			width: 12px;
-		}
 	}
 }
 
@@ -77,6 +81,7 @@
 }
 
 .menu {
+    // TODO: reduce size of icons
 	@extend .s-menu;
 	display: block;
 	position: absolute;
@@ -86,7 +91,8 @@
 		li {
 			box-sizing: border-box;
 			border-top: 1px solid pullForward($colorMenuBg, 10%);
-			color: pullForward($colorMenuBg, 60%);
+            color: $colorMenuFg;
+			//color: pullForward($colorMenuBg, 60%);
 			line-height: $menuLineH;
 			padding: $interiorMarginSm $interiorMargin * 2 $interiorMarginSm ($interiorMargin * 2) + $treeTypeIconW;
 			position: relative;
@@ -97,33 +103,37 @@
 			&:hover {
 				background: $colorMenuHovBg;
 				color: $colorMenuHovFg;
-				.icon {
-					color: $colorMenuHovIc;
-				}
+                &:before {
+                    color: $colorMenuHovIc;
+                }
 			}
-			.type-icon {
-				left: $interiorMargin * 2;
-			}
+            &:before {
+                @extend .ui-symbol;
+                @extend .type-icon;
+                @extend .icon;
+                display: inline-block;
+                left: $interiorMargin * 2;
+            }
 		}
 	}
 }
 
 .menu,
+.icon-menu,
 .context-menu,
 .super-menu,
-.s-menu-btn .menu {
+.s-menu-button .menu {
 	pointer-events: auto;
 	ul li {
-		a {
-			color: $colorMenuFg;
+		a.menu-item-a {
+            color: $colorMenuFg;
             display: block;
 		}
-		.icon {
-			color: $colorMenuIc;
-		}
-		.type-icon {
-			left: $interiorMargin;
-		}
+        &:before,
+        a.menu-item-a:before {
+            color: $colorMenuIc;
+            left: $interiorMargin;
+        }
 	}
 }
 
@@ -148,7 +158,8 @@
 				}
 			}
 		}
-		.type-icon {
+		&:before {
+            // Type icon
 			left: 25px;
 		}
 	}

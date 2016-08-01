@@ -62,6 +62,12 @@
     }
 }
 
+.subdued {
+    .status-indicator {
+        color: pullForward($colorStatusBarBg, 40%);
+    }
+}
+
 .status-block-holder {
     // Applied to mct-include element
     // Contains status.block elements
@@ -122,7 +128,7 @@
 		font-weight: bold;
 		opacity: 1;
 	}
-    .s-btn {
+    .s-button {
         background: $colorStatusBtnBg;
         padding: 0 $interiorMargin;
         height: auto;
@@ -233,7 +239,7 @@
 @mixin messageBlock($iconW: 32px) {
     .type-icon.message-type {
         @include txtShdw($shdwStatusIc);
-        &:before { content:"\e608"; }
+        @extend .icon-bell;
         color: $colorStatusDefault;
         font-size: $iconW;
         padding: 1px;
@@ -241,15 +247,15 @@
     }
 
     .message-severity-info .type-icon.message-type {
-        &:before { content:"\e608"; }
+        @extend .icon-info;
         color: $colorStatusInfo;
     }
     .message-severity-alert .type-icon.message-type {
-        &:before { content:"\e610"; }
+        @extend .icon-bell;
         color: $colorStatusAlert;
     }
     .message-severity-error .type-icon.message-type {
-        &:before { content:"\21"; }
+        @extend .icon-alert-rect;
         color: $colorStatusError;
     }
 }
@@ -272,12 +278,10 @@
     @include flex-direction(row);
     @include align-items(stretch);
     .type-icon.message-type {
-        //@include test(red);
         @include flex(0 1 auto);
         position: relative;
     }
     .message-contents {
-        //@include test(blue);
         @include flex(1 1 auto);
         margin-left: $overlayMargin;
         position: relative;

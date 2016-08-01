@@ -56,7 +56,7 @@ define([
                 {
                     "key": "layout",
                     "name": "Display Layout",
-                    "glyph": "\u004c",
+                    "cssclass": "icon-layout",
                     "type": "layout",
                     "template": layoutTemplate,
                     "editable": true,
@@ -65,7 +65,7 @@ define([
                 {
                     "key": "fixed",
                     "name": "Fixed Position",
-                    "glyph": "3",
+                    "cssclass": "icon-box-with-dashed-lines",
                     "type": "telemetry.panel",
                     "template": fixedTemplate,
                     "uses": [
@@ -77,28 +77,30 @@ define([
                                 "items": [
                                     {
                                         "method": "add",
-                                        "glyph": "\u002b",
+                                        "cssclass": "icon-plus",
                                         "control": "menu-button",
                                         "text": "Add",
+                                        "title": "Add",
+                                        "description": "Add new items",
                                         "options": [
                                             {
                                                 "name": "Box",
-                                                "glyph": "\u00e0",
+                                                "cssclass": "icon-box",
                                                 "key": "fixed.box"
                                             },
                                             {
                                                 "name": "Line",
-                                                "glyph": "\u00e2",
+                                                "cssclass": "icon-line-horz",
                                                 "key": "fixed.line"
                                             },
                                             {
                                                 "name": "Text",
-                                                "glyph": "\u00e4",
+                                                "cssclass": "icon-T",
                                                 "key": "fixed.text"
                                             },
                                             {
                                                 "name": "Image",
-                                                "glyph": "\u00e3",
+                                                "cssclass": "icon-image",
                                                 "key": "fixed.image"
                                             }
                                         ]
@@ -109,52 +111,61 @@ define([
                                 "items": [
                                     {
                                         "method": "order",
-                                        "glyph": "á",
+                                        "cssclass": "icon-layers",
                                         "control": "menu-button",
+                                        "title": "Layering",
+                                        "description": "Move the selected object above or below other objects",
                                         "options": [
                                             {
                                                 "name": "Move to Top",
-                                                "glyph": "\u00eb",
+                                                "cssclass": "icon-arrow-double-up",
                                                 "key": "top"
                                             },
                                             {
                                                 "name": "Move Up",
-                                                "glyph": "\u005e",
+                                                "cssclass": "icon-arrow-up",
                                                 "key": "up"
                                             },
                                             {
                                                 "name": "Move Down",
-                                                "glyph": "\u0076",
+                                                "cssclass": "icon-arrow-down",
                                                 "key": "down"
                                             },
                                             {
                                                 "name": "Move to Bottom",
-                                                "glyph": "\u00ee",
+                                                "cssclass": "icon-arrow-double-down",
                                                 "key": "bottom"
                                             }
                                         ]
                                     },
                                     {
                                         "property": "fill",
-                                        "glyph": "",
+                                        "cssclass": "icon-paint-bucket",
+                                        "title": "Fill color",
+                                        "description": "Set fill color",
                                         "control": "color"
                                     },
                                     {
                                         "property": "stroke",
-                                        "glyph": "â",
+                                        "cssclass": "icon-line-horz",
+                                        "title": "Border color",
+                                        "description": "Set border color",
                                         "control": "color"
                                     },
                                     {
                                         "property": "color",
-                                        "glyph": "ä",
+                                        "cssclass": "icon-T",
+                                        "title": "Text color",
+                                        "description": "Set text color",
                                         "mandatory": true,
                                         "control": "color"
                                     },
                                     {
                                         "property": "url",
-                                        "glyph": "ã",
+                                        "cssclass": "icon-image",
                                         "control": "dialog-button",
                                         "title": "Image Properties",
+                                        "description": "Edit image properties",
                                         "dialog": {
                                             "control": "textfield",
                                             "name": "Image URL",
@@ -163,9 +174,10 @@ define([
                                     },
                                     {
                                         "property": "text",
-                                        "glyph": "G",
+                                        "cssclass": "icon-gear",
                                         "control": "dialog-button",
                                         "title": "Text Properties",
+                                        "description": "Edit text properties",
                                         "dialog": {
                                             "control": "textfield",
                                             "name": "Text",
@@ -174,15 +186,17 @@ define([
                                     },
                                     {
                                         "method": "showTitle",
-                                        "glyph": "ç",
+                                        "cssclass": "icon-two-parts-both",
                                         "control": "button",
-                                        "description": "Show telemetry element title."
+                                        "title": "Show title",
+                                        "description": "Show telemetry element title"
                                     },
                                     {
                                         "method": "hideTitle",
-                                        "glyph": "å",
+                                        "cssclass": "icon-two-parts-one-only",
                                         "control": "button",
-                                        "description": "Hide telemetry element title."
+                                        "title": "Hide title",
+                                        "description": "Hide telemetry element title"
                                     }
                                 ]
                             },
@@ -191,7 +205,9 @@ define([
                                     {
                                         "method": "remove",
                                         "control": "button",
-                                        "glyph": "Z"
+                                        "cssclass": "icon-trash",
+                                        "title": "Delete",
+                                        "description": "Delete the selected item"
                                     }
                                 ]
                             }
@@ -258,7 +274,7 @@ define([
                 {
                     "key": "layout",
                     "name": "Display Layout",
-                    "glyph": "\u004c",
+                    "cssclass": "icon-layout",
                     "description": "Assemble other objects and components together into a reusable screen layout. Working in a simple canvas workspace, simply drag in the objects you want, position and size them. Save your design and view or edit it at any time.",
                     "priority": 900,
                     "features": "creation",
@@ -290,7 +306,7 @@ define([
                 {
                     "key": "telemetry.panel",
                     "name": "Telemetry Panel",
-                    "glyph": "t",
+                    "cssclass": "icon-telemetry-panel",
                     "description": "A panel for collecting telemetry elements.",
                     "priority": 899,
                     "delegates": [

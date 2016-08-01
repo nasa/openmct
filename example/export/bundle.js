@@ -36,7 +36,7 @@ define([
                     "name": "Export Telemetry as CSV",
                     "implementation": ExportTelemetryAsCSVAction,
                     "category": "contextual",
-                    "glyph": "\u0033",
+                    "cssclass": "icon-download",
                     "depends": [ "exportService" ]
                 }
             ]

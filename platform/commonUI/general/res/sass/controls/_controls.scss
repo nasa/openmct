@@ -72,6 +72,23 @@
     }
 }
 
+.s-icon-button {
+    // Clickable icon elements that have hover
+    @extend .ui-symbol;
+    color: $colorClickIcon;
+    &:hover {
+        color: $colorClickIconHov;
+    }
+}
+
+.s-toggle-icon {
+    // Has default (in-active) and .active states
+    @extend .s-icon-button;
+    color: $colorToggleIcon;
+    &:hover { color: rgba($colorToggleIconHov, 0.5); }
+    &.active { color: $colorToggleIconActive; }
+}
+
 .l-composite-control {
     vertical-align: middle;
     &:not(.l-inline) {
@@ -166,10 +183,10 @@ label.radio.custom {
     }
 }
 
-label.checkbox.custom input:checked ~ em:before { content: "\32"; }
-label.radio.custom input:checked ~ em:before { content: "\e619"; }
+label.checkbox.custom input:checked ~ em:before { content: $glyph-icon-check; }
+label.radio.custom input:checked ~ em:before { content: $glyph-icon-bullet; }
 
-.s-menu-btn label.checkbox.custom {
+.s-menu-button label.checkbox.custom {
     margin-left: 5px;
 }
 
@@ -218,10 +235,12 @@ input[type="search"] {
 
 /******************************************************** SELECTS */
 .select {
-    @include btnSubtle($colorSelectBg);
+    @include btnSubtle($bg: $colorSelectBg);
+    @extend .icon-arrow-down; // Context arrow
     @if $shdwBtns != none {
         margin: 0 0 2px 0; // Needed to avoid dropshadow from being clipped by parent containers
     }
+    display: inline-block;
     padding: 0 $interiorMargin;
     overflow: hidden;
     position: relative;
@@ -239,10 +258,11 @@ input[type="search"] {
             margin: $interiorMargin 0; // Firefox
         }
     }
-    &:after {
-        @include contextArrow();
+    &:before {
+        //@include contextArrow();
         pointer-events: none;
         color: rgba($colorSelectFg, percentToDecimal($contrastInvokeMenuPercent));
+        display: block;
         position: absolute;
         right: $interiorMargin; top: 0;
     }
@@ -439,17 +459,13 @@ input[type="search"] {
             width: $pagerW;
             @extend .ui-symbol;
             &.prev {
+                @extend .icon-arrow-left;
                 right: auto;
-                &:before {
-                    content: "\3c";
-                }
             }
             &.next {
+                @extend .icon-arrow-right;
                 left: auto;
                 text-align: right;
-                &:before {
-                    content: "\3e";
-                }
             }
         }
         .val {
@@ -539,12 +555,11 @@ textarea {
 }
 
 /******************************************************** MISC */
-.context-available,
-.s-icon-btn {
-    $c: $colorKey;
-    color: $c;
+.context-available {
+    @extend .icon-arrow-down;
+    color: $colorKey;
     &:hover {
-        color: lighten($c, 10%);
+        color: $colorKeyHov;
     }
 }
 

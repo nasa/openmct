@@ -55,24 +55,13 @@ define(
 
             return {
                 /**
-                 * Get the glyph (single character used as an icon)
+                 * Get the CSS class (single character used as an icon)
                  * to display in this indicator. This will return ".",
-                 * which should appear as a dataflow icon.
+                 * which should appear as a database icon.
                  * @returns {string} the character of the database icon
                  */
-                getGlyph: function () {
-                    return "E";
-                },
-                /**
-                 * Get the name of the CSS class to apply to the glyph.
-                 * This is used to color the glyph to match its
-                 * state (one of ok, caution or err)
-                 * @returns {string} the CSS class to apply to this glyph
-                 */
-                getGlyphClass: function () {
-                    return (watches > 2000) ? "caution" :
-                            (watches < 1000) ? "ok" :
-                                    undefined;
+                getCssClass: function () {
+                    return "icon-database";
                 },
                 /**
                  * Get the text that should appear in the indicator.

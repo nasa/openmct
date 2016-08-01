@@ -174,7 +174,7 @@ define([
                     ],
                     "description": "Edit",
                     "category": "view-control",
-                    "glyph": "p"
+                    "cssclass": "major icon-pencil"
                 },
                 {
                     "key": "properties",
@@ -183,7 +183,7 @@ define([
                         "view-control"
                     ],
                     "implementation": PropertiesAction,
-                    "glyph": "p",
+                    "cssclass": "major icon-pencil",
                     "name": "Edit Properties...",
                     "description": "Edit properties of this object.",
                     "depends": [
@@ -194,7 +194,7 @@ define([
                     "key": "remove",
                     "category": "contextual",
                     "implementation": RemoveAction,
-                    "glyph": "Z",
+                    "cssclass": "icon-trash",
                     "name": "Remove",
                     "description": "Remove this object from its containing object.",
                     "depends": [
@@ -207,6 +207,7 @@ define([
                     "category": "conclude-editing",
                     "implementation": SaveAction,
                     "name": "Save",
+                    "cssclass": "icon-save labeled",
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "dialogService"
@@ -217,7 +218,8 @@ define([
                     "key": "save",
                     "category": "conclude-editing",
                     "implementation": SaveAsAction,
-                    "name": "Save",
+                    "name": "Save As...",
+                    "cssclass": "icon-save labeled",
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "$injector",
@@ -233,6 +235,7 @@ define([
                     "category": "conclude-editing",
                     "implementation": CancelAction,
                     "name": "Cancel",
+                    "cssclass": "icon-x no-label",
                     "description": "Discard changes made to these objects.",
                     "depends": []
                 }

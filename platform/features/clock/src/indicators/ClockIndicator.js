@@ -44,12 +44,12 @@ define(
             });
         }
 
-        ClockIndicator.prototype.getGlyph = function () {
-            return "C";
+        ClockIndicator.prototype.getGlyphClass = function () {
+            return "no-collapse float-right subdued";
         };
 
-        ClockIndicator.prototype.getGlyphClass = function () {
-            return "no-icon no-collapse float-right subtle";
+        ClockIndicator.prototype.getCssClass = function () {
+            return "icon-clock";
         };
 
         ClockIndicator.prototype.getText = function () {

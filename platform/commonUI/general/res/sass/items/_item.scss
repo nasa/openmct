@@ -31,7 +31,7 @@
             $iconMargin: 40px;
             $iconD: ($d - ($iconMargin * 2)) * 0.85;
             $transTime: 200ms;
-            @include btnSubtle($colorItemBg, $colorItemBgHov, $colorItemFg, $colorItemIc);
+            @include btnSubtle($bg: $colorItemBg, $bgHov: $colorItemBgHov, $fg: $colorItemFg, $fgHov: pullForward($colorItemFg, $hoverRatioPercent), $ic: $colorItemIc);
             box-sizing: border-box;
             cursor: pointer;
             float: left;
@@ -91,7 +91,7 @@
                     font-size: $iconD * 0.95;
                     &.l-icon-link {
                         .t-item-icon-glyph {
-                            &:before {
+                            &:after {
                                 @include transform(scale(0.25));
                             }
                         }
@@ -121,7 +121,7 @@
 	        &.selected {
 		        $cfg: lighten($colorItemBgSelected, 35%);
 		        $cfgh: lighten($cfg, 30%);
-		        @include btnSubtle($colorItemBgSelected);
+		        @include btnSubtle($bg: $colorItemBgSelected);
 		        color: $cfg;
 		        .item-type, .top-bar .icon:not(.alert) { color: $cfg }
 		        .item-main .item-open { color: $cfg }

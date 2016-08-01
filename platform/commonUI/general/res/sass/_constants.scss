@@ -43,9 +43,10 @@ $ueColMargin: 1.5%;
 $ueAppLogoW: 80px;
 $ueEditToolBarH: 25px;
 $ueCollapsedPaneEdgeM: 22px;
-$uePaneMiniTabH: $ueTopBarH;
-$uePaneMiniTabW: 10px;
-$uePaneMiniTabCollapsedW: 11px;
+$uePaneMiniTabH: 22px;
+$uePaneMiniTabW: 8px;
+$uePaneMiniTabFontSize: 8px;
+$uePaneMiniTabCollapsedW: 18px;
 $ueEditLeftPaneW: 75%;
 $treeSearchInputBarH: 25px;
 $ueTimeControlH: (33px, 18px, 20px);
@@ -73,7 +74,7 @@ $treeTypeIconHPx: 16px;
 $treeTypeIconW: 18px;
 $treeContextTriggerW: 20px;
 /*************** Tabular */
-$tabularHeaderH: 22px; //18px
+$tabularHeaderH: 22px;
 $tabularTdPadLR: $itemPadLR;
 $tabularTdPadTB: 3px;
 /*************** Imagery */
@@ -107,7 +108,7 @@ $bubbleMaxW: 300px;
 /*************** Forms */
 $reqSymbolW: 15px;
 $reqSymbolM: $interiorMargin * 2;
-$reqSymbolFontSize: 0.7em;
+$reqSymbolFontSize: 0.75em;
 /*************** Wait Spinner Defaults */
 $waitSpinnerD: 32px;
 $waitSpinnerTreeD: 20px;
@@ -136,8 +137,3 @@ $dirImgs: $dirCommonRes + 'images/';
 $controlFadeMs: 100ms;
 $browseToEditAnimMs: 400ms;
 $editBorderPulseMs: 500ms;
-
-/************************** LIMITS */
-$glyphLimit: '\e603';
-$glyphLimitUpr: '\0000eb';
-$glyphLimitLwr: '\0000ee';

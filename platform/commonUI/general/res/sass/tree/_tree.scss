@@ -21,52 +21,57 @@
  *****************************************************************************/
 
 ul.tree {
-	@include menuUlReset();
-	@include user-select(none);
-	li {
-		display: block;
-		position: relative;
-	}
-	ul.tree {
-		margin-left: $treeVCW + $interiorMargin;
-	}
+    @include menuUlReset();
+    @include user-select(none);
+    li {
+        display: block;
+        position: relative;
+    }
+    ul.tree {
+        margin-left: $treeVCW + $interiorMargin;
+    }
 }
 
 .tree-item,
 .search-result-item {
     @extend .l-flex-row;
-	box-sizing: border-box;
-	border-radius: $basicCr;
-	@include transition(background-color, 0.25s);
-	font-size: 0.8rem;
-	height: $menuLineH;
-	line-height: $menuLineH;
-	margin-bottom: $interiorMarginSm;
+    box-sizing: border-box;
+    border-radius: $basicCr;
+    @include transition(background-color, 0.25s);
+    font-size: 0.8rem;
+    height: $menuLineH;
+    line-height: $menuLineH;
+    margin-bottom: $interiorMarginSm;
     padding: 0 $interiorMarginSm;
-	position: relative;
+    position: relative;
 
-	.view-control {
-		color: $colorItemTreeVC;
+    .flex-elem {
+        height: inherit !important;
+        line-height: inherit !important;
+    }
+
+    .view-control {
+        color: $colorItemTreeVC;
         font-size: 0.75em;
-		margin-right: $interiorMargin;
+        margin-right: $interiorMargin;
         height: 100%;
         line-height: inherit;
-		width: $treeVCW;
+        width: $treeVCW;
         &.has-children {
             &:before {
                 position: absolute;
                 @include trans-prop-nice(transform, 100ms);
-                content: "\3e";
+                content: "\e904";
                 @include transform-origin(center);
             }
             &.expanded:before {
                 @include transform(rotate(90deg));
             }
         }
-	}
+    }
 
-	.t-object-label {
-		line-height: $menuLineH;
+    .t-object-label {
+        line-height: $menuLineH;
         .t-item-icon {
             @include txtShdwSubtle($shdwItemTreeIcon);
             font-size: $treeTypeIconH;
@@ -76,34 +81,34 @@ ul.tree {
         .t-title-label {
             @include ellipsize();
         }
-	}
+    }
 
-	&.selected {
-		background: $colorItemTreeSelectedBg;
-		color: $colorItemTreeSelectedFg;
-		.view-control {
-			color: $colorItemTreeSelectedVC;
-		}
-		.t-object-label .t-item-icon {
-			color: $colorItemTreeSelectedFg;
-		}
-	}
+    &.selected {
+        background: $colorItemTreeSelectedBg !important;
+        color: $colorItemTreeSelectedFg !important;
+        .view-control {
+            color: $colorItemTreeSelectedVC;
+        }
+        .t-object-label .t-item-icon {
+            color: $colorItemTreeSelectedFg;
+        }
+    }
 
-	&:not(.loading) {
-		cursor: pointer;
-	}
+    &:not(.loading) {
+        cursor: pointer;
+    }
 
-	.context-trigger {
-		$h: 0.9rem;
-		top: -1px;
-		position: absolute;
-		right: $interiorMarginSm;
-		.invoke-menu {
-			font-size: 0.75em;
-			height: $h;
-			line-height: $h;
-		}
-	}
+    .context-trigger {
+        $h: 0.9rem;
+        top: -1px;
+        position: absolute;
+        right: $interiorMarginSm;
+        .invoke-menu {
+            font-size: 0.75em;
+            height: $h;
+            line-height: $h;
+        }
+    }
 }
 
 body.desktop {
@@ -151,7 +156,7 @@ mct-representation {
             @extend .ui-symbol;
             @include pulse($dur: 1s, $opacity0: 0.25);
             color: $colorItemTreeEditingFg;
-            content: '\70';
+            content: $glyph-icon-pencil;
             margin-right: $interiorMarginSm;
         }
         .t-object-label {
@@ -164,6 +169,16 @@ mct-representation {
                 font-style: italic;
             }
         }
-        .view-control, + .tree-item-subtree { display: none; }
+        .view-control, + .tree-item-subtree {
+            display: none;
+        }
+
+        &.selected {
+            .t-title-label,
+            .t-item-icon,
+            &:before {
+                color: rgba($colorItemTreeSelectedFg, 0.5);
+            }
+        }
     }
 }
