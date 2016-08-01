@@ -69,7 +69,12 @@ define([
             ],
             "stylesheets": [
                 {
-                    "stylesheetUrl": "css/time-conductor.css"
+                    "stylesheetUrl": "css/time-conductor-espresso.css",
+                    "theme": "espresso"
+                },
+                {
+                    "stylesheetUrl": "css/time-conductor-snow.css",
+                    "theme": "snow"
                 }
             ],
             "representations": [
