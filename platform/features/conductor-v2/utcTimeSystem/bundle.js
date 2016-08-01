@@ -21,33 +21,18 @@
  *****************************************************************************/
 
 define([
-    "./src/ConductorTelemetryDecorator",
-    "./src/ConductorRepresenter",
+    "./src/UTCTimeSystem",
     'legacyRegistry'
 ], function (
-    ConductorTelemetryDecorator,
-    ConductorRepresenter,
+    UTCTimeSystem,
     legacyRegistry
 ) {
-
-    legacyRegistry.register("platform/features/conductor-v2-compatibility", {
+    legacyRegistry.register("platform/features/conductor-v2/utcTimeSystem", {
         "extensions": {
-            "representers": [
+            "timeSystems": [
                 {
-                    "implementation": ConductorRepresenter,
-                    "depends": [
-                        "timeConductor"
-                    ]
-                }
-            ],
-            "components": [
-                {
-                    "type": "decorator",
-                    "provides": "telemetryService",
-                    "implementation": ConductorTelemetryDecorator,
-                    "depends": [
-                        "timeConductor"
-                    ]
+                    "implementation": UTCTimeSystem,
+                    "depends": ["$timeout"]
                 }
             ]
         }

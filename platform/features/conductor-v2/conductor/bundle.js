@@ -24,7 +24,6 @@ define([
     "./src/TimeConductor",
     "./src/ui/TimeConductorController",
     "./src/ui/MCTConductorAxis",
-    "./src/timeSystems/UTCTimeSystem",
     "text!./res/templates/time-conductor.html",
     "text!./res/templates/mode-selector/mode-selector.html",
     "text!./res/templates/mode-selector/mode-menu.html",
@@ -33,14 +32,13 @@ define([
     TimeConductor,
     TimeConductorController,
     MCTConductorAxis,
-    UTCTimeSystem,
     timeConductorTemplate,
     modeSelectorTemplate,
     modeMenuTemplate,
     legacyRegistry
 ) {
 
-    legacyRegistry.register("platform/features/conductor-v2", {
+    legacyRegistry.register("platform/features/conductor-v2/conductor", {
         "extensions": {
             "services": [
                 {
@@ -86,12 +84,6 @@ define([
                 {
                     "key": "mode-menu",
                     "template": modeMenuTemplate
-                }
-            ],
-            "timeSystems": [
-                {
-                    "implementation": UTCTimeSystem,
-                    "depends": ["$timeout"]
                 }
             ]
         }

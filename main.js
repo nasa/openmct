@@ -91,8 +91,9 @@ define([
     './platform/features/plot/bundle',
     './platform/features/timeline/bundle',
     //'./platform/features/conductor/bundle',
-    './platform/features/conductor-v2/bundle',
-    './platform/features/conductor-v2-compatibility/bundle',
+    './platform/features/conductor-v2/conductor/bundle',
+    './platform/features/conductor-v2/compatibility/bundle',
+    './platform/features/conductor-v2/utcTimeSystem/bundle',
     './platform/features/table/bundle',
     './platform/forms/bundle',
     './platform/identity/bundle',
@@ -104,7 +105,8 @@ define([
     './platform/search/bundle',
     './platform/status/bundle',
     './platform/commonUI/regions/bundle',
-    './example/msl/bundle'
+    './example/msl/bundle',
+    './example/localTimeSystem/bundle'
 ], function (Main, legacyRegistry) {
     return {
         legacyRegistry: legacyRegistry,

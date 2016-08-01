@@ -21,9 +21,9 @@
  *****************************************************************************/
 
 define([
-    './TimeSystem',
-    './LocalClock'
-], function (TimeSystem, LocalClock, UTCTimeFormat) {
+    '../../../platform/features/conductor/src/timeSystems/TimeSystem',
+    '../../platform/features/conductor/src/timeSystems/LocalClock'
+], function (TimeSystem, LocalClock) {
     var FIFTEEN_MINUTES = 15 * 60 * 1000,
         DEFAULT_PERIOD = 1000;
 
@@ -32,7 +32,7 @@ define([
      * @implements TimeSystem
      * @constructor
      */
-    function UTCTimeSystem ($timeout) {
+    function LocalTimeSystem ($timeout) {
         TimeSystem.call(this);
 
         /**
@@ -41,8 +41,8 @@ define([
          * @type {{key: string, name: string, glyph: string}}
          */
         this.metadata = {
-            'key': 'utc',
-            'name': 'UTC',
+            'key': 'local',
+            'name': 'Local 12 hour',
             'glyph': '\u0043'
         };
 
@@ -50,27 +50,27 @@ define([
         this._tickSources = [new LocalClock($timeout, DEFAULT_PERIOD)];
     }
 
-    UTCTimeSystem.prototype = Object.create(TimeSystem.prototype);
+    LocalTimeSystem.prototype = Object.create(TimeSystem.prototype);
 
-    UTCTimeSystem.prototype.formats = function () {
+    LocalTimeSystem.prototype.formats = function () {
         return this._formats;
     };
 
-    UTCTimeSystem.prototype.tickSources = function () {
+    LocalTimeSystem.prototype.tickSources = function () {
         return this._tickSources;
     };
 
-    UTCTimeSystem.prototype.defaults = function () {
+    LocalTimeSystem.prototype.defaults = function () {
         var now = Math.ceil(Date.now() / 1000) * 1000;
         return [
             {
-                key: 'utc-default',
-                name: 'UTC time system defaults',
+                key: 'local-default',
+                name: 'Local 12 hour time system defaults',
                 deltas: {start: FIFTEEN_MINUTES, end: 0},
                 bounds: {start: now - FIFTEEN_MINUTES, end: now}
             }
         ];
     };
 
-    return UTCTimeSystem;
+    return LocalTimeSystem;
 });

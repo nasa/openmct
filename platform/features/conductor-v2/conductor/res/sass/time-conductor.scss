@@ -20,13 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 @import "bourbon";
-@import "../../../../commonUI/general/res/sass/constants";
-@import "../../../../commonUI/general/res/sass/mixins";
-@import "../../../../commonUI/general/res/sass/mobile/constants";
-@import "../../../../commonUI/general/res/sass/mobile/mixins";
-@import "../../../../commonUI/themes/espresso/res/sass/constants";
-@import "../../../../commonUI/themes/espresso/res/sass/mixins";
-@import "../../../../commonUI/general/res/sass/icons";
+@import "../../../../../commonUI/general/res/sass/constants";
+@import "../../../../../commonUI/general/res/sass/mixins";
+@import "../../../../../commonUI/general/res/sass/mobile/constants";
+@import "../../../../../commonUI/general/res/sass/mobile/mixins";
+@import "../../../../../commonUI/themes/espresso/res/sass/constants";
+@import "../../../../../commonUI/themes/espresso/res/sass/mixins";
+@import "../../../../../commonUI/general/res/sass/icons";
 @import "constants";
 
 @mixin toiLineHovEffects() {
