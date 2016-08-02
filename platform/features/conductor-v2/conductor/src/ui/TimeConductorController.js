@@ -41,7 +41,7 @@ define(
 
             this.conductor = conductor;
             // Construct the provided time system definitions
-            this.timeSystems = timeSystems.map(function (timeSystemConstructor){
+            this._timeSystems = timeSystems.map(function (timeSystemConstructor){
                 return timeSystemConstructor();
             });
 
@@ -51,20 +51,29 @@ define(
                     label: 'Fixed',
                     name: 'Fixed Timespan Mode',
                     description: 'Query and explore data that falls between two fixed datetimes.'
-                },
-                'latest': {
-                    glyph: '\u0044',
-                    label: 'LAD',
-                    name: 'LAD Mode',
-                    description: 'Latest Available Data mode monitors real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'
-                },
-                'realtime': {
+                }
+            };
+
+            //Only show 'real-time mode' if a clock source is available
+            if (this.timeSystemsForSourceType('clock').length > 0 ) {
+                this.modes['realtime'] = {
                     glyph: '\u0043',
                     label: 'Real-time',
                     name: 'Real-time Mode',
                     description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will automatically advance themselves based on a UTC clock.'
                 }
-            };
+            }
+
+            //Only show 'real-time mode' if a clock source is available
+            if (this.timeSystemsForSourceType('data').length > 0) {
+                this.modes['latest'] = {
+                    glyph: '\u0044',
+                        label: 'LAD',
+                        name: 'LAD Mode',
+                        description: 'Latest Available Data mode monitors real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'
+                }
+            }
+
             this.selectedMode = undefined;
 
             this.validation = new TimeConductorValidation(conductor);
@@ -166,6 +175,21 @@ define(
         };
 
         /**
+         * @private
+         */
+        TimeConductorController.prototype.timeSystemsForSourceType = function(type){
+            if (!type) {
+                return this._timeSystems;
+            } else {
+                return this._timeSystems.filter(function (timeSystem){
+                    return timeSystem.tickSources().some(function (tickSource){
+                        return tickSource.type() === type;
+                    });
+                });
+            }
+        };
+        
+        /**
          * Change the selected Time Conductor mode. This will call destroy
          * and initialization functions on the relevant modes, setting
          * default values for bound and deltas in the form.
@@ -181,27 +205,17 @@ define(
                 }
                 switch (newMode) {
                     case 'fixed':
-                        this.selectedMode = new FixedMode(this.conductor, this.timeSystems);
+                        this.selectedMode = new FixedMode(this.conductor, this._timeSystems);
                         break;
                     case 'realtime':
                         // Filter time systems to only those with clock tick
                         // sources
-                        var realtimeSystems = this.timeSystems.filter(function (timeSystem){
-                            return timeSystem.tickSources().some(function (tickSource){
-                                return tickSource.type() === 'clock';
-                            });
-                        });
-                        this.selectedMode = new FollowMode(this.conductor, realtimeSystems);
+                        this.selectedMode = new FollowMode(this.conductor, this.timeSystemsForSourceType('clock'));
                         break;
                     case 'latest':
-                        // Filter time systems to only those with clock tick
+                        // Filter time systems to only those with data tick
                         // sources
-                        var ladSystems = this.timeSystems.filter(function (timeSystem){
-                            return timeSystem.tickSources().some(function (tickSource){
-                                return tickSource.type() === 'data';
-                            });
-                        });
-                        this.selectedMode = new FollowMode(this.conductor, ladSystems);
+                        this.selectedMode = new FollowMode(this.conductor, this.timeSystemsForSourceType('data'));
                         break;
                 }
                 this.selectedMode.initialize();
@@ -214,10 +228,6 @@ define(
                 });
 
                 this.setTimeSystem(timeSystem);
-                /*this.$scope.timeSystemModel.selected = timeSystem;
-                //Use default format
-                this.$scope.timeSystemModel.format = timeSystem.formats()[0];
-                this.setDeltasFromTimeSystem(timeSystem); */
             }
         };
 
@@ -248,7 +258,7 @@ define(
          * @see TimeConductorController#setTimeSystem
          */
         TimeConductorController.prototype.selectTimeSystem = function(key){
-            var selected = this.timeSystems.find(function (timeSystem){
+            var selected = this._timeSystems.find(function (timeSystem){
                 return timeSystem.metadata.key === key;
             });
             this.setTimeSystem(selected);
