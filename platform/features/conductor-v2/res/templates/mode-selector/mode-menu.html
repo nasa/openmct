@@ -24,21 +24,16 @@
         <ul>
             <li ng-repeat="(key, metadata) in ngModel.options"
                 ng-click="ngModel.selectedKey=key">
-                <a
-                   ng-mouseover="representation.activeMetadata = metadata"
-                   ng-mouseleave="representation.activeMetadata = undefined">
-                    <span class="ui-symbol icon type-icon">
-                        {{metadata.glyph}}
-                    </span>
+                <a ng-mouseover="representation.activeMetadata = metadata"
+                   ng-mouseleave="representation.activeMetadata = undefined"
+                   class="menu-item-a {{metadata.cssclass}}">
                     {{metadata.name}}
                 </a>
             </li>
         </ul>
     </div>
     <div class="pane right menu-item-description">
-        <div class="desc-area ui-symbol icon type-icon">
-            {{representation.activeMetadata.glyph}}
-        </div>
+        <div class="desc-area ui-symbol icon type-icon {{representation.activeMetadata.cssclass}}"></div>
         <div class="desc-area title">
             {{representation.activeMetadata.name}}
         </div>

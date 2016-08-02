@@ -43,7 +43,7 @@
     &:before {
         @extend .ui-symbol;
         color: $c;
-        content: '\e624';
+        content: $glyph-icon-brackets;
         font-size: $d;
         line-height: normal;
         display: block;
@@ -99,11 +99,6 @@
     $r2H: nth($ueTimeConductorH, 2);
     $r3H: nth($ueTimeConductorH, 3);
 
-    // Glyphs Todo: replace with refactored CSS approach when that is merged into master
-    $glyphIconFixed: '\e604';
-    $glyphIconRealtime: '\43';
-    $glyphIconLatest: '\44';
-
     position: relative;
 
     > .l-row-elem {
@@ -113,7 +108,7 @@
         position: relative;
     }
 
-    .mode-selector .s-menu-btn,
+    .mode-selector .s-menu-button,
     .time-delta {
         &:before {
             @extend .ui-symbol;
@@ -285,27 +280,30 @@
             background: $colorTimeCondDataVisRtBg !important
         }
 
-        .mode-selector .s-menu-btn {
-            @include btnSubtle($colorTimeCondKeyBg, pullForward($colorTimeCondKeyBg, $ltGamma), $colorTimeCondKeyFg);
+        .mode-selector .s-menu-button {
+            $fg: $colorTimeCondKeyFg;
+            @include btnSubtle($bg: $colorTimeCondKeyBg, $bgHov: pullForward($colorTimeCondKeyBg, $ltGamma), $fg: $colorTimeCondKeyFg);
+            &:before { color: $fg !important; };
+            color: $fg !important;
         }
     }
 
     // Fixed mode
     &.fixed-mode {
-        $i: $glyphIconFixed;
+        $i: $glyph-icon-calendar;
         .time-conductor-icon div[class*="hand"] {
             &.hand-little {
                 @include transform(rotate(120deg));
             }
         }
-        .mode-selector .s-menu-btn:before {
+        .mode-selector .s-menu-button:before {
             content: $i;
         }
     }
 
     // Realtime mode
     &.realtime-mode {
-        $i: $glyphIconRealtime;
+        $i: $glyph-icon-clock;
         .time-conductor-icon div[class*="hand"] {
             @include animation-name(clock-hands);
         }
@@ -315,14 +313,14 @@
         .l-time-conductor-inputs-holder .l-time-range-w.end-w .title:before {
             content: 'Now';
         }
-        .mode-selector .s-menu-btn:before {
+        .mode-selector .s-menu-button:before {
             content: $i;
         }
     }
 
     // LAD mode
     &.latest-mode {
-        $i: $glyphIconLatest;
+        $i: $glyph-icon-database;
         .time-conductor-icon div[class*="hand"] {
             @include animation-name(clock-hands-sticky);
             &.hand-big {
@@ -338,7 +336,7 @@
         .l-time-conductor-inputs-holder .l-time-range-w.end-w .title:before {
             content: 'LAD';
         }
-        .mode-selector .s-menu-btn:before {
+        .mode-selector .s-menu-button:before {
             content: $i;
         }
     }

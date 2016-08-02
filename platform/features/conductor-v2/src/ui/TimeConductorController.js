@@ -47,22 +47,22 @@ define(
 
             this.modes = {
                 'fixed': {
-                    glyph: '\ue604',
+                    cssclass: 'icon-calendar',
                     label: 'Fixed',
                     name: 'Fixed Timespan Mode',
                     description: 'Query and explore data that falls between two fixed datetimes.'
                 },
-                'latest': {
-                    glyph: '\u0044',
-                    label: 'LAD',
-                    name: 'LAD Mode',
-                    description: 'Latest Available Data mode monitors real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'
-                },
                 'realtime': {
-                    glyph: '\u0043',
+                    cssclass: 'icon-clock',
                     label: 'Real-time',
                     name: 'Real-time Mode',
                     description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will automatically advance themselves based on a UTC clock.'
+                },
+                'latest': {
+                    cssclass: 'icon-database',
+                    label: 'LAD',
+                    name: 'LAD Mode',
+                    description: 'Latest Available Data mode monitors real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'
                 }
             };
             this.selectedMode = undefined;

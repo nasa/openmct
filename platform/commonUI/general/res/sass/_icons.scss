@@ -73,7 +73,7 @@
     &.l-icon-link {
         &:after {
             color: $colorIconLink;
-            content: '\e921'; //$glyph-icon-link;
+            content: $glyph-icon-link;
             height: auto; width: auto;
             position: absolute;
             left: 0; top: 0; right: 0; bottom: 20%;
