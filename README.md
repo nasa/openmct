@@ -9,6 +9,11 @@ Please visit our [Official Site](https://nasa.github.io/openmct/) and [Getting S
 Try Open MCT now with our [live demo](https://openmct-demo.herokuapp.com/).
 ![Demo](https://nasa.github.io/openmct/static/res/images/Open-MCT.Browse.Layout.Mars-Weather-1.jpg)
 
+## New API
+A new API is currently under development that will deprecate a lot of the documentation currently in the docs directory, however Open MCT will remain compatible with the currently documented API. An updated set of tutorials is being developed with the new API, and progress on this task can be followed in the [associated pull request](https://github.com/nasa/openmct/pull/999). Any code in this branch should be considered experimental, and we welcome any feedback.
+
+Differences between the two APIs include a move away from a declarative system of JSON configuration files towards an imperative system based on function calls. Developers will be able to extend and build on Open MCT by making direct function calls to a public API. Open MCT is also being refactored to minimize the dependencies that using Open MCT imposes on developers, such as the current requirement to use Angular JS.
+
 ## Building and Running Open MCT Locally
 
 Building and running Open MCT in your local dev environment is very easy. Be sure you have [Git](https://git-scm.com/downloads) and [Node.js](https://nodejs.org/) installed, then follow the directions below. Need additional information? Check out the [Getting Started](https://nasa.github.io/openmct/getting-started/) page on our website.
