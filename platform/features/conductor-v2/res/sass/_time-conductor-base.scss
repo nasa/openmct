@@ -66,7 +66,7 @@
         top: 50%;
         z-index: 2;
         &:before {
-            background-color: $c;
+            background: $colorObjHdrIc;
             content: '';
             display: block;
             position: absolute;
@@ -77,7 +77,6 @@
             z-index: 2;
             @include animation-duration(12s);
             &:before {
-                //background: red;
                 height: ceil($handH * 0.7);
             }
         }
@@ -178,7 +177,7 @@
     }
 
     .l-time-conductor-inputs-and-ticks {
-        $c: $colorTick;
+        $c: $colorTimeCondTicks; //$colorTick;
         height: $r1H;
         mct-conductor-axis {
             display: block;

@@ -61,8 +61,8 @@ $colorCreateBtn: $colorKey;
 $colorGridLines: rgba(#000, 0.05);
 $colorInvokeMenu: #fff;
 $colorObjHdrTxt: $colorBodyFg;
-$colorObjHdrIc: pushBack($colorObjHdrTxt, 30%);
-$colorTick: pullForward($colorBodyBg, 30%);
+$colorObjHdrIc: lighten($colorObjHdrTxt, 20%);
+$colorTick: lighten($colorBodyFg, 10%);
 
 // Menu colors
 $colorMenuBg: pushBack($colorBodyBg, 10%);

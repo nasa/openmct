@@ -31,6 +31,7 @@
 @import "constants";
 
 // Thematic constants
+$colorTimeCondTicks: pullForward($colorBodyBg, 30%);
 $colorTimeCondKeyBg: #6178dc;
 $colorTimeCondKeyFg: #fff;
 $colorTimeCondDataVisBg: pullForward($colorBodyBg, 10%);

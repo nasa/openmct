@@ -61,7 +61,7 @@ $colorCreateBtn: $colorKey;
 $colorGridLines: rgba(#fff, 0.05);
 $colorInvokeMenu: #fff;
 $colorObjHdrTxt: $colorBodyFg;
-$colorObjHdrIc: pullForward($colorObjHdrTxt, 20%);
+$colorObjHdrIc: darken($colorObjHdrTxt, 20%);
 $colorTick: pullForward($colorBodyBg, 20%);
 
 // Menu colors

@@ -268,16 +268,6 @@
     text-shadow: rgba(black, $sVal) 0 3px 7px;
 }
 
-@function pullForward($c, $p: 20%) {
-    // For dark interfaces, lighter things come forward
-    @return lighten($c, $p);
-}
-
-@function pushBack($c, $p: 20%) {
-    // For dark interfaces, darker things move back
-    @return darken($c, $p);
-}
-
 @function percentToDecimal($p) {
 	@return $p / 100%;
 }
