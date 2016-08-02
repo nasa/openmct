@@ -65,7 +65,7 @@ define(
 
                         //Define a custom format function
                         xAxis.tickFormat(function (date) {
-                            return format.format(date, {min: b.start, max: b.end});
+                            return format.format(date.getTime(), {min: b.start, max: b.end});
                         });
                         axisElement.call(xAxis);
                     }
