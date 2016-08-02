@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -31,7 +31,7 @@
             $iconMargin: 40px;
             $iconD: ($d - ($iconMargin * 2)) * 0.85;
             $transTime: 200ms;
-            @include btnSubtle($colorItemBg, $colorItemBgHov, $colorItemFg, $colorItemIc);
+            @include btnSubtle($bg: $colorItemBg, $bgHov: $colorItemBgHov, $fg: $colorItemFg, $fgHov: pullForward($colorItemFg, $hoverRatioPercent), $ic: $colorItemIc);
             box-sizing: border-box;
             cursor: pointer;
             float: left;
@@ -91,7 +91,7 @@
                     font-size: $iconD * 0.95;
                     &.l-icon-link {
                         .t-item-icon-glyph {
-                            &:before {
+                            &:after {
                                 @include transform(scale(0.25));
                             }
                         }
@@ -121,7 +121,7 @@
 	        &.selected {
 		        $cfg: lighten($colorItemBgSelected, 35%);
 		        $cfgh: lighten($cfg, 30%);
-		        @include btnSubtle($colorItemBgSelected);
+		        @include btnSubtle($bg: $colorItemBgSelected);
 		        color: $cfg;
 		        .item-type, .top-bar .icon:not(.alert) { color: $cfg }
 		        .item-main .item-open { color: $cfg }

@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -42,6 +42,7 @@ define([
     "./src/representers/EditToolbarRepresenter",
     "./src/capabilities/EditorCapability",
     "./src/capabilities/TransactionCapabilityDecorator",
+    "./src/services/TransactionManager",
     "./src/services/TransactionService",
     "./src/creation/CreateMenuController",
     "./src/creation/LocatorController",
@@ -80,6 +81,7 @@ define([
     EditToolbarRepresenter,
     EditorCapability,
     TransactionCapabilityDecorator,
+    TransactionManager,
     TransactionService,
     CreateMenuController,
     LocatorController,
@@ -172,7 +174,7 @@ define([
                     ],
                     "description": "Edit",
                     "category": "view-control",
-                    "glyph": "p"
+                    "cssclass": "major icon-pencil"
                 },
                 {
                     "key": "properties",
@@ -181,7 +183,7 @@ define([
                         "view-control"
                     ],
                     "implementation": PropertiesAction,
-                    "glyph": "p",
+                    "cssclass": "major icon-pencil",
                     "name": "Edit Properties...",
                     "description": "Edit properties of this object.",
                     "depends": [
@@ -192,7 +194,7 @@ define([
                     "key": "remove",
                     "category": "contextual",
                     "implementation": RemoveAction,
-                    "glyph": "Z",
+                    "cssclass": "icon-trash",
                     "name": "Remove",
                     "description": "Remove this object from its containing object.",
                     "depends": [
@@ -205,6 +207,7 @@ define([
                     "category": "conclude-editing",
                     "implementation": SaveAction,
                     "name": "Save",
+                    "cssclass": "icon-save labeled",
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "dialogService"
@@ -215,7 +218,8 @@ define([
                     "key": "save",
                     "category": "conclude-editing",
                     "implementation": SaveAsAction,
-                    "name": "Save",
+                    "name": "Save As...",
+                    "cssclass": "icon-save labeled",
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "$injector",
@@ -231,6 +235,7 @@ define([
                     "category": "conclude-editing",
                     "implementation": CancelAction,
                     "name": "Cancel",
+                    "cssclass": "icon-x no-label",
                     "description": "Discard changes made to these objects.",
                     "depends": []
                 }
@@ -320,7 +325,7 @@ define([
                     "implementation": TransactionCapabilityDecorator,
                     "depends": [
                         "$q",
-                        "transactionService"
+                        "transactionManager"
                     ],
                     "priority": "fallback"
                 },
@@ -404,6 +409,15 @@ define([
                 {
                     "key": "locator",
                     "template": locatorTemplate
+                }
+            ],
+            "services": [
+                {
+                    "key": "transactionManager",
+                    "implementation": TransactionManager,
+                    "depends": [
+                        "transactionService"
+                    ]
                 }
             ]
         }

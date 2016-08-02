@@ -1,6 +1,6 @@
 # Overview
 
-The purpose of this document is to review feedback on Open MCT Web's
+The purpose of this document is to review feedback on Open MCT's
 current API and propose improvements to the API, particularly for a
 1.0.0 release.
 
@@ -64,7 +64,7 @@ useful, powerful interfaces.
 ## Developer Intern Feedback
 
 This feedback comes from interns who worked closely with
-Open MCT Web as their primary task over the Summer of 2015.
+Open MCT as their primary task over the Summer of 2015.
 
 ### Developer Intern 1
 
@@ -104,7 +104,7 @@ Worked on bug fixes in the platform and a plugin for search.
 
 Worked on platform bug fixes and mobile support.
 
-* No guide for the UI and front end for the HTML/CSS part of Open MCT Web.
+* No guide for the UI and front end for the HTML/CSS part of Open MCT.
   Not sure if this is applicable or needed for developers, however would
   be helpful to any front end development
 * Found it difficult to follow the plot controller & subplot
@@ -118,11 +118,11 @@ Worked on platform bug fixes and mobile support.
 ## Plugin Developer Feedback
 
 This feedback comes from developers who have worked on plugins for
-Open MCT Web, but have not worked on the platform.
+Open MCT, but have not worked on the platform.
 
 ### Plugin Developer 1
 
-Used Open MCT Web over the course of several months (on a
+Used Open MCT over the course of several months (on a
 less-than-half-time basis) to develop a
 spectrum visualization plugin.
 
@@ -138,7 +138,7 @@ spectrum visualization plugin.
 
 ### Plugin Developer 2
 
-Used Open MCT Web over the course of several weeks (on a half-time basis)
+Used Open MCT over the course of several weeks (on a half-time basis)
 to develop a tabular visualization plugin.
 
 * Pain points
@@ -197,7 +197,7 @@ to develop a tabular visualization plugin.
 ## Long-term Developer Notes
 
 The following notes are from original platform developer, with long
-term experience using Open MCT Web.
+term experience using Open MCT.
 
 * Bundle mechanism allows for grouping related components across concerns,
   and adding and removing these easily. (e.g. model and view components of
@@ -220,7 +220,7 @@ or reducing the Angular dependency.
 
 ### Angular's Role
 
-Angular is Open MCT Web's:
+Angular is Open MCT's:
 
 * Dependency injection framework.
 * Template rendering.
@@ -268,7 +268,7 @@ by experience:
 
 * Feedback from new developers is that Angular was a hindrance to
   training, not a benefit. ("One more thing to learn.") Significant
-  documentation remains necessary for Open MCT Web.
+  documentation remains necessary for Open MCT.
 * Expected enhancements to maintainability will be effectively
   invalidated by an expected Angular end-of-life.
 * Data binding and automatic view updates do save development effort,
@@ -526,7 +526,7 @@ subset of `$http`'s functionality.
 
 ### Detriments
 
-* Increases the number of interfaces in Open MCT Web. (Arguably,
+* Increases the number of interfaces in Open MCT. (Arguably,
   not really, since the same interfaces would exist if exposed
   by Angular.)
 
@@ -574,7 +574,7 @@ This would also allow for "composite bundles" which serve as
 proxies for multiple bundles. The `BundleContext` could contain
 (or later be amended to contain) filtering rules to ignore
 other bundles and so forth (this has been useful for administering
-Open MCT Web in subtly different configurations in the past.)
+Open MCT in subtly different configurations in the past.)
 
 ### Benefits
 
@@ -827,7 +827,7 @@ This could be resolved by:
 
 ## Nomenclature Change
 
-Instead of presenting Open MCT Web as a "framework" or
+Instead of presenting Open MCT as a "framework" or
 "platform", present it as an "extensible application."
 
 This is mostly a change for the developer guide. A
@@ -1040,7 +1040,7 @@ This is a more specific variant of
 * Removes a whole category of API (bundle definitions), reducing
   learning curve associated with the software.
 * Closer to Angular style, reducing disconnect between learning
-  Angular and learning Open MCT Web (reducing burden of having
+  Angular and learning Open MCT (reducing burden of having
   to learn multiple paradigms.)
 * Clarifies "what can be found where" (albeit not perfectly)
   since you can look to module dependencies and follow back from there.

@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2009-2015, United States Government
+ * Open MCT, Copyright (c) 2009-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -50,10 +50,13 @@ define(
                 if (formatter && !isNaN(timeDelta)) {
                     self.textValue = formatter(timeDelta);
                     self.signValue = timeDelta < 0 ? "-" :
-                            timeDelta >= 1000 ? "+" : "";
+                        timeDelta >= 1000 ? "+" : "";
+                    self.signCssClass = timeDelta < 0 ? "icon-minus" :
+                        timeDelta >= 1000 ? "icon-plus" : "";
                 } else {
                     self.textValue = "";
                     self.signValue = "";
+                    self.signCssClass = "";
                 }
             }
 
@@ -126,12 +129,13 @@ define(
         }
 
         /**
-         * Get the glyph to display for the start/restart button.
-         * @returns {string} glyph to display
+         * Get the CSS class to display the right icon
+         * for the start/restart button.
+         * @returns {string} cssclass to display
          */
-        TimerController.prototype.buttonGlyph = function () {
+        TimerController.prototype.buttonCssClass = function () {
             return this.relevantAction ?
-                    this.relevantAction.getMetadata().glyph : "";
+                    this.relevantAction.getMetadata().cssclass : "";
         };
 
         /**
@@ -162,6 +166,15 @@ define(
          */
         TimerController.prototype.sign = function () {
             return this.signValue;
+        };
+
+        /**
+         * Get the sign (+ or -) of the current timer value, as
+         * a CSS class.
+         * @returns {string} sign of the current timer value
+         */
+        TimerController.prototype.signClass = function () {
+            return this.signCssClass;
         };
 
         /**

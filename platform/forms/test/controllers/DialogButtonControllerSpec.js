@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -46,7 +46,7 @@ define(
                 );
                 testStructure = {
                     name: "A Test",
-                    glyph: "T",
+                    cssclass: "icon-T",
                     description: "Test description",
                     control: "dialog-button",
                     title: "Test title",
@@ -83,7 +83,7 @@ define(
                 mockScope.$watch.mostRecentCall.args[1](testStructure);
 
                 buttonStructure = controller.getButtonStructure();
-                expect(buttonStructure.glyph).toEqual(testStructure.glyph);
+                expect(buttonStructure.cssclass).toEqual(testStructure.cssclass);
                 expect(buttonStructure.description).toEqual(testStructure.description);
                 expect(buttonStructure.name).toEqual(testStructure.name);
                 expect(buttonStructure.click).toEqual(jasmine.any(Function));

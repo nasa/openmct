@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -56,13 +56,13 @@ define(
          * @method Type#getDescription
          */
         /**
-         * Get the glyph associated with this type. Glyphs are
-         * single-character strings which will appear as icons (when
+         * Get the cssclass associated with this type. cssclass is a
+         * string which will appear as an icon (when
          * displayed in an appropriate font) which visually
          * distinguish types from one another.
          *
-         * @returns {string} the glyph to be displayed
-         * @method Type#getGlyph
+         * @returns {string} the cssclass for this type
+         * @method Type#getCssClass
          */
         /**
          * Get an array of properties associated with objects of
@@ -144,8 +144,8 @@ define(
             return this.typeDef.description;
         };
 
-        TypeImpl.prototype.getGlyph = function () {
-            return this.typeDef.glyph;
+        TypeImpl.prototype.getCssClass = function () {
+            return this.typeDef.cssclass;
         };
 
         TypeImpl.prototype.getProperties = function () {

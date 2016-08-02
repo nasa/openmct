@@ -8,6 +8,15 @@
 	}
 
 	&.l-timer {
+        .l-value:before,
+        .control {
+            font-size: 0.8em;
+        }
+
+        .l-value:before {
+            // Direction +/- element
+            margin-right: $interiorMarginSm;
+        }
         .control {
             @include trans-prop-nice((width, opacity), $transTime);
             line-height: inherit;
@@ -25,8 +34,5 @@
     .value {
         color: pullForward($colorBodyFg, 50%);
         font-weight: 400;
-        .direction {
-            font-size: 0.8em;
-        }
     }
 }
