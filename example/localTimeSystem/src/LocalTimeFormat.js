@@ -26,11 +26,11 @@ define([
     moment
 ) {
 
-    var DATE_FORMAT = "YYYY-MM-DD hh:mm:ss.SSS",
+    var DATE_FORMAT = "YYYY-MM-DD h:mm:ss.SSS a",
         DATE_FORMATS = [
             DATE_FORMAT,
-            "YYYY-MM-DD hh:mm:ss",
-            "YYYY-MM-DD hh:mm",
+            "YYYY-MM-DD h:mm:ss a",
+            "YYYY-MM-DD h:mm a",
             "YYYY-MM-DD"
         ];
 
@@ -67,8 +67,8 @@ define([
         return [
             [".SSS", function(m) { return m.milliseconds(); }],
             [":ss", function(m) { return m.seconds(); }],
-            ["hh:mm", function(m) { return m.minutes(); }],
-            ["hh", function(m) { return m.hours(); }],
+            ["hh:mma", function(m) { return m.minutes(); }],
+            ["hha", function(m) { return m.hours(); }],
             ["ddd DD", function(m) {
                 return m.days() &&
                     m.date() != 1;

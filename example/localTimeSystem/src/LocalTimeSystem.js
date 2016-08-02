@@ -42,11 +42,11 @@ define([
          */
         this.metadata = {
             'key': 'local',
-            'name': 'Local 12 hour',
+            'name': 'Local',
             'glyph': '\u0043'
         };
 
-        this._formats = ['utc'];
+        this._formats = ['local-format'];
         this._tickSources = [new LocalClock($timeout, DEFAULT_PERIOD)];
     }
 

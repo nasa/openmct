@@ -212,10 +212,12 @@ define(
                 this.$scope.timeSystemModel.options = this.selectedMode.timeSystems().map(function (timeSystem) {
                     return timeSystem.metadata;
                 });
-                this.$scope.timeSystemModel.selected = timeSystem;
+
+                this.setTimeSystem(timeSystem);
+                /*this.$scope.timeSystemModel.selected = timeSystem;
                 //Use default format
                 this.$scope.timeSystemModel.format = timeSystem.formats()[0];
-                this.setDeltasFromTimeSystem(timeSystem);
+                this.setDeltasFromTimeSystem(timeSystem); */
             }
         };
 
@@ -260,6 +262,7 @@ define(
         TimeConductorController.prototype.setTimeSystem = function (newTimeSystem) {
             if (newTimeSystem && newTimeSystem !== this.$scope.timeSystemModel.selected) {
                 this.$scope.timeSystemModel.selected = newTimeSystem;
+                this.$scope.timeSystemModel.format = newTimeSystem.formats()[0];
                 var mode = this.selectedMode;
                 mode.selectedTimeSystem(newTimeSystem);
                 this.setDeltasFromTimeSystem(newTimeSystem);

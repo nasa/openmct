@@ -33,7 +33,7 @@ define([
         "extensions": {
             "formats": [
                 {
-                    "key": "local",
+                    "key": "local-format",
                     "implementation": LocalTimeFormat
                 }
             ],
