@@ -1,0 +1,300 @@
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+@import "bourbon";
+
+@import "../../../../commonUI/general/res/sass/constants";
+@import "../../../../commonUI/general/res/sass/mixins";
+@import "../../../../commonUI/general/res/sass/mobile/constants";
+@import "../../../../commonUI/general/res/sass/mobile/mixins";
+@import "../../../../commonUI/themes/espresso/res/sass/constants";
+@import "../../../../commonUI/themes/espresso/res/sass/mixins";
+
+$ueTimeConductorH: (33px, 18px, 20px);
+
+@mixin toiLineHovEffects() {
+    &:before,
+    &:after {
+        background-color: $timeControllerToiLineColorHov;
+    }
+}
+
+.l-time-controller {
+    $minW: 500px;
+    $knobHOffset: 0px;
+    $knobM: ($sliderKnobW + $knobHOffset) * -1;
+    $rangeValPad: $interiorMargin;
+    $rangeValOffset: $sliderKnobW + $interiorMargin;
+    $timeRangeSliderLROffset: 150px + ($sliderKnobW * 2);
+    $r1H: nth($ueTimeConductorH,1);
+    $r2H: nth($ueTimeConductorH,2);
+    $r3H: nth($ueTimeConductorH,3);
+
+    min-width: $minW;
+    font-size: 0.8rem;
+
+    .l-time-range-inputs-holder,
+    .l-time-range-slider-holder,
+    .l-time-range-ticks-holder
+    {
+        box-sizing: border-box;
+        position: relative;
+        &:not(:first-child) {
+            margin-top: $interiorMargin;
+        }
+    }
+    .l-time-range-slider,
+    .l-time-range-ticks {
+        @include absPosDefault(0, visible);
+        left: $timeRangeSliderLROffset; right: $timeRangeSliderLROffset;
+    }
+
+    .l-time-range-inputs-holder {
+        border-top: 1px solid $colorInteriorBorder;
+        padding-top: $interiorMargin;
+        &.l-flex-row,
+        .l-flex-row {
+            @include align-items(center);
+            .flex-elem {
+                height: auto;
+                line-height: normal;
+            }
+        }
+        .type-icon {
+            font-size: 120%;
+            vertical-align: middle;
+        }
+        .l-time-range-input-w,
+        .l-time-range-inputs-elem {
+            margin-right: $interiorMargin;
+            .lbl {
+                color: $colorPlotLabelFg;
+            }
+            .ui-symbol.icon {
+                font-size: 11px;
+            }
+        }
+        .l-time-range-input-w {
+            // Wraps a datetime text input field
+            position: relative;
+            input[type="text"] {
+                width: 200px;
+                &.picker-icon {
+                    padding-right: 20px;
+                }
+            }
+            .icon-calendar {
+                position: absolute;
+                right: 5px;
+                top: 5px;
+            }
+        }
+    }
+
+    .l-time-range-slider-holder {
+        height: $r2H;
+        .range-holder {
+            box-shadow: none;
+            background: none;
+            border: none;
+            .range {
+                .toi-line {
+                    $myC: $timeControllerToiLineColor;
+                    $myW: 8px;
+                    @include transform(translateX(50%));
+                    position: absolute;
+                    top: 0; right: 0; bottom: 0px; left: auto;
+                    width: $myW;
+                    height: auto;
+                    z-index: 2;
+                    &:before {
+                        // Vert line
+                        background-color: $myC;
+                        position: absolute;
+                        content: "";
+                        top: 0; right: auto; bottom: -10px; left: floor($myW/2) - 1;
+                        width: 1px;
+                    }
+                }
+                &:hover .toi-line {
+                    @include toiLineHovEffects;
+                }
+            }
+        }
+        &:not(:active) {
+            .knob,
+            .range {
+                @include transition-property(left, right);
+                @include transition-duration(500ms);
+                @include transition-timing-function(ease-in-out);
+            }
+        }
+    }
+
+    .l-time-range-ticks-holder {
+        height: $r3H;
+        .l-time-range-ticks {
+            border-top: 1px solid $colorTick;
+            .tick {
+                background-color: $colorTick;
+                border:none;
+                height: 5px;
+                width: 1px;
+                margin-left: -1px;
+                position: absolute;
+                &:first-child {
+                    margin-left: 0;
+                }
+                .l-time-range-tick-label {
+                    @include webkitProp(transform, translateX(-50%));
+                    color: $colorPlotLabelFg;
+                    display: inline-block;
+                    font-size: 0.7rem;
+                    position: absolute;
+                    top: 5px;
+                    white-space: nowrap;
+                    z-index: 2;
+                }
+            }
+        }
+    }
+
+    .knob {
+        z-index: 2;
+        &:before {
+            $mTB: 2px;
+            $grippyW: 3px;
+            $mLR: ($sliderKnobW - $grippyW)/2;
+            @include bgStripes($c: pullForward($sliderColorKnob, 20%), $a: 1, $bgsize: 4px, $angle: 0deg);
+            content: '';
+            display: block;
+            position: absolute;
+            top: $mTB; right: $mLR; bottom: $mTB; left: $mLR;
+        }
+        .range-value {
+            @include trans-prop-nice-fade(.25s);
+            font-size: 0.7rem;
+            position: absolute;
+            height: $r2H;
+            line-height: $r2H;
+            white-space: nowrap;
+            z-index: 1;
+        }
+        &:hover {
+            .range-value {
+                color: $sliderColorKnobHov;
+            }
+        }
+        &.knob-l {
+            margin-left: $knobM;
+            .range-value {
+                text-align: right;
+                right: $rangeValOffset;
+            }
+        }
+        &.knob-r {
+            margin-right: $knobM;
+            .range-value {
+                left: $rangeValOffset;
+            }
+            &:hover + .range-holder .range .toi-line {
+                @include toiLineHovEffects;
+            }
+        }
+    }
+
+    .l-time-domain-selector {
+        position: absolute;
+        right: 0px;
+        top: $interiorMargin;
+    }
+
+}
+
+.s-time-range-val {
+    border-radius: $controlCr;
+    background-color: $colorInputBg;
+    padding: 1px 1px 0 $interiorMargin;
+}
+
+/******************************************************************** MOBILE */
+
+@include phoneandtablet {
+    .l-time-controller {
+        min-width: 0;
+        .l-time-range-slider-holder,
+        .l-time-range-ticks-holder {
+            display: none;
+        }
+    }
+}
+
+@include phone {
+    .l-time-controller {
+        .l-time-range-inputs-holder {
+            &.l-flex-row,
+            .l-flex-row {
+                @include align-items(flex-start);
+            }
+            .l-time-range-inputs-elem {
+                &.type-icon {
+                    margin-top: 3px;
+                }
+            }
+            .t-inputs-w,
+            .l-time-range-inputs-elem {
+                @include flex-direction(column);
+                .l-time-range-input-w:not(:first-child) {
+                    &:not(:first-child) {
+                        margin-top: $interiorMargin;
+                    }
+                    margin-right: 0;
+                }
+                .l-time-range-inputs-elem {
+                    &.lbl { display: none; }
+                }
+            }
+        }
+    }
+}
+
+@include phonePortrait {
+    .l-time-controller {
+        .l-time-range-inputs-holder {
+            .t-inputs-w,
+            .l-time-range-inputs-elem {
+                @include flex(1 1 auto);
+                padding-top: 25px; // Make room for the ever lovin' Time Domain Selector
+                .flex-elem {
+                    @include flex(1 1 auto);
+                    width: 100%;
+                }
+                input[type="text"] {
+                    width: 100%;
+                }
+            }
+        }
+    }
+    .l-time-domain-selector {
+        right: auto;
+        left: 20px;
+    }
+}

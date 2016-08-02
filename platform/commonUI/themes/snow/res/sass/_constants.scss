@@ -61,8 +61,8 @@ $colorCreateBtn: $colorKey;
 $colorGridLines: rgba(#000, 0.05);
 $colorInvokeMenu: #fff;
 $colorObjHdrTxt: $colorBodyFg;
-$colorObjHdrIc: pushBack($colorObjHdrTxt, 30%);
-$colorTick: rgba(black, 0.2);
+$colorObjHdrIc: lighten($colorObjHdrTxt, 20%);
+$colorTick: lighten($colorBodyFg, 10%);
 
 // Menu colors
 $colorMenuBg: pushBack($colorBodyBg, 10%);
@@ -113,6 +113,7 @@ $colorProgressBarAmt: #0a0;
 $progressBarHOverlay: 15px;
 $progressBarStripeW: 20px;
 $shdwStatusIc: rgba(white, 0.8) 0 0px 5px;
+$animPausedPulseDur: 1s;
 
 // Selects
 $colorSelectBg: $colorBtnBg;
