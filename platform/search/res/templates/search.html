@@ -43,7 +43,7 @@
                 </mct-include>
             </div>
 
-            <a class="holder s-btn flex-elem btn-cancel"
+            <a class="holder s-button flex-elem btn-cancel"
                ng-show="!(ngModel.input === '' || ngModel.input === undefined)"
                ng-click="ngModel.input = ''; ngModel.checkAll = true; menuController.checkAll(); controller.search()">
                 Cancel</a>
@@ -51,13 +51,16 @@
 
         <div class="active-filter-display flex-elem holder"
              ng-class="{off: ngModel.filtersString === '' || ngModel.filtersString === undefined || !ngModel.search}">
-            <a class="clear-filters icon-x-in-circle"
+            <a class="clear-filters icon-x-in-circle s-icon-button"
                ng-click="ngModel.checkAll = true; menuController.checkAll()"></a>Filtered by: {{ ngModel.filtersString }}
         </div>
 
-        <div class="holder results-msg" ng-model="ngModel"
-             ng-show="!loading && !results.length > 0 && ngModel.search">
-            No results found</div>
+        <div class="flex-elem holder results-msg" ng-model="ngModel" ng-show="!loading && ngModel.search">
+            {{
+                !results.length > 0? 'No results found':
+                    results.length + ' result' + (results.length > 1? 's':'') + ' found'
+            }}
+        </div>
 
         <div class="search-results flex-elem holder grows vscroll"
              ng-class="{ off: !(loading || results.length > 0), loading: loading }">
