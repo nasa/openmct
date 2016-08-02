@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,48 +14,49 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-.validates {
-    > .label {
-        padding-right: $reqSymbolM; // Keep room for validation element
-        &::after {
-            position: absolute;
-            right: $interiorMargin;
-            font-family: symbolsfont;
-            font-size: $reqSymbolFontSize;
-            height: 100%;
-            line-height: 200%;
+mct-form.validates {
+    .form-row.validates {
+        > .label {
+            padding-right: $reqSymbolM; // Keep room for validation element
+            &:before {
+                position: absolute;
+                right: $interiorMargin;
+                font-size: $reqSymbolFontSize;
+                height: 100%;
+                line-height: 200%;
 
+            }
+        }
+        &.invalid,
+        &.invalid.req {
+            > .label {
+                @extend .icon-x;
+                &:before {
+                    color: $colorFormInvalid;
+                }
+            }
+        }
+        &.valid,
+        &.valid.req {
+            > .label {
+                @extend .icon-check;
+                &:before {
+                    color: $colorFormValid;
+                }
+            }
+        }
+        &.req {
+            > .label {
+                @extend .icon-asterisk;
+                &:before {
+                    color: $colorFormRequired;
+                }
+            }
         }
     }
-    &.invalid,
-    &.invalid.req {
-        > .label::after {
-            color: $colorFormInvalid;
-            content: "x";
-        }
-    }
-    &.valid,
-    &.valid.req {
-        > .label::after {
-            color: $colorFormValid;
-            content: "2";
-        }
-    }
-    &.req {
-        > .label::after {
-            color: $colorFormRequired;
-            content: "*";
-        }
-    }
-}
-.req {
-	font-size: $reqSymbolFontSize;
-}
-span.req {
-    color: $colorFormRequired;
 }

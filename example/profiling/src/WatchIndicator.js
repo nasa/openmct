@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -55,24 +55,13 @@ define(
 
             return {
                 /**
-                 * Get the glyph (single character used as an icon)
+                 * Get the CSS class (single character used as an icon)
                  * to display in this indicator. This will return ".",
-                 * which should appear as a dataflow icon.
+                 * which should appear as a database icon.
                  * @returns {string} the character of the database icon
                  */
-                getGlyph: function () {
-                    return "E";
-                },
-                /**
-                 * Get the name of the CSS class to apply to the glyph.
-                 * This is used to color the glyph to match its
-                 * state (one of ok, caution or err)
-                 * @returns {string} the CSS class to apply to this glyph
-                 */
-                getGlyphClass: function () {
-                    return (watches > 2000) ? "caution" :
-                            (watches < 1000) ? "ok" :
-                                    undefined;
+                getCssClass: function () {
+                    return "icon-database";
                 },
                 /**
                  * Get the text that should appear in the indicator.

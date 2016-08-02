@@ -38,12 +38,12 @@ define([
         /**
          * Some metadata, which will be used to identify the time system in
          * the UI
-         * @type {{key: string, name: string, glyph: string}}
+         * @type {{key: string, name: string, cssclass: string}}
          */
         this.metadata = {
             'key': 'utc',
             'name': 'UTC',
-            'glyph': '\u0043'
+            'cssclass': 'icon-clock'
         };
 
         this._formats = ['utc'];

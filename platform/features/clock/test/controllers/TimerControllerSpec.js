@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2009-2015, United States Government
+ * Open MCT, Copyright (c) 2009-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -85,8 +85,8 @@ define(
                         'timer.restart': mockRestart
                     }[k]];
                 });
-                mockStart.getMetadata.andReturn({ glyph: "S", name: "Start" });
-                mockRestart.getMetadata.andReturn({ glyph: "R", name: "Restart" });
+                mockStart.getMetadata.andReturn({ cssclass: "icon-play", name: "Start" });
+                mockRestart.getMetadata.andReturn({ cssclass: "icon-refresh", name: "Restart" });
                 mockScope.domainObject = mockDomainObject;
 
                 testModel = {};
@@ -144,14 +144,14 @@ define(
                 expect(controller.text()).toEqual("0D 00:00:00");
             });
 
-            it("shows glyph & name for the applicable start/restart action", function () {
+            it("shows cssclass & name for the applicable start/restart action", function () {
                 invokeWatch('domainObject', mockDomainObject);
-                expect(controller.buttonGlyph()).toEqual("S");
+                expect(controller.buttonCssClass()).toEqual("icon-play");
                 expect(controller.buttonText()).toEqual("Start");
 
                 testModel.timestamp = 12321;
                 invokeWatch('model.modified', 1);
-                expect(controller.buttonGlyph()).toEqual("R");
+                expect(controller.buttonCssClass()).toEqual("icon-refresh");
                 expect(controller.buttonText()).toEqual("Restart");
             });
 

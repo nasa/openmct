@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -43,9 +43,10 @@ $ueColMargin: 1.5%;
 $ueAppLogoW: 80px;
 $ueEditToolBarH: 25px;
 $ueCollapsedPaneEdgeM: 22px;
-$uePaneMiniTabH: $ueTopBarH;
-$uePaneMiniTabW: 10px;
-$uePaneMiniTabCollapsedW: 11px;
+$uePaneMiniTabH: 22px;
+$uePaneMiniTabW: 8px;
+$uePaneMiniTabFontSize: 8px;
+$uePaneMiniTabCollapsedW: 18px;
 $ueEditLeftPaneW: 75%;
 $treeSearchInputBarH: 25px;
 /*************** Panes */
@@ -72,7 +73,7 @@ $treeTypeIconHPx: 16px;
 $treeTypeIconW: 18px;
 $treeContextTriggerW: 20px;
 /*************** Tabular */
-$tabularHeaderH: 22px; //18px
+$tabularHeaderH: 22px;
 $tabularTdPadLR: $itemPadLR;
 $tabularTdPadTB: 3px;
 /*************** Imagery */
@@ -106,7 +107,7 @@ $bubbleMaxW: 300px;
 /*************** Forms */
 $reqSymbolW: 15px;
 $reqSymbolM: $interiorMargin * 2;
-$reqSymbolFontSize: 0.7em;
+$reqSymbolFontSize: 0.75em;
 $inputTextP: 3px 5px;
 /*************** Wait Spinner Defaults */
 $waitSpinnerD: 32px;
@@ -136,8 +137,3 @@ $dirImgs: $dirCommonRes + 'images/';
 $controlFadeMs: 100ms;
 $browseToEditAnimMs: 400ms;
 $editBorderPulseMs: 500ms;
-
-/************************** LIMITS */
-$glyphLimit: '\e603';
-$glyphLimitUpr: '\0000eb';
-$glyphLimitLwr: '\0000ee';

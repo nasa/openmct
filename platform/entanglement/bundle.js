@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -66,7 +66,7 @@ define([
                     "key": "move",
                     "name": "Move",
                     "description": "Move object to another location.",
-                    "glyph": "f",
+                    "cssclass": "icon-move",
                     "category": "contextual",
                     "implementation": MoveAction,
                     "depends": [
@@ -79,7 +79,7 @@ define([
                     "key": "copy",
                     "name": "Duplicate",
                     "description": "Duplicate object to another location.",
-                    "glyph": "+",
+                    "cssclass": "icon-duplicate",
                     "category": "contextual",
                     "implementation": CopyAction,
                     "depends": [
@@ -95,7 +95,7 @@ define([
                     "key": "link",
                     "name": "Create Link",
                     "description": "Create Link to object in another location.",
-                    "glyph": "è",
+                    "cssclass": "icon-link",
                     "category": "contextual",
                     "implementation": LinkAction,
                     "depends": [
@@ -108,7 +108,7 @@ define([
                     "key": "follow",
                     "name": "Go To Original",
                     "description": "Go to the original, un-linked instance of this object.",
-                    "glyph": "ô",
+                    "cssclass": "",
                     "category": "contextual",
                     "implementation": GoToOriginalAction
                 },
@@ -116,7 +116,7 @@ define([
                     "key": "locate",
                     "name": "Set Primary Location",
                     "description": "Set a domain object's primary location.",
-                    "glyph": "",
+                    "cssclass": "",
                     "category": "contextual",
                     "implementation": SetPrimaryLocationAction
                 }

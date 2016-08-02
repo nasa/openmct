@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -59,6 +59,12 @@
 .available {
     .status-indicator, .count {
         color: $colorStatusAvailable;
+    }
+}
+
+.subdued {
+    .status-indicator {
+        color: pullForward($colorStatusBarBg, 40%);
     }
 }
 
@@ -122,7 +128,7 @@
 		font-weight: bold;
 		opacity: 1;
 	}
-    .s-btn {
+    .s-button {
         background: $colorStatusBtnBg;
         padding: 0 $interiorMargin;
         height: auto;
@@ -233,7 +239,7 @@
 @mixin messageBlock($iconW: 32px) {
     .type-icon.message-type {
         @include txtShdw($shdwStatusIc);
-        &:before { content:"\e608"; }
+        @extend .icon-bell;
         color: $colorStatusDefault;
         font-size: $iconW;
         padding: 1px;
@@ -241,15 +247,15 @@
     }
 
     .message-severity-info .type-icon.message-type {
-        &:before { content:"\e608"; }
+        @extend .icon-info;
         color: $colorStatusInfo;
     }
     .message-severity-alert .type-icon.message-type {
-        &:before { content:"\e610"; }
+        @extend .icon-bell;
         color: $colorStatusAlert;
     }
     .message-severity-error .type-icon.message-type {
-        &:before { content:"\21"; }
+        @extend .icon-alert-rect;
         color: $colorStatusError;
     }
 }
@@ -272,12 +278,10 @@
     @include flex-direction(row);
     @include align-items(stretch);
     .type-icon.message-type {
-        //@include test(red);
         @include flex(0 1 auto);
         position: relative;
     }
     .message-contents {
-        //@include test(blue);
         @include flex(1 1 auto);
         margin-left: $overlayMargin;
         position: relative;
@@ -341,3 +345,29 @@ body.desktop .t-message-single {
 body.desktop .t-message-list {
     .message-contents .l-message { margin-right: $interiorMarginLg; }
 }
+
+// Alert elements in views
+.s-unsynced {
+    $c: $colorPausedBg;
+    border: 1px solid $c;
+    @include animTo($animName: pulsePaused, $propName: border-color, $propValStart: rgba($c, 0.8), $propValEnd: rgba($c, 0.5), $dur: $animPausedPulseDur, $dir: alternate, $count: infinite);
+}
+
+.s-status-timeconductor-unsynced {
+    // Plot areas
+    .gl-plot .gl-plot-display-area {
+        @extend .s-unsynced;
+    }
+
+    // Object headers
+    .object-header {
+        .t-object-alert {
+            display: inline;
+            &.t-alert-unsynced {
+                @extend .icon-alert-triangle;
+                color: $colorPausedBg;
+            }
+        }
+    }
+}
+

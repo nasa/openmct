@@ -26,10 +26,12 @@
 @import "../../../../../commonUI/general/res/sass/mobile/mixins";
 @import "../../../../../commonUI/themes/espresso/res/sass/constants";
 @import "../../../../../commonUI/themes/espresso/res/sass/mixins";
+@import "../../../../../commonUI/general/res/sass/glyphs";
 @import "../../../../../commonUI/general/res/sass/icons";
 @import "constants";
 
 // Thematic constants
+$colorTimeCondTicks: pullForward($colorBodyBg, 30%);
 $colorTimeCondKeyBg: #4e70dc;
 $colorTimeCondKeyFg: #fff;
 $colorTimeCondDataVisBg: pullForward($colorBodyBg, 10%);

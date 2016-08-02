@@ -47,7 +47,7 @@ define(
 
             this.modes = {
                 'fixed': {
-                    glyph: '\ue604',
+                    cssclass: 'icon-calendar',
                     label: 'Fixed',
                     name: 'Fixed Timespan Mode',
                     description: 'Query and explore data that falls between two fixed datetimes.'
@@ -57,7 +57,7 @@ define(
             //Only show 'real-time mode' if a clock source is available
             if (this.timeSystemsForSourceType('clock').length > 0 ) {
                 this.modes['realtime'] = {
-                    glyph: '\u0043',
+                    cssclass: 'icon-clock',
                     label: 'Real-time',
                     name: 'Real-time Mode',
                     description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will automatically advance themselves based on a UTC clock.'
@@ -67,10 +67,10 @@ define(
             //Only show 'real-time mode' if a clock source is available
             if (this.timeSystemsForSourceType('data').length > 0) {
                 this.modes['latest'] = {
-                    glyph: '\u0044',
-                        label: 'LAD',
-                        name: 'LAD Mode',
-                        description: 'Latest Available Data mode monitors real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'
+                    cssclass: 'icon-database',
+                    label: 'LAD',
+                    name: 'LAD Mode',
+                    description: 'Latest Available Data mode monitors real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'
                 }
             }
 

@@ -5,18 +5,16 @@
         <div
             class="l-local-controls s-local-controls"
             ng-show="false && showLocalControls">
-            <a class="s-btn"
+            <a class="s-button icon-arrow-left"
                ng-click="plot.stepBackPanZoom()"
                ng-show="1"
                title="Restore previous pan/zoom">
-                <span class="ui-symbol icon">&lt;</span>
             </a>
 
-            <a class="s-btn"
+            <a class="s-button icon-arrows-out"
                ng-click="plot.unzoom()"
                ng-show="1"
                title="Reset pan/zoom">
-                <span class="ui-symbol icon">I</span>
             </a>
         </div>
 
@@ -27,24 +25,24 @@
 
         <div class="l-image-main-controlbar flex-elem l-flex-row">
             <div class="left flex-elem grows">
-                <a class="s-btn show-thumbs sm hidden"
-                    ng-click="showThumbsBubble = (showThumbsBubble)? false:true"><span class="ui-symbol icon"></span></a>
+                <a class="s-button show-thumbs sm hidden icon-thumbs-strip"
+                    ng-click="showThumbsBubble = (showThumbsBubble)? false:true"></a>
                 <span class="l-timezone">{{imagery.getZone()}}</span>
                 <span class="l-time">{{imagery.getTime()}}</span>
                 <span class="l-date">{{imagery.getDate()}}</span>
             </div>
             <div class="right flex-elem">
-                <a class="s-btn pause-play"
+                <a class="s-button pause-play"
                     ng-click="imagery.paused(!imagery.paused())"
-                    ng-class="{ paused: imagery.paused() }"><span class="ui-symbol icon"></span></a>
+                    ng-class="{ paused: imagery.paused() }"></a>
                 <a href="{{imagery.getImageUrl()}}"
                    ng-if="imagery.getImageUrl()"
                    target="_blank"
                    title="Open image in new tab."
-                   class="s-btn">
-                    <span class="ui-symbol icon">y</span></a>
+                   class="s-button icon-new-window">
+                   </a>
                 <a href=""
-                    class="s-btn l-mag s-mag ui-symbol vsm"
+                    class="s-button l-mag s-mag ui-symbol vsm icon-arrows-out"
                     ng-click="clipped = false"
                     ng-show="clipped === true"
                     title="Not all of image is visible; click to reset."></a>

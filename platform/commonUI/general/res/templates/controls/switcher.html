@@ -1,9 +1,9 @@
 <!--
- Open MCT Web, Copyright (c) 2014-2015, United States Government
+ Open MCT, Copyright (c) 2014-2016, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
- Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ Open MCT is licensed under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,32 +14,26 @@
  License for the specific language governing permissions and limitations
  under the License.
 
- Open MCT Web includes source code licensed under additional open source
+ Open MCT includes source code licensed under additional open source
  licenses. See the Open Source Licenses file (LICENSES.md) included with
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
 <span ng-controller="ViewSwitcherController">
-    <div
-	    class="view-switcher menu-element s-menu-btn"
+    <div class="view-switcher menu-element s-menu-button {{ngModel.selected.cssclass}}"
 	    ng-if="view.length > 1"
-	    ng-controller="ClickAwayController as toggle"
-	    >
+	    ng-controller="ClickAwayController as toggle">
 
-        <span
-	        class="l-click-area"
+        <span class="l-click-area"
 	        ng-click="toggle.toggle()"
-	        title="{{ngModel.selected.name}}"
-	        ></span>
-
-        <span class="ui-symbol icon type-icon">{{ngModel.selected.glyph}}</span>
+	        title="{{ngModel.selected.name}}"></span>
         <span class="title-label">{{ngModel.selected.name}}</span>
 
         <div class="menu" ng-show="toggle.isActive()">
             <ul>
                 <li ng-repeat="option in view"
-                    ng-click="ngModel.selected = option; toggle.setState(false)">
-                    <span class="ui-symbol type-icon icon">{{option.glyph}}</span>
+                    ng-click="ngModel.selected = option; toggle.setState(false)"
+                    class="{{option.cssclass}}">
                     {{option.name}}
                 </li>
             </ul>

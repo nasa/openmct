@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -30,18 +30,18 @@ define(
                 testTypeDefinitions = [
                     {
                         key: 'basic',
-                        glyph: "X",
+                        cssclass: "icon-magnify-in",
                         name: "Basic Type"
                     },
                     {
                         key: 'multi1',
-                        glyph: "Z",
+                        cssclass: "icon-trash",
                         description: "Multi1 Description",
                         capabilities: ['a1', 'b1']
                     },
                     {
                         key: 'multi2',
-                        glyph: "Y",
+                        cssclass: "icon-magnify-out",
                         capabilities: ['a2', 'b2', 'c2']
                     },
                     {
@@ -70,7 +70,7 @@ define(
             it("looks up non-inherited types by name", function () {
                 captured.type = provider.getType('basic');
 
-                expect(captured.type.getGlyph()).toEqual("X");
+                expect(captured.type.getCssClass()).toEqual("icon-magnify-in");
                 expect(captured.type.getName()).toEqual("Basic Type");
                 expect(captured.type.getDescription()).toBeUndefined();
             });
@@ -78,7 +78,7 @@ define(
             it("supports single inheritance", function () {
                 captured.type = provider.getType('single-subtype');
 
-                expect(captured.type.getGlyph()).toEqual("X");
+                expect(captured.type.getCssClass()).toEqual("icon-magnify-in");
                 expect(captured.type.getName()).toEqual("Basic Subtype");
                 expect(captured.type.getDescription()).toEqual("A test subtype");
             });
@@ -86,7 +86,7 @@ define(
             it("supports multiple inheritance", function () {
                 captured.type = provider.getType('multi-subtype');
 
-                expect(captured.type.getGlyph()).toEqual("Y");
+                expect(captured.type.getCssClass()).toEqual("icon-magnify-out");
                 expect(captured.type.getName()).toEqual("Multi-parent Subtype");
                 expect(captured.type.getDescription()).toEqual("Multi1 Description");
             });

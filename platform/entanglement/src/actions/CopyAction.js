@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -86,7 +86,9 @@ define(
                     severity: "info"
                 });
             } else if (phase.toLowerCase() === "copying") {
-                this.dialogService.dismiss();
+                if (this.dialog) {
+                    this.dialog.dismiss();
+                }
                 if (!this.notification) {
                     this.notification = this.notificationService
                         .notify({
@@ -115,7 +117,8 @@ define(
             }
 
             function error(errorDetails) {
-                var errorMessage = {
+                var errorDialog,
+                    errorMessage = {
                     title: "Error copying objects.",
                     severity: "error",
                     hint: errorDetails.message,
@@ -123,12 +126,12 @@ define(
                     options: [{
                         label: "OK",
                         callback: function () {
-                            self.dialogService.dismiss();
+                            errorDialog.dismiss();
                         }
                     }]
                 };
 
-                self.dialogService.dismiss();
+                self.dialog.dismiss();
                 if (self.notification) {
                     self.notification.dismiss(); // Clear the progress notification
                 }
@@ -136,7 +139,7 @@ define(
                 //Show a minimized notification of error for posterity
                 self.notificationService.notify(errorMessage);
                 //Display a blocking message
-                self.dialogService.showBlockingMessage(errorMessage);
+                errorDialog = self.dialogService.showBlockingMessage(errorMessage);
 
             }
             function notification(details) {
