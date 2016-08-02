@@ -1,23 +1,6 @@
-.s-unsynced {
-    $c: $colorPausedBg;
-    border: 1px solid $c;
-    @include animTo($animName: pulsePaused, $propName: border-color, $propValStart: rgba($c, 0.8), $propValEnd: rgba($c, 0.5), $dur: $animPausedPulseDur, $dir: alternate, $count: infinite);
-}
-
-
 .s-stale {
 	@include s-stale();
 	.td {
 		@include s-stale();
 	}
 }
-
-.s-status-timeconductor-unsynced {
-    // Layout frames
-
-    // Plot areas
-    .gl-plot .gl-plot-display-area {
-        @extend .s-unsynced;
-    }
-}
-

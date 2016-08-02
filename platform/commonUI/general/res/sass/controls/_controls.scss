@@ -295,8 +295,6 @@ input[type="search"] {
     .title-label {
         color: $colorObjHdrTxt;
         @include ellipsize();
-        @include webkitProp(flex, '0 1 auto');
-        padding-right: 0.35em; // For context arrow. Done with em's so pad is relative to the scale of the text.
     }
 
     .context-available-w {
@@ -306,6 +304,10 @@ input[type="search"] {
     .context-available {
         font-size: 0.7em;
         @include flex(0 0 1);
+    }
+
+    .t-object-alert {
+        display: none;
     }
 }
 
