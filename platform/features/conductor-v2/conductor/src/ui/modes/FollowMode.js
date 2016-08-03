@@ -33,8 +33,8 @@ define(
          * the mode relevant, with both offsets defined relative to it.
          * @constructor
          */
-        function FollowMode(conductor, timeSystems) {
-            TimeConductorMode.call(this, conductor, timeSystems);
+        function FollowMode(conductor, timeSystems, key) {
+            TimeConductorMode.call(this, conductor, timeSystems, key);
 
             this._deltas = undefined;
         }

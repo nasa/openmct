@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([
-    "./src/TimeConductor",
+    "./src/ui/TimeConductorService",
     "./src/ui/TimeConductorController",
     "./src/ui/MCTConductorAxis",
     "text!./res/templates/time-conductor.html",
@@ -29,7 +29,7 @@ define([
     "text!./res/templates/mode-selector/mode-menu.html",
     'legacyRegistry'
 ], function (
-    TimeConductor,
+    TimeConductorService,
     TimeConductorController,
     MCTConductorAxis,
     timeConductorTemplate,
@@ -42,8 +42,8 @@ define([
         "extensions": {
             "services": [
                 {
-                    "key": "timeConductor",
-                    "implementation": TimeConductor
+                    "key": "timeConductorService",
+                    "implementation": TimeConductorService
                 }
             ],
             "controllers": [
@@ -52,7 +52,7 @@ define([
                     "implementation": TimeConductorController,
                     "depends": [
                         "$scope",
-                        "timeConductor",
+                        "timeConductorService",
                         "timeSystems[]"
                     ]
                 }
@@ -62,7 +62,7 @@ define([
                     "key": "mctConductorAxis",
                     "implementation": MCTConductorAxis,
                     "depends": [
-                        "timeConductor",
+                        "timeConductorService",
                         "formatService"
                     ]
                 }

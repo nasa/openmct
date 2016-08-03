@@ -26,8 +26,8 @@ define([
 
 ) {
 
-    function Conductor(timeConductor) {
-        this.timeConductor = timeConductor;
+    function Conductor(timeConductorService) {
+        this.timeConductor = timeConductorService.conductor();
     }
 
     Conductor.prototype.displayStart = function () {

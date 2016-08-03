@@ -32,8 +32,8 @@ define(
          * @param timeSystems
          * @constructor
          */
-        function FixedMode(conductor, timeSystems) {
-            TimeConductorMode.call(this, conductor, timeSystems);
+        function FixedMode(conductor, timeSystems, key) {
+            TimeConductorMode.call(this, conductor, timeSystems, key);
         }
 
         FixedMode.prototype = Object.create(TimeConductorMode.prototype);
