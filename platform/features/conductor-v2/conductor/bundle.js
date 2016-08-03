@@ -42,6 +42,15 @@ define([
         "extensions": {
             "services": [
                 {
+                    "key": "timeConductor",
+                    "implementation": function (timeConductorService) {
+                        return timeConductorService.conductor();
+                    },
+                    "depends": [
+                        "timeConductorService"
+                    ]
+                },
+                {
                     "key": "timeConductorService",
                     "implementation": TimeConductorService
                 }
