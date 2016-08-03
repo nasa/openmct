@@ -44,16 +44,25 @@ define(
                             .append('svg:svg')
                             .attr('width', '100%')
                             .attr('height', height);
-                var xScale = d3.scaleUtc();
                 var xAxis = d3.axisTop();
                 // draw x axis with labels and move to the bottom of the chart area
                 var axisElement = vis.append("g")
                     .attr("transform", "translate(0," + (height - padding) + ")");
 
-                function setScale(start, end) {
+                function setScale() {
+                    var xScale = undefined;
                     var width = target.offsetWidth;
-                    xScale.domain([new Date(start), new Date(end)])
-                        .range([padding, width - padding * 2]);
+                    var timeSystem = conductor.timeSystem();
+                    var bounds = conductor.bounds();
+
+                    if (timeSystem.isUTCBased()) {
+                        xScale = d3.scaleUtc();
+                        xScale.domain([new Date(bounds.start), new Date(bounds.end)]);
+                    } else {
+                        xScale = d3.scaleLinear();
+                        xScale.domain([bounds.start, bounds.end]);
+                    }
+                    xScale.range([padding, width - padding * 2]);
                     xAxis.scale(xScale);
                     axisElement.call(xAxis);
                 }
@@ -65,27 +74,30 @@ define(
                         var b = conductor.bounds();
 
                         //Define a custom format function
-                        xAxis.tickFormat(function (date) {
-                            return format.format(date.getTime(), {min: b.start, max: b.end});
+                        xAxis.tickFormat(function (tickValue) {
+                            // Normalize date representations to numbers
+                            if (tickValue instanceof Date){
+                                tickValue = tickValue.getTime();
+                            }
+                            return format.format(tickValue, {
+                                min: b.start,
+                                max: b.end
+                            });
                         });
                         axisElement.call(xAxis);
                     }
                 }
 
-                scope.resize = function () {
-                    var b = conductor.bounds();
-                    setScale(b.start, b.end);
-                };
+                scope.resize = setScale;
 
                 conductor.on('timeSystem', changeTimeSystem);
 
                 //On conductor bounds changes, redraw ticks
                 conductor.on('bounds', function (bounds) {
-                    setScale(bounds.start, bounds.end);
+                    setScale();
                 });
-                //Set initial scale.
-                var bounds = conductor.bounds();
-                setScale(bounds.start, bounds.end);
+
+                setScale();
 
                 if (conductor.timeSystem() !== undefined) {
                     changeTimeSystem(conductor.timeSystem());

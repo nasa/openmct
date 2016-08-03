@@ -66,5 +66,12 @@ define([], function () {
         throw new Error('Not implemented');
     };
 
+    /**
+     * @return {boolean}
+     */
+    TimeSystem.prototype.isUTCBased = function () {
+        return true;
+    };
+
     return TimeSystem;
 });
