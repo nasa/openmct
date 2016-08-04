@@ -106,6 +106,7 @@ define([
     './platform/search/bundle',
     './platform/status/bundle',
     './platform/commonUI/regions/bundle'
+    //'./example/localTimeSystem/bundle'
 
 ], function (Main, legacyRegistry) {
     return {

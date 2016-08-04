@@ -261,6 +261,8 @@ define(
                         break;
                 }
                 newMode.initialize();
+                this.setDeltasFromDefaults(newMode.defaults());
+
                 this.conductorService.mode(newMode);
 
                 //Synchronize scope with time system on mode
@@ -275,8 +277,7 @@ define(
         /**
          * @private
          */
-        TimeConductorController.prototype.setDeltasFromMode = function (mode) {
-            var defaults = mode.defaults();
+        TimeConductorController.prototype.setDeltasFromDefaults = function (defaults) {
             var deltas = defaults.deltas;
 
             /*
@@ -312,12 +313,16 @@ define(
          */
         TimeConductorController.prototype.setTimeSystem = function (newTimeSystem) {
             if (newTimeSystem && newTimeSystem !== this.$scope.timeSystemModel.selected) {
+
+                var mode = this.conductorService.mode();
+                mode.timeSystem(newTimeSystem);
+                var defaults = mode.defaults();
+
                 this.$scope.timeSystemModel.selected = newTimeSystem;
                 this.$scope.timeSystemModel.format = newTimeSystem.formats()[0];
                 this.$scope.timeSystemModel.deltaFormat = newTimeSystem.deltaFormat();
-                var mode = this.conductorService.mode();
-                mode.timeSystem(newTimeSystem);
-                this.setDeltasFromMode(mode);
+
+                this.setDeltasFromDefaults(defaults);
 
                 // If current mode supports ticking, set an appropriate tick
                 // source from the new time system
