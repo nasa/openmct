@@ -32,8 +32,8 @@ define(
          * @param timeSystems
          * @constructor
          */
-        function FixedMode(conductor, timeSystems, key) {
-            TimeConductorMode.call(this, conductor, timeSystems, key);
+        function FixedMode(conductor, timeSystem, key) {
+            TimeConductorMode.call(this, conductor, timeSystem, key);
         }
 
         FixedMode.prototype = Object.create(TimeConductorMode.prototype);
@@ -49,8 +49,8 @@ define(
          * @param timeSystem
          * @returns {*}
          */
-        FixedMode.prototype.selectedTimeSystem = function (timeSystem){
-            TimeConductorMode.prototype.selectedTimeSystem.apply(this, arguments);
+        FixedMode.prototype.timeSystem = function (timeSystem){
+            TimeConductorMode.prototype.timeSystem.apply(this, arguments);
 
             if (timeSystem) {
                 var defaults = timeSystem.defaults()[0];
@@ -62,7 +62,7 @@ define(
 
                 this.conductor.timeSystem(timeSystem, bounds);
             }
-            return this._selectedTimeSystem;
+            return this._timeSystem;
         };
 
         return FixedMode;

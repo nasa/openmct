@@ -33,9 +33,9 @@ define(
          * @constructor
          * @param {TimeConductorMetadata} metadata
          */
-        function TimeConductorMode(conductor, timeSystems, key) {
+        function TimeConductorMode(conductor, timeSystem, key) {
             this.conductor = conductor;
-            this._timeSystems = timeSystems;
+            this._timeSystem = timeSystem;
             this._key = key;
         }
 
@@ -43,18 +43,7 @@ define(
          * Function is called when mode becomes active (ie. is selected)
          */
         TimeConductorMode.prototype.initialize = function () {
-            this.selectedTimeSystem(this._timeSystems[0]);
-        };
-
-        /**
-         * Return the time systems supported by this mode. Modes are
-         * expected to determine which time systems they will support by
-         * filtering a provided list of all time systems.
-         *
-         * @returns {TimeSystem[]} The time systems supported by this mode
-         */
-        TimeConductorMode.prototype.timeSystems = function () {
-            return this._timeSystems;
+            this.timeSystem(this._timeSystem);
         };
 
         /**
@@ -62,15 +51,11 @@ define(
          * @param timeSystem
          * @returns {TimeSystem} the currently selected time system
          */
-        TimeConductorMode.prototype.selectedTimeSystem = function (timeSystem) {
+        TimeConductorMode.prototype.timeSystem = function (timeSystem) {
             if (arguments.length > 0) {
-                if (this._timeSystems.indexOf(timeSystem) === -1){
-                    throw new Error("Unsupported time system");
-                } else {
-                    this._selectedTimeSystem = timeSystem;
-                }
+                this._timeSystem = timeSystem;
             }
-            return this._selectedTimeSystem;
+            return this._timeSystem;
         };
 
         TimeConductorMode.prototype.key = function () {

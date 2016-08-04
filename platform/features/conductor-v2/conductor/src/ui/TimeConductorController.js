@@ -99,6 +99,7 @@ define(
             if (this.conductor.timeSystem()) {
                 $scope.timeSystemModel.selected = this.conductor.timeSystem();
                 $scope.timeSystemModel.format = this.conductor.timeSystem().formats()[0];
+                $scope.timeSystemModel.deltaFormat = this.conductor.timeSystem().deltaFormat();
             }
 
             /*
@@ -194,6 +195,9 @@ define(
         TimeConductorController.prototype.setMode = function (newModeKey, oldModeKey) {
             if (newModeKey !== oldModeKey) {
                 var newMode = undefined;
+                var timeSystems = [];
+                var timeSystem = undefined;
+
                 this.$scope.modeModel.selectedKey = newModeKey;
 
                 if (this.conductorService.mode()) {
@@ -202,26 +206,31 @@ define(
 
                 switch (newModeKey) {
                     case 'fixed':
-                        newMode = new FixedMode(this.conductor, this._timeSystems, newModeKey);
+                        timeSystems = this._timeSystems;
+                        timeSystem = timeSystems[0];
+                        newMode = new FixedMode(this.conductor, timeSystem, newModeKey);
                         break;
                     case 'realtime':
                         // Filter time systems to only those with clock tick
                         // sources
-                        newMode = new FollowMode(this.conductor, this.timeSystemsForSourceType('clock'), newModeKey);
+                        timeSystems = this.timeSystemsForSourceType('clock');
+                        timeSystem = timeSystems[0];
+                        newMode = new FollowMode(this.conductor, timeSystem, newModeKey);
                         break;
                     case 'latest':
                         // Filter time systems to only those with data tick
                         // sources
-                        newMode = new FollowMode(this.conductor, this.timeSystemsForSourceType('data'), newModeKey);
+                        timeSystems = this.timeSystemsForSourceType('data');
+                        timeSystem = timeSystems[0];
+                        newMode = new FollowMode(this.conductor, timeSystem, newModeKey);
                         break;
                 }
                 newMode.initialize();
                 this.conductorService.mode(newMode);
-                var timeSystem = newMode.selectedTimeSystem();
 
                 //Synchronize scope with time system on mode
-                this.$scope.timeSystemModel.options = newMode.timeSystems().map(function (timeSystem) {
-                    return timeSystem.metadata;
+                this.$scope.timeSystemModel.options = timeSystems.map(function (t) {
+                    return t.metadata;
                 });
 
                 this.setTimeSystem(timeSystem);
@@ -272,7 +281,7 @@ define(
                 this.$scope.timeSystemModel.format = newTimeSystem.formats()[0];
                 this.$scope.timeSystemModel.deltaFormat = newTimeSystem.deltaFormat();
                 var mode = this.conductorService.mode();
-                mode.selectedTimeSystem(newTimeSystem);
+                mode.timeSystem(newTimeSystem);
                 this.setDeltasFromTimeSystem(newTimeSystem);
             }
         };

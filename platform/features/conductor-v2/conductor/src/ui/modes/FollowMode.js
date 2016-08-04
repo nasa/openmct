@@ -33,8 +33,8 @@ define(
          * the mode relevant, with both offsets defined relative to it.
          * @constructor
          */
-        function FollowMode(conductor, timeSystems, key) {
-            TimeConductorMode.call(this, conductor, timeSystems, key);
+        function FollowMode(conductor, timeSystem, key) {
+            TimeConductorMode.call(this, conductor, timeSystem, key);
 
             this._deltas = undefined;
         }
@@ -63,10 +63,8 @@ define(
          * @param tickSource
          */
         FollowMode.prototype.listenToTickSource = function () {
-            if (this._selectedTimeSystem &&
-                this._timeSystems[0]) {
-
-                var tickSource = this._timeSystems[0].tickSources()[0];
+            if (this._timeSystem) {
+                var tickSource = this._timeSystem.tickSources()[0];
                 if (tickSource) {
                     this.tickSourceUnlisten = tickSource.listen(this.tick.bind(this));
                 }
@@ -79,8 +77,8 @@ define(
          * @param timeSystem
          * @returns {TimeSystem}
          */
-        FollowMode.prototype.selectedTimeSystem = function (timeSystem) {
-            TimeConductorMode.prototype.selectedTimeSystem.apply(this, arguments);
+        FollowMode.prototype.timeSystem = function (timeSystem) {
+            TimeConductorMode.prototype.timeSystem.apply(this, arguments);
 
             if (timeSystem) {
                 if (this.tickSourceUnlisten) {
@@ -106,7 +104,7 @@ define(
                     this.listenToTickSource();
                 }
             }
-            return this._selectedTimeSystem;
+            return this._timeSystem;
         };
 
         /**
