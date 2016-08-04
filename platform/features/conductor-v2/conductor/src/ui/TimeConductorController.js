@@ -67,6 +67,7 @@ define(
                     cssclass: 'icon-clock',
                     label: 'Real-time',
                     name: 'Real-time Mode',
+                    tickSourceType: 'clock',
                     description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will automatically advance themselves based on a UTC clock.'
                 };
             }
@@ -77,6 +78,7 @@ define(
                     cssclass: 'icon-database',
                     label: 'LAD',
                     name: 'LAD Mode',
+                    tickSourceType: 'data',
                     description: 'Latest Available Data mode monitors real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'
                 };
             }
@@ -184,6 +186,12 @@ define(
                 });
             }
         };
+
+        TimeConductorController.prototype.selectTickSource = function (timeSystem, sourceType) {
+            return timeSystem.tickSources().filter(function (source){
+                return source.type() === sourceType;
+            })[0];
+        }
         
         /**
          * Change the selected Time Conductor mode. This will call destroy
@@ -197,6 +205,7 @@ define(
                 var newMode = undefined;
                 var timeSystems = [];
                 var timeSystem = undefined;
+                var tickSourceType = this.modes[newModeKey].tickSourceType;
 
                 this.$scope.modeModel.selectedKey = newModeKey;
 
@@ -210,19 +219,23 @@ define(
                         timeSystem = timeSystems[0];
                         newMode = new FixedMode(this.conductor, timeSystem, newModeKey);
                         break;
+
                     case 'realtime':
                         // Filter time systems to only those with clock tick
                         // sources
-                        timeSystems = this.timeSystemsForSourceType('clock');
+                        timeSystems = this.timeSystemsForSourceType(tickSourceType);
                         timeSystem = timeSystems[0];
                         newMode = new FollowMode(this.conductor, timeSystem, newModeKey);
+                        newMode.tickSource(this.selectTickSource(timeSystem, tickSourceType));
                         break;
+
                     case 'latest':
                         // Filter time systems to only those with data tick
                         // sources
-                        timeSystems = this.timeSystemsForSourceType('data');
+                        timeSystems = this.timeSystemsForSourceType(tickSourceType);
                         timeSystem = timeSystems[0];
                         newMode = new FollowMode(this.conductor, timeSystem, newModeKey);
+                        newMode.tickSource(this.selectTickSource(timeSystem, tickSourceType));
                         break;
                 }
                 newMode.initialize();
@@ -283,6 +296,13 @@ define(
                 var mode = this.conductorService.mode();
                 mode.timeSystem(newTimeSystem);
                 this.setDeltasFromTimeSystem(newTimeSystem);
+
+                // If current mode supports ticking, set an appropriate tick
+                // source from the new time system
+                if (mode.tickSource) {
+                    var tickSourceType = this.modes[mode.key()].tickSourceType;
+                    mode.tickSource(this.selectTickSource(newTimeSystem, tickSourceType));
+                }
             }
         };
 

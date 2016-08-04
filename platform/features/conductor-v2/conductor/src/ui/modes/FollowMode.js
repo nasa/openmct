@@ -37,6 +37,8 @@ define(
             TimeConductorMode.call(this, conductor, timeSystem, key);
 
             this._deltas = undefined;
+            this._tickSource = undefined;
+            this._tickSourceUnlisten = undefined;
         }
 
         FollowMode.prototype = Object.create(TimeConductorMode.prototype);
@@ -59,16 +61,20 @@ define(
         };
 
         /**
-         * @private
+         * Get or set tick source. Setting tick source will also start
+         * listening to it and unlisten from any existing tick source
          * @param tickSource
+         * @returns {undefined|*}
          */
-        FollowMode.prototype.listenToTickSource = function () {
-            if (this._timeSystem) {
-                var tickSource = this._timeSystem.tickSources()[0];
-                if (tickSource) {
-                    this.tickSourceUnlisten = tickSource.listen(this.tick.bind(this));
+        FollowMode.prototype.tickSource = function (tickSource) {
+            if (tickSource) {
+                if (this._tickSourceUnlisten) {
+                    this._tickSourceUnlisten();
                 }
+                this._tickSource = tickSource;
+                this._tickSourceUnlisten = tickSource.listen(this.tick.bind(this));
             }
+            return this._tickSource;
         };
 
         /**
@@ -81,10 +87,6 @@ define(
             TimeConductorMode.prototype.timeSystem.apply(this, arguments);
 
             if (timeSystem) {
-                if (this.tickSourceUnlisten) {
-                    this.tickSourceUnlisten();
-                }
-
                 var defaults = timeSystem.defaults()[0];
 
                 if (arguments.length > 0) {
@@ -100,8 +102,6 @@ define(
                     }
 
                     this.conductor.timeSystem(timeSystem, bounds);
-
-                    this.listenToTickSource();
                 }
             }
             return this._timeSystem;
@@ -139,8 +139,8 @@ define(
          * Stop listening to tick sources
          */
         FollowMode.prototype.destroy = function () {
-            if (this.tickSourceUnlisten) {
-                this.tickSourceUnlisten();
+            if (this._tickSourceUnlisten) {
+                this._tickSourceUnlisten();
             }
         };
 

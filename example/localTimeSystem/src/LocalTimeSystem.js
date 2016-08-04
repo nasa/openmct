@@ -22,8 +22,9 @@
 
 define([
     '../../../platform/features/conductor-v2/conductor/src/timeSystems/TimeSystem',
-    '../../../platform/features/conductor-v2/conductor/src/timeSystems/LocalClock'
-], function (TimeSystem, LocalClock) {
+    '../../../platform/features/conductor-v2/conductor/src/timeSystems/LocalClock',
+    './LADTickSource'
+], function (TimeSystem, LocalClock, LADTickSource) {
     var FIFTEEN_MINUTES = 15 * 60 * 1000,
         DEFAULT_PERIOD = 1000;
 
@@ -47,7 +48,7 @@ define([
         };
 
         this._formats = ['local-format'];
-        this._tickSources = [new LocalClock($timeout, DEFAULT_PERIOD)];
+        this._tickSources = [new LocalClock($timeout, DEFAULT_PERIOD), new LADTickSource($timeout, DEFAULT_PERIOD)];
     }
 
     LocalTimeSystem.prototype = Object.create(TimeSystem.prototype);
