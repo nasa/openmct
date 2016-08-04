@@ -24,6 +24,7 @@ define([
     "./src/ui/TimeConductorService",
     "./src/ui/TimeConductorController",
     "./src/ui/MCTConductorAxis",
+    "./src/ui/NumberFormat",
     "text!./res/templates/time-conductor.html",
     "text!./res/templates/mode-selector/mode-selector.html",
     "text!./res/templates/mode-selector/mode-menu.html",
@@ -32,6 +33,7 @@ define([
     TimeConductorService,
     TimeConductorController,
     MCTConductorAxis,
+    NumberFormat,
     timeConductorTemplate,
     modeSelectorTemplate,
     modeMenuTemplate,
@@ -98,6 +100,12 @@ define([
                 {
                     "key": "mode-menu",
                     "template": modeMenuTemplate
+                }
+            ],
+            "formats": [
+                {
+                    "key": "number",
+                    "implementation": NumberFormat
                 }
             ]
         }

@@ -31,7 +31,7 @@
                             -
                         <mct-control key="'datetime-field'"
                                      structure="{
-                                        format: 'duration',
+                                        format: timeSystemModel.deltaFormat,
                                         validate: tcController.validation.validateStartDelta
                                      }"
                                      ng-model="formModel"
@@ -62,7 +62,7 @@
                             +
                         <mct-control key="'datetime-field'"
                                      structure="{
-                                        format: 'duration',
+                                        format: timeSystemModel.deltaFormat,
                                         validate: tcController.validation.validateEndDelta
                                      }"
                                      ng-model="formModel"

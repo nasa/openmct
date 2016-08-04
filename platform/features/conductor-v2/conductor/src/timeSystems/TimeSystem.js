@@ -49,6 +49,23 @@ define([], function () {
     };
 
     /**
+     * @typedef DeltaFormat
+     * @property {string} type the type of MctControl used to represent this
+     * field. Typically 'datetime-field' for UTC based dates, or 'textfield'
+     * otherwise
+     * @property {string} [format] An optional field specifying the
+     * Format to use for delta fields in this time system.
+     */
+    /**
+     * Specifies a format for deltas in this time system.
+     *
+     * @returns {DeltaFormat} a delta format specifier
+     */
+    TimeSystem.prototype.deltaFormat = function () {
+        throw new Error('Not implemented');
+    };
+
+    /**
      * Returns the tick sources supported by this time system. Tick sources
      * are event generators that can be used to advance the time conductor
      * @returns {TickSource[]} The tick sources supported by this time system.

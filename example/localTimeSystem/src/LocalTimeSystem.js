@@ -56,6 +56,10 @@ define([
         return this._formats;
     };
 
+    LocalTimeSystem.prototype.deltaFormat = function () {
+        return 'duration';
+    };
+
     LocalTimeSystem.prototype.tickSources = function () {
         return this._tickSources;
     };

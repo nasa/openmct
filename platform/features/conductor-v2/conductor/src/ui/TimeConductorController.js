@@ -163,9 +163,9 @@ define(
             var mode = this.conductorService.mode(),
                 deltas = mode.deltas();
 
-            if (deltas !== undefined && this.validation.validateDeltas(formModel)) {
+            if (deltas !== undefined && this.validation.validateDeltas(formModel.startDelta, formModel.endDelta)) {
                 //Sychronize deltas between form and mode
-                mode.deltas({start: formModel.startDelta, end: formModel.endDelta});
+                mode.deltas({start: parseFloat(formModel.startDelta), end: parseFloat(formModel.endDelta)});
             }
         };
 
@@ -270,6 +270,7 @@ define(
             if (newTimeSystem && newTimeSystem !== this.$scope.timeSystemModel.selected) {
                 this.$scope.timeSystemModel.selected = newTimeSystem;
                 this.$scope.timeSystemModel.format = newTimeSystem.formats()[0];
+                this.$scope.timeSystemModel.deltaFormat = newTimeSystem.deltaFormat();
                 var mode = this.conductorService.mode();
                 mode.selectedTimeSystem(newTimeSystem);
                 this.setDeltasFromTimeSystem(newTimeSystem);

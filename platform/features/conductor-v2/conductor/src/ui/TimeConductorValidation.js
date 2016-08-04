@@ -54,11 +54,11 @@ define(
         };
 
         TimeConductorValidation.prototype.validateStartDelta = function (startDelta) {
-            return startDelta > 0;
+            return !isNaN(startDelta) && startDelta > 0;
         };
 
         TimeConductorValidation.prototype.validateEndDelta = function (endDelta) {
-            return endDelta >= 0;
+            return !isNaN(endDelta) && endDelta >= 0;
         };
 
         /**
@@ -68,10 +68,10 @@ define(
          * @param formModel
          * @returns {*}
          */
-        TimeConductorValidation.prototype.validateDeltas = function (formModel) {
+        TimeConductorValidation.prototype.validateDeltas = function (startDelta, endDelta) {
             // Validate that start Delta is some non-zero value, and that end
             // delta is zero or positive (ie. 'now' or some time in the future).
-            return this.validateStartDelta(formModel.startDelta) && this.validateEndDelta(formModel.endDelta);
+            return this.validateStartDelta(startDelta) && this.validateEndDelta(endDelta);
         };
 
         return TimeConductorValidation;

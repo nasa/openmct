@@ -56,6 +56,10 @@ define([
         return this._formats;
     };
 
+    UTCTimeSystem.prototype.deltaFormat = function () {
+        return 'duration';
+    };
+
     UTCTimeSystem.prototype.tickSources = function () {
         return this._tickSources;
     };
