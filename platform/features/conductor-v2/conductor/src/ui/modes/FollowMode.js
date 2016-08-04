@@ -87,7 +87,9 @@ define(
                     this.tickSourceUnlisten();
                 }
 
-                var defaults = timeSystem.defaults()[0];
+                var defaults = timeSystem.defaults().filter(function (d) {
+                    return d.mode === 'follow';
+                })[0];
 
                 if (arguments.length > 0) {
                     var bounds = {

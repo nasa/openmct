@@ -70,6 +70,14 @@ define([
             {
                 key: 'utc-default',
                 name: 'UTC time system defaults',
+                mode: 'follow',
+                deltas: {start: FIFTEEN_MINUTES, end: 0},
+                bounds: {start: now - FIFTEEN_MINUTES, end: now}
+            },
+            {
+                key: 'utc-default',
+                name: 'UTC time system defaults',
+                mode: 'fixed',
                 deltas: {start: FIFTEEN_MINUTES, end: 0},
                 bounds: {start: now - FIFTEEN_MINUTES, end: now}
             }

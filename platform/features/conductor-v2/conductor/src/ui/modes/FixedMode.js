@@ -53,7 +53,9 @@ define(
             TimeConductorMode.prototype.selectedTimeSystem.apply(this, arguments);
 
             if (timeSystem) {
-                var defaults = timeSystem.defaults()[0];
+                var defaults = timeSystem.defaults().filter(function (d) {
+                    return d.mode === 'fixed';
+                })[0];
 
                 var bounds = {
                     start: defaults.bounds.start,
