@@ -120,6 +120,13 @@ define(
                     $scope.formModel.startDelta = deltas.start;
                     $scope.formModel.endDelta = deltas.end;
                 }
+
+                // Show filtered list of time systems available for the
+                // current mode
+                var tickSourceType = this.modes[mode.key()].tickSourceType;
+                $scope.timeSystemModel.options = this.timeSystemsForSourceType(tickSourceType).map(function (t) {
+                    return t.metadata;
+                });
             } else {
                 // Default to fixed mode
                 this.setMode('fixed');
