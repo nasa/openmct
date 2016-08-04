@@ -83,6 +83,10 @@ define(
             TimeConductorMode.prototype.selectedTimeSystem.apply(this, arguments);
 
             if (timeSystem) {
+                if (this.tickSourceUnlisten) {
+                    this.tickSourceUnlisten();
+                }
+
                 var defaults = timeSystem.defaults()[0];
 
                 if (arguments.length > 0) {
