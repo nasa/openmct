@@ -212,6 +212,7 @@ define(
                 var newMode = undefined;
                 var timeSystems = [];
                 var timeSystem = undefined;
+                var $scope = this.$scope;
                 var tickSourceType = this.modes[newModeKey].tickSourceType;
 
                 this.$scope.modeModel.selectedKey = newModeKey;
@@ -231,7 +232,14 @@ define(
                         // Filter time systems to only those with clock tick
                         // sources
                         timeSystems = this.timeSystemsForSourceType(tickSourceType);
-                        timeSystem = timeSystems[0];
+
+                        //Retain currently selected time system if available
+                        timeSystem = timeSystems.filter(function (t) {
+                            return t.metadata.key === $scope.timeSystemModel.selected.metadata.key;
+                        })[0];
+                        //Default to first available time system
+                        timeSystem = timeSystem || timeSystems[0];
+
                         newMode = new FollowMode(this.conductor, timeSystem, newModeKey);
                         newMode.tickSource(this.selectTickSource(timeSystem, tickSourceType));
                         break;
@@ -240,7 +248,14 @@ define(
                         // Filter time systems to only those with data tick
                         // sources
                         timeSystems = this.timeSystemsForSourceType(tickSourceType);
-                        timeSystem = timeSystems[0];
+
+                        //Retain currently selected time system if available
+                        timeSystem = timeSystems.filter(function (t) {
+                            return t.metadata.key === $scope.timeSystemModel.selected.metadata.key;
+                        })[0];
+                        //Default to first available time system
+                        timeSystem = timeSystem || timeSystems[0];
+
                         newMode = new FollowMode(this.conductor, timeSystem, newModeKey);
                         newMode.tickSource(this.selectTickSource(timeSystem, tickSourceType));
                         break;
