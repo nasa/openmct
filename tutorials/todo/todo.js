@@ -221,13 +221,6 @@ define([
             canView: todoType.check.bind(todoType)
         });
 
-        mct.view(mct.regions.properties, {
-            view: function (domainObject) {
-                return new TodoToolbarView(domainObject);
-            },
-            canView: todoType.check.bind(todoType)
-        });
-
         return mct;
     };
 });
