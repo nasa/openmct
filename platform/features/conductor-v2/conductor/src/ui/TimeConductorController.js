@@ -253,8 +253,8 @@ define(
         /**
          * @private
          */
-        TimeConductorController.prototype.setDeltasFromTimeSystem = function (timeSystem) {
-            var defaults = timeSystem.defaults()[0];
+        TimeConductorController.prototype.setDeltasFromMode = function (mode) {
+            var defaults = mode.defaults();
             var deltas = defaults.deltas;
 
             /*
@@ -295,7 +295,7 @@ define(
                 this.$scope.timeSystemModel.deltaFormat = newTimeSystem.deltaFormat();
                 var mode = this.conductorService.mode();
                 mode.timeSystem(newTimeSystem);
-                this.setDeltasFromTimeSystem(newTimeSystem);
+                this.setDeltasFromMode(mode);
 
                 // If current mode supports ticking, set an appropriate tick
                 // source from the new time system

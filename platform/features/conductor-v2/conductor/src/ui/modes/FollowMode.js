@@ -64,7 +64,7 @@ define(
          * Get or set tick source. Setting tick source will also start
          * listening to it and unlisten from any existing tick source
          * @param tickSource
-         * @returns {undefined|*}
+         * @returns {TickSource}
          */
         FollowMode.prototype.tickSource = function (tickSource) {
             if (tickSource) {
@@ -77,6 +77,16 @@ define(
             return this._tickSource;
         };
 
+        FollowMode.prototype.defaults = function () {
+            var timeSystem = this.timeSystem();
+
+            if (timeSystem){
+                return timeSystem.defaults().filter(function (d) {
+                    return d.mode === 'follow';
+                })[0];
+            }
+        };
+
         /**
          * On time system change, default the bounds values in the time
          * conductor, using the deltas associated with this mode.
@@ -87,7 +97,7 @@ define(
             TimeConductorMode.prototype.timeSystem.apply(this, arguments);
 
             if (timeSystem) {
-                var defaults = timeSystem.defaults()[0];
+                var defaults = this.defaults();
 
                 if (arguments.length > 0) {
                     var bounds = {

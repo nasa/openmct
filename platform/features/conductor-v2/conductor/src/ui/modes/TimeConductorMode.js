@@ -62,6 +62,10 @@ define(
             return this._key;
         };
 
+        TimeConductorMode.prototype.defaults = function () {
+            throw new Error("Not implemented");
+        };
+
         TimeConductorMode.prototype.destroy = function () {
         };
 

@@ -26,6 +26,7 @@ define([
     './LADTickSource'
 ], function (TimeSystem, LocalClock, LADTickSource) {
     var FIFTEEN_MINUTES = 15 * 60 * 1000,
+        THIRTY_MINUTES = 30 * 60 * 1000,
         DEFAULT_PERIOD = 1000;
 
     /**
@@ -71,8 +72,16 @@ define([
             {
                 key: 'local-default',
                 name: 'Local 12 hour time system defaults',
+                mode: 'fixed',
                 deltas: {start: FIFTEEN_MINUTES, end: 0},
                 bounds: {start: now - FIFTEEN_MINUTES, end: now}
+            },
+            {
+                key: 'local-default',
+                name: 'Local 12 hour time system defaults',
+                mode: 'follow',
+                deltas: {start: THIRTY_MINUTES, end: 0},
+                bounds: {start: now - THIRTY_MINUTES, end: now}
             }
         ];
     };

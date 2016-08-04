@@ -43,6 +43,16 @@ define(
             this.conductor.follow(false);
         };
 
+        FixedMode.prototype.defaults = function () {
+            var timeSystem = this.timeSystem();
+
+            if (timeSystem){
+                return timeSystem.defaults().filter(function (d) {
+                    return d.mode === 'fixed';
+                })[0];
+            }
+        };
+
         /**
          * Defines behavior to occur when selected time system changes. In
          * this case, sets default bounds on the time conductor.
@@ -53,7 +63,7 @@ define(
             TimeConductorMode.prototype.timeSystem.apply(this, arguments);
 
             if (timeSystem) {
-                var defaults = timeSystem.defaults()[0];
+                var defaults = this.defaults();
 
                 var bounds = {
                     start: defaults.bounds.start,

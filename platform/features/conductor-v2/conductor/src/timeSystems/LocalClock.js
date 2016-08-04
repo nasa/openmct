@@ -54,7 +54,6 @@ define(['./TickSource'], function (TickSource) {
     };
 
     LocalClock.prototype.tick = function () {
-        console.log('clock tick');
         var now = Date.now();
         this.listeners.forEach(function (listener){
             listener(now);

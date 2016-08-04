@@ -38,16 +38,6 @@ define(['../../../platform/features/conductor-v2/conductor/src/timeSystems/Local
     }
     LADTickSource.prototype = Object.create(LocalClock.prototype);
 
-    LADTickSource.prototype.tick = function () {
-        console.log('data tick');
-        var now = Date.now();
-        this.listeners.forEach(function (listener){
-            listener(now);
-        });
-        this.timeoutHandle = this.$timeout(this.tick.bind(this), this.period);
-    };
-
-
     LADTickSource.prototype.type = function () {
         return 'data';
     };
