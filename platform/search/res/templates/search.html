@@ -21,7 +21,7 @@
 -->
 <div class="l-flex-col flex-elem grows holder holder-search"  ng-controller="SearchController as controller">
     <div class="search-bar flex-elem"
-         ng-controller="ClickAwayController as toggle"
+         ng-controller="ToggleController as toggle"
          ng-class="{ holder: !(ngModel.input === '' || ngModel.input === undefined) }">
         <input class="search-input"
                type="text"
@@ -30,13 +30,17 @@
         <a class="clear-icon clear-input icon-x-in-circle"
            ng-class="{show: !(ngModel.input === '' || ngModel.input === undefined)}"
            ng-click="ngModel.input = ''; controller.search()"></a>
-        <a class="menu-icon context-available"
+        <!-- To prevent double triggering of clicks on click away, render
+        non-clickable version of the button when menu active-->
+        <a ng-if="!toggle.isActive()" class="menu-icon context-available"
            ng-click="toggle.toggle()"></a>
+        <a ng-if="toggle.isActive()" class="menu-icon context-available"></a>
+        
         <mct-include key="'search-menu'"
                      class="menu-element search-menu-holder"
                      ng-class="{off: !toggle.isActive()}"
                      ng-model="ngModel"
-                     ng-click="toggle.setState(true)">
+                     parameters="{menuVisible: toggle.setState}">
         </mct-include>
     </div>
     <div class="active-filter-display flex-elem holder"
