@@ -67,23 +67,14 @@ define([
         return this._tickSources;
     };
 
-    LocalTimeSystem.prototype.defaults = function () {
+    LocalTimeSystem.prototype.defaults = function (key) {
         var now = Math.ceil(Date.now() / 1000) * 1000;
-        return [
-            {
-                key: 'local-default',
-                name: 'Local 12 hour time system defaults',
-                mode: 'fixed',
-                bounds: {start: now - ONE_HOUR, end: now}
-            },
-            {
-                key: 'local-default',
-                name: 'Local 12 hour time system defaults',
-                mode: 'follow',
-                deltas: {start: THIRTY_MINUTES, end: 0},
-                bounds: {start: now - THIRTY_MINUTES, end: now}
-            }
-        ];
+        return {
+            key: 'local-default',
+            name: 'Local 12 hour time system defaults',
+            deltas: {start: THIRTY_MINUTES, end: 0},
+            bounds: {start: now - THIRTY_MINUTES, end: now}
+        };
     };
 
     return LocalTimeSystem;

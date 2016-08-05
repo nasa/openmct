@@ -206,7 +206,7 @@ define(
                 return source.type() === sourceType;
             })[0];
         }
-        
+
         /**
          * Change the selected Time Conductor mode. This will call destroy
          * and initialization functions on the relevant modes, setting

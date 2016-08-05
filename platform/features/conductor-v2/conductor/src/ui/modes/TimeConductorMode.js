@@ -63,7 +63,12 @@ define(
         };
 
         TimeConductorMode.prototype.defaults = function () {
-            throw new Error("Not implemented");
+            var timeSystem = this.timeSystem(),
+                key = this.key();
+
+            if (timeSystem) {
+                return timeSystem.defaults(key);
+            }
         };
 
         TimeConductorMode.prototype.destroy = function () {

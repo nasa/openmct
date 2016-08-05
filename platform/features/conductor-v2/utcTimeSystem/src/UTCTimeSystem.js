@@ -64,23 +64,14 @@ define([
         return this._tickSources;
     };
 
-    UTCTimeSystem.prototype.defaults = function () {
+    UTCTimeSystem.prototype.defaults = function (key) {
         var now = Math.ceil(Date.now() / 1000) * 1000;
-        return [
-            {
-                key: 'utc-default',
-                name: 'UTC time system defaults',
-                mode: 'follow',
-                deltas: {start: FIFTEEN_MINUTES, end: 0},
-                bounds: {start: now - FIFTEEN_MINUTES, end: now}
-            },
-            {
-                key: 'utc-default',
-                name: 'UTC time system defaults',
-                mode: 'fixed',
-                bounds: {start: now - FIFTEEN_MINUTES, end: now}
-            }
-        ];
+        return {
+            key: 'utc-default',
+            name: 'UTC time system defaults',
+            deltas: {start: FIFTEEN_MINUTES, end: 0},
+            bounds: {start: now - FIFTEEN_MINUTES, end: now}
+        };
     };
 
     return UTCTimeSystem;

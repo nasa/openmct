@@ -77,16 +77,6 @@ define(
             return this._tickSource;
         };
 
-        FollowMode.prototype.defaults = function () {
-            var timeSystem = this.timeSystem();
-
-            if (timeSystem){
-                return timeSystem.defaults().filter(function (d) {
-                    return d.mode === 'follow';
-                })[0];
-            }
-        };
-
         /**
          * On time system change, default the bounds values in the time
          * conductor, using the deltas associated with this mode.
