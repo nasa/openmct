@@ -22,13 +22,13 @@
 
 <div ng-controller="SearchMenuController as controller">
 
-    <div class="menu checkbox-menu">
+    <div class="menu checkbox-menu"
+         mct-click-elsewhere="parameters.menuVisible(false)">
         <ul>
             <!-- First element is special - it's a reset option -->
             <li class="search-menu-item special icon-asterisk"
                 title="Select all filters"
                 ng-click="ngModel.checkAll = !ngModel.checkAll; controller.checkAll()">
-
                 <label class="checkbox custom no-text">
                     <input type="checkbox"
                            class="checkbox"

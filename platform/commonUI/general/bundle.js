@@ -259,7 +259,7 @@ define([
                     "implementation": ClickAwayController,
                     "depends": [
                         "$document",
-                        "$scope"
+                        "$timeout"
                     ]
                 },
                 {
