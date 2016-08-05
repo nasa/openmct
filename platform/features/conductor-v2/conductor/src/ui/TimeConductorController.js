@@ -145,6 +145,13 @@ define(
         TimeConductorController.prototype.setBounds = function (bounds) {
             this.$scope.formModel.start = bounds.start;
             this.$scope.formModel.end = bounds.end;
+            if (!this.pendingUpdate) {
+                this.pendingUpdate = true;
+                requestAnimationFrame(function () {
+                    this.pendingUpdate = false;
+                    this.$scope.$digest();
+                }.bind(this));
+            }
         };
 
         /**
