@@ -46,8 +46,8 @@ define([
             expect(mctTree.restrict).toEqual("E");
         });
 
-        it("two-way binds to mctObject", function () {
-            expect(mctTree.scope).toEqual({ mctObject: "=" });
+        it("two-way binds to mctObject and mctModel", function () {
+            expect(mctTree.scope).toEqual({ mctObject: "=", mctModel: "=" });
         });
 
         describe("link", function () {
@@ -69,8 +69,8 @@ define([
             });
 
             it("watches for mct-model's expression in the parent", function () {
-                expect(mockScope.$parent.$watch).toHaveBeenCalledWith(
-                    testAttrs.mctModel,
+                expect(mockScope.$watch).toHaveBeenCalledWith(
+                    "mctModel",
                     jasmine.any(Function)
                 );
             });
