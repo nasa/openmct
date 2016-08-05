@@ -24,20 +24,17 @@ define([
     'angular',
     '../ui/TreeView'
 ], function (angular, TreeView) {
-    function MCTTree($parse, gestureService) {
-        function link(scope, element, attrs) {
+    function MCTTree(gestureService) {
+        function link(scope, element) {
             var treeView = new TreeView(gestureService),
-                expr = $parse(attrs.mctModel),
                 unobserve = treeView.observe(function (domainObject) {
-                    if (domainObject !== expr(scope.$parent)) {
-                        expr.assign(scope.$parent, domainObject);
-                        scope.$apply();
-                    }
+                    scope.mctModel = domainObject;
+                    scope.$apply();
                 });
 
             element.append(angular.element(treeView.elements()));
 
-            scope.$parent.$watch(attrs.mctModel, treeView.value.bind(treeView));
+            scope.$watch('mctModel', treeView.value.bind(treeView));
             scope.$watch('mctObject', treeView.model.bind(treeView));
             scope.$on('$destroy', unobserve);
         }
@@ -45,7 +42,7 @@ define([
         return {
             restrict: "E",
             link: link,
-            scope: { mctObject: "=" }
+            scope: { mctObject: "=", mctModel: "=" }
         };
     }
 
