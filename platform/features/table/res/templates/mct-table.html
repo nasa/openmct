@@ -48,7 +48,7 @@
         </thead>
 
         <tbody>
-            <tr ng-repeat="visibleRow in visibleRows track by visibleRow.rowIndex"
+            <tr ng-repeat="visibleRow in visibleRows track by $index"
                 ng-style="{
                     top: visibleRow.offsetY + 'px',
                 }">
