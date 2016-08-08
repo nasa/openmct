@@ -28,7 +28,7 @@ define(['./Transaction'], function (Transaction) {
     NestedTransaction.prototype = Object.create(Transaction.prototype);
 
     NestedTransaction.prototype.commit = function () {
-        parent.add(
+        this.parent.add(
             Transaction.prototype.commit.bind(this),
             Transaction.prototype.cancel.bind(this)
         );
