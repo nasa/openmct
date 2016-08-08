@@ -21,13 +21,58 @@
  *****************************************************************************/
 /*global define,describe,it,expect,beforeEach,jasmine*/
 
-define(
-    ["../../src/services/NestedTransaction"],
-    function (NestedTransaction) {
+define(["../../src/services/NestedTransaction"], function (NestedTransaction) {
+    var TRANSACTION_METHODS = ['add', 'commit', 'cancel', 'size'];
 
-        describe("A NestedTransaction", function () {
+    describe("A NestedTransaction", function () {
+        var mockTransaction,
+            nestedTransaction;
 
+        beforeEach(function () {
+            mockTransaction =
+                jasmine.createSpyObj('transaction', TRANSACTION_METHODS);
+            nestedTransaction = new NestedTransaction(mockTransaction);
         });
-    }
-);
+
+        it("exposes a Transaction's interface", function () {
+            TRANSACTION_METHODS.forEach(function (method) {
+                expect(nestedTransaction[method])
+                    .toEqual(jasmine.any(Function));
+            });
+        });
+
+        describe("when callbacks are added", function () {
+            var mockCommit,
+                mockCancel,
+                remove;
+
+            beforeEach(function () {
+                mockCommit = jasmine.createSpy('commit');
+                mockCancel = jasmine.createSpy('cancel');
+                remove = nestedTransaction.add(mockCommit, mockCancel);
+            });
+
+            it("does not interact with its parent transaction", function () {
+                TRANSACTION_METHODS.forEach(function (method) {
+                    expect(mockTransaction[method])
+                        .not.toHaveBeenCalled();
+                });
+            });
+
+            describe("and the transaction is committed", function () {
+                beforeEach(function () {
+                    nestedTransaction.commit();
+                });
+
+                it("adds to its parent transaction", function () {
+                    expect(mockTransaction.add).toHaveBeenCalledWith(
+                        jasmine.any(Function),
+                        jasmine.any(Function)
+                    );
+                });
+            });
+        });
+    });
+});
+
 
