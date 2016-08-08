@@ -27,9 +27,9 @@
 }
 
 .l-time-conductor-holder {
-    $minW: 500px;
     border-top: 1px solid $colorInteriorBorder;
-    min-width: $minW;
+    // Clip if Time Conductor min-width is exceeded
+    overflow: hidden;
     padding-top: $interiorMargin;
 }
 
@@ -98,6 +98,7 @@
     $r2H: nth($ueTimeConductorH, 2);
     $r3H: nth($ueTimeConductorH, 3);
 
+    min-width: 500px;
     position: relative;
 
     > .l-row-elem {
