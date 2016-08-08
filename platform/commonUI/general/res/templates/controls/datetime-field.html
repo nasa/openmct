@@ -23,6 +23,8 @@
     <input type="text"
            ng-model="textValue"
            ng-blur="restoreTextValue(); ngBlur()"
+           ng-mouseup="ngMouseup()"
+           ng-disabled="ngDisabled"
            ng-class="{
                         error: textInvalid ||
                             (structure.validate &&
