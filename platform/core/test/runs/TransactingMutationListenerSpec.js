@@ -34,7 +34,7 @@ define(
             beforeEach(function () {
                 mockTopic = jasmine.createSpy('topic');
                 mockMutationTopic =
-                    jasmine.createSpyObj('mutation', [ 'listen' ]);
+                    jasmine.createSpyObj('mutation', ['listen']);
                 mockTransactionService =
                     jasmine.createSpyObj('transactionService', [
                         'isActive',
@@ -73,7 +73,7 @@ define(
             });
 
             [false, true].forEach(function (isActive) {
-                var verb = isActive ? "is": "isn't";
+                var verb = isActive ? "is" : "isn't";
 
                 function onlyWhenInactive(expectation) {
                     return isActive ? expectation.not : expectation;
