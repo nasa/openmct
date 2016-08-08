@@ -22,6 +22,7 @@
 define(['./Transaction'], function (Transaction) {
     function NestedTransaction(parent) {
         this.parent = parent;
+        Transaction.call(this, parent.$log);
     }
 
     NestedTransaction.prototype = Object.create(Transaction.prototype);
