@@ -72,39 +72,49 @@ define(
                     .toHaveBeenCalledWith(jasmine.any(Function));
             });
 
+            [false, true].forEach(function (isActive) {
+                var verb = isActive ? "is": "isn't";
 
-            describe("when mutation occurs during a transaction", function () {
-                beforeEach(function () {
-                    mockTransactionService.isActive.andReturn(true);
-                    mockMutationTopic.listen.mostRecentCall
-                        .args[0](mockDomainObject);
-                });
+                function onlyWhenInactive(expectation) {
+                    return isActive ? expectation.not : expectation;
+                }
 
-                it("adds to the active transaction", function () {
-                    expect(mockTransactionService.addToTransaction)
-                        .toHaveBeenCalledWith(
-                            jasmine.any(Function),
-                            jasmine.any(Function)
-                        );
+                describe("when a transaction " + verb + " active", function () {
+                    var innerVerb = isActive ? "does" : "doesn't";
+
+                    beforeEach(function () {
+                        mockTransactionService.isActive.andReturn(isActive);
+                    });
+
+                    describe("and mutation occurs", function () {
+                        beforeEach(function () {
+                            mockMutationTopic.listen.mostRecentCall
+                                .args[0](mockDomainObject);
+                        });
+
+
+                        it(innerVerb + " start a new transaction", function () {
+                            onlyWhenInactive(
+                                expect(mockTransactionService.startTransaction)
+                            ).toHaveBeenCalled();
+                        });
+
+                        it("adds to the active transaction", function () {
+                            expect(mockTransactionService.addToTransaction)
+                                .toHaveBeenCalledWith(
+                                jasmine.any(Function),
+                                jasmine.any(Function)
+                            );
+                        });
+
+                        it(innerVerb + " immediately commit", function () {
+                            onlyWhenInactive(
+                                expect(mockTransactionService.commit)
+                            ).toHaveBeenCalled();
+                        });
+                    });
                 });
             });
-
-            describe("when mutation occurs outside a transaction", function () {
-                beforeEach(function () {
-                    mockTransactionService.isActive.andReturn(false);
-                    mockMutationTopic.listen.mostRecentCall
-                        .args[0](mockDomainObject);
-                });
-
-                it("adds to the active transaction", function () {
-                    expect(mockTransactionService.addToTransaction)
-                        .toHaveBeenCalledWith(
-                        jasmine.any(Function),
-                        jasmine.any(Function)
-                    );
-                });
-            });
-
         });
     }
 );
