@@ -20,6 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 define(['./Transaction'], function (Transaction) {
+    /**
+     * A nested transaction is a transaction which takes place in the context
+     * of a larger parent transaction. It becomes part of the parent
+     * transaction when (and only when) committed.
+     * @param parent
+     * @constructor
+     * @extends {platform/commonUI/edit/services.Transaction}
+     * @memberof platform/commonUI/edit/services
+     */
     function NestedTransaction(parent) {
         this.parent = parent;
         Transaction.call(this, parent.$log);
