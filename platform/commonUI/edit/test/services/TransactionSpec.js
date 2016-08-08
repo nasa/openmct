@@ -26,6 +26,83 @@ define(
     function (Transaction) {
 
         describe("A Transaction", function () {
+            var mockLog,
+                transaction;
+
+            beforeEach(function () {
+                mockLog = jasmine.createSpyObj(
+                    '$log',
+                    ['warn', 'info', 'error', 'debug']
+                );
+                transaction = new Transaction(mockLog);
+            });
+
+            it("initially has a size of zero", function () {
+                expect(transaction.size()).toEqual(0);
+            });
+
+            describe("when callbacks are added", function () {
+                var mockCommit,
+                    mockCancel,
+                    remove;
+
+                beforeEach(function () {
+                    mockCommit = jasmine.createSpy('commit');
+                    mockCancel = jasmine.createSpy('cancel');
+                    remove = transaction.add(mockCommit, mockCancel);
+                });
+
+                it("reports a new size", function () {
+                    expect(transaction.size()).toEqual(1);
+                });
+
+                it("returns a function to remove those callbacks", function () {
+                    expect(remove).toEqual(jasmine.any(Function));
+                    remove();
+                    expect(transaction.size()).toEqual(0);
+                });
+
+                describe("and the transaction is committed", function () {
+                    beforeEach(function () {
+                        transaction.commit();
+                    });
+
+                    it("triggers the commit callback", function () {
+                        expect(mockCommit).toHaveBeenCalled();
+                    });
+
+                    it("does not trigger the cancel callback", function () {
+                        expect(mockCancel).not.toHaveBeenCalled();
+                    });
+                });
+
+                describe("and the transaction is cancelled", function () {
+                    beforeEach(function () {
+                        transaction.cancel();
+                    });
+
+                    it("triggers the cancel callback", function () {
+                        expect(mockCancel).toHaveBeenCalled();
+                    });
+
+                    it("does not trigger the commit callback", function () {
+                        expect(mockCommit).not.toHaveBeenCalled();
+                    });
+                });
+
+                describe("and an exception is encountered during commit", function () {
+                    beforeEach(function () {
+                        mockCommit.andCallFake(function () {
+                            throw new Error("test error");
+                        });
+                        transaction.commit();
+                    });
+
+                    it("logs an error", function () {
+                        expect(mockLog.error).toHaveBeenCalled();
+                    });
+                });
+            });
 
         });
     }
