@@ -54,7 +54,7 @@ define(
                 copyService,
                 context,
                 "Duplicate",
-                "to a location"
+                "To a Location"
             );
         }
 
