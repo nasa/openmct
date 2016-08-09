@@ -33,6 +33,8 @@ define(
          */
         function ToggleController() {
             this.state = false;
+
+            this.setState = this.setState.bind(this);
         }
 
         /**
