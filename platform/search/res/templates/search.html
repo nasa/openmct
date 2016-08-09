@@ -19,52 +19,62 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="l-flex-col flex-elem grows holder holder-search"  ng-controller="SearchController as controller">
-    <div class="search-bar flex-elem"
-         ng-controller="ToggleController as toggle"
-         ng-class="{ holder: !(ngModel.input === '' || ngModel.input === undefined) }">
-        <input class="search-input"
-               type="text"
-               ng-model="ngModel.input"
-               ng-keyup="controller.search()"/>
-        <a class="clear-icon clear-input icon-x-in-circle"
-           ng-class="{show: !(ngModel.input === '' || ngModel.input === undefined)}"
-           ng-click="ngModel.input = ''; controller.search()"></a>
-        <!-- To prevent double triggering of clicks on click away, render
-        non-clickable version of the button when menu active-->
-        <a ng-if="!toggle.isActive()" class="menu-icon context-available"
-           ng-click="toggle.toggle()"></a>
-        <a ng-if="toggle.isActive()" class="menu-icon context-available"></a>
+<div class="angular-w" ng-controller="SearchController as controller">
+    <div class="l-flex-col flex-elem grows holder holder-search" ng-controller="SearchMenuController as menuController">
+        <div class="search-bar flex-elem l-flex-row"
+             ng-controller="ToggleController as toggle"
+             ng-class="{ holder: !(ngModel.input === '' || ngModel.input === undefined) }">
+            <div class="holder flex-elem grows">
+                <input class="search-input"
+                       type="text"
+                       ng-model="ngModel.input"
+                       ng-keyup="controller.search()"/>
+                <a class="clear-icon clear-input icon-x-in-circle"
+                   ng-class="{show: !(ngModel.input === '' || ngModel.input === undefined)}"
+                   ng-click="ngModel.input = ''; controller.search()"></a>
 
-        <mct-include key="'search-menu'"
-                     class="menu-element search-menu-holder"
-                     ng-class="{off: !toggle.isActive()}"
-                     ng-model="ngModel"
-                     parameters="{menuVisible: toggle.setState}">
-        </mct-include>
-    </div>
-    <div class="active-filter-display flex-elem holder"
-         ng-class="{off: ngModel.filtersString === '' || ngModel.filtersString === undefined || !ngModel.search}"
-         ng-controller="SearchMenuController as menuController">
-        <a class="clear-icon clear-filters icon-x-in-circle"
-           ng-click="ngModel.checkAll = true; menuController.checkAll()"></a>Filtered by: {{ ngModel.filtersString }}
-    </div>
+                <!-- To prevent double triggering of clicks on click away, render
+                non-clickable version of the button when menu active-->
+                <a ng-if="!toggle.isActive()" class="menu-icon context-available"
+                   ng-click="toggle.toggle()"></a>
+                <a ng-if="toggle.isActive()" class="menu-icon context-available"></a>
 
-    <div class="flex-elem holder results-msg" ng-model="ngModel" ng-show="!loading && ngModel.search">
-        {{
-        !results.length > 0? 'No results found':
-        results.length + ' result' + (results.length > 1? 's':'') + ' found'
-        }}
-    </div>
+                <mct-include key="'search-menu'"
+                             class="menu-element search-menu-holder"
+                             ng-class="{off: !toggle.isActive()}"
+                             ng-model="ngModel"
+                             parameters="{menuVisible: toggle.setState}">
+                </mct-include>
+            </div>
 
-    <div class="search-results flex-elem holder grows vscroll"
-         ng-class="{ off: !(loading || results.length > 0), loading: loading }">
-        <mct-representation key="'search-item'"
-                            ng-repeat="result in results"
-                            mct-object="result.object"
-                            ng-model="ngModel"
-                            class="l-flex-row flex-elem grows">
-        </mct-representation>
-        <a class="load-more-button s-button vsm" ng-if="controller.areMore()" ng-click="controller.loadMore()">More Results</a>
+            <a class="holder s-button flex-elem btn-cancel"
+               ng-show="!(ngModel.input === '' || ngModel.input === undefined)"
+               ng-click="ngModel.input = ''; ngModel.checkAll = true; menuController.checkAll(); controller.search()">
+                Cancel</a>
+        </div>
+
+        <div class="active-filter-display flex-elem holder"
+             ng-class="{off: ngModel.filtersString === '' || ngModel.filtersString === undefined || !ngModel.search}">
+            <a class="clear-filters icon-x-in-circle s-icon-button"
+               ng-click="ngModel.checkAll = true; menuController.checkAll()"></a>Filtered by: {{ ngModel.filtersString }}
+        </div>
+
+        <div class="flex-elem holder results-msg" ng-model="ngModel" ng-show="!loading && ngModel.search">
+            {{
+                !results.length > 0? 'No results found':
+                    results.length + ' result' + (results.length > 1? 's':'') + ' found'
+            }}
+        </div>
+
+        <div class="search-results flex-elem holder grows vscroll"
+             ng-class="{ off: !(loading || results.length > 0), loading: loading }">
+            <mct-representation key="'search-item'"
+                                ng-repeat="result in results"
+                                mct-object="result.object"
+                                ng-model="ngModel"
+                                class="l-flex-row flex-elem grows">
+            </mct-representation>
+            <a class="load-more-button s-button vsm" ng-if="controller.areMore()" ng-click="controller.loadMore()">More Results</a>
+        </div>
     </div>
 </div>
