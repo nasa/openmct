@@ -17,6 +17,10 @@
         fs = require('fs'),
         request = require('request');
 
+    var proxyUrls = [
+        'http://cab.inta-csic.es/rems/wp-content/plugins/marsweather-widget/api.php'
+    ];
+
     // Defaults
     options.port = options.port || options.p || 8080;
     options.directory = options.directory || options.D || '.';
@@ -65,11 +69,15 @@
     });
 
     app.use('/proxyUrl', function proxyRequest(req, res, next) {
-        console.log('Proxying request to: ', req.query.url);
-        req.pipe(request({
-            url: req.query.url,
-            strictSSL: false
-        }).on('error', next)).pipe(res);
+        if (proxyUrls.indexOf(req.query.url) !== -1) {
+            console.log('Proxying request to: ', req.query.url);
+            req.pipe(request({
+                url: req.query.url,
+                strictSSL: false
+            }).on('error', next)).pipe(res);
+        } else {
+            res.status(400).send();
+        }
     });
 
     // Expose everything else as static files
