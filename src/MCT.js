@@ -4,7 +4,6 @@ define([
     'uuid',
     './api/api',
     'text!./adapter/templates/edit-object-replacement.html',
-    './ui/Dialog',
     './Selection',
     './api/objects/object-utils'
 ], function (
@@ -13,7 +12,6 @@ define([
     uuid,
     api,
     editObjectTemplate,
-    Dialog,
     Selection,
     objectUtils
 ) {
@@ -117,10 +115,6 @@ define([
             template: editObjectTemplate,
             type: key
         });
-    };
-
-    MCT.prototype.dialog = function (view, title) {
-        return new Dialog(view, title).show();
     };
 
     MCT.prototype.start = function () {

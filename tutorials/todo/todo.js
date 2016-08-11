@@ -163,7 +163,7 @@ define([
                         destroy: function () {}
                     };
 
-                mct.dialog(view, "Add a Task").then(function () {
+                new mct.Dialog(view, "Add a Task").show().then(function () {
                     var description = $dialog.find('input').val();
                     var tasks = self.mutableObject.get('tasks');
                     tasks.push({ description: description });
