@@ -148,7 +148,8 @@ define([
                     "depends": [
                         "stylesheets[]",
                         "$document",
-                        "THEME"
+                        "THEME",
+                        "ASSETS_PATH"
                     ]
                 },
                 {
@@ -405,6 +406,11 @@ define([
                 {
                     "key": "THEME",
                     "value": "unspecified",
+                    "priority": "fallback"
+                },
+                {
+                    "key": "ASSETS_PATH",
+                    "value": ".",
                     "priority": "fallback"
                 }
             ],

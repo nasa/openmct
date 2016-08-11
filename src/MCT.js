@@ -6,7 +6,6 @@ define([
     'text!./adapter/templates/edit-object-replacement.html',
     './ui/Dialog',
     './Selection',
-    './api/objects/bundle',
     './api/objects/object-utils'
 ], function (
     EventEmitter,
@@ -16,7 +15,6 @@ define([
     editObjectTemplate,
     Dialog,
     Selection,
-    objectAPIBundle,
     objectUtils
 ) {
     function MCT() {
@@ -47,6 +45,16 @@ define([
         this.legacyBundle.extensions[category] =
             this.legacyBundle.extensions[category] || [];
         this.legacyBundle.extensions[category].push(extension);
+    };
+
+    /**
+     * Set path to where assets are hosted.  This should be the path to main.js.
+     */
+    MCT.prototype.setAssetPath = function (path) {
+        this.legacyExtension('constants', {
+            key: "ASSETS_PATH",
+            value: path
+        });
     };
 
     /**
@@ -125,6 +133,7 @@ define([
         });
 
         legacyRegistry.register('adapter', this.legacyBundle);
+        legacyRegistry.enable('adapter');
         this.emit('start');
     };
 

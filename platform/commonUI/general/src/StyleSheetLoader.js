@@ -38,7 +38,7 @@ define(
          * @param $document Angular's jqLite-wrapped document element
          * @param {string} activeTheme the theme in use
          */
-        function StyleSheetLoader(stylesheets, $document, activeTheme) {
+        function StyleSheetLoader(stylesheets, $document, activeTheme, assetPath) {
             var head = $document.find('head'),
                 document = $document[0];
 
@@ -47,6 +47,7 @@ define(
                 // Create a link element, and construct full path
                 var link = document.createElement('link'),
                     path = [
+                        assetPath,
                         stylesheet.bundle.path,
                         stylesheet.bundle.resources,
                         stylesheet.stylesheetUrl
