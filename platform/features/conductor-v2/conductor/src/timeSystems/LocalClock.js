@@ -29,7 +29,8 @@ define(['./TickSource'], function (TickSource) {
         TickSource.call(this);
 
         this.metadata = {
-            key: 'real-time',
+            key: 'local',
+            mode: 'realtime',
             cssclass: 'icon-clock',
             label: 'Real-time',
             name: 'Real-time Mode',
@@ -82,10 +83,6 @@ define(['./TickSource'], function (TickSource) {
                 this.stop();
             }
         }.bind(this);
-    };
-
-    LocalClock.prototype.type = function () {
-        return 'clock';
     };
 
     return LocalClock;

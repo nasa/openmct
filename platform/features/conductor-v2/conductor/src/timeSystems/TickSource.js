@@ -43,14 +43,5 @@ define([], function () {
         throw new Error('Not implemented');
     };
 
-    /**
-     * What does this source tick on? A clock, or data availability.
-     * Information is required to support time conductor modes.
-     * @returns {string} type One of 'clock' or 'data'
-     */
-    TickSource.prototype.type = function () {
-        throw new Error('Not implemented');
-    }
-
     return TickSource;
 });

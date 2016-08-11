@@ -148,9 +148,6 @@ define(['EventEmitter'], function (EventEmitter) {
              * Time System
              * */
             this.emit('timeSystem', this.system);
-            // Do something with bounds here. Try and convert between
-            // time systems? Or just set defaults when time system changes?
-            // eg.
             this.bounds(bounds);
         } else if (arguments.length === 1) {
             throw new Error('Must set bounds when changing time system');

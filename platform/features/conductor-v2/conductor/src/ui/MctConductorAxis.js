@@ -32,9 +32,7 @@ define(
          * labelled 'ticks'. It requires 'start' and 'end' integer values to
          * be specified as attributes.
          */
-        function MCTConductorAxis(conductorService, formatService) {
-            var conductor = conductorService.conductor();
-
+        function MCTConductorAxis(conductor, formatService) {
             function link(scope, element, attrs, ngModelController) {
                 var target = element[0].firstChild,
                     height = target.offsetHeight,
@@ -45,25 +43,24 @@ define(
                             .attr('width', '100%')
                             .attr('height', height);
                 var xAxis = d3.axisTop();
+                var xScale = d3.scaleUtc();
+
                 // draw x axis with labels and move to the bottom of the chart area
                 var axisElement = vis.append("g")
                     .attr("transform", "translate(0," + (height - padding) + ")");
 
                 function setScale() {
-                    var xScale = undefined;
                     var width = target.offsetWidth;
                     var timeSystem = conductor.timeSystem();
                     var bounds = conductor.bounds();
 
                     if (timeSystem.isUTCBased()) {
-                        xScale = d3.scaleUtc();
                         xScale.domain([new Date(bounds.start), new Date(bounds.end)]);
                     } else {
-                        xScale = d3.scaleLinear();
                         xScale.domain([bounds.start, bounds.end]);
                     }
+
                     xScale.range([padding, width - padding * 2]);
-                    xAxis.scale(xScale);
                     axisElement.call(xAxis);
                 }
 
@@ -73,6 +70,13 @@ define(
                         var format =  formatService.getFormat(key);
                         var b = conductor.bounds();
 
+                        if (timeSystem.isUTCBased()) {
+                            xScale = d3.scaleUtc();
+                        } else {
+                            xScale = d3.scaleLinear();
+                        }
+
+                        xAxis.scale(xScale);
                         //Define a custom format function
                         xAxis.tickFormat(function (tickValue) {
                             // Normalize date representations to numbers
@@ -97,23 +101,16 @@ define(
                     setScale();
                 });
 
-                setScale();
-
                 if (conductor.timeSystem() !== undefined) {
                     changeTimeSystem(conductor.timeSystem());
+                    setScale();
                 }
             }
 
             return {
-                // Only show at the element level
                 restrict: "E",
-
                 template: "<div class=\"l-axis-holder\" mct-resize=\"resize()\"></div>",
-
-                // ngOptions is terminal, so we need to be higher priority
                 priority: 1000,
-
-                // Link function
                 link: link
             };
         }

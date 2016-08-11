@@ -20,11 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'moment'
-], function (
-    moment
-) {
+define([], function () {
 
     /**
      * Formatter for basic numbers. Provides basic support for non-UTC

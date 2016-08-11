@@ -37,11 +37,11 @@ define(
          * @constructor
          */
         function ConductorRepresenter(
-            conductorService,
+            timeConductor,
             scope,
             element
         ) {
-            this.conductor = conductorService.conductor();
+            this.conductor = timeConductor;
             this.scope = scope;
             this.element = element;
 

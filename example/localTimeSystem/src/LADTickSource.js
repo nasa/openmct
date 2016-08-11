@@ -30,6 +30,7 @@ define(['../../../platform/features/conductor-v2/conductor/src/timeSystems/Local
 
         this.metadata = {
             key: 'test-lad',
+            mode: 'LAD',
             cssclass: 'icon-clock',
             label: 'Latest Available Data',
             name: 'Latest available data',
@@ -37,10 +38,6 @@ define(['../../../platform/features/conductor-v2/conductor/src/timeSystems/Local
         };
     }
     LADTickSource.prototype = Object.create(LocalClock.prototype);
-
-    LADTickSource.prototype.type = function () {
-        return 'data';
-    };
 
     return LADTickSource;
 });

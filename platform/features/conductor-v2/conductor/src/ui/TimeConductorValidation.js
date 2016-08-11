@@ -43,6 +43,9 @@ define(
             });
         }
 
+        /**
+         * Validation methods below are invoked directly from controls in the TimeConductor form
+         */
         TimeConductorValidation.prototype.validateStart = function (start) {
             var bounds = this.conductor.bounds();
             return this.conductor.validateBounds({start: start, end: bounds.end}) === true;
@@ -59,19 +62,6 @@ define(
 
         TimeConductorValidation.prototype.validateEndDelta = function (endDelta) {
             return !isNaN(endDelta) && endDelta >= 0;
-        };
-
-        /**
-         * Validates the delta values in the form model. Deltas are offsets
-         * from a fixed point in time, and are used in follow modes as the
-         * primary determinant of conductor bounds.
-         * @param formModel
-         * @returns {*}
-         */
-        TimeConductorValidation.prototype.validateDeltas = function (startDelta, endDelta) {
-            // Validate that start Delta is some non-zero value, and that end
-            // delta is zero or positive (ie. 'now' or some time in the future).
-            return this.validateStartDelta(startDelta) && this.validateEndDelta(endDelta);
         };
 
         return TimeConductorValidation;

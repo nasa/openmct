@@ -21,17 +21,19 @@
  *****************************************************************************/
 
 define([
-    "./src/ui/TimeConductorService",
+    "./src/ui/TimeConductorViewService",
     "./src/ui/TimeConductorController",
-    "./src/ui/MCTConductorAxis",
+    "./src/TimeConductor",
+    "./src/ui/MctConductorAxis",
     "./src/ui/NumberFormat",
     "text!./res/templates/time-conductor.html",
     "text!./res/templates/mode-selector/mode-selector.html",
     "text!./res/templates/mode-selector/mode-menu.html",
     'legacyRegistry'
 ], function (
-    TimeConductorService,
+    TimeConductorViewService,
     TimeConductorController,
+    TimeConductor,
     MCTConductorAxis,
     NumberFormat,
     timeConductorTemplate,
@@ -45,16 +47,15 @@ define([
             "services": [
                 {
                     "key": "timeConductor",
-                    "implementation": function (timeConductorService) {
-                        return timeConductorService.conductor();
-                    },
-                    "depends": [
-                        "timeConductorService"
-                    ]
+                    "implementation": TimeConductor
                 },
                 {
-                    "key": "timeConductorService",
-                    "implementation": TimeConductorService
+                    "key": "timeConductorViewService",
+                    "implementation": TimeConductorViewService,
+                    "depends": [
+                        "timeConductor",
+                        "timeSystems[]"
+                    ]
                 }
             ],
             "controllers": [
@@ -63,7 +64,8 @@ define([
                     "implementation": TimeConductorController,
                     "depends": [
                         "$scope",
-                        "timeConductorService",
+                        "timeConductor",
+                        "timeConductorViewService",
                         "timeSystems[]"
                     ]
                 }
@@ -73,7 +75,7 @@ define([
                     "key": "mctConductorAxis",
                     "implementation": MCTConductorAxis,
                     "depends": [
-                        "timeConductorService",
+                        "timeConductor",
                         "formatService"
                     ]
                 }

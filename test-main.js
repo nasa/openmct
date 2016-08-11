@@ -62,6 +62,7 @@ requirejs.config({
         "text": "bower_components/text/text",
         "uuid": "bower_components/node-uuid/uuid",
         "zepto": "bower_components/zepto/zepto.min",
+        "d3": "bower_components/d3/d3.min"
     },
 
     "shim": {
@@ -82,6 +83,9 @@ requirejs.config({
         },
         "zepto": {
             "exports": "Zepto"
+        },
+        "d3": {
+            "exports": "d3"
         }
     },
 
