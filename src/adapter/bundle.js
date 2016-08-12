@@ -2,12 +2,14 @@ define([
     'legacyRegistry',
     './directives/MCTView',
     './services/Instantiate',
-    './capabilities/APICapabilityDecorator'
+    './capabilities/APICapabilityDecorator',
+    './policies/AdapterCompositionPolicy'
 ], function (
     legacyRegistry,
     MCTView,
     Instantiate,
-    APICapabilityDecorator
+    APICapabilityDecorator,
+    AdapterCompositionPolicy
 ) {
     legacyRegistry.register('src/adapter', {
         "extensions": {
@@ -41,6 +43,13 @@ define([
                     depends: [
                         "$injector"
                     ]
+                }
+            ],
+            policies: [
+                {
+                    category: "composition",
+                    implementation: AdapterCompositionPolicy,
+                    depends: [ "mct" ]
                 }
             ]
         }
