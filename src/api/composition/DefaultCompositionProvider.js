@@ -59,6 +59,10 @@ define([
         );
     };
 
+    DefaultCompositionProvider.prototype.canContain = function (domainObject, child) {
+        return true;
+    };
+
     DefaultCompositionProvider.prototype.remove = function (domainObject, child) {
         // TODO: this needs to be synchronized via mutation
         var index = domainObject.composition.indexOf(child);

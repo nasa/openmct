@@ -94,6 +94,10 @@ define([
         }
     };
 
+    CompositionCollection.prototype.canContain = function (domainObject) {
+        return this.provider.canContain(this.domainObject, domainObject);
+    };
+
     CompositionCollection.prototype.destroy = function () {
         if (this.provider.off) {
             this.provider.off(
