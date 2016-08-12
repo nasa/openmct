@@ -13,7 +13,7 @@ define([], function () {
         containerObject.type = containerType.getKey();
         childObject.type = childType.getKey();
 
-        var composition = mct.Composition(containerObject);
+        var composition = this.mct.Composition(containerObject);
 
         if (composition) {
             return composition.canContain(childObject);
