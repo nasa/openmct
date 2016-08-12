@@ -29,11 +29,10 @@ define([
                 if (definitions.length > 0) {
                     action.dialogService = Object.create(action.dialogService);
                     action.dialogService.getUserInput = function (form, value) {
-                        mct.dialog(
+                        return new mct.Dialog(
                             definitions[0].view(context.domainObject),
                             form.title
-                        );
-                        return Promise.resolve(value);
+                        ).show();
                     };
                 }
             }
