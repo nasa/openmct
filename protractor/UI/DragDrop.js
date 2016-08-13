@@ -108,13 +108,7 @@ describe('Test Drag and Drop', function() {
             return ele.getText().then(function(text) {
                 return text === "P\nõ\nTimer"
             })
-        })//output console.log
-        /*expect(dragObject.get(0).isPresent()).toBe(true);
-        browser.manage().logs().get('browser').then(function(browserLogs) {
-            browserLogs.forEach(function(log){
-                console.log(log.message);
-           });
-        });*/
+        })
     });
     it('should delete the Folder Item', function(){
         var ITEM_SIDE_SELECT = ">\nF\nFolder"
