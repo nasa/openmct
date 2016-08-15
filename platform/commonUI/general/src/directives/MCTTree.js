@@ -28,8 +28,10 @@ define([
         function link(scope, element) {
             var treeView = new TreeView(gestureService),
                 unobserve = treeView.observe(function (domainObject) {
-                    scope.mctModel = domainObject;
-                    scope.$apply();
+                    if (scope.mctModel !== domainObject) {
+                        scope.mctModel = domainObject;
+                        scope.$apply();
+                    }
                 });
 
             element.append(angular.element(treeView.elements()));
