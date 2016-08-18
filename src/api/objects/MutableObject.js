@@ -3,6 +3,14 @@ define([
 ], function (
     _
 ) {
+
+    /**
+     * The MutableObject wraps a DomainObject and provides getters and
+     * setters for
+     * @param eventEmitter
+     * @param object
+     * @constructor
+     */
     function MutableObject(eventEmitter, object) {
         this.eventEmitter = eventEmitter;
         this.object = object;
@@ -33,10 +41,6 @@ define([
         this.eventEmitter.emit(qualifiedEventName(this.object, path), value);
         //Emit wildcare event
         this.eventEmitter.emit(qualifiedEventName(this.object, '*'), this.object);
-    };
-
-    MutableObject.prototype.get = function (path) {
-        return _.get(this.object, path);
     };
 
     return MutableObject;
