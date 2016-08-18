@@ -54,7 +54,9 @@ define(['./MutableObject'], function (MutableObject) {
                     arrayProperty: arrayProperty
                 };
             eventEmitter = jasmine.createSpyObj('eventEmitter', [
-                'emit'
+                'emit',
+                'on',
+                'off'
             ]);
             mutableObject = new MutableObject(eventEmitter, domainObject);
         });

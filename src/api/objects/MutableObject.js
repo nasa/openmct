@@ -3,10 +3,25 @@ define([
 ], function (
     _
 ) {
+    /**
+     * The MutableObject wraps a DomainObject and provides getters and
+     * setters for
+     * @param eventEmitter
+     * @param object
+     * @constructor
+     */
     function MutableObject(eventEmitter, object) {
         this.eventEmitter = eventEmitter;
         this.object = object;
         this.unlisteners = [];
+
+        var synchronizeObject = function (object) {
+            this.object = object;
+        }.bind(this);
+
+        eventEmitter.on(qualifiedEventName(object, '*'), synchronizeObject);
+        this.unlisteners.push(eventEmitter.off.bind(eventEmitter,
+            qualifiedEventName(object, '*'), synchronizeObject));
     }
 
     function qualifiedEventName(object, eventName) {
@@ -20,9 +35,19 @@ define([
     };
 
     MutableObject.prototype.on = function(path, callback) {
+        function synchronizeModel(value) {
+            if (path === '*'){
+                this.object = value;
+            } else {
+                _.set(object, path, value)
+            }
+            callback(value);
+        }
         var fullPath = qualifiedEventName(this.object, path);
-        this.eventEmitter.on(fullPath, callback);
-        this.unlisteners.push(this.eventEmitter.off.bind(this.eventEmitter, fullPath, callback));
+        var wrappedFunction = synchronizeModel.bind(this);
+
+        this.eventEmitter.on(fullPath, wrappedFunction);
+        this.unlisteners.push(this.eventEmitter.off.bind(this.eventEmitter, fullPath, wrappedFunction));
     };
 
     MutableObject.prototype.set = function (path, value) {
