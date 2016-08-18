@@ -44,6 +44,10 @@ define([], function () {
         return this.parent;
     };
 
+    Path.prototype.append = function (item) {
+        return new Path(item, this);
+    };
+
     NULL_PATH = new Path(undefined, undefined);
     NULL_PATH.parent = NULL_PATH;
     NULL_PATH.depth = function () {
