@@ -21,37 +21,37 @@
  *****************************************************************************/
 
 define([], function () {
-    function Selection() {
-        this.selected = [];
+    var NULL_PATH;
+
+    function Path(item, path) {
+        this.item = item;
+        this.parent = path || NULL_PATH;
     }
 
-    Selection.prototype.add = function (path) {
-        this.selected.push(path);
+    Path.prototype.matches = function (path) {
+        return (this.item === path.head()) && this.parent.matches(path.path());
     };
 
-    Selection.prototype.remove = function (path) {
-        this.selected = this.selected.filter(function (otherPath) {
-            return !path.matches(otherPath);
-        });
+    Path.prototype.head = function () {
+        return this.item;
     };
 
-    Selection.prototype.contains = function (path) {
-        return this.selected.some(function (otherPath) {
-            return path.matches(otherPath);
-        });
+    Path.prototype.depth = function () {
+        return 1 + this.parent.depth();
     };
 
-    Selection.prototype.clear = function () {
-        this.selected = [];
+    Path.prototype.tail = function () {
+        return this.parent;
     };
 
-    Selection.prototype.primary = function () {
-        return this.selected[this.selected.length - 1];
+    NULL_PATH = new Path(undefined, undefined);
+    NULL_PATH.parent = NULL_PATH;
+    NULL_PATH.depth = function () {
+        return 0;
+    };
+    NULL_PATH.matches = function (path) {
+        return path.depth() === 0;
     };
 
-    Selection.prototype.all = function () {
-        return this.selected;
-    };
-
-    return Selection;
+    return Path;
 });
