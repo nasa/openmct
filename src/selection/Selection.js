@@ -20,19 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define(['EventEmitter'], function (EventEmitter) {
     function Selection() {
+        EventEmitter.call(this);
         this.selected = [];
     }
 
+    Selection.prototype = Object.create(EventEmitter.prototype);
+
     Selection.prototype.add = function (path) {
         this.selected.push(path);
+        this.emit('change');
     };
 
     Selection.prototype.remove = function (path) {
         this.selected = this.selected.filter(function (otherPath) {
             return !path.matches(otherPath);
         });
+        this.emit('change');
     };
 
     Selection.prototype.contains = function (path) {
@@ -43,6 +48,7 @@ define([], function () {
 
     Selection.prototype.clear = function () {
         this.selected = [];
+        this.emit('change');
     };
 
     Selection.prototype.primary = function () {
