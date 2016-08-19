@@ -50,7 +50,7 @@ define(
                         $scope.rootObject =
                             (context && context.getRoot()) || $scope.rootObject;
                     }, 0);
-                } else if (!contextRoot) {
+                } else if (!contextRoot && !$scope.rootObject) {
                     //If no context root is available, default to the root
                     // object
                     $scope.rootObject = undefined;
