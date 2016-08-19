@@ -54,33 +54,31 @@ define(['./MutableObject'], function (MutableObject) {
                     arrayProperty: arrayProperty
                 };
             eventEmitter = jasmine.createSpyObj('eventEmitter', [
-                'emit',
-                'on',
-                'off'
+                'emit'
             ]);
             mutableObject = new MutableObject(eventEmitter, domainObject);
         });
 
         it('Supports getting and setting of object properties', function () {
-            expect(mutableObject.get('stringProperty')).toEqual('stringValue');
+            expect(domainObject.stringProperty).toEqual('stringValue');
             mutableObject.set('stringProperty', 'updated');
-            expect(mutableObject.get('stringProperty')).toEqual('updated');
+            expect(domainObject.stringProperty).toEqual('updated');
 
             var newArrayProperty = [];
-            expect(mutableObject.get('arrayProperty')).toEqual(arrayProperty);
+            expect(domainObject.arrayProperty).toEqual(arrayProperty);
             mutableObject.set('arrayProperty', newArrayProperty);
-            expect(mutableObject.get('arrayProperty')).toEqual(newArrayProperty);
+            expect(domainObject.arrayProperty).toEqual(newArrayProperty);
 
             var newObjectProperty = [];
-            expect(mutableObject.get('objectProperty')).toEqual(objectProperty);
+            expect(domainObject.objectProperty).toEqual(objectProperty);
             mutableObject.set('objectProperty', newObjectProperty);
-            expect(mutableObject.get('objectProperty')).toEqual(newObjectProperty);
+            expect(domainObject.objectProperty).toEqual(newObjectProperty);
         });
 
         it('Supports getting and setting of nested properties', function () {
-            expect(mutableObject.get('objectProperty')).toEqual(objectProperty);
-            expect(mutableObject.get('objectProperty.prop1')).toEqual(objectProperty.prop1);
-            expect(mutableObject.get('objectProperty.prop3.propA')).toEqual(objectProperty.prop3.propA);
+            expect(domainObject.objectProperty).toEqual(objectProperty);
+            expect(domainObject.objectProperty.prop1).toEqual(objectProperty.prop1);
+            expect(domainObject.objectProperty.prop3.propA).toEqual(objectProperty.prop3.propA);
 
             mutableObject.set('objectProperty.prop1', 'new-prop-1');
             expect(domainObject.objectProperty.prop1).toEqual('new-prop-1');

@@ -14,14 +14,6 @@ define([
         this.eventEmitter = eventEmitter;
         this.object = object;
         this.unlisteners = [];
-
-        var synchronizeObject = function (object) {
-            this.object = object;
-        }.bind(this);
-
-        eventEmitter.on(qualifiedEventName(object, '*'), synchronizeObject);
-        this.unlisteners.push(eventEmitter.off.bind(eventEmitter,
-            qualifiedEventName(object, '*'), synchronizeObject));
     }
 
     function qualifiedEventName(object, eventName) {
@@ -58,10 +50,6 @@ define([
         this.eventEmitter.emit(qualifiedEventName(this.object, path), value);
         //Emit wildcare event
         this.eventEmitter.emit(qualifiedEventName(this.object, '*'), this.object);
-    };
-
-    MutableObject.prototype.get = function (path) {
-        return _.get(this.object, path);
     };
 
     return MutableObject;
