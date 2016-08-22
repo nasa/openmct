@@ -669,7 +669,7 @@
             "YYYY/DDD hh:mm:ss",
             "clock24"
         ],
-        "name": "Spacecraft Elapsed Time",
+        "name": "Spacecraft Event Time",
         "type": "clock",
         "modified": 1459986141608,
         "location": "a330490d-59ba-4c0c-b046-e5450f29f39b",
@@ -957,7 +957,7 @@
     },
     "00f8c193-bbc3-497d-baf6-a7698948fca3": {
         "clockFormat": ["YYYY/DDD hh:mm:ss", "clock24"],
-        "name": "Spacecraft Elapsed Time",
+        "name": "Spacecraft Event Time",
         "type": "clock",
         "modified": 1461703126657,
         "location": "a32079d0-676b-4e9f-ade7-86d5d2f152fc",
