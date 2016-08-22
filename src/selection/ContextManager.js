@@ -20,39 +20,42 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['zepto', './Path'], function ($, Path) {
-    function SelectGesture(selection, contextManager) {
-        this.selection = selection;
-        this.contextManager = contextManager;
+define(['./Path', 'zepto'], function (Path, $) {
+    function ContextManager() {
+        this.counter = 0;
+        this.paths = {};
     }
 
-    SelectGesture.prototype.apply = function (htmlElement, item) {
-        var $element = $(htmlElement);
-        var contextManager = this.contextManager;
-        var selection = this.selection;
-        var path = contextManager.path(item, htmlElement);
-
-        function select() {
-            selection.add(path);
-        }
-
-        function change() {
-            var selected = selection.primary();
-            $element.toggleClass(
-                'selected',
-                selected && path.matches(selected)
-            );
-        }
-
-        $element.addClass('selectable');
-        $element.on('click', select);
-        selection.on('change', change);
-        change(); // Initialize
-
-        return function () {
-            contextManager.release(htmlElement);
-        };
+    ContextManager.prototype.nextId = function () {
+        this.counter += 1;
+        return "context-" + this.counter;
     };
 
-    return SelectGesture;
+    ContextManager.prototype.path = function (item, htmlElement) {
+        var $element = $(htmlElement);
+        var id = $element.attr('data-context') || this.nextId();
+
+        $element.attr('data-context', id);
+
+        if (!this.paths[id]) {
+            var $parent = $element.closest('[data-context]');
+            var parentId = $parent.attr('data-context');
+            var parentPath = this.paths[parentId];
+            this.paths[id] = new Path(item, parentPath);
+        }
+
+        return this.paths[id];
+    };
+
+    ContextManager.prototype.release = function (htmlElement) {
+        var $element = $(htmlElement);
+        var id = $element.attr('data-context');
+
+        if (id) {
+            delete this.paths[id];
+            $element.removeAttr('data-context');
+        }
+    };
+
+    return ContextManager;
 });
