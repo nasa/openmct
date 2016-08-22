@@ -103,6 +103,11 @@ gulp.task('stylesheets', function () {
         .pipe(gulp.dest(__dirname));
 });
 
+gulp.task('nsp', function (done) {
+    var nsp = require('gulp-nsp');
+    nsp({package: __dirname + '/package.json'}, done);
+});
+
 gulp.task('lint', function () {
     var nonspecs = paths.specs.map(function (glob) {
             return "!" + glob;
