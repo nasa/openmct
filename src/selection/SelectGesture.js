@@ -51,6 +51,8 @@ define(['zepto'], function ($) {
 
         return function () {
             contextManager.release(htmlElement);
+            $element.off('click', select);
+            selection.off('change', change);
         };
     };
 
