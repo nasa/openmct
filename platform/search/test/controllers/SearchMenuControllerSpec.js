@@ -83,7 +83,7 @@ define(
                 mockScope.ngModel.checkAll = false;
 
                 controller.checkAll();
-                expect(mockScope.ngModel.filtersString).toEqual('NONE');
+                expect(mockScope.ngModel.filtersString).toEqual('');
             });
 
             it("checking checkAll option resets other options", function () {
@@ -97,7 +97,7 @@ define(
                 });
             });
 
-            it("tells the user when no options are checked", function () {
+            it("checks checkAll when no options are checked", function () {
                 Object.keys(mockScope.ngModel.checked).forEach(function (type) {
                     mockScope.ngModel.checked[type] = false;
                 });
@@ -105,7 +105,8 @@ define(
 
                 controller.updateOptions();
 
-                expect(mockScope.ngModel.filtersString).toEqual('NONE');
+                expect(mockScope.ngModel.filtersString).toEqual('');
+                expect(mockScope.ngModel.checkAll).toEqual(true);
             });
 
             it("tells the user when options are checked", function () {
