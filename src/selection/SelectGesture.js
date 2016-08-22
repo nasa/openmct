@@ -20,18 +20,34 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['zepto'], function ($) {
-    function SelectGesture(selection) {
+define(['zepto', './Path'], function ($, Path) {
+    function SelectGesture(selection, contextManager) {
         this.selection = selection;
+        this.contextManager = contextManager;
     }
 
     SelectGesture.prototype.apply = function (htmlElement, item) {
         var $element = $(htmlElement);
+        var contextManager = this.contextManager;
         var selection = this.selection;
-        var select = selection.add.bind(selection, item);
+        var path = new Path(item, contextManager.path(htmlElement));
+
+        function select() {
+            selection.add(path);
+        }
+
+        function change() {
+            var selected = selection.primary();
+            $element.toggleClass(
+                'selected',
+                selected && path.matches(selected)
+            );
+        }
 
         $element.addClass('selectable');
         $element.on('click', select);
+        selection.on('change', change);
+        change(); // Initialize
     };
 
     return SelectGesture;
