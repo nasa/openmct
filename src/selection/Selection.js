@@ -29,6 +29,7 @@ define(['EventEmitter'], function (EventEmitter) {
     Selection.prototype = Object.create(EventEmitter.prototype);
 
     Selection.prototype.add = function (path) {
+        this.clear(); // Only allow single select as initial simplification
         this.selected.push(path);
         this.emit('change');
     };
