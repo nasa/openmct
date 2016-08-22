@@ -83,7 +83,17 @@ define([
     };
 
     Objects.getMutable = function (object) {
-        return new MutableObject(eventEmitter, object);
+        var mutable = new MutableObject(eventEmitter, object);
+        var id = object.key.identifier;
+        var specificTopic = topic("mutation:" + id);
+
+        function legacyEvent (modifiedObject) {
+            specificTopic.notify(utils.toOldFormat(modifiedObject));
+        };
+
+        // Add legacy event support
+        mutable.on("*", legacyEvent);
+        return mutable;
     };
 
     return Objects;

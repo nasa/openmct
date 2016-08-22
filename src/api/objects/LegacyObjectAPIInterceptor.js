@@ -1,14 +1,43 @@
 define([
     './object-utils',
-    './ObjectAPI'
+    './ObjectAPI',
+    './objectEventBus'
 ], function (
     utils,
-    ObjectAPI
+    ObjectAPI,
+    objectEventBus
 ) {
-    function ObjectServiceProvider(objectService, instantiate) {
+    function ObjectServiceProvider(objectService, instantiate, topic) {
         this.objectService = objectService;
         this.instantiate = instantiate;
+
+        this.topicService = topic;
+        this.generalTopic = topic('mutation');
+        this.bridgeEventBuses(this.topicService, this.generalTopic);
     }
+
+    /**
+     * Bridges old and new style mutation events to provide compatibility between the two APIs
+     * @private
+     */
+    ObjectServiceProvider.prototype.bridgeEventBuses = function (topicService, generalTopic) {
+
+        function handleMutation(newStyleObject) {
+            var oldStyleObject = utils.toOldFormat(newStyleObject);
+            var specificTopic = topicService("mutation:" + oldStyleObject.getId());
+
+            generalTopic.notify(oldStyleObject);
+            specificTopic.notify(oldStyleObject.getModel());
+        }
+
+        function handleLegacyMutation(legacyObject){
+            var newStyleObject = utils.toNewFormat(legacyObject.getModel(), legacyObject.getId());
+            objectEventBus.emit(newStyleObject.key.identifier + ":*", newStyleObject);
+        }
+
+        objectEventBus.on('mutation', handleMutation)
+        generalTopic.listen(handleLegacyMutation);
+    };
 
     ObjectServiceProvider.prototype.save = function (object) {
         var key = object.key,
