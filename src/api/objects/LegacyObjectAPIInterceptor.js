@@ -1,11 +1,11 @@
 define([
     './object-utils',
     './ObjectAPI',
-    './objectEventBus'
+    './objectEventEmitter'
 ], function (
     utils,
     ObjectAPI,
-    objectEventBus
+    objectEventEmitter
 ) {
     function ObjectServiceProvider(objectService, instantiate, topic) {
         this.objectService = objectService;
@@ -13,30 +13,42 @@ define([
 
         this.topicService = topic;
         this.generalTopic = topic('mutation');
-        this.bridgeEventBuses(this.topicService, this.generalTopic);
+        this.bridgeEventBuses();
     }
 
     /**
      * Bridges old and new style mutation events to provide compatibility between the two APIs
      * @private
      */
-    ObjectServiceProvider.prototype.bridgeEventBuses = function (topicService, generalTopic) {
+    ObjectServiceProvider.prototype.bridgeEventBuses = function () {
+        var generalTopicListener;
 
-        function handleMutation(newStyleObject) {
-            var oldStyleObject = utils.toOldFormat(newStyleObject);
-            var specificTopic = topicService("mutation:" + oldStyleObject.getId());
+        var handleMutation = function (newStyleObject) {
+            var keyString = utils.makeKeyString(newStyleObject.key);
+            var oldStyleObject = this.instantiate(utils.toOldFormat(newStyleObject), keyString);
+            var specificTopic = this.topicService("mutation:" + keyString);
 
-            generalTopic.notify(oldStyleObject);
+            // Don't trigger self
+            if (generalTopicListener){
+                generalTopicListener();
+            }
+            this.generalTopic.notify(oldStyleObject);
             specificTopic.notify(oldStyleObject.getModel());
-        }
 
-        function handleLegacyMutation(legacyObject){
+            generalTopicListener = this.generalTopic.listen(handleLegacyMutation);
+        }.bind(this);
+
+        var handleLegacyMutation = function (legacyObject){
             var newStyleObject = utils.toNewFormat(legacyObject.getModel(), legacyObject.getId());
-            objectEventBus.emit(newStyleObject.key.identifier + ":*", newStyleObject);
-        }
 
-        objectEventBus.on('mutation', handleMutation)
-        generalTopic.listen(handleLegacyMutation);
+            //Don't trigger self
+            objectEventEmitter.off('mutation', handleMutation);
+            objectEventEmitter.emit(newStyleObject.key.identifier + ":*", newStyleObject);
+            objectEventEmitter.on('mutation', handleMutation);
+        }.bind(this);
+
+        objectEventEmitter.on('mutation', handleMutation);
+        generalTopicListener = this.generalTopic.listen(handleLegacyMutation);
     };
 
     ObjectServiceProvider.prototype.save = function (object) {
@@ -66,7 +78,7 @@ define([
 
     // Injects new object API as a decorator so that it hijacks all requests.
     // Object providers implemented on new API should just work, old API should just work, many things may break.
-    function LegacyObjectAPIInterceptor(ROOTS, instantiate, objectService) {
+    function LegacyObjectAPIInterceptor(ROOTS, instantiate, topic, objectService) {
         this.getObjects = function (keys) {
             var results = {},
                 promises = keys.map(function (keyString) {
@@ -85,7 +97,7 @@ define([
         };
 
         ObjectAPI._supersecretSetFallbackProvider(
-            new ObjectServiceProvider(objectService, instantiate)
+            new ObjectServiceProvider(objectService, instantiate, topic)
         );
 
         ROOTS.forEach(function (r) {

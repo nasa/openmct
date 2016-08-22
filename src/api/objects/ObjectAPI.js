@@ -1,11 +1,9 @@
 define([
     'lodash',
-    'EventEmitter',
     './object-utils',
     './MutableObject'
 ], function (
     _,
-    EventEmitter,
     utils,
     MutableObject
 ) {
@@ -18,8 +16,7 @@ define([
     var Objects = {},
         ROOT_REGISTRY = [],
         PROVIDER_REGISTRY = {},
-        FALLBACK_PROVIDER,
-        eventEmitter = new EventEmitter();
+        FALLBACK_PROVIDER;
 
     Objects._supersecretSetFallbackProvider = function (p) {
         FALLBACK_PROVIDER = p;
@@ -83,17 +80,7 @@ define([
     };
 
     Objects.getMutable = function (object) {
-        var mutable = new MutableObject(eventEmitter, object);
-        var id = object.key.identifier;
-        var specificTopic = topic("mutation:" + id);
-
-        function legacyEvent (modifiedObject) {
-            specificTopic.notify(utils.toOldFormat(modifiedObject));
-        };
-
-        // Add legacy event support
-        mutable.on("*", legacyEvent);
-        return mutable;
+        return new MutableObject(object);
     };
 
     return Objects;

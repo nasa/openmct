@@ -40,7 +40,8 @@ define([
                     implementation: LegacyObjectAPIInterceptor,
                     depends: [
                         "roots[]",
-                        "instantiate"
+                        "instantiate",
+                        "topic"
                     ]
                 }
             ]
