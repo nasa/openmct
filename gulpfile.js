@@ -157,6 +157,6 @@ gulp.task('develop', ['serve', 'stylesheets', 'watch']);
 
 gulp.task('install', [ 'static', 'scripts' ]);
 
-gulp.task('verify', [ 'lint', 'test', 'checkstyle' ]);
+gulp.task('verify', [ 'lint', 'test', 'checkstyle', 'nsp' ]);
 
 gulp.task('build', [ 'verify', 'install' ]);
