@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['zepto', './Path'], function ($, Path) {
+define(['zepto'], function ($) {
     function SelectGesture(selection, contextManager) {
         this.selection = selection;
         this.contextManager = contextManager;
