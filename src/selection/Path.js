@@ -48,6 +48,10 @@ define([], function () {
         return new Path(item, this);
     };
 
+    Path.prototype.toArray = function () {
+        return [this.item].concat(this.parent.toArray());
+    };
+
     NULL_PATH = new Path(undefined, undefined);
     NULL_PATH.parent = NULL_PATH;
     NULL_PATH.depth = function () {
@@ -55,6 +59,9 @@ define([], function () {
     };
     NULL_PATH.matches = function (path) {
         return path.depth() === 0;
+    };
+    NULL_PATH.toArray = function () {
+        return [];
     };
 
     return Path;
