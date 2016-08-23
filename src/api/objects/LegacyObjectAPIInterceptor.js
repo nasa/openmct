@@ -11,7 +11,6 @@ define([
         this.objectService = objectService;
         this.instantiate = instantiate;
 
-        this.topicService = topic;
         this.generalTopic = topic('mutation');
         this.bridgeEventBuses();
     }
@@ -21,21 +20,20 @@ define([
      * @private
      */
     ObjectServiceProvider.prototype.bridgeEventBuses = function () {
-        var generalTopicListener;
+        var removeGeneralTopicListener;
 
         var handleMutation = function (newStyleObject) {
             var keyString = utils.makeKeyString(newStyleObject.key);
             var oldStyleObject = this.instantiate(utils.toOldFormat(newStyleObject), keyString);
-            var specificTopic = this.topicService("mutation:" + keyString);
 
             // Don't trigger self
-            if (generalTopicListener){
-                generalTopicListener();
-            }
-            this.generalTopic.notify(oldStyleObject);
-            specificTopic.notify(oldStyleObject.getModel());
+            removeGeneralTopicListener();
 
-            generalTopicListener = this.generalTopic.listen(handleLegacyMutation);
+            oldStyleObject.getCapability('mutation').mutate(function () {
+                return utils.toOldFormat(newStyleObject);
+            });
+
+            removeGeneralTopicListener = this.generalTopic.listen(handleLegacyMutation);
         }.bind(this);
 
         var handleLegacyMutation = function (legacyObject){
@@ -48,7 +46,7 @@ define([
         }.bind(this);
 
         objectEventEmitter.on('mutation', handleMutation);
-        generalTopicListener = this.generalTopic.listen(handleLegacyMutation);
+        removeGeneralTopicListener = this.generalTopic.listen(handleLegacyMutation);
     };
 
     ObjectServiceProvider.prototype.save = function (object) {
