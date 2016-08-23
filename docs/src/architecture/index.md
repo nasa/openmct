@@ -6,7 +6,7 @@ overall architecture of Open MCT.
 The target audience includes:
 
 * _Platform maintainers_: Individuals involved in developing,
-  extending, and maintaing capabilities of the platform.
+  extending, and maintaining capabilities of the platform.
 * _Integration developers_: Individuals tasked with integrated
   Open MCT into a larger system, who need to understand
   its inner workings sufficiently to complete this integration.

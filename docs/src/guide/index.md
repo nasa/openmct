@@ -1153,7 +1153,7 @@ For example, the _My Items_ folder is added as an extension of this category.
 
 Extensions of this category should have the following properties:
 
-* `id`: The machine-readable identifier for the domaiwn object being exposed.
+* `id`: The machine-readable identifier for the domain object being exposed.
 * `model`: The model, as a JSON object, for the domain object being exposed. 
 
 ## Stylesheets Category

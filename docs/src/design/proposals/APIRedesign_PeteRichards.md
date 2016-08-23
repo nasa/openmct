@@ -34,7 +34,7 @@
 
 Transition component registries to javascript, get rid of bundle.json and bundles.json.  Prescribe a method for application configuration, but allow flexibility in how application configuration is defined.
 
-Register components in an imperitive fashion, see angularApp.factory, angularApp.controller, etc.  Alternatively, implement our own application object with new registries and it's own form of registering objects.
+Register components in an imperative fashion, see angularApp.factory, angularApp.controller, etc.  Alternatively, implement our own application object with new registries and it's own form of registering objects.
 
 ## Get rid of "extension category" concept.
 
@@ -128,7 +128,7 @@ Allow developers to use whatever module loading system they'd like to use, while
 
 Using gulp or grunt as a task runner would bring us in line with standard web developer workflows and help standardize rendering, deployment, and packaging.  Additional tools can be added to the workflow at low cost, simplifying the set up of developer environments.
 
-Gulp and grunt provide useful developer tooling such as live reload, automatic scss/less/etc compiliation, and ease of extensibility for standard production build processes.  They're key in decoupling code.
+Gulp and grunt provide useful developer tooling such as live reload, automatic scss/less/etc compilation, and ease of extensibility for standard production build processes.  They're key in decoupling code.
 
 ## Package openmctweb as single versioned file.
 
@@ -145,7 +145,7 @@ Then, if we're using imperative methods for extending the application we can use
 <script>
 // can configure from object
 var myApp = new OpenMCTWeb({
-  persitence: {
+  persistence: {
     providers: [
       {
         type: 'elastic',
