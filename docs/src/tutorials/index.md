@@ -130,7 +130,6 @@ to this plugin as tutorials/todo as well.) We will start with an "empty bundle",
 one which exposes no extensions - which looks like:
 
 ```diff
-
 define([
     'legacyRegistry'
 ], function (
@@ -144,7 +143,6 @@ define([
         }
     });
 });
-
 ```
 __tutorials/todo/bundle.js__
 
@@ -348,7 +346,8 @@ deeper explanation of domain objects, see the Open MCT Developer Guide.)
 In the case of our to-do list feature, the to-do list itself is the thing we'll 
 want users to be able to create and edit. So, we will add that as a new type in 
 our bundle definition:
-```diff    
+
+```diff
 define([
     'legacyRegistry'
 ], function (
@@ -370,7 +369,6 @@ define([
 +       ]}
     });
 });
-
 ```
 __tutorials/todo/bundle.js__
 
@@ -427,7 +425,6 @@ are stored by convention.)
     </li>
 </ul>
 ```
-
 __tutorials/todo/res/templates/todo.html__
 
 A summary of what's included:
@@ -573,6 +570,7 @@ We will define that in an AMD module (see http://requirejs.org/docs/whyamd.html)
 in the directory `tutorials/todo/src/controllers` (`src` is, by default, the 
 directory where bundle-related source code is kept, and controllers is where 
 Angular controllers are stored by convention.)
+
 ```diff
 define(function () {
     function TodoController($scope) {
@@ -971,6 +969,7 @@ by the tool bar we've defined.
 Additionally, we need to make changes to our template to select specific tasks 
 in response to some user gesture. Here, we will select tasks when a user clicks 
 the description.
+
 ```diff
 <div ng-controller="TodoController">
     <div>
@@ -996,6 +995,7 @@ __tutorials/todo/res/templates/todo.html__
 
 Finally, the `TodoController` uses the `dialogService` now, so we need to 
 declare that dependency in its extension definition:
+
 ```diff
 define([
     'legacyRegistry',
@@ -1248,7 +1248,6 @@ another file to the res directory of our bundle; this time, it is `css/todo.css`
     font-style: italic;
 }
 ```
-
 __tutorials/todo/res/css/todo.css__
 
 Here, we have defined classes and appearances for:
@@ -1261,6 +1260,7 @@ Here, we have defined classes and appearances for:
 To include this CSS file in our running instance of Open MCT, we need to 
 declare it in our bundle definition, this time as an extension of category 
 `stylesheets`:
+
 ```diff
 define([
     'legacyRegistry',
@@ -1430,7 +1430,6 @@ define([
     });
 });
 ```
-
 __tutorials/bargraph/bundle.js__
 
 The view definition should look familiar after the To-Do List tutorial, with 
@@ -1499,6 +1498,7 @@ The third is for labels along the horizontal axis, which will indicate which
 bar corresponds to which telemetry point. Inline `style` attributes are used 
 wherever dynamic positioning (handled by a script) is anticipated.
 The corresponding CSS file which styles and positions these elements:
+
 ```diff
 .example-bargraph {
     position: absolute;
@@ -1596,6 +1596,7 @@ actual telemetry data in subsequent steps.)
 Notably, we will not try to show telemetry data after this step.
 
 To support this, we will add a new controller which supports our Bar Graph view:
+
 ```diff
 define(function () {
     function BarGraphController($scope, telemetryHandler) {
@@ -1647,6 +1648,7 @@ Whenever the telemetry handler invokes its callbacks, we update the set of
 telemetry objects in view, as well as the width for each bar.
 
 We will also utilize this from our template:
+
 ```diff
 + <div class="example-bargraph" ng-controller="BarGraphController">
     <div class="example-tick-labels">
@@ -2471,7 +2473,6 @@ define([
     };
 });
 ```
-
 __main.js__
 
 ...we will be able to reload Open MCT and see that it is present:
@@ -2942,6 +2943,7 @@ identifier, the pending promise is resolved.
 
 This `history` method will be used by a `telemetryService` provider which we 
 will implement:
+
 ```diff
 /*global define*/
 
@@ -3027,6 +3029,7 @@ Finally, note that we also have a `subscribe` method, to satisfy the interface o
 `telemetryService`, but this `subscribe` method currently does nothing.
 
 This script uses an `ExampleTelemetrySeries` class, which looks like:
+
 ```diff
 /*global define*/
 
@@ -3058,6 +3061,7 @@ This takes the array of telemetry values (as returned by the server) and wraps
 it with the interface expected by the platform (the methods shown.)
 
 Finally, we expose this `telemetryService` provider declaratively:
+
 ```diff
 define([
     'legacyRegistry',
@@ -3324,7 +3328,6 @@ define(
     }
 );
 ```
-    
 __tutorials/telemetry/src/ExampleTelemetryProvider.js__
 
 A quick summary of these changes:
