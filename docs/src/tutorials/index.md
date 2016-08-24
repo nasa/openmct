@@ -2488,43 +2488,45 @@ server. Our first step will be to add a service that will handle interactions
 with the server; this will not be used by Open MCT directly, but will be 
 used by subsequent components we add.
 
-    /*global define,WebSocket*/
-    
-    define(
-        [],
-        function () {
-            "use strict";
-    
-            function ExampleTelemetryServerAdapter($q, wsUrl) {
-                var ws = new WebSocket(wsUrl),
-                    dictionary = $q.defer();
-    
-                // Handle an incoming message from the server
-                ws.onmessage = function (event) {
-                    var message = JSON.parse(event.data);
-    
-                    switch (message.type) {
-                    case "dictionary":
-                        dictionary.resolve(message.value);
-                        break;
-                    }
-                };
-    
-                // Request dictionary once connection is established
-                ws.onopen = function () {
-                    ws.send("dictionary");
-                };
-    
-                return {
-                    dictionary: function () {
-                        return dictionary.promise;
-                    }
-                };
-            }
-    
-            return ExampleTelemetryServerAdapter;
+```diff
+/*global define,WebSocket*/
+
+define(
+    [],
+    function () {
+        "use strict";
+
+        function ExampleTelemetryServerAdapter($q, wsUrl) {
+            var ws = new WebSocket(wsUrl),
+                dictionary = $q.defer();
+
+            // Handle an incoming message from the server
+            ws.onmessage = function (event) {
+                var message = JSON.parse(event.data);
+
+                switch (message.type) {
+                case "dictionary":
+                    dictionary.resolve(message.value);
+                    break;
+                }
+            };
+
+            // Request dictionary once connection is established
+            ws.onopen = function () {
+                ws.send("dictionary");
+            };
+
+            return {
+                dictionary: function () {
+                    return dictionary.promise;
+                }
+            };
         }
-    );
+
+        return ExampleTelemetryServerAdapter;
+    }
+);
+```
 __tutorials/telemetry/src/ExampleTelemetryServerAdapter.js__
 
 When created, this service initiates a connection to the server, and begins 
@@ -2541,86 +2543,88 @@ subsystems. This means that we need to convert the data from the dictionary
 into domain object models, and expose these to Open MCT via a 
 `modelService`.
 
-    /*global define*/
-    
-    define(
-        function () {
-            "use strict";
-    
-            var PREFIX = "example_tlm:",
-                FORMAT_MAPPINGS = {
-                    float: "number",
-                    integer: "number",
-                    string: "string"
-                };
-    
-            function ExampleTelemetryModelProvider(adapter, $q) {
-                var modelPromise, empty = $q.when({});
-    
-                // Check if this model is in our dictionary (by prefix)
-                function isRelevant(id) {
-                    return id.indexOf(PREFIX) === 0;
-                }
-    
-                // Build a domain object identifier by adding a prefix
-                function makeId(element) {
-                    return PREFIX + element.identifier;
-                }
-    
-                // Create domain object models from this dictionary
-                function buildTaxonomy(dictionary) {
-                    var models = {};
-    
-                    // Create & store a domain object model for a measurement
-                    function addMeasurement(measurement) {
-                        var format = FORMAT_MAPPINGS[measurement.type];
-                        models[makeId(measurement)] = {
-                            type: "example.measurement",
-                            name: measurement.name,
-                            telemetry: {
-                                key: measurement.identifier,
-                                ranges: [{
-                                    key: "value",
-                                    name: "Value",
-                                    units: measurement.units,
-                                    format: format
-                                }]
-                            }
-                        };
-                    }
-    
-                    // Create & store a domain object model for a subsystem
-                    function addSubsystem(subsystem) {
-                        var measurements =
-                            (subsystem.measurements || []);
-                        models[makeId(subsystem)] = {
-                            type: "example.subsystem",
-                            name: subsystem.name,
-                            composition: measurements.map(makeId)
-                        };
-                        measurements.forEach(addMeasurement);
-                    }
-    
-                    (dictionary.subsystems || []).forEach(addSubsystem);
-    
-                    return models;
-                }
-    
-                // Begin generating models once the dictionary is available
-                modelPromise = adapter.dictionary().then(buildTaxonomy);
-    
-                return {
-                    getModels: function (ids) {
-                        // Return models for the dictionary only when they
-                        // are relevant to the request.
-                        return ids.some(isRelevant) ? modelPromise : empty;
-                    }
-                };
+```diff
+/*global define*/
+
+define(
+    function () {
+        "use strict";
+
+        var PREFIX = "example_tlm:",
+            FORMAT_MAPPINGS = {
+                float: "number",
+                integer: "number",
+                string: "string"
+            };
+
+        function ExampleTelemetryModelProvider(adapter, $q) {
+            var modelPromise, empty = $q.when({});
+
+            // Check if this model is in our dictionary (by prefix)
+            function isRelevant(id) {
+                return id.indexOf(PREFIX) === 0;
             }
-    
-            return ExampleTelemetryModelProvider;
+
+            // Build a domain object identifier by adding a prefix
+            function makeId(element) {
+                return PREFIX + element.identifier;
+            }
+
+            // Create domain object models from this dictionary
+            function buildTaxonomy(dictionary) {
+                var models = {};
+
+                // Create & store a domain object model for a measurement
+                function addMeasurement(measurement) {
+                    var format = FORMAT_MAPPINGS[measurement.type];
+                    models[makeId(measurement)] = {
+                        type: "example.measurement",
+                        name: measurement.name,
+                        telemetry: {
+                            key: measurement.identifier,
+                            ranges: [{
+                                key: "value",
+                                name: "Value",
+                                units: measurement.units,
+                                format: format
+                            }]
+                        }
+                    };
+                }
+
+                // Create & store a domain object model for a subsystem
+                function addSubsystem(subsystem) {
+                    var measurements =
+                        (subsystem.measurements || []);
+                    models[makeId(subsystem)] = {
+                        type: "example.subsystem",
+                        name: subsystem.name,
+                        composition: measurements.map(makeId)
+                    };
+                    measurements.forEach(addMeasurement);
+                }
+
+                (dictionary.subsystems || []).forEach(addSubsystem);
+
+                return models;
+            }
+
+            // Begin generating models once the dictionary is available
+            modelPromise = adapter.dictionary().then(buildTaxonomy);
+
+            return {
+                getModels: function (ids) {
+                    // Return models for the dictionary only when they
+                    // are relevant to the request.
+                    return ids.some(isRelevant) ? modelPromise : empty;
+                }
+            };
         }
-    );
+
+        return ExampleTelemetryModelProvider;
+    }
+);
+```
 __tutorials/telemetry/src/ExampleTelemetryModelProvider.js__
 
 This script implements a `provider` for `modelService`; the `modelService` is a 
@@ -2673,55 +2677,57 @@ This allows our telemetry dictionary to be expressed as domain object models
 fix this, we will need another script which will add these subsystems to the 
 root-level object we added in Step 1.
 
-    /*global define*/
-    
-    define(
-        function () {
-            "use strict";
-    
-            var TAXONOMY_ID = "example:sc",
-                PREFIX = "example_tlm:";
-    
-            function ExampleTelemetryInitializer(adapter, objectService) {
-                // Generate a domain object identifier for a dictionary element
-                function makeId(element) {
-                    return PREFIX + element.identifier;
-                }
-    
-                // When the dictionary is available, add all subsystems
-                // to the composition of My Spacecraft
-                function initializeTaxonomy(dictionary) {
-                    // Get the top-level container for dictionary objects
-                    // from a group of domain objects.
-                    function getTaxonomyObject(domainObjects) {
-                        return domainObjects[TAXONOMY_ID];
-                    }
-    
-                    // Populate
-                    function populateModel(taxonomyObject) {
-                        return taxonomyObject.useCapability(
-                            "mutation",
-                            function (model) {
-                                model.name =
-                                    dictionary.name;
-                                model.composition =
-                                    dictionary.subsystems.map(makeId);
-                            }
-                        );
-                    }
-    
-                    // Look up My Spacecraft, and populate it accordingly.
-                    objectService.getObjects([TAXONOMY_ID])
-                        .then(getTaxonomyObject)
-                        .then(populateModel);
-                }
-    
-                adapter.dictionary().then(initializeTaxonomy);
+```diff
+/*global define*/
+
+define(
+    function () {
+        "use strict";
+
+        var TAXONOMY_ID = "example:sc",
+            PREFIX = "example_tlm:";
+
+        function ExampleTelemetryInitializer(adapter, objectService) {
+            // Generate a domain object identifier for a dictionary element
+            function makeId(element) {
+                return PREFIX + element.identifier;
             }
-    
-            return ExampleTelemetryInitializer;
+
+            // When the dictionary is available, add all subsystems
+            // to the composition of My Spacecraft
+            function initializeTaxonomy(dictionary) {
+                // Get the top-level container for dictionary objects
+                // from a group of domain objects.
+                function getTaxonomyObject(domainObjects) {
+                    return domainObjects[TAXONOMY_ID];
+                }
+
+                // Populate
+                function populateModel(taxonomyObject) {
+                    return taxonomyObject.useCapability(
+                        "mutation",
+                        function (model) {
+                            model.name =
+                                dictionary.name;
+                            model.composition =
+                                dictionary.subsystems.map(makeId);
+                        }
+                    );
+                }
+
+                // Look up My Spacecraft, and populate it accordingly.
+                objectService.getObjects([TAXONOMY_ID])
+                    .then(getTaxonomyObject)
+                    .then(populateModel);
+            }
+
+            adapter.dictionary().then(initializeTaxonomy);
         }
-    );
+
+        return ExampleTelemetryInitializer;
+    }
+);
+```
 __tutorials/telemetry/src/ExampleTelemetryInitializer.js__
 
 At the conclusion of Step 1, the top-level My Spacecraft object was empty. This 
