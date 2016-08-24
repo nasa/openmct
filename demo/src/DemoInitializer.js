@@ -142,8 +142,9 @@ define(
                                 content: "<b>Click this button now</b> to begin editing the current object.",
                                 target: ".object-browse-bar .btn-bar",
                                 placement: "bottom",
+                                arrowOffset: "170px",
                                 width: "200px",
-                                xOffset: "-20px",
+                                xOffset: "-180px",
                                 nextOnTargetClick: true
                             },
                             {
