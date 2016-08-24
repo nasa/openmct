@@ -68,6 +68,7 @@ define(function () {
             }
             if(!someOptionSelected) {
               $scope.ngModel.checkAll = true;
+              $scope.ngModel.filtersString = 'NONE';
             }
 
             // Update the current filters string
