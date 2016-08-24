@@ -2346,35 +2346,35 @@ add a top-level object which will serve as a container; in the next step, we
 will populate this with the contents of the telemetry dictionary (which we 
 will retrieve from the server.)
 
-define([
-    'legacyRegistry'
-], function (
-    legacyRegistry
-) {
-    legacyRegistry.register("tutorials/telemetry", {
-        "name": "Example Telemetry Adapter",
-        "extensions": {
-            "types": [
-                {
-                    "name": "Spacecraft",
-                    "key": "example.spacecraft",
-                    "glyph": "o"
-                }
-            ],
-            "roots": [
-                {
-                    "id": "example:sc",
-                    "priority": "preferred",
-                    "model": {
-                        "type": "example.spacecraft",
-                        "name": "My Spacecraft",
-                        "composition": []
+    define([
+        'legacyRegistry'
+    ], function (
+        legacyRegistry
+    ) {
+        legacyRegistry.register("tutorials/telemetry", {
+            "name": "Example Telemetry Adapter",
+            "extensions": {
+                "types": [
+                    {
+                        "name": "Spacecraft",
+                        "key": "example.spacecraft",
+                        "glyph": "o"
                     }
-                }
-            ]
-        }
+                ],
+                "roots": [
+                    {
+                        "id": "example:sc",
+                        "priority": "preferred",
+                        "model": {
+                            "type": "example.spacecraft",
+                            "name": "My Spacecraft",
+                            "composition": []
+                        }
+                    }
+                ]
+            }
+        });
     });
-});
 __tutorials/telemetry/bundle.js__
 
 Here, we've created our initial telemetry plugin. This exposes a new domain 
