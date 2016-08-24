@@ -79,7 +79,7 @@ define(
             return function() {
                 unsubscribeFunc();
                 conductor.off('bounds', amendRequests);
-            }
+            };
         };
 
         return ConductorTelemetryDecorator;

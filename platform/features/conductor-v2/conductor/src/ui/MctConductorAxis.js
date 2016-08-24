@@ -22,10 +22,10 @@
 
 define(
     [
-        "zepto",
         "d3"
     ],
-    function ($, d3) {
+    function (d3) {
+        var PADDING = 1;
 
         /**
          * The mct-conductor-axis renders a horizontal axis with regular
@@ -33,88 +33,102 @@ define(
          * be specified as attributes.
          */
         function MCTConductorAxis(conductor, formatService) {
-            function link(scope, element, attrs, ngModelController) {
-                var target = element[0].firstChild,
-                    height = target.offsetHeight,
-                    padding = 1;
+            // Dependencies
+            this.d3 = d3;
+            this.conductor = conductor;
+            this.formatService = formatService;
 
-                var vis = d3.select(target)
-                            .append('svg:svg')
-                            .attr('width', '100%')
-                            .attr('height', height);
-                var xAxis = d3.axisTop();
-                var xScale = d3.scaleUtc();
+            // Runtime properties (set by 'link' function)
+            this.target = undefined;
+            this.xScale = undefined;
+            this.xAxis = undefined;
+            this.axisElement = undefined;
+            this.setScale = this.setScale.bind(this);
+            this.changeTimeSystem = this.changeTimeSystem.bind(this);
 
-                // draw x axis with labels and move to the bottom of the chart area
-                var axisElement = vis.append("g")
-                    .attr("transform", "translate(0," + (height - padding) + ")");
-
-                function setScale() {
-                    var width = target.offsetWidth;
-                    var timeSystem = conductor.timeSystem();
-                    var bounds = conductor.bounds();
-
-                    if (timeSystem.isUTCBased()) {
-                        xScale.domain([new Date(bounds.start), new Date(bounds.end)]);
-                    } else {
-                        xScale.domain([bounds.start, bounds.end]);
-                    }
-
-                    xScale.range([padding, width - padding * 2]);
-                    axisElement.call(xAxis);
-                }
-
-                function changeTimeSystem(timeSystem) {
-                    var key = timeSystem.formats()[0];
-                    if (key !== undefined) {
-                        var format =  formatService.getFormat(key);
-                        var b = conductor.bounds();
-
-                        if (timeSystem.isUTCBased()) {
-                            xScale = d3.scaleUtc();
-                        } else {
-                            xScale = d3.scaleLinear();
-                        }
-
-                        xAxis.scale(xScale);
-                        //Define a custom format function
-                        xAxis.tickFormat(function (tickValue) {
-                            // Normalize date representations to numbers
-                            if (tickValue instanceof Date){
-                                tickValue = tickValue.getTime();
-                            }
-                            return format.format(tickValue, {
-                                min: b.start,
-                                max: b.end
-                            });
-                        });
-                        axisElement.call(xAxis);
-                    }
-                }
-
-                scope.resize = setScale;
-
-                conductor.on('timeSystem', changeTimeSystem);
-
-                //On conductor bounds changes, redraw ticks
-                conductor.on('bounds', function (bounds) {
-                    setScale();
-                });
-
-                if (conductor.timeSystem() !== undefined) {
-                    changeTimeSystem(conductor.timeSystem());
-                    setScale();
-                }
-            }
-
-            return {
-                restrict: "E",
-                template: "<div class=\"l-axis-holder\" mct-resize=\"resize()\"></div>",
-                priority: 1000,
-                link: link
-            };
+            // Angular Directive interface
+            this.link = this.link.bind(this);
+            this.restrict = "E";
+            this.template =
+                "<div class=\"l-axis-holder\" mct-resize=\"resize()\"></div>";
+            this.priority = 1000;
         }
 
-        return MCTConductorAxis;
+        MCTConductorAxis.prototype.setScale = function () {
+            var width = this.target.offsetWidth;
+            var timeSystem = this.conductor.timeSystem();
+            var bounds = this.conductor.bounds();
+
+            if (timeSystem.isUTCBased()) {
+                this.xScale = this.xScale || this.d3.scaleUtc();
+                this.xScale.domain([new Date(bounds.start), new Date(bounds.end)]);
+            } else {
+                this.xScale = this.xScale || this.d3.scaleLinear();
+                this.xScale.domain([bounds.start, bounds.end]);
+            }
+
+            this.xScale.range([PADDING, width - PADDING * 2]);
+            this.axisElement.call(this.xAxis);
+        };
+
+        MCTConductorAxis.prototype.changeTimeSystem = function (timeSystem) {
+            var key = timeSystem.formats()[0];
+            if (key !== undefined) {
+                var format = this.formatService.getFormat(key);
+                var bounds = this.conductor.bounds();
+
+                if (timeSystem.isUTCBased()) {
+                    this.xScale = this.d3.scaleUtc();
+                } else {
+                    this.xScale = this.d3.scaleLinear();
+                }
+
+                this.xAxis.scale(this.xScale);
+                //Define a custom format function
+                this.xAxis.tickFormat(function (tickValue) {
+                    // Normalize date representations to numbers
+                    if (tickValue instanceof Date){
+                        tickValue = tickValue.getTime();
+                    }
+                    return format.format(tickValue, {
+                        min: bounds.start,
+                        max: bounds.end
+                    });
+                });
+                this.axisElement.call(this.xAxis);
+            }
+        };
+
+        MCTConductorAxis.prototype.link = function (scope, element) {
+            var conductor = this.conductor;
+            this.target = element[0].firstChild;
+            var height = this.target.offsetHeight;
+            var vis = this.d3.select(this.target)
+                        .append('svg:svg')
+                        .attr('width', '100%')
+                        .attr('height', height);
+
+            this.xAxis = this.d3.axisTop();
+
+            // draw x axis with labels and move to the bottom of the chart area
+            this.axisElement = vis.append("g")
+                .attr("transform", "translate(0," + (height - PADDING) + ")");
+
+            scope.resize = this.setScale;
+
+            conductor.on('timeSystem', this.changeTimeSystem);
+
+            //On conductor bounds changes, redraw ticks
+            conductor.on('bounds', this.setScale);
+
+            if (conductor.timeSystem() !== undefined) {
+                this.changeTimeSystem(conductor.timeSystem());
+                this.setScale();
+            }
+        };
+
+        return function(conductor, formatService) {
+            return new MCTConductorAxis(conductor, formatService);
+        };
     }
 );

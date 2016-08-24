@@ -36,7 +36,7 @@ define(
          * @constructor
          */
         function TimeConductorViewService(conductor, timeSystems) {
-            this._timeSystems = timeSystems = timeSystems.map(
+            this._timeSystems = timeSystems.map(
                 function (timeSystemConstructor) {
                     return timeSystemConstructor();
             });
@@ -63,34 +63,38 @@ define(
                 }
             };
 
-            function timeSystemsForMode(sourceType) {
-                return timeSystems.filter(function (timeSystem){
-                    return timeSystem.tickSources().some(function (tickSource){
-                        return tickSource.metadata.mode === sourceType;
-                    });
+            function hasTickSource(sourceType, timeSystem) {
+                return timeSystem.tickSources().some(function (tickSource){
+                    return tickSource.metadata.mode === sourceType;
                 });
             }
 
+            var timeSystemsForMode = function (sourceType) {
+                return this._timeSystems.filter(hasTickSource.bind(this, sourceType));
+            }.bind(this);
+
             //Only show 'real-time mode' if appropriate time systems available
             if (timeSystemsForMode('realtime').length > 0 ) {
-                this._availableModes['realtime'] = {
+                var realtimeMode = {
                     key: 'realtime',
                     cssclass: 'icon-clock',
                     label: 'Real-time',
                     name: 'Real-time Mode',
                     description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will automatically advance themselves based on a UTC clock.'
                 };
+                this._availableModes[realtimeMode.key] = realtimeMode;
             }
 
             //Only show 'LAD mode' if appropriate time systems available
             if (timeSystemsForMode('LAD').length > 0) {
-                this._availableModes['latest'] = {
+                var ladMode = {
                     key: 'LAD',
                     cssclass: 'icon-database',
                     label: 'LAD',
                     name: 'LAD Mode',
                     description: 'Latest Available Data mode monitors real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'
                 };
+                this._availableModes[ladMode.key] = ladMode;
             }
         }
 
@@ -114,6 +118,12 @@ define(
          *
          */
         TimeConductorViewService.prototype.mode = function (newModeKey) {
+            function contains(timeSystems, ts) {
+                return timeSystems.filter(function (t) {
+                        return t.metadata.key === ts.metadata.key;
+                    }).length > 0;
+            }
+
             if (arguments.length === 1) {
                 var timeSystem = this._conductor.timeSystem();
                 var modes = this.availableModes();
@@ -122,13 +132,10 @@ define(
                 if (this._mode) {
                     this._mode.destroy();
                 }
-
-                function contains(timeSystems, timeSystem) {
-                    return timeSystems.find(function (t) {
-                            return t.metadata.key === timeSystem.metadata.key;
-                        }) !== undefined;
-                }
                 this._mode = new TimeConductorMode(modeMetaData, this._conductor, this._timeSystems);
+
+                // If no time system set on time conductor, or the currently selected time system is not available in
+                // the new mode, default to first available time system
                 if (!timeSystem || !contains(this._mode.availableTimeSystems(), timeSystem)) {
                     timeSystem = this._mode.availableTimeSystems()[0];
                     this._conductor.timeSystem(timeSystem, timeSystem.defaults().bounds);
@@ -169,7 +176,7 @@ define(
          */
         TimeConductorViewService.prototype.deltas = function () {
             //Deltas stored on mode. Use .apply to preserve arguments
-            return this._mode.deltas.apply(this._mode, arguments)
+            return this._mode.deltas.apply(this._mode, arguments);
         };
 
         /**

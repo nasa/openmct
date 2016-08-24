@@ -39,8 +39,8 @@ define(
             this._tickSourceUnlisten = undefined;
             this._timeSystems = timeSystems;
             this._availableTickSources = undefined;
-
             this.changeTimeSystem = this.changeTimeSystem.bind(this);
+            this.tick = this.tick.bind(this);
 
             //Set the time system initially
             if (conductor.timeSystem()) {
@@ -81,6 +81,7 @@ define(
                         end: 0
                     }
                 };
+
             this.conductor.bounds(defaults.bounds);
             this.deltas(defaults.deltas);
 
@@ -130,7 +131,7 @@ define(
                 }
                 this._tickSource = tickSource;
                 if (tickSource) {
-                    this._tickSourceUnlisten = tickSource.listen(this.tick.bind(this));
+                    this._tickSourceUnlisten = tickSource.listen(this.tick);
                     //Now following a tick source
                     this.conductor.follow(true);
                 } else {

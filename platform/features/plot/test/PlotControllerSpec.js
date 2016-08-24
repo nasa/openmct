@@ -35,6 +35,7 @@ define(
                 mockHandle,
                 mockDomainObject,
                 mockSeries,
+                mockStatusCapability,
                 controller;
 
             function bind(method, thisObj) {
@@ -71,7 +72,7 @@ define(
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    ["getId", "getModel", "getCapability"]
+                    ["getId", "getModel", "getCapability", "hasCapability"]
                 );
                 mockHandler = jasmine.createSpyObj(
                     "telemetrySubscriber",
@@ -93,6 +94,11 @@ define(
                 mockSeries = jasmine.createSpyObj(
                     'series',
                     ['getPointCount', 'getDomainValue', 'getRangeValue']
+                );
+
+                mockStatusCapability = jasmine.createSpyObj(
+                    "statusCapability",
+                    ["set"]
                 );
 
                 mockHandler.handle.andReturn(mockHandle);
@@ -230,6 +236,34 @@ define(
                 expect(bind(controller.unzoom, controller)).not.toThrow();
             });
 
+            it("sets status when plot becomes detached from time conductor", function () {
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+
+                function boundsEvent(){
+                    fireEvent("telemetry:display:bounds", [
+                        {},
+                        { start: 10, end: 100 },
+                        true
+                    ]);
+                }
+
+                mockDomainObject.hasCapability.andCallFake(function (name) {
+                    return name === "status";
+                });
+                mockDomainObject.getCapability.andReturn(mockStatusCapability);
+                spyOn(controller, "isZoomed");
+
+                //Mock zoomed in state
+                controller.isZoomed.andReturn(true);
+                boundsEvent();
+                expect(mockStatusCapability.set).toHaveBeenCalledWith("timeconductor-unsynced", true);
+
+                //"Reset" zoom
+                controller.isZoomed.andReturn(false);
+                boundsEvent();
+                expect(mockStatusCapability.set).toHaveBeenCalledWith("timeconductor-unsynced", false);
+            });
+
             it("indicates if a request is pending", function () {
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
                 expect(controller.isRequestPending()).toBeTruthy();
@@ -285,7 +319,6 @@ define(
                 fireWatch("axes[1].active.key", 'someNewKey');
                 expect(mockHandle.request.calls.length).toEqual(2);
             });
-
 
             it("maintains externally-provided domain axis bounds after data is received", function () {
                 mockSeries.getPointCount.andReturn(3);

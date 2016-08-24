@@ -31,7 +31,7 @@ define(
          */
         function TimeConductorValidation(conductor) {
             var self = this;
-            this.conductor = conductor
+            this.conductor = conductor;
 
             /*
              * Bind all class functions to 'this'

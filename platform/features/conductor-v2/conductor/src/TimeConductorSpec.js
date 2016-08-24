@@ -50,21 +50,21 @@ define(['./TimeConductor'], function (TimeConductor) {
 
         it("Allows setting of valid bounds", function () {
             bounds = {start: 0, end: 1};
-            expect(tc.bounds()).not.toBe(bounds);
+            expect(tc.bounds()).not.toEqual(bounds);
             expect(tc.bounds.bind(tc, bounds)).not.toThrow();
-            expect(tc.bounds()).toBe(bounds);
+            expect(tc.bounds()).toEqual(bounds);
         });
 
         it("Disallows setting of invalid bounds", function () {
             bounds = {start: 1, end: 0};
-            expect(tc.bounds()).not.toBe(bounds);
+            expect(tc.bounds()).not.toEqual(bounds);
             expect(tc.bounds.bind(tc, bounds)).toThrow();
-            expect(tc.bounds()).not.toBe(bounds);
+            expect(tc.bounds()).not.toEqual(bounds);
 
             bounds = {start: 1};
-            expect(tc.bounds()).not.toBe(bounds);
+            expect(tc.bounds()).not.toEqual(bounds);
             expect(tc.bounds.bind(tc, bounds)).toThrow();
-            expect(tc.bounds()).not.toBe(bounds);
+            expect(tc.bounds()).not.toEqual(bounds);
         });
 
         it("Allows setting of time system with bounds", function () {

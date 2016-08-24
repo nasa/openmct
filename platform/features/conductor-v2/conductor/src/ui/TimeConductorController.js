@@ -26,7 +26,7 @@ define(
     ],
     function (TimeConductorValidation) {
 
-        function TimeConductorController($scope, timeConductor, conductorViewService, timeSystems) {
+        function TimeConductorController($scope, $window, timeConductor, conductorViewService, timeSystems) {
 
             var self = this;
 
@@ -38,6 +38,7 @@ define(
             });
 
             this.$scope = $scope;
+            this.$window = $window;
             this.conductorViewService = conductorViewService;
             this.conductor = timeConductor;
             this.modes = conductorViewService.availableModes();
@@ -99,7 +100,6 @@ define(
 
             // Watch scope for selection of mode or time system by user
             this.$scope.$watch('modeModel.selectedKey', this.setMode);
-            this.$scope.$watch('timeSystem', this.changeTimeSystem);
         };
 
         /**
@@ -113,7 +113,7 @@ define(
             this.$scope.boundsModel.end = bounds.end;
             if (!this.pendingUpdate) {
                 this.pendingUpdate = true;
-                requestAnimationFrame(function () {
+                this.$window.requestAnimationFrame(function () {
                     this.pendingUpdate = false;
                     this.$scope.$digest();
                 }.bind(this));
@@ -136,16 +136,8 @@ define(
          * @private
          */
         TimeConductorController.prototype.setFormFromDeltas = function (deltas) {
-            /*
-             * If the selected mode defines deltas, set them in the form
-             */
-            if (deltas !== undefined) {
-                this.$scope.boundsModel.startDelta = deltas.start;
-                this.$scope.boundsModel.endDelta = deltas.end;
-            } else {
-                this.$scope.boundsModel.startDelta = 0;
-                this.$scope.boundsModel.endDelta = 0;
-            }
+            this.$scope.boundsModel.startDelta = deltas.start;
+            this.$scope.boundsModel.endDelta = deltas.end;
         };
 
         /**
@@ -180,7 +172,7 @@ define(
             var deltas = {
                 start: boundsFormModel.startDelta,
                 end: boundsFormModel.endDelta
-            }
+            };
             if (this.validation.validateStartDelta(deltas.start) && this.validation.validateEndDelta(deltas.end)) {
                 //Sychronize deltas between form and mode
                 this.conductorViewService.deltas(deltas);
@@ -204,6 +196,8 @@ define(
         };
 
         /**
+         * Respond to time system selection from UI
+         *
          * Allows time system to be changed by key. This supports selection
          * from the menu. Resolves a TimeSystem object and then invokes
          * TimeConductorController#setTimeSystem
@@ -211,13 +205,15 @@ define(
          * @see TimeConductorController#setTimeSystem
          */
         TimeConductorController.prototype.selectTimeSystemByKey = function(key){
-            var selected = this.timeSystems.find(function (timeSystem){
+            var selected = this.timeSystems.filter(function (timeSystem){
                 return timeSystem.metadata.key === key;
-            });
+            })[0];
             this.conductor.timeSystem(selected, selected.defaults().bounds);
         };
         
         /**
+         * Handles time system change from time conductor
+         *
          * Sets the selected time system. Will populate form with the default
          * bounds and deltas defined in the selected time system.
          *
@@ -226,7 +222,13 @@ define(
          */
         TimeConductorController.prototype.changeTimeSystem = function (newTimeSystem) {
             if (newTimeSystem && (newTimeSystem !== this.$scope.timeSystemModel.selected)) {
-                this.setFormFromDeltas((newTimeSystem.defaults() || {}).deltas);
+                if (newTimeSystem.defaults()){
+                    var deltas = newTimeSystem.defaults().deltas || {start: 0, end: 0};
+                    var bounds = newTimeSystem.defaults().bounds || {start: 0, end: 0};
+
+                    this.setFormFromDeltas(deltas);
+                    this.setFormFromBounds(bounds);
+                }
                 this.setFormFromTimeSystem(newTimeSystem);
             }
         };

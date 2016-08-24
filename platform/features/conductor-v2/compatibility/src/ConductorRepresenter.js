@@ -78,7 +78,7 @@ define(
 
                 this.conductor.on("bounds", this.boundsListener);
                 this.conductor.on("timeSystem", this.timeSystemListener);
-                this.conductor.on("follow", this.followListener)
+                this.conductor.on("follow", this.followListener);
             }
         };
 

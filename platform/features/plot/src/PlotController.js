@@ -239,7 +239,7 @@ define(
                     setBasePanZoom(bounds);
                     requery();
                 }
-                self.updateStatus($scope.domainObject, follow);
+                self.setUnsynchedStatus($scope.domainObject, follow && self.isZoomed());
             }
 
             this.modeOptions = new PlotModeOptions([], subPlotFactory);
@@ -370,9 +370,9 @@ define(
             return this.pending;
         };
 
-        PlotController.prototype.updateStatus = function (domainObject, follow) {
+        PlotController.prototype.setUnsynchedStatus = function (domainObject, status) {
             if (domainObject.hasCapability('status')) {
-                domainObject.getCapability('status').set('timeconductor-unsynced', follow && this.isZoomed());
+                domainObject.getCapability('status').set('timeconductor-unsynced', status);
             }
         };
 

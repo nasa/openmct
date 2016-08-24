@@ -57,7 +57,7 @@ define([
      * @private
      */
     function getScaledFormat (d) {
-        var m = moment.utc(d);
+        var momentified = moment.utc(d);
         /**
          * Uses logic from d3 Time-Scales, v3 of the API. See
          * https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Scales.md
@@ -71,17 +71,17 @@ define([
             ["HH", function(m) { return m.hours(); }],
             ["ddd DD", function(m) {
                 return m.days() &&
-                    m.date() != 1;
+                    m.date() !== 1;
             }],
-            ["MMM DD", function(m) { return m.date() != 1; }],
+            ["MMM DD", function(m) { return m.date() !== 1; }],
             ["MMMM", function(m) {
                 return m.month();
             }],
             ["YYYY", function() { return true; }]
         ].filter(function (row){
-            return row[1](m);
+            return row[1](momentified);
         })[0][0];
-    };
+    }
 
     /**
      *

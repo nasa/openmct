@@ -64,6 +64,7 @@ define([
                     "implementation": TimeConductorController,
                     "depends": [
                         "$scope",
+                        "$window",
                         "timeConductor",
                         "timeConductorViewService",
                         "timeSystems[]"

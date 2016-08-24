@@ -66,7 +66,7 @@ define([
 
     ConductorService.prototype.getConductor = function () {
         return this.tc;
-    }
+    };
 
     return ConductorService;
 });
