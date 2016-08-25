@@ -52,6 +52,9 @@ define([
         if (!this._children) {
             throw new Error("Must load composition before you can add!");
         }
+        if (!this.canContain(child)) {
+            throw new Error("This object cannot contain that object.");
+        }
         if (this.contains(child)) {
             if (skipMutate) {
                 return; // don't add twice, don't error.
@@ -92,6 +95,10 @@ define([
             // trigger removal after we have internally removed it.
             this.provider.remove(this.domainObject, removed);
         }
+    };
+
+    CompositionCollection.prototype.canContain = function (domainObject) {
+        return this.provider.canContain(this.domainObject, domainObject);
     };
 
     CompositionCollection.prototype.destroy = function () {

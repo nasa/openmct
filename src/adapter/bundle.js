@@ -3,13 +3,15 @@ define([
     './actions/ActionDialogDecorator',
     './directives/MCTView',
     './services/Instantiate',
-    './capabilities/APICapabilityDecorator'
+    './capabilities/APICapabilityDecorator',
+    './policies/AdapterCompositionPolicy'
 ], function (
     legacyRegistry,
     ActionDialogDecorator,
     MCTView,
     Instantiate,
-    APICapabilityDecorator
+    APICapabilityDecorator,
+    AdapterCompositionPolicy
 ) {
     legacyRegistry.register('src/adapter', {
         "extensions": {
@@ -49,6 +51,13 @@ define([
                     provides: "actionService",
                     implementation: ActionDialogDecorator,
                     depends: [ "mct", "newViews[]" ]
+                }
+            ],
+            policies: [
+                {
+                    category: "composition",
+                    implementation: AdapterCompositionPolicy,
+                    depends: [ "mct" ]
                 }
             ]
         }
