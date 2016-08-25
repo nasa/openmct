@@ -145,6 +145,15 @@ gulp.task('watch', function () {
     return gulp.watch(paths.scss, ['stylesheets', 'assets']);
 });
 
+gulp.task('api', function () {
+    var jsdoc2md = require('gulp-jsdoc-to-markdown');
+    var concat = require('gulp-concat');
+    return gulp.src('src/**/*.js')
+        .pipe(concat('api.md'))
+        .pipe(jsdoc2md())
+        .pipe(gulp.dest(paths.dist));
+});
+
 gulp.task('serve', function () {
     console.log('Running development server with all defaults');
     var app = require('./app.js');
