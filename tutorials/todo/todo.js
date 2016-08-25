@@ -31,8 +31,27 @@ define([
             this.setTaskStatus = this.setTaskStatus.bind(this);
             this.selectTask = this.selectTask.bind(this);
 
+<<<<<<< HEAD
             this.mutableObject = mct.Objects.getMutable(domainObject);
             this.mutableObject.on('tasks', this.updateTasks.bind(this));
+=======
+            //If anything on object changes, re-render view
+            this.mutableObject.on("*", this.objectChanged);
+        };
+
+        TodoView.prototype.show = function (container) {
+            var self = this;
+            this.destroy();
+
+            self.$els = $(todoTemplate);
+            self.$buttons = {
+                all: self.$els.find('.example-todo-button-all'),
+                incomplete: self.$els.find('.example-todo-button-incomplete'),
+                complete: self.$els.find('.example-todo-button-complete')
+            };
+
+            $(container).empty().append(self.$els);
+>>>>>>> origin/api-tutorials
 
             this.$el = $(todoTemplate);
             this.$emptyMessage = this.$el.find('.example-no-tasks');
@@ -41,6 +60,7 @@ define([
             this.$el.on('change', 'li', this.setTaskStatus.bind(this));
             this.$el.on('click', '.example-task-description', this.selectTask.bind(this));
 
+<<<<<<< HEAD
             this.updateSelection = this.updateSelection.bind(this);
             mct.selection.on('change', this.updateSelection);
         }
@@ -48,6 +68,12 @@ define([
         TodoView.prototype.show = function (container) {
             $(container).empty().append(this.$el);
             this.render();
+=======
+            self.initialize();
+            self.objectChanged(this.domainObject);
+
+            mct.selection.on('change', self.render);
+>>>>>>> origin/api-tutorials
         };
 
         TodoView.prototype.destroy = function () {
@@ -166,19 +192,58 @@ define([
         };
 
         TodoToolbarView.prototype.show = function (container) {
-            $(container).empty().append(this.$el);
+            var self = this;
+            this.destroy();
+            this.$els = $(toolbarTemplate);
             this.render();
+            $(container).append(this.$els);
         };
 
         TodoToolbarView.prototype.render = function () {
-            this.$remove.toggle(this.selection >= 0);
+            var self = this;
+            var $els = this.$els;
+
+            self.mutableObject = mct.Objects.getMutable(this.domainObject);
+
+            var $add = $els.find('a.example-add');
+            var $remove = $els.find('a.example-remove');
+
+            $add.on('click', function () {
+                var $dialog = $(dialogTemplate),
+                    view = {
+                        show: function (container) {
+                            $(container).append($dialog);
+                        },
+                        destroy: function () {}
+                    };
+
+                new mct.Dialog(view, "Add a Task").show().then(function () {
+                    var description = $dialog.find('input').val();
+                    var tasks = self.mutableObject.get('tasks');
+                    tasks.push({ description: description });
+                    self.mutableObject.set('tasks', tasks);
+                });
+            });
+            $remove.on('click', function () {
+                var index = mct.selection.selected()[0].index;
+                if (index !== undefined) {
+                    var tasks = self.mutableObject.get('tasks').filter(function (t, i) {
+                        return i !== index;
+                    });
+                    self.mutableObject.set("tasks", tasks);
+                    self.mutableObject.set("selected", undefined);
+                    mct.selection.clear();
+                }
+            });
+            self.$remove = $remove;
+            self.handleSelectionChange();
+            mct.selection.on('change', self.handleSelectionChange);
         };
 
-        TodoToolbarView.prototype.handleSelectionChange = function (selection) {
-            if (selection && selection.length) {
-                this.selection = selection[0].index;
-            } else {
-                this.selection = -1;
+        TodoToolbarView.prototype.handleSelectionChange = function () {
+            var selected = mct.selection.selected();
+            if (this.$remove) {
+                this.$remove.toggle(selected.length > 0);
             }
             this.render();
         };
