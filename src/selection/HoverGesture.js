@@ -21,16 +21,27 @@
  *****************************************************************************/
 
 define(['zepto'], function ($) {
-    function HoverGesture() {
+    function HoverGesture(hoverManager) {
+        this.hoverManager = hoverManager;
     }
 
     HoverGesture.prototype.apply = function (htmlElement) {
         var $element = $(htmlElement);
+        var hoverManager = this.hoverManager;
+
+        function update() {
+            $(hoverManager.all()).removeClass('hovering');
+            $(hoverManager.top()).addClass('hovering');
+        }
 
         function enter() {
+            hoverManager.add(htmlElement);
+            update();
         }
 
         function leave() {
+            hoverManager.remove(htmlElement);
+            update();
         }
 
         $element.on('mouseenter', enter);
