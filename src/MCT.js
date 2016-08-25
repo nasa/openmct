@@ -17,6 +17,14 @@ define([
     Selection,
     objectUtils
 ) {
+
+    /**
+     * The Open MCT application, an instance of which is exported
+     * by the `mct` module, or exposed as `mct` in the global scope if
+     * loaded via a script tag.
+     * @constructor MCT
+     * @augments {EventEmitter}
+     */
     function MCT() {
         EventEmitter.call(this);
         this.legacyBundle = { extensions: {} };
