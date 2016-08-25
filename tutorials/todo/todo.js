@@ -48,22 +48,20 @@ define([
             var self = this;
             this.destroy();
 
-            mct.Objects.get(utils.parseKeyString(self.domainObject.getId())).then(function (object) {
-                self.$els = $(todoTemplate);
-                self.$buttons = {
-                    all: self.$els.find('.example-todo-button-all'),
-                    incomplete: self.$els.find('.example-todo-button-incomplete'),
-                    complete: self.$els.find('.example-todo-button-complete')
-                };
+            self.$els = $(todoTemplate);
+            self.$buttons = {
+                all: self.$els.find('.example-todo-button-all'),
+                incomplete: self.$els.find('.example-todo-button-incomplete'),
+                complete: self.$els.find('.example-todo-button-complete')
+            };
 
-                $(container).empty().append(self.$els);
+            $(container).empty().append(self.$els);
 
 
-                self.initialize();
-                self.objectChanged(object);
+            self.initialize();
+            self.objectChanged(this.domainObject);
 
-                mct.selection.on('change', self.render);
-            });
+            mct.selection.on('change', self.render);
         };
 
         TodoView.prototype.destroy = function () {
@@ -148,47 +146,44 @@ define([
             var self = this;
             this.destroy();
 
-            mct.Objects.get(utils.parseKeyString(this.domainObject.getId())).then(function (wrappedObject){
+            self.mutableObject = mct.Objects.getMutable(this.domainObject);
 
-                self.mutableObject = mct.Objects.getMutable(wrappedObject);
+            var $els = $(toolbarTemplate);
+            var $add = $els.find('a.example-add');
+            var $remove = $els.find('a.example-remove');
 
-                var $els = $(toolbarTemplate);
-                var $add = $els.find('a.example-add');
-                var $remove = $els.find('a.example-remove');
+            $(container).append($els);
 
-                $(container).append($els);
+            $add.on('click', function () {
+                var $dialog = $(dialogTemplate),
+                    view = {
+                        show: function (container) {
+                            $(container).append($dialog);
+                        },
+                        destroy: function () {}
+                    };
 
-                $add.on('click', function () {
-                    var $dialog = $(dialogTemplate),
-                        view = {
-                            show: function (container) {
-                                $(container).append($dialog);
-                            },
-                            destroy: function () {}
-                        };
-
-                    mct.dialog(view, "Add a Task").then(function () {
-                        var description = $dialog.find('input').val();
-                        var tasks = self.mutableObject.get('tasks');
-                        tasks.push({ description: description });
-                        self.mutableObject.set('tasks', tasks);
-                    });
+                new mct.Dialog(view, "Add a Task").show().then(function () {
+                    var description = $dialog.find('input').val();
+                    var tasks = self.mutableObject.get('tasks');
+                    tasks.push({ description: description });
+                    self.mutableObject.set('tasks', tasks);
                 });
-                $remove.on('click', function () {
-                    var index = mct.selection.selected()[0].index;
-                    if (index !== undefined) {
-                        var tasks = self.mutableObject.get('tasks').filter(function (t, i) {
-                            return i !== index;
-                        });
-                        self.mutableObject.set("tasks", tasks);
-                        self.mutableObject.set("selected", undefined);
-                        mct.selection.clear();
-                    }
-                });
-                self.$remove = $remove;
-                self.handleSelectionChange();
-                mct.selection.on('change', self.handleSelectionChange);
             });
+            $remove.on('click', function () {
+                var index = mct.selection.selected()[0].index;
+                if (index !== undefined) {
+                    var tasks = self.mutableObject.get('tasks').filter(function (t, i) {
+                        return i !== index;
+                    });
+                    self.mutableObject.set("tasks", tasks);
+                    self.mutableObject.set("selected", undefined);
+                    mct.selection.clear();
+                }
+            });
+            self.$remove = $remove;
+            self.handleSelectionChange();
+            mct.selection.on('change', self.handleSelectionChange);
         };
 
         TodoToolbarView.prototype.handleSelectionChange = function () {

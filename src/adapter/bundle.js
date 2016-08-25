@@ -1,10 +1,12 @@
 define([
     'legacyRegistry',
+    './actions/ActionDialogDecorator',
     './directives/MCTView',
     './services/Instantiate',
     './capabilities/APICapabilityDecorator'
 ], function (
     legacyRegistry,
+    ActionDialogDecorator,
     MCTView,
     Instantiate,
     APICapabilityDecorator
@@ -17,7 +19,7 @@ define([
                     implementation: MCTView,
                     depends: [
                         "newViews[]",
-                        "PublicAPI"
+                        "mct"
                     ]
                 }
             ],
@@ -41,6 +43,12 @@ define([
                     depends: [
                         "$injector"
                     ]
+                },
+                {
+                    type: "decorator",
+                    provides: "actionService",
+                    implementation: ActionDialogDecorator,
+                    depends: [ "mct", "newViews[]" ]
                 }
             ]
         }

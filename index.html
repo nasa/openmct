@@ -31,10 +31,12 @@
     <script type="text/javascript">
         require(['main'], function (mct) {
             require([
+                './tutorials/todo/todo',
                 './example/imagery/bundle',
                 './example/eventGenerator/bundle',
                 './example/generator/bundle',
-            ], function () {
+            ], function (todo) {
+                todo(mct);
                 mct.run();
             })
         });
