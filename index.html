@@ -34,9 +34,9 @@
                 './tutorials/todo/todo',
                 './example/imagery/bundle',
                 './example/eventGenerator/bundle',
-                './example/generator/bundle',
-            ], function (todo) {
-                todo(mct);
+                './example/generator/bundle'
+            ], function (todoPlugin) {
+                mct.install(todoPlugin);
                 mct.run();
             })
         });

@@ -1,14 +1,53 @@
 define([
     './object-utils',
-    './ObjectAPI'
+    './ObjectAPI',
+    './objectEventEmitter'
 ], function (
     utils,
-    ObjectAPI
+    ObjectAPI,
+    objectEventEmitter
 ) {
-    function ObjectServiceProvider(objectService, instantiate) {
+    function ObjectServiceProvider(objectService, instantiate, topic) {
         this.objectService = objectService;
         this.instantiate = instantiate;
+
+        this.generalTopic = topic('mutation');
+        this.bridgeEventBuses();
     }
+
+    /**
+     * Bridges old and new style mutation events to provide compatibility between the two APIs
+     * @private
+     */
+    ObjectServiceProvider.prototype.bridgeEventBuses = function () {
+        var removeGeneralTopicListener;
+
+        var handleMutation = function (newStyleObject) {
+            var keyString = utils.makeKeyString(newStyleObject.key);
+            var oldStyleObject = this.instantiate(utils.toOldFormat(newStyleObject), keyString);
+
+            // Don't trigger self
+            removeGeneralTopicListener();
+
+            oldStyleObject.getCapability('mutation').mutate(function () {
+                return utils.toOldFormat(newStyleObject);
+            });
+
+            removeGeneralTopicListener = this.generalTopic.listen(handleLegacyMutation);
+        }.bind(this);
+
+        var handleLegacyMutation = function (legacyObject){
+            var newStyleObject = utils.toNewFormat(legacyObject.getModel(), legacyObject.getId());
+
+            //Don't trigger self
+            objectEventEmitter.off('mutation', handleMutation);
+            objectEventEmitter.emit(newStyleObject.key.identifier + ":*", newStyleObject);
+            objectEventEmitter.on('mutation', handleMutation);
+        }.bind(this);
+
+        objectEventEmitter.on('mutation', handleMutation);
+        removeGeneralTopicListener = this.generalTopic.listen(handleLegacyMutation);
+    };
 
     ObjectServiceProvider.prototype.save = function (object) {
         var key = object.key,
@@ -37,7 +76,7 @@ define([
 
     // Injects new object API as a decorator so that it hijacks all requests.
     // Object providers implemented on new API should just work, old API should just work, many things may break.
-    function LegacyObjectAPIInterceptor(ROOTS, instantiate, objectService) {
+    function LegacyObjectAPIInterceptor(ROOTS, instantiate, topic, objectService) {
         this.getObjects = function (keys) {
             var results = {},
                 promises = keys.map(function (keyString) {
@@ -56,7 +95,7 @@ define([
         };
 
         ObjectAPI._supersecretSetFallbackProvider(
-            new ObjectServiceProvider(objectService, instantiate)
+            new ObjectServiceProvider(objectService, instantiate, topic)
         );
 
         ROOTS.forEach(function (r) {
