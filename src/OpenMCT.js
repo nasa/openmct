@@ -22,7 +22,7 @@ define([
      * The Open MCT application, an instance of which is exported
      * by the `mct` module, or exposed as `mct` in the global scope if
      * loaded via a script tag.
-     * @constructor MCT
+     * @constructor module:mct.OpenMCT
      * @augments {EventEmitter}
      */
     function OpenMCT() {

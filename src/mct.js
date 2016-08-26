@@ -1,10 +1,12 @@
 define(['./OpenMCT'], function (OpenMCT) {
     /**
      * This is Open MCT.
+     * @exports mct
+     * @type {OpenMCT}
      */
-    var mct = {};
+    var mct = new OpenMCT();
 
-    var app = new OpenMCT();
+    mct.OpenMCT = OpenMCT;
 
     return mct;
 });
