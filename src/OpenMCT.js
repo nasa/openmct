@@ -22,7 +22,8 @@ define([
      * The Open MCT application, an instance of which is exported
      * by the `mct` module, or exposed as `mct` in the global scope if
      * loaded via a script tag.
-     * @constructor module:mct.OpenMCT
+     * @constructor
+     * @memberof mct
      * @augments {EventEmitter}
      */
     function OpenMCT() {
@@ -61,6 +62,7 @@ define([
      *
      * @param region the region identifier (see mct.regions)
      * @param {ViewDefinition} definition the definition for this view
+     * @method
      */
     OpenMCT.prototype.view = function (region, definition) {
         var viewKey = region + uuid();
@@ -146,7 +148,7 @@ define([
     /**
      * Install a plugin in MCT.
      *
-     * @param `Function` plugin -- a plugin install function which will be
+     * @param {Function} plugin a plugin install function which will be
      *     invoked with the mct instance.
      */
     OpenMCT.prototype.install = function (plugin) {
