@@ -10,7 +10,7 @@ COPY . /usr/src/app
 EXPOSE 8080
 
 # Build the app.
-RUN echo '{ "allow_root": true }' > "/root/.bowerrc"
-RUN npm run prepublish
+RUN echo '{ "allow_root": true }' > "/root/.bowerrc" && \
+    npm run prepublish
 
 CMD [ "npm", "start" ]
