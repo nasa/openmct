@@ -1,12 +1,13 @@
 {
     "source": {
         "include": [
-            "platform/"
+            "src/"
         ],
-        "includePattern": "platform/.+\\.js$",
+        "includePattern": "src/.+\\.js$",
         "excludePattern": ".+\\Spec\\.js$|lib/.+"
     },
     "plugins": [
-        "plugins/markdown"
+        "plugins/markdown",
+        "build/jsdoc/plugins/mct-only"
     ]
 }
