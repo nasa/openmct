@@ -42,11 +42,11 @@ If you don't have node installed, you can even use [Docker](https://docker.com/)
 
 2. Build the docker image locally
 
- `docker build me/openmct .`
+ `docker build nasa/openmct .`
 
 3. Run the docker image
 
- `docker run -d -p 8080:8080 me/openmct`
+ `docker run -d -p 8080:8080 nasa/openmct`
 
 
 ## Documentation
