@@ -76,13 +76,15 @@ define(
                 expect(mockScope.ngModel.filtersString).not.toEqual('');
             });
 
-            it("changing checkAll status updates the filter string", function () {
+            it("changing checkAll status sets checkAll to true", function () {
                 controller.checkAll();
+                expect(mockScope.ngModel.checkAll).toEqual(true);
                 expect(mockScope.ngModel.filtersString).toEqual('');
 
                 mockScope.ngModel.checkAll = false;
 
                 controller.checkAll();
+                expect(mockScope.ngModel.checkAll).toEqual(true);
                 expect(mockScope.ngModel.filtersString).toEqual('');
             });
 
@@ -117,7 +119,6 @@ define(
 
                 controller.updateOptions();
 
-                expect(mockScope.ngModel.filtersString).not.toEqual('NONE');
                 expect(mockScope.ngModel.filtersString).not.toEqual('');
             });
         });
