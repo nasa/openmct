@@ -54,7 +54,7 @@ define([
                 {
                     "key": "KERBAL_HTTP_API_URL",
                     "priority": "fallback",
-                    "value": "http://localhost:8085/telemachus/datalink"
+                    "value": "/proxyUrl?url=http://localhost:8085/telemachus/datalink"
                 }
             ],
             "runs": [
