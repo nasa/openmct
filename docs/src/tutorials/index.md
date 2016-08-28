@@ -2746,14 +2746,14 @@ with the platform):
 ```diff
 define([
     'legacyRegistry',
-    './src/ExampleTelemetryServerAdapter',
-    './src/ExampleTelemetryInitializer',
-    './src/ExampleTelemetryModelProvider'
++   './src/ExampleTelemetryServerAdapter',
++   './src/ExampleTelemetryInitializer',
++   './src/ExampleTelemetryModelProvider'
 ], function (
     legacyRegistry,
-    ExampleTelemetryServerAdapter,
-    ExampleTelemetryInitializer,
-    ExampleTelemetryModelProvider
++   ExampleTelemetryServerAdapter,
++   ExampleTelemetryInitializer,
++   ExampleTelemetryModelProvider
 ) {
     legacyRegistry.register("tutorials/telemetry", {
     "name": "Example Telemetry Adapter",
@@ -2764,7 +2764,7 @@ define([
                 "key": "example.spacecraft",
                 "glyph": "o"
             },
-            {
++           {
 +               "name": "Subsystem",
 +               "key": "example.subsystem",
 +               "glyph": "o",
