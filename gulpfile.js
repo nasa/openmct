@@ -42,6 +42,7 @@ var gulp = require('gulp'),
         main: 'main.js',
         dist: 'dist',
         assets: 'dist/assets',
+        reports: 'dist/reports',
         scss: ['./platform/**/*.scss', './example/**/*.scss'],
         scripts: [ 'main.js', 'platform/**/*.js', 'src/**/*.js' ],
         specs: [ 'platform/**/*Spec.js', 'src/**/*Spec.js' ],
@@ -112,6 +113,10 @@ gulp.task('lint', function () {
             .pipe(jshint({ jasmine: true }));
 
     return merge(scriptLint, specLint)
+        .pipe(jshint.reporter('gulp-jshint-html-reporter', {
+            filename: paths.reports + '/lint/jshint-report.html',
+            createMissingFolders : true
+        }))
         .pipe(jshint.reporter('default'))
         .pipe(jshint.reporter('fail'));
 });
