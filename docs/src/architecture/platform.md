@@ -1,6 +1,6 @@
 # Overview
 
-The Open MCT platform utilizes the [framework layer](Framework.md)
+The Open MCT platform utilizes the [framework layer](framework.md)
 to provide an extensible baseline for applications which includes:
 
 * A common user interface (and user interface paradigm) for dealing with
