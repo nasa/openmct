@@ -1,12 +1,21 @@
 define([
+    './src/KerbalTelemetryServerAdapter.js',
+    './src/KerbalTelemetryInitializer.js',
+    './src/KerbalTelemetryModelProvider.js',
+    './src/KerbalTelemetryProvider.js',
     'legacyRegistry'
-], function (legacyRegistry) {
+], function (
+    KerbalTelemetryServerAdapter,
+    KerbalTelemetryInitializer,
+    KerbalTelemetryModelProvider,
+    KerbalTelemetryProvider,
+    legacyRegistry) {
     legacyRegistry.register("example/kerbal", {
         "name": "Kerbal Telemetry Adapter",
         "extensions": {
             "types": [
                 {
-                    "name": "Spacecraft",
+                    "name": "Kerbal Spacecraft",
                     "key": "kerbal.spacecraft",
                     "glyph": "o"
                 },
@@ -46,7 +55,7 @@ define([
             "services": [
                 {
                     "key": "kerbal.adapter",
-                    "implementation": "KerbalTelemetryServerAdapter.js",
+                    "implementation": KerbalTelemetryServerAdapter,
                     "depends": ["$q", "$http", "$interval", "KERBAL_HTTP_API_URL"]
                 }
             ],
@@ -59,7 +68,7 @@ define([
             ],
             "runs": [
                 {
-                    "implementation": "KerbalTelemetryInitializer.js",
+                    "implementation": KerbalTelemetryInitializer,
                     "depends": ["kerbal.adapter", "objectService"]
                 }
             ],
@@ -67,13 +76,13 @@ define([
                 {
                     "provides": "modelService",
                     "type": "provider",
-                    "implementation": "KerbalTelemetryModelProvider.js",
+                    "implementation": KerbalTelemetryModelProvider,
                     "depends": ["kerbal.adapter", "$q"]
                 },
                 {
                     "provides": "telemetryService",
                     "type": "provider",
-                    "implementation": "KerbalTelemetryProvider.js",
+                    "implementation": KerbalTelemetryProvider,
                     "depends": ["kerbal.adapter", "$q"]
                 }
             ]
