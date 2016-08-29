@@ -8,7 +8,8 @@ define(
             FORMAT_MAPPINGS = {
                 float: "number",
                 integer: "number",
-                string: "string"
+                string: "string",
+                boolean: "string"
             };
 
         function KerbalTelemetryModelProvider(adapter, $q) {

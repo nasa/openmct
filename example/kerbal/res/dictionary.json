@@ -16,31 +16,31 @@
           "name": "v.rcsValue",
           "identifier": "v.rcsValue",
           "units": "None",
-          "type": "string"
+          "type": "boolean"
         },
         {
           "name": "v.sasValue",
           "identifier": "v.sasValue",
           "units": "None",
-          "type": "string"
+          "type": "boolean"
         },
         {
           "name": "v.lightValue",
           "identifier": "v.lightValue",
           "units": "None",
-          "type": "string"
+          "type": "boolean"
         },
         {
           "name": "v.brakeValue",
           "identifier": "v.brakeValue",
           "units": "None",
-          "type": "string"
+          "type": "boolean"
         },
         {
           "name": "v.gearValue",
           "identifier": "v.gearValue",
           "units": "None",
-          "type": "string"
+          "type": "boolean"
         }
       ]
     },
