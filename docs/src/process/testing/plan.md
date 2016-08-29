@@ -102,7 +102,7 @@ perform:
 
 * A relevant subset of [_user testing_](procedures.md#user-test-procedures)
   identified by the acting [project manager](../cycle.md#roles).
-* [_Long-duration testing_](procedures.md#long-duration-testng)
+* [_Long-duration testing_](procedures.md#long-duration-testing)
   (specifically, for 24 hours.)
 
 Issues are reported as a product of both forms of testing.
