@@ -65,7 +65,7 @@ define(
             }
 
             // Begin generating models once the dictionary is available
-           modelPromise = adapter.dictionary().then(buildTaxonomy);
+            modelPromise = adapter.dictionary().then(buildTaxonomy);
 
             return {
                 getModels: function (ids) {
