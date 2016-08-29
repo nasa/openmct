@@ -70,7 +70,8 @@
         console.log('Proxying request to: ', req.query.url);
         req.pipe(request({
             url: req.query.url,
-            strictSSL: false
+            strictSSL: false,
+            qs: req.query
         }).on('error', next)).pipe(res);
     });
 
