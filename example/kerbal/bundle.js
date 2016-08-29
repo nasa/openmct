@@ -1,10 +1,14 @@
 define([
+    "../../../platform/commonUI/formats/src/FormatProvider",
+    "./src/KerbalTimeFormat",
     './src/KerbalTelemetryServerAdapter.js',
     './src/KerbalTelemetryInitializer.js',
     './src/KerbalTelemetryModelProvider.js',
     './src/KerbalTelemetryProvider.js',
     'legacyRegistry'
 ], function (
+    FormatProvider,
+    KerbalTimeFormat,
     KerbalTelemetryServerAdapter,
     KerbalTelemetryInitializer,
     KerbalTelemetryModelProvider,
@@ -34,8 +38,9 @@ define([
                         "source": "kerbal.source",
                         "domains": [
                             {
-                                "name": "Time",
-                                "key": "timestamp"
+                                "name": "Kerbal Time",
+                                "key": "timestamp",
+                                "format": "kerbal"
                             }
                         ]
                     }
@@ -47,7 +52,7 @@ define([
                     "priority": "preferred",
                     "model": {
                         "type": "kerbal.spacecraft",
-                        "name": "My Spacecraft",
+                        "name": "Kerbal Spacecraft",
                         "composition": []
                     }
                 }
@@ -64,6 +69,10 @@ define([
                     "key": "KERBAL_HTTP_API_URL",
                     "priority": "fallback",
                     "value": "http://localhost:8085/telemachus/datalink"
+                },
+                {
+                    "key": "DEFAULT_TIME_FORMAT",
+                    "value": "kerbal"
                 }
             ],
             "runs": [
@@ -84,6 +93,20 @@ define([
                     "type": "provider",
                     "implementation": KerbalTelemetryProvider,
                     "depends": ["kerbal.adapter", "$q"]
+                },
+                {
+                    "provides": "formatService",
+                    "type": "provider",
+                    "implementation": FormatProvider,
+                    "depends": [
+                        "formats[]"
+                    ]
+                }
+            ],
+            "formats": [
+                {
+                    "key": "kerbal",
+                    "implementation": KerbalTimeFormat
                 }
             ]
         }

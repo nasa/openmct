@@ -9,8 +9,8 @@ define(
                 getPointCount: function () {
                     return data.length;
                 },
-                getDomainValue: function (index) {
-                    return (data[index] || {}).timestamp;
+                getDomainValue: function (index, key) {
+                    return (data[index] || {})[key];
                 },
                 getRangeValue: function (index) {
                     return (data[index] || {}).value;

@@ -29,7 +29,7 @@ define(
                             };
 
                         histories[id]['value'].push({
-                            timestamp: Date.now(),
+                            timestamp: message.data['t.universalTime']*1000,
                             value: message.data[id]
                         });
 
@@ -38,7 +38,7 @@ define(
                             listener({
                                 id: id,
                                 value: {
-                                    timestamp: Date.now(),
+                                    timestamp: message.data['t.universalTime']*1000,
                                     value: message.data[id]
                                 }
                             });
