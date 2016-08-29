@@ -21,18 +21,18 @@ define([
                 {
                     "name": "Kerbal Spacecraft",
                     "key": "kerbal.spacecraft",
-                    "glyph": "o"
+                    "cssclass": "icon-object"
                 },
                 {
                     "name": "Subsystem",
                     "key": "kerbal.subsystem",
-                    "glyph": "o",
+                    "cssclass": "icon-object",
                     "model": {"composition": []}
                 },
                 {
                     "name": "Measurement",
                     "key": "kerbal.measurement",
-                    "glyph": "T",
+                    "cssclass": "icon-telemetry-panel",
                     "model": {"telemetry": {}},
                     "telemetry": {
                         "source": "kerbal.source",
