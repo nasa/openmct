@@ -6,7 +6,7 @@ overall architecture of Open MCT.
 The target audience includes:
 
 * _Platform maintainers_: Individuals involved in developing,
-  extending, and maintaing capabilities of the platform.
+  extending, and maintaining capabilities of the platform.
 * _Integration developers_: Individuals tasked with integrated
   Open MCT into a larger system, who need to understand
   its inner workings sufficiently to complete this integration.
@@ -63,7 +63,7 @@ These layers are:
   application-specific knowledge; at this layer, we have only
   established an abstraction by which different software components
   may communicate and/or interact.
-* [_Platform_](platform.md): The platform layer defines the general look, 
+* [_Platform_](platform.md): The platform layer defines the general look,
   feel, and behavior of Open MCT. This includes user-facing components like
   Browse mode and Edit mode, as well as underlying elements of the
   information model and the general service infrastructure.
@@ -74,5 +74,3 @@ These layers are:
   typically consists of a mix of custom plug-ins to Open MCT,
   as well as optional features (such as Plot view) included alongside
   the platform.
-
-
