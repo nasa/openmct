@@ -42,6 +42,7 @@ var gulp = require('gulp'),
         main: 'main.js',
         dist: 'dist',
         assets: 'dist/assets',
+        reports: 'dist/reports',
         scss: ['./platform/**/*.scss', './example/**/*.scss'],
         scripts: [ 'main.js', 'platform/**/*.js', 'src/**/*.js' ],
         specs: [ 'platform/**/*Spec.js', 'src/**/*Spec.js' ],
@@ -102,6 +103,11 @@ gulp.task('stylesheets', function () {
         .pipe(gulp.dest(__dirname));
 });
 
+gulp.task('nsp', function (done) {
+    var nsp = require('gulp-nsp');
+    nsp({package: __dirname + '/package.json'}, done);
+});
+
 gulp.task('lint', function () {
     var nonspecs = paths.specs.map(function (glob) {
             return "!" + glob;
@@ -112,6 +118,10 @@ gulp.task('lint', function () {
             .pipe(jshint({ jasmine: true }));
 
     return merge(scriptLint, specLint)
+        .pipe(jshint.reporter('gulp-jshint-html-reporter', {
+            filename: paths.reports + '/lint/jshint-report.html',
+            createMissingFolders : true
+        }))
         .pipe(jshint.reporter('default'))
         .pipe(jshint.reporter('fail'));
 });
@@ -147,6 +157,6 @@ gulp.task('develop', ['serve', 'stylesheets', 'watch']);
 
 gulp.task('install', [ 'static', 'scripts' ]);
 
-gulp.task('verify', [ 'lint', 'test', 'checkstyle' ]);
+gulp.task('verify', [ 'lint', 'test', 'checkstyle', 'nsp' ]);
 
 gulp.task('build', [ 'verify', 'install' ]);

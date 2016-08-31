@@ -173,7 +173,7 @@ define(
                     it("prompts for location", function () {
                         expect(locationService.getLocationFromUser)
                             .toHaveBeenCalledWith(
-                                "Duplicate selectedObject to a location",
+                                "Duplicate selectedObject To a Location",
                                 "Duplicate To",
                                 jasmine.any(Function),
                                 currentParent

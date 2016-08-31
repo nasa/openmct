@@ -139,6 +139,7 @@ define([
                                         "dialog": {
                                             "control": "textfield",
                                             "name": "Image URL",
+                                            "cssclass": "l-input-lg",
                                             "required": true
                                         }
                                     },
@@ -213,12 +214,12 @@ define([
                                 {
                                     "name": "Horizontal grid (px)",
                                     "control": "textfield",
-                                    "cssclass": "l-small l-numeric"
+                                    "cssclass": "l-input-sm l-numeric"
                                 },
                                 {
                                     "name": "Vertical grid (px)",
                                     "control": "textfield",
-                                    "cssclass": "l-small l-numeric"
+                                    "cssclass": "l-input-sm l-numeric"
                                 }
                             ],
                             "pattern": "^(\\d*[1-9]\\d*)?$",
