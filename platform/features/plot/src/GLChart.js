@@ -54,7 +54,7 @@ define(
          * @throws {Error} an error is thrown if WebGL is unavailable.
          */
         function GLChart(canvas) {
-            var gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl"),
+            var gl = canvas.getContext("webgl", { preserveDrawingBuffer: true }) || canvas.getContext("experimental-webgl", { preserveDrawingBuffer: true }),
                 vertexShader,
                 fragmentShader,
                 program,

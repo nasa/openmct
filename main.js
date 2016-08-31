@@ -28,6 +28,8 @@ requirejs.config({
         "angular-route": "bower_components/angular-route/angular-route.min",
         "csv": "bower_components/comma-separated-values/csv.min",
         "es6-promise": "bower_components/es6-promise/promise.min",
+        "html2canvas": "bower_components/html2canvas/build/html2canvas.min",
+        "jspdf": "bower_components/jspdf/dist/jspdf.min",
         "moment": "bower_components/moment/moment",
         "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
         "saveAs": "bower_components/FileSaver.js/FileSaver.min",
@@ -42,6 +44,9 @@ requirejs.config({
         },
         "angular-route": {
             "deps": ["angular"]
+        },
+        "html2canvas": {
+            "exports": "html2canvas"
         },
         "moment-duration-format": {
             "deps": ["moment"]
@@ -59,6 +64,8 @@ define([
     './platform/framework/src/Main',
     'legacyRegistry',
 
+    'html2canvas',
+    'jspdf',
     './platform/framework/bundle',
     './platform/core/bundle',
     './platform/representation/bundle',
@@ -95,6 +102,18 @@ define([
     './platform/status/bundle',
     './platform/commonUI/regions/bundle'
 ], function (Main, legacyRegistry) {
+    setTimeout(function() {
+        var plotEl = document.getElementsByClassName('gl-plot')[0];
+
+        html2canvas(plotEl, {
+           onrendered: function(htmlCanvas) {
+               var pdf = new jsPDF('l', 'px', [plotEl.offsetHeight, plotEl.offsetWidth]);
+               pdf.addImage(htmlCanvas.toDataURL('image/jpeg', 2.0), 'JPEG', 0, 0, plotEl.offsetWidth, plotEl.offsetHeight);
+               pdf.save("plot.pdf");
+           }
+        });
+    }, 5000);
+
     return {
         legacyRegistry: legacyRegistry,
         run: function () {
