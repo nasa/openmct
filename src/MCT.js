@@ -20,9 +20,7 @@ define([
 
     /**
      * The Open MCT application.
-
-     * @constructor
-     * @memberof module:openmct
+     * @class MCT
      */
     function MCT() {
         EventEmitter.call(this);

@@ -7,9 +7,11 @@ define(['./MCT', './api/Type'], function (MCT, Type) {
      *
      * @exports openmct
      * @borrows Type as Type
+     * @borrows MCT as MCT
      */
     var openmct = new MCT();
 
+    openmct.MCT = MCT;
     openmct.Type = Type;
 
     return openmct;
