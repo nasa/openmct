@@ -70,6 +70,7 @@ define([
                     "implementation": PlotController,
                     "depends": [
                         "$scope",
+                        "$element",
                         "telemetryFormatter",
                         "telemetryHandler",
                         "throttle",
