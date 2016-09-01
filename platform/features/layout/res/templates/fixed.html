@@ -44,7 +44,7 @@
 
     <!-- Selection highlight, handles -->
     <span ng-if="controller.selected()">
-        <div class="l-fixed-position-item s-selected"
+        <div class="l-fixed-position-item s-selectable s-selected s-moveable"
              mct-drag-down="controller.moveHandle().startDrag(controller.selected())"
              mct-drag="controller.moveHandle().continueDrag(delta)"
              mct-drag-up="controller.moveHandle().endDrag()"
