@@ -81,14 +81,14 @@ define(
         };
 
         /**
-         * Save any changes from this editing session. This will flush all
-         * pending persists and end the current transaction
+         * Save any unsaved changes from this editing session. This will 
+         * end the current transaction and continue with a new one.
          * @returns {*}
          */
         EditorCapability.prototype.save = function () {
-            var domainObject = this.domainObject;
-            return this.transactionService.commit().then(function () {
-                domainObject.getCapability('status').set('editing', false);
+            var transactionService = this.transactionService;
+            return transactionService.commit().then(function () {
+                transactionService.startTransaction();
             });
         };
 

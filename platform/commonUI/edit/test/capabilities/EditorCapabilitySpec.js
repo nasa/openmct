@@ -134,8 +134,8 @@ define(
                 it("commits the transaction", function () {
                     expect(mockTransactionService.commit).toHaveBeenCalled();
                 });
-                it("resets the edit state", function () {
-                    expect(mockStatusCapability.set).toHaveBeenCalledWith('editing', false);
+                it("begins a new transaction", function () {
+                    expect(mockTransactionService.startTransaction).toHaveBeenCalled();
                 });
             });
 
