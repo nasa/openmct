@@ -20,7 +20,7 @@ define([
 
     /**
      * The Open MCT application.
-     
+
      * @constructor
      * @memberof module:openmct
      */
@@ -111,6 +111,11 @@ define([
         });
     };
 
+    /**
+     * Register a new [type]{@link module:openmct.Type} of domain object.
+     * @param {string} key a unique identifier for this type of object
+     * @param {module:openmct.Type} type the new type
+     */
     MCT.prototype.type = function (key, type) {
         var legacyDef = type.toLegacyDefinition();
         legacyDef.key = key;
@@ -129,6 +134,11 @@ define([
         return new Dialog(view, title).show();
     };
 
+    /**
+     * Start running Open MCT. This should be called only after any plugins
+     * have been installed.
+     * @fires module:openmct.MCT#start
+     */
     MCT.prototype.start = function () {
         this.legacyExtension('runs', {
             depends: ['navigationService'],
