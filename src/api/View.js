@@ -4,7 +4,8 @@ define([], function () {
      * A View is used to provide displayable content, and to react to
      * associated life cycle events.
      *
-     * @interface
+     * @constructor
+     * @memberof module:openmct
      */
     function View() {
 

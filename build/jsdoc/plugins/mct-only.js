@@ -5,7 +5,7 @@ module.exports = {
             var memberof = doclet.memberof || "";
             var longname = doclet.longname || "";
 
-            if (longname !== 'mct' && memberof.indexOf('mct') !== 0) {
+            if (longname !== 'module:openmct' && memberof.indexOf('module:openmct') !== 0) {
                 e.preventDefault = true;
                 e.stopPropagation = true;
                 doclet.ignore = true;

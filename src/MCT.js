@@ -23,10 +23,9 @@ define([
      * by the `mct` module, or exposed as `mct` in the global scope if
      * loaded via a script tag.
      * @constructor
-     * @memberof mct
-     * @augments {EventEmitter}
+     * @memberof module:openmct
      */
-    function OpenMCT() {
+    function MCT() {
         EventEmitter.call(this);
         this.legacyBundle = { extensions: {} };
 
@@ -34,14 +33,14 @@ define([
         this.on('navigation', this.selection.clear.bind(this.selection));
     }
 
-    OpenMCT.prototype = Object.create(EventEmitter.prototype);
+    MCT.prototype = Object.create(EventEmitter.prototype);
 
     Object.keys(api).forEach(function (k) {
-        OpenMCT.prototype[k] = api[k];
+        MCT.prototype[k] = api[k];
     });
-    OpenMCT.prototype.OpenMCT = OpenMCT;
+    MCT.prototype.MCT = MCT;
 
-    OpenMCT.prototype.legacyExtension = function (category, extension) {
+    MCT.prototype.legacyExtension = function (category, extension) {
         this.legacyBundle.extensions[category] =
             this.legacyBundle.extensions[category] || [];
         this.legacyBundle.extensions[category].push(extension);
@@ -50,7 +49,7 @@ define([
     /**
      * Set path to where assets are hosted.  This should be the path to main.js.
      */
-    OpenMCT.prototype.setAssetPath = function (path) {
+    MCT.prototype.setAssetPath = function (path) {
         this.legacyExtension('constants', {
             key: "ASSETS_PATH",
             value: path
@@ -64,7 +63,7 @@ define([
      * @param {ViewDefinition} definition the definition for this view
      * @method
      */
-    OpenMCT.prototype.view = function (region, definition) {
+    MCT.prototype.view = function (region, definition) {
         var viewKey = region + uuid();
         var adaptedViewKey = "adapted-view-" + region;
 
@@ -113,7 +112,7 @@ define([
         });
     };
 
-    OpenMCT.prototype.type = function (key, type) {
+    MCT.prototype.type = function (key, type) {
         var legacyDef = type.toLegacyDefinition();
         legacyDef.key = key;
         type.key = key;
@@ -127,11 +126,11 @@ define([
         });
     };
 
-    OpenMCT.prototype.dialog = function (view, title) {
+    MCT.prototype.dialog = function (view, title) {
         return new Dialog(view, title).show();
     };
 
-    OpenMCT.prototype.start = function () {
+    MCT.prototype.start = function () {
         this.legacyExtension('runs', {
             depends: ['navigationService'],
             implementation: function (navigationService) {
@@ -151,14 +150,14 @@ define([
      * @param {Function} plugin a plugin install function which will be
      *     invoked with the mct instance.
      */
-    OpenMCT.prototype.install = function (plugin) {
+    MCT.prototype.install = function (plugin) {
         plugin(this);
     };
 
-    OpenMCT.prototype.regions = {
+    MCT.prototype.regions = {
         main: "MAIN",
         toolbar: "TOOLBAR"
     };
 
-    return OpenMCT;
+    return MCT;
 });
