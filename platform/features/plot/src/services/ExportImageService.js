@@ -24,15 +24,19 @@
  * Module defining ExportImageService. Created by hudsonfoo on 09/02/16
  */
 define(
-    ['saveAs'],
-    function (saveAs) {
+    [
+        'html2canvas',
+        'jsPDF',
+        'saveAs'
+    ],
+    function (html2canvas, jsPDF, saveAs) {
 
         /**
          * The export image service will export any HTML node to
          * PDF, JPG, or PNG.
          * @constructor
          */
-        function ExportImageService() {
+        function ExportImageService () {
         }
 
         /**
@@ -47,7 +51,7 @@ define(
             type = type || 'jpeg';
 
             html2canvas(element, {
-                onrendered: function(canvas) {
+                onrendered: function (canvas) {
                     switch (type.toLowerCase()) {
                         case "blob":
                             canvas.toBlob(callback);
@@ -67,22 +71,22 @@ define(
             });
         }
 
-        ExportImageService.exportPDF = function(element, filename) {
-            renderElement(element, function(img) {
+        ExportImageService.exportPDF = function (element, filename) {
+            renderElement(element, function (img) {
                 var pdf = new jsPDF('l', 'px', [element.offsetHeight, element.offsetWidth]);
                 pdf.addImage(img, 'JPEG', 0, 0, element.offsetWidth, element.offsetHeight);
                 pdf.save(filename);
             }, 'jpeg');
         };
 
-        ExportImageService.exportJPG = function(element, filename) {
-            renderElement(element, function(img) {
+        ExportImageService.exportJPG = function (element, filename) {
+            renderElement(element, function (img) {
                 saveAs(img, filename);
             }, "blob");
         };
 
-        ExportImageService.exportPNG = function(element, filename) {
-            renderElement(element, function(img) {
+        ExportImageService.exportPNG = function (element, filename) {
+            renderElement(element, function (img) {
                 saveAs(img, filename);
             }, "blob");
         };

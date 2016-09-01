@@ -258,15 +258,15 @@ define(
                 new PlotAxis("ranges", [], AXIS_DEFAULTS[1])
             ];
 
-            $scope.exportPDF = function() {
+            $scope.exportPDF = function () {
                 PlotController.prototype.exportPDF(self.$element, 'plot.pdf');
             };
 
-            $scope.exportPNG = function() {
+            $scope.exportPNG = function () {
                 PlotController.prototype.exportPNG(self.$element, 'plot.png');
             };
 
-            $scope.exportJPG = function() {
+            $scope.exportJPG = function () {
                 PlotController.prototype.exportJPG(self.$element, 'plot.jpg');
             };
 
