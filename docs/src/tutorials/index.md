@@ -79,7 +79,7 @@ changes to stylesheets, or you are running the minified version of the app
 
 The next step is to run a web server so that you can view the Open MCT 
 client (including the plugins you add to it) in browser. Any web server can 
-be used for hosting OpenMCT, and a trivial web server is provided in this 
+be used for hosting Open MCT, and a trivial web server is provided in this 
 package for the purposes of running the tutorials. The provided web server 
 should not be used in a production environment
   
@@ -91,7 +91,7 @@ To run the tutorial web server
 
 Once running, you should be able to view Open MCT from your browser at 
 http://localhost:8080/ (assuming the web server is running on port 8080, 
-and OpenMCT is installed at the server's root path). 
+and Open MCT is installed at the server's root path). 
 [Google Chrome](https://www.google.com/chrome/) is recommended for these 
 tutorials, as Chrome is Open MCT's "test-to" browser. The browser cache 
 can sometimes interfere with development (masking changes by 
