@@ -25,9 +25,8 @@ define(
     function (SaveInProgressDialog) {
 
         /**
-         * The "Save" action; the action triggered by clicking Save from
-         * Edit Mode. Exits the editing user interface and invokes object
-         * capabilities to persist the changes that have been made.
+         * The "Save" action; it invokes object capabilities to persist
+         * the changes that have been made.
          * @constructor
          * @implements {Action}
          * @memberof platform/commonUI/edit
@@ -41,7 +40,7 @@ define(
         }
 
         /**
-         * Save changes and conclude editing.
+         * Save changes.
          *
          * @returns {Promise} a promise that will be fulfilled when
          *          cancellation has completed
@@ -51,40 +50,22 @@ define(
             var domainObject = this.domainObject,
                 dialog = new SaveInProgressDialog(this.dialogService);
 
-            function resolveWith(object) {
-                return function () {
-                    return object;
-                };
-            }
-
             // Invoke any save behavior introduced by the editor capability;
             // this is introduced by EditableDomainObject which is
             // used to insulate underlying objects from changes made
             // during editing.
             function doSave() {
-                return domainObject.getCapability("editor").save()
-                    .then(resolveWith(domainObject));
+                return domainObject.getCapability("editor").save();
             }
 
-            // Discard the current root view (which will be the editing
-            // UI, which will have been pushed atop the Browse UI.)
-            function returnToBrowse(object) {
-                if (object) {
-                    object.getCapability("action").perform("navigate");
-                }
-                return object;
-            }
-
-            function hideBlockingDialog(object) {
+            function hideBlockingDialog() {
                 dialog.hide();
-                return object;
             }
 
             dialog.show();
 
             return doSave()
                 .then(hideBlockingDialog)
-                .then(returnToBrowse)
                 .catch(hideBlockingDialog);
         };
 

@@ -105,12 +105,6 @@ define(
                     expect(mockEditorCapability.save).toHaveBeenCalled();
                 });
 
-            it("navigates to the object after saving",
-                function () {
-                    action.perform();
-                    expect(mockActionCapability.perform).toHaveBeenCalledWith("navigate");
-                });
-
             describe("a blocking dialog", function () {
                 var mockDialogHandle;
 
