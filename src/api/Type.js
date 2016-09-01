@@ -11,7 +11,7 @@ define(function () {
     /**
      *
      * @param {TypeDefinition} definition
-     * @constructor
+     * @class Type
      */
     function Type(definition) {
         this.definition = definition;
