@@ -102,18 +102,6 @@ define([
     './platform/status/bundle',
     './platform/commonUI/regions/bundle'
 ], function (Main, legacyRegistry) {
-    setTimeout(function() {
-        var plotEl = document.getElementsByClassName('gl-plot')[0];
-
-        html2canvas(plotEl, {
-           onrendered: function(htmlCanvas) {
-               var pdf = new jsPDF('l', 'px', [plotEl.offsetHeight, plotEl.offsetWidth]);
-               pdf.addImage(htmlCanvas.toDataURL('image/jpeg', 2.0), 'JPEG', 0, 0, plotEl.offsetWidth, plotEl.offsetHeight);
-               pdf.save("plot.pdf");
-           }
-        });
-    }, 5000);
-
     return {
         legacyRegistry: legacyRegistry,
         run: function () {
