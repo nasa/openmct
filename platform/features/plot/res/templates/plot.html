@@ -21,6 +21,21 @@
 -->
 <span ng-controller="PlotController as plot"
       class="abs holder holder-plot">
+    <a class="s-button t-export icon-download labeled"
+       ng-click="exportPDF()"
+       title="Export This View's Data">
+    Export as PDF
+    </a>
+    <a class="s-button t-export icon-download labeled"
+           ng-click="exportPNG()"
+           title="Export This View's Data">
+    Export as PNG
+    </a>
+    <a class="s-button t-export icon-download labeled"
+           ng-click="exportJPG()"
+           title="Export This View's Data">
+    Export as JPG
+    </a>
     <div class="gl-plot"
          ng-style="{ height: 100 / plot.getSubPlots().length + '%'}"
          ng-repeat="subplot in plot.getSubPlots()">
