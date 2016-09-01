@@ -19,9 +19,8 @@ define([
 ) {
 
     /**
-     * The Open MCT application, an instance of which is exported
-     * by the `mct` module, or exposed as `mct` in the global scope if
-     * loaded via a script tag.
+     * The Open MCT application.
+     
      * @constructor
      * @memberof module:openmct
      */
