@@ -32,7 +32,8 @@ define(
         "./elements/PlotLimitTracker",
         "./elements/PlotTelemetryFormatter",
         "./modes/PlotModeOptions",
-        "./SubPlotFactory"
+        "./SubPlotFactory",
+        "./services/ExportImageService"
     ],
     function (
         PlotUpdater,
@@ -41,7 +42,8 @@ define(
         PlotLimitTracker,
         PlotTelemetryFormatter,
         PlotModeOptions,
-        SubPlotFactory
+        SubPlotFactory,
+        ExportImageService
     ) {
 
         var AXIS_DEFAULTS = [
@@ -63,6 +65,7 @@ define(
          */
         function PlotController(
             $scope,
+            $element,
             telemetryFormatter,
             telemetryHandler,
             throttle,
@@ -246,6 +249,7 @@ define(
             });
 
             self.pending = true;
+            self.$element = $element;
 
             // Initialize axes; will get repopulated when telemetry
             // metadata becomes available.
@@ -253,6 +257,18 @@ define(
                 new PlotAxis("domains", [], AXIS_DEFAULTS[0]),
                 new PlotAxis("ranges", [], AXIS_DEFAULTS[1])
             ];
+
+            $scope.exportPDF = function() {
+                PlotController.prototype.exportPDF(self.$element, 'plot.pdf');
+            };
+
+            $scope.exportPNG = function() {
+                PlotController.prototype.exportPNG(self.$element, 'plot.png');
+            };
+
+            $scope.exportJPG = function() {
+                PlotController.prototype.exportJPG(self.$element, 'plot.jpg');
+            };
 
             // Watch for changes to the selected axis
             $scope.$watch("axes[0].active.key", domainRequery);
@@ -362,6 +378,27 @@ define(
             // Placeholder; this should reflect request state
             // when requesting historical telemetry
             return this.pending;
+        };
+
+        /**
+         * Export the plot to PDF
+         */
+        PlotController.prototype.exportPDF = function (element, filename) {
+            ExportImageService.exportPDF(element[0], filename);
+        };
+
+        /**
+         * Export the plot to PNG
+         */
+        PlotController.prototype.exportPNG = function (element, filename) {
+            ExportImageService.exportPNG(element, filename);
+        };
+
+        /**
+         * Export the plot to JPG
+         */
+        PlotController.prototype.exportJPG = function (element, filename) {
+            ExportImageService.exportJPG(element, filename);
         };
 
         return PlotController;
