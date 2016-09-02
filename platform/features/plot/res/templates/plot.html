@@ -21,7 +21,7 @@
 -->
 <span ng-controller="PlotController as plot"
       class="abs holder holder-plot">
-    <span class="l-btn-set">
+    <span class="l-btn-set" ng-show="!plot.hideExportButtons">
         <a class="s-button t-export icon-download labeled first"
            ng-click="plot.exportJPG()"
            title="Export This View's Data as JPG">

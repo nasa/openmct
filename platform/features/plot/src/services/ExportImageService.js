@@ -71,23 +71,32 @@ define(
             });
         }
 
-        ExportImageService.prototype.exportPDF = function (element, filename) {
+        ExportImageService.prototype.exportPDF = function (element, filename, callback) {
+            callback = typeof callback === "function" ? callback : function () {};
+
             renderElement(element, function (img) {
                 var pdf = new jsPDF("l", "px", [element.offsetHeight, element.offsetWidth]);
                 pdf.addImage(img, "JPEG", 0, 0, element.offsetWidth, element.offsetHeight);
                 pdf.save(filename);
+                callback();
             }, "jpeg");
         };
 
-        ExportImageService.prototype.exportJPG = function (element, filename) {
+        ExportImageService.prototype.exportJPG = function (element, filename, callback) {
+            callback = typeof callback === "function" ? callback : function () {};
+
             renderElement(element, function (img) {
                 saveAs(img, filename);
+                callback();
             }, "blob");
         };
 
-        ExportImageService.prototype.exportPNG = function (element, filename) {
+        ExportImageService.prototype.exportPNG = function (element, filename, callback) {
+            callback = typeof callback === "function" ? callback : function () {};
+
             renderElement(element, function (img) {
                 saveAs(img, filename);
+                callback();
             }, "blob");
         };
 
