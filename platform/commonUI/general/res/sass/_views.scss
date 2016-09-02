@@ -1,4 +1,12 @@
 /* Styles for sub-dividing views generically */
+$cbH: 25px;
+
+.l-control-bar {
+    // Element that can be placed above l-view-section
+    height: $cbH;
+
+}
+
 
 .l-view-section {
 	@include absPosDefault(0);
@@ -15,4 +23,36 @@
 	.inline-block {
 		display: inline-block;
 	}
+}
+
+.has-control-bar {
+    .l-view-section {
+        top: $cbH + $interiorMargin;
+    }
+}
+
+
+.child-frame {
+    .has-control-bar {
+        $btnExportH: $btnFrameH;
+        .l-control-bar {
+            @include trans-prop-nice(opacity, $dur: 50ms);
+            opacity: 0;
+        }
+        .l-view-section {
+            @include trans-prop-nice(top, $dur: 150ms, $delay: 50ms);
+            top: 0;
+        }
+        &:hover {
+            .l-control-bar {
+                @include trans-prop-nice(opacity, 150ms, 100ms);
+                opacity: 1;
+            }
+            .l-view-section {
+                @include trans-prop-nice(top, $dur: 150ms);
+                top: $btnExportH + $interiorMargin;
+            }
+        }
+    }
+
 }
