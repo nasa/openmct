@@ -21,21 +21,23 @@
 -->
 <span ng-controller="PlotController as plot"
       class="abs holder holder-plot">
-    <a class="s-button t-export icon-download labeled"
-       ng-click="plot.exportPDF()"
-       title="Export This View's Data">
-    Export as PDF
-    </a>
-    <a class="s-button t-export icon-download labeled"
-           ng-click="plot.exportPNG()"
-           title="Export This View's Data">
-    Export as PNG
-    </a>
-    <a class="s-button t-export icon-download labeled"
+    <span class="l-btn-set">
+        <a class="s-button t-export icon-download labeled first"
            ng-click="plot.exportJPG()"
-           title="Export This View's Data">
-    Export as JPG
-    </a>
+           title="Export This View's Data as JPG">
+            JPG
+        </a>
+        <a class="s-button t-export labeled"
+           ng-click="plot.exportPNG()"
+           title="Export This View's Data as PNG">
+            PNG
+        </a>
+        <a class="s-button t-export labeled last"
+           ng-click="plot.exportPDF()"
+           title="Export This View's Data as PDF">
+            PDF
+        </a>
+    </span>
     <div class="gl-plot"
          ng-style="{ height: 100 / plot.getSubPlots().length + '%'}"
          ng-repeat="subplot in plot.getSubPlots()">
