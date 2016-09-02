@@ -71,7 +71,7 @@ define(
             });
         }
 
-        ExportImageService.exportPDF = function (element, filename) {
+        ExportImageService.prototype.exportPDF = function (element, filename) {
             renderElement(element, function (img) {
                 var pdf = new jsPDF('l', 'px', [element.offsetHeight, element.offsetWidth]);
                 pdf.addImage(img, 'JPEG', 0, 0, element.offsetWidth, element.offsetHeight);
@@ -79,13 +79,13 @@ define(
             }, 'jpeg');
         };
 
-        ExportImageService.exportJPG = function (element, filename) {
+        ExportImageService.prototype.exportJPG = function (element, filename) {
             renderElement(element, function (img) {
                 saveAs(img, filename);
             }, "blob");
         };
 
-        ExportImageService.exportPNG = function (element, filename) {
+        ExportImageService.prototype.exportPNG = function (element, filename) {
             renderElement(element, function (img) {
                 saveAs(img, filename);
             }, "blob");

@@ -22,17 +22,17 @@
 <span ng-controller="PlotController as plot"
       class="abs holder holder-plot">
     <a class="s-button t-export icon-download labeled"
-       ng-click="exportPDF()"
+       ng-click="plot.exportPDF()"
        title="Export This View's Data">
     Export as PDF
     </a>
     <a class="s-button t-export icon-download labeled"
-           ng-click="exportPNG()"
+           ng-click="plot.exportPNG()"
            title="Export This View's Data">
     Export as PNG
     </a>
     <a class="s-button t-export icon-download labeled"
-           ng-click="exportJPG()"
+           ng-click="plot.exportJPG()"
            title="Export This View's Data">
     Export as JPG
     </a>
