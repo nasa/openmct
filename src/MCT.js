@@ -22,7 +22,7 @@ define([
 
     /**
      * The Open MCT application. This may be configured by installing plugins
-     * or registering extensions before the application is started. Foo?
+     * or registering extensions before the application is started.
      * @class MCT
      * @memberof module:openmct
      * @augments {EventEmitter}
@@ -33,7 +33,7 @@ define([
 
         /**
          *
-         * @type {Selection}
+         * @type {module:openmct.Selection}
          * @memberof module:openmct.MCT#
          * @name selection
          */
@@ -41,7 +41,7 @@ define([
 
         /**
          *
-         * @type {TimeConductor}
+         * @type {module:openmct.TimeConductor}
          * @memberof module:openmct.MCT#
          * @name conductor
          */
@@ -66,7 +66,8 @@ define([
 
     /**
      * Set path to where assets are hosted.  This should be the path to main.js.
-     * @memberof module:openmct.MCT
+     * @memberof module:openmct.MCT#
+     * @method setAssetPath
      */
     MCT.prototype.setAssetPath = function (path) {
         this.legacyExtension('constants', {
@@ -80,8 +81,8 @@ define([
      *
      * @param region the region identifier (see mct.regions)
      * @param {ViewDefinition} definition the definition for this view
-     * @method
-     * @memberof module:openmct.MCT
+     * @method view
+     * @memberof module:openmct.MCT#
      */
     MCT.prototype.view = function (region, definition) {
         var viewKey = region + uuid();
@@ -136,7 +137,8 @@ define([
      * Register a new [type]{@link module:openmct.Type} of domain object.
      * @param {string} key a unique identifier for this type of object
      * @param {module:openmct.Type} type the new type
-     * @memberof module:openmct.MCT
+     * @memberof module:openmct.MCT#
+     * @method type
      */
     MCT.prototype.type = function (key, type) {
         var legacyDef = type.toLegacyDefinition();
@@ -152,6 +154,14 @@ define([
         });
     };
 
+    /**
+     * Show a dialog.
+     * @param view
+     * @param title
+     * @returns {Promise}
+     * @method dialog
+     * #memberof module:openmct.MCT#
+     */
     MCT.prototype.dialog = function (view, title) {
         return new Dialog(view, title).show();
     };
@@ -159,8 +169,9 @@ define([
     /**
      * Start running Open MCT. This should be called only after any plugins
      * have been installed.
-     * @fires module:openmct.MCT#start
-     * @memberof module:openmct.MCT
+     * @fires module:openmct.MCT~start
+     * @memberof module:openmct.MCT#
+     * @method start
      */
     MCT.prototype.start = function () {
         this.legacyExtension('runs', {
@@ -181,7 +192,7 @@ define([
      *
      * @param {Function} plugin a plugin install function which will be
      *     invoked with the mct instance.
-     * @memberof module:openmct.MCT
+     * @memberof module:openmct.MCT#
      */
     MCT.prototype.install = function (plugin) {
         plugin(this);

@@ -1,4 +1,9 @@
 define(['EventEmitter'], function (EventEmitter) {
+    /**
+     * This is a selection.
+     * @interface
+     * @memberof module:openmct
+     */
     function Selection() {
         EventEmitter.call(this);
         this.selectedValues = [];

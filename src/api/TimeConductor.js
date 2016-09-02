@@ -32,7 +32,8 @@ define(['EventEmitter'], function (EventEmitter) {
      * The TimeConductor extends the EventEmitter class. A number of events are
      * fired when properties of the time conductor change, which are
      * documented below.
-     * @constructor
+     * @interface
+     * @memberof module:openmct
      */
     function TimeConductor() {
         EventEmitter.call(this);
@@ -58,6 +59,8 @@ define(['EventEmitter'], function (EventEmitter) {
      * bounds, for example by views validating user inputs.
      * @param bounds The start and end time of the conductor.
      * @returns {string | true} A validation error, or true if valid
+     * @memberof module:openmct.TimeConductor#
+     * @method validateBounds
      */
     TimeConductor.prototype.validateBounds = function (bounds) {
         if ((bounds.start === undefined) ||
@@ -86,6 +89,8 @@ define(['EventEmitter'], function (EventEmitter) {
      * @fires TimeConductor#follow
      * @param {boolean} followMode
      * @returns {boolean}
+     * @memberof module:openmct.TimeConductor#
+     * @method follow
      */
     TimeConductor.prototype.follow = function (followMode) {
         if (arguments.length > 0) {
@@ -105,15 +110,19 @@ define(['EventEmitter'], function (EventEmitter) {
      * @typedef {Object} TimeConductorBounds
      * @property {number} start The start time displayed by the time conductor in ms since epoch. Epoch determined by current time system
      * @property {number} end The end time displayed by the time conductor in ms since epoch.
+     * @memberof module:openmct.TimeConductor~
      */
+
     /**
      * Get or set the start and end time of the time conductor. Basic validation
      * of bounds is performed.
      *
-     * @param {TimeConductorBounds} newBounds
+     * @param {module:openmct.TimeConductorBounds~TimeConductorBounds} newBounds
      * @throws {Error} Validation error
      * @fires TimeConductor#bounds
-     * @returns {TimeConductorBounds}
+     * @returns {module:openmct.TimeConductorBounds~TimeConductorBounds}
+     * @memberof module:openmct.TimeConductor#
+     * @method bounds
      */
     TimeConductor.prototype.bounds = function (newBounds) {
         if (arguments.length > 0) {
@@ -137,6 +146,8 @@ define(['EventEmitter'], function (EventEmitter) {
      * @param {TimeConductorBounds} bounds
      * @fires TimeConductor#timeSystem
      * @returns {TimeSystem} The currently applied time system
+     * @memberof module:openmct.TimeConductor#
+     * @method timeSystem
      */
     TimeConductor.prototype.timeSystem = function (newTimeSystem, bounds) {
         if (arguments.length >= 2) {
@@ -166,6 +177,8 @@ define(['EventEmitter'], function (EventEmitter) {
      * @fires TimeConductor#timeOfInterest
      * @param newTOI
      * @returns {number} the current time of interest
+     * @memberof module:openmct.TimeConductor#
+     * @method timeOfInterest
      */
     TimeConductor.prototype.timeOfInterest = function (newTOI) {
         if (arguments.length > 0) {
