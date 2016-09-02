@@ -48,17 +48,17 @@ for a more general overview of how to run and deploy a Open MCT application.
 
 First step is to check out Open MCT from the source repository. 
 
-`git clone https://github.com/nasa/openmctweb.git openmctweb`
+`git clone https://github.com/nasa/openmct.git openmct`
 
 This will create a copy of the Open MCT source code repository in the folder 
-`openmctweb` (relative to the path from which you ran the command.)
+`openmct` (relative to the path from which you ran the command.)
 If you have a repository URL, use that as the "path to repo" above. Alternately, 
 if you received Open MCT as a git bundle, the path to that bundle on the 
 local filesystem can be used instead.
 At this point, it will also be useful to branch off of Open MCT v0.6.2 
 (which was used when writing these tutorials) to begin adding plugins.
 
-    cd openmctweb
+    cd openmct
 	git branch <my branch name> open-v0.6.2
 	git checkout <my branch name>
 
@@ -79,7 +79,7 @@ changes to stylesheets, or you are running the minified version of the app
 
 The next step is to run a web server so that you can view the Open MCT 
 client (including the plugins you add to it) in browser. Any web server can 
-be used for hosting OpenMCTWeb, and a trivial web server is provided in this 
+be used for hosting Open MCT, and a trivial web server is provided in this 
 package for the purposes of running the tutorials. The provided web server 
 should not be used in a production environment
   
@@ -91,7 +91,7 @@ To run the tutorial web server
 
 Once running, you should be able to view Open MCT from your browser at 
 http://localhost:8080/ (assuming the web server is running on port 8080, 
-and OpenMCTWeb is installed at the server's root path). 
+and Open MCT is installed at the server's root path). 
 [Google Chrome](https://www.google.com/chrome/) is recommended for these 
 tutorials, as Chrome is Open MCT's "test-to" browser. The browser cache 
 can sometimes interfere with development (masking changes by 

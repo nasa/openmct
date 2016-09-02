@@ -21,7 +21,6 @@
 *****************************************************************************/
 .t-fixed-position {
 	&.l-fixed-position {
-		//		@include test(red);
 		position: absolute;
 		top: 0;
 		right: 0;
@@ -35,7 +34,6 @@
 			height: 100%;
 			width: 100%;
 			.l-grid {
-				//				@include test(orange);
 				position: absolute;
 				height: 100%;
 				width: 100%;
@@ -49,11 +47,6 @@
 		position: absolute;
 		border: 1px solid transparent;
 
-		&.s-selected {
-			@include boxShdwLarge();
-			border-color: $colorKey;
-			cursor: move;
-		}
 		&.s-not-selected {
 			opacity: 0.8;
 		}
@@ -76,26 +69,19 @@
 		}
 
 		.l-fixed-position-text {
-			//@include txtShdwSubtle();
 			border: 1px solid transparent;
 			font-size: 0.8rem;
-			$p: 1px; //$interiorMarginSm;
+			$p: 1px;
 			line-height: 100%;
 			&.l-static-text {
-				//				overflow: auto;
 				padding: $p;
 			}
 			&.l-telemetry {
 				.l-elem {
-					//@include absPosDefault($p);
-					//@include absPosDefault(0);
 					box-sizing: border-box;
 					display: block;
 					padding: 2px;
-					//width: 50%;
 					&.l-title {
-						//right: auto;
-						//left: $p;
 						float: none;
 						overflow: hidden;
 						text-overflow: ellipsis;
@@ -103,9 +89,6 @@
 						width: auto;
 					}
 					&.l-value {
-						// @include test(blue);
-						// right: $p;
-						// left: auto;
 						border-radius: $smallCr;
 						$valPad: 5px;
 						float: right;
@@ -125,7 +108,6 @@
 
 	.l-fixed-position-item-handle {
 		$brd: 1px solid $colorKey;
-		//		border-radius: $controlCr;
 		background: rgba($colorKey, 0.5);
 		cursor: crosshair;
 		border: $brd;
