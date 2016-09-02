@@ -1,16 +1,11 @@
 /* Styles for sub-dividing views generically */
-$cbH: 25px;
-
 .l-control-bar {
-    // Element that can be placed above l-view-section
-    height: $cbH;
-
+    // Element that can be placed above l-view-section, holds controls, buttons, etc.
+    height: $controlBarH;
 }
-
 
 .l-view-section {
 	@include absPosDefault(0);
-	font-size: 0.8rem;
 	h2 {
 		color: #fff;
 		margin-bottom: $interiorMargin;
@@ -27,7 +22,7 @@ $cbH: 25px;
 
 .has-control-bar {
     .l-view-section {
-        top: $cbH + $interiorMargin;
+        top: $controlBarH + $interiorMargin;
     }
 }
 
