@@ -9,9 +9,12 @@ define(function () {
      */
 
     /**
+     * A Type describes a kind of domain object that may appear or be
+     * created within Open MCT.
      *
      * @param {TypeDefinition} definition
      * @class Type
+     * @memberof module:openmct
      */
     function Type(definition) {
         this.definition = definition;

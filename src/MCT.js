@@ -22,6 +22,7 @@ define([
      * The Open MCT application. This may be configured by installing plugins
      * or registering extensions before the application is started. Foo?
      * @class MCT
+     * @memberof module:openmct
      */
     function MCT() {
         EventEmitter.call(this);
@@ -46,6 +47,7 @@ define([
 
     /**
      * Set path to where assets are hosted.  This should be the path to main.js.
+     * @memberof module:openmct.MCT
      */
     MCT.prototype.setAssetPath = function (path) {
         this.legacyExtension('constants', {
@@ -60,6 +62,7 @@ define([
      * @param region the region identifier (see mct.regions)
      * @param {ViewDefinition} definition the definition for this view
      * @method
+     * @memberof module:openmct.MCT
      */
     MCT.prototype.view = function (region, definition) {
         var viewKey = region + uuid();
@@ -114,6 +117,7 @@ define([
      * Register a new [type]{@link module:openmct.Type} of domain object.
      * @param {string} key a unique identifier for this type of object
      * @param {module:openmct.Type} type the new type
+     * @memberof module:openmct.MCT
      */
     MCT.prototype.type = function (key, type) {
         var legacyDef = type.toLegacyDefinition();
@@ -137,6 +141,7 @@ define([
      * Start running Open MCT. This should be called only after any plugins
      * have been installed.
      * @fires module:openmct.MCT#start
+     * @memberof module:openmct.MCT
      */
     MCT.prototype.start = function () {
         this.legacyExtension('runs', {
@@ -157,6 +162,7 @@ define([
      *
      * @param {Function} plugin a plugin install function which will be
      *     invoked with the mct instance.
+     * @memberof module:openmct.MCT
      */
     MCT.prototype.install = function (plugin) {
         plugin(this);

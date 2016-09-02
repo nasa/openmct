@@ -6,8 +6,6 @@ define(['./MCT', './api/Type'], function (MCT, Type) {
      * configuring and executing the application.
      *
      * @exports openmct
-     * @borrows Type as Type
-     * @borrows MCT as MCT
      */
     var openmct = new MCT();
 
