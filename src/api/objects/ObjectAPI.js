@@ -15,6 +15,11 @@ define([
         A new Object API.
     */
 
+    /**
+     * Utilities for loading, saving, and manipulating domain objects.
+     * @interface ObjectAPI
+     * @memberof module:openmct
+     */
     var Objects = {},
         ROOT_REGISTRY = [],
         PROVIDER_REGISTRY = {},

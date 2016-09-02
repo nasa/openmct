@@ -58,6 +58,15 @@ define([
     });
     MCT.prototype.MCT = MCT;
 
+    /**
+     * Utilities for interacting with domain objects.
+     *
+     * @type {module:openmct.ObjectAPI}
+     * @memberof module:openmct.MCT#
+     * @name Objects
+     */
+    MCT.Objects = api.Objects;
+
     MCT.prototype.legacyExtension = function (category, extension) {
         this.legacyBundle.extensions[category] =
             this.legacyBundle.extensions[category] || [];
