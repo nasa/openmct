@@ -156,6 +156,10 @@ gulp.task('api', function () {
         .pipe(gulp.dest(paths.dist));
 });
 
+gulp.task('api-watch', function () {
+    return gulp.watch('src/**/*.js', ['api']);
+});
+
 gulp.task('serve', function () {
     console.log('Running development server with all defaults');
     var app = require('./app.js');

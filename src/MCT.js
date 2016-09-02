@@ -19,7 +19,8 @@ define([
 ) {
 
     /**
-     * The Open MCT application.
+     * The Open MCT application. This may be configured by installing plugins
+     * or registering extensions before the application is started. Foo?
      * @class MCT
      */
     function MCT() {
