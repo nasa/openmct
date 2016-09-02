@@ -25,6 +25,7 @@ define([
      * or registering extensions before the application is started. Foo?
      * @class MCT
      * @memberof module:openmct
+     * @augments {EventEmitter}
      */
     function MCT() {
         EventEmitter.call(this);
