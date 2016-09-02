@@ -25,9 +25,9 @@
  */
 define(
     [
-        'html2canvas',
-        'jsPDF',
-        'saveAs'
+        "html2canvas",
+        "jsPDF",
+        "saveAs"
     ],
     function (html2canvas, jsPDF, saveAs) {
 
@@ -48,7 +48,7 @@ define(
          * @returns {string} the color, in #RRGGBB form
          */
         function renderElement(element, callback, type) {
-            type = type || 'jpeg';
+            type = type || "jpeg";
 
             html2canvas(element, {
                 onrendered: function (canvas) {
@@ -58,13 +58,13 @@ define(
                             break;
 
                         case "png":
-                            callback(canvas.toDataURL('image/png', 1.0));
+                            callback(canvas.toDataURL("image/png", 1.0));
                             break;
 
                         default:
                         case "jpg":
                         case "jpeg":
-                            callback(canvas.toDataURL('image/jpeg', 1.0));
+                            callback(canvas.toDataURL("image/jpeg", 1.0));
                             break;
                     }
                 }
@@ -73,10 +73,10 @@ define(
 
         ExportImageService.prototype.exportPDF = function (element, filename) {
             renderElement(element, function (img) {
-                var pdf = new jsPDF('l', 'px', [element.offsetHeight, element.offsetWidth]);
-                pdf.addImage(img, 'JPEG', 0, 0, element.offsetWidth, element.offsetHeight);
+                var pdf = new jsPDF("l", "px", [element.offsetHeight, element.offsetWidth]);
+                pdf.addImage(img, "JPEG", 0, 0, element.offsetWidth, element.offsetHeight);
                 pdf.save(filename);
-            }, 'jpeg');
+            }, "jpeg");
         };
 
         ExportImageService.prototype.exportJPG = function (element, filename) {

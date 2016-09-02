@@ -373,21 +373,21 @@ define(
          * Export the plot to PDF
          */
         PlotController.prototype.exportPDF = function () {
-            this.ExportImageService.exportPDF(this.$element[0], 'plot.pdf');
+            this.ExportImageService.exportPDF(this.$element[0], "plot.pdf");
         };
 
         /**
          * Export the plot to PNG
          */
         PlotController.prototype.exportPNG = function () {
-            this.ExportImageService.exportPNG(this.$element[0], 'plot.png');
+            this.ExportImageService.exportPNG(this.$element[0], "plot.png");
         };
 
         /**
          * Export the plot to JPG
          */
         PlotController.prototype.exportJPG = function () {
-            this.ExportImageService.exportJPG(this.$element[0], 'plot.jpg');
+            this.ExportImageService.exportJPG(this.$element[0], "plot.jpg");
         };
 
         return PlotController;
