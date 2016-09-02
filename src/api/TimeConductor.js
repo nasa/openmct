@@ -96,10 +96,10 @@ define(['EventEmitter'], function (EventEmitter) {
         if (arguments.length > 0) {
             this.followMode = followMode;
             /**
-             * @event TimeConductor#follow The TimeConductor has toggled
-             * into or out of follow mode.
+             * The TimeConductor has toggled into or out of follow mode.
+             * @event module:openmct.TimeConductor~follow
              * @property {boolean} followMode true if follow mode is
-             * enabled, otherwise false.
+             *           enabled, otherwise false.
              */
             this.emit('follow', this.followMode);
         }
@@ -129,8 +129,8 @@ define(['EventEmitter'], function (EventEmitter) {
             throwOnError(this.validateBounds(newBounds));
             this.boundsVal = newBounds;
             /**
-             * @event TimeConductor#bounds The start time, end time, or
-             * both have been updated
+             * The start time, end time, or both have been updated.
+             * @event module:openmct.TimeConductor~bounds
              * @property {TimeConductorBounds} bounds
              */
             this.emit('bounds', this.boundsVal);
@@ -143,8 +143,8 @@ define(['EventEmitter'], function (EventEmitter) {
      * units, epoch, and other aspects of time representation. When changing
      * the time system in use, new valid bounds must also be provided.
      * @param {TimeSystem} newTimeSystem
-     * @param {TimeConductorBounds} bounds
-     * @fires TimeConductor#timeSystem
+     * @param {module:openmct.TimeConductor~TimeConductorBounds} bounds
+     * @fires module:openmct.TimeConductor~timeSystem
      * @returns {TimeSystem} The currently applied time system
      * @memberof module:openmct.TimeConductor#
      * @method timeSystem
@@ -153,9 +153,11 @@ define(['EventEmitter'], function (EventEmitter) {
         if (arguments.length >= 2) {
             this.system = newTimeSystem;
             /**
-             * @event TimeConductor#timeSystem The time system used by the time
+             * The time system used by the time
              * conductor has changed. A change in Time System will always be
-             * followed by a bounds event specifying new query bounds
+             * followed by a bounds event specifying new query bounds.
+             *
+             * @event module:openmct.TimeConductor~timeSystem
              * @property {TimeSystem} The value of the currently applied
              * Time System
              * */
@@ -184,7 +186,8 @@ define(['EventEmitter'], function (EventEmitter) {
         if (arguments.length > 0) {
             this.toi = newTOI;
             /**
-             * @event TimeConductor#timeOfInterest The Time of Interest has moved.
+             * The Time of Interest has moved.
+             * @event module:openmctTimeConductor~timeOfInterest
              * @property {number} Current time of interest
              */
             this.emit('timeOfInterest', this.toi);

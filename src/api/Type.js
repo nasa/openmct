@@ -1,6 +1,7 @@
 define(function () {
     /**
      * @typedef TypeDefinition
+     * @memberof module:openmct.Type~
      * @property {Metadata} metadata displayable metadata about this type
      * @property {function (object)} [initialize] a function which initializes
      *           the model for new domain objects of this type
@@ -12,7 +13,7 @@ define(function () {
      * A Type describes a kind of domain object that may appear or be
      * created within Open MCT.
      *
-     * @param {TypeDefinition} definition
+     * @param {module:opemct.Type~TypeDefinition} definition
      * @class Type
      * @memberof module:openmct
      */
