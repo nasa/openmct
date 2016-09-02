@@ -6,7 +6,8 @@ define([
     'text!./adapter/templates/edit-object-replacement.html',
     './ui/Dialog',
     './Selection',
-    './api/objects/object-utils'
+    './api/objects/object-utils',
+    './api/TimeConductor'
 ], function (
     EventEmitter,
     legacyRegistry,
@@ -15,7 +16,8 @@ define([
     editObjectTemplate,
     Dialog,
     Selection,
-    objectUtils
+    objectUtils,
+    TimeConductor
 ) {
 
     /**
@@ -28,7 +30,23 @@ define([
         EventEmitter.call(this);
         this.legacyBundle = { extensions: {} };
 
+        /**
+         *
+         * @type {Selection}
+         * @memberof module:openmct.MCT#
+         * @name selection
+         */
         this.selection = new Selection();
+
+        /**
+         *
+         * @type {TimeConductor}
+         * @memberof module:openmct.MCT#
+         * @name conductor
+         */
+        this.conductor = new TimeConductor();
+
+        this.TimeConductor = this.conductor; // compatibility for prototype
         this.on('navigation', this.selection.clear.bind(this.selection));
     }
 

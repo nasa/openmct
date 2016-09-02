@@ -13,7 +13,6 @@ define([
 ) {
     return {
         Type: Type,
-        TimeConductor: new TimeConductor(),
         View: View,
         Objects: ObjectAPI,
         Composition: CompositionAPI
