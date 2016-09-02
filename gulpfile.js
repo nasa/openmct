@@ -151,7 +151,7 @@ gulp.task('api', function () {
     var markdown = require('gulp-markdown');
     return gulp.src('src/**/*.js')
         .pipe(concat('api.md'))
-        .pipe(jsdoc2md())
+        .pipe(jsdoc2md(require('./jsdoc.json')))
         .pipe(markdown())
         .pipe(gulp.dest(paths.dist));
 });

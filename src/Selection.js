@@ -1,8 +1,9 @@
 define(['EventEmitter'], function (EventEmitter) {
     /**
-     * This is a selection.
+     * Maintains selection state for the application.
      * @interface
      * @memberof module:openmct
+     * @extends {EventEmitter}
      */
     function Selection() {
         EventEmitter.call(this);
