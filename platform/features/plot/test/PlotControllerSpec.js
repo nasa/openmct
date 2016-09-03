@@ -29,6 +29,7 @@ define(
 
         describe("The plot controller", function () {
             var mockScope,
+                mockElement,
                 mockFormatter,
                 mockHandler,
                 mockThrottle,
@@ -65,6 +66,7 @@ define(
                     "$scope",
                     ["$watch", "$on", "$emit"]
                 );
+                mockElement = angular.element('<div />');
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
                     ["formatDomainValue", "formatRangeValue"]
@@ -107,6 +109,7 @@ define(
 
                 controller = new PlotController(
                     mockScope,
+                    mockElement,
                     mockFormatter,
                     mockHandler,
                     mockThrottle
