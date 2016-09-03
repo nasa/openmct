@@ -1,3 +1,5 @@
+/*global angular*/
+
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -30,6 +32,7 @@ define(
         describe("The plot controller", function () {
             var mockScope,
                 mockElement,
+                mockExportImageService,
                 mockFormatter,
                 mockHandler,
                 mockThrottle,
@@ -67,6 +70,10 @@ define(
                     ["$watch", "$on", "$emit"]
                 );
                 mockElement = angular.element('<div />');
+                mockExportImageService = jasmine.createSpyObj(
+                    "ExportImageService",
+                    ["exportJPG", "exportPNG", "exportPDF"]
+                );
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
                     ["formatDomainValue", "formatRangeValue"]
@@ -110,6 +117,7 @@ define(
                 controller = new PlotController(
                     mockScope,
                     mockElement,
+                    mockExportImageService,
                     mockFormatter,
                     mockHandler,
                     mockThrottle
