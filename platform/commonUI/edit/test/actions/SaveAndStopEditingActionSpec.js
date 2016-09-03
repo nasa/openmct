@@ -26,6 +26,11 @@ define(
 
         describe("The Save and Stop Editing action", function () {
 
+            // Some mocks appear unused because the
+            // underlying SaveAction that this action
+            // depends on is not mocked, so we mock some
+            // of SaveAction's own dependencies to make
+            // it run.
             var mockDomainObject,
                 mockEditorCapability,
                 actionContext,
