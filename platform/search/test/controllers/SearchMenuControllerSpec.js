@@ -54,7 +54,7 @@ define(
                 controller = new SearchMenuController(mockScope, mockTypes);
             });
 
-            it("gets types on initiliztion", function () {
+            it("gets types on initialization", function () {
                 expect(mockScope.ngModel.types).toBeDefined();
             });
 

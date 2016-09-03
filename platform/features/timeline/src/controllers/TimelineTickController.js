@@ -28,7 +28,7 @@ define(
 
         /**
          * Provides labels for the tick mark area of a timeline view.
-         * Since the tick mark regin is potentially extremeley large,
+         * Since the tick mark reign is potentially extremely large,
          * only the subset of ticks which will actually be shown in
          * view are provided.
          * @constructor

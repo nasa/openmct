@@ -616,7 +616,7 @@ follows:
   part of an action's extension definition.
 * `CreateActionProvider` provides the various Create actions which
   populate the Create menu. These are driven by the available types,
-  so do not map easily ot extension category `actions`; instead, these
+  so do not map easily to extension category `actions`; instead, these
   are generated after looking up which actions are available from the
   [`TypeService`](#type-service).
 * `ActionAggregator` merges together actions from multiple providers.

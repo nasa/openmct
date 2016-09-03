@@ -195,7 +195,7 @@ define(
                 expect(failure).toHaveBeenCalled();
             });
 
-            it("logs an error when mutaton fails", function () {
+            it("logs an error when mutation fails", function () {
                 // If mutation of the parent fails, we've lost the
                 // created object - this is an error.
                 var model = { someKey: "some value" };

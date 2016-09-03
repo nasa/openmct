@@ -38,7 +38,7 @@ define(
             $scope.contextutalParents = [];
             //$scope.isLink = false;
 
-            // Gets an array of the contextual parents/anscestors of the selected object
+            // Gets an array of the contextual parents/ancestors of the selected object
             function getContextualPath() {
                 var currentObj = $scope.ngModel.selectedObject,
                     currentParent,
@@ -61,7 +61,7 @@ define(
                 $scope.contextutalParents = parents;
             }
 
-            // Gets an array of the parents/anscestors of the selected object's
+            // Gets an array of the parents/ancestors of the selected object's
             //   primary location (locational of original non-link)
             function getPrimaryPath(current) {
                 var location;

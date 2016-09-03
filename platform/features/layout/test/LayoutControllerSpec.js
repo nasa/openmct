@@ -164,7 +164,7 @@ define(
                 // Populate scope
                 mockScope.$watchCollection.mostRecentCall.args[1]();
 
-                // Verify precondtion
+                // Verify precondition
                 expect(testConfiguration.panels.b).not.toBeDefined();
 
                 // Do a drag

@@ -187,7 +187,7 @@ define(
 
         /**
          * A description of the model options that may be passed to the
-         * showBlockingMessage method. Note that the DialogModel desribed
+         * showBlockingMessage method. Note that the DialogModel described
          * here is shared with the Notifications framework.
          * @see NotificationService
          *

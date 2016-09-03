@@ -45,7 +45,7 @@ define(
                         ['getKey', 'getDefinition', 'getInitialModel']
                     );
                     mockType.getKey.andReturn(type);
-                    // Return a model to drive apparant capabilities
+                    // Return a model to drive apparent capabilities
                     mockType.getInitialModel.andReturn({ id: type });
                     return mockType;
                 });
