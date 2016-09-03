@@ -32,8 +32,7 @@ define(
         "./elements/PlotLimitTracker",
         "./elements/PlotTelemetryFormatter",
         "./modes/PlotModeOptions",
-        "./SubPlotFactory",
-        "./services/ExportImageService"
+        "./SubPlotFactory"
     ],
     function (
         PlotUpdater,
@@ -42,8 +41,7 @@ define(
         PlotLimitTracker,
         PlotTelemetryFormatter,
         PlotModeOptions,
-        SubPlotFactory,
-        ExportImageService
+        SubPlotFactory
     ) {
 
         var AXIS_DEFAULTS = [
@@ -66,6 +64,7 @@ define(
         function PlotController(
             $scope,
             $element,
+            ExportImageService,
             telemetryFormatter,
             telemetryHandler,
             throttle,
@@ -250,7 +249,7 @@ define(
 
             self.pending = true;
             self.$element = $element;
-            self.ExportImageService = new ExportImageService();
+            self.ExportImageService = ExportImageService;
 
             // Initialize axes; will get repopulated when telemetry
             // metadata becomes available.

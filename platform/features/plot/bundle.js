@@ -25,6 +25,7 @@ define([
     "./src/PlotController",
     "./src/policies/PlotViewPolicy",
     "./src/PlotOptionsController",
+    "./src/services/ExportImageService",
     "text!./res/templates/plot.html",
     "text!./res/templates/plot-options-browse.html",
     'legacyRegistry'
@@ -33,6 +34,7 @@ define([
     PlotController,
     PlotViewPolicy,
     PlotOptionsController,
+    ExportImageService,
     plotTemplate,
     plotOptionsBrowseTemplate,
     legacyRegistry
@@ -71,6 +73,7 @@ define([
                     "depends": [
                         "$scope",
                         "$element",
+                        "ExportImageService",
                         "telemetryFormatter",
                         "telemetryHandler",
                         "throttle",
@@ -83,6 +86,13 @@ define([
                     "depends": [
                         "$scope"
                     ]
+                }
+            ],
+            "services": [
+                {
+                    "key": "ExportImageService",
+                    "implementation": ExportImageService,
+                    "depends": []
                 }
             ],
             "constants": [
