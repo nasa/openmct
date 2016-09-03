@@ -81,7 +81,7 @@ define(
         };
 
         /**
-         * Save any unsaved changes from this editing session. This will 
+         * Save any unsaved changes from this editing session. This will
          * end the current transaction and continue with a new one.
          * @returns {*}
          */
