@@ -57,7 +57,7 @@ define(
                 );
                 mockEditorCapability = jasmine.createSpyObj(
                     "editor",
-                    ["save", "cancel", "isEditContextRoot"]
+                    ["save", "finish", "isEditContextRoot"]
                 );
                 mockActionCapability = jasmine.createSpyObj(
                     "actionCapability",
@@ -105,13 +105,13 @@ define(
                 }));
                 action.perform();
                 expect(mockEditorCapability.save).toHaveBeenCalled();
-                expect(mockEditorCapability.cancel).not.toHaveBeenCalled();
+                expect(mockEditorCapability.finish).not.toHaveBeenCalled();
             });
 
             it("closes the editor after saving", function () {
                 action.perform();
                 expect(mockEditorCapability.save).toHaveBeenCalled();
-                expect(mockEditorCapability.cancel).toHaveBeenCalled();
+                expect(mockEditorCapability.finish).toHaveBeenCalled();
             });
         });
     }

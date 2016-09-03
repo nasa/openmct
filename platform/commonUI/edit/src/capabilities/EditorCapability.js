@@ -95,11 +95,11 @@ define(
         EditorCapability.prototype.invoke = EditorCapability.prototype.edit;
 
         /**
-         * Cancel the current editing session. This will discard any pending
+         * Finish the current editing session. This will discard any pending
          * persist operations
          * @returns {*}
          */
-        EditorCapability.prototype.cancel = function () {
+        EditorCapability.prototype.finish = function () {
             var domainObject = this.domainObject;
             return this.transactionService.cancel().then(function () {
                 domainObject.getCapability("status").set("editing", false);

@@ -52,7 +52,7 @@ define(
                 saveAction = new SaveAction(this.dialogService, this.context);
             
             function closeEditor() {
-                return domainObject.getCapability("editor").cancel();
+                return domainObject.getCapability("editor").finish();
             }
 
             return saveAction.perform()
