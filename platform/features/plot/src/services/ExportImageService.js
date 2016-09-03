@@ -29,14 +29,14 @@ define(
         "jsPDF",
         "saveAs"
     ],
-    function (html2canvas, jsPDF, saveAs) {
+    function (html2canvas, JsPdf, saveAs) {
 
         /**
          * The export image service will export any HTML node to
          * PDF, JPG, or PNG.
          * @constructor
          */
-        function ExportImageService () {
+        function ExportImageService() {
         }
 
         /**
@@ -75,7 +75,7 @@ define(
             callback = typeof callback === "function" ? callback : function () {};
 
             renderElement(element, function (img) {
-                var pdf = new jsPDF("l", "px", [element.offsetHeight, element.offsetWidth]);
+                var pdf = new JsPdf("l", "px", [element.offsetHeight, element.offsetWidth]);
                 pdf.addImage(img, "JPEG", 0, 0, element.offsetWidth, element.offsetHeight);
                 pdf.save(filename);
                 callback();
