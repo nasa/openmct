@@ -125,6 +125,38 @@ define([
                     "key": "plot-options-browse",
                     "template": plotOptionsBrowseTemplate
                 }
+            ],
+            "licenses": [
+                {
+                    "name": "FileSaver.js",
+                    "version": "0.0.2",
+                    "author": "Eli Grey",
+                    "description": "File download initiator (for file exports)",
+                    "website": "https://github.com/eligrey/FileSaver.js/",
+                    "copyright": "Copyright © 2015 Eli Grey.",
+                    "license": "license-mit",
+                    "link": "https://github.com/eligrey/FileSaver.js/blob/master/LICENSE.md"
+                },
+                {
+                    "name": "html2canvas",
+                    "version": "0.4.1",
+                    "author": "Niklas von Hertzen",
+                    "description": "JavaScript HTML renderer",
+                    "website": "https://github.com/niklasvh/html2canvas",
+                    "copyright": "Copyright © 2012 Niklas von Hertzen.",
+                    "license": "license-mit",
+                    "link": "https://github.com/niklasvh/html2canvas/blob/master/LICENSE"
+                },
+                {
+                    "name": "jsPDF",
+                    "version": "1.2.61",
+                    "author": "James Hall",
+                    "description": "JavaScript HTML renderer",
+                    "website": "https://github.com/MrRio/jsPDF",
+                    "copyright": "Copyright © 2010-2016 James Hall",
+                    "license": "license-mit",
+                    "link": "https://github.com/MrRio/jsPDF/blob/master/MIT-LICENSE.txt"
+                }
             ]
         }
     });
