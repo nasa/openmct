@@ -10,7 +10,7 @@ define([], function () {
     }
 
     SaveInProgressDialog.prototype.show = function () {
-        clearTimeout(self.timeoutId);
+        self.$timeout.cancel(self.timeoutId);
         self.timeoutId = self.$timeout(function () {
             self.dialog = self.dialogService.showBlockingMessage({
                 title: "Saving...",
