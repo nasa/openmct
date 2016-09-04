@@ -31,7 +31,7 @@ define(
     ],
     function (
         html2canvas,
-        JsPdf,
+        jsPDF,
         saveAs
     ) {
         var self = this;
@@ -39,13 +39,20 @@ define(
         /**
          * The export image service will export any HTML node to
          * PDF, JPG, or PNG.
+         * @param {object} $q
+         * @param {object} $timeout
+         * @param {object} $log
+         * @param {constant} EXPORT_IMAGE_TIMEOUT time in milliseconds before a timeout error is returned
          * @constructor
          */
-        function ExportImageService($q, $timeout, $log, EXPORT_IMAGE_TIMEOUT) {
+        function ExportImageService($q, $timeout, $log, EXPORT_IMAGE_TIMEOUT, injHtml2Canvas, injJsPDF, injSaveAs) {
             self.$q = $q;
             self.$timeout = $timeout;
             self.$log = $log;
             self.EXPORT_IMAGE_TIMEOUT = EXPORT_IMAGE_TIMEOUT;
+            self.html2canvas = injHtml2Canvas || html2canvas;
+            self.jsPDF = injJsPDF || jsPDF;
+            self.saveAs = injSaveAs || saveAs;
         }
 
         /**
@@ -59,12 +66,13 @@ define(
             var defer = self.$q.defer(),
                 renderTimeout;
 
-            renderTimeout = self.$timeout(function() {
+            renderTimeout = self.$timeout(function () {
                 defer.reject("html2canvas timed out");
+                self.$log.warn("html2canvas timed out");
             }, self.EXPORT_IMAGE_TIMEOUT);
 
             try {
-                html2canvas(element, {
+                self.html2canvas(element, {
                     onrendered: function (canvas) {
                         switch (type.toLowerCase()) {
                             case "blob":
@@ -83,9 +91,9 @@ define(
                         }
                     }
                 });
-            } catch(e) {
-                self.$log.warn("html2canvas failed with error: " + e);
+            } catch (e) {
                 defer.reject(e);
+                self.$log.warn("html2canvas failed with error: " + e);
             }
 
             defer.promise.finally(renderTimeout.cancel);
@@ -95,7 +103,7 @@ define(
 
         ExportImageService.prototype.exportPDF = function (element, filename) {
             return renderElement(element, "jpeg").then(function (img) {
-                var pdf = new JsPdf("l", "px", [element.offsetHeight, element.offsetWidth]);
+                var pdf = new self.jsPDF("l", "px", [element.offsetHeight, element.offsetWidth]);
                 pdf.addImage(img, "JPEG", 0, 0, element.offsetWidth, element.offsetHeight);
                 pdf.save(filename);
             });
@@ -103,13 +111,13 @@ define(
 
         ExportImageService.prototype.exportJPG = function (element, filename) {
             return renderElement(element, "blob").then(function (img) {
-                saveAs(img, filename);
+                self.saveAs(img, filename);
             });
         };
 
         ExportImageService.prototype.exportPNG = function (element, filename) {
             return renderElement(element, "blob").then(function (img) {
-                saveAs(img, filename);
+                self.saveAs(img, filename);
             });
         };
 
