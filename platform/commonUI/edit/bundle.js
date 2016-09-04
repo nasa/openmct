@@ -210,7 +210,8 @@ define([
                     "cssclass": "icon-save labeled",
                     "description": "Save changes made to these objects.",
                     "depends": [
-                        "dialogService"
+                        "dialogService",
+                        "$timeout"
                     ],
                     "priority": "mandatory"
                 },
@@ -225,6 +226,7 @@ define([
                         "$injector",
                         "policyService",
                         "dialogService",
+                        "$timeout",
                         "creationService",
                         "copyService"
                     ],

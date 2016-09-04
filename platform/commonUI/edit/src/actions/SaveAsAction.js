@@ -42,6 +42,7 @@ define([
             $injector,
             policyService,
             dialogService,
+            $timeout,
             creationService,
             copyService,
             context
@@ -52,6 +53,7 @@ define([
             };
             this.policyService = policyService;
             this.dialogService = dialogService;
+            this.$timeout = $timeout;
             this.creationService = creationService;
             this.copyService = copyService;
         }
@@ -111,7 +113,7 @@ define([
             var self = this,
                 domainObject = this.domainObject,
                 copyService = this.copyService,
-                dialog = new SaveInProgressDialog(this.dialogService),
+                dialog = new SaveInProgressDialog(this.dialogService, this.$timeout),
                 toUndirty = [];
 
             function doWizardSave(parent) {

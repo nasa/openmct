@@ -1,21 +1,30 @@
 define([], function () {
-    function SaveInProgressDialog(dialogService) {
-        this.dialogService = dialogService;
-        this.dialog = undefined;
+    var self = this;
+
+    function SaveInProgressDialog(dialogService, $timeout) {
+        self.dialogService = dialogService;
+        self.$timeout = $timeout;
+
+        self.dialog = undefined;
+        self.timeoutId = undefined;
     }
 
     SaveInProgressDialog.prototype.show = function () {
-        this.dialog = this.dialogService.showBlockingMessage({
-            title: "Saving...",
-            hint: "Do not navigate away from this page or close this browser tab while this message is displayed.",
-            unknownProgress: true,
-            severity: "info"
-        });
+        clearTimeout(self.timeoutId);
+        self.timeoutId = self.$timeout(function () {
+            self.dialog = self.dialogService.showBlockingMessage({
+                title: "Saving...",
+                hint: "Do not navigate away from this page or close this browser tab while this message is displayed.",
+                unknownProgress: true,
+                severity: "info"
+            });
+        }, 100);
     };
 
     SaveInProgressDialog.prototype.hide = function () {
-        if (this.dialog) {
-            this.dialog.dismiss();
+        self.$timeout.cancel(self.timeoutId);
+        if (self.dialog) {
+            self.dialog.dismiss();
         }
     };
 

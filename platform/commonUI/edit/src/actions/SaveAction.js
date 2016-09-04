@@ -34,10 +34,12 @@ define(
          */
         function SaveAction(
             dialogService,
+            $timeout,
             context
         ) {
             this.domainObject = (context || {}).domainObject;
             this.dialogService = dialogService;
+            this.$timeout = $timeout;
         }
 
         /**
@@ -49,7 +51,7 @@ define(
          */
         SaveAction.prototype.perform = function () {
             var domainObject = this.domainObject,
-                dialog = new SaveInProgressDialog(this.dialogService);
+                dialog = new SaveInProgressDialog(this.dialogService, this.$timeout);
 
             function resolveWith(object) {
                 return function () {
