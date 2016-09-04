@@ -31,6 +31,7 @@ define(
                 mockActionCapability,
                 mockObjectService,
                 mockDialogService,
+                mockTimeout,
                 mockCopyService,
                 mockParent,
                 mockUrlService,
@@ -106,6 +107,12 @@ define(
                 );
                 mockDialogService.getUserInput.andReturn(mockPromise(undefined));
 
+
+                mockTimeout = function (fn, delay) {
+                    fn();
+                };
+                mockTimeout.cancel = jasmine.createSpy("$timeout.cancel");
+
                 mockCopyService = jasmine.createSpyObj(
                     "copyService",
                     [
@@ -122,7 +129,7 @@ define(
                     domainObject: mockDomainObject
                 };
 
-                action = new SaveAsAction(undefined, undefined, mockDialogService, undefined, mockCopyService, actionContext);
+                action = new SaveAsAction(undefined, undefined, mockDialogService, mockTimeout, undefined, mockCopyService, actionContext);
 
                 spyOn(action, "getObjectService");
                 action.getObjectService.andReturn(mockObjectService);

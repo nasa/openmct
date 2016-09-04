@@ -29,6 +29,7 @@ define(
                 mockEditorCapability,
                 actionContext,
                 dialogService,
+                mockTimeout,
                 mockActionCapability,
                 capabilities = {},
                 action;
@@ -72,7 +73,10 @@ define(
                     "dialogService",
                     ["showBlockingMessage"]
                 );
-
+                mockTimeout = function (fn, delay) {
+                    fn();
+                };
+                mockTimeout.cancel = jasmine.createSpy("$timeout.cancel");
                 mockDomainObject.hasCapability.andReturn(true);
                 mockDomainObject.getCapability.andCallFake(function (capability) {
                     return capabilities[capability];
@@ -81,7 +85,7 @@ define(
                 mockEditorCapability.save.andReturn(mockPromise(true));
                 mockEditorCapability.isEditContextRoot.andReturn(true);
 
-                action = new SaveAction(dialogService, actionContext);
+                action = new SaveAction(dialogService, mockTimeout, actionContext);
             });
 
             it("only applies to domain object with an editor capability", function () {
