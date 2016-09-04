@@ -29,75 +29,88 @@ define(
         "jsPDF",
         "saveAs"
     ],
-    function (html2canvas, JsPdf, saveAs) {
+    function (
+        html2canvas,
+        JsPdf,
+        saveAs
+    ) {
+        var self = this;
 
         /**
          * The export image service will export any HTML node to
          * PDF, JPG, or PNG.
          * @constructor
          */
-        function ExportImageService() {
+        function ExportImageService($q, $timeout, $log, EXPORT_IMAGE_TIMEOUT) {
+            self.$q = $q;
+            self.$timeout = $timeout;
+            self.$log = $log;
+            self.EXPORT_IMAGE_TIMEOUT = EXPORT_IMAGE_TIMEOUT;
         }
 
         /**
          * Renders an HTML element into a base64 encoded image
          * as a BLOB, PNG, or JPG.
          * @param {node} element that will be converted to an image
-         * @param {function} callback for passing the resulting image
          * @param {string} type of image to convert the element to
-         * @returns {string} the color, in #RRGGBB form
+         * @returns {promise}
          */
-        function renderElement(element, callback, type) {
-            type = type || "jpeg";
+        function renderElement(element, type) {
+            var defer = self.$q.defer(),
+                renderTimeout;
 
-            html2canvas(element, {
-                onrendered: function (canvas) {
-                    switch (type.toLowerCase()) {
-                        case "blob":
-                            canvas.toBlob(callback);
-                            break;
+            renderTimeout = self.$timeout(function() {
+                defer.reject("html2canvas timed out");
+            }, self.EXPORT_IMAGE_TIMEOUT);
 
-                        case "png":
-                            callback(canvas.toDataURL("image/png", 1.0));
-                            break;
+            try {
+                html2canvas(element, {
+                    onrendered: function (canvas) {
+                        switch (type.toLowerCase()) {
+                            case "blob":
+                                canvas.toBlob(defer.resolve);
+                                break;
 
-                        default:
-                        case "jpg":
-                        case "jpeg":
-                            callback(canvas.toDataURL("image/jpeg", 1.0));
-                            break;
+                            case "png":
+                                defer.resolve(canvas.toDataURL("image/png", 1.0));
+                                break;
+
+                            default:
+                            case "jpg":
+                            case "jpeg":
+                                defer.resolve(canvas.toDataURL("image/jpeg", 1.0));
+                                break;
+                        }
                     }
-                }
-            });
+                });
+            } catch(e) {
+                self.$log.warn("html2canvas failed with error: " + e);
+                defer.reject(e);
+            }
+
+            defer.promise.finally(renderTimeout.cancel);
+
+            return defer.promise;
         }
 
-        ExportImageService.prototype.exportPDF = function (element, filename, callback) {
-            callback = typeof callback === "function" ? callback : function () {};
-
-            renderElement(element, function (img) {
+        ExportImageService.prototype.exportPDF = function (element, filename) {
+            return renderElement(element, "jpeg").then(function (img) {
                 var pdf = new JsPdf("l", "px", [element.offsetHeight, element.offsetWidth]);
                 pdf.addImage(img, "JPEG", 0, 0, element.offsetWidth, element.offsetHeight);
                 pdf.save(filename);
-                callback();
-            }, "jpeg");
+            });
         };
 
-        ExportImageService.prototype.exportJPG = function (element, filename, callback) {
-            callback = typeof callback === "function" ? callback : function () {};
-
-            renderElement(element, function (img) {
+        ExportImageService.prototype.exportJPG = function (element, filename) {
+            return renderElement(element, "blob").then(function (img) {
                 saveAs(img, filename);
-                callback();
-            }, "blob");
+            });
         };
 
-        ExportImageService.prototype.exportPNG = function (element, filename, callback) {
-            callback = typeof callback === "function" ? callback : function () {};
-
-            renderElement(element, function (img) {
+        ExportImageService.prototype.exportPNG = function (element, filename) {
+            return renderElement(element, "blob").then(function (img) {
                 saveAs(img, filename);
-                callback();
-            }, "blob");
+            });
         };
 
         return ExportImageService;

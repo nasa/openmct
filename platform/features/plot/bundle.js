@@ -92,7 +92,13 @@ define([
                 {
                     "key": "ExportImageService",
                     "implementation": ExportImageService,
-                    "depends": []
+                    "depends": [
+                        "$q",
+                        "$timeout",
+                        "$log",
+                        "EXPORT_IMAGE_TIMEOUT"
+                    ]
+
                 }
             ],
             "constants": [
@@ -101,6 +107,11 @@ define([
                     "value": 900000,
                     "priority": "fallback",
                     "comment": "Fifteen minutes."
+                },
+                {
+                    "key": "EXPORT_IMAGE_TIMEOUT",
+                    "value": 500,
+                    "priority": "fallback"
                 }
             ],
             "policies": [

@@ -374,7 +374,7 @@ define(
         PlotController.prototype.exportPDF = function () {
             var self = this;
             self.hideExportButtons = true;
-            self.ExportImageService.exportPDF(self.$element[0], "plot.pdf", function () {
+            self.ExportImageService.exportPDF(self.$element[0], "plot.pdf").finally(function () {
                 self.hideExportButtons = false;
             });
         };
@@ -385,7 +385,7 @@ define(
         PlotController.prototype.exportPNG = function () {
             var self = this;
             self.hideExportButtons = true;
-            self.ExportImageService.exportPNG(self.$element[0], "plot.png", function () {
+            self.ExportImageService.exportPNG(self.$element[0], "plot.png").finally(function () {
                 self.hideExportButtons = false;
             });
         };
@@ -396,7 +396,7 @@ define(
         PlotController.prototype.exportJPG = function () {
             var self = this;
             self.hideExportButtons = true;
-            self.ExportImageService.exportJPG(self.$element[0], "plot.jpg", function () {
+            self.ExportImageService.exportJPG(self.$element[0], "plot.jpg").finally(function () {
                 self.hideExportButtons = false;
             });
         };
