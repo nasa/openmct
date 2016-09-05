@@ -43,6 +43,16 @@
 			top: $btnExportH + $interiorMargin;
 		}
 	}
+	&.hide-l-btn-set {
+		.s-button.t-export {
+			@include trans-prop-nice(opacity, 0ms, 0ms);
+			opacity: 0;
+		}
+		.gl-plot {
+			@include trans-prop-nice(top, $dur: 0ms);
+			top: 0;
+		}
+	}
 }
 
 .gl-plot {

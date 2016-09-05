@@ -20,8 +20,9 @@
  at runtime from the About dialog for additional information.
 -->
 <span ng-controller="PlotController as plot"
-      class="abs holder holder-plot">
-    <span class="l-btn-set" ng-show="!plot.hideExportButtons">
+      class="abs holder holder-plot"
+      ng-class="{'hide-l-btn-set': plot.hideExportButtons}">
+    <span class="l-btn-set">
         <a class="s-button t-export icon-download labeled first"
            ng-click="plot.exportJPG()"
            title="Export This View's Data as JPG">
