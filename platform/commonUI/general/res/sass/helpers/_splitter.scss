@@ -103,6 +103,8 @@
             top: 0;
             bottom: 0;
             width: $splitterD;
+            position: relative;
+            height: 100%;
             &:after {
                 left: $inset; right: $inset;
                 //width: $splitterHandleD;
