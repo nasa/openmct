@@ -66,13 +66,23 @@ define([
     MCT.prototype.MCT = MCT;
 
     /**
-     * Utilities for interacting with domain objects.
+     * An interface for interacting with domain objects and the domain
+     * object hierarchy.
      *
      * @type {module:openmct.ObjectAPI}
      * @memberof module:openmct.MCT#
      * @name Objects
      */
     MCT.Objects = api.Objects;
+
+    /**
+     * An interface for retrieving and interpreting telemetry data associated
+     * with a domain object.
+     *
+     * @type {module:openmct.TelemetryAPI}
+     * @memberof module:openmct.MCT#
+     * @name Telemetry
+     */
 
     MCT.prototype.legacyExtension = function (category, extension) {
         this.legacyBundle.extensions[category] =

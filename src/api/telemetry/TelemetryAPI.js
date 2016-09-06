@@ -53,7 +53,12 @@ define([
         FORMAT_MAP.generic;
 
 
-
+    /**
+     * An interface for retrieving telemetry data associated with a domain
+     * object.
+     * @interface TelemetryAPI
+     * @memberof module:openmct
+     */
     function TelemetryAPI(
         formatService
     ) {
@@ -201,13 +206,55 @@ define([
         }
 
         var Telemetry = {
+            /**
+             * Register a new telemetry provider.
+             * @method registerProvider
+             * @memberof module:openmct.TelemetryAPI#
+             */
             registerProvider: registerProvider,
+
+            /**
+             * Register a new limit evaluator.
+             * @method registerEvaluator
+             * @memberof module:openmct.TelemetryAPI#
+             */
             registerEvaluator: registerEvaluator,
+
+            /**
+             * Request historical telemetry data.
+             * @method request
+             * @memberof module:openmct.TelemetryAPI#
+             */
             request: request,
+
+            /**
+             * Subscribe to updates to telemetry data.
+             * @method subscribe
+             * @memberof module:openmct.TelemetryAPI#
+             */
             subscribe: subscribe,
+
+            /**
+             * Get metadata associated with telemetry for this domain object.
+             * @param {module:openmct.DomainObject} domainObject the domain
+             *        object for which to request telemetry
+             * @returns {module:openmct.TelemetryAPI~TelemetryMetadata}
+             *          telemetry metadata
+             * @method getMetadata
+             * @memberof module:openmct.TelemetryAPI#
+             */
             getMetadata: function (domainObject) {
                 return domainObject.getCapability('telemetry').getMetadata();
             },
+
+            /**
+             * Get a telemetry formatter for this domain object.
+             * @param {module:openmct.DomainObject} domainObject the domain
+             *        object for which to format telemetry
+             * @returns {module:openmct.TelemetryAPI~TelemetryFormatter}
+             * @method Formatter
+             * @memberof module:openmct.TelemetryAPI#
+             */
             Formatter: function (domainObject) {
                 if (!FORMATTER_CACHE.has(domainObject)) {
                     FORMATTER_CACHE.set(
@@ -217,6 +264,15 @@ define([
                 }
                 return FORMATTER_CACHE.get(domainObject);
             },
+
+            /**
+             * Get a limit evaluator for this domain object.
+             * @param {module:openmct.DomainObject} domainObject the domain
+             *        object for which to evaluate limits
+             * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
+             * @method LimitEvaluator
+             * @memberof module:openmct.TelemetryAPI#
+             */
             LimitEvaluator: function (domainObject) {
                 if (!EVALUATOR_CACHE.has(domainObject)) {
                     EVALUATOR_CACHE.set(
