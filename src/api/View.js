@@ -4,7 +4,8 @@ define([], function () {
      * A View is used to provide displayable content, and to react to
      * associated life cycle events.
      *
-     * @class
+     * @interface
+     * @memberof module:openmct
      */
     function View() {
 
@@ -18,6 +19,8 @@ define([], function () {
      * the contents of this view up-to-date.
      *
      * @param {HTMLElement} container the DOM element to populate
+     * @method show
+     * @memberof module:openmct.View#
      */
     View.prototype.show = function (container) {
 
@@ -29,6 +32,9 @@ define([], function () {
      * View implementations should use this method to detach any
      * listeners or release other resources that are no longer necessary
      * once a view is no longer used.
+     *
+     * @method destroy
+     * @memberof module:openmct.View#
      */
     View.prototype.destroy = function () {
 
