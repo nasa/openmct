@@ -1,9 +1,24 @@
 define(['text!./dialog.html', 'zepto'], function (dialogTemplate, $) {
+
+    /**
+     * A dialog may be displayed to show blocking content to users.
+     * @param {module:openmct.View} view the view to show in the dialog
+     * @param {string [title] the title for this dialog
+     * @constructor
+     * @memberof module:openmct
+     */
     function Dialog(view, title) {
         this.view = view;
         this.title = title;
     }
 
+    /**
+     * Display this dialog.
+     * @returns {Promise} a promise that will be resolved if the user
+     *          chooses "OK", an rejected if the user chooses "cancel"
+     * @method show
+     * @memberof module:openmct.Dialog#
+     */
     Dialog.prototype.show = function () {
         var $body = $('body');
         var $dialog = $(dialogTemplate);
