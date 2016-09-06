@@ -125,8 +125,8 @@ define([
 
     /**
      * Add a root-level object.
-     * @param {module:openmct.Identifier} id the identifier of the root-level
-     *        object to add.
+     * @param {module:openmct.ObjectAPI~Identifier} id the identifier of the
+     *        root-level object to add.
      * @method addRoot
      * @memberof module:openmct.ObjectAPI#
      */
@@ -136,8 +136,8 @@ define([
 
     /**
      * Remove a root-level object.
-     * @param {module:openmct.Identifier} id the identifier of the root-level
-     *        object to remove.
+     * @param {module:openmct.ObjectAPI~Identifier} id the identifier of the
+     *        root-level object to remove.
      * @method removeRoot
      * @memberof module:openmct.ObjectAPI#
      */
@@ -166,7 +166,7 @@ define([
      * Uniquely identifies a domain object.
      *
      * @typedef Identifier
-     * @memberof module:openmct
+     * @memberof module:openmct.ObjectAPI~
      * @property {string} namespace the namespace to/from which this domain
      *           object should be loaded/stored.
      * @property {string} key a unique identifier for the domain object
