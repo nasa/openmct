@@ -643,7 +643,7 @@ to be passed along by other services.
 ## Domain Objects 
 
 Domain objects are the most fundamental component of Open MCT's information 
-model. A domain object is some distinct thing relevant to a user's work flow, 
+model. A domain object is some distinct thing relevant to a user's workflow, 
 such as a telemetry channel, display, or similar. Open MCT is a tool for 
 viewing, browsing, manipulating, and otherwise interacting with a graph of 
 domain objects. 
@@ -981,7 +981,7 @@ Examples of gestures included in the platform are:
 composition.
 * `drop`: For representations that can be drop targets for drag-and-drop 
 composition. 
-* `menu`: For representations that can be used to pop up a context menu. 
+* `menu`: For representations that can be used to popup a context menu. 
  
 Gesture definitions have a property `key` which is used as a machine-readable 
 identifier for the gesture (e.g. `drag`, `drop`, `menu` above.) 
@@ -1153,7 +1153,7 @@ For example, the _My Items_ folder is added as an extension of this category.
 
 Extensions of this category should have the following properties:
 
-* `id`: The machine-readable identifier for the domaiwn object being exposed.
+* `id`: The machine-readable identifier for the domain object being exposed.
 * `model`: The model, as a JSON object, for the domain object being exposed. 
 
 ## Stylesheets Category

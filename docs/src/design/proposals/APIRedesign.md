@@ -180,7 +180,7 @@ to develop a tabular visualization plugin.
       * Add a model property to the bundle.json to take in "Hello World"
         as a parameter and pass through to the controller/view
 
-### Open Source Contributer
+### Open Source Contributor
 
  * [Failures are non-graceful when services are missing.](
    https://github.com/nasa/openmctweb/issues/79)
@@ -214,7 +214,7 @@ to an entirely different framework.
 
 We can expect AngularJS 1.x to reach end-of-life reasonably soon thereafter.
 
-Our API is currently a superset of Angular's API, so this directly effects
+Our API is currently a superset of Angular's API, so this directly affects
 our API. Specifically, API changes should be oriented towards removing
 or reducing the Angular dependency.
 

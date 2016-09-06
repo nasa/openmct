@@ -95,7 +95,7 @@ define(
             this.locationService = locationService;
             this.composeService = composeService;
             this.verb = verb || "Compose";
-            this.suffix = suffix || "to a new location";
+            this.suffix = suffix || "To a New Location";
         }
 
         AbstractComposeAction.prototype.cloneContext = function () {

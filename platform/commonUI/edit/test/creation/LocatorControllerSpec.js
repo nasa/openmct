@@ -138,23 +138,34 @@ define(
                     });
             });
             describe("when no context is available", function () {
-                    var defaultRoot = "DEFAULT_ROOT";
+                var defaultRoot = "DEFAULT_ROOT";
 
-                    beforeEach(function () {
-                        mockContext.getRoot.andReturn(undefined);
-                        getObjectsPromise.then.andCallFake(function (callback) {
-                            callback({'ROOT': defaultRoot});
-                        });
-                        controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
+                beforeEach(function () {
+                    mockContext.getRoot.andReturn(undefined);
+                    getObjectsPromise.then.andCallFake(function (callback) {
+                        callback({'ROOT': defaultRoot});
                     });
-
-                    it("provides a default context where none is available", function () {
-                        mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
-                        mockTimeout.mostRecentCall.args[0]();
-                        expect(mockScope.rootObject).toBe(defaultRoot);
-
-                    });
+                    controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
                 });
+
+                it("provides a default context where none is available", function () {
+                    mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                    mockTimeout.mostRecentCall.args[0]();
+                    expect(mockScope.rootObject).toBe(defaultRoot);
+                });
+
+                it("does not issue redundant requests for the root object", function () {
+                    mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                    mockTimeout.mostRecentCall.args[0]();
+                    mockScope.$watch.mostRecentCall.args[1](undefined);
+                    mockTimeout.mostRecentCall.args[0]();
+                    mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                    mockTimeout.mostRecentCall.args[0]();
+                    expect(mockObjectService.getObjects.calls.length)
+                        .toEqual(1);
+                });
+
+            });
         });
     }
 );
