@@ -193,8 +193,15 @@ define([
 
         legacyRegistry.register('adapter', this.legacyBundle);
         legacyRegistry.enable('adapter');
+        /**
+         * Fired by [MCT]{@link module:openmct.MCT} when the application
+         * is started.
+         * @event start
+         * @memberof module:openmct.MCT~
+         */
         this.emit('start');
     };
+
 
     /**
      * Install a plugin in MCT.
