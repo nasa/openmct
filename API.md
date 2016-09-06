@@ -3,8 +3,10 @@
 The Open MCT framework public api can be utilized by building the application (`gulp install`) and then copying the file from `dist/main.js` to your directory
 of choice.
 
-Open MCT supports AMD, CommonJS, and standard browser loading; it's easy to use
-in your project.
+Open MCT supports AMD, CommonJS, and loading via a script tag; it's easy to use
+in your project. The [`openmct`]{@link module:openmct} module is exported
+via AMD and CommonJS, and is also exposed as `openmct` in the global scope
+if loaded via a script tag.
 
 ## Overview
 
