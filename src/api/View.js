@@ -40,5 +40,52 @@ define([], function () {
 
     };
 
+    /**
+     * Exposes types of views in Open MCT.
+     *
+     * @interface ViewProvider
+     * @memberof module:openmct
+     */
+
+    /**
+     * Check if this provider can supply views for a domain object.
+     * @method canView
+     * @memberof module:openmct.ViewProvider#
+     * @param {module:openmct.DomainObject} domainObject the domain object
+     *        to be viewed
+     * @returns {boolean} true if this domain object can be viewed using
+     *          this provider
+     */
+
+    /**
+     * Provide a view of this domain object.
+     * @method view
+     * @memberof module:openmct.ViewProvider#
+     * @param {module:openmct.DomainObject} domainObject the domain object
+     *        to be viewed
+     * @returns {module:openmct.View} a view of this domain object
+     */
+
+    /**
+     * Get metadata associated with this view provider. This may be used
+     * to populate the user interface with options associated with this
+     * view provider.
+     *
+     * @method metadata
+     * @memberof module:openmct.ViewProvider#
+     * @returns {module:openmct.ViewProvider~ViewMetadata} view metadata
+     */
+
+    /**
+     * @typedef ViewMetadata
+     * @memberof module:openmct.ViewProvider~
+     * @property {string} name the human-readable name of this view
+     * @property {string} key a machine-readable name for this view
+     * @property {string} [description] a longer-form description (typically
+     *           a single sentence or short paragraph) of this kind of view
+     * @property {string} cssclass the CSS class to apply to labels for this
+     *           view (to add icons, for instance)
+     */
+
     return View;
 });

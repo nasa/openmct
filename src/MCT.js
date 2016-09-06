@@ -88,8 +88,8 @@ define([
     /**
      * Register a new type of view.
      *
-     * @param region the region identifier (see mct.regions)
-     * @param {ViewDefinition} definition the definition for this view
+     * @param {string} region the region identifier (see mct.regions)
+     * @param {module:openmct.ViewProvider} provider the provider for this view
      * @method view
      * @memberof module:openmct.MCT#
      */
