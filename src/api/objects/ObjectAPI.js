@@ -153,6 +153,14 @@ define([
         });
     };
 
+    /**
+     * Get an interface for observing and mutating this domain object.
+     * @param {module:openmct.DomainObject} object the object to mutate
+     * @returns {module:openmct.MutableObject} an interface for mutating
+     *          and observing this domain object
+     * @method getMutable
+     * @memberof module:openmct.ObjectAPI#
+     */
     Objects.getMutable = function (object) {
         return new MutableObject(eventEmitter, object);
     };
