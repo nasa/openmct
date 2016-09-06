@@ -1,7 +1,8 @@
 # Open MCT API
 
-The Open MCT framework public api can be utilized by building the application (`gulp install`) and then copying the file from `dist/main.js` to your directory
-of choice.
+The Open MCT framework public api can be utilized by building the application
+(`gulp install`) and then copying the file from `dist/main.js` to your
+directory of choice.
 
 Open MCT supports AMD, CommonJS, and loading via a script tag; it's easy to use
 in your project. The [`openmct`]{@link module:openmct} module is exported
@@ -10,7 +11,8 @@ if loaded via a script tag.
 
 ## Overview
 
-Open MCT's goal is to allow you to browse, create, edit, and visualize all of the domain knowledge you need on a daily basis.  
+Open MCT's goal is to allow you to browse, create, edit, and visualize all of
+the domain knowledge you need on a daily basis.
 
 To do this, the main building block provided by Open MCT is the _domain object_.
 The temperature sensor on the starboard solar panel,
