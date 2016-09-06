@@ -103,6 +103,9 @@ define([
         if (!this._children) {
             throw new Error("Must load composition before you can add!");
         }
+        if (!this.canContain(child)) {
+            throw new Error("This object cannot contain that object.");
+        }
         if (this.contains(child)) {
             if (skipMutate) {
                 return; // don't add twice, don't error.
@@ -163,6 +166,17 @@ define([
             // trigger removal after we have internally removed it.
             this.provider.remove(this.domainObject, removed);
         }
+    };
+
+    /**
+     * Check if this composition can contain this domain object.
+     * @name canContain
+     * @memberof module:openmct.CompositionCollection
+     * @param {module:openmct.DomainObject} the domain object to contain
+     * @returns {boolean} true if containment is allowed
+     */
+    CompositionCollection.prototype.canContain = function (domainObject) {
+        return this.provider.canContain(this.domainObject, domainObject);
     };
 
     /**

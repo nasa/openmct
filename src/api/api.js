@@ -3,18 +3,21 @@ define([
     './TimeConductor',
     './View',
     './objects/ObjectAPI',
-    './composition/CompositionAPI'
+    './composition/CompositionAPI',
+    './ui/Dialog'
 ], function (
     Type,
     TimeConductor,
     View,
     ObjectAPI,
-    CompositionAPI
+    CompositionAPI,
+    Dialog
 ) {
     return {
         Type: Type,
         View: View,
         Objects: ObjectAPI,
-        Composition: CompositionAPI
+        Composition: CompositionAPI,
+        Dialog: Dialog
     };
 });

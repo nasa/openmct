@@ -10,6 +10,8 @@ define(['text!./dialog.html', 'zepto'], function (dialogTemplate, $) {
     function Dialog(view, title) {
         this.view = view;
         this.title = title;
+        this.showing = false;
+        this.enabledState = true;
     }
 
     /**
@@ -20,6 +22,10 @@ define(['text!./dialog.html', 'zepto'], function (dialogTemplate, $) {
      * @memberof module:openmct.Dialog#
      */
     Dialog.prototype.show = function () {
+        if (this.showing) {
+            throw new Error("Dialog already showing.");
+        }
+
         var $body = $('body');
         var $dialog = $(dialogTemplate);
         var $contents = $dialog.find('.contents .editor');
@@ -28,30 +34,44 @@ define(['text!./dialog.html', 'zepto'], function (dialogTemplate, $) {
         var $ok = $dialog.find('.ok');
         var $cancel = $dialog.find('.cancel');
 
-        var view = this.view;
-
-        function dismiss() {
-            $dialog.remove();
-            view.destroy();
-        }
-
         if (this.title) {
             $dialog.find('.title').text(this.title);
         }
 
         $body.append($dialog);
         this.view.show($contents[0]);
+        this.$dialog = $dialog;
+        this.$ok = $ok;
+        this.showing = true;
+
+        [$ok, $cancel, $close].forEach(function ($button) {
+            $button.on('click', this.hide.bind(this));
+        }.bind(this));
 
         return new Promise(function (resolve, reject) {
             $ok.on('click', resolve);
-            $ok.on('click', dismiss);
-
             $cancel.on('click', reject);
-            $cancel.on('click', dismiss);
-
             $close.on('click', reject);
-            $close.on('click', dismiss);
         });
+    };
+
+    Dialog.prototype.hide = function () {
+        if (!this.showing) {
+            return;
+        }
+        this.$dialog.remove();
+        this.view.destroy();
+        this.showing = false;
+    };
+
+    Dialog.prototype.enabled = function (state) {
+        if (state !== undefined) {
+            this.enabledState = state;
+            if (this.showing) {
+                this.$ok.toggleClass('disabled', !state);
+            }
+        }
+        return this.enabledState;
     };
 
     return Dialog;

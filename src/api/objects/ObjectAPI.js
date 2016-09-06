@@ -1,11 +1,9 @@
 define([
     'lodash',
-    'EventEmitter',
     './object-utils',
     './MutableObject'
 ], function (
     _,
-    EventEmitter,
     utils,
     MutableObject
 ) {
@@ -24,8 +22,7 @@ define([
     var Objects = {},
         ROOT_REGISTRY = [],
         PROVIDER_REGISTRY = {},
-        FALLBACK_PROVIDER,
-        eventEmitter = new EventEmitter();
+        FALLBACK_PROVIDER;
 
     Objects._supersecretSetFallbackProvider = function (p) {
         FALLBACK_PROVIDER = p;
@@ -162,7 +159,7 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     Objects.getMutable = function (object) {
-        return new MutableObject(eventEmitter, object);
+        return new MutableObject(object);
     };
 
     /**

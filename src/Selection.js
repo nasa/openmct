@@ -28,7 +28,7 @@ define(['EventEmitter'], function (EventEmitter) {
      */
     Selection.prototype.select = function (value) {
         this.selectedValues.push(value);
-        this.emit('change');
+        this.emit('change', this.selectedValues);
         return this.deselect.bind(this, value);
     };
 
@@ -43,7 +43,7 @@ define(['EventEmitter'], function (EventEmitter) {
         this.selectedValues = this.selectedValues.filter(function (v) {
             return v !== value;
         });
-        this.emit('change');
+        this.emit('change', this.selectedValues);
     };
 
     /**
@@ -65,7 +65,7 @@ define(['EventEmitter'], function (EventEmitter) {
      */
     Selection.prototype.clear = function () {
         this.selectedValues = [];
-        this.emit('change');
+        this.emit('change', this.selectedValues);
     };
 
     return Selection;

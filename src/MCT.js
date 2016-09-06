@@ -4,7 +4,6 @@ define([
     'uuid',
     './api/api',
     'text!./adapter/templates/edit-object-replacement.html',
-    './ui/Dialog',
     './Selection',
     './api/objects/object-utils',
     './api/TimeConductor'
@@ -14,7 +13,6 @@ define([
     uuid,
     api,
     editObjectTemplate,
-    Dialog,
     Selection,
     objectUtils,
     TimeConductor
@@ -29,7 +27,16 @@ define([
      */
     function MCT() {
         EventEmitter.call(this);
-        this.legacyBundle = { extensions: {} };
+        this.legacyBundle = { extensions: {
+            services: [
+                {
+                    key: "mct",
+                    implementation: function () {
+                        return this;
+                    }.bind(this)
+                }
+            ]
+        } };
 
         /**
          *
@@ -133,13 +140,6 @@ define([
             region: region,
             key: viewKey
         });
-
-        this.legacyExtension('services', {
-            key: 'PublicAPI',
-            implementation: function () {
-                return this;
-            }.bind(this)
-        });
     };
 
     /**
@@ -161,18 +161,6 @@ define([
             template: editObjectTemplate,
             type: key
         });
-    };
-
-    /**
-     * Show a dialog.
-     * @param view
-     * @param title
-     * @returns {Promise}
-     * @method dialog
-     * #memberof module:openmct.MCT#
-     */
-    MCT.prototype.dialog = function (view, title) {
-        return new Dialog(view, title).show();
     };
 
     /**
@@ -216,6 +204,7 @@ define([
 
     MCT.prototype.regions = {
         main: "MAIN",
+        properties: "PROPERTIES",
         toolbar: "TOOLBAR"
     };
 

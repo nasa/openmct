@@ -1,13 +1,17 @@
 define([
     'legacyRegistry',
+    './actions/ActionDialogDecorator',
     './directives/MCTView',
     './services/Instantiate',
-    './capabilities/APICapabilityDecorator'
+    './capabilities/APICapabilityDecorator',
+    './policies/AdapterCompositionPolicy'
 ], function (
     legacyRegistry,
+    ActionDialogDecorator,
     MCTView,
     Instantiate,
-    APICapabilityDecorator
+    APICapabilityDecorator,
+    AdapterCompositionPolicy
 ) {
     legacyRegistry.register('src/adapter', {
         "extensions": {
@@ -17,7 +21,7 @@ define([
                     implementation: MCTView,
                     depends: [
                         "newViews[]",
-                        "PublicAPI"
+                        "mct"
                     ]
                 }
             ],
@@ -41,6 +45,19 @@ define([
                     depends: [
                         "$injector"
                     ]
+                },
+                {
+                    type: "decorator",
+                    provides: "actionService",
+                    implementation: ActionDialogDecorator,
+                    depends: [ "mct", "newViews[]" ]
+                }
+            ],
+            policies: [
+                {
+                    category: "composition",
+                    implementation: AdapterCompositionPolicy,
+                    depends: [ "mct" ]
                 }
             ]
         }
