@@ -9,6 +9,14 @@ define([
     ObjectAPI,
     objectUtils
 ) {
+    /**
+     * A CompositionProvider provides the underlying implementation of
+     * composition-related behavior for certain types of domain object.
+     *
+     * @interface CompositionProvider
+     * @memberof module:openmct
+     * @augments EventEmitter
+     */
 
     function makeEventName(domainObject, event) {
         return event + ':' + objectUtils.makeKeyString(domainObject.key);
@@ -21,10 +29,30 @@ define([
     DefaultCompositionProvider.prototype =
         Object.create(EventEmitter.prototype);
 
+    /**
+     * Check if this provider should be used to load composition for a
+     * particular domain object.
+     * @param {module:openmct.DomainObject} domainObject the domain object
+     *        to check
+     * @returns {boolean} true if this provider can provide
+     *          composition for a given domain object
+     * @memberof {module:openmct.CompositionProvider#}
+     * @name appliesTo
+     */
     DefaultCompositionProvider.prototype.appliesTo = function (domainObject) {
         return !!domainObject.composition;
     };
 
+    /**
+     * Load any domain objects contained in the composition of this domain
+     * object.
+     * @param {module:openmct.DomainObjcet} domainObject the domain object
+     *        for which to load composition
+     * @returns {Promise.<Array.<module:openmct.DomainObject>>} a promise for
+     *          the domain objects in this composition
+     * @memberof {module:openmct.CompositionProvider#}
+     * @name load
+     */
     DefaultCompositionProvider.prototype.load = function (domainObject) {
         return Promise.all(domainObject.composition.map(ObjectAPI.get));
     };
@@ -59,6 +87,16 @@ define([
         );
     };
 
+
+    /**
+     * Remove a domain object from another domain object's composition.
+     *
+     * @param {module:openmct.DomainObject} domainObject the domain object
+     *        which should have its composition modified
+     * @param {module:openmct.DomainObject} child the domain object to remove
+     * @memberof module:openmct.CompositionProvider#
+     * @name remove
+     */
     DefaultCompositionProvider.prototype.remove = function (domainObject, child) {
         // TODO: this needs to be synchronized via mutation
         var index = domainObject.composition.indexOf(child);
@@ -66,6 +104,15 @@ define([
         this.emit(makeEventName(domainObject, 'remove'), child);
     };
 
+    /**
+     * Add a domain object to another domain object's composition.
+     *
+     * @param {module:openmct.DomainObject} domainObject the domain object
+     *        which should have its composition modified
+     * @param {module:openmct.DomainObject} child the domain object to add
+     * @memberof module:openmct.CompositionProvider#
+     * @name add
+     */
     DefaultCompositionProvider.prototype.add = function (domainObject, child) {
         // TODO: this needs to be synchronized via mutation
         domainObject.composition.push(child.key);
