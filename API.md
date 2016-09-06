@@ -41,4 +41,29 @@ Domain objects can be mutated and persisted, developers can create custom
 actions and apply them to domain objects, and many more things can be done.
 For more information, read on!
 
+## Running Open MCT
+
+Once the [`openmct`](@link module:openmct) module has been loaded, you can
+simply invoke [`start`]{@link module:openmct.MCT#start} to run Open MCT:
+
+
+```
+openmct.start();
+```
+
+Generally, however, you will want to configure Open MCT by adding plugins
+before starting it. It is important to install plugins and configure Open MCT
+_before_ calling [`start`]{@link module:openmct.MCT#start}; Open MCT is not
+designed to be reconfigured once started.
+
+## Configuring Open MCT
+
+The [`openmct`]{@link module:openmct} module (more specifically, the
+[`MCT`](@link module:openmct.MCT} class, of which `openmct` is an instance)
+exposes a variety of methods to allow the application to be configured,
+extended, and customized before running.
+
+
+
+## Plugins
 
