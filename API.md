@@ -59,11 +59,67 @@ designed to be reconfigured once started.
 ## Configuring Open MCT
 
 The [`openmct`]{@link module:openmct} module (more specifically, the
-[`MCT`](@link module:openmct.MCT} class, of which `openmct` is an instance)
+[`MCT`]{@link module:openmct.MCT} class, of which `openmct` is an instance)
 exposes a variety of methods to allow the application to be configured,
 extended, and customized before running.
 
+Short examples follow; see the linked documentation for further details.
 
+### Adding Domain Object Types
+
+Custom types may be registered via
+[`openmct.type`]{@link module:openmct.MCT#type}:
+
+```
+openmct.type('my-type', new openmct.Type({
+    label: "My Type",
+    description: "This is a type that I added!"
+});
+```
+
+### Adding Views
+
+Custom views may be registered via
+[`openmct.type`]{@link module:openmct.MCT#type}:
+
+```
+openmct.view(openmct.regions.main, {
+    canView: function (domainObject) {
+        return domainObject.type === 'my-type';
+    },
+    view: function (domainObject) {
+        return new MyView(domainObject);
+    }
+});
+```
 
 ## Plugins
+
+While you can register new features with Open MCT directly, it is generally
+more useful to package these as a plugin. A plugin is a function that takes
+[`openmct`]{@link module:openmct} as an argument, and performs configuration
+upon `openmct` when invoked.
+
+### Installing Plugins
+
+To install plugins, use the [`install`]{@link module:openmct.MCT#install}
+method:
+
+```
+openmct.install(myPlugin);
+```
+
+The plugin will be invoked to configure Open MCT before it is started.
+
+### Writing Plugins
+
+Plugins configure Open MCT, and should utilize the
+[`openmct`]{@link module:openmct} to do so, as summarized above in
+"Configuring Open MCT."
+
+### Distributing Plugins
+
+Hosting or downloading plugins is outside of the scope of this documentation.
+We recommend distributing plugins as UMD modules which export a single
+function.
 
