@@ -32,7 +32,7 @@ define([
      * @implements TimeSystem
      * @constructor
      */
-    function UTCTimeSystem ($timeout) {
+    function UTCTimeSystem($timeout) {
         TimeSystem.call(this);
 
         /**
@@ -46,14 +46,14 @@ define([
             'cssclass': 'icon-clock'
         };
 
-        this._formats = ['utc'];
-        this._tickSources = [new LocalClock($timeout, DEFAULT_PERIOD)];
+        this.fmts = ['utc'];
+        this.sources = [new LocalClock($timeout, DEFAULT_PERIOD)];
     }
 
     UTCTimeSystem.prototype = Object.create(TimeSystem.prototype);
 
     UTCTimeSystem.prototype.formats = function () {
-        return this._formats;
+        return this.fmts;
     };
 
     UTCTimeSystem.prototype.deltaFormat = function () {
@@ -61,7 +61,7 @@ define([
     };
 
     UTCTimeSystem.prototype.tickSources = function () {
-        return this._tickSources;
+        return this.sources;
     };
 
     UTCTimeSystem.prototype.defaults = function (key) {

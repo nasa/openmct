@@ -118,7 +118,7 @@ define(['./TimeConductorMode'], function (TimeConductorMode) {
                 fixedTimeSystem.defaults.andReturn(defaults);
 
             });
-            it ("sets defaults from new time system", function() {
+            it ("sets defaults from new time system", function () {
                 mode = new TimeConductorMode(fixedModeMetaData, mockTimeConductor, mockTimeSystems);
                 spyOn(mode, "deltas");
                 mode.deltas.andCallThrough();
@@ -127,7 +127,7 @@ define(['./TimeConductorMode'], function (TimeConductorMode) {
                 expect(mockTimeConductor.bounds).toHaveBeenCalledWith(defaults.bounds);
                 expect(mode.deltas).toHaveBeenCalledWith(defaults.deltas);
             });
-            it ("If a tick source is available, sets the tick source", function() {
+            it ("If a tick source is available, sets the tick source", function () {
                 mode = new TimeConductorMode(realtimeModeMetaData, mockTimeConductor, mockTimeSystems);
                 mode.changeTimeSystem(realtimeTimeSystem);
 
@@ -139,7 +139,7 @@ define(['./TimeConductorMode'], function (TimeConductorMode) {
         describe("Setting a tick source", function () {
             var mockUnlistener;
 
-            beforeEach(function() {
+            beforeEach(function () {
                 mockUnlistener = jasmine.createSpy("unlistener");
                 mockTickSource.listen.andReturn(mockUnlistener);
 
@@ -147,31 +147,31 @@ define(['./TimeConductorMode'], function (TimeConductorMode) {
                 mode.tickSource(mockTickSource);
             });
 
-            it ("Unlistens from old tick source", function() {
+            it ("Unlistens from old tick source", function () {
                 mode.tickSource(mockTickSource);
                 expect(mockUnlistener).toHaveBeenCalled();
             });
 
-            it ("Listens to new tick source", function() {
+            it ("Listens to new tick source", function () {
                 expect(mockTickSource.listen).toHaveBeenCalledWith(mode.tick);
             });
 
-            it ("Sets 'follow' state on time conductor", function() {
+            it ("Sets 'follow' state on time conductor", function () {
                 expect(mockTimeConductor.follow).toHaveBeenCalledWith(true);
             });
 
-            it ("on destroy, unlistens from tick source", function() {
+            it ("on destroy, unlistens from tick source", function () {
                 mode.destroy();
                 expect(mockUnlistener).toHaveBeenCalled();
             });
         });
 
         describe("setting deltas", function () {
-            beforeEach(function() {
+            beforeEach(function () {
                 mode = new TimeConductorMode(realtimeModeMetaData, mockTimeConductor, mockTimeSystems);
             });
             it ("sets the bounds on the time conductor based on new delta" +
-                " values", function() {
+                " values", function () {
                 var deltas = {
                     start: 20,
                     end: 10
@@ -187,10 +187,10 @@ define(['./TimeConductorMode'], function (TimeConductorMode) {
         });
 
         describe("ticking", function () {
-            beforeEach(function() {
+            beforeEach(function () {
                 mode = new TimeConductorMode(realtimeModeMetaData, mockTimeConductor, mockTimeSystems);
             });
-            it ("sets bounds based on current delta values", function() {
+            it ("sets bounds based on current delta values", function () {
                 var deltas = {
                     start: 20,
                     end: 10
@@ -202,7 +202,7 @@ define(['./TimeConductorMode'], function (TimeConductorMode) {
 
                 expect(mockTimeConductor.bounds).toHaveBeenCalledWith({
                     start: time - deltas.start,
-                    end:time + deltas.end
+                    end: time + deltas.end
                 });
             });
         });

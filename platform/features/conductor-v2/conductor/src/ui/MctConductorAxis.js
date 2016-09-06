@@ -87,7 +87,7 @@ define(
                 //Define a custom format function
                 this.xAxis.tickFormat(function (tickValue) {
                     // Normalize date representations to numbers
-                    if (tickValue instanceof Date){
+                    if (tickValue instanceof Date) {
                         tickValue = tickValue.getTime();
                     }
                     return format.format(tickValue, {
@@ -127,7 +127,7 @@ define(
             }
         };
 
-        return function(conductor, formatService) {
+        return function (conductor, formatService) {
             return new MCTConductorAxis(conductor, formatService);
         };
     }

@@ -133,7 +133,7 @@ define(['./TimeConductorViewService'], function (TimeConductorViewService) {
                 ]);
 
                 viewService = new TimeConductorViewService(mockTimeConductor, mockTimeSystems);
-                viewService._mode = oldMode;
+                viewService.currentMode = oldMode;
                 viewService.mode('fixed');
                 expect(oldMode.destroy).toHaveBeenCalled();
             });
@@ -145,7 +145,7 @@ define(['./TimeConductorViewService'], function (TimeConductorViewService) {
                         metadata: {
                             mode: 'realtime'
                         },
-                        listen: function() {}
+                        listen: function () {}
                     };
                     tickingTimeSystem.tickSources.andReturn([mockRealtimeTickSource]);
 
@@ -165,7 +165,7 @@ define(['./TimeConductorViewService'], function (TimeConductorViewService) {
                         metadata: {
                             mode: 'realtime'
                         },
-                        listen: function() {}
+                        listen: function () {}
                     };
                     tickingTimeSystem.tickSources.andReturn([mockRealtimeTickSource]);
 

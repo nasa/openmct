@@ -30,7 +30,7 @@ define([], function () {
      * @interface
      * @constructor
      */
-    function TickSource () {
+    function TickSource() {
         this.listeners = [];
     }
 

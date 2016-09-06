@@ -76,7 +76,7 @@ define(
             }
 
             conductor.on('bounds', amendRequests);
-            return function() {
+            return function () {
                 unsubscribeFunc();
                 conductor.off('bounds', amendRequests);
             };

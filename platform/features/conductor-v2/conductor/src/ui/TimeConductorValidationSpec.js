@@ -34,7 +34,7 @@ define(['./TimeConductorValidation'], function (TimeConductorValidation) {
         });
 
         describe("Validates start and end values using Time Conductor", function () {
-            beforeEach(function() {
+            beforeEach(function () {
                 var mockBounds = {
                     start: 10,
                     end: 20

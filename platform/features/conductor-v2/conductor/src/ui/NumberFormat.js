@@ -34,7 +34,7 @@ define([], function () {
     }
 
     NumberFormat.prototype.format = function (value) {
-        if (isNaN(value)){
+        if (isNaN(value)) {
             return '';
         } else {
             return '' + value;

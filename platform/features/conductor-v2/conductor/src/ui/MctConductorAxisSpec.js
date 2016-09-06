@@ -71,7 +71,7 @@ define(['./MctConductorAxis'], function (MctConductorAxis) {
                 "range"
             ];
             d3 = jasmine.createSpyObj("d3", d3Functions);
-            d3Functions.forEach(function(func) {
+            d3Functions.forEach(function (func) {
                 d3[func].andReturn(d3);
             });
 
@@ -89,7 +89,7 @@ define(['./MctConductorAxis'], function (MctConductorAxis) {
             var mockTimeSystem;
             var mockFormat;
 
-            beforeEach(function() {
+            beforeEach(function () {
                 mockTimeSystem = jasmine.createSpyObj("timeSystem", [
                     "formats",
                     "isUTCBased"

@@ -229,7 +229,7 @@ define(
             // Respond to a display bounds change (requery for data)
             function changeDisplayBounds(event, bounds, follow) {
                 //'hack' for follow mode
-                if (follow === true){
+                if (follow === true) {
                     setBasePanZoom(bounds);
                 } else {
                     var domainAxis = $scope.axes[0];

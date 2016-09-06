@@ -239,7 +239,7 @@ define(
             it("sets status when plot becomes detached from time conductor", function () {
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
 
-                function boundsEvent(){
+                function boundsEvent() {
                     fireEvent("telemetry:display:bounds", [
                         {},
                         { start: 10, end: 100 },

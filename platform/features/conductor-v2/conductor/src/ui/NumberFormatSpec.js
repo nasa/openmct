@@ -30,13 +30,13 @@ define(['./NumberFormat'], function (NumberFormat) {
         it("The format function takes a string and produces a number", function () {
             var text = format.format(1);
             expect(text).toBe("1");
-            expect(typeof(text)).toBe("string");
+            expect(typeof text).toBe("string");
         });
 
         it("The parse function takes a string and produces a number", function () {
             var number = format.parse("1");
             expect(number).toBe(1);
-            expect(typeof(number)).toBe("number");
+            expect(typeof number).toBe("number");
         });
 
         it("validates that the input is a number", function () {

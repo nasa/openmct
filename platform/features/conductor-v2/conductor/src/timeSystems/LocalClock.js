@@ -25,7 +25,7 @@ define(['./TickSource'], function (TickSource) {
      * @implements TickSource
      * @constructor
      */
-    function LocalClock ($timeout, period) {
+    function LocalClock($timeout, period) {
         TickSource.call(this);
 
         this.metadata = {
@@ -56,7 +56,7 @@ define(['./TickSource'], function (TickSource) {
 
     LocalClock.prototype.tick = function () {
         var now = Date.now();
-        this.listeners.forEach(function (listener){
+        this.listeners.forEach(function (listener) {
             listener(now);
         });
         this.timeoutHandle = this.$timeout(this.tick.bind(this), this.period);
@@ -73,7 +73,7 @@ define(['./TickSource'], function (TickSource) {
         var listeners = this.listeners;
         listeners.push(listener);
 
-        if (listeners.length === 1){
+        if (listeners.length === 1) {
             this.start();
         }
 

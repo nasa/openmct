@@ -45,7 +45,7 @@ define(
             this.validation = new TimeConductorValidation(this.conductor);
 
             // Construct the provided time system definitions
-            this.timeSystems = timeSystems.map(function (timeSystemConstructor){
+            this.timeSystems = timeSystems.map(function (timeSystemConstructor) {
                 return timeSystemConstructor();
             });
 
@@ -53,7 +53,7 @@ define(
             this.initializeScope();
 
             this.conductor.on('bounds', this.setFormFromBounds);
-            this.conductor.on('follow', function (follow){
+            this.conductor.on('follow', function (follow) {
                 $scope.followMode = follow;
             });
             this.conductor.on('timeSystem', this.changeTimeSystem);
@@ -67,7 +67,7 @@ define(
         /**
          * @private
          */
-        TimeConductorController.prototype.initializeScope = function() {
+        TimeConductorController.prototype.initializeScope = function () {
             //Set time Conductor bounds in the form
             this.$scope.boundsModel = this.conductor.bounds();
 
@@ -126,10 +126,11 @@ define(
         TimeConductorController.prototype.setFormFromMode = function (mode) {
             this.$scope.modeModel.selectedKey = mode;
             //Synchronize scope with time system on mode
-            this.$scope.timeSystemModel.options = this.conductorViewService.availableTimeSystems()
+            this.$scope.timeSystemModel.options =
+                this.conductorViewService.availableTimeSystems()
                 .map(function (t) {
                     return t.metadata;
-            });
+                });
         };
 
         /**
@@ -204,13 +205,13 @@ define(
          * @param key
          * @see TimeConductorController#setTimeSystem
          */
-        TimeConductorController.prototype.selectTimeSystemByKey = function(key){
-            var selected = this.timeSystems.filter(function (timeSystem){
+        TimeConductorController.prototype.selectTimeSystemByKey = function (key) {
+            var selected = this.timeSystems.filter(function (timeSystem) {
                 return timeSystem.metadata.key === key;
             })[0];
             this.conductor.timeSystem(selected, selected.defaults().bounds);
         };
-        
+
         /**
          * Handles time system change from time conductor
          *
@@ -222,7 +223,7 @@ define(
          */
         TimeConductorController.prototype.changeTimeSystem = function (newTimeSystem) {
             if (newTimeSystem && (newTimeSystem !== this.$scope.timeSystemModel.selected)) {
-                if (newTimeSystem.defaults()){
+                if (newTimeSystem.defaults()) {
                     var deltas = newTimeSystem.defaults().deltas || {start: 0, end: 0};
                     var bounds = newTimeSystem.defaults().bounds || {start: 0, end: 0};
 

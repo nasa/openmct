@@ -25,7 +25,7 @@ define([], function () {
      * @interface
      * @constructor
      */
-    function TimeSystem () {
+    function TimeSystem() {
         /**
          * @typedef TimeSystemMetadata
          * @property {string} key
@@ -35,7 +35,6 @@ define([], function () {
          * @type {TimeSystemMetadata}
          */
         this.metadata = undefined;
-        this._tickSources = [];
     }
 
     /**

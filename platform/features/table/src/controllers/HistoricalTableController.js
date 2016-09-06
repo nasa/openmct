@@ -80,7 +80,7 @@ define(
         HistoricalTableController.prototype.boundsChange = function (event, bounds, follow) {
             // If in follow mode, don't bother re-subscribing, data will be
             // received from existing subscription.
-            if (follow!==true) {
+            if (follow !== true) {
                 this.subscribe();
             }
         };

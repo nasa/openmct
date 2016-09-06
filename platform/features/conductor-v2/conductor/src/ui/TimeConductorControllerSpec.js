@@ -58,13 +58,13 @@ define(['./TimeConductorController'], function (TimeConductorController) {
         });
 
         function getListener(name) {
-            return mockTimeConductor.on.calls.filter(function (call){
+            return mockTimeConductor.on.calls.filter(function (call) {
                 return call.args[0] === name;
             })[0].args[1];
         }
 
-        describe("", function (){
-            beforeEach(function() {
+        describe("", function () {
+            beforeEach(function () {
                 controller = new TimeConductorController(
                     mockScope,
                     mockWindow,
@@ -183,7 +183,7 @@ define(['./TimeConductorController'], function (TimeConductorController) {
             var ts2Metadata;
             var ts3Metadata;
             var mockTimeSystemConstructors;
-            
+
             beforeEach(function () {
                 mode = "realtime";
                 ts1Metadata = {
@@ -304,7 +304,7 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                         metadata: {
                             key: 'testTimeSystem'
                         },
-                        defaults: function() {
+                        defaults: function () {
                             return {
                                 bounds: defaultBounds
                             };
@@ -313,7 +313,7 @@ define(['./TimeConductorController'], function (TimeConductorController) {
 
                 mockTimeSystems = [
                     // Wrap as constructor function
-                    function() {
+                    function () {
                         return timeSystem;
                     }
                 ];

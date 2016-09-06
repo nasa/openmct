@@ -33,12 +33,12 @@ define(
         function TimeConductorMode(metadata, conductor, timeSystems) {
             this.conductor = conductor;
 
-            this._metadata = metadata;
-            this._deltas = undefined;
-            this._tickSource = undefined;
-            this._tickSourceUnlisten = undefined;
-            this._timeSystems = timeSystems;
-            this._availableTickSources = undefined;
+            this.mdata = metadata;
+            this.dlts = undefined;
+            this.source = undefined;
+            this.sourceUnlisten = undefined;
+            this.systems = timeSystems;
+            this.availableSources = undefined;
             this.changeTimeSystem = this.changeTimeSystem.bind(this);
             this.tick = this.tick.bind(this);
 
@@ -52,9 +52,9 @@ define(
 
             if (metadata.key === 'fixed') {
                 //Fixed automatically supports all time systems
-                this._availableTimeSystems = timeSystems;
+                this.availableSystems = timeSystems;
             } else {
-                this._availableTimeSystems = timeSystems.filter(function (timeSystem) {
+                this.availableSystems = timeSystems.filter(function (timeSystem) {
                     //Only include time systems that have tick sources that
                     // support the current mode
                     return timeSystem.tickSources().some(function (tickSource) {
@@ -86,10 +86,10 @@ define(
             this.deltas(defaults.deltas);
 
             // Tick sources are mode-specific, so restrict tick sources to only those supported by the current mode.
-            var key = this._metadata.key;
+            var key = this.mdata.key;
             var tickSources = timeSystem.tickSources();
             if (tickSources) {
-                this._availableTickSources = tickSources.filter(function (source){
+                this.availableSources = tickSources.filter(function (source) {
                     return source.metadata.mode === key;
                 });
             }
@@ -102,11 +102,11 @@ define(
          * @returns {ModeMetadata}
          */
         TimeConductorMode.prototype.metadata = function () {
-            return this._metadata;
+            return this.mdata;
         };
 
         TimeConductorMode.prototype.availableTimeSystems = function () {
-            return this._availableTimeSystems;
+            return this.availableSystems;
         };
 
         /**
@@ -115,7 +115,7 @@ define(
          * @returns {Array.<T>}
          */
         TimeConductorMode.prototype.availableTickSources = function (timeSystem) {
-            return this._availableTickSources;
+            return this.availableSources;
         };
 
         /**
@@ -126,26 +126,26 @@ define(
          */
         TimeConductorMode.prototype.tickSource = function (tickSource) {
             if (arguments.length > 0) {
-                if (this._tickSourceUnlisten) {
-                    this._tickSourceUnlisten();
+                if (this.sourceUnlisten) {
+                    this.sourceUnlisten();
                 }
-                this._tickSource = tickSource;
+                this.source = tickSource;
                 if (tickSource) {
-                    this._tickSourceUnlisten = tickSource.listen(this.tick);
+                    this.sourceUnlisten = tickSource.listen(this.tick);
                     //Now following a tick source
                     this.conductor.follow(true);
                 } else {
                     this.conductor.follow(false);
                 }
             }
-            return this._tickSource;
+            return this.source;
         };
 
         TimeConductorMode.prototype.destroy = function () {
             this.conductor.off('timeSystem', this.changeTimeSystem);
 
-            if (this._tickSourceUnlisten) {
-                this._tickSourceUnlisten();
+            if (this.sourceUnlisten) {
+                this.sourceUnlisten();
             }
         };
 
@@ -179,21 +179,21 @@ define(
             if (arguments.length !== 0) {
                 var oldEnd = this.conductor.bounds().end;
 
-                if (this._deltas && this._deltas.end !== undefined){
+                if (this.dlts && this.dlts.end !== undefined) {
                     //Calculate the previous raw end value (without delta)
-                    oldEnd = oldEnd - this._deltas.end;
+                    oldEnd = oldEnd - this.dlts.end;
                 }
 
-                this._deltas = deltas;
+                this.dlts = deltas;
 
                 var newBounds = {
-                    start: oldEnd - this._deltas.start,
-                    end: oldEnd + this._deltas.end
+                    start: oldEnd - this.dlts.start,
+                    end: oldEnd + this.dlts.end
                 };
 
                 this.conductor.bounds(newBounds);
             }
-            return this._deltas;
+            return this.dlts;
         };
 
         return TimeConductorMode;

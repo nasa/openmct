@@ -56,7 +56,7 @@ define([
      * the threshold required.
      * @private
      */
-    function getScaledFormat (d) {
+    function getScaledFormat(d) {
         var momentified = moment.utc(d);
         /**
          * Uses logic from d3 Time-Scales, v3 of the API. See
@@ -65,20 +65,32 @@ define([
          * Licensed
          */
         return [
-            [".SSS", function(m) { return m.milliseconds(); }],
-            [":ss", function(m) { return m.seconds(); }],
-            ["HH:mm", function(m) { return m.minutes(); }],
-            ["HH", function(m) { return m.hours(); }],
-            ["ddd DD", function(m) {
+            [".SSS", function (m) {
+                return m.milliseconds();
+            }],
+            [":ss", function (m) {
+                return m.seconds();
+            }],
+            ["HH:mm", function (m) {
+                return m.minutes();
+            }],
+            ["HH", function (m) {
+                return m.hours();
+            }],
+            ["ddd DD", function (m) {
                 return m.days() &&
                     m.date() !== 1;
             }],
-            ["MMM DD", function(m) { return m.date() !== 1; }],
-            ["MMMM", function(m) {
+            ["MMM DD", function (m) {
+                return m.date() !== 1;
+            }],
+            ["MMMM", function (m) {
                 return m.month();
             }],
-            ["YYYY", function() { return true; }]
-        ].filter(function (row){
+            ["YYYY", function () {
+                return true;
+            }]
+        ].filter(function (row) {
             return row[1](momentified);
         })[0][0];
     }
@@ -91,7 +103,7 @@ define([
      * @returns {string} the formatted date
      */
     UTCTimeFormat.prototype.format = function (value, scale) {
-        if (scale !== undefined){
+        if (scale !== undefined) {
             var scaledFormat = getScaledFormat(value, scale);
             if (scaledFormat) {
                 return moment.utc(value).format(scaledFormat);

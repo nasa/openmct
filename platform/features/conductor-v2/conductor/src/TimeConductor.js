@@ -112,7 +112,7 @@ define(['EventEmitter'], function (EventEmitter) {
     TimeConductor.prototype.bounds = function (newBounds) {
         if (arguments.length > 0) {
             var validationResult = this.validateBounds(newBounds);
-            if (validationResult !== true){
+            if (validationResult !== true) {
                 throw new Error(validationResult);
             }
             //Create a copy to avoid direct mutation of conductor bounds
