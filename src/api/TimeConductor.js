@@ -86,7 +86,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * time conductor ticks, regularly updating the bounds from a timing
      * source appropriate to the selected time system and mode of the time
      * conductor.
-     * @fires TimeConductor#follow
+     * @fires module:openmct.TimeConductor~follow
      * @param {boolean} followMode
      * @returns {boolean}
      * @memberof module:openmct.TimeConductor#
@@ -97,7 +97,8 @@ define(['EventEmitter'], function (EventEmitter) {
             this.followMode = followMode;
             /**
              * The TimeConductor has toggled into or out of follow mode.
-             * @event module:openmct.TimeConductor~follow
+             * @event follow
+             * @memberof module:openmct.TimeConductor~
              * @property {boolean} followMode true if follow mode is
              *           enabled, otherwise false.
              */
@@ -119,7 +120,7 @@ define(['EventEmitter'], function (EventEmitter) {
      *
      * @param {module:openmct.TimeConductorBounds~TimeConductorBounds} newBounds
      * @throws {Error} Validation error
-     * @fires TimeConductor#bounds
+     * @fires module:openmct.TimeConductor~bounds
      * @returns {module:openmct.TimeConductorBounds~TimeConductorBounds}
      * @memberof module:openmct.TimeConductor#
      * @method bounds
@@ -130,7 +131,8 @@ define(['EventEmitter'], function (EventEmitter) {
             this.boundsVal = newBounds;
             /**
              * The start time, end time, or both have been updated.
-             * @event module:openmct.TimeConductor~bounds
+             * @event bounds
+             * @memberof module:openmct.TimeConductor~
              * @property {TimeConductorBounds} bounds
              */
             this.emit('bounds', this.boundsVal);
@@ -176,7 +178,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * Get or set the Time of Interest. The Time of Interest is the temporal
      * focus of the current view. It can be manipulated by the user from the
      * time conductor or from other views.
-     * @fires TimeConductor#timeOfInterest
+     * @fires module:openmct.TimeConductor~timeOfInterest
      * @param newTOI
      * @returns {number} the current time of interest
      * @memberof module:openmct.TimeConductor#
@@ -187,7 +189,8 @@ define(['EventEmitter'], function (EventEmitter) {
             this.toi = newTOI;
             /**
              * The Time of Interest has moved.
-             * @event module:openmctTimeConductor~timeOfInterest
+             * @event timeOfInterest
+             * @memberof module:openmct.TimeConductor~
              * @property {number} Current time of interest
              */
             this.emit('timeOfInterest', this.toi);
