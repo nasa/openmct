@@ -1,15 +1,15 @@
 define([], function () {
-    var self = this;
-
     function SaveInProgressDialog(dialogService, $timeout) {
-        self.dialogService = dialogService;
-        self.$timeout = $timeout;
+        this.dialogService = dialogService;
+        this.$timeout = $timeout;
 
-        self.dialog = undefined;
-        self.timeoutId = undefined;
+        this.dialog = undefined;
+        this.timeoutId = undefined;
     }
 
     SaveInProgressDialog.prototype.show = function () {
+        var self = this;
+
         self.$timeout.cancel(self.timeoutId);
         self.timeoutId = self.$timeout(function () {
             self.dialog = self.dialogService.showBlockingMessage({
@@ -22,9 +22,9 @@ define([], function () {
     };
 
     SaveInProgressDialog.prototype.hide = function () {
-        self.$timeout.cancel(self.timeoutId);
-        if (self.dialog) {
-            self.dialog.dismiss();
+        this.$timeout.cancel(this.timeoutId);
+        if (this.dialog) {
+            this.dialog.dismiss();
         }
     };
 
