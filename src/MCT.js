@@ -38,16 +38,11 @@ define([
             ]
         } };
 
-        /**
-         *
-         * @type {module:openmct.Selection}
-         * @memberof module:openmct.MCT#
-         * @name selection
-         */
         this.selection = new Selection();
 
         /**
-         *
+         * MCT's time conductor, which may be used to synchronize view contents
+         * for telemetry- or time-based views.
          * @type {module:openmct.TimeConductor}
          * @memberof module:openmct.MCT#
          * @name conductor
