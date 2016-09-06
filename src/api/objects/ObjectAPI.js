@@ -128,7 +128,7 @@ define([
 
     /**
      * Add a root-level object.
-     * @param {module:openmct.Identifier} the identifier of the root-level
+     * @param {module:openmct.Identifier} id the identifier of the root-level
      *        object to add.
      * @method addRoot
      * @memberof module:openmct.ObjectAPI#
@@ -139,7 +139,7 @@ define([
 
     /**
      * Remove a root-level object.
-     * @param {module:openmct.Identifier} the identifier of the root-level
+     * @param {module:openmct.Identifier} id the identifier of the root-level
      *        object to remove.
      * @method removeRoot
      * @memberof module:openmct.ObjectAPI#
