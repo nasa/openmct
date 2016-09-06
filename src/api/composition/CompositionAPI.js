@@ -18,6 +18,15 @@ define([
         });
     };
 
+    /**
+     * Retrieve the composition (if any) of this domain object. The
+     * composition of a domain object is the list of other domain objects
+     * it "contains" (for instance, that should be displayed beneath it
+     * in the tree.)
+     * @method Composition
+     * @returns {module:openmct.CompositionCollection}
+     * @memberof module:openmct.MCT
+     */
     function composition(object) {
         var provider = getProvider(object);
 

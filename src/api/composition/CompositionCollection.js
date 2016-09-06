@@ -8,6 +8,20 @@ define([
     objectUtils
 ) {
 
+
+    /**
+     * A CompositionCollection represents the list of domain objects contained
+     * by another domain object. It provides methods for loading this
+     * list asynchronously, and for modifying this list.
+     *
+     * @class CompositionCollection
+     * @param {module:openmct.DomainObject} domainObject the domain object
+     *        whose composition will be contained
+     * @param {module:openmct.CompositionProvider} provider the provider
+     *        to use to retrieve other domain objects
+     * @memberof module:openmct
+     * @augments EventEmitter
+     */
     function CompositionCollection(domainObject, provider) {
         EventEmitter.call(this);
         this.domainObject = domainObject;
@@ -38,16 +52,53 @@ define([
         this.remove(child, true);
     };
 
+    /**
+     * Get the index of a domain object within this composition. If the
+     * domain object is not contained here, -1 will be returned.
+     *
+     * A call to [load]{@link module:openmct.CompositionCollection#load}
+     * must have resolved before using this method.
+     *
+     * @param {module:openmct.DomainObject} child the domain object for which
+     *        an index should be retrieved
+     * @returns {number} the index of that domain object
+     * @memberof module:openmct.CompositionCollection#
+     * @name indexOf
+     */
     CompositionCollection.prototype.indexOf = function (child) {
         return _.findIndex(this._children, function (other) {
             return objectUtils.equals(child, other);
         });
     };
 
+    /**
+     * Get the index of a domain object within this composition.
+     *
+     * A call to [load]{@link module:openmct.CompositionCollection#load}
+     * must have resolved before using this method.
+     *
+     * @param {module:openmct.DomainObject} child the domain object for which
+     *        containment should be checked
+     * @returns {boolean} true if the domain object is contained here
+     * @memberof module:openmct.CompositionCollection#
+     * @name contains
+     */
     CompositionCollection.prototype.contains = function (child) {
         return this.indexOf(child) !== -1;
     };
 
+    /**
+     * Add a domain object to this composition.
+     *
+     * A call to [load]{@link module:openmct.CompositionCollection#load}
+     * must have resolved before using this method.
+     *
+     * @param {module:openmct.DomainObject} child the domain object to add
+     * @param {boolean} skipMutate true if the underlying provider should
+     *        not be updated
+     * @memberof module:openmct.CompositionCollection#
+     * @name add
+     */
     CompositionCollection.prototype.add = function (child, skipMutate) {
         if (!this._children) {
             throw new Error("Must load composition before you can add!");
@@ -66,6 +117,14 @@ define([
         }
     };
 
+    /**
+     * Load the domain objects in this composition.
+     *
+     * @returns {Promise.<Array.<module:openmct.DomainObject>>} a promise for
+     *          the domain objects in this composition
+     * @memberof {module:openmct.CompositionCollection#}
+     * @name load
+     */
     CompositionCollection.prototype.load = function () {
         return this.provider.load(this.domainObject)
             .then(function (children) {
@@ -78,6 +137,18 @@ define([
             }.bind(this));
     };
 
+    /**
+     * Remove a domain object from this composition.
+     *
+     * A call to [load]{@link module:openmct.CompositionCollection#load}
+     * must have resolved before using this method.
+     *
+     * @param {module:openmct.DomainObject} child the domain object to remove
+     * @param {boolean} skipMutate true if the underlying provider should
+     *        not be updated
+     * @memberof module:openmct.CompositionCollection#
+     * @name remove
+     */
     CompositionCollection.prototype.remove = function (child, skipMutate) {
         if (!this.contains(child)) {
             if (skipMutate) {
@@ -94,6 +165,12 @@ define([
         }
     };
 
+    /**
+     * Stop using this composition collection. This will release any resources
+     * associated with this collection.
+     * @name destroy
+     * @memberof module:openmct.CompositionCollection
+     */
     CompositionCollection.prototype.destroy = function () {
         if (this.provider.off) {
             this.provider.off(
