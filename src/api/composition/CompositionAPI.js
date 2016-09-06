@@ -25,7 +25,7 @@ define([
      * in the tree.)
      * @method Composition
      * @returns {module:openmct.CompositionCollection}
-     * @memberof module:openmct.MCT
+     * @memberof module:openmct.MCT#
      */
     function composition(object) {
         var provider = getProvider(object);
