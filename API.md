@@ -152,9 +152,6 @@ openmct.composition.addProvider({
 });
 ```
 
-
-
-
 ## Using Open MCT
 
 When implementing new features, it is useful and sometimes necessary to
@@ -191,6 +188,28 @@ a view (or part of a view) selectable:
 
 ```
 openmct.gestures.selectable(myHtmlElement, myDomainObject);
+```
+
+### Working with Domain Objects
+
+The [object API]{@link module:openmct.ObjectAPI} provides useful methods
+for working with domain objects.
+
+To make changes to a domain object, use the
+[`mutate`]{@link module:openmct.ObjectAPI#mutate} method:
+
+```
+openmct.objects.mutate(myDomainObject, "name", "New name!");
+```
+
+Making modifications in this fashion allows other usages of the domain
+object to remain up to date using the
+[`observe`]{@link module:openmct.ObjectAPI#observe} method:
+
+```
+openmct.objects.observe(myDomainObject, "name", function (newName) {
+    myLabel.textContent = newName;
+});
 ```
 
 ## Plugins
