@@ -154,6 +154,15 @@ openmct.conductor.on('bounds', function (newBounds) {
 });
 ```
 
+### Support Common Gestures
+
+Custom views may also want to support common gestures using the
+[gesture API]{@link module:openmct.GestureAPI}. For instance, to make
+a view (or part of a view) selectable:
+
+```
+openmct.gestures.selectable(myHtmlElement, myDomainObject);
+```
 
 ## Plugins
 
