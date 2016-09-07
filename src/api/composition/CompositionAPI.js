@@ -55,7 +55,6 @@ define([
      *
      * @method addProvider
      * @param {module:openmct.CompositionProvider} provider the provider to add
-     * @returns {module:openmct.CompositionCollection}
      * @memberof module:openmct.CompositionAPI#
      */
     composition.addProvider = function (provider) {
