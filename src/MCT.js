@@ -49,6 +49,21 @@ define([
          */
         this.conductor = new TimeConductor();
 
+        /**
+         * An interface for interacting with the composition of domain objects.
+         * The composition of a domain object is the list of other domain
+         * objects it "contains" (for instance, that should be displayed
+         * beneath it in the tree.)
+         *
+         * `composition` may be called as a function, in which case it acts
+         * as [`composition.get`]{@link module:openmct.CompositionAPI#get}.
+         *
+         * @type {module:openmct.CompositionAPI}
+         * @memberof module:openmct.MCT#
+         * @name composition
+         */
+        this.composition = api.Composition;
+
         this.TimeConductor = this.conductor; // compatibility for prototype
         this.on('navigation', this.selection.clear.bind(this.selection));
     }
@@ -66,7 +81,7 @@ define([
      *
      * @type {module:openmct.ObjectAPI}
      * @memberof module:openmct.MCT#
-     * @name Objects
+     * @name objects
      */
     MCT.Objects = api.Objects;
 
@@ -76,7 +91,7 @@ define([
      *
      * @type {module:openmct.TelemetryAPI}
      * @memberof module:openmct.MCT#
-     * @name Telemetry
+     * @name telemetry
      */
 
     MCT.prototype.legacyExtension = function (category, extension) {

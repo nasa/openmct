@@ -19,13 +19,14 @@ define([
     };
 
     /**
-     * Retrieve the composition (if any) of this domain object. The
-     * composition of a domain object is the list of other domain objects
+     * An interface for interacting with the composition of domain objects.
+     * The composition of a domain object is the list of other domain objects
      * it "contains" (for instance, that should be displayed beneath it
      * in the tree.)
-     * @method Composition
+     *
+     * @interface CompositionAPI
      * @returns {module:openmct.CompositionCollection}
-     * @memberof module:openmct.MCT#
+     * @memberof module:openmct
      */
     function composition(object) {
         var provider = getProvider(object);
@@ -35,8 +36,28 @@ define([
         }
 
         return new CompositionCollection(object, provider);
-    };
+    }
 
+    /**
+     * Retrieve the composition (if any) of this domain object.
+     *
+     * @method get
+     * @returns {module:openmct.CompositionCollection}
+     * @memberof module:openmct.CompositionAPI#
+     */
+    composition.get = composition;
+
+    /**
+     * Add a composition provider.
+     *
+     * Plugins can add new composition providers to change the loading
+     * behavior for certain domain objects.
+     *
+     * @method addProvider
+     * @param {module:openmct.CompositionProvider} provider the provider to add
+     * @returns {module:openmct.CompositionCollection}
+     * @memberof module:openmct.CompositionAPI#
+     */
     composition.addProvider = function (provider) {
         PROVIDER_REGISTRY.unshift(provider);
     };
