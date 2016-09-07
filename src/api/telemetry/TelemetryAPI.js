@@ -207,9 +207,12 @@ define([
 
         var Telemetry = {
             /**
-             * Register a new telemetry provider.
+             * Register a telemetry provider with the telemetry service. This
+             * allows you to connect alternative telemetry sources.
              * @method registerProvider
              * @memberof module:openmct.TelemetryAPI#
+             * @param {module:openmct.TelemetryProvider} provider the new
+             *        telemetry provider
              */
             registerProvider: registerProvider,
 
@@ -217,6 +220,8 @@ define([
              * Register a new limit evaluator.
              * @method registerEvaluator
              * @memberof module:openmct.TelemetryAPI#
+             * @param {module:openmct.LimitEvaluatorProvider} provider the
+             *        new limit evaluator
              */
             registerEvaluator: registerEvaluator,
 
@@ -239,7 +244,7 @@ define([
              * Subscribe to realtime telemetry for a specific domain object.
              * The callback will be called whenever data is received from a
              * realtime provider.
-             * 
+             *
              * @method subscribe
              * @memberof module:openmct.TelemetryAPI#
              * @param {module:openmct.DomainObject} domainObject the object
@@ -265,11 +270,15 @@ define([
             },
 
             /**
-             * Get a telemetry formatter for this domain object.
+             * Telemetry formatters help you format telemetry values for
+             * display. Under the covers, they use telemetry metadata to
+             * interpret your telemetry data, and then they use the format API
+             * to format that data for display.
+             *
              * @param {module:openmct.DomainObject} domainObject the domain
              *        object for which to format telemetry
              * @returns {module:openmct.TelemetryAPI~TelemetryFormatter}
-             * @method Formatter
+             * @method formatter
              * @memberof module:openmct.TelemetryAPI#
              */
             Formatter: function (domainObject) {
@@ -284,10 +293,12 @@ define([
 
             /**
              * Get a limit evaluator for this domain object.
+             * Limit Evaluators help you evaluate limit and alarm status of individual telemetry datums for display purposes without having to interact directly with the Limit API.
+             *
              * @param {module:openmct.DomainObject} domainObject the domain
              *        object for which to evaluate limits
              * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
-             * @method LimitEvaluator
+             * @method limitEvaluator
              * @memberof module:openmct.TelemetryAPI#
              */
             LimitEvaluator: function (domainObject) {
