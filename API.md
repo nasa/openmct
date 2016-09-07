@@ -164,7 +164,7 @@ The plugin will be invoked to configure Open MCT before it is started.
 
 Plugins configure Open MCT, and should utilize the
 [`openmct`]{@link module:openmct} module to do so, as summarized above in
-"Configuring Open MCT."
+"Configuring Open MCT" and "Using Open MCT" above.
 
 ### Distributing Plugins
 
