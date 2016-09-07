@@ -64,6 +64,46 @@ define([
          */
         this.composition = api.Composition;
 
+        /**
+         * Registry for views of domain objects which should appear in the
+         * main viewing area.
+         *
+         * @type {module:openmct.ViewRegistry}
+         * @memberof module:openmct.MCT#
+         * @name mainViews
+         */
+
+        /**
+         * Registry for views which should appear in the Inspector area.
+         * These views will be chosen based on selection state, so
+         * providers should be prepared to test arbitrary objects for
+         * viewability.
+         *
+         * @type {module:openmct.ViewRegistry}
+         * @memberof module:openmct.MCT#
+         * @name inspectors
+         */
+
+        /**
+         * Registry for views which should appear in the status indicator area.
+         * @type {module:openmct.ViewRegistry}
+         * @memberof module:openmct.MCT#
+         * @name indicators
+         */
+
+        /**
+         * Registry for views which should appear in the toolbar area while
+         * editing.
+         *
+         * These views will be chosen based on selection state, so
+         * providers should be prepared to test arbitrary objects for
+         * viewability.
+         *
+         * @type {module:openmct.ViewRegistry}
+         * @memberof module:openmct.MCT#
+         * @name toolbars
+         */
+
         this.TimeConductor = this.conductor; // compatibility for prototype
         this.on('navigation', this.selection.clear.bind(this.selection));
     }
@@ -112,14 +152,6 @@ define([
         });
     };
 
-    /**
-     * Register a new type of view.
-     *
-     * @param {string} region the region identifier (see mct.regions)
-     * @param {module:openmct.ViewProvider} provider the provider for this view
-     * @method view
-     * @memberof module:openmct.MCT#
-     */
     MCT.prototype.view = function (region, definition) {
         var viewKey = region + uuid();
         var adaptedViewKey = "adapted-view-" + region;
