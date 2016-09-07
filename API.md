@@ -142,6 +142,19 @@ openmct.composition(myObject).load().then(function (childObjects) {
 });
 ```
 
+### Synchronizing with the Time Conductor
+
+Views which wish to remain synchronized with the state of Open MCT's
+time conductor should utilize
+[`openmct.conductor`]{@link module:openmct.TimeConductor}:
+
+```
+openmct.conductor.on('bounds', function (newBounds) {
+    requestTelemetry(newBounds.start, newBounds.end).then(displayTelemetry);
+});
+```
+
+
 ## Plugins
 
 While you can register new features with Open MCT directly, it is generally
