@@ -14,7 +14,7 @@ define([
      * by another domain object. It provides methods for loading this
      * list asynchronously, and for modifying this list.
      *
-     * @class CompositionCollection
+     * @interface CompositionCollection
      * @param {module:openmct.DomainObject} domainObject the domain object
      *        whose composition will be contained
      * @param {module:openmct.CompositionProvider} provider the provider
