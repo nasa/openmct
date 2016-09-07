@@ -36,8 +36,8 @@ define([
      *        to check
      * @returns {boolean} true if this provider can provide
      *          composition for a given domain object
-     * @memberof {module:openmct.CompositionProvider#}
-     * @name appliesTo
+     * @memberof module:openmct.CompositionProvider#
+     * @method appliesTo
      */
     DefaultCompositionProvider.prototype.appliesTo = function (domainObject) {
         return !!domainObject.composition;
@@ -50,8 +50,8 @@ define([
      *        for which to load composition
      * @returns {Promise.<Array.<module:openmct.DomainObject>>} a promise for
      *          the domain objects in this composition
-     * @memberof {module:openmct.CompositionProvider#}
-     * @name load
+     * @memberof module:openmct.CompositionProvider#
+     * @method load
      */
     DefaultCompositionProvider.prototype.load = function (domainObject) {
         return Promise.all(domainObject.composition.map(ObjectAPI.get));
@@ -95,11 +95,14 @@ define([
     /**
      * Remove a domain object from another domain object's composition.
      *
+     * This method is optional; if not present, adding to a domain object's
+     * composition using this provider will be disallowed.
+     *
      * @param {module:openmct.DomainObject} domainObject the domain object
      *        which should have its composition modified
      * @param {module:openmct.DomainObject} child the domain object to remove
      * @memberof module:openmct.CompositionProvider#
-     * @name remove
+     * @method remove
      */
     DefaultCompositionProvider.prototype.remove = function (domainObject, child) {
         // TODO: this needs to be synchronized via mutation
@@ -111,11 +114,14 @@ define([
     /**
      * Add a domain object to another domain object's composition.
      *
+     * This method is optional; if not present, adding to a domain object's
+     * composition using this provider will be disallowed.
+     *
      * @param {module:openmct.DomainObject} domainObject the domain object
      *        which should have its composition modified
      * @param {module:openmct.DomainObject} child the domain object to add
      * @memberof module:openmct.CompositionProvider#
-     * @name add
+     * @method add
      */
     DefaultCompositionProvider.prototype.add = function (domainObject, child) {
         // TODO: this needs to be synchronized via mutation

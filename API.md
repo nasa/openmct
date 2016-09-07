@@ -106,6 +106,42 @@ openmct.mainViews.addProvider({
 });
 ```
 
+### Adding Composition Providers
+
+The "composition" of a domain object is the list of objects it contains,
+as shown (for example) in the tree for browsing. Open MCT provides a
+default solution for composition, but there may be cases where you want
+to provide the composition of a certain object (or type of object) dynamically.
+For this, you can add a new CompositionProvider:
+
+```
+openmct.composition.addProvider({
+    appliesTo: function (domainObject) {
+        return domainObject.type === 'my-type';
+    },
+    load: function (domainObject) {
+        return Promise.resolve(myDomainObjects);
+    }
+});
+```
+
+
+## Using Open MCT
+
+When implementing new features, it is useful and sometimes necessary to
+utilize functionality exposed by Open MCT.
+
+### Retrieving Composition
+
+To limit which objects are loaded at any given time, the composition of
+a domain object must be requested asynchronously:
+
+```
+openmct.composition(myObject).load().then(function (childObjects) {
+    childObjects.forEach(doSomething);
+});
+```
+
 ## Plugins
 
 While you can register new features with Open MCT directly, it is generally
