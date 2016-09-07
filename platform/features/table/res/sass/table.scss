@@ -37,6 +37,9 @@
     table-layout: fixed;
     thead {
         display: block;
+        position: fixed;
+        background-color: rgba(71,71,71, 1);
+        z-index: 1;
         tr {
             display: block;
             white-space: nowrap;
