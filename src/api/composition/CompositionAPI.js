@@ -61,6 +61,33 @@ define([
         PROVIDER_REGISTRY.unshift(provider);
     };
 
+    /**
+     * Add a composition policy. Composition policies may disallow domain
+     * objects from containing other domain objects.
+     *
+     * @method addPolicy
+     * @param {module:openmct.CompositionAPI~CompositionPolicy} policy
+     *        the policy to add
+     * @memberof module:openmct.CompositionAPI#
+     */
+
+    /**
+     * A composition policy is a function which either allows or disallows
+     * placing one object in another's composition.
+     *
+     * Open MCT's policy model requires consensus, so any one policy may
+     * reject composition by returning false. As such, policies should
+     * generally be written to return true in the default case.
+     *
+     * @callback CompositionPolicy
+     * @memberof module:openmct.CompositionAPI~
+     * @param {module:openmct.DomainObject} containingObject the object which
+     *        would act as a container
+     * @param {module:openmct.DomainObject} containedObject the object which
+     *        would be contained
+     * @returns {boolean} false if this composition should be disallowed
+     */
+
     composition.addProvider(new DefaultCompositionProvider());
 
     return composition;

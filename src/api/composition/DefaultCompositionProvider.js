@@ -87,14 +87,7 @@ define([
         );
     };
 
-    /**
-     * Check if one domain object can contain another.
-     * @param {module:openmct.DomainObject} domainObject the domain object
-     *        which will act as the container
-     * @param {module:openmct.DomainObject} child the domain object to be
-     *        contained
-     * @returns {boolean} true if this is allowed
-     */
+
     DefaultCompositionProvider.prototype.canContain = function (domainObject, child) {
         return true;
     };

@@ -168,13 +168,6 @@ define([
         }
     };
 
-    /**
-     * Check if this composition can contain this domain object.
-     * @name canContain
-     * @memberof module:openmct.CompositionCollection
-     * @param {module:openmct.DomainObject} the domain object to contain
-     * @returns {boolean} true if containment is allowed
-     */
     CompositionCollection.prototype.canContain = function (domainObject) {
         return this.provider.canContain(this.domainObject, domainObject);
     };
