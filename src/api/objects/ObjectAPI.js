@@ -151,16 +151,23 @@ define([
     };
 
     /**
-     * Get an interface for observing and mutating this domain object.
+     * Modify a domain object.
      * @param {module:openmct.DomainObject} object the object to mutate
-     * @returns {module:openmct.MutableObject} an interface for mutating
-     *          and observing this domain object
-     * @method getMutable
+     * @param {string} path the property to modify
+     * @param {*} value the new value for this property
+     * @method mutate
      * @memberof module:openmct.ObjectAPI#
      */
-    Objects.getMutable = function (object) {
-        return new MutableObject(object);
-    };
+
+    /**
+     * Observe changes to a domain object.
+     * @param {module:openmct.DomainObject} object the object to observe
+     * @param {string} path the property to observe
+     * @param {Function} callback a callback to invoke when new values for
+     *        this property are observed
+     * @method observe
+     * @memberof module:openmct.ObjectAPI#
+     */
 
     /**
      * Uniquely identifies a domain object.
