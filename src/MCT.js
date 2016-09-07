@@ -104,6 +104,16 @@ define([
          * @name toolbars
          */
 
+        /**
+         * Registry for domain object types which may exist within this
+         * instance of Open MCT.
+         *
+         * @type {module:openmct.TypeRegistry}
+         * @memberof module:openmct.MCT#
+         * @name types
+         */
+
+
         this.TimeConductor = this.conductor; // compatibility for prototype
         this.on('navigation', this.selection.clear.bind(this.selection));
     }
@@ -194,13 +204,6 @@ define([
         });
     };
 
-    /**
-     * Register a new [type]{@link module:openmct.Type} of domain object.
-     * @param {string} key a unique identifier for this type of object
-     * @param {module:openmct.Type} type the new type
-     * @memberof module:openmct.MCT#
-     * @method type
-     */
     MCT.prototype.type = function (key, type) {
         var legacyDef = type.toLegacyDefinition();
         legacyDef.key = key;

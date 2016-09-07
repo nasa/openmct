@@ -4,6 +4,7 @@ define([], function () {
      * A ViewRegistry maintains the definitions for different kinds of views
      * that may occur in different places in the user interface.
      * @interface ViewRegistry
+     * @memberof module:openmct
      */
     function ViewRegistry() {
 
