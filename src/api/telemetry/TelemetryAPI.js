@@ -64,6 +64,12 @@ define([
      * @property {string} units the units associated with this property
      * @property {boolean} temporal true if this property is a timestamp, or
      *           may be otherwise used to order telemetry in a time-like fashion
+     * @property {boolean} numeric true if the values for this property
+     *           can be interpreted plainly as numbers
+     * @property {boolean} enumerated true if this property may have only
+     *           certain specific values
+     * @property {string} [values] for enumerated states, an ordered list
+     *           of possible values
      */
 
 
