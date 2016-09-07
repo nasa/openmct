@@ -91,6 +91,12 @@ define([
                     "theme": "snow"
                 }
             ],
+            "templates": [
+                {
+                    "key": "time-conductor",
+                    "template": timeConductorTemplate
+                }
+            ],
             "representations": [
                 {
                     "key": "time-conductor",
