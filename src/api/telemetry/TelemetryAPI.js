@@ -73,6 +73,19 @@ define([
      *           of possible values
      */
 
+    /**
+     * Describes and bounds requests for telemetry data.
+     *
+     * @typedef TelemetryRequest
+     * @memberof module:openmct.TelemetryAPI~
+     * @property {string} sort the key of the property to sort by
+     * @property {*} start the lower bound for values of the sorting property
+     * @property {*} end the upper bound for values of the sorting property
+     * @property {string[]} strategies symbolic identifiers for strategies
+     *           (such as `minmax`) which may be recognized by providers;
+     *           these will be tried in order until an appropriate provider
+     *           is found
+     */
 
     /**
      * An interface for retrieving telemetry data associated with a domain
