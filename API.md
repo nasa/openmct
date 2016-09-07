@@ -68,10 +68,10 @@ Short examples follow; see the linked documentation for further details.
 ### Adding Domain Object Types
 
 Custom types may be registered via
-[`openmct.type`]{@link module:openmct.MCT#type}:
+[`openmct.types`]{@link module:openmct.MCT#types}:
 
 ```
-openmct.type('my-type', new openmct.Type({
+openmct.types.addType('my-type', new openmct.Type({
     label: "My Type",
     description: "This is a type that I added!"
 });
@@ -79,11 +79,24 @@ openmct.type('my-type', new openmct.Type({
 
 ### Adding Views
 
-Custom views may be registered via
-[`openmct.type`]{@link module:openmct.MCT#type}:
+Custom views may be registered based on the region in the application
+where they should appear:
+
+* [`openmct.mainViews`]{@link module:openmct.MCT#mainViews} is a registry
+  of views of domain objects which should appear in the main viewing area.
+* [`openmct.inspectors`]{@link module:openmct.MCT#inspectors} is a registry
+  of views of domain objects and/or active selections, which should appear in
+  the Inspector.
+* [`openmct.toolbars`]{@link module:openmct.MCT#toolbars} is a registry
+  of views of domain objects and/or active selections, which should appear in
+  the toolbar area while editing.
+* [`openmct.indicators`]{@link module:openmct.MCT#inspectors} is a registry
+  of views which should appear in the status area of the application.
+
+Example:
 
 ```
-openmct.view(openmct.regions.main, {
+openmct.mainViews.addProvider({
     canView: function (domainObject) {
         return domainObject.type === 'my-type';
     },
