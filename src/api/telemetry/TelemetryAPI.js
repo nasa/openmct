@@ -61,7 +61,7 @@ define([
      * @property {string} key the name of the property in the datum which
      *           contains this telemetry value
      * @property {string} name the human-readable name for this property
-     * @property {string} units the units associated with this property
+     * @property {string} [units] the units associated with this property
      * @property {boolean} [temporal] true if this property is a timestamp, or
      *           may be otherwise used to order telemetry in a time-like
      *           fashion; default is false
@@ -295,7 +295,7 @@ define([
             /**
              * Register a telemetry provider with the telemetry service. This
              * allows you to connect alternative telemetry sources.
-             * @method registerProvider
+             * @method addProvider
              * @memberof module:openmct.TelemetryAPI#
              * @param {module:openmct.TelemetryAPI~TelemetryProvider} provider the new
              *        telemetry provider
@@ -304,7 +304,7 @@ define([
              *        default provider (when no strategy is requested or no
              *        matching strategy is found.)
              */
-            registerProvider: registerProvider,
+            addProvider: registerProvider,
 
             /**
              * Request historical telemetry for a domain object.
@@ -362,6 +362,11 @@ define([
              * interpret your telemetry data, and then they use the format API
              * to format that data for display.
              *
+             * This method is optional.
+             * If a provider does not implement this method, it is presumed
+             * that all telemetry associated with this domain object can
+             * be formatted correctly by string coercion.
+             *
              * @param {module:openmct.DomainObject} domainObject the domain
              *        object for which to format telemetry
              * @returns {module:openmct.TelemetryAPI~TelemetryFormatter}
@@ -381,6 +386,10 @@ define([
             /**
              * Get a limit evaluator for this domain object.
              * Limit Evaluators help you evaluate limit and alarm status of individual telemetry datums for display purposes without having to interact directly with the Limit API.
+             *
+             * This method is optional.
+             * If a provider does not implement this method, it is presumed
+             * that no limits are defined for this domain object's telemetry.
              *
              * @param {module:openmct.DomainObject} domainObject the domain
              *        object for which to evaluate limits

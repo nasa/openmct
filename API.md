@@ -152,6 +152,41 @@ openmct.composition.addProvider({
 });
 ```
 
+### Adding Telemetry Providers
+
+When connecting to a new telemetry source, you will want to register a new
+[telemetry provider]{@link module:openmct.TelemetryAPI~TelemetryProvider}
+with the [telemetry API]{@link module:openmct.TelemetryAPI#addProvider}:
+
+```
+openmct.telemetry.addProvider({
+    canProvideTelemetry: function (domainObject) {
+        return domainObject.type === 'my-type';
+    },
+    properties: function (domainObject) {
+        return [
+            { key: 'value', name: "Temperature", units: "degC" },
+            { key: 'time', name: "UTC" }
+        ];
+    },
+    request: function (domainObject, options) {
+        var telemetryId = domainObject.myTelemetryId;
+        return myAdapter.request(telemetryId, options.start, options.end);
+    },
+    subscribe: function (domainObject, callback) {
+        var telemetryId = domainObject.myTelemetryId;
+        myAdapter.subscribe(telemetryId, callback);
+        return myAdapter.unsubscribe.bind(myAdapter, telemetryId, callback);
+    }
+});
+```
+
+The implementations for `request` and `subscribe` can vary depending on the
+nature of the endpoint which will provide telemetry. In the example above,
+it is assumed that `myAdapter` contains the specific implementations
+(HTTP requests, WebSocket connections, etc.) associated with some telemetry
+source.
+
 ## Using Open MCT
 
 When implementing new features, it is useful and sometimes necessary to
