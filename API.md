@@ -106,13 +106,40 @@ openmct.mainViews.addProvider({
 });
 ```
 
+### Adding a Root-level Object
+
+In many cases, you'd like a certain object (or a certain hierarchy of
+objects) to be accessible from the top level of the application (the
+tree on the left-hand side of Open MCT.) It is typical to expose a telemetry
+dictionary as a hierarchy of telemetry-providing domain objects in this
+fashion.
+
+To do so, use the [`addRoot`]{@link module:openmct.ObjectAPI#addRoot} method
+of the [object API]{@link module:openmct.ObjectAPI}:
+
+```
+openmct.objects.addRoot({
+    identifier: { key: "my-key", namespace: "my-namespace" }
+    name: "My Root-level Object",
+    type: "my-type"
+});
+```
+
+You can also remove this root-level object via its identifier:
+
+```
+openmct.objects.removeRoot({ key: "my-key", namespace: "my-namespace" });
+```
+
 ### Adding Composition Providers
 
 The "composition" of a domain object is the list of objects it contains,
 as shown (for example) in the tree for browsing. Open MCT provides a
 default solution for composition, but there may be cases where you want
 to provide the composition of a certain object (or type of object) dynamically.
-For this, you can add a new CompositionProvider:
+For instance, you may want to populate a hierarchy under a custom root-level
+object based on the contents of a telemetry dictionary.
+To do this, you can add a new CompositionProvider:
 
 ```
 openmct.composition.addProvider({
@@ -124,6 +151,8 @@ openmct.composition.addProvider({
     }
 });
 ```
+
+
 
 
 ## Using Open MCT

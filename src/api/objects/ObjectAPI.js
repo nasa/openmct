@@ -125,8 +125,8 @@ define([
 
     /**
      * Add a root-level object.
-     * @param {module:openmct.ObjectAPI~Identifier} id the identifier of the
-     *        root-level object to add.
+     * @param {module:openmct.DomainObject} domainObject the root-level object
+     *        to add.
      * @method addRoot
      * @memberof module:openmct.ObjectAPI#
      */
