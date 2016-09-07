@@ -113,6 +113,13 @@ define([
          * @name types
          */
 
+        /**
+         * Utilities for attaching common behaviors to views.
+         *
+         * @type {module:openmct.GestureAPI}
+         * @memberof module:openmct.MCT#
+         * @name gestures
+         */
 
         this.TimeConductor = this.conductor; // compatibility for prototype
         this.on('navigation', this.selection.clear.bind(this.selection));
