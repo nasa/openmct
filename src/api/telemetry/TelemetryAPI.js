@@ -78,7 +78,10 @@ define([
      *
      * @typedef TelemetryRequest
      * @memberof module:openmct.TelemetryAPI~
-     * @property {string} sort the key of the property to sort by
+     * @property {string} sort the key of the property to sort by. This may
+     *           be prefixed with a "+" or a "-" sign to sort in ascending
+     *           or descending order respectively. If no prefix is present,
+     *           ascending order will be used.
      * @property {*} start the lower bound for values of the sorting property
      * @property {*} end the upper bound for values of the sorting property
      * @property {string[]} strategies symbolic identifiers for strategies
