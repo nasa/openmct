@@ -52,6 +52,20 @@ define([
         FORMAT_MAP.ascii =
         FORMAT_MAP.generic;
 
+    /**
+     * Describes a property which would be found in a datum of telemetry
+     * associated with a particular domain object.
+     *
+     * @typedef TelemetryProperty
+     * @memberof module:openmct.TelemetryAPI~
+     * @property {string} key the name of the property in the datum which
+     *           contains this telemetry value
+     * @property {string} name the human-readable name for this property
+     * @property {string} units the units associated with this property
+     * @property {boolean} temporal true if this property is a timestamp, or
+     *           may be otherwise used to order telemetry in a time-like fashion
+     */
+
 
     /**
      * An interface for retrieving telemetry data associated with a domain
@@ -109,6 +123,13 @@ define([
             }
         }
 
+        /**
+         * A TelemetryFormatter converts telemetry values for purposes of
+         * display as text.
+         *
+         * @interface TelemetryFormatter
+         * @memberof module:openmct.TelemetryAPI~
+         */
         function TelemetryFormatter(domainObject) {
             this.metadata = domainObject.getCapability('telemetry').getMetadata();
             this.formats = {};
@@ -122,11 +143,21 @@ define([
         /**
          * Retrieve the 'key' from the datum and format it accordingly to
          * telemetry metadata in domain object.
+         *
+         * @method format
+         * @memberof module:openmct.TelemetryAPI~TelemetryFormatter#
          */
         TelemetryFormatter.prototype.format = function (datum, key) {
             return this.formats[key](datum);
         };
 
+        /**
+         * A LimitEvaluator may be used to detect when telemetry values
+         * have exceeded nominal conditions.
+         *
+         * @interface LimitEvaluator
+         * @memberof module:openmct.TelemetryAPI~
+         */
         function LimitEvaluator(domainObject) {
             this.domainObject = domainObject;
             this.evaluator = domainObject.getCapability('limit');
@@ -140,6 +171,15 @@ define([
         /** TODO: Do we need a telemetry parser, or do we assume telemetry
         is numeric by default? */
 
+        /**
+         * Check if any limits have been exceeded.
+         *
+         * @param {*} datum a telemetry datum
+         * @param {string} key the name of the property to be evaluated
+         *        for limit violation
+         * @returns {string[]} an array of limit exceedance states
+         * @memberof module:openmct.TelemetryAPI~TelemetryFormatter#
+         */
         LimitEvaluator.prototype.evaluate = function (datum, key) {
             return this.evaluator.evaluate(datum, key);
         };
@@ -249,7 +289,7 @@ define([
              * @memberof module:openmct.TelemetryAPI#
              * @param {module:openmct.DomainObject} domainObject the object
              *        which has associated telemetry
-             * @param {Function} the callback to invoke with new data, as
+             * @param {Function} callback the callback to invoke with new data, as
              *        it becomes available
              * @param {module:openmct.TelemetryAPI~TelemetryRequest} options
              *        options for this request
@@ -257,15 +297,17 @@ define([
             subscribe: subscribe,
 
             /**
-             * Get metadata associated with telemetry for this domain object.
+             * Get a list of all telemetry properties defined for this
+             * domain object.
+             *
              * @param {module:openmct.DomainObject} domainObject the domain
              *        object for which to request telemetry
-             * @returns {module:openmct.TelemetryAPI~TelemetryMetadata}
+             * @returns {module:openmct.TelemetryAPI~TelemetryProperty[]}
              *          telemetry metadata
              * @method getMetadata
              * @memberof module:openmct.TelemetryAPI#
              */
-            getMetadata: function (domainObject) {
+            properties: function (domainObject) {
                 return domainObject.getCapability('telemetry').getMetadata();
             },
 
