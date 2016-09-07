@@ -197,6 +197,9 @@ define([
      *           object
      * @property {number} [modified] the time, in milliseconds since the UNIX
      *           epoch, at which this domain object was last modified
+     * @property {module:openmct.ObjectAPI~Identifier[]} [composition] if
+     *           present, this will be used by the default composition provider
+     *           to load domain objects
      * @typedef DomainObject
      * @memberof module:openmct
      */
