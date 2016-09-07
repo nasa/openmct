@@ -180,5 +180,26 @@ define([
      *           within that namespace
      */
 
+    /**
+     * A domain object is an entity of relevance to a user's workflow, that
+     * should appear as a distinct and meaningful object within the user
+     * interface. Examples of domain objects are folders, telemetry sensors,
+     * and so forth.
+     *
+     * A few common properties are defined for domain objects. Beyond these,
+     * individual types of domain objects may add more as they see fit.
+     *
+     * @property {module:openmct.ObjectAPI~Identifier} identifier a key/namespace pair which
+     *           uniquely identifies this domain object
+     * @property {string} type the type of domain object
+     * @property {string} name the human-readable name for this domain object
+     * @property {string} [creator] the user name of the creator of this domain
+     *           object
+     * @property {number} [modified] the time, in milliseconds since the UNIX
+     *           epoch, at which this domain object was last modified
+     * @typedef DomainObject
+     * @memberof module:openmct
+     */
+
     return Objects;
 });
