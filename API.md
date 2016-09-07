@@ -203,18 +203,6 @@ openmct.composition(myObject).load().then(function (childObjects) {
 });
 ```
 
-### Synchronizing with the Time Conductor
-
-Views which wish to remain synchronized with the state of Open MCT's
-time conductor should utilize
-[`openmct.conductor`]{@link module:openmct.TimeConductor}:
-
-```
-openmct.conductor.on('bounds', function (newBounds) {
-    requestTelemetry(newBounds.start, newBounds.end).then(displayTelemetry);
-});
-```
-
 ### Support Common Gestures
 
 Custom views may also want to support common gestures using the
@@ -244,6 +232,24 @@ object to remain up to date using the
 ```
 openmct.objects.observe(myDomainObject, "name", function (newName) {
     myLabel.textContent = newName;
+});
+```
+
+### Using Telemetry
+
+Very often in Open MCT, you wish to work with telemetry data (for instance,
+to display it in a custom visualization.)
+
+
+### Synchronizing with the Time Conductor
+
+Views which wish to remain synchronized with the state of Open MCT's
+time conductor should utilize
+[`openmct.conductor`]{@link module:openmct.TimeConductor}:
+
+```
+openmct.conductor.on('bounds', function (newBounds) {
+    requestTelemetry(newBounds.start, newBounds.end).then(displayTelemetry);
 });
 ```
 
