@@ -90,7 +90,9 @@ define([
     /**
      * An interface for retrieving telemetry data associated with a domain
      * object.
+     *
      * @interface TelemetryAPI
+     * @augments module:openmct.TelemetryAPI~TelemetryProvider
      * @memberof module:openmct
      */
     function TelemetryAPI(
@@ -265,13 +267,37 @@ define([
                 }, options);
         }
 
+        /**
+         * Provides telemetry data. To connect to new data sources, new
+         * TelemetryProvider implementations should be
+         * [registered]{@link module:openmct.TelemetryAPI#addProvider}.
+         *
+         * @interface TelemetryProvider
+         * @memberof module:openmct.TelemetryAPI~
+         */
+
+
         var Telemetry = {
+            /**
+             * Check if this provider can supply telemetry data associated with
+             * this domain object.
+             *
+             * @method canProvideTelemetry
+             * @param {module:openmct.DomainObject} domainObject the object for
+             *        which telemetry would be provided
+             * @returns {boolean} true if telemetry can be provided
+             * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
+             */
+            canProvideTelemetry: function () {
+
+            },
+
             /**
              * Register a telemetry provider with the telemetry service. This
              * allows you to connect alternative telemetry sources.
              * @method registerProvider
              * @memberof module:openmct.TelemetryAPI#
-             * @param {module:openmct.TelemetryProvider} provider the new
+             * @param {module:openmct.TelemetryAPI~TelemetryProvider} provider the new
              *        telemetry provider
              * @param {string} [strategy] the request strategy supported by
              *        this provider. If omitted, this will be used as a
@@ -281,26 +307,19 @@ define([
             registerProvider: registerProvider,
 
             /**
-             * Register a new limit evaluator.
-             * @method registerEvaluator
-             * @memberof module:openmct.TelemetryAPI#
-             * @param {module:openmct.LimitEvaluatorProvider} provider the
-             *        new limit evaluator
-             */
-            registerEvaluator: registerEvaluator,
-
-            /**
              * Request historical telemetry for a domain object.
              * The `options` argument allows you to specify filters
              * (start, end, etc.), sort order, and strategies for retrieving
              * telemetry (aggregation, latest available, etc.).
              *
              * @method request
-             * @memberof module:openmct.TelemetryAPI#
+             * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
              * @param {module:openmct.DomainObject} domainObject the object
              *        which has associated telemetry
              * @param {module:openmct.TelemetryAPI~TelemetryRequest} options
              *        options for this historical request
+             * @returns {Promise.<object[]>} a promise for an array of
+             *          telemetry data
              */
             request: request,
 
@@ -310,13 +329,15 @@ define([
              * realtime provider.
              *
              * @method subscribe
-             * @memberof module:openmct.TelemetryAPI#
+             * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
              * @param {module:openmct.DomainObject} domainObject the object
              *        which has associated telemetry
              * @param {Function} callback the callback to invoke with new data, as
              *        it becomes available
              * @param {module:openmct.TelemetryAPI~TelemetryRequest} options
              *        options for this request
+             * @returns {Function} a function which may be called to terminate
+             *          the subscription
              */
             subscribe: subscribe,
 
@@ -328,8 +349,8 @@ define([
              *        object for which to request telemetry
              * @returns {module:openmct.TelemetryAPI~TelemetryProperty[]}
              *          telemetry metadata
-             * @method getMetadata
-             * @memberof module:openmct.TelemetryAPI#
+             * @method properties
+             * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
              */
             properties: function (domainObject) {
                 return domainObject.getCapability('telemetry').getMetadata();
@@ -345,7 +366,7 @@ define([
              *        object for which to format telemetry
              * @returns {module:openmct.TelemetryAPI~TelemetryFormatter}
              * @method formatter
-             * @memberof module:openmct.TelemetryAPI#
+             * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
              */
             Formatter: function (domainObject) {
                 if (!FORMATTER_CACHE.has(domainObject)) {
@@ -365,7 +386,7 @@ define([
              *        object for which to evaluate limits
              * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
              * @method limitEvaluator
-             * @memberof module:openmct.TelemetryAPI#
+             * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
              */
             LimitEvaluator: function (domainObject) {
                 if (!EVALUATOR_CACHE.has(domainObject)) {
