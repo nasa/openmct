@@ -62,12 +62,13 @@ define([
      *           contains this telemetry value
      * @property {string} name the human-readable name for this property
      * @property {string} units the units associated with this property
-     * @property {boolean} temporal true if this property is a timestamp, or
-     *           may be otherwise used to order telemetry in a time-like fashion
-     * @property {boolean} numeric true if the values for this property
-     *           can be interpreted plainly as numbers
-     * @property {boolean} enumerated true if this property may have only
-     *           certain specific values
+     * @property {boolean} [temporal] true if this property is a timestamp, or
+     *           may be otherwise used to order telemetry in a time-like
+     *           fashion; default is false
+     * @property {boolean} [numeric] true if the values for this property
+     *           can be interpreted plainly as numbers; default is true
+     * @property {boolean} [enumerated] true if this property may have only
+     *           certain specific values; default is false
      * @property {string} [values] for enumerated states, an ordered list
      *           of possible values
      */
