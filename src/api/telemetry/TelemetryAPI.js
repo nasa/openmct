@@ -240,7 +240,7 @@ define([
             );
         };
 
-        function registerProvider(provider) {
+        function registerProvider(provider, strategy) {
             // Not yet implemented.
             console.log('registering provider', provider);
         }
@@ -273,6 +273,10 @@ define([
              * @memberof module:openmct.TelemetryAPI#
              * @param {module:openmct.TelemetryProvider} provider the new
              *        telemetry provider
+             * @param {string} [strategy] the request strategy supported by
+             *        this provider. If omitted, this will be used as a
+             *        default provider (when no strategy is requested or no
+             *        matching strategy is found.)
              */
             registerProvider: registerProvider,
 
