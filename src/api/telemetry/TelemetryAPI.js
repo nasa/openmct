@@ -221,16 +221,33 @@ define([
             registerEvaluator: registerEvaluator,
 
             /**
-             * Request historical telemetry data.
+             * Request historical telemetry for a domain object.
+             * The `options` argument allows you to specify filters
+             * (start, end, etc.), sort order, and strategies for retrieving
+             * telemetry (aggregation, latest available, etc.).
+             *
              * @method request
              * @memberof module:openmct.TelemetryAPI#
+             * @param {module:openmct.DomainObject} domainObject the object
+             *        which has associated telemetry
+             * @param {module:openmct.TelemetryAPI~TelemetryRequest} options
+             *        options for this historical request
              */
             request: request,
 
             /**
-             * Subscribe to updates to telemetry data.
+             * Subscribe to realtime telemetry for a specific domain object.
+             * The callback will be called whenever data is received from a
+             * realtime provider.
+             * 
              * @method subscribe
              * @memberof module:openmct.TelemetryAPI#
+             * @param {module:openmct.DomainObject} domainObject the object
+             *        which has associated telemetry
+             * @param {Function} the callback to invoke with new data, as
+             *        it becomes available
+             * @param {module:openmct.TelemetryAPI~TelemetryRequest} options
+             *        options for this request
              */
             subscribe: subscribe,
 
