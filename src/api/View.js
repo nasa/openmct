@@ -49,6 +49,13 @@ define([], function () {
 
     /**
      * Check if this provider can supply views for a domain object.
+     *
+     * When called by Open MCT, this may include additional arguments
+     * which are on the path to the object to be viewed; for instance,
+     * when viewing "A Folder" within "My Items", this method will be
+     * invoked with "A Folder" (as a domain object) as the first argument,
+     * and "My Items" as the second argument.
+     *
      * @method canView
      * @memberof module:openmct.ViewProvider#
      * @param {module:openmct.DomainObject} domainObject the domain object
@@ -58,11 +65,17 @@ define([], function () {
      */
 
     /**
-     * Provide a view of this domain object.
+     * Provide a view of this object.
+     *
+     * When called by Open MCT, this may include additional arguments
+     * which are on the path to the object to be viewed; for instance,
+     * when viewing "A Folder" within "My Items", this method will be
+     * invoked with "A Folder" (as a domain object) as the first argument,
+     * and "My Items" as the second argument.
+     *
      * @method view
      * @memberof module:openmct.ViewProvider#
-     * @param {module:openmct.DomainObject} domainObject the domain object
-     *        to be viewed
+     * @param {*} object the object to be viewed
      * @returns {module:openmct.View} a view of this domain object
      */
 
