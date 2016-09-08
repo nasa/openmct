@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .abs.holder-plot {
-	$btnExportH: $btnFrameH;
-
     // Fend off the scrollbar when less than min-height;
     right: $interiorMargin;
 
@@ -37,20 +35,6 @@
 		.s-button.t-export {
 			@include trans-prop-nice(opacity, 150ms, 100ms);
 			opacity: 1;
-		}
-		.gl-plot {
-			@include trans-prop-nice(top, $dur: 150ms);
-			top: $btnExportH + $interiorMargin;
-		}
-	}
-	&.hide-l-btn-set {
-		.s-button.t-export {
-			@include trans-prop-nice(opacity, 0ms, 0ms);
-			opacity: 0;
-		}
-		.gl-plot {
-			@include trans-prop-nice(top, $dur: 0ms);
-			top: 0;
 		}
 	}
 }
