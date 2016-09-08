@@ -36,18 +36,18 @@
         ng-controller="ColorController as colors"
         ng-show="toggle.isActive()">
         <div
-	        class="l-palette-row l-option-row"
-	        ng-if="!structure.mandatory">
+            class="l-palette-row l-option-row"
+            ng-if="!structure.mandatory">
             <div class="l-palette-item s-palette-item {{ngModel[field] === 'transparent' ? 'icon-check' : '' }}"
                 ng-click="ngModel[field] = 'transparent'">
             </div>
             <span class="l-palette-item-label">None</span>
         </div>
         <div
-	        class="l-palette-row"
+            class="l-palette-row"
             ng-repeat="group in colors.groups()">
             <div class="l-palette-item s-palette-item {{ngModel[field] === color ? 'icon-check' : '' }}"
-	            ng-repeat="color in group"
+                ng-repeat="color in group"
                 ng-style="{ background: color }"
                 ng-click="ngModel[field] = color">
             </div>
