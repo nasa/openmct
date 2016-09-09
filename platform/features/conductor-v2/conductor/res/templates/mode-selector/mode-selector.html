@@ -27,9 +27,8 @@
     </div>
     <div class="menu super-menu mini mode-selector-menu"
          ng-show="modeController.isActive()">
-        <mct-representation mct-object="domainObject"
-                            key="'mode-menu'"
-                            ng-model="ngModel">
-        </mct-representation>
+        <mct-include key="'mode-menu'"
+                     ng-model="ngModel">
+        </mct-include>
     </div>
 </span>

@@ -85,9 +85,9 @@ define(
             }
 
             //Only show 'LAD mode' if appropriate time systems available
-            if (timeSystemsForMode('LAD').length > 0) {
+            if (timeSystemsForMode('lad').length > 0) {
                 var ladMode = {
-                    key: 'LAD',
+                    key: 'lad',
                     cssclass: 'icon-database',
                     label: 'LAD',
                     name: 'LAD Mode',

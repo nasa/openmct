@@ -93,22 +93,22 @@ define([
             ],
             "templates": [
                 {
-                    "key": "time-conductor",
+                    "key": "conductor",
                     "template": timeConductorTemplate
+                },
+                {
+                    "key": "mode-menu",
+                    "template": modeMenuTemplate
+                },
+                {
+                    "key": "mode-selector",
+                    "template": modeSelectorTemplate
                 }
             ],
             "representations": [
                 {
                     "key": "time-conductor",
                     "template": timeConductorTemplate
-                },
-                {
-                    "key": "mode-selector",
-                    "template": modeSelectorTemplate
-                },
-                {
-                    "key": "mode-menu",
-                    "template": modeMenuTemplate
                 }
             ],
             "formats": [

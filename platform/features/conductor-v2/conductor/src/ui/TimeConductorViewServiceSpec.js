@@ -112,7 +112,7 @@ define(['./TimeConductorViewService'], function (TimeConductorViewService) {
             var mockTimeSystems = [mockConstructor(tickingTimeSystem)];
             var mockLADTickSource = {
                 metadata: {
-                    mode: 'LAD'
+                    mode: 'lad'
                 }
             };
             tickingTimeSystem.tickSources.andReturn([mockLADTickSource]);
@@ -120,7 +120,7 @@ define(['./TimeConductorViewService'], function (TimeConductorViewService) {
             viewService = new TimeConductorViewService(mockTimeConductor, mockTimeSystems);
 
             var availableModes = viewService.availableModes();
-            expect(availableModes.LAD).toBeDefined();
+            expect(availableModes.lad).toBeDefined();
         });
 
         describe("when mode is changed", function () {

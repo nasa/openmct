@@ -233,7 +233,7 @@
 
     // Real-time, latest modes
     &.realtime-mode,
-    &.latest-mode {
+    &.lad-mode {
         .time-conductor-icon {
             &:before { color: $colorTimeCondKeyBg; }
             div[class*="hand"] {
@@ -318,7 +318,7 @@
     }
 
     // LAD mode
-    &.latest-mode {
+    &.lad-mode {
         $i: $glyph-icon-database;
         .time-conductor-icon div[class*="hand"] {
             @include animation-name(clock-hands-sticky);
@@ -411,7 +411,7 @@
 
         // Real-time, latest modes
         &.realtime-mode,
-        &.latest-mode {
+        &.lad-mode {
             .l-time-conductor-inputs-and-ticks {
                 .l-time-range-w {
                     &.start-w {

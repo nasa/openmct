@@ -30,7 +30,7 @@ define(['../../../platform/features/conductor-v2/conductor/src/timeSystems/Local
 
         this.metadata = {
             key: 'test-lad',
-            mode: 'LAD',
+            mode: 'lad',
             cssclass: 'icon-clock',
             label: 'Latest Available Data',
             name: 'Latest available data',

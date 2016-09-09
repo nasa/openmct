@@ -83,12 +83,11 @@
 
         <!-- Holds time system and session selectors, and zoom control -->
         <div class="l-time-conductor-controls l-row-elem l-flex-row flex-elem">
-            <mct-representation
+            <mct-include
                 key="'mode-selector'"
-                mct-object="domainObject"
                 ng-model="modeModel"
                 class="holder flex-elem menus-up mode-selector">
-            </mct-representation>
+            </mct-include>
             <mct-control
                     key="'menu-button'"
                     class="holder flex-elem menus-up time-system"
