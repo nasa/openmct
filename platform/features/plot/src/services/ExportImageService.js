@@ -125,6 +125,12 @@ define(
             }
         }
 
+        /**
+         * Takes a screenshot of a DOM node and exports to PDF.
+         * @param {node} element to be exported
+         * @param {string} filename the exported image
+         * @returns {promise}
+         */
         ExportImageService.prototype.exportPDF = function (element, filename) {
             return renderElement(element, "jpeg").then(function (img) {
                 var pdf = new self.jsPDF("l", "px", [element.offsetHeight, element.offsetWidth]);
@@ -133,12 +139,24 @@ define(
             });
         };
 
+        /**
+         * Takes a screenshot of a DOM node and exports to JPG.
+         * @param {node} element to be exported
+         * @param {string} filename the exported image
+         * @returns {promise}
+         */
         ExportImageService.prototype.exportJPG = function (element, filename) {
             return renderElement(element, "blob").then(function (img) {
                 self.saveAs(img, filename);
             });
         };
 
+        /**
+         * Takes a screenshot of a DOM node and exports to PNG.
+         * @param {node} element to be exported
+         * @param {string} filename the exported image
+         * @returns {promise}
+         */
         ExportImageService.prototype.exportPNG = function (element, filename) {
             return renderElement(element, "blob").then(function (img) {
                 self.saveAs(img, filename);
