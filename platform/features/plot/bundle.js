@@ -73,7 +73,7 @@ define([
                     "depends": [
                         "$scope",
                         "$element",
-                        "ExportImageService",
+                        "exportImageService",
                         "telemetryFormatter",
                         "telemetryHandler",
                         "throttle",
