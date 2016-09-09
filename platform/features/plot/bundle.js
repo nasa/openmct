@@ -90,7 +90,7 @@ define([
             ],
             "services": [
                 {
-                    "key": "ExportImageService",
+                    "key": "exportImageService",
                     "implementation": exportImageService,
                     "depends": [
                         "$q",
