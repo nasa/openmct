@@ -34,7 +34,7 @@ define([
     PlotController,
     PlotViewPolicy,
     PlotOptionsController,
-    ExportImageService,
+    exportImageService,
     plotTemplate,
     plotOptionsBrowseTemplate,
     legacyRegistry
@@ -91,7 +91,7 @@ define([
             "services": [
                 {
                     "key": "ExportImageService",
-                    "implementation": ExportImageService,
+                    "implementation": exportImageService,
                     "depends": [
                         "$q",
                         "$timeout",

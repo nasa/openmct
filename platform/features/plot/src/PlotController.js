@@ -64,7 +64,7 @@ define(
         function PlotController(
             $scope,
             $element,
-            ExportImageService,
+            exportImageService,
             telemetryFormatter,
             telemetryHandler,
             throttle,
@@ -249,7 +249,7 @@ define(
 
             self.pending = true;
             self.$element = $element;
-            self.ExportImageService = ExportImageService;
+            self.exportImageService = exportImageService;
 
             // Initialize axes; will get repopulated when telemetry
             // metadata becomes available.
@@ -374,7 +374,7 @@ define(
         PlotController.prototype.exportPDF = function () {
             var self = this;
             self.hideExportButtons = true;
-            self.ExportImageService.exportPDF(self.$element[0], "plot.pdf").finally(function () {
+            self.exportImageService.exportPDF(self.$element[0], "plot.pdf").finally(function () {
                 self.hideExportButtons = false;
             });
         };
@@ -385,7 +385,7 @@ define(
         PlotController.prototype.exportPNG = function () {
             var self = this;
             self.hideExportButtons = true;
-            self.ExportImageService.exportPNG(self.$element[0], "plot.png").finally(function () {
+            self.exportImageService.exportPNG(self.$element[0], "plot.png").finally(function () {
                 self.hideExportButtons = false;
             });
         };
@@ -396,7 +396,7 @@ define(
         PlotController.prototype.exportJPG = function () {
             var self = this;
             self.hideExportButtons = true;
-            self.ExportImageService.exportJPG(self.$element[0], "plot.jpg").finally(function () {
+            self.exportImageService.exportJPG(self.$element[0], "plot.jpg").finally(function () {
                 self.hideExportButtons = false;
             });
         };
