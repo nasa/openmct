@@ -136,6 +136,7 @@
         bottom: 0;
         left: 0;
         z-index: 1;
+        pointer-events: none;
         .l-time-range-w {
             // Wraps a datetime text input field
             height: 100%;
@@ -158,6 +159,9 @@
                 .title:before {
                     content: 'End';
                 }
+            }
+            .l-time-conductor-inputs {
+                pointer-events: auto;
             }
             input[type="text"] {
                 @include trans-prop-nice(padding, 250ms);
