@@ -91,14 +91,6 @@ define([
     './platform/features/pages/bundle',
     './platform/features/plot/bundle',
     './platform/features/timeline/bundle',
-
-    // Old time conductor
-    //'./platform/features/conductor/bundle',
-
-    // New time conductor
-    //'./platform/features/conductor-v2/conductor/bundle',
-    //'./platform/features/conductor-v2/compatibility/bundle',
-    //'./platform/features/conductor-v2/utcTimeSystem/bundle',
     './platform/features/table/bundle',
     './platform/forms/bundle',
     './platform/identity/bundle',
@@ -110,8 +102,6 @@ define([
     './platform/search/bundle',
     './platform/status/bundle',
     './platform/commonUI/regions/bundle'
-
-
 ], function (Main, legacyRegistry) {
     return {
         legacyRegistry: legacyRegistry,
