@@ -139,7 +139,7 @@ define(
                 self.reader.readAsDataURL(img);
                 self.reader.onloadend = function () {
                     var pdf = new self.jsPDF("l", "px", [element.offsetHeight, element.offsetWidth]);
-                    pdf.addImage(reader.result, "JPEG", 0, 0, element.offsetWidth, element.offsetHeight);
+                    pdf.addImage(self.reader.result, "JPEG", 0, 0, element.offsetWidth, element.offsetHeight);
                     pdf.save(filename);
                 };
             });
