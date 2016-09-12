@@ -97,6 +97,14 @@ define(
 
             // Watch scope for selection of mode or time system by user
             this.$scope.$watch('modeModel.selectedKey', this.setMode);
+            this.$scope.$on('pan', function (e, bounds) {
+                this.$scope.panning = true;
+                this.setFormFromBounds(bounds);
+            }.bind(this));
+
+            this.$scope.$on('pan-stop', function () {
+                this.$scope.panning = false;
+            }.bind(this));
 
             this.$scope.$on('$destroy', this.destroy);
         };
