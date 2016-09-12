@@ -137,7 +137,7 @@ define(
         ExportImageService.prototype.exportPDF = function (element, filename) {
             return renderElement(element, "jpeg").then(function (img) {
                 self.reader.readAsDataURL(img);
-                self.reader.onloadend = function() {
+                self.reader.onloadend = function () {
                     var pdf = new self.jsPDF("l", "px", [element.offsetHeight, element.offsetWidth]);
                     pdf.addImage(reader.result, "JPEG", 0, 0, element.offsetWidth, element.offsetHeight);
                     pdf.save(filename);
