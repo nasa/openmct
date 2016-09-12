@@ -45,7 +45,7 @@ define(
          * @param {constant} EXPORT_IMAGE_TIMEOUT time in milliseconds before a timeout error is returned
          * @constructor
          */
-        function ExportImageService($q, $timeout, $log, EXPORT_IMAGE_TIMEOUT, injHtml2Canvas, injJsPDF, injSaveAs) {
+        function ExportImageService($q, $timeout, $log, EXPORT_IMAGE_TIMEOUT, injHtml2Canvas, injJsPDF, injSaveAs, injFileReader) {
             self.$q = $q;
             self.$timeout = $timeout;
             self.$log = $log;
@@ -53,6 +53,7 @@ define(
             self.html2canvas = injHtml2Canvas || html2canvas;
             self.jsPDF = injJsPDF || jsPDF;
             self.saveAs = injSaveAs || saveAs;
+            self.reader = injFileReader || new FileReader();
         }
 
         /**
@@ -64,7 +65,13 @@ define(
          */
         function renderElement(element, type) {
             var defer = self.$q.defer(),
+                validTypes = ["png", "jpg", "jpeg"],
                 renderTimeout;
+
+            if (validTypes.indexOf(type) === -1) {
+                self.$log.error("Invalid type requested. Try: (" + validTypes.join(",") + ")");
+                return;
+            }
 
             renderTimeout = self.$timeout(function () {
                 defer.reject("html2canvas timed out");
@@ -75,18 +82,14 @@ define(
                 self.html2canvas(element, {
                     onrendered: function (canvas) {
                         switch (type.toLowerCase()) {
-                            case "blob":
-                                canvas.toBlob(defer.resolve);
-                                break;
-
                             case "png":
-                                defer.resolve(canvas.toDataURL("image/png", 1.0));
+                                canvas.toBlob(defer.resolve, "image/png");
                                 break;
 
                             default:
                             case "jpg":
                             case "jpeg":
-                                defer.resolve(canvas.toDataURL("image/jpeg", 1.0));
+                                canvas.toBlob(defer.resolve, "image/jpeg");
                                 break;
                         }
                     }
@@ -133,9 +136,12 @@ define(
          */
         ExportImageService.prototype.exportPDF = function (element, filename) {
             return renderElement(element, "jpeg").then(function (img) {
-                var pdf = new self.jsPDF("l", "px", [element.offsetHeight, element.offsetWidth]);
-                pdf.addImage(img, "JPEG", 0, 0, element.offsetWidth, element.offsetHeight);
-                pdf.save(filename);
+                self.reader.readAsDataURL(img);
+                self.reader.onloadend = function() {
+                    var pdf = new self.jsPDF("l", "px", [element.offsetHeight, element.offsetWidth]);
+                    pdf.addImage(reader.result, "JPEG", 0, 0, element.offsetWidth, element.offsetHeight);
+                    pdf.save(filename);
+                };
             });
         };
 
@@ -146,7 +152,7 @@ define(
          * @returns {promise}
          */
         ExportImageService.prototype.exportJPG = function (element, filename) {
-            return renderElement(element, "blob").then(function (img) {
+            return renderElement(element, "jpeg").then(function (img) {
                 self.saveAs(img, filename);
             });
         };
@@ -158,7 +164,7 @@ define(
          * @returns {promise}
          */
         ExportImageService.prototype.exportPNG = function (element, filename) {
-            return renderElement(element, "blob").then(function (img) {
+            return renderElement(element, "png").then(function (img) {
                 self.saveAs(img, filename);
             });
         };
