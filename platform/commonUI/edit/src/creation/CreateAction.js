@@ -72,7 +72,7 @@ define(
             }
 
             function onCancel() {
-                return editorCapability.cancel();
+                return editorCapability.finish();
             }
 
             newModel.type = this.type.getKey();

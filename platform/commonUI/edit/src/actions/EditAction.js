@@ -71,7 +71,7 @@ define(
         EditAction.prototype.perform = function () {
             var self = this;
             function cancelEditing() {
-                self.domainObject.getCapability('editor').cancel();
+                self.domainObject.getCapability('editor').finish();
                 self.navigationService.removeListener(cancelEditing);
             }
             //If this is not the currently navigated object, then navigate

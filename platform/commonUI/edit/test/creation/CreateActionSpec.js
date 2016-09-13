@@ -103,7 +103,7 @@ define(
                     [
                         "edit",
                         "save",
-                        "cancel"
+                        "finish"
                     ]
                 );
 
@@ -178,10 +178,10 @@ define(
                         expect(capabilities.editor.save).toHaveBeenCalled();
                     });
 
-                    it("to cancel the edit if user cancels dialog", function () {
+                    it("to finish the edit if user cancels dialog", function () {
                         action.perform();
                         promise.then.mostRecentCall.args[1]();
-                        expect(capabilities.editor.cancel).toHaveBeenCalled();
+                        expect(capabilities.editor.finish).toHaveBeenCalled();
                     });
                 });
             });
