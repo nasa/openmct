@@ -22,15 +22,14 @@
 
 .overlay {
     font-size: 90%;
-    z-index: 5;
-    @include keyframes(fadeInFromNone) {
-        0% { display: none; opacity: 0; }
-        1% { display: block; opacity: 0; }
-        95% { display: block; opacity: 0; }
-        100% { display: block; opacity: 1; }
+    &.delayEntry100ms {
+        @include keyframes(fadeInFromNone) {
+            0% { display: none; opacity: 0; }
+            100% { display: block; opacity: 1; }
+        }
+        @include animation-delay($delayEntryMs);
+        @include animation(fadeInFromNone $durEntryMs ease-in);
     }
-    @include animation(fadeInFromNone 100ms ease-in);
-
     .blocker {
         background: $colorOvrBlocker;
         z-index: 100;
