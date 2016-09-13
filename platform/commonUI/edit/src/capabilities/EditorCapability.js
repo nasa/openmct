@@ -28,8 +28,8 @@ define(
          * A capability that implements an editing 'session' for a domain
          * object. An editing session is initiated via a call to .edit().
          * Once initiated, any persist operations will be queued pending a
-         * subsequent call to [.save()](@link #save) or [.cancel()](@link
-         * #cancel).
+         * subsequent call to [.save()](@link #save) or [.finish()](@link
+         * #finish).
          * @param transactionService
          * @param domainObject
          * @constructor
@@ -45,7 +45,7 @@ define(
         /**
          * Initiate an editing session. This will start a transaction during
          * which any persist operations will be deferred until either save()
-         * or cancel() are called.
+         * or finish() are called.
          */
         EditorCapability.prototype.edit = function () {
             this.transactionService.startTransaction();
