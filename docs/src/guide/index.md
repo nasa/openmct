@@ -933,7 +933,7 @@ Note that `templateUrl` is not supported for `containers`.
 
 Controls provide options for the `mct-control` directive. 
  
-Six standard control types are included in the forms bundle:
+Ten standard control types are included in the forms bundle:
 
 * `textfield`: An area to enter plain text.
 * `select`: A drop-down list of options.
@@ -941,7 +941,13 @@ Six standard control types are included in the forms bundle:
 * `color`: A color picker.
 * `button`: A button.
 * `datetime`: An input for UTC date/time entry; gives result as a UNIX 
-timestamp, in milliseconds since start of 1970, UTC. 
+timestamp, in milliseconds since start of 1970, UTC.
+* `composite`: A control parenting an array of other controls.
+* `menu-button`: A drop-down list of items supporting custom behavior
+on click.
+* `dialog-button`: A button which opens a dialog allowing a single property
+to be edited.
+* `radio`: A radio button.
 
 New controls may be added as extensions of the controls category. Extensions of 
 this category have two properties: 
