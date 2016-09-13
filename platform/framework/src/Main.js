@@ -30,14 +30,12 @@
 define(
     [
         'require',
-        'es6-promise',
         './FrameworkLayer',
         'angular',
         'angular-route'
     ],
     function (
         require,
-        es6promise,
         FrameworkLayer,
         angular
     ) {
@@ -55,9 +53,6 @@ define(
                 var match = /[?&]log=([a-z]+)/.exec(window.location.search);
                 return match ? match[1] : "";
             }
-
-            // Polyfill Promise, in case browser does not natively provide Promise
-            window.Promise = window.Promise || es6promise.Promise;
 
             // Reconfigure base url, since bundle paths will all be relative
             // to the root now.

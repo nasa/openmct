@@ -36,9 +36,6 @@ Object.keys(window.__karma__.files).forEach(function(file) {
     }
 });
 
-// Force es6-promise to load.
-allTestFiles.unshift('es6-promise');
-
 // Drop legacyRegistry, since it is at a different path by RequireJS config
 allTestFiles = allTestFiles.filter(function (file) {
     return file.indexOf('legacyRegistry') === -1;
@@ -53,7 +50,6 @@ requirejs.config({
         "angular": "bower_components/angular/angular.min",
         "angular-route": "bower_components/angular-route/angular-route.min",
         "csv": "bower_components/comma-separated-values/csv.min",
-        "es6-promise": "bower_components/es6-promise/promise.min",
         "html2canvas": "bower_components/html2canvas/build/html2canvas.min",
         "jsPDF": "bower_components/jspdf/dist/jspdf.min",
         "moment": "bower_components/moment/moment",
@@ -89,11 +85,6 @@ requirejs.config({
     // we have to kickoff jasmine, as it is asynchronous
     callback: function () {
         var args = [].slice.apply(arguments);
-        require(['es6-promise'], function (es6Promise) {
-            if (!window.Promise) {
-                window.Promise = es6Promise.Promise;
-            }
-            window.__karma__.start.apply(window.__karma__, args);
-        });
+        window.__karma__.start.apply(window.__karma__, args);
     }
 });
