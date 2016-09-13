@@ -142,6 +142,7 @@ define(
             });
 
             describe("the perform function", function () {
+                var promise = jasmine.createSpyObj("promise", ["then"]);
                 beforeEach(function () {
                     capabilities.action.getActions.andReturn([mockEditAction]);
                 });
@@ -160,15 +161,16 @@ define(
                     " available", function () {
                     capabilities.action.getActions.andReturn([]);
                     capabilities.action.perform.andReturn(mockPromise(undefined));
+                    capabilities.editor.save.andReturn(promise);
                     action.perform();
                     expect(capabilities.action.perform).toHaveBeenCalledWith("save");
                 });
 
                 describe("uses to editor capability", function () {
-                    var promise = jasmine.createSpyObj("promise", ["then"]);
                     beforeEach(function () {
                         capabilities.action.getActions.andReturn([]);
                         capabilities.action.perform.andReturn(promise);
+                        capabilities.editor.save.andReturn(promise);
                     });
 
                     it("to save the edit if user saves dialog", function () {

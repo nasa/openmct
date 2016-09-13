@@ -67,12 +67,17 @@ define(
                 editAction,
                 editorCapability;
 
+            function closeEditor() {
+                return editorCapability.finish();
+            }
+
             function onSave() {
-                return editorCapability.save();
+                return editorCapability.save()
+                    .then(closeEditor);
             }
 
             function onCancel() {
-                return editorCapability.finish();
+                return closeEditor();
             }
 
             newModel.type = this.type.getKey();
