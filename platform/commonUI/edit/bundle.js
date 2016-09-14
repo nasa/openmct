@@ -387,7 +387,7 @@ define([
             "constants": [
                 {
                     "key": "editModeBlacklist",
-                    "value": ["copy", "follow", "window", "link", "locate"]
+                    "value": ["copy", "follow", "link", "locate"]
                 },
                 {
                     "key": "nonEditContextBlacklist",
