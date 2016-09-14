@@ -97,7 +97,7 @@
     .frame.child-frame.panel {
         &:hover {
             @include boxShdwLarge();
-            border-color: $colorKey;
+            border-color: $colorSelectableSelectedPrimary;
             .view-switcher {
                 opacity: 1;
             }

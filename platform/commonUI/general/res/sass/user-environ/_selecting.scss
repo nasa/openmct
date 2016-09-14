@@ -19,25 +19,21 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-var fullScreenFile = require("../common/Buttons");
-var createItem = require("../common/CreateItem")
-var itemEdit = require("../common/EditItem");
-var rightMenu = require("../common/RightMenu");
-var Drag = require("../common/drag");
+.s-selectable {
+    border: 1px solid transparent;
 
-describe('Info Bubble', function() {
-    var fullScreenClass = new fullScreenFile();
-    var createClass = new createItem();
-    var editItemClass = new itemEdit();
-    var rightMenuClass = new rightMenu();
-    var dragDrop = new Drag();
+    &.s-hover {
+        // Styles when hovering over a selectable object
+        border-color: $colorSelectableHov !important;
+    }
 
-    beforeEach(require('../common/Launch'));
+    &.s-selected {
+        // Styles for a selected object. Also used by legacy Fixed Position/Panel objects.
+        border-color: $colorSelectableSelectedPrimary !important;
+    }
 
-    it('should detect info bubble', function(){
-        var myitem = (element.all(by.repeater('child in composition'))).get(0);
-        browser.actions().mouseMove(myitem).perform();
-        browser.sleep(4000);
-        expect(element(by.css('.t-infobubble.s-infobubble.l-infobubble-wrapper')).isDisplayed()).toBe(true);
-    });
-});
+    &.s-moveable {
+        @include boxShdwLarge();
+        cursor: move;
+    }
+}

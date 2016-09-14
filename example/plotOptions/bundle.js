@@ -129,7 +129,7 @@ define([
                         {
                             "name": "Period",
                             "control": "textfield",
-                            "cssclass": "l-small l-numeric",
+                            "cssclass": "l-input-sm l-numeric",
                             "key": "period",
                             "required": true,
                             "property": [

@@ -45,8 +45,8 @@ npm run docs
 
 echo "git clone $REPOSITORY_URL website"
 git clone $REPOSITORY_URL website || exit 1
-echo "cp -r $OUTPUT_DIRECTORY $WEBSITE_DIRECTORY/docs"
-cp -r $OUTPUT_DIRECTORY $WEBSITE_DIRECTORY/docs
+echo "cp -r $OUTPUT_DIRECTORY $WEBSITE_DIRECTORY"
+cp -r $OUTPUT_DIRECTORY $WEBSITE_DIRECTORY
 echo "cd $WEBSITE_DIRECTORY"
 cd $WEBSITE_DIRECTORY || exit 1
 

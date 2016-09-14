@@ -126,7 +126,7 @@ define(
                     it("prompts for location", function () {
                         expect(locationService.getLocationFromUser)
                             .toHaveBeenCalledWith(
-                                "Link selectedObject to a new location",
+                                "Link selectedObject To a New Location",
                                 "Link To",
                                 jasmine.any(Function),
                                 currentParent
