@@ -37,6 +37,10 @@ define(['./Path', 'zepto'], function (Path, $) {
 
         $element.attr('data-context', id);
 
+        if (this.paths[id].head() !== item) {
+            this.release(htmlElement);
+        }
+
         if (!this.paths[id]) {
             var $parent = $element.closest('[data-context]');
             var parentId = $parent.attr('data-context');
