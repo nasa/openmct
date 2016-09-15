@@ -83,6 +83,16 @@
                  ng-mouseenter="subplot.isHovering(true);"
                  ng-mouseleave="subplot.isHovering(false)"
                  ng-class="{ loading: plot.isRequestPending() }">
+
+                <!-- TOI element -->
+                <div class="l-toi-holder">
+                    <!-- Need text vals at top and bottom, plus vertical line -->
+                    <div class="l-toi-val">
+                        <span class="val">{{subplot.getHoverCoordinates()}}</span>
+                        <a class="s-icon-button icon-x"></a>
+                    </div>
+                </div>
+
                 <!-- Out-of-bounds data indicators -->
                 <!-- ng-show is temporarily hard-coded in next element -->
                 <div ng-show="false" class="l-oob-data l-oob-data-up"></div>
