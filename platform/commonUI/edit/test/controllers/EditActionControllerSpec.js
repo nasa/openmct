@@ -19,21 +19,53 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global describe,it,expect,beforeEach,jasmine,spyOn*/
 
 define(
     ["../../src/controllers/EditActionController"],
     function (EditActionController) {
 
         describe("The Edit Action controller", function () {
+            function FakeSaveAction() {
+            }
+
+            var fakeSaveActionMetadata = {
+                name: "mocked-save-action",
+                cssclass: "mocked-save-action-css"
+            };
+
+            FakeSaveAction.prototype.getMetadata = function () {
+                return fakeSaveActionMetadata;
+            };
+
+            FakeSaveAction.prototype.perform = function () {
+            };
+
+            function fakeGetActions(actionContext) {
+                if (actionContext.category === "save") {
+                    return [new FakeSaveAction(), new FakeSaveAction()];
+                } else if (actionContext.category === "conclude-editing") {
+                    return ["a", "b", "c"];
+                } else {
+                    throw "EditActionController uses a context that's not covered by tests.";
+                }
+            }
+
             var mockScope,
                 mockActions,
                 controller;
 
             beforeEach(function () {
                 mockActions = jasmine.createSpyObj("action", ["getActions"]);
+                mockActions.getActions.andCallFake(fakeGetActions);
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
+                mockScope.action = mockActions;
                 controller = new EditActionController(mockScope);
             });
+
+            function makeControllerUpdateActions() {
+                mockScope.$watch.mostRecentCall.args[1]();
+            }
 
             it("watches scope that may change applicable actions", function () {
                 // The action capability
@@ -43,16 +75,36 @@ define(
                 );
             });
 
-            it("populates the scope with grouped and ungrouped actions", function () {
-                mockScope.action = mockActions;
+            it("populates the scope with 'save' actions", function () {
+                makeControllerUpdateActions();
+                expect(mockScope.saveActions.length).toEqual(2);
+            });
 
-                mockActions.getActions.andReturn(["a", "b", "c"]);
+            it("converts 'save' actions to their menu counterparts", function () {
+                makeControllerUpdateActions();
+                var menuOptions = mockScope.saveActionsAsMenuOptions;
 
-                // Call the watch
-                mockScope.$watch.mostRecentCall.args[1]();
+                expect(menuOptions.length).toEqual(2);
+                expect(menuOptions[0].key).toEqual(mockScope.saveActions[0]);
+                expect(menuOptions[1].key).toEqual(mockScope.saveActions[1]);
+                menuOptions.forEach(function (option) {
+                    expect(option.name).toEqual(fakeSaveActionMetadata.name);
+                    expect(option.cssclass).toEqual(fakeSaveActionMetadata.cssclass);
+                });
+            });
 
-                // Should have grouped and ungrouped actions in scope now
-                expect(mockScope.editActions.length).toEqual(3);
+            it("uses a click handler to perform the clicked action", function () {
+                makeControllerUpdateActions();
+                var sampleSaveAction = mockScope.saveActions[0];
+
+                spyOn(sampleSaveAction, "perform");
+                mockScope.saveActionMenuClickHandler(sampleSaveAction);
+                expect(sampleSaveAction.perform).toHaveBeenCalled();
+            });
+
+            it("populates the scope with other 'conclude-editing' actions", function () {
+                makeControllerUpdateActions();
+                expect(mockScope.otherEditActions).toEqual(["a", "b", "c"]);
             });
         });
     }

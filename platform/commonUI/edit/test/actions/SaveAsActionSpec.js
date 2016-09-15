@@ -155,7 +155,7 @@ define(
                 mockDomainObject.getModel.andReturn({persisted: 0});
                 expect(SaveAsAction.appliesTo(actionContext)).toBe(false);
             });
-            
+
             it("uses the editor capability to save the object", function () {
                 mockEditorCapability.save.andReturn(new Promise(function () {}));
                 runs(function () {
