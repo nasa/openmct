@@ -157,13 +157,13 @@ define(
                     expect(mockEditAction.perform).toHaveBeenCalled();
                 });
 
-                it("uses the save action if object does not have an edit action" +
+                it("uses the save-as action if object does not have an edit action" +
                     " available", function () {
                     capabilities.action.getActions.andReturn([]);
                     capabilities.action.perform.andReturn(mockPromise(undefined));
                     capabilities.editor.save.andReturn(promise);
                     action.perform();
-                    expect(capabilities.action.perform).toHaveBeenCalledWith("save");
+                    expect(capabilities.action.perform).toHaveBeenCalledWith("save-as");
                 });
 
                 describe("uses to editor capability", function () {
