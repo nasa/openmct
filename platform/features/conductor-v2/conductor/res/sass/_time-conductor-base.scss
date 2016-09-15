@@ -296,7 +296,7 @@
         }
 
         .l-toi-val {
-            @include transform(translateY(-50%));
+            @include transform(translateY(-51%));
             display: none; // Only show when TOI is active
             font-size: 0.7rem;
             position: absolute;
