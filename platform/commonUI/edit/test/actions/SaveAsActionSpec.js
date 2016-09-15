@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global describe,it,expect,beforeEach,jasmine*/
+/*global describe,it,expect,beforeEach,jasmine,runs,waitsFor,spyOn*/
 
 define(
     ["../../src/actions/SaveAsAction"],
@@ -78,9 +78,10 @@ define(
 
                 mockEditorCapability = jasmine.createSpyObj(
                     "editor",
-                    ["save", "isEditContextRoot"]
+                    ["save", "finish", "isEditContextRoot"]
                 );
                 mockEditorCapability.save.andReturn(mockPromise(true));
+                mockEditorCapability.finish.andReturn(mockPromise(true));
                 mockEditorCapability.isEditContextRoot.andReturn(true);
                 capabilities.editor = mockEditorCapability;
 
@@ -153,6 +154,28 @@ define(
 
                 mockDomainObject.getModel.andReturn({persisted: 0});
                 expect(SaveAsAction.appliesTo(actionContext)).toBe(false);
+            });
+            
+            it("uses the editor capability to save the object", function () {
+                mockEditorCapability.save.andReturn(new Promise(function () {}));
+                runs(function () {
+                    action.perform();
+                });
+                waitsFor(function () {
+                    return mockEditorCapability.save.calls.length > 0;
+                }, "perform() should call EditorCapability.save");
+                runs(function () {
+                    expect(mockEditorCapability.finish).not.toHaveBeenCalled();
+                });
+            });
+
+            it("uses the editor capability to finish editing the object", function () {
+                runs(function () {
+                    action.perform();
+                });
+                waitsFor(function () {
+                    return mockEditorCapability.finish.calls.length > 0;
+                }, "perform() should call EditorCapability.finish");
             });
 
             it("returns to browse after save", function () {
