@@ -54,7 +54,7 @@
     // Clock hands
     div[class*="hand"] {
         $handW: 2px;
-        $handH: $d * 0.4; //8px;
+        $handH: $d * 0.4;
         @include transform(translate(-50%, -50%));
         @include animation-iteration-count(infinite);
         @include animation-timing-function(linear);
@@ -95,6 +95,7 @@
     $rangeValOffset: $sliderKnobW + $interiorMargin;
     $r1H: nth($ueTimeConductorH, 1);
     $r2H: nth($ueTimeConductorH, 2);
+    $r2HRt: nth($ueTimeConductorRtH, 2);
     $r3H: nth($ueTimeConductorH, 3);
     position: relative;
 
@@ -175,7 +176,7 @@
     }
 
     .l-time-conductor-inputs-and-ticks {
-        $c: $colorTimeCondTicks; //$colorTick;
+        $c: $colorTimeCondTicks;
         height: $r1H;
         mct-conductor-axis {
             display: block;
@@ -211,6 +212,73 @@
     .l-data-visualization {
         background: $colorTimeCondDataVisBg;
         height: $r2H;
+    }
+
+    // Time of Interest control
+    .l-toi-holder,
+    .l-toi-holder:after,
+    .l-toi-holder:before,
+    .l-toi {
+        display: block;
+        position: absolute;
+    }
+
+    .l-toi-holder {
+        $c: $colorClickIcon;
+        $cHov: $colorClickIconHov;
+        $linesVOffset: 2px;
+        @include transform(translateX(-50%));
+        @include test(green);
+        top: 0px; bottom: 0px;
+        width: $r2H;
+        left: auto; right: auto;
+        z-index: 1;
+        &:before,
+        &:after {
+            // Vertical lines
+            content: '';
+            background-color: $c;
+            left: 50%; height: 35%; width: 1px;
+            z-index: 0;
+        }
+
+        &:before {
+            @include transform(translate(-50%, $linesVOffset * -1));
+            top: 0px; bottom: auto;
+        }
+
+        &:after {
+            @include transform(translate(-50%, $linesVOffset));
+            top: auto; bottom: 0px;
+        }
+
+        .l-toi {
+            $d: $r2H * 0.65;
+            @include transform(translate(-50%, -50%));
+            color: $c;
+            font-size: $d;
+            line-height: $d;
+            text-align: center;
+            left: 50%;
+            top: 50%;
+            height: $d; width: $d;
+            z-index: 1;
+            &:before {
+                @extend .ui-symbol;
+                content: $glyph-icon-clock;
+            }
+        }
+
+        &:hover {
+            &:before,
+            &:after {
+                background-color: $cHov !important;
+            }
+            .l-toi {
+                color: $cHov !important;
+            }
+
+        }
     }
 
     .l-time-conductor-controls {
@@ -275,8 +343,13 @@
             }
         }
 
+        .l-toi-holder {
+            display: none;
+        }
+
         .l-data-visualization {
-            background: $colorTimeCondDataVisRtBg !important
+            background: $colorTimeCondDataVisRtBg !important;
+            height: $r2HRt;
         }
 
         .mode-selector .s-menu-button {
