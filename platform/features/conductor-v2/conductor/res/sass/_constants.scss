@@ -2,4 +2,6 @@ $ueTimeConductorH: (25px, 16px, 20px); // Heights for Ticks, Data Visualization,
 $ueTimeConductorRtH: (25px, 3px, 20px); // Heights for elements in Real-time mode
 $timeCondInputTimeSysDefW: 165px; // Default width for datetime value inputs
 $timeCondInputDeltaDefW: 60px; // Default width for delta value inputs, typically 00:00:00
-$timeCondAxisLROffset: (5px, 5px); // Margin to left, right of tick axis and vis bar. For paging, use 15, 20px
+$timeCondAxisLROffset: (6px, 6px); // Margin to left, right of tick axis and vis bar. For paging, use 15, 20px
+$timeCondTOIIconD: 12px; // height and width of icon used for TOI indicator
+$timeCondTOIValOffset: 0px;

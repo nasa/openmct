@@ -255,7 +255,7 @@
         $linesVOffset: 2px;
         @include transform(translateX(-50%));
         top: 0px; bottom: 0px;
-        width: $r2H;
+        width: $timeCondTOIIconD;
         left: auto; right: auto;
         z-index: 1;
         &:before,
@@ -263,7 +263,8 @@
             // Vertical lines
             content: '';
             background-color: $c;
-            left: 50%; height: 35%; width: 1px;
+            left: 50%;
+            height: (($r2H - $timeCondTOIIconD)/2) + $linesVOffset; width: 1px;
             z-index: 0;
         }
 
@@ -278,7 +279,7 @@
         }
 
         .l-toi {
-            $d: $r2H * 0.65;
+            $d: $timeCondTOIIconD; //$r2H * 0.65;
             @include transform(translate(-50%, -50%));
             color: $c;
             font-size: $d;
@@ -294,15 +295,38 @@
             }
         }
 
+        .l-toi-val {
+            @include transform(translateY(-50%));
+            display: none; // Only show when TOI is active
+            font-size: 0.7rem;
+            position: absolute;
+            top: 50%;
+            white-space: nowrap;
+            right: $timeCondTOIIconD + $interiorMarginSm;
+        }
+
+        &.val-to-right {
+            .l-toi-val {
+                right: auto;
+                left: $timeCondTOIIconD + $interiorMarginSm;
+            }
+        }
+
+        &.s-status-active {
+            .l-toi-val {
+                display: block;
+            }
+        }
+
         &:hover {
             &:before,
             &:after {
                 background-color: $cHov !important;
             }
-            .l-toi {
+            .l-toi,
+            .l-toi-val {
                 color: $cHov !important;
             }
-
         }
     }
 
