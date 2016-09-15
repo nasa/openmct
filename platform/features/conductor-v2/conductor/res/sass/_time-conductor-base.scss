@@ -185,8 +185,9 @@
         }
         .l-axis-holder {
             height: $r1H;
-            position: relative;
-            width: 100%;
+            position: absolute;
+            left: nth($timeCondAxisLROffset,1);
+            right: nth($timeCondAxisLROffset,2);
             svg {
                 text-rendering: geometricPrecision;
                 width: 100%;
@@ -209,9 +210,34 @@
             }
         }
     }
-    .l-data-visualization {
-        background: $colorTimeCondDataVisBg;
+    .l-data-visualization-holder {
         height: $r2H;
+
+        .l-page-button,
+        .l-data-visualization {
+            position: absolute;
+            top: 0; bottom: 0;
+        }
+
+        .l-page-button {
+            @if nth($timeCondAxisLROffset, 1) + nth($timeCondAxisLROffset, 2) > 30 {
+                left: 0;
+                width: nth($timeCondAxisLROffset,1);
+                &.align-right {
+                    left: auto; right: 0;
+                    width: nth($timeCondAxisLROffset,2);
+                }
+            } @else {
+                // Hide these if the offsets aren't enough
+                display: none;
+            }
+        }
+
+        .l-data-visualization {
+            background: $colorTimeCondDataVisBg;
+            left: nth($timeCondAxisLROffset, 1);
+            right: nth($timeCondAxisLROffset, 2);
+        }
     }
 
     // Time of Interest control
@@ -228,7 +254,6 @@
         $cHov: $colorClickIconHov;
         $linesVOffset: 2px;
         @include transform(translateX(-50%));
-        @include test(green);
         top: 0px; bottom: 0px;
         width: $r2H;
         left: auto; right: auto;
@@ -343,13 +368,9 @@
             }
         }
 
-        .l-toi-holder {
-            display: none;
-        }
-
         .l-data-visualization {
             background: $colorTimeCondDataVisRtBg !important;
-            height: $r2HRt;
+            //height: $r2HRt;
         }
 
         .mode-selector .s-menu-button {
