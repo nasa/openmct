@@ -3,6 +3,7 @@
 *.gzip
 *.tgz
 *.DS_Store
+*.swp
 
 # Compiled CSS, unless directly added
 *.sass-cache
