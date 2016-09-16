@@ -26,24 +26,21 @@ define(
     function (EditActionController) {
 
         describe("The Edit Action controller", function () {
-            function FakeSaveAction() {
-            }
-
-            var fakeSaveActionMetadata = {
+            var mockSaveActionMetadata = {
                 name: "mocked-save-action",
                 cssclass: "mocked-save-action-css"
             };
 
-            FakeSaveAction.prototype.getMetadata = function () {
-                return fakeSaveActionMetadata;
-            };
-
-            FakeSaveAction.prototype.perform = function () {
-            };
-
             function fakeGetActions(actionContext) {
                 if (actionContext.category === "save") {
-                    return [new FakeSaveAction(), new FakeSaveAction()];
+                    var mockedSaveActions = [
+                        jasmine.createSpyObj("mockSaveAction", ["getMetadata", "perform"]),
+                        jasmine.createSpyObj("mockSaveAction", ["getMetadata", "perform"])
+                    ];
+                    mockedSaveActions.forEach(function (action) {
+                        action.getMetadata.andReturn(mockSaveActionMetadata);
+                    });
+                    return mockedSaveActions;
                 } else if (actionContext.category === "conclude-editing") {
                     return ["a", "b", "c"];
                 } else {
@@ -88,21 +85,19 @@ define(
                 expect(menuOptions[0].key).toEqual(mockScope.saveActions[0]);
                 expect(menuOptions[1].key).toEqual(mockScope.saveActions[1]);
                 menuOptions.forEach(function (option) {
-                    expect(option.name).toEqual(fakeSaveActionMetadata.name);
-                    expect(option.cssclass).toEqual(fakeSaveActionMetadata.cssclass);
+                    expect(option.name).toEqual(mockSaveActionMetadata.name);
+                    expect(option.cssclass).toEqual(mockSaveActionMetadata.cssclass);
                 });
             });
 
             it("uses a click handler to perform the clicked action", function () {
                 makeControllerUpdateActions();
                 var sampleSaveAction = mockScope.saveActions[0];
-
-                spyOn(sampleSaveAction, "perform");
                 mockScope.saveActionMenuClickHandler(sampleSaveAction);
                 expect(sampleSaveAction.perform).toHaveBeenCalled();
             });
 
-            it("populates the scope with other 'conclude-editing' actions", function () {
+            it("populates the scope with other editing actions", function () {
                 makeControllerUpdateActions();
                 expect(mockScope.otherEditActions).toEqual(["a", "b", "c"]);
             });
