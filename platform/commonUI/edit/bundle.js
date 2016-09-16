@@ -208,7 +208,7 @@ define([
                     "key": "save-and-stop-editing",
                     "category": "save",
                     "implementation": SaveAndStopEditingAction,
-                    "name": "Save and Done Editing",
+                    "name": "Save and Finish Editing",
                     "cssclass": "icon-save labeled",
                     "description": "Save changes made to these objects.",
                     "depends": [
