@@ -24,16 +24,18 @@ define([
     "./src/ui/TimeConductorViewService",
     "./src/ui/TimeConductorController",
     "./src/TimeConductor",
+    "./src/ui/ConductorAxisController",
     "./src/ui/MctConductorAxis",
     "./src/ui/NumberFormat",
     "text!./res/templates/time-conductor.html",
     "text!./res/templates/mode-selector/mode-selector.html",
     "text!./res/templates/mode-selector/mode-menu.html",
-    'legacyRegistry'
+    "legacyRegistry"
 ], function (
     TimeConductorViewService,
     TimeConductorController,
     TimeConductor,
+    ConductorAxisController,
     MCTConductorAxis,
     NumberFormat,
     timeConductorTemplate,
@@ -68,6 +70,14 @@ define([
                         "timeConductor",
                         "timeConductorViewService",
                         "timeSystems[]"
+                    ]
+                },
+                {
+                    "key": "ConductorAxisController",
+                    "implementation": ConductorAxisController,
+                    "depends": [
+                        "timeConductor",
+                        "formatService"
                     ]
                 }
             ],

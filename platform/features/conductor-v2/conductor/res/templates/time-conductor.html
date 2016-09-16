@@ -1,6 +1,18 @@
 <!-- Parent holder for time conductor. follow-mode | fixed-mode -->
+<style>
+    .fixed-mode .l-axis-holder {
+        cursor: grab;
+        cursor: -webkit-grab;
+    }
+
+    .fixed-mode .l-axis-holder:active {
+        cursor: grabbing;
+        cursor: -webkit-grabbing;
+    }
+</style>
 <div ng-controller="TimeConductorController as tcController"
-    class="holder grows flex-elem l-flex-row l-time-conductor {{modeModel.selectedKey}}-mode {{timeSystemModel.selected.metadata.key}}-time-system">
+    class="holder grows flex-elem l-flex-row l-time-conductor {{modeModel.selectedKey}}-mode {{timeSystemModel.selected.metadata.key}}-time-system"
+        ng-class="{'status-panning': panning}">
 
     <div class="flex-elem holder time-conductor-icon">
         <div class="hand-little"></div>
@@ -13,63 +25,67 @@
             <form class="l-time-conductor-inputs-holder"
                   ng-submit="tcController.updateBoundsFromForm(boundsModel)">
                 <span class="l-time-range-w start-w">
-                    <span class="l-time-range-input-w start-date">
-                        <span class="title"></span>
-                        <mct-control key="'datetime-field'"
-                                     structure="{
-                                         format: timeSystemModel.format,
-                                         validate: tcController.validation.validateStart
-                                     }"
-                                     ng-model="boundsModel"
-                                     ng-blur="tcController.updateBoundsFromForm(boundsModel)"
-                                     field="'start'"
-                                     class="time-range-input">
-                        </mct-control>
-                    </span>
-                        <span class="l-time-range-input-w time-delta start-delta"
-                          ng-class="{'hide':(modeModel.selectedKey === 'fixed')}">
-                            -
-                        <mct-control key="'datetime-field'"
-                                     structure="{
-                                        format: timeSystemModel.deltaFormat,
-                                        validate: tcController.validation.validateStartDelta
-                                     }"
-                                     ng-model="boundsModel"
-                                     ng-blur="tcController.updateDeltasFromForm(boundsModel)"
-                                     field="'startDelta'"
-                                     class="hrs-min-input">
-                        </mct-control>
+                    <span class="l-time-conductor-inputs">
+                        <span class="l-time-range-input-w start-date">
+                            <span class="title"></span>
+                            <mct-control key="'datetime-field'"
+                                         structure="{
+                                             format: timeSystemModel.format,
+                                             validate: tcController.validation.validateStart
+                                         }"
+                                         ng-model="boundsModel"
+                                         ng-blur="tcController.updateBoundsFromForm(boundsModel)"
+                                         field="'start'"
+                                         class="time-range-input">
+                            </mct-control>
+                        </span>
+                            <span class="l-time-range-input-w time-delta start-delta"
+                              ng-class="{'hide':(modeModel.selectedKey === 'fixed')}">
+                                -
+                            <mct-control key="'datetime-field'"
+                                         structure="{
+                                            format: timeSystemModel.deltaFormat,
+                                            validate: tcController.validation.validateStartDelta
+                                         }"
+                                         ng-model="boundsModel"
+                                         ng-blur="tcController.updateDeltasFromForm(boundsModel)"
+                                         field="'startDelta'"
+                                         class="hrs-min-input">
+                            </mct-control>
+                        </span>
                     </span>
                 </span>
                 <span class="l-time-range-w end-w">
-                    <span class="l-time-range-input-w end-date"
-                          ng-controller="ToggleController as t2">
-                        <span class="title"></span>
-                        <mct-control key="'datetime-field'"
-                                     structure="{
-                                         format: timeSystemModel.format,
-                                         validate: tcController.validation.validateEnd
-                                     }"
-                                     ng-model="boundsModel"
-                                     ng-blur="tcController.updateBoundsFromForm(boundsModel)"
-                                     ng-disabled="modeModel.selectedKey !== 'fixed'"
-                                     field="'end'"
-                                     class="time-range-input">
-                        </mct-control>
-                    </span>
-                    <span class="l-time-range-input-w time-delta end-delta"
-                          ng-class="{'hide':(modeModel.selectedKey === 'fixed')}">
-                            +
-                        <mct-control key="'datetime-field'"
-                                     structure="{
-                                        format: timeSystemModel.deltaFormat,
-                                        validate: tcController.validation.validateEndDelta
-                                     }"
-                                     ng-model="boundsModel"
-                                     ng-blur="tcController.updateDeltasFromForm(boundsModel)"
-                                     field="'endDelta'"
-                                     class="hrs-min-input">
-                        </mct-control>
+                    <span class="l-time-conductor-inputs">
+                        <span class="l-time-range-input-w end-date"
+                              ng-controller="ToggleController as t2">
+                            <span class="title"></span>
+                            <mct-control key="'datetime-field'"
+                                         structure="{
+                                             format: timeSystemModel.format,
+                                             validate: tcController.validation.validateEnd
+                                         }"
+                                         ng-model="boundsModel"
+                                         ng-blur="tcController.updateBoundsFromForm(boundsModel)"
+                                         ng-disabled="modeModel.selectedKey !== 'fixed'"
+                                         field="'end'"
+                                         class="time-range-input">
+                            </mct-control>
+                        </span>
+                        <span class="l-time-range-input-w time-delta end-delta"
+                              ng-class="{'hide':(modeModel.selectedKey === 'fixed')}">
+                                +
+                            <mct-control key="'datetime-field'"
+                                         structure="{
+                                            format: timeSystemModel.deltaFormat,
+                                            validate: tcController.validation.validateEndDelta
+                                         }"
+                                         ng-model="boundsModel"
+                                         ng-blur="tcController.updateDeltasFromForm(boundsModel)"
+                                         field="'endDelta'"
+                                         class="hrs-min-input">
+                            </mct-control>
+                        </span>
                     </span>
                 </span>
 
