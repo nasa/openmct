@@ -22,11 +22,13 @@
 <span ng-controller="EditActionController">
     <!-- If there's a single save action show a button, otherwise show a dropdown with all save actions. -->
     <span ng-if="saveActions.length === 1">
-        <a class='s-button major {{saveActions[0].getMetadata().cssclass}}'
-           title='{{saveActions[0].getMetadata().name}}'
-           ng-click="saveActions[0].perform()">
-            <span class="title-label">{{saveActions[0].getMetadata().name}}</span>
-        </a>
+        <mct-control key="'button'"
+                     structure="{
+                        text: saveActions[0].getMetadata().name,
+                        click: saveActions[0].perform,
+                        cssclass: 'major ' + saveActions[0].getMetadata().cssclass
+                     }">
+        </mct-control>
     </span>
 
     <span ng-if="saveActions.length > 1">
@@ -39,7 +41,7 @@
         </mct-control>
     </span>
 
-    <span ng-repeat="currentAction in otherEditActions">
+   <span ng-repeat="currentAction in otherEditActions">
         <a class='s-button {{currentAction.getMetadata().cssclass}}'
            title='{{currentAction.getMetadata().name}}'
            ng-click="currentAction.perform()"
