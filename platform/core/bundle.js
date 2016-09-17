@@ -259,7 +259,7 @@ define([
                             "property": "notes",
                             "control": "textarea",
                             "required": false,
-                            "cssclass": "field-notes"
+                            "cssclass": "l-textarea-sm"
                         }
                     ]
                 },
