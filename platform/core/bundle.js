@@ -252,6 +252,12 @@ define([
                             "pattern": "\\S+",
                             "required": true,
                             "cssclass": "l-input-lg"
+                        },
+                        {
+                            "name": "Notes",
+                            "control": "textarea",
+                            "required": false,
+                            "cssclass": "field-notes"
                         }
                     ]
                 },
