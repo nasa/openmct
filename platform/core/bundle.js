@@ -255,6 +255,8 @@ define([
                         },
                         {
                             "name": "Notes",
+                            "key": "notes",
+                            "property": "notes",
                             "control": "textarea",
                             "required": false,
                             "cssclass": "field-notes"
