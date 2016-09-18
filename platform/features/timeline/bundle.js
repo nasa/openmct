@@ -37,6 +37,7 @@ define([
     "./src/capabilities/CostCapability",
     "./src/directives/MCTSwimlaneDrop",
     "./src/directives/MCTSwimlaneDrag",
+    "./src/directives/MCTResourceGraphDrop",
     "./src/services/ObjectLoader",
     "./src/chart/MCTTimelineChart",
     "text!./res/templates/values.html",
@@ -67,6 +68,7 @@ define([
     CostCapability,
     MCTSwimlaneDrop,
     MCTSwimlaneDrag,
+    MCTResourceGraphDrop,
     ObjectLoader,
     MCTTimelineChart,
     valuesTemplate,
@@ -565,6 +567,13 @@ define([
                     "depends": [
                         "$interval",
                         "$log"
+                    ]
+                },
+                {
+                    "key": "mctResourceGraphDrop",
+                    "implementation": MCTResourceGraphDrop,
+                    "depends": [
+                        "dndService"
                     ]
                 }
             ],
