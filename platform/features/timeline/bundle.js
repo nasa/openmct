@@ -182,6 +182,16 @@ define([
                                 "capacity"
                             ],
                             "pattern": "^-?\\d+(\\.\\d*)?$"
+                        },
+                        {
+                            "name": "Battery Starting SOC",
+                            "control": "textfield",
+                            "required": false,
+                            "conversion": "number",
+                            "property": [
+                                "startingSOC"
+                            ],
+                            "pattern": "^-?\\d+(\\.\\d*)?$"
                         }
                     ],
                     "model": {

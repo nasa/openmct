@@ -60,7 +60,7 @@ define(
                         result.power,
                         0,
                         domainObject.getModel().capacity, // Watts
-                        domainObject.getModel().capacity,
+                        domainObject.getModel().startingSOC,
                         1 / 3600000 // millis-to-hour (since units are watt-hours)
                     );
                 }

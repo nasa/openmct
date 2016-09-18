@@ -101,6 +101,7 @@ define(
             it("provides a battery graph for timelines with capacity", function () {
                 var mockCallback = jasmine.createSpy('callback');
                 testModel.capacity = 1000;
+                testModel.startingSOC = 1000;
                 testModel.type = "timeline";
                 mockDomainObject.useCapability.andReturn(asPromise([
                     { key: "power", start: 0, end: 15 }
