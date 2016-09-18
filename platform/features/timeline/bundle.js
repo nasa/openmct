@@ -37,6 +37,7 @@ define([
     "./src/capabilities/CostCapability",
     "./src/directives/MCTSwimlaneDrop",
     "./src/directives/MCTSwimlaneDrag",
+    "./src/directives/MCTResourceGraphDrop",
     "./src/services/ObjectLoader",
     "text!./res/templates/values.html",
     "text!./res/templates/timeline.html",
@@ -66,6 +67,7 @@ define([
     CostCapability,
     MCTSwimlaneDrop,
     MCTSwimlaneDrag,
+    MCTResourceGraphDrop,
     ObjectLoader,
     valuesTemplate,
     timelineTemplate,
@@ -543,6 +545,13 @@ define([
                 {
                     "key": "mctSwimlaneDrag",
                     "implementation": MCTSwimlaneDrag,
+                    "depends": [
+                        "dndService"
+                    ]
+                },
+                {
+                    "key": "mctResourceGraphDrop",
+                    "implementation": MCTResourceGraphDrop,
                     "depends": [
                         "dndService"
                     ]
