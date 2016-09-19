@@ -41,7 +41,7 @@
         </mct-control>
     </span>
 
-   <span ng-repeat="currentAction in otherEditActions">
+    <span ng-repeat="currentAction in otherEditActions">
         <a class='s-button {{currentAction.getMetadata().cssclass}}'
            title='{{currentAction.getMetadata().name}}'
            ng-click="currentAction.perform()"
