@@ -60,7 +60,7 @@ define(
                 expect(controller.isActive()).toBe(false);
             });
 
-            it("allows active state to be explictly specified", function () {
+            it("allows active state to be explicitly specified", function () {
                 controller.setState(true);
                 expect(controller.isActive()).toBe(true);
                 controller.setState(true);

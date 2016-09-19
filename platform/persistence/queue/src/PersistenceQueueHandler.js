@@ -25,7 +25,7 @@ define(
     function () {
 
         /**
-         * Handles actual persistence invocations for queeud persistence
+         * Handles actual persistence invocations for queued persistence
          * attempts, in a group. Handling in a group in this manner
          * also allows failure to be handled in a group (e.g. in a single
          * summary dialog.)

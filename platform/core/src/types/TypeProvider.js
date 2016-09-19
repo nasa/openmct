@@ -68,7 +68,7 @@ define(
             }) : array;
         }
 
-        // Reduce an array of type definitions to a single type definiton,
+        // Reduce an array of type definitions to a single type definition,
         // which has merged all properties in order.
         function collapse(typeDefs) {
             var collapsed = typeDefs.reduce(function (a, b) {

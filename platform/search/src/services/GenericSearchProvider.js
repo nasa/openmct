@@ -246,7 +246,7 @@ define([
 
     /**
      * @private
-     * @returns {Number} a unique, unusued query Id.
+     * @returns {Number} a unique, unused query Id.
      */
     GenericSearchProvider.prototype.makeQueryId = function () {
         var queryId = Math.ceil(Math.random() * 100000);

@@ -57,7 +57,7 @@ define(
          * `telemetrySubscriber` service.
          *
          * Subscriptions may also be made directly using the
-         * `telemetry` capability of a domain objcet; the subscriber
+         * `telemetry` capability of a domain object; the subscriber
          * uses this as well, but additionally handles delegation
          * (e.g. for telemetry panels) as well as latest-value
          * extraction.

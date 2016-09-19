@@ -49,7 +49,7 @@ define(
                 }
             }
 
-            // Prepoulate maps with models to make subsequent lookup faster.
+            // Prepopulate maps with models to make subsequent lookup faster.
             models.forEach(addModelToMap);
 
             this.modelMap = modelMap;
