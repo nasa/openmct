@@ -33,7 +33,6 @@ define(
                 mockDialogService,
                 mockCopyService,
                 mockParent,
-                mockUrlService,
                 actionContext,
                 capabilities = {},
                 action;
@@ -112,12 +111,7 @@ define(
                         "perform"
                     ]
                 );
-
-                mockUrlService = jasmine.createSpyObj(
-                    "urlService",
-                    ["urlForLocation"]
-                );
-
+                
                 actionContext = {
                     domainObject: mockDomainObject
                 };
