@@ -111,7 +111,7 @@ define(
                         "perform"
                     ]
                 );
-                
+
                 actionContext = {
                     domainObject: mockDomainObject
                 };
