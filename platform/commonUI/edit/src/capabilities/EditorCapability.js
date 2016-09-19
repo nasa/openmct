@@ -103,6 +103,7 @@ define(
             var domainObject = this.domainObject;
             return this.transactionService.cancel().then(function () {
                 domainObject.getCapability("status").set("editing", false);
+                return domainObject;
             });
         };
 
