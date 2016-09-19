@@ -42,7 +42,6 @@ define([
             $injector,
             policyService,
             dialogService,
-            creationService,
             copyService,
             context
         ) {
@@ -52,7 +51,6 @@ define([
             };
             this.policyService = policyService;
             this.dialogService = dialogService;
-            this.creationService = creationService;
             this.copyService = copyService;
         }
 

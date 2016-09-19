@@ -116,7 +116,7 @@ define(
                     domainObject: mockDomainObject
                 };
 
-                action = new SaveAsAction(undefined, undefined, mockDialogService, undefined, mockCopyService, actionContext);
+                action = new SaveAsAction(undefined, undefined, mockDialogService, mockCopyService, actionContext);
 
                 spyOn(action, "getObjectService");
                 action.getObjectService.andReturn(mockObjectService);
