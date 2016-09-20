@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -44,12 +44,18 @@ define(
          */
         function RemsTelemetryServerAdapter($q, $http, $log, REMS_WS_URL) {
             this.localDataURI = module.uri.substring(0, module.uri.lastIndexOf('/') + 1) + LOCAL_DATA;
-            this.requestDeferred = undefined;
             this.REMS_WS_URL = REMS_WS_URL;
             this.$q = $q;
             this.$http = $http;
             this.$log = $log;
             this.cache = undefined;
+
+            this.dataTransforms = {
+                //Convert from pascals to millibars
+                'pressure': function pascalsToMillibars(pascals) {
+                    return pascals / 100;
+                }
+            }
         }
 
         /**
@@ -64,9 +70,9 @@ define(
          * @private
          */
         RemsTelemetryServerAdapter.prototype.requestHistory = function(request) {
-            var self = this,
-                id = request.key,
-                deferred = this.$q.defer();
+            var self = this;
+            var id = request.key;
+            var dataTransforms = this.dataTransforms;
 
             function processResponse(response){
                 var data = [];
@@ -78,13 +84,14 @@ define(
                      * Check that valid data exists
                      */
                     if (!isNaN(solData[id])) {
+                        var dataTransform = dataTransforms[id];
                         /*
                          * Append each data point to the array of values
                          * for this data point property (min. temp, etc).
                          */
                         data.unshift({
                             date: Date.parse(solData[TERRESTRIAL_DATE]),
-                            value: solData[id]
+                            value: dataTransform ? dataTransform(solData[id]) : solData[id]
                         });
                     }
                 });

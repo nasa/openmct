@@ -44,31 +44,31 @@ define(
                         {
                             "name": "Min. Air Temperature",
                             "identifier": "min_temp",
-                            "units": "degrees",
+                            "units": "Degrees (C)",
                             "type": "float"
                         },
                         {
                             "name": "Max. Air Temperature",
                             "identifier": "max_temp",
-                            "units": "degrees",
+                            "units": "Degrees (C)",
                             "type": "float"
                         },
                         {
                             "name": "Atmospheric Pressure",
                             "identifier": "pressure",
-                            "units": "pascals",
+                            "units": "Millibars",
                             "type": "float"
                         },
                         {
                             "name": "Min. Ground Temperature",
                             "identifier": "min_gts_temp",
-                            "units": "degrees",
+                            "units": "Degrees (C)",
                             "type": "float"
                         },
                         {
                             "name": "Max. Ground Temperature",
                             "identifier": "max_gts_temp",
-                            "units": "degrees",
+                            "units": "Degrees (C)",
                             "type": "float"
                         }
                     ]
