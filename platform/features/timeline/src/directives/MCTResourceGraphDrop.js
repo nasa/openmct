@@ -36,8 +36,15 @@ define(
             function link(scope, element, attrs) {
                 // Handle dragover
                 element.on('dragover', function (e) {
-                    scope.resourceGraphLegendropOver = true;
-                    scope.$apply();
+                    var swimlane = dndService.getData(
+                        SwimlaneDragConstants.TIMELINE_SWIMLANE_DRAG_TYPE
+                    );
+
+                    if (typeof swimlane !== "undefined" && !swimlane.graph()) {
+                        element.addClass('drop-over');
+                        scope.$apply();
+                        e.preventDefault();
+                    }
                 });
                 // Handle drops
                 element.on('drop', function (e) {
@@ -45,15 +52,19 @@ define(
                         SwimlaneDragConstants.TIMELINE_SWIMLANE_DRAG_TYPE
                     );
 
+                    element.removeClass('drop-over');
+
                     // Only toggle if the graph isn't already set
-                    if (!swimlane.graph()) {
+                    if (typeof swimlane !== "undefined" && !swimlane.graph()) {
                         swimlane.toggleGraph();
+                        e.preventDefault();
                     }
                 });
                 // Clear highlights when drag leaves this swimlane
-                element.on('dragleave', function () {
-                    scope.resourceGraphLegendropOver = false;
+                element.on('dragleave', function (e) {
+                    element.removeClass('drop-over');
                     scope.$apply();
+                    e.preventDefault();
                 });
             }
 
