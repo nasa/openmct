@@ -55,12 +55,14 @@ define(
                 if (domainObject.getModel().type === 'timeline' &&
                         result.power &&
                             domainObject.getModel().capacity > 0) {
+                    domainObject.getModel().startingSOC =
+                        parseFloat(domainObject.getModel().startingSOC) || 100;
 
                     result.battery = new CumulativeGraph(
                         result.power,
                         0,
                         domainObject.getModel().capacity, // Watts
-                        domainObject.getModel().startingSOC,
+                        (domainObject.getModel().startingSOC/100)*domainObject.getModel().capacity,
                         1 / 3600000 // millis-to-hour (since units are watt-hours)
                     );
                 }
