@@ -223,13 +223,13 @@
         .l-time-conductor-zoom-w {
             @include justify-content(flex-end);
             .time-conductor-zoom {
-                display: none; // TEMP per request from Andrew 8/1/16
+                //display: none; // TEMP per request from Andrew 8/1/16
                 height: $r3H;
                 min-width: 100px;
                 width: 20%;
             }
             .time-conductor-zoom-current-range {
-                display: none; // TEMP per request from Andrew 8/1/16
+                //display: none; // TEMP per request from Andrew 8/1/16
                 color: $colorTick;
             }
         }

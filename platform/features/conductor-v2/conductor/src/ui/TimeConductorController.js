@@ -123,6 +123,8 @@ define(
         TimeConductorController.prototype.setFormFromBounds = function (bounds) {
             this.$scope.boundsModel.start = bounds.start;
             this.$scope.boundsModel.end = bounds.end;
+            //this.$scope.currentZoom = bounds.end - bounds.start;
+            this.$scope.currentZoom = this.toSliderValue(bounds.end - bounds.start);
             if (!this.pendingUpdate) {
                 this.pendingUpdate = true;
                 this.$window.requestAnimationFrame(function () {
@@ -157,9 +159,12 @@ define(
          * @private
          */
         TimeConductorController.prototype.setFormFromTimeSystem = function (timeSystem) {
-            this.$scope.timeSystemModel.selected = timeSystem;
-            this.$scope.timeSystemModel.format = timeSystem.formats()[0];
-            this.$scope.timeSystemModel.deltaFormat = timeSystem.deltaFormat();
+            var timeSystemModel = this.$scope.timeSystemModel;
+            timeSystemModel.selected = timeSystem;
+            timeSystemModel.format = timeSystem.formats()[0];
+            timeSystemModel.deltaFormat = timeSystem.deltaFormat();
+            timeSystemModel.minZoom = timeSystem.defaults().zoom.min;
+            timeSystemModel.maxZoom = timeSystem.defaults().zoom.max;
         };
 
 
@@ -244,6 +249,35 @@ define(
                 }
                 this.setFormFromTimeSystem(newTimeSystem);
             }
+        };
+
+        TimeConductorController.prototype.toSliderValue = function (timeSpan) {
+            var timeSystem = this.conductor.timeSystem();
+            if (timeSystem) {
+                var zoomDefaults = this.conductor.timeSystem().defaults().zoom;
+                var perc = timeSpan / (zoomDefaults.min - zoomDefaults.max);
+                return 1 - Math.pow(perc, 1 / 4);
+            }
+        };
+
+        TimeConductorController.prototype.toTimeSpan = function (sliderValue) {
+            var center = this.$scope.boundsModel.start +
+                ((this.$scope.boundsModel.end - this.$scope.boundsModel.start) / 2);
+            var zoomDefaults = this.conductor.timeSystem().defaults().zoom;
+            var timeSpan = Math.pow((1 - sliderValue), 4) * (zoomDefaults.min - zoomDefaults.max);
+            return {start: center - timeSpan / 2, end: center + timeSpan / 2};
+        };
+
+        TimeConductorController.prototype.zoom = function(sliderValue) {
+            var bounds = this.toTimeSpan(sliderValue);
+            this.setFormFromBounds(bounds);
+
+            this.$scope.$broadcast("zoom", bounds);
+        };
+
+        TimeConductorController.prototype.zoomStop = function (sliderValue) {
+            var bounds = this.toTimeSpan(sliderValue);
+            this.conductor.bounds(bounds);
         };
 
         return TimeConductorController;

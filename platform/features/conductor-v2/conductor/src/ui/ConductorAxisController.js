@@ -135,6 +135,10 @@ define(
             //Respond to changes in conductor
             this.conductor.on("timeSystem", this.changeTimeSystem);
             this.conductor.on("bounds", this.changeBounds);
+
+            scope.$on("zoom", function (evt, bounds){
+                this.changeBounds(bounds);
+            }.bind(this));
         };
 
         ConductorAxisController.prototype.panEnd = function () {

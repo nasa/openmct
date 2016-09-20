@@ -64,13 +64,17 @@ define([
         return this.sources;
     };
 
-    UTCTimeSystem.prototype.defaults = function (key) {
+    UTCTimeSystem.prototype.defaults = function () {
         var now = Math.ceil(Date.now() / 1000) * 1000;
+        var ONE_MINUTE = 60 * 1 * 1000;
+        var FIFTY_YEARS = 50 * 365 * 24 * 60 * 60 * 1000;
+
         return {
             key: 'utc-default',
             name: 'UTC time system defaults',
             deltas: {start: FIFTEEN_MINUTES, end: 0},
-            bounds: {start: now - FIFTEEN_MINUTES, end: now}
+            bounds: {start: now - FIFTEEN_MINUTES, end: now},
+            zoom: {min: FIFTY_YEARS, max: ONE_MINUTE}
         };
     };
 
