@@ -55,7 +55,7 @@ define(
                 'pressure': function pascalsToMillibars(pascals) {
                     return pascals / 100;
                 }
-            }
+            };
         }
 
         /**

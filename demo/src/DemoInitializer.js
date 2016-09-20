@@ -201,13 +201,15 @@ define(
                             },
                             {
                                 title: "Thank You",
-                                content: "That’s the end of the tour. Thanks" +
+                                content: "<p>That’s the end of the tour." +
+                                " Thanks" +
                                 " for your time, and we hope you enjoy using" +
-                                " and contributing to Open MCT! To find out" +
-                                " more about Open MCT, please visit <a" +
-                                " target=\"_blank\" " +
-                                " href=\"https://nasa.github.io/openmct/\">our" +
-                                " website</a>",
+                                " and contributing to Open MCT!</p> " +
+                                " <p>To find out more about Open MCT," +
+                                " please visit our website -<p>" +
+                                "<a target=\"_blank\"" +
+                                " href=\"https://nasa.github.io/openmct/\">" +
+                                "<strong>https://nasa.github.io/openmct</strong></a>",
                                 target: ".user-environ",
                                 placement: "top",
                                 xOffset: "center",
