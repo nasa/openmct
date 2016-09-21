@@ -20,10 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./Path', 'zepto'], function (Path, $) {
+define(['zepto'], function ($) {
+    /**
+     * @typedef Context
+     * @property {*} item
+     * @property {HTMLElement} element
+     * @property {Context} parent the containing context (may be undefined)
+     */
+
+
     function ContextManager() {
         this.counter = 0;
-        this.paths = {};
+        this.contexts = {};
     }
 
     ContextManager.prototype.nextId = function () {
@@ -31,24 +39,28 @@ define(['./Path', 'zepto'], function (Path, $) {
         return "context-" + this.counter;
     };
 
-    ContextManager.prototype.path = function (item, htmlElement) {
+    ContextManager.prototype.context = function (item, htmlElement) {
         var $element = $(htmlElement);
         var id = $element.attr('data-context') || this.nextId();
 
         $element.attr('data-context', id);
 
-        if (this.paths[id].head() !== item) {
+        if (this.contexts[id].item !== item) {
             this.release(htmlElement);
         }
 
-        if (!this.paths[id]) {
+        if (!this.contexts[id]) {
             var $parent = $element.closest('[data-context]');
             var parentId = $parent.attr('data-context');
-            var parentPath = this.paths[parentId];
-            this.paths[id] = new Path(item, parentPath);
+            var parentContext = parentId ? this.contexts[parentId] : undefined;
+            this.contexts[id] = {
+                item: item,
+                element: htmlElement,
+                parent: parentContext
+            };
         }
 
-        return this.paths[id];
+        return this.contexts[id];
     };
 
     ContextManager.prototype.release = function (htmlElement) {
@@ -56,7 +68,7 @@ define(['./Path', 'zepto'], function (Path, $) {
         var id = $element.attr('data-context');
 
         if (id) {
-            delete this.paths[id];
+            delete this.contexts[id];
             $element.removeAttr('data-context');
         }
     };
