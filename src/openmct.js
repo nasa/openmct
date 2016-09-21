@@ -23,14 +23,17 @@
 define([
     './selection/Selection',
     './selection/ContextManager',
-    './selection/SelectGesture'
-], function (Selection, ContextManager, SelectGesture) {
+    './selection/SelectGesture',
+    './ui/ViewRegistry'
+], function (Selection, ContextManager, SelectGesture, ViewRegistry) {
     var openmct = {};
     var selection = new Selection();
     var manager = new ContextManager();
     var select = new SelectGesture(manager, selection);
 
-    openmct.selection = new selection;
+    openmct.selection = selection;
+
+    openmct.inspectors = new ViewRegistry();
 
     openmct.gestures = {
         selectable: select.apply.bind(select)
