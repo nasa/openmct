@@ -20,7 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['legacyRegistry', '../openmct'], function (legacyRegistry, openmct) {
+define([
+    'legacyRegistry',
+    './gestures/AdaptedContextMenuGesture',
+    '../openmct'
+], function (legacyRegistry, AdaptedContextMenuGesture, openmct) {
     legacyRegistry.register('adapter', {
         extensions: {
             services: [
@@ -29,6 +33,14 @@ define(['legacyRegistry', '../openmct'], function (legacyRegistry, openmct) {
                     implementation: function () {
                         return openmct;
                     }
+                }
+            ],
+            gestures: [
+                {
+                    key: "menu",
+                    implementation: AdaptedContextMenuGesture,
+                    priority: "preferred",
+                    depends: ["openmct"]
                 }
             ]
         }
