@@ -76,7 +76,6 @@ define(
                 this.navigationService.setNavigation(this.domainObject);
             }
 
-            //this.navigationService.addListener(cancelEditing);
             this.domainObject.useCapability("editor");
         };
 

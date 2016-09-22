@@ -140,7 +140,7 @@ define(
                 });
             });
 
-            describe("in edit more", function () {
+            describe("in edit mode", function () {
                 beforeEach(function () {
                     mockNavigatedObject.hasCapability.andCallFake(function (capability) {
                         return capability === "editor";

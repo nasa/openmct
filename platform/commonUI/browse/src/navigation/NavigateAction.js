@@ -49,9 +49,7 @@ define(
         NavigateAction.prototype.perform = function () {
             var self = this,
                 navigateTo = this.domainObject,
-                currentObject = self.navigationService.getNavigation(),
-                editing = currentObject.hasCapability('editor') &&
-                    currentObject.getCapability('editor').isEditContextRoot();
+                currentObject = self.navigationService.getNavigation();
 
             function allow() {
                 var navigationAllowed = true;
@@ -63,6 +61,9 @@ define(
             }
 
             function cancelIfEditing() {
+                var editing = currentObject.hasCapability('editor') &&
+                    currentObject.getCapability('editor').isEditContextRoot();
+
                 return self.$q.when(editing && currentObject.getCapability("editor").cancel());
             }
 
