@@ -277,9 +277,7 @@
         $cPinnedHov: $toiColorBgPinned;
         $linesVOffset: 2px;
         @include transform(translateX(-50%));
-        @include trans-prop-nice($props: opacity, $dur: 200ms);
         color: $c;
-        opacity: 0; // Hide by default, only show when user hovers over .l-data-visualization
         top: 0px;
         bottom: 0px;
         width: $timeCondTOIIconD;

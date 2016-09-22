@@ -392,6 +392,14 @@
     white-space: nowrap;
 }
 
+@mixin reverseEllipsis() {
+    direction: rtl;
+    unicode-bidi:bidi-override;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 @mixin scrollH($showBar: auto) {
     overflow-x: $showBar;
     overflow-y: hidden;

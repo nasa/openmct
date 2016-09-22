@@ -1,0 +1,119 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2016, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+.l-toi-holder {
+    @include trans-prop-nice($props: opacity, $dur: 200ms);
+    &:not(.pinned) {
+        opacity: 0; // Hide by default, only show when user hovers over container that implements this element
+    }
+    .l-toi {
+
+    }
+    .l-toi-val {
+        color: $toiColorFg;
+
+    }
+}
+
+// TOI in tables
+.mct-table {
+    tr.l-toi-holder {
+        td.l-toi {
+            background-color: $toiColorBg;
+            column-span: 999;
+            font-size: 0;
+        }
+    }
+}
+
+// TOI in plots
+.gl-plot {
+    .gl-plot-wrapper-display-area-and-x-axis {
+        &:hover {
+            .l-toi-holder {
+                opacity: 1;
+            }
+        }
+        .l-toi-holder {
+            $toiColorBgPinned: rgba($toiColorBgPinned, 0.4);
+            pointer-events: none;
+            position: absolute;
+            top: 0;
+            bottom: nth($plotDisplayArea, 3); // Position of element when TOI is pinned
+            min-width: 50px;
+            max-width: 150px;
+            width: 20%; // Needs to be an even number to avoid sub-pixel antialiasing of the vertical line
+            &:before {
+                // Vertical line
+                border-left: 1px dashed $toiColorBg;
+                content: '';
+                display: block;
+                left: 50%;
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 1px;
+            }
+            .l-toi-val {
+                background-color: $toiColorBg;
+                box-sizing: border-box;
+                padding: $interiorMarginSm $interiorMarginSm;
+                position: absolute;
+                text-align: center;
+                width: 100%;
+                bottom: -2px;
+                border-radius: $controlCr;
+                .val {
+                    @include reverseEllipsis();
+                }
+                .t-unpin-button {
+                    margin-left: $interiorMarginSm;
+                    pointer-events: auto;
+                }
+            }
+
+            &.pinned {
+                &:before {
+                    border-left-color: $toiColorBgPinned;
+                    border-left-style: solid;
+                }
+                .l-toi-val {
+                    background-color: $toiColorBgPinned;
+                    border-radius: 0;
+                    border-top-left-radius: $controlCr;
+                    border-top-right-radius: $controlCr;
+                    bottom: 0px;
+                }
+            }
+
+            &:not(.pinned) {
+                .l-toi-val {
+                    @include transform(translateY(100%)); // Position of element when TOI is visible but not pinned
+                }
+                .t-unpin-button {
+                    display: none;
+                }
+            }
+            z-index: 3;
+        }
+    }
+}

@@ -19,14 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@mixin reverseEllipsis() {
-    direction: rtl;
-    unicode-bidi:bidi-override;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
 .abs.holder-plot {
     // Fend off the scrollbar when less than min-height;
     right: $interiorMargin;
@@ -86,72 +78,6 @@
             height: $plotXBarH;
             width: auto;
             overflow: hidden;
-        }
-
-        .l-toi-holder {
-            //@include test(green);
-            $cBg: $toiColorBg;
-            $cBgPinnedOpacity: 0.4;
-            $cBgPinned: rgba($toiColorBgPinned, 0.4);
-            pointer-events: none;
-            position: absolute;
-            top: 0;
-            bottom: nth($plotDisplayArea, 3); // Position of element when TOI is pinned
-            min-width: 50px;
-            max-width: 150px;
-            width: 20%; // Needs to be an even number to avoid sub-pixel antialiasing of the vertical line
-            &:before {
-                // Vertical line
-                border-left: 1px dashed $cBg;
-                content:'';
-                display: block;
-                left: 50%;
-                position: absolute;
-                top: 0; bottom: 0;
-                width: 1px;
-            }
-            .l-toi-val {
-                background-color: $cBg;
-                color: $toiColorFg;
-                box-sizing: border-box;
-                padding: $interiorMarginSm $interiorMarginSm;
-                position: absolute;
-                text-align: center;
-                width: 100%;
-                bottom: -2px;
-                border-radius: $controlCr;
-                .val {
-                    @include reverseEllipsis();
-                }
-                .t-unpin-button {
-                    margin-left: $interiorMarginSm;
-                    pointer-events: auto;
-                }
-            }
-
-            &.pinned {
-                &:before {
-                    border-left-color: $cBgPinned;
-                    border-left-style: solid;
-                }
-                .l-toi-val {
-                    background-color: $cBgPinned;
-                    border-radius: 0;
-                    border-top-left-radius: $controlCr;
-                    border-top-right-radius: $controlCr;
-                    bottom: 0px;
-                }
-            }
-
-            &:not(.pinned) {
-                .l-toi-val {
-                    @include transform(translateY(100%));  // Position of element when TOI is visible but not pinned
-                }
-                .t-unpin-button {
-                    display: none;
-                }
-            }
-            z-index: 3;
         }
     }
 
