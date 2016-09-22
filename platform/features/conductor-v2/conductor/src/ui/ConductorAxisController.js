@@ -46,13 +46,21 @@ define(
             this.initialized = false;
             this.msPerPixel = undefined;
 
-            this.setScale = this.setScale.bind(this);
-            this.changeBounds = this.changeBounds.bind(this);
-            this.changeTimeSystem = this.changeTimeSystem.bind(this);
-
             this.bounds = conductor.bounds();
             this.timeSystem = conductor.timeSystem();
+
+            //Bind all class functions to 'this'
+            Object.keys(ConductorAxisController.prototype).filter(function (key) {
+                return typeof ConductorAxisController.prototype[key] === 'function';
+            }).forEach(function (key) {
+                self[key] = self[key].bind(self);
+            });
         }
+
+        ConductorAxisController.prototype.destroy = function () {
+            this.conductor.off('timeSystem', this.changeTimeSystem);
+            this.conductor.off('bounds', this.setScale);
+        };
 
         ConductorAxisController.prototype.changeBounds = function (bounds) {
             this.bounds = bounds;
@@ -135,6 +143,8 @@ define(
             //Respond to changes in conductor
             this.conductor.on("timeSystem", this.changeTimeSystem);
             this.conductor.on("bounds", this.changeBounds);
+
+            this.scope.$on("$destroy", this.destroy);
 
             scope.$on("zoom", function (evt, bounds){
                 this.changeBounds(bounds);
