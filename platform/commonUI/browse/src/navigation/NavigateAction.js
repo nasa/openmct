@@ -48,20 +48,35 @@ define(
          */
         NavigateAction.prototype.perform = function () {
             var self = this,
-                navigationAllowed = true;
+                navigateTo = this.domainObject,
+                currentObject = self.navigationService.getNavigation();
 
             function allow() {
-                self.policyService.allow("navigation", self.navigationService.getNavigation(), self.domainObject, function (message) {
+                var navigationAllowed = true;
+                self.policyService.allow("navigation", currentObject, navigateTo, function (message) {
                     navigationAllowed = self.$window.confirm(message + "\r\n\r\n" +
                         " Are you sure you want to continue?");
                 });
                 return navigationAllowed;
             }
 
-            // Set navigation, and wrap like a promise
-            return this.$q.when(
-                allow() && this.navigationService.setNavigation(this.domainObject)
-            );
+            function cancelIfEditing() {
+                var editing = currentObject.hasCapability('editor') &&
+                    currentObject.getCapability('editor').isEditContextRoot();
+
+                return self.$q.when(editing && currentObject.getCapability("editor").cancel());
+            }
+
+            function navigate() {
+                return self.navigationService.setNavigation(navigateTo);
+            }
+
+            if (allow()) {
+                return cancelIfEditing().then(navigate);
+            } else {
+                return this.$q.when(false);
+            }
+
         };
 
         /**

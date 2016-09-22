@@ -32,7 +32,9 @@ define(
                 mockQ,
                 mockDomainObject,
                 mockPolicyService,
+                mockNavigatedObject,
                 mockWindow,
+                capabilities,
                 action;
 
             function mockPromise(value) {
@@ -44,6 +46,29 @@ define(
             }
 
             beforeEach(function () {
+                capabilities = {};
+
+                mockQ = { when: mockPromise };
+                mockNavigatedObject = jasmine.createSpyObj(
+                    "domainObject",
+                    [
+                        "getId",
+                        "getModel",
+                        "hasCapability",
+                        "getCapability"
+                    ]
+                );
+
+                capabilities.editor = jasmine.createSpyObj("editorCapability", [
+                    "isEditContextRoot",
+                    "cancel"
+                ]);
+
+                mockNavigatedObject.getCapability.andCallFake(function (capability) {
+                    return capabilities[capability];
+                });
+                mockNavigatedObject.hasCapability.andReturn(false);
+
                 mockNavigationService = jasmine.createSpyObj(
                     "navigationService",
                     [
@@ -51,11 +76,14 @@ define(
                         "getNavigation"
                     ]
                 );
-                mockNavigationService.getNavigation.andReturn({});
-                mockQ = { when: mockPromise };
+                mockNavigationService.getNavigation.andReturn(mockNavigatedObject);
+
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    ["getId", "getModel", "getCapability"]
+                    [
+                        "getId",
+                        "getModel"
+                    ]
                 );
 
                 mockPolicyService = jasmine.createSpyObj("policyService",
@@ -108,6 +136,21 @@ define(
                     mockWindow.confirm.andReturn(true);
                     action.perform();
                     expect(mockNavigationService.setNavigation)
+                        .toHaveBeenCalled();
+                });
+            });
+
+            describe("in edit mode", function () {
+                beforeEach(function () {
+                    mockNavigatedObject.hasCapability.andCallFake(function (capability) {
+                        return capability === "editor";
+                    });
+                    capabilities.editor.isEditContextRoot.andReturn(true);
+                });
+
+                it("cancels editing if in edit mode", function () {
+                    action.perform();
+                    expect(capabilities.editor.cancel)
                         .toHaveBeenCalled();
                 });
             });

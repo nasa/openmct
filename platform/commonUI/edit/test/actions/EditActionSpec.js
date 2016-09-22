@@ -98,13 +98,6 @@ define(
                 expect(EditAction.appliesTo(actionContext)).toBe(false);
             });
 
-            it ("cancels editing when user navigates away", function () {
-                action.perform();
-                expect(mockNavigationService.addListener).toHaveBeenCalled();
-                mockNavigationService.addListener.mostRecentCall.args[0]();
-                expect(mockEditor.cancel).toHaveBeenCalled();
-            });
-
             it ("invokes the Edit capability on the object", function () {
                 action.perform();
                 expect(mockDomainObject.useCapability).toHaveBeenCalledWith("editor");
