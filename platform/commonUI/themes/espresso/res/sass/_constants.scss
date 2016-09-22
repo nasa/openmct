@@ -107,9 +107,8 @@ $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 $toiColorBg: #666;
 $toiColorBgHov: #999;
 $toiColorFg: #fff;
-$toiColorBgPinned: rgba($colorKey, 0.4);
+$toiColorBgPinned: $colorKey;
 $toiColorFgPinned: #fff;
-
 
 // Status colors, mainly used for messaging and item ancillary symbols
 $colorStatusFg: #ccc;

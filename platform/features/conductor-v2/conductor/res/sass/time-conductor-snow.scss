@@ -36,4 +36,6 @@ $colorTimeCondKeyBg: #6178dc;
 $colorTimeCondKeyFg: #fff;
 $colorTimeCondDataVisBg: pullForward($colorBodyBg, 10%);
 $colorTimeCondDataVisRtBg: pushBack($colorTimeCondKeyBg, 30%);
+$colorTimeCondTOIBg: darken($toiColorBg, 20%);
+$colorTimeCondTOIBgHov: $toiColorBg;
 @import "time-conductor-base";

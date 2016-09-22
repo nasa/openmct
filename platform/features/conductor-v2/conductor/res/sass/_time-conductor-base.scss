@@ -190,8 +190,8 @@
         .l-axis-holder {
             height: $r1H;
             position: absolute;
-            left: nth($timeCondAxisLROffset,1);
-            right: nth($timeCondAxisLROffset,2);
+            left: nth($timeCondAxisLROffset, 1);
+            right: nth($timeCondAxisLROffset, 2);
             svg {
                 text-rendering: geometricPrecision;
                 width: 100%;
@@ -220,16 +220,18 @@
         .l-page-button,
         .l-data-visualization {
             position: absolute;
-            top: 0; bottom: 0;
+            top: 0;
+            bottom: 0;
         }
 
         .l-page-button {
             @if nth($timeCondAxisLROffset, 1) + nth($timeCondAxisLROffset, 2) > 30 {
                 left: 0;
-                width: nth($timeCondAxisLROffset,1);
+                width: nth($timeCondAxisLROffset, 1);
                 &.align-right {
-                    left: auto; right: 0;
-                    width: nth($timeCondAxisLROffset,2);
+                    left: auto;
+                    right: 0;
+                    width: nth($timeCondAxisLROffset, 2);
                 }
             } @else {
                 // Hide these if the offsets aren't enough
@@ -241,6 +243,21 @@
             background: $colorTimeCondDataVisBg;
             left: nth($timeCondAxisLROffset, 1);
             right: nth($timeCondAxisLROffset, 2);
+            &:hover {
+                // Hide the cursor, because the TOI element essentially "becomes" the cursor
+                // when the user is hovering over the visualization area.
+                cursor: none;
+                .l-toi-holder {
+                    opacity: 1;
+                }
+                .l-toi-holder.pinned {
+                    opacity: 0.4;
+                    .l-toi-val {
+                        pointer-events: none;
+                        opacity: 0;
+                    }
+                }
+            }
         }
     }
 
@@ -254,13 +271,20 @@
     }
 
     .l-toi-holder {
-        $c: $toiColorBg;
+        $c: $colorTimeCondTOIBg;
         $cHov: $toiColorBgHov;
+        $cPinned: rgba($toiColorBgPinned, 0.8);
+        $cPinnedHov: $toiColorBgPinned;
         $linesVOffset: 2px;
         @include transform(translateX(-50%));
-        top: 0px; bottom: 0px;
+        @include trans-prop-nice($props: opacity, $dur: 200ms);
+        color: $c;
+        opacity: 0; // Hide by default, only show when user hovers over .l-data-visualization
+        top: 0px;
+        bottom: 0px;
         width: $timeCondTOIIconD;
-        left: auto; right: auto;
+        left: auto;
+        right: auto;
         z-index: 1;
         &:before,
         &:after {
@@ -268,30 +292,33 @@
             content: '';
             background-color: $c;
             left: 50%;
-            height: (($r2H - $timeCondTOIIconD)/2) + $linesVOffset; width: 1px;
+            height: (($r2H - $timeCondTOIIconD)/2) + $linesVOffset;
+            width: 1px;
             z-index: 0;
         }
 
         &:before {
             @include transform(translate(-50%, $linesVOffset * -1));
-            top: 0px; bottom: auto;
+            top: 0px;
+            bottom: auto;
         }
 
         &:after {
             @include transform(translate(-50%, $linesVOffset));
-            top: auto; bottom: 0px;
+            top: auto;
+            bottom: 0px;
         }
 
         .l-toi {
             $d: $timeCondTOIIconD;
             @include transform(translate(-50%, -50%));
-            color: $c;
             font-size: $d;
             line-height: $d;
             text-align: center;
             left: 50%;
             top: 50%;
-            height: $d; width: $d;
+            height: $d;
+            width: $d;
             z-index: 1;
             &:before {
                 @extend .ui-symbol;
@@ -301,7 +328,6 @@
 
         .l-toi-val {
             @include transform(translateY(-51%));
-            display: none; // Only show when TOI is active
             font-size: 0.7rem;
             position: absolute;
             top: 50%;
@@ -316,20 +342,34 @@
             }
         }
 
-        &.s-status-active {
-            .l-toi-val {
-                display: block;
+        &.pinned {
+            opacity: 1;
+            z-index: 2; // Get this above a non-pinned instance so user can access the remove "x" button.
+            &.active {
+                opacity: 1;
             }
-        }
-
-        &:hover {
             &:before,
             &:after {
-                background-color: $cHov !important;
+                // Vertical lines
+                background-color: $cPinned;
             }
-            .l-toi,
-            .l-toi-val {
-                color: $cHov !important;
+            color: $cPinned;
+
+            &:hover {
+                opacity: 1 !important;
+                + .l-toi-holder {
+                    // Important note: the non-pinned TOI element must come after the pinned version in markup.
+                    opacity: 0;
+
+                }
+            }
+
+            .l-toi:hover {
+                color: $cPinnedHov;
+                cursor: pointer;
+                &:before {
+                    content: $glyph-icon-x-in-circle;
+                }
             }
         }
     }
@@ -356,7 +396,9 @@
     &.realtime-mode,
     &.lad-mode {
         .time-conductor-icon {
-            &:before { color: $colorTimeCondKeyBg; }
+            &:before {
+                color: $colorTimeCondKeyBg;
+            }
             div[class*="hand"] {
                 @include animation-name(clock-hands);
                 &:before {
@@ -398,13 +440,15 @@
 
         .l-data-visualization {
             background: $colorTimeCondDataVisRtBg !important;
-            //height: $r2HRt;
         }
 
         .mode-selector .s-menu-button {
             $fg: $colorTimeCondKeyFg;
             @include btnSubtle($bg: $colorTimeCondKeyBg, $bgHov: pullForward($colorTimeCondKeyBg, $ltGamma), $fg: $colorTimeCondKeyFg);
-            &:before { color: $fg !important; };
+            &:before {
+                color: $fg !important;
+            }
+        ;
             color: $fg !important;
         }
     }
@@ -466,7 +510,9 @@
 /******************************************************************** MOBILE */
 
 @include phoneandtablet {
-    .l-time-conductor-holder { min-width: 0 !important; }
+    .l-time-conductor-holder {
+        min-width: 0 !important;
+    }
     .super-menu.mini {
         width: 200px;
         height: 100px;

@@ -91,8 +91,8 @@
         .l-toi-holder {
             //@include test(green);
             $cBg: $toiColorBg;
-            $cBgPinnedOpacity: 0.3;
-            $cBgPinned: $toiColorBgPinned;
+            $cBgPinnedOpacity: 0.4;
+            $cBgPinned: rgba($toiColorBgPinned, 0.4);
             pointer-events: none;
             position: absolute;
             top: 0;
