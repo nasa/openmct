@@ -43,8 +43,6 @@ define(
             this.xScale = undefined;
             this.xAxis = undefined;
             this.axisElement = undefined;
-            this.setScale = this.setScale.bind(this);
-            this.changeTimeSystem = this.changeTimeSystem.bind(this);
 
             // Angular Directive interface
             this.link = this.link.bind(this);
@@ -52,6 +50,13 @@ define(
             this.template =
                 "<div class=\"l-axis-holder\" mct-resize=\"resize()\"></div>";
             this.priority = 1000;
+
+            //Bind all class functions to 'this'
+            Object.keys(MCTConductorAxis.prototype).filter(function (key) {
+                return typeof MCTConductorAxis.prototype[key] === 'function';
+            }).forEach(function (key) {
+                this[key] = this[key].bind(this);
+            }.bind(this));
         }
 
         MCTConductorAxis.prototype.setScale = function () {
@@ -99,6 +104,11 @@ define(
             }
         };
 
+        MCTConductorAxis.prototype.destroy = function () {
+            this.conductor.off('timeSystem', this.changeTimeSystem);
+            this.conductor.off('bounds', this.setScale);
+        };
+
         MCTConductorAxis.prototype.link = function (scope, element) {
             var conductor = this.conductor;
             this.target = element[0].firstChild;
@@ -120,6 +130,8 @@ define(
 
             //On conductor bounds changes, redraw ticks
             conductor.on('bounds', this.setScale);
+
+            scope.$on("$destroy", this.destroy);
 
             if (conductor.timeSystem() !== undefined) {
                 this.changeTimeSystem(conductor.timeSystem());

@@ -53,9 +53,6 @@ define(
             this.initializeScope();
 
             this.conductor.on('bounds', this.setFormFromBounds);
-            this.conductor.on('follow', function (follow) {
-                $scope.followMode = follow;
-            });
             this.conductor.on('timeSystem', this.changeTimeSystem);
 
             // If no mode selected, select fixed as the default
@@ -100,6 +97,13 @@ define(
 
             // Watch scope for selection of mode or time system by user
             this.$scope.$watch('modeModel.selectedKey', this.setMode);
+
+            this.$scope.$on('$destroy', this.destroy);
+        };
+
+        TimeConductorController.prototype.destroy = function () {
+            this.conductor.off('bounds', this.setFormFromBounds);
+            this.conductor.off('timeSystem', this.changeTimeSystem);
         };
 
         /**

@@ -32,7 +32,9 @@ define(['./MctConductorAxis'], function (MctConductorAxis) {
             d3;
 
         beforeEach(function () {
-            mockScope = {};
+            mockScope = jasmine.createSpyObj("scope", [
+                "$on"
+            ]);
 
             //Add some HTML elements
             mockTarget = {
@@ -49,7 +51,8 @@ define(['./MctConductorAxis'], function (MctConductorAxis) {
             mockConductor = jasmine.createSpyObj("conductor", [
                 "timeSystem",
                 "bounds",
-                "on"
+                "on",
+                "off"
             ]);
             mockConductor.bounds.andReturn(mockBounds);
 
@@ -83,6 +86,13 @@ define(['./MctConductorAxis'], function (MctConductorAxis) {
         it("listens for changes to time system and bounds", function () {
             expect(mockConductor.on).toHaveBeenCalledWith("timeSystem", directive.changeTimeSystem);
             expect(mockConductor.on).toHaveBeenCalledWith("bounds", directive.setScale);
+        });
+
+        it("on scope destruction, deregisters listeners", function () {
+            expect(mockScope.$on).toHaveBeenCalledWith("$destroy", directive.destroy);
+            directive.destroy();
+            expect(mockConductor.off).toHaveBeenCalledWith("timeSystem", directive.changeTimeSystem);
+            expect(mockConductor.off).toHaveBeenCalledWith("bounds", directive.setScale);
         });
 
         describe("when the time system changes", function () {
