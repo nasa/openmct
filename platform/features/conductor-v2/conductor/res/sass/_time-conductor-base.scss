@@ -254,8 +254,8 @@
     }
 
     .l-toi-holder {
-        $c: $colorClickIcon;
-        $cHov: $colorClickIconHov;
+        $c: $toiColorBg;
+        $cHov: $toiColorBgHov;
         $linesVOffset: 2px;
         @include transform(translateX(-50%));
         top: 0px; bottom: 0px;
@@ -283,7 +283,7 @@
         }
 
         .l-toi {
-            $d: $timeCondTOIIconD; //$r2H * 0.65;
+            $d: $timeCondTOIIconD;
             @include transform(translate(-50%, -50%));
             color: $c;
             font-size: $d;

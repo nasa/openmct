@@ -90,10 +90,9 @@
 
         .l-toi-holder {
             //@include test(green);
-            $cBg: #666  ;
+            $cBg: $toiColorBg;
             $cBgPinnedOpacity: 0.3;
-            $cBgPinned: rgba($colorKey, 0.4);
-            //@include transform(translateX(-50%));
+            $cBgPinned: $toiColorBgPinned;
             pointer-events: none;
             position: absolute;
             top: 0;
@@ -103,42 +102,34 @@
             width: 20%; // Needs to be an even number to avoid sub-pixel antialiasing of the vertical line
             &:before {
                 // Vertical line
-                //background-color: $cBg;
                 border-left: 1px dashed $cBg;
                 content:'';
                 display: block;
                 left: 50%;
-                //@include transform(translateX(-50%));
                 position: absolute;
                 top: 0; bottom: 0;
                 width: 1px;
             }
             .l-toi-val {
-                //@include test(green);
                 background-color: $cBg;
-                color: #fff;
+                color: $toiColorFg;
                 box-sizing: border-box;
-                //display: inline-block;
                 padding: $interiorMarginSm $interiorMarginSm;
                 position: absolute;
                 text-align: center;
-                //white-space: nowrap;
                 width: 100%;
                 bottom: -2px;
                 border-radius: $controlCr;
                 .val {
                     @include reverseEllipsis();
-                    //display: inline-block;
                 }
                 .t-unpin-button {
-                    //display: inline-block;
                     margin-left: $interiorMarginSm;
                     pointer-events: auto;
                 }
             }
 
             &.pinned {
-                //opacity: 0.4;
                 &:before {
                     border-left-color: $cBgPinned;
                     border-left-style: solid;
