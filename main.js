@@ -113,4 +113,5 @@ define([
     openmct.on('start', function () {
         return new Main().run(legacyRegistry);
     });
+    return openmct;
 });
