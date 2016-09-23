@@ -45,7 +45,7 @@ define(['zepto'], function ($) {
 
         $element.attr('data-context', id);
 
-        if (this.contexts[id].item !== item) {
+        if (this.contexts[id] && this.contexts[id].item !== item) {
             this.release(htmlElement);
         }
 

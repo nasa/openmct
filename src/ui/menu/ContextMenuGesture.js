@@ -18,14 +18,13 @@ define(['zepto', './ContextMenuView'], function ($, ContextMenuView) {
         var contextManager = this.contextManager;
 
         var $element = $(htmlElement);
-        var path = contextManager.path(item, htmlElement);
+        var context = contextManager.context(item, htmlElement);
 
         function showMenu(event) {
-            selection.add(path);
+            selection.add(context);
 
             var x = event.clientX;
             var y = event.clientY;
-            var context = selection.context();
             var actions = actionRegistry.get(context);
             var view = new ContextMenuView(actions);
 
