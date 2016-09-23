@@ -83,7 +83,7 @@ table {
 .gl-plot {
     .gl-plot-wrapper-display-area-and-x-axis {
         &:hover {
-            .l-toi-holder:not(.active) {
+            .l-toi-holder.hover {
                 opacity: 1;
             }
         }

@@ -247,10 +247,10 @@
                 // Hide the cursor, because the TOI element essentially "becomes" the cursor
                 // when the user is hovering over the visualization area.
                 cursor: none;
-                .l-toi-holder {
+                .l-toi-holder.hover {
                     opacity: 1;
                 }
-                .l-toi-holder.pinned {
+                .l-toi-holder.pinned.active {
                     opacity: 0.4;
                     .l-toi-val {
                         pointer-events: none;
@@ -341,7 +341,7 @@
         }
 
         &.pinned {
-            opacity: 1;
+            //opacity: 1;
             z-index: 2; // Get this above a non-pinned instance so user can access the remove "x" button.
             &.active {
                 opacity: 1;
