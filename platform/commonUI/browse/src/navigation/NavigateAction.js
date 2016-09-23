@@ -64,7 +64,7 @@ define(
                 var editing = currentObject.hasCapability('editor') &&
                     currentObject.getCapability('editor').isEditContextRoot();
 
-                return self.$q.when(editing && currentObject.getCapability("editor").cancel());
+                return self.$q.when(editing && currentObject.getCapability("editor").finish());
             }
 
             function navigate() {

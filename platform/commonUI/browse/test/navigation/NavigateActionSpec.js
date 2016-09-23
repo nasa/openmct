@@ -61,7 +61,7 @@ define(
 
                 capabilities.editor = jasmine.createSpyObj("editorCapability", [
                     "isEditContextRoot",
-                    "cancel"
+                    "finish"
                 ]);
 
                 mockNavigatedObject.getCapability.andCallFake(function (capability) {
@@ -148,9 +148,9 @@ define(
                     capabilities.editor.isEditContextRoot.andReturn(true);
                 });
 
-                it("cancels editing if in edit mode", function () {
+                it("finishes editing if in edit mode", function () {
                     action.perform();
-                    expect(capabilities.editor.cancel)
+                    expect(capabilities.editor.finish)
                         .toHaveBeenCalled();
                 });
             });
