@@ -21,23 +21,27 @@
  *****************************************************************************/
 
 define([
+    'EventEmitter',
     './selection/Selection',
     './selection/ContextManager',
     './selection/SelectGesture',
     './ui/menu/ContextMenuGesture',
     './ui/ViewRegistry'
 ], function (
+    EventEmitter,
     Selection,
     ContextManager,
     SelectGesture,
     ContextMenuGesture,
     ViewRegistry
 ) {
-    var openmct = {};
+    var openmct = Object.create(EventEmitter.prototype);
     var selection = new Selection();
     var manager = new ContextManager();
     var select = new SelectGesture(manager, selection);
     var contextMenu = new ContextMenuGesture(selection, {}, {}, manager);
+
+    EventEmitter.call(openmct);
 
     openmct.selection = selection;
 
@@ -47,6 +51,8 @@ define([
         selectable: select.apply.bind(select),
         contextual: contextMenu.apply.bind(contextMenu)
     };
+
+    openmct.start = openmct.emit.bind(openmct, 'start');
 
     return openmct;
 });

@@ -68,6 +68,7 @@ requirejs.config({
 });
 
 define([
+    './src/openmct',
     './platform/framework/src/Main',
     'legacyRegistry',
 
@@ -105,12 +106,11 @@ define([
     './platform/entanglement/bundle',
     './platform/search/bundle',
     './platform/status/bundle',
-    './platform/commonUI/regions/bundle'
-], function (Main, legacyRegistry) {
-    return {
-        legacyRegistry: legacyRegistry,
-        run: function () {
-            return new Main().run(legacyRegistry);
-        }
-    };
+    './platform/commonUI/regions/bundle',
+    './src/adapter/legacyBundle'
+], function (openmct, Main, legacyRegistry) {
+    openmct.legacyRegistry = legacyRegistry;
+    openmct.on('start', function () {
+        return new Main().run(legacyRegistry);
+    });
 });
