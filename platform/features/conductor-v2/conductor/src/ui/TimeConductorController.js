@@ -97,14 +97,9 @@ define(
 
             // Watch scope for selection of mode or time system by user
             this.$scope.$watch('modeModel.selectedKey', this.setMode);
-            this.$scope.$on('pan', function (e, bounds) {
-                this.$scope.panning = true;
-                this.setFormFromBounds(bounds);
-            }.bind(this));
+            this.conductorViewService.on('pan', this.pan);
 
-            this.$scope.$on('pan-stop', function () {
-                this.$scope.panning = false;
-            }.bind(this));
+            this.conductorViewService.on('pan-stop', this.panStop);
 
             this.$scope.$on('$destroy', this.destroy);
         };
@@ -112,6 +107,15 @@ define(
         TimeConductorController.prototype.destroy = function () {
             this.conductor.off('bounds', this.setFormFromBounds);
             this.conductor.off('timeSystem', this.changeTimeSystem);
+        };
+
+        TimeConductorController.prototype.pan = function (bounds) {
+            this.$scope.panning = true;
+            this.setFormFromBounds(bounds);
+        };
+
+        TimeConductorController.prototype.panStop = function () {
+            this.$scope.panning = false;
         };
 
         /**
@@ -123,7 +127,7 @@ define(
         TimeConductorController.prototype.setFormFromBounds = function (bounds) {
             this.$scope.boundsModel.start = bounds.start;
             this.$scope.boundsModel.end = bounds.end;
-            //this.$scope.currentZoom = bounds.end - bounds.start;
+
             this.$scope.currentZoom = this.toSliderValue(bounds.end - bounds.start);
             if (!this.pendingUpdate) {
                 this.pendingUpdate = true;
@@ -272,7 +276,7 @@ define(
             var bounds = this.toTimeSpan(sliderValue);
             this.setFormFromBounds(bounds);
 
-            this.$scope.$broadcast("zoom", bounds);
+            this.conductorViewService.emit("zoom", bounds);
         };
 
         TimeConductorController.prototype.zoomStop = function (sliderValue) {

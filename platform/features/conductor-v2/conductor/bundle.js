@@ -77,7 +77,8 @@ define([
                     "implementation": ConductorAxisController,
                     "depends": [
                         "timeConductor",
-                        "formatService"
+                        "formatService",
+                        "timeConductorViewService"
                     ]
                 }
             ],

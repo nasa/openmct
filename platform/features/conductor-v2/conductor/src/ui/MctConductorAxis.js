@@ -41,7 +41,7 @@ define([], function () {
 
                 template: '<div class="l-axis-holder" ' +
                 '    mct-drag-down="axis.panStart()"' +
-                '    mct-drag-up="axis.panEnd(delta)"' +
+                '    mct-drag-up="axis.panStop(delta)"' +
                 '    mct-drag="axis.pan(delta)"' +
                 '    mct-resize="axis.resize()"></div>'
             }
