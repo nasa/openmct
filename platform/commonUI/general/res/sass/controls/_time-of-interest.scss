@@ -22,7 +22,7 @@
 
 .l-toi-holder {
     @include trans-prop-nice($props: opacity, $dur: 200ms);
-    &:not(.pinned) {
+    &:not(.active) {
         opacity: 0; // Hide by default, only show when user hovers over container that implements this element
     }
     .l-toi {
@@ -35,12 +35,46 @@
 }
 
 // TOI in tables
-.mct-table {
-    tr.l-toi-holder {
-        td.l-toi {
-            background-color: $toiColorBg;
-            column-span: 999;
-            font-size: 0;
+@mixin toiIcon() {
+    @extend .ui-symbol;
+    @include transform(translate(-50%, -50%));
+    content: $glyph-icon-clock;
+    display: block;
+    position: absolute;
+    text-shadow: 0 1px 15px black;
+    left: 50%;
+    top: 0;
+    z-index: 2;
+}
+
+.tabular,
+table {
+    tbody, .tbody {
+        tr, .tr {
+            &:hover {
+                td {
+                    border-top: 1px dashed $toiColorBg;
+                    &:first-child:before {
+                        @include toiIcon();
+                        color: $toiColorFg;
+                    }
+                }
+            }
+            &.l-toi.pinned {
+                td {
+                    border-top: 1px solid $toiColorBgPinned;
+                    &:first-child:before {
+                        @include toiIcon();
+                        color: $toiColorBgPinned;
+                    }
+                }
+                &:hover {
+                    td:first-child:before {
+                        content: $glyph-icon-x-in-circle;
+                        cursor: pointer;
+                    }
+                }
+            }
         }
     }
 }
@@ -49,7 +83,7 @@
 .gl-plot {
     .gl-plot-wrapper-display-area-and-x-axis {
         &:hover {
-            .l-toi-holder {
+            .l-toi-holder:not(.active) {
                 opacity: 1;
             }
         }

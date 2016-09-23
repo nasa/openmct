@@ -51,11 +51,11 @@ table {
 
 	tbody, .tbody {
 		display: table-row-group;
-		tr, .tr {
+/*		tr, .tr {
 			&:hover {
 				background: rgba($colorTabBodyFg, 0.1);
 			}
-		}
+		}*/
 	}
 	tr, .tr {
 		display: table-row;
@@ -99,7 +99,7 @@ table {
 			}
 		}
 		td, .td {
-			border-bottom: 1px solid $colorTabBorder;
+			border-top: 1px solid $colorTabBorder;
 			min-width: 20px;
 			color: $colorTelemFresh;
 			padding: $tabularTdPadTB $tabularTdPadLR;
