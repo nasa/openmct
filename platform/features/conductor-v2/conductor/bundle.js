@@ -69,7 +69,8 @@ define([
                         "$window",
                         "timeConductor",
                         "timeConductorViewService",
-                        "timeSystems[]"
+                        "timeSystems[]",
+                        "formatService"
                     ]
                 },
                 {

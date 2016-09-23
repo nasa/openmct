@@ -95,6 +95,38 @@ define([
         })[0][0];
     }
 
+    UTCTimeFormat.prototype.timeUnits = function (timeRange) {
+        var momentified = moment.duration(timeRange);
+        return [
+            ["Decades", function (r) {
+                return r.years() > 15;
+            }],
+            ["Years", function (r) {
+                return r.years() > 0;
+            }],
+            ["Months", function (r) {
+                return r.months() > 0;
+            }],
+            ["Days", function (r) {
+                return r.days() > 0;
+            }],
+            ["Hours", function (r) {
+                return r.hours() > 0;
+            }],
+            ["Minutes", function (r) {
+                return r.minutes() > 0;
+            }],
+            ["Seconds", function (r) {
+                return r.seconds() > 0;
+            }],
+            ["Milliseconds", function (r) {
+                return true;
+            }]
+        ].filter(function (row){
+            return row[1](momentified);
+        })[0][0];
+    };
+
     /**
      *
      * @param value

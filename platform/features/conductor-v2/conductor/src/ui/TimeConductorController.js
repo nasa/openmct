@@ -26,7 +26,7 @@ define(
     ],
     function (TimeConductorValidation) {
 
-        function TimeConductorController($scope, $window, timeConductor, conductorViewService, timeSystems) {
+        function TimeConductorController($scope, $window, timeConductor, conductorViewService, timeSystems, formatService) {
 
             var self = this;
 
@@ -43,6 +43,7 @@ define(
             this.conductor = timeConductor;
             this.modes = conductorViewService.availableModes();
             this.validation = new TimeConductorValidation(this.conductor);
+            this.formatService = formatService;
 
             // Construct the provided time system definitions
             this.timeSystems = timeSystems.map(function (timeSystemConstructor) {
@@ -129,6 +130,8 @@ define(
             this.$scope.boundsModel.end = bounds.end;
 
             this.$scope.currentZoom = this.toSliderValue(bounds.end - bounds.start);
+            this.toTimeUnits(bounds.end - bounds.start);
+
             if (!this.pendingUpdate) {
                 this.pendingUpdate = true;
                 this.$window.requestAnimationFrame(function () {
@@ -272,10 +275,16 @@ define(
             return {start: center - timeSpan / 2, end: center + timeSpan / 2};
         };
 
+        TimeConductorController.prototype.toTimeUnits = function (timeSpan) {
+            if (this.conductor.timeSystem()) {
+                var timeFormat = this.formatService.getFormat(this.conductor.timeSystem().formats()[0]);
+                this.$scope.timeUnits = timeFormat.timeUnits && timeFormat.timeUnits(timeSpan);
+            }
+        }
+
         TimeConductorController.prototype.zoom = function(sliderValue) {
             var bounds = this.toTimeSpan(sliderValue);
             this.setFormFromBounds(bounds);
-
             this.conductorViewService.emit("zoom", bounds);
         };
 

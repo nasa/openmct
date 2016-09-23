@@ -115,7 +115,8 @@
             </mct-control>
             <!-- Zoom control -->
             <div class="l-time-conductor-zoom-w grows flex-elem l-flex-row">
-                <span class="time-conductor-zoom-current-range flex-elem flex-fixed holder"></span>
+                <span
+                        class="time-conductor-zoom-current-range flex-elem flex-fixed holder">{{timeUnits}}</span>
                 <input class="time-conductor-zoom flex-elem" type="range"
                        ng-model="currentZoom"
                        ng-mouseUp="tcController.zoomStop(currentZoom)"
