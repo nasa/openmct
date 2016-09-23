@@ -22,6 +22,7 @@
 
 define([
     'EventEmitter',
+    './Registry',
     './selection/Selection',
     './selection/ContextManager',
     './selection/SelectGesture',
@@ -29,6 +30,7 @@ define([
     './ui/ViewRegistry'
 ], function (
     EventEmitter,
+    Registry,
     Selection,
     ContextManager,
     SelectGesture,
@@ -36,15 +38,20 @@ define([
     ViewRegistry
 ) {
     var openmct = Object.create(EventEmitter.prototype);
+    var actionRegistry = new Registry();
     var selection = new Selection();
     var manager = new ContextManager();
     var select = new SelectGesture(manager, selection);
-    var contextMenu = new ContextMenuGesture(selection, {}, {}, manager);
+    var contextMenu = new ContextMenuGesture(
+            selection,
+            {},
+            actionRegistry,
+            manager
+        );
 
     EventEmitter.call(openmct);
 
     openmct.selection = selection;
-
     openmct.inspectors = new ViewRegistry();
 
     openmct.gestures = {
