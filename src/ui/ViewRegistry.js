@@ -1,4 +1,4 @@
-define(['zepto'], function () {
+define([], function () {
     function ViewRegistry() {
         this.providers = [];
     }
