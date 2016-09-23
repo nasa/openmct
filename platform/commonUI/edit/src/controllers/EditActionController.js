@@ -27,7 +27,8 @@ define(
     [],
     function () {
 
-        var ACTION_CONTEXT = { category: 'conclude-editing' };
+        var SAVE_ACTION_CONTEXT = { category: 'save' };
+        var OTHERS_ACTION_CONTEXT = { category: 'conclude-editing' };
 
         /**
          * Controller which supplies action instances for Save/Cancel.
@@ -35,11 +36,30 @@ define(
          * @constructor
          */
         function EditActionController($scope) {
-            // Maintain all "conclude-editing" actions in the present
-            // context.
+
+            function actionToMenuOption(action) {
+                return {
+                    key: action,
+                    name: action.getMetadata().name,
+                    cssclass: action.getMetadata().cssclass
+                };
+            }
+
+            // Maintain all "conclude-editing" and "save" actions in the
+            // present context.
             function updateActions() {
-                $scope.editActions = $scope.action ?
-                        $scope.action.getActions(ACTION_CONTEXT) :
+                $scope.saveActions = $scope.action ?
+                        $scope.action.getActions(SAVE_ACTION_CONTEXT) :
+                        [];
+
+                $scope.saveActionsAsMenuOptions = $scope.saveActions.map(actionToMenuOption);
+
+                $scope.saveActionMenuClickHandler = function (clickedAction) {
+                    clickedAction.perform();
+                };
+
+                $scope.otherEditActions = $scope.action ?
+                        $scope.action.getActions(OTHERS_ACTION_CONTEXT) :
                         [];
             }
 

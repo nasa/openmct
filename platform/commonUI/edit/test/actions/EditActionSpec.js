@@ -58,7 +58,7 @@ define(
                 );
                 mockEditor = jasmine.createSpyObj(
                     "editorCapability",
-                    ["edit", "isEditContextRoot", "cancel"]
+                    ["edit", "isEditContextRoot"]
                 );
 
                 capabilities = {

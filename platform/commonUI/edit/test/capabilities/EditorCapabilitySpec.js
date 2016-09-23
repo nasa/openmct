@@ -134,15 +134,15 @@ define(
                 it("commits the transaction", function () {
                     expect(mockTransactionService.commit).toHaveBeenCalled();
                 });
-                it("resets the edit state", function () {
-                    expect(mockStatusCapability.set).toHaveBeenCalledWith('editing', false);
+                it("begins a new transaction", function () {
+                    expect(mockTransactionService.startTransaction).toHaveBeenCalled();
                 });
             });
 
-            describe("cancel", function () {
+            describe("finish", function () {
                 beforeEach(function () {
                     capability.edit();
-                    capability.cancel();
+                    capability.finish();
                 });
                 it("cancels the transaction", function () {
                     expect(mockTransactionService.cancel).toHaveBeenCalled();
@@ -158,7 +158,7 @@ define(
                 beforeEach(function () {
                     mockDomainObject.getModel.andReturn(model);
                     capability.edit();
-                    capability.cancel();
+                    capability.finish();
                 });
                 it("returns true if the object has been modified since it" +
                     " was last persisted", function () {

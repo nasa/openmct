@@ -62,7 +62,7 @@ define(
             }
 
             function cancel(allowed) {
-                return allowed && domainObject.getCapability("editor").cancel();
+                return allowed && domainObject.getCapability("editor").finish();
             }
 
             //Do navigation first in order to trigger unsaved changes dialog
