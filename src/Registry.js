@@ -1,9 +1,9 @@
 define([], function () {
-    function ActionRegistry() {
+    function Registry() {
         this.providers = [];
     }
 
-    ActionRegistry.prototype.get = function (context) {
+    Registry.prototype.get = function (context) {
         return this.providers.filter(function (provider) {
             return provider.appliesTo(context);
         }).map(function (provider) {
@@ -13,9 +13,9 @@ define([], function () {
         }, []);
     };
 
-    ActionRegistry.prototype.register = function (provider) {
+    Registry.prototype.register = function (provider) {
         this.providers.push(provider);
     };
 
-    return ActionRegistry;
+    return Registry;
 });
