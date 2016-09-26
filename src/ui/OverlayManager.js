@@ -1,4 +1,5 @@
 define(['zepto'], function ($) {
+
     function OverlayManager(bodyElement) {
         this.$body = $(bodyElement);
     }
@@ -9,8 +10,9 @@ define(['zepto'], function ($) {
         x = x || 0;
         y = y || 0;
 
-        $container.attr('left', x + 'px');
-        $container.attr('top', y + 'px');
+        $container.css('position', 'absolute');
+        $container.css('left', x + 'px');
+        $container.css('top', y + 'px');
 
         view.show($container[0]);
 
