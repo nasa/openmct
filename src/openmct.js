@@ -27,6 +27,7 @@ define([
     './selection/ContextManager',
     './selection/SelectGesture',
     './ui/menu/ContextMenuGesture',
+    './ui/OverlayManager',
     './ui/ViewRegistry'
 ], function (
     EventEmitter,
@@ -35,8 +36,10 @@ define([
     ContextManager,
     SelectGesture,
     ContextMenuGesture,
+    OverlayManager,
     ViewRegistry
 ) {
+    var overlayManager = new OverlayManager(window.document.body);
     var openmct = Object.create(EventEmitter.prototype);
     var actionRegistry = new Registry();
     var selection = new Selection();
@@ -44,7 +47,7 @@ define([
     var select = new SelectGesture(manager, selection);
     var contextMenu = new ContextMenuGesture(
             selection,
-            {},
+            overlayManager,
             actionRegistry,
             manager
         );

@@ -14,6 +14,8 @@ define(['zepto'], function ($) {
 
         view.show($container[0]);
 
+        this.$body.prepend($container);
+
         return function () {
             $container.remove();
             view.destroy();
