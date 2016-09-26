@@ -6,7 +6,7 @@ define([
 
     function ContextMenuView(actions) {
         AngularView.call(this, template, function ($scope) {
-            $scope.actions = actions;
+            $scope.menuActions = actions;
         });
     }
 
