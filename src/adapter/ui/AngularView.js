@@ -1,6 +1,7 @@
 define(['angular'], function (angular) {
-    function AngularView(template) {
+    function AngularView(template, scopeFn) {
         this.template = template;
+        this.scopeFn = scopeFn;
     }
 
     AngularView.prototype.show = function (container) {
@@ -12,6 +13,9 @@ define(['angular'], function (angular) {
         var $compile = $injector.get('$compile');
         var $rootScope = $injector.get('$rootScope');
         var $scope = $rootScope.$new();
+
+        this.scopeFn($scope);
+
         var elements = $compile(this.template)($scope);
 
         angular.element(container).append(elements);

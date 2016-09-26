@@ -1,16 +1,16 @@
-define(['zepto'], function ($) {
+define([
+    'zepto',
+    'text!./context-menu.html',
+    '../../adapter/ui/AngularView'
+], function ($, template, AngularView) {
+
     function ContextMenuView(actions) {
-        this.actions = actions;
+        AngularView.call(this, template, function ($scope) {
+            $scope.actions = actions;
+        });
     }
 
-    ContextMenuView.prototype.show = function (element) {
-        var $els = $('<span>Hello context menu!</span>');
-        $(element).append($els);
-    };
-
-    ContextMenuView.prototype.destroy = function () {
-
-    };
+    ContextMenuView.prototype = Object.create(AngularView.prototype);
 
     return ContextMenuView;
 });
