@@ -25,7 +25,7 @@
         <mct-control key="'button'"
                      structure="{
                         text: saveActions[0].getMetadata().name,
-                        click: saveActions[0].perform,
+                        click: actionPerformer(saveActions[0]),
                         cssclass: 'major ' + saveActions[0].getMetadata().cssclass
                      }">
         </mct-control>
@@ -45,7 +45,7 @@
         <mct-control key="'button'"
                      structure="{
                         text: currentAction.getMetadata().name,
-                        click: currentAction.perform,
+                        click: actionPerformer(currentAction),
                         cssclass: currentAction.getMetadata().cssclass
                      }">
         </mct-control>
