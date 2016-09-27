@@ -2948,7 +2948,7 @@ will implement:
 /*global define*/
 
 define(
-    ['./src/ExampleTelemetrySeries'],
+    ['./ExampleTelemetrySeries'],
     function (ExampleTelemetrySeries) {
         "use strict";
 
