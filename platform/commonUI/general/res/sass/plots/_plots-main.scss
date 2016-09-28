@@ -48,10 +48,9 @@
 
     .gl-plot-wrapper-display-area-and-x-axis {
         // Holds the plot area and the X-axis only
-        //@include test(blue, 0.1);
         position: absolute;
         top: nth($plotDisplayArea, 1);
-        right: nth($plotDisplayArea, 2);
+        right: nth($plotDisplayArea, 2) + $toiW / 2;
         bottom: 0;
         left: nth($plotDisplayArea, 4);
 

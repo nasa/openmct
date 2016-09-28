@@ -22,15 +22,43 @@
 
 .l-toi-holder {
     @include trans-prop-nice($props: opacity, $dur: 200ms);
-    &:not(.active) {
-        opacity: 0; // Hide by default, only show when user hovers over container that implements this element
+    &:not(.pinned) {
+        opacity: 0;
+    }
+    &.pinned {
+        opacity: 1;
     }
     .l-toi {
-
+        position: absolute;
+        &.block {
+            $d: $toiW;
+            background-color: $toiColorBg;
+            border-radius: $controlCr;
+            color: $toiColorFg;
+            width: $d;
+            height: $d;
+            line-height: $d;
+            text-align: center;
+            &:hover {
+                background-color: $colorAlert !important;
+                color: #fff !important;
+            }
+        }
+        &:hover {
+            cursor: pointer !important;
+            &:before {
+                // Icon, change to close box
+                content: $glyph-icon-x-in-circle !important;
+            }
+        }
     }
-    .l-toi-val {
-        color: $toiColorFg;
-
+    &:hover {
+        $c: $toiColorBgHov;
+        cursor: ew-resize;
+        .l-toi.block {
+            background-color: $c !important;
+            color: $toiColorFgHov;
+        }
     }
 }
 
@@ -62,10 +90,10 @@ table {
             }
             &.l-toi.pinned {
                 td {
-                    border-top: 1px solid $toiColorBgPinned;
+                    border-top: 1px solid $toiColorBg;
                     &:first-child:before {
                         @include toiIcon();
-                        color: $toiColorBgPinned;
+                        color: $toiColorFg;
                     }
                 }
                 &:hover {
@@ -82,20 +110,13 @@ table {
 // TOI in plots
 .gl-plot {
     .gl-plot-wrapper-display-area-and-x-axis {
-        &:hover {
-            .l-toi-holder.hover {
-                opacity: 1;
-            }
-        }
         .l-toi-holder {
-            $toiColorBgPinned: rgba($toiColorBgPinned, 0.4);
-            pointer-events: none;
+            //@include test();
+            @include transform(translateX(-50%));
             position: absolute;
             top: 0;
-            bottom: nth($plotDisplayArea, 3); // Position of element when TOI is pinned
-            min-width: 50px;
-            max-width: 150px;
-            width: 20%; // Needs to be an even number to avoid sub-pixel antialiasing of the vertical line
+            bottom: nth($plotDisplayArea, 3);
+            width: $toiW; // Needs to be an even number to avoid sub-pixel antialiasing of the vertical line
             &:before {
                 // Vertical line
                 border-left: 1px dashed $toiColorBg;
@@ -107,44 +128,15 @@ table {
                 bottom: 0;
                 width: 1px;
             }
-            .l-toi-val {
-                background-color: $toiColorBg;
-                box-sizing: border-box;
-                padding: $interiorMarginSm $interiorMarginSm;
-                position: absolute;
-                text-align: center;
-                width: 100%;
-                bottom: -2px;
-                border-radius: $controlCr;
-                .val {
-                    @include reverseEllipsis();
-                }
-                .t-unpin-button {
-                    margin-left: $interiorMarginSm;
-                    pointer-events: auto;
-                }
+            .l-toi {
+                @extend .icon-clock;
+                @include transform(translateY(100%));
+                bottom: 0;
             }
-
-            &.pinned {
+            &:hover {
+                background-color: rgba($toiColorBgHov, 0.1);
                 &:before {
-                    border-left-color: $toiColorBgPinned;
-                    border-left-style: solid;
-                }
-                .l-toi-val {
-                    background-color: $toiColorBgPinned;
-                    border-radius: 0;
-                    border-top-left-radius: $controlCr;
-                    border-top-right-radius: $controlCr;
-                    bottom: 0px;
-                }
-            }
-
-            &:not(.pinned) {
-                .l-toi-val {
-                    @include transform(translateY(100%)); // Position of element when TOI is visible but not pinned
-                }
-                .t-unpin-button {
-                    display: none;
+                    border-left-color: $toiColorBgHov !important;
                 }
             }
             z-index: 3;
