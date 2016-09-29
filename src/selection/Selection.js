@@ -20,54 +20,45 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'EventEmitter',
-    './MCT',
-    './api/Type',
-    './Registry',
-    './selection/Selection',
-    './selection/ContextManager',
-    './selection/SelectGesture',
-    './ui/menu/ContextMenuGesture',
-    './ui/OverlayManager',
-    './ui/ViewRegistry'
-], function (
-    EventEmitter,
-    MCT,
-    Type,
-    Registry,
-    Selection,
-    ContextManager,
-    SelectGesture,
-    ContextMenuGesture,
-    OverlayManager,
-    ViewRegistry
-) {
-    var openmct = new MCT();
-    var overlayManager = new OverlayManager(window.document.body);
-    var actionRegistry = new Registry();
-    var selection = new Selection();
-    var manager = new ContextManager();
-    var select = new SelectGesture(manager, selection);
-    var contextMenu = new ContextMenuGesture(
-            selection,
-            overlayManager,
-            actionRegistry,
-            manager
-        );
+define(['EventEmitter'], function (EventEmitter) {
+    function Selection() {
+        EventEmitter.call(this);
+        this.selected = [];
+    }
 
-    EventEmitter.call(openmct);
+    Selection.prototype = Object.create(EventEmitter.prototype);
 
-    openmct.MCT = MCT;
-    openmct.Type = Type;
-
-    openmct.selection = selection;
-    openmct.inspectors = new ViewRegistry();
-
-    openmct.gestures = {
-        selectable: select.apply.bind(select),
-        contextual: contextMenu.apply.bind(contextMenu)
+    Selection.prototype.add = function (path) {
+        this.clear(); // Only allow single select as initial simplification
+        this.selected.push(path);
+        this.emit('change');
     };
 
-    return openmct;
+    Selection.prototype.remove = function (path) {
+        this.selected = this.selected.filter(function (otherPath) {
+            return !path.matches(otherPath);
+        });
+        this.emit('change');
+    };
+
+    Selection.prototype.contains = function (path) {
+        return this.selected.some(function (otherPath) {
+            return path.matches(otherPath);
+        });
+    };
+
+    Selection.prototype.clear = function () {
+        this.selected = [];
+        this.emit('change');
+    };
+
+    Selection.prototype.primary = function () {
+        return this.selected[this.selected.length - 1];
+    };
+
+    Selection.prototype.all = function () {
+        return this.selected;
+    };
+
+    return Selection;
 });

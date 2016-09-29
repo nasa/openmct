@@ -72,6 +72,7 @@ requirejs.config({
 });
 
 define([
+    './src/openmct',
     './platform/framework/src/Main',
     './src/defaultRegistry',
     './src/MCT'
@@ -94,4 +95,5 @@ define([
     });
 
     return mct;
+
 });

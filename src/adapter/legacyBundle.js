@@ -21,53 +21,28 @@
  *****************************************************************************/
 
 define([
-    'EventEmitter',
-    './MCT',
-    './api/Type',
-    './Registry',
-    './selection/Selection',
-    './selection/ContextManager',
-    './selection/SelectGesture',
-    './ui/menu/ContextMenuGesture',
-    './ui/OverlayManager',
-    './ui/ViewRegistry'
-], function (
-    EventEmitter,
-    MCT,
-    Type,
-    Registry,
-    Selection,
-    ContextManager,
-    SelectGesture,
-    ContextMenuGesture,
-    OverlayManager,
-    ViewRegistry
-) {
-    var openmct = new MCT();
-    var overlayManager = new OverlayManager(window.document.body);
-    var actionRegistry = new Registry();
-    var selection = new Selection();
-    var manager = new ContextManager();
-    var select = new SelectGesture(manager, selection);
-    var contextMenu = new ContextMenuGesture(
-            selection,
-            overlayManager,
-            actionRegistry,
-            manager
-        );
-
-    EventEmitter.call(openmct);
-
-    openmct.MCT = MCT;
-    openmct.Type = Type;
-
-    openmct.selection = selection;
-    openmct.inspectors = new ViewRegistry();
-
-    openmct.gestures = {
-        selectable: select.apply.bind(select),
-        contextual: contextMenu.apply.bind(contextMenu)
-    };
-
-    return openmct;
+    'legacyRegistry',
+    './gestures/AdaptedContextMenuGesture',
+    '../openmct'
+], function (legacyRegistry, AdaptedContextMenuGesture, openmct) {
+    legacyRegistry.register('adapter', {
+        extensions: {
+            services: [
+                {
+                    key: "openmct",
+                    implementation: function () {
+                        return openmct;
+                    }
+                }
+            ],
+            gestures: [
+                {
+                    key: "menu",
+                    implementation: AdaptedContextMenuGesture,
+                    priority: "preferred",
+                    depends: ["openmct"]
+                }
+            ]
+        }
+    });
 });

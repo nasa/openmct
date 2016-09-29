@@ -20,54 +20,39 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'EventEmitter',
-    './MCT',
-    './api/Type',
-    './Registry',
-    './selection/Selection',
-    './selection/ContextManager',
-    './selection/SelectGesture',
-    './ui/menu/ContextMenuGesture',
-    './ui/OverlayManager',
-    './ui/ViewRegistry'
-], function (
-    EventEmitter,
-    MCT,
-    Type,
-    Registry,
-    Selection,
-    ContextManager,
-    SelectGesture,
-    ContextMenuGesture,
-    OverlayManager,
-    ViewRegistry
-) {
-    var openmct = new MCT();
-    var overlayManager = new OverlayManager(window.document.body);
-    var actionRegistry = new Registry();
-    var selection = new Selection();
-    var manager = new ContextManager();
-    var select = new SelectGesture(manager, selection);
-    var contextMenu = new ContextMenuGesture(
-            selection,
-            overlayManager,
-            actionRegistry,
-            manager
-        );
+define(['zepto'], function ($) {
+    function HoverGesture(hoverManager) {
+        this.hoverManager = hoverManager;
+    }
 
-    EventEmitter.call(openmct);
+    HoverGesture.prototype.apply = function (htmlElement) {
+        var $element = $(htmlElement);
+        var hoverManager = this.hoverManager;
 
-    openmct.MCT = MCT;
-    openmct.Type = Type;
+        function update() {
+            $(hoverManager.all()).removeClass('hovering');
+            $(hoverManager.top()).addClass('hovering');
+        }
 
-    openmct.selection = selection;
-    openmct.inspectors = new ViewRegistry();
+        function enter() {
+            hoverManager.add(htmlElement);
+            update();
+        }
 
-    openmct.gestures = {
-        selectable: select.apply.bind(select),
-        contextual: contextMenu.apply.bind(contextMenu)
+        function leave() {
+            hoverManager.remove(htmlElement);
+            update();
+        }
+
+        $element.on('mouseenter', enter);
+        $element.on('mouseleave', leave);
+
+        return function () {
+            leave();
+            $element.off('mouseenter', enter);
+            $element.off('mouseleave', leave);
+        }.bind(this);
     };
 
-    return openmct;
+    return HoverGesture;
 });
