@@ -70,6 +70,9 @@
 
     app.use('/proxyUrl', function proxyRequest(req, res, next) {
         if (proxyUrls.indexOf(req.query.url) !== -1) {
+            res.header("Access-Control-Allow-Origin", "https://nasa.github.io");
+            res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
             console.log('Proxying request to: ', req.query.url);
             req.pipe(request({
                 url: req.query.url,
