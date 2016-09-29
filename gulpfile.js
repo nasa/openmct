@@ -31,14 +31,14 @@ var gulp = require('gulp'),
     project = require('./package.json'),
     _ = require('lodash'),
     paths = {
-        main: 'main.js',
+        main: 'openmct.js',
         dist: 'dist',
         reports: 'dist/reports',
         scss: ['./platform/**/*.scss', './example/**/*.scss'],
         assets: [
             './{example,platform}/**/*.{css,css.map,png,svg,ico,woff,eot,ttf}'
         ],
-        scripts: [ 'main.js', 'platform/**/*.js', 'src/**/*.js' ],
+        scripts: [ 'openmct.js', 'platform/**/*.js', 'src/**/*.js' ],
         specs: [ 'platform/**/*Spec.js', 'src/**/*Spec.js' ],
     },
     options = {
