@@ -262,33 +262,14 @@
     }
 
     // Time of Interest control
-    .l-toi-holder,
-    .l-toi-holder:after,
-    .l-toi-holder:before,
-    .l-toi {
-        display: block;
-        position: absolute;
-    }
-
     .l-toi-holder {
         $c: $colorTimeCondTOIBg;
         $cHov: $toiColorBgHov;
-        //$cPinned: rgba($toiColorBgPinned, 0.8);
-        //$cPinnedHov: $toiColorBgPinned;
         $linesVOffset: 2px;
-        @include transform(translateX(-50%));
-        //color: $c;
-        top: 0px;
-        bottom: 0px;
-        width: $timeCondTOIIconD;
-        left: auto;
-        right: auto;
-        z-index: 1;
         &:before,
         &:after {
             // Vertical lines
-            content: '';
-            //background-color: $c;
+            border-left-style: solid;
             left: 50%;
             height: (($r2H - $timeCondTOIIconD)/2) + $linesVOffset;
             width: 1px;
@@ -312,64 +293,17 @@
             @include transform(translate(-50%, -50%));
             font-size: $d;
             line-height: $d;
-            text-align: center;
             left: 50%;
             top: 50%;
             height: $d;
             width: $d;
             z-index: 1;
-            &:before {
-                @extend .ui-symbol;
-                content: $glyph-icon-clock;
-            }
         }
 
         .l-toi-val {
             @include transform(translateY(-51%));
-            font-size: 0.7rem;
-            position: absolute;
             top: 50%;
-            white-space: nowrap;
-            right: $timeCondTOIIconD + $interiorMarginSm;
         }
-
-        &.val-to-right {
-            .l-toi-val {
-                right: auto;
-                left: $timeCondTOIIconD + $interiorMarginSm;
-            }
-        }
-
-       /* &.pinned {
-            //opacity: 1;
-            z-index: 2; // Get this above a non-pinned instance so user can access the remove "x" button.
-            &.active {
-                opacity: 1;
-            }
-            &:before,
-            &:after {
-                // Vertical lines
-                background-color: $cPinned;
-            }
-            color: $cPinned;
-
-            &:hover {
-                opacity: 1 !important;
-                + .l-toi-holder {
-                    // Important note: the non-pinned TOI element must come after the pinned version in markup.
-                    opacity: 0;
-
-                }
-            }
-
-            .l-toi:hover {
-                color: $cPinnedHov;
-                cursor: pointer;
-                &:before {
-                    content: $glyph-icon-x-in-circle;
-                }
-            }
-        }*/
     }
 
     .l-time-conductor-controls {

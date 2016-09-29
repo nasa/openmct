@@ -20,44 +20,92 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+
+/*
+Plots
+-toi-holder:before vertical line
+-toi: glyphs
+
+Tables
+tr: border color
+td:before: glyphs
+
+TC
+-toi-holder:before, after: vertical lines
+-toi: glyphs
+
+*/
+.l-toi-holder,
+.l-toi-holder:after,
+.l-toi-holder:before,
+.l-toi {
+    display: block;
+    position: absolute;
+}
+
+
 .l-toi-holder {
     @include trans-prop-nice($props: opacity, $dur: 200ms);
+    @include transform(translateX(-50%));
+    color: $toiColorBg;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: $toiW; // Needs to be an even number to avoid sub-pixel antialiasing of the vertical line
     &:not(.pinned) {
         opacity: 0;
+        pointer-events: none;
     }
     &.pinned {
         opacity: 1;
     }
-    .l-toi {
+    &:before,
+    &:after {
+        // Vertical lines. TC uses both; plot only uses :before
+        border-left: 1px dashed $toiColorBg;
+        box-sizing: border-box;
+        content: '';
+        display: block;
+        left: 50%;
         position: absolute;
-        &.block {
-            $d: $toiW;
-            background-color: $toiColorBg;
-            border-radius: $controlCr;
-            color: $toiColorFg;
-            width: $d;
-            height: $d;
-            line-height: $d;
-            text-align: center;
-            &:hover {
-                background-color: $colorAlert !important;
-                color: #fff !important;
-            }
+        top: 0;
+        bottom: 0;
+        width: 1px;
+    }
+    .l-toi {
+        @extend .icon-clock;
+        @extend .l-flex-row;
+        text-align: center;
+        //width: $toiW;
+        &:before {
+            // Clock icon
+            @extend .flex-elem;
+            margin-right: $interiorMarginSm;
+            order: 1;
         }
         &:hover {
             cursor: pointer !important;
             &:before {
                 // Icon, change to close box
+                color: $colorAlert;
                 content: $glyph-icon-x-in-circle !important;
             }
         }
     }
-    &:hover {
-        $c: $toiColorBgHov;
-        cursor: ew-resize;
-        .l-toi.block {
-            background-color: $c !important;
-            color: $toiColorFgHov;
+
+    .l-toi-val {
+        //@extend .flex-elem;
+        //@extend .grows;
+        font-size: 0.7rem;
+        white-space: nowrap;
+        //right: $toiW + $interiorMargin;
+    }
+
+    &.val-to-right {
+        .l-toi-val {
+            order: 2;
+            //right: auto;
+            //left: $toiW + $interiorMarginSm;
         }
     }
 }
@@ -112,33 +160,18 @@ table {
     .gl-plot-wrapper-display-area-and-x-axis {
         .l-toi-holder {
             //@include test();
-            @include transform(translateX(-50%));
-            position: absolute;
-            top: 0;
             bottom: nth($plotDisplayArea, 3);
-            width: $toiW; // Needs to be an even number to avoid sub-pixel antialiasing of the vertical line
-            &:before {
-                // Vertical line
-                border-left: 1px dashed $toiColorBg;
-                content: '';
-                display: block;
-                left: 50%;
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                width: 1px;
+            &:after {
+                display: none;
             }
             .l-toi {
-                @extend .icon-clock;
+                @include test();
                 @include transform(translateY(100%));
                 bottom: 0;
             }
-            &:hover {
-                background-color: rgba($toiColorBgHov, 0.1);
-                &:before {
-                    border-left-color: $toiColorBgHov !important;
-                }
-            }
+            //&:hover {
+            //    background-color: rgba($toiColorBgHov, 0.1);
+            //}
             z-index: 3;
         }
     }
