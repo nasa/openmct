@@ -64,6 +64,13 @@ define(['text!./dialog.html', 'zepto'], function (dialogTemplate, $) {
         this.showing = false;
     };
 
+    /**
+     * Get or set the "enabled" state of the OK button for this dialog.
+     * @param {boolean} [state] true to enable, false to disable
+     * @returns {boolean} true if enabled, false if disabled
+     * @method enabled
+     * @memberof module:openmct.Dialog#
+     */
     Dialog.prototype.enabled = function (state) {
         if (state !== undefined) {
             this.enabledState = state;
