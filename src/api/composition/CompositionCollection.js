@@ -14,7 +14,7 @@ define([
      * by another domain object. It provides methods for loading this
      * list asynchronously, and for modifying this list.
      *
-     * @class CompositionCollection
+     * @interface CompositionCollection
      * @param {module:openmct.DomainObject} domainObject the domain object
      *        whose composition will be contained
      * @param {module:openmct.CompositionProvider} provider the provider
@@ -168,13 +168,6 @@ define([
         }
     };
 
-    /**
-     * Check if this composition can contain this domain object.
-     * @name canContain
-     * @memberof module:openmct.CompositionCollection
-     * @param {module:openmct.DomainObject} the domain object to contain
-     * @returns {boolean} true if containment is allowed
-     */
     CompositionCollection.prototype.canContain = function (domainObject) {
         return this.provider.canContain(this.domainObject, domainObject);
     };

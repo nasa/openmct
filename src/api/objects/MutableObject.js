@@ -13,7 +13,6 @@ define([
      * @param eventEmitter
      * @param object
      * @interface MutableObject
-     * @memberof module:openmct
      */
     function MutableObject(object) {
         this.object = object;

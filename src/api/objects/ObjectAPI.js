@@ -125,8 +125,8 @@ define([
 
     /**
      * Add a root-level object.
-     * @param {module:openmct.Identifier} id the identifier of the root-level
-     *        object to add.
+     * @param {module:openmct.DomainObject} domainObject the root-level object
+     *        to add.
      * @method addRoot
      * @memberof module:openmct.ObjectAPI#
      */
@@ -136,8 +136,8 @@ define([
 
     /**
      * Remove a root-level object.
-     * @param {module:openmct.Identifier} id the identifier of the root-level
-     *        object to remove.
+     * @param {module:openmct.ObjectAPI~Identifier} id the identifier of the
+     *        root-level object to remove.
      * @method removeRoot
      * @memberof module:openmct.ObjectAPI#
      */
@@ -151,26 +151,57 @@ define([
     };
 
     /**
-     * Get an interface for observing and mutating this domain object.
+     * Modify a domain object.
      * @param {module:openmct.DomainObject} object the object to mutate
-     * @returns {module:openmct.MutableObject} an interface for mutating
-     *          and observing this domain object
-     * @method getMutable
+     * @param {string} path the property to modify
+     * @param {*} value the new value for this property
+     * @method mutate
      * @memberof module:openmct.ObjectAPI#
      */
-    Objects.getMutable = function (object) {
-        return new MutableObject(object);
-    };
+
+    /**
+     * Observe changes to a domain object.
+     * @param {module:openmct.DomainObject} object the object to observe
+     * @param {string} path the property to observe
+     * @param {Function} callback a callback to invoke when new values for
+     *        this property are observed
+     * @method observe
+     * @memberof module:openmct.ObjectAPI#
+     */
 
     /**
      * Uniquely identifies a domain object.
      *
      * @typedef Identifier
-     * @memberof module:openmct
+     * @memberof module:openmct.ObjectAPI~
      * @property {string} namespace the namespace to/from which this domain
      *           object should be loaded/stored.
      * @property {string} key a unique identifier for the domain object
      *           within that namespace
+     */
+
+    /**
+     * A domain object is an entity of relevance to a user's workflow, that
+     * should appear as a distinct and meaningful object within the user
+     * interface. Examples of domain objects are folders, telemetry sensors,
+     * and so forth.
+     *
+     * A few common properties are defined for domain objects. Beyond these,
+     * individual types of domain objects may add more as they see fit.
+     *
+     * @property {module:openmct.ObjectAPI~Identifier} identifier a key/namespace pair which
+     *           uniquely identifies this domain object
+     * @property {string} type the type of domain object
+     * @property {string} name the human-readable name for this domain object
+     * @property {string} [creator] the user name of the creator of this domain
+     *           object
+     * @property {number} [modified] the time, in milliseconds since the UNIX
+     *           epoch, at which this domain object was last modified
+     * @property {module:openmct.ObjectAPI~Identifier[]} [composition] if
+     *           present, this will be used by the default composition provider
+     *           to load domain objects
+     * @typedef DomainObject
+     * @memberof module:openmct
      */
 
     return Objects;

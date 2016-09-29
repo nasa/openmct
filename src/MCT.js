@@ -38,21 +38,88 @@ define([
             ]
         } };
 
-        /**
-         *
-         * @type {module:openmct.Selection}
-         * @memberof module:openmct.MCT#
-         * @name selection
-         */
         this.selection = new Selection();
 
         /**
-         *
+         * MCT's time conductor, which may be used to synchronize view contents
+         * for telemetry- or time-based views.
          * @type {module:openmct.TimeConductor}
          * @memberof module:openmct.MCT#
          * @name conductor
          */
         this.conductor = new TimeConductor();
+
+        /**
+         * An interface for interacting with the composition of domain objects.
+         * The composition of a domain object is the list of other domain
+         * objects it "contains" (for instance, that should be displayed
+         * beneath it in the tree.)
+         *
+         * `composition` may be called as a function, in which case it acts
+         * as [`composition.get`]{@link module:openmct.CompositionAPI#get}.
+         *
+         * @type {module:openmct.CompositionAPI}
+         * @memberof module:openmct.MCT#
+         * @name composition
+         */
+        this.composition = api.Composition;
+
+        /**
+         * Registry for views of domain objects which should appear in the
+         * main viewing area.
+         *
+         * @type {module:openmct.ViewRegistry}
+         * @memberof module:openmct.MCT#
+         * @name mainViews
+         */
+
+        /**
+         * Registry for views which should appear in the Inspector area.
+         * These views will be chosen based on selection state, so
+         * providers should be prepared to test arbitrary objects for
+         * viewability.
+         *
+         * @type {module:openmct.ViewRegistry}
+         * @memberof module:openmct.MCT#
+         * @name inspectors
+         */
+
+        /**
+         * Registry for views which should appear in the status indicator area.
+         * @type {module:openmct.ViewRegistry}
+         * @memberof module:openmct.MCT#
+         * @name indicators
+         */
+
+        /**
+         * Registry for views which should appear in the toolbar area while
+         * editing.
+         *
+         * These views will be chosen based on selection state, so
+         * providers should be prepared to test arbitrary objects for
+         * viewability.
+         *
+         * @type {module:openmct.ViewRegistry}
+         * @memberof module:openmct.MCT#
+         * @name toolbars
+         */
+
+        /**
+         * Registry for domain object types which may exist within this
+         * instance of Open MCT.
+         *
+         * @type {module:openmct.TypeRegistry}
+         * @memberof module:openmct.MCT#
+         * @name types
+         */
+
+        /**
+         * Utilities for attaching common behaviors to views.
+         *
+         * @type {module:openmct.GestureAPI}
+         * @memberof module:openmct.MCT#
+         * @name gestures
+         */
 
         this.TimeConductor = this.conductor; // compatibility for prototype
         this.on('navigation', this.selection.clear.bind(this.selection));
@@ -71,7 +138,7 @@ define([
      *
      * @type {module:openmct.ObjectAPI}
      * @memberof module:openmct.MCT#
-     * @name Objects
+     * @name objects
      */
     MCT.Objects = api.Objects;
 
@@ -81,7 +148,7 @@ define([
      *
      * @type {module:openmct.TelemetryAPI}
      * @memberof module:openmct.MCT#
-     * @name Telemetry
+     * @name telemetry
      */
 
     MCT.prototype.legacyExtension = function (category, extension) {
@@ -102,14 +169,6 @@ define([
         });
     };
 
-    /**
-     * Register a new type of view.
-     *
-     * @param {string} region the region identifier (see mct.regions)
-     * @param {module:openmct.ViewProvider} provider the provider for this view
-     * @method view
-     * @memberof module:openmct.MCT#
-     */
     MCT.prototype.view = function (region, definition) {
         var viewKey = region + uuid();
         var adaptedViewKey = "adapted-view-" + region;
@@ -152,13 +211,6 @@ define([
         });
     };
 
-    /**
-     * Register a new [type]{@link module:openmct.Type} of domain object.
-     * @param {string} key a unique identifier for this type of object
-     * @param {module:openmct.Type} type the new type
-     * @memberof module:openmct.MCT#
-     * @method type
-     */
     MCT.prototype.type = function (key, type) {
         var legacyDef = type.toLegacyDefinition();
         legacyDef.key = key;
