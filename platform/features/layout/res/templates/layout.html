@@ -1,9 +1,9 @@
 <!--
- Open MCT Web, Copyright (c) 2014-2015, United States Government
+ Open MCT, Copyright (c) 2014-2016, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
- Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ Open MCT is licensed under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  License for the specific language governing permissions and limitations
  under the License.
 
- Open MCT Web includes source code licensed under additional open source
+ Open MCT includes source code licensed under additional open source
  licenses. See the Open Source Licenses file (LICENSES.md) included with
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
@@ -33,61 +33,28 @@
         </div>
         <!-- Drag handles -->
         <span ng-show="domainObject.hasCapability('editor')">
-
-            <span
-                class="edit-handle edit-move"
+            <span class="edit-handle edit-move"
                   mct-drag-down="controller.startDrag(childObject.getId(), [1,1], [0,0])"
                   mct-drag="controller.continueDrag(delta)"
                   mct-drag-up="controller.endDrag()">
             </span>
-            <!--
-            <span
-                class="edit-handle edit-resize-w"
-                  mct-drag-down="controller.startDrag(childObject.getId(), [1,0], [-1,0])"
-                  mct-drag="controller.continueDrag(delta)"
-                  mct-drag-up="controller.endDrag()">
-            </span>
-            <span
-                class="edit-handle edit-resize-e"
-                  mct-drag-down="controller.startDrag(childObject.getId(), [0,0], [1,0])"
-                  mct-drag="controller.continueDrag(delta)"
-                  mct-drag-up="controller.endDrag()">
-            </span>
 
-            <span
-                class="edit-handle edit-resize-n"
-                  mct-drag-down="controller.startDrag(childObject.getId(), [0,1], [0,-1])"
-                  mct-drag="controller.continueDrag(delta)"
-                  mct-drag-up="controller.endDrag()">
-            </span>
-            <span
-                class="edit-handle edit-resize-s"
-                  mct-drag-down="controller.startDrag(childObject.getId(), [0,0], [0,1])"
-                  mct-drag="controller.continueDrag(delta)"
-                  mct-drag-up="controller.endDrag()">
-            </span>
-            -->
-
-            <span
-                class="edit-corner edit-resize-nw"
+            <span class="edit-corner edit-resize-nw"
                   mct-drag-down="controller.startDrag(childObject.getId(), [1,1], [-1,-1])"
                   mct-drag="controller.continueDrag(delta)"
                   mct-drag-up="controller.endDrag()">
             </span>
-            <span
-                class="edit-corner edit-resize-ne"
+            <span class="edit-corner edit-resize-ne"
                   mct-drag-down="controller.startDrag(childObject.getId(), [0,1], [1,-1])"
                   mct-drag="controller.continueDrag(delta)"
                   mct-drag-up="controller.endDrag()">
             </span>
-            <span
-                class="edit-corner edit-resize-sw"
+            <span class="edit-corner edit-resize-sw"
                   mct-drag-down="controller.startDrag(childObject.getId(), [1,0], [-1,1])"
                   mct-drag="controller.continueDrag(delta)"
                   mct-drag-up="controller.endDrag()">
             </span>
-            <span
-                class="edit-corner edit-resize-se"
+            <span class="edit-corner edit-resize-se"
                   mct-drag-down="controller.startDrag(childObject.getId(), [0,0], [1,1])"
                   mct-drag="controller.continueDrag(delta)"
                   mct-drag-up="controller.endDrag()">

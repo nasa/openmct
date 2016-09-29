@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -53,7 +53,7 @@ define([
      *        format has been otherwise specified
      * @param {Function} now a function to return current system time
      */
-    function TimeRangeController($scope, formatService, defaultFormat, now) {
+    function TimeRangeController($scope, $timeout, formatService, defaultFormat, now) {
         this.$scope = $scope;
         this.formatService = formatService;
         this.defaultFormat = defaultFormat;
@@ -66,6 +66,7 @@ define([
         this.formatter = formatService.getFormat(defaultFormat);
         this.formStartChanged = false;
         this.formEndChanged = false;
+        this.$timeout = $timeout;
 
         this.$scope.ticks = [];
 
@@ -259,18 +260,23 @@ define([
     };
 
     TimeRangeController.prototype.updateBoundsFromForm = function () {
-        if (this.formStartChanged) {
-            this.$scope.ngModel.outer.start =
-                this.$scope.ngModel.inner.start =
-                this.$scope.formModel.start;
-            this.formStartChanged = false;
-        }
-        if (this.formEndChanged) {
-            this.$scope.ngModel.outer.end =
-                this.$scope.ngModel.inner.end =
-                this.$scope.formModel.end;
-            this.formEndChanged = false;
-        }
+        var self = this;
+
+        //Allow Angular to trigger watches and determine whether values have changed.
+        this.$timeout(function () {
+            if (self.formStartChanged) {
+                self.$scope.ngModel.outer.start =
+                    self.$scope.ngModel.inner.start =
+                        self.$scope.formModel.start;
+                self.formStartChanged = false;
+            }
+            if (self.formEndChanged) {
+                self.$scope.ngModel.outer.end =
+                    self.$scope.ngModel.inner.end =
+                        self.$scope.formModel.end;
+                self.formEndChanged = false;
+            }
+        });
     };
 
     TimeRangeController.prototype.onFormStartChange = function (

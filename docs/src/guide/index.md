@@ -643,7 +643,7 @@ to be passed along by other services.
 ## Domain Objects 
 
 Domain objects are the most fundamental component of Open MCT's information 
-model. A domain object is some distinct thing relevant to a user's work flow, 
+model. A domain object is some distinct thing relevant to a user's workflow, 
 such as a telemetry channel, display, or similar. Open MCT is a tool for 
 viewing, browsing, manipulating, and otherwise interacting with a graph of 
 domain objects. 
@@ -933,7 +933,7 @@ Note that `templateUrl` is not supported for `containers`.
 
 Controls provide options for the `mct-control` directive. 
  
-Six standard control types are included in the forms bundle:
+Ten standard control types are included in the forms bundle:
 
 * `textfield`: An area to enter plain text.
 * `select`: A drop-down list of options.
@@ -941,7 +941,13 @@ Six standard control types are included in the forms bundle:
 * `color`: A color picker.
 * `button`: A button.
 * `datetime`: An input for UTC date/time entry; gives result as a UNIX 
-timestamp, in milliseconds since start of 1970, UTC. 
+timestamp, in milliseconds since start of 1970, UTC.
+* `composite`: A control parenting an array of other controls.
+* `menu-button`: A drop-down list of items supporting custom behavior
+on click.
+* `dialog-button`: A button which opens a dialog allowing a single property
+to be edited.
+* `radio`: A radio button.
 
 New controls may be added as extensions of the controls category. Extensions of 
 this category have two properties: 
@@ -981,7 +987,7 @@ Examples of gestures included in the platform are:
 composition.
 * `drop`: For representations that can be drop targets for drag-and-drop 
 composition. 
-* `menu`: For representations that can be used to pop up a context menu. 
+* `menu`: For representations that can be used to popup a context menu. 
  
 Gesture definitions have a property `key` which is used as a machine-readable 
 identifier for the gesture (e.g. `drag`, `drop`, `menu` above.) 
@@ -1153,7 +1159,7 @@ For example, the _My Items_ folder is added as an extension of this category.
 
 Extensions of this category should have the following properties:
 
-* `id`: The machine-readable identifier for the domaiwn object being exposed.
+* `id`: The machine-readable identifier for the domain object being exposed.
 * `model`: The model, as a JSON object, for the domain object being exposed. 
 
 ## Stylesheets Category

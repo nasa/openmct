@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -28,8 +28,8 @@ define(
          * A capability that implements an editing 'session' for a domain
          * object. An editing session is initiated via a call to .edit().
          * Once initiated, any persist operations will be queued pending a
-         * subsequent call to [.save()](@link #save) or [.cancel()](@link
-         * #cancel).
+         * subsequent call to [.save()](@link #save) or [.finish()](@link
+         * #finish).
          * @param transactionService
          * @param domainObject
          * @constructor
@@ -45,7 +45,7 @@ define(
         /**
          * Initiate an editing session. This will start a transaction during
          * which any persist operations will be deferred until either save()
-         * or cancel() are called.
+         * or finish() are called.
          */
         EditorCapability.prototype.edit = function () {
             this.transactionService.startTransaction();
@@ -81,25 +81,25 @@ define(
         };
 
         /**
-         * Save any changes from this editing session. This will flush all
-         * pending persists and end the current transaction
+         * Save any unsaved changes from this editing session. This will
+         * end the current transaction and continue with a new one.
          * @returns {*}
          */
         EditorCapability.prototype.save = function () {
-            var domainObject = this.domainObject;
-            return this.transactionService.commit().then(function () {
-                domainObject.getCapability('status').set('editing', false);
+            var transactionService = this.transactionService;
+            return transactionService.commit().then(function () {
+                transactionService.startTransaction();
             });
         };
 
         EditorCapability.prototype.invoke = EditorCapability.prototype.edit;
 
         /**
-         * Cancel the current editing session. This will discard any pending
+         * Finish the current editing session. This will discard any pending
          * persist operations
          * @returns {*}
          */
-        EditorCapability.prototype.cancel = function () {
+        EditorCapability.prototype.finish = function () {
             var domainObject = this.domainObject;
             return this.transactionService.cancel().then(function () {
                 domainObject.getCapability("status").set("editing", false);

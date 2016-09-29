@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -34,8 +34,7 @@ define(
             TEST_ID = "test-id",
             DROP_ID = "drop-id";
 
-        //TODO: Disabled for NEM Beta
-        xdescribe("The drop gesture", function () {
+        describe("The drop gesture", function () {
             var mockDndService,
                 mockQ,
                 mockElement,
@@ -143,23 +142,6 @@ define(
                 callbacks.drop(mockEvent);
                 expect(mockCompose.perform).toHaveBeenCalled();
             });
-
-
-            it("does not invoke compose on drop in browse mode for non-folders", function () {
-                // Set the mockDomainObject to not have the editor capability
-                mockDomainObject.hasCapability.andReturn(false);
-                // Set the mockDomainObject to not have a type of folder
-                mockDomainObject.getModel.andReturn({type: 'notAFolder'});
-
-                callbacks.dragover(mockEvent);
-                expect(mockAction.getActions).toHaveBeenCalledWith({
-                    key: 'compose',
-                    selectedObject: mockDraggedObject
-                });
-                callbacks.drop(mockEvent);
-                expect(mockCompose.perform).not.toHaveBeenCalled();
-            });
-
 
             it("invokes compose on drop in browse mode for folders", function () {
                 // Set the mockDomainObject to not have the editor capability

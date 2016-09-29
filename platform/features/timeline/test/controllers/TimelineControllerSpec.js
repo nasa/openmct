@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2009-2015, United States Government
+ * Open MCT, Copyright (c) 2009-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -212,23 +212,6 @@ define(
                 // Should have some graphs now
                 expect(controller.graphs().length).toEqual(2);
 
-            });
-
-            it("reports full scrollable width using zoom controller", function () {
-                var mockZoom = jasmine.createSpyObj('zoom', ['toPixels', 'duration']);
-                mockZoom.toPixels.andReturn(54321);
-                mockZoom.duration.andReturn(12345);
-
-                // Initially populate
-                fireWatch('domainObject', mockDomainObject);
-
-                expect(controller.width(mockZoom)).toEqual(54321);
-                // Verify interactions; we took zoom's duration for our start/end,
-                // and converted it to pixels.
-                // First, check that we used the start/end (from above)
-                expect(mockZoom.duration).toHaveBeenCalledWith(12321 - 42);
-                // Next, verify that the result was passed to toPixels
-                expect(mockZoom.toPixels).toHaveBeenCalledWith(12345);
             });
 
             it("provides drag handles", function () {

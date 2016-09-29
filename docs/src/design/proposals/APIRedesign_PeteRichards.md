@@ -3,7 +3,7 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [Reducing interface depth (the bundle.json version)](#reducing-interface-depth-the-bundlejson-version)
-  - [Imperitive component registries](#imperitive-component-registries)
+  - [Imperitive component registries](#imperative-component-registries)
   - [Get rid of "extension category" concept.](#get-rid-of-extension-category-concept)
   - [Reduce number and depth of extension points](#reduce-number-and-depth-of-extension-points)
   - [Composite services should not be the default](#composite-services-should-not-be-the-default)
@@ -30,11 +30,11 @@
 
 # Reducing interface depth (the bundle.json version)
 
-## Imperitive component registries 
+## Imperative component registries 
 
 Transition component registries to javascript, get rid of bundle.json and bundles.json.  Prescribe a method for application configuration, but allow flexibility in how application configuration is defined.
 
-Register components in an imperitive fashion, see angularApp.factory, angularApp.controller, etc.  Alternatively, implement our own application object with new registries and it's own form of registering objects.
+Register components in an imperative fashion, see angularApp.factory, angularApp.controller, etc.  Alternatively, implement our own application object with new registries and it's own form of registering objects.
 
 ## Get rid of "extension category" concept.
 
@@ -99,7 +99,7 @@ To reduce interface depth, we can replace our own provider and registry patterns
 
 ## More angular: for all services
 
-Increasing our commitment to angular would mean using more of the angular factorys, services, etc, and less of our home grown tools.  We'd implement our services and extension points as angular providers, and make them configurable via app.config.
+Increasing our commitment to angular would mean using more of the angular factories, services, etc, and less of our home grown tools.  We'd implement our services and extension points as angular providers, and make them configurable via app.config.
 
 As an example, registering a specific type of model provider in angular would look like:
 
@@ -126,9 +126,9 @@ Allow developers to use whatever module loading system they'd like to use, while
 
 ## Use gulp or grunt for standard tooling
 
-Using gulp or grunt as a task runner would bring us in line with standard web developer workflows and help standardize rendering, deployment, and packaging.  Additional tools can be added to the workflow at low cost, simplifying the set up of developer environments.
+Using gulp or grunt as a task runner would bring us in line with standard web developer workflows and help standardize rendering, deployment, and packaging.  Additional tools can be added to the workflow at low cost, simplifying the setup of developer environments.
 
-Gulp and grunt provide useful developer tooling such as live reload, automatic scss/less/etc compiliation, and ease of extensibility for standard production build processes.  They're key in decoupling code.
+Gulp and grunt provide useful developer tooling such as live reload, automatic scss/less/etc compilation, and ease of extensibility for standard production build processes.  They're key in decoupling code.
 
 ## Package openmctweb as single versioned file.
 

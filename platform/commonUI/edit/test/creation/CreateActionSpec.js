@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -51,6 +51,7 @@ define(
                     [
                         "getKey",
                         "getGlyph",
+                        "getCssClass",
                         "getName",
                         "getDescription",
                         "getProperties",
@@ -102,7 +103,7 @@ define(
                     [
                         "edit",
                         "save",
-                        "cancel"
+                        "finish"
                     ]
                 );
 
@@ -119,7 +120,7 @@ define(
                 mockParent.useCapability.andReturn(mockDomainObject);
 
                 mockType.getKey.andReturn("test");
-                mockType.getGlyph.andReturn("T");
+                mockType.getCssClass.andReturn("icon-telemetry");
                 mockType.getDescription.andReturn("a test type");
                 mockType.getName.andReturn("Test");
                 mockType.getProperties.andReturn([]);
@@ -137,10 +138,11 @@ define(
 
                 expect(metadata.name).toEqual("Test");
                 expect(metadata.description).toEqual("a test type");
-                expect(metadata.glyph).toEqual("T");
+                expect(metadata.cssclass).toEqual("icon-telemetry");
             });
 
             describe("the perform function", function () {
+                var promise = jasmine.createSpyObj("promise", ["then"]);
                 beforeEach(function () {
                     capabilities.action.getActions.andReturn([mockEditAction]);
                 });
@@ -155,19 +157,20 @@ define(
                     expect(mockEditAction.perform).toHaveBeenCalled();
                 });
 
-                it("uses the save action if object does not have an edit action" +
+                it("uses the save-as action if object does not have an edit action" +
                     " available", function () {
                     capabilities.action.getActions.andReturn([]);
                     capabilities.action.perform.andReturn(mockPromise(undefined));
+                    capabilities.editor.save.andReturn(promise);
                     action.perform();
-                    expect(capabilities.action.perform).toHaveBeenCalledWith("save");
+                    expect(capabilities.action.perform).toHaveBeenCalledWith("save-as");
                 });
 
                 describe("uses to editor capability", function () {
-                    var promise = jasmine.createSpyObj("promise", ["then"]);
                     beforeEach(function () {
                         capabilities.action.getActions.andReturn([]);
                         capabilities.action.perform.andReturn(promise);
+                        capabilities.editor.save.andReturn(promise);
                     });
 
                     it("to save the edit if user saves dialog", function () {
@@ -177,10 +180,10 @@ define(
                         expect(capabilities.editor.save).toHaveBeenCalled();
                     });
 
-                    it("to cancel the edit if user cancels dialog", function () {
+                    it("to finish the edit if user cancels dialog", function () {
                         action.perform();
                         promise.then.mostRecentCall.args[1]();
-                        expect(capabilities.editor.cancel).toHaveBeenCalled();
+                        expect(capabilities.editor.finish).toHaveBeenCalled();
                     });
                 });
             });

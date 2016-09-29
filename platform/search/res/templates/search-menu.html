@@ -1,9 +1,9 @@
 <!--
- Open MCT Web, Copyright (c) 2014-2015, United States Government
+ Open MCT, Copyright (c) 2014-2016, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
- Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ Open MCT is licensed under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
  http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  License for the specific language governing permissions and limitations
  under the License.
 
- Open MCT Web includes source code licensed under additional open source
+ Open MCT includes source code licensed under additional open source
  licenses. See the Open Source Licenses file (LICENSES.md) included with
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
@@ -22,14 +22,13 @@
 
 <div ng-controller="SearchMenuController as controller">
 
-    <div class="menu checkbox-menu">
-
+    <div class="menu checkbox-menu"
+         mct-click-elsewhere="parameters.menuVisible(false)">
         <ul>
             <!-- First element is special - it's a reset option -->
-            <li class="search-menu-item special"
+            <li class="search-menu-item special icon-asterisk"
                 title="Select all filters"
                 ng-click="ngModel.checkAll = !ngModel.checkAll; controller.checkAll()">
-
                 <label class="checkbox custom no-text">
                     <input type="checkbox"
                            class="checkbox"
@@ -37,15 +36,11 @@
                            ng-change="controller.checkAll()" />
                     <em></em>
                 </label>
-
-                <span class="ui-symbol icon type-icon">
-                    *
-                </span>
 				All
             </li>
 
             <!-- The filter options, by type -->
-            <li class="search-menu-item"
+            <li class="search-menu-item {{ type.cssclass }}"
                 ng-repeat="type in ngModel.types"
                 ng-click="ngModel.checked[type.key] = !ngModel.checked[type.key]; controller.updateOptions()">
 
@@ -56,10 +51,6 @@
                            ng-change="controller.updateOptions()" />
                     <em></em>
                 </label>
-
-                <span class="ui-symbol icon type-icon">
-                    {{ type.glyph }}
-                </span>
 				{{ type.name }}
             </li>
         </ul>

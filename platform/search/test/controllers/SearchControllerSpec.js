@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * 'License'); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -69,7 +69,7 @@ define([
             );
             mockSearchService.query.andReturn(mockPromise);
 
-            mockTypes = [{key: 'mock.type', name: 'Mock Type', glyph: '?'}];
+            mockTypes = [{key: 'mock.type', name: 'Mock Type', cssclass: 'icon-object-unknown'}];
 
             mockSearchResult = jasmine.createSpyObj(
                 'searchResult',
@@ -123,7 +123,7 @@ define([
             expect(mockScope.results).toContain('a');
         });
 
-        it('is loading until the service\'s promise fufills', function () {
+        it('is loading until the service\'s promise fulfills', function () {
             expect(mockScope.loading).toBeTruthy();
 
             // Then resolve the promises
@@ -163,7 +163,7 @@ define([
             // Flag should be true with nonempty input
             expect(mockScope.ngModel.search).toEqual(true);
 
-            // Flag should be flase with empty input
+            // Flag should be false with empty input
             mockScope.ngModel.input = '';
             controller.search();
             mockPromise.then.mostRecentCall.args[0]({hits: [], total: 0});

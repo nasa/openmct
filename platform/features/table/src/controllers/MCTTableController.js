@@ -12,7 +12,7 @@ define(
          * @param element
          * @constructor
          */
-        function MCTTableController($scope, $timeout, element) {
+        function MCTTableController($scope, $timeout, element, exportService) {
             var self = this;
 
             this.$scope = $scope;
@@ -46,6 +46,16 @@ define(
 
             setDefaults($scope);
 
+            $scope.exportAsCSV = function () {
+                var headers = $scope.displayHeaders;
+                exportService.exportCSV($scope.displayRows.map(function (row) {
+                    return headers.reduce(function (r, header) {
+                        r[header] = row[header].text;
+                        return r;
+                    }, {});
+                }), { headers: headers });
+            };
+
             $scope.toggleSort = function (key) {
                 if (!$scope.enableSort) {
                     return;
@@ -76,6 +86,12 @@ define(
              */
             $scope.$on('add:row', this.addRow.bind(this));
             $scope.$on('remove:row', this.removeRow.bind(this));
+
+            /*
+             * Listen for resize events to trigger recalculation of table width
+             */
+            $scope.resize = this.setElementSizes.bind(this);
+
         }
 
         /**

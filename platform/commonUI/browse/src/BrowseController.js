@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -44,11 +44,9 @@ define(
             $scope,
             $route,
             $location,
-            $window,
             objectService,
             navigationService,
             urlService,
-            policyService,
             defaultPath
         ) {
             var path = [ROOT_ID].concat(
@@ -75,31 +73,30 @@ define(
 
             }
 
-            // Callback for updating the in-scope reference to the object
-            // that is currently navigated-to.
-            function setNavigation(domainObject) {
-                var navigationAllowed = true;
-
-                if (domainObject === $scope.navigatedObject) {
-                    //do nothing;
-                    return;
-                }
-
-                policyService.allow("navigation", $scope.navigatedObject, domainObject, function (message) {
-                    navigationAllowed = $window.confirm(message + "\r\n\r\n" +
-                        " Are you sure you want to continue?");
-                });
-
+            function setScopeObjects(domainObject, navigationAllowed) {
                 if (navigationAllowed) {
                     $scope.navigatedObject = domainObject;
                     $scope.treeModel.selectedObject = domainObject;
-                    navigationService.setNavigation(domainObject);
                     updateRoute(domainObject);
                 } else {
                     //If navigation was unsuccessful (ie. blocked), reset
                     // the selected object in the tree to the currently
                     // navigated object
                     $scope.treeModel.selectedObject = $scope.navigatedObject ;
+                }
+            }
+
+            // Callback for updating the in-scope reference to the object
+            // that is currently navigated-to.
+            function setNavigation(domainObject) {
+                if (domainObject === $scope.navigatedObject) {
+                    //do nothing;
+                    return;
+                }
+                if (domainObject) {
+                    domainObject.getCapability("action").perform("navigate").then(setScopeObjects.bind(undefined, domainObject));
+                } else {
+                    setScopeObjects(domainObject, true);
                 }
             }
 

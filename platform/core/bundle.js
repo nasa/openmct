@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -87,8 +87,8 @@ define([
 ) {
 
     legacyRegistry.register("platform/core", {
-        "name": "Open MCT Web Core",
-        "description": "Defines core concepts of Open MCT Web.",
+        "name": "Open MCT Core",
+        "description": "Defines core concepts of Open MCT.",
         "sources": "src",
         "configuration": {
             "paths": {
@@ -252,18 +252,26 @@ define([
                             "pattern": "\\S+",
                             "required": true,
                             "cssclass": "l-input-lg"
+                        },
+                        {
+                            "name": "Notes",
+                            "key": "notes",
+                            "property": "notes",
+                            "control": "textarea",
+                            "required": false,
+                            "cssclass": "l-textarea-sm"
                         }
                     ]
                 },
                 {
                     "key": "root",
                     "name": "Root",
-                    "glyph": "\u0046"
+                    "cssclass": "icon-folder"
                 },
                 {
                     "key": "folder",
                     "name": "Folder",
-                    "glyph": "\u0046",
+                    "cssclass": "icon-folder",
                     "features": "creation",
                     "description": "Create folders to organize other objects or links to objects.",
                     "priority": 1000,
@@ -274,11 +282,11 @@ define([
                 {
                     "key": "unknown",
                     "name": "Unknown Type",
-                    "glyph": "\u003f"
+                    "cssclass": "icon-object-unknown"
                 },
                 {
                     "name": "Unknown Type",
-                    "glyph": "\u003f"
+                    "cssclass": "icon-object-unknown"
                 }
             ],
             "capabilities": [

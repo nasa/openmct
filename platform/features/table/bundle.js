@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -66,7 +66,7 @@ define([
                 {
                     "key": "table",
                     "name": "Historical Telemetry Table",
-                    "glyph": "\ue604",
+                    "cssclass": "icon-tabular",
                     "description": "A static table of all values over time for all included telemetry elements. Rows are timestamped data values for each telemetry element; columns are data fields. The number of rows is based on the range of your query. New incoming data must be manually re-queried for.",
                     "priority": 861,
                     "features": "creation",
@@ -89,7 +89,7 @@ define([
                 {
                     "key": "rttable",
                     "name": "Real-time Telemetry Table",
-                    "glyph": "\ue620",
+                    "cssclass": "icon-tabular-realtime",
                     "description": "A scrolling table of latest values for all included telemetry elements. Rows are timestamped data values for each telemetry element; columns are data fields. New incoming data is automatically added to the view.",
                     "priority": 860,
                     "features": "creation",
@@ -115,7 +115,7 @@ define([
                 {
                     "key": "HistoricalTableController",
                     "implementation": HistoricalTableController,
-                    "depends": ["$scope", "telemetryHandler", "telemetryFormatter"]
+                    "depends": ["$scope", "telemetryHandler", "telemetryFormatter", "$timeout"]
                 },
                 {
                     "key": "RealtimeTableController",
@@ -133,8 +133,8 @@ define([
                 {
                     "name": "Historical Table",
                     "key": "table",
-                    "glyph": "\ue604",
                     "template": historicalTableTemplate,
+                    "cssclass": "icon-tabular",
                     "needs": [
                         "telemetry"
                     ],
@@ -144,8 +144,8 @@ define([
                 {
                     "name": "Real-time Table",
                     "key": "rt-table",
-                    "glyph": "\ue620",
-                    "template": rtTableTemplate,
+                    "cssclass": "icon-tabular-realtime",
+                    "templateUrl": rtTableTemplate,
                     "needs": [
                         "telemetry"
                     ],

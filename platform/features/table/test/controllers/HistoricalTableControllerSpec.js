@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -34,6 +34,8 @@ define(
                 mockDomainObject,
                 mockTable,
                 mockConfiguration,
+                mockAngularTimeout,
+                mockTimeoutHandle,
                 watches,
                 controller;
 
@@ -62,6 +64,11 @@ define(
                 mockScope.$watchCollection.andCallFake(function (expression, callback) {
                     watches[expression] = callback;
                 });
+
+                mockTimeoutHandle = jasmine.createSpy("timeoutHandle");
+                mockAngularTimeout = jasmine.createSpy("$timeout");
+                mockAngularTimeout.andReturn(mockTimeoutHandle);
+                mockAngularTimeout.cancel = jasmine.createSpy("cancelTimeout");
 
                 mockConfiguration = {
                     'range1': true,
@@ -107,7 +114,7 @@ define(
                 ]);
                 mockTelemetryHandler.handle.andReturn(mockTelemetryHandle);
 
-                controller = new TableController(mockScope, mockTelemetryHandler, mockTelemetryFormatter);
+                controller = new TableController(mockScope, mockTelemetryHandler, mockTelemetryFormatter, mockAngularTimeout);
                 controller.table = mockTable;
                 controller.handle = mockTelemetryHandle;
             });
@@ -163,6 +170,13 @@ define(
 
                 controller.addHistoricalData(mockDomainObject, mockSeries);
 
+                // Angular timeout is called a minumum of twice, regardless
+                // of batch size used.
+                expect(mockAngularTimeout).toHaveBeenCalled();
+                mockAngularTimeout.mostRecentCall.args[0]();
+                expect(mockAngularTimeout.calls.length).toEqual(2);
+                mockAngularTimeout.mostRecentCall.args[0]();
+
                 expect(controller.$scope.rows.length).toBe(5);
                 expect(controller.$scope.rows[0]).toBe(mockRow);
             });
@@ -198,7 +212,7 @@ define(
                     ' object composition changes', function () {
                     controller.registerChangeListeners();
                     expect(watches['domainObject.getModel().composition']).toBeDefined();
-                    watches['domainObject.getModel().composition']();
+                    watches['domainObject.getModel().composition']([], []);
                     expect(controller.subscribe).toHaveBeenCalled();
                 });
 
@@ -218,6 +232,78 @@ define(
                     expect(controller.filterColumns).toHaveBeenCalled();
                 });
 
+            });
+            describe('Yields thread', function () {
+                var mockSeries,
+                    mockRow;
+
+                beforeEach(function () {
+                    mockSeries = {
+                        getPointCount: function () {
+                            return 5;
+                        },
+                        getDomainValue: function () {
+                            return 'Domain Value';
+                        },
+                        getRangeValue: function () {
+                            return 'Range Value';
+                        }
+                    };
+                    mockRow = {'domain': 'Domain Value', 'range': 'Range Value'};
+
+                    mockTelemetryHandle.makeDatum.andCallFake(function () {
+                        return mockRow;
+                    });
+                    mockTable.getRowValues.andReturn(mockRow);
+                    mockTelemetryHandle.getTelemetryObjects.andReturn([mockDomainObject]);
+                    mockTelemetryHandle.getSeries.andReturn(mockSeries);
+                });
+                it('when row count exceeds batch size', function () {
+                    controller.batchSize = 3;
+                    controller.addHistoricalData(mockDomainObject, mockSeries);
+
+                    //Timeout is called a minimum of two times
+                    expect(mockAngularTimeout).toHaveBeenCalled();
+                    mockAngularTimeout.mostRecentCall.args[0]();
+
+                    expect(mockAngularTimeout.calls.length).toEqual(2);
+                    mockAngularTimeout.mostRecentCall.args[0]();
+
+                    //Because it yields, timeout will have been called a
+                    // third time for the batch.
+                    expect(mockAngularTimeout.calls.length).toEqual(3);
+                    mockAngularTimeout.mostRecentCall.args[0]();
+
+                    expect(controller.$scope.rows.length).toBe(5);
+                    expect(controller.$scope.rows[0]).toBe(mockRow);
+                });
+                it('cancelling any outstanding timeouts', function () {
+                    controller.batchSize = 3;
+                    controller.addHistoricalData(mockDomainObject, mockSeries);
+
+                    expect(mockAngularTimeout).toHaveBeenCalled();
+                    mockAngularTimeout.mostRecentCall.args[0]();
+
+                    controller.addHistoricalData(mockDomainObject, mockSeries);
+
+                    expect(mockAngularTimeout.cancel).toHaveBeenCalledWith(mockTimeoutHandle);
+                });
+                it('cancels timeout on scope destruction', function () {
+                    controller.batchSize = 3;
+                    controller.addHistoricalData(mockDomainObject, mockSeries);
+
+                    //Destroy is used by parent class as well, so multiple
+                    // calls are made to scope.$on
+                    var destroyCalls = mockScope.$on.calls.filter(function (call) {
+                        return call.args[0] === '$destroy';
+                    });
+                    //Call destroy function
+                    expect(destroyCalls.length).toEqual(2);
+
+                    destroyCalls[0].args[1]();
+                    expect(mockAngularTimeout.cancel).toHaveBeenCalledWith(mockTimeoutHandle);
+
+                });
             });
         });
     }

@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -91,7 +91,12 @@ define([
                     "name": "Export Timeline as CSV",
                     "category": "contextual",
                     "implementation": ExportTimelineAsCSVAction,
-                    "depends": ["exportService", "notificationService"]
+                    "depends": [
+                        "$log",
+                        "exportService",
+                        "notificationService",
+                        "resources[]"
+                    ]
                 }
             ],
             "constants": [
@@ -146,7 +151,7 @@ define([
                 {
                     "key": "timeline",
                     "name": "Timeline",
-                    "glyph": "\u0053",
+                    "cssclass": "icon-timeline",
                     "description": "A time-oriented container that lets you enclose and organize other Timelines and Activities. The Timeline view provides both tabular and Gantt views as well as resource utilization graphing of Activities.",
                     "priority": 502,
                     "features": [
@@ -189,7 +194,7 @@ define([
                 {
                     "key": "activity",
                     "name": "Activity",
-                    "glyph": "\u0061",
+                    "cssclass": "icon-activity",
                     "features": [
                         "creation"
                     ],
@@ -235,7 +240,7 @@ define([
                 {
                     "key": "mode",
                     "name": "Activity Mode",
-                    "glyph": "\u0041",
+                    "cssclass": "icon-activity-mode",
                     "features": [
                         "creation"
                     ],
@@ -275,7 +280,7 @@ define([
                 {
                     "key": "values",
                     "name": "Values",
-                    "glyph": "\u0041",
+                    "cssclass": "icon-activity-mode",
                     "template": valuesTemplate,
                     "type": "mode",
                     "uses": [
@@ -286,7 +291,7 @@ define([
                 {
                     "key": "timeline",
                     "name": "Timeline",
-                    "glyph": "\u0053",
+                    "cssclass": "icon-timeline",
                     "type": "timeline",
                     "description": "A time-oriented container that lets you enclose and organize other Timelines and Activities. The Timeline view provides both tabular and Gantt views as well as resource utilization graphing of Activities.",
                     "template": timelineTemplate,
@@ -297,18 +302,17 @@ define([
                                 "items": [
                                     {
                                         "method": "add",
-                                        "glyph": "\u002b",
                                         "control": "menu-button",
                                         "text": "Add",
                                         "options": [
                                             {
                                                 "name": "Timeline",
-                                                "glyph": "\u0053",
+                                                "cssclass": "icon-timeline",
                                                 "key": "timeline"
                                             },
                                             {
                                                 "name": "Activity",
-                                                "glyph": "\u0061",
+                                                "cssclass": "icon-activity",
                                                 "key": "activity"
                                             }
                                         ]
@@ -318,13 +322,13 @@ define([
                             {
                                 "items": [
                                     {
-                                        "glyph": "\u00e9",
+                                        "cssclass": "icon-plot-resource",
                                         "description": "Graph Resource Utilization",
                                         "control": "button",
                                         "method": "toggleGraph"
                                     },
                                     {
-                                        "glyph": "\u0041",
+                                        "cssclass": "icon-activity-mode",
                                         "control": "dialog-button",
                                         "description": "Apply Activity Modes...",
                                         "title": "Apply Activity Modes",
@@ -337,7 +341,7 @@ define([
                                         "property": "modes"
                                     },
                                     {
-                                        "glyph": "\u00e8",
+                                        "cssclass": "icon-chain-links",
                                         "description": "Edit Activity Link",
                                         "title": "Activity Link",
                                         "control": "dialog-button",
@@ -350,7 +354,7 @@ define([
                                         "property": "link"
                                     },
                                     {
-                                        "glyph": "\u0047",
+                                        "cssclass": "icon-gear",
                                         "description": "Edit Properties...",
                                         "control": "button",
                                         "method": "properties"
@@ -363,7 +367,7 @@ define([
                                         "method": "remove",
                                         "description": "Remove Item",
                                         "control": "button",
-                                        "glyph": "\u005a"
+                                        "cssclass": "icon-trash"
                                     }
                                 ]
                             }
@@ -467,6 +471,7 @@ define([
                     "implementation": TimelineZoomController,
                     "depends": [
                         "$scope",
+                        "$window",
                         "TIMELINE_ZOOM_CONFIGURATION"
                     ]
                 },

@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2009-2015, United States Government
+ * Open MCT, Copyright (c) 2009-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,7 +14,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT Web includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
@@ -25,13 +25,15 @@ define([
     "./ModeColumn",
     "./CompositionColumn",
     "./MetadataColumn",
-    "./TimespanColumn"
+    "./TimespanColumn",
+    "./UtilizationColumn"
 ], function (
     IdColumn,
     ModeColumn,
     CompositionColumn,
     MetadataColumn,
-    TimespanColumn
+    TimespanColumn,
+    UtilizationColumn
 ) {
 
     /**
@@ -63,15 +65,17 @@ define([
      *
      * @param {DomainObject[]} domainObjects the objects to include
      *        in the exported data
+     * @param {Array} resources an array of `resources` extensions
      * @constructor
      * @memberof {platform/features/timeline}
      */
-    function TimelineColumnizer(domainObjects) {
+    function TimelineColumnizer(domainObjects, resources) {
         var maxComposition = 0,
             maxRelationships = 0,
             columnNames = {},
             columns = [],
             foundTimespan = false,
+            idMap,
             i;
 
         function addMetadataProperty(property) {
@@ -82,7 +86,12 @@ define([
             }
         }
 
-        columns.push(new IdColumn());
+        idMap = domainObjects.reduce(function (map, domainObject, index) {
+            map[domainObject.getId()] = index + 1;
+            return map;
+        }, {});
+
+        columns.push(new IdColumn(idMap));
 
         domainObjects.forEach(function (domainObject) {
             var model = domainObject.getModel(),
@@ -113,12 +122,16 @@ define([
             columns.push(new TimespanColumn(false));
         }
 
+        resources.forEach(function (resource) {
+            columns.push(new UtilizationColumn(resource));
+        });
+
         for (i = 0; i < maxComposition; i += 1) {
-            columns.push(new CompositionColumn(i));
+            columns.push(new CompositionColumn(i, idMap));
         }
 
         for (i = 0; i < maxRelationships; i += 1) {
-            columns.push(new ModeColumn(i));
+            columns.push(new ModeColumn(i, idMap));
         }
 
         this.domainObjects = domainObjects;
