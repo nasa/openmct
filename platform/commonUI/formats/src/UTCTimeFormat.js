@@ -102,22 +102,22 @@ define([
                 return r.years() > 15;
             }],
             ["Years", function (r) {
-                return r.years() > 0;
+                return r.years() > 1;
             }],
             ["Months", function (r) {
-                return r.months() > 0;
+                return r.years() === 1 || r.months() > 1;
             }],
             ["Days", function (r) {
-                return r.days() > 0;
+                return r.months() === 1 || r.days() > 1;
             }],
             ["Hours", function (r) {
-                return r.hours() > 0;
+                return r.days() === 1 || r.hours() > 1;
             }],
             ["Minutes", function (r) {
-                return r.minutes() > 0;
+                return r.hours() === 1 || r.minutes() > 1;
             }],
             ["Seconds", function (r) {
-                return r.seconds() > 0;
+                return r.minutes() === 1 || r.seconds() > 1;
             }],
             ["Milliseconds", function (r) {
                 return true;
