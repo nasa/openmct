@@ -3,7 +3,7 @@ define(['text!./dialog.html', 'zepto'], function (dialogTemplate, $) {
     /**
      * A dialog may be displayed to show blocking content to users.
      * @param {module:openmct.View} view the view to show in the dialog
-     * @param {string [title] the title for this dialog
+     * @param {string} [title] the title for this dialog
      * @constructor
      * @memberof module:openmct
      */
