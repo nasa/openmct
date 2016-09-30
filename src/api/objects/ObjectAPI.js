@@ -8,10 +8,6 @@ define([
     MutableObject
 ) {
 
-    /**
-        Object API.  Intercepts the existing object API while also exposing
-        A new Object API.
-    */
 
     /**
      * Utilities for loading, saving, and manipulating domain objects.
@@ -158,6 +154,9 @@ define([
      * @method mutate
      * @memberof module:openmct.ObjectAPI#
      */
+    Objects.mutate = function (domainObject, path, value) {
+        return new MutableObject(domainObject).set(path, value);
+    };
 
     /**
      * Observe changes to a domain object.
@@ -168,6 +167,9 @@ define([
      * @method observe
      * @memberof module:openmct.ObjectAPI#
      */
+    Objects.observe = function (domainObject, path, callback) {
+        return new MutableObject(domainObject).on(path, callback);
+    };
 
     /**
      * Uniquely identifies a domain object.
