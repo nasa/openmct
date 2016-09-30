@@ -110,4 +110,5 @@ define([
         });
     };
 
+    return CompositionAPI;
 });
