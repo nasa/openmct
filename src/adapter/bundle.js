@@ -81,6 +81,38 @@ define([
                     implementation: AdapterCompositionPolicy,
                     depends: [ "mct" ]
                 }
+            ],
+            licenses: [
+                {
+                    "name": "almond",
+                    "version": "0.3.3",
+                    "description": "Lightweight RequireJS replacement for builds",
+                    "author": "jQuery Foundation",
+                    "website": "https://github.com/requirejs/almond",
+                    "copyright": "Copyright jQuery Foundation and other contributors, https://jquery.org/",
+                    "license": "license-mit",
+                    "link": "https://github.com/requirejs/almond/blob/master/LICENSE"
+                },
+                {
+                    "name": "lodash",
+                    "version": "3.10.1",
+                    "description": "Utility functions",
+                    "author": "Dojo Foundation",
+                    "website": "https://lodash.com",
+                    "copyright": "Copyright 2012-2015 The Dojo Foundation",
+                    "license": "license-mit",
+                    "link": "https://raw.githubusercontent.com/lodash/lodash/3.10.1/LICENSE"
+                },
+                {
+                    "name": "Zepto",
+                    "version": "1.1.6",
+                    "description": "DOM manipulation library",
+                    "author": "Thomas Fuchs",
+                    "website": "http://zeptojs.com",
+                    "copyright": "Copyright (c) 2010-2016 Thomas Fuchs",
+                    "license": "license-mit",
+                    "link": "https://github.com/madrobby/zepto/blob/master/MIT-LICENSE"
+                }
             ]
         }
     });
