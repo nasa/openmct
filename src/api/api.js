@@ -16,8 +16,8 @@ define([
     return {
         Type: Type,
         View: View,
-        Objects: ObjectAPI,
-        Composition: CompositionAPI,
+        ObjectAPI: ObjectAPI,
+        CompositionAPI: CompositionAPI,
         Dialog: Dialog
     };
 });
