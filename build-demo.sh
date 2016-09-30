@@ -37,11 +37,6 @@ BUILD_SHA=`git rev-parse HEAD`
 REMOTE_NAME="website"
 WEBSITE_BRANCH="master"
 
-# Clean output directory, JSDOC will recreate
-if [ -d $OUTPUT_DIRECTORY ]; then
-    rm -rf $OUTPUT_DIRECTORY || exit 1
-fi
-
 echo "git clone $REPOSITORY_URL website"
 git clone $REPOSITORY_URL $WEBSITE_DIRECTORY || exit 1
 echo "cp -r $OUTPUT_DIRECTORY/** $WEBSITE_DIRECTORY/$LIVE_DEMO_DIRECTORY"
