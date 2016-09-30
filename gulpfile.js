@@ -150,21 +150,6 @@ gulp.task('watch', function () {
     return gulp.watch(paths.scss, ['stylesheets', 'assets']);
 });
 
-gulp.task('api', function () {
-    var jsdoc2md = require('gulp-jsdoc-to-markdown');
-    var concat = require('gulp-concat');
-    var markdown = require('gulp-markdown');
-    return gulp.src('src/**/*.js')
-        .pipe(concat('api.md'))
-        .pipe(jsdoc2md(require('./jsdoc.json')))
-        .pipe(markdown())
-        .pipe(gulp.dest(paths.dist));
-});
-
-gulp.task('api-watch', function () {
-    return gulp.watch('src/**/*.js', ['api']);
-});
-
 gulp.task('serve', function () {
     console.log('Running development server with all defaults');
     var app = require('./app.js');
