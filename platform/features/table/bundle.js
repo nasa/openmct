@@ -145,7 +145,7 @@ define([
                     "name": "Real-time Table",
                     "key": "rt-table",
                     "cssclass": "icon-tabular-realtime",
-                    "templateUrl": rtTableTemplate,
+                    "template": rtTableTemplate,
                     "needs": [
                         "telemetry"
                     ],
