@@ -24,6 +24,7 @@ define([
     'EventEmitter',
     './MCT',
     './api/Type',
+    './api/ui/GestureAPI',
     './Registry',
     './selection/Selection',
     './selection/ContextManager',
@@ -35,6 +36,7 @@ define([
     EventEmitter,
     MCT,
     Type,
+    GestureAPI,
     Registry,
     Selection,
     ContextManager,
@@ -72,11 +74,7 @@ define([
 
     openmct.selection = selection;
     openmct.inspectors = new ViewRegistry();
-
-    openmct.gestures = {
-        selectable: select.apply.bind(select),
-        contextual: contextMenu.apply.bind(contextMenu)
-    };
+    openmct.gestures = new GestureAPI(select, contextMenu);
 
     return openmct;
 });
