@@ -71,7 +71,7 @@ define([
         "constants": [
             {
                 "key": "REMS_WS_URL",
-                "value": "/proxyUrl?url=http://cab.inta-csic.es/rems/wp-content/plugins/marsweather-widget/api.php"
+                "value": "https://openmct-demo.herokuapp.com/proxyUrl?url=http://cab.inta-csic.es/rems/wp-content/plugins/marsweather-widget/api.php"
             }
         ],
         "roots": [
