@@ -38,6 +38,10 @@ define([
             ]
         } };
 
+        /**
+         * Tracks current selection state of the application.
+         * @private
+         */
         this.selection = new Selection();
 
         /**
