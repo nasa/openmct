@@ -21,6 +21,11 @@
  *****************************************************************************/
 
 define(['EventEmitter'], function (EventEmitter) {
+
+    /**
+     * Manages selection state for Open MCT
+     * @private
+     */
     function Selection() {
         EventEmitter.call(this);
         this.selected = [];
@@ -28,9 +33,9 @@ define(['EventEmitter'], function (EventEmitter) {
 
     Selection.prototype = Object.create(EventEmitter.prototype);
 
-    Selection.prototype.add = function (path) {
+    Selection.prototype.add = function (context) {
         this.clear(); // Only allow single select as initial simplification
-        this.selected.push(path);
+        this.selected.push(context);
         this.emit('change');
     };
 
