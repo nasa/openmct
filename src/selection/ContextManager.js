@@ -26,6 +26,7 @@ define(['zepto'], function ($) {
      * @property {*} item
      * @property {HTMLElement} element
      * @property {Context} parent the containing context (may be undefined)
+     * @memberof module:openmct
      */
 
 

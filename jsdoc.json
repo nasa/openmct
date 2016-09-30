@@ -7,7 +7,6 @@
         "excludePattern": ".+\\Spec\\.js$|lib/.+"
     },
     "plugins": [
-        "plugins/markdown",
-        "build/jsdoc/plugins/mct-only"
+        "plugins/markdown"
     ]
 }
