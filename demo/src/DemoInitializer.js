@@ -78,7 +78,8 @@ define(
                         steps: [
                             {
                                 title: "Welcome to Open MCT",
-                                content: "This brief tour will introduce you to the main elements and concepts of the application. To cancel at any time, click the 'X' in the top right of this box, or click 'Next' to continue.",
+                                content: "This brief tour will introduce you" +
+                                " to the main elements and concepts of the application. To cancel at any time, click the 'x' in the top right of this box, or click 'Next' to continue.",
                                 target: ".user-environ",
                                 placement: "top",
                                 xOffset: "center",
