@@ -69,7 +69,17 @@ define([
                         "$window",
                         "timeConductor",
                         "timeConductorViewService",
-                        "timeSystems[]"
+                        "timeSystems[]",
+                        "formatService"
+                    ]
+                },
+                {
+                    "key": "ConductorAxisController",
+                    "implementation": ConductorAxisController,
+                    "depends": [
+                        "timeConductor",
+                        "formatService",
+                        "timeConductorViewService"
                     ]
                 },
                 {

@@ -30,14 +30,18 @@ define(['./TimeConductorController'], function (TimeConductorController) {
         var controller;
 
         beforeEach(function () {
-            mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
+            mockScope = jasmine.createSpyObj("$scope", [
+                "$watch",
+                "$on"
+            ]);
             mockWindow = jasmine.createSpyObj("$window", ["requestAnimationFrame"]);
             mockTimeConductor = jasmine.createSpyObj(
                 "TimeConductor",
                 [
                     "bounds",
                     "timeSystem",
-                    "on"
+                    "on",
+                    "off"
                 ]
             );
             mockTimeConductor.bounds.andReturn({start: undefined, end: undefined});
@@ -124,9 +128,16 @@ define(['./TimeConductorController'], function (TimeConductorController) {
             });
 
             it("listens for changes to conductor state", function () {
-                expect(mockTimeConductor.on).toHaveBeenCalledWith("timeSystem", jasmine.any(Function));
-                expect(mockTimeConductor.on).toHaveBeenCalledWith("bounds", jasmine.any(Function));
-                expect(mockTimeConductor.on).toHaveBeenCalledWith("follow", jasmine.any(Function));
+                expect(mockTimeConductor.on).toHaveBeenCalledWith("timeSystem", controller.changeTimeSystem);
+                expect(mockTimeConductor.on).toHaveBeenCalledWith("bounds", controller.setFormFromBounds);
+            });
+
+            it("deregisters conductor listens when scope is destroyed", function () {
+                expect(mockScope.$on).toHaveBeenCalledWith("$destroy", controller.destroy);
+
+                controller.destroy();
+                expect(mockTimeConductor.off).toHaveBeenCalledWith("timeSystem", controller.changeTimeSystem);
+                expect(mockTimeConductor.off).toHaveBeenCalledWith("bounds", controller.setFormFromBounds);
             });
 
             it("when time system changes, sets time system on scope", function () {
@@ -163,17 +174,6 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                 expect(mockScope.boundsModel).toBeDefined();
                 expect(mockScope.boundsModel.start).toEqual(bounds.start);
                 expect(mockScope.boundsModel.end).toEqual(bounds.end);
-            });
-
-            it("responds to a change in 'follow' state of the time conductor", function () {
-                var followListener = getListener("follow");
-                expect(followListener).toBeDefined();
-
-                followListener(true);
-                expect(mockScope.followMode).toEqual(true);
-
-                followListener(false);
-                expect(mockScope.followMode).toEqual(false);
             });
         });
 

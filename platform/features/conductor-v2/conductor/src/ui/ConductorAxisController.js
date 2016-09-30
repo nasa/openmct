@@ -32,11 +32,12 @@ define(
          * labelled 'ticks'. It requires 'start' and 'end' integer values to
          * be specified as attributes.
          */
-        function ConductorAxisController(conductor, formatService) {
+        function ConductorAxisController(conductor, formatService, conductorViewService) {
             // Dependencies
             this.d3 = d3;
             this.formatService = formatService;
             this.conductor = conductor;
+            this.conductorViewService = conductorViewService;
 
             // Runtime properties (set by 'link' function)
             this.target = undefined;
@@ -46,13 +47,21 @@ define(
             this.initialized = false;
             this.msPerPixel = undefined;
 
-            this.setScale = this.setScale.bind(this);
-            this.changeBounds = this.changeBounds.bind(this);
-            this.changeTimeSystem = this.changeTimeSystem.bind(this);
-
             this.bounds = conductor.bounds();
             this.timeSystem = conductor.timeSystem();
+
+            //Bind all class functions to 'this'
+            Object.keys(ConductorAxisController.prototype).filter(function (key) {
+                return typeof ConductorAxisController.prototype[key] === 'function';
+            }).forEach(function (key) {
+                this[key] = ConductorAxisController.prototype[key].bind(this);
+            }.bind(this));
         }
+
+        ConductorAxisController.prototype.destroy = function () {
+            this.conductor.off('timeSystem', this.changeTimeSystem);
+            this.conductor.off('bounds', this.setScale);
+        };
 
         ConductorAxisController.prototype.changeBounds = function (bounds) {
             this.bounds = bounds;
@@ -129,18 +138,26 @@ define(
 
             if (this.timeSystem !== undefined) {
                 this.changeTimeSystem(this.timeSystem);
-                this.setScale(this.bounds);
+                this.setScale();
             }
 
             //Respond to changes in conductor
             this.conductor.on("timeSystem", this.changeTimeSystem);
             this.conductor.on("bounds", this.changeBounds);
+
+            this.scope.$on("$destroy", this.destroy);
+
+            this.conductorViewService.on("zoom", this.zoom);
         };
 
-        ConductorAxisController.prototype.panEnd = function () {
+        ConductorAxisController.prototype.panStop = function () {
             //resync view bounds with time conductor bounds
             this.conductor.bounds(this.bounds);
-            this.scope.$emit("pan-stop");
+            this.conductorViewService.emit("pan-stop");
+        };
+
+        ConductorAxisController.prototype.zoom = function (bounds) {
+            this.changeBounds(bounds);
         };
 
         ConductorAxisController.prototype.pan = function (delta) {
@@ -154,7 +171,7 @@ define(
                     end: end
                 };
                 this.setScale();
-                this.scope.$emit("pan", this.bounds);
+                this.conductorViewService.emit("pan", this.bounds);
             }
         };
 

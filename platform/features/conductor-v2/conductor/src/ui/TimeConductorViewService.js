@@ -22,9 +22,10 @@
 
 define(
     [
+        'EventEmitter',
         './TimeConductorMode'
     ],
-    function (TimeConductorMode) {
+    function (EventEmitter, TimeConductorMode) {
 
         /**
          * A class representing the state of the time conductor view. This
@@ -36,6 +37,9 @@ define(
          * @constructor
          */
         function TimeConductorViewService(conductor, timeSystems) {
+
+            EventEmitter.call(this);
+
             this.systems = timeSystems.map(function (timeSystemConstructor) {
                 return timeSystemConstructor();
             });
@@ -96,6 +100,8 @@ define(
                 this.availModes[ladMode.key] = ladMode;
             }
         }
+
+        TimeConductorViewService.prototype = Object.create(EventEmitter.prototype);
 
         /**
          * Getter/Setter for the Time Conductor Mode. Modes determine the

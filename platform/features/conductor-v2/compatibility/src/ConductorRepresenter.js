@@ -85,6 +85,7 @@ define(
         ConductorRepresenter.prototype.destroy = function destroy() {
             this.conductor.off("bounds", this.boundsListener);
             this.conductor.off("timeSystem", this.timeSystemListener);
+            this.conductor.off("follow", this.followListener);
         };
 
         return ConductorRepresenter;
