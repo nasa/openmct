@@ -37,18 +37,17 @@ define([
         for (var i = 0, escaped = false; i < key.length; i++) {
             if (escaped) {
                 escaped = false;
+                namespace += key[i];
             } else {
                 if (key[i] === "\\") {
                     escaped = true;
-                    continue;
-                }
-                if (key[i] === ":") {
+                } else if (key[i] === ":") {
                     // namespace = key.slice(0, i);
                     identifier = key.slice(i + 1);
                     break;
                 }
+                namespace += key[i];
             }
-            namespace += key[i];
         }
 
         if (key === namespace) {

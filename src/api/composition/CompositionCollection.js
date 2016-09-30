@@ -91,7 +91,7 @@ define([
      * @name indexOf
      */
     CompositionCollection.prototype.indexOf = function (child) {
-        return _.findIndex(this._children, function (other) {
+        return _.findIndex(this.loadedChildren, function (other) {
             return objectUtils.equals(child, other);
         });
     };
@@ -136,7 +136,7 @@ define([
      * @name add
      */
     CompositionCollection.prototype.add = function (child, skipMutate) {
-        if (!this._children) {
+        if (!this.loadedChildren) {
             throw new Error("Must load composition before you can add!");
         }
         if (!this.canContain(child)) {
@@ -148,7 +148,7 @@ define([
             }
             throw new Error("Unable to add child: already in composition");
         }
-        this._children.push(child);
+        this.loadedChildren.push(child);
         this.emit('add', child);
         if (!skipMutate) {
             // add after we have added.
@@ -167,12 +167,12 @@ define([
     CompositionCollection.prototype.load = function () {
         return this.provider.load(this.domainObject)
             .then(function (children) {
-                this._children = [];
+                this.loadedChildren = [];
                 children.map(function (c) {
                     this.add(c, true);
                 }, this);
                 this.emit('load');
-                return this._children.slice();
+                return this.loadedChildren.slice();
             }.bind(this));
     };
 
@@ -196,7 +196,7 @@ define([
             throw new Error("Unable to remove child: not found in composition");
         }
         var index = this.indexOf(child);
-        var removed = this._children.splice(index, 1)[0];
+        var removed = this.loadedChildren.splice(index, 1)[0];
         this.emit('remove', index, child);
         if (!skipMutate) {
             // trigger removal after we have internally removed it.

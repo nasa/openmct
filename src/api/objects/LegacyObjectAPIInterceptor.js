@@ -113,7 +113,7 @@ define([
                 });
         };
 
-        openmct.objects._supersecretSetFallbackProvider(
+        openmct.objects.supersecretSetFallbackProvider(
             new ObjectServiceProvider(objectService, instantiate, topic)
         );
 

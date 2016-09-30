@@ -52,7 +52,7 @@ define([
         };
     }
 
-    ObjectAPI.prototype._supersecretSetFallbackProvider = function (p) {
+    ObjectAPI.prototype.supersecretSetFallbackProvider = function (p) {
         this.fallbackProvider = p;
     };
 
