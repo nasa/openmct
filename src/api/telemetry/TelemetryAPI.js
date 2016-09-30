@@ -226,9 +226,9 @@ define([
      *          telemetry data
      */
     TelemetryAPI.prototype.request = function (domainObject, options) {
-        var provider = this.providers.reduce(function (result, provider) {
-            return (provider.canProvideTelemetry(domainObject)) ?
-                provider : result;
+        var provider = this.providers.reduce(function (result, p) {
+            return (p.canProvideTelemetry(domainObject)) ?
+                p : result;
         }, undefined);
         return provider ?
             provider.request(domainObject, options) :
@@ -303,10 +303,10 @@ define([
         formatter: undefined,
         limitEvaluator: undefined
     }, function (defaultValue, method) {
-        TelemetryAPI.prototype[method] = function () {
-            var provider = this.providers.reduce(function (result, provider) {
-                return (provider.canProvideTelemetry(domainObject)) ?
-                    provider : result;
+        TelemetryAPI.prototype[method] = function (domainObject) {
+            var provider = this.providers.reduce(function (result, p) {
+                return (p.canProvideTelemetry(domainObject)) ?
+                    p : result;
             }, undefined);
             return provider ?
                 provider[method].apply(provider, arguments) :

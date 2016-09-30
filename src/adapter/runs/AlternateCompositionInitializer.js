@@ -32,5 +32,5 @@ define([
         };
     }
 
-    return AlternateCompositionCapability;
+    return AlternateCompositionInitializer;
 });

@@ -48,7 +48,7 @@ define([
     MutableObject.prototype.stopListening = function () {
         this.unlisteners.forEach(function (unlisten) {
             unlisten();
-        })
+        });
     };
 
     /**

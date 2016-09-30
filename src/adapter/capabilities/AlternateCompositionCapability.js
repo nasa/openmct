@@ -48,7 +48,7 @@ define([
             function addChildToComposition(model) {
                 var existingIndex = model.composition.indexOf(child.getId());
                 if (existingIndex === -1) {
-                    model.composition.push(child.getId())
+                    model.composition.push(child.getId());
                 }
             }
 

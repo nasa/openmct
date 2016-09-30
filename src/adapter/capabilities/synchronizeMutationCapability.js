@@ -42,8 +42,8 @@ define([
                 });
             };
             return capability;
-        }
-    };
+        };
+    }
 
     return synchronizeMutationCapability;
 });

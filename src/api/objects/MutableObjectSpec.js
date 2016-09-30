@@ -91,7 +91,7 @@ define(['./MutableObject'], function (MutableObject) {
         });
 
         it('Fires events when properties change', function () {
-            var newString = 'updated'
+            var newString = 'updated';
             mutableObject.set('stringProperty', newString);
             expect(eventEmitter.emit).toHaveBeenCalledWith([identifier, 'stringProperty'].join(':'), newString);
 
@@ -102,7 +102,7 @@ define(['./MutableObject'], function (MutableObject) {
         });
 
         it('Fires wildcard event when any property changes', function () {
-            var newString = 'updated'
+            var newString = 'updated';
             mutableObject.set('objectProperty.prop3.propA', newString);
             expect(eventEmitter.emit).toHaveBeenCalledWith([identifier, '*'].join(':'), domainObject);
         });

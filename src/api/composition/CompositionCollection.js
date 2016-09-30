@@ -65,7 +65,7 @@ define([
                 this
             );
         }
-    };
+    }
 
     CompositionCollection.prototype = Object.create(EventEmitter.prototype);
 
@@ -227,5 +227,5 @@ define([
         }
     };
 
-    return CompositionCollection
+    return CompositionCollection;
 });

@@ -34,7 +34,7 @@ define([
         }
         var namespace = '',
             identifier = key;
-        for (var i = 0, escaped = false, len=key.length; i < key.length; i++) {
+        for (var i = 0, escaped = false; i < key.length; i++) {
             if (escaped) {
                 escaped = false;
             } else {

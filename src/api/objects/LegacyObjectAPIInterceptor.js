@@ -41,6 +41,7 @@ define([
      */
     ObjectServiceProvider.prototype.bridgeEventBuses = function () {
         var removeGeneralTopicListener;
+        var handleLegacyMutation;
 
         var handleMutation = function (newStyleObject) {
             var keyString = utils.makeKeyString(newStyleObject.key);
@@ -56,7 +57,7 @@ define([
             removeGeneralTopicListener = this.generalTopic.listen(handleLegacyMutation);
         }.bind(this);
 
-        var handleLegacyMutation = function (legacyObject){
+        handleLegacyMutation = function (legacyObject){
             var newStyleObject = utils.toNewFormat(legacyObject.getModel(), legacyObject.getId());
 
             //Don't trigger self
@@ -70,9 +71,7 @@ define([
     };
 
     ObjectServiceProvider.prototype.save = function (object) {
-        var key = object.key,
-            keyString = utils.makeKeyString(key),
-            newObject = this.instantiate(utils.toOldFormat(object), keyString);
+        var key = object.key;
 
         return object.getCapability('persistence')
                 .persist()
@@ -103,7 +102,7 @@ define([
                     var key = utils.parseKeyString(keyString);
                     return openmct.objects.get(key)
                         .then(function (object) {
-                            object = utils.toOldFormat(object)
+                            object = utils.toOldFormat(object);
                             results[keyString] = instantiate(object, keyString);
                         });
                 });

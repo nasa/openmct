@@ -47,7 +47,7 @@ define([
         }
         if (AlternateCompositionCapability.appliesTo(model)) {
             capabilities.composition = function (domainObject) {
-                return new AlternateCompositionCapability(this.$injector, domainObject)
+                return new AlternateCompositionCapability(this.$injector, domainObject);
             }.bind(this);
         }
 
