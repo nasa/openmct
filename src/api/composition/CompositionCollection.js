@@ -19,13 +19,16 @@ define([
      *        whose composition will be contained
      * @param {module:openmct.CompositionProvider} provider the provider
      *        to use to retrieve other domain objects
+     * @param {module:openmct.CompositionAPI} api the composition API, for
+     *        policy checks
      * @memberof module:openmct
      * @augments EventEmitter
      */
-    function CompositionCollection(domainObject, provider) {
+    function CompositionCollection(domainObject, provider, api) {
         EventEmitter.call(this);
         this.domainObject = domainObject;
         this.provider = provider;
+        this.api = api;
         if (this.provider.on) {
             this.provider.on(
                 this.domainObject,
@@ -85,6 +88,17 @@ define([
      */
     CompositionCollection.prototype.contains = function (child) {
         return this.indexOf(child) !== -1;
+    };
+
+    /**
+     * Check if a domain object can be added to this composition.
+     *
+     * @param {module:openmct.DomainObject} child the domain object to add
+     * @memberof module:openmct.CompositionCollection#
+     * @name canContain
+     */
+    CompositionCollection.prototype.canContain = function (domainObject) {
+        return this.api.checkPolicy(this.domainObject, domainObject);
     };
 
     /**
@@ -168,15 +182,11 @@ define([
         }
     };
 
-    CompositionCollection.prototype.canContain = function (domainObject) {
-        return this.provider.canContain(this.domainObject, domainObject);
-    };
-
     /**
      * Stop using this composition collection. This will release any resources
      * associated with this collection.
      * @name destroy
-     * @memberof module:openmct.CompositionCollection
+     * @memberof module:openmct.CompositionCollection#
      */
     CompositionCollection.prototype.destroy = function () {
         if (this.provider.off) {
