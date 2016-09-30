@@ -8,7 +8,7 @@ define([], function () {
      * @memberof module:openmct
      */
     function TypeRegistry() {
-
+        this.types = {};
     }
 
     /**
@@ -20,7 +20,7 @@ define([], function () {
      * @memberof module:openmct.TypeRegistry#
      */
     TypeRegistry.prototype.addType = function (typeKey, type) {
-
+        this.types[typeKey] = type;
     };
 
 
