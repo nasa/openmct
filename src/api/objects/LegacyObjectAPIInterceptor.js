@@ -57,7 +57,7 @@ define([
             removeGeneralTopicListener = this.generalTopic.listen(handleLegacyMutation);
         }.bind(this);
 
-        handleLegacyMutation = function (legacyObject){
+        handleLegacyMutation = function (legacyObject) {
             var newStyleObject = utils.toNewFormat(legacyObject.getModel(), legacyObject.getId());
 
             //Don't trigger self

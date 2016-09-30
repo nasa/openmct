@@ -74,14 +74,14 @@ define([
                     type: "decorator",
                     provides: "actionService",
                     implementation: ActionDialogDecorator,
-                    depends: [ "openmct", "newViews[]" ]
+                    depends: ["openmct", "newViews[]"]
                 }
             ],
             policies: [
                 {
                     category: "composition",
                     implementation: AdapterCompositionPolicy,
-                    depends: [ "openmct" ]
+                    depends: ["openmct"]
                 }
             ],
             runs: [

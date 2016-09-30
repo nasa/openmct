@@ -191,7 +191,7 @@ define([
         MCT.prototype[k] = api[k];
     });
     MCT.prototype.MCT = MCT;
-    
+
     MCT.prototype.legacyExtension = function (category, extension) {
         this.legacyBundle.extensions[category] =
             this.legacyBundle.extensions[category] || [];

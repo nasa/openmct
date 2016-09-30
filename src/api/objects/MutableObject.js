@@ -59,7 +59,7 @@ define([
      * @method on
      * @memberof module:openmct.MutableObject#
      */
-    MutableObject.prototype.on = function(path, callback) {
+    MutableObject.prototype.on = function (path, callback) {
         var fullPath = qualifiedEventName(this.object, path);
         objectEventEmitter.on(fullPath, callback);
         this.unlisteners.push(objectEventEmitter.off.bind(objectEventEmitter, fullPath, callback));
