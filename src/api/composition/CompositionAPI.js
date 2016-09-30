@@ -70,7 +70,7 @@ define([
      */
     CompositionAPI.prototype.get = function (domainObject) {
         var provider = _.find(this.registry, function (p) {
-            return p.appliesTo(object);
+            return p.appliesTo(domainObject);
         });
 
         if (!provider) {

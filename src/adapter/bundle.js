@@ -26,14 +26,16 @@ define([
     './directives/MCTView',
     './services/Instantiate',
     './capabilities/APICapabilityDecorator',
-    './policies/AdapterCompositionPolicy'
+    './policies/AdapterCompositionPolicy',
+    './runs/AlternateCompositionInitializer'
 ], function (
     legacyRegistry,
     ActionDialogDecorator,
     MCTView,
     Instantiate,
     APICapabilityDecorator,
-    AdapterCompositionPolicy
+    AdapterCompositionPolicy,
+    AlternateCompositionInitializer
 ) {
     legacyRegistry.register('src/adapter', {
         "extensions": {
@@ -80,6 +82,12 @@ define([
                     category: "composition",
                     implementation: AdapterCompositionPolicy,
                     depends: [ "openmct" ]
+                }
+            ],
+            runs: [
+                {
+                    implementation: AlternateCompositionInitializer,
+                    depends: ["openmct"]
                 }
             ],
             licenses: [

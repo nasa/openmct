@@ -26,7 +26,6 @@
 define([
     '../../api/objects/object-utils'
 ], function (objectUtils) {
-
         function AlternateCompositionCapability($injector, domainObject) {
             this.domainObject = domainObject;
             this.getDependencies = function () {
@@ -98,7 +97,9 @@ define([
         };
 
         AlternateCompositionCapability.appliesTo = function (model) {
-            return true;
+            // Will get replaced by a runs exception to properly
+            // bind to running openmct instance
+            return false;
         };
 
         return AlternateCompositionCapability;
