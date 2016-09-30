@@ -72,7 +72,7 @@ define(
 
             // Assemble all gestures into a map, for easy look up
             gestures.forEach(function (gesture) {
-                gestureMap[gesture.key] = gesture;
+                gestureMap[gesture.key] = gestureMap[gesture.key] || gesture;
             });
 
             this.gestureMap = gestureMap;
