@@ -26,6 +26,36 @@ define([
     _,
     EventEmitter
 ) {
+    /**
+     * A LimitEvaluator may be used to detect when telemetry values
+     * have exceeded nominal conditions.
+     *
+     * @interface LimitEvaluator
+     * @memberof module:openmct.TelemetryAPI~
+     */
+
+    /**
+     * Check for any limit violations associated with a telemetry datum.
+     * @method evaluate
+     * @param {*} datum the telemetry datum to evaluate
+     * @param {TelemetryProperty} the property to check for limit violations
+     * @memberof module:openmct.TelemetryAPI~LimitEvaluator
+     * @returns {module:openmct.TelemetryAPI~LimitViolation} metadata about
+     *          the limit violation, or undefined if a value is within limits
+     */
+
+    /**
+     * A violation of limits defined for a telemetry property.
+     * @typedef LimitViolation
+     * @memberof {module:openmct.TelemetryAPI~}
+     * @property {string} cssclass the class (or space-separated classes) to
+     *           apply to display elements for values which violate this limit
+     * @property {string} name the human-readable name for the limit violation
+     */
+
+
+
+
 
     // format map is a placeholder until we figure out format service.
     var FORMAT_MAP = {
@@ -176,13 +206,7 @@ define([
             return this.formats[key](datum);
         };
 
-        /**
-         * A LimitEvaluator may be used to detect when telemetry values
-         * have exceeded nominal conditions.
-         *
-         * @interface LimitEvaluator
-         * @memberof module:openmct.TelemetryAPI~
-         */
+
         function LimitEvaluator(domainObject) {
             this.domainObject = domainObject;
             this.evaluator = domainObject.getCapability('limit');
