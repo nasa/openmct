@@ -1,7 +1,6 @@
 define([
     './Type',
     './TimeConductor',
-    './View',
     './objects/ObjectAPI',
     './composition/CompositionAPI',
     './types/TypeRegistry',
@@ -21,7 +20,6 @@ define([
 ) {
     return {
         Type: Type,
-        View: View,
         TimeConductor: TimeConductor,
         ObjectAPI: ObjectAPI,
         CompositionAPI: CompositionAPI,

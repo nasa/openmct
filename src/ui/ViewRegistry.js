@@ -26,6 +26,98 @@ define([], function () {
         this.providers.push(provider);
     };
 
+    /**
+     * A View is used to provide displayable content, and to react to
+     * associated life cycle events.
+     *
+     * @name View
+     * @interface
+     * @memberof module:openmct
+     */
+
+    /**
+     * Populate the supplied DOM element with the contents of this view.
+     *
+     * View implementations should use this method to attach any
+     * listeners or acquire other resources that are necessary to keep
+     * the contents of this view up-to-date.
+     *
+     * @param {HTMLElement} container the DOM element to populate
+     * @method show
+     * @memberof module:openmct.View#
+     */
+
+    /**
+     * Release any resources associated with this view.
+     *
+     * View implementations should use this method to detach any
+     * listeners or release other resources that are no longer necessary
+     * once a view is no longer used.
+     *
+     * @method destroy
+     * @memberof module:openmct.View#
+     */
+
+    /**
+     * Exposes types of views in Open MCT.
+     *
+     * @interface ViewProvider
+     * @memberof module:openmct
+     */
+
+    /**
+     * Check if this provider can supply views for a domain object.
+     *
+     * When called by Open MCT, this may include additional arguments
+     * which are on the path to the object to be viewed; for instance,
+     * when viewing "A Folder" within "My Items", this method will be
+     * invoked with "A Folder" (as a domain object) as the first argument,
+     * and "My Items" as the second argument.
+     *
+     * @method canView
+     * @memberof module:openmct.ViewProvider#
+     * @param {module:openmct.DomainObject} domainObject the domain object
+     *        to be viewed
+     * @returns {boolean} true if this domain object can be viewed using
+     *          this provider
+     */
+
+    /**
+     * Provide a view of this object.
+     *
+     * When called by Open MCT, this may include additional arguments
+     * which are on the path to the object to be viewed; for instance,
+     * when viewing "A Folder" within "My Items", this method will be
+     * invoked with "A Folder" (as a domain object) as the first argument,
+     * and "My Items" as the second argument.
+     *
+     * @method view
+     * @memberof module:openmct.ViewProvider#
+     * @param {*} object the object to be viewed
+     * @returns {module:openmct.View} a view of this domain object
+     */
+
+    /**
+     * Get metadata associated with this view provider. This may be used
+     * to populate the user interface with options associated with this
+     * view provider.
+     *
+     * @method metadata
+     * @memberof module:openmct.ViewProvider#
+     * @returns {module:openmct.ViewProvider~ViewMetadata} view metadata
+     */
+
+    /**
+     * @typedef ViewMetadata
+     * @memberof module:openmct.ViewProvider~
+     * @property {string} name the human-readable name of this view
+     * @property {string} key a machine-readable name for this view
+     * @property {string} [description] a longer-form description (typically
+     *           a single sentence or short paragraph) of this kind of view
+     * @property {string} cssclass the CSS class to apply to labels for this
+     *           view (to add icons, for instance)
+     */
+
     return ViewRegistry;
 
 });
