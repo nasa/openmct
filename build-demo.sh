@@ -24,7 +24,7 @@
 
 # Script to build and deploy docs.
 
-OUTPUT_DIRECTORY="dist/**"
+OUTPUT_DIRECTORY="dist"
 # Docs, once built, are pushed to the private website repo
 REPOSITORY_URL="git@github.com:nasa/openmct-website.git"
 WEBSITE_DIRECTORY="website"
@@ -44,8 +44,8 @@ fi
 
 echo "git clone $REPOSITORY_URL website"
 git clone $REPOSITORY_URL $WEBSITE_DIRECTORY || exit 1
-echo "cp -r $OUTPUT_DIRECTORY $WEBSITE_DIRECTORY/$LIVE_DEMO_DIRECTORY"
-cp -r $OUTPUT_DIRECTORY $WEBSITE_DIRECTORY/$LIVE_DEMO_DIRECTORY
+echo "cp -r $OUTPUT_DIRECTORY/** $WEBSITE_DIRECTORY/$LIVE_DEMO_DIRECTORY"
+cp -r $OUTPUT_DIRECTORY/** $WEBSITE_DIRECTORY/$LIVE_DEMO_DIRECTORY
 echo "cd $WEBSITE_DIRECTORY"
 cd $WEBSITE_DIRECTORY || exit 1
 
