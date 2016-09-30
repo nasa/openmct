@@ -32,7 +32,6 @@ define([
 ], function (
     Type,
     TimeConductor,
-    View,
     ObjectAPI,
     CompositionAPI,
     TypeRegistry,
