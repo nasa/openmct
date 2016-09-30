@@ -7,8 +7,10 @@ deployment:
       - git push git@heroku.com:openmctweb-demo.git $CIRCLE_SHA1:refs/heads/master
   openmct-demo:
     branch: live_demo
-    heroku:
-      appname: openmct-demo
+    commands:
+      - git push git@heroku.com:openmct-demo.git $CIRCLE_SHA1:refs/heads/master
+      - ./build-demo.sh
+
   openmctweb-staging-deux:
     branch: mobile
     heroku:
