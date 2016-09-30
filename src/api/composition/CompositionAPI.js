@@ -9,15 +9,6 @@ define([
     DefaultCompositionProvider,
     CompositionCollection
 ) {
-
-    var PROVIDER_REGISTRY = [];
-
-    function getProvider (object) {
-        return _.find(PROVIDER_REGISTRY, function (p) {
-            return p.appliesTo(object);
-        });
-    };
-
     /**
      * An interface for interacting with the composition of domain objects.
      * The composition of a domain object is the list of other domain objects
@@ -28,24 +19,11 @@ define([
      * @returns {module:openmct.CompositionCollection}
      * @memberof module:openmct
      */
-    function composition(object) {
-        var provider = getProvider(object);
-
-        if (!provider) {
-            return;
-        }
-
-        return new CompositionCollection(object, provider);
+    function CompositionAPI() {
+        this.registry = [];
+        this.policies = [];
+        this.addProvider(new DefaultCompositionProvider());
     }
-
-    /**
-     * Retrieve the composition (if any) of this domain object.
-     *
-     * @method get
-     * @returns {module:openmct.CompositionCollection}
-     * @memberof module:openmct.CompositionAPI#
-     */
-    composition.get = composition;
 
     /**
      * Add a composition provider.
@@ -57,19 +35,28 @@ define([
      * @param {module:openmct.CompositionProvider} provider the provider to add
      * @memberof module:openmct.CompositionAPI#
      */
-    composition.addProvider = function (provider) {
-        PROVIDER_REGISTRY.unshift(provider);
+    CompositionAPI.prototype.addProvider = function (provider) {
+        this.registry.unshift(provider);
     };
 
     /**
-     * Add a composition policy. Composition policies may disallow domain
-     * objects from containing other domain objects.
+     * Retrieve the composition (if any) of this domain object.
      *
-     * @method addPolicy
-     * @param {module:openmct.CompositionAPI~CompositionPolicy} policy
-     *        the policy to add
+     * @method get
+     * @returns {module:openmct.CompositionCollection}
      * @memberof module:openmct.CompositionAPI#
      */
+    CompositionAPI.prototype.get = function (domainObject) {
+        var provider = _.find(this.registry, function (p) {
+            return p.appliesTo(object);
+        });
+
+        if (!provider) {
+            return;
+        }
+
+        return new CompositionCollection(domainObject, provider);
+    };
 
     /**
      * A composition policy is a function which either allows or disallows
@@ -88,8 +75,39 @@ define([
      * @returns {boolean} false if this composition should be disallowed
      */
 
-    composition.addProvider(new DefaultCompositionProvider());
+    /**
+     * Add a composition policy. Composition policies may disallow domain
+     * objects from containing other domain objects.
+     *
+     * @method addPolicy
+     * @param {module:openmct.CompositionAPI~CompositionPolicy} policy
+     *        the policy to add
+     * @memberof module:openmct.CompositionAPI#
+     */
+    CompositionAPI.prototype.addPolicy = function (policy) {
+        this.policies.push(policy);
+    };
 
-    return composition;
+    /**
+     * Check whether or not a domain object is allowed to contain another
+     * domain object.
+     *
+     * @private
+     * @method checkPolicy
+     * @param {module:openmct.DomainObject} containingObject the object which
+     *        would act as a container
+     * @param {module:openmct.DomainObject} containedObject the object which
+     *        would be contained
+     * @returns {boolean} false if this composition should be disallowed
+
+     * @param {module:openmct.CompositionAPI~CompositionPolicy} policy
+     *        the policy to add
+     * @memberof module:openmct.CompositionAPI#
+     */
+    CompositionAPI.prototype.checkPolicy = function (container, containee) {
+        return this.policies.every(function (policy) {
+            return policy(container, containee);
+        });
+    };
 
 });
