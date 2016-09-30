@@ -87,11 +87,6 @@ define([
         );
     };
 
-
-    DefaultCompositionProvider.prototype.canContain = function (domainObject, child) {
-        return true;
-    };
-
     /**
      * Remove a domain object from another domain object's composition.
      *
