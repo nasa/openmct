@@ -4,6 +4,7 @@ Open MCT is a next-generation mission control framework for visualization of dat
 
 Please visit our [Official Site](https://nasa.github.io/openmct/) and [Getting Started Guide](https://nasa.github.io/openmct/getting-started/)
 
+
 ## See Open MCT in Action
 
 Try Open MCT now with our [live demo](https://openmct-demo.herokuapp.com/).
