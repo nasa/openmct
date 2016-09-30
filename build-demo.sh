@@ -34,15 +34,13 @@ BUILD_SHA=`git rev-parse HEAD`
 
 # A remote will be created for the git repository we are pushing to.
 # Don't worry, as this entire directory will get trashed in between builds.
-REMOTE_NAME="documentation"
+REMOTE_NAME="website"
 WEBSITE_BRANCH="master"
 
 # Clean output directory, JSDOC will recreate
 if [ -d $OUTPUT_DIRECTORY ]; then
     rm -rf $OUTPUT_DIRECTORY || exit 1
 fi
-
-npm run docs
 
 echo "git clone $REPOSITORY_URL website"
 git clone $REPOSITORY_URL $WEBSITE_DIRECTORY || exit 1
