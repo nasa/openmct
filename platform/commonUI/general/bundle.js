@@ -48,7 +48,7 @@ define([
     "./src/directives/MCTSplitPane",
     "./src/directives/MCTSplitter",
     "./src/directives/MCTTree",
-    "./src/filters/ReverseFilter.js",
+    "./src/filters/ReverseFilter",
     "text!./res/templates/bottombar.html",
     "text!./res/templates/controls/action-button.html",
     "text!./res/templates/controls/input-filter.html",

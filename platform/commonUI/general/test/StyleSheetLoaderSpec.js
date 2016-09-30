@@ -69,7 +69,7 @@ define(
 
             it("adjusts link locations", function () {
                 expect(mockElement.setAttribute)
-                    .toHaveBeenCalledWith('href', "a/b/c/d.css");
+                    .toHaveBeenCalledWith('href', "./a/b/c/d.css");
             });
 
             describe("for themed stylesheets", function () {
@@ -95,12 +95,13 @@ define(
 
                 it("includes matching themes", function () {
                     expect(mockElement.setAttribute)
-                        .toHaveBeenCalledWith('href', "a/b/c/themed.css");
+                        .toHaveBeenCalledWith('href', "./a/b/c/themed.css");
                 });
 
                 it("excludes mismatching themes", function () {
                     expect(mockElement.setAttribute)
-                        .not.toHaveBeenCalledWith('href', "a/b/c/bad-theme.css");
+                        .not
+                        .toHaveBeenCalledWith('href', "./a/b/c/bad-theme.css");
                 });
             });
 
