@@ -22,11 +22,9 @@
 
 define([
     './object-utils',
-    './ObjectAPI',
     './objectEventEmitter'
 ], function (
     utils,
-    ObjectAPI,
     objectEventEmitter
 ) {
     function ObjectServiceProvider(objectService, instantiate, topic) {
@@ -98,12 +96,12 @@ define([
 
     // Injects new object API as a decorator so that it hijacks all requests.
     // Object providers implemented on new API should just work, old API should just work, many things may break.
-    function LegacyObjectAPIInterceptor(ROOTS, instantiate, topic, objectService) {
+    function LegacyObjectAPIInterceptor(openmct, ROOTS, instantiate, topic, objectService) {
         this.getObjects = function (keys) {
             var results = {},
                 promises = keys.map(function (keyString) {
                     var key = utils.parseKeyString(keyString);
-                    return ObjectAPI.get(key)
+                    return openmct.objects.get(key)
                         .then(function (object) {
                             object = utils.toOldFormat(object)
                             results[keyString] = instantiate(object, keyString);
@@ -116,12 +114,12 @@ define([
                 });
         };
 
-        ObjectAPI._supersecretSetFallbackProvider(
+        openmct.objects._supersecretSetFallbackProvider(
             new ObjectServiceProvider(objectService, instantiate, topic)
         );
 
         ROOTS.forEach(function (r) {
-            ObjectAPI.addRoot(utils.parseKeyString(r.id));
+            openmct.objects.addRoot(utils.parseKeyString(r.id));
         });
 
         return this;

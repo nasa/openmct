@@ -60,7 +60,7 @@ define([
         this.legacyBundle = { extensions: {
             services: [
                 {
-                    key: "mct",
+                    key: "openmct",
                     implementation: function () {
                         return this;
                     }.bind(this)

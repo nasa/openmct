@@ -37,33 +37,33 @@ define([
      * @memberof module:openmct
      * @implements {module:openmct.ObjectProvider}
      */
-    var Objects = {},
-        ROOT_REGISTRY = [],
-        PROVIDER_REGISTRY = {},
-        FALLBACK_PROVIDER;
 
-    Objects._supersecretSetFallbackProvider = function (p) {
-        FALLBACK_PROVIDER = p;
-    };
+    function ObjectAPI() {
+        this.providers = {};
+        this.rootRegistry = [];
+        this.rootProvider = {
+            'get': function () {
+                return Promise.resolve({
+                    name: 'The root object',
+                    type: 'root',
+                    composition: this.rootRegistry
+                });
+            }.bind(this)
+        };
+    }
 
-    // Root provider is hardcoded in; can't be skipped.
-    var RootProvider = {
-        'get': function () {
-            return Promise.resolve({
-                name: 'The root object',
-                type: 'root',
-                composition: ROOT_REGISTRY
-            });
-        }
+    ObjectAPI.prototype._supersecretSetFallbackProvider = function (p) {
+        this.fallbackProvider = p;
     };
 
     // Retrieve the provider for a given key.
-    function getProvider(key) {
+    ObjectAPI.prototype.getProvider = function (key) {
         if (key.identifier === 'ROOT') {
-            return RootProvider;
+            return this.rootProvider;
         }
-        return PROVIDER_REGISTRY[key.namespace] || FALLBACK_PROVIDER;
-    }
+        return this.providers[key.namespace] || this.fallbackProvider;
+    };
+
 
     /**
      * Register a new object provider for a particular namespace.
@@ -74,8 +74,8 @@ define([
      * @memberof {module:openmct.ObjectAPI#}
      * @name addProvider
      */
-    Objects.addProvider = function (namespace, provider) {
-        PROVIDER_REGISTRY[namespace] = provider;
+    ObjectAPI.prototype.addProvider = function (namespace, provider) {
+        this.providers[namespace] = provider;
     };
 
     /**
@@ -125,9 +125,9 @@ define([
         'delete',
         'get'
     ].forEach(function (method) {
-        Objects[method] = function () {
+        ObjectAPI.prototype[method] = function () {
             var key = arguments[0],
-                provider = getProvider(key);
+                provider = this.getProvider(key);
 
             if (!provider) {
                 throw new Error('No Provider Matched');
@@ -148,8 +148,8 @@ define([
      * @method addRoot
      * @memberof module:openmct.ObjectAPI#
      */
-    Objects.addRoot = function (key) {
-        ROOT_REGISTRY.unshift(key);
+    ObjectAPI.prototype.addRoot = function (key) {
+        this.rootRegistry.unshift(key);
     };
 
     /**
@@ -159,8 +159,8 @@ define([
      * @method removeRoot
      * @memberof module:openmct.ObjectAPI#
      */
-    Objects.removeRoot = function (key) {
-        ROOT_REGISTRY = ROOT_REGISTRY.filter(function (k) {
+    ObjectAPI.prototype.removeRoot = function (key) {
+        this.rootRegistry = this.rootRegistry.filter(function (k) {
             return (
                 k.identifier !== key.identifier ||
                 k.namespace !== key.namespace
@@ -176,7 +176,7 @@ define([
      * @method mutate
      * @memberof module:openmct.ObjectAPI#
      */
-    Objects.mutate = function (domainObject, path, value) {
+    ObjectAPI.prototype.mutate = function (domainObject, path, value) {
         return new MutableObject(domainObject).set(path, value);
     };
 
@@ -189,7 +189,7 @@ define([
      * @method observe
      * @memberof module:openmct.ObjectAPI#
      */
-    Objects.observe = function (domainObject, path, callback) {
+    ObjectAPI.prototype.observe = function (domainObject, path, callback) {
         return new MutableObject(domainObject).on(path, callback);
     };
 
@@ -228,5 +228,5 @@ define([
      * @memberof module:openmct
      */
 
-    return Objects;
+    return ObjectAPI;
 });

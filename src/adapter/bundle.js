@@ -43,7 +43,7 @@ define([
                     implementation: MCTView,
                     depends: [
                         "newViews[]",
-                        "mct"
+                        "openmct"
                     ]
                 }
             ],
@@ -72,14 +72,14 @@ define([
                     type: "decorator",
                     provides: "actionService",
                     implementation: ActionDialogDecorator,
-                    depends: [ "mct", "newViews[]" ]
+                    depends: [ "openmct", "newViews[]" ]
                 }
             ],
             policies: [
                 {
                     category: "composition",
                     implementation: AdapterCompositionPolicy,
-                    depends: [ "mct" ]
+                    depends: [ "openmct" ]
                 }
             ],
             licenses: [

@@ -39,6 +39,7 @@ define([
                     priority: "mandatory",
                     implementation: LegacyObjectAPIInterceptor,
                     depends: [
+                        "openmct",
                         "roots[]",
                         "instantiate",
                         "topic"
