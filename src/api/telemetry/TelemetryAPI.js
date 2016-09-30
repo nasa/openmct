@@ -297,7 +297,7 @@ define([
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
     _.forEach({
-        request: Promise.reject("No such provider"),
+        request: undefined,
         subscribe: undefined,
         properties: [],
         formatter: undefined,

@@ -24,17 +24,16 @@
  * Module defining AlternateCompositionCapability. Created by vwoeltje on 11/7/14.
  */
 define([
-    '../../api/objects/object-utils',
-    '../../api/composition/CompositionAPI'
-], function (objectUtils, CompositionAPI) {
+    '../../api/objects/object-utils'
+], function (objectUtils) {
 
         function AlternateCompositionCapability($injector, domainObject) {
             this.domainObject = domainObject;
-
             this.getDependencies = function () {
                 this.instantiate = $injector.get("instantiate");
                 this.contextualize = $injector.get("contextualize");
                 this.getDependencies = undefined;
+                this.openmct = $injector.get("openmct");
             }.bind(this);
         }
 
@@ -85,7 +84,12 @@ define([
                 this.domainObject.getModel(),
                 this.domainObject.getId()
             );
-            var collection = CompositionAPI(newFormatDO);
+
+            if (this.getDependencies) {
+                this.getDependencies();
+            }
+
+            var collection = this.openmct.composition.get(newFormatDO);
             return collection.load()
                 .then(function (children) {
                     collection.destroy();
@@ -94,7 +98,7 @@ define([
         };
 
         AlternateCompositionCapability.appliesTo = function (model) {
-            return !!CompositionAPI(objectUtils.toNewFormat(model, model.id));
+            return true;
         };
 
         return AlternateCompositionCapability;
