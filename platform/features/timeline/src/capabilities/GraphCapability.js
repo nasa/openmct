@@ -37,7 +37,8 @@ define(
             // Build graphs for this group of utilizations
             function buildGraphs(utilizations) {
                 var utilizationMap = {},
-                    result = {};
+                    result = {},
+                    startingSOC;
 
                 // Bucket utilizations by type
                 utilizations.forEach(function (u) {
@@ -55,14 +56,14 @@ define(
                 if (domainObject.getModel().type === 'timeline' &&
                         result.power &&
                             domainObject.getModel().capacity > 0) {
-                    domainObject.getModel().startingSOC =
-                        parseFloat(domainObject.getModel().startingSOC) || 100;
+                    startingSOC = isNaN(parseFloat(domainObject.getModel().startingSOC)) ?
+                                    100 : parseFloat(domainObject.getModel().startingSOC);
 
                     result.battery = new CumulativeGraph(
                         result.power,
                         0,
                         domainObject.getModel().capacity, // Watts
-                        (domainObject.getModel().startingSOC / 100) * domainObject.getModel().capacity,
+                        (startingSOC / 100) * domainObject.getModel().capacity,
                         1 / 3600000 // millis-to-hour (since units are watt-hours)
                     );
                 }
