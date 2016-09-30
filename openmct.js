@@ -72,28 +72,17 @@ requirejs.config({
 });
 
 define([
-    './src/openmct',
     './platform/framework/src/Main',
     './src/defaultRegistry',
     './src/MCT'
 ], function (Main, defaultRegistry, MCT) {
-    var mct = new MCT();
+    var openmct = new MCT();
 
-    mct.legacyRegistry = defaultRegistry;
+    openmct.legacyRegistry = defaultRegistry;
 
-    mct.run = function (domElement) {
-        if (!domElement) { domElement = document.body; }
-        var appDiv = document.createElement('div');
-        appDiv.setAttribute('ng-view', '');
-        appDiv.className = 'user-environ';
-        domElement.appendChild(appDiv);
-        mct.start();
-    };
-
-    mct.on('start', function () {
+    openmct.on('start', function () {
         return new Main().run(defaultRegistry);
     });
 
-    return mct;
-
+    return openmct;
 });

@@ -194,8 +194,19 @@ define([
      * @fires module:openmct.MCT~start
      * @memberof module:openmct.MCT#
      * @method start
+     * @param {HTMLElement} [domElement] the DOM element in which to run
+     *        MCT; if undefined, MCT will be run in the body of the document
      */
-    MCT.prototype.start = function () {
+    MCT.prototype.start = function (domElement) {
+        if (!domElement) {
+            domElement = document.body;
+        }
+
+        var appDiv = document.createElement('div');
+        appDiv.setAttribute('ng-view', '');
+        appDiv.className = 'user-environ';
+        domElement.appendChild(appDiv);
+
         this.legacyExtension('runs', {
             depends: ['navigationService'],
             implementation: function (navigationService) {
