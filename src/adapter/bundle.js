@@ -104,14 +104,14 @@ define([
                     "link": "https://raw.githubusercontent.com/lodash/lodash/3.10.1/LICENSE"
                 },
                 {
-                    "name": "Zepto",
-                    "version": "1.1.6",
-                    "description": "DOM manipulation library",
-                    "author": "Thomas Fuchs",
-                    "website": "http://zeptojs.com",
-                    "copyright": "Copyright (c) 2010-2016 Thomas Fuchs",
+                    "name": "EventEmitter3",
+                    "version": "1.2.0",
+                    "description": "Event-driven programming support",
+                    "author": "Arnout Kazemier",
+                    "website": "https://github.com/primus/eventemitter3",
+                    "copyright": "Copyright (c) 2014 Arnout Kazemier",
                     "license": "license-mit",
-                    "link": "https://github.com/madrobby/zepto/blob/master/MIT-LICENSE"
+                    "link": "https://github.com/primus/eventemitter3/blob/1.2.0/LICENSE"
                 }
             ]
         }
