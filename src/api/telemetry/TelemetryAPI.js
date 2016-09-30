@@ -41,7 +41,7 @@ MCT.objects.getObject([key])
 
 define([
     'lodash',
-    'eventemitter2'
+    'eventemitter3'
 ], function (
     _,
     EventEmitter
