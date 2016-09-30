@@ -6,7 +6,7 @@ define([
     'text!./adapter/templates/edit-object-replacement.html',
     './Selection',
     './api/objects/object-utils',
-    './api/TimeConductor'
+    './ui/ViewRegistry'
 ], function (
     EventEmitter,
     legacyRegistry,
@@ -15,7 +15,7 @@ define([
     editObjectTemplate,
     Selection,
     objectUtils,
-    TimeConductor
+    ViewRegistry
 ) {
 
     /**
@@ -51,7 +51,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name conductor
          */
-        this.conductor = new TimeConductor();
+        this.conductor = new api.TimeConductor();
 
         /**
          * An interface for interacting with the composition of domain objects.
@@ -66,7 +66,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name composition
          */
-        this.composition = api.Composition;
+        this.composition = new api.CompositionAPI;
 
         /**
          * Registry for views of domain objects which should appear in the
@@ -76,6 +76,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name mainViews
          */
+        this.mainViews = new ViewRegistry();
 
         /**
          * Registry for views which should appear in the Inspector area.
@@ -87,6 +88,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name inspectors
          */
+        this.inspectors = new ViewRegistry();
 
         /**
          * Registry for views which should appear in the status indicator area.
@@ -94,6 +96,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name indicators
          */
+        this.indicators = new ViewRegistry();
 
         /**
          * Registry for views which should appear in the toolbar area while
@@ -107,6 +110,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name toolbars
          */
+        this.toolbars = new ViewRegistry();
 
         /**
          * Registry for domain object types which may exist within this
@@ -116,6 +120,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name types
          */
+        this.types = new api.TypeRegistry();
 
         /**
          * Utilities for attaching common behaviors to views.
@@ -124,6 +129,27 @@ define([
          * @memberof module:openmct.MCT#
          * @name gestures
          */
+        this.gestures = new api.GestureAPI();
+
+        /**
+         * An interface for interacting with domain objects and the domain
+         * object hierarchy.
+         *
+         * @type {module:openmct.ObjectAPI}
+         * @memberof module:openmct.MCT#
+         * @name objects
+         */
+        this.objects = new api.ObjectAPI();
+
+        /**
+         * An interface for retrieving and interpreting telemetry data associated
+         * with a domain object.
+         *
+         * @type {module:openmct.TelemetryAPI}
+         * @memberof module:openmct.MCT#
+         * @name telemetry
+         */
+        this.telemetry = new api.TelemetryAPI();
 
         this.TimeConductor = this.conductor; // compatibility for prototype
         this.on('navigation', this.selection.clear.bind(this.selection));
@@ -135,26 +161,7 @@ define([
         MCT.prototype[k] = api[k];
     });
     MCT.prototype.MCT = MCT;
-
-    /**
-     * An interface for interacting with domain objects and the domain
-     * object hierarchy.
-     *
-     * @type {module:openmct.ObjectAPI}
-     * @memberof module:openmct.MCT#
-     * @name objects
-     */
-    MCT.Objects = api.Objects;
-
-    /**
-     * An interface for retrieving and interpreting telemetry data associated
-     * with a domain object.
-     *
-     * @type {module:openmct.TelemetryAPI}
-     * @memberof module:openmct.MCT#
-     * @name telemetry
-     */
-
+    
     MCT.prototype.legacyExtension = function (category, extension) {
         this.legacyBundle.extensions[category] =
             this.legacyBundle.extensions[category] || [];
@@ -170,62 +177,6 @@ define([
         this.legacyExtension('constants', {
             key: "ASSETS_PATH",
             value: path
-        });
-    };
-
-    MCT.prototype.view = function (region, definition) {
-        var viewKey = region + uuid();
-        var adaptedViewKey = "adapted-view-" + region;
-
-        this.legacyExtension(
-            region === this.regions.main ? 'views' : 'representations',
-            {
-                name: "A view",
-                key: adaptedViewKey,
-                editable: true,
-                template: '<mct-view region="\'' +
-                    region +
-                    '\'" ' +
-                    'key="\'' +
-                    viewKey +
-                    '\'" ' +
-                    'mct-object="domainObject">' +
-                    '</mct-view>'
-            }
-        );
-
-        this.legacyExtension('policies', {
-            category: "view",
-            implementation: function Policy() {
-                this.allow = function (view, domainObject) {
-                    if (view.key === adaptedViewKey) {
-                        var model = domainObject.getModel();
-                        var newDO = objectUtils.toNewFormat(model);
-                        return definition.canView(newDO);
-                    }
-                    return true;
-                };
-            }
-        });
-
-        this.legacyExtension('newViews', {
-            factory: definition,
-            region: region,
-            key: viewKey
-        });
-    };
-
-    MCT.prototype.type = function (key, type) {
-        var legacyDef = type.toLegacyDefinition();
-        legacyDef.key = key;
-        type.key = key;
-
-        this.legacyExtension('types', legacyDef);
-        this.legacyExtension('representations', {
-            key: "edit-object",
-            priority: "preferred",
-            template: editObjectTemplate,
-            type: key
         });
     };
 
@@ -266,12 +217,6 @@ define([
      */
     MCT.prototype.install = function (plugin) {
         plugin(this);
-    };
-
-    MCT.prototype.regions = {
-        main: "MAIN",
-        properties: "PROPERTIES",
-        toolbar: "TOOLBAR"
     };
 
     return MCT;

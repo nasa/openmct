@@ -4,20 +4,30 @@ define([
     './View',
     './objects/ObjectAPI',
     './composition/CompositionAPI',
-    './ui/Dialog'
+    './types/TypeRegistry',
+    './ui/Dialog',
+    './ui/GestureAPI',
+    './telemetry/TelemetryAPI'
 ], function (
     Type,
     TimeConductor,
     View,
     ObjectAPI,
     CompositionAPI,
-    Dialog
+    TypeRegistry,
+    Dialog,
+    GestureAPI,
+    TelemetryAPI
 ) {
     return {
         Type: Type,
         View: View,
+        TimeConductor: TimeConductor,
         ObjectAPI: ObjectAPI,
         CompositionAPI: CompositionAPI,
-        Dialog: Dialog
+        Dialog: Dialog,
+        TypeRegistry: TypeRegistry,
+        GestureAPI: GestureAPI,
+        TelemetryAPI: TelemetryAPI
     };
 });
