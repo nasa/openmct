@@ -79,7 +79,7 @@ define(
             it("removes state from parent scope on destroy", function () {
                 // Verify precondition
                 expect(mockScope.$parent.testToolbar).toBeDefined();
-                // Destroy the represeter
+                // Destroy the representer
                 representer.destroy();
                 // Should have removed toolbar state from view
                 expect(mockScope.$parent.testToolbar).toBeUndefined();

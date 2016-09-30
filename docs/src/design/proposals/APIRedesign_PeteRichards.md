@@ -99,7 +99,7 @@ To reduce interface depth, we can replace our own provider and registry patterns
 
 ## More angular: for all services
 
-Increasing our commitment to angular would mean using more of the angular factorys, services, etc, and less of our home grown tools.  We'd implement our services and extension points as angular providers, and make them configurable via app.config.
+Increasing our commitment to angular would mean using more of the angular factories, services, etc, and less of our home grown tools.  We'd implement our services and extension points as angular providers, and make them configurable via app.config.
 
 As an example, registering a specific type of model provider in angular would look like:
 

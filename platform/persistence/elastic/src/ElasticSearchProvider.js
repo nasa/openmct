@@ -51,7 +51,7 @@ define([
      * Search for domain objects using elasticsearch as a search provider.
      *
      * @param {String} searchTerm the term to search by.
-     * @param {Number} [maxResults] the max numer of results to return.
+     * @param {Number} [maxResults] the max number of results to return.
      * @returns {Promise} promise for a modelResults object.
      */
     ElasticSearchProvider.prototype.query = function (searchTerm, maxResults) {

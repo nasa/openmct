@@ -174,7 +174,7 @@ define(
          * category.
          *
          * @param {string} category name of the extension category
-         * @returns {Array} extension definitions of that cataegory
+         * @returns {Array} extension definitions of that category
          */
         Bundle.prototype.getExtensions = function (category) {
             var extensions = this.definition.extensions[category] || [],

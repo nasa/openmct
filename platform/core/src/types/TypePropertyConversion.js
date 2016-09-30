@@ -43,7 +43,7 @@ define(
             },
             ARRAY_SUFFIX = '[]';
 
-        // Utility function to handle arrays of conversiions
+        // Utility function to handle arrays of conversions
         function ArrayConversion(conversion) {
             return {
                 toModelValue: function (formValue) {

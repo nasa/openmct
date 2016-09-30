@@ -123,7 +123,7 @@ define([
             expect(mockScope.results).toContain('a');
         });
 
-        it('is loading until the service\'s promise fufills', function () {
+        it('is loading until the service\'s promise fulfills', function () {
             expect(mockScope.loading).toBeTruthy();
 
             // Then resolve the promises
@@ -163,7 +163,7 @@ define([
             // Flag should be true with nonempty input
             expect(mockScope.ngModel.search).toEqual(true);
 
-            // Flag should be flase with empty input
+            // Flag should be false with empty input
             mockScope.ngModel.input = '';
             controller.search();
             mockPromise.then.mostRecentCall.args[0]({hits: [], total: 0});

@@ -103,7 +103,7 @@ define(
                     [
                         "edit",
                         "save",
-                        "cancel"
+                        "finish"
                     ]
                 );
 
@@ -142,6 +142,7 @@ define(
             });
 
             describe("the perform function", function () {
+                var promise = jasmine.createSpyObj("promise", ["then"]);
                 beforeEach(function () {
                     capabilities.action.getActions.andReturn([mockEditAction]);
                 });
@@ -156,19 +157,20 @@ define(
                     expect(mockEditAction.perform).toHaveBeenCalled();
                 });
 
-                it("uses the save action if object does not have an edit action" +
+                it("uses the save-as action if object does not have an edit action" +
                     " available", function () {
                     capabilities.action.getActions.andReturn([]);
                     capabilities.action.perform.andReturn(mockPromise(undefined));
+                    capabilities.editor.save.andReturn(promise);
                     action.perform();
-                    expect(capabilities.action.perform).toHaveBeenCalledWith("save");
+                    expect(capabilities.action.perform).toHaveBeenCalledWith("save-as");
                 });
 
                 describe("uses to editor capability", function () {
-                    var promise = jasmine.createSpyObj("promise", ["then"]);
                     beforeEach(function () {
                         capabilities.action.getActions.andReturn([]);
                         capabilities.action.perform.andReturn(promise);
+                        capabilities.editor.save.andReturn(promise);
                     });
 
                     it("to save the edit if user saves dialog", function () {
@@ -178,10 +180,10 @@ define(
                         expect(capabilities.editor.save).toHaveBeenCalled();
                     });
 
-                    it("to cancel the edit if user cancels dialog", function () {
+                    it("to finish the edit if user cancels dialog", function () {
                         action.perform();
                         promise.then.mostRecentCall.args[1]();
-                        expect(capabilities.editor.cancel).toHaveBeenCalled();
+                        expect(capabilities.editor.finish).toHaveBeenCalled();
                     });
                 });
             });

@@ -35,7 +35,7 @@ define(
 
         /**
          * The PersistenceQueue is used by the QueuingPersistenceCapability
-         * to aggregrate calls for object persistence. These are then issued
+         * to aggregate calls for object persistence. These are then issued
          * in a group, such that if some or all are rejected, this result can
          * be shown to the user (again, in a group.)
          *

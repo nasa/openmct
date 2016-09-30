@@ -19,12 +19,13 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="abs overlay" ng-class="{'delayEntry100ms' : ngModel.delay}">
-    <div class="abs blocker"></div>
-    <div class="abs holder">
-        <a ng-click="ngModel.cancel()"
-           ng-if="ngModel.cancel"
-           class="close icon-x"></a>
-        <div class="abs contents" ng-transclude></div>
-    </div>
-</div>
+<span class='form-control shell'>
+    <span class='field control {{structure.cssclass}}'>
+        <textarea ng-required="ngRequired"
+               ng-model="ngModel[field]"
+               ng-pattern="ngPattern"
+               size="{{structure.size}}"
+               name="mctControl">
+        </textarea>
+    </span>
+</span>
