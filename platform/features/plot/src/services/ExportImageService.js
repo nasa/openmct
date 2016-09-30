@@ -26,32 +26,29 @@
 define(
     [
         "html2canvas",
-        "jsPDF",
         "saveAs"
     ],
     function (
         html2canvas,
-        jsPDF,
         saveAs
     ) {
         var self = this;
 
         /**
          * The export image service will export any HTML node to
-         * PDF, JPG, or PNG.
+         * JPG, or PNG.
          * @param {object} $q
          * @param {object} $timeout
          * @param {object} $log
          * @param {constant} EXPORT_IMAGE_TIMEOUT time in milliseconds before a timeout error is returned
          * @constructor
          */
-        function ExportImageService($q, $timeout, $log, EXPORT_IMAGE_TIMEOUT, injHtml2Canvas, injJsPDF, injSaveAs, injFileReader) {
+        function ExportImageService($q, $timeout, $log, EXPORT_IMAGE_TIMEOUT, injHtml2Canvas, injSaveAs, injFileReader) {
             self.$q = $q;
             self.$timeout = $timeout;
             self.$log = $log;
             self.EXPORT_IMAGE_TIMEOUT = EXPORT_IMAGE_TIMEOUT;
             self.html2canvas = injHtml2Canvas || html2canvas;
-            self.jsPDF = injJsPDF || jsPDF;
             self.saveAs = injSaveAs || saveAs;
             self.reader = injFileReader || new FileReader();
         }
@@ -127,23 +124,6 @@ define(
                 });
             }
         }
-
-        /**
-         * Takes a screenshot of a DOM node and exports to PDF.
-         * @param {node} element to be exported
-         * @param {string} filename the exported image
-         * @returns {promise}
-         */
-        ExportImageService.prototype.exportPDF = function (element, filename) {
-            return renderElement(element, "jpeg").then(function (img) {
-                self.reader.readAsDataURL(img);
-                self.reader.onloadend = function () {
-                    var pdf = new self.jsPDF("l", "px", [element.offsetHeight, element.offsetWidth]);
-                    pdf.addImage(self.reader.result, "JPEG", 0, 0, element.offsetWidth, element.offsetHeight);
-                    pdf.save(filename);
-                };
-            });
-        };
 
         /**
          * Takes a screenshot of a DOM node and exports to JPG.
