@@ -72,7 +72,7 @@ define(
                 mockElement = angular.element('<div />');
                 mockExportImageService = jasmine.createSpyObj(
                     "ExportImageService",
-                    ["exportJPG", "exportPNG", "exportPDF"]
+                    ["exportJPG", "exportPNG"]
                 );
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",

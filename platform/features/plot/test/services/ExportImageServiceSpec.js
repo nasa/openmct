@@ -33,8 +33,6 @@ define(
             mockLog,
             mockHtml2Canvas,
             mockCanvas,
-            mockJsPDF,
-            mockJsPDFSave,
             mockSaveAs,
             mockFileReader,
             mockExportTimeoutConstant,
@@ -79,13 +77,6 @@ define(
                     "canvas",
                     ["toBlob"]
                 );
-                mockJsPDFSave = jasmine.createSpy("jsPDFSave");
-                mockJsPDF = function () {
-                    return {
-                        "addImage": function () {},
-                        "save": mockJsPDFSave
-                    };
-                };
                 mockSaveAs = jasmine.createSpy("saveAs");
                 mockFileReader = jasmine.createSpyObj(
                     "FileReader",
@@ -100,21 +91,9 @@ define(
                     mockLog,
                     mockExportTimeoutConstant,
                     mockHtml2Canvas,
-                    mockJsPDF,
                     mockSaveAs,
                     mockFileReader
                 );
-            });
-
-            it("runs html2canvas and tries to save a pdf", function () {
-                exportImageService.exportPDF(testElement, "plot.pdf");
-                mockFileReader.onloadend();
-
-                expect(mockHtml2Canvas).toHaveBeenCalledWith(testElement, { onrendered: jasmine.any(Function) });
-                expect(mockCanvas.toBlob).toHaveBeenCalledWith(mockDeferred.resolve, "image/jpeg");
-                expect(mockDeferred.reject).not.toHaveBeenCalled();
-                expect(mockJsPDFSave).toHaveBeenCalled();
-                expect(mockPromise.finally).toHaveBeenCalled();
             });
 
             it("runs html2canvas and tries to save a png", function () {
