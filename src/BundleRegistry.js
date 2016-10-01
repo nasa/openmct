@@ -32,7 +32,6 @@ define(function () {
             throw new Error('Cannot register bundle with duplicate path', path);
         }
         this.knownBundles[path] = definition;
-        this.enable(path);
     };
 
     BundleRegistry.prototype.enable = function (path) {
