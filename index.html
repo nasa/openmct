@@ -28,12 +28,12 @@
     <script src="bower_components/requirejs/require.js">
     </script>
     <script>
-        require(['main'], function (mct) {
+        require(['openmct'], function (openmct) {
             require([
                 './example/imagery/bundle',
                 './example/eventGenerator/bundle',
                 './example/generator/bundle'
-            ], mct.run.bind(mct));
+            ], openmct.start.bind(openmct));
         });
     </script>
     <link rel="stylesheet" href="platform/commonUI/general/res/css/startup-base.css">
@@ -47,7 +47,5 @@
     <div class="l-splash-holder s-splash-holder">
         <div class="l-splash s-splash"></div>
     </div>
-
-    <div ng-view></div>
 </body>
 </html>

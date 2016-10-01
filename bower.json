@@ -19,6 +19,9 @@
     "comma-separated-values": "^3.6.4",
     "FileSaver.js": "^0.0.2",
     "zepto": "^1.1.6",
+    "eventemitter3": "^1.2.0",
+    "lodash": "3.10.1",
+    "almond": "~0.3.2",
     "html2canvas": "^0.4.1"
   }
 }

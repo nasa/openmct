@@ -37,8 +37,10 @@ define(
          * @param {object[]} stylesheets stylesheet extension definitions
          * @param $document Angular's jqLite-wrapped document element
          * @param {string} activeTheme the theme in use
+         * @param {string} [assetPath] the directory relative to which
+         *        stylesheets will be found
          */
-        function StyleSheetLoader(stylesheets, $document, activeTheme) {
+        function StyleSheetLoader(stylesheets, $document, activeTheme, assetPath) {
             var head = $document.find('head'),
                 document = $document[0];
 
@@ -47,6 +49,7 @@ define(
                 // Create a link element, and construct full path
                 var link = document.createElement('link'),
                     path = [
+                        assetPath,
                         stylesheet.bundle.path,
                         stylesheet.bundle.resources,
                         stylesheet.stylesheetUrl
@@ -67,6 +70,8 @@ define(
                 return stylesheet.theme === undefined ||
                     stylesheet.theme === activeTheme;
             }
+
+            assetPath = assetPath || ".";
 
             // Add all stylesheets from extensions
             stylesheets.filter(matchesTheme).forEach(addStyleSheet);

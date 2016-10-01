@@ -48,7 +48,7 @@
     "test": "karma start --single-run",
     "jshint": "jshint platform example",
     "watch": "karma start",
-    "jsdoc": "jsdoc -c jsdoc.json -r -d target/docs/api",
+    "jsdoc": "jsdoc -c jsdoc.json -R API.md -r -d dist/docs/api",
     "otherdoc": "node docs/gendocs.js --in docs/src --out target/docs --suppress-toc 'docs/src/index.md|docs/src/process/index.md'",
     "docs": "npm run jsdoc ; npm run otherdoc",
     "prepublish": "node ./node_modules/bower/bin/bower install && node ./node_modules/gulp/bin/gulp.js install"

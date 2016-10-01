@@ -10,9 +10,24 @@ Try Open MCT now with our [live demo](https://openmct-demo.herokuapp.com/).
 ![Demo](https://nasa.github.io/openmct/static/res/images/Open-MCT.Browse.Layout.Mars-Weather-1.jpg)
 
 ## New API
-A new API is currently under development that will deprecate a lot of the documentation currently in the docs directory, however Open MCT will remain compatible with the currently documented API. An updated set of tutorials is being developed with the new API, and progress on this task can be followed in the [associated pull request](https://github.com/nasa/openmct/pull/999). Any code in this branch should be considered experimental, and we welcome any feedback.
 
-Differences between the two APIs include a move away from a declarative system of JSON configuration files towards an imperative system based on function calls. Developers will be able to extend and build on Open MCT by making direct function calls to a public API. Open MCT is also being refactored to minimize the dependencies that using Open MCT imposes on developers, such as the current requirement to use Angular JS.
+A simpler, [easier-to-use API](https://nasa.github.io/openmct/docs/api/)
+has been added to Open MCT. Changes in this
+API include a move away from a declarative system of JSON configuration files
+towards an imperative system based on function calls. Developers will be able
+to extend and build on Open MCT by making direct function calls to a public
+API. Open MCT is also being refactored to minimize the dependencies that using
+Open MCT imposes on developers, such as the current requirement to use
+AngularJS.
+
+This new API has not yet been heavily used and is likely to contain defects.
+You can help by trying it out, and reporting any issues you encounter
+using our GitHub issue tracker. Such issues may include bugs, suggestions,
+missing documentation, or even just requests for help if you're having
+trouble.
+
+We want Open MCT to be as easy to use, install, run, and develop for as
+possible, and your feedback will help us get there!
 
 ## Building and Running Open MCT Locally
 
