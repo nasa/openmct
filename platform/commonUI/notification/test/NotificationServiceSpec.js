@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global describe,it,expect,beforeEach,jasmine*/
 
 define(
     ['../src/NotificationService'],
@@ -53,8 +54,7 @@ define(
                 };
             });
 
-            it("gets a new success notification, making" +
-                " the notification active", function () {
+            it("activates success notifications", function () {
                 var activeNotification;
                 notificationService.notify(successModel);
                 activeNotification = notificationService.getActiveNotification();
@@ -74,8 +74,7 @@ define(
 
             });
 
-            it("allows specification of an info notification given just a" +
-                " title, making the notification active", function () {
+            it("activates an info notification built with just the title", function () {
                 var activeNotification,
                     notificationTitle = "Test info notification";
                 notificationService.info(notificationTitle);
@@ -84,8 +83,7 @@ define(
                 expect(activeNotification.model.severity).toBe("info");
             });
 
-            it("gets a new success notification with" +
-                " numerical auto-dismiss specified. ", function () {
+            it("gets a new success notification with numerical auto-dismiss specified. ", function () {
                 var activeNotification;
                 successModel.autoDismiss = 1000;
                 notificationService.notify(successModel);
@@ -98,8 +96,7 @@ define(
                 expect(activeNotification).toBeUndefined();
             });
 
-            it("gets a new notification with" +
-                " boolean auto-dismiss specified. ", function () {
+            it("gets a new notification with boolean auto-dismiss specified. ", function () {
                 var activeNotification;
                 successModel.autoDismiss = true;
                 notificationService.notify(successModel);
@@ -143,9 +140,8 @@ define(
                 expect(notificationService.notifications.length).toBe(0);
             });
 
-            describe(" gets called with multiple notifications", function () {
-                it("auto-dismisses the previously active notification, making" +
-                    " the new notification active", function () {
+            describe("when called with multiple notifications", function () {
+                it("auto-dismisses the previously active notification, making the new notification active", function () {
                     var activeNotification;
                     //First pre-load with a info message
                     notificationService.notify(successModel);
@@ -165,6 +161,7 @@ define(
                     activeNotification = notificationService.getActiveNotification();
                     expect(activeNotification.model).toBe(errorModel);
                 });
+
                 it("auto-minimizes an active error notification", function () {
                     var activeNotification;
                     //First pre-load with an error message
@@ -186,8 +183,8 @@ define(
                     expect(activeNotification.model).toBe(successModel);
                     expect(errorModel.minimized).toEqual(true);
                 });
-                it("auto-minimizes errors when a number of them arrive in" +
-                    " short succession ", function () {
+
+                it("auto-minimizes errors when a number of them arrive in short succession", function () {
                     var activeNotification,
                         error2 = {
                             title: "Second Mock Error Notification",
@@ -228,7 +225,6 @@ define(
                         notificationService.getActiveNotification();
                     expect(activeNotification.model).toBe(error3);
                     expect(error2.minimized).toEqual(true);
-
                 });
             });
         });
