@@ -32,6 +32,7 @@ define(function () {
             throw new Error('Cannot register bundle with duplicate path', path);
         }
         this.knownBundles[path] = definition;
+        this.enable(path);
     };
 
     BundleRegistry.prototype.enable = function (path) {
@@ -45,6 +46,7 @@ define(function () {
         if (!this.bundles[path]) {
             throw new Error('Tried to disable inactive bundle ' + path);
         }
+        delete this.bundles[path];
     };
 
     BundleRegistry.prototype.contains = function (path) {
