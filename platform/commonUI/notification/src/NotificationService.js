@@ -109,18 +109,18 @@ define(
          * @memberof platform/commonUI/notification
          * @constructor
          * @param $timeout the Angular $timeout service
-         * @param DEFAULT_AUTO_DISMISS The period of time that an
+         * @param defaultAutoDismissTimeout The period of time that an
          * auto-dismissed message will be displayed for.
-         * @param MINIMIZE_TIMEOUT When notifications are minimized, a brief
+         * @param minimizeAnimationTimeout When notifications are minimized, a brief
          * animation is shown. This animation requires some time to execute,
          * so a timeout is required before the notification is hidden
          */
-        function NotificationService($timeout, topic, DEFAULT_AUTO_DISMISS, MINIMIZE_TIMEOUT) {
+        function NotificationService($timeout, topic, defaultAutoDismissTimeout, minimizeAnimationTimeout) {
             this.notifications = [];
             this.$timeout = $timeout;
             this.highest = { severity: "info" };
-            this.DEFAULT_AUTO_DISMISS = DEFAULT_AUTO_DISMISS;
-            this.MINIMIZE_TIMEOUT = MINIMIZE_TIMEOUT;
+            this.AUTO_DISMISS_TIMEOUT = defaultAutoDismissTimeout;
+            this.MINIMIZE_ANIMATION_TIMEOUT = minimizeAnimationTimeout;
             this.topic = topic;
 
             /*
@@ -162,7 +162,7 @@ define(
                 // in order to allow the minimize animation to run through.
                 service.$timeout(function () {
                     service.setActiveNotification(service.selectNextNotification());
-                }, service.MINIMIZE_TIMEOUT);
+                }, service.MINIMIZE_ANIMATION_TIMEOUT);
             }
         };
 
@@ -325,7 +325,7 @@ define(
 
             notificationModel.severity = notificationModel.severity || "info";
             if (notificationModel.autoDismiss === true) {
-                notificationModel.autoDismiss = this.DEFAULT_AUTO_DISMISS;
+                notificationModel.autoDismiss = this.AUTO_DISMISS_TIMEOUT;
             }
 
             //Notifications support a 'dismissable' attribute. This is a
@@ -366,7 +366,7 @@ define(
                  */
                 this.active.timeout = this.$timeout(function () {
                     activeNotification.dismissOrMinimize();
-                }, this.DEFAULT_AUTO_DISMISS);
+                }, this.AUTO_DISMISS_TIMEOUT);
             }
 
             return notification;
@@ -390,7 +390,7 @@ define(
                 if (notification && (notification.model.autoDismiss ||
                     this.selectNextNotification())) {
 
-                    timeout = notification.model.autoDismiss || this.DEFAULT_AUTO_DISMISS;
+                    timeout = notification.model.autoDismiss || this.AUTO_DISMISS_TIMEOUT;
                     this.active.timeout = this.$timeout(function () {
                         notification.dismissOrMinimize();
                     }, timeout);
