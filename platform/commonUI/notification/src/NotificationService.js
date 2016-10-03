@@ -208,11 +208,11 @@ define(
          * @private
          */
         NotificationService.prototype.dismissOrMinimize = function (notification) {
-
-            //For now minimize everything, and have discussion around which
-            //kind of messages should or should not be in the minimized
-            //notifications list
-            notification.minimize();
+            if (notification.minimizeInsteadOfDismiss) {
+                notification.minimize();
+            } else {
+                notification.dismiss();
+            }
         };
 
         /**
@@ -226,7 +226,9 @@ define(
         /**
          * A convenience method for info notifications. Notifications
          * created via this method will be auto-dismissed after a default
-         * wait period
+         * wait period unless explicitly forbidden by the caller through
+         * the {autoDismiss} property on the {NotificationModel}, in which
+         * case the notification will be minimized after the wait.
          * @param {NotificationModel | string} message either a string for
          * the title of the notification message, or a {@link NotificationModel}
          * defining the options notification to display
@@ -235,7 +237,6 @@ define(
          */
         NotificationService.prototype.info = function (message) {
             var notificationModel = typeof message === "string" ? {title: message} : message;
-            notificationModel.autoDismiss = notificationModel.autoDismiss || true;
             notificationModel.severity = "info";
             return this.notify(notificationModel);
         };
@@ -306,27 +307,52 @@ define(
                 activeNotification = self.active.notification,
                 topic = this.topic();
 
+            notificationModel.severity = notificationModel.severity || "info";
+
             notification = {
                 model: notificationModel,
+
                 minimize: function () {
                     self.minimize(self, notification);
                 },
+
                 dismiss: function () {
                     self.dismiss(self, notification);
                     topic.notify();
                 },
+
                 dismissOrMinimize: function () {
                     self.dismissOrMinimize(notification);
                 },
+
                 onDismiss: function (callback) {
                     topic.listen(callback);
-                }
-            };
+                },
 
-            notificationModel.severity = notificationModel.severity || "info";
-            if (notificationModel.autoDismiss === true) {
-                notificationModel.autoDismiss = this.AUTO_DISMISS_TIMEOUT;
-            }
+                autoDismiss: (function () {
+                    if (notificationModel.severity === "info") {
+                        return true;
+                    }
+                    return notificationModel.autoDismiss;
+                })(),
+
+                autoDismissTimeout: (function () {
+                    if (typeof notificationModel.autoDismiss === "number") {
+                        return notificationModel.autoDismiss;
+                    }
+                    return self.AUTO_DISMISS_TIMEOUT;
+                })(),
+
+                minimizeInsteadOfDismiss: (function () {
+                    if (notificationModel.severity === "info") {
+                        if (notificationModel.autoDismiss === false) {
+                            return true;
+                        }
+                        return false;
+                    }
+                    return true;
+                })()
+            };
 
             //Notifications support a 'dismissable' attribute. This is a
             // convenience to support adding a 'dismiss' option to the
@@ -370,27 +396,23 @@ define(
             }
 
             return notification;
-
         };
 
         /**
          * Used internally by the NotificationService
          * @private
          */
-        NotificationService.prototype.setActiveNotification =
-            function (notification) {
+        NotificationService.prototype.setActiveNotification = function (notification) {
                 var timeout;
-
                 this.active.notification = notification;
+
                 /*
                 If autoDismiss has been specified, OR there are other
                  notifications queued for display, setup a timeout to
                   dismiss the dialog.
                  */
-                if (notification && (notification.model.autoDismiss ||
-                    this.selectNextNotification())) {
-
-                    timeout = notification.model.autoDismiss || this.AUTO_DISMISS_TIMEOUT;
+                if (notification && (notification.autoDismiss || this.selectNextNotification())) {
+                    timeout = notification.autoDismissTimeout || this.AUTO_DISMISS_TIMEOUT;
                     this.active.timeout = this.$timeout(function () {
                         notification.dismissOrMinimize();
                     }, timeout);

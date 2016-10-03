@@ -33,7 +33,12 @@ define(
                 mockTopicFunction,
                 mockTopicObject,
                 infoModel,
+                alertModel,
                 errorModel;
+
+            function elapseTimeout() {
+                mockTimeout.mostRecentCall.args[0]();
+            }
 
             beforeEach(function () {
                 mockTimeout = jasmine.createSpy("$timeout");
@@ -42,12 +47,16 @@ define(
                 mockTopicFunction.andReturn(mockTopicObject);
 
                 mockAutoDismiss = mockMinimizeTimeout = 1000;
-                notificationService = new NotificationService(
-                    mockTimeout, mockTopicFunction, mockAutoDismiss, mockMinimizeTimeout);
+                notificationService = new NotificationService(mockTimeout, mockTopicFunction, mockAutoDismiss, mockMinimizeTimeout);
 
                 infoModel = {
                     title: "Mock Info Notification",
                     severity: "info"
+                };
+
+                alertModel = {
+                    title: "Mock Alert Notification",
+                    severity: "alert"
                 };
 
                 errorModel = {
@@ -56,110 +65,162 @@ define(
                 };
             });
 
-            it("activates info notifications", function () {
-                var activeNotification;
-                notificationService.notify(infoModel);
-                activeNotification = notificationService.getActiveNotification();
-                expect(activeNotification.model).toBe(infoModel);
-            });
-
             it("notifies listeners on dismissal of notification", function () {
-                var notification,
-                    dismissListener = jasmine.createSpy("ondismiss");
-                notification = notificationService.notify(infoModel);
+                var dismissListener = jasmine.createSpy("ondismiss");
+                var notification = notificationService.notify(infoModel);
                 notification.onDismiss(dismissListener);
                 expect(mockTopicObject.listen).toHaveBeenCalled();
                 notification.dismiss();
                 expect(mockTopicObject.notify).toHaveBeenCalled();
                 mockTopicObject.listen.mostRecentCall.args[0]();
                 expect(dismissListener).toHaveBeenCalled();
-
             });
 
-            it("activates an info notification built with just the title", function () {
-                var activeNotification,
-                    notificationTitle = "Test info notification";
-                notificationService.info(notificationTitle);
-                activeNotification = notificationService.getActiveNotification();
-                expect(activeNotification.model.title).toBe(notificationTitle);
-                expect(activeNotification.model.severity).toBe("info");
+            describe("when receiving info notifications", function () {
+                it("minimizes info notifications if the caller disables auto-dismiss", function () {
+                    infoModel.autoDismiss = false;
+                    var notification = notificationService.info(infoModel);
+                    elapseTimeout();
+                    // 2nd elapse for the minimize animation timeout
+                    elapseTimeout();
+                    expect(notificationService.getActiveNotification()).toBeUndefined();
+                    expect(notificationService.notifications.length).toEqual(1);
+                    expect(notificationService.notifications[0]).toEqual(notification);
+                });
+
+                it("dismisses info notifications if the caller ignores auto-dismiss", function () {
+                    notificationService.info(infoModel);
+                    elapseTimeout();
+                    expect(notificationService.getActiveNotification()).toBeUndefined();
+                    expect(notificationService.notifications.length).toEqual(0);
+                });
+
+                it("dismisses info notifications if the caller requests auto-dismissal", function () {
+                    infoModel.autoDismiss = true;
+                    notificationService.info(infoModel);
+                    elapseTimeout();
+                    expect(notificationService.getActiveNotification()).toBeUndefined();
+                    expect(notificationService.notifications.length).toEqual(0);
+                });
+
+                it("uses a custom auto-dismiss timeout value if provided", function () {
+                    var timeoutValueInModel = 1500;
+                    var timeoutValueUsedByService = 0;
+                    mockTimeout.andCallFake(function (callback, timeout) {
+                        timeoutValueUsedByService = timeout;
+                    });
+                    infoModel.autoDismiss = timeoutValueInModel;
+                    notificationService.info(infoModel);
+                    expect(timeoutValueUsedByService).toEqual(timeoutValueInModel);
+                });
             });
 
-            it("gets a new info notification with numerical auto-dismiss specified. ", function () {
-                var activeNotification;
-                infoModel.autoDismiss = 1000;
-                notificationService.notify(infoModel);
-                activeNotification = notificationService.getActiveNotification();
-                expect(activeNotification.model).toBe(infoModel);
-                mockTimeout.mostRecentCall.args[0]();
-                expect(mockTimeout.calls.length).toBe(2);
-                mockTimeout.mostRecentCall.args[0]();
-                activeNotification = notificationService.getActiveNotification();
-                expect(activeNotification).toBeUndefined();
+            describe("when receiving alert notifications", function () {
+                it("minimizes alert notifications if the caller enables auto-dismiss", function () {
+                    alertModel.autoDismiss = true;
+                    var notification = notificationService.alert(alertModel);
+                    elapseTimeout();
+                    elapseTimeout();
+                    expect(notificationService.getActiveNotification()).toBeUndefined();
+                    expect(notificationService.notifications.length).toEqual(1);
+                    expect(notificationService.notifications[0]).toEqual(notification);
+                });
+
+                it("keeps alert notifications active if the caller disables auto-dismiss", function () {
+                    mockTimeout.andCallFake(function (callback, time) {
+                        callback();
+                    });
+                    alertModel.autoDismiss = false;
+                    var notification = notificationService.alert(alertModel);
+                    expect(notificationService.getActiveNotification()).toEqual(notification);
+                    expect(notificationService.notifications.length).toEqual(1);
+                    expect(notificationService.notifications[0]).toEqual(notification);
+                });
+
+                it("keeps alert notifications active if the caller ignores auto-dismiss", function () {
+                    mockTimeout.andCallFake(function (callback, time) {
+                        callback();
+                    });
+                    var notification = notificationService.alert(alertModel);
+                    expect(notificationService.getActiveNotification()).toEqual(notification);
+                    expect(notificationService.notifications.length).toEqual(1);
+                    expect(notificationService.notifications[0]).toEqual(notification);
+                });
+
+                it("uses a custom auto-dismiss timeout value if provided", function () {
+                    var timeoutValueInModel = 1500;
+                    var timeoutValueUsedByService = 0;
+                    mockTimeout.andCallFake(function (callback, timeout) {
+                        timeoutValueUsedByService = timeout;
+                    });
+                    alertModel.autoDismiss = timeoutValueInModel;
+                    notificationService.alert(alertModel);
+                    expect(timeoutValueUsedByService).toEqual(timeoutValueInModel);
+                });
             });
 
-            it("gets a new notification with boolean auto-dismiss specified. ", function () {
-                var activeNotification;
-                infoModel.autoDismiss = true;
-                notificationService.notify(infoModel);
-                activeNotification = notificationService.getActiveNotification();
-                expect(activeNotification.model).toBe(infoModel);
-                mockTimeout.mostRecentCall.args[0]();
-                expect(mockTimeout.calls.length).toBe(2);
-                mockTimeout.mostRecentCall.args[0]();
-                activeNotification = notificationService.getActiveNotification();
-                expect(activeNotification).toBeUndefined();
-            });
+            describe("when receiving error notifications", function () {
+                it("minimizes error notifications if the caller enables auto-dismiss", function () {
+                    errorModel.autoDismiss = true;
+                    var notification = notificationService.error(errorModel);
+                    elapseTimeout();
+                    elapseTimeout();
+                    expect(notificationService.getActiveNotification()).toBeUndefined();
+                    expect(notificationService.notifications.length).toEqual(1);
+                    expect(notificationService.notifications[0]).toEqual(notification);
+                });
 
-            it("allows minimization of notifications", function () {
-                var notification,
-                    activeNotification;
+                it("keeps error notifications active if the caller disables auto-dismiss", function () {
+                    mockTimeout.andCallFake(function (callback, time) {
+                        callback();
+                    });
+                    errorModel.autoDismiss = false;
+                    var notification = notificationService.error(errorModel);
+                    expect(notificationService.getActiveNotification()).toEqual(notification);
+                    expect(notificationService.notifications.length).toEqual(1);
+                    expect(notificationService.notifications[0]).toEqual(notification);
+                });
 
-                infoModel.autoDismiss = false;
-                notification = notificationService.notify(infoModel);
+                it("keeps error notifications active if the caller ignores auto-dismiss", function () {
+                    mockTimeout.andCallFake(function (callback, time) {
+                        callback();
+                    });
+                    var notification = notificationService.error(errorModel);
+                    expect(notificationService.getActiveNotification()).toEqual(notification);
+                    expect(notificationService.notifications.length).toEqual(1);
+                    expect(notificationService.notifications[0]).toEqual(notification);
+                });
 
-                activeNotification = notificationService.getActiveNotification();
-                expect(activeNotification.model).toBe(infoModel);
-                notification.minimize();
-                mockTimeout.mostRecentCall.args[0]();
-                activeNotification = notificationService.getActiveNotification();
-                expect(activeNotification).toBeUndefined();
-                expect(notificationService.notifications.length).toBe(1);
-            });
-
-            it("allows dismissal of notifications", function () {
-                var notification,
-                    activeNotification;
-
-                infoModel.autoDismiss = false;
-                notification = notificationService.notify(infoModel);
-
-                activeNotification = notificationService.getActiveNotification();
-                expect(activeNotification.model).toBe(infoModel);
-                notification.dismiss();
-                activeNotification = notificationService.getActiveNotification();
-                expect(activeNotification).toBeUndefined();
-                expect(notificationService.notifications.length).toBe(0);
+                it("uses a custom auto-dismiss timeout value if provided", function () {
+                    var timeoutValueInModel = 1500;
+                    var timeoutValueUsedByService = 0;
+                    mockTimeout.andCallFake(function (callback, timeout) {
+                        timeoutValueUsedByService = timeout;
+                    });
+                    errorModel.autoDismiss = timeoutValueInModel;
+                    notificationService.error(errorModel);
+                    expect(timeoutValueUsedByService).toEqual(timeoutValueInModel);
+                });
             });
 
             describe("when called with multiple notifications", function () {
                 it("auto-dismisses the previously active notification, making the new notification active", function () {
                     var activeNotification;
+                    infoModel.autoDismiss = false;
                     //First pre-load with a info message
                     notificationService.notify(infoModel);
-                    activeNotification =
-                        notificationService.getActiveNotification();
+                    activeNotification = notificationService.getActiveNotification();
                     //Initially expect the active notification to be info
                     expect(activeNotification.model).toBe(infoModel);
                     //Then notify of an error
                     notificationService.notify(errorModel);
                     //But it should be auto-dismissed and replaced with the
                     // error notification
-                    mockTimeout.mostRecentCall.args[0]();
+                    elapseTimeout();
                     //Two timeouts, one is to force minimization after
                     // displaying the message for a minimum period, the
                     // second is to allow minimization animation to take place.
-                    mockTimeout.mostRecentCall.args[0]();
+                    elapseTimeout();
                     activeNotification = notificationService.getActiveNotification();
                     expect(activeNotification.model).toBe(errorModel);
                 });
@@ -172,16 +233,15 @@ define(
                     notificationService.notify(infoModel);
                     expect(notificationService.notifications.length).toEqual(2);
                     //Mock the auto-minimize
-                    mockTimeout.mostRecentCall.args[0]();
+                    elapseTimeout();
                     //Two timeouts, one is to force minimization after
                     // displaying the message for a minimum period, the
                     // second is to allow minimization animation to take place.
-                    mockTimeout.mostRecentCall.args[0]();
+                    elapseTimeout();
                     //Previous error message should be minimized, not
                     // dismissed
                     expect(notificationService.notifications.length).toEqual(2);
-                    activeNotification =
-                        notificationService.getActiveNotification();
+                    activeNotification = notificationService.getActiveNotification();
                     expect(activeNotification.model).toBe(infoModel);
                     expect(errorModel.minimized).toEqual(true);
                 });
@@ -204,27 +264,25 @@ define(
                     notificationService.notify(error3);
                     expect(notificationService.notifications.length).toEqual(3);
                     //Mock the auto-minimize
-                    mockTimeout.mostRecentCall.args[0]();
+                    elapseTimeout();
                     //Two timeouts, one is to force minimization after
                     // displaying the message for a minimum period, the
                     // second is to allow minimization animation to take place.
-                    mockTimeout.mostRecentCall.args[0]();
+                    elapseTimeout();
                     //Previous error message should be minimized, not
                     // dismissed
                     expect(notificationService.notifications.length).toEqual(3);
-                    activeNotification =
-                        notificationService.getActiveNotification();
+                    activeNotification = notificationService.getActiveNotification();
                     expect(activeNotification.model).toBe(error2);
                     expect(errorModel.minimized).toEqual(true);
 
                     //Mock the second auto-minimize
-                    mockTimeout.mostRecentCall.args[0]();
+                    elapseTimeout();
                     //Two timeouts, one is to force minimization after
                     // displaying the message for a minimum period, the
                     // second is to allow minimization animation to take place.
-                    mockTimeout.mostRecentCall.args[0]();
-                    activeNotification =
-                        notificationService.getActiveNotification();
+                    elapseTimeout();
+                    activeNotification = notificationService.getActiveNotification();
                     expect(activeNotification.model).toBe(error3);
                     expect(error2.minimized).toEqual(true);
                 });
