@@ -369,17 +369,6 @@ define(
         };
 
         /**
-         * Export the plot to PDF
-         */
-        PlotController.prototype.exportPDF = function () {
-            var self = this;
-            self.hideExportButtons = true;
-            self.exportImageService.exportPDF(self.$element[0], "plot.pdf").finally(function () {
-                self.hideExportButtons = false;
-            });
-        };
-
-        /**
          * Export the plot to PNG
          */
         PlotController.prototype.exportPNG = function () {

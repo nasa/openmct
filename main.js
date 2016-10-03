@@ -29,7 +29,6 @@ requirejs.config({
         "csv": "bower_components/comma-separated-values/csv.min",
         "es6-promise": "bower_components/es6-promise/es6-promise.min",
         "html2canvas": "bower_components/html2canvas/build/html2canvas.min",
-        "jsPDF": "bower_components/jspdf/dist/jspdf.debug",
         "moment": "bower_components/moment/moment",
         "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
         "saveAs": "bower_components/FileSaver.js/FileSaver.min",
@@ -47,9 +46,6 @@ requirejs.config({
         },
         "html2canvas": {
             "exports": "html2canvas"
-        },
-        "jsPDF": {
-            "exports": "jsPDF"
         },
         "moment-duration-format": {
             "deps": ["moment"]

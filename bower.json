@@ -19,7 +19,6 @@
     "comma-separated-values": "^3.6.4",
     "FileSaver.js": "^0.0.2",
     "zepto": "^1.1.6",
-    "html2canvas": "^0.4.1",
-    "jspdf": "^1.2.61"
+    "html2canvas": "^0.4.1"
   }
 }
