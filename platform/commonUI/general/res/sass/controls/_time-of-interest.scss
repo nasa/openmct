@@ -115,39 +115,39 @@ TC
 }
 
 // TOI in tables
-@mixin toiIcon() {
-    @extend .ui-symbol;
-    @include transform(translate(-50%, -50%));
-    content: $glyph-icon-clock;
-    display: block;
-    position: absolute;
-    text-shadow: 0 1px 15px black;
-    left: 50%;
-    top: 0;
-    z-index: 2;
-}
-
 .tabular,
 table {
     tbody, .tbody {
         tr, .tr {
-            &:hover {
+            &.l-toi.pinned {
                 td {
                     border-top: 1px dashed $toiColorBg;
                     &:first-child:before {
-                        @include toiIcon();
-                        color: $toiColorFg;
+                        @extend .ui-symbol;
+                        @include transform(translate(-50%, -50%));
+                        content: $glyph-icon-clock;
+                        display: block;
+                        position: absolute;
+                        text-shadow: 0 1px 15px black;
+                        left: 50%;
+                        top: 0;
+                        z-index: 2;
+                        color: $toiColorBg;
                     }
                 }
-            }
-            &.l-toi.pinned {
-                td {
-                    border-top: 1px solid $toiColorBg;
-                    &:first-child:before {
-                        @include toiIcon();
-                        color: $toiColorFg;
+
+                &.highlight-bottom-edge {
+                    td {
+                        border-bottom: 1px dashed $toiColorBg;
+                        //border-top: 1px solid transparent;
+                        &:first-child:before {
+                            @include transform(translate(-50%, 50%));
+                            top: auto;
+                            bottom: 0;
+                        }
                     }
                 }
+
                 &:hover {
                     td:first-child:before {
                         content: $glyph-icon-x-in-circle;

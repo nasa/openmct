@@ -263,8 +263,6 @@
 
     // Time of Interest control
     .l-toi-holder {
-        $c: $colorTimeCondTOIBg;
-        $cHov: $toiColorBgHov;
         $linesVOffset: 2px;
         &:before,
         &:after {
@@ -291,20 +289,6 @@
         .l-toi {
             top: 50%;
             @include transform(translateY(-50%));
-            //$d: $timeCondTOIIconD;
-            //@include transform(translate(-50%, -50%));
-            //font-size: $d;
-            //line-height: $d;
-            //left: 50%;
-            //top: 50%;
-            //height: $d;
-            //width: $d;
-            //z-index: 1;
-        }
-
-        .l-toi-val {
-            //@include transform(translateY(-51%));
-            //top: 50%;
         }
     }
 
@@ -314,13 +298,11 @@
         .l-time-conductor-zoom-w {
             @include justify-content(flex-end);
             .time-conductor-zoom {
-                //display: none; // TEMP per request from Andrew 8/1/16
                 height: $r3H;
                 min-width: 100px;
                 width: 20%;
             }
             .time-conductor-zoom-current-range {
-                //display: none; // TEMP per request from Andrew 8/1/16
                 color: $colorTick;
             }
         }
