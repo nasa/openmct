@@ -38,14 +38,15 @@ TC
 .l-toi-holder,
 .l-toi-holder:after,
 .l-toi-holder:before,
-.l-toi {
+.l-toi,
+.l-toi-val {
     display: block;
     position: absolute;
 }
 
 
 .l-toi-holder {
-    @include trans-prop-nice($props: opacity, $dur: 200ms);
+    $p: 3px;
     @include transform(translateX(-50%));
     color: $toiColorBg;
     position: absolute;
@@ -70,42 +71,45 @@ TC
         position: absolute;
         top: 0;
         bottom: 0;
-        width: 1px;
+        width: 2px;
     }
     .l-toi {
-        @extend .icon-clock;
-        @extend .l-flex-row;
-        text-align: center;
-        //width: $toiW;
-        &:before {
-            // Clock icon
-            @extend .flex-elem;
-            margin-right: $interiorMarginSm;
-            order: 1;
-        }
-        &:hover {
-            cursor: pointer !important;
-            &:before {
-                // Icon, change to close box
-                color: $colorAlert;
-                content: $glyph-icon-x-in-circle !important;
+        // Holds clock icon an unpin button
+        font-size: $toiW;
+        height: $toiW;
+        width: $toiW;
+        .t-button-unpin {
+            color: $toiColorBg;
+            @extend .icon-clock;
+            &:hover {
+                &:before {
+                    content: $glyph-icon-x-in-circle;
+                }
             }
         }
     }
 
     .l-toi-val {
-        //@extend .flex-elem;
-        //@extend .grows;
+        $tbP: 1px;
+        background-color: $toiColorBg; //rgba($toiColorBg, 0.8);
+        border-radius: $controlCr;
+        box-sizing: content-box;
+        display: inline-block;
+        color: $toiColorFg;
         font-size: 0.7rem;
+        height: $toiW;
+        right: $toiW + $interiorMarginSm;
+        top: 50%;
+        @include transform(translateY(-50%));
+        line-height: $toiW;
+        padding: $tbP $p;
         white-space: nowrap;
-        //right: $toiW + $interiorMargin;
     }
 
     &.val-to-right {
         .l-toi-val {
-            order: 2;
-            //right: auto;
-            //left: $toiW + $interiorMarginSm;
+            right: auto;
+            left: $toiW + $interiorMarginSm;
         }
     }
 }
@@ -159,19 +163,16 @@ table {
 .gl-plot {
     .gl-plot-wrapper-display-area-and-x-axis {
         .l-toi-holder {
-            //@include test();
-            bottom: nth($plotDisplayArea, 3);
+            bottom: nth($plotDisplayArea, 3) - $interiorMargin;
             &:after {
                 display: none;
             }
+
             .l-toi {
-                @include test();
                 @include transform(translateY(100%));
                 bottom: 0;
             }
-            //&:hover {
-            //    background-color: rgba($toiColorBgHov, 0.1);
-            //}
+
             z-index: 3;
         }
     }

@@ -106,11 +106,11 @@ $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 // Time of Interest
 $toiColorBg: $colorKey;
 $toiColorBgHov: lighten($colorKey, 10%);
-$toiColorFg: #ccc;
+$toiColorFg: #fff;
 $toiColorFgHov: #fff;
 $toiColorBgActive:  lighten($colorKey, 20%);
 $toiColorFgActive: $toiColorFgHov;
-$toiW: 18px;
+$toiW: 12px;
 
 // Status colors, mainly used for messaging and item ancillary symbols
 $colorStatusFg: #fff;

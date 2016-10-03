@@ -289,20 +289,22 @@
         }
 
         .l-toi {
-            $d: $timeCondTOIIconD;
-            @include transform(translate(-50%, -50%));
-            font-size: $d;
-            line-height: $d;
-            left: 50%;
             top: 50%;
-            height: $d;
-            width: $d;
-            z-index: 1;
+            @include transform(translateY(-50%));
+            //$d: $timeCondTOIIconD;
+            //@include transform(translate(-50%, -50%));
+            //font-size: $d;
+            //line-height: $d;
+            //left: 50%;
+            //top: 50%;
+            //height: $d;
+            //width: $d;
+            //z-index: 1;
         }
 
         .l-toi-val {
-            @include transform(translateY(-51%));
-            top: 50%;
+            //@include transform(translateY(-51%));
+            //top: 50%;
         }
     }
 

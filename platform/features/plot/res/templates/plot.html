@@ -78,13 +78,14 @@
             <!-- new wrapper inserted here -->
             <div class="gl-plot-wrapper-display-area-and-x-axis">
                 <!-- TOI element -->
-                <div class="l-toi-holder show-val val-to-right"
-                     ng-class="{ pinned: true }"
+                <div class="l-toi-holder show-val"
+                     ng-class="{ pinned: true, 'val-to-right': true }"
                      style="left: 0%">
                     <!-- Need text val at bottom, plus vertical line -->
-                    <div class="l-toi l-flex-row">
-                    <span class="l-toi-val flex-elem">Z884.92:25:32 52-90-6102</span>
-                    </div>
+                    <span class="l-toi">
+                        <a class="t-button-unpin icon-button" ng-click="unpin()"></a>
+                        <span class="l-toi-val">21:31:30</span>
+                    </span>
                 </div>
 
                 <div class="gl-plot-coords"
