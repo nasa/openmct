@@ -106,7 +106,7 @@ $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 // Time of Interest
 $toiColorBg: #6b93c6;
 $toiColorFg: #fff;
-$toiW: 12px;
+$toiW: 12px;  // Needs to be an even number to avoid sub-pixel antialiasing of the vertical line
 
 // Status colors, mainly used for messaging and item ancillary symbols
 $colorStatusFg: #fff;

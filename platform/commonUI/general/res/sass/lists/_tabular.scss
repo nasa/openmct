@@ -58,6 +58,7 @@ table {
 		}*/
 	}
 	tr, .tr {
+        border-top: 1px solid $colorTabBorder;
 		display: table-row;
 		&:first-child .td {
 			border-top: none;
@@ -99,7 +100,6 @@ table {
 			}
 		}
 		td, .td {
-			border-top: 1px solid $colorTabBorder;
 			min-width: 20px;
 			color: $colorTelemFresh;
 			padding: $tabularTdPadTB $tabularTdPadLR;
