@@ -51,6 +51,7 @@
         <tbody>
             <tr ng-repeat="visibleRow in visibleRows track by visibleRow.rowIndex"
                 ng-class="{ 'l-toi pinned': false }"
+                ng-click="dummyUnpin()"
                 ng-style="{
                     top: visibleRow.offsetY + 'px',
                 }">

@@ -61,7 +61,7 @@
     }
 
     .l-toi {
-        // Holds clock icon an unpin button
+        // Holds clock icon and unpin button
         font-size: $toiW;
         height: $toiW;
         width: $toiW;
@@ -70,6 +70,7 @@
             @extend .icon-clock;
             &:hover {
                 &:before {
+                    color: $toiColorBgAlert;
                     content: $glyph-icon-x-in-circle;
                 }
             }
@@ -77,27 +78,33 @@
     }
 
     .l-toi-val {
-        $tbP: 1px;
-        background-color: $toiColorBg;
-        border-radius: $controlCr;
-        box-sizing: content-box;
-        display: inline-block;
-        color: $toiColorFg;
-        font-size: 0.7rem;
-        font-weight: 400;
-        height: $toiW;
-        right: $toiW + $interiorMarginSm;
-        top: 50%;
-        @include transform(translateY(-50%));
-        line-height: $toiW;
-        padding: $tbP $p;
-        white-space: nowrap;
+        display: none; // Hide by default; see .show-val below
     }
 
-    &.val-to-right {
+    &.show-val {
         .l-toi-val {
-            right: auto;
-            left: $toiW + $interiorMarginSm;
+            $tbP: 1px;
+            background-color: $toiColorBg;
+            border-radius: $controlCr;
+            box-sizing: content-box;
+            color: $toiColorFg;
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 400;
+            height: $toiW;
+            right: $toiW + $interiorMarginSm;
+            top: 50%;
+            @include transform(translateY(-50%));
+            line-height: $toiW;
+            padding: $tbP $p;
+            white-space: nowrap;
+        }
+
+        &.val-to-right {
+            .l-toi-val {
+                right: auto;
+                left: $toiW + $interiorMarginSm;
+            }
         }
     }
 }
@@ -110,24 +117,38 @@ table {
             &.l-toi.pinned {
                 border-top: 1px dashed $toiColorBg;
                 td, .td {
-                    &:first-child:before {
-                        @extend .icon-clock;
-                        @include transform(translate(-50%, -50%));
-                        color: $toiColorBg;
-                        cursor: pointer;
-                        display: block;
-                        position: absolute;
-                        left: 50%;
-                        bottom: auto;
-                        text-shadow: 0 1px 15px black;
-                        top: 0;
-                        z-index: 2;
+                    &:first-child {
+                        &:before,
+                        &:after {
+                            @include transform(translate(-50%, -50%));
+                            display: block;
+                            position: absolute;
+                            left: 50%;
+                            bottom: auto;
+                            top: 0;
+
+                        }
+                        &:before {
+                            @extend .icon-clock;
+                            color: $toiColorBg;
+                            cursor: pointer;
+                            z-index: 3;
+                        }
+                        &:after {
+                            border-radius: 100%;
+                            content: '';
+                            background: $toiColorBlocker;
+                            height: $toiW + $interiorMargin;
+                            width: $toiW + $interiorMargin;
+                            z-index: 2;
+                        }
                     }
                 }
 
                 &:hover {
                     td, .td {
                         &:first-child:before {
+                            color: $toiColorBgAlert;
                             content: $glyph-icon-x-in-circle !important;
                         }
                     }
