@@ -246,7 +246,9 @@
             &:hover {
                 // Hide the cursor, because the TOI element essentially "becomes" the cursor
                 // when the user is hovering over the visualization area.
-                cursor: none;
+
+                // AH - not any more it doesn't?
+                //cursor: none;
                 .l-toi-holder.hover {
                     opacity: 1;
                 }

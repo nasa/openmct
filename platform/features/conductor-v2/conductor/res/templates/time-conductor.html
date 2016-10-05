@@ -95,19 +95,20 @@
         </div>
 
         <!-- Holds data visualization, time of interest -->
-        <div class="l-data-visualization-holder l-row-elem flex-elem">
+        <div class="l-data-visualization-holder l-row-elem flex-elem"
+             ng-controller="ConductorTOIController as toi"
+             ng-click="toi.click($event)">
             <a class="l-page-button s-icon-button icon-pointer-left"></a>
             <div class="l-data-visualization">
                 <!-- Note:
                 - val-to-right should be applied when l-toi-holder left < 160px
                 -->
                 <div class="l-toi-holder"
-                     ng-class="{ 'pinned': true, 'val-to-right': false }"
-                     ng-click="this.pinned = false"
-                    style="left: 70%">
+                     ng-class="{ 'pinned': toi.pinned, 'val-to-right': false }"
+                     ng-style="{'left': toi.left + '%'}">
                     <div class="l-toi">
-                        <a class="t-button-unpin icon-button" ng-click="unpin()"></a>
-                        <span class="l-toi-val">21:31:30</span>
+                        <a class="t-button-unpin icon-button" ng-click="toi.pinned = false"></a>
+                        <div class="l-toi-val">2016-09-15 21:31:30.000Z</div>
                     </div>
                 </div>
             </div>

@@ -99,7 +99,6 @@ define(
             // Watch scope for selection of mode or time system by user
             this.$scope.$watch('modeModel.selectedKey', this.setMode);
             this.conductorViewService.on('pan', this.pan);
-
             this.conductorViewService.on('pan-stop', this.panStop);
 
             this.$scope.$on('$destroy', this.destroy);
