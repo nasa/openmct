@@ -252,6 +252,14 @@ define([
                             "pattern": "\\S+",
                             "required": true,
                             "cssclass": "l-input-lg"
+                        },
+                        {
+                            "name": "Notes",
+                            "key": "notes",
+                            "property": "notes",
+                            "control": "textarea",
+                            "required": false,
+                            "cssclass": "l-textarea-sm"
                         }
                     ]
                 },

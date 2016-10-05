@@ -112,7 +112,7 @@ define(
                 expect(mockPersistence.persist).toHaveBeenCalled();
 
                 // Finally, check that the provided mutation function
-                // includes both model and configuratioon
+                // includes both model and configuration
                 expect(
                     mockDomainObject.useCapability.mostRecentCall.args[1]()
                 ).toEqual({

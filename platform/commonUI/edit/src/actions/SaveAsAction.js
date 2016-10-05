@@ -42,7 +42,6 @@ define([
             $injector,
             policyService,
             dialogService,
-            creationService,
             copyService,
             context
         ) {
@@ -52,7 +51,6 @@ define([
             };
             this.policyService = policyService;
             this.dialogService = dialogService;
-            this.creationService = creationService;
             this.copyService = copyService;
         }
 
@@ -166,8 +164,13 @@ define([
                     .then(resolveWith(object));
             }
 
-            function commitEditingAfterClone(clonedObject) {
+            function saveAfterClone(clonedObject) {
                 return domainObject.getCapability("editor").save()
+                    .then(resolveWith(clonedObject));
+            }
+
+            function finishEditing(clonedObject) {
+                return domainObject.getCapability("editor").finish()
                     .then(resolveWith(clonedObject));
             }
 
@@ -182,7 +185,8 @@ define([
                 .then(getParent)
                 .then(cloneIntoParent)
                 .then(undirtyOriginals)
-                .then(commitEditingAfterClone)
+                .then(saveAfterClone)
+                .then(finishEditing)
                 .then(hideBlockingDialog)
                 .catch(onFailure);
         };

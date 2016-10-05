@@ -3,7 +3,7 @@
 Entanglement is the process of moving, copying, and linking domain objects
 in such a way that their relationships are impossible to discern.
 
-This bundle provides move, copy, and link functionality.  Acheiving a state of 
+This bundle provides move, copy, and link functionality.  Achieving a state of 
 entanglement is left up to the end user.
 
 

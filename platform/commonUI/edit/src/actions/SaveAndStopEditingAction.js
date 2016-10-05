@@ -21,52 +21,43 @@
  *****************************************************************************/
 
 define(
-    ['./SaveInProgressDialog'],
-    function (SaveInProgressDialog) {
+    ["./SaveAction"],
+    function (SaveAction) {
 
         /**
-         * The "Save" action; it invokes object capabilities to persist
-         * the changes that have been made.
+         * The "Save and Stop Editing" action performs a [Save action]{@link SaveAction}
+         * on the object under edit followed by exiting the edit user interface.
          * @constructor
          * @implements {Action}
          * @memberof platform/commonUI/edit
          */
-        function SaveAction(
+        function SaveAndStopEditingAction(
             dialogService,
             context
         ) {
+            this.context = context;
             this.domainObject = (context || {}).domainObject;
             this.dialogService = dialogService;
         }
 
         /**
-         * Save changes.
+         * Trigger a save operation and exit edit mode.
          *
          * @returns {Promise} a promise that will be fulfilled when
          *          cancellation has completed
-         * @memberof platform/commonUI/edit.SaveAction#
+         * @memberof platform/commonUI/edit.SaveAndStopEditingAction#
          */
-        SaveAction.prototype.perform = function () {
+        SaveAndStopEditingAction.prototype.perform = function () {
             var domainObject = this.domainObject,
-                dialog = new SaveInProgressDialog(this.dialogService);
+                saveAction = new SaveAction(this.dialogService, this.context);
 
-            // Invoke any save behavior introduced by the editor capability;
-            // this is introduced by EditableDomainObject which is
-            // used to insulate underlying objects from changes made
-            // during editing.
-            function doSave() {
-                return domainObject.getCapability("editor").save();
+            function closeEditor() {
+                return domainObject.getCapability("editor").finish();
             }
 
-            function hideBlockingDialog() {
-                dialog.hide();
-            }
-
-            dialog.show();
-
-            return doSave()
-                .then(hideBlockingDialog)
-                .catch(hideBlockingDialog);
+            return saveAction.perform()
+                .then(closeEditor)
+                .catch(closeEditor);
         };
 
         /**
@@ -75,14 +66,8 @@ define(
          * and that this domain object is in Edit mode.
          * @returns true if applicable
          */
-        SaveAction.appliesTo = function (context) {
-            var domainObject = (context || {}).domainObject;
-            return domainObject !== undefined &&
-                domainObject.hasCapability('editor') &&
-                domainObject.getCapability('editor').isEditContextRoot() &&
-                domainObject.getModel().persisted !== undefined;
-        };
+        SaveAndStopEditingAction.appliesTo = SaveAction.appliesTo;
 
-        return SaveAction;
+        return SaveAndStopEditingAction;
     }
 );
