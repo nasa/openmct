@@ -25,7 +25,7 @@
         <mct-control key="'button'"
                      structure="{
                         text: saveActions[0].getMetadata().name,
-                        click: saveActions[0].perform,
+                        click: actionPerformer(saveActions[0]),
                         cssclass: 'major ' + saveActions[0].getMetadata().cssclass
                      }">
         </mct-control>
@@ -42,11 +42,12 @@
     </span>
 
     <span ng-repeat="currentAction in otherEditActions">
-        <a class='s-button {{currentAction.getMetadata().cssclass}}'
-           title='{{currentAction.getMetadata().name}}'
-           ng-click="currentAction.perform()"
-           ng-class="{ major: $index === 0 && saveActions.length === 0 }">
-            <span class="title-label">{{currentAction.getMetadata().name}}</span>
-        </a>
+        <mct-control key="'button'"
+                     structure="{
+                        text: currentAction.getMetadata().name,
+                        click: actionPerformer(currentAction),
+                        cssclass: currentAction.getMetadata().cssclass
+                     }">
+        </mct-control>
     </span>
 </span>

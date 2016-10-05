@@ -245,7 +245,9 @@ define([
                     "key": "cancel",
                     "category": "conclude-editing",
                     "implementation": CancelAction,
-                    "name": "Cancel",
+                    // Because we use the name as label for edit buttons and mct-control buttons need
+                    // the label to be set to undefined in order to not apply the labeled CSS rule.
+                    "name": undefined,
                     "cssclass": "icon-x no-label",
                     "description": "Discard changes made to these objects.",
                     "depends": []
