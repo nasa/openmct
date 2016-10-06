@@ -88,12 +88,14 @@ define(
                     'exportService',
                     MCTTableController
                 ],
+                controllerAs: "table",
                 scope: {
                     headers: "=",
                     rows: "=",
                     enableFilter: "=?",
                     enableSort: "=?",
-                    autoScroll: "=?"
+                    autoScroll: "=?",
+                    onRowClick: "&"
                 }
             };
         }

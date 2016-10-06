@@ -25,6 +25,13 @@ define(
             this.tbody = element.find('tbody');
             this.$scope.sizingRow = {};
 
+            //Bind all class functions to 'this'
+            Object.keys(MCTTableController.prototype).filter(function (key) {
+                return typeof MCTTableController.prototype[key] === 'function';
+            }).forEach(function (key) {
+                this[key] = MCTTableController.prototype[key].bind(this);
+            }.bind(this));
+
             this.scrollable.on('scroll', this.onScroll.bind(this));
 
             $scope.visibleRows = [];
@@ -294,37 +301,38 @@ define(
         /**
          * @private
          */
-        MCTTableController.prototype.insertSorted = function (array, element) {
-            var index = -1,
-                self = this,
-                sortKey = this.$scope.sortColumn;
+        MCTTableController.prototype.binarySearch = function (searchArray, searchElement, min, max) {
+            var sampleAt = Math.floor((max - min) / 2) + min;
 
-            function binarySearch(searchArray, searchElement, min, max) {
-                var sampleAt = Math.floor((max - min) / 2) + min;
-
-                if (max < min) {
-                    return min; // Element is not in array, min gives direction
-                }
-
-                switch (self.sortComparator(searchElement[sortKey].text,
-                    searchArray[sampleAt][sortKey].text)) {
-                    case -1:
-                        return binarySearch(searchArray, searchElement, min,
-                            sampleAt - 1);
-                    case 0 :
-                        return sampleAt;
-                    case 1 :
-                        return binarySearch(searchArray, searchElement,
-                            sampleAt + 1, max);
-                }
+            if (max < min) {
+                return min; // Element is not in array, min gives direction
             }
+
+            switch (this.sortComparator(searchElement[this.$scope.sortColumn].text,
+                searchArray[sampleAt][this.$scope.sortColumn].text)) {
+                case -1:
+                    return this.binarySearch(searchArray, searchElement, min,
+                        sampleAt - 1);
+                case 0 :
+                    return sampleAt;
+                case 1 :
+                    return this.binarySearch(searchArray, searchElement,
+                        sampleAt + 1, max);
+            }
+        };
+
+        /**
+         * @private
+         */
+        MCTTableController.prototype.insertSorted = function (array, element) {
+            var index = -1;
 
             if (!this.$scope.sortColumn || !this.$scope.sortDirection) {
                 //No sorting applied, push it on the end.
                 index = array.length;
             } else {
                 //Sort is enabled, perform binary search to find insertion point
-                index = binarySearch(array, element, 0, array.length - 1);
+                index = this.binarySearch(array, element, 0, array.length - 1);
             }
             if (index === -1) {
                 array.unshift(element);
@@ -486,6 +494,11 @@ define(
 
             this.$scope.displayRows = this.filterAndSort(newRows || []);
             this.resize(newRows).then(this.setVisibleRows.bind(this));
+        };
+
+        MCTTableController.prototype.onRowClick = function (event, row) {
+            var index = this.$scope.rows.indexOf(row);
+            this.$scope.onRowClick({event: event, rowIndex:index, sortColumn: this.$scope.sortColumn, sortDirection: this.$scope.sortDirection});
         };
 
         /**

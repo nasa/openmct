@@ -75,15 +75,15 @@
                 </div>
             </div>
 
-            <!-- new wrapper inserted here -->
             <div class="gl-plot-wrapper-display-area-and-x-axis">
-                <!-- TOI element -->
+                <!-- TOI element. val-to-right should be true when 'left' is < 150px -->
                 <div class="l-toi-holder show-val"
-                     ng-class="{ pinned: true, 'val-to-right': true }"
+                     ng-class="{ pinned: false, 'val-to-right': true }"
                      style="left: 0%">
-                    <!-- Need text val at bottom, plus vertical line -->
                     <span class="l-toi">
-                        <a class="t-button-unpin icon-button" ng-click="unpin()"></a>
+                        <a class="t-button-unpin icon-button"
+                           title="Unset Time of Interest"
+                           ng-click="dummyUnpin()"></a>
                         <span class="l-toi-val">21:31:30</span>
                     </span>
                 </div>

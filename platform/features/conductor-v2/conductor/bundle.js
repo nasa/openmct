@@ -91,7 +91,7 @@ define([
                         "$scope",
                         "timeConductor",
                         "timeConductorViewService",
-                        "$timeout"
+                        "formatService"
                     ]
                 }
             ],

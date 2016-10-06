@@ -100,15 +100,13 @@
              ng-click="toi.click($event)">
             <a class="l-page-button s-icon-button icon-pointer-left"></a>
             <div class="l-data-visualization">
-                <!-- Note:
-                - val-to-right should be applied when l-toi-holder left < 160px
-                -->
-                <div class="l-toi-holder"
-                     ng-class="{ 'pinned': toi.pinned, 'val-to-right': false }"
+                <!-- Note: - val-to-right should be applied when l-toi-holder left < 150px -->
+                <div class="l-toi-holder show-val"
+                     ng-class="{ 'pinned': toi.pinned, 'val-to-right': toi.left < 20 }"
                      ng-style="{'left': toi.left + '%'}">
                     <div class="l-toi">
                         <a class="t-button-unpin icon-button" ng-click="toi.pinned = false"></a>
-                        <div class="l-toi-val">2016-09-15 21:31:30.000Z</div>
+                        <span class="l-toi-val">{{toi.toiText}}</span>
                     </div>
                 </div>
             </div>

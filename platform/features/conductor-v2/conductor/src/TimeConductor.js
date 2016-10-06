@@ -123,6 +123,12 @@ define(['EventEmitter'], function (EventEmitter) {
              * @property {TimeConductorBounds} bounds
              */
             this.emit('bounds', this.boundsVal);
+
+            // If a bounds change results in a TOI outside of the current
+            // bounds, unset it
+            if (this.toi < newBounds.start || this.toi > newBounds.end) {
+                this.timeOfInterest(undefined);
+            }
         }
         //Return a copy to prevent direct mutation of time conductor bounds.
         return JSON.parse(JSON.stringify(this.boundsVal));
@@ -158,17 +164,21 @@ define(['EventEmitter'], function (EventEmitter) {
     /**
      * Get or set the Time of Interest. The Time of Interest is the temporal
      * focus of the current view. It can be manipulated by the user from the
-     * time conductor or from other views.
+     * time conductor or from other views. The time of interest can
+     * effectively be unset by assigning a value of 'undefined'.
      * @fires TimeConductor#timeOfInterest
-     * @param newTOI
-     * @returns {number} the current time of interest
+     * @param {number | undefined} newTOI A new time of interest, represented
+     * as a
+     * number that is valid in the current time system.
+     * @returns {number | undefined} the current time of interest
      */
     TimeConductor.prototype.timeOfInterest = function (newTOI) {
         if (arguments.length > 0) {
             this.toi = newTOI;
             /**
-             * @event TimeConductor#timeOfInterest The Time of Interest has moved.
-             * @property {number} Current time of interest
+             * @event TimeConductor#timeOfInterest The Time of Interest has
+             * changed.
+             * @property {number | undefined} Current time of interest
              */
             this.emit('timeOfInterest', this.toi);
         }

@@ -36,7 +36,7 @@ define(
          * @param telemetryFormatter
          * @constructor
          */
-        function HistoricalTableController($scope, telemetryHandler, telemetryFormatter, $timeout) {
+        function HistoricalTableController($scope, telemetryHandler, telemetryFormatter, $timeout, conductor) {
             var self = this;
 
             this.$timeout = $timeout;
@@ -49,7 +49,7 @@ define(
                 }
             });
 
-            TableController.call(this, $scope, telemetryHandler, telemetryFormatter);
+            TableController.call(this, $scope, telemetryHandler, telemetryFormatter, conductor);
         }
 
         HistoricalTableController.prototype = Object.create(TableController.prototype);
@@ -59,6 +59,7 @@ define(
          * @private
          */
         HistoricalTableController.prototype.doneProcessing = function (rowData) {
+            //Set table rows to formatted data;
             this.$scope.rows = rowData;
             this.$scope.loading = false;
         };
@@ -109,8 +110,9 @@ define(
 
             //Process rows in a batch with size not exceeding a maximum length
             for (; i < end; i++) {
-                rowData.push(this.table.getRowValues(telemetryObject,
-                    this.handle.makeDatum(telemetryObject, series, i)));
+                var datum = this.handle.makeDatum(telemetryObject, series, i);
+                this.data.push(datum);
+                rowData.push(this.table.getRowValues(telemetryObject, datum));
             }
 
             //Done processing all rows for this object.
@@ -123,7 +125,7 @@ define(
             // before continuing processing
             this.timeoutHandle = this.$timeout(this.processTelemetryObjects.bind(this, objects, offset, end, rowData));
         };
-
+        
         /**
         * Populates historical data on scope when it becomes available from
         * the telemetry API
@@ -132,7 +134,7 @@ define(
             if (this.timeoutHandle) {
                 this.$timeout.cancel(this.timeoutHandle);
             }
-
+            this.data = [];
             this.timeoutHandle = this.$timeout(this.processTelemetryObjects.bind(this, this.handle.getTelemetryObjects(), 0, 0, []));
         };
 

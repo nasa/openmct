@@ -20,21 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
-/*
-Plots
--toi-holder:before vertical line
--toi: glyphs
-
-Tables
-tr: border color
-td:before: glyphs
-
-TC
--toi-holder:before, after: vertical lines
--toi: glyphs
-
-*/
 .l-toi-holder,
 .l-toi-holder:after,
 .l-toi-holder:before,
@@ -44,7 +29,6 @@ TC
     position: absolute;
 }
 
-
 .l-toi-holder {
     $p: 3px;
     @include transform(translateX(-50%));
@@ -52,14 +36,16 @@ TC
     position: absolute;
     top: 0;
     bottom: 0;
-    width: $toiW; // Needs to be an even number to avoid sub-pixel antialiasing of the vertical line
+    width: $toiW;
     &:not(.pinned) {
         opacity: 0;
         pointer-events: none;
     }
+
     &.pinned {
         opacity: 1;
     }
+
     &:before,
     &:after {
         // Vertical lines. TC uses both; plot only uses :before
@@ -73,8 +59,9 @@ TC
         bottom: 0;
         width: 2px;
     }
+
     .l-toi {
-        // Holds clock icon an unpin button
+        // Holds clock icon and unpin button
         font-size: $toiW;
         height: $toiW;
         width: $toiW;
@@ -83,6 +70,7 @@ TC
             @extend .icon-clock;
             &:hover {
                 &:before {
+                    color: $toiColorBgAlert;
                     content: $glyph-icon-x-in-circle;
                 }
             }
@@ -90,26 +78,33 @@ TC
     }
 
     .l-toi-val {
-        $tbP: 1px;
-        background-color: $toiColorBg; //rgba($toiColorBg, 0.8);
-        border-radius: $controlCr;
-        box-sizing: content-box;
-        display: inline-block;
-        color: $toiColorFg;
-        font-size: 0.7rem;
-        height: $toiW;
-        right: $toiW + $interiorMarginSm;
-        top: 50%;
-        @include transform(translateY(-50%));
-        line-height: $toiW;
-        padding: $tbP $p;
-        white-space: nowrap;
+        display: none; // Hide by default; see .show-val below
     }
 
-    &.val-to-right {
+    &.show-val {
         .l-toi-val {
-            right: auto;
-            left: $toiW + $interiorMarginSm;
+            $tbP: 1px;
+            background-color: $toiColorBg;
+            border-radius: $controlCr;
+            box-sizing: content-box;
+            color: $toiColorFg;
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 400;
+            height: $toiW;
+            right: $toiW + $interiorMarginSm;
+            top: 50%;
+            @include transform(translateY(-50%));
+            line-height: $toiW;
+            padding: $tbP $p;
+            white-space: nowrap;
+        }
+
+        &.val-to-right {
+            .l-toi-val {
+                right: auto;
+                left: $toiW + $interiorMarginSm;
+            }
         }
     }
 }
@@ -120,38 +115,42 @@ table {
     tbody, .tbody {
         tr, .tr {
             &.l-toi.pinned {
-                td {
-                    border-top: 1px dashed $toiColorBg;
-                    &:first-child:before {
-                        @extend .ui-symbol;
-                        @include transform(translate(-50%, -50%));
-                        content: $glyph-icon-clock;
-                        display: block;
-                        position: absolute;
-                        text-shadow: 0 1px 15px black;
-                        left: 50%;
-                        top: 0;
-                        z-index: 2;
-                        color: $toiColorBg;
-                    }
-                }
+                border-top: 1px dashed $toiColorBg;
+                td, .td {
+                    &:first-child {
+                        &:before,
+                        &:after {
+                            @include transform(translate(-50%, -50%));
+                            display: block;
+                            position: absolute;
+                            left: 50%;
+                            bottom: auto;
+                            top: 0;
 
-                &.highlight-bottom-edge {
-                    td {
-                        border-bottom: 1px dashed $toiColorBg;
-                        //border-top: 1px solid transparent;
-                        &:first-child:before {
-                            @include transform(translate(-50%, 50%));
-                            top: auto;
-                            bottom: 0;
+                        }
+                        &:before {
+                            @extend .icon-clock;
+                            color: $toiColorBg;
+                            cursor: pointer;
+                            z-index: 3;
+                        }
+                        &:after {
+                            border-radius: 100%;
+                            content: '';
+                            background: $toiColorBlocker;
+                            height: $toiW + $interiorMargin;
+                            width: $toiW + $interiorMargin;
+                            z-index: 2;
                         }
                     }
                 }
 
                 &:hover {
-                    td:first-child:before {
-                        content: $glyph-icon-x-in-circle;
-                        cursor: pointer;
+                    td, .td {
+                        &:first-child:before {
+                            color: $toiColorBgAlert;
+                            content: $glyph-icon-x-in-circle !important;
+                        }
                     }
                 }
             }
@@ -164,6 +163,7 @@ table {
     .gl-plot-wrapper-display-area-and-x-axis {
         .l-toi-holder {
             bottom: nth($plotDisplayArea, 3) - $interiorMargin;
+            z-index: 3;
             &:after {
                 display: none;
             }
@@ -172,8 +172,6 @@ table {
                 @include transform(translateY(100%));
                 bottom: 0;
             }
-
-            z-index: 3;
         }
     }
 }

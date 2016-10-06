@@ -29,9 +29,11 @@ define(
          * labelled 'ticks'. It requires 'start' and 'end' integer values to
          * be specified as attributes.
          */
-        function ConductorTOIController($scope, conductor, conductorViewService, $timeout) {
+        function ConductorTOIController($scope, conductor, conductorViewService, formatService) {
             this.conductor = conductor;
             this.conductorViewService = conductorViewService;
+            this.formatService = formatService;
+            this.toiText = undefined;
 
             //Bind all class functions to 'this'
             Object.keys(ConductorTOIController.prototype).filter(function (key) {
@@ -43,19 +45,10 @@ define(
             this.conductor.on('timeOfInterest', this.changeTimeOfInterest);
             this.conductorViewService.on('zoom', this.setOffsetFromBounds);
             this.conductorViewService.on('pan', this.setOffsetFromBounds);
-
-            this.$timeout = $timeout;
-
-            var generateRandomTOI = function () {
-                var bounds = conductor.bounds();
-                var range = bounds.end - bounds.start;
-                var toi = Math.random() * range + bounds.start;
-                console.log('calculated random TOI of ' + toi);
-                conductor.timeOfInterest(toi);
-                //this.timeoutHandle = $timeout(generateRandomTOI, 1000);
-            }.bind(this);
-
-            //this.timeoutHandle = $timeout(generateRandomTOI, 2000);
+            this.conductor.on('timeSystem', this.changeTimeSystem);
+            if (conductor.timeSystem()) {
+                this.changeTimeSystem(conductor.timeSystem());
+            }
 
             $scope.$on('$destroy', this.destroy);
 
@@ -63,23 +56,28 @@ define(
 
         ConductorTOIController.prototype.destroy = function () {
             this.conductor.off('timeOfInterest', this.setOffsetFromBounds);
+            this.conductor.off('timeSystem', this.changeTimeSystem);
             this.conductorViewService.off('zoom', this.setOffsetFromBounds);
             this.conductorViewService.off('pan', this.setOffsetFromBounds);
-
-            this.$timeout.cancel(this.timeoutHandle);
         };
 
         ConductorTOIController.prototype.setOffsetFromBounds = function (bounds) {
             var toi = this.conductor.timeOfInterest();
             var offset = toi - bounds.start;
-            this.left = offset / (bounds.end - bounds.start) * 100;
+            var duration = bounds.end - bounds.start;
+            this.left = offset / duration * 100;
+            this.toiText = this.format.format(toi);
+        };
+
+        ConductorTOIController.prototype.changeTimeSystem = function (timeSystem) {
+            this.format = this.formatService.getFormat(timeSystem.formats()[0]);
         };
 
         ConductorTOIController.prototype.changeTimeOfInterest = function () {
             var bounds = this.conductor.bounds();
             if (bounds) {
                 this.setOffsetFromBounds(bounds);
-                this.pinned = true;
+                this.pinned = this.conductor.timeOfInterest() !== undefined;
             }
         };
 
@@ -96,17 +94,8 @@ define(
             }
         };
 
-        /*
-        ConductorTOIController.prototype.zoom = function (bounds) {
-            this.changeTOI(bounds)
-        };
-
-        ConductorTOIController.prototype.pan = function (bounds) {
-            this.changeTOI(bounds)
-        };*/
-
         ConductorTOIController.prototype.resize = function () {
-            //Do something
+            //Do something?
         };
 
         return ConductorTOIController;

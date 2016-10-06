@@ -26,9 +26,10 @@
  */
 define(
     [
-        '../TableConfiguration'
+        '../TableConfiguration',
+        '../DomainColumn'
     ],
-    function (TableConfiguration) {
+    function (TableConfiguration, DomainColumn) {
 
         /**
          * The TableController is responsible for getting data onto the page
@@ -43,7 +44,8 @@ define(
         function TelemetryTableController(
             $scope,
             telemetryHandler,
-            telemetryFormatter
+            telemetryFormatter,
+            conductor
         ) {
             var self = this;
 
@@ -54,6 +56,8 @@ define(
             this.table = new TableConfiguration($scope.domainObject,
                 telemetryFormatter);
             this.changeListeners = [];
+            this.conductor = conductor;
+            this.data = [];
 
             $scope.rows = [];
 
@@ -64,8 +68,26 @@ define(
             });
 
             // Unsubscribe when the plot is destroyed
-            this.$scope.$on("$destroy", this.destroy.bind(this));
+            this.$scope.$on("$destroy", this.destroy);
         }
+
+        TelemetryTableController.prototype.onRowClick = function (event, rowIndex, sortBy, sortOrder) {
+            var datum = this.data[rowIndex];
+
+            if (event.altKey) {
+                console.log("selected: " + this.$scope.rows[rowIndex]);
+                //Is column one that we can use to set time of interest?
+                var domainColumn = this.table.columns.filter(function (column) {
+                    return column instanceof DomainColumn &&
+                        column.getTitle() === sortBy;
+                })[0];
+                if (domainColumn) {
+                    var timeOfInterest = datum[domainColumn.domainMetadata.key];
+                    this.conductor.timeOfInterest(timeOfInterest);
+                }
+            }
+
+        };
 
         /**
          * @private
@@ -187,6 +209,10 @@ define(
                 return columnConfig[column];
             });
         };
+
+        TelemetryTableController.prototype.changeTimeOfInterest = function (toi) {
+
+        }
 
         return TelemetryTableController;
     }
