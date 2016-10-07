@@ -37,8 +37,7 @@ define(
         function TransactionService($q, $log) {
             this.$q = $q;
             this.$log = $log;
-            this.transaction = undefined;
-            this.transactionStack = [];
+            this.transactions = [];
         }
 
         /**
@@ -48,19 +47,18 @@ define(
          * #cancel} are called
          */
         TransactionService.prototype.startTransaction = function () {
-            if (this.transaction) {
-                this.transactionStack.push(this.transaction);
-                this.transaction = new NestedTransaction(this.transaction);
-            } else {
-                this.transaction = new Transaction(this.$log);
-            }
+            var transaction = this.isActive() ?
+                new NestedTransaction(this.transactions[0]) :
+                new Transaction(this.$log);
+
+            this.transactions.push(transaction);
         };
 
         /**
          * @returns {boolean} If true, indicates that a transaction is in progress
          */
         TransactionService.prototype.isActive = function () {
-            return !!this.transaction;
+            return this.transactions.length > 0;
         };
 
         /**
@@ -71,12 +69,20 @@ define(
          * @param onCancel A function to call on cancel
          */
         TransactionService.prototype.addToTransaction = function (onCommit, onCancel) {
-            if (this.transaction) {
-                return this.transaction.add(onCommit, onCancel);
+            if (this.isActive()) {
+                return this.activeTransaction().add(onCommit, onCancel);
             } else {
                 //Log error because this is a programming error if it occurs.
                 this.$log.error("No transaction in progress");
             }
+        };
+
+        /**
+         * Get the transaction at the top of the stack.
+         * @private
+         */
+        TransactionService.prototype.activeTransaction = function () {
+            return this.transactions[this.transactions.length - 1];
         };
 
         /**
@@ -87,8 +93,7 @@ define(
          * completed. Will reject if any commit operations fail
          */
         TransactionService.prototype.commit = function () {
-            var transaction = this.transaction;
-            this.transaction = this.transactionStack.pop();
+            var transaction = this.transactions.pop();
             return transaction ? transaction.commit() : Promise.reject();
         };
 
@@ -101,13 +106,17 @@ define(
          * @returns {*}
          */
         TransactionService.prototype.cancel = function () {
-            var transaction = this.transaction;
-            this.transaction = this.transactionStack.pop();
+            var transaction = this.transactions.pop();
             return transaction ? transaction.cancel() : Promise.reject();
         };
 
+        /**
+         * Get the size (the number of commit/cancel callbacks) of
+         * the active transaction.
+         * @returns {number} size of the active transaction
+         */
         TransactionService.prototype.size = function () {
-            return this.transaction ? this.transaction.size() : 0;
+            return this.isActive() ? this.activeTransaction.size() : 0;
         };
 
         return TransactionService;
