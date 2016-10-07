@@ -31,6 +31,7 @@ define([
     "./src/actions/PropertiesAction",
     "./src/actions/RemoveAction",
     "./src/actions/SaveAction",
+    "./src/actions/SaveAndStopEditingAction",
     "./src/actions/SaveAsAction",
     "./src/actions/CancelAction",
     "./src/policies/EditActionPolicy",
@@ -70,6 +71,7 @@ define([
     PropertiesAction,
     RemoveAction,
     SaveAction,
+    SaveAndStopEditingAction,
     SaveAsAction,
     CancelAction,
     EditActionPolicy,
@@ -203,20 +205,30 @@ define([
                     ]
                 },
                 {
-                    "key": "save",
-                    "category": "conclude-editing",
-                    "implementation": SaveAction,
-                    "name": "Save",
+                    "key": "save-and-stop-editing",
+                    "category": "save",
+                    "implementation": SaveAndStopEditingAction,
+                    "name": "Save and Finish Editing",
                     "cssclass": "icon-save labeled",
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "dialogService"
-                    ],
-                    "priority": "mandatory"
+                    ]
                 },
                 {
                     "key": "save",
-                    "category": "conclude-editing",
+                    "category": "save",
+                    "implementation": SaveAction,
+                    "name": "Save and Continue Editing",
+                    "cssclass": "icon-save labeled",
+                    "description": "Save changes made to these objects.",
+                    "depends": [
+                        "dialogService"
+                    ]
+                },
+                {
+                    "key": "save-as",
+                    "category": "save",
                     "implementation": SaveAsAction,
                     "name": "Save As...",
                     "cssclass": "icon-save labeled",
@@ -225,7 +237,6 @@ define([
                         "$injector",
                         "policyService",
                         "dialogService",
-                        "creationService",
                         "copyService"
                     ],
                     "priority": "mandatory"
@@ -234,7 +245,9 @@ define([
                     "key": "cancel",
                     "category": "conclude-editing",
                     "implementation": CancelAction,
-                    "name": "Cancel",
+                    // Because we use the name as label for edit buttons and mct-control buttons need
+                    // the label to be set to undefined in order to not apply the labeled CSS rule.
+                    "name": undefined,
                     "cssclass": "icon-x no-label",
                     "description": "Discard changes made to these objects.",
                     "depends": []

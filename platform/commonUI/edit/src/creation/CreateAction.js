@@ -67,12 +67,17 @@ define(
                 editAction,
                 editorCapability;
 
+            function closeEditor() {
+                return editorCapability.finish();
+            }
+
             function onSave() {
-                return editorCapability.save();
+                return editorCapability.save()
+                    .then(closeEditor);
             }
 
             function onCancel() {
-                return editorCapability.cancel();
+                return closeEditor();
             }
 
             newModel.type = this.type.getKey();
@@ -85,9 +90,9 @@ define(
             if (editAction) {
                 return editAction.perform();
             } else if (editorCapability) {
-                //otherwise, use the save action
+                //otherwise, use the save as action
                 editorCapability.edit();
-                return newObject.getCapability("action").perform("save").then(onSave, onCancel);
+                return newObject.getCapability("action").perform("save-as").then(onSave, onCancel);
             }
         };
 

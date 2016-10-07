@@ -21,10 +21,16 @@
  *****************************************************************************/
 
 define(
-    ["../../src/actions/SaveAction"],
-    function (SaveAction) {
+    ["../../src/actions/SaveAndStopEditingAction"],
+    function (SaveAndStopEditingAction) {
 
-        describe("The Save action", function () {
+        describe("The Save and Stop Editing action", function () {
+
+            // Some mocks appear unused because the
+            // underlying SaveAction that this action
+            // depends on is not mocked, so we mock some
+            // of SaveAction's own dependencies to make
+            // it run.
             var mockDomainObject,
                 mockEditorCapability,
                 actionContext,
@@ -56,7 +62,7 @@ define(
                 );
                 mockEditorCapability = jasmine.createSpyObj(
                     "editor",
-                    ["save", "isEditContextRoot"]
+                    ["save", "finish", "isEditContextRoot"]
                 );
                 mockActionCapability = jasmine.createSpyObj(
                     "actionCapability",
@@ -77,58 +83,41 @@ define(
                 mockDomainObject.getCapability.andCallFake(function (capability) {
                     return capabilities[capability];
                 });
-                mockDomainObject.getModel.andReturn({persisted: 0});
+                mockDomainObject.getModel.andReturn({ persisted: 0 });
                 mockEditorCapability.save.andReturn(mockPromise(true));
                 mockEditorCapability.isEditContextRoot.andReturn(true);
 
-                action = new SaveAction(dialogService, actionContext);
+                action = new SaveAndStopEditingAction(dialogService, actionContext);
             });
 
+
             it("only applies to domain object with an editor capability", function () {
-                expect(SaveAction.appliesTo(actionContext)).toBe(true);
+                expect(SaveAndStopEditingAction.appliesTo(actionContext)).toBe(true);
                 expect(mockDomainObject.hasCapability).toHaveBeenCalledWith("editor");
 
                 mockDomainObject.hasCapability.andReturn(false);
                 mockDomainObject.getCapability.andReturn(undefined);
-                expect(SaveAction.appliesTo(actionContext)).toBe(false);
+                expect(SaveAndStopEditingAction.appliesTo(actionContext)).toBe(false);
             });
 
-            it("only applies to domain object that has already been persisted",
-                function () {
-                    mockDomainObject.getModel.andReturn({persisted: undefined});
-                    expect(SaveAction.appliesTo(actionContext)).toBe(false);
-                });
-
-            it("uses the editor capability to save the object",
-                function () {
-                    action.perform();
-                    expect(mockEditorCapability.save).toHaveBeenCalled();
-                });
-
-            describe("a blocking dialog", function () {
-                var mockDialogHandle;
-
-                beforeEach(function () {
-                    mockDialogHandle = jasmine.createSpyObj("dialogHandle", ["dismiss"]);
-                    dialogService.showBlockingMessage.andReturn(mockDialogHandle);
-                });
-
-
-                it("shows a dialog while saving", function () {
-                    mockEditorCapability.save.andReturn(new Promise(function () {
-                    }));
-                    action.perform();
-                    expect(dialogService.showBlockingMessage).toHaveBeenCalled();
-                    expect(mockDialogHandle.dismiss).not.toHaveBeenCalled();
-                });
-
-                it("hides a dialog when saving is complete", function () {
-                    action.perform();
-                    expect(dialogService.showBlockingMessage).toHaveBeenCalled();
-                    expect(mockDialogHandle.dismiss).toHaveBeenCalled();
-                });
+            it("only applies to domain object that has already been persisted", function () {
+                mockDomainObject.getModel.andReturn({ persisted: undefined });
+                expect(SaveAndStopEditingAction.appliesTo(actionContext)).toBe(false);
             });
 
+            it("does not close the editor before completing the save", function () {
+                mockEditorCapability.save.andReturn(new Promise(function () {
+                }));
+                action.perform();
+                expect(mockEditorCapability.save).toHaveBeenCalled();
+                expect(mockEditorCapability.finish).not.toHaveBeenCalled();
+            });
+
+            it("closes the editor after saving", function () {
+                action.perform();
+                expect(mockEditorCapability.save).toHaveBeenCalled();
+                expect(mockEditorCapability.finish).toHaveBeenCalled();
+            });
         });
     }
 );

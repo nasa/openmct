@@ -1,7 +1,7 @@
 
 define(
-    [],
-    function () {
+    ['zepto'],
+    function ($) {
 
         /**
          * A controller for the MCTTable directive. Populates scope with
@@ -16,13 +16,13 @@ define(
             var self = this;
 
             this.$scope = $scope;
-            this.element = element;
+            this.element = $(element[0]);
             this.$timeout = $timeout;
             this.maxDisplayRows = 50;
 
-            this.scrollable = element.find('div');
-            this.thead = element.find('thead');
-            this.tbody = element.find('tbody');
+            this.scrollable = this.element.find('.l-view-section.scrolling').first();
+            this.resultsHeader = this.element.find('.mct-table>thead').first();
+            this.sizingTableBody = this.element.find('.sizing-table>tbody').first();
             this.$scope.sizingRow = {};
 
             this.scrollable.on('scroll', this.onScroll.bind(this));
@@ -261,8 +261,8 @@ define(
          * for individual rows.
          */
         MCTTableController.prototype.setElementSizes = function () {
-            var thead = this.thead,
-                tbody = this.tbody,
+            var thead = this.resultsHeader,
+                tbody = this.sizingTableBody,
                 firstRow = tbody.find('tr'),
                 column = firstRow.find('td'),
                 headerHeight = thead.prop('offsetHeight'),

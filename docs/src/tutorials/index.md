@@ -3238,7 +3238,7 @@ define(
 __tutorials/telemetry/src/ExampleTelemetryServerAdapter.js__
 
 Here, we have added `subscribe` and `unsubscribe` methods which issue the 
-corresponding requests to the server. Seperately, we introduce the ability to 
+corresponding requests to the server. Separately, we introduce the ability to 
 listen for `data` messages as they come in: These will contain the data associated 
 with these subscriptions.
 

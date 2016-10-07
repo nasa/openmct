@@ -25,7 +25,7 @@ define(function () {
     /**
      * Implements the `reverse` filter, which reverses text strings.
      * Useful in cases where text should be reversed for presentational
-     * reasons (e.g. in conjunction with CSS tricks involing text direction),
+     * reasons (e.g. in conjunction with CSS tricks involving text direction),
      * allowing such behavior to be handled independently from the controller
      * layer.
      *

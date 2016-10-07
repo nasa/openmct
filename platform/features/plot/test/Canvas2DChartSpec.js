@@ -59,7 +59,7 @@ define(
                 expect(mock2d.clearRect).toHaveBeenCalled();
             });
 
-            it("doees not construct if 2D is unavailable", function () {
+            it("does not construct if 2D is unavailable", function () {
                 mockCanvas.getContext.andReturn(undefined);
                 expect(function () {
                     return new Canvas2DChart(mockCanvas);

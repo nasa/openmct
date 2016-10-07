@@ -50,7 +50,7 @@ define(
                         // third one defines no containership rules
                         contains: (index < 2) ? [{ has: 'b' }] : undefined
                     });
-                    // Return a model to drive apparant capabilities
+                    // Return a model to drive apparent capabilities
                     mockType.getInitialModel.andReturn({ id: type });
                     return mockType;
                 });

@@ -187,7 +187,7 @@ define(
 
         /**
          * A description of the model options that may be passed to the
-         * showBlockingMessage method. Note that the DialogModel desribed
+         * showBlockingMessage method. Note that the DialogModel described
          * here is shared with the Notifications framework.
          * @see NotificationService
          *
@@ -200,6 +200,9 @@ define(
          * shown above a progress bar to indicate what's happening.
          * @property {number} progress a percentage value (1-100)
          * indicating the completion of the blocking task
+         * @property {boolean} delay adds a brief delay before loading
+         * the dialog. Useful for removing the dialog flicker when the
+         * conditions for displaying the dialog change rapidly.
          * @property {string} progressText the message to show below a
          * progress bar to indicate progress. For example, this might be
          * used to indicate time remaining, or items still to process.
