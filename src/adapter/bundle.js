@@ -74,7 +74,7 @@ define([
                     type: "decorator",
                     provides: "actionService",
                     implementation: ActionDialogDecorator,
-                    depends: ["openmct", "newViews[]"]
+                    depends: ["openmct"]
                 }
             ],
             policies: [
