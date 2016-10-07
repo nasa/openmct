@@ -116,7 +116,7 @@ define(
          * @returns {number} size of the active transaction
          */
         TransactionService.prototype.size = function () {
-            return this.isActive() ? this.activeTransaction.size() : 0;
+            return this.isActive() ? this.activeTransaction().size() : 0;
         };
 
         return TransactionService;
