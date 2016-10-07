@@ -22,9 +22,16 @@
 
 define(
     [
+        "zepto",
         "../../src/controllers/MCTTableController"
     ],
-    function (MCTTableController) {
+    function ($, MCTTableController) {
+
+        var MOCK_ELEMENT_TEMPLATE =
+            '<div><div class="l-view-section scrolling">' +
+                '<table class="sizing-table"><tbody></tbody></table>' +
+                '<table class="mct-table"><thead></thead></table>' +
+            '</div></div>';
 
         describe('The MCTTable Controller', function () {
 
@@ -55,19 +62,7 @@ define(
                     watches[event] = callback;
                 });
 
-                mockElement = jasmine.createSpyObj('element', [
-                    'find',
-                    'prop',
-                    'on'
-                ]);
-                mockElement.find.andReturn(mockElement);
-                mockElement.prop.andReturn(0);
-                mockElement[0] = {
-                    scrollTop: 0,
-                    scrollHeight: 500,
-                    offsetHeight: 1000
-                };
-
+                mockElement = $(MOCK_ELEMENT_TEMPLATE);
                 mockExportService = jasmine.createSpyObj('exportService', [
                     'exportCSV'
                 ]);
