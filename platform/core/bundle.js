@@ -254,18 +254,26 @@ define([
                             "pattern": "\\S+",
                             "required": true,
                             "cssclass": "l-input-lg"
+                        },
+                        {
+                            "name": "Notes",
+                            "key": "notes",
+                            "property": "notes",
+                            "control": "textarea",
+                            "required": false,
+                            "cssclass": "l-textarea-sm"
                         }
                     ]
                 },
                 {
                     "key": "root",
                     "name": "Root",
-                    "glyph": "\u0046"
+                    "cssclass": "icon-folder"
                 },
                 {
                     "key": "folder",
                     "name": "Folder",
-                    "glyph": "\u0046",
+                    "cssclass": "icon-folder",
                     "features": "creation",
                     "description": "Create folders to organize other objects or links to objects.",
                     "priority": 1000,
@@ -276,11 +284,11 @@ define([
                 {
                     "key": "unknown",
                     "name": "Unknown Type",
-                    "glyph": "\u003f"
+                    "cssclass": "icon-object-unknown"
                 },
                 {
                     "name": "Unknown Type",
-                    "glyph": "\u003f"
+                    "cssclass": "icon-object-unknown"
                 }
             ],
             "capabilities": [

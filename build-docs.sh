@@ -32,7 +32,7 @@ WEBSITE_DIRECTORY="website"
 BUILD_SHA=`git rev-parse HEAD`
 
 # A remote will be created for the git repository we are pushing to.
-# Don't worry, as this entire directory will get trashed inbetween builds.
+# Don't worry, as this entire directory will get trashed in between builds.
 REMOTE_NAME="documentation"
 WEBSITE_BRANCH="master"
 
@@ -45,8 +45,8 @@ npm run docs
 
 echo "git clone $REPOSITORY_URL website"
 git clone $REPOSITORY_URL website || exit 1
-echo "cp -r $OUTPUT_DIRECTORY $WEBSITE_DIRECTORY/docs"
-cp -r $OUTPUT_DIRECTORY $WEBSITE_DIRECTORY/docs
+echo "cp -r $OUTPUT_DIRECTORY $WEBSITE_DIRECTORY"
+cp -r $OUTPUT_DIRECTORY $WEBSITE_DIRECTORY
 echo "cd $WEBSITE_DIRECTORY"
 cd $WEBSITE_DIRECTORY || exit 1
 

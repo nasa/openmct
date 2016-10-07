@@ -27,7 +27,7 @@ define(
         /**
          * A CouchDocument describes domain object model in a format
          * which is easily read-written to CouchDB. This includes
-         * Couch's _id and _rev fields, as well as a sseparate
+         * Couch's _id and _rev fields, as well as a separate
          * metadata field which contains a subset of information found
          * in the model itself (to support search optimization with
          * CouchDB views.)
@@ -37,7 +37,7 @@ define(
          * @param {object} model the model to store
          * @param {string} rev the revision to include (or undefined,
          *        if no revision should be noted for couch)
-         * @param {boolean} whether or not to mark this documnet as
+         * @param {boolean} whether or not to mark this document as
          *        deleted (see CouchDB docs for _deleted)
          */
         function CouchDocument(id, model, rev, markDeleted) {

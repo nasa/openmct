@@ -1,6 +1,6 @@
 # Overview
 
-The Open MCT platform utilizes the [framework layer](Framework.md)
+The Open MCT platform utilizes the [framework layer](framework.md)
 to provide an extensible baseline for applications which includes:
 
 * A common user interface (and user interface paradigm) for dealing with
@@ -38,7 +38,7 @@ in __any of these tiers__.
   are initiated from here and invoke behavior in the presentation layer. HTML 
   templates are written in Angular’s template syntax; see the [Angular documentation on templates](https://docs.angularjs.org/guide/templates)​. 
   These describe the page as actually seen by the user. Conceptually, 
-  stylesheets (controlling the look­and­feel of the rendered templates) belong 
+  stylesheets (controlling the look-and-feel of the rendered templates) belong 
   in this grouping as well. 
 * [_Presentation layer_](#presentation-layer): The presentation layer
   is responsible for updating (and providing information to update)
@@ -48,7 +48,7 @@ in __any of these tiers__.
   display.
 * [_Information model_](#information-model): ​Provides a common (within Open MCT 
   Web) set of interfaces for dealing with “things” ­ domain objects ­ within the 
-  system. User­facing concerns in a Open MCT Web application are expressed as 
+  system. User-facing concerns in a Open MCT Web application are expressed as 
   domain objects; examples include folders (used to organize other domain 
   objects), layouts (used to build displays), or telemetry points (used as 
   handles for streams of remote measurements.) These domain objects expose a 
@@ -616,7 +616,7 @@ follows:
   part of an action's extension definition.
 * `CreateActionProvider` provides the various Create actions which
   populate the Create menu. These are driven by the available types,
-  so do not map easily ot extension category `actions`; instead, these
+  so do not map easily to extension category `actions`; instead, these
   are generated after looking up which actions are available from the
   [`TypeService`](#type-service).
 * `ActionAggregator` merges together actions from multiple providers.

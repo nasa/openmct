@@ -63,6 +63,8 @@ define(
          */
         function PlotController(
             $scope,
+            $element,
+            exportImageService,
             telemetryFormatter,
             telemetryHandler,
             throttle,
@@ -246,6 +248,8 @@ define(
             });
 
             self.pending = true;
+            self.$element = $element;
+            self.exportImageService = exportImageService;
 
             // Initialize axes; will get repopulated when telemetry
             // metadata becomes available.
@@ -313,7 +317,7 @@ define(
 
         /**
          * Get the current mode that is applicable to this plot. This
-         * will include key, name, and glyph fields.
+         * will include key, name, and cssclass fields.
          */
         PlotController.prototype.getMode = function () {
             return this.modeOptions.getMode();
@@ -362,6 +366,28 @@ define(
             // Placeholder; this should reflect request state
             // when requesting historical telemetry
             return this.pending;
+        };
+
+        /**
+         * Export the plot to PNG
+         */
+        PlotController.prototype.exportPNG = function () {
+            var self = this;
+            self.hideExportButtons = true;
+            self.exportImageService.exportPNG(self.$element[0], "plot.png").finally(function () {
+                self.hideExportButtons = false;
+            });
+        };
+
+        /**
+         * Export the plot to JPG
+         */
+        PlotController.prototype.exportJPG = function () {
+            var self = this;
+            self.hideExportButtons = true;
+            self.exportImageService.exportJPG(self.$element[0], "plot.jpg").finally(function () {
+                self.hideExportButtons = false;
+            });
         };
 
         return PlotController;

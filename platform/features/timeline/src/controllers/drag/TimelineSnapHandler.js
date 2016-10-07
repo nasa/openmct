@@ -41,7 +41,7 @@ define(
                     ids,
                     candidates;
 
-                // Filter an id for inclustion
+                // Filter an id for inclusion
                 function include(id) {
                     return id !== exclude;
                 }

@@ -46,12 +46,12 @@ define(
         };
 
         FullscreenAction.prototype.getMetadata = function () {
-            // We override getMetadata, because the glyph and
+            // We override getMetadata, because the icon cssclass and
             // description need to be determined at run-time
             // based on whether or not we are currently
             // full screen.
             var metadata = Object.create(FullscreenAction);
-            metadata.glyph = screenfull.isFullscreen ? "_" : "z";
+            metadata.cssclass = screenfull.isFullscreen ? "icon-fullscreen-expand" : "icon-fullscreen-collapse";
             metadata.description = screenfull.isFullscreen ?
                 EXIT_FULLSCREEN : ENTER_FULLSCREEN;
             metadata.group = "windowing";

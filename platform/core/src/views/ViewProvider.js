@@ -61,7 +61,7 @@ define(
          *   domain object's whose `type` capability matches or inherits
          *   from that type.
          *
-         * Views themselves are primarily metadata, such as name, glyph, and
+         * Views themselves are primarily metadata, such as name, icon and
          * description (to be shown in the UI); they do not contain any
          * information directly applicable to rendering to the DOM, although
          * they do contain sufficient information (such as a `templateUrl`,

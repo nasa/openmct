@@ -63,7 +63,7 @@ define(
 
                 // Prepare the structure for the button itself
                 self.buttonStructure = {};
-                self.buttonStructure.glyph = structure.glyph;
+                self.buttonStructure.cssclass = structure.cssclass;
                 self.buttonStructure.name = structure.name;
                 self.buttonStructure.description = structure.description;
                 self.buttonStructure.click = showDialog;

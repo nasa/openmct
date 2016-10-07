@@ -35,7 +35,7 @@ define(
             beforeEach(function () {
                 mockIndicator = jasmine.createSpyObj(
                     "indicator",
-                    ["getGlyph", "getText"]
+                    ["getGlyph", "getCssClass", "getText"]
                 );
 
                 testIndicatorA = {};

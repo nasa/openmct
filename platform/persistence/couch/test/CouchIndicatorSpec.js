@@ -57,7 +57,7 @@ define(
             });
 
             it("has a database icon", function () {
-                expect(indicator.getGlyph()).toEqual("D");
+                expect(indicator.getCssClass()).toEqual("icon-database");
             });
 
             it("consults the database at the configured path", function () {
@@ -69,7 +69,7 @@ define(
                     initialDescrption = indicator.getDescription(),
                     initialGlyphClass = indicator.getGlyphClass();
 
-                // Nominal just means getting back an objeect, without
+                // Nominal just means getting back an object, without
                 // an error field.
                 mockPromise.then.mostRecentCall.args[0]({ data: {} });
 
@@ -88,7 +88,7 @@ define(
                     initialDescrption = indicator.getDescription(),
                     initialGlyphClass = indicator.getGlyphClass();
 
-                // Nominal just means getting back an objeect, with
+                // Nominal just means getting back an object, with
                 // an error field.
                 mockPromise.then.mostRecentCall.args[0](
                     { data: { error: "Uh oh." } }
@@ -110,7 +110,7 @@ define(
                     initialDescrption = indicator.getDescription(),
                     initialGlyphClass = indicator.getGlyphClass();
 
-                // Nominal just means getting back an objeect, without
+                // Nominal just means getting back an object, without
                 // an error field.
                 mockPromise.then.mostRecentCall.args[1]({ data: {} });
 

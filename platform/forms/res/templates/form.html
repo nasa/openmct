@@ -19,39 +19,39 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<form name="mctForm" novalidate class="form">
-    <span ng-repeat="section in structure.sections">
-        <div class="section-header" ng-if="section.name">
+<form name="mctForm" novalidate class="form l-flex-col">
+    <span ng-repeat="section in structure.sections"
+          class="l-form-section l-flex-col flex-elem {{ section.cssclass }}">
+        <div class="section-header flex-elem" ng-if="section.name">
             {{section.name}}
         </div>
-        <div class="form-section" ng-class="{ first:$index < 1 }">
-            <ng-form name="mctFormInner" ng-repeat="row in section.rows">
-                <div class="form-row validates l-flex-row"
-                     ng-class="{
-                               req: row.required,
-                               valid: mctFormInner.$dirty && mctFormInner.$valid,
-                               invalid: mctFormInner.$dirty && !mctFormInner.$valid,
-                               first: $index < 1,
-                               'l-controls-first': row.layout === 'control-first',
-                               'l-controls-under': row.layout === 'controls-under'
-                               }">
-                    <div class='label flex-elem' title="{{row.description}}">
-                        {{row.name}}
-                    </div>
-                    <div class='controls flex-elem'>
-                        <div class="wrapper" ng-if="row.control">
-                            <mct-control key="row.control"
-                                         ng-model="ngModel"
-                                         ng-required="row.required"
-                                         ng-pattern="getRegExp(row.pattern)"
-                                         options="row.options"
-                                         structure="row"
-                                         field="row.key">
-                            </mct-control>
-                        </div>
-                    </div>
+        <ng-form class="form-row validates l-flex-row flex-elem {{ section.cssclass }}"
+                 ng-class="{
+                 first:$index < 1,
+                 req: row.required,
+                 valid: mctFormInner.$dirty && mctFormInner.$valid,
+                 invalid: mctFormInner.$dirty && !mctFormInner.$valid,
+                 first: $index < 1,
+                'l-controls-first': row.layout === 'control-first',
+                'l-controls-under': row.layout === 'controls-under'
+                 }"
+                 name="mctFormInner"
+                 ng-repeat="row in section.rows">
+            <div class='label flex-elem' title="{{row.description}}">
+                {{row.name}}
+            </div>
+            <div class='controls flex-elem'>
+                <div class="wrapper" ng-if="row.control">
+                    <mct-control key="row.control"
+                                 ng-model="ngModel"
+                                 ng-required="row.required"
+                                 ng-pattern="getRegExp(row.pattern)"
+                                 options="row.options"
+                                 structure="row"
+                                 field="row.key">
+                    </mct-control>
                 </div>
-            </ng-form>
-        </div>
+            </div>
+        </ng-form>
     </span>
 </form>

@@ -20,11 +20,8 @@
  at runtime from the About dialog for additional information.
 -->
 
-<!-- Back Arrow Icon used on mobile-->
-<a
-   class='type-icon icon ui-symbol s-back'
+<a class='s-icon-button icon-pointer-left'
    ng-show="context.getPath().length > 2"
    ng-click="context.getParent().getCapability('action').perform('navigate')">
-    {
 </a>
 

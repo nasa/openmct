@@ -29,8 +29,7 @@
 define({
     BUBBLE_TEMPLATE: "<mct-container key=\"bubble\" " +
                 "bubble-title=\"{{bubbleTitle}}\" " +
-                "bubble-layout=\"{{bubbleLayout}}\" " +
-                "class=\"bubble-container\">" +
+                "bubble-layout=\"{{bubbleLayout}}\">" +
                 "<mct-include key=\"bubbleTemplate\" " +
                 "ng-model=\"bubbleModel\">" +
                 "</mct-include>" +

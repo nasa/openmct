@@ -259,7 +259,7 @@ define([
                     "implementation": ClickAwayController,
                     "depends": [
                         "$document",
-                        "$scope"
+                        "$timeout"
                     ]
                 },
                 {
@@ -381,7 +381,7 @@ define([
                 {
                     "key": "mctTree",
                     "implementation": MCTTree,
-                    "depends": ['$parse', 'gestureService']
+                    "depends": ['gestureService']
                 }
             ],
             "constants": [

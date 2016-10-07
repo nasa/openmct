@@ -19,12 +19,9 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<a class="s-btn"
+<a class="s-button {{structure.cssclass}}"
    ng-class="{ labeled: structure.text }"
    ng-click="structure.click()">
-    <span class="ui-symbol icon">
-        {{structure.glyph}}
-    </span>
     <span class="title-label" ng-if="structure.text">
         {{structure.text}}
     </span>

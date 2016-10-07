@@ -21,6 +21,7 @@
  *****************************************************************************/
 @import "effects";
 @import "global";
+@import "glyphs";
 @import "archetypes";
 @import "about";
 @import "text";
@@ -64,6 +65,7 @@
 @import "user-environ/frame";
 @import "user-environ/top-bar";
 @import "user-environ/tool-bar";
+@import "user-environ/selecting";
 
 /********************************* VIEWS */
 @import "fixed-position";

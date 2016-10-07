@@ -30,23 +30,22 @@ define([
         this.gestureService = gestureService;
     }
 
-    function getGlyph(domainObject) {
-        var type = domainObject.getCapability('type');
-        return type.getGlyph();
-    }
-
     function isLink(domainObject) {
         var location = domainObject.getCapability('location');
         return location.isLink();
     }
 
+    function getClass(domainObject) {
+        var type = domainObject.getCapability('type');
+        return type.getCssClass();
+    }
+
     TreeLabelView.prototype.updateView = function (domainObject) {
         var titleEl = this.el.find('.t-title-label'),
-            glyphEl = this.el.find('.t-item-icon-glyph'),
             iconEl = this.el.find('.t-item-icon');
 
         titleEl.text(domainObject ? domainObject.getModel().name : "");
-        glyphEl.text(domainObject ? getGlyph(domainObject) : "");
+        iconEl.addClass(domainObject ? getClass(domainObject) : "");
 
         if (domainObject && isLink(domainObject)) {
             iconEl.addClass('l-icon-link');

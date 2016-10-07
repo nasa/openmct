@@ -241,8 +241,8 @@
 		@include trans-prop-nice-fade(500ms);
 		opacity: 0;
 		height: $timelineTopPaneHeaderH;
-		width: 100px; left: auto;
-		padding: $interiorMargin;
+        left: auto;
+		padding: $interiorMargin $interiorMargin $interiorMargin $interiorMargin * 10;
 		text-align: right;
 		z-index: 10;
 	}
@@ -266,9 +266,6 @@
 				width: $timelineColIconW;
                 text-align: center;
                 padding: 0;
-				.ui-symbol {
-					color: $colorKey;
-				}
 			}
 
 			&.l-plot-resource {

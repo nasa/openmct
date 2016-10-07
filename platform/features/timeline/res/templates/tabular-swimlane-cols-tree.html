@@ -31,20 +31,17 @@
         <span class="l-col l-col-icon l-plot-resource"
               ng-click="ngModel.toggleGraph(); parameters.commit()"
               title="Click to enable or disable inclusion in Resource Graphing">
-            <span class="ui-symbol"
-                  ng-show="ngModel.graph()"
-                  >
-                &#x00e9;
+            <span class="icon-plot-resource s-toggle-icon"
+                  ng-class="{ active: ngModel.graph() }">
             </span>
         </span>
         <span class="l-col l-col-icon l-link">
-            <a class="ui-symbol"
+            <a class="icon-chain-links"
                target="_blank"
                ng-href="{{ngModel.link()}}"
                ng-if="ngModel.link().length > 0"
                title="{{ngModel.link()}}"
                >
-                &#x00e8;
             </a>
         </span>
         <span class="l-col l-title"

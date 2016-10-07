@@ -22,21 +22,24 @@
 $baseRatio: 1.5;
 $pad: $interiorMargin * $baseRatio;
 
-.s-btn,
-.s-icon-btn {
+.s-button,
+button {
     @include user-select(none);
+    @include btnSubtle($bg: $colorBtnBg, $bgHov: $colorBtnBgHov, $fg: $colorBtnFg, $ic: $colorBtnIcon);
+    box-sizing: border-box;
     cursor: pointer;
+    display: inline-block;
+    font-size: 0.7rem;
     text-decoration: none;
     height: $btnStdH;
     line-height: $btnStdH;
-}
-
-.s-btn {
-    box-sizing: border-box;
     padding: 0 $pad;
-    font-size: 0.7rem;
     vertical-align: top;
-    @include btnSubtle($colorBtnBg, $colorBtnBgHov, $colorBtnFg, $colorBtnIcon);
+
+    &.labeled:before {
+        // Icon when it's included
+        margin-right: $interiorMarginSm;
+    }
 
 	&.lg {
 		font-size: 1rem;
@@ -50,58 +53,20 @@ $pad: $interiorMargin * $baseRatio;
         padding: 0 ($pad / $baseRatio) / 2;
     }
 
-    &.major,
-    &.key-edit,
-    &.key-properties {
-        $bg: $colorBtnMajorBg;
-        $hc: lighten($bg, 10%);
-        @include btnSubtle($bg, $hc, $colorBtnMajorFg, $colorBtnMajorFg);
+    &.major {
+        @include btnSubtle($bg: $colorBtnMajorBg, $bgHov: $colorBtnMajorBgHov, $fg: $colorBtnMajorFg, $fgHov: $colorBtnMajorFgHov, $ic: $colorBtnMajorFg, $icHov: $colorBtnMajorFgHov);
     }
 
-    &.t-save:before {
-        content:'\e612';
-        font-family: symbolsfont;
-        margin-right: $interiorMarginSm;
-    }
-    &.t-save-as:before {
-        content:'\e612';
-        font-family: symbolsfont;
-        margin-right: $interiorMarginSm;
-    }
-    &.t-cancel {
-        .title-label { display: none; }
-        &:before {
-            content:'\78';
-            font-family: symbolsfont;
-        }
+    &.no-label {
+        .label, .title-label { display: none; }
     }
 
     &.pause-play {
-        .icon:before {
-            content: "\0000F1";
-        }
+        @extend .icon-pause;
         &.paused {
-            @include btnSubtle($colorPausedBg, pushBack($colorPausedBg, 10%), $colorPausedFg, $colorPausedFg);
-            .icon {
-                @include pulse($dur: 1000ms);
-                :before {
-                    content: "\0000EF";
-                }
-            }
-        }
-    }
-
-    &.show-thumbs {
-        .icon:before {
-            content: "\000039";
-        }
-    }
-
-    &.t-export {
-        &:before {
-            @extend .ui-symbol;
-            @extend .icon;
-            content: '\e623';
+            @include btnSubtle($bg: $colorPausedBg, $bgHov: pushBack($colorPausedBg, 10%), $fg: $colorPausedFg, $ic: $colorPausedFg);
+            @extend .icon-play;
+            &:before { @include pulse($dur: 1000ms); }
         }
     }
 
@@ -114,166 +79,59 @@ $pad: $interiorMargin * $baseRatio;
     }
 }
 
-.s-icon-btn {
-    @extend .ui-symbol;
-    // Color and styling additionally in _controls.scss
-}
-
-body.desktop .mini-tab {
-    // Meant to be used as pane hide/show control elements in concert with mct-splitter
-    $iconH: $uePaneMiniTabH;
-    $iconW: $uePaneMiniTabW;
-    $iconInnerLR: 0;
-    $arwD: 9px;
-    $arwOffsetX: 0px;
-    $arwAnimOffsetX: 2px + $iconInnerLR;
-    $cBg: pullForward($colorBodyBg, 15%);
-    $cFg: $cBg;
-
-
-    border-radius: $basicCr;
-    //@include boxShdw($shdwBtns);
-    box-sizing: border-box;
-    @include trans-prop-nice((color, background-color), 100ms);
-    color: $cFg;
-    cursor: pointer;
-    font-family: symbolsfont;
-    font-size: $arwD;
-    display: block;
-    position: absolute;
-    line-height: $iconH;
-    height: $iconH; width: $iconW;
-    text-align: center;
-
-    &.collapsed {
-        // State when the pane this element controls has been collapsed
-        @include btnSubtle($colorBtnBg, $colorKey, $colorBtnFg, $colorBtnIcon);
-        &:before { opacity: 0; }
-        &:after { opacity: 1; }
-        &:hover {
-            &:before { opacity: 1; }
-            &:after { opacity: 0; }
-        }
-
-    }
-
-    &:before,
-    &:after {
-        @include trans-prop-nice((left, right, opacity), 250ms);
-        display: block;
-        height: 100%;
-        position: absolute;
-    }
-
-    &:before {
-        // Always the arrow icon
-        width: $arwD;
-    }
-    &:after {
-        // Always icon; content is set in _layout.scss
-        width: 100%;
-        text-align: center;
-        opacity: 0;
-    }
-
-    &.anchor-left {
-        // |<
-        text-align: right;
-        &:before {
-            content:'\3c'; // Collapse left icon e613
-            right: $iconInnerLR;
-        }
-        &.collapsed {
-            @include border-left-radius(0);
-            text-align: left;
-            &:before {
-                content:'\3e';
-                left: $iconInnerLR;
-            }
-            &:hover:before { left: $arwAnimOffsetX; }
-        }
-    }
-    &.anchor-right {
-        // >|
-        text-align: left;
-        &:before {
-            content:'\3e'; // Collapse right icon e614
-            left: $iconInnerLR;
-        }
-        &.collapsed {
-            @include border-right-radius(0);
-            &:before {
-                text-align: right;
-                content:'\3c';
-                right: $iconInnerLR;
-            }
-            &:hover:before { right: $arwAnimOffsetX; }
-        }
-    }
-}
-
 body.desktop .mini-tab-icon {
     // Meant to be used as pane hide/show control elements in concert with mct-splitter
-    $d: $uePaneMiniTabW;
-    color: pullForward($colorBodyBg, 15%);
+    // Font glyphs set in _layout.scss
+    background-color: $colorMiniTabBg;
+    color: $colorMiniTabFg;
     cursor: pointer;
     display: block;
-    font-family: symbolsfont;
-    font-size: $d;
+    font-family: 'symbolsfont';
+    font-size: $uePaneMiniTabFontSize;
     position: absolute;
-    height: $d; width: $d;
-    line-height: $d;
+    height: $uePaneMiniTabH; width: $uePaneMiniTabW;
+    line-height: $uePaneMiniTabH;
     overflow: hidden;
-    word-break: break-all;
-
-    &.collapsed {
-        $d: $uePaneMiniTabCollapsedW;
-        width: $d; font-size: $d;
-    }
-
-    &:before,
-    &:after {
-        position: absolute;
-        display: inherit;
-    }
+    text-align: center;
 
     &:before {
-        content: '\78'; // X icon
+        display: inline-block;
     }
 
     &:hover {
-        color: $colorKey;
+        background-color: $colorMiniTabBgHov;
+        color: $colorMiniTabFgHov;
     }
 }
 
 .l-btn-set {
     // Buttons that have a very tight conceptual grouping - no internal space between them.
-    // Structure: .btn-set > mct-representation class=first|last > .s-btn
-    font-size: 0; // Remove space between s-btn elements due to white space in markup
+    // Structure: .btn-set > mct-representation class=first|last > .s-button
+    font-size: 0; // Remove space between s-button elements due to white space in markup
 
-    .s-btn {
+    .s-button {
         border-radius: 0;
         margin-left: 1px;
     }
 
     .first {
-        .s-btn,
-        &.s-btn {
+        .s-button,
+        &.s-button {
             @include border-left-radius($controlCr);
             margin-left: 0;
         }
     }
 
     .last {
-        .s-btn,
-        &.s-btn {
+        .s-button,
+        &.s-button {
             @include border-right-radius($controlCr);
         }
     }
 }
 
 .paused {
-    &:not(.s-btn) {
+    &:not(.s-button) {
         border-color: $colorPausedBg !important;
         color: $colorPausedBg !important;
     }

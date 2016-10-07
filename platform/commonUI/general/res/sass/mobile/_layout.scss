@@ -37,7 +37,7 @@ body.mobile {
         }
     }
 
-    .create-btn-holder {
+    .create-button-holder {
         // Hide the create button by default in mobile;
         // This can be overridden by the examples/mobile bundle
         display: none;
@@ -88,10 +88,7 @@ body.mobile {
         position: absolute;
         top: $bodyMargin + 2;
         left: $bodyMargin;
-        &:after {
-            content:'m' !important;
-            font-family: symbolsfont;
-        }
+        @extend .icon-menu-hamburger;
     }
 
     .object-browse-bar {

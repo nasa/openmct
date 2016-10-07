@@ -25,11 +25,21 @@
 
 .form {
 	color: $colorFormText;
+    height: 100%;
     width: 100%;
-	.form-section {
-		position: relative;
-		margin-bottom: $interiorMarginLg * 2;
-	}
+
+    .l-form-section {
+        position: relative;
+        &.grows {
+            .l-section-body,
+            .form-row {
+                @include flex(1 1 auto);
+                .wrapper {
+                    height: 100%;
+                }
+            }
+        }
+    }
 
     .section-header {
         border-radius: $basicCr;
@@ -43,10 +53,14 @@
 	.form-row {
 		$m: $interiorMargin;
 		box-sizing: border-box;
-		@include clearfix;
 		border-top: 1px solid $colorFormLines;
+        margin-bottom: $interiorMarginLg * 2;
 		padding: $formTBPad 0;
 		position: relative;
+        //&ng-form {
+        //    display: block;
+        //}
+
 		&.first {
 			border-top: none;
 		}
@@ -92,17 +106,14 @@
 		.selector-list {
 			// Used in create overlay to display tree view
 			@include nice-input();
-			$h: 150px;
+            padding: $interiorMargin;
 			position: relative;
-			height: $h;
+            min-height: 150px;
+			height: 100%;
 			>.wrapper {
 				$p: $interiorMargin;
+                box-sizing: border-box;
 				overflow: auto;
-				position: absolute;
-				top: $p;
-				right: $p;
-				bottom: $p;
-				left: $p;
 			}
 		}
 	}
@@ -136,18 +147,13 @@
     }
 }
 
-.no-validate {
-    .form .form-row >.label {
-        padding-right: 0;
-        &:after {
-            display: none;
-        }
-    }
-}
-
 .hint,
 .s-hint {
 	font-size: 0.9em;
+    .req {
+        color: $colorFormRequired;
+        font-size: 0.7rem;
+    }
 }
 
 .l-result {

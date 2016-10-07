@@ -56,7 +56,7 @@ define(
                 );
                 mockEditorCapability = jasmine.createSpyObj(
                     "editor",
-                    ["save", "cancel", "isEditContextRoot"]
+                    ["save", "isEditContextRoot"]
                 );
                 mockActionCapability = jasmine.createSpyObj(
                     "actionCapability",
@@ -103,12 +103,6 @@ define(
                 function () {
                     action.perform();
                     expect(mockEditorCapability.save).toHaveBeenCalled();
-                });
-
-            it("navigates to the object after saving",
-                function () {
-                    action.perform();
-                    expect(mockActionCapability.perform).toHaveBeenCalledWith("navigate");
                 });
 
             describe("a blocking dialog", function () {

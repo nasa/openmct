@@ -31,7 +31,7 @@
                 <div class="abs holder l-flex-col holder-treeview-elements">
                     <mct-representation key="'create-button'"
                                         mct-object="navigatedObject"
-                                        class="holder flex-elem create-btn-holder">
+                                        class="holder flex-elem create-button-holder">
                     </mct-representation>
                     <mct-include key="'search'"
                                  ng-model="treeModel"
@@ -66,6 +66,10 @@
                                                 key="'view-object'"
                                                 class="abs holder holder-object">
                             </mct-representation>
+                            <a class="mini-tab-icon anchor-right mobile-hide toggle-pane toggle-inspect flush-right"
+                               title="{{ modelPaneInspect.visible()? 'Hide' : 'Show' }} the Inspection pane"
+                               ng-click="modelPaneInspect.toggle()"
+                               ng-class="{ collapsed : !modelPaneInspect.visible() }"></a>
                         </div>
 
                         <mct-splitter class="splitter-inspect mobile-hide flush-right edge-shdw"></mct-splitter>
@@ -75,10 +79,6 @@
                                                 mct-object="navigatedObject"
                                                 ng-model="treeModel">
                             </mct-representation>
-                            <a class="mini-tab-icon anchor-right mobile-hide toggle-pane toggle-inspect"
-                               title="{{ modelPaneInspect.visible()? 'Hide' : 'Show' }} the Inspection pane"
-                               ng-click="modelPaneInspect.toggle()"
-                               ng-class="{ collapsed : !modelPaneInspect.visible() }"></a>
                         </div>
                     </mct-split-pane>
                 </div>

@@ -121,17 +121,16 @@
 .l-flex-row {
     @include flex-direction(row);
     &.flex-elem { @include flex(1 1 auto); }
-    .flex-elem {
-        height: inherit;
-        line-height: inherit;
+    > .flex-elem {
         min-width: 0;
+        &.holder:not(:last-child) { margin-right: $interiorMargin; }
     }
     .flex-container { @include flex-direction(row); }
 }
 
 .l-flex-col {
     @include flex-direction(column);
-    .flex-elem {
+    > .flex-elem {
         min-height: 0;
         &.holder:not(:last-child) { margin-bottom: $interiorMarginLg; }
     }

@@ -90,7 +90,9 @@ define(
             // Ensure there is always a "save in" section
             if (includeLocation) {
                 sections.push({
-                    name: 'Location', rows: [{
+                    name: 'Location',
+                    cssclass: "grows",
+                    rows: [{
                         name: "Save In",
                         control: "locator",
                         validate: validateLocation,

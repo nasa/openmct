@@ -26,7 +26,7 @@ define(
 
         /**
          * Control for Gantt bars in a timeline view.
-         * Primarily reesponsible for supporting the positioning of Gantt
+         * Primarily responsible for supporting the positioning of Gantt
          * bars; particularly, this ensures that the left and right edges
          * never go to far off screen, because in some environments this
          * will effect rendering performance without visible results.

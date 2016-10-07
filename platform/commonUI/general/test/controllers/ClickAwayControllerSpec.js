@@ -26,7 +26,7 @@ define(
 
         describe("The click-away controller", function () {
             var mockDocument,
-                mockScope,
+                mockTimeout,
                 controller;
 
             beforeEach(function () {
@@ -34,11 +34,10 @@ define(
                     "$document",
                     ["on", "off"]
                 );
-                mockScope = jasmine.createSpyObj('$scope', ['$apply']);
-
+                mockTimeout = jasmine.createSpy('timeout');
                 controller = new ClickAwayController(
                     mockDocument,
-                    mockScope
+                    mockTimeout
                 );
             });
 
@@ -61,7 +60,7 @@ define(
                 expect(controller.isActive()).toBe(false);
             });
 
-            it("allows active state to be explictly specified", function () {
+            it("allows active state to be explicitly specified", function () {
                 controller.setState(true);
                 expect(controller.isActive()).toBe(true);
                 controller.setState(true);
@@ -78,15 +77,18 @@ define(
             });
 
             it("deactivates and detaches listener on document click", function () {
-                var callback, apply;
+                var callback, timeout;
                 controller.setState(true);
                 callback = mockDocument.on.mostRecentCall.args[1];
                 callback();
-                apply = mockScope.$apply.mostRecentCall.args[0];
-                apply();
+                timeout = mockTimeout.mostRecentCall.args[0];
+                timeout();
                 expect(controller.isActive()).toEqual(false);
                 expect(mockDocument.off).toHaveBeenCalledWith("mouseup", callback);
             });
+
+
+
         });
     }
 );

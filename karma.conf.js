@@ -81,7 +81,7 @@ module.exports = function(config) {
         coverageReporter: {
             dir: process.env.CIRCLE_ARTIFACTS ?
                 process.env.CIRCLE_ARTIFACTS + '/coverage' :
-                "dist/coverage",
+                "dist/reports/coverage",
             check: {
                 global: {
                     lines: 80
@@ -91,13 +91,13 @@ module.exports = function(config) {
 
         // HTML test reporting.
         htmlReporter: {
-            outputDir: "target/tests",
+            outputDir: "dist/reports/tests",
             preserveDescribeNesting: true,
             foldAll: false
         },
 
         junitReporter: {
-            outputDir: process.env.CIRCLE_TEST_REPORTS || 'target/junit'
+            outputDir: process.env.CIRCLE_TEST_REPORTS || 'dist/reports/junit'
         },
 
         // Continuous Integration mode.

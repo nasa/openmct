@@ -140,7 +140,7 @@ define(
                     var timespan = timespans[toId(id)];
                     // Use as setter if argument is present
                     if ((typeof value === 'number') && timespan) {
-                        // Set the end (ensuring it doesn't preceed start)
+                        // Set the end (ensuring it doesn't precede start)
                         timespan.setEnd(
                             Math.max(value, timespan.getStart())
                         );

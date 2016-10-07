@@ -23,14 +23,14 @@
 <div class='item grid-item' ng-click='action.perform("navigate")'>
     <div class='contents abs'>
         <div class='top-bar bar abs'>
-            <div class='ui-symbol profile' title='Shared'>&#x4f;</div>
+            <span class='icon-people' title='Shared'></span>
             <mct-representation class="desktop-hide" key="'info-button'" mct-object="domainObject"></mct-representation>
         </div>
         <div class='item-main abs lg'>
             <span class="t-item-icon" ng-class="{ 'l-icon-link':location.isLink() }">
-                <span class="t-item-icon-glyph ng-binding">{{type.getGlyph()}}</span>
+                <span class="t-item-icon-glyph ng-binding {{type.getCssClass()}}"></span>
             </span>
-            <div class='ui-symbol abs item-open'>}</div>
+            <div class='abs item-open icon-pointer-right'></div>
         </div>
         <div class='bottom-bar bar abs'>
             <div class='title'>{{model.name}}</div>

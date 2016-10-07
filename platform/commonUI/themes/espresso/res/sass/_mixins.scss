@@ -1,13 +1,7 @@
-@mixin containerSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $hover: false) {
+@mixin containerSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $gradRatio: 5%) {
 	@include containerBase($bg, $fg);
-	@include background-image(linear-gradient(lighten($bg, 5%), $bg));
+	@include background-image(linear-gradient(pullForward($bg, $gradRatio), $bg));
 	@include boxShdw($shdwBtns);
-}
-
-@mixin btnSubtle($bg: $colorBodyBg, $bgHovColor: none, $fg: $colorBodyFg, $ic: $colorBtnIcon) {
-	@include containerSubtle($bg, $fg);
-	@include btnBase($bg, $bgHovColor, $fg, $ic);
-	text-shadow: $shdwItemText;
 }
 
 @function pullForward($c: $colorBodyBg, $p: 20%) {

@@ -29,6 +29,18 @@ define([
             mockExpr,
             mctTree;
 
+        function makeMockDomainObject(id) {
+            var mockDomainObject = jasmine.createSpyObj('domainObject-' + id, [
+                'getId',
+                'getModel',
+                'getCapability',
+                'hasCapability'
+            ]);
+            mockDomainObject.getId.andReturn(id);
+            mockDomainObject.getModel.andReturn({});
+            return mockDomainObject;
+        }
+
         beforeEach(function () {
             mockGestureService = jasmine.createSpyObj(
                 'gestureService',
@@ -46,8 +58,8 @@ define([
             expect(mctTree.restrict).toEqual("E");
         });
 
-        it("two-way binds to mctObject", function () {
-            expect(mctTree.scope).toEqual({ mctObject: "=" });
+        it("two-way binds to mctObject and mctModel", function () {
+            expect(mctTree.scope).toEqual({ mctObject: "=", mctModel: "=" });
         });
 
         describe("link", function () {
@@ -56,7 +68,8 @@ define([
                 testAttrs;
 
             beforeEach(function () {
-                mockScope = jasmine.createSpyObj('$scope', ['$watch', '$on']);
+                mockScope =
+                    jasmine.createSpyObj('$scope', ['$watch', '$on', '$apply']);
                 mockElement = jasmine.createSpyObj('element', ['append']);
                 testAttrs = { mctModel: "some-expression" };
                 mockScope.$parent =
@@ -69,8 +82,8 @@ define([
             });
 
             it("watches for mct-model's expression in the parent", function () {
-                expect(mockScope.$parent.$watch).toHaveBeenCalledWith(
-                    testAttrs.mctModel,
+                expect(mockScope.$watch).toHaveBeenCalledWith(
+                    "mctModel",
                     jasmine.any(Function)
                 );
             });
@@ -87,6 +100,27 @@ define([
                     "$destroy",
                     jasmine.any(Function)
                 );
+            });
+
+            // https://github.com/nasa/openmct/issues/1114
+            it("does not trigger $apply during $watches", function () {
+                mockScope.mctObject = makeMockDomainObject('root');
+                mockScope.mctMode = makeMockDomainObject('selection');
+                mockScope.$watch.calls.forEach(function (call) {
+                    call.args[1](mockScope[call.args[0]]);
+                });
+                expect(mockScope.$apply).not.toHaveBeenCalled();
+            });
+            it("does trigger $apply from other value changes", function () {
+                // White-boxy; we know this is the setter for the tree's value
+                var treeValueFn = mockScope.$watch.calls[0].args[1];
+
+                mockScope.mctObject = makeMockDomainObject('root');
+                mockScope.mctMode = makeMockDomainObject('selection');
+
+                treeValueFn(makeMockDomainObject('other'));
+
+                expect(mockScope.$apply).toHaveBeenCalled();
             });
         });
     });

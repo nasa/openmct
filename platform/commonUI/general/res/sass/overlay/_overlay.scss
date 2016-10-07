@@ -19,13 +19,22 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
 .overlay {
     font-size: 90%;
+    &.delayEntry100ms {
+        @include keyframes(fadeInFromNone) {
+            0% { display: none; opacity: 0; }
+            100% { display: block; opacity: 1; }
+        }
+        @include animation-delay($delayEntryMs);
+        @include animation(fadeInFromNone $durEntryMs ease-in);
+    }
     .blocker {
         background: $colorOvrBlocker;
         z-index: 100;
     }
-    .clk-icon.close {
+    .close {
         font-size: 0.8rem;
         position: absolute;
         top: $interiorMarginLg;
@@ -87,7 +96,7 @@
 
     .bottom-bar {
         text-align: right;
-        .s-btn {
+        .s-button {
             $bg: $colorOvrBtnBg;
             &:not(.major) {
                 @include btnSubtle($bg, pullForward($bg, 10%), $colorOvrBtnFg, $colorOvrBtnFg);

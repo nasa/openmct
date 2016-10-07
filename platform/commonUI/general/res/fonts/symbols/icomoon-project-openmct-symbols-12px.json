@@ -1,0 +1,207 @@
+{
+	"metadata": {
+		"name": "openmct-symbols-12px",
+		"lastOpened": 1467322505818,
+		"created": 1467322503679
+	},
+	"iconSets": [
+		{
+			"selection": [
+				{
+					"order": 4,
+					"id": 2,
+					"prevSize": 12,
+					"code": 59671,
+					"name": "icon12-eye-open",
+					"tempChar": ""
+				},
+				{
+					"order": 7,
+					"id": 5,
+					"prevSize": 12,
+					"code": 921607,
+					"name": "icon12-pane-collapse-left",
+					"tempChar": ""
+				},
+				{
+					"order": 8,
+					"id": 4,
+					"prevSize": 12,
+					"code": 921608,
+					"name": "icon12-pane-collapse-right",
+					"tempChar": ""
+				},
+				{
+					"order": 6,
+					"id": 3,
+					"prevSize": 12,
+					"code": 921865,
+					"name": "icon12-folder",
+					"tempChar": ""
+				}
+			],
+			"id": 0,
+			"metadata": {
+				"name": "openmct-symbols-12px",
+				"importSize": {
+					"width": 320,
+					"height": 384
+				},
+				"designer": "Charles Hacskaylo"
+			},
+			"height": 1024,
+			"prevSize": 12,
+			"icons": [
+				{
+					"id": 2,
+					"paths": [
+						"M512 86c-257.92 0-471.28 185.147-506.667 426 35.493 240.853 248.853 426 506.667 426s471.28-185.147 506.667-426c-35.387-240.853-248.747-426-506.667-426zM738.373 685.2c-131.048 109.517-321.699 109.517-452.747 0-53.328-44.749-90.832-105.477-106.96-173.2 16.101-67.707 53.565-128.435 106.853-173.2 131.048-109.517 321.699-109.517 452.747 0 53.368 44.733 90.909 105.464 107.067 173.2-16.128 67.723-53.632 128.451-106.96 173.2z",
+						"M682.667 512c0 94.257-76.41 170.667-170.667 170.667s-170.667-76.41-170.667-170.667c0-94.257 76.41-170.667 170.667-170.667s170.667 76.41 170.667 170.667z"
+					],
+					"attrs": [],
+					"isMulticolor": false,
+					"grid": 0,
+					"tags": [
+						"icon12-eye-open"
+					],
+					"colorPermutations": {
+						"1161751": [
+							{
+								"f": 0
+							},
+							{
+								"f": 0
+							}
+						]
+					}
+				},
+				{
+					"id": 5,
+					"paths": [
+						"M0 0h170.667v1024h-170.667v-1024z",
+						"M853.333 256h-256v-256l-341.333 426.667 341.333 426.667v-256h256v-341.333z"
+					],
+					"attrs": [
+						{
+							"opacity": 1
+						},
+						{
+							"opacity": 1
+						}
+					],
+					"isMulticolor": false,
+					"width": 853,
+					"grid": 0,
+					"tags": [
+						"icon12-pane-collapse-left"
+					],
+					"colorPermutations": {
+						"1161751": [
+							{},
+							{}
+						]
+					}
+				},
+				{
+					"id": 4,
+					"paths": [
+						"M682.667 0h170.667v1024h-170.667v-1024z",
+						"M0 256h256v-256l341.333 426.667-341.333 426.667v-256h-256v-341.333z"
+					],
+					"attrs": [
+						{
+							"opacity": 1
+						},
+						{
+							"opacity": 1
+						}
+					],
+					"isMulticolor": false,
+					"width": 853,
+					"grid": 0,
+					"tags": [
+						"icon12-pane-collapse-right"
+					],
+					"colorPermutations": {
+						"1161751": [
+							{},
+							{}
+						]
+					}
+				},
+				{
+					"id": 3,
+					"paths": [
+						"M938.667 170.667h-341.333l-110.32-110.32c-33.2-33.2-98.667-60.347-145.68-60.347h-256c-47.073 0.136-85.197 38.26-85.333 85.32l-0 341.346c0.136-47.073 38.26-85.197 85.32-85.333l853.346-0c47.073 0.136 85.197 38.26 85.333 85.32l0-170.654c-0.136-47.073-38.26-85.197-85.32-85.333z",
+						"M85.333 426.667h853.333c47.128 0 85.333 38.205 85.333 85.333v426.667c0 47.128-38.205 85.333-85.333 85.333h-853.333c-47.128 0-85.333-38.205-85.333-85.333v-426.667c0-47.128 38.205-85.333 85.333-85.333z"
+					],
+					"attrs": [],
+					"isMulticolor": false,
+					"grid": 0,
+					"tags": [
+						"icon12-folder"
+					],
+					"colorPermutations": {
+						"1161751": [
+							{
+								"f": 0
+							},
+							{
+								"f": 0
+							}
+						]
+					}
+				}
+			],
+			"invisible": false,
+			"colorThemes": [
+				[
+					[
+						0,
+						0,
+						0,
+						1
+					],
+					[
+						0,
+						161,
+						75,
+						1
+					]
+				]
+			],
+			"colorThemeIdx": 0
+		}
+	],
+	"preferences": {
+		"showGlyphs": true,
+		"showCodes": true,
+		"showQuickUse": true,
+		"showQuickUse2": true,
+		"showSVGs": true,
+		"fontPref": {
+			"prefix": "icon-",
+			"metadata": {
+				"fontFamily": "openmct-symbols-12px",
+				"majorVersion": 1,
+				"minorVersion": 0
+			},
+			"metrics": {
+				"emSize": 1024,
+				"baseline": 6.25,
+				"whitespace": 50
+			},
+			"embed": false
+		},
+		"imagePref": {
+			"prefix": "icon-",
+			"png": true,
+			"useClassSelector": true,
+			"color": 0,
+			"bgColor": 16777215
+		},
+		"historySize": 100,
+		"gridSize": 16
+	},
+	"uid": -1
+}

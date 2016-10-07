@@ -81,7 +81,7 @@ define([
                 {
                     "key": "plot",
                     "name": "Example Telemetry Plot",
-                    "glyph": "\u0074",
+                    "cssclass": "icon-telemetry-panel",
                     "description": "For development use. A plot for displaying telemetry.",
                     "priority": 10,
                     "delegates": [
@@ -129,7 +129,7 @@ define([
                         {
                             "name": "Period",
                             "control": "textfield",
-                            "cssclass": "l-small l-numeric",
+                            "cssclass": "l-input-sm l-numeric",
                             "key": "period",
                             "required": true,
                             "property": [

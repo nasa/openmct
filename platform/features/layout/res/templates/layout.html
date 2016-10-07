@@ -33,61 +33,28 @@
         </div>
         <!-- Drag handles -->
         <span ng-show="domainObject.hasCapability('editor')">
-
-            <span
-                class="edit-handle edit-move"
+            <span class="edit-handle edit-move"
                   mct-drag-down="controller.startDrag(childObject.getId(), [1,1], [0,0])"
                   mct-drag="controller.continueDrag(delta)"
                   mct-drag-up="controller.endDrag()">
             </span>
-            <!--
-            <span
-                class="edit-handle edit-resize-w"
-                  mct-drag-down="controller.startDrag(childObject.getId(), [1,0], [-1,0])"
-                  mct-drag="controller.continueDrag(delta)"
-                  mct-drag-up="controller.endDrag()">
-            </span>
-            <span
-                class="edit-handle edit-resize-e"
-                  mct-drag-down="controller.startDrag(childObject.getId(), [0,0], [1,0])"
-                  mct-drag="controller.continueDrag(delta)"
-                  mct-drag-up="controller.endDrag()">
-            </span>
 
-            <span
-                class="edit-handle edit-resize-n"
-                  mct-drag-down="controller.startDrag(childObject.getId(), [0,1], [0,-1])"
-                  mct-drag="controller.continueDrag(delta)"
-                  mct-drag-up="controller.endDrag()">
-            </span>
-            <span
-                class="edit-handle edit-resize-s"
-                  mct-drag-down="controller.startDrag(childObject.getId(), [0,0], [0,1])"
-                  mct-drag="controller.continueDrag(delta)"
-                  mct-drag-up="controller.endDrag()">
-            </span>
-            -->
-
-            <span
-                class="edit-corner edit-resize-nw"
+            <span class="edit-corner edit-resize-nw"
                   mct-drag-down="controller.startDrag(childObject.getId(), [1,1], [-1,-1])"
                   mct-drag="controller.continueDrag(delta)"
                   mct-drag-up="controller.endDrag()">
             </span>
-            <span
-                class="edit-corner edit-resize-ne"
+            <span class="edit-corner edit-resize-ne"
                   mct-drag-down="controller.startDrag(childObject.getId(), [0,1], [1,-1])"
                   mct-drag="controller.continueDrag(delta)"
                   mct-drag-up="controller.endDrag()">
             </span>
-            <span
-                class="edit-corner edit-resize-sw"
+            <span class="edit-corner edit-resize-sw"
                   mct-drag-down="controller.startDrag(childObject.getId(), [1,0], [-1,1])"
                   mct-drag="controller.continueDrag(delta)"
                   mct-drag-up="controller.endDrag()">
             </span>
-            <span
-                class="edit-corner edit-resize-se"
+            <span class="edit-corner edit-resize-se"
                   mct-drag-down="controller.startDrag(childObject.getId(), [0,0], [1,1])"
                   mct-drag="controller.continueDrag(delta)"
                   mct-drag-up="controller.endDrag()">

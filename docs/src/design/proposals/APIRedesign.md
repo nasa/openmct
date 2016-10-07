@@ -98,7 +98,7 @@ Worked on bug fixes in the platform and a plugin for search.
   It is hard to figure out what the difference between the various ways of
   dealing with telemetry are. e.g., what is the difference between just
   "Telemetry" and the "Telemetry Service"? There are many
-  "Telemetry Thing"s which seem related, but in an unclear way.
+  "Telemetry Things" which seem related, but in an unclear way.
 
 ### Developer Intern 2
 
@@ -180,7 +180,7 @@ to develop a tabular visualization plugin.
       * Add a model property to the bundle.json to take in "Hello World"
         as a parameter and pass through to the controller/view
 
-### Open Source Contributer
+### Open Source Contributor
 
  * [Failures are non-graceful when services are missing.](
    https://github.com/nasa/openmctweb/issues/79)
@@ -214,7 +214,7 @@ to an entirely different framework.
 
 We can expect AngularJS 1.x to reach end-of-life reasonably soon thereafter.
 
-Our API is currently a superset of Angular's API, so this directly effects
+Our API is currently a superset of Angular's API, so this directly affects
 our API. Specifically, API changes should be oriented towards removing
 or reducing the Angular dependency.
 
@@ -456,7 +456,7 @@ Instead, propose that:
 For parity with actions, a `View` would be a constructor which
 takes an `ActionContext` as a parameter (with similarly-defined
 properties) and exposes a method to retrieve the HTML elements
-associateed with it.
+associated with it.
 
 The platform would then additionally expose an `AngularView`
 implementation to improve compatibility with existing

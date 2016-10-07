@@ -19,7 +19,7 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<span class='type-icon ui-symbol flex-elem'>{{type.getGlyph()}}</span>
+<span class='type-icon flex-elem {{type.getCssClass()}}'></span>
 <span class="l-elem-wrapper l-flex-row flex-elem grows">
     <span ng-if="parameters.mode" class='action flex-elem'>{{parameters.mode}}</span>
     <span class='title-label flex-elem flex-can-shrink'>{{model.name}}</span>

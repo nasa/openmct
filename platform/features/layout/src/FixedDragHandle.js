@@ -94,7 +94,7 @@ define(
         };
 
         /**
-         * End a drag gesture. This should be callled when a drag
+         * End a drag gesture. This should be called when a drag
          * concludes to trigger commit of changes.
          */
         FixedDragHandle.prototype.endDrag = function () {

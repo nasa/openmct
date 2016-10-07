@@ -25,7 +25,6 @@
 
 @include phone {
     .overlay > .holder {
-        //@include test(orange); // This works!
         $m: 0;
         border-radius: $m;
         top: $m;
@@ -38,36 +37,30 @@
         overflow: auto;
         @include transform(none);
 
-        .editor .form .form-row {
-            > .label,
-            > .controls {
-                //@include test(blue);
-                display: block;
-                float: none;
-                width: 100%;
-            }
-            > .label {
-                &:after {
-                    float: none;
+        .editor .form .form-row.l-flex-row  {
+            // Display elements in a columnar view
+            @include flex-direction(column);
+            > .flex-elem {
+                &:not(:first-child) {
+                    margin-top: $interiorMargin;
+                }
+                &.label {
+                    width: 100%;
+                }
+                &.controls {
+                    overflow: auto;
                 }
             }
-        }
-        
-        .contents {
-            .abs.top-bar,
-            .abs.editor,
-            .abs.message-body,
-            .abs.bottom-bar {
-                //@include test(orange);
-                top: auto; right: auto; bottom: auto; left: auto;
-                height: auto; width: auto;
-                margin-bottom: $interiorMarginLg * 2;
+
+            &.validates > .label:before {
                 position: relative;
+                right: auto;
+                line-height: inherit;
+                margin-right: $interiorMargin;
             }
         }
     }
     .t-dialog-sm .overlay > .holder {
-        //@include test(blue);
         height: auto; max-height: 100%;
     }
 }

@@ -150,7 +150,7 @@ define(
                     it("prompts for location", function () {
                         expect(locationService.getLocationFromUser)
                             .toHaveBeenCalledWith(
-                                "Compose selectedObject to a new location",
+                                "Compose selectedObject To a New Location",
                                 "Compose To",
                                 jasmine.any(Function),
                                 currentParent

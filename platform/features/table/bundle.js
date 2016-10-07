@@ -60,7 +60,7 @@ define([
                 {
                     "key": "table",
                     "name": "Historical Telemetry Table",
-                    "glyph": "\ue604",
+                    "cssclass": "icon-tabular",
                     "description": "A static table of all values over time for all included telemetry elements. Rows are timestamped data values for each telemetry element; columns are data fields. The number of rows is based on the range of your query. New incoming data must be manually re-queried for.",
                     "priority": 861,
                     "features": "creation",
@@ -83,7 +83,7 @@ define([
                 {
                     "key": "rttable",
                     "name": "Real-time Telemetry Table",
-                    "glyph": "\ue620",
+                    "cssclass": "icon-tabular-realtime",
                     "description": "A scrolling table of latest values for all included telemetry elements. Rows are timestamped data values for each telemetry element; columns are data fields. New incoming data is automatically added to the view.",
                     "priority": 860,
                     "features": "creation",
@@ -127,7 +127,7 @@ define([
                 {
                     "name": "Historical Table",
                     "key": "table",
-                    "glyph": "\ue604",
+                    "cssclass": "icon-tabular",
                     "templateUrl": "templates/historical-table.html",
                     "needs": [
                         "telemetry"
@@ -138,7 +138,7 @@ define([
                 {
                     "name": "Real-time Table",
                     "key": "rt-table",
-                    "glyph": "\ue620",
+                    "cssclass": "icon-tabular-realtime",
                     "templateUrl": "templates/rt-table.html",
                     "needs": [
                         "telemetry"

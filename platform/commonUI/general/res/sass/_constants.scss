@@ -43,9 +43,10 @@ $ueColMargin: 1.5%;
 $ueAppLogoW: 80px;
 $ueEditToolBarH: 25px;
 $ueCollapsedPaneEdgeM: 22px;
-$uePaneMiniTabH: $ueTopBarH;
-$uePaneMiniTabW: 10px;
-$uePaneMiniTabCollapsedW: 11px;
+$uePaneMiniTabH: 22px;
+$uePaneMiniTabW: 8px;
+$uePaneMiniTabFontSize: 8px;
+$uePaneMiniTabCollapsedW: 18px;
 $ueEditLeftPaneW: 75%;
 $treeSearchInputBarH: 25px;
 $ueTimeControlH: (33px, 18px, 20px);
@@ -61,6 +62,9 @@ $ueDesktopMinW: 600px;
 $ovrTopBarH: 45px;
 $ovrFooterH: 24px;
 $overlayMargin: 25px;
+/*************** Progress Overlay */
+$durEntryMs: 50ms;
+$delayEntryMs: 100ms;
 /*************** Items */
 $ueBrowseGridItemLg: 200px;
 $ueBrowseGridItemTopBarH: 20px;
@@ -73,7 +77,7 @@ $treeTypeIconHPx: 16px;
 $treeTypeIconW: 18px;
 $treeContextTriggerW: 20px;
 /*************** Tabular */
-$tabularHeaderH: 22px; //18px
+$tabularHeaderH: 22px;
 $tabularTdPadLR: $itemPadLR;
 $tabularTdPadTB: 3px;
 /*************** Imagery */
@@ -107,7 +111,7 @@ $bubbleMaxW: 300px;
 /*************** Forms */
 $reqSymbolW: 15px;
 $reqSymbolM: $interiorMargin * 2;
-$reqSymbolFontSize: 0.7em;
+$reqSymbolFontSize: 0.75em;
 /*************** Wait Spinner Defaults */
 $waitSpinnerD: 32px;
 $waitSpinnerTreeD: 20px;
@@ -125,6 +129,7 @@ $menuLineH: 1.5rem;
 $menuLineHPx: 24px;
 $btnStdH: 25px;
 $btnToolbarH: $btnStdH;
+$controlBarH: $btnStdH;
 $btnFrameH: 16px;
 
 /************************** PATHS */
@@ -136,8 +141,3 @@ $dirImgs: $dirCommonRes + 'images/';
 $controlFadeMs: 100ms;
 $browseToEditAnimMs: 400ms;
 $editBorderPulseMs: 500ms;
-
-/************************** LIMITS */
-$glyphLimit: '\e603';
-$glyphLimitUpr: '\0000eb';
-$glyphLimitLwr: '\0000ee';

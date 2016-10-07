@@ -59,11 +59,14 @@ define(
             update();
 
             return {
-                getGlyph: function () {
-                    return ".";
-                },
-                getGlyphClass: function () {
-                    return undefined;
+                /**
+                 * Get the CSS class that defines the icon
+                 * to display in this indicator. This will appear
+                 * as a dataflow icon.
+                 * @returns {string} the cssclass of the dataflow icon
+                 */
+                getCssClass: function () {
+                    return "icon-connectivity";
                 },
                 getText: function () {
                     return displayed + " digests/sec";

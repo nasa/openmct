@@ -2,10 +2,11 @@
 $colorBodyBg: #333;
 $colorBodyFg: #999;
 $colorGenBg: #222;
-$colorFooterBg: #000;
+$colorStatusBarBg: #000;
 $colorKey: #0099cc;
 $colorKeySelectedBg: #005177;
 $colorKeyFg: #fff;
+$colorKeyHov: #00c0f6;
 $colorEditAreaBg: #31363e;
 $colorEditAreaFg: #587ab5;
 $colorInteriorBorder: rgba($colorBodyFg, 0.1);
@@ -21,11 +22,20 @@ $smallCr: 2px;
 $colorBtnBg: pullForward($colorBodyBg, $contrastRatioPercent);
 $colorBtnBgHov: pullForward($colorBtnBg, $hoverRatioPercent);
 $colorBtnFg: $colorBodyFg;
+$colorBtnFgHov: pullForward($colorBtnFg, $hoverRatioPercent);
+$colorBtnIcon: $colorBtnFg;
+$colorBtnIconHov: $colorBtnFgHov;
 $colorBtnMajorBg: $colorKey;
+$colorBtnMajorBgHov: pullForward($colorBtnMajorBg, $hoverRatioPercent);
 $colorBtnMajorFg: $colorKeyFg;
-$colorBtnIcon: $colorKey;
+$colorBtnMajorFgHov: pullForward($colorBtnMajorFg, $hoverRatioPercent);
+$colorClickIcon: $colorKey;
+$colorClickIconHov: $colorKeyHov;
+$colorToggleIcon: rgba($colorBodyFg, 0.5);
+$colorToggleIconActive: $colorKey;
+$colorToggleIconHov: rgba($colorToggleIconActive, 0.5);
 $colorInvokeMenu: #fff;
-$contrastInvokeMenuPercent: 20%;
+$contrastInvokeMenuPercent: 30%;
 $shdwBtns: rgba(black, 0.2) 0 1px 2px;
 $shdwBtnsOverlay: rgba(black, 0.5) 0 1px 5px;
 $sliderColorBase: $colorKey;
@@ -53,6 +63,9 @@ $colorInvokeMenu: #fff;
 $colorObjHdrTxt: $colorBodyFg;
 $colorObjHdrIc: pullForward($colorObjHdrTxt, 20%);
 $colorTick: rgba(white, 0.2);
+$colorSelectableSelectedPrimary: $colorKey;
+$colorSelectableSelectedSecondary: pushBack($colorSelectableSelectedPrimary, 20%);
+$colorSelectableHov: $colorSelectableSelectedSecondary;
 
 // Menu colors
 $colorMenuBg: pullForward($colorBodyBg, 23%);
@@ -168,7 +181,7 @@ $colorItemTreeSelectedBg: pushBack($colorKey, 15%);
 $colorItemTreeSelectedFg: pullForward($colorBodyFg, 20%);
 $colorItemTreeEditingBg: #344154;
 $colorItemTreeEditingFg: $colorEditAreaFg;
-$colorItemTreeVC: $colorBodyFg; //rgba(#fff, 0.3);
+$colorItemTreeVC: $colorBodyFg;
 $colorItemTreeVCHover: pullForward($colorItemTreeVC, 20%);
 $colorItemTreeSelectedVC: $colorItemTreeVC;
 $shdwItemTreeIcon: 0.6;
@@ -177,23 +190,35 @@ $shdwItemTreeIcon: 0.6;
 $scrollbarTrackSize: 10px;
 $scrollbarTrackShdw: rgba(#000, 0.7) 0 1px 5px;
 $scrollbarTrackColorBg: rgba(#000, 0.4);
-$scrollbarThumbColor: lighten($colorBodyBg, 10%);
-$scrollbarThumbColorHov: lighten($scrollbarThumbColor, 2%);
-$scrollbarThumbColorOverlay: lighten($colorOvrBg, 10%);
-$scrollbarThumbColorOverlayHov: lighten($scrollbarThumbColorOverlay, 2%);
+$scrollbarThumbColor: pullForward($colorBodyBg, 10%);
+$scrollbarThumbColorHov: pullForward($scrollbarThumbColor, 2%);
+$scrollbarThumbColorOverlay: pullForward($colorOvrBg, 10%);
+$scrollbarThumbColorOverlayHov: pullForward($scrollbarThumbColorOverlay, 2%);
 
 // Splitter
-$splitterD: 17px; // splitterD and $splitterHandleD should both be odd, or even
-$splitterHandleD: 1px;
-$splitterDSm: 17px; // Smaller splitter, used inside elements like a Timeline view
-$colorSplitterBg: rgba(#fff, 0.1); //pullForward($colorBodyBg, 5%);
+// All splitterD* values MUST both be either odd or even numbers
+$splitterD: 20px;
+$splitterDSm: 10px; // Smaller splitter, used inside elements like a Timeline view
+$splitterHandleD: 2px;
+$colorSplitterBaseBg: pullForward($colorBodyBg, 10%);
+$colorSplitterBg: $colorSplitterBaseBg;
 $splitterShdw: rgba(black, 0.4) 0 0 3px;
 $splitterEndCr: none;
-$colorSplitterHover: pullForward($colorBodyBg, 40%);
+$colorSplitterHover: pullForward($colorSplitterBg, $hoverRatioPercent);
 $colorSplitterActive: $colorKey;
+
+// Minitabs
+$uePaneMiniTabH: 24px;
+$uePaneMiniTabW: 8px;
+$colorMiniTabBg: $colorSplitterBg;
+$colorMiniTabFg: pushBack($colorMiniTabBg, 10%);
+$colorMiniTabBgHov: $colorSplitterHover;
+$colorMiniTabFgHov: #fff;
 
 // Mobile
 $colorMobilePaneLeft: darken($colorBodyBg, 5%);
+$colorMobilePaneLeftTreeItemBg: pullForward($colorMobilePaneLeft, 3%);
+$colorMobileSelectListTreeItemBg: rgba(#fff, 0.05);
 
 // Datetime Picker
 $colorCalCellHovBg: $colorKey;

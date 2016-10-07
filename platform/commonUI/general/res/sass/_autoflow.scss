@@ -29,7 +29,7 @@
 	font-size: 0.75rem;
 
 	&:hover {
-		.l-autoflow-header .s-btn.change-column-width {
+		.l-autoflow-header .s-button.change-column-width {
 			@include trans-prop-nice-fade(50ms);
 			opacity: 1;
 		}
@@ -43,7 +43,7 @@
         .t-last-update {
             overflow: hidden;
         }
-		.s-btn.change-column-width {
+		.s-button.change-column-width {
 			@include trans-prop-nice-fade(500ms);
 			opacity: 0;
 		}

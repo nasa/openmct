@@ -51,7 +51,7 @@ define(
             });
 
             it("provides displayable metadata", function () {
-                expect(action.getMetadata().glyph).toBeDefined();
+                expect(action.getMetadata().cssclass).toBeDefined();
             });
 
         });

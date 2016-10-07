@@ -54,6 +54,7 @@ define(
                     [
                         "getKey",
                         "getGlyph",
+                        "getCssClass",
                         "getName",
                         "getDescription",
                         "getProperties",
@@ -74,7 +75,7 @@ define(
                 testModel = { someKey: "some value" };
 
                 mockType.getKey.andReturn("test");
-                mockType.getGlyph.andReturn("T");
+                mockType.getCssClass.andReturn("icon-telemetry");
                 mockType.getDescription.andReturn("a test type");
                 mockType.getName.andReturn("Test");
                 mockType.getInitialModel.andReturn(testModel);

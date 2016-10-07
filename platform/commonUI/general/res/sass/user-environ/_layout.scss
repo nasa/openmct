@@ -82,7 +82,7 @@
         top: auto;
         height: $ueFooterH;
         line-height: $ueFooterH - ($interiorMargin * 2);
-        background: $colorFooterBg;
+        background: $colorStatusBarBg;
         color: lighten($colorBodyBg, 30%);
         font-size: .7rem;
         .status-holder {
@@ -147,44 +147,40 @@
 }
 
 body.desktop .pane .mini-tab-icon.toggle-pane {
-    $d: $uePaneMiniTabH;
-    $paneExpandedOffset: $splitterD + $uePaneMiniTabW;
-    top: $bodyMargin;
-    height: $d;
-    line-height: $d;
-    &:after {
-        // Always the icon that shows when the pane is collapsed
-        opacity: 0;
+    $hi: splitterHandleInset($splitterD, $splitterHandleD);
+    $paneExpandedOffset: $hi + $splitterHandleD + $uePaneMiniTabW;
+    top: $bodyMargin + ($ueTopBarH - $uePaneMiniTabH)/2;
+
+    &.toggle-tree.anchor-left.collapsed,
+    &.toggle-inspect.anchor-right:not(.collapsed) {
+        @extend .icon-arrow-right;
+        border-bottom-right-radius: $controlCr;
+        border-top-right-radius: $controlCr;
     }
-    &.collapsed {
-        &:before {
-            opacity: 0;
-        }
-        &:after {
-            opacity: 1;
-        }
+
+    &.toggle-tree.anchor-left:not(.collapsed),
+    &.toggle-inspect.anchor-right.collapsed {
+        @extend .icon-arrow-left;
+        border-bottom-left-radius: $controlCr;
+        border-top-left-radius: $controlCr;
     }
+
     &.toggle-tree.anchor-left {
         left: 0;
         @include transform(translateX(-1 * $paneExpandedOffset));
-        &:after {
-            content: '\6d'; // Menu 'hamburger' icon
-        }
         &.collapsed {
-            left: 0;
-            @include transform(translateX((-1 * $ueCollapsedPaneEdgeM) + $interiorMargin));
-        }
-        &:not(.collapsed):before {
-            @include trans-prop-nice(opacity, 200ms, 200ms);
+            @include transform(translateX(-1 * $ueCollapsedPaneEdgeM));
         }
     }
+
     &.toggle-inspect.anchor-right {
-        right: $bodyMargin;
-        &:after {
-            content: '\e615'; // Eye icon
+        right: 0;
+        @include transform(translateX($paneExpandedOffset));
+        &.flush-right {
+            @include transform(translateX(($uePaneMiniTabW + ceil($splitterD / 2))));
         }
         &.collapsed {
-            right: $interiorMargin;
+            @include transform(translateX($ueCollapsedPaneEdgeM));
         }
     }
 }
@@ -196,11 +192,11 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
         right: 0;
         bottom: $interiorMargin;
         left: $bodyMargin;
-        .create-btn-holder {
+        .create-button-holder {
             &.s-status-editing {
                 display: none;
                 & + .search-holder .search-bar {
-                    // .search-holder is adjacent sibling to .create-btn-holder
+                    // .search-holder is adjacent sibling to .create-button-holder
                     // Add right margin when create button is hidden, to make room for the collapse pane 'x' button
                     margin-right: $interiorMarginLg * 2;
                 }
@@ -220,7 +216,7 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
         .holder-inspector {
             top: $bodyMargin;
             bottom: $interiorMargin;
-            left: $bodyMargin;
+            left: $bodyMargin + $interiorMargin;
             right: $bodyMargin;
         }
         .holder-elements {
@@ -241,11 +237,11 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
     @include trans-prop-nice-resize(0.25s);
 }
 
-.object-browse-bar .s-btn,
-.top-bar .buttons-main .s-btn,
-.top-bar .s-menu-btn,
-.tool-bar .s-btn,
-.tool-bar .s-menu-btn {
+.object-browse-bar .s-button,
+.top-bar .buttons-main .s-button,
+.top-bar .s-menu-button,
+.tool-bar .s-button,
+.tool-bar .s-menu-button {
     $h: $btnToolbarH;
     height: $h;
     line-height: $h;
