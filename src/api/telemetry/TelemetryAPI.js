@@ -201,9 +201,7 @@ define([
     /**
      * @private
      */
-    TelemetryAPI.prototype.findProvider = function (domainObject, options) {
-        var strategy = options.strategy;
-
+    TelemetryAPI.prototype.findProvider = function (domainObject, strategy) {
         function supportsDomainObject(provider) {
             return provider.canProvideTelemetry(domainObject);
         }
@@ -236,7 +234,7 @@ define([
      *          telemetry data
      */
     TelemetryAPI.prototype.request = function (domainObject, options) {
-        var provider = this.findProvider(domainObject, options);
+        var provider = this.findProvider(domainObject, options.strategy);
         return provider ?
             provider.request(domainObject, options) :
             Promise.reject([]);
@@ -310,7 +308,7 @@ define([
         limitEvaluator: undefined
     }, function (defaultValue, method) {
         TelemetryAPI.prototype[method] = function (domainObject) {
-            var provider = this.findProvider(domainObject, options);
+            var provider = this.findProvider(domainObject);
             return provider ?
                 provider[method].apply(provider, arguments) :
                 defaultValue;
