@@ -156,7 +156,8 @@ define([
      * @memberof module:openmct
      */
     function TelemetryAPI() {
-        this.providers = [];
+        this.providersByStrategy = {};
+        this.defaultProviders = [];
     }
 
     /**
@@ -170,7 +171,7 @@ define([
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
     TelemetryAPI.prototype.canProvideTelemetry = function (domainObject) {
-        return this.providers.some(function (provider) {
+        return this.defaultProviders.some(function (provider) {
             return provider.canProvideTelemetry(domainObject);
         });
     };
@@ -187,8 +188,36 @@ define([
      *        default provider (when no strategy is requested or no
      *        matching strategy is found.)
      */
-    TelemetryAPI.prototype.addProvider = function (provider) {
-        this.providers.push(provider);
+    TelemetryAPI.prototype.addProvider = function (provider, strategy) {
+        if (!strategy) {
+            this.defaultProviders.push(provider);
+        } else {
+            this.providersByStrategy[strategy] =
+                this.providersByStrategy[strategy] || [];
+            this.providersByStrategy[strategy].push(provider);
+        }
+    };
+
+    /**
+     * @private
+     */
+    TelemetryAPI.prototype.findProvider = function (domainObject, options) {
+        var strategy = options.strategy;
+
+        function supportsDomainObject(provider) {
+            return provider.canProvideTelemetry(domainObject);
+        }
+
+        if (strategy) {
+            var eligibleProviders =
+                (this.providersByStrategy[strategy] || [])
+                    .filter(supportsDomainObject);
+            if (eligibleProviders.length > 0) {
+                return eligibleProviders[0];
+            }
+        }
+
+        return this.defaultProviders.filter(supportsDomainObject)[0];
     };
 
     /**
@@ -207,10 +236,7 @@ define([
      *          telemetry data
      */
     TelemetryAPI.prototype.request = function (domainObject, options) {
-        var provider = this.providers.reduce(function (result, p) {
-            return (p.canProvideTelemetry(domainObject)) ?
-                p : result;
-        }, undefined);
+        var provider = this.findProvider(domainObject, options);
         return provider ?
             provider.request(domainObject, options) :
             Promise.reject([]);
@@ -278,17 +304,13 @@ define([
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
     _.forEach({
-        request: undefined,
         subscribe: undefined,
         properties: [],
         formatter: undefined,
         limitEvaluator: undefined
     }, function (defaultValue, method) {
         TelemetryAPI.prototype[method] = function (domainObject) {
-            var provider = this.providers.reduce(function (result, p) {
-                return (p.canProvideTelemetry(domainObject)) ?
-                    p : result;
-            }, undefined);
+            var provider = this.findProvider(domainObject, options);
             return provider ?
                 provider[method].apply(provider, arguments) :
                 defaultValue;
