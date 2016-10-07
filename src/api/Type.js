@@ -55,28 +55,5 @@ define(function () {
         return domainObject.type === this.key;
     };
 
-    /**
-     * Get a definition for this type that can be registered using the
-     * legacy bundle format.
-     * @private
-     */
-    Type.prototype.toLegacyDefinition = function () {
-        var def = {};
-        def.name = this.definition.metadata.label;
-        def.glyph = this.definition.metadata.glyph;
-        def.description = this.definition.metadata.description;
-        def.properties = this.definition.form;
-
-        if (this.definition.initialize) {
-            def.model = {};
-            this.definition.initialize(def.model);
-        }
-
-        if (this.definition.creatable) {
-            def.features = ['creation'];
-        }
-        return def;
-    };
-
     return Type;
 });
