@@ -190,7 +190,9 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.observe = function (domainObject, path, callback) {
-        return new MutableObject(domainObject).on(path, callback);
+        var mutableObject = new MutableObject(domainObject);
+        mutableObject.on(path, callback);
+        return mutableObject.stopListening.bind(mutableObject);
     };
 
     /**
