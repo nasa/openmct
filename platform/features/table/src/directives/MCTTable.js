@@ -86,6 +86,8 @@ define(
                     '$timeout',
                     '$element',
                     'exportService',
+                    'formatService',
+                    'timeConductor',
                     MCTTableController
                 ],
                 controllerAs: "table",
@@ -95,7 +97,7 @@ define(
                     enableFilter: "=?",
                     enableSort: "=?",
                     autoScroll: "=?",
-                    onRowClick: "&"
+                    timeColumns: "=?"
                 }
             };
         }

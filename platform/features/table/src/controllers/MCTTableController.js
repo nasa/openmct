@@ -12,7 +12,7 @@ define(
          * @param element
          * @constructor
          */
-        function MCTTableController($scope, $timeout, element, exportService) {
+        function MCTTableController($scope, $timeout, element, exportService, formatService, conductor) {
             var self = this;
 
             this.$scope = $scope;
@@ -24,6 +24,9 @@ define(
             this.thead = element.find('thead');
             this.tbody = element.find('tbody');
             this.$scope.sizingRow = {};
+            this.conductor = conductor;
+            this.toiFormatter = undefined;
+            this.formatService = formatService;
 
             //Bind all class functions to 'this'
             Object.keys(MCTTableController.prototype).filter(function (key) {
@@ -77,6 +80,7 @@ define(
                     $scope.sortDirection = undefined;
                 }
                 self.setRows($scope.rows);
+                self.setTimeOfInterest(self.conductor.timeOfInterest());
             };
 
             /*
@@ -99,7 +103,28 @@ define(
              */
             $scope.resize = this.setElementSizes.bind(this);
 
+
+            // Time conductor integration
+            if (this.$scope.timeColumns) {
+                this.conductor.on('timeSystem', this.changeTimeSystem);
+                this.conductor.on('timeOfInterest', this.setTimeOfInterest);
+                $scope.$on('$destroy', function () {
+                    this.conductor.off('timeSystem', this.changeTimeSystem);
+                    this.conductor.off('timeOfInterest', this.setTimeOfInterest);
+                }.bind(this));
+
+                // If time system defined, set initially
+                if (conductor.timeSystem()) {
+                    this.changeTimeSystem(conductor.timeSystem());
+                }
+            }
+
         }
+
+        MCTTableController.prototype.changeTimeSystem = function () {
+            var format = this.conductor.timeSystem().formats()[0];
+            this.toiFormatter = this.formatService.getFormat(format);
+        };
 
         /**
          * If auto-scroll is enabled, this function will scroll to the
@@ -308,7 +333,7 @@ define(
                 return min; // Element is not in array, min gives direction
             }
 
-            switch (this.sortComparator(searchElement[this.$scope.sortColumn].text,
+            switch (this.sortComparator(searchElement,
                 searchArray[sampleAt][this.$scope.sortColumn].text)) {
                 case -1:
                     return this.binarySearch(searchArray, searchElement, min,
@@ -332,7 +357,7 @@ define(
                 index = array.length;
             } else {
                 //Sort is enabled, perform binary search to find insertion point
-                index = this.binarySearch(array, element, 0, array.length - 1);
+                index = this.binarySearch(array, element[this.$scope.sortColumn].text, 0, array.length - 1);
             }
             if (index === -1) {
                 array.unshift(element);
@@ -496,11 +521,6 @@ define(
             this.resize(newRows).then(this.setVisibleRows.bind(this));
         };
 
-        MCTTableController.prototype.onRowClick = function (event, row) {
-            var index = this.$scope.rows.indexOf(row);
-            this.$scope.onRowClick({event: event, rowIndex:index, sortColumn: this.$scope.sortColumn, sortDirection: this.$scope.sortDirection});
-        };
-
         /**
          * Applies user defined filters to rows. These filters are based on
          * the text entered in the search areas in each column.
@@ -538,6 +558,20 @@ define(
             return rowsToFilter.filter(matchRow.bind(null, filters));
         };
 
+        /**
+         * Update rows with new data.  If filtering is enabled, rows
+         * will be sorted before display.
+         */
+        MCTTableController.prototype.setTimeOfInterest = function (newTOI) {
+            if (this.$scope.timeColumns.indexOf(this.$scope.sortColumn) !== -1) {
+                var formattedTOI = this.toiFormatter.format(newTOI);
+                var rowsLength = this.$scope.displayRows.length;
+                // searchElement, min, max
+                this.$scope.toiRowIndex = this.binarySearch(this.$scope.displayRows, formattedTOI, 0, rowsLength);
+            } else {
+                this.$scope.toiRowIndex = -1;
+            }
+        };
 
         return MCTTableController;
     }

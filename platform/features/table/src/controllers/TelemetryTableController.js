@@ -26,10 +26,9 @@
  */
 define(
     [
-        '../TableConfiguration',
-        '../DomainColumn'
+        '../TableConfiguration'
     ],
-    function (TableConfiguration, DomainColumn) {
+    function (TableConfiguration) {
 
         /**
          * The TableController is responsible for getting data onto the page
@@ -57,7 +56,6 @@ define(
                 telemetryFormatter);
             this.changeListeners = [];
             this.conductor = conductor;
-            this.data = [];
 
             $scope.rows = [];
 
@@ -67,27 +65,12 @@ define(
                 self.registerChangeListeners();
             });
 
+            this.destroy = this.destroy.bind(this);
+
             // Unsubscribe when the plot is destroyed
             this.$scope.$on("$destroy", this.destroy);
+            this.$scope.timeColumns = ['Time'];
         }
-
-        TelemetryTableController.prototype.onRowClick = function (event, rowIndex, sortBy, sortOrder) {
-            var datum = this.data[rowIndex];
-
-            if (event.altKey) {
-                console.log("selected: " + this.$scope.rows[rowIndex]);
-                //Is column one that we can use to set time of interest?
-                var domainColumn = this.table.columns.filter(function (column) {
-                    return column instanceof DomainColumn &&
-                        column.getTitle() === sortBy;
-                })[0];
-                if (domainColumn) {
-                    var timeOfInterest = datum[domainColumn.domainMetadata.key];
-                    this.conductor.timeOfInterest(timeOfInterest);
-                }
-            }
-
-        };
 
         /**
          * @private
@@ -209,10 +192,6 @@ define(
                 return columnConfig[column];
             });
         };
-
-        TelemetryTableController.prototype.changeTimeOfInterest = function (toi) {
-
-        }
 
         return TelemetryTableController;
     }

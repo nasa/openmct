@@ -52,7 +52,7 @@
         <!--ng-class="{ 'l-toi pinned': false }"-->
         <!--ng-click="dummyUnpin()" -->
             <tr ng-repeat="visibleRow in visibleRows track by visibleRow.rowIndex"
-                class="{{visibleRow.contents.cssClass}}"
+                ng-class="{ 'l-toi pinned': visibleRow.rowIndex === toiRowIndex }"
                 ng-click="table.onRowClick($event, visibleRow.contents)"
             ng-style="{
                 top: visibleRow.offsetY + 'px',
