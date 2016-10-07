@@ -20,25 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/**
-
-var key = '114ced6c-deb7-4169-ae71-68c571665514';
-MCT.objects.getObject([key])
-    .then(function (results) {
-        console.log('got results');
-        return results[key];
-    })
-    .then(function (domainObject) {
-        console.log('got object');
-        MCT.telemetry.subscribe(domainObject, function (datum) {
-            console.log('gotData!', datum);
-        });
-    });
-});
-
-
-*/
-
 define([
     'lodash',
     'EventEmitter'
