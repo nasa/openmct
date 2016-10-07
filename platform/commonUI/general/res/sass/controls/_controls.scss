@@ -216,6 +216,7 @@ input[type="search"] {
 .l-input-lg input[type="text"] {  width: 100% !important; }
 .l-input-med input[type="text"] { width: 200px !important; }
 .l-input-sm input[type="text"] {  width: 50px !important; }
+.l-textarea-sm textarea { position: relative; height: 50px; }
 .l-numeric input[type="text"] { text-align: right; }
 
 .input-labeled {

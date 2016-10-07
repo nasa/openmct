@@ -361,7 +361,7 @@ define(
                  autodismiss specified), leave it to run. Otherwise force a
                   timeout.
 
-                 This notifcation has been added to queue and will be
+                 This notification has been added to queue and will be
                   serviced as soon as possible.
                  */
                 this.active.timeout = this.$timeout(function () {

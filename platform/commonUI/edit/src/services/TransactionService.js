@@ -138,7 +138,7 @@ define(
                 try {
                     results.push(onCancel());
                 } catch (error) {
-                    this.$log.error("Error committing transaction.");
+                    this.$log.error("Error cancelling transaction.");
                 }
             }
             return this.$q.all(results).then(function () {

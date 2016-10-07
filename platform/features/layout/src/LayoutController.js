@@ -152,7 +152,7 @@ define(
         }
 
         // Convert from { positions: ..., dimensions: ... } to an
-        // apropriate ng-style argument, to position frames.
+        // appropriate ng-style argument, to position frames.
         LayoutController.prototype.convertPosition = function (raw) {
             var gridSize = this.gridSize;
             // Multiply position/dimensions by grid size

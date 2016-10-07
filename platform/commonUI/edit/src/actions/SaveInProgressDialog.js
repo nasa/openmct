@@ -9,7 +9,8 @@ define([], function () {
             title: "Saving...",
             hint: "Do not navigate away from this page or close this browser tab while this message is displayed.",
             unknownProgress: true,
-            severity: "info"
+            severity: "info",
+            delay: true
         });
     };
 

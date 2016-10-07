@@ -42,7 +42,7 @@ define(
          * @implements {ModelService}
          * @param {Array} roots all `roots[]` extensions
          * @param $q Angular's $q, for promises
-         * @param $log Anuglar's $log, for logging
+         * @param $log Angular's $log, for logging
          */
         function RootModelProvider(roots, $q, $log) {
             // Pull out identifiers to used as ROOT's

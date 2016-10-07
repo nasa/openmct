@@ -71,7 +71,7 @@ define(
                     initialDescrption = indicator.getDescription(),
                     initialGlyphClass = indicator.getGlyphClass();
 
-                // Nominal just means getting back an objeect, without
+                // Nominal just means getting back an object, without
                 // an error field.
                 mockPromise.then.mostRecentCall.args[0]({ data: {} });
 
@@ -90,7 +90,7 @@ define(
                     initialDescrption = indicator.getDescription(),
                     initialGlyphClass = indicator.getGlyphClass();
 
-                // Nominal just means getting back an objeect, without
+                // Nominal just means getting back an object, without
                 // an error field.
                 mockPromise.then.mostRecentCall.args[1]({ data: {} });
 
