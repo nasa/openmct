@@ -121,6 +121,17 @@ define([
         this.inspectors = new ViewRegistry();
 
         /**
+         * Registry for views which should appear in Edit Properties
+         * dialogs, and similar user interface elements used for
+         * modifying domain objects external to its regular views.
+         *
+         * @type {module:openmct.ViewRegistry}
+         * @memberof module:openmct.MCT#
+         * @name propertyEditors
+         */
+        this.propertyEditors = new ViewRegistry();
+
+        /**
          * Registry for views which should appear in the status indicator area.
          * @type {module:openmct.ViewRegistry}
          * @memberof module:openmct.MCT#

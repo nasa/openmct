@@ -31,6 +31,13 @@ define([], function () {
         this.providers = [];
     }
 
+
+    /**
+     * @private for platform-internal use
+     * @param {*} item the object to be viewed
+     * @returns {module:openmct.ViewProvider[]} any providers
+     *          which can provide views of this object
+     */
     ViewRegistry.prototype.get = function (item) {
         return this.providers.filter(function (provider) {
             return provider.canView(item);
