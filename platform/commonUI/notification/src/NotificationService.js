@@ -332,21 +332,7 @@ define(
 
                 onDismiss: function (callback) {
                     topic.listen(callback);
-                },
-
-                autoDismiss: (function () {
-                    if (notificationModel.severity === "info") {
-                        return true;
-                    }
-                    return notificationModel.autoDismiss;
-                })(),
-
-                autoDismissTimeout: (function () {
-                    if (typeof notificationModel.autoDismiss === "number") {
-                        return notificationModel.autoDismiss;
-                    }
-                    return self.AUTO_DISMISS_TIMEOUT;
-                })()
+                }
             };
 
             //Notifications support a 'dismissable' attribute. This is a
@@ -398,23 +384,33 @@ define(
          * @private
          */
         NotificationService.prototype.setActiveNotification = function (notification) {
-                var timeout;
-                this.active.notification = notification;
+            var timeout;
+            var shouldAutoDismiss;
+            var usesCustomTimeout;
+            this.active.notification = notification;
 
-                /*
-                If autoDismiss has been specified, OR there are other
-                 notifications queued for display, setup a timeout to
-                  dismiss the dialog.
-                 */
-                if (notification && (notification.autoDismiss || this.selectNextNotification())) {
-                    timeout = notification.autoDismissTimeout || this.AUTO_DISMISS_TIMEOUT;
-                    this.active.timeout = this.$timeout(function () {
-                        notification.dismissOrMinimize();
-                    }, timeout);
-                } else {
-                    delete this.active.timeout;
-                }
-            };
+            if (!notification) {
+                delete this.active.timeout;
+                return;
+            }
+
+            usesCustomTimeout = typeof notification.model.autoDismiss === "number";
+
+            if (notification.model.severity === "info" || usesCustomTimeout) {
+                shouldAutoDismiss = true;
+            } else {
+                shouldAutoDismiss = notification.model.autoDismiss;
+            }
+
+            if (shouldAutoDismiss || this.selectNextNotification()) {
+                timeout = usesCustomTimeout ? notification.model.autoDismiss : this.AUTO_DISMISS_TIMEOUT;
+                this.active.timeout = this.$timeout(function () {
+                    notification.dismissOrMinimize();
+                }, timeout);
+            } else {
+                delete this.active.timeout;
+            }
+        };
 
         /**
          * Used internally by the NotificationService
