@@ -4,6 +4,7 @@
   "description": "The Open MCT core platform",
   "dependencies": {
     "express": "^4.13.1",
+    "helmet": "^2.3.0",
     "minimist": "^1.1.1",
     "request": "^2.69.0"
   },
