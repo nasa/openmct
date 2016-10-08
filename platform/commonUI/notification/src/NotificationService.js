@@ -208,10 +208,15 @@ define(
          * @private
          */
         NotificationService.prototype.dismissOrMinimize = function (notification) {
-            if (notification.minimizeInsteadOfDismiss) {
-                notification.minimize();
+            var model = notification.model;
+            if (model.severity === "info") {
+                if (model.autoDismiss === false) {
+                    notification.minimize();
+                } else {
+                    notification.dismiss();
+                }
             } else {
-                notification.dismiss();
+                notification.minimize();
             }
         };
 
@@ -341,16 +346,6 @@ define(
                         return notificationModel.autoDismiss;
                     }
                     return self.AUTO_DISMISS_TIMEOUT;
-                })(),
-
-                minimizeInsteadOfDismiss: (function () {
-                    if (notificationModel.severity === "info") {
-                        if (notificationModel.autoDismiss === false) {
-                            return true;
-                        }
-                        return false;
-                    }
-                    return true;
                 })()
             };
 
