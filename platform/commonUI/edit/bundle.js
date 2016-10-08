@@ -236,7 +236,8 @@ define([
                         "$injector",
                         "policyService",
                         "dialogService",
-                        "copyService"
+                        "copyService",
+                        "notificationService"
                     ],
                     "priority": "mandatory"
                 },

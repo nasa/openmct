@@ -43,6 +43,7 @@ define([
             policyService,
             dialogService,
             copyService,
+            notificationService,
             context
         ) {
             this.domainObject = (context || {}).domainObject;
@@ -52,6 +53,7 @@ define([
             this.policyService = policyService;
             this.dialogService = dialogService;
             this.copyService = copyService;
+            this.notificationService = notificationService;
         }
 
         /**
@@ -174,8 +176,14 @@ define([
                     .then(resolveWith(clonedObject));
             }
 
+            function onSuccess(object) {
+                self.notificationService.info("Save Succeeded");
+                return object;
+            }
+
             function onFailure() {
                 hideBlockingDialog();
+                self.notificationService.error("Save Failed");
                 return false;
             }
 
@@ -188,6 +196,7 @@ define([
                 .then(saveAfterClone)
                 .then(finishEditing)
                 .then(hideBlockingDialog)
+                .then(onSuccess)
                 .catch(onFailure);
         };
 
