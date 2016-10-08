@@ -103,23 +103,28 @@ define(
              */
             $scope.resize = this.setElementSizes.bind(this);
 
-
             // Time conductor integration
-            if (this.$scope.timeColumns) {
-                this.conductor.on('timeSystem', this.changeTimeSystem);
-                this.conductor.on('timeOfInterest', this.setTimeOfInterest);
-                $scope.$on('$destroy', function () {
-                    this.conductor.off('timeSystem', this.changeTimeSystem);
-                    this.conductor.off('timeOfInterest', this.setTimeOfInterest);
-                }.bind(this));
+            $scope.$watch("timeColumns", function (timeColumns){
+                if (timeColumns) {
+                    this.destroyConductorListeners();
 
-                // If time system defined, set initially
-                if (conductor.timeSystem()) {
-                    this.changeTimeSystem(conductor.timeSystem());
+                    this.conductor.on('timeSystem', this.changeTimeSystem);
+                    this.conductor.on('timeOfInterest', this.setTimeOfInterest);
+
+                    // If time system defined, set initially
+                    if (conductor.timeSystem()) {
+                        this.changeTimeSystem(conductor.timeSystem());
+                    }
                 }
-            }
+            }.bind(this));
 
+            $scope.$on('$destroy', this.destroyConductorListeners);
         }
+
+        MCTTableController.prototype.destroyConductorListeners = function () {
+            this.conductor.off('timeSystem', this.changeTimeSystem);
+            this.conductor.off('timeOfInterest', this.setTimeOfInterest);
+        };
 
         MCTTableController.prototype.changeTimeSystem = function () {
             var format = this.conductor.timeSystem().formats()[0];
@@ -558,18 +563,50 @@ define(
             return rowsToFilter.filter(matchRow.bind(null, filters));
         };
 
+        MCTTableController.prototype.scrollToRow = function (displayRowIndex) {
+
+            var visible = this.$scope.visibleRows.reduce(function (exists, row) {
+                return exists || (row.rowIndex === displayRowIndex)
+            }, false);
+
+            if (!visible) {
+                var scrollTop = displayRowIndex * this.$scope.rowHeight
+                    + this.$scope.headerHeight
+                    - (this.scrollable[0].offsetHeight / 2);
+                this.scrollable[0].scrollTop = scrollTop;
+                this.setVisibleRows();
+            }
+        };
+
         /**
          * Update rows with new data.  If filtering is enabled, rows
          * will be sorted before display.
          */
         MCTTableController.prototype.setTimeOfInterest = function (newTOI) {
-            if (this.$scope.timeColumns.indexOf(this.$scope.sortColumn) !== -1) {
+            this.$scope.toiRowIndex = -1;
+            if (this.$scope.timeColumns.indexOf(this.$scope.sortColumn) !== -1
+                && newTOI
+                && this.$scope.displayRows.length > 0) {
                 var formattedTOI = this.toiFormatter.format(newTOI);
                 var rowsLength = this.$scope.displayRows.length;
                 // searchElement, min, max
                 this.$scope.toiRowIndex = this.binarySearch(this.$scope.displayRows, formattedTOI, 0, rowsLength);
-            } else {
-                this.$scope.toiRowIndex = -1;
+                this.scrollToRow(this.$scope.toiRowIndex);
+            }
+        };
+
+        MCTTableController.prototype.onRowClick = function (event, rowIndex) {
+            if (this.$scope.timeColumns.indexOf(this.$scope.sortColumn) !== -1) {
+                if (rowIndex === this.$scope.toiRowIndex) {
+                    this.conductor.timeOfInterest(undefined);
+                } else {
+                    var selectedTime = this.$scope.displayRows[rowIndex][this.$scope.sortColumn].text;
+                    if (selectedTime
+                        && this.toiFormatter.validate(selectedTime)
+                        && event.altKey) {
+                        this.conductor.timeOfInterest(this.toiFormatter.parse(selectedTime));
+                    }
+                }
             }
         };
 

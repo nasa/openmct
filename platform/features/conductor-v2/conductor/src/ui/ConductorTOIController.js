@@ -94,6 +94,10 @@ define(
             }
         };
 
+        ConductorTOIController.prototype.dismiss = function () {
+            this.conductor.timeOfInterest(undefined);
+        };
+
         ConductorTOIController.prototype.resize = function () {
             //Do something?
         };

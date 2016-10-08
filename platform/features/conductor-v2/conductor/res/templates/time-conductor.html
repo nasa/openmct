@@ -105,7 +105,8 @@
                      ng-class="{ 'pinned': toi.pinned, 'val-to-right': toi.left < 20 }"
                      ng-style="{'left': toi.left + '%'}">
                     <div class="l-toi">
-                        <a class="t-button-unpin icon-button" ng-click="toi.pinned = false"></a>
+                        <a class="t-button-unpin icon-button"
+                           ng-click="toi.dismiss()"></a>
                         <span class="l-toi-val">{{toi.toiText}}</span>
                     </div>
                 </div>

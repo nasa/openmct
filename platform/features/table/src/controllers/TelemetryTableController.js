@@ -69,7 +69,7 @@ define(
 
             // Unsubscribe when the plot is destroyed
             this.$scope.$on("$destroy", this.destroy);
-            this.$scope.timeColumns = ['Time'];
+            this.$scope.timeColumns = [];
         }
 
         /**
@@ -153,20 +153,32 @@ define(
             this.setup();
         };
 
+        TelemetryTableController.prototype.populateColumns = function (telemetryMetadata) {
+            this.table.populateColumns(telemetryMetadata);
+
+            //Identify time columns
+            telemetryMetadata.forEach(function (metadatum) {
+                //Push domains first
+                (metadatum.domains || []).forEach(function (domainMetadata) {
+                    this.timeColumns.push(domainMetadata.name);
+                }.bind(this));
+            }.bind(this));
+        };
+
         /**
          * Setup table columns based on domain object metadata
          */
         TelemetryTableController.prototype.setup = function () {
             var handle = this.handle,
-                table = this.table,
                 self = this;
 
             if (handle) {
+                this.timeColumns = [];
                 handle.promiseTelemetryObjects().then(function () {
                     self.$scope.headers = [];
                     self.$scope.rows = [];
-                    table.populateColumns(handle.getMetadata());
 
+                    self.populateColumns(handle.getMetadata());
                     self.filterColumns();
 
                     // When table column configuration changes, (due to being
