@@ -200,7 +200,6 @@ define([
                     "name": "Remove",
                     "description": "Remove this object from its containing object.",
                     "depends": [
-                        "$q",
                         "navigationService"
                     ]
                 },

@@ -19,41 +19,30 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-define(
-    [],
-    function () {
-
-
-        /**
-         * Add one domain object to another's composition.
-         * @constructor
-         * @memberof platform/commonUI/edit
-         * @implements {Action}
-         */
-        function EditAndComposeAction(context) {
-            this.domainObject = (context || {}).domainObject;
-            this.selectedObject = (context || {}).selectedObject;
-        }
-
-        EditAndComposeAction.prototype.perform = function () {
-            var self = this,
-                editAction = this.domainObject.getCapability('action').getActions("edit")[0];
-
-            // Link these objects
-            function doLink() {
-                var composition = self.domainObject &&
-                        self.domainObject.getCapability('composition');
-                return composition && composition.add(self.selectedObject);
-            }
-
-            if (editAction) {
-                editAction.perform();
-            }
-
-            return this.selectedObject && doLink();
-        };
-
-        return EditAndComposeAction;
+define(['./Transaction'], function (Transaction) {
+    /**
+     * A nested transaction is a transaction which takes place in the context
+     * of a larger parent transaction. It becomes part of the parent
+     * transaction when (and only when) committed.
+     * @param parent
+     * @constructor
+     * @extends {platform/commonUI/edit/services.Transaction}
+     * @memberof platform/commonUI/edit/services
+     */
+    function NestedTransaction(parent) {
+        this.parent = parent;
+        Transaction.call(this, parent.$log);
     }
-);
+
+    NestedTransaction.prototype = Object.create(Transaction.prototype);
+
+    NestedTransaction.prototype.commit = function () {
+        this.parent.add(
+            Transaction.prototype.commit.bind(this),
+            Transaction.prototype.cancel.bind(this)
+        );
+        return Promise.resolve(true);
+    };
+
+    return NestedTransaction;
+});

@@ -113,10 +113,15 @@ define(
                 domainObject = this.domainObject,
                 model = domainObject.getModel(),
                 modified = model.modified,
+                persisted = model.persisted,
                 persistenceService = this.persistenceService,
-                persistenceFn = model.persisted !== undefined ?
+                persistenceFn = persisted !== undefined ?
                     this.persistenceService.updateObject :
                     this.persistenceService.createObject;
+
+            if (persisted !== undefined && persisted === modified) {
+                return this.$q.when(true);
+            }
 
             // Update persistence timestamp...
             domainObject.useCapability("mutation", function (m) {
@@ -177,6 +182,15 @@ define(
             return this.identifierService.parse(id).getSpace();
         };
 
+
+        /**
+         * Check if this domain object has been persisted at some
+         * point.
+         * @returns {boolean} true if the object has been persisted
+         */
+        PersistenceCapability.prototype.persisted = function () {
+            return this.domainObject.getModel().persisted !== undefined;
+        };
 
         /**
          * Get the key for this domain object in the given space.

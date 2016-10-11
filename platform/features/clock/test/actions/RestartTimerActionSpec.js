@@ -27,7 +27,6 @@ define(
         describe("A timer's restart action", function () {
             var mockNow,
                 mockDomainObject,
-                mockPersistence,
                 testModel,
                 testContext,
                 action;
@@ -46,14 +45,7 @@ define(
                     'domainObject',
                     ['getCapability', 'useCapability', 'getModel']
                 );
-                mockPersistence = jasmine.createSpyObj(
-                    'persistence',
-                    ['persist']
-                );
 
-                mockDomainObject.getCapability.andCallFake(function (c) {
-                    return (c === 'persistence') && mockPersistence;
-                });
                 mockDomainObject.useCapability.andCallFake(function (c, v) {
                     if (c === 'mutation') {
                         testModel = v(testModel) || testModel;
@@ -70,11 +62,10 @@ define(
                 action = new RestartTimerAction(mockNow, testContext);
             });
 
-            it("updates the model with a timestamp and persists", function () {
+            it("updates the model with a timestamp", function () {
                 mockNow.andReturn(12000);
                 action.perform();
                 expect(testModel.timestamp).toEqual(12000);
-                expect(mockPersistence.persist).toHaveBeenCalled();
             });
 
             it("applies only to timers with a target time", function () {

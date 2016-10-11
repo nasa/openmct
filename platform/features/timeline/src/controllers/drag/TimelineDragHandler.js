@@ -35,7 +35,6 @@ define(
          */
         function TimelineDragHandler(domainObject, objectLoader) {
             var timespans = {},
-                persists = {},
                 mutations = {},
                 compositions = {},
                 dirty = {};
@@ -56,8 +55,6 @@ define(
                         timespans[id] = timespan;
                         // And its mutation capability
                         mutations[id] = object.getCapability('mutation');
-                        // Also cache the persistence capability for later
-                        persists[id] = object.getCapability('persistence');
                         // And the composition, for bulk moves
                         compositions[id] = object.getModel().composition || [];
                     });
@@ -71,18 +68,13 @@ define(
             }
 
             // Persist changes for objects by id (when dragging ends)
-            function doPersist(id) {
-                var persistence = persists[id],
-                    mutation = mutations[id];
+            function finalMutate(id) {
+                var mutation = mutations[id];
                 if (mutation) {
                     // Mutate just to update the timestamp (since we
                     // explicitly don't do this during the drag to
                     // avoid firing a ton of refreshes.)
                     mutation.mutate(function () {});
-                }
-                if (persistence) {
-                    // Persist the changes
-                    persistence.persist();
                 }
             }
 
@@ -105,7 +97,7 @@ define(
                  */
                 persist: function () {
                     // Persist every dirty object...
-                    Object.keys(dirty).forEach(doPersist);
+                    Object.keys(dirty).forEach(finalMutate);
                     // Clear out the dirty list
                     dirty = {};
                 },
