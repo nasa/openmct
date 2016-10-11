@@ -61,11 +61,13 @@ define(
         ConductorAxisController.prototype.destroy = function () {
             this.conductor.off('timeSystem', this.changeTimeSystem);
             this.conductor.off('bounds', this.setScale);
+            this.conductorViewService.off("zoom", this.onZoom);
+            this.conductorViewService.off("zoom-stop", this.onZoomStop)
         };
 
         ConductorAxisController.prototype.changeBounds = function (bounds) {
             this.bounds = bounds;
-            if (this.initialized) {
+            if (this.initialized && !this.zooming) {
                 this.setScale();
             }
         };
@@ -147,17 +149,25 @@ define(
 
             this.scope.$on("$destroy", this.destroy);
 
-            this.conductorViewService.on("zoom", this.zoom);
+            this.conductorViewService.on("zoom", this.onZoom);
+            this.conductorViewService.on("zoom-stop", this.onZoomStop);
         };
 
         ConductorAxisController.prototype.panStop = function () {
             //resync view bounds with time conductor bounds
-            this.conductor.bounds(this.bounds);
             this.conductorViewService.emit("pan-stop");
+            this.conductor.bounds(this.bounds);
         };
 
-        ConductorAxisController.prototype.zoom = function (bounds) {
-            this.changeBounds(bounds);
+        ConductorAxisController.prototype.onZoom = function (zoom) {
+            this.zooming = true;
+
+            this.bounds = zoom.bounds;
+            this.setScale();
+        };
+
+        ConductorAxisController.prototype.onZoomStop = function (zoom) {
+            this.zooming = false;
         };
 
         ConductorAxisController.prototype.pan = function (delta) {
