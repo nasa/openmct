@@ -39,20 +39,20 @@
     @include pulse($animName: pulse-subtle, $dur: 500ms, $opacity0: 0.7);
 }
 
-@mixin animTo($animName, $propName, $propValStart, $propValEnd, $dur: 500ms, $delay: 0) {
+@mixin animTo($animName, $propName, $propValStart, $propValEnd, $dur: 500ms, $delay: 0, $dir: normal, $count: 1) {
     @include keyframes($animName) {
         from { #{propName}: $propValStart; }
         to { #{$propName}: $propValEnd; }
     }
-    @include animToParams($animName, $dur: 500ms, $delay: 0)
+    @include animToParams($animName, $dur: $dur, $delay: $delay, $dir: $dir, $count: $count)
 }
 
-@mixin animToParams($animName, $dur: 500ms, $delay: 0) {
+@mixin animToParams($animName, $dur: 500ms, $delay: 0, $dir: normal, $count: 1) {
     @include animation-name($animName);
     @include animation-duration($dur);
     @include animation-delay($delay);
     @include animation-fill-mode(both);
-    @include animation-direction(normal);
-    @include animation-iteration-count(1);
+    @include animation-direction($dir);
+    @include animation-iteration-count($count);
     @include animation-timing-function(ease-in-out);
 }

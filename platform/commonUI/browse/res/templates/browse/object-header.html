@@ -22,7 +22,8 @@
 <span class='type-icon flex-elem {{type.getCssClass()}}'></span>
 <span class="l-elem-wrapper l-flex-row flex-elem grows">
     <span ng-if="parameters.mode" class='action flex-elem'>{{parameters.mode}}</span>
-    <span class='title-label flex-elem flex-can-shrink'>{{model.name}}</span>
+    <span class='title-label flex-elem holder flex-can-shrink'>{{model.name}}</span>
+    <span class='t-object-alert t-alert-unsynced flex-elem holder' title='This object is not currently displaying real-time data'></span>
     <mct-representation
         key="'menu-arrow'"
         mct-object='domainObject'

@@ -345,3 +345,29 @@ body.desktop .t-message-single {
 body.desktop .t-message-list {
     .message-contents .l-message { margin-right: $interiorMarginLg; }
 }
+
+// Alert elements in views
+.s-unsynced {
+    $c: $colorPausedBg;
+    border: 1px solid $c;
+    @include animTo($animName: pulsePaused, $propName: border-color, $propValStart: rgba($c, 0.8), $propValEnd: rgba($c, 0.5), $dur: $animPausedPulseDur, $dir: alternate, $count: infinite);
+}
+
+.s-status-timeconductor-unsynced {
+    // Plot areas
+    .gl-plot .gl-plot-display-area {
+        @extend .s-unsynced;
+    }
+
+    // Object headers
+    .object-header {
+        .t-object-alert {
+            display: inline;
+            &.t-alert-unsynced {
+                @extend .icon-alert-triangle;
+                color: $colorPausedBg;
+            }
+        }
+    }
+}
+

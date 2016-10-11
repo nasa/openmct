@@ -82,7 +82,7 @@ input, textarea {
 input[type="text"],
 input[type="search"] {
 	vertical-align: baseline;
-	padding: 3px 5px;
+	padding: $inputTextP;
 }
 
 h1, h2, h3 {
