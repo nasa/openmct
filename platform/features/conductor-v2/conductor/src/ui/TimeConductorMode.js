@@ -176,24 +176,56 @@ define(
          * @returns {TimeSystemDeltas}
          */
         TimeConductorMode.prototype.deltas = function (deltas) {
-            if (arguments.length !== 0) {
-                var oldEnd = this.conductor.bounds().end;
-
-                if (this.dlts && this.dlts.end !== undefined) {
-                    //Calculate the previous raw end value (without delta)
-                    oldEnd = oldEnd - this.dlts.end;
-                }
+            if (arguments.length !== 0 && this.metadata().key!=='fixed') {
+                var bounds = this.calculateBoundsFromDeltas(deltas);
 
                 this.dlts = deltas;
-
-                var newBounds = {
-                    start: oldEnd - this.dlts.start,
-                    end: oldEnd + this.dlts.end
-                };
-
-                this.conductor.bounds(newBounds);
+                this.conductor.bounds(bounds);
             }
             return this.dlts;
+        };
+
+        TimeConductorMode.prototype.calculateBoundsFromDeltas = function (deltas) {
+            var oldEnd = this.conductor.bounds().end;
+
+            if (this.dlts && this.dlts.end !== undefined) {
+                //Calculate the previous raw end value (without delta)
+                oldEnd = oldEnd - this.dlts.end;
+            }
+
+            var bounds = {
+                start: oldEnd - deltas.start,
+                end: oldEnd + deltas.end
+            };
+            return bounds;
+        };
+
+        /**
+         * Performs zoom calculation. Will calculate new bounds and deltas
+         * based on desired timeSpan
+         * @param timeSpan
+         */
+        TimeConductorMode.prototype.calculateZoom = function (timeSpan) {
+            var zoom = {};
+
+            // If a tick source is defined, then the concept of 'now' is
+            // important. Calculate zoom based on 'now'.
+            if (this.tickSource()){
+                zoom.deltas = {
+                    start: timeSpan,
+                    end: this.dlts.end
+                };
+                zoom.bounds = this.calculateBoundsFromDeltas(zoom.deltas);
+                // Calculate bounds based on deltas;
+            } else {
+                var bounds = this.conductor.bounds();
+                var center = bounds.start + ((bounds.end - bounds.start)) / 2;
+                bounds.start = center - timeSpan / 2;
+                bounds.end = center + timeSpan / 2;
+                zoom.bounds = bounds;
+            }
+
+            return zoom;
         };
 
         return TimeConductorMode;

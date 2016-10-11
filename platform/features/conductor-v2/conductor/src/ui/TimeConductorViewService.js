@@ -203,6 +203,12 @@ define(
             return this.currentMode.availableTimeSystems();
         };
 
+        TimeConductorViewService.prototype.zoom = function (timeSpan) {
+            var zoom = this.currentMode.calculateZoom(timeSpan);
+            this.emit("zoom", zoom);
+            return zoom;
+        };
+
         return TimeConductorViewService;
     }
 );
