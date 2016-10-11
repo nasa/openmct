@@ -176,11 +176,12 @@ define(
          * @returns {TimeSystemDeltas}
          */
         TimeConductorMode.prototype.deltas = function (deltas) {
-            if (arguments.length !== 0 && this.metadata().key!=='fixed') {
+            if (arguments.length !== 0) {
                 var bounds = this.calculateBoundsFromDeltas(deltas);
-
                 this.dlts = deltas;
-                this.conductor.bounds(bounds);
+                if (this.metadata().key!=='fixed') {
+                    this.conductor.bounds(bounds);
+                }
             }
             return this.dlts;
         };
