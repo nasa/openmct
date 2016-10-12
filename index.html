@@ -29,11 +29,14 @@
     </script>
     <script>
         require(['openmct'], function (openmct) {
-            require([
-                './example/imagery/bundle',
-                './example/eventGenerator/bundle',
-                './example/generator/bundle'
-            ], openmct.start.bind(openmct));
+            [
+                'example/imagery',
+                'example/eventGenerator',
+                'example/generator'
+            ].forEach(
+                openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
+            );
+            openmct.start();
         });
     </script>
     <link rel="stylesheet" href="platform/commonUI/general/res/css/startup-base.css">
