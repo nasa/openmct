@@ -128,7 +128,7 @@
         line-height: $ueTopBarH;
     }
 
-    .primary-pane {
+    .t-object.primary-pane {
         // Need to lift up this pane to ensure that 'collapsed' panes don't block user interactions
         z-index: 4;
     }
@@ -212,6 +212,8 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
         .holder-object {
             top: $bodyMargin;
             bottom: $interiorMargin;
+            // Clip element that have min-widths
+            overflow: hidden;
         }
         .holder-inspector {
             top: $bodyMargin;

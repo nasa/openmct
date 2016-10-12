@@ -64,6 +64,28 @@ define(
         };
 
         /**
+         * @private
+         */
+        HistoricalTableController.prototype.registerChangeListeners = function () {
+            TableController.prototype.registerChangeListeners.call(this);
+            //Change of bounds in time conductor
+            this.changeListeners.push(this.$scope.$on('telemetry:display:bounds',
+                    this.boundsChange.bind(this))
+            );
+        };
+
+        /**
+         * @private
+         */
+        HistoricalTableController.prototype.boundsChange = function (event, bounds, follow) {
+            // If in follow mode, don't bother re-subscribing, data will be
+            // received from existing subscription.
+            if (follow !== true) {
+                this.subscribe();
+            }
+        };
+
+        /**
          * Processes an array of objects, formatting the telemetry available
          * for them and setting it on scope when done
          * @private
