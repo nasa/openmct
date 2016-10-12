@@ -201,18 +201,51 @@ define(
         };
 
         /**
+         * @private
+         */
+        MCTTableController.prototype.firstVisible = function () {
+            var target = this.scrollable[0],
+                topScroll = target.scrollTop,
+                firstVisible;
+
+            if (topScroll < this.$scope.headerHeight) {
+                firstVisible = 0;
+            } else {
+                firstVisible = Math.floor(
+                    (topScroll - this.$scope.headerHeight) /
+                    this.$scope.rowHeight
+                );
+            }
+
+            return firstVisible;
+        };
+
+        /**
+         * @private
+         */
+        MCTTableController.prototype.lastVisible = function () {
+            var target = this.scrollable[0],
+                topScroll = target.scrollTop,
+                bottomScroll = topScroll + target.offsetHeight,
+                lastVisible;
+
+            lastVisible = Math.ceil(
+                (bottomScroll - this.$scope.headerHeight) /
+                this.$scope.rowHeight
+            );
+            return lastVisible;
+        };
+
+        /**
          * Sets visible rows based on array
          * content and current scroll state.
          */
         MCTTableController.prototype.setVisibleRows = function () {
             var self = this,
-                target = this.scrollable[0],
-                topScroll = target.scrollTop,
-                bottomScroll = topScroll + target.offsetHeight,
-                firstVisible,
-                lastVisible,
                 totalVisible,
                 numberOffscreen,
+                firstVisible,
+                lastVisible,
                 start,
                 end;
 
@@ -221,21 +254,8 @@ define(
                 start = 0;
                 end = this.$scope.displayRows.length;
             } else {
-                //rows has exceeded display maximum, so may be necessary to
-                // scroll
-                if (topScroll < this.$scope.headerHeight) {
-                    firstVisible = 0;
-                } else {
-                    firstVisible = Math.floor(
-                        (topScroll - this.$scope.headerHeight) /
-                        this.$scope.rowHeight
-                    );
-                }
-                lastVisible = Math.ceil(
-                    (bottomScroll - this.$scope.headerHeight) /
-                    this.$scope.rowHeight
-                );
-
+                firstVisible = this.firstVisible();
+                lastVisible = this.lastVisible();
                 totalVisible = lastVisible - firstVisible;
                 numberOffscreen = this.maxDisplayRows - totalVisible;
                 start = firstVisible - Math.floor(numberOffscreen / 2);
@@ -337,7 +357,6 @@ define(
             if (max < min) {
                 return min; // Element is not in array, min gives direction
             }
-
             switch (this.sortComparator(searchElement,
                 searchArray[sampleAt][this.$scope.sortColumn].text)) {
                 case -1:
@@ -565,9 +584,7 @@ define(
 
         MCTTableController.prototype.scrollToRow = function (displayRowIndex) {
 
-            var visible = this.$scope.visibleRows.reduce(function (exists, row) {
-                return exists || (row.rowIndex === displayRowIndex)
-            }, false);
+            var visible = displayRowIndex > this.firstVisible() && displayRowIndex < this.lastVisible();
 
             if (!visible) {
                 var scrollTop = displayRowIndex * this.$scope.rowHeight
@@ -587,10 +604,10 @@ define(
             if (this.$scope.timeColumns.indexOf(this.$scope.sortColumn) !== -1
                 && newTOI
                 && this.$scope.displayRows.length > 0) {
-                var formattedTOI = this.toiFormatter.format(newTOI);
-                var rowsLength = this.$scope.displayRows.length;
+                var formattedTOI = this.toiFormatter.format(newTOI);;
                 // searchElement, min, max
-                this.$scope.toiRowIndex = this.binarySearch(this.$scope.displayRows, formattedTOI, 0, rowsLength);
+                this.$scope.toiRowIndex = this.binarySearch(this.$scope.displayRows,
+                    formattedTOI, 0, this.$scope.displayRows.length - 1);
                 this.scrollToRow(this.$scope.toiRowIndex);
             }
         };
