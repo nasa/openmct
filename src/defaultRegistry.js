@@ -45,6 +45,7 @@ define([
     '../example/scratchpad/bundle',
     '../example/taxonomy/bundle',
     '../example/worker/bundle',
+    '../example/localTimeSystem/bundle',
 
     '../platform/commonUI/about/bundle',
     '../platform/commonUI/browse/bundle',
@@ -65,6 +66,9 @@ define([
     '../platform/exporters/bundle',
     '../platform/features/clock/bundle',
     '../platform/features/conductor/bundle',
+    '../platform/features/conductor-v2/conductor/bundle',
+    '../platform/features/conductor-v2/compatibility/bundle',
+    '../platform/features/conductor-v2/utcTimeSystem/bundle',
     '../platform/features/imagery/bundle',
     '../platform/features/layout/bundle',
     '../platform/features/pages/bundle',
