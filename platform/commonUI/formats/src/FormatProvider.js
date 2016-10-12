@@ -58,6 +58,10 @@ define([
      * @method format
      * @memberof Format#
      * @param {number} value the numeric value to format
+     * @param {number} [threshold]  Optionally provides context to the
+     * format request, allowing for scale-appropriate formatting. This value
+     * should be the minimum unit to be represented by this format, in ms. For
+     * example, to display seconds, a threshold of 1 * 1000 should be provided.
      * @returns {string} the text representation of the value
      */
 

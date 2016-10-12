@@ -37,7 +37,8 @@ requirejs.config({
         "text": "bower_components/text/text",
         "uuid": "bower_components/node-uuid/uuid",
         "zepto": "bower_components/zepto/zepto.min",
-        "lodash": "bower_components/lodash/lodash"
+        "lodash": "bower_components/lodash/lodash",
+        "d3": "bower_components/d3/d3.min"
     },
     "shim": {
         "angular": {
@@ -52,6 +53,9 @@ requirejs.config({
         "html2canvas": {
             "exports": "html2canvas"
         },
+        "EventEmitter": {
+            "exports": "EventEmitter"
+        },
         "moment-duration-format": {
             "deps": ["moment"]
         },
@@ -63,6 +67,9 @@ requirejs.config({
         },
         "lodash": {
             "exports": "lodash"
+        },
+        "d3": {
+            "exports": "d3"
         }
     }
 });
