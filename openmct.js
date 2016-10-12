@@ -53,9 +53,6 @@ requirejs.config({
         "html2canvas": {
             "exports": "html2canvas"
         },
-        "EventEmitter": {
-            "exports": "EventEmitter"
-        },
         "moment-duration-format": {
             "deps": ["moment"]
         },
