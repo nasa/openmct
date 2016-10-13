@@ -51,21 +51,26 @@
         <tbody>
         <!--ng-class="{ 'l-toi pinned': false }"-->
         <!--ng-click="dummyUnpin()" -->
-            <tr ng-repeat="visibleRow in visibleRows track by visibleRow.rowIndex"
-                ng-class="{ 'l-toi pinned': visibleRow.rowIndex === toiRowIndex }"
+            <tr ng-repeat-start="visibleRow in visibleRows track by visibleRow.rowIndex"
+                ng-if="visibleRow.rowIndex === 10"
+                ng-style="{ top: visibleRow.offsetY + 'px' }"
+                class="l-toi-tablerow pinned">
+                <td colspan="999">
+                    <mct-include key="'time-of-interest'"></mct-include>
+                </td>
+            </tr>
+            <tr ng-repeat-end
                 ng-click="table.onRowClick($event, visibleRow.rowIndex)"
-            ng-style="{
-                top: visibleRow.offsetY + 'px',
-            }">
-            <td ng-repeat="header in displayHeaders"
-                ng-style=" {
-                    width: columnWidths[$index] + 'px',
-                    'max-width': columnWidths[$index] + 'px',
-                }"
-                class="{{visibleRow.contents[header].cssClass}}">
-                {{ visibleRow.contents[header].text }}
-            </td>
-        </tr>
-    </tbody>
-</table>
+                ng-style="{ top: visibleRow.offsetY + 'px' }">
+                <td ng-repeat="header in displayHeaders"
+                    ng-style=" {
+                        width: columnWidths[$index] + 'px',
+                        'max-width': columnWidths[$index] + 'px',
+                    }"
+                    class="{{visibleRow.contents[header].cssClass}}">
+                    {{ visibleRow.contents[header].text }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>
