@@ -13,15 +13,15 @@
 
 <!-- Note: - val-to-right should be applied when l-toi-holder left < 150px -->
 <div class="l-toi-holder show-val"
-     ng-class="{ 'pinned': true, 'val-to-right': toi.left < 20 }"
-     ng-style="{'left': 20 + '%'}">
-    <div class="l-toi">
-        <span class="l-toi-buttons">
-            <a class="t-button-unpin icon-button" title="Unset Time of Interest"
-               ng-click="toi.dismiss()"></a>
-            <a class="t-button-resync icon-button" title="Re-sync Time of Interest"
+     ng-class="{ 'pinned': true, 'val-to-right': false }"
+     ng-style="{'left': 90 + '%'}">
+    <div class="l-flex-row l-toi">
+        <span class="flex-elem l-flex-row l-toi-buttons">
+            <a class="flex-elem t-button-resync icon-button" title="Re-sync Time of Interest"
                ng-click="toi.resync()"></a>
+            <a class="flex-elem t-button-unpin icon-button" title="Unset Time of Interest"
+               ng-click="toi.dismiss()"></a>
         </span>
-        <span class="l-toi-val">{{toi.toiText}}2016-09-16 21:30:30</span>
+        <span class="flex-elem l-toi-val">{{toi.toiText}}2016-09-16 21:30:30</span>
     </div>
 </div>

@@ -50,7 +50,7 @@
         // Holds the plot area and the X-axis only
         position: absolute;
         top: nth($plotDisplayArea, 1);
-        right: nth($plotDisplayArea, 2) + $toiH / 2;
+        right: nth($plotDisplayArea, 2);
         bottom: 0;
         left: nth($plotDisplayArea, 4);
 

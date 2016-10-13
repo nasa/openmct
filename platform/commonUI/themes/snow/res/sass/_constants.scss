@@ -103,15 +103,6 @@ $colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
 $colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
 $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
-// Time of Interest
-$toiColorBg: #6b93c6;
-$toiColorBlocker: $colorBodyBg; // Color of blocker element beneath the TOI icon
-$toiColorFg: #fff;
-$toiColorCtrlFg: #fff;
-$toiColorBgAlert: #a7292a; // $colorFormInvalid;
-$toiH: 12px;  // Needs to be an even number to avoid sub-pixel antialiasing of the vertical line
-$toiPadLR: 2px;
-
 // Status colors, mainly used for messaging and item ancillary symbols
 $colorStatusFg: #fff;
 $colorStatusDefault: #ccc;

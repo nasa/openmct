@@ -36,6 +36,15 @@ $colorTimeCondKeyBg: #6178dc;
 $colorTimeCondKeyFg: #fff;
 $colorTimeCondDataVisBg: pullForward($colorBodyBg, 10%);
 $colorTimeCondDataVisRtBg: pushBack($colorTimeCondKeyBg, 30%);
+
+// Time of Interest
+$toiColorBg: #6b93c6;
+$toiColorBlocker: $colorBodyBg; // Color of blocker element beneath the TOI icon
+$toiColorFg: #fff;
+$toiColorCtrlFg: #fff;
+$toiColorBgAlert: #a7292a; // $colorFormInvalid;
 $colorTimeCondTOIBg: darken($toiColorBg, 20%);
 $colorTimeCondTOIBgHov: $toiColorBg;
+
 @import "time-conductor-base";
+@import "time-of-interest";

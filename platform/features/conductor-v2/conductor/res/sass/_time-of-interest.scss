@@ -22,13 +22,14 @@
 
 .l-toi-holder,
 .l-toi-holder:after,
-.l-toi-holder:before,
-.l-toi {
+.l-toi-holder:before {
     display: block;
     position: absolute;
 }
 
 .l-toi-holder {
+    $blockerFadeW: $toiBlockerFadeW;
+    $LROffset: $blockerFadeW + $toiPad;
     $p: 3px;
     @include transform(translateX(-50%));
     color: $toiColorBg;
@@ -62,36 +63,36 @@
 
     .l-toi {
         // Holds buttons and val. Acts as a blocking element.
-        @extend .l-flex-row;
-        @include transform(translateY(-50%));
-        background: blue; // $toiColorBlocker;
+        @include background-image(linear-gradient(90deg, transparent, $toiColorBlocker 10%, $toiColorBlocker 90%, transparent 100%));
+        position: absolute;
         align-items: center;
         box-sizing: content-box;
         height: $toiH;
-        left: $toiPadLR * -1;
-        top: 50%;
-        padding: $toiPadLR $toiPadLR $toiPadLR 0;
+        right: $LROffset * -1;
+        @include transform(translateY(-50%)); top: 50%;
+        padding: $toiPad $blockerFadeW $toiPad $LROffset;
         z-index: 1;
 
         .l-toi-buttons {
-            @extend .flex-elem;
             @include trans-prop-nice($props: width, $dur: 250ms);
             border-radius: $controlCr;
             box-sizing: content-box;
             font-size: $toiH;
             height: 100%;
             line-height: $toiH;
-            padding: $toiPadLR $toiPadLR;
+            padding: $toiPad $toiPad;
+            order: 2;
             overflow: hidden;
             white-space: nowrap;
+            justify-content: space-between;
             width: $toiH;
 
             &:hover {
                 // Expand and display controls; clock icon changes to resync
                 background-color: $toiColorBg;
                 cursor: pointer;
+                margin-left: $interiorMarginSm;
                 width: 30px;
-                //z-index: 2;
 
                 .icon-button {
                     color: rgba($toiColorCtrlFg, 0.5);
@@ -99,13 +100,19 @@
                     &:hover {
                         color: $toiColorCtrlFg;
                     }
-                    &.t-button-unpin:hover {
-                        color: $toiColorBgAlert;
-                    }
                 }
 
-                .t-button-resync:before {
-                    content: $glyph-icon-resync;
+                .t-button-resync {
+                    order: 2;
+                    &:before {
+                        content: $glyph-icon-resync;
+                    }
+                }
+                .t-button-unpin {
+                    order: 1;
+                    &:hover {
+                        color: $toiColorBgAlert;
+                    }
                 }
 
                 & + .l-toi-val {
@@ -114,16 +121,16 @@
                 }
             }
         }
-        // Holds clock icon and resync and unpin buttons
-        //left: $toiPadLR * -1;
 
         .icon-button {
             color: $toiColorBg;
         }
+
         .t-button-resync {
             @extend .icon-clock;
             &:hover { color: $toiColorCtrlFg; }
         }
+
         .t-button-unpin {
             @include trans-prop-nice($props: opacity, $dur: 150ms);
             @extend .icon-x-in-circle;
@@ -137,33 +144,43 @@
     }
 
     &.show-val {
-        .l-toi-val {
-            $tbP: 1px;
-            @extend .flex-elem;
-            @include trans-prop-nice($props: opacity, $dur: 150ms);
-            background-color: $toiColorBg;
-            border-radius: $controlCr;
-            box-sizing: content-box;
-            color: $toiColorFg;
-            display: inline-block;
-            font-size: 0.7rem;
-            font-weight: 400;
-            height: $toiH;
-            //right: $toiH + $interiorMarginSm;
-            //top: 50%;
-            //@include transform(translateY(-50%));
-            line-height: $toiH;
-            padding: $tbP $p;
-            white-space: nowrap;
-            &:hover {
-                //opacity: 1;
+        .l-toi {
+            .l-toi-val {
+                $tbP: 1px;
+                @include trans-prop-nice($props: opacity, $dur: 150ms);
+                background-color: $toiColorBg;
+                border-radius: $controlCr;
+                box-sizing: content-box;
+                color: $toiColorFg;
+                display: inline-block;
+                font-size: 0.7rem;
+                font-weight: 400;
+                height: $toiH;
+                line-height: $toiH;
+                order: 1;
+                padding: $tbP $p;
+                white-space: nowrap;
             }
         }
+    }
 
-        &.val-to-right {
+    &.val-to-right {
+        .l-toi {
+            right: auto;
+            left: $LROffset * -1;
+            padding: $toiPad $LROffset $toiPad $blockerFadeW;
+
+            .l-toi-buttons {
+                order: 1;
+                &:hover {
+                    .t-button-resync { order: 1; }
+                    .t-button-unpin { order: 2; }
+                    margin-right: $interiorMarginSm;
+                }
+            }
+
             .l-toi-val {
-                right: auto;
-                left: $toiH + $interiorMarginSm;
+                order: 2;
             }
         }
     }
@@ -188,12 +205,14 @@ table {
                             top: 0;
 
                         }
+
                         &:before {
                             @extend .icon-clock;
                             color: $toiColorBg;
                             cursor: pointer;
                             z-index: 3;
                         }
+
                         &:after {
                             border-radius: 100%;
                             content: '';
@@ -221,25 +240,20 @@ table {
 // TOI in plots
 .gl-plot {
     .gl-plot-wrapper-display-area-and-x-axis {
+        right: nth($plotDisplayArea, 2) + ($toiH / 2) + $toiPad; // Make room for TOI element
+
         .l-toi-holder {
             bottom: nth($plotDisplayArea, 3) - $interiorMargin;
             z-index: 3;
 
-            .l-toi,
-            .l-toi-val {
-                //@include transform(translateY(100%));
+            .l-toi {
+                @include transform(translateY(100%));
 
             }
 
             .l-toi {
-                //bottom: $toiPadLR - 1;
-                //z-index: 2;
-            }
-
-            .l-toi-val {
-                //top: auto;
-                //bottom: 0;
-                //z-index: 1;
+                top: auto;
+                bottom: $toiPad;
             }
         }
     }
@@ -253,7 +267,7 @@ table {
         &:after {
             // Vertical lines
             border-left-style: solid;
-            //height: (($r2H - $timeCondTOIIconD)/2) + $linesVOffset;
+            height: ((nth($ueTimeConductorH, 2) - $timeCondTOIIconD)/2) + $linesVOffset;
         }
 
         &:before {
