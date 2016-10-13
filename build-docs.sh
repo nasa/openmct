@@ -24,7 +24,7 @@
 
 # Script to build and deploy docs.
 
-OUTPUT_DIRECTORY="target/docs"
+OUTPUT_DIRECTORY="dist/docs"
 # Docs, once built, are pushed to the private website repo
 REPOSITORY_URL="git@github.com:nasa/openmct-website.git"
 WEBSITE_DIRECTORY="website"
