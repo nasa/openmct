@@ -105,10 +105,12 @@
                      ng-class="{ 'pinned': toi.pinned, 'val-to-right': toi.left < 20 }"
                      ng-style="{'left': toi.left + '%'}">
                     <div class="l-toi">
-                        <a class="t-button-unpin icon-button"
+                        <a class="t-button-unpin icon-button" title="Unset Time of Interest"
                            ng-click="toi.dismiss()"></a>
-                        <span class="l-toi-val">{{toi.toiText}}</span>
+                        <a class="t-button-resync icon-button" title="Re-sync Time of Interest"
+                           ng-click="toi.resync()"></a>
                     </div>
+                    <span class="l-toi-val">{{toi.toiText}}</span>
                 </div>
             </div>
             <a class="l-page-button align-right s-icon-button icon-pointer-right"></a>

@@ -36,7 +36,7 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    width: $toiW;
+    width: $toiH;
     &:not(.pinned) {
         opacity: 0;
         pointer-events: none;
@@ -61,18 +61,57 @@
     }
 
     .l-toi {
-        // Holds clock icon and unpin button
-        font-size: $toiW;
-        height: $toiW;
-        width: $toiW;
-        .t-button-unpin {
+        // Holds clock icon and resync and unpin buttons
+        @include trans-prop-nice($props: width, $dur: 250ms);
+        border-radius: $controlCr;
+        box-sizing: content-box;
+        height: $toiH;
+        left: $toiPadLR * -1;
+        line-height: $toiH;
+        overflow: hidden;
+        padding: $toiPadLR $toiPadLR;
+        font-size: $toiH;
+        width: $toiH;
+        white-space: nowrap;
+        .icon-button {
             color: $toiColorBg;
+        }
+        .t-button-resync {
             @extend .icon-clock;
-            &:hover {
-                &:before {
-                    color: $toiColorBgAlert;
-                    content: $glyph-icon-x-in-circle;
+            &:hover { color: $toiColorCtrlFg; }
+        }
+        .t-button-unpin {
+            @include trans-prop-nice($props: opacity, $dur: 150ms);
+            @extend .icon-x-in-circle;
+            float: right;
+            opacity: 0;
+
+        }
+        &:hover {
+            // Expand and display controls; clock icon changes to resync
+            background-color: $toiColorBg;
+            cursor: pointer;
+            width: 30px;
+            z-index: 2;
+
+            .icon-button {
+                color: rgba($toiColorCtrlFg, 0.5);
+                opacity: 1;
+                &:hover {
+                    color: $toiColorCtrlFg;
                 }
+                &.t-button-unpin:hover {
+                    color: $toiColorBgAlert;
+                }
+            }
+
+            .t-button-resync:before {
+                content: $glyph-icon-resync;
+            }
+
+            & + .l-toi-val {
+                // Dim the value to emphasize the controls
+                opacity: 0.5;
             }
         }
     }
@@ -84,6 +123,7 @@
     &.show-val {
         .l-toi-val {
             $tbP: 1px;
+            @include trans-prop-nice($props: opacity, $dur: 150ms);
             background-color: $toiColorBg;
             border-radius: $controlCr;
             box-sizing: content-box;
@@ -91,19 +131,22 @@
             display: inline-block;
             font-size: 0.7rem;
             font-weight: 400;
-            height: $toiW;
-            right: $toiW + $interiorMarginSm;
+            height: $toiH;
+            right: $toiH + $interiorMarginSm;
             top: 50%;
             @include transform(translateY(-50%));
-            line-height: $toiW;
+            line-height: $toiH;
             padding: $tbP $p;
             white-space: nowrap;
+            &:hover {
+                //opacity: 1;
+            }
         }
 
         &.val-to-right {
             .l-toi-val {
                 right: auto;
-                left: $toiW + $interiorMarginSm;
+                left: $toiH + $interiorMarginSm;
             }
         }
     }
@@ -138,8 +181,8 @@ table {
                             border-radius: 100%;
                             content: '';
                             background: $toiColorBlocker;
-                            height: $toiW + $interiorMargin;
-                            width: $toiW + $interiorMargin;
+                            height: $toiH + $interiorMargin;
+                            width: $toiH + $interiorMargin;
                             z-index: 2;
                         }
                     }
@@ -164,13 +207,22 @@ table {
         .l-toi-holder {
             bottom: nth($plotDisplayArea, 3) - $interiorMargin;
             z-index: 3;
-            &:after {
-                display: none;
+
+            .l-toi,
+            .l-toi-val {
+                @include transform(translateY(100%));
+
             }
 
             .l-toi {
-                @include transform(translateY(100%));
+                bottom: $toiPadLR - 1;
+                z-index: 2;
+            }
+
+            .l-toi-val {
+                top: auto;
                 bottom: 0;
+                z-index: 1;
             }
         }
     }
