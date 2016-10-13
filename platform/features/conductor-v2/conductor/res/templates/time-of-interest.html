@@ -1,0 +1,27 @@
+<!-- Note: - val-to-right should be applied when l-toi-holder left < 150px -->
+<div class="l-toi-holder show-val hidden"
+     ng-class="{ 'pinned': toi.pinned, 'val-to-right': toi.left < 20 }"
+     ng-style="{'left': toi.left + '%'}">
+    <div class="l-toi">
+        <a class="t-button-unpin icon-button" title="Unset Time of Interest"
+           ng-click="toi.dismiss()"></a>
+        <a class="t-button-resync icon-button" title="Re-sync Time of Interest"
+           ng-click="toi.resync()"></a>
+    </div>
+    <span class="l-toi-val">{{toi.toiText}}</span>
+</div>
+
+<!-- Note: - val-to-right should be applied when l-toi-holder left < 150px -->
+<div class="l-toi-holder show-val"
+     ng-class="{ 'pinned': true, 'val-to-right': toi.left < 20 }"
+     ng-style="{'left': 20 + '%'}">
+    <div class="l-toi">
+        <span class="l-toi-buttons">
+            <a class="t-button-unpin icon-button" title="Unset Time of Interest"
+               ng-click="toi.dismiss()"></a>
+            <a class="t-button-resync icon-button" title="Re-sync Time of Interest"
+               ng-click="toi.resync()"></a>
+        </span>
+        <span class="l-toi-val">{{toi.toiText}}2016-09-16 21:30:30</span>
+    </div>
+</div>

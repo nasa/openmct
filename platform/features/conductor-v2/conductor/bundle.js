@@ -31,6 +31,7 @@ define([
     "text!./res/templates/time-conductor.html",
     "text!./res/templates/mode-selector/mode-selector.html",
     "text!./res/templates/mode-selector/mode-menu.html",
+    "text!./res/templates/time-of-interest.html",
     "legacyRegistry"
 ], function (
     TimeConductorViewService,
@@ -43,6 +44,7 @@ define([
     timeConductorTemplate,
     modeSelectorTemplate,
     modeMenuTemplate,
+    timeOfInterest,
     legacyRegistry
 ) {
 
@@ -127,6 +129,10 @@ define([
                 {
                     "key": "mode-selector",
                     "template": modeSelectorTemplate
+                },
+                {
+                    "key": "time-of-interest",
+                    "template": timeOfInterest
                 }
             ],
             "representations": [

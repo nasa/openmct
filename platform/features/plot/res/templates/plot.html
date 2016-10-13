@@ -71,18 +71,7 @@
             </div>
 
             <div class="gl-plot-wrapper-display-area-and-x-axis">
-                <!-- TOI element. val-to-right should be true when 'left' is < 150px -->
-                <div class="l-toi-holder show-val"
-                     ng-class="{ pinned: false, 'val-to-right': true }"
-                     style="left: 20%">
-                    <span class="l-toi">
-                        <a class="t-button-unpin icon-button" title="Unset Time of Interest"
-                           ng-click="toi.dismiss()"></a>
-                        <a class="t-button-resync icon-button" title="Re-sync Time of Interest"
-                           ng-click="toi.resync()"></a>
-                    </span>
-                    <span class="l-toi-val">21:31:30</span>
-                </div>
+                <mct-include key="'time-of-interest'"></mct-include>
 
                 <div class="gl-plot-coords"
                      ng-if="subplot.isHovering() && subplot.getHoverCoordinates()">

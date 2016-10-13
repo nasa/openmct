@@ -258,40 +258,6 @@
         }
     }
 
-    // Time of Interest control
-    .l-toi-holder {
-        $linesVOffset: 2px;
-        &:before,
-        &:after {
-            // Vertical lines
-            border-left-style: solid;
-            left: 50%;
-            height: (($r2H - $timeCondTOIIconD)/2) + $linesVOffset;
-            width: 1px;
-            z-index: 0;
-        }
-
-        &:before {
-            @include transform(translate(-50%, $linesVOffset * -1));
-            top: 0px;
-            bottom: auto;
-        }
-
-        &:after {
-            @include transform(translate(-50%, $linesVOffset));
-            top: auto;
-            bottom: 0px;
-        }
-
-        .l-toi {
-            //height: $r2H;
-            //line-height: $r2H;
-            top: 50%;
-            @include transform(translateY(-50%));
-            @include transform-origin(left center);
-        }
-    }
-
     .l-time-conductor-controls {
         align-items: center;
         margin-top: $interiorMargin;

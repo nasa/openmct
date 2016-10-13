@@ -100,18 +100,7 @@
              ng-click="toi.click($event)">
             <a class="l-page-button s-icon-button icon-pointer-left"></a>
             <div class="l-data-visualization">
-                <!-- Note: - val-to-right should be applied when l-toi-holder left < 150px -->
-                <div class="l-toi-holder show-val"
-                     ng-class="{ 'pinned': toi.pinned, 'val-to-right': toi.left < 20 }"
-                     ng-style="{'left': toi.left + '%'}">
-                    <div class="l-toi">
-                        <a class="t-button-unpin icon-button" title="Unset Time of Interest"
-                           ng-click="toi.dismiss()"></a>
-                        <a class="t-button-resync icon-button" title="Re-sync Time of Interest"
-                           ng-click="toi.resync()"></a>
-                    </div>
-                    <span class="l-toi-val">{{toi.toiText}}</span>
-                </div>
+                <mct-include key="'time-of-interest'"></mct-include>
             </div>
             <a class="l-page-button align-right s-icon-button icon-pointer-right"></a>
         </div>
