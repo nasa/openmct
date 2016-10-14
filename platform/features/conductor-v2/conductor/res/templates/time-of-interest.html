@@ -1,20 +1,6 @@
-<!--
 <div class="l-toi-holder"
-     ng-class="{ 'pinned': toi.pinned, 'val-to-right': toi.left < 80 }"
+     ng-class="{ 'pinned': toi.pinned, 'val-to-left': toi.left > 80 }"
      ng-style="{'left': toi.left + '%'}">
-    <div class="l-toi">
-        <a class="t-button-unpin icon-button" title="Unset Time of Interest"
-           ng-click="toi.dismiss()"></a>
-        <a class="t-button-resync icon-button" title="Re-sync Time of Interest"
-           ng-click="toi.resync()"></a>
-    </div>
-    <span class="l-toi-val">{{toi.toiText}}</span>
-</div>
--->
-
-<div class="l-toi-holder"
-     ng-class="{ 'pinned': true, 'val-to-right': true }"
-     ng-style="{'left': 50 + '%'}">
     <div class="l-flex-row l-toi">
         <span class="flex-elem l-flex-row l-toi-buttons">
             <a class="flex-elem t-button-resync icon-button" title="Re-sync Time of Interest"
@@ -22,6 +8,6 @@
             <a class="flex-elem t-button-unpin icon-button" title="Unset Time of Interest"
                ng-click="toi.dismiss()"></a>
         </span>
-        <span class="flex-elem l-toi-val">{{toi.toiText}}2016-09-16 21:30:30</span>
+        <span class="flex-elem l-toi-val">{{toi.toiText}}</span>
     </div>
 </div>

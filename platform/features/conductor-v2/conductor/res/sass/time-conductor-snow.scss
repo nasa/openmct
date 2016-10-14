@@ -39,10 +39,10 @@ $colorTimeCondDataVisRtBg: pushBack($colorTimeCondKeyBg, 30%);
 
 // Time of Interest
 $toiColorBg: #6b93c6;
-$toiColorBlocker: $colorBodyBg; // Color of blocker element beneath the TOI icon
-$toiColorFg: #fff;
+$toiColorBlocker: $colorBodyBg; // Color of blocker element beneath the TOI icons
+$toiColorFg: #fff; // Used by value display
 $toiColorCtrlFg: #fff;
-$toiColorBgAlert: #a7292a; // $colorFormInvalid;
+$toiColorBgAlert: #ff9540; // Used by unpin button on hover
 $colorTimeCondTOIBg: darken($toiColorBg, 20%);
 $colorTimeCondTOIBgHov: $toiColorBg;
 
