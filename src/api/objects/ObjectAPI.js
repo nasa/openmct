@@ -24,12 +24,14 @@ define([
     'lodash',
     './object-utils',
     './MutableObject',
-    './RootRegistry'
+    './RootRegistry',
+    './RootObjectProvider'
 ], function (
     _,
     utils,
     MutableObject,
-    RootRegistry
+    RootRegistry,
+    RootObjectProvider
 ) {
 
 
@@ -43,18 +45,7 @@ define([
     function ObjectAPI() {
         this.providers = {};
         this.rootRegistry = new RootRegistry();
-        this.rootProvider = {
-            'get': function () {
-                return this.rootRegistry.getRoots()
-                    .then(function (roots) {
-                        return {
-                            name: 'The root object',
-                            type: 'root',
-                            composition: roots
-                        };
-                    });
-            }.bind(this)
-        };
+        this.rootProvider = new RootObjectProvider(this.rootRegistry);
     }
 
     ObjectAPI.prototype.supersecretSetFallbackProvider = function (p) {
