@@ -118,18 +118,11 @@ To do so, use the [`addRoot`]{@link module:openmct.ObjectAPI#addRoot} method
 of the [object API]{@link module:openmct.ObjectAPI}:
 
 ```
-openmct.objects.addRoot({
-    identifier: { key: "my-key", namespace: "my-namespace" }
-    name: "My Root-level Object",
-    type: "my-type"
-});
+openmct.objects.addRoot({ key: "my-key", namespace: "my-namespace" });
 ```
 
-You can also remove this root-level object via its identifier:
-
-```
-openmct.objects.removeRoot({ key: "my-key", namespace: "my-namespace" });
-```
+Root objects are loaded just like any other objects, i.e. via an object
+provider.
 
 ### Adding Composition Providers
 
