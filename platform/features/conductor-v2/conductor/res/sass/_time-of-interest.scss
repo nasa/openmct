@@ -66,20 +66,19 @@
         align-items: center;
         box-sizing: content-box;
         height: $toiH;
-        right: $toiPad * -2;
+        left: $toiPad * -2;
         @include transform(translateY(-50%)); top: 50%;
         padding: $toiPad;
         z-index: 1;
 
         .l-toi-buttons {
-            @include trans-prop-nice($props: width, $dur: 250ms);
+            @include trans-prop-nice($props: (width, padding), $dur: 250ms);
             border-radius: $controlCr;
             box-sizing: content-box;
             font-size: $toiH;
             height: 100%;
             line-height: $toiH;
             padding: $toiPad;
-            order: 2;
             overflow: hidden;
             white-space: nowrap;
             justify-content: space-between;
@@ -100,13 +99,13 @@
                 }
 
                 .t-button-resync {
-                    order: 2;
+                    order: 1;
                     &:before {
                         content: $glyph-icon-resync;
                     }
                 }
                 .t-button-unpin {
-                    order: 1;
+                    order: 2;
                     &:hover {
                         color: $toiColorBgAlert;
                     }
@@ -141,11 +140,14 @@
     }
 }
 
+
+// TOI is showing value as well
 .show-val .l-toi-holder {
     .l-toi {
         .l-toi-buttons {
+            order: 1;
             &:hover {
-                margin-left: $interiorMarginSm;
+                margin-right: $interiorMarginSm;
             }
         }
         .l-toi-val {
@@ -159,28 +161,28 @@
             font-weight: 400;
             height: $toiH;
             line-height: $toiH;
-            order: 1;
+            order: 2;
             padding: 1px 3px;
             white-space: nowrap;
         }
     }
 
-    &.val-to-right {
+    &.val-to-left {
         .l-toi {
-            right: auto;
-            left: $toiPad * -2;
+            left: auto;
+            right: $toiPad * -2;
 
             .l-toi-buttons {
-                order: 1;
+                order: 2;
                 &:hover {
-                    .t-button-resync { order: 1; }
-                    .t-button-unpin { order: 2; }
-                    margin-right: $interiorMarginSm;
+                    .t-button-resync { order: 2; }
+                    .t-button-unpin { order: 1; }
+                    margin-left: $interiorMarginSm;
                 }
             }
 
             .l-toi-val {
-                order: 2;
+                order: 1;
             }
         }
     }
@@ -196,18 +198,24 @@ table {
                 z-index: 1;
                 td, .td {
                     .l-toi-holder {
-                        //@include test();
-                        //width: 100%;
-                        //z-index: 5;
+                        left: 50% !important;
                         &:before,
                         &:after {
                             display: none;
                         }
                         .l-toi {
-                            background: $toiColorBlocker;
+                            background: rgba($toiColorBlocker, 0.9);
+                            border-radius: 20%;
+                            height: auto;
                             padding: $toiPad;
                             @include transform(translate(-50%, -50%));
                             left: 50%; right: auto; top: 0;
+                            .l-toi-buttons {
+                                padding: 1px;
+                                &:hover {
+                                    padding: $toiPad;
+                                }
+                            }
                         }
                     }
                 }
@@ -215,57 +223,6 @@ table {
         }
     }
 }
-
-// Old approach
-/*.tabular,
-table {
-    tbody, .tbody {
-        tr, .tr {
-            &.l-toi.pinned {
-                border-top: 1px dashed $toiColorBg;
-                td, .td {
-                    &:first-child {
-                        &:before,
-                        &:after {
-                            @include transform(translate(-50%, -50%));
-                            display: block;
-                            position: absolute;
-                            left: 50%;
-                            bottom: auto;
-                            top: 0;
-
-                        }
-
-                        &:before {
-                            @extend .icon-clock;
-                            color: $toiColorBg;
-                            cursor: pointer;
-                            z-index: 3;
-                        }
-
-                        &:after {
-                            border-radius: 100%;
-                            content: '';
-                            background: $toiColorBlocker;
-                            height: $toiH + $interiorMargin;
-                            width: $toiH + $interiorMargin;
-                            z-index: 2;
-                        }
-                    }
-                }
-
-                &:hover {
-                    td, .td {
-                        &:first-child:before {
-                            color: $toiColorBgAlert;
-                            content: $glyph-icon-x-in-circle !important;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}*/
 
 // TOI in plots
 .gl-plot {

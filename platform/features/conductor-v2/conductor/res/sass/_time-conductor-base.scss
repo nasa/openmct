@@ -345,6 +345,9 @@
         .mode-selector .s-menu-button:before {
             content: $i;
         }
+        .l-axis-holder {
+            @include cursorGrab();
+        }
     }
 
     // Realtime mode

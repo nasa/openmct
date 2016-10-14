@@ -164,7 +164,7 @@ $ueTimeConductorH: (33px, 18px, 20px);
                     margin-left: 0;
                 }
                 .l-time-range-tick-label {
-                    @include webkitProp(transform, translateX(-50%));
+                    @include transform(translateX(-50%));
                     color: $colorPlotLabelFg;
                     display: inline-block;
                     font-size: 0.7rem;

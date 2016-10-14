@@ -1,15 +1,4 @@
 <!-- Parent holder for time conductor. follow-mode | fixed-mode -->
-<style>
-    .fixed-mode .l-axis-holder {
-        cursor: grab;
-        cursor: -webkit-grab;
-    }
-
-    .fixed-mode .l-axis-holder:active {
-        cursor: grabbing;
-        cursor: -webkit-grabbing;
-    }
-</style>
 <div ng-controller="TimeConductorController as tcController"
     class="holder grows flex-elem l-flex-row l-time-conductor {{modeModel.selectedKey}}-mode {{timeSystemModel.selected.metadata.key}}-time-system"
         ng-class="{'status-panning': panning}">
