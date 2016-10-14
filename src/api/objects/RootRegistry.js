@@ -52,11 +52,6 @@ define([
         }
     };
 
-    // Assume no one ever removes a root.  everything is opt in.
-    RootRegistry.prototype.removeRoot = function (key) {
-        throw new Error('you should never remove a root');
-    };
-
     return RootRegistry;
 
 });
