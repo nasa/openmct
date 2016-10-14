@@ -38,11 +38,14 @@ define([
             .then(_.flatten);
     };
 
+    function isKey(key) {
+        return _.isObject(key) && _.has(key, 'key') && _.has(key, 'namespace');
+    }
 
     RootRegistry.prototype.addRoot = function (key) {
-        if (_.isObject(key) && _.has(key, 'identifier') && _.has(key, 'namespace')) {
+        if (isKey(key) || (_.isArray(key) && _.every(key, isKey))) {
             this.providers.push(function () {
-                return Promise.resolve(key);
+                return key;
             });
         } else if (_.isFunction(key)) {
             this.providers.push(key);
