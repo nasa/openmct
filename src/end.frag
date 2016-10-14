@@ -1,3 +1,2 @@
-
-   return require('main'); 
+    return require('openmct');
 }));

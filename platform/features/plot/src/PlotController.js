@@ -229,13 +229,19 @@ define(
             }
 
             // Respond to a display bounds change (requery for data)
-            function changeDisplayBounds(event, bounds) {
-                var domainAxis = $scope.axes[0];
+            function changeDisplayBounds(event, bounds, follow) {
+                //'hack' for follow mode
+                if (follow === true) {
+                    setBasePanZoom(bounds);
+                } else {
+                    var domainAxis = $scope.axes[0];
 
-                domainAxis.chooseOption(bounds.domain);
-                updateDomainFormat();
-                setBasePanZoom(bounds);
-                requery();
+                    domainAxis.chooseOption(bounds.domain);
+                    updateDomainFormat();
+                    setBasePanZoom(bounds);
+                    requery();
+                }
+                self.setUnsynchedStatus($scope.domainObject, follow && self.isZoomed());
             }
 
             this.modeOptions = new PlotModeOptions([], subPlotFactory);
@@ -366,6 +372,12 @@ define(
             // Placeholder; this should reflect request state
             // when requesting historical telemetry
             return this.pending;
+        };
+
+        PlotController.prototype.setUnsynchedStatus = function (domainObject, status) {
+            if (domainObject.hasCapability('status')) {
+                domainObject.getCapability('status').set('timeconductor-unsynced', status);
+            }
         };
 
         /**

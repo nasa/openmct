@@ -71,6 +71,9 @@ define(
                     // Allow controls to trigger blur-like events
                     ngBlur: "&",
 
+                    // Allow controls to trigger blur-like events
+                    ngMouseup: "&",
+
                     // The state of the form value itself
                     ngModel: "=",
 

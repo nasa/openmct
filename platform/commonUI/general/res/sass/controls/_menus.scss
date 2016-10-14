@@ -178,7 +178,7 @@
 	}
 	.pane {
 		box-sizing: border-box;
-		&.left {
+		&.menu-items {
 			border-right: 1px solid pullForward($colorMenuBg, 10%);
 			left: 0;
 			padding-right: $interiorMargin;
@@ -194,38 +194,53 @@
 				}
 			}
 		}
-		&.right {
+		&.menu-item-description {
 			left: auto;
 			right: 0;
 			padding: $interiorMargin * 5;
 			width: $prw;
+            .desc-area {
+                &.icon {
+                    color: $colorCreateMenuLgIcon;
+                    font-size: 8em;
+                    margin-bottom: $interiorMargin * 3;
+                    position: relative;
+                    text-align: center;
+                }
+                &.title {
+                    color: $colorCreateMenuText;
+                    font-size: 1.2em;
+                    margin-bottom: $interiorMargin * 2;
+                }
+                &.description {
+                    color: pushBack($colorCreateMenuText, 20%);
+                    font-size: 0.8em;
+                    line-height: 1.5em;
+                }
+            }
 		}
 	}
-	.menu-item-description {
-		.desc-area {
-			&.icon {
-				$h: 150px;
-				color: $colorCreateMenuLgIcon;
-				position: relative;
-				font-size: 8em;
-				left: 0;
-				height: $h;
-				line-height: $h;
-				margin-bottom: $interiorMargin * 5;
-				text-align: center;
-			}
-			&.title {
-				color: $colorCreateMenuText;
-				font-size: 1.2em;
-				margin-bottom: 0.5em;
-			}
-			&.description {
-				color: $colorCreateMenuText;
-				font-size: 0.8em;
-				line-height: 1.5em;
-			}
-		}
-	}
+
+    &.mini {
+        width: 400px;
+        height: 300px;
+        .pane {
+            &.menu-items {
+                font-size: 0.8em;
+            }
+            &.menu-item-description {
+                padding: $interiorMargin * 3;
+                .desc-area {
+                    &.icon {
+                        font-size: 4em;
+                    }
+                    &.title {
+                        font-size: 1em;
+                    }
+                }
+            }
+        }
+    }
 }
 .context-menu {
 	font-size: 0.80rem;
@@ -261,4 +276,8 @@
 	left: auto;
 	right: 0;
 	width: auto;
+}
+
+.menus-up .menu {
+    bottom: $btnStdH; top: auto;
 }

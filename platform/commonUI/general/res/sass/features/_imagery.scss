@@ -74,7 +74,7 @@
 .s-image-main {
 	border: 1px solid transparent;
 	&.paused {
-		border-color: $colorPausedBg;
+		@extend .s-unsynced;
 	}
 }
 

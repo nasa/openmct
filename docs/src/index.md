@@ -34,5 +34,4 @@ As we transition to a new API, the following documentation for the old API
  platform and the functionality that it provides.
 
  * The [Tutorials](tutorials/) give examples of extending the platform to add
- functionality,
- and integrate with data sources.
+ functionality, and integrate with data sources.
