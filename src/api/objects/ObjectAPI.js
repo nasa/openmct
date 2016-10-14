@@ -23,11 +23,13 @@
 define([
     'lodash',
     './object-utils',
-    './MutableObject'
+    './MutableObject',
+    './RootRegistry'
 ], function (
     _,
     utils,
-    MutableObject
+    MutableObject,
+    RootRegistry
 ) {
 
 
@@ -40,14 +42,17 @@ define([
 
     function ObjectAPI() {
         this.providers = {};
-        this.rootRegistry = [];
+        this.rootRegistry = new RootRegistry();
         this.rootProvider = {
             'get': function () {
-                return Promise.resolve({
-                    name: 'The root object',
-                    type: 'root',
-                    composition: this.rootRegistry
-                });
+                return this.rootRegistry.getRoots()
+                    .then(function (roots) {
+                        return {
+                            name: 'The root object',
+                            type: 'root',
+                            composition: roots
+                        };
+                    });
             }.bind(this)
         };
     }
@@ -143,29 +148,14 @@ define([
 
     /**
      * Add a root-level object.
-     * @param {module:openmct.DomainObject} domainObject the root-level object
-     *        to add.
+     * @param {module:openmct.ObjectAPI~Identifier|function} an array of
+     *        identifiers for root level objects, or a function that returns a
+     *        promise for an identifier or an array of root level objects.
      * @method addRoot
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.addRoot = function (key) {
-        this.rootRegistry.unshift(key);
-    };
-
-    /**
-     * Remove a root-level object.
-     * @param {module:openmct.ObjectAPI~Identifier} id the identifier of the
-     *        root-level object to remove.
-     * @method removeRoot
-     * @memberof module:openmct.ObjectAPI#
-     */
-    ObjectAPI.prototype.removeRoot = function (key) {
-        this.rootRegistry = this.rootRegistry.filter(function (k) {
-            return (
-                k.identifier !== key.identifier ||
-                k.namespace !== key.namespace
-            );
-        });
+        this.rootRegistry.addRoot(key);
     };
 
     /**
