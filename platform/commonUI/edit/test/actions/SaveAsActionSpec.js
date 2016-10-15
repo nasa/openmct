@@ -236,6 +236,7 @@ define(
                     });
                     runs(function () {
                         expect(mockNotificationService.info).toHaveBeenCalled();
+                        expect(mockNotificationService.error).not.toHaveBeenCalled();
                     });
                 });
 
@@ -248,6 +249,7 @@ define(
                     });
                     runs(function () {
                         expect(mockNotificationService.error).toHaveBeenCalled();
+                        expect(mockNotificationService.info).not.toHaveBeenCalled();
                     });
                 });
             });
