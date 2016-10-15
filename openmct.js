@@ -27,6 +27,7 @@ requirejs.config({
         "angular": "bower_components/angular/angular.min",
         "angular-route": "bower_components/angular-route/angular-route.min",
         "csv": "bower_components/comma-separated-values/csv.min",
+        "EventEmitter": "bower_components/eventemitter3/index",
         "es6-promise": "bower_components/es6-promise/es6-promise.min",
         "html2canvas": "bower_components/html2canvas/build/html2canvas.min",
         "moment": "bower_components/moment/moment",
@@ -35,7 +36,9 @@ requirejs.config({
         "screenfull": "bower_components/screenfull/dist/screenfull.min",
         "text": "bower_components/text/text",
         "uuid": "bower_components/node-uuid/uuid",
-        "zepto": "bower_components/zepto/zepto.min"
+        "zepto": "bower_components/zepto/zepto.min",
+        "lodash": "bower_components/lodash/lodash",
+        "d3": "bower_components/d3/d3.min"
     },
     "shim": {
         "angular": {
@@ -43,6 +46,9 @@ requirejs.config({
         },
         "angular-route": {
             "deps": ["angular"]
+        },
+        "EventEmitter": {
+            "exports": "EventEmitter"
         },
         "html2canvas": {
             "exports": "html2canvas"
@@ -55,54 +61,28 @@ requirejs.config({
         },
         "zepto": {
             "exports": "Zepto"
+        },
+        "lodash": {
+            "exports": "lodash"
+        },
+        "d3": {
+            "exports": "d3"
         }
     }
 });
 
 define([
     './platform/framework/src/Main',
-    'legacyRegistry',
+    './src/defaultRegistry',
+    './src/MCT'
+], function (Main, defaultRegistry, MCT) {
+    var openmct = new MCT();
 
-    './platform/framework/bundle',
-    './platform/core/bundle',
-    './platform/representation/bundle',
-    './platform/commonUI/about/bundle',
-    './platform/commonUI/browse/bundle',
-    './platform/commonUI/edit/bundle',
-    './platform/commonUI/dialog/bundle',
-    './platform/commonUI/formats/bundle',
-    './platform/commonUI/general/bundle',
-    './platform/commonUI/inspect/bundle',
-    './platform/commonUI/mobile/bundle',
-    './platform/commonUI/themes/espresso/bundle',
-    './platform/commonUI/notification/bundle',
-    './platform/containment/bundle',
-    './platform/execution/bundle',
-    './platform/exporters/bundle',
-    './platform/telemetry/bundle',
-    './platform/features/clock/bundle',
-    './platform/features/fixed/bundle',
-    './platform/features/imagery/bundle',
-    './platform/features/layout/bundle',
-    './platform/features/pages/bundle',
-    './platform/features/plot/bundle',
-    './platform/features/timeline/bundle',
-    './platform/features/table/bundle',
-    './platform/forms/bundle',
-    './platform/identity/bundle',
-    './platform/persistence/aggregator/bundle',
-    './platform/persistence/local/bundle',
-    './platform/persistence/queue/bundle',
-    './platform/policy/bundle',
-    './platform/entanglement/bundle',
-    './platform/search/bundle',
-    './platform/status/bundle',
-    './platform/commonUI/regions/bundle'
-], function (Main, legacyRegistry) {
-    return {
-        legacyRegistry: legacyRegistry,
-        run: function () {
-            return new Main().run(legacyRegistry);
-        }
-    };
+    openmct.legacyRegistry = defaultRegistry;
+
+    openmct.on('start', function () {
+        return new Main().run(defaultRegistry);
+    });
+
+    return openmct;
 });

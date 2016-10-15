@@ -21,8 +21,8 @@
  *****************************************************************************/
 /*global define*/
 define(
-    [],
-    function () {
+    ['./Transaction', './NestedTransaction'],
+    function (Transaction, NestedTransaction) {
         /**
          * Implements an application-wide transaction state. Once a
          * transaction is started, calls to
@@ -37,10 +37,7 @@ define(
         function TransactionService($q, $log) {
             this.$q = $q;
             this.$log = $log;
-            this.transaction = false;
-
-            this.onCommits = [];
-            this.onCancels = [];
+            this.transactions = [];
         }
 
         /**
@@ -50,18 +47,18 @@ define(
          * #cancel} are called
          */
         TransactionService.prototype.startTransaction = function () {
-            if (this.transaction) {
-                //Log error because this is a programming error if it occurs.
-                this.$log.error("Transaction already in progress");
-            }
-            this.transaction = true;
+            var transaction = this.isActive() ?
+                new NestedTransaction(this.transactions[0]) :
+                new Transaction(this.$log);
+
+            this.transactions.push(transaction);
         };
 
         /**
          * @returns {boolean} If true, indicates that a transaction is in progress
          */
         TransactionService.prototype.isActive = function () {
-            return this.transaction;
+            return this.transactions.length > 0;
         };
 
         /**
@@ -72,24 +69,20 @@ define(
          * @param onCancel A function to call on cancel
          */
         TransactionService.prototype.addToTransaction = function (onCommit, onCancel) {
-            if (this.transaction) {
-                this.onCommits.push(onCommit);
-                if (onCancel) {
-                    this.onCancels.push(onCancel);
-                }
+            if (this.isActive()) {
+                return this.activeTransaction().add(onCommit, onCancel);
             } else {
                 //Log error because this is a programming error if it occurs.
                 this.$log.error("No transaction in progress");
             }
+        };
 
-            return function () {
-                this.onCommits = this.onCommits.filter(function (callback) {
-                    return callback !== onCommit;
-                });
-                this.onCancels = this.onCancels.filter(function (callback) {
-                    return callback !== onCancel;
-                });
-            }.bind(this);
+        /**
+         * Get the transaction at the top of the stack.
+         * @private
+         */
+        TransactionService.prototype.activeTransaction = function () {
+            return this.transactions[this.transactions.length - 1];
         };
 
         /**
@@ -100,24 +93,8 @@ define(
          * completed. Will reject if any commit operations fail
          */
         TransactionService.prototype.commit = function () {
-            var self = this,
-                promises = [],
-                onCommit;
-
-            while (this.onCommits.length > 0) { // ...using a while in case some onCommit adds to transaction
-                onCommit = this.onCommits.pop();
-                try { // ...also don't want to fail mid-loop...
-                    promises.push(onCommit());
-                } catch (e) {
-                    this.$log.error("Error committing transaction.");
-                }
-            }
-            return this.$q.all(promises).then(function () {
-                self.transaction = false;
-
-                self.onCommits = [];
-                self.onCancels = [];
-            });
+            var transaction = this.transactions.pop();
+            return transaction ? transaction.commit() : Promise.reject();
         };
 
         /**
@@ -129,28 +106,17 @@ define(
          * @returns {*}
          */
         TransactionService.prototype.cancel = function () {
-            var self = this,
-                results = [],
-                onCancel;
-
-            while (this.onCancels.length > 0) {
-                onCancel = this.onCancels.pop();
-                try {
-                    results.push(onCancel());
-                } catch (error) {
-                    this.$log.error("Error cancelling transaction.");
-                }
-            }
-            return this.$q.all(results).then(function () {
-                self.transaction = false;
-
-                self.onCommits = [];
-                self.onCancels = [];
-            });
+            var transaction = this.transactions.pop();
+            return transaction ? transaction.cancel() : Promise.reject();
         };
 
+        /**
+         * Get the size (the number of commit/cancel callbacks) of
+         * the active transaction.
+         * @returns {number} size of the active transaction
+         */
         TransactionService.prototype.size = function () {
-            return this.onCommits.length;
+            return this.isActive() ? this.activeTransaction().size() : 0;
         };
 
         return TransactionService;

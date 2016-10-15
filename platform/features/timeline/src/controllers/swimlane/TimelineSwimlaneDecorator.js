@@ -35,7 +35,6 @@ define(
             var domainObject = swimlane && swimlane.domainObject,
                 model = (domainObject && domainObject.getModel()) || {},
                 mutator = domainObject && domainObject.getCapability('mutation'),
-                persister = domainObject && domainObject.getCapability('persistence'),
                 type = domainObject && domainObject.getCapability('type'),
                 dropHandler = new TimelineSwimlaneDropHandler(swimlane);
 
@@ -48,7 +47,7 @@ define(
                         mutator.mutate(function (m) {
                             m.relationships = m.relationships || {};
                             m.relationships[ACTIVITY_RELATIONSHIP] = value;
-                        }).then(persister.persist);
+                        });
                     }
                 }
                 // ...otherwise, use as a getter
@@ -63,7 +62,7 @@ define(
                     // Update the link
                     mutator.mutate(function (m) {
                         m.link = value;
-                    }).then(persister.persist);
+                    });
                 }
                 return model.link;
             }
@@ -84,7 +83,7 @@ define(
             }
 
             // Activities should have the Activity Modes and Activity Link dialog
-            if (type && type.instanceOf("activity") && mutator && persister) {
+            if (type && type.instanceOf("activity") && mutator) {
                 swimlane.modes = modes;
                 swimlane.link = link;
             }

@@ -46,6 +46,7 @@ define([
     "./src/capabilities/MutationCapability",
     "./src/capabilities/DelegationCapability",
     "./src/capabilities/InstantiationCapability",
+    "./src/runs/TransactingMutationListener",
     "./src/services/Now",
     "./src/services/Throttle",
     "./src/services/Topic",
@@ -78,6 +79,7 @@ define([
     MutationCapability,
     DelegationCapability,
     InstantiationCapability,
+    TransactingMutationListener,
     Now,
     Throttle,
     Topic,
@@ -415,6 +417,12 @@ define([
                         "type": "folder",
                         "composition": []
                     }
+                }
+            ],
+            "runs": [
+                {
+                    "implementation": TransactingMutationListener,
+                    "depends": ["topic", "transactionService"]
                 }
             ],
             "constants": [

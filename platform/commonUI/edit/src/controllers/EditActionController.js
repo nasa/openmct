@@ -61,6 +61,12 @@ define(
                 $scope.otherEditActions = $scope.action ?
                         $scope.action.getActions(OTHERS_ACTION_CONTEXT) :
                         [];
+
+                // Required because Angular does not allow 'bind'
+                // in expressions.
+                $scope.actionPerformer = function (action) {
+                    return action.perform.bind(action);
+                };
             }
 
             // Update set of actions whenever the action capability
