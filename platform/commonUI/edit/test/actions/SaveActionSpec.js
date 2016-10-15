@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global describe,it,expect,beforeEach,jasmine,waitsFor,runs*/
 
 define(
     ["../../src/actions/SaveAction"],
@@ -28,7 +29,8 @@ define(
             var mockDomainObject,
                 mockEditorCapability,
                 actionContext,
-                dialogService,
+                mockDialogService,
+                mockNotificationService,
                 mockActionCapability,
                 capabilities = {},
                 action;
@@ -68,9 +70,15 @@ define(
                 actionContext = {
                     domainObject: mockDomainObject
                 };
-                dialogService = jasmine.createSpyObj(
+
+                mockDialogService = jasmine.createSpyObj(
                     "dialogService",
                     ["showBlockingMessage"]
+                );
+
+                mockNotificationService = jasmine.createSpyObj(
+                    "notificationService",
+                    ["info", "error"]
                 );
 
                 mockDomainObject.hasCapability.andReturn(true);
@@ -81,7 +89,7 @@ define(
                 mockEditorCapability.save.andReturn(mockPromise(true));
                 mockEditorCapability.isEditContextRoot.andReturn(true);
 
-                action = new SaveAction(dialogService, actionContext);
+                action = new SaveAction(mockDialogService, mockNotificationService, actionContext);
             });
 
             it("only applies to domain object with an editor capability", function () {
@@ -105,30 +113,54 @@ define(
                     expect(mockEditorCapability.save).toHaveBeenCalled();
                 });
 
-            describe("a blocking dialog", function () {
+            describe("in order to keep the user in the loop", function () {
                 var mockDialogHandle;
 
                 beforeEach(function () {
                     mockDialogHandle = jasmine.createSpyObj("dialogHandle", ["dismiss"]);
-                    dialogService.showBlockingMessage.andReturn(mockDialogHandle);
+                    mockDialogService.showBlockingMessage.andReturn(mockDialogHandle);
                 });
-
 
                 it("shows a dialog while saving", function () {
                     mockEditorCapability.save.andReturn(new Promise(function () {
                     }));
                     action.perform();
-                    expect(dialogService.showBlockingMessage).toHaveBeenCalled();
+                    expect(mockDialogService.showBlockingMessage).toHaveBeenCalled();
                     expect(mockDialogHandle.dismiss).not.toHaveBeenCalled();
                 });
 
-                it("hides a dialog when saving is complete", function () {
+                it("hides the dialog when saving is complete", function () {
                     action.perform();
-                    expect(dialogService.showBlockingMessage).toHaveBeenCalled();
+                    expect(mockDialogService.showBlockingMessage).toHaveBeenCalled();
                     expect(mockDialogHandle.dismiss).toHaveBeenCalled();
                 });
-            });
 
+                it("notifies if saving succeeded", function () {
+                    var mockCallback = jasmine.createSpy("callback");
+                    mockEditorCapability.save.andReturn(Promise.resolve("success"));
+                    action.perform().then(mockCallback);
+                    waitsFor(function () {
+                        return mockCallback.calls.length > 0;
+                    });
+                    runs(function () {
+                        expect(mockNotificationService.info).toHaveBeenCalled();
+                        expect(mockNotificationService.error).not.toHaveBeenCalled();
+                    });
+                });
+
+                it("notifies if saving failed", function () {
+                    var mockCallback = jasmine.createSpy("callback");
+                    mockEditorCapability.save.andReturn(Promise.reject("some failure reason"));
+                    action.perform().then(mockCallback);
+                    waitsFor(function () {
+                        return mockCallback.calls.length > 0;
+                    });
+                    runs(function () {
+                        expect(mockNotificationService.error).toHaveBeenCalled();
+                        expect(mockNotificationService.info).not.toHaveBeenCalled();
+                    });
+                });
+            });
         });
     }
 );
