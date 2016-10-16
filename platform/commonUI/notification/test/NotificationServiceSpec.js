@@ -76,6 +76,22 @@ define(
                 expect(dismissListener).toHaveBeenCalled();
             });
 
+            it("dismisses a notification when the notification's dismiss method is used", function () {
+                var notification = notificationService.info(infoModel);
+                notification.dismiss();
+                expect(notificationService.getActiveNotification()).toBeUndefined();
+                expect(notificationService.notifications.length).toEqual(0);
+            });
+
+            it("minimizes a notification when the notification's minimize method is used", function () {
+                var notification = notificationService.info(infoModel);
+                notification.minimize();
+                elapseTimeout(); // needed for the minimize animation timeout
+                expect(notificationService.getActiveNotification()).toBeUndefined();
+                expect(notificationService.notifications.length).toEqual(1);
+                expect(notificationService.notifications[0]).toEqual(notification);
+            });
+
             describe("when receiving info notifications", function () {
                 it("minimizes info notifications if the caller disables auto-dismiss", function () {
                     infoModel.autoDismiss = false;
@@ -95,7 +111,7 @@ define(
                     expect(notificationService.notifications.length).toEqual(0);
                 });
 
-                it("dismisses info notifications if the caller requests auto-dismissal", function () {
+                it("dismisses info notifications if the caller requests auto-dismiss", function () {
                     infoModel.autoDismiss = true;
                     notificationService.info(infoModel);
                     elapseTimeout();
