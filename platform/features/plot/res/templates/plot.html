@@ -71,7 +71,9 @@
             </div>
 
             <div class="gl-plot-wrapper-display-area-and-x-axis">
-                <mct-include key="'time-of-interest'" class="show-val"></mct-include>
+                <mct-include key="'time-of-interest'" class="show-val"
+                             parameters = "{'name': 'plot'}"
+                        ></mct-include>
 
                 <div class="gl-plot-coords"
                      ng-if="subplot.isHovering() && subplot.getHoverCoordinates()">

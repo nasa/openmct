@@ -89,7 +89,10 @@
              ng-click="toi.click($event)">
             <a class="l-page-button s-icon-button icon-pointer-left"></a>
             <div class="l-data-visualization">
-                <mct-include key="'time-of-interest'" class="show-val"></mct-include>
+                <div style="position: relative; height: 100%" ng-style="{'left': toi.left + '%'}">
+                <mct-include key="'time-of-interest'" class="show-val"
+                             parameters = "{'name': 'conductor'}"></mct-include>
+                </div>
             </div>
             <a class="l-page-button align-right s-icon-button icon-pointer-right"></a>
         </div>

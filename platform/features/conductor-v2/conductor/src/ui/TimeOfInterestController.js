@@ -34,6 +34,7 @@ define(
             this.formatService = formatService;
             this.format = undefined;
             this.toiText = undefined;
+            this.$scope = $scope;
 
             //Bind all class functions to 'this'
             Object.keys(TimeOfInterestController.prototype).filter(function (key) {
@@ -42,18 +43,22 @@ define(
                 this[key] = TimeOfInterestController.prototype[key].bind(this);
             }.bind(this));
 
-            this.conductor.on('timeOfInterest', this.changeTimeOfInterest);
-            this.conductor.on('timeSystem', this.changeTimeSystem);
+            conductor.on('timeOfInterest', this.changeTimeOfInterest);
+            conductor.on('timeSystem', this.changeTimeSystem);
             if (conductor.timeSystem()) {
                 this.changeTimeSystem(conductor.timeSystem());
             }
 
             $scope.$on('$destroy', this.destroy);
-
         }
 
         TimeOfInterestController.prototype.changeTimeOfInterest = function (toi) {
-            this.pinned = (toi !== undefined);
+            if (toi !== undefined) {
+                this.$scope.pinned = true;
+                this.toiText = this.format.format(toi);
+            } else {
+                this.$scope.pinned = false;
+            }
         };
 
         TimeOfInterestController.prototype.changeTimeSystem = function (timeSystem) {
@@ -61,10 +66,17 @@ define(
         };
 
         TimeOfInterestController.prototype.destroy = function () {
-            this.conductor.off('timeOfInterest', this.setOffsetFromBounds);
+            this.conductor.off('timeOfInterest', this.changeTimeOfInterest);
             this.conductor.off('timeSystem', this.changeTimeSystem);
         };
 
+        TimeOfInterestController.prototype.dismiss = function () {
+            this.conductor.timeOfInterest(undefined);
+        };
+
+        TimeOfInterestController.prototype.resync = function () {
+            this.conductor.timeOfInterest(this.conductor.timeOfInterest());
+        };
 
         return TimeOfInterestController;
     }

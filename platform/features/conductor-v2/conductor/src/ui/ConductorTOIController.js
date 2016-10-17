@@ -29,11 +29,9 @@ define(
          * labelled 'ticks'. It requires 'start' and 'end' integer values to
          * be specified as attributes.
          */
-        function ConductorTOIController($scope, conductor, conductorViewService, formatService) {
+        function ConductorTOIController($scope, conductor, conductorViewService) {
             this.conductor = conductor;
             this.conductorViewService = conductorViewService;
-            this.formatService = formatService;
-            this.toiText = undefined;
 
             //Bind all class functions to 'this'
             Object.keys(ConductorTOIController.prototype).filter(function (key) {
@@ -46,9 +44,6 @@ define(
             this.conductorViewService.on('zoom', this.setOffsetFromBounds);
             this.conductorViewService.on('pan', this.setOffsetFromBounds);
             this.conductor.on('timeSystem', this.changeTimeSystem);
-            if (conductor.timeSystem()) {
-                this.changeTimeSystem(conductor.timeSystem());
-            }
 
             $scope.$on('$destroy', this.destroy);
 
@@ -66,18 +61,12 @@ define(
             var offset = toi - bounds.start;
             var duration = bounds.end - bounds.start;
             this.left = offset / duration * 100;
-            this.toiText = this.format.format(toi);
-        };
-
-        ConductorTOIController.prototype.changeTimeSystem = function (timeSystem) {
-            this.format = this.formatService.getFormat(timeSystem.formats()[0]);
         };
 
         ConductorTOIController.prototype.changeTimeOfInterest = function () {
             var bounds = this.conductor.bounds();
             if (bounds) {
                 this.setOffsetFromBounds(bounds);
-                this.pinned = this.conductor.timeOfInterest() !== undefined;
             }
         };
 
@@ -92,14 +81,6 @@ define(
 
                 this.conductor.timeOfInterest(timeRange * percX + bounds.start);
             }
-        };
-
-        ConductorTOIController.prototype.dismiss = function () {
-            this.conductor.timeOfInterest(undefined);
-        };
-
-        ConductorTOIController.prototype.resize = function () {
-            //Do something?
         };
 
         return ConductorTOIController;

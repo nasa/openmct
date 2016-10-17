@@ -1,6 +1,6 @@
 <div class="l-toi-holder"
-     ng-class="{ 'pinned': toi.pinned, 'val-to-left': toi.left > 80 }"
-     ng-style="{'left': toi.left + '%'}">
+     ng-controller="TimeOfInterestController as toi"
+     ng-class="{ 'pinned': pinned, 'val-to-left': toi.left > 80 }">
     <div class="l-flex-row l-toi">
         <span class="flex-elem l-flex-row l-toi-buttons">
             <a class="flex-elem t-button-resync icon-button" title="Re-sync Time of Interest"

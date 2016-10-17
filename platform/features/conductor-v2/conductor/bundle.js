@@ -26,6 +26,7 @@ define([
     "./src/TimeConductor",
     "./src/ui/ConductorAxisController",
     "./src/ui/ConductorTOIController",
+    "./src/ui/TimeOfInterestController",
     "./src/ui/MctConductorAxis",
     "./src/ui/NumberFormat",
     "text!./res/templates/time-conductor.html",
@@ -39,6 +40,7 @@ define([
     TimeConductor,
     ConductorAxisController,
     ConductorTOIController,
+    TimeOfInterestController,
     MCTConductorAxis,
     NumberFormat,
     timeConductorTemplate,
@@ -93,6 +95,15 @@ define([
                         "$scope",
                         "timeConductor",
                         "timeConductorViewService",
+                        "formatService"
+                    ]
+                },
+                {
+                    "key": "TimeOfInterestController",
+                    "implementation": TimeOfInterestController,
+                    "depends": [
+                        "$scope",
+                        "timeConductor",
                         "formatService"
                     ]
                 }
