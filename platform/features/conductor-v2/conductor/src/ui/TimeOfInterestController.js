@@ -47,6 +47,10 @@ define(
             conductor.on('timeSystem', this.changeTimeSystem);
             if (conductor.timeSystem()) {
                 this.changeTimeSystem(conductor.timeSystem());
+                var toi = conductor.timeOfInterest();
+                if (toi) {
+                    this.changeTimeOfInterest(toi);
+                }
             }
 
             $scope.$on('$destroy', this.destroy);

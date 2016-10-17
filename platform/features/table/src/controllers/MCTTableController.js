@@ -110,6 +110,7 @@ define(
 
                     this.conductor.on('timeSystem', this.changeTimeSystem);
                     this.conductor.on('timeOfInterest', this.setTimeOfInterest);
+                    this.conductor.on('bounds', this.changeBounds);
 
                     // If time system defined, set initially
                     if (conductor.timeSystem()) {
@@ -124,6 +125,7 @@ define(
         MCTTableController.prototype.destroyConductorListeners = function () {
             this.conductor.off('timeSystem', this.changeTimeSystem);
             this.conductor.off('timeOfInterest', this.setTimeOfInterest);
+            this.conductor.off('bounds', this.changeBounds);
         };
 
         MCTTableController.prototype.changeTimeSystem = function () {
@@ -542,7 +544,15 @@ define(
             }
 
             this.$scope.displayRows = this.filterAndSort(newRows || []);
-            this.resize(newRows).then(this.setVisibleRows.bind(this));
+            this.resize(newRows).then(function() {
+                this.setVisibleRows();
+
+                var timeOfInterest = this.conductor.timeOfInterest();
+                if (timeOfInterest) {
+                    this.setTimeOfInterest(timeOfInterest);
+                }
+            }.bind(this));
+
         };
 
         /**
@@ -604,25 +614,29 @@ define(
             if (this.$scope.timeColumns.indexOf(this.$scope.sortColumn) !== -1
                 && newTOI
                 && this.$scope.displayRows.length > 0) {
-                var formattedTOI = this.toiFormatter.format(newTOI);;
-                // searchElement, min, max
-                this.$scope.toiRowIndex = this.binarySearch(this.$scope.displayRows,
-                    formattedTOI, 0, this.$scope.displayRows.length - 1);
-                this.scrollToRow(this.$scope.toiRowIndex);
+                    var formattedTOI = this.toiFormatter.format(newTOI);
+                    // searchElement, min, max
+                    this.$scope.toiRowIndex = this.binarySearch(this.$scope.displayRows,
+                        formattedTOI, 0, this.$scope.displayRows.length - 1);
+                    this.scrollToRow(this.$scope.toiRowIndex);
             }
+        };
+
+        /**
+         * On zoom, pan, etc. reset TOI
+         * @param bounds
+         */
+        MCTTableController.prototype.changeBounds = function(bounds) {
+            this.setTimeOfInterest(this.conductor.timeOfInterest());
         };
 
         MCTTableController.prototype.onRowClick = function (event, rowIndex) {
             if (this.$scope.timeColumns.indexOf(this.$scope.sortColumn) !== -1) {
-                if (rowIndex === this.$scope.toiRowIndex) {
-                    this.conductor.timeOfInterest(undefined);
-                } else {
-                    var selectedTime = this.$scope.displayRows[rowIndex][this.$scope.sortColumn].text;
-                    if (selectedTime
-                        && this.toiFormatter.validate(selectedTime)
-                        && event.altKey) {
-                        this.conductor.timeOfInterest(this.toiFormatter.parse(selectedTime));
-                    }
+                var selectedTime = this.$scope.displayRows[rowIndex][this.$scope.sortColumn].text;
+                if (selectedTime
+                    && this.toiFormatter.validate(selectedTime)
+                    && event.altKey) {
+                    this.conductor.timeOfInterest(this.toiFormatter.parse(selectedTime));
                 }
             }
         };

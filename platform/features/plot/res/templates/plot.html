@@ -19,6 +19,12 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
+<style>
+    .gl-plot-wrapper-display-area-and-x-axis .toiPositioner {
+        position: relative;
+        height: 100%;
+    }
+</style>
 <span ng-controller="PlotController as plot"
       class="abs holder holder-plot has-control-bar">
     <div class="l-control-bar" ng-show="!plot.hideExportButtons">
@@ -71,9 +77,10 @@
             </div>
 
             <div class="gl-plot-wrapper-display-area-and-x-axis">
-                <mct-include key="'time-of-interest'" class="show-val"
-                             parameters = "{'name': 'plot'}"
-                        ></mct-include>
+                <div class="toiPositioner"
+                     ng-if="toiPerc" ng-style="{'left': toiPerc + '%'}">
+                    <mct-include key="'time-of-interest'" class="show-val"></mct-include>
+                </div>
 
                 <div class="gl-plot-coords"
                      ng-if="subplot.isHovering() && subplot.getHoverCoordinates()">

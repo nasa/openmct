@@ -49,10 +49,8 @@
             </tr>
         </thead>
         <tbody>
-        <!--ng-class="{ 'l-toi pinned': false }"-->
-        <!--ng-click="dummyUnpin()" -->
             <tr ng-repeat-start="visibleRow in visibleRows track by visibleRow.rowIndex"
-                ng-if="visibleRow.rowIndex === 10"
+                ng-if="visibleRow.rowIndex === toiRowIndex"
                 ng-style="{ top: visibleRow.offsetY + 'px' }"
                 class="l-toi-tablerow pinned">
                 <td colspan="999">
@@ -60,8 +58,8 @@
                 </td>
             </tr>
             <tr ng-repeat-end
-                ng-click="table.onRowClick($event, visibleRow.rowIndex)"
-                ng-style="{ top: visibleRow.offsetY + 'px' }">
+                ng-style="{ top: visibleRow.offsetY + 'px' }"
+                ng-click="table.onRowClick($event, visibleRow.rowIndex) ">
                 <td ng-repeat="header in displayHeaders"
                     ng-style=" {
                         width: columnWidths[$index] + 'px',

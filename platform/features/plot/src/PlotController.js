@@ -68,7 +68,8 @@ define(
             telemetryFormatter,
             telemetryHandler,
             throttle,
-            PLOT_FIXED_DURATION
+            PLOT_FIXED_DURATION,
+            conductor
         ) {
             var self = this,
                 plotTelemetryFormatter =
@@ -200,6 +201,7 @@ define(
                 if (handle) {
                     handle.unsubscribe();
                     handle = undefined;
+                    conductor.off(changeTimeOfInterest);
                 }
             }
 
@@ -242,6 +244,17 @@ define(
                     requery();
                 }
                 self.setUnsynchedStatus($scope.domainObject, follow && self.isZoomed());
+                changeTimeOfInterest(conductor.timeOfInterest());
+            }
+
+            function changeTimeOfInterest(timeOfInterest) {
+                if (timeOfInterest !== undefined){
+                    var bounds = conductor.bounds();
+                    var range = bounds.end - bounds.start;
+                    $scope.toiPerc = ((timeOfInterest - bounds.start) / range) * 100;
+                } else {
+                    $scope.toiPerc = undefined;
+                }
             }
 
             this.modeOptions = new PlotModeOptions([], subPlotFactory);
@@ -263,6 +276,10 @@ define(
                 new PlotAxis("domains", [], AXIS_DEFAULTS[0]),
                 new PlotAxis("ranges", [], AXIS_DEFAULTS[1])
             ];
+
+            changeTimeOfInterest(conductor.timeOfInterest());
+
+            conductor.on("timeOfInterest", changeTimeOfInterest);
 
             // Watch for changes to the selected axis
             $scope.$watch("axes[0].active.key", domainRequery);
