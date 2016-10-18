@@ -498,7 +498,7 @@ define([
                     ]
                 },
                 {
-                    "key": "object-inspector",
+                    "key": "legacy-object-inspector",
                     "template": objectInspectorTemplate
                 }
             ],
