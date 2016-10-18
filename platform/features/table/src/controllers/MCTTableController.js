@@ -544,14 +544,14 @@ define(
             }
 
             this.$scope.displayRows = this.filterAndSort(newRows || []);
-            this.resize(newRows).then(function() {
-                this.setVisibleRows();
-
-                var timeOfInterest = this.conductor.timeOfInterest();
-                if (timeOfInterest) {
-                    this.setTimeOfInterest(timeOfInterest);
-                }
-            }.bind(this));
+            this.resize(newRows).then(this.setVisibleRows)
+                .then(this.timeout)
+                .then(function() {
+                    var timeOfInterest = this.conductor.timeOfInterest();
+                    if (timeOfInterest) {
+                        this.setTimeOfInterest(timeOfInterest);
+                    }
+                }.bind(this));
 
         };
 
@@ -615,7 +615,7 @@ define(
                 && newTOI
                 && this.$scope.displayRows.length > 0) {
                     var formattedTOI = this.toiFormatter.format(newTOI);
-                    // searchElement, min, max
+                    // array, searchElement, min, max
                     this.$scope.toiRowIndex = this.binarySearch(this.$scope.displayRows,
                         formattedTOI, 0, this.$scope.displayRows.length - 1);
                     this.scrollToRow(this.$scope.toiRowIndex);
