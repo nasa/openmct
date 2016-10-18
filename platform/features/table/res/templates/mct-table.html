@@ -52,9 +52,10 @@
             <tr ng-repeat-start="visibleRow in visibleRows track by visibleRow.rowIndex"
                 ng-if="visibleRow.rowIndex === toiRowIndex"
                 ng-style="{ top: visibleRow.offsetY + 'px' }"
-                class="l-toi-tablerow pinned">
+                class="l-toi-tablerow">
                 <td colspan="999">
-                    <mct-include key="'time-of-interest'"></mct-include>
+                    <mct-include key="'time-of-interest'"
+                                 class="l-toi-holder pinned"></mct-include>
                 </td>
             </tr>
             <tr ng-repeat-end
