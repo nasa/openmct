@@ -23,11 +23,15 @@
 define([
     'lodash',
     './object-utils',
-    './MutableObject'
+    './MutableObject',
+    './RootRegistry',
+    './RootObjectProvider'
 ], function (
     _,
     utils,
-    MutableObject
+    MutableObject,
+    RootRegistry,
+    RootObjectProvider
 ) {
 
 
@@ -40,16 +44,8 @@ define([
 
     function ObjectAPI() {
         this.providers = {};
-        this.rootRegistry = [];
-        this.rootProvider = {
-            'get': function () {
-                return Promise.resolve({
-                    name: 'The root object',
-                    type: 'root',
-                    composition: this.rootRegistry
-                });
-            }.bind(this)
-        };
+        this.rootRegistry = new RootRegistry();
+        this.rootProvider = new RootObjectProvider(this.rootRegistry);
     }
 
     ObjectAPI.prototype.supersecretSetFallbackProvider = function (p) {
@@ -143,29 +139,14 @@ define([
 
     /**
      * Add a root-level object.
-     * @param {module:openmct.DomainObject} domainObject the root-level object
-     *        to add.
+     * @param {module:openmct.ObjectAPI~Identifier|function} an array of
+     *        identifiers for root level objects, or a function that returns a
+     *        promise for an identifier or an array of root level objects.
      * @method addRoot
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.addRoot = function (key) {
-        this.rootRegistry.unshift(key);
-    };
-
-    /**
-     * Remove a root-level object.
-     * @param {module:openmct.ObjectAPI~Identifier} id the identifier of the
-     *        root-level object to remove.
-     * @method removeRoot
-     * @memberof module:openmct.ObjectAPI#
-     */
-    ObjectAPI.prototype.removeRoot = function (key) {
-        this.rootRegistry = this.rootRegistry.filter(function (k) {
-            return (
-                k.identifier !== key.identifier ||
-                k.namespace !== key.namespace
-            );
-        });
+        this.rootRegistry.addRoot(key);
     };
 
     /**

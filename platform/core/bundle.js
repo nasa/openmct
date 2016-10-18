@@ -409,16 +409,6 @@ define([
                     ]
                 }
             ],
-            "roots": [
-                {
-                    "id": "mine",
-                    "model": {
-                        "name": "My Items",
-                        "type": "folder",
-                        "composition": []
-                    }
-                }
-            ],
             "runs": [
                 {
                     "implementation": TransactingMutationListener,
