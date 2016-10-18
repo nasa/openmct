@@ -27,7 +27,8 @@ define([
     './services/Instantiate',
     './capabilities/APICapabilityDecorator',
     './policies/AdapterCompositionPolicy',
-    './runs/AlternateCompositionInitializer'
+    './runs/AlternateCompositionInitializer',
+    'text!./templates/object-inspector-replacement.html'
 ], function (
     legacyRegistry,
     ActionDialogDecorator,
@@ -35,7 +36,8 @@ define([
     Instantiate,
     APICapabilityDecorator,
     AdapterCompositionPolicy,
-    AlternateCompositionInitializer
+    AlternateCompositionInitializer,
+    objectInspectorTemplate
 ) {
     legacyRegistry.register('src/adapter', {
         "extensions": {
@@ -88,6 +90,13 @@ define([
                 {
                     implementation: AlternateCompositionInitializer,
                     depends: ["openmct"]
+                }
+            ],
+            representations: [
+                {
+                    key: "object-inspector",
+                    priority: "mandatory",
+                    template: objectInspectorTemplate
                 }
             ],
             licenses: [
