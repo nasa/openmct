@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define([], function () {
-    function AdapterCompositionPolicy(mct) {
-        this.mct = mct;
+    function AdapterCompositionPolicy(openmct) {
+        this.openmct = openmct;
     }
 
     AdapterCompositionPolicy.prototype.allow = function (
@@ -32,16 +32,10 @@ define([], function () {
         var containerObject = containerType.getInitialModel();
         var childObject = childType.getInitialModel();
 
-        containerObject.type = containerType.getKey();
-        childObject.type = childType.getKey();
-
-        var composition = this.mct.Composition(containerObject);
-
-        if (composition) {
-            return composition.canContain(childObject);
-        }
-
-        return true;
+        return this.openmct.composition.checkPolicy(
+            containerObject,
+            childObject
+        );
     };
 
     return AdapterCompositionPolicy;
