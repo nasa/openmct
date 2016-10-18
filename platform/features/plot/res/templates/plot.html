@@ -77,10 +77,11 @@
             </div>
 
             <div class="gl-plot-wrapper-display-area-and-x-axis">
-                <div class="toiPositioner"
-                     ng-if="toiPerc" ng-style="{'left': toiPerc + '%'}">
-                    <mct-include key="'time-of-interest'" class="show-val"></mct-include>
-                </div>
+                <mct-include key="'time-of-interest'"
+                             class="l-toi-holder show-val"
+                             ng-if="toiPerc"
+                             ng-class="{ 'val-to-left': toiPerc > 80 }"
+                             ng-style="{'left': toiPerc + '%'}"></mct-include>
 
                 <div class="gl-plot-coords"
                      ng-if="subplot.isHovering() && subplot.getHoverCoordinates()">

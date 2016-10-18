@@ -20,14 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-.l-toi-holder,
+mct-include.l-toi-holder,
 .l-toi-holder:after,
 .l-toi-holder:before {
     display: block;
     position: absolute;
 }
 
-.l-toi-holder {
+mct-include.l-toi-holder {
     $blockerFadeW: $toiBlockerFadeW;
     @include transform(translateX(-50%));
     color: $toiColorBg;
@@ -36,12 +36,11 @@
     bottom: 0;
     width: $toiH;
     &:not(.pinned) {
-        opacity: 0;
-        pointer-events: none;
+        display: none;
     }
 
     &.pinned {
-        opacity: 1;
+        display: block;
     }
 
     &:before,
@@ -138,61 +137,62 @@
     .l-toi-val {
         display: none; // Hide by default; see .show-val below
     }
-}
 
-// TOI is showing value as well
-.show-val .l-toi-holder {
-    .l-toi {
-        .l-toi-buttons {
-            order: 1;
-            &:hover {
-                margin-right: $interiorMarginSm;
-            }
-        }
-        .l-toi-val {
-            @include trans-prop-nice($props: opacity, $dur: 150ms);
-            background-color: $toiColorBg;
-            border-radius: $controlCr;
-            box-sizing: content-box;
-            color: $toiColorFg;
-            display: inline-block;
-            font-size: 0.7rem;
-            font-weight: 400;
-            height: $toiH;
-            line-height: $toiH;
-            order: 2;
-            padding: 1px 3px;
-            white-space: nowrap;
-        }
-    }
-
-    &.val-to-left {
+    // TOI is showing value as well
+    &.show-val {
         .l-toi {
-            left: auto;
-            right: $toiPad * -2;
-
             .l-toi-buttons {
-                order: 2;
+                order: 1;
                 &:hover {
-                    .t-button-resync { order: 2; }
-                    .t-button-unpin { order: 1; }
-                    margin-left: $interiorMarginSm;
+                    margin-right: $interiorMarginSm;
                 }
             }
-
             .l-toi-val {
-                order: 1;
+                @include trans-prop-nice($props: opacity, $dur: 150ms);
+                background-color: $toiColorBg;
+                border-radius: $controlCr;
+                box-sizing: content-box;
+                color: $toiColorFg;
+                display: inline-block;
+                font-size: 0.7rem;
+                font-weight: 400;
+                height: $toiH;
+                line-height: $toiH;
+                order: 2;
+                padding: 1px 3px;
+                white-space: nowrap;
+            }
+        }
+
+        &.val-to-left {
+            .l-toi {
+                left: auto;
+                right: $toiPad * -2;
+
+                .l-toi-buttons {
+                    order: 2;
+                    &:hover {
+                        .t-button-resync { order: 2; }
+                        .t-button-unpin { order: 1; }
+                        margin-left: $interiorMarginSm;
+                    }
+                }
+
+                .l-toi-val {
+                    order: 1;
+                }
             }
         }
     }
 }
+
 
 // TOI in tables
 .tabular,
 table {
     tbody, .tbody {
         tr, .tr {
-            &.l-toi-tablerow.pinned {
+            &.l-toi-tablerow {
                 border-top: 1px dashed $toiColorBg;
                 z-index: 1;
                 td, .td {
