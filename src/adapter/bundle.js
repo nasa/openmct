@@ -23,6 +23,7 @@
 define([
     'legacyRegistry',
     './actions/ActionDialogDecorator',
+    './controllers/InspectorAdapterController',
     './directives/MCTView',
     './services/Instantiate',
     './capabilities/APICapabilityDecorator',
@@ -32,6 +33,7 @@ define([
 ], function (
     legacyRegistry,
     ActionDialogDecorator,
+    InspectorAdapterController,
     MCTView,
     Instantiate,
     APICapabilityDecorator,
@@ -77,6 +79,13 @@ define([
                     provides: "actionService",
                     implementation: ActionDialogDecorator,
                     depends: ["openmct"]
+                }
+            ],
+            controllers: [
+                {
+                    "key": "InspectorAdapterController",
+                    implementation: InspectorAdapterController,
+                    depends: ["$scope", "openmct"]
                 }
             ],
             policies: [

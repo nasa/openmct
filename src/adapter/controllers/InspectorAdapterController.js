@@ -30,6 +30,8 @@ define([], function () {
     function InspectorAdapterController($scope, openmct) {
         var changeCallback = this.selectionChanged.bind(this);
 
+        this.hasViewFlag = false;
+
         openmct.selection.on('change', changeCallback);
         $scope.$on('$destroy', function () {
             openmct.selection.off('change', changeCallback);
@@ -38,6 +40,14 @@ define([], function () {
 
     InspectorAdapterController.prototype.selectionChanged = function () {
 
+    };
+
+    InspectorAdapterController.prototype.toggle = function () {
+        this.hasViewFlag = !this.hasViewFlag;
+    };
+
+    InspectorAdapterController.prototype.hasView = function () {
+        return this.hasViewFlag;
     };
 
     return InspectorAdapterController;

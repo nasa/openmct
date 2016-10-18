@@ -1,6 +1,10 @@
-<div>
-    <mct-representation key="'legacy-object-inspector'"
-                        mct-object="domainObject"
-                        ng-model="ngModel">
-    </mct-representation>
+<div ng-controller="InspectorAdapterController as adapter"
+     ng-click="adapter.toggle()">
+    <span ng-if="adapter.hasView()">Legacy inspector suppressed</span>
+    <div ng-if="!adapter.hasView()">
+        <mct-representation key="'legacy-object-inspector'"
+                            mct-object="domainObject"
+                            ng-model="ngModel">
+        </mct-representation>
+    </div>
 </div>
