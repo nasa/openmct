@@ -39,7 +39,6 @@ define([
      * Utilities for loading, saving, and manipulating domain objects.
      * @interface ObjectAPI
      * @memberof module:openmct
-     * @implements {module:openmct.ObjectProvider}
      */
 
     function ObjectAPI() {
@@ -53,11 +52,11 @@ define([
     };
 
     // Retrieve the provider for a given key.
-    ObjectAPI.prototype.getProvider = function (key) {
-        if (key.identifier === 'ROOT') {
+    ObjectAPI.prototype.getProvider = function (identifier) {
+        if (identifier.key === 'ROOT') {
             return this.rootProvider;
         }
-        return this.providers[key.namespace] || this.fallbackProvider;
+        return this.providers[identifier.namespace] || this.fallbackProvider;
     };
 
     /**
@@ -123,14 +122,25 @@ define([
      *          has been saved, or be rejected if it cannot be saved
      */
 
+    /**
+     * Get a domain object.
+     *
+     * @method get
+     * @memberof module:openmct.ObjectAPI#
+     * @param {module:openmct.ObjectAPI~Identifier} identifier
+     *        the identifier for the domain object to load
+     * @returns {Promise} a promise which will resolve when the domain object
+     *          has been saved, or be rejected if it cannot be saved
+     */
+
     [
         'save',
         'delete',
         'get'
     ].forEach(function (method) {
         ObjectAPI.prototype[method] = function () {
-            var key = arguments[0],
-                provider = this.getProvider(key);
+            var identifier = arguments[0],
+                provider = this.getProvider(identifier);
 
             if (!provider) {
                 throw new Error('No Provider Matched');
@@ -138,6 +148,10 @@ define([
 
             if (!provider[method]) {
                 throw new Error('Provider does not support [' + method + '].');
+            }
+
+            if (method === 'get') {
+                return provider.get(identifier.key);
             }
 
             return provider[method].apply(provider, arguments);
