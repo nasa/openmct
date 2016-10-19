@@ -545,7 +545,7 @@ define(
 
             this.$scope.displayRows = this.filterAndSort(newRows || []);
             this.resize(newRows).then(this.setVisibleRows)
-                .then(this.timeout)
+                .then(this.$timeout)
                 .then(function() {
                     var timeOfInterest = this.conductor.timeOfInterest();
                     if (timeOfInterest) {

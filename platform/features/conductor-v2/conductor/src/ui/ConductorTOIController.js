@@ -58,9 +58,15 @@ define(
 
         ConductorTOIController.prototype.setOffsetFromBounds = function (bounds) {
             var toi = this.conductor.timeOfInterest();
-            var offset = toi - bounds.start;
-            var duration = bounds.end - bounds.start;
-            this.left = offset / duration * 100;
+            if (toi !== undefined) {
+                var offset = toi - bounds.start;
+                var duration = bounds.end - bounds.start;
+                this.left = offset / duration * 100;
+                this.pinned = true;
+            } else {
+                this.left = 0;
+                this.pinned = false;
+            }
         };
 
         ConductorTOIController.prototype.changeTimeOfInterest = function () {

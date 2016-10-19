@@ -80,7 +80,7 @@
                 <mct-include key="'time-of-interest'"
                              class="l-toi-holder show-val"
                              ng-if="toiPerc"
-                             ng-class="{ 'val-to-left': toiPerc > 80 }"
+                             ng-class="{ 'pinned': toiPinned, 'val-to-left': toiPerc > 80 }"
                              ng-style="{'left': toiPerc + '%'}"></mct-include>
 
                 <div class="gl-plot-coords"

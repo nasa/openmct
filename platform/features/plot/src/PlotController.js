@@ -252,8 +252,10 @@ define(
                     var bounds = conductor.bounds();
                     var range = bounds.end - bounds.start;
                     $scope.toiPerc = ((timeOfInterest - bounds.start) / range) * 100;
+                    $scope.toiPinned = true;
                 } else {
                     $scope.toiPerc = undefined;
+                    $scope.toiPinned = false;
                 }
             }
 
