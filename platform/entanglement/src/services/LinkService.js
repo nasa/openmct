@@ -63,14 +63,7 @@ define(
                 );
             }
 
-            return parentObject.getCapability('composition').add(object)
-                .then(function (objectInNewContext) {
-                    return parentObject.getCapability('persistence')
-                        .persist()
-                        .then(function () {
-                            return objectInNewContext;
-                        });
-                });
+            return parentObject.getCapability('composition').add(object);
         };
 
         return LinkService;

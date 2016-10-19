@@ -229,13 +229,19 @@ define(
             }
 
             // Respond to a display bounds change (requery for data)
-            function changeDisplayBounds(event, bounds) {
-                var domainAxis = $scope.axes[0];
+            function changeDisplayBounds(event, bounds, follow) {
+                //'hack' for follow mode
+                if (follow === true) {
+                    setBasePanZoom(bounds);
+                } else {
+                    var domainAxis = $scope.axes[0];
 
-                domainAxis.chooseOption(bounds.domain);
-                updateDomainFormat();
-                setBasePanZoom(bounds);
-                requery();
+                    domainAxis.chooseOption(bounds.domain);
+                    updateDomainFormat();
+                    setBasePanZoom(bounds);
+                    requery();
+                }
+                self.setUnsynchedStatus($scope.domainObject, follow && self.isZoomed());
             }
 
             this.modeOptions = new PlotModeOptions([], subPlotFactory);
@@ -368,15 +374,10 @@ define(
             return this.pending;
         };
 
-        /**
-         * Export the plot to PDF
-         */
-        PlotController.prototype.exportPDF = function () {
-            var self = this;
-            self.hideExportButtons = true;
-            self.exportImageService.exportPDF(self.$element[0], "plot.pdf").finally(function () {
-                self.hideExportButtons = false;
-            });
+        PlotController.prototype.setUnsynchedStatus = function (domainObject, status) {
+            if (domainObject.hasCapability('status')) {
+                domainObject.getCapability('status').set('timeconductor-unsynced', status);
+            }
         };
 
         /**

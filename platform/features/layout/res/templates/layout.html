@@ -26,11 +26,10 @@
          ng-repeat="childObject in composition"
          ng-style="controller.getFrameStyle(childObject.getId())">
 
-        <div class="frame child-frame holder contents abs">
-            <mct-representation key="'frame'"
-                                mct-object="childObject">
-            </mct-representation>
-        </div>
+        <mct-representation key="'frame'"
+                            class="frame child-frame holder contents abs"
+                            mct-object="childObject">
+        </mct-representation>
         <!-- Drag handles -->
         <span ng-show="domainObject.hasCapability('editor')">
             <span class="edit-handle edit-move"

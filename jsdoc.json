@@ -1,9 +1,9 @@
 {
     "source": {
         "include": [
-            "platform/"
+            "src/"
         ],
-        "includePattern": "platform/.+\\.js$",
+        "includePattern": "src/.+\\.js$",
         "excludePattern": ".+\\Spec\\.js$|lib/.+"
     },
     "plugins": [

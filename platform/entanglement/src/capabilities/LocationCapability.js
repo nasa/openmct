@@ -76,17 +76,12 @@ define(
          * completes.
          */
         LocationCapability.prototype.setPrimaryLocation = function (location) {
-            var capability = this;
             return this.domainObject.useCapability(
                 'mutation',
                 function (model) {
                     model.location = location;
                 }
-            ).then(function () {
-                return capability.domainObject
-                    .getCapability('persistence')
-                    .persist();
-            });
+            );
         };
 
         /**

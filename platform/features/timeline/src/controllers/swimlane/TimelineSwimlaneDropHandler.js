@@ -29,16 +29,6 @@ define(
          * @constructor
          */
         function TimelineSwimlaneDropHandler(swimlane) {
-            // Utility function; like $q.when, but synchronous (to reduce
-            // performance impact when wrapping synchronous values)
-            function asPromise(value) {
-                return (value && value.then) ? value : {
-                    then: function (callback) {
-                        return asPromise(callback(value));
-                    }
-                };
-            }
-
             // Check if we are in edit mode (also check parents)
             function inEditMode() {
                 return swimlane.domainObject.hasCapability('editor') &&
@@ -75,16 +65,7 @@ define(
 
             // Initiate mutation of a domain object
             function doMutate(domainObject, mutator) {
-                return asPromise(
-                    domainObject.useCapability("mutation", mutator)
-                ).then(function () {
-                    // Persist the results of mutation
-                    var persistence = domainObject.getCapability("persistence");
-                    if (persistence) {
-                        // Persist the changes
-                        persistence.persist();
-                    }
-                });
+                return domainObject.useCapability("mutation", mutator);
             }
 
             // Check if this swimlane is in a state where a drop-after will

@@ -48,6 +48,7 @@ define([
     "./src/directives/MCTSplitPane",
     "./src/directives/MCTSplitter",
     "./src/directives/MCTTree",
+    "./src/filters/ReverseFilter",
     "text!./res/templates/bottombar.html",
     "text!./res/templates/controls/action-button.html",
     "text!./res/templates/controls/input-filter.html",
@@ -96,6 +97,7 @@ define([
     MCTSplitPane,
     MCTSplitter,
     MCTTree,
+    ReverseFilter,
     bottombarTemplate,
     actionButtonTemplate,
     inputFilterTemplate,
@@ -146,7 +148,8 @@ define([
                     "depends": [
                         "stylesheets[]",
                         "$document",
-                        "THEME"
+                        "THEME",
+                        "ASSETS_PATH"
                     ]
                 },
                 {
@@ -158,7 +161,7 @@ define([
             ],
             "filters": [
                 {
-                    "implementation": "filters/ReverseFilter.js",
+                    "implementation": ReverseFilter,
                     "key": "reverse"
                 }
             ],
@@ -404,6 +407,11 @@ define([
                 {
                     "key": "THEME",
                     "value": "unspecified",
+                    "priority": "fallback"
+                },
+                {
+                    "key": "ASSETS_PATH",
+                    "value": ".",
                     "priority": "fallback"
                 }
             ],

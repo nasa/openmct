@@ -104,9 +104,17 @@ body.desktop .mini-tab-icon {
     }
 }
 
+@mixin btnSetButtonFirst() {
+    @include border-left-radius($controlCr);
+    margin-left: 0;
+}
+
+@mixin btnSetButtonLast() {
+    @include border-right-radius($controlCr);
+}
+
 .l-btn-set {
     // Buttons that have a very tight conceptual grouping - no internal space between them.
-    // Structure: .btn-set > mct-representation class=first|last > .s-button
     font-size: 0; // Remove space between s-button elements due to white space in markup
 
     .s-button {
@@ -114,20 +122,16 @@ body.desktop .mini-tab-icon {
         margin-left: 1px;
     }
 
-    .first {
-        .s-button,
-        &.s-button {
-            @include border-left-radius($controlCr);
-            margin-left: 0;
-        }
+    > .s-button {
+        // Styles for .s-button as immediate descendants in .l-btn-set
+        &:first-child { @include btnSetButtonFirst(); }
+        &:last-child { @include btnSetButtonLast(); }
     }
 
-    .last {
-        .s-button,
-        &.s-button {
-            @include border-right-radius($controlCr);
-        }
-    }
+    // Must use following due to DOM structure of action buttons,
+    // which have structure like .l-btn-set > mct-representation class=first|last > .s-button
+    .first > .s-button { @include btnSetButtonFirst(); }
+    .last > .s-button { @include btnSetButtonLast(); }
 }
 
 .paused {

@@ -53,16 +53,18 @@ requirejs.config({
         "angular": "bower_components/angular/angular.min",
         "angular-route": "bower_components/angular-route/angular-route.min",
         "csv": "bower_components/comma-separated-values/csv.min",
+        "EventEmitter": "bower_components/eventemitter3/index",
         "es6-promise": "bower_components/es6-promise/es6-promise.min",
         "html2canvas": "bower_components/html2canvas/build/html2canvas.min",
-        "jsPDF": "bower_components/jspdf/dist/jspdf.min",
         "moment": "bower_components/moment/moment",
         "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
         "saveAs": "bower_components/FileSaver.js/FileSaver.min",
         "screenfull": "bower_components/screenfull/dist/screenfull.min",
         "text": "bower_components/text/text",
         "uuid": "bower_components/node-uuid/uuid",
-        "zepto": "bower_components/zepto/zepto.min"
+        "zepto": "bower_components/zepto/zepto.min",
+        "lodash": "bower_components/lodash/lodash",
+        "d3": "bower_components/d3/d3.min"
     },
 
     "shim": {
@@ -72,6 +74,9 @@ requirejs.config({
         "angular-route": {
             "deps": [ "angular" ]
         },
+        "EventEmitter": {
+            "exports": "EventEmitter"
+        },
         "moment-duration-format": {
             "deps": [ "moment" ]
         },
@@ -80,6 +85,12 @@ requirejs.config({
         },
         "zepto": {
             "exports": "Zepto"
+        },
+        "lodash": {
+            "exports": "lodash"
+        },
+        "d3": {
+            "exports": "d3"
         }
     },
 
