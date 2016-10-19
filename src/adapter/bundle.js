@@ -23,6 +23,7 @@
 define([
     'legacyRegistry',
     './actions/ActionDialogDecorator',
+    './components/NewRootModelProvider',
     './directives/MCTView',
     './services/Instantiate',
     './capabilities/APICapabilityDecorator',
@@ -32,6 +33,7 @@ define([
 ], function (
     legacyRegistry,
     ActionDialogDecorator,
+    NewRootModelProvider,
     MCTView,
     Instantiate,
     APICapabilityDecorator,
@@ -77,6 +79,12 @@ define([
                     provides: "actionService",
                     implementation: ActionDialogDecorator,
                     depends: ["openmct"]
+                },
+                {
+                    "provides": "modelService",
+                    "type": "provider",
+                    "implementation": NewRootModelProvider,
+                    "depends": ["openmct"]
                 }
             ],
             policies: [
@@ -90,10 +98,6 @@ define([
                 {
                     implementation: AlternateCompositionInitializer,
                     depends: ["openmct"]
-                },
-                {
-                    implementation: RootRegistrar,
-                    depends: ["openmct", "roots[]"]
                 }
             ],
             licenses: [

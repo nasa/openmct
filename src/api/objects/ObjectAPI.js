@@ -60,6 +60,13 @@ define([
         return this.providers[key.namespace] || this.fallbackProvider;
     };
 
+    /**
+     * Get the root-level object.
+     * @returns {Promise.<DomainObject>} a promise for the root object
+     */
+    ObjectAPI.prototype.getRoot = function () {
+        return this.rootProvider.get();
+    };
 
     /**
      * Register a new object provider for a particular namespace.
