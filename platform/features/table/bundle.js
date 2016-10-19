@@ -109,12 +109,12 @@ define([
                 {
                     "key": "HistoricalTableController",
                     "implementation": HistoricalTableController,
-                    "depends": ["$scope", "telemetryHandler", "telemetryFormatter", "$timeout", "timeConductor"]
+                    "depends": ["$scope", "telemetryHandler", "telemetryFormatter", "$timeout", "timeConductor", "timeConductor"]
                 },
                 {
                     "key": "RealtimeTableController",
                     "implementation": RealtimeTableController,
-                    "depends": ["$scope", "telemetryHandler", "telemetryFormatter"]
+                    "depends": ["$scope", "telemetryHandler", "telemetryFormatter", "timeConductor"]
                 },
                 {
                     "key": "TableOptionsController",

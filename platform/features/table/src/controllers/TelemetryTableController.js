@@ -70,7 +70,24 @@ define(
             // Unsubscribe when the plot is destroyed
             this.$scope.$on("$destroy", this.destroy);
             this.$scope.timeColumns = [];
+
+
+            this.sortByTimeSystem = this.sortByTimeSystem.bind(this);
+            conductor.on('timeSystem', this.sortByTimeSystem);
+            conductor.off('timeSystem', this.sortByTimeSystem);
         }
+
+        TelemetryTableController.prototype.sortByTimeSystem = function (timeSystem) {
+            var scope = this.$scope;
+            scope.defaultSort = undefined;
+            if (timeSystem) {
+                this.table.columns.forEach(function (column) {
+                    if (column.domainMetadata && column.domainMetadata.key === timeSystem.metadata.key) {
+                        scope.defaultSort = column.getTitle();
+                    }
+                });
+            }
+        };
 
         /**
          * @private
@@ -163,6 +180,11 @@ define(
                     this.timeColumns.push(domainMetadata.name);
                 }.bind(this));
             }.bind(this));
+
+            var timeSystem = this.conductor.timeSystem();
+            if (timeSystem) {
+                this.sortByTimeSystem(timeSystem);
+            }
         };
 
         /**

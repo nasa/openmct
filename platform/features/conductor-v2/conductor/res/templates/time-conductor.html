@@ -85,10 +85,9 @@
 
         <!-- Holds data visualization, time of interest -->
         <div class="l-data-visualization-holder l-row-elem flex-elem"
-             ng-controller="ConductorTOIController as toi"
-             ng-click="toi.click($event)">
+             ng-controller="ConductorTOIController as toi">
             <a class="l-page-button s-icon-button icon-pointer-left"></a>
-            <div class="l-data-visualization">
+            <div class="l-data-visualization" ng-click="toi.click($event)">
                 <mct-include key="'time-of-interest'"
                              class="l-toi-holder show-val"
                              ng-class="{ pinned: toi.pinned, 'val-to-left': toi.left > 80 }"

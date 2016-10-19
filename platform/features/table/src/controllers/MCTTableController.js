@@ -89,19 +89,24 @@ define(
             $scope.$watchCollection('filters', function () {
                 self.setRows($scope.rows);
             });
-            $scope.$watch('headers', this.setHeaders.bind(this));
-            $scope.$watch('rows', this.setRows.bind(this));
+            $scope.$watch('headers', this.setHeaders);
+            $scope.$watch('rows', this.setRows);
 
             /*
              * Listen for rows added individually (eg. for real-time tables)
              */
-            $scope.$on('add:row', this.addRow.bind(this));
-            $scope.$on('remove:row', this.removeRow.bind(this));
+            $scope.$on('add:row', this.addRow);
+            $scope.$on('remove:row', this.removeRow);
+
+            $scope.$watch('defaultSort', function (defaultSort) {
+                $scope.sortColumn = defaultSort;
+                $scope.sortDirection = 'asc';
+            });
 
             /*
              * Listen for resize events to trigger recalculation of table width
              */
-            $scope.resize = this.setElementSizes.bind(this);
+            $scope.resize = this.setElementSizes;
 
             // Time conductor integration
             $scope.$watch("timeColumns", function (timeColumns){

@@ -97,7 +97,8 @@ define(
                     enableFilter: "=?",
                     enableSort: "=?",
                     autoScroll: "=?",
-                    timeColumns: "=?"
+                    timeColumns: "=?",
+                    defaultSort: "=?"
                 }
             };
         }

@@ -45,6 +45,11 @@ define(
             this.conductorViewService.on('pan', this.setOffsetFromBounds);
             this.conductor.on('timeSystem', this.changeTimeSystem);
 
+            var timeOfInterest = this.conductor.timeOfInterest();
+            if (timeOfInterest) {
+                this.changeTimeOfInterest(timeOfInterest);
+            }
+
             $scope.$on('$destroy', this.destroy);
 
         }
