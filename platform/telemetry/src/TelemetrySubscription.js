@@ -103,7 +103,7 @@ define(
                     updateValuesFromPool();
                     // Fire callback, if one was provided
                     if (callback) {
-                        callback();
+                        callback(domainObject);
                     }
                 }
 
