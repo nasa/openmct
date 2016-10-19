@@ -28,8 +28,7 @@ define([
     './services/Instantiate',
     './capabilities/APICapabilityDecorator',
     './policies/AdapterCompositionPolicy',
-    './runs/AlternateCompositionInitializer',
-    './runs/RootRegistrar'
+    './runs/AlternateCompositionInitializer'
 ], function (
     legacyRegistry,
     ActionDialogDecorator,
@@ -38,8 +37,7 @@ define([
     Instantiate,
     APICapabilityDecorator,
     AdapterCompositionPolicy,
-    AlternateCompositionInitializer,
-    RootRegistrar
+    AlternateCompositionInitializer
 ) {
     legacyRegistry.register('src/adapter', {
         "extensions": {
