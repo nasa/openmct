@@ -36,7 +36,7 @@ define([
     legacyRegistry
 ) {
     "use strict";
-    legacyRegistry.register("example/notifications", {
+    legacyRegistry.register("example/msl-adapter", {
         "name" : "Mars Science Laboratory Data Adapter",
         "extensions" : {
         "types": [

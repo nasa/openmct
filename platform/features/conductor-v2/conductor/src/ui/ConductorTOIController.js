@@ -29,8 +29,8 @@ define(
          * labelled 'ticks'. It requires 'start' and 'end' integer values to
          * be specified as attributes.
          */
-        function ConductorTOIController($scope, conductor, conductorViewService) {
-            this.conductor = conductor;
+        function ConductorTOIController($scope, openmct, conductorViewService) {
+            this.conductor = openmct.conductor;
             this.conductorViewService = conductorViewService;
 
             //Bind all class functions to 'this'

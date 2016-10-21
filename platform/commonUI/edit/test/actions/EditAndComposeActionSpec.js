@@ -30,7 +30,6 @@ define(
                 mockParent,
                 mockContext,
                 mockComposition,
-                mockPersistence,
                 mockActionCapability,
                 mockEditAction,
                 mockType,
@@ -68,7 +67,6 @@ define(
                 };
                 mockContext = jasmine.createSpyObj("context", ["getParent"]);
                 mockComposition = jasmine.createSpyObj("composition", ["invoke", "add"]);
-                mockPersistence = jasmine.createSpyObj("persistence", ["persist"]);
                 mockType = jasmine.createSpyObj("type", ["hasFeature", "getKey"]);
                 mockActionCapability = jasmine.createSpyObj("actionCapability", ["getActions"]);
                 mockEditAction = jasmine.createSpyObj("editAction", ["perform"]);
@@ -84,7 +82,6 @@ define(
 
                 capabilities = {
                     composition: mockComposition,
-                    persistence: mockPersistence,
                     action: mockActionCapability,
                     type: mockType
                 };
@@ -105,11 +102,6 @@ define(
                 action.perform();
                 expect(mockComposition.add)
                     .toHaveBeenCalledWith(mockDomainObject);
-            });
-
-            it("persists changes afterward", function () {
-                action.perform();
-                expect(mockPersistence.persist).toHaveBeenCalled();
             });
 
             it("enables edit mode for objects that have an edit action", function () {

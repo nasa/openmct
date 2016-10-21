@@ -36,7 +36,7 @@ define(
          * @param timeSystems
          * @constructor
          */
-        function TimeConductorViewService(conductor, timeSystems) {
+        function TimeConductorViewService(openmct, timeSystems) {
 
             EventEmitter.call(this);
 
@@ -44,7 +44,7 @@ define(
                 return timeSystemConstructor();
             });
 
-            this.conductor = conductor;
+            this.conductor = openmct.conductor;
             this.currentMode = undefined;
 
             /**

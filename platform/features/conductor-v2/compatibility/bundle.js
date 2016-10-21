@@ -39,7 +39,7 @@ define([
                     "key": "conductorService",
                     "implementation": ConductorService,
                     "depends": [
-                        "timeConductor"
+                        "openmct"
                     ]
                 }
             ],
@@ -47,7 +47,7 @@ define([
                 {
                     "implementation": ConductorRepresenter,
                     "depends": [
-                        "timeConductor"
+                        "openmct"
                     ]
                 }
             ],
@@ -57,7 +57,7 @@ define([
                     "provides": "telemetryService",
                     "implementation": ConductorTelemetryDecorator,
                     "depends": [
-                        "timeConductor"
+                        "openmct"
                     ]
                 }
             ]

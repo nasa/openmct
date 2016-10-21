@@ -60,8 +60,8 @@ define([
      * directly on the conductor service to continue to do so without
      * modification.
      */
-    function ConductorService(timeConductor) {
-        this.tc = new Conductor(timeConductor);
+    function ConductorService(openmct) {
+        this.tc = new Conductor(openmct.conductor);
     }
 
     ConductorService.prototype.getConductor = function () {

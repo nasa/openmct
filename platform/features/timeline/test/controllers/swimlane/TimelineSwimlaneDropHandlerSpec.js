@@ -29,7 +29,6 @@ define(
                 mockOtherObject,
                 mockActionCapability,
                 mockEditorCapability,
-                mockPersistence,
                 mockContext,
                 mockAction,
                 handler;
@@ -76,7 +75,6 @@ define(
                     ["getId", "getCapability", "useCapability", "hasCapability"]
                 );
                 mockActionCapability = jasmine.createSpyObj("action", ["perform", "getActions"]);
-                mockPersistence = jasmine.createSpyObj("persistence", ["persist"]);
                 mockContext = jasmine.createSpyObj('context', ['getParent']);
 
                 mockActionCapability.getActions.andReturn([mockAction]);
@@ -89,14 +87,12 @@ define(
                 mockSwimlane.domainObject.getCapability.andCallFake(function (c) {
                     return {
                         action: mockActionCapability,
-                        persistence: mockPersistence,
                         editor: mockEditorCapability
                     }[c];
                 });
                 mockSwimlane.parent.domainObject.getCapability.andCallFake(function (c) {
                     return {
                         action: mockActionCapability,
-                        persistence: mockPersistence,
                         editor: mockEditorCapability
                     }[c];
                 });
@@ -162,8 +158,6 @@ define(
                 mockSwimlane.domainObject.useCapability.mostRecentCall
                     .args[1](testModel);
                 expect(testModel.composition).toEqual(['c', 'd']);
-                // Finally, should also have persisted
-                expect(mockPersistence.persist).toHaveBeenCalled();
             });
 
             it("inserts after as a peer when highlighted at the bottom", function () {

@@ -41,6 +41,7 @@ define([
     "text!./res/templates/items/items.html",
     "text!./res/templates/browse/object-properties.html",
     "text!./res/templates/browse/inspector-region.html",
+    "text!./res/templates/view-object.html",
     'legacyRegistry'
 ], function (
     BrowseController,
@@ -63,6 +64,7 @@ define([
     itemsTemplate,
     objectPropertiesTemplate,
     inspectorRegionTemplate,
+    viewObjectTemplate,
     legacyRegistry
 ) {
 
@@ -142,7 +144,7 @@ define([
             "representations": [
                 {
                     "key": "view-object",
-                    "templateUrl": "templates/view-object.html"
+                    "template": viewObjectTemplate
                 },
                 {
                     "key": "browse-object",

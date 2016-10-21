@@ -32,11 +32,11 @@ define(
          * labelled 'ticks'. It requires 'start' and 'end' integer values to
          * be specified as attributes.
          */
-        function ConductorAxisController(conductor, formatService, conductorViewService) {
+        function ConductorAxisController(openmct, formatService, conductorViewService) {
             // Dependencies
             this.d3 = d3;
             this.formatService = formatService;
-            this.conductor = conductor;
+            this.conductor = openmct.conductor;
             this.conductorViewService = conductorViewService;
 
             // Runtime properties (set by 'link' function)
@@ -47,8 +47,8 @@ define(
             this.initialized = false;
             this.msPerPixel = undefined;
 
-            this.bounds = conductor.bounds();
-            this.timeSystem = conductor.timeSystem();
+            this.bounds = this.conductor.bounds();
+            this.timeSystem = this.conductor.timeSystem();
 
             //Bind all class functions to 'this'
             Object.keys(ConductorAxisController.prototype).filter(function (key) {

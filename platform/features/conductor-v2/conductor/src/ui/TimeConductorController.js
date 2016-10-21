@@ -26,7 +26,7 @@ define(
     ],
     function (TimeConductorValidation) {
 
-        function TimeConductorController($scope, $window, timeConductor, conductorViewService, timeSystems, formatService) {
+        function TimeConductorController($scope, $window, openmct, conductorViewService, timeSystems, formatService) {
 
             var self = this;
 
@@ -40,7 +40,7 @@ define(
             this.$scope = $scope;
             this.$window = $window;
             this.conductorViewService = conductorViewService;
-            this.conductor = timeConductor;
+            this.conductor = openmct.conductor;
             this.modes = conductorViewService.availableModes();
             this.validation = new TimeConductorValidation(this.conductor);
             this.formatService = formatService;

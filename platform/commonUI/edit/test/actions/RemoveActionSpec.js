@@ -37,7 +37,6 @@ define(
                 mockGrandchildContext,
                 mockRootContext,
                 mockMutation,
-                mockPersistence,
                 mockType,
                 actionContext,
                 model,
@@ -53,8 +52,6 @@ define(
             }
 
             beforeEach(function () {
-
-
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     ["getId", "getCapability"]
@@ -88,7 +85,6 @@ define(
                 mockGrandchildContext = jasmine.createSpyObj("context", ["getParent"]);
                 mockRootContext = jasmine.createSpyObj("context", ["getParent"]);
                 mockMutation = jasmine.createSpyObj("mutation", ["invoke"]);
-                mockPersistence = jasmine.createSpyObj("persistence", ["persist"]);
                 mockType = jasmine.createSpyObj("type", ["hasFeature"]);
                 mockNavigationService = jasmine.createSpyObj(
                     "navigationService",
@@ -109,7 +105,6 @@ define(
 
                 capabilities = {
                     mutation: mockMutation,
-                    persistence: mockPersistence,
                     type: mockType
                 };
                 model = {
@@ -118,7 +113,7 @@ define(
 
                 actionContext = { domainObject: mockDomainObject };
 
-                action = new RemoveAction(mockQ, mockNavigationService, actionContext);
+                action = new RemoveAction(mockNavigationService, actionContext);
             });
 
             it("only applies to objects with parents", function () {
@@ -154,9 +149,6 @@ define(
                 // Should have removed "test" - that was our
                 // mock domain object's id.
                 expect(result.composition).toEqual(["a", "b"]);
-
-                // Finally, should have persisted
-                expect(mockPersistence.persist).toHaveBeenCalled();
             });
 
             it("removes parent of object currently navigated to", function () {

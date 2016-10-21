@@ -23,7 +23,6 @@
 define([
     "./src/ui/TimeConductorViewService",
     "./src/ui/TimeConductorController",
-    "./src/TimeConductor",
     "./src/ui/ConductorAxisController",
     "./src/ui/ConductorTOIController",
     "./src/ui/TimeOfInterestController",
@@ -37,7 +36,6 @@ define([
 ], function (
     TimeConductorViewService,
     TimeConductorController,
-    TimeConductor,
     ConductorAxisController,
     ConductorTOIController,
     TimeOfInterestController,
@@ -54,14 +52,10 @@ define([
         "extensions": {
             "services": [
                 {
-                    "key": "timeConductor",
-                    "implementation": TimeConductor
-                },
-                {
                     "key": "timeConductorViewService",
                     "implementation": TimeConductorViewService,
                     "depends": [
-                        "timeConductor",
+                        "openmct",
                         "timeSystems[]"
                     ]
                 }
@@ -73,7 +67,7 @@ define([
                     "depends": [
                         "$scope",
                         "$window",
-                        "timeConductor",
+                        "openmct",
                         "timeConductorViewService",
                         "timeSystems[]",
                         "formatService"
@@ -83,7 +77,7 @@ define([
                     "key": "ConductorAxisController",
                     "implementation": ConductorAxisController,
                     "depends": [
-                        "timeConductor",
+                        "openmct",
                         "formatService",
                         "timeConductorViewService"
                     ]
@@ -93,7 +87,7 @@ define([
                     "implementation": ConductorTOIController,
                     "depends": [
                         "$scope",
-                        "timeConductor",
+                        "openmct",
                         "timeConductorViewService",
                         "formatService"
                     ]
@@ -103,7 +97,7 @@ define([
                     "implementation": TimeOfInterestController,
                     "depends": [
                         "$scope",
-                        "timeConductor",
+                        "openmct",
                         "formatService"
                     ]
                 }
@@ -113,7 +107,7 @@ define([
                     "key": "mctConductorAxis",
                     "implementation": MCTConductorAxis,
                     "depends": [
-                        "timeConductor",
+                        "openmct",
                         "formatService"
                     ]
                 }

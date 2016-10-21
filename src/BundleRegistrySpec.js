@@ -51,6 +51,7 @@ define(['./BundleRegistry'], function (BundleRegistry) {
             beforeEach(function () {
                 testBundleDef = { someKey: "some value" };
                 bundleRegistry.register(testPath, testBundleDef);
+                bundleRegistry.enable(testPath);
             });
 
             it("lists registered bundles", function () {

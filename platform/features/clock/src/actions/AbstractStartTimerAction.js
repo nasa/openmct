@@ -49,17 +49,11 @@ define(
             var domainObject = this.domainObject,
                 now = this.now;
 
-            function doPersist() {
-                var persistence = domainObject.getCapability('persistence');
-                return persistence && persistence.persist();
-            }
-
             function setTimestamp(model) {
                 model.timestamp = now();
             }
 
-            return domainObject.useCapability('mutation', setTimestamp)
-                .then(doPersist);
+            return domainObject.useCapability('mutation', setTimestamp);
         };
 
         return AbstractStartTimerAction;
