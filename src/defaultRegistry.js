@@ -72,6 +72,7 @@ define([
     '../platform/features/conductor-v2/utcTimeSystem/bundle',
     '../platform/features/imagery/bundle',
     '../platform/features/layout/bundle',
+    '../platform/features/my-items/bundle',
     '../platform/features/pages/bundle',
     '../platform/features/plot/bundle',
     '../platform/features/static-markup/bundle',
