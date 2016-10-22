@@ -44,7 +44,7 @@ define(
             $scope,
             telemetryHandler,
             telemetryFormatter,
-            conductor
+            openmct
         ) {
             var self = this;
 
@@ -55,7 +55,7 @@ define(
             this.table = new TableConfiguration($scope.domainObject,
                 telemetryFormatter);
             this.changeListeners = [];
-            this.conductor = conductor;
+            this.conductor = openmct.conductor;
 
             $scope.rows = [];
 
@@ -73,8 +73,8 @@ define(
 
 
             this.sortByTimeSystem = this.sortByTimeSystem.bind(this);
-            conductor.on('timeSystem', this.sortByTimeSystem);
-            conductor.off('timeSystem', this.sortByTimeSystem);
+            this.conductor.on('timeSystem', this.sortByTimeSystem);
+            this.conductor.off('timeSystem', this.sortByTimeSystem);
         }
 
         TelemetryTableController.prototype.sortByTimeSystem = function (timeSystem) {

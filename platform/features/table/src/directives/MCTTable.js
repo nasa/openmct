@@ -87,7 +87,7 @@ define(
                     '$element',
                     'exportService',
                     'formatService',
-                    'timeConductor',
+                    'openmct',
                     MCTTableController
                 ],
                 controllerAs: "table",

@@ -12,7 +12,7 @@ define(
          * @param element
          * @constructor
          */
-        function MCTTableController($scope, $timeout, element, exportService, formatService, conductor) {
+        function MCTTableController($scope, $timeout, element, exportService, formatService, openmct) {
             var self = this;
 
             this.$scope = $scope;
@@ -24,7 +24,7 @@ define(
             this.resultsHeader = this.element.find('.mct-table>thead').first();
             this.sizingTableBody = this.element.find('.sizing-table>tbody').first();
             this.$scope.sizingRow = {};
-            this.conductor = conductor;
+            this.conductor = openmct.conductor;
             this.toiFormatter = undefined;
             this.formatService = formatService;
 
@@ -118,8 +118,8 @@ define(
                     this.conductor.on('bounds', this.changeBounds);
 
                     // If time system defined, set initially
-                    if (conductor.timeSystem()) {
-                        this.changeTimeSystem(conductor.timeSystem());
+                    if (this.conductor.timeSystem()) {
+                        this.changeTimeSystem(this.conductor.timeSystem());
                     }
                 }
             }.bind(this));

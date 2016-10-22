@@ -69,7 +69,7 @@ define(
             telemetryHandler,
             throttle,
             PLOT_FIXED_DURATION,
-            conductor
+            openmct
         ) {
             var self = this,
                 plotTelemetryFormatter =
@@ -82,6 +82,7 @@ define(
                 lastRange,
                 lastDomain,
                 handle;
+            var conductor = openmct.conductor;
 
             // Populate the scope with axis information (specifically, options
             // available for each axis.)

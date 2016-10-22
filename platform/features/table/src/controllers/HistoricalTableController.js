@@ -36,7 +36,7 @@ define(
          * @param telemetryFormatter
          * @constructor
          */
-        function HistoricalTableController($scope, telemetryHandler, telemetryFormatter, $timeout, conductor) {
+        function HistoricalTableController($scope, telemetryHandler, telemetryFormatter, $timeout, openmct) {
             var self = this;
 
             this.$timeout = $timeout;
@@ -49,7 +49,7 @@ define(
                 }
             });
 
-            TableController.call(this, $scope, telemetryHandler, telemetryFormatter, conductor);
+            TableController.call(this, $scope, telemetryHandler, telemetryFormatter, openmct);
         }
 
         HistoricalTableController.prototype = Object.create(TableController.prototype);

@@ -29,8 +29,8 @@ define(
          * labelled 'ticks'. It requires 'start' and 'end' integer values to
          * be specified as attributes.
          */
-        function TimeOfInterestController($scope, conductor, formatService) {
-            this.conductor = conductor;
+        function TimeOfInterestController($scope, openmct, formatService) {
+            this.conductor = openmct.conductor;
             this.formatService = formatService;
             this.format = undefined;
             this.toiText = undefined;
@@ -43,11 +43,11 @@ define(
                 this[key] = TimeOfInterestController.prototype[key].bind(this);
             }.bind(this));
 
-            conductor.on('timeOfInterest', this.changeTimeOfInterest);
-            conductor.on('timeSystem', this.changeTimeSystem);
-            if (conductor.timeSystem()) {
-                this.changeTimeSystem(conductor.timeSystem());
-                var toi = conductor.timeOfInterest();
+            this.conductor.on('timeOfInterest', this.changeTimeOfInterest);
+            this.conductor.on('timeSystem', this.changeTimeSystem);
+            if (this.conductor.timeSystem()) {
+                this.changeTimeSystem(this.conductor.timeSystem());
+                var toi = this.conductor.timeOfInterest();
                 if (toi) {
                     this.changeTimeOfInterest(toi);
                 }
