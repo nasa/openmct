@@ -621,10 +621,14 @@ define(
                 && this.$scope.displayRows.length > 0) {
                     var formattedTOI = this.toiFormatter.format(newTOI);
                     // array, searchElement, min, max
-                    this.$scope.toiRowIndex = this.binarySearch(this.$scope.displayRows,
+                    var rowIndex = this.binarySearch(this.$scope.displayRows,
                         formattedTOI, 0, this.$scope.displayRows.length - 1);
-                    this.scrollToRow(this.$scope.toiRowIndex);
+                    if (rowIndex > 0 && rowIndex < this.$scope.displayRows.length) {
+                        this.$scope.toiRowIndex = rowIndex;
+                        this.scrollToRow(this.$scope.toiRowIndex);
+                    }
             }
+            console.log('toiRowIndex '+ this.$scope.toiRowIndex + ' length: ' + this.$scope.displayRows.length);
         };
 
         /**
