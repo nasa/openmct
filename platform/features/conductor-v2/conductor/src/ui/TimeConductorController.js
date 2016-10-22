@@ -72,8 +72,10 @@ define(
             //If conductor has a time system selected already, populate the
             //form from it
             this.$scope.timeSystemModel = {};
-            if (this.conductor.timeSystem()) {
-                this.setFormFromTimeSystem(this.conductor.timeSystem());
+            var timeSystem = this.conductor.timeSystem();
+            if (timeSystem) {
+                this.setFormFromTimeSystem(timeSystem);
+                this.supportsZoom = timeSystem.defaults().zoom !== undefined;
             }
 
             //Represents the various modes, and the currently selected mode
@@ -114,17 +116,17 @@ define(
         };
 
         TimeConductorController.prototype.onPan = function (bounds) {
-            this.$scope.panning = true;
+            this.panning = true;
             this.$scope.boundsModel.start = bounds.start;
             this.$scope.boundsModel.end = bounds.end;
         };
 
         TimeConductorController.prototype.onPanStop = function () {
-            this.$scope.panning = false;
+            this.panning = false;
         };
 
         TimeConductorController.prototype.changeBounds = function (bounds) {
-            if (!this.$scope.zooming && !this.$scope.panning) {
+            if (!this.zooming && !this.panning) {
                 this.setFormFromBounds(bounds);
             }
         };
@@ -136,12 +138,14 @@ define(
          * @private
          */
         TimeConductorController.prototype.setFormFromBounds = function (bounds) {
-            if (!this.$scope.zooming && ! this.$scope.panning) {
+            if (!this.zooming && ! this.panning) {
                 this.$scope.boundsModel.start = bounds.start;
                 this.$scope.boundsModel.end = bounds.end;
 
-                this.$scope.currentZoom = this.toSliderValue(bounds.end - bounds.start);
-                this.toTimeUnits(bounds.end - bounds.start);
+                if (this.supportsZoom) {
+                    this.currentZoom = this.toSliderValue(bounds.end - bounds.start);
+                    this.toTimeUnits(bounds.end - bounds.start);
+                }
 
                 if (!this.pendingUpdate) {
                     this.pendingUpdate = true;
@@ -182,8 +186,10 @@ define(
             timeSystemModel.selected = timeSystem;
             timeSystemModel.format = timeSystem.formats()[0];
             timeSystemModel.deltaFormat = timeSystem.deltaFormat();
-            timeSystemModel.minZoom = timeSystem.defaults().zoom.min;
-            timeSystemModel.maxZoom = timeSystem.defaults().zoom.max;
+            if (this.supportsZoom) {
+                timeSystemModel.minZoom = timeSystem.defaults().zoom.min;
+                timeSystemModel.maxZoom = timeSystem.defaults().zoom.max;
+            }
         };
 
 
@@ -265,6 +271,8 @@ define(
 
                     this.setFormFromDeltas(deltas);
                     this.setFormFromBounds(bounds);
+
+                    this.supportsZoom = newTimeSystem.defaults().zoom !== undefined;
                 }
                 this.setFormFromTimeSystem(newTimeSystem);
             }
@@ -300,15 +308,13 @@ define(
             if (zoom.deltas) {
                 this.setFormFromDeltas(zoom.deltas);
             }
-
-            this.$scope.zooming = true;
         };
 
         TimeConductorController.prototype.zoomStop = function () {
             this.updateBoundsFromForm(this.$scope.boundsModel);
             this.updateDeltasFromForm(this.$scope.boundsModel);
+            this.zooming = false;
 
-            this.$scope.zooming = false;
             this.conductorViewService.emit('zoom-stop');
         };
 

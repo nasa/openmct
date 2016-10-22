@@ -597,6 +597,10 @@ define(
             return rowsToFilter.filter(matchRow.bind(null, filters));
         };
 
+        /**
+         * @param displayRowIndex {number} The index in the displayed rows
+         * to scroll to.
+         */
         MCTTableController.prototype.scrollToRow = function (displayRowIndex) {
 
             var visible = displayRowIndex > this.firstVisible() && displayRowIndex < this.lastVisible();
@@ -639,6 +643,9 @@ define(
             this.setTimeOfInterest(this.conductor.timeOfInterest());
         };
 
+        /**
+         * @private
+         */
         MCTTableController.prototype.onRowClick = function (event, rowIndex) {
             if (this.$scope.timeColumns.indexOf(this.$scope.sortColumn) !== -1) {
                 var selectedTime = this.$scope.displayRows[rowIndex][this.$scope.sortColumn].text;
