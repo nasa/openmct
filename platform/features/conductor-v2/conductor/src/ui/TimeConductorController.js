@@ -75,7 +75,6 @@ define(
             var timeSystem = this.conductor.timeSystem();
             if (timeSystem) {
                 this.setFormFromTimeSystem(timeSystem);
-                this.supportsZoom = timeSystem.defaults().zoom !== undefined;
             }
 
             //Represents the various modes, and the currently selected mode
@@ -108,7 +107,7 @@ define(
         };
 
         TimeConductorController.prototype.destroy = function () {
-            this.conductor.off('bounds', this.setFormFromBounds);
+            this.conductor.off('bounds', this.changeBounds);
             this.conductor.off('timeSystem', this.changeTimeSystem);
 
             this.conductorViewService.off('pan', this.onPan);
@@ -186,6 +185,8 @@ define(
             timeSystemModel.selected = timeSystem;
             timeSystemModel.format = timeSystem.formats()[0];
             timeSystemModel.deltaFormat = timeSystem.deltaFormat();
+            this.supportsZoom = timeSystem.defaults().zoom !== undefined;
+
             if (this.supportsZoom) {
                 timeSystemModel.minZoom = timeSystem.defaults().zoom.min;
                 timeSystemModel.maxZoom = timeSystem.defaults().zoom.max;
@@ -265,16 +266,14 @@ define(
          */
         TimeConductorController.prototype.changeTimeSystem = function (newTimeSystem) {
             if (newTimeSystem && (newTimeSystem !== this.$scope.timeSystemModel.selected)) {
+                this.setFormFromTimeSystem(newTimeSystem);
                 if (newTimeSystem.defaults()) {
                     var deltas = newTimeSystem.defaults().deltas || {start: 0, end: 0};
                     var bounds = newTimeSystem.defaults().bounds || {start: 0, end: 0};
 
                     this.setFormFromDeltas(deltas);
                     this.setFormFromBounds(bounds);
-
-                    this.supportsZoom = newTimeSystem.defaults().zoom !== undefined;
                 }
-                this.setFormFromTimeSystem(newTimeSystem);
             }
         };
 

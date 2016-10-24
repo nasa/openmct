@@ -60,7 +60,7 @@ define(
 
         ConductorAxisController.prototype.destroy = function () {
             this.conductor.off('timeSystem', this.changeTimeSystem);
-            this.conductor.off('bounds', this.setScale);
+            this.conductor.off('bounds', this.changeBounds);
             this.conductorViewService.off("zoom", this.onZoom);
             this.conductorViewService.off("zoom-stop", this.onZoomStop)
         };

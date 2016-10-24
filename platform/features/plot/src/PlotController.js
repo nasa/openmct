@@ -202,7 +202,7 @@ define(
                 if (handle) {
                     handle.unsubscribe();
                     handle = undefined;
-                    conductor.off(changeTimeOfInterest);
+                    conductor.off("timeOfInterest", changeTimeOfInterest);
                 }
             }
 

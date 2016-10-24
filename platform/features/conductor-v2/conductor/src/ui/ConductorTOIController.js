@@ -43,7 +43,6 @@ define(
             this.conductor.on('timeOfInterest', this.changeTimeOfInterest);
             this.conductorViewService.on('zoom', this.setOffsetFromBounds);
             this.conductorViewService.on('pan', this.setOffsetFromBounds);
-            this.conductor.on('timeSystem', this.changeTimeSystem);
 
             var timeOfInterest = this.conductor.timeOfInterest();
             if (timeOfInterest) {
@@ -55,8 +54,7 @@ define(
         }
 
         ConductorTOIController.prototype.destroy = function () {
-            this.conductor.off('timeOfInterest', this.setOffsetFromBounds);
-            this.conductor.off('timeSystem', this.changeTimeSystem);
+            this.conductor.off('timeOfInterest', this.changeTimeOfInterest);
             this.conductorViewService.off('zoom', this.setOffsetFromBounds);
             this.conductorViewService.off('pan', this.setOffsetFromBounds);
         };

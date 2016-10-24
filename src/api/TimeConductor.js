@@ -54,6 +54,10 @@ define(['EventEmitter'], function (EventEmitter) {
 
     TimeConductor.prototype = Object.create(EventEmitter.prototype);
 
+    TimeConductor.prototype.on = function (event) {
+        EventEmitter.prototype.on.apply(this, arguments);
+    };
+
     /**
      * Validate the given bounds. This can be used for pre-validation of
      * bounds, for example by views validating user inputs.
