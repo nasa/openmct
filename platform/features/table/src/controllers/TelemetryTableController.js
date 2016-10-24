@@ -77,6 +77,11 @@ define(
             this.conductor.off('timeSystem', this.sortByTimeSystem);
         }
 
+        /**
+         * Based on the selected time system, find a matching domain column
+         * to sort by. By default will just match on key.
+         * @param timeSystem
+         */
         TelemetryTableController.prototype.sortByTimeSystem = function (timeSystem) {
             var scope = this.$scope;
             scope.defaultSort = undefined;
@@ -89,9 +94,6 @@ define(
             }
         };
 
-        /**
-         * @private
-         */
         TelemetryTableController.prototype.unregisterChangeListeners = function () {
             this.changeListeners.forEach(function (listener) {
                 return listener && listener();

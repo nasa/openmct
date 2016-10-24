@@ -65,6 +65,10 @@ define(
             }
         };
 
+        /**
+         * When time system is changed, update the formatter used to
+         * display the current TOI label
+         */
         TimeOfInterestController.prototype.changeTimeSystem = function (timeSystem) {
             this.format = this.formatService.getFormat(timeSystem.formats()[0]);
         };
@@ -78,6 +82,10 @@ define(
             this.conductor.timeOfInterest(undefined);
         };
 
+        /**
+         * Sends out a time of interest event with the effect of resetting
+         * the TOI displayed in views.
+         */
         TimeOfInterestController.prototype.resync = function () {
             this.conductor.timeOfInterest(this.conductor.timeOfInterest());
         };

@@ -97,7 +97,12 @@ define(
                     enableFilter: "=?",
                     enableSort: "=?",
                     autoScroll: "=?",
+                    // Used to indicate which columns contain time data. This
+                    // will be used for determining when the table is sorted
+                    // by the column that can be used for time conductor
+                    // time of interest.
                     timeColumns: "=?",
+                    // Indicate the column that should be sorted on by default
                     defaultSort: "=?"
                 }
             };

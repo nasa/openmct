@@ -32,20 +32,15 @@ define(
          * labelled 'ticks'. It requires 'start' and 'end' integer values to
          * be specified as attributes.
          */
-        function ConductorAxisController(openmct, formatService, conductorViewService) {
+        function ConductorAxisController(openmct, formatService, conductorViewService, scope, element) {
             // Dependencies
             this.d3 = d3;
             this.formatService = formatService;
             this.conductor = openmct.conductor;
             this.conductorViewService = conductorViewService;
 
-            // Runtime properties (set by 'link' function)
-            this.target = undefined;
-            this.xScale = undefined;
-            this.xAxis = undefined;
-            this.axisElement = undefined;
+            this.scope = scope;
             this.initialized = false;
-            this.msPerPixel = undefined;
 
             this.bounds = this.conductor.bounds();
             this.timeSystem = this.conductor.timeSystem();
@@ -56,6 +51,8 @@ define(
             }).forEach(function (key) {
                 this[key] = ConductorAxisController.prototype[key].bind(this);
             }.bind(this));
+
+            this.initialize(element);
         }
 
         ConductorAxisController.prototype.destroy = function () {
@@ -65,70 +62,18 @@ define(
             this.conductorViewService.off("zoom-stop", this.onZoomStop)
         };
 
-        ConductorAxisController.prototype.changeBounds = function (bounds) {
-            this.bounds = bounds;
-            if (this.initialized && !this.zooming) {
-                this.setScale();
-            }
-        };
-
-        ConductorAxisController.prototype.setScale = function () {
-            var width = this.target.offsetWidth;
-            var timeSystem = this.conductor.timeSystem();
-            var bounds = this.bounds;
-
-            if (timeSystem.isUTCBased()) {
-                this.xScale = this.xScale || this.d3.scaleUtc();
-                this.xScale.domain([new Date(bounds.start), new Date(bounds.end)]);
-            } else {
-                this.xScale = this.xScale || this.d3.scaleLinear();
-                this.xScale.domain([bounds.start, bounds.end]);
-            }
-
-            this.xScale.range([PADDING, width - PADDING * 2]);
-            this.axisElement.call(this.xAxis);
-
-            this.msPerPixel = (bounds.end - bounds.start) / width;
-        };
-
-        ConductorAxisController.prototype.changeTimeSystem = function (timeSystem) {
-            this.timeSystem = timeSystem;
-
-            var key = timeSystem.formats()[0];
-            if (this.initialized && key !== undefined) {
-                var format = this.formatService.getFormat(key);
-                var bounds = this.conductor.bounds();
-
-                if (timeSystem.isUTCBased()) {
-                    this.xScale = this.d3.scaleUtc();
-                } else {
-                    this.xScale = this.d3.scaleLinear();
-                }
-
-                this.xAxis.scale(this.xScale);
-                //Define a custom format function
-                this.xAxis.tickFormat(function (tickValue) {
-                    // Normalize date representations to numbers
-                    if (tickValue instanceof Date) {
-                        tickValue = tickValue.getTime();
-                    }
-                    return format.format(tickValue, {
-                        min: bounds.start,
-                        max: bounds.end
-                    });
-                });
-                this.axisElement.call(this.xAxis);
-            }
-        };
-
-        ConductorAxisController.prototype.link = function (scope, element) {
+        /**
+         * Set defaults, and apply d3 axis to the
+         * @param scope
+         * @param element
+         */
+        ConductorAxisController.prototype.initialize = function (element) {
             this.target = element[0].firstChild;
-            this.scope = scope;
             var height = this.target.offsetHeight;
             var vis = this.d3.select(this.target)
-                        .append("svg:svg")
-                        .attr("width", "100%")
-                        .attr("height", height);
+                .append("svg:svg")
+                .attr("width", "100%")
+                .attr("height", height);
 
             this.xAxis = this.d3.axisTop();
 
@@ -153,6 +98,73 @@ define(
             this.conductorViewService.on("zoom-stop", this.onZoomStop);
         };
 
+        ConductorAxisController.prototype.changeBounds = function (bounds) {
+            this.bounds = bounds;
+            if (this.initialized && !this.zooming) {
+                this.setScale();
+            }
+        };
+
+        /**
+         * Set the scale of the axis, based on current conductor bounds.
+         */
+        ConductorAxisController.prototype.setScale = function () {
+            var width = this.target.offsetWidth;
+            var timeSystem = this.conductor.timeSystem();
+            var bounds = this.bounds;
+
+            if (timeSystem.isUTCBased()) {
+                this.xScale = this.xScale || this.d3.scaleUtc();
+                this.xScale.domain([new Date(bounds.start), new Date(bounds.end)]);
+            } else {
+                this.xScale = this.xScale || this.d3.scaleLinear();
+                this.xScale.domain([bounds.start, bounds.end]);
+            }
+
+            this.xScale.range([PADDING, width - PADDING * 2]);
+            this.axisElement.call(this.xAxis);
+
+            this.msPerPixel = (bounds.end - bounds.start) / width;
+        };
+
+        /**
+         * When the time system changes, update the scale and formatter used
+         * for showing times.
+         * @param timeSystem
+         */
+        ConductorAxisController.prototype.changeTimeSystem = function (timeSystem) {
+            this.timeSystem = timeSystem;
+
+            var key = timeSystem.formats()[0];
+            if (this.initialized && key !== undefined) {
+                var format = this.formatService.getFormat(key);
+                var bounds = this.conductor.bounds();
+
+                //The D3 scale used depends on the type of time system as d3
+                // supports UTC out of the box.
+                if (timeSystem.isUTCBased()) {
+                    this.xScale = this.d3.scaleUtc();
+                } else {
+                    this.xScale = this.d3.scaleLinear();
+                }
+
+                this.xAxis.scale(this.xScale);
+
+                //Define a custom format function
+                this.xAxis.tickFormat(function (tickValue) {
+                    // Normalize date representations to numbers
+                    if (tickValue instanceof Date) {
+                        tickValue = tickValue.getTime();
+                    }
+                    return format.format(tickValue, {
+                        min: bounds.start,
+                        max: bounds.end
+                    });
+                });
+                this.axisElement.call(this.xAxis);
+            }
+        };
+
         ConductorAxisController.prototype.panStop = function () {
             //resync view bounds with time conductor bounds
             this.conductorViewService.emit("pan-stop");
@@ -170,6 +182,12 @@ define(
             this.zooming = false;
         };
 
+        /**
+         * Initiate panning via a click + drag gesture on the time conductor
+         * scale. Panning triggers a "pan" event
+         * @param {number} delta the offset from the original click event
+         * @see TimeConductorViewService#
+         */
         ConductorAxisController.prototype.pan = function (delta) {
             if (!this.conductor.follow()) {
                 var deltaInMs = delta[0] * this.msPerPixel;

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define(['./ConductorAxisController'], function (ConductorAxisController) {
 
         function MctConductorAxis() {
             /**
@@ -30,11 +30,15 @@ define([], function () {
              */
 
             return {
-                controller: 'ConductorAxisController',
+                controller: [
+                    'openmct',
+                    'formatService',
+                    'timeConductorViewService',
+                    '$scope',
+                    '$element',
+                    ConductorAxisController
+                ],
                 controllerAs: 'axis',
-                link: function(scope, element, attrs, controller){
-                    controller.link(scope, element);
-                },
 
                 restrict: 'E',
                 priority: 1000,

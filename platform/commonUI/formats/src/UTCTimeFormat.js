@@ -95,8 +95,15 @@ define([
         })[0][0];
     }
 
+    /**
+     * Returns a description of the current range of the time conductor's
+     * bounds.
+     * @param timeRange
+     * @returns {*}
+     */
     UTCTimeFormat.prototype.timeUnits = function (timeRange) {
         var momentified = moment.duration(timeRange);
+
         return [
             ["Decades", function (r) {
                 return r.years() > 15;

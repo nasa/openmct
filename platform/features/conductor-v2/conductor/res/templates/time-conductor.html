@@ -120,8 +120,8 @@
                         class="time-conductor-zoom-current-range flex-elem flex-fixed holder">{{timeUnits}}</span>
                 <input class="time-conductor-zoom flex-elem" type="range"
                        ng-model="tcController.currentZoom"
-                       ng-mouseUp="tcController.zoomStop(tcController.currentZoom)"
-                       ng-change="tcController.zoomDrag(tcController.currentZoom)"
+                       ng-mouseUp="tcController.onZoomStop(tcController.currentZoom)"
+                       ng-change="tcController.onZoom(tcController.currentZoom)"
                        min="0.01"
                        step="0.01"
                        max="0.99" />

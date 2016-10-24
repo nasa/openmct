@@ -195,6 +195,9 @@ define(
                     true // Lossless
                 );
                 replot();
+
+                changeTimeOfInterest(conductor.timeOfInterest());
+                conductor.on("timeOfInterest", changeTimeOfInterest);
             }
 
             // Release the current subscription (called when scope is destroyed)
@@ -279,10 +282,6 @@ define(
                 new PlotAxis("domains", [], AXIS_DEFAULTS[0]),
                 new PlotAxis("ranges", [], AXIS_DEFAULTS[1])
             ];
-
-            changeTimeOfInterest(conductor.timeOfInterest());
-
-            conductor.on("timeOfInterest", changeTimeOfInterest);
 
             // Watch for changes to the selected axis
             $scope.$watch("axes[0].active.key", domainRequery);

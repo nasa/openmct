@@ -114,16 +114,6 @@ define(
             this.conductorViewService.off('pan-stop', this.onPanStop);
         };
 
-        TimeConductorController.prototype.onPan = function (bounds) {
-            this.panning = true;
-            this.$scope.boundsModel.start = bounds.start;
-            this.$scope.boundsModel.end = bounds.end;
-        };
-
-        TimeConductorController.prototype.onPanStop = function () {
-            this.panning = false;
-        };
-
         TimeConductorController.prototype.changeBounds = function (bounds) {
             if (!this.zooming && !this.panning) {
                 this.setFormFromBounds(bounds);
@@ -131,17 +121,32 @@ define(
         };
 
         /**
+         * Does the currently selected time system support zooming? To
+         * support zooming a time system must, at a minimum, define some
+         * values for maximum and minimum zoom levels. Additionally
+         * TimeFormats, a related concept, may also support providing time
+         * unit feedback for the zoom level label, eg "seconds, minutes,
+         * hours, etc..."
+         * @returns {boolean}
+         */
+        TimeConductorController.prototype.supportsZoom = function () {
+            var timeSystem = this.conductor.timeSystem();
+            return timeSystem &&
+                    timeSystem.defaults() &&
+                    timeSystem.defaults().zoom;
+        };
+
+        /**
          * Called when the bounds change in the time conductor. Synchronizes
          * the bounds values in the time conductor with those in the form
-         *
-         * @private
+         * @param {TimeConductorBounds}
          */
         TimeConductorController.prototype.setFormFromBounds = function (bounds) {
             if (!this.zooming && ! this.panning) {
                 this.$scope.boundsModel.start = bounds.start;
                 this.$scope.boundsModel.end = bounds.end;
 
-                if (this.supportsZoom) {
+                if (this.supportsZoom()) {
                     this.currentZoom = this.toSliderValue(bounds.end - bounds.start);
                     this.toTimeUnits(bounds.end - bounds.start);
                 }
@@ -157,7 +162,9 @@ define(
         };
 
         /**
-         * @private
+         * On mode change, populate form based on time systems available
+         * from the selected mode.
+         * @param mode
          */
         TimeConductorController.prototype.setFormFromMode = function (mode) {
             this.$scope.modeModel.selectedKey = mode;
@@ -169,25 +176,22 @@ define(
                 });
         };
 
-        /**
-         * @private
-         */
         TimeConductorController.prototype.setFormFromDeltas = function (deltas) {
             this.$scope.boundsModel.startDelta = deltas.start;
             this.$scope.boundsModel.endDelta = deltas.end;
         };
 
         /**
-         * @private
+         * Initialize the form when time system changes.
+         * @param timeSystem
          */
         TimeConductorController.prototype.setFormFromTimeSystem = function (timeSystem) {
             var timeSystemModel = this.$scope.timeSystemModel;
             timeSystemModel.selected = timeSystem;
             timeSystemModel.format = timeSystem.formats()[0];
             timeSystemModel.deltaFormat = timeSystem.deltaFormat();
-            this.supportsZoom = timeSystem.defaults().zoom !== undefined;
 
-            if (this.supportsZoom) {
+            if (this.supportsZoom()) {
                 timeSystemModel.minZoom = timeSystem.defaults().zoom.min;
                 timeSystemModel.maxZoom = timeSystem.defaults().zoom.max;
             }
@@ -261,7 +265,6 @@ define(
          * Sets the selected time system. Will populate form with the default
          * bounds and deltas defined in the selected time system.
          *
-         * @private
          * @param newTimeSystem
          */
         TimeConductorController.prototype.changeTimeSystem = function (newTimeSystem) {
@@ -277,6 +280,12 @@ define(
             }
         };
 
+        /**
+         * Takes a time span and calculates a slider increment value, used
+         * to set the horizontal offset of the slider.
+         * @param {number} timeSpan a duration of time, in ms
+         * @returns {number} a value between 0.01 and 0.99, in increments of .01
+         */
         TimeConductorController.prototype.toSliderValue = function (timeSpan) {
             var timeSystem = this.conductor.timeSystem();
             if (timeSystem) {
@@ -286,6 +295,11 @@ define(
             }
         };
 
+        /**
+         * Given a time span, set a label for the units of time that it,
+         * roughly, represents. Leverages
+         * @param {TimeSpan} timeSpan
+         */
         TimeConductorController.prototype.toTimeUnits = function (timeSpan) {
             if (this.conductor.timeSystem()) {
                 var timeFormat = this.formatService.getFormat(this.conductor.timeSystem().formats()[0]);
@@ -293,7 +307,14 @@ define(
             }
         };
 
-        TimeConductorController.prototype.zoomDrag = function(sliderValue) {
+        /**
+         * Zooming occurs when the user manipulates the zoom slider.
+         * Zooming updates the scale and bounds fields immediately, but does
+         * not trigger a bounds change to other views until the mouse button
+         * is released.
+         * @param bounds
+         */
+        TimeConductorController.prototype.onZoom = function(sliderValue) {
             var zoomDefaults = this.conductor.timeSystem().defaults().zoom;
             var timeSpan = Math.pow((1 - sliderValue), 4) * (zoomDefaults.min - zoomDefaults.max);
 
@@ -309,12 +330,30 @@ define(
             }
         };
 
-        TimeConductorController.prototype.zoomStop = function () {
+        TimeConductorController.prototype.onZoomStop = function () {
             this.updateBoundsFromForm(this.$scope.boundsModel);
             this.updateDeltasFromForm(this.$scope.boundsModel);
             this.zooming = false;
 
             this.conductorViewService.emit('zoom-stop');
+        };
+
+        /**
+         * Panning occurs when the user grabs the conductor scale and drags
+         * it left or right to slide the window of time represented by the
+         * conductor. Panning updates the scale and bounds fields
+         * immediately, but does not trigger a bounds change to other views
+         * until the mouse button is released.
+         * @param bounds
+         */
+        TimeConductorController.prototype.onPan = function (bounds) {
+            this.panning = true;
+            this.$scope.boundsModel.start = bounds.start;
+            this.$scope.boundsModel.end = bounds.end;
+        };
+
+        TimeConductorController.prototype.onPanStop = function () {
+            this.panning = false;
         };
 
         return TimeConductorController;

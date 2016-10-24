@@ -74,15 +74,6 @@ define([
                     ]
                 },
                 {
-                    "key": "ConductorAxisController",
-                    "implementation": ConductorAxisController,
-                    "depends": [
-                        "openmct",
-                        "formatService",
-                        "timeConductorViewService"
-                    ]
-                },
-                {
                     "key": "ConductorTOIController",
                     "implementation": ConductorTOIController,
                     "depends": [

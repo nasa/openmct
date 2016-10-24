@@ -59,6 +59,14 @@ define(
             this.conductorViewService.off('pan', this.setOffsetFromBounds);
         };
 
+        /**
+         * Given some bounds, set horizontal position of TOI indicator based
+         * on current conductor TOI value. Bounds are provided so that
+         * ephemeral bounds from zoom and pan events can be used as well
+         * as current conductor bounds, allowing TOI to be updated in
+         * realtime during scroll and zoom.
+         * @param {TimeConductorBounds} bounds
+         */
         ConductorTOIController.prototype.setOffsetFromBounds = function (bounds) {
             var toi = this.conductor.timeOfInterest();
             if (toi !== undefined) {
@@ -79,7 +87,12 @@ define(
             }
         };
 
+        /**
+         * Set time of interest
+         * @param e The angular $event object
+         */
         ConductorTOIController.prototype.click = function (e) {
+            //TOI is set using the alt key modified + primary click
             if (e.altKey) {
                 var element = $(e.currentTarget);
                 var width = element.width();

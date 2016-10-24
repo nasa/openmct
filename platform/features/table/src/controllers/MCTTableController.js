@@ -98,6 +98,10 @@ define(
             $scope.$on('add:row', this.addRow);
             $scope.$on('remove:row', this.removeRow);
 
+            /**
+             * Populated from the default-sort attribute on MctTable
+             * directive tag.
+             */
             $scope.$watch('defaultSort', function (defaultSort) {
                 $scope.sortColumn = defaultSort;
                 $scope.sortDirection = 'asc';
@@ -108,7 +112,11 @@ define(
              */
             $scope.resize = this.setElementSizes;
 
-            // Time conductor integration
+            /**
+             * Scope variable that is populated from the 'time-columns'
+             * attribute on the MctTable tag. Indicates which columns, while
+             * sorted, can be used for indicated time of interest.
+             */
             $scope.$watch("timeColumns", function (timeColumns){
                 if (timeColumns) {
                     this.destroyConductorListeners();
@@ -208,6 +216,7 @@ define(
         };
 
         /**
+         * Return first visible row, based on current scroll state.
          * @private
          */
         MCTTableController.prototype.firstVisible = function () {
@@ -228,6 +237,7 @@ define(
         };
 
         /**
+         * Return last visible row, based on current scroll state.
          * @private
          */
         MCTTableController.prototype.lastVisible = function () {
@@ -550,8 +560,11 @@ define(
 
             this.$scope.displayRows = this.filterAndSort(newRows || []);
             this.resize(newRows).then(this.setVisibleRows)
+                //Timeout following setVisibleRows to allow digest to
+                // perform DOM changes, otherwise scrollTo won't work.
                 .then(this.$timeout)
                 .then(function() {
+                    //If TOI specified, scroll to it
                     var timeOfInterest = this.conductor.timeOfInterest();
                     if (timeOfInterest) {
                         this.setTimeOfInterest(timeOfInterest);

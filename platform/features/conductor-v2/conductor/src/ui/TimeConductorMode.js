@@ -186,6 +186,11 @@ define(
             return this.dlts;
         };
 
+        /**
+         *
+         * @param deltas
+         * @returns {TimeConductorBounds}
+         */
         TimeConductorMode.prototype.calculateBoundsFromDeltas = function (deltas) {
             var oldEnd = this.conductor.bounds().end;
 
@@ -202,9 +207,9 @@ define(
         };
 
         /**
-         * Performs zoom calculation. Will calculate new bounds and deltas
-         * based on desired timeSpan
-         * @param timeSpan
+         * Calculates bounds and deltas based on a timeSpan. Collectively
+         * the bounds and deltas will constitute the new zoom level.
+         * @param {number} timeSpan time duration in ms.
          */
         TimeConductorMode.prototype.calculateZoom = function (timeSpan) {
             var zoom = {};

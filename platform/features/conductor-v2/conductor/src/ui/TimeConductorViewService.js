@@ -32,6 +32,7 @@ define(
          * exposes details of the UI that are not represented on the
          * TimeConductor API itself such as modes and deltas.
          *
+         * @memberof platform.features.conductor
          * @param conductor
          * @param timeSystems
          * @constructor
@@ -203,6 +204,15 @@ define(
             return this.currentMode.availableTimeSystems();
         };
 
+        /**
+         * Zoom to given time span. Will fire a zoom event with new zoom
+         * bounds. Zoom bounds emitted in this way are considered ephemeral
+         * and should be overridden by any time conductor bounds events. Does
+         * not set bounds globally.
+         * @param {number} zoom A time duration in ms
+         * @fires platform.features.conductor.TimeConductorViewService~zoom
+         * @see module:openmct.TimeConductor#bounds
+         */
         TimeConductorViewService.prototype.zoom = function (timeSpan) {
             var zoom = this.currentMode.calculateZoom(timeSpan);
             this.emit("zoom", zoom);
