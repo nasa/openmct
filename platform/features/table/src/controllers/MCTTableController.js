@@ -645,7 +645,6 @@ define(
                         this.scrollToRow(this.$scope.toiRowIndex);
                     }
             }
-            console.log('toiRowIndex '+ this.$scope.toiRowIndex + ' length: ' + this.$scope.displayRows.length);
         };
 
         /**
