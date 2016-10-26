@@ -102,8 +102,9 @@ define(
                     // by the column that can be used for time conductor
                     // time of interest.
                     timeColumns: "=?",
-                    // Indicate the column that should be sorted on by default
-                    defaultSort: "=?"
+                    // Indicate a column to sort on. Allows control of sort
+                    // via configuration (eg. for default sort column).
+                    sortColumn: "=?"
                 }
             };
         }

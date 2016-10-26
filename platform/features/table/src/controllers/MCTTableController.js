@@ -102,10 +102,7 @@ define(
              * Populated from the default-sort attribute on MctTable
              * directive tag.
              */
-            $scope.$watch('defaultSort', function (defaultSort) {
-                $scope.sortColumn = defaultSort;
-                $scope.sortDirection = 'asc';
-            });
+            $scope.$watch('sortColumn', $scope.toggleSort);
 
             /*
              * Listen for resize events to trigger recalculation of table width
@@ -559,7 +556,8 @@ define(
             }
 
             this.$scope.displayRows = this.filterAndSort(newRows || []);
-            this.resize(newRows).then(this.setVisibleRows)
+            this.resize(newRows)
+                .then(this.setVisibleRows)
                 //Timeout following setVisibleRows to allow digest to
                 // perform DOM changes, otherwise scrollTo won't work.
                 .then(this.$timeout)
@@ -632,18 +630,24 @@ define(
          * will be sorted before display.
          */
         MCTTableController.prototype.setTimeOfInterest = function (newTOI) {
+            var isSortedByTime =
+                this.$scope.timeColumns &&
+                this.$scope.timeColumns.indexOf(this.$scope.sortColumn) !== -1;
+
             this.$scope.toiRowIndex = -1;
-            if (this.$scope.timeColumns.indexOf(this.$scope.sortColumn) !== -1
-                && newTOI
-                && this.$scope.displayRows.length > 0) {
-                    var formattedTOI = this.toiFormatter.format(newTOI);
-                    // array, searchElement, min, max
-                    var rowIndex = this.binarySearch(this.$scope.displayRows,
-                        formattedTOI, 0, this.$scope.displayRows.length - 1);
-                    if (rowIndex > 0 && rowIndex < this.$scope.displayRows.length) {
-                        this.$scope.toiRowIndex = rowIndex;
-                        this.scrollToRow(this.$scope.toiRowIndex);
-                    }
+
+            if (newTOI && isSortedByTime) {
+                var formattedTOI = this.toiFormatter.format(newTOI);
+                var rowIndex = this.binarySearch(
+                    this.$scope.displayRows,
+                    formattedTOI,
+                    0,
+                    this.$scope.displayRows.length - 1);
+
+                if (rowIndex > 0 && rowIndex < this.$scope.displayRows.length) {
+                    this.$scope.toiRowIndex = rowIndex;
+                    this.scrollToRow(this.$scope.toiRowIndex);
+                }
             }
         };
 
