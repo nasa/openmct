@@ -155,7 +155,7 @@ gulp.task('serve', function () {
     var app = require('./app.js');
 });
 
-gulp.task('develop', ['serve', 'install', 'watch']);
+gulp.task('develop', ['serve', 'stylesheets', 'watch']);
 
 gulp.task('install', [ 'assets', 'scripts' ]);
 
