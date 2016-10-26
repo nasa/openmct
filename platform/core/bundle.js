@@ -24,6 +24,7 @@ define([
     "./src/objects/DomainObjectProvider",
     "./src/capabilities/CoreCapabilityProvider",
     "./src/models/StaticModelProvider",
+    "./src/models/RootModelProvider",
     "./src/models/ModelAggregator",
     "./src/models/ModelCacheService",
     "./src/models/PersistedModelProvider",
@@ -56,6 +57,7 @@ define([
     DomainObjectProvider,
     CoreCapabilityProvider,
     StaticModelProvider,
+    RootModelProvider,
     ModelAggregator,
     ModelCacheService,
     PersistedModelProvider,
@@ -146,6 +148,16 @@ define([
                     "implementation": StaticModelProvider,
                     "depends": [
                         "models[]",
+                        "$q",
+                        "$log"
+                    ]
+                },
+                {
+                    "provides": "modelService",
+                    "type": "provider",
+                    "implementation": RootModelProvider,
+                    "depends": [
+                        "roots[]",
                         "$q",
                         "$log"
                     ]
