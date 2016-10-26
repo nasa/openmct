@@ -20,40 +20,39 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './synchronizeMutationCapability',
-    './AlternateCompositionCapability'
-], function (
-    synchronizeMutationCapability,
-    AlternateCompositionCapability
-) {
-
-    /**
-     * Overrides certain capabilities to keep consistency between old API
-     * and new API.
-     */
-    function APICapabilityDecorator($injector, capabilityService) {
-        this.$injector = $injector;
-        this.capabilityService = capabilityService;
+define(['zepto'], function ($) {
+    function HoverGesture(hoverManager) {
+        this.hoverManager = hoverManager;
     }
 
-    APICapabilityDecorator.prototype.getCapabilities = function (
-        model
-    ) {
-        var capabilities = this.capabilityService.getCapabilities(model);
-        if (capabilities.mutation) {
-            capabilities.mutation =
-                synchronizeMutationCapability(capabilities.mutation);
-        }
-        if (AlternateCompositionCapability.appliesTo(model)) {
-            capabilities.composition = function (domainObject) {
-                return new AlternateCompositionCapability(this.$injector, domainObject);
-            }.bind(this);
+    HoverGesture.prototype.apply = function (htmlElement) {
+        var $element = $(htmlElement);
+        var hoverManager = this.hoverManager;
+
+        function update() {
+            $(hoverManager.all()).removeClass('hovering');
+            $(hoverManager.top()).addClass('hovering');
         }
 
-        return capabilities;
+        function enter() {
+            hoverManager.add(htmlElement);
+            update();
+        }
+
+        function leave() {
+            hoverManager.remove(htmlElement);
+            update();
+        }
+
+        $element.on('mouseenter', enter);
+        $element.on('mouseleave', leave);
+
+        return function () {
+            leave();
+            $element.off('mouseenter', enter);
+            $element.off('mouseleave', leave);
+        }.bind(this);
     };
 
-    return APICapabilityDecorator;
-
+    return HoverGesture;
 });

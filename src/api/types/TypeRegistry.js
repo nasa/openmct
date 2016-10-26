@@ -20,40 +20,32 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './synchronizeMutationCapability',
-    './AlternateCompositionCapability'
-], function (
-    synchronizeMutationCapability,
-    AlternateCompositionCapability
-) {
+define([], function () {
 
     /**
-     * Overrides certain capabilities to keep consistency between old API
-     * and new API.
+     * A TypeRegistry maintains the definitions for different types
+     * that domain objects may have.
+     * @interface TypeRegistry
+     * @memberof module:openmct
      */
-    function APICapabilityDecorator($injector, capabilityService) {
-        this.$injector = $injector;
-        this.capabilityService = capabilityService;
+    function TypeRegistry() {
+        this.types = {};
     }
 
-    APICapabilityDecorator.prototype.getCapabilities = function (
-        model
-    ) {
-        var capabilities = this.capabilityService.getCapabilities(model);
-        if (capabilities.mutation) {
-            capabilities.mutation =
-                synchronizeMutationCapability(capabilities.mutation);
-        }
-        if (AlternateCompositionCapability.appliesTo(model)) {
-            capabilities.composition = function (domainObject) {
-                return new AlternateCompositionCapability(this.$injector, domainObject);
-            }.bind(this);
-        }
-
-        return capabilities;
+    /**
+     * Register a new type of view.
+     *
+     * @param {string} typeKey a string identifier for this type
+     * @param {module:openmct.Type} type the type to add
+     * @method addProvider
+     * @memberof module:openmct.TypeRegistry#
+     */
+    TypeRegistry.prototype.addType = function (typeKey, type) {
+        this.types[typeKey] = type;
     };
 
-    return APICapabilityDecorator;
 
+    return TypeRegistry;
 });
+
+

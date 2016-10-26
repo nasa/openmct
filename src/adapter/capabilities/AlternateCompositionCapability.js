@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -24,17 +24,15 @@
  * Module defining AlternateCompositionCapability. Created by vwoeltje on 11/7/14.
  */
 define([
-    '../../api/objects/object-utils',
-    '../../api/composition/CompositionAPI'
-], function (objectUtils, CompositionAPI) {
-
+    '../../api/objects/object-utils'
+], function (objectUtils) {
         function AlternateCompositionCapability($injector, domainObject) {
             this.domainObject = domainObject;
-
             this.getDependencies = function () {
                 this.instantiate = $injector.get("instantiate");
                 this.contextualize = $injector.get("contextualize");
                 this.getDependencies = undefined;
+                this.openmct = $injector.get("openmct");
             }.bind(this);
         }
 
@@ -50,7 +48,7 @@ define([
             function addChildToComposition(model) {
                 var existingIndex = model.composition.indexOf(child.getId());
                 if (existingIndex === -1) {
-                    model.composition.push(child.getId())
+                    model.composition.push(child.getId());
                 }
             }
 
@@ -85,7 +83,12 @@ define([
                 this.domainObject.getModel(),
                 this.domainObject.getId()
             );
-            var collection = CompositionAPI(newFormatDO);
+
+            if (this.getDependencies) {
+                this.getDependencies();
+            }
+
+            var collection = this.openmct.composition.get(newFormatDO);
             return collection.load()
                 .then(function (children) {
                     collection.destroy();
@@ -94,7 +97,9 @@ define([
         };
 
         AlternateCompositionCapability.appliesTo = function (model) {
-            return !!CompositionAPI(objectUtils.toNewFormat(model, model.id));
+            // Will get replaced by a runs exception to properly
+            // bind to running openmct instance
+            return false;
         };
 
         return AlternateCompositionCapability;

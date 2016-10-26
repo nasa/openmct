@@ -20,40 +20,41 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './synchronizeMutationCapability',
-    './AlternateCompositionCapability'
-], function (
-    synchronizeMutationCapability,
-    AlternateCompositionCapability
-) {
-
-    /**
-     * Overrides certain capabilities to keep consistency between old API
-     * and new API.
-     */
-    function APICapabilityDecorator($injector, capabilityService) {
-        this.$injector = $injector;
-        this.capabilityService = capabilityService;
+define(['zepto'], function ($) {
+    function SelectGesture(selection, contextManager) {
+        this.selection = selection;
+        this.contextManager = contextManager;
     }
 
-    APICapabilityDecorator.prototype.getCapabilities = function (
-        model
-    ) {
-        var capabilities = this.capabilityService.getCapabilities(model);
-        if (capabilities.mutation) {
-            capabilities.mutation =
-                synchronizeMutationCapability(capabilities.mutation);
-        }
-        if (AlternateCompositionCapability.appliesTo(model)) {
-            capabilities.composition = function (domainObject) {
-                return new AlternateCompositionCapability(this.$injector, domainObject);
-            }.bind(this);
+    SelectGesture.prototype.apply = function (htmlElement, item) {
+        var $element = $(htmlElement);
+        var contextManager = this.contextManager;
+        var selection = this.selection;
+        var path = contextManager.path(item, htmlElement);
+
+        function select() {
+            selection.add(path);
         }
 
-        return capabilities;
+        function change() {
+            var selected = selection.primary();
+            $element.toggleClass(
+                'selected',
+                selected && path.matches(selected)
+            );
+        }
+
+        $element.addClass('selectable');
+        $element.on('click', select);
+        selection.on('change', change);
+        change(); // Initialize
+
+        return function () {
+            contextManager.release(htmlElement);
+            $element.off('click', select);
+            selection.off('change', change);
+        };
     };
 
-    return APICapabilityDecorator;
-
+    return SelectGesture;
 });

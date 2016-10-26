@@ -14,12 +14,23 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT includes source code licensed under additional open source
+ * Open MCT Web includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['src/BundleRegistry'], function (BundleRegistry) {
-    return new BundleRegistry();
+define([
+    '../capabilities/AlternateCompositionCapability'
+], function (AlternateCompositionCapability) {
+    // Present to work around the need for openmct to be used
+    // from AlternateCompositionCapability.appliesTo, even though it
+    // cannot be injected.
+    function AlternateCompositionInitializer(openmct) {
+        AlternateCompositionCapability.appliesTo = function (model) {
+            return !model.composition && !!openmct.composition.get(model);
+        };
+    }
+
+    return AlternateCompositionInitializer;
 });
