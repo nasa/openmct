@@ -21,21 +21,12 @@
  *****************************************************************************/
 
 define(function () {
-    /**
-     * @typedef TypeDefinition
-     * @memberof module:openmct.Type~
-     * @property {Metadata} metadata displayable metadata about this type
-     * @property {function (object)} [initialize] a function which initializes
-     *           the model for new domain objects of this type
-     * @property {boolean} [creatable] true if users should be allowed to
-     *           create this type (default: false)
-     */
 
     /**
      * A Type describes a kind of domain object that may appear or be
      * created within Open MCT.
      *
-     * @param {module:opemct.Type~TypeDefinition} definition
+     * @param {module:opemct.TypeRegistry~TypeDefinition} definition
      * @class Type
      * @memberof module:openmct
      */
@@ -53,6 +44,30 @@ define(function () {
     Type.prototype.check = function (domainObject) {
         // Depends on assignment from MCT.
         return domainObject.type === this.key;
+    };
+
+    /**
+     * Get a definition for this type that can be registered using the
+     * legacy bundle format.
+     * @private
+     */
+    Type.prototype.toLegacyDefinition = function () {
+        var def = {};
+        def.name = this.definition.label;
+        def.cssclass = this.definition.cssclass;
+        def.description = this.definition.description;
+        def.properties = this.definition.form;
+
+        if (this.definition.initialize) {
+            def.model = {};
+            this.definition.initialize(def.model);
+        }
+
+        if (this.definition.creatable) {
+            def.features = ['creation'];
+        }
+
+        return def;
     };
 
     return Type;
