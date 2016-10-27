@@ -26,12 +26,25 @@ define([
     objectUtils
 ) {
 
+    /**
+     * Compatibility decorator for New API.
+     *
+     * When the model service returns no results, this attempts to load
+     * the model from the new Object API and returns that instead.  In order
+     * to prevent infinite recursion, this only tries to fetch from the API
+     * a single time.
+     *
+     */
     function MissingModelCompatibilityDecorator(api, modelService) {
         this.api = api;
         this.modelService = modelService;
         this.apiFetching = {}; // to prevent loops, if we have already
     }
 
+    /**
+     * Fetch a set of ids from the public api and return a promise for their
+     * models.  If a model is requested twice, respond with a missing result.
+     */
     MissingModelCompatibilityDecorator.prototype.apiFetch = function (ids) {
         var results = {},
             promises = ids.map(function (id) {
@@ -51,6 +64,10 @@ define([
             });
     };
 
+    /**
+     * Return a promise for model results based on provided ids.  Will attempt
+     * to fetch any missing results from the object api.
+     */
     MissingModelCompatibilityDecorator.prototype.getModels = function (ids) {
         return this.modelService.getModels(ids)
             .then(function (models) {
