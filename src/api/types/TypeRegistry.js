@@ -44,6 +44,26 @@ define([], function () {
         this.types[typeKey] = type;
     };
 
+    /**
+     * List keys for all registered types.
+     * @method list
+     * @memberof module:openmct.TypeRegistry#
+     * @returns {string[]} all registered type keys
+     */
+    TypeRegistry.prototype.listKeys = function () {
+        return Object.keys(this.types);
+    };
+
+    /**
+     * Retrieve a registered type by its key.
+     * @method get
+     * @param {string} typeKey the key for htis type
+     * @memberof module:openmct.TypeRegistry#
+     * @returns {module:openmct.Type} the registered type
+     */
+    TypeRegistry.prototype.get = function (typeKey) {
+        return this.types[typeKey];
+    }
 
     return TypeRegistry;
 });
