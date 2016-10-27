@@ -20,7 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define(['./Type'], function (Type) {
+    /**
+     * @typedef TypeDefinition
+     * @memberof module:openmct.TypeRegistry~
+     * @property {string} label the name for this type of object
+     * @property {string} description a longer-form description of this type
+     * @property {function (object)} [initialize] a function which initializes
+     *           the model for new domain objects of this type
+     * @property {boolean} [creatable] true if users should be allowed to
+     *           create this type (default: false)
+     * @property {string} [cssclass] the CSS class to apply for icons
+     */
 
     /**
      * A TypeRegistry maintains the definitions for different types
@@ -40,8 +51,8 @@ define([], function () {
      * @method addType
      * @memberof module:openmct.TypeRegistry#
      */
-    TypeRegistry.prototype.addType = function (typeKey, type) {
-        this.types[typeKey] = type;
+    TypeRegistry.prototype.addType = function (typeKey, typeDef) {
+        this.types[typeKey] = new Type(typeDef);
     };
 
     /**

@@ -21,21 +21,12 @@
  *****************************************************************************/
 
 define(function () {
-    /**
-     * @typedef TypeDefinition
-     * @memberof module:openmct.Type~
-     * @property {Metadata} metadata displayable metadata about this type
-     * @property {function (object)} [initialize] a function which initializes
-     *           the model for new domain objects of this type
-     * @property {boolean} [creatable] true if users should be allowed to
-     *           create this type (default: false)
-     */
 
     /**
      * A Type describes a kind of domain object that may appear or be
      * created within Open MCT.
      *
-     * @param {module:opemct.Type~TypeDefinition} definition
+     * @param {module:opemct.TypeRegistry~TypeDefinition} definition
      * @class Type
      * @memberof module:openmct
      */
