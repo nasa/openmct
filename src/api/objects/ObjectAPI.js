@@ -150,10 +150,6 @@ define([
                 throw new Error('Provider does not support [' + method + '].');
             }
 
-            if (method === 'get') {
-                return provider.get(identifier.key);
-            }
-
             return provider[method].apply(provider, arguments);
         };
     });
