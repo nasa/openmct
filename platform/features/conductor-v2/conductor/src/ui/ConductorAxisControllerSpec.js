@@ -29,7 +29,7 @@ define([
     $,
     d3
 ) {
-    ddescribe("The ConductorAxisController", function () {
+    describe("The ConductorAxisController", function () {
         var directive,
             mockConductor,
             mockConductorViewService,
