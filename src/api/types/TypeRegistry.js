@@ -37,7 +37,7 @@ define([], function () {
      *
      * @param {string} typeKey a string identifier for this type
      * @param {module:openmct.Type} type the type to add
-     * @method addProvider
+     * @method addType
      * @memberof module:openmct.TypeRegistry#
      */
     TypeRegistry.prototype.addType = function (typeKey, type) {
