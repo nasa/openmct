@@ -62,7 +62,7 @@ define([
         it("Returns appropriate time units for a given time span", function () {
             var ONE_DAY = 1000 * 60 * 60 * 24;
             var FIVE_DAYS = 5 * ONE_DAY;
-            var TWO_MONTHS = 60 * ONE_DAY;
+            var FIVE_MONTHS = 60 * ONE_DAY;
 
             var ONE_YEAR = 365 * ONE_DAY;
             var SEVEN_YEARS = 7 * ONE_YEAR;
@@ -72,7 +72,7 @@ define([
             expect(format.timeUnits(ONE_DAY)).toEqual("Hours");
             //Multiple days should display "Days"
             expect(format.timeUnits(FIVE_DAYS)).toEqual("Days");
-            expect(format.timeUnits(TWO_MONTHS)).toEqual("Months");
+            expect(format.timeUnits(FIVE_MONTHS)).toEqual("Days");
             //A span of one year should show a zoom level of "Months".
             // Multiple years will show "Years"
             expect(format.timeUnits(ONE_YEAR)).toEqual("Months");

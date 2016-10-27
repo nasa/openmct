@@ -20,16 +20,33 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./MctConductorAxis'], function (MctConductorAxis) {
-    describe("The MctConductorAxis directive", function () {
+define([
+    './ConductorAxisController',
+    'zepto',
+    'd3'
+], function (
+    ConductorAxisController,
+    $,
+    d3
+) {
+    ddescribe("The ConductorAxisController", function () {
         var directive,
             mockConductor,
+            mockConductorViewService,
             mockFormatService,
             mockScope,
             mockElement,
             mockTarget,
             mockBounds,
-            d3;
+            element,
+            mockTimeSystem,
+            mockFormat;
+
+        function getCallback(target, name) {
+            return target.calls.filter(function (call){
+                return call.args[0] === name;
+            })[0].args[1];
+        }
 
         beforeEach(function () {
             mockScope = jasmine.createSpyObj("scope", [
@@ -52,7 +69,8 @@ define(['./MctConductorAxis'], function (MctConductorAxis) {
                 "timeSystem",
                 "bounds",
                 "on",
-                "off"
+                "off",
+                "follow"
             ]);
             mockConductor.bounds.andReturn(mockBounds);
 
@@ -60,61 +78,50 @@ define(['./MctConductorAxis'], function (MctConductorAxis) {
                 "getFormat"
             ]);
 
-            var d3Functions = [
-                "scale",
-                "scaleUtc",
-                "scaleLinear",
-                "select",
-                "append",
-                "attr",
-                "axisTop",
-                "call",
-                "tickFormat",
-                "domain",
-                "range"
-            ];
-            d3 = jasmine.createSpyObj("d3", d3Functions);
-            d3Functions.forEach(function (func) {
-                d3[func].andReturn(d3);
-            });
+            mockConductorViewService = jasmine.createSpyObj("conductorViewService", [
+                "on",
+                "off",
+                "emit"
+            ]);
 
-            directive = new MctConductorAxis(mockConductor, mockFormatService);
-            directive.d3 = d3;
-            directive.link(mockScope, [mockElement]);
+            spyOn(d3, 'scaleUtc').andCallThrough();
+            spyOn(d3, 'scaleLinear').andCallThrough();
+
+            element = $('<div style="width: 100px;"><div style="width: 100%;"></div></div>');
+            $(document).find('body').append(element);
+            directive = new ConductorAxisController({conductor: mockConductor}, mockFormatService, mockConductorViewService, mockScope, element);
+
+            mockTimeSystem = jasmine.createSpyObj("timeSystem", [
+                "formats",
+                "isUTCBased"
+            ]);
+            mockFormat = jasmine.createSpyObj("format", [
+                "format"
+            ]);
+
+            mockTimeSystem.formats.andReturn(["mockFormat"]);
+            mockFormatService.getFormat.andReturn(mockFormat);
+            mockConductor.timeSystem.andReturn(mockTimeSystem);
+            mockTimeSystem.isUTCBased.andReturn(false);
         });
 
         it("listens for changes to time system and bounds", function () {
             expect(mockConductor.on).toHaveBeenCalledWith("timeSystem", directive.changeTimeSystem);
-            expect(mockConductor.on).toHaveBeenCalledWith("bounds", directive.setScale);
+            expect(mockConductor.on).toHaveBeenCalledWith("bounds", directive.changeBounds);
         });
 
         it("on scope destruction, deregisters listeners", function () {
             expect(mockScope.$on).toHaveBeenCalledWith("$destroy", directive.destroy);
             directive.destroy();
             expect(mockConductor.off).toHaveBeenCalledWith("timeSystem", directive.changeTimeSystem);
-            expect(mockConductor.off).toHaveBeenCalledWith("bounds", directive.setScale);
+            expect(mockConductor.off).toHaveBeenCalledWith("bounds", directive.changeBounds);
         });
 
         describe("when the time system changes", function () {
-            var mockTimeSystem;
-            var mockFormat;
-
-            beforeEach(function () {
-                mockTimeSystem = jasmine.createSpyObj("timeSystem", [
-                    "formats",
-                    "isUTCBased"
-                ]);
-                mockFormat = jasmine.createSpyObj("format", [
-                    "format"
-                ]);
-
-                mockTimeSystem.formats.andReturn(["mockFormat"]);
-                mockFormatService.getFormat.andReturn(mockFormat);
-            });
-
             it("uses a UTC scale for UTC time systems", function () {
                 mockTimeSystem.isUTCBased.andReturn(true);
                 directive.changeTimeSystem(mockTimeSystem);
+
                 expect(d3.scaleUtc).toHaveBeenCalled();
                 expect(d3.scaleLinear).not.toHaveBeenCalled();
             });
@@ -128,19 +135,46 @@ define(['./MctConductorAxis'], function (MctConductorAxis) {
 
             it("sets axis domain to time conductor bounds", function () {
                 mockTimeSystem.isUTCBased.andReturn(false);
-                mockConductor.timeSystem.andReturn(mockTimeSystem);
-
                 directive.setScale();
-                expect(d3.domain).toHaveBeenCalledWith([mockBounds.start, mockBounds.end]);
+                expect(directive.xScale.domain()).toEqual([mockBounds.start, mockBounds.end]);
             });
 
             it("uses the format specified by the time system to format tick" +
                 " labels", function () {
+
                 directive.changeTimeSystem(mockTimeSystem);
-                expect(d3.tickFormat).toHaveBeenCalled();
-                d3.tickFormat.mostRecentCall.args[0]();
                 expect(mockFormat.format).toHaveBeenCalled();
+
             });
+
+            it('responds to zoom events', function () {
+                expect(mockConductorViewService.on).toHaveBeenCalledWith("zoom", directive.onZoom);
+                var cb = getCallback(mockConductorViewService.on, "zoom");
+                spyOn(directive, 'setScale').andCallThrough();
+                cb({bounds: {start: 0, end: 100}});
+                expect(directive.setScale).toHaveBeenCalled();
+            });
+
+            it('adjusts scale on pan', function () {
+                spyOn(directive, 'setScale').andCallThrough();
+                directive.pan(100);
+                expect(directive.setScale).toHaveBeenCalled();
+            });
+
+            it('emits event on pan', function () {
+                spyOn(directive,'setScale').andCallThrough();
+                directive.pan(100);
+                expect(mockConductorViewService.emit).toHaveBeenCalledWith("pan", jasmine.any(Object));
+            });
+
+            it('cleans up listeners on destruction', function () {
+                directive.destroy();
+                expect(mockConductor.off).toHaveBeenCalledWith("bounds", directive.changeBounds);
+                expect(mockConductor.off).toHaveBeenCalledWith("timeSystem", directive.changeTimeSystem);
+
+                expect(mockConductorViewService.off).toHaveBeenCalledWith("zoom", directive.onZoom);
+            });
+
         });
     });
 });

@@ -34,7 +34,6 @@ define(
          */
         function ConductorAxisController(openmct, formatService, conductorViewService, scope, element) {
             // Dependencies
-            this.d3 = d3;
             this.formatService = formatService;
             this.conductor = openmct.conductor;
             this.conductorViewService = conductorViewService;
@@ -70,18 +69,16 @@ define(
         ConductorAxisController.prototype.initialize = function (element) {
             this.target = element[0].firstChild;
             var height = this.target.offsetHeight;
-            var vis = this.d3.select(this.target)
+            var vis = d3.select(this.target)
                 .append("svg:svg")
                 .attr("width", "100%")
                 .attr("height", height);
 
-            this.xAxis = this.d3.axisTop();
+            this.xAxis = d3.axisTop();
 
             // draw x axis with labels and move to the bottom of the chart area
             this.axisElement = vis.append("g")
                 .attr("transform", "translate(0," + (height - PADDING) + ")");
-
-            this.initialized = true;
 
             if (this.timeSystem !== undefined) {
                 this.changeTimeSystem(this.timeSystem);
@@ -100,7 +97,7 @@ define(
 
         ConductorAxisController.prototype.changeBounds = function (bounds) {
             this.bounds = bounds;
-            if (this.initialized && !this.zooming) {
+            if (!this.zooming) {
                 this.setScale();
             }
         };
@@ -114,12 +111,14 @@ define(
             var bounds = this.bounds;
 
             if (timeSystem.isUTCBased()) {
-                this.xScale = this.xScale || this.d3.scaleUtc();
+                this.xScale = this.xScale || d3.scaleUtc();
                 this.xScale.domain([new Date(bounds.start), new Date(bounds.end)]);
             } else {
-                this.xScale = this.xScale || this.d3.scaleLinear();
+                this.xScale = this.xScale || d3.scaleLinear();
                 this.xScale.domain([bounds.start, bounds.end]);
             }
+
+            this.xAxis.scale(this.xScale);
 
             this.xScale.range([PADDING, width - PADDING * 2]);
             this.axisElement.call(this.xAxis);
@@ -136,16 +135,16 @@ define(
             this.timeSystem = timeSystem;
 
             var key = timeSystem.formats()[0];
-            if (this.initialized && key !== undefined) {
+            if (key !== undefined) {
                 var format = this.formatService.getFormat(key);
                 var bounds = this.conductor.bounds();
 
                 //The D3 scale used depends on the type of time system as d3
                 // supports UTC out of the box.
                 if (timeSystem.isUTCBased()) {
-                    this.xScale = this.d3.scaleUtc();
+                    this.xScale = d3.scaleUtc();
                 } else {
-                    this.xScale = this.d3.scaleLinear();
+                    this.xScale = d3.scaleLinear();
                 }
 
                 this.xAxis.scale(this.xScale);
@@ -204,9 +203,7 @@ define(
         };
 
         ConductorAxisController.prototype.resize = function () {
-            if (this.initialized) {
-                this.setScale();
-            }
+            this.setScale();
         };
 
         return ConductorAxisController;
