@@ -63,7 +63,7 @@ define([], function () {
      */
     TypeRegistry.prototype.get = function (typeKey) {
         return this.types[typeKey];
-    }
+    };
 
     return TypeRegistry;
 });
