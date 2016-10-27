@@ -73,7 +73,8 @@ Custom types may be registered via
 ```
 openmct.types.addType('my-type', new openmct.Type({
     label: "My Type",
-    description: "This is a type that I added!"
+    description: "This is a type that I added!",
+    creatable: true
 });
 ```
 
