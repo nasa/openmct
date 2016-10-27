@@ -25,6 +25,7 @@ define([
     './actions/ActionDialogDecorator',
     './directives/MCTView',
     './services/Instantiate',
+    './services/MissingModelCompatibilityDecorator',
     './capabilities/APICapabilityDecorator',
     './policies/AdapterCompositionPolicy',
     './runs/AlternateCompositionInitializer'
@@ -33,6 +34,7 @@ define([
     ActionDialogDecorator,
     MCTView,
     Instantiate,
+    MissingModelCompatibilityDecorator,
     APICapabilityDecorator,
     AdapterCompositionPolicy,
     AlternateCompositionInitializer
@@ -74,6 +76,12 @@ define([
                     type: "decorator",
                     provides: "actionService",
                     implementation: ActionDialogDecorator,
+                    depends: ["openmct"]
+                },
+                {
+                    type: "decorator",
+                    provides: "modelService",
+                    implementation: MissingModelCompatibilityDecorator,
                     depends: ["openmct"]
                 }
             ],
