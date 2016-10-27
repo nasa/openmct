@@ -46,7 +46,7 @@ define([], function () {
 
     /**
      * List keys for all registered types.
-     * @method list
+     * @method listKeys
      * @memberof module:openmct.TypeRegistry#
      * @returns {string[]} all registered type keys
      */
