@@ -34,10 +34,7 @@ define([
             restrict: 'A',
             link: function (scope, element, attrs) {
                 var region = new Region(element[0]);
-                scope.$watch('mctView', region.show.bind(region));
-            },
-            scope: {
-                mctView: "="
+                scope.$watch(attrs.mctView, region.show.bind(region));
             }
         };
     }
