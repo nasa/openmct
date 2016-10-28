@@ -197,7 +197,6 @@ define(
             }
         };
 
-
         /**
          * Called when form values are changed. Synchronizes the form with
          * the time conductor
@@ -317,7 +316,6 @@ define(
         TimeConductorController.prototype.onZoom = function(sliderValue) {
             var zoomDefaults = this.conductor.timeSystem().defaults().zoom;
             var timeSpan = Math.pow((1 - sliderValue), 4) * (zoomDefaults.min - zoomDefaults.max);
-
 
             var zoom = this.conductorViewService.zoom(timeSpan);
 

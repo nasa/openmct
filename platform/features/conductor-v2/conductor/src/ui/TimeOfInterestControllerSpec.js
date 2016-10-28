@@ -22,7 +22,7 @@
 
 define(['./TimeOfInterestController'], function (TimeOfInterestController) {
 
-    ddescribe("The time of interest controller", function () {
+    describe("The time of interest controller", function () {
         var controller;
         var mockScope;
         var mockConductor;

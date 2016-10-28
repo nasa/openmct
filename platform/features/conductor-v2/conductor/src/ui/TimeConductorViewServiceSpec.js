@@ -87,7 +87,7 @@ define(['./TimeConductorViewService'], function (TimeConductorViewService) {
 
         it("At a minimum supports fixed mode", function () {
             var mockTimeSystems = [mockConstructor(basicTimeSystem)];
-            viewService = new TimeConductorViewService(mockTimeConductor, mockTimeSystems);
+            viewService = new TimeConductorViewService({conductor: mockTimeConductor}, mockTimeSystems);
 
             var availableModes = viewService.availableModes();
             expect(availableModes.fixed).toBeDefined();
@@ -102,7 +102,7 @@ define(['./TimeConductorViewService'], function (TimeConductorViewService) {
             };
             tickingTimeSystem.tickSources.andReturn([mockRealtimeTickSource]);
 
-            viewService = new TimeConductorViewService(mockTimeConductor, mockTimeSystems);
+            viewService = new TimeConductorViewService({conductor: mockTimeConductor}, mockTimeSystems);
 
             var availableModes = viewService.availableModes();
             expect(availableModes.realtime).toBeDefined();
@@ -117,7 +117,7 @@ define(['./TimeConductorViewService'], function (TimeConductorViewService) {
             };
             tickingTimeSystem.tickSources.andReturn([mockLADTickSource]);
 
-            viewService = new TimeConductorViewService(mockTimeConductor, mockTimeSystems);
+            viewService = new TimeConductorViewService({conductor: mockTimeConductor}, mockTimeSystems);
 
             var availableModes = viewService.availableModes();
             expect(availableModes.lad).toBeDefined();
@@ -132,7 +132,7 @@ define(['./TimeConductorViewService'], function (TimeConductorViewService) {
                     "destroy"
                 ]);
 
-                viewService = new TimeConductorViewService(mockTimeConductor, mockTimeSystems);
+                viewService = new TimeConductorViewService({conductor: mockTimeConductor}, mockTimeSystems);
                 viewService.currentMode = oldMode;
                 viewService.mode('fixed');
                 expect(oldMode.destroy).toHaveBeenCalled();
@@ -149,7 +149,7 @@ define(['./TimeConductorViewService'], function (TimeConductorViewService) {
                     };
                     tickingTimeSystem.tickSources.andReturn([mockRealtimeTickSource]);
 
-                    viewService = new TimeConductorViewService(mockTimeConductor, mockTimeSystems);
+                    viewService = new TimeConductorViewService({conductor: mockTimeConductor}, mockTimeSystems);
 
                     //Set time system to one known to support realtime mode
                     mockTimeConductor.timeSystem.andReturn(tickingTimeSystem);
@@ -169,7 +169,7 @@ define(['./TimeConductorViewService'], function (TimeConductorViewService) {
                     };
                     tickingTimeSystem.tickSources.andReturn([mockRealtimeTickSource]);
 
-                    viewService = new TimeConductorViewService(mockTimeConductor, mockTimeSystems);
+                    viewService = new TimeConductorViewService({conductor: mockTimeConductor}, mockTimeSystems);
 
                     //Set time system to one known to not support realtime mode
                     mockTimeConductor.timeSystem.andReturn(basicTimeSystem);
