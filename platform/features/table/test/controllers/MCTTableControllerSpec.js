@@ -114,6 +114,15 @@ define(
                 expect(mockScope.$watch).toHaveBeenCalledWith('rows', jasmine.any(Function));
             });
 
+            it('destroys listeners on destruction', function() {
+                expect(mockScope.$on).toHaveBeenCalledWith('$destroy', controller.destroyConductorListeners);
+                getCallback(mockScope.$on, '$destroy')();
+
+                expect(mockConductor.off).toHaveBeenCalledWith('timeSystem', controller.changeTimeSystem);
+                expect(mockConductor.off).toHaveBeenCalledWith('timeOfInterest', controller.setTimeOfInterest);
+                expect(mockConductor.off).toHaveBeenCalledWith('bounds', controller.changeBounds);
+            });
+
             describe('The time of interest', function() {
                 var rowsAsc = [];
                 var rowsDesc = [];

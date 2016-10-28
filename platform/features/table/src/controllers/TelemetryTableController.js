@@ -69,7 +69,7 @@ define(
 
             // Unsubscribe when the plot is destroyed
             this.$scope.$on("$destroy", this.destroy);
-            this.$scope.timeColumns = [];
+            this.timeColumns = [];
 
 
             this.sortByTimeSystem = this.sortByTimeSystem.bind(this);
