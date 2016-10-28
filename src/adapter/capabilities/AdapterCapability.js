@@ -26,7 +26,10 @@ define(['../../api/objects/object-utils'], function (objectUtils) {
     }
 
     AdapterCapability.prototype.invoke = function () {
-        return objectUtils.toNewFormat(this.domainObject);
+        return objectUtils.toNewFormat(
+            this.domainObject.getModel(),
+            this.domainObject.getId()
+        );
     };
 
     return AdapterCapability;
