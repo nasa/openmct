@@ -23,20 +23,18 @@
 
 define([
     "./src/RemsTelemetryServerAdapter",
-    "./src/RemsTelemetryInitializer",
     "./src/RemsTelemetryModelProvider",
     "./src/RemsTelemetryProvider",
     'legacyRegistry',
     "module"
 ], function (
     RemsTelemetryServerAdapter,
-    RemsTelemetryInitializer,
     RemsTelemetryModelProvider,
     RemsTelemetryProvider,
     legacyRegistry
 ) {
     "use strict";
-    legacyRegistry.register("example/msl-adapter", {
+    legacyRegistry.register("example/msl", {
         "name" : "Mars Science Laboratory Data Adapter",
         "extensions" : {
         "types": [
@@ -81,7 +79,7 @@ define([
                 "model": {
                     "type": "msl.curiosity",
                     "name": "Mars Science Laboratory",
-                    "composition": []
+                    "composition": ["msl_tlm:rems"]
                 }
             }
         ],
@@ -90,12 +88,6 @@ define([
                 "key":"rems.adapter",
                 "implementation": RemsTelemetryServerAdapter,
                 "depends": ["$q", "$http", "$log", "REMS_WS_URL"]
-            }
-        ],
-        "runs": [
-            {
-                "implementation": RemsTelemetryInitializer,
-                "depends": ["rems.adapter", "objectService"]
             }
         ],
         "components": [

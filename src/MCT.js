@@ -248,6 +248,13 @@ define([
             }.bind(this)
         });
 
+        this.types.listKeys().forEach(function (typeKey) {
+            var type = this.types.get(typeKey);
+            var legacyDefinition = type.toLegacyDefinition();
+            legacyDefinition.key = typeKey;
+            this.legacyExtension('types', legacyDefinition);
+        }.bind(this));
+
         legacyRegistry.register('adapter', this.legacyBundle);
         legacyRegistry.enable('adapter');
         /**

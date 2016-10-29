@@ -128,6 +128,8 @@ define(
                 latest[service] = name;
 
                 app.service(name, dependencies.concat([provider]));
+
+                $log.info("Registering provider for " + service);
             }
 
             // Register an array of providers as a single dependency;
@@ -137,6 +139,13 @@ define(
                 Object.keys(providerLists).forEach(function (service) {
                     var name = makeName("provider", service, "*"),
                         list = providerLists[service];
+
+                    $log.info([
+                        "Compositing",
+                        list.length,
+                        "providers for",
+                        service
+                    ].join(" "));
 
                     app.service(name, list.concat([echoMany]));
                 });
