@@ -26,11 +26,40 @@
                             ng-model="treeModel">
         </mct-representation>
     </div>
-    <mct-control key="'button'"
-                 structure="{
-                    text: 'New Folder',
-                    click: newFolderButtonClickHandler,
-                    cssclass: 'icon-folder-new'
-                 }">
-    </mct-control>
+
+    <!-- The button that triggers new folder creation. -->
+    <div ng-if="!newFolderCreationTriggered">
+        <mct-control key="'button'"
+                     ng-class="{ disabled: !canCreateNewFolder }"
+                     structure="{
+                        text: 'New Folder',
+                        click: newFolderButtonClickHandler,
+                        cssclass: 'icon-folder-new'
+                     }">
+        </mct-control>
+    </div>
+
+    <!-- User inputs for the new folder's properties. -->
+    <div ng-if="newFolderCreationTriggered">
+        <span class='form-control shell'>
+            <span class='field control'>
+                <input type="text"
+                       ng-model="newFolderName">
+            </span>
+        </span>
+
+        <mct-control key="'button'"
+                     structure="{
+                        text: 'Create',
+                        click: newFolderCreateButtonClickHandler
+                     }">
+        </mct-control>
+
+        <mct-control key="'button'"
+                     structure="{
+                        cssclass: 'icon-x',
+                        click: newFolderCancelButtonClickHandler
+                     }">
+        </mct-control>
+    </div>
 </div>

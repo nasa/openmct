@@ -66,8 +66,8 @@ define(
 
                 // Restrict which locations can be selected
                 if (domainObject &&
-                        $scope.structure &&
-                            $scope.structure.validate) {
+                    $scope.structure &&
+                    $scope.structure.validate) {
                     if (!$scope.structure.validate(domainObject)) {
                         setLocatingObject(priorObject, undefined);
                         return;
@@ -81,14 +81,26 @@ define(
                         !!$scope.treeModel.selectedObject
                     );
                 }
+
+                $scope.canCreateNewFolder = ($scope.treeModel.selectedObject.model.type === "folder");
             }
 
-            // Initial state for the tree's model
-            $scope.treeModel =
-                { selectedObject: $scope.ngModel[$scope.field] };
+            $scope.newFolderCreationTriggered = false;
+            $scope.newFolderName = "Unnamed Folder";
 
             $scope.newFolderButtonClickHandler = function () {
+                $scope.newFolderCreationTriggered = true;
             };
+
+            $scope.newFolderCancelButtonClickHandler = function () {
+                $scope.newFolderCreationTriggered = false;
+            };
+
+            $scope.newFolderCreateButtonClickHandler = function () {
+            };
+
+            // Initial state for the tree's model
+            $scope.treeModel = { selectedObject: $scope.ngModel[$scope.field] };
 
             // Watch for changes from the tree
             $scope.$watch("treeModel.selectedObject", setLocatingObject);
