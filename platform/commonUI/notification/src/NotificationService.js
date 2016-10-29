@@ -61,7 +61,7 @@ define(
          * @property {boolean} [unknownProgress] a boolean indicating that the
          * progress of the underlying task is unknown. This will result in a
          * visually distinct progress bar.
-         * @property {boolean | number} [autoDismiss] If truthy, dialog will
+         * @property {boolean} [autoDismiss] If truthy, dialog will
          * be automatically minimized or dismissed (depending on severity).
          * Additionally, if the provided value is a number, it will be used
          * as the delay period before being dismissed.
@@ -384,9 +384,7 @@ define(
          * @private
          */
         NotificationService.prototype.setActiveNotification = function (notification) {
-            var timeout;
             var shouldAutoDismiss;
-            var usesCustomTimeout;
             this.active.notification = notification;
 
             if (!notification) {
@@ -394,19 +392,16 @@ define(
                 return;
             }
 
-            usesCustomTimeout = typeof notification.model.autoDismiss === "number";
-
-            if (notification.model.severity === "info" || usesCustomTimeout) {
+            if (notification.model.severity === "info") {
                 shouldAutoDismiss = true;
             } else {
                 shouldAutoDismiss = notification.model.autoDismiss;
             }
 
             if (shouldAutoDismiss || this.selectNextNotification()) {
-                timeout = usesCustomTimeout ? notification.model.autoDismiss : this.AUTO_DISMISS_TIMEOUT;
                 this.active.timeout = this.$timeout(function () {
                     notification.dismissOrMinimize();
-                }, timeout);
+                }, this.AUTO_DISMISS_TIMEOUT);
             } else {
                 delete this.active.timeout;
             }

@@ -118,17 +118,6 @@ define(
                     expect(notificationService.getActiveNotification()).toBeUndefined();
                     expect(notificationService.notifications.length).toEqual(0);
                 });
-
-                it("uses a custom auto-dismiss timeout value if provided", function () {
-                    var timeoutValueInModel = 1500;
-                    var timeoutValueUsedByService = 0;
-                    mockTimeout.andCallFake(function (callback, timeout) {
-                        timeoutValueUsedByService = timeout;
-                    });
-                    infoModel.autoDismiss = timeoutValueInModel;
-                    notificationService.info(infoModel);
-                    expect(timeoutValueUsedByService).toEqual(timeoutValueInModel);
-                });
             });
 
             describe("when receiving alert notifications", function () {
@@ -162,17 +151,6 @@ define(
                     expect(notificationService.notifications.length).toEqual(1);
                     expect(notificationService.notifications[0]).toEqual(notification);
                 });
-
-                it("uses a custom auto-dismiss timeout value if provided", function () {
-                    var timeoutValueInModel = 1500;
-                    var timeoutValueUsedByService = 0;
-                    mockTimeout.andCallFake(function (callback, timeout) {
-                        timeoutValueUsedByService = timeout;
-                    });
-                    alertModel.autoDismiss = timeoutValueInModel;
-                    notificationService.alert(alertModel);
-                    expect(timeoutValueUsedByService).toEqual(timeoutValueInModel);
-                });
             });
 
             describe("when receiving error notifications", function () {
@@ -205,17 +183,6 @@ define(
                     expect(notificationService.getActiveNotification()).toEqual(notification);
                     expect(notificationService.notifications.length).toEqual(1);
                     expect(notificationService.notifications[0]).toEqual(notification);
-                });
-
-                it("uses a custom auto-dismiss timeout value if provided", function () {
-                    var timeoutValueInModel = 1500;
-                    var timeoutValueUsedByService = 0;
-                    mockTimeout.andCallFake(function (callback, timeout) {
-                        timeoutValueUsedByService = timeout;
-                    });
-                    errorModel.autoDismiss = timeoutValueInModel;
-                    notificationService.error(errorModel);
-                    expect(timeoutValueUsedByService).toEqual(timeoutValueInModel);
                 });
             });
 
