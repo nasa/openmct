@@ -87,6 +87,9 @@ define(
             $scope.treeModel =
                 { selectedObject: $scope.ngModel[$scope.field] };
 
+            $scope.newFolderButtonClickHandler = function () {
+            };
+
             // Watch for changes from the tree
             $scope.$watch("treeModel.selectedObject", setLocatingObject);
         }
