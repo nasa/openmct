@@ -62,7 +62,7 @@ define([
 
             //Don't trigger self
             objectEventEmitter.off('mutation', handleMutation);
-            objectEventEmitter.emit(newStyleObject.key.identifier + ":*", newStyleObject);
+            objectEventEmitter.emit(newStyleObject.identifier.key + ":*", newStyleObject);
             objectEventEmitter.on('mutation', handleMutation);
         }.bind(this);
 
