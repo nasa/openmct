@@ -20,24 +20,17 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'angular',
-    './Region',
-    '../../api/objects/object-utils'
-], function (
-    angular,
-    Region,
-    objectUtils
-) {
-    function MCTView() {
-        return {
-            restrict: 'A',
-            link: function (scope, element, attrs) {
-                var region = new Region(element[0]);
-                scope.$watch(attrs.mctView, region.show.bind(region));
-            }
-        };
+define(['../../api/objects/object-utils'], function (objectUtils) {
+    function AdapterCapability(domainObject) {
+        this.domainObject = domainObject;
     }
 
-    return MCTView;
+    AdapterCapability.prototype.invoke = function () {
+        return objectUtils.toNewFormat(
+            this.domainObject.getModel(),
+            this.domainObject.getId()
+        );
+    };
+
+    return AdapterCapability;
 });

@@ -78,7 +78,7 @@ define([
     // Converts composition to use key strings instead of keys
     var toOldFormat = function (model) {
         model = JSON.parse(JSON.stringify(model));
-        delete model.key;
+        delete model.identifier;
         if (model.composition) {
             model.composition = model.composition.map(makeKeyString);
         }
@@ -86,9 +86,9 @@ define([
     };
 
     // converts composition to use keys instead of key strings
-    var toNewFormat = function (model, key) {
+    var toNewFormat = function (model, identifier) {
         model = JSON.parse(JSON.stringify(model));
-        model.key = key;
+        model.identifier = parseKeyString(identifier);
         if (model.composition) {
             model.composition = model.composition.map(parseKeyString);
         }

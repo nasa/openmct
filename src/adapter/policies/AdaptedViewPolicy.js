@@ -20,24 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'angular',
-    './Region',
-    '../../api/objects/object-utils'
-], function (
-    angular,
-    Region,
-    objectUtils
-) {
-    function MCTView() {
-        return {
-            restrict: 'A',
-            link: function (scope, element, attrs) {
-                var region = new Region(element[0]);
-                scope.$watch(attrs.mctView, region.show.bind(region));
-            }
-        };
+define([], function () {
+    function AdaptedViewPolicy(openmct) {
+        this.openmct = openmct;
     }
 
-    return MCTView;
+    AdaptedViewPolicy.prototype.allow = function (
+        view,
+        legacyObject
+    ) {
+        if (view.key === 'adapted-view') {
+            var domainObject = legacyObject.useCapability('adapter');
+            return this.openmct.mainViews.get(domainObject).length > 0;
+        }
+        return true;
+    };
+
+    return AdaptedViewPolicy;
 });
