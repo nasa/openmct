@@ -119,8 +119,10 @@ define([
 
                 return self.dialogService
                     .getUserInput(wizard.getFormStructure(true),
-                        wizard.getInitialFormValue()
-                    ).then(wizard.populateObjectFromInput.bind(wizard));
+                        wizard.getInitialFormValue())
+                    .then(wizard.populateObjectFromInput.bind(wizard), function (failureReason) {
+                        return Promise.reject("user canceled");
+                    });
             }
 
             function showBlockingDialog(object) {
@@ -181,9 +183,11 @@ define([
                 return object;
             }
 
-            function onFailure() {
+            function onFailure(reason) {
                 hideBlockingDialog();
-                self.notificationService.error("Save Failed");
+                if (reason !== "user canceled") {
+                    self.notificationService.error("Save Failed");
+                }
                 return false;
             }
 
