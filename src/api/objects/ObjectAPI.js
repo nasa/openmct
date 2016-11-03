@@ -23,11 +23,15 @@
 define([
     'lodash',
     './object-utils',
-    './MutableObject'
+    './MutableObject',
+    './RootRegistry',
+    './RootObjectProvider'
 ], function (
     _,
     utils,
-    MutableObject
+    MutableObject,
+    RootRegistry,
+    RootObjectProvider
 ) {
 
 
@@ -35,21 +39,12 @@ define([
      * Utilities for loading, saving, and manipulating domain objects.
      * @interface ObjectAPI
      * @memberof module:openmct
-     * @implements {module:openmct.ObjectProvider}
      */
 
     function ObjectAPI() {
         this.providers = {};
-        this.rootRegistry = [];
-        this.rootProvider = {
-            'get': function () {
-                return Promise.resolve({
-                    name: 'The root object',
-                    type: 'root',
-                    composition: this.rootRegistry
-                });
-            }.bind(this)
-        };
+        this.rootRegistry = new RootRegistry();
+        this.rootProvider = new RootObjectProvider(this.rootRegistry);
     }
 
     ObjectAPI.prototype.supersecretSetFallbackProvider = function (p) {
@@ -57,13 +52,20 @@ define([
     };
 
     // Retrieve the provider for a given key.
-    ObjectAPI.prototype.getProvider = function (key) {
-        if (key.identifier === 'ROOT') {
+    ObjectAPI.prototype.getProvider = function (identifier) {
+        if (identifier.key === 'ROOT') {
             return this.rootProvider;
         }
-        return this.providers[key.namespace] || this.fallbackProvider;
+        return this.providers[identifier.namespace] || this.fallbackProvider;
     };
 
+    /**
+     * Get the root-level object.
+     * @returns {Promise.<DomainObject>} a promise for the root object
+     */
+    ObjectAPI.prototype.getRoot = function () {
+        return this.rootProvider.get();
+    };
 
     /**
      * Register a new object provider for a particular namespace.
@@ -120,14 +122,25 @@ define([
      *          has been saved, or be rejected if it cannot be saved
      */
 
+    /**
+     * Get a domain object.
+     *
+     * @method get
+     * @memberof module:openmct.ObjectAPI#
+     * @param {module:openmct.ObjectAPI~Identifier} identifier
+     *        the identifier for the domain object to load
+     * @returns {Promise} a promise which will resolve when the domain object
+     *          has been saved, or be rejected if it cannot be saved
+     */
+
     [
         'save',
         'delete',
         'get'
     ].forEach(function (method) {
         ObjectAPI.prototype[method] = function () {
-            var key = arguments[0],
-                provider = this.getProvider(key);
+            var identifier = arguments[0],
+                provider = this.getProvider(identifier);
 
             if (!provider) {
                 throw new Error('No Provider Matched');
@@ -143,29 +156,14 @@ define([
 
     /**
      * Add a root-level object.
-     * @param {module:openmct.DomainObject} domainObject the root-level object
-     *        to add.
+     * @param {module:openmct.ObjectAPI~Identifier|function} an array of
+     *        identifiers for root level objects, or a function that returns a
+     *        promise for an identifier or an array of root level objects.
      * @method addRoot
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.addRoot = function (key) {
-        this.rootRegistry.unshift(key);
-    };
-
-    /**
-     * Remove a root-level object.
-     * @param {module:openmct.ObjectAPI~Identifier} id the identifier of the
-     *        root-level object to remove.
-     * @method removeRoot
-     * @memberof module:openmct.ObjectAPI#
-     */
-    ObjectAPI.prototype.removeRoot = function (key) {
-        this.rootRegistry = this.rootRegistry.filter(function (k) {
-            return (
-                k.identifier !== key.identifier ||
-                k.namespace !== key.namespace
-            );
-        });
+        this.rootRegistry.addRoot(key);
     };
 
     /**

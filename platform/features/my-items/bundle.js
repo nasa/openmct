@@ -20,23 +20,26 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-    function AdapterCompositionPolicy(openmct) {
-        this.openmct = openmct;
-    }
+define([
+    'legacyRegistry'
+], function (
+    legacyRegistry
+) {
 
-    AdapterCompositionPolicy.prototype.allow = function (
-        containerType,
-        childType
-    ) {
-        var containerObject = containerType.getInitialModel();
-        var childObject = childType.getInitialModel();
-
-        return this.openmct.composition.checkPolicy(
-            containerObject,
-            childObject
-        );
-    };
-
-    return AdapterCompositionPolicy;
+    legacyRegistry.register("platform/features/my-items", {
+        "name": "My Items",
+        "description": "Defines a root named My Items",
+        "extensions": {
+            "roots": [
+                {
+                    "id": "mine",
+                    "model": {
+                        "name": "My Items",
+                        "type": "folder",
+                        "composition": []
+                    }
+                }
+            ]
+        }
+    });
 });
