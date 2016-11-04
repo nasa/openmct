@@ -52,6 +52,9 @@ define(
                     scope.sortColumn = undefined;
                     scope.sortDirection = undefined;
                 }
+                if (scope.sortColumn !== undefined) {
+                    scope.sortDirection = "asc";
+                }
             }
 
             setDefaults($scope);
@@ -78,6 +81,9 @@ define(
                 } else if ($scope.sortDirection === 'desc') {
                     $scope.sortColumn = undefined;
                     $scope.sortDirection = undefined;
+                } else if ($scope.sortColumn !== undefined &&
+                    $scope.sortDirection === undefined) {
+                    $scope.sortDirection = 'asc';
                 }
                 self.setRows($scope.rows);
                 self.setTimeOfInterest(self.conductor.timeOfInterest());
@@ -114,7 +120,7 @@ define(
              * attribute on the MctTable tag. Indicates which columns, while
              * sorted, can be used for indicated time of interest.
              */
-            $scope.$watch("timeColumns", function (timeColumns){
+            $scope.$watch("timeColumns", function (timeColumns) {
                 if (timeColumns) {
                     this.destroyConductorListeners();
 
@@ -561,7 +567,7 @@ define(
                 //Timeout following setVisibleRows to allow digest to
                 // perform DOM changes, otherwise scrollTo won't work.
                 .then(this.$timeout)
-                .then(function() {
+                .then(function () {
                     //If TOI specified, scroll to it
                     var timeOfInterest = this.conductor.timeOfInterest();
                     if (timeOfInterest) {
@@ -617,9 +623,9 @@ define(
             var visible = displayRowIndex > this.firstVisible() && displayRowIndex < this.lastVisible();
 
             if (!visible) {
-                var scrollTop = displayRowIndex * this.$scope.rowHeight
-                    + this.$scope.headerHeight
-                    - (this.scrollable[0].offsetHeight / 2);
+                var scrollTop = displayRowIndex * this.$scope.rowHeight +
+                    this.$scope.headerHeight -
+                    (this.scrollable[0].offsetHeight / 2);
                 this.scrollable[0].scrollTop = scrollTop;
                 this.setVisibleRows();
             }
@@ -655,7 +661,7 @@ define(
          * On zoom, pan, etc. reset TOI
          * @param bounds
          */
-        MCTTableController.prototype.changeBounds = function(bounds) {
+        MCTTableController.prototype.changeBounds = function (bounds) {
             this.setTimeOfInterest(this.conductor.timeOfInterest());
         };
 
@@ -665,9 +671,9 @@ define(
         MCTTableController.prototype.onRowClick = function (event, rowIndex) {
             if (this.$scope.timeColumns.indexOf(this.$scope.sortColumn) !== -1) {
                 var selectedTime = this.$scope.displayRows[rowIndex][this.$scope.sortColumn].text;
-                if (selectedTime
-                    && this.toiFormatter.validate(selectedTime)
-                    && event.altKey) {
+                if (selectedTime &&
+                    this.toiFormatter.validate(selectedTime) &&
+                    event.altKey) {
                     this.conductor.timeOfInterest(this.toiFormatter.parse(selectedTime));
                 }
             }

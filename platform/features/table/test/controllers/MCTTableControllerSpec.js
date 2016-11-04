@@ -114,7 +114,7 @@ define(
                 expect(mockScope.$watch).toHaveBeenCalledWith('rows', jasmine.any(Function));
             });
 
-            it('destroys listeners on destruction', function() {
+            it('destroys listeners on destruction', function () {
                 expect(mockScope.$on).toHaveBeenCalledWith('$destroy', controller.destroyConductorListeners);
                 getCallback(mockScope.$on, '$destroy')();
 
@@ -123,7 +123,7 @@ define(
                 expect(mockConductor.off).toHaveBeenCalledWith('bounds', controller.changeBounds);
             });
 
-            describe('The time of interest', function() {
+            describe('The time of interest', function () {
                 var rowsAsc = [];
                 var rowsDesc = [];
                 beforeEach(function () {
@@ -328,9 +328,9 @@ define(
                 describe('sorting', function () {
                     var sortedRows;
 
-                    beforeEach(function() {
+                    beforeEach(function () {
                         sortedRows = [];
-                    })
+                    });
 
                     it('Sorts rows ascending', function () {
                         mockScope.sortColumn = 'col1';

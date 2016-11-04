@@ -21,36 +21,34 @@
  *****************************************************************************/
 
 define(['./ConductorAxisController'], function (ConductorAxisController) {
+    function MctConductorAxis() {
+        /**
+         * The mct-conductor-axis renders a horizontal axis with regular
+         * labelled 'ticks'. It requires 'start' and 'end' integer values to
+         * be specified as attributes.
+         */
 
-        function MctConductorAxis() {
-            /**
-             * The mct-conductor-axis renders a horizontal axis with regular
-             * labelled 'ticks'. It requires 'start' and 'end' integer values to
-             * be specified as attributes.
-             */
+        return {
+            controller: [
+                'openmct',
+                'formatService',
+                'timeConductorViewService',
+                '$scope',
+                '$element',
+                ConductorAxisController
+            ],
+            controllerAs: 'axis',
 
-            return {
-                controller: [
-                    'openmct',
-                    'formatService',
-                    'timeConductorViewService',
-                    '$scope',
-                    '$element',
-                    ConductorAxisController
-                ],
-                controllerAs: 'axis',
+            restrict: 'E',
+            priority: 1000,
 
-                restrict: 'E',
-                priority: 1000,
-
-                template: '<div class="l-axis-holder" ' +
-                '    mct-drag-down="axis.panStart()"' +
-                '    mct-drag-up="axis.panStop(delta)"' +
-                '    mct-drag="axis.pan(delta)"' +
-                '    mct-resize="axis.resize()"></div>'
-            }
-        }
-
-        return MctConductorAxis;
+            template: '<div class="l-axis-holder" ' +
+            '    mct-drag-down="axis.panStart()"' +
+            '    mct-drag-up="axis.panStop(delta)"' +
+            '    mct-drag="axis.pan(delta)"' +
+            '    mct-resize="axis.resize()"></div>'
+        };
     }
-);
+
+    return MctConductorAxis;
+});

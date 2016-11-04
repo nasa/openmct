@@ -49,7 +49,7 @@ define(
             }
 
             function getCallback(target, event) {
-                return target.calls.filter(function (call){
+                return target.calls.filter(function (call) {
                     return call.args[0] === event;
                 })[0].args[1];
             }
@@ -252,7 +252,7 @@ define(
             describe('After populating columns', function () {
                 var metadata;
                 beforeEach(function () {
-                    metadata = [{domains: [{name: 'time domain 1'}, {name:'time domain 2'}]}, {domains: [{name: 'time domain 3'}, {name: 'time domain 4'}]} ];
+                    metadata = [{domains: [{name: 'time domain 1'}, {name: 'time domain 2'}]}, {domains: [{name: 'time domain 3'}, {name: 'time domain 4'}]}];
                     controller.populateColumns(metadata);
                 });
 

@@ -179,7 +179,7 @@ define(
             if (arguments.length !== 0) {
                 var bounds = this.calculateBoundsFromDeltas(deltas);
                 this.dlts = deltas;
-                if (this.metadata().key!=='fixed') {
+                if (this.metadata().key !== 'fixed') {
                     this.conductor.bounds(bounds);
                 }
             }
@@ -216,7 +216,7 @@ define(
 
             // If a tick source is defined, then the concept of 'now' is
             // important. Calculate zoom based on 'now'.
-            if (this.tickSource()){
+            if (this.tickSource()) {
                 zoom.deltas = {
                     start: timeSpan,
                     end: this.dlts.end

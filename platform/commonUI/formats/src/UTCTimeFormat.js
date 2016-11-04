@@ -129,7 +129,7 @@ define([
             ["Milliseconds", function (r) {
                 return true;
             }]
-        ].filter(function (row){
+        ].filter(function (row) {
             return row[1](momentified);
         })[0][0];
     };

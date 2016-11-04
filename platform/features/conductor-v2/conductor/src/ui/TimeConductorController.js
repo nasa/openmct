@@ -142,7 +142,7 @@ define(
          * @param {TimeConductorBounds}
          */
         TimeConductorController.prototype.setFormFromBounds = function (bounds) {
-            if (!this.zooming && ! this.panning) {
+            if (!this.zooming && !this.panning) {
                 this.$scope.boundsModel.start = bounds.start;
                 this.$scope.boundsModel.end = bounds.end;
 
@@ -313,7 +313,7 @@ define(
          * is released.
          * @param bounds
          */
-        TimeConductorController.prototype.onZoom = function(sliderValue) {
+        TimeConductorController.prototype.onZoom = function (sliderValue) {
             var zoomDefaults = this.conductor.timeSystem().defaults().zoom;
             var timeSpan = Math.pow((1 - sliderValue), 4) * (zoomDefaults.min - zoomDefaults.max);
 

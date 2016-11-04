@@ -63,7 +63,7 @@ define(['./TimeConductorController'], function (TimeConductorController) {
             mockConductorViewService.availableModes.andReturn([]);
             mockConductorViewService.availableTimeSystems.andReturn([]);
 
-            mockFormatService = jasmine.createSpyObj('formatService',[
+            mockFormatService = jasmine.createSpyObj('formatService', [
                 'getFormat'
             ]);
             mockFormat = jasmine.createSpyObj('format', [
@@ -81,7 +81,6 @@ define(['./TimeConductorController'], function (TimeConductorController) {
         }
 
         describe("when time conductor state changes", function () {
-            var mockFormat;
             var mockDeltaFormat;
             var defaultBounds;
             var defaultDeltas;
@@ -169,7 +168,7 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                 expect(mockScope.timeSystemModel.maxZoom).toBe(mockDefaults.zoom.max);
             });
 
-            it("when bounds change, sets the correct zoom slider value", function() {
+            it("when bounds change, sets the correct zoom slider value", function () {
                 var bounds = {
                     start: 0,
                     end: 50
@@ -179,7 +178,7 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                     max: 0
                 };
 
-                function exponentializer (rawValue){
+                function exponentializer(rawValue) {
                     return 1 - Math.pow(rawValue, 1 / 4);
                 }
 
@@ -366,7 +365,7 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                 expect(mockTimeConductor.timeSystem).toHaveBeenCalledWith(timeSystem, defaultBounds);
             });
 
-            it("updates form bounds during pan events", function() {
+            it("updates form bounds during pan events", function () {
                 var testBounds = {
                     start: 10,
                     end: 20

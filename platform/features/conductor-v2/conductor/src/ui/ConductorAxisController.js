@@ -58,7 +58,7 @@ define(
             this.conductor.off('timeSystem', this.changeTimeSystem);
             this.conductor.off('bounds', this.changeBounds);
             this.conductorViewService.off("zoom", this.onZoom);
-            this.conductorViewService.off("zoom-stop", this.onZoomStop)
+            this.conductorViewService.off("zoom-stop", this.onZoomStop);
         };
 
         /**

@@ -183,6 +183,18 @@ define(
                 }
             }
 
+            function changeTimeOfInterest(timeOfInterest) {
+                if (timeOfInterest !== undefined) {
+                    var bounds = conductor.bounds();
+                    var range = bounds.end - bounds.start;
+                    $scope.toiPerc = ((timeOfInterest - bounds.start) / range) * 100;
+                    $scope.toiPinned = true;
+                } else {
+                    $scope.toiPerc = undefined;
+                    $scope.toiPinned = false;
+                }
+            }
+
             // Create a new subscription; telemetrySubscriber gets
             // to do the meaningful work here.
             function subscribe(domainObject) {
@@ -249,18 +261,6 @@ define(
                 }
                 self.setUnsynchedStatus($scope.domainObject, follow && self.isZoomed());
                 changeTimeOfInterest(conductor.timeOfInterest());
-            }
-
-            function changeTimeOfInterest(timeOfInterest) {
-                if (timeOfInterest !== undefined){
-                    var bounds = conductor.bounds();
-                    var range = bounds.end - bounds.start;
-                    $scope.toiPerc = ((timeOfInterest - bounds.start) / range) * 100;
-                    $scope.toiPinned = true;
-                } else {
-                    $scope.toiPerc = undefined;
-                    $scope.toiPinned = false;
-                }
             }
 
             this.modeOptions = new PlotModeOptions([], subPlotFactory);

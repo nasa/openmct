@@ -30,7 +30,7 @@ define([
     d3
 ) {
     describe("The ConductorAxisController", function () {
-        var directive,
+        var controller,
             mockConductor,
             mockConductorViewService,
             mockFormatService,
@@ -43,7 +43,7 @@ define([
             mockFormat;
 
         function getCallback(target, name) {
-            return target.calls.filter(function (call){
+            return target.calls.filter(function (call) {
                 return call.args[0] === name;
             })[0].args[1];
         }
@@ -89,7 +89,7 @@ define([
 
             element = $('<div style="width: 100px;"><div style="width: 100%;"></div></div>');
             $(document).find('body').append(element);
-            directive = new ConductorAxisController({conductor: mockConductor}, mockFormatService, mockConductorViewService, mockScope, element);
+            controller = new ConductorAxisController({conductor: mockConductor}, mockFormatService, mockConductorViewService, mockScope, element);
 
             mockTimeSystem = jasmine.createSpyObj("timeSystem", [
                 "formats",
@@ -106,21 +106,21 @@ define([
         });
 
         it("listens for changes to time system and bounds", function () {
-            expect(mockConductor.on).toHaveBeenCalledWith("timeSystem", directive.changeTimeSystem);
-            expect(mockConductor.on).toHaveBeenCalledWith("bounds", directive.changeBounds);
+            expect(mockConductor.on).toHaveBeenCalledWith("timeSystem", controller.changeTimeSystem);
+            expect(mockConductor.on).toHaveBeenCalledWith("bounds", controller.changeBounds);
         });
 
         it("on scope destruction, deregisters listeners", function () {
-            expect(mockScope.$on).toHaveBeenCalledWith("$destroy", directive.destroy);
-            directive.destroy();
-            expect(mockConductor.off).toHaveBeenCalledWith("timeSystem", directive.changeTimeSystem);
-            expect(mockConductor.off).toHaveBeenCalledWith("bounds", directive.changeBounds);
+            expect(mockScope.$on).toHaveBeenCalledWith("$destroy", controller.destroy);
+            controller.destroy();
+            expect(mockConductor.off).toHaveBeenCalledWith("timeSystem", controller.changeTimeSystem);
+            expect(mockConductor.off).toHaveBeenCalledWith("bounds", controller.changeBounds);
         });
 
         describe("when the time system changes", function () {
             it("uses a UTC scale for UTC time systems", function () {
                 mockTimeSystem.isUTCBased.andReturn(true);
-                directive.changeTimeSystem(mockTimeSystem);
+                controller.changeTimeSystem(mockTimeSystem);
 
                 expect(d3.scaleUtc).toHaveBeenCalled();
                 expect(d3.scaleLinear).not.toHaveBeenCalled();
@@ -128,51 +128,49 @@ define([
 
             it("uses a linear scale for non-UTC time systems", function () {
                 mockTimeSystem.isUTCBased.andReturn(false);
-                directive.changeTimeSystem(mockTimeSystem);
+                controller.changeTimeSystem(mockTimeSystem);
                 expect(d3.scaleLinear).toHaveBeenCalled();
                 expect(d3.scaleUtc).not.toHaveBeenCalled();
             });
 
             it("sets axis domain to time conductor bounds", function () {
                 mockTimeSystem.isUTCBased.andReturn(false);
-                directive.setScale();
-                expect(directive.xScale.domain()).toEqual([mockBounds.start, mockBounds.end]);
+                controller.setScale();
+                expect(controller.xScale.domain()).toEqual([mockBounds.start, mockBounds.end]);
             });
 
             it("uses the format specified by the time system to format tick" +
                 " labels", function () {
-
-                directive.changeTimeSystem(mockTimeSystem);
+                controller.changeTimeSystem(mockTimeSystem);
                 expect(mockFormat.format).toHaveBeenCalled();
-
             });
 
             it('responds to zoom events', function () {
-                expect(mockConductorViewService.on).toHaveBeenCalledWith("zoom", directive.onZoom);
+                expect(mockConductorViewService.on).toHaveBeenCalledWith("zoom", controller.onZoom);
                 var cb = getCallback(mockConductorViewService.on, "zoom");
-                spyOn(directive, 'setScale').andCallThrough();
+                spyOn(controller, 'setScale').andCallThrough();
                 cb({bounds: {start: 0, end: 100}});
-                expect(directive.setScale).toHaveBeenCalled();
+                expect(controller.setScale).toHaveBeenCalled();
             });
 
             it('adjusts scale on pan', function () {
-                spyOn(directive, 'setScale').andCallThrough();
-                directive.pan(100);
-                expect(directive.setScale).toHaveBeenCalled();
+                spyOn(controller, 'setScale').andCallThrough();
+                controller.pan(100);
+                expect(controller.setScale).toHaveBeenCalled();
             });
 
             it('emits event on pan', function () {
-                spyOn(directive,'setScale').andCallThrough();
-                directive.pan(100);
+                spyOn(controller, 'setScale').andCallThrough();
+                controller.pan(100);
                 expect(mockConductorViewService.emit).toHaveBeenCalledWith("pan", jasmine.any(Object));
             });
 
             it('cleans up listeners on destruction', function () {
-                directive.destroy();
-                expect(mockConductor.off).toHaveBeenCalledWith("bounds", directive.changeBounds);
-                expect(mockConductor.off).toHaveBeenCalledWith("timeSystem", directive.changeTimeSystem);
+                controller.destroy();
+                expect(mockConductor.off).toHaveBeenCalledWith("bounds", controller.changeBounds);
+                expect(mockConductor.off).toHaveBeenCalledWith("timeSystem", controller.changeTimeSystem);
 
-                expect(mockConductorViewService.off).toHaveBeenCalledWith("zoom", directive.onZoom);
+                expect(mockConductorViewService.off).toHaveBeenCalledWith("zoom", controller.onZoom);
             });
 
         });

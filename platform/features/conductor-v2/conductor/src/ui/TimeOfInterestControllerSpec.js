@@ -50,7 +50,7 @@ define(['./TimeOfInterestController'], function (TimeOfInterestController) {
             mockFormatService.getFormat.andReturn(mockFormat);
 
             mockTimeSystem = {
-                formats: function() {
+                formats: function () {
                     return ["mockFormat"];
                 }
             };
@@ -58,7 +58,7 @@ define(['./TimeOfInterestController'], function (TimeOfInterestController) {
             controller = new TimeOfInterestController(mockScope, {conductor: mockConductor}, mockFormatService);
         });
 
-        function getCallback(target, event){
+        function getCallback(target, event) {
             return target.calls.filter(function (call) {
                 return call.args[0] === event;
             })[0].args[1];
@@ -94,7 +94,7 @@ define(['./TimeOfInterestController'], function (TimeOfInterestController) {
                 mockFormat.format.andReturn(formattedTOI);
             });
             it("Uses the time system formatter to produce TOI text", function () {
-                var toiCallback = getCallback(mockConductor.on, "timeOfInterest");
+                toiCallback = getCallback(mockConductor.on, "timeOfInterest");
                 //Set TOI
                 toiCallback(toi);
                 expect(mockFormat.format).toHaveBeenCalled();
@@ -109,7 +109,7 @@ define(['./TimeOfInterestController'], function (TimeOfInterestController) {
                 toiCallback(toi);
                 expect(mockScope.pinned).toBe(true);
             });
-        })
+        });
 
     });
 });

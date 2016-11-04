@@ -75,12 +75,6 @@ define(['EventEmitter'], function (EventEmitter) {
         return true;
     };
 
-    function throwOnError(validationResult) {
-        if (validationResult !== true) {
-            throw new Error(validationResult);
-        }
-    }
-
     /**
      * Get or set the follow mode of the time conductor. In follow mode the
      * time conductor ticks, regularly updating the bounds from a timing
