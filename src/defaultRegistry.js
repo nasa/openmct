@@ -125,7 +125,6 @@ define([
         'platform/forms',
         'platform/identity',
         'platform/persistence/aggregator',
-        'platform/persistence/local',
         'platform/persistence/queue',
         'platform/policy',
         'platform/entanglement',
