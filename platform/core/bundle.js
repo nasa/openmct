@@ -336,7 +336,7 @@ define([
                     "key": "persistence",
                     "implementation": PersistenceCapability,
                     "depends": [
-                        "cacheService",
+                        "topic",
                         "persistenceService",
                         "identifierService",
                         "notificationService",

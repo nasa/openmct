@@ -42,7 +42,7 @@ define(
          * @implements {Capability}
          */
         function PersistenceCapability(
-            cacheService,
+            topic,
             persistenceService,
             identifierService,
             notificationService,
@@ -53,7 +53,7 @@ define(
             this.modified = domainObject.getModel().modified;
 
             this.domainObject = domainObject;
-            this.cacheService = cacheService;
+            this.topic = topic;
             this.identifierService = identifierService;
             this.persistenceService = persistenceService;
             this.notificationService = notificationService;
@@ -110,6 +110,7 @@ define(
          */
         PersistenceCapability.prototype.persist = function () {
             var self = this,
+                persistenceTopic = this.topic('persistence'),
                 domainObject = this.domainObject,
                 model = domainObject.getModel(),
                 modified = model.modified,
@@ -135,6 +136,9 @@ define(
                 domainObject.getModel()
             ]).then(function (result) {
                 return rejectIfFalsey(result, self.$q);
+            }).then(function (result) {
+                persistenceTopic.notify(domainObject);
+                return result;
             }).catch(function (error) {
                 return notifyOnError(error, domainObject, self.notificationService, self.$q);
             });
@@ -148,6 +152,7 @@ define(
          */
         PersistenceCapability.prototype.refresh = function () {
             var domainObject = this.domainObject;
+            var refreshTopic = this.topic('refresh');
 
             // Update a domain object's model upon refresh
             function updateModel(model) {
@@ -164,7 +169,10 @@ define(
             return this.persistenceService.readObject(
                     this.getSpace(),
                     this.getKey()
-                ).then(updateModel);
+                ).then(updateModel).then(function (result) {
+                    refreshTopic.notify(domainObject);
+                    return result;
+                });
         };
 
         /**
