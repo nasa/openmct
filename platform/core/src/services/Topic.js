@@ -67,6 +67,7 @@ define(
                                 listener(message);
                             } catch (e) {
                                 $log.error(ERROR_PREFIX + e.message);
+                                $log.error(e);
                             }
                         });
                     }
