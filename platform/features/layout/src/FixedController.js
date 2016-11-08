@@ -308,14 +308,14 @@ define(
                 }
             }.bind(this));
 
+            // Detect changes to grid size
+            $scope.$watch("model.layoutGrid", updateElementPositions);
+
             // Refresh list of elements whenever model changes
             $scope.$watch("model.modified", refreshElements);
 
             // Position panes when the model field changes
             $scope.$watch("model.composition", updateComposition);
-
-            // Detect changes to grid size
-            $scope.$watch("model.layoutGrid", updateElementPositions);
 
             // Subscribe to telemetry when an object is available
             $scope.$watch("domainObject", subscribe);
