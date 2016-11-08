@@ -22,6 +22,8 @@
 /*global define*/
 
 define([], function () {
+
+    var MUTATION_TRACKER = new WeakMap();
     /**
      * Listens for mutation on domain objects and triggers persistence when
      * it occurs.
@@ -37,10 +39,29 @@ define([], function () {
                 if (!wasActive) {
                     transactionService.startTransaction();
                 }
+                var wrap = function(f) {
+                    return function () {
+                        if (MUTATION_TRACKER.has(domainObject)) {
+                            MUTATION_TRACKER.get(domainObject)();
+                            MUTATION_TRACKER.delete(domainObject);
+                        }
+                        return f();
+                    }
+                }
+
+                if (!MUTATION_TRACKER.has(domainObject)) {
+                    MUTATION_TRACKER.set(domainObject, domainObject
+                        .getCapability('mutation')
+                        .listen(function () {})
+                    );
+                }
+
+                // add model to cache and keep cache up to date with listener
+                // remove listener and remove from cache on commit & on cancel.
 
                 transactionService.addToTransaction(
-                    persistence.persist.bind(persistence),
-                    persistence.refresh.bind(persistence)
+                    wrap(persistence.persist.bind(persistence)),
+                    wrap(persistence.refresh.bind(persistence))
                 );
 
                 if (!wasActive) {
