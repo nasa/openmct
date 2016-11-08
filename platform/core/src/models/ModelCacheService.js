@@ -28,13 +28,8 @@ define([], function () {
      * @constructor
      * @memberof platform/core
      */
-    function ModelCacheService(topic) {
+    function ModelCacheService() {
         this.cache = {};
-        topic('mutation').listen(function (domainObject) {
-            if (this.has(domainObject.getId())) {
-                this.put(domainObject.getId(), domainObject.getModel());
-            }
-        }.bind(this));
     }
 
     /**

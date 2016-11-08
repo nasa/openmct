@@ -373,9 +373,6 @@ define([
                 {
                     "key": "cacheService",
                     "implementation": ModelCacheService,
-                    "depends": [
-                        "topic"
-                    ]
                 },
                 {
                     "key": "now",
@@ -415,7 +412,7 @@ define([
             "runs": [
                 {
                     "implementation": TransactingMutationListener,
-                    "depends": ["topic", "transactionService"]
+                    "depends": ["topic", "transactionService", "cacheService"]
                 }
             ],
             "constants": [

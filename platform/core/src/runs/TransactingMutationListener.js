@@ -30,7 +30,11 @@ define([], function () {
      * @param {Topic} topic the `topic` service; used to listen for mutation
      * @memberof platform/core
      */
-    function TransactingMutationListener(topic, transactionService) {
+    function TransactingMutationListener(
+        topic,
+        transactionService,
+        cacheService
+    ) {
         var mutationTopic = topic('mutation');
         mutationTopic.listen(function (domainObject) {
             var persistence = domainObject.getCapability('persistence');
@@ -38,15 +42,6 @@ define([], function () {
             if (persistence.persisted()) {
                 if (!wasActive) {
                     transactionService.startTransaction();
-                }
-                var wrap = function(f) {
-                    return function () {
-                        if (MUTATION_TRACKER.has(domainObject)) {
-                            MUTATION_TRACKER.get(domainObject)();
-                            MUTATION_TRACKER.delete(domainObject);
-                        }
-                        return f();
-                    }
                 }
 
                 if (!MUTATION_TRACKER.has(domainObject)) {
@@ -56,12 +51,21 @@ define([], function () {
                     );
                 }
 
-                // add model to cache and keep cache up to date with listener
-                // remove listener and remove from cache on commit & on cancel.
+                cacheService.put(domainObject.getId(), domainObject.getModel());
+
+                function unlistenAndCall(f) {
+                    return function () {
+                        if (MUTATION_TRACKER.has(domainObject)) {
+                            MUTATION_TRACKER.get(domainObject)();
+                            MUTATION_TRACKER.delete(domainObject);
+                        }
+                        return f();
+                    }
+                }
 
                 transactionService.addToTransaction(
-                    wrap(persistence.persist.bind(persistence)),
-                    wrap(persistence.refresh.bind(persistence))
+                    unlistenAndCall(persistence.persist.bind(persistence)),
+                    unlistenAndCall(persistence.refresh.bind(persistence))
                 );
 
                 if (!wasActive) {
