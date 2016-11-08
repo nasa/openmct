@@ -39,7 +39,7 @@ define(
                 model.id = id;
                 var capabilities = capabilityService.getCapabilities(model);
                 model.id = old_id;
-                // cacheService.put(id, model);
+                cacheService.put(id, model);
                 return new DomainObjectImpl(id, model, capabilities);
             };
         }
