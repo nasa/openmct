@@ -50,7 +50,7 @@ define(
             return function (model, id) {
                 var capabilities = capabilityService.getCapabilities(model);
                 id = id || identifierService.generate();
-                cacheService.put(id, model);
+                // cacheService.put(id, model);
                 return new DomainObjectImpl(id, model, capabilities);
             };
         }
