@@ -39,6 +39,8 @@ define([], function () {
         mutationTopic.listen(function (domainObject) {
             var persistence = domainObject.getCapability('persistence');
             var wasActive = transactionService.isActive();
+            cacheService.put(domainObject.getId(), domainObject.getModel());
+
             if (persistence.persisted()) {
                 if (!wasActive) {
                     transactionService.startTransaction();
@@ -50,8 +52,6 @@ define([], function () {
                         .listen(function () {})
                     );
                 }
-
-                cacheService.put(domainObject.getId(), domainObject.getModel());
 
                 function unlistenAndCall(f) {
                     return function () {
