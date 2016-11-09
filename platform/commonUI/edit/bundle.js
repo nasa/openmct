@@ -347,7 +347,8 @@ define([
                     "implementation": TransactionService,
                     "depends": [
                         "$q",
-                        "$log"
+                        "$log",
+                        "cacheService"
                     ]
                 },
                 {

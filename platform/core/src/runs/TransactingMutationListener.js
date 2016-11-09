@@ -22,17 +22,24 @@
 /*global define*/
 
 define([], function () {
+
     /**
      * Listens for mutation on domain objects and triggers persistence when
      * it occurs.
      * @param {Topic} topic the `topic` service; used to listen for mutation
      * @memberof platform/core
      */
-    function TransactingMutationListener(topic, transactionService) {
+    function TransactingMutationListener(
+        topic,
+        transactionService,
+        cacheService
+    ) {
         var mutationTopic = topic('mutation');
         mutationTopic.listen(function (domainObject) {
             var persistence = domainObject.getCapability('persistence');
             var wasActive = transactionService.isActive();
+            cacheService.put(domainObject.getId(), domainObject.getModel());
+
             if (persistence.persisted()) {
                 if (!wasActive) {
                     transactionService.startTransaction();

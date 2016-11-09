@@ -171,7 +171,9 @@ define([
 
             function finishEditing(clonedObject) {
                 return domainObject.getCapability("editor").finish()
-                    .then(resolveWith(clonedObject));
+                    .then(function () {
+                        return fetchObject(clonedObject.getId());
+                    });
             }
 
             function onFailure() {

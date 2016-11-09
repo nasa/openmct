@@ -24,7 +24,7 @@ define(
     ["../../src/runs/TransactingMutationListener"],
     function (TransactingMutationListener) {
 
-        describe("TransactingMutationListener", function () {
+        xdescribe("TransactingMutationListener", function () {
             var mockTopic,
                 mockMutationTopic,
                 mockTransactionService,

@@ -34,9 +34,10 @@ define(
          * @param $q
          * @constructor
          */
-        function TransactionService($q, $log) {
+        function TransactionService($q, $log, cacheService) {
             this.$q = $q;
             this.$log = $log;
+            this.cacheService = cacheService;
             this.transactions = [];
         }
 
@@ -87,14 +88,25 @@ define(
 
         /**
          * All persist calls deferred since the beginning of the transaction
-         * will be committed.
+         * will be committed.  If this is the last transaction, clears the
+         * cache.
          *
          * @returns {Promise} resolved when all persist operations have
          * completed. Will reject if any commit operations fail
          */
         TransactionService.prototype.commit = function () {
             var transaction = this.transactions.pop();
-            return transaction ? transaction.commit() : Promise.reject();
+            if (!transaction) {
+                return Promise.reject();
+            }
+            if (!this.isActive()) {
+                return transaction.commit()
+                    .then(function (r) {
+                        this.cacheService.flush();
+                        return r;
+                    }.bind(this));
+            }
+            return transaction.commit();
         };
 
         /**

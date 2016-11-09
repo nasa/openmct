@@ -412,7 +412,7 @@ define([
             "runs": [
                 {
                     "implementation": TransactingMutationListener,
-                    "depends": ["topic", "transactionService"]
+                    "depends": ["topic", "transactionService", "cacheService"]
                 }
             ],
             "constants": [
