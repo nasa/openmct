@@ -675,10 +675,10 @@ it in our bundle definition, as an extension of category `controllers`:
 ```diff
 define([
     'legacyRegistry',
-    './src/controllers/TodoController'
++    './src/controllers/TodoController'
 ], function (
     legacyRegistry,
-    TodoController
++    TodoController
 ) {
     legacyRegistry.register("tutorials/todo", {
     "name": "To-do Plugin",
@@ -2948,7 +2948,7 @@ will implement:
 /*global define*/
 
 define(
-    ['./src/ExampleTelemetrySeries'],
+    ['./ExampleTelemetrySeries'],
     function (ExampleTelemetrySeries) {
         "use strict";
 

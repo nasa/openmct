@@ -21,23 +21,23 @@
  *****************************************************************************/
 
 define([
-    'angular',
-    './Region',
-    '../../api/objects/object-utils'
 ], function (
-    angular,
-    Region,
-    objectUtils
 ) {
-    function MCTView() {
-        return {
-            restrict: 'A',
-            link: function (scope, element, attrs) {
-                var region = new Region(element[0]);
-                scope.$watch(attrs.mctView, region.show.bind(region));
-            }
-        };
+
+    function RootObjectProvider(rootRegistry) {
+        this.rootRegistry = rootRegistry;
     }
 
-    return MCTView;
+    RootObjectProvider.prototype.get = function () {
+        return this.rootRegistry.getRoots()
+            .then(function (roots) {
+                return {
+                    name: 'The root object',
+                    type: 'root',
+                    composition: roots
+                };
+            });
+    };
+
+    return RootObjectProvider;
 });

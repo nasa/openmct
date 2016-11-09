@@ -19,25 +19,41 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 define([
-    'angular',
-    './Region',
-    '../../api/objects/object-utils'
+    '../RootObjectProvider'
 ], function (
-    angular,
-    Region,
-    objectUtils
+    RootObjectProvider
 ) {
-    function MCTView() {
-        return {
-            restrict: 'A',
-            link: function (scope, element, attrs) {
-                var region = new Region(element[0]);
-                scope.$watch(attrs.mctView, region.show.bind(region));
-            }
-        };
-    }
+    describe('RootObjectProvider', function () {
+        var rootRegistry,
+            rootObjectProvider;
 
-    return MCTView;
+        function done() {
+            var isDone = false;
+            waitsFor(function () {
+                return isDone;
+            });
+            return function () {
+                isDone = true;
+            };
+        }
+
+        beforeEach(function () {
+            rootRegistry = jasmine.createSpyObj('rootRegistry', ['getRoots']);
+            rootRegistry.getRoots.andReturn(Promise.resolve(['some root']));
+            rootObjectProvider = new RootObjectProvider(rootRegistry);
+        });
+
+        it('supports fetching root', function () {
+            rootObjectProvider.get()
+                .then(function (root) {
+                    expect(root).toEqual({
+                        name: 'The root object',
+                        type: 'root',
+                        composition: ['some root']
+                    });
+                })
+                .then(done());
+        });
+    });
 });

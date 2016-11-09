@@ -21,23 +21,37 @@
  *****************************************************************************/
 
 define([
-    'angular',
-    './Region',
-    '../../api/objects/object-utils'
+    'lodash'
 ], function (
-    angular,
-    Region,
-    objectUtils
+    _
 ) {
-    function MCTView() {
-        return {
-            restrict: 'A',
-            link: function (scope, element, attrs) {
-                var region = new Region(element[0]);
-                scope.$watch(attrs.mctView, region.show.bind(region));
-            }
-        };
+
+    function RootRegistry() {
+        this.providers = [];
     }
 
-    return MCTView;
+    RootRegistry.prototype.getRoots = function () {
+        var promises = this.providers.map(function (provider) {
+            return provider();
+        });
+        return Promise.all(promises)
+            .then(_.flatten);
+    };
+
+    function isKey(key) {
+        return _.isObject(key) && _.has(key, 'key') && _.has(key, 'namespace');
+    }
+
+    RootRegistry.prototype.addRoot = function (key) {
+        if (isKey(key) || (_.isArray(key) && _.every(key, isKey))) {
+            this.providers.push(function () {
+                return key;
+            });
+        } else if (_.isFunction(key)) {
+            this.providers.push(key);
+        }
+    };
+
+    return RootRegistry;
+
 });

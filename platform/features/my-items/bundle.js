@@ -21,23 +21,25 @@
  *****************************************************************************/
 
 define([
-    'angular',
-    './Region',
-    '../../api/objects/object-utils'
+    'legacyRegistry'
 ], function (
-    angular,
-    Region,
-    objectUtils
+    legacyRegistry
 ) {
-    function MCTView() {
-        return {
-            restrict: 'A',
-            link: function (scope, element, attrs) {
-                var region = new Region(element[0]);
-                scope.$watch(attrs.mctView, region.show.bind(region));
-            }
-        };
-    }
 
-    return MCTView;
+    legacyRegistry.register("platform/features/my-items", {
+        "name": "My Items",
+        "description": "Defines a root named My Items",
+        "extensions": {
+            "roots": [
+                {
+                    "id": "mine",
+                    "model": {
+                        "name": "My Items",
+                        "type": "folder",
+                        "composition": []
+                    }
+                }
+            ]
+        }
+    });
 });

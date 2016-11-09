@@ -77,5 +77,9 @@ define([], function () {
         return this.cache;
     };
 
+    ModelCacheService.prototype.flush = function () {
+        this.cache = {};
+    };
+
     return ModelCacheService;
 });

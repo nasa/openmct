@@ -28,57 +28,57 @@ define([
 
     // take a key string and turn it into a key object
     // 'scratch:root' ==> {namespace: 'scratch', identifier: 'root'}
-    var parseKeyString = function (key) {
-        if (typeof key === 'object') {
-            return key;
+    var parseKeyString = function (identifier) {
+        if (typeof identifier === 'object') {
+            return identifier;
         }
         var namespace = '',
-            identifier = key;
+            key = identifier;
         for (var i = 0, escaped = false; i < key.length; i++) {
             if (escaped) {
                 escaped = false;
                 namespace += key[i];
             } else {
-                if (key[i] === "\\") {
+                if (identifier[i] === "\\") {
                     escaped = true;
-                } else if (key[i] === ":") {
+                } else if (identifier[i] === ":") {
                     // namespace = key.slice(0, i);
-                    identifier = key.slice(i + 1);
+                    key = identifier.slice(i + 1);
                     break;
                 }
-                namespace += key[i];
+                namespace += identifier[i];
             }
         }
 
-        if (key === namespace) {
+        if (identifier === namespace) {
             namespace = '';
         }
 
         return {
             namespace: namespace,
-            identifier: identifier
+            key: key
         };
     };
 
     // take a key and turn it into a key string
     // {namespace: 'scratch', identifier: 'root'} ==> 'scratch:root'
-    var makeKeyString = function (key) {
-        if (typeof key === 'string') {
-            return key;
+    var makeKeyString = function (identifier) {
+        if (typeof identifier === 'string') {
+            return identifier;
         }
-        if (!key.namespace) {
-            return key.identifier;
+        if (!identifier.namespace) {
+            return identifier.key;
         }
         return [
-            key.namespace.replace(':', '\\:'),
-            key.identifier.replace(':', '\\:')
+            identifier.namespace.replace(':', '\\:'),
+            identifier.key.replace(':', '\\:')
         ].join(':');
     };
 
     // Converts composition to use key strings instead of keys
     var toOldFormat = function (model) {
         model = JSON.parse(JSON.stringify(model));
-        delete model.key;
+        delete model.identifier;
         if (model.composition) {
             model.composition = model.composition.map(makeKeyString);
         }
@@ -86,9 +86,9 @@ define([
     };
 
     // converts composition to use keys instead of key strings
-    var toNewFormat = function (model, key) {
+    var toNewFormat = function (model, identifier) {
         model = JSON.parse(JSON.stringify(model));
-        model.key = key;
+        model.identifier = parseKeyString(identifier);
         if (model.composition) {
             model.composition = model.composition.map(parseKeyString);
         }

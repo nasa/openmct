@@ -20,40 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(function () {
-    /**
-     * @typedef TypeDefinition
-     * @memberof module:openmct.Type~
-     * @property {Metadata} metadata displayable metadata about this type
-     * @property {function (object)} [initialize] a function which initializes
-     *           the model for new domain objects of this type
-     * @property {boolean} [creatable] true if users should be allowed to
-     *           create this type (default: false)
-     */
+define([], function () {
+    function AdaptedViewController($scope, openmct) {
+        function refresh(legacyObject) {
+            if (!legacyObject) {
+                $scope.view = undefined;
+                return;
+            }
 
-    /**
-     * A Type describes a kind of domain object that may appear or be
-     * created within Open MCT.
-     *
-     * @param {module:opemct.Type~TypeDefinition} definition
-     * @class Type
-     * @memberof module:openmct
-     */
-    function Type(definition) {
-        this.definition = definition;
+            var domainObject = legacyObject.useCapability('adapter');
+            var providers = openmct.mainViews.get(domainObject);
+            $scope.view = providers[0] && providers[0].view(domainObject);
+        }
+
+        $scope.$watch('domainObject', refresh);
     }
 
-    /**
-     * Check if a domain object is an instance of this type.
-     * @param domainObject
-     * @returns {boolean} true if the domain object is of this type
-     * @memberof module:openmct.Type#
-     * @method check
-     */
-    Type.prototype.check = function (domainObject) {
-        // Depends on assignment from MCT.
-        return domainObject.type === this.key;
-    };
-
-    return Type;
+    return AdaptedViewController;
 });

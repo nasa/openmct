@@ -38,75 +38,25 @@ define(
             this.modelService = modelService;
         }
 
-        // Fast-resolving promise
-        function fastPromise(value) {
-            return (value || {}).then ? value : {
-                then: function (callback) {
-                    return fastPromise(callback(value));
-                }
-            };
-        }
-
         CachingModelDecorator.prototype.getModels = function (ids) {
-            var cacheService = this.cacheService,
-                neededIds = ids.filter(function notCached(id) {
-                    return !cacheService.has(id);
-                });
+            var loadFromCache = ids.filter(function cached(id) {
+                    return this.cacheService.has(id);
+                }, this),
+                loadFromService = ids.filter(function notCached(id) {
+                    return !this.cacheService.has(id);
+                }, this);
 
-            // Update the cached instance of a model to a new value.
-            // We update in-place to ensure there is only ever one instance
-            // of any given model exposed by the modelService as a whole.
-            function updateModel(id, model) {
-                var oldModel = cacheService.get(id);
-
-                // Same object instance is a possibility, so don't copy
-                if (oldModel === model) {
-                    return model;
-                }
-
-                // If we'd previously cached an undefined value, or are now
-                // seeing undefined, replace the item in the cache entirely.
-                if (oldModel === undefined || model === undefined) {
-                    cacheService.put(id, model);
-                    return model;
-                }
-
-                // Otherwise, empty out the old model...
-                Object.keys(oldModel).forEach(function (k) {
-                    delete oldModel[k];
-                });
-
-                // ...and replace it with the contents of the new model.
-                Object.keys(model).forEach(function (k) {
-                    oldModel[k] = model[k];
-                });
-
-                return oldModel;
+            if (!loadFromCache.length) {
+                return this.modelService.getModels(loadFromService);
             }
 
-            // Store the provided models in our cache
-            function cacheAll(models) {
-                Object.keys(models).forEach(function (id) {
-                    var model = cacheService.has(id) ?
-                        updateModel(id, models[id]) : models[id];
-                    cacheService.put(id, model);
-                });
-            }
-
-            // Expose the cache (for promise chaining)
-            function giveCache() {
-                return cacheService.all();
-            }
-
-            // Look up if we have unknown IDs
-            if (neededIds.length > 0) {
-                return this.modelService.getModels(neededIds)
-                    .then(cacheAll)
-                    .then(giveCache);
-            }
-
-            // Otherwise, just expose the cache directly
-            return fastPromise(cacheService.all());
+            return this.modelService.getModels(loadFromService)
+                .then(function (modelResults) {
+                    loadFromCache.forEach(function (id) {
+                        modelResults[id] = this.cacheService.get(id);
+                    }, this);
+                    return modelResults;
+                }.bind(this));
         };
 
         return CachingModelDecorator;

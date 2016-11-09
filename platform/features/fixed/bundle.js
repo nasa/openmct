@@ -204,6 +204,7 @@ define([
                         }
                     ],
                     "model": {
+                        "layoutGrid": [64, 16],
                         "composition": []
                     },
                     "properties": [

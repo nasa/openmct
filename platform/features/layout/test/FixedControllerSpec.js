@@ -147,6 +147,7 @@ define(
                     mockFormatter
                 );
 
+                findWatch("model.layoutGrid")(testModel.layoutGrid);
                 findWatch("selection")(mockScope.selection);
             });
 

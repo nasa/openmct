@@ -23,29 +23,51 @@
 define([
     'legacyRegistry',
     './actions/ActionDialogDecorator',
+    './capabilities/AdapterCapability',
+    './controllers/AdaptedViewController',
     './directives/MCTView',
     './services/Instantiate',
+    './services/MissingModelCompatibilityDecorator',
     './capabilities/APICapabilityDecorator',
     './policies/AdapterCompositionPolicy',
-    './runs/AlternateCompositionInitializer'
+    './policies/AdaptedViewPolicy',
+    './runs/AlternateCompositionInitializer',
+    'text!./templates/adapted-view-template.html'
 ], function (
     legacyRegistry,
     ActionDialogDecorator,
+    AdapterCapability,
+    AdaptedViewController,
     MCTView,
     Instantiate,
+    MissingModelCompatibilityDecorator,
     APICapabilityDecorator,
     AdapterCompositionPolicy,
-    AlternateCompositionInitializer
+    AdaptedViewPolicy,
+    AlternateCompositionInitializer,
+    adaptedViewTemplate
 ) {
     legacyRegistry.register('src/adapter', {
         "extensions": {
             "directives": [
                 {
                     key: "mctView",
-                    implementation: MCTView,
+                    implementation: MCTView
+                }
+            ],
+            capabilities: [
+                {
+                    key: "adapter",
+                    implementation: AdapterCapability
+                }
+            ],
+            controllers: [
+                {
+                    key: "AdaptedViewController",
+                    implementation: AdaptedViewController,
                     depends: [
-                        "newViews[]",
-                        "openmct"
+                        '$scope',
+                        'openmct'
                     ]
                 }
             ],
@@ -75,6 +97,12 @@ define([
                     provides: "actionService",
                     implementation: ActionDialogDecorator,
                     depends: ["openmct"]
+                },
+                {
+                    type: "decorator",
+                    provides: "modelService",
+                    implementation: MissingModelCompatibilityDecorator,
+                    depends: ["openmct"]
                 }
             ],
             policies: [
@@ -82,12 +110,23 @@ define([
                     category: "composition",
                     implementation: AdapterCompositionPolicy,
                     depends: ["openmct"]
+                },
+                {
+                    category: "view",
+                    implementation: AdaptedViewPolicy,
+                    depends: ["openmct"]
                 }
             ],
             runs: [
                 {
                     implementation: AlternateCompositionInitializer,
                     depends: ["openmct"]
+                }
+            ],
+            views: [
+                {
+                    key: "adapted-view",
+                    template: adaptedViewTemplate
                 }
             ],
             licenses: [

@@ -90,7 +90,7 @@ define(
                     couldRepresent = false,
                     lastIdPath = [],
                     lastKey,
-                    statusListener,
+                    mutationListener,
                     changeTemplate = templateLinker.link($scope, element);
 
                 // Populate scope with any capabilities indicated by the
@@ -101,7 +101,16 @@ define(
                         uses = ((representation || {}).uses || []),
                         myCounter = counter;
 
+                    if (mutationListener) {
+                        mutationListener();
+                        mutationListener = undefined;
+                    }
+
                     if (domainObject) {
+                        mutationListener = domainObject
+                            .getCapability('mutation')
+                            .listen(refreshCapabilities);
+
                         // Update model
                         $scope.model = domainObject.getModel();
 
@@ -236,17 +245,12 @@ define(
                 // (to a different object)
                 $scope.$watch("domainObject", refresh);
 
-                // Finally, also update when there is a new version of that
-                // same domain object; these changes should be tracked in the
-                // model's "modified" field, by the mutation capability.
-                $scope.$watch("domainObject.getModel().modified", refreshCapabilities);
-
                 // Make sure any resources allocated by representers also get
                 // released.
                 $scope.$on("$destroy", destroyRepresenters);
                 $scope.$on("$destroy", function () {
-                    if (statusListener) {
-                        statusListener();
+                    if (mutationListener) {
+                        mutationListener();
                     }
                 });
 
