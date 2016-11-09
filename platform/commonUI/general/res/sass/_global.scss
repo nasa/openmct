@@ -21,18 +21,18 @@
  *****************************************************************************/
 /************************** FONTS */
 @font-face {
-	/*
+    /*
     * Use https://icomoon.io/app with icomoon-project-openmct-symbols-16px.json
     * to generate font files
     */
-	font-family: 'symbolsfont';
-	src: url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.eot');
-	src: url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.eot?#iefix') format('embedded-opentype'),
-	url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.woff') format('woff'),
-	url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.ttf') format('truetype'),
-	url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.svg') format('svg');
-	font-weight: normal;
-	font-style: normal;
+    font-family: 'symbolsfont';
+    src: url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.eot');
+    src: url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.eot?#iefix') format('embedded-opentype'),
+    url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.woff') format('woff'),
+    url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.ttf') format('truetype'),
+    url($dirCommonRes + 'fonts/symbols/openmct-symbols-16px.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
 }
 
 @font-face {
@@ -52,53 +52,53 @@
 
 /************************** HTML ENTITIES */
 a {
-	color: $colorA;
-	cursor: pointer;
-	text-decoration: none;
-	&:hover {
-		color: $colorAHov;
-	}
+    color: $colorA;
+    cursor: pointer;
+    text-decoration: none;
+    &:hover {
+        color: $colorAHov;
+    }
 }
 
 body, html {
-	-webkit-font-smoothing: subpixel-antialiased;
-	background-color: $colorBodyBg;
-	color: $colorBodyFg;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 100%;
-	font-weight: 200;
-	height: 100%;
-	width: 100%;
+    -webkit-font-smoothing: subpixel-antialiased;
+    background-color: $colorBodyBg;
+    color: $colorBodyFg;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 100%;
+    font-weight: 200;
+    height: 100%;
+    width: 100%;
 }
 
 em {
-	font-style: normal;
+    font-style: normal;
 }
 
 input, textarea {
-	font-family: Helvetica, Arial, sans-serif;
+    font-family: Helvetica, Arial, sans-serif;
 }
 
 input[type="text"],
 input[type="search"] {
-	vertical-align: baseline;
-	padding: $inputTextP;
+    vertical-align: baseline;
+    padding: $inputTextP;
 }
 
 h1, h2, h3 {
-	margin: 0;
+    margin: 0;
 }
 
 h1 {
-	font-size: 1.7em;
-	font-weight: normal !important;
-	line-height: 120%;
-	margin-bottom: 20px;
-	margin-top: 0;
+    font-size: 1.7em;
+    font-weight: normal !important;
+    line-height: 120%;
+    margin-bottom: 20px;
+    margin-top: 0;
 }
 
 p {
-	margin-bottom: $interiorMarginLg;
+    margin-bottom: $interiorMarginLg;
 }
 
 ol, ul {
@@ -108,30 +108,30 @@ ol, ul {
 }
 
 mct-container {
-	display: block;
+    display: block;
 }
 
 .abs {
-	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	height: auto;
-	width: auto;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: auto;
+    width: auto;
 }
 
 .code {
-	font-family: "Lucida Console", monospace;
-	font-size: 0.7em;
-	line-height: 150%;
-	white-space: pre;
+    font-family: "Lucida Console", monospace;
+    font-size: 0.7em;
+    line-height: 150%;
+    white-space: pre;
 }
 
 .codehilite {
-	@extend .code;
-	background-color: rgba($colorBodyFg, 0.1);
-	padding: 1em;
+    @extend .code;
+    background-color: rgba($colorBodyFg, 0.1);
+    padding: 1em;
 }
 
 .disabled,
@@ -141,12 +141,41 @@ a.disabled {
     cursor: default !important;
 }
 
+.s-status-missing {
+    // Labels. Expects .s-status-missing to be applied to mct-representation that contains
+    // .t-object-label
+    .t-object-label .t-item-icon:before {
+        content: $glyph-icon-object-unknown;
+    }
+
+    // Item, grid item. Expects .s-status-missing to be applied to mct-representation that contains .item.grid-item
+    .item .t-item-icon-glyph:before {
+        content: $glyph-icon-object-unknown;
+    }
+
+    // Object header. Expects .s-status-missing to be applied to mct-representation.object-header
+    &.object-header {
+        .type-icon:before {
+            content: $glyph-icon-object-unknown;
+        }
+    }
+
+    // Tree item. Expects .s-status-missing to be applied to .tree-item,
+    // and mct-representation.search-item
+    &.tree-item,
+    &.search-item {
+        > .rep-object-label .t-item-icon:before {
+            content: $glyph-icon-object-unknown;
+        }
+    }
+}
+
 .align-right {
-	text-align: right;
+    text-align: right;
 }
 
 .centered {
-	text-align: center;
+    text-align: center;
 }
 
 .ellipsis {
@@ -155,24 +184,24 @@ a.disabled {
 
 .scrolling,
 .scroll {
-	overflow: auto;
+    overflow: auto;
 }
 
 .vscroll {
-	overflow-y: auto;
+    overflow-y: auto;
 }
 
 .no-margin {
-	margin: 0;
+    margin: 0;
 }
 
 .ds {
-	box-shadow: rgba(#000, 0.7) 0 4px 10px 2px;
+    box-shadow: rgba(#000, 0.7) 0 4px 10px 2px;
 }
 
 .hide,
 .hidden {
-	display: none !important;
+    display: none !important;
 }
 
 .off {
@@ -186,7 +215,7 @@ a.disabled {
 }
 
 .sep {
-	color: rgba(#fff, 0.2);
+    color: rgba(#fff, 0.2);
 }
 
 .test-stripes {
