@@ -77,9 +77,11 @@ define([], function () {
      *
      * @typedef {object} TimeConductorZoom
      * @property {number} min The largest time span that the time
-     * conductor can display in this time system
+     * conductor can display in this time system. ie. the span of the time
+     * conductor in its most zoomed out state.
      * @property {number} max The smallest time span that the time
-     * conductor can display in this time system
+     * conductor can display in this time system. ie. the span of the time
+     * conductor bounds in its most zoomed in state.
      *
      * @typedef {object} TimeSystemDefault
      * @property {TimeConductorDeltas} deltas The deltas to apply by default
