@@ -23,7 +23,6 @@
 
 define([], function () {
 
-    var MUTATION_TRACKER = new WeakMap();
     /**
      * Listens for mutation on domain objects and triggers persistence when
      * it occurs.

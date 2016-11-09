@@ -104,7 +104,7 @@ define(
                     .then(function (r) {
                         this.cacheService.flush();
                         return r;
-                    }.bind(this))
+                    }.bind(this));
             }
             return transaction.commit();
         };

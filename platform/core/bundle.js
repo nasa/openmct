@@ -372,7 +372,7 @@ define([
             "services": [
                 {
                     "key": "cacheService",
-                    "implementation": ModelCacheService,
+                    "implementation": ModelCacheService
                 },
                 {
                     "key": "now",
