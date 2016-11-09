@@ -46,26 +46,9 @@ define([], function () {
                     transactionService.startTransaction();
                 }
 
-                if (!MUTATION_TRACKER.has(domainObject)) {
-                    MUTATION_TRACKER.set(domainObject, domainObject
-                        .getCapability('mutation')
-                        .listen(function () {})
-                    );
-                }
-
-                function unlistenAndCall(f) {
-                    return function () {
-                        if (MUTATION_TRACKER.has(domainObject)) {
-                            MUTATION_TRACKER.get(domainObject)();
-                            MUTATION_TRACKER.delete(domainObject);
-                        }
-                        return f();
-                    }
-                }
-
                 transactionService.addToTransaction(
-                    unlistenAndCall(persistence.persist.bind(persistence)),
-                    unlistenAndCall(persistence.refresh.bind(persistence))
+                    persistence.persist.bind(persistence),
+                    persistence.refresh.bind(persistence)
                 );
 
                 if (!wasActive) {
