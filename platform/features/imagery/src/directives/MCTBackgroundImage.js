@@ -51,6 +51,15 @@ define(
                 // do not display out-of-order.
                 var requested = 0, loaded = 0;
 
+                function updateFilters(filters) {
+                    var styleValue = filters ?
+                        Object.keys(filters).map(function (k) {
+                            return k + "(" + filters[k] + "%)";
+                        }).join(' ') :
+                        "";
+                    element.css('filter', styleValue);
+                }
+
                 function nextImage(url) {
                     var myCounter = requested,
                         image;
@@ -75,11 +84,15 @@ define(
                 }
 
                 scope.$watch('mctBackgroundImage', nextImage);
+                scope.$watchCollection('filters', updateFilters);
             }
 
             return {
                 restrict: "A",
-                scope: { mctBackgroundImage: "=" },
+                scope: {
+                    mctBackgroundImage: "=",
+                    filters: "="
+                },
                 link: link
             };
         }

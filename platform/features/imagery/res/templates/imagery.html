@@ -20,7 +20,8 @@
 
         <div class="l-image-main s-image-main flex-elem grows"
             ng-class="{ paused: imagery.paused(), stale:false }"
-            mct-background-image="imagery.getImageUrl()">
+            mct-background-image="imagery.getImageUrl()"
+            filters="filters">
         </div>
 
         <div class="l-image-main-controlbar flex-elem l-flex-row">
@@ -32,6 +33,16 @@
                 <span class="l-date">{{imagery.getDate()}}</span>
             </div>
             <div class="right flex-elem">
+                <input type="range"
+                       min="0"
+                       max="200"
+                       ng-model="filters.contrast">
+                </input>
+                <input type="range"
+                       min="0"
+                       max="200"
+                       ng-model="filters.brightness">
+                </input>
                 <a class="s-button pause-play"
                     ng-click="imagery.paused(!imagery.paused())"
                     ng-class="{ paused: imagery.paused() }"></a>
