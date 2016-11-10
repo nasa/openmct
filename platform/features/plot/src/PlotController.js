@@ -283,6 +283,8 @@ define(
                 new PlotAxis("ranges", [], AXIS_DEFAULTS[1])
             ];
 
+            changeDisplayBounds(undefined, conductor.bounds(), conductor.follow());
+
             // Watch for changes to the selected axis
             $scope.$watch("axes[0].active.key", domainRequery);
             $scope.$watch("axes[1].active.key", rangeRequery);
