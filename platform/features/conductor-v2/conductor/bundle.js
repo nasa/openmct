@@ -67,6 +67,7 @@ define([
                     "depends": [
                         "$scope",
                         "$window",
+                        "$location",
                         "openmct",
                         "timeConductorViewService",
                         "timeSystems[]",

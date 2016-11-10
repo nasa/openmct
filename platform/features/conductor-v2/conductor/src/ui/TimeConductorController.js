@@ -26,7 +26,7 @@ define(
     ],
     function (TimeConductorValidation) {
 
-        function TimeConductorController($scope, $window, openmct, conductorViewService, timeSystems, formatService) {
+        function TimeConductorController($scope, $window, $location, openmct, conductorViewService, timeSystems, formatService) {
 
             var self = this;
 
@@ -39,6 +39,7 @@ define(
 
             this.$scope = $scope;
             this.$window = $window;
+            this.$location = $location;
             this.conductorViewService = conductorViewService;
             this.conductor = openmct.conductor;
             this.modes = conductorViewService.availableModes();
@@ -50,16 +51,22 @@ define(
                 return timeSystemConstructor();
             });
 
-            //Set the initial state of the view based on current time conductor
             this.initializeScope();
-
-            this.conductor.on('bounds', this.changeBounds);
-            this.conductor.on('timeSystem', this.changeTimeSystem);
 
             // If no mode selected, select fixed as the default
             if (!this.conductorViewService.mode()) {
                 this.setMode('fixed');
             }
+
+            // set the bounds on the time conductor based on any URL defined
+            // bounds
+            this.setBoundsFromLocation();
+            //Setup bounds in the UI based on those defined on the conductor
+            this.changeBounds(this.conductor.bounds());
+
+            //Respond to any subsequent bounds changes
+            this.conductor.on('bounds', this.changeBounds);
+            this.conductor.on('timeSystem', this.changeTimeSystem);
         }
 
         /**
@@ -95,15 +102,24 @@ define(
 
             }
 
-            this.setFormFromBounds(this.conductor.bounds());
-
             // Watch scope for selection of mode or time system by user
             this.$scope.$watch('modeModel.selectedKey', this.setMode);
 
             this.conductorViewService.on('pan', this.onPan);
             this.conductorViewService.on('pan-stop', this.onPanStop);
 
+            //Listen for changes to URL and update bounds if necessary
+            this.$scope.$on('$routeUpdate', this.setBoundsFromLocation);
+
             this.$scope.$on('$destroy', this.destroy);
+        };
+
+        TimeConductorController.prototype.setBoundsFromLocation = function() {
+            var startBound = this.$location.search().startBound;
+            var endBound = this.$location.search().endBound;
+            if (startBound !== undefined && endBound !== undefined) {
+                this.conductor.bounds({start: parseInt(startBound), end: parseInt(endBound)});
+            }
         };
 
         TimeConductorController.prototype.destroy = function () {
@@ -117,6 +133,8 @@ define(
         TimeConductorController.prototype.changeBounds = function (bounds) {
             if (!this.zooming && !this.panning) {
                 this.setFormFromBounds(bounds);
+                this.$location.search('startBound', bounds.start);
+                this.$location.search('endBound', bounds.end);
             }
         };
 
