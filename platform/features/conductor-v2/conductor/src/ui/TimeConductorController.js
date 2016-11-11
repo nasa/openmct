@@ -25,6 +25,14 @@ define(
         './TimeConductorValidation'
     ],
     function (TimeConductorValidation) {
+        var SEARCH = {
+            MODE: 'tc.mode',
+            TIME_SYSTEM: 'tc.timeSystem',
+            START_BOUND: 'tc.startBound',
+            END_BOUND: 'tc.endBound',
+            START_DELTA: 'tc.startDelta',
+            END_DELTA: 'tc.endDelta'
+        };
 
         /**
          * Controller for the Time Conductor UI element. The Time Conductor includes form fields for specifying time
@@ -58,19 +66,32 @@ define(
             });
 
             this.initializeScope();
+            var searchParams = JSON.parse(JSON.stringify(this.$location.search()));
+            //Set bounds, time systems, deltas, on conductor from URL
+            this.setStateFromSearchParams(searchParams);
 
-            // If no mode selected, select fixed as the default
-            if (!this.conductorViewService.mode()) {
-                this.setMode('fixed');
+            //Set the initial state of the UI from the conductor state
+            var timeSystem = this.conductor.timeSystem();
+            if (timeSystem) {
+                this.changeTimeSystem(this.conductor.timeSystem());
             }
 
-            // set the bounds on the time conductor based on any URL defined
-            // bounds
-            this.setBoundsFromLocation();
-            //Setup bounds in the UI based on those defined on the conductor
-            this.changeBounds(this.conductor.bounds());
+            var deltas = this.conductorViewService.deltas();
+            if (deltas) {
+                this.setFormFromDeltas(deltas);
+            }
 
-            //Respond to any subsequent bounds changes
+            var bounds = this.conductor.bounds();
+            if (bounds && bounds.start !== undefined && bounds.end !== undefined) {
+                this.changeBounds(bounds);
+            }
+
+            //Listen for changes to URL and update state if necessary
+            this.$scope.$on('$routeUpdate', function () {
+                this.setStateFromSearchParams(this.$location.search());
+            }.bind(this));
+
+            //Respond to any subsequent conductor changes
             this.conductor.on('bounds', this.changeBounds);
             this.conductor.on('timeSystem', this.changeTimeSystem);
         }
@@ -85,10 +106,6 @@ define(
             //If conductor has a time system selected already, populate the
             //form from it
             this.$scope.timeSystemModel = {};
-            var timeSystem = this.conductor.timeSystem();
-            if (timeSystem) {
-                this.setFormFromTimeSystem(timeSystem);
-            }
 
             //Represents the various modes, and the currently selected mode
             //in the view
@@ -96,35 +113,53 @@ define(
                 options: this.conductorViewService.availableModes()
             };
 
-            var mode = this.conductorViewService.mode();
-            if (mode) {
-                //If view already defines a mode (eg. controller is being
-                // initialized after navigation), then pre-populate form.
-                this.setFormFromMode(mode);
-                var deltas = this.conductorViewService.deltas();
-                if (deltas) {
-                    this.setFormFromDeltas(deltas);
-                }
-
-            }
-
             // Watch scope for selection of mode or time system by user
             this.$scope.$watch('modeModel.selectedKey', this.setMode);
 
             this.conductorViewService.on('pan', this.onPan);
             this.conductorViewService.on('pan-stop', this.onPanStop);
 
-            //Listen for changes to URL and update bounds if necessary
-            this.$scope.$on('$routeUpdate', this.setBoundsFromLocation);
-
             this.$scope.$on('$destroy', this.destroy);
         };
 
-        TimeConductorController.prototype.setBoundsFromLocation = function() {
-            var startBound = this.$location.search().startBound;
-            var endBound = this.$location.search().endBound;
-            if (startBound !== undefined && endBound !== undefined) {
-                this.conductor.bounds({start: parseInt(startBound), end: parseInt(endBound)});
+        TimeConductorController.prototype.setStateFromSearchParams = function (searchParams) {
+            //Set mode from url if changed
+            if (searchParams[SEARCH.MODE] === undefined ||
+                searchParams[SEARCH.MODE] !== this.$scope.modeModel.selectedKey) {
+                this.setMode(searchParams[SEARCH.MODE] || "fixed");
+            }
+
+            if (searchParams[SEARCH.TIME_SYSTEM] &&
+                searchParams[SEARCH.TIME_SYSTEM] !== this.conductor.timeSystem().metadata.key) {
+                //Will select the specified time system on the conductor
+                this.selectTimeSystemByKey(searchParams[SEARCH.TIME_SYSTEM]);
+            }
+
+            var validDeltas = searchParams[SEARCH.MODE] !== 'fixed' &&
+                searchParams[SEARCH.START_DELTA] &&
+                searchParams[SEARCH.END_DELTA] &&
+                !isNaN(searchParams[SEARCH.START_DELTA]) &&
+                !isNaN(searchParams[SEARCH.END_DELTA]);
+
+            if (validDeltas) {
+                //Sets deltas from some form model
+                this.setDeltas({
+                    startDelta: parseInt(searchParams[SEARCH.START_DELTA]),
+                    endDelta: parseInt(searchParams[SEARCH.END_DELTA])
+                });
+            }
+
+            var validBounds = searchParams[SEARCH.MODE] === 'fixed' &&
+                searchParams[SEARCH.START_BOUND] &&
+                searchParams[SEARCH.END_BOUND] &&
+                !isNaN(searchParams[SEARCH.START_BOUND]) &&
+                !isNaN(searchParams[SEARCH.END_BOUND]);
+
+            if (validBounds) {
+                this.conductor.bounds({
+                    start: parseInt(searchParams[SEARCH.START_BOUND]),
+                    end: parseInt(searchParams[SEARCH.END_BOUND])
+                });
             }
         };
 
@@ -148,8 +183,11 @@ define(
             //If a zoom or pan is currently in progress, do not override form values.
             if (!this.zooming && !this.panning) {
                 this.setFormFromBounds(bounds);
-                this.$location.search('startBound', bounds.start);
-                this.$location.search('endBound', bounds.end);
+                if (this.conductorViewService.mode() === 'fixed') {
+                    //Set bounds in URL on change
+                    this.$location.search(SEARCH.START_BOUND, bounds.start);
+                    this.$location.search(SEARCH.END_BOUND, bounds.end);
+                }
             }
         };
 
@@ -235,11 +273,10 @@ define(
         };
 
         /**
-         * Called when form values are changed. Synchronizes the form with
-         * the time conductor
+         * Called when form values are changed.
          * @param formModel
          */
-        TimeConductorController.prototype.updateBoundsFromForm = function (boundsModel) {
+        TimeConductorController.prototype.setBounds = function (boundsModel) {
             this.conductor.bounds({
                 start: boundsModel.start,
                 end: boundsModel.end
@@ -252,7 +289,7 @@ define(
          * @param boundsModel
          * @see TimeConductorMode
          */
-        TimeConductorController.prototype.updateDeltasFromForm = function (boundsFormModel) {
+        TimeConductorController.prototype.setDeltas = function (boundsFormModel) {
             var deltas = {
                 start: boundsFormModel.startDelta,
                 end: boundsFormModel.endDelta
@@ -260,6 +297,10 @@ define(
             if (this.validation.validateStartDelta(deltas.start) && this.validation.validateEndDelta(deltas.end)) {
                 //Sychronize deltas between form and mode
                 this.conductorViewService.deltas(deltas);
+
+                //Set Deltas in URL on change
+                this.$location.search(SEARCH.START_DELTA, deltas.start);
+                this.$location.search(SEARCH.END_DELTA, deltas.end);
             }
         };
 
@@ -273,9 +314,26 @@ define(
          * @param oldModeKey
          */
         TimeConductorController.prototype.setMode = function (newModeKey, oldModeKey) {
+            //Set mode in URL on change
+            this.$location.search(SEARCH.MODE, newModeKey);
+
             if (newModeKey !== oldModeKey) {
                 this.conductorViewService.mode(newModeKey);
                 this.setFormFromMode(newModeKey);
+
+                if (newModeKey === "fixed") {
+                    this.$location.search(SEARCH.START_DELTA, null);
+                    this.$location.search(SEARCH.END_DELTA, null);
+                } else {
+                    this.$location.search(SEARCH.START_BOUND, null);
+                    this.$location.search(SEARCH.END_BOUND, null);
+
+                    var deltas = this.conductorViewService.deltas();
+                    if (deltas) {
+                        this.$location.search(SEARCH.START_DELTA, deltas.start);
+                        this.$location.search(SEARCH.END_DELTA, deltas.end);
+                    }
+                }
             }
         };
 
@@ -304,8 +362,12 @@ define(
          * @param newTimeSystem
          */
         TimeConductorController.prototype.changeTimeSystem = function (newTimeSystem) {
+            //Set time system in URL on change
+            this.$location.search(SEARCH.TIME_SYSTEM, newTimeSystem.metadata.key);
+
             if (newTimeSystem && (newTimeSystem !== this.$scope.timeSystemModel.selected)) {
                 this.setFormFromTimeSystem(newTimeSystem);
+
                 if (newTimeSystem.defaults()) {
                     var deltas = newTimeSystem.defaults().deltas || {start: 0, end: 0};
                     var bounds = newTimeSystem.defaults().bounds || {start: 0, end: 0};
@@ -375,8 +437,8 @@ define(
          * @fires platform.features.conductor.TimeConductorController~zoomStop
          */
         TimeConductorController.prototype.onZoomStop = function () {
-            this.updateBoundsFromForm(this.$scope.boundsModel);
-            this.updateDeltasFromForm(this.$scope.boundsModel);
+            this.setBounds(this.$scope.boundsModel);
+            this.setDeltas(this.$scope.boundsModel);
             this.zooming = false;
 
             this.conductorViewService.emit('zoom-stop');
