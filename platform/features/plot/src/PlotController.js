@@ -254,7 +254,9 @@ define(
                 } else {
                     var domainAxis = $scope.axes[0];
 
-                    domainAxis.chooseOption(bounds.domain);
+                    if (bounds.domain) {
+                        domainAxis.chooseOption(bounds.domain);
+                    }
                     updateDomainFormat();
                     setBasePanZoom(bounds);
                     requery();
@@ -283,7 +285,13 @@ define(
                 new PlotAxis("ranges", [], AXIS_DEFAULTS[1])
             ];
 
-            changeDisplayBounds(undefined, conductor.bounds(), conductor.follow());
+            //Are some initialized bounds defined?
+            var bounds = conductor.bounds();
+            if (bounds &&
+                bounds.start !== undefined &&
+                bounds.end !== undefined) {
+                changeDisplayBounds(undefined, conductor.bounds(), conductor.follow());
+            }
 
             // Watch for changes to the selected axis
             $scope.$watch("axes[0].active.key", domainRequery);

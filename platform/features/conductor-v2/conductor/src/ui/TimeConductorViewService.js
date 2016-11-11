@@ -182,7 +182,8 @@ define(
          */
         TimeConductorViewService.prototype.deltas = function () {
             //Deltas stored on mode. Use .apply to preserve arguments
-            return this.currentMode.deltas.apply(this.currentMode, arguments);
+            var deltas = this.currentMode.deltas.apply(this.currentMode, arguments);
+            return deltas;
         };
 
         /**

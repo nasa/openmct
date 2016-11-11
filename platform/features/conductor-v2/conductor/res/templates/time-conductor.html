@@ -12,7 +12,7 @@
         <!-- Holds inputs and ticks -->
         <div class="l-time-conductor-inputs-and-ticks l-row-elem flex-elem no-margin">
             <form class="l-time-conductor-inputs-holder"
-                  ng-submit="tcController.updateBoundsFromForm(boundsModel)">
+                  ng-submit="tcController.setBounds(boundsModel)">
                 <span class="l-time-range-w start-w">
                     <span class="l-time-conductor-inputs">
                         <span class="l-time-range-input-w start-date">
@@ -23,7 +23,7 @@
                                              validate: tcController.validation.validateStart
                                          }"
                                          ng-model="boundsModel"
-                                         ng-blur="tcController.updateBoundsFromForm(boundsModel)"
+                                         ng-blur="tcController.setBounds(boundsModel)"
                                          field="'start'"
                                          class="time-range-input">
                             </mct-control>
@@ -37,7 +37,7 @@
                                             validate: tcController.validation.validateStartDelta
                                          }"
                                          ng-model="boundsModel"
-                                         ng-blur="tcController.updateDeltasFromForm(boundsModel)"
+                                         ng-blur="tcController.setDeltas(boundsModel)"
                                          field="'startDelta'"
                                          class="hrs-min-input">
                             </mct-control>
@@ -55,7 +55,7 @@
                                              validate: tcController.validation.validateEnd
                                          }"
                                          ng-model="boundsModel"
-                                         ng-blur="tcController.updateBoundsFromForm(boundsModel)"
+                                         ng-blur="tcController.setBounds(boundsModel)"
                                          ng-disabled="modeModel.selectedKey !== 'fixed'"
                                          field="'end'"
                                          class="time-range-input">
@@ -70,7 +70,7 @@
                                             validate: tcController.validation.validateEndDelta
                                          }"
                                          ng-model="boundsModel"
-                                         ng-blur="tcController.updateDeltasFromForm(boundsModel)"
+                                         ng-blur="tcController.setDeltas(boundsModel)"
                                          field="'endDelta'"
                                          class="hrs-min-input">
                             </mct-control>
