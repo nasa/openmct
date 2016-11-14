@@ -99,7 +99,7 @@ define([
                         "source": "generator",
                         "domains": [
                             {
-                                "key": "time",
+                                "key": "utc",
                                 "name": "Time"
                             },
                             {

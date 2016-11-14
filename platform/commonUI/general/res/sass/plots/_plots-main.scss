@@ -46,18 +46,42 @@
         }
     }
 
+    .gl-plot-wrapper-display-area-and-x-axis {
+        // Holds the plot area and the X-axis only
+        position: absolute;
+        top: nth($plotDisplayArea, 1);
+        right: nth($plotDisplayArea, 2);
+        bottom: 0;
+        left: nth($plotDisplayArea, 4);
+
+        .gl-plot-display-area {
+            //@include test(yellow);
+            @if $colorPlotBg != none {
+                background-color: $colorPlotBg;
+            }
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: nth($plotDisplayArea, 3);
+            left: 0;
+            cursor: crosshair;
+            border: 1px solid $colorPlotAreaBorder;
+        }
+
+        .gl-plot-axis-area.gl-plot-x {
+            //@include test(green);
+            top: auto;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            height: $plotXBarH;
+            width: auto;
+            overflow: hidden;
+        }
+    }
+
 	.gl-plot-axis-area {
-        //@include test();
 		position: absolute;
-		&.gl-plot-x {
-			top: auto;
-			right: 0;
-			bottom: $interiorMargin;
-			left: $plotYBarW;
-			height: $plotXBarH;
-			width: auto;
-			overflow: hidden;
-		}
 		&.gl-plot-y {
 			top: $plotLegendH + $interiorMargin;
 			right: auto;
@@ -82,19 +106,6 @@
 		&:empty {
 			display: none;
 		}
-	}
-
-	.gl-plot-display-area {
-		@if $colorPlotBg != none {
-			background-color: $colorPlotBg;
-		}
-		position: absolute;
-		top: nth($plotDisplayArea, 1);
-		right: nth($plotDisplayArea, 2);
-		bottom: nth($plotDisplayArea, 3);
-		left: nth($plotDisplayArea, 4);
-		cursor: crosshair;
-		border: 1px solid $colorPlotAreaBorder;
 	}
 
 	.gl-plot-label,
@@ -265,13 +276,9 @@
 
 .gl-plot-tick,
 .tick-label {
-    direction: rtl;
-    unicode-bidi:bidi-override;
+    @include reverseEllipsis();
 	font-size: 0.7rem;
 	position: absolute;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
 	&.gl-plot-x-tick-label,
 	&.tick-label-x {
 		right: auto;

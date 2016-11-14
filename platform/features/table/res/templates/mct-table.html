@@ -48,12 +48,19 @@
                 </th>
             </tr>
         </thead>
-
         <tbody>
-            <tr ng-repeat="visibleRow in visibleRows track by visibleRow.rowIndex"
-                ng-style="{
-                    top: visibleRow.offsetY + 'px',
-                }">
+            <tr ng-repeat-start="visibleRow in visibleRows track by visibleRow.rowIndex"
+                ng-if="visibleRow.rowIndex === toiRowIndex"
+                ng-style="{ top: visibleRow.offsetY + 'px' }"
+                class="l-toi-tablerow">
+                <td colspan="999">
+                    <mct-include key="'time-of-interest'"
+                                 class="l-toi-holder pinned"></mct-include>
+                </td>
+            </tr>
+            <tr ng-repeat-end
+                ng-style="{ top: visibleRow.offsetY + 'px' }"
+                ng-click="table.onRowClick($event, visibleRow.rowIndex) ">
                 <td ng-repeat="header in displayHeaders"
                     ng-style=" {
                         width: columnWidths[$index] + 'px',

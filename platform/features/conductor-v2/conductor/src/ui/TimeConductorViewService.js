@@ -22,25 +22,30 @@
 
 define(
     [
+        'EventEmitter',
         './TimeConductorMode'
     ],
-    function (TimeConductorMode) {
+    function (EventEmitter, TimeConductorMode) {
 
         /**
          * A class representing the state of the time conductor view. This
          * exposes details of the UI that are not represented on the
          * TimeConductor API itself such as modes and deltas.
          *
+         * @memberof platform.features.conductor
          * @param conductor
          * @param timeSystems
          * @constructor
          */
-        function TimeConductorViewService(conductor, timeSystems) {
+        function TimeConductorViewService(openmct, timeSystems) {
+
+            EventEmitter.call(this);
+
             this.systems = timeSystems.map(function (timeSystemConstructor) {
                 return timeSystemConstructor();
             });
 
-            this.conductor = conductor;
+            this.conductor = openmct.conductor;
             this.currentMode = undefined;
 
             /**
@@ -96,6 +101,8 @@ define(
                 this.availModes[ladMode.key] = ladMode;
             }
         }
+
+        TimeConductorViewService.prototype = Object.create(EventEmitter.prototype);
 
         /**
          * Getter/Setter for the Time Conductor Mode. Modes determine the
@@ -175,7 +182,8 @@ define(
          */
         TimeConductorViewService.prototype.deltas = function () {
             //Deltas stored on mode. Use .apply to preserve arguments
-            return this.currentMode.deltas.apply(this.currentMode, arguments);
+            var deltas = this.currentMode.deltas.apply(this.currentMode, arguments);
+            return deltas;
         };
 
         /**
@@ -195,6 +203,21 @@ define(
          */
         TimeConductorViewService.prototype.availableTimeSystems = function () {
             return this.currentMode.availableTimeSystems();
+        };
+
+        /**
+         * Zoom to given time span. Will fire a zoom event with new zoom
+         * bounds. Zoom bounds emitted in this way are considered ephemeral
+         * and should be overridden by any time conductor bounds events. Does
+         * not set bounds globally.
+         * @param {number} zoom A time duration in ms
+         * @fires platform.features.conductor.TimeConductorViewService~zoom
+         * @see module:openmct.TimeConductor#bounds
+         */
+        TimeConductorViewService.prototype.zoom = function (timeSpan) {
+            var zoom = this.currentMode.calculateZoom(timeSpan);
+            this.emit("zoom", zoom);
+            return zoom;
         };
 
         return TimeConductorViewService;

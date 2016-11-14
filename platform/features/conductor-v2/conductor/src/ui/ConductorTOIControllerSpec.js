@@ -21,35 +21,20 @@
  *****************************************************************************/
 
 define([
-    "./src/ConductorTelemetryDecorator",
-    "./src/ConductorRepresenter",
-    'legacyRegistry'
+    './ConductorTOIController'
 ], function (
-    ConductorTelemetryDecorator,
-    ConductorRepresenter,
-    legacyRegistry
+    ConductorTOIController
 ) {
+    var mockConductor;
+    var mockConductorViewService;
 
-    legacyRegistry.register("platform/features/conductor-v2/compatibility", {
-        "extensions": {
-            "representers": [
-                {
-                    "implementation": ConductorRepresenter,
-                    "depends": [
-                        "openmct"
-                    ]
-                }
-            ],
-            "components": [
-                {
-                    "type": "decorator",
-                    "provides": "telemetryService",
-                    "implementation": ConductorTelemetryDecorator,
-                    "depends": [
-                        "openmct"
-                    ]
-                }
-            ]
-        }
+    describe("The ConductorTOIController", function () {
+        mockConductor = jasmine.createSpyObj("conductor", [
+            "on"
+        ]);
+        mockConductorViewService = jasmine.createSpyObj("conductorViewService", [
+            "on"
+        ]);
+
     });
 });

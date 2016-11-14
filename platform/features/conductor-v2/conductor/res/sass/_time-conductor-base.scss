@@ -54,7 +54,7 @@
     // Clock hands
     div[class*="hand"] {
         $handW: 2px;
-        $handH: $d * 0.4; //8px;
+        $handH: $d * 0.4;
         @include transform(translate(-50%, -50%));
         @include animation-iteration-count(infinite);
         @include animation-timing-function(linear);
@@ -125,7 +125,6 @@
     }
 
     .l-time-conductor-inputs-holder {
-        $ticksBlockerFadeW: 50px;
         $iconCalendarW: 16px;
         $wBgColor: $colorBodyBg;
 
@@ -136,6 +135,7 @@
         bottom: 0;
         left: 0;
         z-index: 1;
+        pointer-events: none;
         .l-time-range-w {
             // Wraps a datetime text input field
             height: 100%;
@@ -159,6 +159,9 @@
                     content: 'End';
                 }
             }
+            .l-time-conductor-inputs {
+                pointer-events: auto;
+            }
             input[type="text"] {
                 @include trans-prop-nice(padding, 250ms);
             }
@@ -175,7 +178,7 @@
     }
 
     .l-time-conductor-inputs-and-ticks {
-        $c: $colorTimeCondTicks; //$colorTick;
+        $c: $colorTimeCondTicks;
         height: $r1H;
         mct-conductor-axis {
             display: block;
@@ -184,8 +187,9 @@
         }
         .l-axis-holder {
             height: $r1H;
-            position: relative;
-            width: 100%;
+            position: absolute;
+            left: nth($timeCondAxisLROffset, 1);
+            right: nth($timeCondAxisLROffset, 2);
             svg {
                 text-rendering: geometricPrecision;
                 width: 100%;
@@ -208,9 +212,49 @@
             }
         }
     }
-    .l-data-visualization {
-        background: $colorTimeCondDataVisBg;
+    .l-data-visualization-holder {
         height: $r2H;
+        z-index: 2; // Must lift above ticks and inputs
+
+        .l-page-button,
+        .l-data-visualization {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+        }
+
+        .l-page-button {
+            @if nth($timeCondAxisLROffset, 1) + nth($timeCondAxisLROffset, 2) > 30 {
+                left: 0;
+                width: nth($timeCondAxisLROffset, 1);
+                &.align-right {
+                    left: auto;
+                    right: 0;
+                    width: nth($timeCondAxisLROffset, 2);
+                }
+            } @else {
+                // Hide these if the offsets aren't enough
+                display: none;
+            }
+        }
+
+        .l-data-visualization {
+            background: $colorTimeCondDataVisBg;
+            left: nth($timeCondAxisLROffset, 1);
+            right: nth($timeCondAxisLROffset, 2);
+            &:hover {
+                .l-toi-holder.hover {
+                    opacity: 1;
+                }
+                .l-toi-holder.pinned.active {
+                    opacity: 0.4;
+                    .l-toi-val {
+                        pointer-events: none;
+                        opacity: 0;
+                    }
+                }
+            }
+        }
     }
 
     .l-time-conductor-controls {
@@ -219,13 +263,11 @@
         .l-time-conductor-zoom-w {
             @include justify-content(flex-end);
             .time-conductor-zoom {
-                display: none; // TEMP per request from Andrew 8/1/16
                 height: $r3H;
                 min-width: 100px;
                 width: 20%;
             }
             .time-conductor-zoom-current-range {
-                display: none; // TEMP per request from Andrew 8/1/16
                 color: $colorTick;
             }
         }
@@ -235,7 +277,9 @@
     &.realtime-mode,
     &.lad-mode {
         .time-conductor-icon {
-            &:before { color: $colorTimeCondKeyBg; }
+            &:before {
+                color: $colorTimeCondKeyBg;
+            }
             div[class*="hand"] {
                 @include animation-name(clock-hands);
                 &:before {
@@ -276,13 +320,16 @@
         }
 
         .l-data-visualization {
-            background: $colorTimeCondDataVisRtBg !important
+            background: $colorTimeCondDataVisRtBg !important;
         }
 
         .mode-selector .s-menu-button {
             $fg: $colorTimeCondKeyFg;
             @include btnSubtle($bg: $colorTimeCondKeyBg, $bgHov: pullForward($colorTimeCondKeyBg, $ltGamma), $fg: $colorTimeCondKeyFg);
-            &:before { color: $fg !important; };
+            &:before {
+                color: $fg !important;
+            }
+        ;
             color: $fg !important;
         }
     }
@@ -297,6 +344,9 @@
         }
         .mode-selector .s-menu-button:before {
             content: $i;
+        }
+        .l-axis-holder {
+            @include cursorGrab();
         }
     }
 
@@ -344,7 +394,9 @@
 /******************************************************************** MOBILE */
 
 @include phoneandtablet {
-    .l-time-conductor-holder { min-width: 0 !important; }
+    .l-time-conductor-holder {
+        min-width: 0 !important;
+    }
     .super-menu.mini {
         width: 200px;
         height: 100px;
