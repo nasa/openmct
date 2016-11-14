@@ -41,7 +41,7 @@ define([
      */
 
     function makeEventName(domainObject, event) {
-        return event + ':' + objectUtils.makeKeyString(domainObject.key);
+        return event + ':' + objectUtils.makeKeyString(domainObject.identifier);
     }
 
     function DefaultCompositionProvider() {
