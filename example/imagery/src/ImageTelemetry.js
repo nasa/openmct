@@ -31,10 +31,15 @@ define(
 
         var firstObservedTime = Date.now(),
             images = [
-                "http://www.nasa.gov/393811main_Palomar_ao_bouchez_10s_after_impact_4x3_946-710.png",
-                "http://www.nasa.gov/393821main_Palomar_ao_bouchez_15s_after_impact_4x3_946-710.png",
-                "http://www.nasa.gov/images/content/393801main_CfhtVeillet2_4x3_516-387.jpg",
-                "http://www.nasa.gov/images/content/392790main_1024_768_GeminiNorth_NightBeforeImpact_946-710.jpg"
+                "https://c1.staticflickr.com/9/8723/16813029640_9250a9a615_b.jpg",
+                "http://cdn.inquisitr.com/wp-content/uploads/2015/09/UFO-Comet-Rosetta-boulder.jpg",
+                "http://en.es-static.us/upl/2015/01/rosetta-comet-crack-OSIRIS-e1422270190774.jpg",
+                "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Vesta_darkside.jpg/768px-Vesta_darkside.jpg",
+                "http://www.leonarddavid.com/wp-content/uploads/2016/01/Chury_2012.jpg",
+                "https://upload.wikimedia.org/wikipedia/commons/6/67/Earth's_Moon.jpg",
+                "https://upload.wikimedia.org/wikipedia/commons/1/17/Rosetta_triumphs_at_asteroid_Lutetia.jpg",
+                "https://upload.wikimedia.org/wikipedia/commons/9/9d/243_Ida_large.jpg",
+                "https://c1.staticflickr.com/1/150/436668227_e9ed29c6ed_b.jpg"
             ].map(function (url, index) {
                 return {
                     timestamp: firstObservedTime + 1000 * index,
