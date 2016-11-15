@@ -37,11 +37,11 @@ define(
          * @constructor
          */
         function ConductorRepresenter(
-            timeConductor,
+            openmct,
             scope,
             element
         ) {
-            this.conductor = timeConductor;
+            this.conductor = openmct.conductor;
             this.scope = scope;
             this.element = element;
 

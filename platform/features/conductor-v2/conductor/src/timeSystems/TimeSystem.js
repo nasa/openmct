@@ -73,8 +73,22 @@ define([], function () {
         throw new Error('Not implemented');
     };
 
-    /**
+    /***
      *
+     * @typedef {object} TimeConductorZoom
+     * @property {number} min The largest time span that the time
+     * conductor can display in this time system. ie. the span of the time
+     * conductor in its most zoomed out state.
+     * @property {number} max The smallest time span that the time
+     * conductor can display in this time system. ie. the span of the time
+     * conductor bounds in its most zoomed in state.
+     *
+     * @typedef {object} TimeSystemDefault
+     * @property {TimeConductorDeltas} deltas The deltas to apply by default
+     * when this time system is active. Applies to real-time modes only
+     * @property {TimeConductorBounds} bounds The bounds to apply by default
+     * when this time system is active
+     * @property {TimeConductorZoom} zoom Default min and max zoom levels
      * @returns {TimeSystemDefault[]} At least one set of default values for
      * this time system.
      */

@@ -35,8 +35,8 @@ define(
          * @param telemetryFormatter
          * @constructor
          */
-        function RealtimeTableController($scope, telemetryHandler, telemetryFormatter) {
-            TableController.call(this, $scope, telemetryHandler, telemetryFormatter);
+        function RealtimeTableController($scope, telemetryHandler, telemetryFormatter, openmct) {
+            TableController.call(this, $scope, telemetryHandler, telemetryFormatter, openmct);
 
             this.maxRows = 100000;
         }

@@ -23,9 +23,10 @@
 define(
     [
         "zepto",
+        "moment",
         "../../src/controllers/MCTTableController"
     ],
-    function ($, MCTTableController) {
+    function ($, moment, MCTTableController) {
 
         var MOCK_ELEMENT_TEMPLATE =
             '<div><div class="l-view-section scrolling">' +
@@ -40,7 +41,10 @@ define(
                 watches,
                 mockTimeout,
                 mockElement,
-                mockExportService;
+                mockExportService,
+                mockConductor,
+                mockFormatService,
+                mockFormat;
 
             function promise(value) {
                 return {
@@ -48,6 +52,12 @@ define(
                         return promise(callback(value));
                     }
                 };
+            }
+
+            function getCallback(target, event) {
+                return target.calls.filter(function (call) {
+                    return call.args[0] === event;
+                })[0].args[1];
             }
 
             beforeEach(function () {
@@ -67,15 +77,33 @@ define(
                     'exportCSV'
                 ]);
 
+                mockConductor = jasmine.createSpyObj('conductor', [
+                    'bounds',
+                    'timeOfInterest',
+                    'timeSystem',
+                    'on',
+                    'off'
+                ]);
+
                 mockScope.displayHeaders = true;
                 mockTimeout = jasmine.createSpy('$timeout');
                 mockTimeout.andReturn(promise(undefined));
+                mockFormat = jasmine.createSpyObj('formatter', [
+                    'parse',
+                    'format'
+                ]);
+                mockFormatService = jasmine.createSpyObj('formatService', [
+                    'getFormat'
+                ]);
+                mockFormatService.getFormat.andReturn(mockFormat);
 
                 controller = new MCTTableController(
                     mockScope,
                     mockTimeout,
                     mockElement,
-                    mockExportService
+                    mockExportService,
+                    mockFormatService,
+                    {conductor: mockConductor}
                 );
                 spyOn(controller, 'setVisibleRows').andCallThrough();
             });
@@ -84,6 +112,133 @@ define(
                 expect(mockScope.$watchCollection).toHaveBeenCalledWith('filters', jasmine.any(Function));
                 expect(mockScope.$watch).toHaveBeenCalledWith('headers', jasmine.any(Function));
                 expect(mockScope.$watch).toHaveBeenCalledWith('rows', jasmine.any(Function));
+            });
+
+            it('destroys listeners on destruction', function () {
+                expect(mockScope.$on).toHaveBeenCalledWith('$destroy', controller.destroyConductorListeners);
+                getCallback(mockScope.$on, '$destroy')();
+
+                expect(mockConductor.off).toHaveBeenCalledWith('timeSystem', controller.changeTimeSystem);
+                expect(mockConductor.off).toHaveBeenCalledWith('timeOfInterest', controller.setTimeOfInterest);
+                expect(mockConductor.off).toHaveBeenCalledWith('bounds', controller.changeBounds);
+            });
+
+            describe('The time of interest', function () {
+                var rowsAsc = [];
+                var rowsDesc = [];
+                beforeEach(function () {
+                    rowsAsc = [
+                        {
+                            'col1': {'text': 'row1 col1 match'},
+                            'col2': {'text': '2012-10-31 00:00:00.000Z'},
+                            'col3': {'text': 'row1 col3'}
+                        },
+                        {
+                            'col1': {'text': 'row2 col1 match'},
+                            'col2': {'text': '2012-11-01 00:00:00.000Z'},
+                            'col3': {'text': 'row2 col3'}
+                        },
+                        {
+                            'col1': {'text': 'row3 col1'},
+                            'col2': {'text': '2012-11-03 00:00:00.000Z'},
+                            'col3': {'text': 'row3 col3'}
+                        },
+                        {
+                            'col1': {'text': 'row3 col1'},
+                            'col2': {'text': '2012-11-04 00:00:00.000Z'},
+                            'col3': {'text': 'row3 col3'}
+                        }
+                    ];
+                    rowsDesc = [
+                        {
+                            'col1': {'text': 'row1 col1 match'},
+                            'col2': {'text': '2012-11-02 00:00:00.000Z'},
+                            'col3': {'text': 'row1 col3'}
+                        },
+                        {
+                            'col1': {'text': 'row2 col1 match'},
+                            'col2': {'text': '2012-11-01 00:00:00.000Z'},
+                            'col3': {'text': 'row2 col3'}
+                        },
+                        {
+                            'col1': {'text': 'row3 col1'},
+                            'col2': {'text': '2012-10-30 00:00:00.000Z'},
+                            'col3': {'text': 'row3 col3'}
+                        },
+                        {
+                            'col1': {'text': 'row3 col1'},
+                            'col2': {'text': '2012-10-29 00:00:00.000Z'},
+                            'col3': {'text': 'row3 col3'}
+                        }
+                    ];
+                    mockScope.timeColumns = ['col2'];
+                    mockScope.sortColumn = 'col2';
+                    controller.toiFormatter = mockFormat;
+                });
+                it("is observed for changes", function () {
+                    //Mock setting time columns
+                    getCallback(mockScope.$watch, 'timeColumns')(['col2']);
+
+                    expect(mockConductor.on).toHaveBeenCalledWith('timeOfInterest',
+                        jasmine.any(Function));
+                });
+                describe("causes corresponding row to be highlighted", function () {
+                    it("when changed and rows sorted ascending", function () {
+                        var testDate = "2012-11-02 00:00:00.000Z";
+                        mockScope.rows = rowsAsc;
+                        mockScope.displayRows = rowsAsc;
+                        mockScope.sortDirection = 'asc';
+
+                        var toi = moment.utc(testDate).valueOf();
+                        mockFormat.parse.andReturn(toi);
+                        mockFormat.format.andReturn(testDate);
+
+                        //mock setting the timeColumns parameter
+                        getCallback(mockScope.$watch, 'timeColumns')(['col2']);
+
+                        var toiCallback = getCallback(mockConductor.on, 'timeOfInterest');
+                        toiCallback(toi);
+
+                        expect(mockScope.toiRowIndex).toBe(2);
+                    });
+                    it("when changed and rows sorted descending", function () {
+                        var testDate = "2012-10-31 00:00:00.000Z";
+                        mockScope.rows = rowsDesc;
+                        mockScope.displayRows = rowsDesc;
+                        mockScope.sortDirection = 'desc';
+
+                        var toi = moment.utc(testDate).valueOf();
+                        mockFormat.parse.andReturn(toi);
+                        mockFormat.format.andReturn(testDate);
+
+                        //mock setting the timeColumns parameter
+                        getCallback(mockScope.$watch, 'timeColumns')(['col2']);
+
+                        var toiCallback = getCallback(mockConductor.on, 'timeOfInterest');
+                        toiCallback(toi);
+
+                        expect(mockScope.toiRowIndex).toBe(2);
+                    });
+                    it("when rows are set and sorted ascending", function () {
+                        var testDate = "2012-11-02 00:00:00.000Z";
+                        mockScope.sortDirection = 'asc';
+
+                        var toi = moment.utc(testDate).valueOf();
+                        mockFormat.parse.andReturn(toi);
+                        mockFormat.format.andReturn(testDate);
+                        mockConductor.timeOfInterest.andReturn(toi);
+
+                        //mock setting the timeColumns parameter
+                        getCallback(mockScope.$watch, 'timeColumns')(['col2']);
+
+                        //Mock setting the rows on scope
+                        var rowsCallback = getCallback(mockScope.$watch, 'rows');
+                        rowsCallback(rowsAsc);
+
+                        expect(mockScope.toiRowIndex).toBe(2);
+                    });
+
+                });
             });
 
             describe('rows', function () {
@@ -132,7 +287,7 @@ define(
                 });
 
                 it('Supports adding rows individually', function () {
-                    var addRowFunc = mockScope.$on.calls[mockScope.$on.calls.length - 2].args[1],
+                    var addRowFunc = getCallback(mockScope.$on, 'add:row'),
                         row4 = {
                             'col1': {'text': 'row3 col1'},
                             'col2': {'text': 'ghi'},
@@ -146,7 +301,7 @@ define(
                 });
 
                 it('Supports removing rows individually', function () {
-                    var removeRowFunc = mockScope.$on.calls[mockScope.$on.calls.length - 1].args[1];
+                    var removeRowFunc = getCallback(mockScope.$on, 'remove:row');
                     controller.setRows(testRows);
                     expect(mockScope.displayRows.length).toBe(3);
                     removeRowFunc(undefined, 2);
@@ -172,6 +327,10 @@ define(
 
                 describe('sorting', function () {
                     var sortedRows;
+
+                    beforeEach(function () {
+                        sortedRows = [];
+                    });
 
                     it('Sorts rows ascending', function () {
                         mockScope.sortColumn = 'col1';
@@ -202,6 +361,20 @@ define(
                         expect(sortedRows[0].col2.text).toEqual('ghi');
                         expect(sortedRows[1].col2.text).toEqual('def');
                         expect(sortedRows[2].col2.text).toEqual('abc');
+                    });
+
+                    it('Allows sort column to be changed externally by ' +
+                       'setting or changing sortBy attribute', function () {
+                        mockScope.displayRows = testRows;
+                        var sortByCB = getCallback(mockScope.$watch, 'sortColumn');
+                        sortByCB('col2');
+
+                        expect(mockScope.sortDirection).toEqual('asc');
+
+                        expect(mockScope.displayRows[0].col2.text).toEqual('abc');
+                        expect(mockScope.displayRows[1].col2.text).toEqual('def');
+                        expect(mockScope.displayRows[2].col2.text).toEqual('ghi');
+
                     });
 
                     // https://github.com/nasa/openmct/issues/910
@@ -369,8 +542,6 @@ define(
 
                     });
                 });
-
-
             });
         });
     });

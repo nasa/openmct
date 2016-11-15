@@ -34,6 +34,17 @@
 $colorTimeCondTicks: pullForward($colorBodyBg, 30%);
 $colorTimeCondKeyBg: #4e70dc;
 $colorTimeCondKeyFg: #fff;
-$colorTimeCondDataVisBg: pullForward($colorBodyBg, 10%);
+$colorTimeCondDataVisBg: pullForward($colorBodyBg, 5%);
 $colorTimeCondDataVisRtBg: pushBack($colorTimeCondKeyBg, 10%);
+
+// Time of Interest
+$toiColorBg: #6b93c6;
+$toiColorBlocker: $colorBodyBg; // Color of blocker element beneath the TOI icons
+$toiColorFg: #000; // Used by value display
+$toiColorCtrlFg: #fff;
+$toiColorBgAlert: #cf2a12; // Used by unpin button on hover
+$colorTimeCondTOIBg: darken($toiColorBg, 20%);
+$colorTimeCondTOIBgHov: $toiColorBg;
+
 @import "time-conductor-base";
+@import "time-of-interest";

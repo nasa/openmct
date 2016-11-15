@@ -75,12 +75,6 @@ define(['EventEmitter'], function (EventEmitter) {
         return true;
     };
 
-    function throwOnError(validationResult) {
-        if (validationResult !== true) {
-            throw new Error(validationResult);
-        }
-    }
-
     /**
      * Get or set the follow mode of the time conductor. In follow mode the
      * time conductor ticks, regularly updating the bounds from a timing
@@ -127,8 +121,12 @@ define(['EventEmitter'], function (EventEmitter) {
      */
     TimeConductor.prototype.bounds = function (newBounds) {
         if (arguments.length > 0) {
-            throwOnError(this.validateBounds(newBounds));
-            this.boundsVal = newBounds;
+            var validationResult = this.validateBounds(newBounds);
+            if (validationResult !== true) {
+                throw new Error(validationResult);
+            }
+            //Create a copy to avoid direct mutation of conductor bounds
+            this.boundsVal = JSON.parse(JSON.stringify(newBounds));
             /**
              * The start time, end time, or both have been updated.
              * @event bounds
@@ -136,8 +134,15 @@ define(['EventEmitter'], function (EventEmitter) {
              * @property {TimeConductorBounds} bounds
              */
             this.emit('bounds', this.boundsVal);
+
+            // If a bounds change results in a TOI outside of the current
+            // bounds, unset it
+            if (this.toi < newBounds.start || this.toi > newBounds.end) {
+                this.timeOfInterest(undefined);
+            }
         }
-        return this.boundsVal;
+        //Return a copy to prevent direct mutation of time conductor bounds.
+        return JSON.parse(JSON.stringify(this.boundsVal));
     };
 
     /**
@@ -164,9 +169,6 @@ define(['EventEmitter'], function (EventEmitter) {
              * Time System
              * */
             this.emit('timeSystem', this.system);
-            // Do something with bounds here. Try and convert between
-            // time systems? Or just set defaults when time system changes?
-            // eg.
             this.bounds(bounds);
         } else if (arguments.length === 1) {
             throw new Error('Must set bounds when changing time system');
@@ -177,7 +179,8 @@ define(['EventEmitter'], function (EventEmitter) {
     /**
      * Get or set the Time of Interest. The Time of Interest is the temporal
      * focus of the current view. It can be manipulated by the user from the
-     * time conductor or from other views.
+     * time conductor or from other views.The time of interest can
+     * effectively be unset by assigning a value of 'undefined'.
      * @fires module:openmct.TimeConductor~timeOfInterest
      * @param newTOI
      * @returns {number} the current time of interest

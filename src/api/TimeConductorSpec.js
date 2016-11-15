@@ -52,19 +52,19 @@ define(['./TimeConductor'], function (TimeConductor) {
             bounds = {start: 0, end: 1};
             expect(tc.bounds()).not.toBe(bounds);
             expect(tc.bounds.bind(tc, bounds)).not.toThrow();
-            expect(tc.bounds()).toBe(bounds);
+            expect(tc.bounds()).toEqual(bounds);
         });
 
         it("Disallows setting of invalid bounds", function () {
             bounds = {start: 1, end: 0};
-            expect(tc.bounds()).not.toBe(bounds);
+            expect(tc.bounds()).not.toEqual(bounds);
             expect(tc.bounds.bind(tc, bounds)).toThrow();
-            expect(tc.bounds()).not.toBe(bounds);
+            expect(tc.bounds()).not.toEqual(bounds);
 
             bounds = {start: 1};
-            expect(tc.bounds()).not.toBe(bounds);
+            expect(tc.bounds()).not.toEqual(bounds);
             expect(tc.bounds.bind(tc, bounds)).toThrow();
-            expect(tc.bounds()).not.toBe(bounds);
+            expect(tc.bounds()).not.toEqual(bounds);
         });
 
         it("Allows setting of time system with bounds", function () {
@@ -105,6 +105,18 @@ define(['./TimeConductor'], function (TimeConductor) {
             tc.on("follow", eventListener);
             tc.follow(follow);
             expect(eventListener).toHaveBeenCalledWith(follow);
+        });
+
+        it("If bounds are set and TOI lies inside them, do not change TOI", function () {
+            tc.timeOfInterest(6);
+            tc.bounds({start: 1, end: 10});
+            expect(tc.timeOfInterest()).toEqual(6);
+        });
+
+        it("If bounds are set and TOI lies outside them, reset TOI", function () {
+            tc.timeOfInterest(11);
+            tc.bounds({start: 1, end: 10});
+            expect(tc.timeOfInterest()).toBeUndefined();
         });
     });
 });

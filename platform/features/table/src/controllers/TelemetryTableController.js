@@ -43,7 +43,8 @@ define(
         function TelemetryTableController(
             $scope,
             telemetryHandler,
-            telemetryFormatter
+            telemetryFormatter,
+            openmct
         ) {
             var self = this;
 
@@ -54,6 +55,7 @@ define(
             this.table = new TableConfiguration($scope.domainObject,
                 telemetryFormatter);
             this.changeListeners = [];
+            this.conductor = openmct.conductor;
 
             $scope.rows = [];
 
@@ -63,13 +65,35 @@ define(
                 self.registerChangeListeners();
             });
 
+            this.destroy = this.destroy.bind(this);
+
             // Unsubscribe when the plot is destroyed
-            this.$scope.$on("$destroy", this.destroy.bind(this));
+            this.$scope.$on("$destroy", this.destroy);
+            this.timeColumns = [];
+
+
+            this.sortByTimeSystem = this.sortByTimeSystem.bind(this);
+            this.conductor.on('timeSystem', this.sortByTimeSystem);
+            this.conductor.off('timeSystem', this.sortByTimeSystem);
         }
 
         /**
-         * @private
+         * Based on the selected time system, find a matching domain column
+         * to sort by. By default will just match on key.
+         * @param timeSystem
          */
+        TelemetryTableController.prototype.sortByTimeSystem = function (timeSystem) {
+            var scope = this.$scope;
+            scope.defaultSort = undefined;
+            if (timeSystem) {
+                this.table.columns.forEach(function (column) {
+                    if (column.domainMetadata && column.domainMetadata.key === timeSystem.metadata.key) {
+                        scope.defaultSort = column.getTitle();
+                    }
+                });
+            }
+        };
+
         TelemetryTableController.prototype.unregisterChangeListeners = function () {
             this.changeListeners.forEach(function (listener) {
                 return listener && listener();
@@ -148,20 +172,37 @@ define(
             this.setup();
         };
 
+        TelemetryTableController.prototype.populateColumns = function (telemetryMetadata) {
+            this.table.populateColumns(telemetryMetadata);
+
+            //Identify time columns
+            telemetryMetadata.forEach(function (metadatum) {
+                //Push domains first
+                (metadatum.domains || []).forEach(function (domainMetadata) {
+                    this.timeColumns.push(domainMetadata.name);
+                }.bind(this));
+            }.bind(this));
+
+            var timeSystem = this.conductor.timeSystem();
+            if (timeSystem) {
+                this.sortByTimeSystem(timeSystem);
+            }
+        };
+
         /**
          * Setup table columns based on domain object metadata
          */
         TelemetryTableController.prototype.setup = function () {
             var handle = this.handle,
-                table = this.table,
                 self = this;
 
             if (handle) {
+                this.timeColumns = [];
                 handle.promiseTelemetryObjects().then(function () {
                     self.$scope.headers = [];
                     self.$scope.rows = [];
-                    table.populateColumns(handle.getMetadata());
 
+                    self.populateColumns(handle.getMetadata());
                     self.filterColumns();
 
                     // When table column configuration changes, (due to being

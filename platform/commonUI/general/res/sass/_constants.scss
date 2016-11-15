@@ -78,7 +78,7 @@ $treeContextTriggerW: 20px;
 /*************** Tabular */
 $tabularHeaderH: 22px;
 $tabularTdPadLR: $itemPadLR;
-$tabularTdPadTB: 3px;
+$tabularTdPadTB: 2px;
 /*************** Imagery */
 $imageMainControlBarH: 25px;
 $imageThumbsD: 120px;
@@ -99,7 +99,7 @@ $plotXBarH: 32px;
 $plotLegendH: 20px;
 $plotSwatchD: 8px;
 // 1: Top, 2: right, 3: bottom, 4: left
-$plotDisplayArea: ($plotLegendH + $interiorMargin, 0, $plotXBarH + $interiorMargin, $plotYBarW);
+$plotDisplayArea: ($plotLegendH + $interiorMargin, 0, $plotXBarH, $plotYBarW);
 /* min plot height is based on user testing to find minimum useful height */
 $plotMinH: 95px;
 /*************** Bubbles */
