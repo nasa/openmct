@@ -30,7 +30,13 @@ define(
          * property to the URL given in its value, but only after that
          * image has loaded; this avoids "flashing" as images change.
          *
-         * If `src` is falsy, no image will be displayed (immediately.)
+         * If the value of `mct-background-image`is falsy, no image
+         * will be displayed (immediately.)
+         *
+         * Optionally, a `filters` attribute may be specified as an
+         * object with `brightness` and/or `contrast` properties,
+         * whose values are percentages. A value of 100 will make
+         * no changes to the image's brightness or contrast.
          *
          * @constructor
          * @memberof platform/features/imagery
