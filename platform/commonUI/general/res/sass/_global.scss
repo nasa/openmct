@@ -175,6 +175,11 @@ a.disabled {
 	display: none !important;
 }
 
+.hide-nice {
+    opacity: 0;
+    pointer-events: none;
+}
+
 .off {
     visibility: hidden;
     opacity: 0;

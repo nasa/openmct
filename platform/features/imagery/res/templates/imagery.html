@@ -3,24 +3,29 @@
         ng-mouseenter="showLocalControls = true;"
         ng-mouseleave="showLocalControls = false;">
         <div class="l-local-controls s-local-controls s-wrapper-transluc"
-            ng-show="showLocalControls">
-            <input class="icon-contrast" type="range"
-                   min="0"
-                   max="200"
-                   ng-model="filters.contrast">
-            </input>
-
+            ng-class="{ 'hide-nice': !showLocalControls }">
             <input class="icon-brightness" type="range"
                    min="0"
-                   max="200"
+                   max="1000"
                    ng-model="filters.brightness">
             </input>
+            <input class="icon-contrast" type="range"
+                   min="0"
+                   max="1000"
+                   ng-model="filters.contrast">
+            </input>
+            <a class="s-button icon-refresh" ng-click="
+            filters.brightness = 100;
+            filters.contrast = 100
+            "></a>
         </div>
 
         <div class="l-image-main s-image-main flex-elem grows"
-            ng-class="{ paused: imagery.paused(), stale:false }"
+             ng-class="{ paused: imagery.paused(), stale:false }">
+            <div class="image-main"
             mct-background-image="imagery.getImageUrl()"
             filters="filters">
+            </div>
         </div>
 
         <div class="l-image-main-controlbar flex-elem l-flex-row">

@@ -122,17 +122,18 @@
     // Default position is upper right
     $p: $interiorMargin;
     position: absolute;
-    top: $p; right: $p; bottom: auto; left: $p;
+    top: $p; right: $p; bottom: auto;
     text-align: right;
     z-index: 5;
 }
 
 .s-local-controls {
+    @include trans-prop-nice(opacity);
     font-size: 0.7rem;
     &.s-wrapper-transluc {
         // Semi-opaque wrapper to visually distinguish a control
         // from the background
-        background: rgba($colorBodyFg, 0.2);
+        background: rgba($colorTransLucBg, 0.5);
         box-sizing: border-box;
         border-radius: $controlCr;
     }

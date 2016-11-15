@@ -1,5 +1,6 @@
 .l-image-main-wrapper,
-.l-image-thumbs-wrapper {
+.l-image-thumbs-wrapper,
+.image-main {
 	@include absPosDefault(0, false);
 }
 
@@ -32,7 +33,7 @@
 
 /*************************************** MAIN IMAGE */
 
-.l-image-main,
+.image-main,
 .l-image-thumb-item .l-thumb {
 	background-size: contain;
 	background-position: center;
