@@ -151,10 +151,35 @@
         }
     }
 
+    .t-reset-btn-holder {
+        $bc: $scrollbarTrackColorBg;
+        &:before,
+        &:after {
+            border-right: 1px solid $bc;
+            content:'';
+            display: block;
+            width: 5px;
+            height: 4px;
+        }
+
+        &:before {
+            border-top: 1px solid $bc;
+            margin-bottom: 2px;
+        }
+
+        &:after {
+            border-bottom: 1px solid $bc;
+            margin-top: 2px;
+        }
+    }
+
     &.s-wrapper-transluc {
-        display: inline-block;
         left: auto;
         padding: $interiorMargin $interiorMarginLg;
+    }
+
+    &.l-flex-row {
+        align-items: center;
     }
 }
 

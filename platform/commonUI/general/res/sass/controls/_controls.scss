@@ -133,7 +133,7 @@
     &.s-wrapper-transluc {
         // Semi-opaque wrapper to visually distinguish a control
         // from the background
-        background: rgba($colorTransLucBg, 0.5);
+        background: rgba($colorTransLucBg, 0.7);
         box-sizing: border-box;
         border-radius: $controlCr;
     }
@@ -467,7 +467,7 @@ input[type="search"] {
     width: $h;
     height: $h;
     margin-top: 1 + floor($h/2) * -1;
-    @include btnSubtle(pullForward($colorBtnBg, 10%));
+    @include btnSubtle(pullForward($colorBtnBg, 20%));
     border-radius: 50% !important;
 }
 
