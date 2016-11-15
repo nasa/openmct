@@ -17,16 +17,15 @@
                 </input>
             </span>
             <span class="holder flex-elem t-reset-btn-holder">
-                <a class="s-icon-button icon-reset t-btn-reset" ng-click="
-                filters.brightness = 100;
-                filters.contrast = 100
-                "></a>
+                <a class="s-icon-button icon-reset t-btn-reset"
+                   ng-click="filters = { brightness: 100, contrast: 100 }"></a>
             </span>
         </div>
 
         <div class="l-image-main s-image-main flex-elem grows"
              ng-class="{ paused: imagery.paused(), stale:false }">
             <div class="image-main"
+
             mct-background-image="imagery.getImageUrl()"
             filters="filters">
             </div>
