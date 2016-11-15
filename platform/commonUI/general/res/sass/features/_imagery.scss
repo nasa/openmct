@@ -134,6 +134,29 @@
 	}
 }
 
+/*************************************** LOCAL CONTROLS */
+.l-local-controls {
+    max-width: 200px;
+    width: 35%;
+    input[type="range"] {
+        display: block;
+        width: 100%;
+        &:not(:first-child) {
+            margin-top: $interiorMarginLg;
+        }
+
+        &:before {
+            margin-right: $interiorMarginSm;
+        }
+    }
+
+    &.s-wrapper-transluc {
+        display: inline-block;
+        left: auto;
+        padding: $interiorMargin $interiorMarginLg;
+    }
+}
+
 /*************************************** WHEN IN FRAME */
 .frame .t-imagery {
 	.l-image-main-wrapper {

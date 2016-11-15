@@ -74,6 +74,8 @@ $glyph-icon-thumbs-strip: '\e1033';
 $glyph-icon-two-parts-both: '\e1034';
 $glyph-icon-two-parts-one-only: '\e1035';
 $glyph-icon-x-in-circle: '\e1036';
+$glyph-icon-brightness: '\e1038';
+$glyph-icon-contrast: '\e1039';
 $glyph-icon-activity: '\e1100';
 $glyph-icon-activity-mode: '\e1101';
 $glyph-icon-autoflow-tabular: '\e1102';
@@ -173,6 +175,8 @@ $glyph-icon-box-with-dashed-lines: '\e1129';
 .icon-two-parts-both {  @include glyph($glyph-icon-two-parts-both); }
 .icon-two-parts-one-only {  @include glyph($glyph-icon-two-parts-one-only); }
 .icon-x-in-circle {  @include glyph($glyph-icon-x-in-circle); }
+.icon-brightness {  @include glyph($glyph-icon-brightness); }
+.icon-contrast {  @include glyph($glyph-icon-contrast); }
 .icon-activity {  @include glyph($glyph-icon-activity); }
 .icon-activity-mode {  @include glyph($glyph-icon-activity-mode); }
 .icon-autoflow-tabular {  @include glyph($glyph-icon-autoflow-tabular); }

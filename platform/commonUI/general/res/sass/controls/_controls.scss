@@ -122,13 +122,20 @@
     // Default position is upper right
     $p: $interiorMargin;
     position: absolute;
-    top: $p;
-    right: $p;
+    top: $p; right: $p; bottom: auto; left: $p;
+    text-align: right;
     z-index: 5;
 }
 
 .s-local-controls {
     font-size: 0.7rem;
+    &.s-wrapper-transluc {
+        // Semi-opaque wrapper to visually distinguish a control
+        // from the background
+        background: rgba($colorBodyFg, 0.2);
+        box-sizing: border-box;
+        border-radius: $controlCr;
+    }
 }
 
 /******************************************************** CUSTOM CHECKBOXES */
