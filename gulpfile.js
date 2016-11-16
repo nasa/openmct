@@ -130,6 +130,7 @@ gulp.task('checkstyle', function () {
     return gulp.src(paths.scripts)
         .pipe(jscs())
         .pipe(jscs.reporter())
+        .pipe(jscs.reporter('jscs-html-reporter'))
         .pipe(jscs.reporter('fail'));
 });
 
