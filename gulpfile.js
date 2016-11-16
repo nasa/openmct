@@ -42,6 +42,9 @@ var gulp = require('gulp'),
         specs: [ 'platform/**/*Spec.js', 'src/**/*Spec.js' ],
     },
     options = {
+        babel: {
+            presets: ['es2015']
+        },
         requirejsOptimize: {
             name: 'bower_components/almond/almond.js',
             include: paths.main.replace('.js', ''),
@@ -70,10 +73,12 @@ var gulp = require('gulp'),
     };
 
 gulp.task('scripts', function () {
+    var babel = require('gulp-babel');
     var requirejsOptimize = require('gulp-requirejs-optimize');
     var replace = require('gulp-replace-task');
     return gulp.src(paths.main)
         .pipe(sourcemaps.init())
+        .pipe(babel(options.babel))
         .pipe(requirejsOptimize(options.requirejsOptimize))
         .pipe(sourcemaps.write('.'))
         .pipe(replace(options.replace))
