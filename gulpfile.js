@@ -126,12 +126,18 @@ gulp.task('lint', function () {
 
 gulp.task('checkstyle', function () {
     var jscs = require('gulp-jscs');
+    var mkdirp = require('mkdirp');
+    var reportName = 'jscs-html-report.html';
+    var reportPath = path.resolve(paths.reports, 'checkstyle', reportName);
+    var moveReport = fs.rename.bind(fs, reportName, reportPath, _.noop);
+
+    mkdirp.sync(path.resolve(paths.reports, 'checkstyle'));
 
     return gulp.src(paths.scripts)
         .pipe(jscs())
         .pipe(jscs.reporter())
-        .pipe(jscs.reporter('jscs-html-reporter'))
-        .pipe(jscs.reporter('fail'));
+        .pipe(jscs.reporter('jscs-html-reporter')).on('finish', moveReport)
+        .pipe(jscs.reporter('fail'))
 });
 
 gulp.task('fixstyle', function () {
