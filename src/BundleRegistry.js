@@ -63,7 +63,7 @@ define(() => class BundleRegistry {
         this.disable.call(this, arguments);
     }
 
-    "delete"(path) {
+    ["delete"](path) {
         if (!this.knownBundles[path]) {
             throw new Error('Cannot remove Unknown Bundle ' + path);
         }
