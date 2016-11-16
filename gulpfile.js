@@ -137,7 +137,7 @@ gulp.task('checkstyle', function () {
         .pipe(jscs())
         .pipe(jscs.reporter())
         .pipe(jscs.reporter('jscs-html-reporter')).on('finish', moveReport)
-        .pipe(jscs.reporter('fail'))
+        .pipe(jscs.reporter('fail'));
 });
 
 gulp.task('fixstyle', function () {
