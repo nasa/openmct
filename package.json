@@ -21,6 +21,7 @@
     "gulp-sass": "^2.2.0",
     "gulp-sourcemaps": "^1.6.0",
     "jasmine-core": "^2.3.0",
+    "jscs-html-reporter": "^0.1.0",
     "jsdoc": "^3.3.2",
     "jshint": "^2.7.0",
     "karma": "^0.13.3",
