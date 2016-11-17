@@ -30,7 +30,13 @@ define(
          * property to the URL given in its value, but only after that
          * image has loaded; this avoids "flashing" as images change.
          *
-         * If `src` is falsy, no image will be displayed (immediately.)
+         * If the value of `mct-background-image`is falsy, no image
+         * will be displayed (immediately.)
+         *
+         * Optionally, a `filters` attribute may be specified as an
+         * object with `brightness` and/or `contrast` properties,
+         * whose values are percentages. A value of 100 will make
+         * no changes to the image's brightness or contrast.
          *
          * @constructor
          * @memberof platform/features/imagery
@@ -50,6 +56,15 @@ define(
                 // some strategy like this is necessary to ensure that images
                 // do not display out-of-order.
                 var requested = 0, loaded = 0;
+
+                function updateFilters(filters) {
+                    var styleValue = filters ?
+                        Object.keys(filters).map(function (k) {
+                            return k + "(" + filters[k] + "%)";
+                        }).join(' ') :
+                        "";
+                    element.css('filter', styleValue);
+                }
 
                 function nextImage(url) {
                     var myCounter = requested,
@@ -75,11 +90,15 @@ define(
                 }
 
                 scope.$watch('mctBackgroundImage', nextImage);
+                scope.$watchCollection('filters', updateFilters);
             }
 
             return {
                 restrict: "A",
-                scope: { mctBackgroundImage: "=" },
+                scope: {
+                    mctBackgroundImage: "=",
+                    filters: "="
+                },
                 link: link
             };
         }
