@@ -30,7 +30,7 @@ define(['zepto'], function ($) {
         var $element = $(htmlElement);
         var contextManager = this.contextManager;
         var selection = this.selection;
-        var path = contextManager.path(item, htmlElement);
+        var context = contextManager.context(item, htmlElement);
 
         function select() {
             selection.add(path);
@@ -40,7 +40,7 @@ define(['zepto'], function ($) {
             var selected = selection.primary();
             $element.toggleClass(
                 'selected',
-                selected && path.matches(selected)
+                !!selected && (selected.element === htmlElement)
             );
         }
 
