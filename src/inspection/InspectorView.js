@@ -20,36 +20,36 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(function () {
-    function InspectorController(selection, navigation, region, factory) {
-        this.selection = selection;
-        this.navigation = navigation;
-        this.region = region;
-        this.factory = factory;
-        this.active = false;
-        this.onChange = this.onChange.bind(this);
+define(['zepto', './InspectorPanelView'], function ($, InspectorPanelView) {
+    function InspectorView(registry, context) {
+        this.registry = registry;
+        this.context = context;
+        this.views = [];
     }
 
-    InspectorController.prototype.onChange = function () {
-        var view = this.factory(this.navigation.get(), this.selection.get());
-        this.region.show(view);
+    InspectorView.prototype.show = function (element) {
+        var providers = this.registry.get(this.context);
+        var $ul = $('<ul></ul>');
+
+        this.destroy();
+
+        this.views = providers.map(function (provider) {
+            return new InspectorPanelView(provider, this.context);
+        }.bind(this));
+
+        $(element).append($ul);
+
+        this.views.foreEach(function (view) {
+            view.show($ul[0]);
+        });
     };
 
-    InspectorController.prototype.activate = function () {
-        if (this.active) {
-            return;
-        }
-        this.selection.off('change', this.onChange);
-        this.navigation.off('change', this.onChange);
+    InspectorView.prototype.destroy = function () {
+        this.views.forEach(function (view) {
+            view.destroy();
+        });
+        this.views = [];
     };
 
-    InspectorController.prototype.deactivate = function () {
-        if (!this.active) {
-            return;
-        }
-        this.selection.off('change', this.onChange);
-        this.navigation.off('change', this.onChange);
-    };
-
-    return InspectorController;
+    return InspectorView;
 });
