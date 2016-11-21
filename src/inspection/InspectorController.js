@@ -35,17 +35,18 @@ define(['./InspectorView'], function (InspectorView) {
     };
 
     InspectorController.prototype.activate = function () {
-        if (this.active) {
-            return;
+        if (!this.active) {
+            this.selection.on('change', this.onChange);
+            this.active = true;
         }
-        this.selection.on('change', this.onChange);
+
     };
 
     InspectorController.prototype.deactivate = function () {
-        if (!this.active) {
-            return;
+        if (this.active) {
+            this.selection.off('change', this.onChange);
+            this.active = false;
         }
-        this.selection.off('change', this.onChange);
     };
 
     return InspectorController;
