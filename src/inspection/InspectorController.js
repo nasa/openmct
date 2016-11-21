@@ -20,18 +20,17 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(function () {
-    function InspectorController(selection, navigation, region, factory) {
+define(['./InspectorView'], function (InspectorView) {
+    function InspectorController(selection, region, registry) {
         this.selection = selection;
-        this.navigation = navigation;
         this.region = region;
-        this.factory = factory;
+        this.registry = registry;
         this.active = false;
         this.onChange = this.onChange.bind(this);
     }
 
-    InspectorController.prototype.onChange = function () {
-        var view = this.factory(this.navigation.get(), this.selection.get());
+    InspectorController.prototype.onChange = function (context) {
+        var view = new InspectorView(this.registry, context)
         this.region.show(view);
     };
 
@@ -39,8 +38,7 @@ define(function () {
         if (this.active) {
             return;
         }
-        this.selection.off('change', this.onChange);
-        this.navigation.off('change', this.onChange);
+        this.selection.on('change', this.onChange);
     };
 
     InspectorController.prototype.deactivate = function () {
@@ -48,7 +46,6 @@ define(function () {
             return;
         }
         this.selection.off('change', this.onChange);
-        this.navigation.off('change', this.onChange);
     };
 
     return InspectorController;
