@@ -32,6 +32,7 @@ define([
     './policies/AdapterCompositionPolicy',
     './policies/AdaptedViewPolicy',
     './runs/AlternateCompositionInitializer',
+    './runs/SelectingNavigationListener',
     'text!./templates/adapted-view-template.html'
 ], function (
     legacyRegistry,
@@ -45,6 +46,7 @@ define([
     AdapterCompositionPolicy,
     AdaptedViewPolicy,
     AlternateCompositionInitializer,
+    SelectingNavigationListener,
     adaptedViewTemplate
 ) {
     legacyRegistry.register('src/adapter', {
@@ -121,6 +123,10 @@ define([
                 {
                     implementation: AlternateCompositionInitializer,
                     depends: ["openmct"]
+                },
+                {
+                    implementation: SelectingNavigationListener,
+                    depends: ["navigationService", "openmct"]
                 }
             ],
             views: [
