@@ -219,7 +219,7 @@ define([
                         "$window"
                     ]
                 },
-                {
+/*                {
                     "key": "window",
                     "name": "Open In New Tab",
                     "implementation": NewTabAction,
@@ -235,7 +235,7 @@ define([
                     "group": "windowing",
                     "cssclass": "icon-new-window",
                     "priority": "preferred"
-                },
+                },*/
                 {
                     "key": "fullscreen",
                     "implementation": FullscreenAction,
