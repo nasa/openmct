@@ -151,7 +151,7 @@ define(
         };
 
         /**
-         * @typedef {object} Delta
+         * @typedef {object} TimeConductorDeltas
          * @property {number} start Used to set the start bound of the
          * TimeConductor on tick. A positive value that will be subtracted
          * from the value provided by a tick source to determine the start
@@ -178,7 +178,7 @@ define(
          *     tick
          *     - end: A time in ms after the timestamp of the last data received
          *     which will be used to determine the 'end' bound on tick
-         * @returns {Delta} current value of the deltas
+         * @returns {TimeConductorDeltas} current value of the deltas
          */
         TimeConductorViewService.prototype.deltas = function () {
             //Deltas stored on mode. Use .apply to preserve arguments
@@ -204,6 +204,11 @@ define(
             return this.currentMode.availableTimeSystems();
         };
 
+        /**
+         * An event to indicate that zooming is taking place
+         * @event platform.features.conductor.TimeConductorViewService~zoom
+         * @property {ZoomLevel} zoom the new zoom level.
+         */
         /**
          * Zoom to given time span. Will fire a zoom event with new zoom
          * bounds. Zoom bounds emitted in this way are considered ephemeral

@@ -374,8 +374,6 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                 expect(controller.$scope.boundsModel.start).not.toBe(testBounds.start);
                 expect(controller.$scope.boundsModel.end).not.toBe(testBounds.end);
 
-                // use registered CB instead
-                // controller.onPan(testBounds);
                 expect(controller.conductorViewService.on).toHaveBeenCalledWith("pan",
                     controller.onPan);
 

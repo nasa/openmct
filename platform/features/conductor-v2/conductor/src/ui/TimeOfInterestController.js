@@ -21,13 +21,14 @@
  *****************************************************************************/
 
 define(
-    ["zepto"],
-    function ($) {
+    [],
+    function () {
 
         /**
-         * The mct-conductor-axis renders a horizontal axis with regular
-         * labelled 'ticks'. It requires 'start' and 'end' integer values to
-         * be specified as attributes.
+         * Controller for the Time of Interest element used in various views to display the TOI. Responsible for setting
+         * the text label for the current TOI, and for toggling the (un)pinned state which determines whether the TOI
+         * indicator is visible.
+         * @constructor
          */
         function TimeOfInterestController($scope, openmct, formatService) {
             this.conductor = openmct.conductor;
@@ -56,6 +57,12 @@ define(
             $scope.$on('$destroy', this.destroy);
         }
 
+        /**
+         * Called when the time of interest changes on the conductor. Will pin (display) the TOI indicator, and set the
+         * text using the default formatter of the currently active Time System.
+         * @private
+         * @param {integer} toi Current time of interest in ms
+         */
         TimeOfInterestController.prototype.changeTimeOfInterest = function (toi) {
             if (toi !== undefined) {
                 this.$scope.pinned = true;
@@ -73,11 +80,18 @@ define(
             this.format = this.formatService.getFormat(timeSystem.formats()[0]);
         };
 
+        /**
+         * @private
+         */
         TimeOfInterestController.prototype.destroy = function () {
             this.conductor.off('timeOfInterest', this.changeTimeOfInterest);
             this.conductor.off('timeSystem', this.changeTimeSystem);
         };
 
+        /**
+         * Will unpin (hide) the TOI indicator. Has the effect of setting the time of interest to `undefined` on the
+         * Time Conductor
+         */
         TimeOfInterestController.prototype.dismiss = function () {
             this.conductor.timeOfInterest(undefined);
         };

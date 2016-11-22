@@ -25,9 +25,9 @@ define(
     function ($) {
 
         /**
-         * The mct-conductor-axis renders a horizontal axis with regular
-         * labelled 'ticks'. It requires 'start' and 'end' integer values to
-         * be specified as attributes.
+         * Controller for the Time of Interest indicator in the conductor itself. Sets the horizontal position of the
+         * TOI indicator based on the current value of the TOI, and the width of the TOI conductor.
+         * @memberof platform.features.conductor
          */
         function ConductorTOIController($scope, openmct, conductorViewService) {
             this.conductor = openmct.conductor;
@@ -41,7 +41,7 @@ define(
             }.bind(this));
 
             this.conductor.on('timeOfInterest', this.changeTimeOfInterest);
-            this.conductorViewService.on('zoom', this.setOffsetFromBounds);
+            this.conductorViewService.on('zoom', this.setOffsetFromZoom);
             this.conductorViewService.on('pan', this.setOffsetFromBounds);
 
             var timeOfInterest = this.conductor.timeOfInterest();
@@ -50,12 +50,14 @@ define(
             }
 
             $scope.$on('$destroy', this.destroy);
-
         }
 
+        /**
+         * @private
+         */
         ConductorTOIController.prototype.destroy = function () {
             this.conductor.off('timeOfInterest', this.changeTimeOfInterest);
-            this.conductorViewService.off('zoom', this.setOffsetFromBounds);
+            this.conductorViewService.off('zoom', this.setOffsetFromZoom);
             this.conductorViewService.off('pan', this.setOffsetFromBounds);
         };
 
@@ -80,6 +82,17 @@ define(
             }
         };
 
+        /**
+         * @private
+         */
+        ConductorTOIController.prototype.setOffsetFromZoom = function (zoom) {
+            return this.setOffsetFromBounds(zoom.bounds);
+        };
+
+        /**
+         * Invoked when time of interest changes. Will set the horizontal offset of the TOI indicator.
+         * @private
+         */
         ConductorTOIController.prototype.changeTimeOfInterest = function () {
             var bounds = this.conductor.bounds();
             if (bounds) {
@@ -88,10 +101,11 @@ define(
         };
 
         /**
-         * Set time of interest
+         * On a mouse click event within the TOI element, convert position within element to a time of interest, and
+         * set the time of interest on the conductor.
          * @param e The angular $event object
          */
-        ConductorTOIController.prototype.click = function (e) {
+        ConductorTOIController.prototype.setTOIFromPosition = function (e) {
             //TOI is set using the alt key modified + primary click
             if (e.altKey) {
                 var element = $(e.currentTarget);

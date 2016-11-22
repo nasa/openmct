@@ -28,9 +28,9 @@ define(
         var PADDING = 1;
 
         /**
-         * The mct-conductor-axis renders a horizontal axis with regular
-         * labelled 'ticks'. It requires 'start' and 'end' integer values to
-         * be specified as attributes.
+         * Controller that renders a horizontal time scale spanning the current bounds defined in the time conductor.
+         * Used by the mct-conductor-axis directive
+         * @constructor
          */
         function ConductorAxisController(openmct, formatService, conductorViewService, scope, element) {
             // Dependencies
@@ -54,6 +54,9 @@ define(
             this.initialize(element);
         }
 
+        /**
+         * @private
+         */
         ConductorAxisController.prototype.destroy = function () {
             this.conductor.off('timeSystem', this.changeTimeSystem);
             this.conductor.off('bounds', this.changeBounds);
@@ -62,9 +65,7 @@ define(
         };
 
         /**
-         * Set defaults, and apply d3 axis to the
-         * @param scope
-         * @param element
+         * @private
          */
         ConductorAxisController.prototype.initialize = function (element) {
             this.target = element[0].firstChild;
@@ -95,6 +96,9 @@ define(
             this.conductorViewService.on("zoom-stop", this.onZoomStop);
         };
 
+        /**
+         * @private
+         */
         ConductorAxisController.prototype.changeBounds = function (bounds) {
             this.bounds = bounds;
             if (!this.zooming) {
@@ -127,8 +131,7 @@ define(
         };
 
         /**
-         * When the time system changes, update the scale and formatter used
-         * for showing times.
+         * When the time system changes, update the scale and formatter used for showing times.
          * @param timeSystem
          */
         ConductorAxisController.prototype.changeTimeSystem = function (timeSystem) {
@@ -164,12 +167,27 @@ define(
             }
         };
 
+        /**
+         * The user has stopped panning the time conductor scale element.
+         * @event panStop
+         */
+        /**
+         * Called on release of mouse button after dragging the scale left or right.
+         * @fires platform.features.conductor.ConductorAxisController~panStop
+         */
         ConductorAxisController.prototype.panStop = function () {
             //resync view bounds with time conductor bounds
             this.conductorViewService.emit("pan-stop");
             this.conductor.bounds(this.bounds);
         };
 
+        /**
+         * Rescales the axis when the user zooms. Although zoom ultimately results in a bounds change once the user
+         * releases the zoom slider, dragging the slider will not immediately change the conductor bounds. It will
+         * however immediately update the scale and the bounds displayed in the UI.
+         * @private
+         * @param {ZoomLevel}
+         */
         ConductorAxisController.prototype.onZoom = function (zoom) {
             this.zooming = true;
 
@@ -177,15 +195,23 @@ define(
             this.setScale();
         };
 
+        /**
+         * @private
+         */
         ConductorAxisController.prototype.onZoomStop = function (zoom) {
             this.zooming = false;
         };
 
         /**
+         * @event platform.features.conductor.ConductorAxisController~pan
+         * Fired when the time conductor is panned
+         */
+        /**
          * Initiate panning via a click + drag gesture on the time conductor
          * scale. Panning triggers a "pan" event
          * @param {number} delta the offset from the original click event
          * @see TimeConductorViewService#
+         * @fires platform.features.conductor.ConductorAxisController~pan
          */
         ConductorAxisController.prototype.pan = function (delta) {
             if (!this.conductor.follow()) {
@@ -202,6 +228,9 @@ define(
             }
         };
 
+        /**
+         * Invoked on element resize. Will rebuild the scale based on the new dimensions of the element.
+         */
         ConductorAxisController.prototype.resize = function () {
             this.setScale();
         };

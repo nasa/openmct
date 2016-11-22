@@ -26,6 +26,12 @@ define(
     ],
     function (TimeConductorValidation) {
 
+        /**
+         * Controller for the Time Conductor UI element. The Time Conductor includes form fields for specifying time
+         * bounds and relative time deltas for queries, as well as controls for selection mode, time systems, and zooming.
+         * @memberof platform.features.conductor
+         * @constructor
+         */
         function TimeConductorController($scope, $window, openmct, conductorViewService, timeSystems, formatService) {
 
             var self = this;
@@ -106,6 +112,9 @@ define(
             this.$scope.$on('$destroy', this.destroy);
         };
 
+        /**
+         * @private
+         */
         TimeConductorController.prototype.destroy = function () {
             this.conductor.off('bounds', this.changeBounds);
             this.conductor.off('timeSystem', this.changeTimeSystem);
@@ -114,7 +123,13 @@ define(
             this.conductorViewService.off('pan-stop', this.onPanStop);
         };
 
+        /**
+         * When the conductor bounds change, set the bounds in the form.
+         * @private
+         * @param {TimeConductorBounds} bounds
+         */
         TimeConductorController.prototype.changeBounds = function (bounds) {
+            //If a zoom or pan is currently in progress, do not override form values.
             if (!this.zooming && !this.panning) {
                 this.setFormFromBounds(bounds);
             }
@@ -176,6 +191,10 @@ define(
                 });
         };
 
+        /**
+         * When the deltas change, update the values in the UI
+         * @private
+         */
         TimeConductorController.prototype.setFormFromDeltas = function (deltas) {
             this.$scope.boundsModel.startDelta = deltas.start;
             this.$scope.boundsModel.endDelta = deltas.end;
@@ -183,7 +202,7 @@ define(
 
         /**
          * Initialize the form when time system changes.
-         * @param timeSystem
+         * @param {TimeSystem} timeSystem
          */
         TimeConductorController.prototype.setFormFromTimeSystem = function (timeSystem) {
             var timeSystemModel = this.$scope.timeSystemModel;
@@ -328,6 +347,15 @@ define(
             }
         };
 
+        /**
+         * Fired when user has released the zoom slider
+         * @event platform.features.conductor.TimeConductorController~zoomStop
+         */
+        /**
+         * Invoked when zoom slider is released by user. Will update the time conductor with the new bounds, triggering
+         * a global bounds change event.
+         * @fires platform.features.conductor.TimeConductorController~zoomStop
+         */
         TimeConductorController.prototype.onZoomStop = function () {
             this.updateBoundsFromForm(this.$scope.boundsModel);
             this.updateDeltasFromForm(this.$scope.boundsModel);
@@ -342,7 +370,7 @@ define(
          * conductor. Panning updates the scale and bounds fields
          * immediately, but does not trigger a bounds change to other views
          * until the mouse button is released.
-         * @param bounds
+         * @param {TimeConductorBounds} bounds
          */
         TimeConductorController.prototype.onPan = function (bounds) {
             this.panning = true;
@@ -350,6 +378,9 @@ define(
             this.$scope.boundsModel.end = bounds.end;
         };
 
+        /**
+         * Called when the user releases the mouse button after panning.
+         */
         TimeConductorController.prototype.onPanStop = function () {
             this.panning = false;
         };
