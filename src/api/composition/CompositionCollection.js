@@ -30,6 +30,16 @@ define([
     objectUtils
 ) {
 
+    /**
+     * var composition = mct.composition(myObject);
+     * composition.on('add', addObject);
+     * composition.on('remove', removeObject);
+     * composition.on('load', stopLoading);
+     * startLoading();
+     * composition.load();
+     *
+     */
+
 
     /**
      * A CompositionCollection represents the list of domain objects contained
@@ -47,17 +57,42 @@ define([
      * @augments EventEmitter
      */
     function CompositionCollection(domainObject, provider, api) {
-        EventEmitter.call(this);
         this.domainObject = domainObject;
+        this._loaded = false;
         this.provider = provider;
         this.api = api;
-        if (this.provider.on) {
+        this._listeners = {
+            add: [],
+            remove: [],
+            load: []
+        };
+        this.onProviderAdd = this.onProviderAdd.bind(this);
+        this.onProviderRemove = this.onProviderRemove.bind(this);
+    }
+
+    CompositionCollection.prototype.onProviderAdd = function (childId) {
+        this.api.publicAPI.objects.get(childId).then(function (child) {
+            this.add(child, true);
+        }.bind(this));
+    };
+
+    CompositionCollection.prototype.onProviderRemove = function (child) {
+        this.remove(child, true);
+    };
+
+    CompositionCollection.prototype.on = function (event, callback, context) {
+        if (!this._listeners[event]) {
+            throw new Error('Event not supported by composition: ' + event);
+        }
+
+        if (event === 'add') {
             this.provider.on(
                 this.domainObject,
                 'add',
                 this.onProviderAdd,
                 this
-            );
+            )
+        } if (event === 'remove') {
             this.provider.on(
                 this.domainObject,
                 'remove',
@@ -65,51 +100,56 @@ define([
                 this
             );
         }
-    }
 
-    CompositionCollection.prototype = Object.create(EventEmitter.prototype);
-
-    CompositionCollection.prototype.onProviderAdd = function (child) {
-        this.add(child, true);
-    };
-
-    CompositionCollection.prototype.onProviderRemove = function (child) {
-        this.remove(child, true);
-    };
-
-    /**
-     * Get the index of a domain object within this composition. If the
-     * domain object is not contained here, -1 will be returned.
-     *
-     * A call to [load]{@link module:openmct.CompositionCollection#load}
-     * must have resolved before using this method.
-     *
-     * @param {module:openmct.DomainObject} child the domain object for which
-     *        an index should be retrieved
-     * @returns {number} the index of that domain object
-     * @memberof module:openmct.CompositionCollection#
-     * @name indexOf
-     */
-    CompositionCollection.prototype.indexOf = function (child) {
-        return _.findIndex(this.loadedChildren, function (other) {
-            return objectUtils.equals(child, other);
+        this._listeners[event].push({
+            callback: callback,
+            context: context
         });
     };
 
-    /**
-     * Get the index of a domain object within this composition.
-     *
-     * A call to [load]{@link module:openmct.CompositionCollection#load}
-     * must have resolved before using this method.
-     *
-     * @param {module:openmct.DomainObject} child the domain object for which
-     *        containment should be checked
-     * @returns {boolean} true if the domain object is contained here
-     * @memberof module:openmct.CompositionCollection#
-     * @name contains
-     */
-    CompositionCollection.prototype.contains = function (child) {
-        return this.indexOf(child) !== -1;
+    CompositionCollection.prototype.off = function (event, callback, context) {
+        if (!this._listeners[event]) {
+            throw new Error('Event not supported by composition: ' + event);
+        }
+
+        var index = _.findIndex(this._listeners[event], function (l) {
+            return l.callback == callback && l.context === context;
+        });
+
+        if (index === -1) {
+            throw new Error('Tried to remove a listener that already existed');
+        }
+
+        this._listeners[event].splice(index, 1);
+        if (this._listeners[event].length === 0) {
+            // Remove provider listener if this is the last callback to
+            // be removed.
+            if (event === 'add') {
+                this.provider.off(
+                    this.domainObject,
+                    'add',
+                    this.onProviderAdd,
+                    this
+                );
+            } else if (event === 'remove') {
+                this.provider.off(
+                    this.domainObject,
+                    'remove',
+                    this.onProviderRemove,
+                    this
+                );
+            }
+        }
+    };
+
+    CompositionCollection.prototype.emit = function (event, payload) {
+        this._listeners[event].forEach(function (l) {
+            if (l.context) {
+                l.callback.call(l.context, payload);
+            } else {
+                l.callback(payload)
+            }
+        });
     };
 
     /**
@@ -136,23 +176,13 @@ define([
      * @name add
      */
     CompositionCollection.prototype.add = function (child, skipMutate) {
-        if (!this.loadedChildren) {
+        if (!this._loaded) {
             throw new Error("Must load composition before you can add!");
         }
-        if (!this.canContain(child)) {
-            throw new Error("This object cannot contain that object.");
-        }
-        if (this.contains(child)) {
-            if (skipMutate) {
-                return; // don't add twice, don't error.
-            }
-            throw new Error("Unable to add child: already in composition");
-        }
-        this.loadedChildren.push(child);
-        this.emit('add', child);
         if (!skipMutate) {
-            // add after we have added.
-            this.provider.add(this.domainObject, child);
+            this.provider.add(this.domainObject, child.identifier);
+        } else {
+            this.emit('add', child);
         }
     };
 
@@ -167,12 +197,9 @@ define([
     CompositionCollection.prototype.load = function () {
         return this.provider.load(this.domainObject)
             .then(function (children) {
-                this.loadedChildren = [];
-                children.map(function (c) {
-                    this.add(c, true);
-                }, this);
+                this._loaded = true;
+                children.map(this.onProviderAdd, this);
                 this.emit('load');
-                return this.loadedChildren.slice();
             }.bind(this));
     };
 
@@ -189,41 +216,10 @@ define([
      * @name remove
      */
     CompositionCollection.prototype.remove = function (child, skipMutate) {
-        if (!this.contains(child)) {
-            if (skipMutate) {
-                return;
-            }
-            throw new Error("Unable to remove child: not found in composition");
-        }
-        var index = this.indexOf(child);
-        var removed = this.loadedChildren.splice(index, 1)[0];
-        this.emit('remove', index, child);
         if (!skipMutate) {
-            // trigger removal after we have internally removed it.
-            this.provider.remove(this.domainObject, removed);
-        }
-    };
-
-    /**
-     * Stop using this composition collection. This will release any resources
-     * associated with this collection.
-     * @name destroy
-     * @memberof module:openmct.CompositionCollection#
-     */
-    CompositionCollection.prototype.destroy = function () {
-        if (this.provider.off) {
-            this.provider.off(
-                this.domainObject,
-                'add',
-                this.onProviderAdd,
-                this
-            );
-            this.provider.off(
-                this.domainObject,
-                'remove',
-                this.onProviderRemove,
-                this
-            );
+            this.provider.remove(this.domainObject, child.identifier);
+        } else {
+            this.emit('remove', child);
         }
     };
 

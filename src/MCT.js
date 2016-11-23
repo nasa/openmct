@@ -61,9 +61,11 @@ define([
             services: [
                 {
                     key: "openmct",
-                    implementation: function () {
+                    implementation: function ($injector) {
+                        this.$injector = $injector;
                         return this;
-                    }.bind(this)
+                    }.bind(this),
+                    depends: ['$injector']
                 }
             ]
         } };
@@ -96,7 +98,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name composition
          */
-        this.composition = new api.CompositionAPI();
+        this.composition = new api.CompositionAPI(this);
 
         /**
          * Registry for views of domain objects which should appear in the

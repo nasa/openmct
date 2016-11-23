@@ -32,6 +32,9 @@ define([
         return this.rootRegistry.getRoots()
             .then(function (roots) {
                 return {
+                    identifier: {
+                        key: "ROOT"
+                    },
                     name: 'The root object',
                     type: 'root',
                     composition: roots

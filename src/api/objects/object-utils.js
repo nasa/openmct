@@ -96,7 +96,7 @@ define([
     };
 
     var equals = function (a, b) {
-        return makeKeyString(a.key) === makeKeyString(b.key);
+        return makeKeyString(a.identifier) === makeKeyString(b.identifier);
     };
 
     return {
