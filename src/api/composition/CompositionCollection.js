@@ -53,7 +53,6 @@ define([
      */
     function CompositionCollection(domainObject, provider, publicAPI) {
         this.domainObject = domainObject;
-        this.loaded = false;
         this.provider = provider;
         this.publicAPI = publicAPI;
         this.listeners = {
@@ -158,9 +157,6 @@ define([
      * @name add
      */
     CompositionCollection.prototype.add = function (child, skipMutate) {
-        if (!this.loaded) {
-            throw new Error("Must load composition before you can add!");
-        }
         if (!skipMutate) {
             this.provider.add(this.domainObject, child.identifier);
         } else {
@@ -179,9 +175,11 @@ define([
     CompositionCollection.prototype.load = function () {
         return this.provider.load(this.domainObject)
             .then(function (children) {
-                this.loaded = true;
-                children.map(this.onProviderAdd, this);
+                return Promise.all(children.map(this.onProviderAdd, this));
+            }.bind(this))
+            .then(function (children) {
                 this.emit('load');
+                return children;
             }.bind(this));
     };
 
@@ -210,8 +208,9 @@ define([
      * @private
      */
     CompositionCollection.prototype.onProviderAdd = function (childId) {
-        this.publicAPI.objects.get(childId).then(function (child) {
+        return this.publicAPI.objects.get(childId).then(function (child) {
             this.add(child, true);
+            return child;
         }.bind(this));
     };
 

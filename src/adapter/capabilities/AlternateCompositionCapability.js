@@ -71,7 +71,7 @@ define([
                 this.getDependencies();
             }
 
-            var keyString = objectUtils.makeKeyString(child.key);
+            var keyString = objectUtils.makeKeyString(child.identifier);
             var oldModel = objectUtils.toOldFormat(child);
             var newDO = this.instantiate(oldModel, keyString);
             return this.contextualize(newDO, this.domainObject);
@@ -89,9 +89,9 @@ define([
             }
 
             var collection = this.openmct.composition.get(newFormatDO);
+
             return collection.load()
                 .then(function (children) {
-                    collection.destroy();
                     return children.map(this.contextualizeChild, this);
                 }.bind(this));
         };
