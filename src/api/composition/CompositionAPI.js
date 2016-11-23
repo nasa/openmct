@@ -78,7 +78,7 @@ define([
             return;
         }
 
-        return new CompositionCollection(domainObject, provider, this);
+        return new CompositionCollection(domainObject, provider, this.publicAPI);
     };
 
     /**
