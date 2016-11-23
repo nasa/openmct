@@ -58,10 +58,10 @@ define([
      */
     function CompositionCollection(domainObject, provider, api) {
         this.domainObject = domainObject;
-        this._loaded = false;
+        this.loaded = false;
         this.provider = provider;
         this.api = api;
-        this._listeners = {
+        this.listeners = {
             add: [],
             remove: [],
             load: []
@@ -81,7 +81,7 @@ define([
     };
 
     CompositionCollection.prototype.on = function (event, callback, context) {
-        if (!this._listeners[event]) {
+        if (!this.listeners[event]) {
             throw new Error('Event not supported by composition: ' + event);
         }
 
@@ -91,7 +91,7 @@ define([
                 'add',
                 this.onProviderAdd,
                 this
-            )
+            );
         } if (event === 'remove') {
             this.provider.on(
                 this.domainObject,
@@ -101,27 +101,27 @@ define([
             );
         }
 
-        this._listeners[event].push({
+        this.listeners[event].push({
             callback: callback,
             context: context
         });
     };
 
     CompositionCollection.prototype.off = function (event, callback, context) {
-        if (!this._listeners[event]) {
+        if (!this.listeners[event]) {
             throw new Error('Event not supported by composition: ' + event);
         }
 
-        var index = _.findIndex(this._listeners[event], function (l) {
-            return l.callback == callback && l.context === context;
+        var index = _.findIndex(this.listeners[event], function (l) {
+            return l.callback === callback && l.context === context;
         });
 
         if (index === -1) {
             throw new Error('Tried to remove a listener that already existed');
         }
 
-        this._listeners[event].splice(index, 1);
-        if (this._listeners[event].length === 0) {
+        this.listeners[event].splice(index, 1);
+        if (this.listeners[event].length === 0) {
             // Remove provider listener if this is the last callback to
             // be removed.
             if (event === 'add') {
@@ -143,11 +143,11 @@ define([
     };
 
     CompositionCollection.prototype.emit = function (event, payload) {
-        this._listeners[event].forEach(function (l) {
+        this.listeners[event].forEach(function (l) {
             if (l.context) {
                 l.callback.call(l.context, payload);
             } else {
-                l.callback(payload)
+                l.callback(payload);
             }
         });
     };
@@ -176,7 +176,7 @@ define([
      * @name add
      */
     CompositionCollection.prototype.add = function (child, skipMutate) {
-        if (!this._loaded) {
+        if (!this.loaded) {
             throw new Error("Must load composition before you can add!");
         }
         if (!skipMutate) {
@@ -197,7 +197,7 @@ define([
     CompositionCollection.prototype.load = function () {
         return this.provider.load(this.domainObject)
             .then(function (children) {
-                this._loaded = true;
+                this.loaded = true;
                 children.map(this.onProviderAdd, this);
                 this.emit('load');
             }.bind(this));

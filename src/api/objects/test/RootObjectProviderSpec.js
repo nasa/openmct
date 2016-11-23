@@ -48,6 +48,9 @@ define([
             rootObjectProvider.get()
                 .then(function (root) {
                     expect(root).toEqual({
+                        identifier: {
+                            key: "ROOT"
+                        },
                         name: 'The root object',
                         type: 'root',
                         composition: ['some root']
