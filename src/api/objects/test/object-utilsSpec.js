@@ -32,7 +32,8 @@ define([
                     namespace: 'thingy:thing',
                     key: 'abc123'
                 }
-            }
+            };
+
             Object.keys(EXPECTATIONS).forEach(function (keyString) {
                 it('parses "' + keyString + '".', function () {
                     expect(objectUtils.parseKeyString(keyString))
@@ -59,7 +60,7 @@ define([
                     againKeyString = objectUtils.makeKeyString(againKeyString);
                     againKeyString = objectUtils.makeKeyString(againKeyString);
                     expect(againKeyString).toEqual(keyString);
-                })
+                });
             });
         });
 

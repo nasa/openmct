@@ -34,7 +34,7 @@ define([
         return typeof thing === 'object' &&
             thing.hasOwnProperty('key') &&
             thing.hasOwnProperty('namespace');
-    };
+    }
 
     /**
      * Utility for checking if a thing is a key string.  Not perfect.
@@ -60,7 +60,7 @@ define([
         var namespace = '',
             key = keyString;
         for (var i = 0; i < key.length; i++) {
-            if (key[i] === "\\" && key[i+1] === ":") {
+            if (key[i] === "\\" && key[i + 1] === ":") {
                 i++; // skip escape character.
             } else if (key[i] === ":") {
                 key = key.slice(i + 1);
@@ -77,7 +77,7 @@ define([
             namespace: namespace,
             key: key
         };
-    };
+    }
 
 
     /**
@@ -100,7 +100,7 @@ define([
             identifier.namespace.replace(/\:/g, '\\:'),
             identifier.key
         ].join(':');
-    };
+    }
 
     /**
      * Convert a new domain object into an old format model, removing the
@@ -117,7 +117,7 @@ define([
             model.composition = model.composition.map(makeKeyString);
         }
         return model;
-    };
+    }
 
     /**
      * Convert an old format domain object model into a new format domain
@@ -135,7 +135,7 @@ define([
             model.composition = model.composition.map(parseKeyString);
         }
         return model;
-    };
+    }
 
     /**
      * Compare two Open MCT Identifiers, returning true if they are equal.
@@ -158,7 +158,7 @@ define([
      */
     function objectEquals(a, b) {
         return identifierEquals(a.identifier, b.identifier);
-    };
+    }
 
     return {
         toOldFormat: toOldFormat,
