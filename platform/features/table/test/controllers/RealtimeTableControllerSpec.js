@@ -36,6 +36,7 @@ define(
                 mockConfiguration,
                 watches,
                 mockTableRow,
+                mockConductor,
                 controller;
 
             function promise(value) {
@@ -106,7 +107,8 @@ define(
                     'getDatum',
                     'promiseTelemetryObjects',
                     'getTelemetryObjects',
-                    'request'
+                    'request',
+                    'getMetadata'
                 ]);
 
                 // Arbitrary array with non-zero length, contents are not
@@ -115,13 +117,22 @@ define(
                 mockTelemetryHandle.promiseTelemetryObjects.andReturn(promise(undefined));
                 mockTelemetryHandle.getDatum.andReturn({});
                 mockTelemetryHandle.request.andReturn(promise(undefined));
+                mockTelemetryHandle.getMetadata.andReturn([]);
 
                 mockTelemetryHandler = jasmine.createSpyObj('telemetryHandler', [
                     'handle'
                 ]);
                 mockTelemetryHandler.handle.andReturn(mockTelemetryHandle);
 
-                controller = new TableController(mockScope, mockTelemetryHandler, mockTelemetryFormatter);
+                mockConductor = jasmine.createSpyObj('conductor', [
+                    'on',
+                    'off',
+                    'bounds',
+                    'timeSystem',
+                    'timeOfInterest'
+                ]);
+
+                controller = new TableController(mockScope, mockTelemetryHandler, mockTelemetryFormatter, {conductor: mockConductor});
                 controller.table = mockTable;
                 controller.handle = mockTelemetryHandle;
             });

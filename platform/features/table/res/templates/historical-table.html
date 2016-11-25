@@ -1,9 +1,12 @@
-<div ng-controller="HistoricalTableController" ng-class="{'loading': loading}">
+<div ng-controller="HistoricalTableController as tableController"
+     ng-class="{'loading': loading}">
     <mct-table
         headers="headers"
+        time-columns="tableController.timeColumns"
         rows="rows"
         enableFilter="true"
         enableSort="true"
+        sort-column="defaultSort"
         class="tabular-holder has-control-bar">
     </mct-table>
 </div>

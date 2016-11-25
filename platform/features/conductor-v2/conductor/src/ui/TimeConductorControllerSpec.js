@@ -28,6 +28,8 @@ define(['./TimeConductorController'], function (TimeConductorController) {
         var mockConductorViewService;
         var mockTimeSystems;
         var controller;
+        var mockFormatService;
+        var mockFormat;
 
         beforeEach(function () {
             mockScope = jasmine.createSpyObj("$scope", [
@@ -52,36 +54,33 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                     "availableModes",
                     "mode",
                     "availableTimeSystems",
-                    "deltas"
+                    "deltas",
+                    "deltas",
+                    "on",
+                    "off"
                 ]
             );
             mockConductorViewService.availableModes.andReturn([]);
             mockConductorViewService.availableTimeSystems.andReturn([]);
 
+            mockFormatService = jasmine.createSpyObj('formatService', [
+                'getFormat'
+            ]);
+            mockFormat = jasmine.createSpyObj('format', [
+                'format'
+            ]);
+            mockFormatService.getFormat.andReturn(mockFormat);
+
             mockTimeSystems = [];
         });
 
-        function getListener(name) {
-            return mockTimeConductor.on.calls.filter(function (call) {
-                return call.args[0] === name;
+        function getListener(target, event) {
+            return target.calls.filter(function (call) {
+                return call.args[0] === event;
             })[0].args[1];
         }
 
-        describe("", function () {
-            beforeEach(function () {
-                controller = new TimeConductorController(
-                    mockScope,
-                    mockWindow,
-                    mockTimeConductor,
-                    mockConductorViewService,
-                    mockTimeSystems
-                );
-            });
-
-        });
-
         describe("when time conductor state changes", function () {
-            var mockFormat;
             var mockDeltaFormat;
             var defaultBounds;
             var defaultDeltas;
@@ -119,17 +118,18 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                 controller = new TimeConductorController(
                     mockScope,
                     mockWindow,
-                    mockTimeConductor,
+                    {conductor: mockTimeConductor},
                     mockConductorViewService,
-                    mockTimeSystems
+                    mockTimeSystems,
+                    mockFormatService
                 );
 
-                tsListener = getListener("timeSystem");
+                tsListener = getListener(mockTimeConductor.on, "timeSystem");
             });
 
             it("listens for changes to conductor state", function () {
                 expect(mockTimeConductor.on).toHaveBeenCalledWith("timeSystem", controller.changeTimeSystem);
-                expect(mockTimeConductor.on).toHaveBeenCalledWith("bounds", controller.setFormFromBounds);
+                expect(mockTimeConductor.on).toHaveBeenCalledWith("bounds", controller.changeBounds);
             });
 
             it("deregisters conductor listens when scope is destroyed", function () {
@@ -137,7 +137,7 @@ define(['./TimeConductorController'], function (TimeConductorController) {
 
                 controller.destroy();
                 expect(mockTimeConductor.off).toHaveBeenCalledWith("timeSystem", controller.changeTimeSystem);
-                expect(mockTimeConductor.off).toHaveBeenCalledWith("bounds", controller.setFormFromBounds);
+                expect(mockTimeConductor.off).toHaveBeenCalledWith("bounds", controller.changeBounds);
             });
 
             it("when time system changes, sets time system on scope", function () {
@@ -151,7 +151,11 @@ define(['./TimeConductorController'], function (TimeConductorController) {
             });
 
             it("when time system changes, sets defaults on scope", function () {
-                expect(tsListener).toBeDefined();
+                mockDefaults.zoom = {
+                    min: 100,
+                    max: 10
+                };
+                mockTimeConductor.timeSystem.andReturn(timeSystem);
                 tsListener(timeSystem);
 
                 expect(mockScope.boundsModel.start).toEqual(defaultBounds.start);
@@ -159,6 +163,32 @@ define(['./TimeConductorController'], function (TimeConductorController) {
 
                 expect(mockScope.boundsModel.startDelta).toEqual(defaultDeltas.start);
                 expect(mockScope.boundsModel.endDelta).toEqual(defaultDeltas.end);
+
+                expect(mockScope.timeSystemModel.minZoom).toBe(mockDefaults.zoom.min);
+                expect(mockScope.timeSystemModel.maxZoom).toBe(mockDefaults.zoom.max);
+            });
+
+            it("when bounds change, sets the correct zoom slider value", function () {
+                var bounds = {
+                    start: 0,
+                    end: 50
+                };
+                mockDefaults.zoom = {
+                    min: 100,
+                    max: 0
+                };
+
+                function exponentializer(rawValue) {
+                    return 1 - Math.pow(rawValue, 1 / 4);
+                }
+
+                mockTimeConductor.timeSystem.andReturn(timeSystem);
+                //Set zoom defaults
+                tsListener(timeSystem);
+
+                controller.changeBounds(bounds);
+                expect(controller.currentZoom).toEqual(exponentializer(0.5));
+
             });
 
             it("when bounds change, sets them on scope", function () {
@@ -167,7 +197,7 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                     end: 2
                 };
 
-                var boundsListener = getListener("bounds");
+                var boundsListener = getListener(mockTimeConductor.on, "bounds");
                 expect(boundsListener).toBeDefined();
                 boundsListener(bounds);
 
@@ -225,9 +255,10 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                 controller = new TimeConductorController(
                     mockScope,
                     mockWindow,
-                    mockTimeConductor,
+                    {conductor: mockTimeConductor},
                     mockConductorViewService,
-                    mockTimeSystemConstructors
+                    mockTimeSystemConstructors,
+                    mockFormatService
                 );
 
                 mockConductorViewService.availableTimeSystems.andReturn(mockTimeSystems);
@@ -240,9 +271,10 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                 controller = new TimeConductorController(
                     mockScope,
                     mockWindow,
-                    mockTimeConductor,
+                    {conductor: mockTimeConductor},
                     mockConductorViewService,
-                    mockTimeSystemConstructors
+                    mockTimeSystemConstructors,
+                    mockFormatService
                 );
 
                 mockConductorViewService.availableTimeSystems.andReturn(mockTimeSystems);
@@ -264,9 +296,10 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                 controller = new TimeConductorController(
                     mockScope,
                     mockWindow,
-                    mockTimeConductor,
+                    {conductor: mockTimeConductor},
                     mockConductorViewService,
-                    mockTimeSystemConstructors
+                    mockTimeSystemConstructors,
+                    mockFormatService
                 );
 
                 controller.updateBoundsFromForm(formModel);
@@ -286,9 +319,10 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                 controller = new TimeConductorController(
                     mockScope,
                     mockWindow,
-                    mockTimeConductor,
+                    {conductor: mockTimeConductor},
                     mockConductorViewService,
-                    mockTimeSystemConstructors
+                    mockTimeSystemConstructors,
+                    mockFormatService
                 );
 
                 controller.updateDeltasFromForm(formModel);
@@ -321,13 +355,32 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                 controller = new TimeConductorController(
                     mockScope,
                     mockWindow,
-                    mockTimeConductor,
+                    {conductor: mockTimeConductor},
                     mockConductorViewService,
-                    mockTimeSystems
+                    mockTimeSystems,
+                    mockFormatService
                 );
 
                 controller.selectTimeSystemByKey('testTimeSystem');
                 expect(mockTimeConductor.timeSystem).toHaveBeenCalledWith(timeSystem, defaultBounds);
+            });
+
+            it("updates form bounds during pan events", function () {
+                var testBounds = {
+                    start: 10,
+                    end: 20
+                };
+
+                expect(controller.$scope.boundsModel.start).not.toBe(testBounds.start);
+                expect(controller.$scope.boundsModel.end).not.toBe(testBounds.end);
+
+                expect(controller.conductorViewService.on).toHaveBeenCalledWith("pan",
+                    controller.onPan);
+
+                getListener(controller.conductorViewService.on, "pan")(testBounds);
+
+                expect(controller.$scope.boundsModel.start).toBe(testBounds.start);
+                expect(controller.$scope.boundsModel.end).toBe(testBounds.end);
             });
         });
 

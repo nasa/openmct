@@ -51,13 +51,9 @@ table {
 
 	tbody, .tbody {
 		display: table-row-group;
-		tr, .tr {
-			&:hover {
-				background: rgba($colorTabBodyFg, 0.1);
-			}
-		}
 	}
 	tr, .tr {
+        border-top: 1px solid $colorTabBorder;
 		display: table-row;
 		&:first-child .td {
 			border-top: none;
@@ -71,11 +67,12 @@ table {
 		}
 		th, .th, td, .td {
 			display: table-cell;
+            font-size: 0.7rem;
 		}
 		th, .th {
 			border-left: 1px solid $colorTabHeaderBorder;
 			color: $colorTabHeaderFg;
-			padding: $tabularTdPadLR $tabularTdPadLR;
+			padding: $tabularTdPadTB $tabularTdPadLR;
 			white-space: nowrap;
 			vertical-align: middle; // This is crucial to hiding f**king 4px height injected by browser by default
 			&:first-child {
@@ -99,7 +96,6 @@ table {
 			}
 		}
 		td, .td {
-			border-bottom: 1px solid $colorTabBorder;
 			min-width: 20px;
 			color: $colorTelemFresh;
 			padding: $tabularTdPadTB $tabularTdPadLR;

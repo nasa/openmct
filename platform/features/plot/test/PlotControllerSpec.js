@@ -40,7 +40,8 @@ define(
                 mockDomainObject,
                 mockSeries,
                 mockStatusCapability,
-                controller;
+                controller,
+                mockConductor;
 
             function bind(method, thisObj) {
                 return function () {
@@ -120,13 +121,23 @@ define(
                 mockHandle.getRangeValue.andReturn(42);
                 mockScope.domainObject = mockDomainObject;
 
+                mockConductor = jasmine.createSpyObj('conductor', [
+                    'on',
+                    'off',
+                    'bounds',
+                    'timeSystem',
+                    'timeOfInterest'
+                ]);
+
                 controller = new PlotController(
                     mockScope,
                     mockElement,
                     mockExportImageService,
                     mockFormatter,
                     mockHandler,
-                    mockThrottle
+                    mockThrottle,
+                    undefined,
+                    {conductor: mockConductor}
                 );
             });
 

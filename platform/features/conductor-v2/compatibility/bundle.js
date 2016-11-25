@@ -23,31 +23,20 @@
 define([
     "./src/ConductorTelemetryDecorator",
     "./src/ConductorRepresenter",
-    "./src/ConductorService",
     'legacyRegistry'
 ], function (
     ConductorTelemetryDecorator,
     ConductorRepresenter,
-    ConductorService,
     legacyRegistry
 ) {
 
     legacyRegistry.register("platform/features/conductor-v2/compatibility", {
         "extensions": {
-            "services": [
-                {
-                    "key": "conductorService",
-                    "implementation": ConductorService,
-                    "depends": [
-                        "timeConductor"
-                    ]
-                }
-            ],
             "representers": [
                 {
                     "implementation": ConductorRepresenter,
                     "depends": [
-                        "timeConductor"
+                        "openmct"
                     ]
                 }
             ],
@@ -57,7 +46,7 @@ define([
                     "provides": "telemetryService",
                     "implementation": ConductorTelemetryDecorator,
                     "depends": [
-                        "timeConductor"
+                        "openmct"
                     ]
                 }
             ]

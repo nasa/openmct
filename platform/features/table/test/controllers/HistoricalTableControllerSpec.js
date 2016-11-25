@@ -37,6 +37,7 @@ define(
                 mockAngularTimeout,
                 mockTimeoutHandle,
                 watches,
+                mockConductor,
                 controller;
 
             function promise(value) {
@@ -45,6 +46,12 @@ define(
                         return promise(callback(value));
                     }
                 };
+            }
+
+            function getCallback(target, event) {
+                return target.calls.filter(function (call) {
+                    return call.args[0] === event;
+                })[0].args[1];
             }
 
             beforeEach(function () {
@@ -108,13 +115,22 @@ define(
                 mockTelemetryHandle.promiseTelemetryObjects.andReturn(promise(undefined));
                 mockTelemetryHandle.request.andReturn(promise(undefined));
                 mockTelemetryHandle.getTelemetryObjects.andReturn([]);
+                mockTelemetryHandle.getMetadata.andReturn([]);
 
                 mockTelemetryHandler = jasmine.createSpyObj('telemetryHandler', [
                     'handle'
                 ]);
                 mockTelemetryHandler.handle.andReturn(mockTelemetryHandle);
 
-                controller = new TableController(mockScope, mockTelemetryHandler, mockTelemetryFormatter, mockAngularTimeout);
+                mockConductor = jasmine.createSpyObj("conductor", [
+                    "timeSystem",
+                    "on",
+                    "off"
+                ]);
+
+                controller = new TableController(mockScope, mockTelemetryHandler,
+                    mockTelemetryFormatter, mockAngularTimeout, {conductor: mockConductor});
+
                 controller.table = mockTable;
                 controller.handle = mockTelemetryHandle;
             });
@@ -232,6 +248,60 @@ define(
                     expect(controller.filterColumns).toHaveBeenCalled();
                 });
 
+            });
+            describe('After populating columns', function () {
+                var metadata;
+                beforeEach(function () {
+                    metadata = [{domains: [{name: 'time domain 1'}, {name: 'time domain 2'}]}, {domains: [{name: 'time domain 3'}, {name: 'time domain 4'}]}];
+                    controller.populateColumns(metadata);
+                });
+
+                it('Automatically identifies time columns', function () {
+                    expect(controller.timeColumns.length).toBe(4);
+                    expect(controller.timeColumns[0]).toBe('time domain 1');
+                });
+
+                it('Automatically sorts by time column that matches current' +
+                    ' time system', function () {
+                    var key = 'time_domain_1',
+                        name = 'time domain 1',
+                        mockTimeSystem = {
+                            metadata: {
+                                key: key
+                            }
+                        };
+
+                    mockTable.columns = [
+                        {
+                            domainMetadata: {
+                                key: key
+                            },
+                            getTitle: function () {
+                                return name;
+                            }
+                        },
+                        {
+                            domainMetadata: {
+                                key: 'anotherColumn'
+                            },
+                            getTitle: function () {
+                                return 'some other column';
+                            }
+                        },
+                        {
+                            domainMetadata: {
+                                key: 'thirdColumn'
+                            },
+                            getTitle: function () {
+                                return 'a third column';
+                            }
+                        }
+                    ];
+
+                    expect(mockConductor.on).toHaveBeenCalledWith('timeSystem', jasmine.any(Function));
+                    getCallback(mockConductor.on, 'timeSystem')(mockTimeSystem);
+                    expect(controller.$scope.defaultSort).toBe(name);
+                });
             });
             describe('Yields thread', function () {
                 var mockSeries,

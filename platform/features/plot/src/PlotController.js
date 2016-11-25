@@ -68,7 +68,8 @@ define(
             telemetryFormatter,
             telemetryHandler,
             throttle,
-            PLOT_FIXED_DURATION
+            PLOT_FIXED_DURATION,
+            openmct
         ) {
             var self = this,
                 plotTelemetryFormatter =
@@ -81,6 +82,7 @@ define(
                 lastRange,
                 lastDomain,
                 handle;
+            var conductor = openmct.conductor;
 
             // Populate the scope with axis information (specifically, options
             // available for each axis.)
@@ -181,6 +183,18 @@ define(
                 }
             }
 
+            function changeTimeOfInterest(timeOfInterest) {
+                if (timeOfInterest !== undefined) {
+                    var bounds = conductor.bounds();
+                    var range = bounds.end - bounds.start;
+                    $scope.toiPerc = ((timeOfInterest - bounds.start) / range) * 100;
+                    $scope.toiPinned = true;
+                } else {
+                    $scope.toiPerc = undefined;
+                    $scope.toiPinned = false;
+                }
+            }
+
             // Create a new subscription; telemetrySubscriber gets
             // to do the meaningful work here.
             function subscribe(domainObject) {
@@ -193,6 +207,9 @@ define(
                     true // Lossless
                 );
                 replot();
+
+                changeTimeOfInterest(conductor.timeOfInterest());
+                conductor.on("timeOfInterest", changeTimeOfInterest);
             }
 
             // Release the current subscription (called when scope is destroyed)
@@ -200,6 +217,7 @@ define(
                 if (handle) {
                     handle.unsubscribe();
                     handle = undefined;
+                    conductor.off("timeOfInterest", changeTimeOfInterest);
                 }
             }
 
@@ -242,6 +260,7 @@ define(
                     requery();
                 }
                 self.setUnsynchedStatus($scope.domainObject, follow && self.isZoomed());
+                changeTimeOfInterest(conductor.timeOfInterest());
             }
 
             this.modeOptions = new PlotModeOptions([], subPlotFactory);

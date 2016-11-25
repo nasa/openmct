@@ -62,7 +62,7 @@ $colorCreateBtn: $colorKey;
 $colorGridLines: rgba(#000, 0.05);
 $colorInvokeMenu: #fff;
 $colorObjHdrTxt: $colorBodyFg;
-$colorObjHdrIc: pushBack($colorObjHdrTxt, 30%);
+$colorObjHdrIc: lighten($colorObjHdrTxt, 30%);
 $colorTick: rgba(black, 0.2);
 $colorSelectableSelectedPrimary: $colorKey;
 $colorSelectableSelectedSecondary: pushBack($colorSelectableSelectedPrimary, 20%);

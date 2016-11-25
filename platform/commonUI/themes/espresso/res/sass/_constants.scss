@@ -62,7 +62,7 @@ $colorCreateBtn: $colorKey;
 $colorGridLines: rgba(#fff, 0.05);
 $colorInvokeMenu: #fff;
 $colorObjHdrTxt: $colorBodyFg;
-$colorObjHdrIc: pullForward($colorObjHdrTxt, 20%);
+$colorObjHdrIc: lighten($colorObjHdrTxt, 20%);
 $colorTick: rgba(white, 0.2);
 $colorSelectableSelectedPrimary: $colorKey;
 $colorSelectableSelectedSecondary: pushBack($colorSelectableSelectedPrimary, 20%);
@@ -158,11 +158,11 @@ $shdwItemText: rgba(black, 0.1) 0 1px 2px;
 $colorItemBgSelected: $colorKey;
 
 // Tabular
-$colorTabBorder: pullForward($colorBodyBg, 10%);
+$colorTabBorder: pullForward($colorBodyBg, 5%);
 $colorTabBodyBg: darken($colorBodyBg, 10%);
 $colorTabBodyFg: lighten($colorTabBodyBg, 40%);
-$colorTabHeaderBg: rgba(white, 0.1); // lighten($colorBodyBg, 10%);
-$colorTabHeaderFg: $colorBodyFg; //lighten($colorTabHeaderBg, 40%);
+$colorTabHeaderBg: rgba(white, 0.1);
+$colorTabHeaderFg: $colorBodyFg;
 $colorTabHeaderBorder: $colorBodyBg;
 
 // Plot

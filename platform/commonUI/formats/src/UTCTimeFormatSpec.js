@@ -58,5 +58,26 @@ define([
             expect(format.format(APRIL, scale)).toBe("April");
             expect(format.format(TWENTY_SIXTEEN, scale)).toBe("2016");
         });
+
+        it("Returns appropriate time units for a given time span", function () {
+            var ONE_DAY = 1000 * 60 * 60 * 24;
+            var FIVE_DAYS = 5 * ONE_DAY;
+            var FIVE_MONTHS = 60 * ONE_DAY;
+
+            var ONE_YEAR = 365 * ONE_DAY;
+            var SEVEN_YEARS = 7 * ONE_YEAR;
+            var TWO_DECADES = 20 * ONE_YEAR;
+
+            //A span of one day should show a zoom label of "Hours"
+            expect(format.timeUnits(ONE_DAY)).toEqual("Hours");
+            //Multiple days should display "Days"
+            expect(format.timeUnits(FIVE_DAYS)).toEqual("Days");
+            expect(format.timeUnits(FIVE_MONTHS)).toEqual("Days");
+            //A span of one year should show a zoom level of "Months".
+            // Multiple years will show "Years"
+            expect(format.timeUnits(ONE_YEAR)).toEqual("Months");
+            expect(format.timeUnits(SEVEN_YEARS)).toEqual("Years");
+            expect(format.timeUnits(TWO_DECADES)).toEqual("Decades");
+        });
     });
 });

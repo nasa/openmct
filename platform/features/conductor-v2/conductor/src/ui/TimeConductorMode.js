@@ -28,13 +28,14 @@ define(
          * Supports mode-specific time conductor behavior.
          *
          * @constructor
+         * @memberof platform.features.conductor
          * @param {TimeConductorMetadata} metadata
          */
         function TimeConductorMode(metadata, conductor, timeSystems) {
             this.conductor = conductor;
 
             this.mdata = metadata;
-            this.dlts = undefined;
+            this.deltasVal = undefined;
             this.source = undefined;
             this.sourceUnlisten = undefined;
             this.systems = timeSystems;
@@ -141,6 +142,9 @@ define(
             return this.source;
         };
 
+        /**
+         * @private
+         */
         TimeConductorMode.prototype.destroy = function () {
             this.conductor.off('timeSystem', this.changeTimeSystem);
 
@@ -177,23 +181,66 @@ define(
          */
         TimeConductorMode.prototype.deltas = function (deltas) {
             if (arguments.length !== 0) {
-                var oldEnd = this.conductor.bounds().end;
-
-                if (this.dlts && this.dlts.end !== undefined) {
-                    //Calculate the previous raw end value (without delta)
-                    oldEnd = oldEnd - this.dlts.end;
+                var bounds = this.calculateBoundsFromDeltas(deltas);
+                this.deltasVal = deltas;
+                if (this.metadata().key !== 'fixed') {
+                    this.conductor.bounds(bounds);
                 }
-
-                this.dlts = deltas;
-
-                var newBounds = {
-                    start: oldEnd - this.dlts.start,
-                    end: oldEnd + this.dlts.end
-                };
-
-                this.conductor.bounds(newBounds);
             }
-            return this.dlts;
+            return this.deltasVal;
+        };
+
+        /**
+         * @param deltas
+         * @returns {TimeConductorBounds}
+         */
+        TimeConductorMode.prototype.calculateBoundsFromDeltas = function (deltas) {
+            var oldEnd = this.conductor.bounds().end;
+
+            if (this.deltasVal && this.deltasVal.end !== undefined) {
+                //Calculate the previous raw end value (without delta)
+                oldEnd = oldEnd - this.deltasVal.end;
+            }
+
+            var bounds = {
+                start: oldEnd - deltas.start,
+                end: oldEnd + deltas.end
+            };
+            return bounds;
+        };
+
+        /**
+         * @typedef {Object} ZoomLevel
+         * @property {TimeConductorBounds} bounds The calculated bounds based on the zoom level
+         * @property {TimeConductorDeltas} deltas The calculated deltas based on the zoom level
+         */
+        /**
+         * Calculates bounds and deltas based on provided timeSpan. Collectively
+         * the bounds and deltas will constitute the new zoom level.
+         * @param {number} timeSpan time duration in ms.
+         * @return {ZoomLevel} The new zoom bounds and delta calculated for the provided time span
+         */
+        TimeConductorMode.prototype.calculateZoom = function (timeSpan) {
+            var zoom = {};
+
+            // If a tick source is defined, then the concept of 'now' is
+            // important. Calculate zoom based on 'now'.
+            if (this.tickSource()) {
+                zoom.deltas = {
+                    start: timeSpan,
+                    end: this.deltasVal.end
+                };
+                zoom.bounds = this.calculateBoundsFromDeltas(zoom.deltas);
+                // Calculate bounds based on deltas;
+            } else {
+                var bounds = this.conductor.bounds();
+                var center = bounds.start + ((bounds.end - bounds.start)) / 2;
+                bounds.start = center - timeSpan / 2;
+                bounds.end = center + timeSpan / 2;
+                zoom.bounds = bounds;
+            }
+
+            return zoom;
         };
 
         return TimeConductorMode;

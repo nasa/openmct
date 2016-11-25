@@ -191,6 +191,19 @@ a.disabled {
     overflow-y: auto;
 }
 
+.slidable {
+    cursor: move; // Fallback
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+    &.horz {
+        cursor: col-resize;
+    }
+    &.vert {
+        cursor: row-resize;
+    }
+}
+
 .no-margin {
     margin: 0;
 }

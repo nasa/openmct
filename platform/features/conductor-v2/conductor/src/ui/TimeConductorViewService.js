@@ -22,25 +22,30 @@
 
 define(
     [
+        'EventEmitter',
         './TimeConductorMode'
     ],
-    function (TimeConductorMode) {
+    function (EventEmitter, TimeConductorMode) {
 
         /**
          * A class representing the state of the time conductor view. This
          * exposes details of the UI that are not represented on the
          * TimeConductor API itself such as modes and deltas.
          *
+         * @memberof platform.features.conductor
          * @param conductor
          * @param timeSystems
          * @constructor
          */
-        function TimeConductorViewService(conductor, timeSystems) {
+        function TimeConductorViewService(openmct, timeSystems) {
+
+            EventEmitter.call(this);
+
             this.systems = timeSystems.map(function (timeSystemConstructor) {
                 return timeSystemConstructor();
             });
 
-            this.conductor = conductor;
+            this.conductor = openmct.conductor;
             this.currentMode = undefined;
 
             /**
@@ -97,6 +102,8 @@ define(
             }
         }
 
+        TimeConductorViewService.prototype = Object.create(EventEmitter.prototype);
+
         /**
          * Getter/Setter for the Time Conductor Mode. Modes determine the
          * behavior of the time conductor, especially with regards to the
@@ -144,7 +151,7 @@ define(
         };
 
         /**
-         * @typedef {object} Delta
+         * @typedef {object} TimeConductorDeltas
          * @property {number} start Used to set the start bound of the
          * TimeConductor on tick. A positive value that will be subtracted
          * from the value provided by a tick source to determine the start
@@ -171,7 +178,7 @@ define(
          *     tick
          *     - end: A time in ms after the timestamp of the last data received
          *     which will be used to determine the 'end' bound on tick
-         * @returns {Delta} current value of the deltas
+         * @returns {TimeConductorDeltas} current value of the deltas
          */
         TimeConductorViewService.prototype.deltas = function () {
             //Deltas stored on mode. Use .apply to preserve arguments
@@ -195,6 +202,26 @@ define(
          */
         TimeConductorViewService.prototype.availableTimeSystems = function () {
             return this.currentMode.availableTimeSystems();
+        };
+
+        /**
+         * An event to indicate that zooming is taking place
+         * @event platform.features.conductor.TimeConductorViewService~zoom
+         * @property {ZoomLevel} zoom the new zoom level.
+         */
+        /**
+         * Zoom to given time span. Will fire a zoom event with new zoom
+         * bounds. Zoom bounds emitted in this way are considered ephemeral
+         * and should be overridden by any time conductor bounds events. Does
+         * not set bounds globally.
+         * @param {number} zoom A time duration in ms
+         * @fires platform.features.conductor.TimeConductorViewService~zoom
+         * @see module:openmct.TimeConductor#bounds
+         */
+        TimeConductorViewService.prototype.zoom = function (timeSpan) {
+            var zoom = this.currentMode.calculateZoom(timeSpan);
+            this.emit("zoom", zoom);
+            return zoom;
         };
 
         return TimeConductorViewService;
