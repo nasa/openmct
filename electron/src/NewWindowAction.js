@@ -42,9 +42,15 @@ define(
                 windae.on('close', function () {
                     windae = null;
                 });
-                var url =  ['file:/', __dirname, url].join('/') + "&synced=" + !!this.synced;
+                var url = [
+                        ['file:/', __dirname, url].join('/'),
+                        'synced=' + !!(this.synced),
+                        'child=' + true
+                    ].join('&');
+
                 windae.loadURL(url);
             };
+            this.open.bind(this);
 
             // Choose the object to be opened into a new tab
             this.domainObject = context.selectedObject || context.domainObject;

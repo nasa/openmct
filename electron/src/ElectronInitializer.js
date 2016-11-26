@@ -30,17 +30,44 @@ define(
          * @constructor
          * @implements {Action}
          */
-        function ElectronInitializer(conductor) {
-            electron.ipcRenderer.on('conductor-bounds', function (event, bounds){
-                console.log('conductor changed' + JSON.stringify(bounds));
-                var cBounds = conductor.bounds();
-                if (bounds.start !== cBounds.start || bounds.end !== cBounds.end) {
-                    conductor.bounds(bounds);
-                }
-            });
-            conductor.on('bounds', function (bounds) {
-                electron.ipcRenderer.send('conductor-bounds', bounds);
-            });
+        function ElectronInitializer(conductor, $location) {
+            var childWindow = $location.search().child === 'true';
+
+            // If child window, listen for conductor state updates from main thread.
+            if (childWindow) {
+                electron.ipcRenderer.on('conductor-bounds', function (event, bounds) {
+                    var cBounds = conductor.bounds();
+                    var synced = $location.search().synced === 'true';
+
+                    if (synced) {
+                        if (synced &&
+                            (bounds.start !== cBounds.start || bounds.end !== cBounds.end)) {
+                            conductor.bounds(bounds);
+                        }
+                    }
+                });
+
+                electron.ipcRenderer.on('conductor-follow', function (event, follow) {
+                    var synced = $location.search().synced === 'true';
+                    follow = !!follow;
+
+                    if (synced && follow !== conductor.follow()) {
+                        conductor.follow(follow);
+                    }
+                });
+            }
+
+            // If parent window, listen to bounds changes and propogate them back to the main thread. From there they
+            // will be disseminated to child windows.
+            if (!childWindow) {
+                conductor.on('bounds', function (bounds) {
+                    electron.ipcRenderer.send('conductor-bounds', bounds);
+                });
+
+                conductor.on('follow', function (follow) {
+                    electron.ipcRenderer.send('conductor-follow', follow);
+                });
+            }
         }
 
         return ElectronInitializer;

@@ -45,7 +45,7 @@ define([
             }],
             "runs": [{
                 "implementation": ElectronInitializer,
-                "depends": ["timeConductor"]
+                "depends": ["timeConductor", "$location"]
             }],
             "actions": [
                 {

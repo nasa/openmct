@@ -74,7 +74,7 @@ define(
                 return $scope[action] && $scope[action]();
             };
 
-            $scope.synced = $location.search().synced;
+            $scope.synced = $location.search().synced === 'true';
         }
 
         return BrowseObjectController;
