@@ -49,7 +49,8 @@ define([
                 .then(function (root) {
                     expect(root).toEqual({
                         identifier: {
-                            key: "ROOT"
+                            key: "ROOT",
+                            namespace: ""
                         },
                         name: 'The root object',
                         type: 'root',

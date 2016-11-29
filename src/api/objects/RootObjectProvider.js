@@ -33,7 +33,8 @@ define([
             .then(function (roots) {
                 return {
                     identifier: {
-                        key: "ROOT"
+                        key: "ROOT",
+                        namespace: ""
                     },
                     name: 'The root object',
                     type: 'root',
