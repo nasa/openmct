@@ -30,7 +30,7 @@ define([
     legacyRegistry
 ) {
 
-    legacyRegistry.register("platform/features/conductor-v2/compatibility", {
+    legacyRegistry.register("platform/features/conductor/compatibility", {
         "extensions": {
             "representers": [
                 {

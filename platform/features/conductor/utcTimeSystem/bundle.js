@@ -27,7 +27,7 @@ define([
     UTCTimeSystem,
     legacyRegistry
 ) {
-    legacyRegistry.register("platform/features/conductor-v2/utcTimeSystem", {
+    legacyRegistry.register("platform/features/conductor/utcTimeSystem", {
         "extensions": {
             "timeSystems": [
                 {

@@ -48,7 +48,7 @@ define([
     legacyRegistry
 ) {
 
-    legacyRegistry.register("platform/features/conductor-v2/conductor", {
+    legacyRegistry.register("platform/features/conductor/core", {
         "extensions": {
             "services": [
                 {
