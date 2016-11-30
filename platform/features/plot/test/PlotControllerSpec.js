@@ -126,8 +126,11 @@ define(
                     'off',
                     'bounds',
                     'timeSystem',
-                    'timeOfInterest'
+                    'timeOfInterest',
+                    'follow'
                 ]);
+
+                mockConductor.bounds.andReturn({});
 
                 controller = new PlotController(
                     mockScope,
