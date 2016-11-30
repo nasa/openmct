@@ -154,9 +154,6 @@ define([
     DefaultCompositionProvider.prototype.remove = function (domainObject, childId) {
         // TODO: this needs to be synchronized via mutation.
         throw new Error('Default Provider does not implement removal.');
-        // var index = domainObject.composition.indexOf(childId);
-        // domainObject.composition.splice(index, 1);
-        // this.emit(makeEventName(domainObject, 'remove'), childId);
     };
 
     /**
@@ -174,8 +171,6 @@ define([
     DefaultCompositionProvider.prototype.add = function (domainObject, child) {
         throw new Error('Default Provider does not implement adding.');
         // TODO: this needs to be synchronized via mutation
-        // domainObject.composition.push(child.key);
-        // this.emit(makeEventName(domainObject, 'add'), child);
     };
 
     /**
