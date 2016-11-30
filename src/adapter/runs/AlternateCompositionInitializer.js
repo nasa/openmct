@@ -28,7 +28,7 @@ define([
     // cannot be injected.
     function AlternateCompositionInitializer(openmct) {
         AlternateCompositionCapability.appliesTo = function (model) {
-            return !model.composition && !!openmct.composition.get(model);
+            return !!openmct.composition.get(model);
         };
     }
 
