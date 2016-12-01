@@ -33,10 +33,16 @@ define([
             "roots": [
                 {
                     "id": "mine",
+                }
+            ],
+            "models": [
+                {
+                    "id": "mine",
                     "model": {
                         "name": "My Items",
                         "type": "folder",
-                        "composition": []
+                        "composition": [],
+                        "location": "ROOT"
                     }
                 }
             ]
