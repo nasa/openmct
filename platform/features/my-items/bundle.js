@@ -32,7 +32,7 @@ define([
         "extensions": {
             "roots": [
                 {
-                    "id": "mine",
+                    "id": "mine"
                 }
             ],
             "models": [
