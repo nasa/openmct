@@ -40,7 +40,7 @@ define(
          * @memberof platform.features.conductor
          * @constructor
          */
-        function TimeConductorController($scope, $window, $location, openmct, conductorViewService, timeSystems, formatService) {
+        function TimeConductorController($scope, $window, $location, $route, openmct, conductorViewService, timeSystems, formatService) {
 
             var self = this;
 
@@ -54,6 +54,7 @@ define(
             this.$scope = $scope;
             this.$window = $window;
             this.$location = $location;
+            this.$route = $route;
             this.conductorViewService = conductorViewService;
             this.conductor = openmct.conductor;
             this.modes = conductorViewService.availableModes();
@@ -95,6 +96,33 @@ define(
             this.conductor.on('bounds', this.changeBounds);
             this.conductor.on('timeSystem', this.changeTimeSystem);
         }
+
+        /**
+         * Used as a url search param setter in place of $location.search(...)
+         *
+         * Invokes $location.search(...) but prevents an Angular route
+         * change from occurring as a consequence which will cause
+         * controllers to reload and strangeness to ensue.
+         *
+         * @private
+         */
+        TimeConductorController.prototype.setParam = function (name, value) {
+            this.$location.search(name, value);
+
+            if (!this.routeUnlisten) {
+                var priorRoute = this.$route.current;
+
+                this.routeUnlisten = this.$scope.$on('$locationChangeSuccess', function () {
+                    // Checks path to make sure /browse/ is at front
+                    // if so, change $route.current
+                    if (this.$location.path().indexOf("/browse/") === 0) {
+                        this.$route.current = priorRoute;
+                    }
+                    this.routeUnlisten();
+                    this.routeUnlisten = undefined;
+                }.bind(this));
+            }
+        };
 
         /**
          * @private
@@ -185,8 +213,8 @@ define(
                 this.setFormFromBounds(bounds);
                 if (this.conductorViewService.mode() === 'fixed') {
                     //Set bounds in URL on change
-                    this.$location.search(SEARCH.START_BOUND, bounds.start);
-                    this.$location.search(SEARCH.END_BOUND, bounds.end);
+                    this.setParam(SEARCH.START_BOUND, bounds.start);
+                    this.setParam(SEARCH.END_BOUND, bounds.end);
                 }
             }
         };
@@ -299,8 +327,8 @@ define(
                 this.conductorViewService.deltas(deltas);
 
                 //Set Deltas in URL on change
-                this.$location.search(SEARCH.START_DELTA, deltas.start);
-                this.$location.search(SEARCH.END_DELTA, deltas.end);
+                this.setParam(SEARCH.START_DELTA, deltas.start);
+                this.setParam(SEARCH.END_DELTA, deltas.end);
             }
         };
 
@@ -315,23 +343,23 @@ define(
          */
         TimeConductorController.prototype.setMode = function (newModeKey, oldModeKey) {
             //Set mode in URL on change
-            this.$location.search(SEARCH.MODE, newModeKey);
+            this.setParam(SEARCH.MODE, newModeKey);
 
             if (newModeKey !== oldModeKey) {
                 this.conductorViewService.mode(newModeKey);
                 this.setFormFromMode(newModeKey);
 
                 if (newModeKey === "fixed") {
-                    this.$location.search(SEARCH.START_DELTA, null);
-                    this.$location.search(SEARCH.END_DELTA, null);
+                    this.setParam(SEARCH.START_DELTA, null);
+                    this.setParam(SEARCH.END_DELTA, null);
                 } else {
-                    this.$location.search(SEARCH.START_BOUND, null);
-                    this.$location.search(SEARCH.END_BOUND, null);
+                    this.setParam(SEARCH.START_BOUND, null);
+                    this.setParam(SEARCH.END_BOUND, null);
 
                     var deltas = this.conductorViewService.deltas();
                     if (deltas) {
-                        this.$location.search(SEARCH.START_DELTA, deltas.start);
-                        this.$location.search(SEARCH.END_DELTA, deltas.end);
+                        this.setParam(SEARCH.START_DELTA, deltas.start);
+                        this.setParam(SEARCH.END_DELTA, deltas.end);
                     }
                 }
             }
@@ -363,7 +391,7 @@ define(
          */
         TimeConductorController.prototype.changeTimeSystem = function (newTimeSystem) {
             //Set time system in URL on change
-            this.$location.search(SEARCH.TIME_SYSTEM, newTimeSystem.metadata.key);
+            this.setParam(SEARCH.TIME_SYSTEM, newTimeSystem.metadata.key);
 
             if (newTimeSystem && (newTimeSystem !== this.$scope.timeSystemModel.selected)) {
                 this.setFormFromTimeSystem(newTimeSystem);
