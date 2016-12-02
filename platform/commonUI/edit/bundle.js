@@ -148,7 +148,8 @@ define([
                     "depends": [
                         "$scope",
                         "$timeout",
-                        "objectService"
+                        "objectService",
+                        "typeService"
                     ]
                 }
             ],

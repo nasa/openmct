@@ -19,10 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global console*/
 
 define(
-    [],
-    function () {
+    [
+        '../creation/CreateAction'
+    ],
+    function (CreateAction) {
 
         /**
          * Controller for the "locator" control, which provides the
@@ -31,7 +34,7 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function LocatorController($scope, $timeout, objectService) {
+        function LocatorController($scope, $timeout, objectService, typeService) {
             // Populate values needed by the locator control. These are:
             // * rootObject: The top-level object, since we want to show
             //               the full tree
@@ -85,6 +88,21 @@ define(
                 $scope.canCreateNewFolder = ($scope.treeModel.selectedObject.model.type === "folder");
             }
 
+            function createNewFolder(name, parent) {
+                var folderType = typeService.listTypes().filter(function (type) {
+                    return type.typeDef.key === "folder";
+                })[0];
+                
+                var newModel = folderType.getInitialModel(),
+                    newObject,
+                    editorCapability;
+
+                newModel.type = folderType.getKey();
+                newModel.location = parent.getId();
+                newObject = parent.useCapability('instantiation', newModel);
+                // Fill in the name property then save.
+            }
+
             $scope.newFolderCreationTriggered = false;
             $scope.newFolderName = "Unnamed Folder";
 
@@ -97,6 +115,11 @@ define(
             };
 
             $scope.newFolderCreateButtonClickHandler = function () {
+                if ($scope.canCreateNewFolder) {
+                    createNewFolder($scope.newFolderName, $scope.treeModel.selectedObject);
+                } else {
+                    console.error("Attempted to create a new folder without being able to.");
+                }
             };
 
             // Initial state for the tree's model
