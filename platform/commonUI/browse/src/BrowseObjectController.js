@@ -58,6 +58,9 @@ define(
 
             $scope.$watch('domainObject', setViewForDomainObject);
             $scope.$watch('representation.selected.key', updateQueryParam);
+            $scope.$on('$locationChangeSuccess', function () {
+                setViewForDomainObject($scope.domainObject);
+            });
 
             $scope.doAction = function (action) {
                 return $scope[action] && $scope[action]();
