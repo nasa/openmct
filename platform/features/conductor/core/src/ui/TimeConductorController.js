@@ -338,11 +338,11 @@ define(
                 this.setFormFromMode(newModeKey);
 
                 if (newModeKey === "fixed") {
-                    this.setParam(SEARCH.START_DELTA, null);
-                    this.setParam(SEARCH.END_DELTA, null);
+                    this.setParam(SEARCH.START_DELTA, undefined);
+                    this.setParam(SEARCH.END_DELTA, undefined);
                 } else {
-                    this.setParam(SEARCH.START_BOUND, null);
-                    this.setParam(SEARCH.END_BOUND, null);
+                    this.setParam(SEARCH.START_BOUND, undefined);
+                    this.setParam(SEARCH.END_BOUND, undefined);
 
                     var deltas = this.conductorViewService.deltas();
                     if (deltas) {
