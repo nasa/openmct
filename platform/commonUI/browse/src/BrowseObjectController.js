@@ -51,19 +51,8 @@ define(
             }
 
             function updateQueryParam(viewKey) {
-                var unlisten,
-                    priorRoute = $route.current;
-
-                if (viewKey) {
+                if (viewKey && $location.search().view !== viewKey) {
                     $location.search('view', viewKey);
-                    unlisten = $scope.$on('$locationChangeSuccess', function () {
-                        // Checks path to make sure /browse/ is at front
-                        // if so, change $route.current
-                        if ($location.path().indexOf("/browse/") === 0) {
-                            $route.current = priorRoute;
-                        }
-                        unlisten();
-                    });
                 }
             }
 

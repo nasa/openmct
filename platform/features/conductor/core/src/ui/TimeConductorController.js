@@ -107,20 +107,8 @@ define(
          * @private
          */
         TimeConductorController.prototype.setParam = function (name, value) {
-            this.$location.search(name, value);
-
-            if (!this.routeUnlisten) {
-                var priorRoute = this.$route.current;
-
-                this.routeUnlisten = this.$scope.$on('$locationChangeSuccess', function () {
-                    // Checks path to make sure /browse/ is at front
-                    // if so, change $route.current
-                    if (this.$location.path().indexOf("/browse/") === 0) {
-                        this.$route.current = priorRoute;
-                    }
-                    this.routeUnlisten();
-                    this.routeUnlisten = undefined;
-                }.bind(this));
+            if (this.$location.search()[name] !== value) {
+                this.$location.search(name, value);
             }
         };
 
