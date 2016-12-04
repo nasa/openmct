@@ -48,6 +48,23 @@ Building and running Open MCT in your local dev environment is very easy. Be sur
 
 Open MCT is now running, and can be accessed by pointing a web browser at [http://localhost:8080/](http://localhost:8080/)
 
+## Building and Running Open MCT using Docker
+
+If you don't have node installed, you can even use [Docker](https://docker.com/) to build the application, just follow the directions below.
+
+1. Clone the source code
+
+ `git clone https://github.com/nasa/openmct.git`
+
+2. Build the docker image locally
+
+ `docker build nasa/openmct .`
+
+3. Run the docker image
+
+ `docker run -d -p 8080:8080 nasa/openmct`
+
+
 ## Documentation
 
 Documentation is available on the [Open MCT website](https://nasa.github.io/openmct/documentation/). The documentation can also be built locally.
