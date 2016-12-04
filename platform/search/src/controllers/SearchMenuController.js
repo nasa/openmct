@@ -52,15 +52,23 @@ define(function () {
         // For documentation, see updateOptions below
         function updateOptions() {
             var type,
-                i;
+                i,
+                someOptionSelected = false;
 
             // Update all-checked status
-            if ($scope.ngModel.checkAll) {
-                for (type in $scope.ngModel.checked) {
-                    if ($scope.ngModel.checked[type]) {
-                        $scope.ngModel.checkAll = false;
-                    }
+
+            for (type in $scope.ngModel.checked) {
+                if ($scope.ngModel.checked[type]) {
+                  if($scope.ngModel.checkAll) {
+                      $scope.ngModel.checkAll = false;
+                  }
+                  someOptionSelected = true;
+                  break;
                 }
+            }
+            if(!someOptionSelected) {
+              $scope.ngModel.checkAll = true;
+              $scope.ngModel.filtersString = 'NONE';
             }
 
             // Update the current filters string
