@@ -104,17 +104,12 @@ define(
                 $scope.navigatedObject = desiredObject;
                 $scope.treeModel.selectedObject = desiredObject;
                 navigationService.setNavigation(desiredObject);
-                if (currentIds !== idsForObject(desiredObject)) {
-                    console.log(desiredObject);
-                    console.log('seems like we ended up in the wrong place.');
-                }
                 currentIds = idsForObject(desiredObject);
                 $route.current.pathParams.ids = currentIds;
                 $location.path('/browse/' + currentIds);
             }
 
             function navigateToPath(path) {
-                console.log('navigating to path!', path);
                 return getObject('ROOT')
                     .then(function (root) {
                         return findViaComposition(root, path);
@@ -132,7 +127,7 @@ define(
             // Handle navigation events from view service.  Only navigates
             // if path has changed.
             function navigateDirectlyToModel(domainObject) {
-                var newIds = idsForObject(domainObject)
+                var newIds = idsForObject(domainObject);
                 if (currentIds !== newIds) {
                     currentIds = newIds;
                     navigateToObject(domainObject);

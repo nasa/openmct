@@ -107,9 +107,7 @@ define(
          * @private
          */
         TimeConductorController.prototype.setParam = function (name, value) {
-            if (this.$location.search()[name] !== value) {
-                this.$location.search(name, value);
-            }
+            this.$location.search(name, value);
         };
 
         /**
