@@ -29,7 +29,6 @@ define(
             var mockScope,
                 mockLocation,
                 mockRoute,
-                mockUnlisten,
                 controller;
 
             // Utility function; look for a $watch on scope and fire it

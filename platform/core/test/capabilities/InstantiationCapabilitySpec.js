@@ -85,7 +85,9 @@ define(
                     'hasCapability'
                 ]), testModel = { someKey: "some value" };
                 mockInstantiate.andReturn(mockDomainObj);
-                mockContextualize.andCallFake(function (x) {return x;});
+                mockContextualize.andCallFake(function (x) {
+                    return x;
+                });
                 expect(instantiation.instantiate(testModel))
                     .toBe(mockDomainObj);
                 expect(mockInstantiate)

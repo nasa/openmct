@@ -135,8 +135,6 @@ define(
                 mockNextObject.getId.andReturn("next");
                 mockDefaultRootObject.getId.andReturn(testDefaultRoot);
 
-                mockActionCapability = jasmine.createSpyObj('actionCapability', ['perform']);
-
                 instantiateController();
                 waitsForNavigation();
             });
@@ -175,7 +173,7 @@ define(
                 mockNavigationService.addListener.mostRecentCall.args[0](
                     mockOtherDomainObject
                 );
-                expect(mockScope.navigatedObject).toEqual(mockOtherDomainObject);;
+                expect(mockScope.navigatedObject).toEqual(mockOtherDomainObject);
             });
 
 
@@ -241,7 +239,7 @@ define(
                     .toBe(testDefaultRoot + '/next');
                 mockLocation.path.andCallFake(function () {
                     expect(mockRoute.current.pathParams.ids)
-                        .toBe(testDefaultRoot + '/next')
+                        .toBe(testDefaultRoot + '/next');
                 });
                 mockNavigationService.addListener.mostRecentCall.args[0](
                     mockNextObject

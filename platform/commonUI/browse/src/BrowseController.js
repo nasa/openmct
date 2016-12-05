@@ -28,8 +28,6 @@ define(
     [],
     function () {
 
-        var ROOT_ID = "ROOT";
-
         /**
          * The BrowseController is used to populate the initial scope in Browse
          * mode. It loads the root object from the objectService and makes it
@@ -49,7 +47,7 @@ define(
             urlService,
             defaultPath
         ) {
-            var path = ($route.current.params.ids || defaultPath).split("/");
+            var initialPath = ($route.current.params.ids || defaultPath).split("/");
 
             var currentIds = $route.current.params.ids;
 
@@ -58,7 +56,9 @@ define(
             };
 
             function idsForObject(domainObject) {
-                return urlService.urlForLocation("", domainObject).replace('/', '')
+                return urlService
+                    .urlForLocation("", domainObject)
+                    .replace('/', '');
             }
 
             // Find an object in an array of objects.
@@ -121,7 +121,7 @@ define(
             getObject('ROOT')
                 .then(function (root) {
                     $scope.domainObject = root;
-                    navigateToPath(path);
+                    navigateToPath(initialPath);
                 });
 
             // Handle navigation events from view service.  Only navigates
