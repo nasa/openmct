@@ -26,9 +26,11 @@
  */
 define(
     [
-        '../TableConfiguration'
+        '../TableConfiguration',
+        '../../../../../src/api/objects/object-utils'
+
     ],
-    function (TableConfiguration) {
+    function (TableConfiguration, objectUtils) {
 
         /**
          * The TableController is responsible for getting data onto the page
@@ -56,6 +58,8 @@ define(
                 telemetryFormatter);
             this.changeListeners = [];
             this.conductor = openmct.conductor;
+            this.openmct = openmct;
+            this.newObject = objectUtils.toNewFormat($scope.domainObject.getModel(), $scope.domainObject.getId());
 
             $scope.rows = [];
 
@@ -156,16 +160,47 @@ define(
          only).
          */
         TelemetryTableController.prototype.subscribe = function () {
+            var telemetryApi = this.openmct.telemetry;
+
             if (this.handle) {
                 this.handle.unsubscribe();
             }
             this.$scope.loading = true;
 
+            function map(func){
+                return function (objects) {
+                    return Promise.all(objects.map(func));
+                }
+            }
+
+            function add(object){
+                return function (objects) {
+                    objects.unshift(object);
+                    return objects;
+                }
+            }
+
+            function subscribeTo(object) {
+                return telemetryApi.request(object, {});
+            }
+
+            function error() {
+                console.log("Unable to subscribe");
+            }
+
+            this.openmct.composition.get(this.newObject)
+                .load()
+                .then(add(this.newObject))
+                .then(map(subscribeTo))
+                .then(function (telemetry) {
+                    console.log(telemetry.length);
+                }).catch(error);
+
             this.handle = this.$scope.domainObject && this.telemetryHandler.handle(
-                    this.$scope.domainObject,
-                    this.addRealtimeData.bind(this),
-                    true // Lossless
-                );
+                this.$scope.domainObject,
+                this.addRealtimeData.bind(this),
+                true // Lossless
+            );
 
             this.handle.request({}).then(this.addHistoricalData.bind(this));
 
