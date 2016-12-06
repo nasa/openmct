@@ -40,19 +40,17 @@ define([], function () {
             var wasActive = transactionService.isActive();
             cacheService.put(domainObject.getId(), domainObject.getModel());
 
-            if (persistence.persisted()) {
-                if (!wasActive) {
-                    transactionService.startTransaction();
-                }
+            if (!wasActive) {
+                transactionService.startTransaction();
+            }
 
-                transactionService.addToTransaction(
-                    persistence.persist.bind(persistence),
-                    persistence.refresh.bind(persistence)
-                );
+            transactionService.addToTransaction(
+                persistence.persist.bind(persistence),
+                persistence.refresh.bind(persistence)
+            );
 
-                if (!wasActive) {
-                    transactionService.commit();
-                }
+            if (!wasActive) {
+                transactionService.commit();
             }
         });
     }
