@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['../../../platform/features/conductor-v2/conductor/src/timeSystems/LocalClock'], function (LocalClock) {
+define(['../../../platform/features/conductor/core/src/timeSystems/LocalClock'], function (LocalClock) {
     /**
      * @implements TickSource
      * @constructor

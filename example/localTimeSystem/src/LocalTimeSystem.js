@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define([
-    '../../../platform/features/conductor-v2/conductor/src/timeSystems/TimeSystem',
-    '../../../platform/features/conductor-v2/conductor/src/timeSystems/LocalClock',
+    '../../../platform/features/conductor/core/src/timeSystems/TimeSystem',
+    '../../../platform/features/conductor/core/src/timeSystems/LocalClock',
     './LADTickSource'
 ], function (TimeSystem, LocalClock, LADTickSource) {
     var THIRTY_MINUTES = 30 * 60 * 1000,

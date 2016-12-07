@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define([
-    '../../conductor/src/timeSystems/TimeSystem',
-    '../../conductor/src/timeSystems/LocalClock'
+    '../../core/src/timeSystems/TimeSystem',
+    '../../core/src/timeSystems/LocalClock'
 ], function (TimeSystem, LocalClock) {
     var FIFTEEN_MINUTES = 15 * 60 * 1000,
         DEFAULT_PERIOD = 1000;
