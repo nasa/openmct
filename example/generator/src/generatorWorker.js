@@ -24,6 +24,7 @@
 
 (function () {
 
+    var FIFTEEN_MINUTES = 15 * 60 * 1000;
 
     var handlers = {
         subscribe: onSubscribe,
@@ -82,8 +83,11 @@
 
     function onRequest(message) {
         var data = message.data;
-        if (!data.start || !data.end) {
-            throw new Error('missing start and end!');
+        if (data.end == undefined) {
+            data.end = Date.now();
+        }
+        if (data.start == undefined){
+            data.start = data.end - FIFTEEN_MINUTES;
         }
 
         var now = Date.now();
