@@ -28,6 +28,7 @@ define(
             var mockInjector,
                 mockIdentifierService,
                 mockInstantiate,
+                mockContextualize,
                 mockIdentifier,
                 mockNow,
                 mockDomainObject,
@@ -36,6 +37,7 @@ define(
             beforeEach(function () {
                 mockInjector = jasmine.createSpyObj("$injector", ["get"]);
                 mockInstantiate = jasmine.createSpy("instantiate");
+                mockContextualize = jasmine.createSpy("contextualize");
                 mockIdentifierService = jasmine.createSpyObj(
                     'identifierService',
                     ['parse', 'generate']
@@ -50,8 +52,10 @@ define(
                 );
 
                 mockInjector.get.andCallFake(function (key) {
-                    return key === 'instantiate' ?
-                            mockInstantiate : undefined;
+                    return {
+                        'instantiate': mockInstantiate,
+                        'contextualize': mockContextualize
+                    }[key];
                 });
                 mockIdentifierService.parse.andReturn(mockIdentifier);
                 mockIdentifierService.generate.andReturn("some-id");
@@ -72,7 +76,7 @@ define(
                 expect(instantiation.invoke).toBe(instantiation.instantiate);
             });
 
-            it("uses the instantiate service to create domain objects", function () {
+            it("uses instantiate and contextualize to create domain objects", function () {
                 var mockDomainObj = jasmine.createSpyObj('domainObject', [
                     'getId',
                     'getModel',
@@ -81,6 +85,9 @@ define(
                     'hasCapability'
                 ]), testModel = { someKey: "some value" };
                 mockInstantiate.andReturn(mockDomainObj);
+                mockContextualize.andCallFake(function (x) {
+                    return x;
+                });
                 expect(instantiation.instantiate(testModel))
                     .toBe(mockDomainObj);
                 expect(mockInstantiate)
@@ -88,6 +95,8 @@ define(
                         someKey: "some value",
                         modified: mockNow()
                     }, jasmine.any(String));
+                expect(mockContextualize)
+                    .toHaveBeenCalledWith(mockDomainObj, mockDomainObject);
             });
 
         });

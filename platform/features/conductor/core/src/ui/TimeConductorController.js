@@ -97,6 +97,19 @@ define(
         }
 
         /**
+         * Used as a url search param setter in place of $location.search(...)
+         *
+         * Invokes $location.search(...) but prevents an Angular route
+         * change from occurring as a consequence which will cause
+         * controllers to reload and strangeness to ensue.
+         *
+         * @private
+         */
+        TimeConductorController.prototype.setParam = function (name, value) {
+            this.$location.search(name, value);
+        };
+
+        /**
          * @private
          */
         TimeConductorController.prototype.initializeScope = function () {
@@ -185,8 +198,8 @@ define(
                 this.setFormFromBounds(bounds);
                 if (this.conductorViewService.mode() === 'fixed') {
                     //Set bounds in URL on change
-                    this.$location.search(SEARCH.START_BOUND, bounds.start);
-                    this.$location.search(SEARCH.END_BOUND, bounds.end);
+                    this.setParam(SEARCH.START_BOUND, bounds.start);
+                    this.setParam(SEARCH.END_BOUND, bounds.end);
                 }
             }
         };
@@ -299,8 +312,8 @@ define(
                 this.conductorViewService.deltas(deltas);
 
                 //Set Deltas in URL on change
-                this.$location.search(SEARCH.START_DELTA, deltas.start);
-                this.$location.search(SEARCH.END_DELTA, deltas.end);
+                this.setParam(SEARCH.START_DELTA, deltas.start);
+                this.setParam(SEARCH.END_DELTA, deltas.end);
             }
         };
 
@@ -315,23 +328,23 @@ define(
          */
         TimeConductorController.prototype.setMode = function (newModeKey, oldModeKey) {
             //Set mode in URL on change
-            this.$location.search(SEARCH.MODE, newModeKey);
+            this.setParam(SEARCH.MODE, newModeKey);
 
             if (newModeKey !== oldModeKey) {
                 this.conductorViewService.mode(newModeKey);
                 this.setFormFromMode(newModeKey);
 
                 if (newModeKey === "fixed") {
-                    this.$location.search(SEARCH.START_DELTA, null);
-                    this.$location.search(SEARCH.END_DELTA, null);
+                    this.setParam(SEARCH.START_DELTA, undefined);
+                    this.setParam(SEARCH.END_DELTA, undefined);
                 } else {
-                    this.$location.search(SEARCH.START_BOUND, null);
-                    this.$location.search(SEARCH.END_BOUND, null);
+                    this.setParam(SEARCH.START_BOUND, undefined);
+                    this.setParam(SEARCH.END_BOUND, undefined);
 
                     var deltas = this.conductorViewService.deltas();
                     if (deltas) {
-                        this.$location.search(SEARCH.START_DELTA, deltas.start);
-                        this.$location.search(SEARCH.END_DELTA, deltas.end);
+                        this.setParam(SEARCH.START_DELTA, deltas.start);
+                        this.setParam(SEARCH.END_DELTA, deltas.end);
                     }
                 }
             }
@@ -363,7 +376,7 @@ define(
          */
         TimeConductorController.prototype.changeTimeSystem = function (newTimeSystem) {
             //Set time system in URL on change
-            this.$location.search(SEARCH.TIME_SYSTEM, newTimeSystem.metadata.key);
+            this.setParam(SEARCH.TIME_SYSTEM, newTimeSystem.metadata.key);
 
             if (newTimeSystem && (newTimeSystem !== this.$scope.timeSystemModel.selected)) {
                 this.setFormFromTimeSystem(newTimeSystem);

@@ -68,7 +68,13 @@ define(
             this.instantiateFn = this.instantiateFn ||
                 this.$injector.get("instantiate");
 
-            return this.instantiateFn(model, id);
+            var newObject = this.instantiateFn(model, id);
+
+            this.contextualizeFn = this.contextualizeFn ||
+                this.$injector.get("contextualize");
+
+
+            return this.contextualizeFn(newObject, this.domainObject);
         };
 
         /**
