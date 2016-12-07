@@ -22,12 +22,14 @@
 
 define([
     './TelemetryAPI',
+    './LegacyTelemetryProvider',
     'legacyRegistry'
 ], function (
     TelemetryAPI,
+    LegacyTelemetryProvider,
     legacyRegistry
 ) {
-    legacyRegistry.register('api/telemetry-api', {
+    legacyRegistry.register('src/api/telemetry', {
         name: 'Telemetry API',
         description: 'The public Telemetry API',
         extensions: {
@@ -37,6 +39,14 @@ define([
                     implementation: TelemetryAPI,
                     depends: [
                         'formatService'
+                    ]
+                },
+                {
+                    key: "LegacyTelemetryAdapter",
+                    implementation: LegacyTelemetryProvider,
+                    depends: [
+                        "openmct",
+                        "instantiate"
                     ]
                 }
             ]
