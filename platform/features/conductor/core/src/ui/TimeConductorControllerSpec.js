@@ -27,7 +27,6 @@ define(['./TimeConductorController'], function (TimeConductorController) {
         var mockTimeConductor;
         var mockConductorViewService;
         var mockTimeSystems;
-        var mockRoute;
         var controller;
         var mockFormatService;
         var mockFormat;
@@ -38,7 +37,6 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                 "$watch",
                 "$on"
             ]);
-            mockRoute = {};
 
             mockWindow = jasmine.createSpyObj("$window", ["requestAnimationFrame"]);
             mockTimeConductor = jasmine.createSpyObj(
@@ -130,7 +128,6 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                     mockScope,
                     mockWindow,
                     mockLocation,
-                    mockRoute,
                     {conductor: mockTimeConductor},
                     mockConductorViewService,
                     mockTimeSystems,
@@ -267,7 +264,6 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                     mockScope,
                     mockWindow,
                     mockLocation,
-                    mockRoute,
                     {conductor: mockTimeConductor},
                     mockConductorViewService,
                     mockTimeSystemConstructors,
@@ -447,7 +443,6 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                     mockScope,
                     mockWindow,
                     mockLocation,
-                    mockRoute,
                     {conductor: mockTimeConductor},
                     mockConductorViewService,
                     mockTimeSystems,

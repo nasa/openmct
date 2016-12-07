@@ -68,7 +68,6 @@ define([
                         "$scope",
                         "$window",
                         "$location",
-                        "$route",
                         "openmct",
                         "timeConductorViewService",
                         "timeSystems[]",

@@ -40,7 +40,7 @@ define(
          * @memberof platform.features.conductor
          * @constructor
          */
-        function TimeConductorController($scope, $window, $location, $route, openmct, conductorViewService, timeSystems, formatService) {
+        function TimeConductorController($scope, $window, $location, openmct, conductorViewService, timeSystems, formatService) {
 
             var self = this;
 
@@ -54,7 +54,6 @@ define(
             this.$scope = $scope;
             this.$window = $window;
             this.$location = $location;
-            this.$route = $route;
             this.conductorViewService = conductorViewService;
             this.conductor = openmct.conductor;
             this.modes = conductorViewService.availableModes();
