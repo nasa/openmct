@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([], function () {
-    function SelectingNavigationListener(navigtionService, openmct) {
+    function SelectingNavigationListener(navigationService, openmct) {
         var selection = openmct.selection;
         navigationService.addListener(function (legacyObject) {
             var domainObject = legacyObject.useCapability('adapter');
