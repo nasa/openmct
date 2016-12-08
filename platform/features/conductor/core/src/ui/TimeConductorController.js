@@ -205,22 +205,6 @@ define(
         };
 
         /**
-         * Does the currently selected time system support zooming? To
-         * support zooming a time system must, at a minimum, define some
-         * values for maximum and minimum zoom levels. Additionally
-         * TimeFormats, a related concept, may also support providing time
-         * unit feedback for the zoom level label, eg "seconds, minutes,
-         * hours, etc..."
-         * @returns {boolean}
-         */
-        TimeConductorController.prototype.supportsZoom = function () {
-            var timeSystem = this.conductor.timeSystem();
-            return timeSystem &&
-                    timeSystem.defaults() &&
-                    timeSystem.defaults().zoom;
-        };
-
-        /**
          * Called when the bounds change in the time conductor. Synchronizes
          * the bounds values in the time conductor with those in the form
          * @param {TimeConductorBounds}
@@ -230,7 +214,7 @@ define(
                 this.$scope.boundsModel.start = bounds.start;
                 this.$scope.boundsModel.end = bounds.end;
 
-                if (this.supportsZoom()) {
+                if (this.supportsZoom) {
                     this.currentZoom = this.toSliderValue(bounds.end - bounds.start);
                     this.toTimeUnits(bounds.end - bounds.start);
                 }
@@ -279,7 +263,7 @@ define(
             timeSystemModel.format = timeSystem.formats()[0];
             timeSystemModel.deltaFormat = timeSystem.deltaFormat();
 
-            if (this.supportsZoom()) {
+            if (this.supportsZoom) {
                 timeSystemModel.minZoom = timeSystem.defaults().zoom.min;
                 timeSystemModel.maxZoom = timeSystem.defaults().zoom.max;
             }
@@ -363,7 +347,10 @@ define(
             var selected = this.timeSystems.filter(function (timeSystem) {
                 return timeSystem.metadata.key === key;
             })[0];
-            this.conductor.timeSystem(selected, selected.defaults().bounds);
+            if (selected) {
+                this.supportsZoom = !!(selected.defaults() && selected.defaults().zoom);
+                this.conductor.timeSystem(selected, selected.defaults().bounds);
+            }
         };
 
         /**
@@ -379,6 +366,7 @@ define(
             this.setParam(SEARCH.TIME_SYSTEM, newTimeSystem.metadata.key);
 
             if (newTimeSystem && (newTimeSystem !== this.$scope.timeSystemModel.selected)) {
+                this.supportsZoom = !!(newTimeSystem.defaults() && newTimeSystem.defaults().zoom);
                 this.setFormFromTimeSystem(newTimeSystem);
 
                 if (newTimeSystem.defaults()) {

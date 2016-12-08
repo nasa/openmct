@@ -178,6 +178,28 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                 expect(mockScope.timeSystemModel.maxZoom).toBe(mockDefaults.zoom.max);
             });
 
+            it("supports zoom if time system defines zoom defaults", function () {
+
+                mockDefaults.zoom = undefined;
+
+                tsListener(timeSystem);
+                expect(controller.supportsZoom).toBe(false);
+
+                mockDefaults.zoom = {
+                    min: 100,
+                    max: 10
+                };
+
+                var anotherTimeSystem = Object.create(timeSystem);
+                timeSystem.defaults = function () {
+                    return mockDefaults;
+                };
+
+                tsListener(anotherTimeSystem);
+                expect(controller.supportsZoom).toBe(true);
+
+            });
+
             it("when bounds change, sets the correct zoom slider value", function () {
                 var bounds = {
                     start: 0,
