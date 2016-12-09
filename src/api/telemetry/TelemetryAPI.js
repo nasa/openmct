@@ -21,9 +21,13 @@
  *****************************************************************************/
 
 define([
+    './TelemetryMetadataManager',
+    './TelemetryValueFormatter',
     'lodash',
     'EventEmitter'
 ], function (
+    TelemetryMetadataManager,
+    TelemetryValueFormatter,
     _,
     EventEmitter
 ) {
@@ -155,9 +159,13 @@ define([
      * @augments module:openmct.TelemetryAPI~TelemetryProvider
      * @memberof module:openmct
      */
-    function TelemetryAPI() {
+    function TelemetryAPI(MCT) {
+        this.MCT = MCT;
         this.providersByStrategy = {};
         this.defaultProviders = [];
+        this.metadataCache = new WeakMap();
+        this.formatMapCache = new WeakMap();
+        this.valueFormatterCache = new WeakMap();
     }
 
     /**
@@ -238,6 +246,80 @@ define([
         return provider ?
             provider.request(domainObject, options) :
             Promise.reject([]);
+    };
+
+    /**
+     * Get telemetry metadata for a given domain object.  Returns a telemetry
+     * metadata manager which provides methods for interrogating telemetry
+     * metadata.
+     *
+     * @returns {TelemetryMetadataManager}
+     */
+    TelemetryAPI.prototype.getMetadata = function (domainObject) {
+        if (!this.metadataCache.has(domainObject)) {
+            this.metadataCache.set(
+                domainObject,
+                new TelemetryMetadataManager(domainObject)
+            );
+        }
+        return this.metadataCache.get(domainObject);
+    };
+
+    /**
+     * Return an array of valueMetadatas that are common to all supplied
+     * telemetry objects and match the requested hints.
+     *
+     */
+    TelemetryAPI.prototype.commonValuesForHints = function (metadatas, hints) {
+        var options = metadatas.map(function (metadata) {
+            var values = metadata.getValueMetadatasForHints(hints);
+            return _.indexBy(values, 'key');
+        }).reduce(function (a, b) {
+            var results = {};
+            Object.keys(a).forEach(function (key) {
+                if (b.hasOwnProperty(key)) {
+                    results[key] = a[key];
+                }
+            });
+            return results;
+        });
+        var sortKeys = hints.map(function (h) { return 'hints.' + h; });
+        return _.sortByAll(options, sortKeys);
+    };
+
+    /**
+     * Get a value formatter for a given valueMetadata.
+     *
+     * @returns {TelemetryValueFormatter}
+     */
+    TelemetryAPI.prototype.getValueFormatter = function (valueMetadata) {
+        if (!this.valueFormatterCache.has(valueMetadata)) {
+            if (!this.formatService) {
+                this.formatService = this.MCT.$injector.get('formatService');
+            }
+            this.valueFormatterCache.set(
+                valueMetadata,
+                new TelemetryValueFormatter(valueMetadata, this.formatService)
+            );
+        }
+        return this.valueFormatterCache.get(valueMetadata);
+    };
+
+    /**
+     * Get a format map of all value formatters for a given piece of telemetry
+     * metadata.
+     *
+     * @returns {Object<String, {TelemetryValueFormatter}>}
+     */
+    TelemetryAPI.prototype.getFormatMap = function (metadata) {
+        if (!this.formatMapCache.has(metadata)) {
+            var formatMap = metadata.values().reduce(function (map, valueMetadata) {
+                map[valueMetadata.key] = this.getValueFormatter(valueMetadata);
+                return map;
+            }.bind(this), {});
+            this.formatMapCache.set(metadata, formatMap);
+        }
+        return this.formatMapCache.get(metadata);
     };
 
     /**

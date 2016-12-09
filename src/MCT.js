@@ -192,7 +192,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name telemetry
          */
-        this.telemetry = new api.TelemetryAPI();
+        this.telemetry = new api.TelemetryAPI(this);
 
         this.TimeConductor = this.conductor; // compatibility for prototype
         this.on('navigation', this.selection.clear.bind(this.selection));
