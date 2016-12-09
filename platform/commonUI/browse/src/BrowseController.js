@@ -52,7 +52,7 @@ define(
             var currentIds = $route.current.params.ids;
 
             $scope.treeModel = {
-                selectedObject: {}
+                selectedObject: undefined
             };
 
             function idsForObject(domainObject) {
@@ -139,7 +139,11 @@ define(
 
             // Also listen for changes which come from the tree. Changes in
             // the tree will trigger a change in browse navigation state.
-            $scope.$watch("treeModel.selectedObject", navigateDirectlyToModel);
+            $scope.$watch("treeModel.selectedObject", function (newObject, oldObject) {
+                if (oldObject !== newObject) {
+                    navigateDirectlyToModel(newObject);
+                }
+            });
 
 
             // Listen for route changes which are caused by browser events
