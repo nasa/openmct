@@ -84,12 +84,16 @@ define([
      * Wraps old format metadata to new format metadata.
      * Provides methods for interrogating telemetry metadata.
      */
-    function TelemetryMetadataManager(domainObject) {
+    function TelemetryMetadataManager(domainObject, typeService) {
         this.metadata = domainObject.telemetry || {};
 
         if (this.metadata.values) {
             this.valueMetadatas = this.metadata.values;
         } else {
+            var typeMetadata = typeService
+                .getType(domainObject.type).typeDef.telemetry;
+
+            _.extend(this.metadata, typeMetadata);
             this.valueMetadatas = valueMetadatasFromOldFormat(this.metadata);
         }
 

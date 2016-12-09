@@ -257,9 +257,12 @@ define([
      */
     TelemetryAPI.prototype.getMetadata = function (domainObject) {
         if (!this.metadataCache.has(domainObject)) {
+            if (!this.typeService) {
+                this.typeService = this.MCT.$injector.get('typeService');
+            }
             this.metadataCache.set(
                 domainObject,
-                new TelemetryMetadataManager(domainObject)
+                new TelemetryMetadataManager(domainObject, this.typeService)
             );
         }
         return this.metadataCache.get(domainObject);
