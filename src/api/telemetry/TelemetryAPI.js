@@ -275,7 +275,7 @@ define([
      */
     TelemetryAPI.prototype.commonValuesForHints = function (metadatas, hints) {
         var options = metadatas.map(function (metadata) {
-            var values = metadata.getValueMetadatasForHints(hints);
+            var values = metadata.valuesForHints(hints);
             return _.indexBy(values, 'key');
         }).reduce(function (a, b) {
             var results = {};
