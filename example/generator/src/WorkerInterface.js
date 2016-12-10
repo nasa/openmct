@@ -73,15 +73,6 @@ define([
             deferred.reject = reject;
         });
 
-        var data = {
-            amplitude: request.amplitude || 1,
-            period: request.period || 100,
-            offset: request.offset || 0,
-            dataRateInHz: request.rate || 1,
-            start: request.start,
-            end: request.end
-        };
-
         function callback(message) {
             if (message.error) {
                 deferred.reject(message.error);
@@ -91,7 +82,7 @@ define([
             return true;
         }
 
-        this.dispatch('request', data, callback);
+        this.dispatch('request', request, callback);
 
         return promise;
     };

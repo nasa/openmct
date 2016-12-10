@@ -61,6 +61,7 @@ define([
             if (!workerRequest[prop]) {
                 workerRequest[prop] = REQUEST_DEFAULTS[prop];
             }
+            workerRequest[prop] = Number(workerRequest[prop]);
         });
 
         return workerRequest;
@@ -68,6 +69,8 @@ define([
 
     GeneratorProvider.prototype.request = function (domainObject, request) {
         var workerRequest = this.makeWorkerRequest(domainObject, request);
+        workerRequest.start = request.start;
+        workerRequest.end = request.end;
         return this.workerInterface.request(workerRequest);
     };
 

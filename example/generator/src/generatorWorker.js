@@ -53,7 +53,7 @@
 
         var start = Date.now();
         var step = 1000 / data.dataRateInHz;
-        var nextStep = start + (start % step);
+        var nextStep = start - (start % step) + step;
 
         function work(now) {
             while (nextStep < now) {
@@ -83,24 +83,26 @@
 
     function onRequest(message) {
         var data = message.data;
-
-        var start = data.start;
-        var end = data.end;
-        if (!start || !end) {
+        if (!data.start || !data.end) {
             throw new Error('missing start and end!');
         }
+
+        var now = Date.now();
+        var start = data.start;
+        var end = data.end > now ? now : data.end;
         var amplitude = data.amplitude;
         var period = data.period;
         var offset = data.offset;
         var dataRateInHz = data.dataRateInHz;
 
         var step = 1000 / dataRateInHz;
-        var nextStep = start + (start % step);
+        var nextStep = start - (start % step) + step;
 
         var data = [];
 
         for (; nextStep < end; nextStep += step) {
             data.push({
+                utc: nextStep,
                 time: nextStep,
                 yesterday: nextStep - 60*60*24*1000,
                 delta: 60*60*24*1000,
