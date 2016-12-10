@@ -24,96 +24,47 @@
 /**
  * Module defining SinewaveTelemetryProvider. Created by vwoeltje on 11/12/14.
  */
-define(
-    ["./SinewaveTelemetrySeries"],
-    function (SinewaveTelemetrySeries) {
-        "use strict";
+define([
+    "./SinewaveTelemetrySeries",
+    "./GeneratorProvider"
+], function (
+    SinewaveTelemetrySeries,
+    GeneratorProvider
+) {
 
-        /**
-         *
-         * @constructor
-         */
-        function SinewaveTelemetryProvider($q, $timeout) {
-            var subscriptions = [],
-                generating = false;
+    function SinewaveTelemetryProvider() {
+        this.provider = new GeneratorProvider();
+    }
 
-            //
-            function matchesSource(request) {
-                return request.source === "generator";
-            }
-
-            // Used internally; this will be repacked by doPackage
-            function generateData(request) {
-                return {
-                    key: request.key,
-                    telemetry: new SinewaveTelemetrySeries(request)
+    SinewaveTelemetryProvider.prototype.requestTelemetry = function (requests) {
+        if (requests[0].source !== 'generator') {
+            return Promise.resolve({});
+        }
+        return this.provider.request({}, requests[0])
+            .then(function (data) {
+                var res = {
+                    generator: {}
                 };
-            }
+                res.generator[requests[0].key] = new SinewaveTelemetrySeries(data);
+                return res;
+            });
+    };
 
-            //
-            function doPackage(results) {
-                var packaged = {};
-                results.forEach(function (result) {
-                    packaged[result.key] = result.telemetry;
-                });
-                // Format as expected (sources -> keys -> telemetry)
-                return { generator: packaged };
-            }
-
-            function requestTelemetry(requests) {
-                return $timeout(function () {
-                    return doPackage(requests.filter(matchesSource).map(generateData));
-                }, 0);
-            }
-
-            function handleSubscriptions() {
-                subscriptions.forEach(function (subscription) {
-                    var requests = subscription.requests;
-                    subscription.callback(doPackage(
-                        requests.filter(matchesSource).map(generateData)
-                    ));
-                });
-            }
-
-            function startGenerating() {
-                generating = true;
-                $timeout(function () {
-                    handleSubscriptions();
-                    if (generating && subscriptions.length > 0) {
-                        startGenerating();
-                    } else {
-                        generating = false;
-                    }
-                }, 1000);
-            }
-
-            function subscribe(callback, requests) {
-                var subscription = {
-                    callback: callback,
-                    requests: requests
-                };
-
-                function unsubscribe() {
-                    subscriptions = subscriptions.filter(function (s) {
-                        return s !== subscription;
-                    });
-                }
-
-                subscriptions.push(subscription);
-
-                if (!generating) {
-                    startGenerating();
-                }
-
-                return unsubscribe;
-            }
-
-            return {
-                requestTelemetry: requestTelemetry,
-                subscribe: subscribe
-            };
+    SinewaveTelemetryProvider.prototype.subscribe = function (callback, requests) {
+        if (requests[0].source !== 'generator') {
+            return function unsubscribe() {};
         }
 
-        return SinewaveTelemetryProvider;
-    }
-);
+        function wrapper(data) {
+            var res = {
+                generator: {}
+            };
+            res.generator[requests[0].key] = new SinewaveTelemetrySeries(data);
+            callback(res);
+        }
+
+        return this.provider.subscribe({}, wrapper, requests[0]);
+    };
+
+    return SinewaveTelemetryProvider;
+});
