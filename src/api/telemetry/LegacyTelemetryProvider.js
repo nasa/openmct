@@ -121,13 +121,9 @@ define([
         return capability.subscribe(callbackWrapper, request);
     };
 
-    function notImplemented () {
+    LegacyTelemetryProvider.prototype.limitEvaluator = function () {
         console.error("function not implemented");
-    }
-
-    LegacyTelemetryProvider.prototype.properties = notImplemented;
-    LegacyTelemetryProvider.prototype.limitEvaluator = notImplemented;
-    LegacyTelemetryProvider.prototype.formatter = notImplemented;
+    };
 
     return function (openmct, instantiate) {
         // Push onto the start of the default providers array so that it's
