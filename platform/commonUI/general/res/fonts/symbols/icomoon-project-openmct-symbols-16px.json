@@ -1,8 +1,8 @@
 {
   "metadata": {
     "name": "openmct-symbols-16px",
-    "lastOpened": 1480112601593,
-    "created": 1480112580248
+    "lastOpened": 1481575258437,
+    "created": 1481575255265
   },
   "iconSets": [
     {
@@ -535,15 +535,15 @@
         {
           "order": 21,
           "prevSize": 24,
-          "name": "icon-x-in-circle",
+          "name": "icon-resync",
           "id": 16,
           "code": 921654,
           "tempChar": ""
         },
         {
-          "order": 117,
+          "order": 121,
           "id": 103,
-          "name": "icon-brightness",
+          "name": "icon-x-in-circle",
           "prevSize": 24,
           "code": 921656,
           "tempChar": ""
@@ -551,7 +551,7 @@
         {
           "order": 118,
           "id": 102,
-          "name": "icon-contrast",
+          "name": "icon-brightness",
           "prevSize": 24,
           "code": 921657,
           "tempChar": ""
@@ -559,7 +559,7 @@
         {
           "order": 119,
           "id": 104,
-          "name": "icon-reset",
+          "name": "icon-contrast",
           "prevSize": 24,
           "code": 921664,
           "tempChar": ""
@@ -567,7 +567,7 @@
         {
           "order": 120,
           "id": 105,
-          "name": "icon-resync",
+          "name": "icon-reset",
           "prevSize": 24,
           "code": 921655,
           "tempChar": ""
