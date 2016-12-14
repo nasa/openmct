@@ -24,55 +24,52 @@
 /**
  * Module defining SinewaveTelemetry. Created by vwoeltje on 11/12/14.
  */
-define(
-    ['./SinewaveConstants'],
-    function (SinewaveConstants) {
+define([
+
+], function (
+
+) {
         "use strict";
 
-        var ONE_DAY = 60 * 60 * 24,
-            firstObservedTime = Math.floor(SinewaveConstants.START_TIME / 1000);
-
-        /**
-         *
-         * @constructor
-         */
-        function SinewaveTelemetrySeries(request) {
-            var timeOffset = (request.domain === 'yesterday') ? ONE_DAY : 0,
-                latestTime = Math.floor(Date.now() / 1000) - timeOffset,
-                firstTime = firstObservedTime - timeOffset,
-                endTime = (request.end !== undefined) ?
-                        Math.floor(request.end / 1000) : latestTime,
-                count = Math.min(endTime, latestTime) - firstTime,
-                period = +request.period || 30,
-                generatorData = {},
-                requestStart = (request.start === undefined) ? firstTime :
-                        Math.max(Math.floor(request.start / 1000), firstTime),
-                offset = requestStart - firstTime;
-
-            if (request.size !== undefined) {
-                offset = Math.max(offset, count - request.size);
+        function SinewaveTelemetrySeries(data) {
+            if (!Array.isArray(data)) {
+                data = [data];
             }
-
-            generatorData.getPointCount = function () {
-                return count - offset;
-            };
-
-            generatorData.getDomainValue = function (i, domain) {
-                // delta uses the same numeric values as the default domain,
-                // so it's not checked for here, just formatted for display
-                // differently.
-                return (i + offset) * 1000 + firstTime * 1000 -
-                    (domain === 'yesterday' ? (ONE_DAY * 1000) : 0);
-            };
-
-            generatorData.getRangeValue = function (i, range) {
-                range = range || "sin";
-                return Math[range]((i + offset) * Math.PI * 2 / period);
-            };
-
-            return generatorData;
+            this.data = data;
         }
 
+        SinewaveTelemetrySeries.prototype.getPointCount = function () {
+            return this.data.length;
+        };
+
+
+        SinewaveTelemetrySeries.prototype.getDomainValue = function (
+            index,
+            domain
+        ) {
+            domain = domain || 'time';
+
+            return this.getDatum(index)[domain];
+        };
+
+        SinewaveTelemetrySeries.prototype.getRangeValue = function (
+            index,
+            range
+        ) {
+            range = range || 'sin';
+            return this.getDatum(index)[range];
+        };
+
+        SinewaveTelemetrySeries.prototype.getDatum = function (index) {
+            if (index > this.data.length || index < 0) {
+                throw new Error('IndexOutOfRange: index not available in series.');
+            }
+            return this.data[index];
+        };
+
+        SinewaveTelemetrySeries.prototype.getData = function () {
+            return this.data;
+        };
+
         return SinewaveTelemetrySeries;
-    }
-);
+});
