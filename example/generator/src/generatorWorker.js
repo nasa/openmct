@@ -61,7 +61,6 @@
                     id: message.id,
                     data: {
                         utc: nextStep,
-                        time: nextStep,
                         yesterday: nextStep - 60*60*24*1000,
                         delta: 60*60*24*1000,
                         sin: sin(nextStep, data.period, data.amplitude, data.offset),
@@ -103,7 +102,6 @@
         for (; nextStep < end; nextStep += step) {
             data.push({
                 utc: nextStep,
-                time: nextStep,
                 yesterday: nextStep - 60*60*24*1000,
                 delta: 60*60*24*1000,
                 sin: sin(nextStep, period, amplitude, offset),
