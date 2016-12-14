@@ -34,6 +34,6 @@
     } else if (typeof exports === 'object') {
         module.exports = factory();
     } else {
-        root.MCT = factory();
+        root.openmct = factory();
     }
 }(this, function() {
