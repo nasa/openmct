@@ -64,6 +64,7 @@ define(
                         }).join(' ') :
                         "";
                     element.css('filter', styleValue);
+                    element.css('webkitFilter', styleValue);
                 }
 
                 function nextImage(url) {
