@@ -121,8 +121,17 @@ define([
         return capability.subscribe(callbackWrapper, request);
     };
 
-    LegacyTelemetryProvider.prototype.limitEvaluator = function () {
-        console.error("function not implemented");
+    LegacyTelemetryProvider.prototype.limitEvaluator = function (domainObject) {
+        var oldObject = this.instantiate(
+            utils.toOldFormat(domainObject),
+            utils.makeKeyString(domainObject.identifier));
+        var limitEvaluator = oldObject.getCapability('limit');
+
+        return {
+            evaluate: function (datum, property) {
+                return limitEvaluator.evaluate(datum, property.key);
+            }
+        }
     };
 
     return function (openmct, instantiate) {
