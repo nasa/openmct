@@ -59,7 +59,7 @@ define([
                     "domains": [
                         {
                             "name": "Time",
-                            "key": "timestamp",
+                            "key": "utc",
                             "format": "utc"
                         }
                     ]

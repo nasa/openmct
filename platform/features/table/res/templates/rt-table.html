@@ -1,10 +1,12 @@
-<div ng-controller="RealtimeTableController">
+<div ng-controller="RealtimeTableController as tableController">
     <mct-table
         headers="headers"
         rows="rows"
+        time-columns="tableController.timeColumns"
         enableFilter="true"
         enableSort="true"
         class="tabular-holder has-control-bar"
+        sort-column="defaultSort"
         auto-scroll="true">
     </mct-table>
 </div>

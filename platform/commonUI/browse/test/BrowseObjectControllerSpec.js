@@ -29,7 +29,6 @@ define(
             var mockScope,
                 mockLocation,
                 mockRoute,
-                mockUnlisten,
                 controller;
 
             // Utility function; look for a $watch on scope and fire it
@@ -51,9 +50,7 @@ define(
                     "$location",
                     ["path", "search"]
                 );
-                mockUnlisten = jasmine.createSpy("unlisten");
-
-                mockScope.$on.andReturn(mockUnlisten);
+                mockLocation.search.andReturn({});
 
                 controller = new BrowseObjectController(
                     mockScope,
@@ -69,10 +66,6 @@ define(
                 // Allows the path index to be checked
                 // prior to setting $route.current
                 mockLocation.path.andReturn("/browse/");
-
-                // Exercise the Angular workaround
-                mockScope.$on.mostRecentCall.args[1]();
-                expect(mockUnlisten).toHaveBeenCalled();
             });
 
             it("sets the active view from query parameters", function () {

@@ -363,14 +363,13 @@
     }
 }
 
-@mixin webkitProp($name, $val) {
-	#{$name}: #{$val};
-	-webkit-#{$name}: #{$val};
-}
-
-@mixin webkitVal($name, $val) {
-	#{$name}: #{$val};
-	#{$name}: -webkit-#{$val};
+@mixin cursorGrab() {
+    cursor: grab;
+    cursor: -webkit-grab;
+    &:active {
+        cursor: grabbing;
+        cursor: -webkit-grabbing;
+    }
 }
 
 @mixin verticalCenter {
@@ -390,6 +389,14 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+@mixin reverseEllipsis() {
+    direction: rtl;
+    unicode-bidi:bidi-override;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 @mixin scrollH($showBar: auto) {

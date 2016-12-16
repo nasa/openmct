@@ -77,7 +77,8 @@ define([
                         "telemetryFormatter",
                         "telemetryHandler",
                         "throttle",
-                        "PLOT_FIXED_DURATION"
+                        "PLOT_FIXED_DURATION",
+                        "openmct"
                     ]
                 },
                 {

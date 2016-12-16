@@ -72,14 +72,13 @@ define([
         "extensions": {
             "routes": [
                 {
-                    "when": "/browse/:ids*",
+                    "when": "/browse/:ids*?",
                     "template": browseTemplate,
                     "reloadOnSearch": false
                 },
                 {
                     "when": "",
-                    "template": browseTemplate,
-                    "reloadOnSearch": false
+                    "redirectTo": "/browse/"
                 }
             ],
             "constants": [

@@ -86,14 +86,25 @@ define(
                     '$timeout',
                     '$element',
                     'exportService',
+                    'formatService',
+                    'openmct',
                     MCTTableController
                 ],
+                controllerAs: "table",
                 scope: {
                     headers: "=",
                     rows: "=",
                     enableFilter: "=?",
                     enableSort: "=?",
-                    autoScroll: "=?"
+                    autoScroll: "=?",
+                    // Used to indicate which columns contain time data. This
+                    // will be used for determining when the table is sorted
+                    // by the column that can be used for time conductor
+                    // time of interest.
+                    timeColumns: "=?",
+                    // Indicate a column to sort on. Allows control of sort
+                    // via configuration (eg. for default sort column).
+                    sortColumn: "=?"
                 }
             };
         }

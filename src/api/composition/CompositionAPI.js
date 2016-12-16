@@ -41,10 +41,11 @@ define([
      * @returns {module:openmct.CompositionCollection}
      * @memberof module:openmct
      */
-    function CompositionAPI() {
+    function CompositionAPI(publicAPI) {
         this.registry = [];
         this.policies = [];
-        this.addProvider(new DefaultCompositionProvider());
+        this.addProvider(new DefaultCompositionProvider(publicAPI));
+        this.publicAPI = publicAPI;
     }
 
     /**
@@ -77,7 +78,7 @@ define([
             return;
         }
 
-        return new CompositionCollection(domainObject, provider);
+        return new CompositionCollection(domainObject, provider, this.publicAPI);
     };
 
     /**
