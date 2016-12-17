@@ -87,7 +87,7 @@ define([
                 {
                     "key": "TelemetryTableController",
                     "implementation": TelemetryTableController,
-                    "depends": ["$scope", "openmct"]
+                    "depends": ["$scope", "$timeout", "openmct"]
                 },
                 {
                     "key": "TableOptionsController",

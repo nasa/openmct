@@ -217,8 +217,8 @@ define(
                 if (handle) {
                     handle.unsubscribe();
                     handle = undefined;
-                    conductor.off("timeOfInterest", changeTimeOfInterest);
                 }
+                conductor.off("timeOfInterest", changeTimeOfInterest);
             }
 
             function requery() {
