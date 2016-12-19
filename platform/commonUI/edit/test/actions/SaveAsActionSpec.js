@@ -32,6 +32,7 @@ define(
                 mockObjectService,
                 mockDialogService,
                 mockCopyService,
+                mockNotificationService,
                 mockParent,
                 actionContext,
                 capabilities = {},
@@ -112,11 +113,25 @@ define(
                     ]
                 );
 
+                mockNotificationService = jasmine.createSpyObj(
+                    "notificationService",
+                    [
+                        "info",
+                        "error"
+                    ]
+                );
+
                 actionContext = {
                     domainObject: mockDomainObject
                 };
 
-                action = new SaveAsAction(undefined, undefined, mockDialogService, mockCopyService, actionContext);
+                action = new SaveAsAction(
+                    undefined,
+                    undefined,
+                    mockDialogService,
+                    mockCopyService,
+                    mockNotificationService,
+                    actionContext);
 
                 spyOn(action, "getObjectService");
                 action.getObjectService.andReturn(mockObjectService);
@@ -186,7 +201,7 @@ define(
                 expect(mockDialogService.getUserInput).toHaveBeenCalled();
             });
 
-            describe("a blocking dialog", function () {
+            describe("in order to keep the user in the loop", function () {
                 var mockDialogHandle;
 
                 beforeEach(function () {
@@ -194,14 +209,14 @@ define(
                     mockDialogService.showBlockingMessage.andReturn(mockDialogHandle);
                 });
 
-                it("indicates that a save is taking place", function () {
+                it("shows a blocking dialog indicating that saving is in progress", function () {
                     mockEditorCapability.save.andReturn(new Promise(function () {}));
                     action.perform();
                     expect(mockDialogService.showBlockingMessage).toHaveBeenCalled();
                     expect(mockDialogHandle.dismiss).not.toHaveBeenCalled();
                 });
 
-                it("is hidden after saving", function () {
+                it("hides the blocking dialog after saving finishes", function () {
                     var mockCallback = jasmine.createSpy();
                     action.perform().then(mockCallback);
                     expect(mockDialogService.showBlockingMessage).toHaveBeenCalled();
@@ -210,6 +225,31 @@ define(
                     });
                     runs(function () {
                         expect(mockDialogHandle.dismiss).toHaveBeenCalled();
+                    });
+                });
+
+                it("notifies if saving succeeded", function () {
+                    var mockCallback = jasmine.createSpy();
+                    action.perform().then(mockCallback);
+                    waitsFor(function () {
+                        return mockCallback.calls.length > 0;
+                    });
+                    runs(function () {
+                        expect(mockNotificationService.info).toHaveBeenCalled();
+                        expect(mockNotificationService.error).not.toHaveBeenCalled();
+                    });
+                });
+
+                it("notifies if saving failed", function () {
+                    mockCopyService.perform.andReturn(Promise.reject("some failure reason"));
+                    var mockCallback = jasmine.createSpy();
+                    action.perform().then(mockCallback);
+                    waitsFor(function () {
+                        return mockCallback.calls.length > 0;
+                    });
+                    runs(function () {
+                        expect(mockNotificationService.error).toHaveBeenCalled();
+                        expect(mockNotificationService.info).not.toHaveBeenCalled();
                     });
                 });
             });

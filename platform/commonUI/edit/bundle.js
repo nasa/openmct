@@ -211,7 +211,8 @@ define([
                     "cssclass": "icon-save labeled",
                     "description": "Save changes made to these objects.",
                     "depends": [
-                        "dialogService"
+                        "dialogService",
+                        "notificationService"
                     ]
                 },
                 {
@@ -222,7 +223,8 @@ define([
                     "cssclass": "icon-save labeled",
                     "description": "Save changes made to these objects.",
                     "depends": [
-                        "dialogService"
+                        "dialogService",
+                        "notificationService"
                     ]
                 },
                 {
@@ -236,7 +238,8 @@ define([
                         "$injector",
                         "policyService",
                         "dialogService",
-                        "copyService"
+                        "copyService",
+                        "notificationService"
                     ],
                     "priority": "mandatory"
                 },
