@@ -30,11 +30,16 @@ define([
     function valueMetadatasFromOldFormat(metadata) {
         var valueMetadatas = [];
 
+        valueMetadatas.push({
+            key: 'name',
+            name: 'Name'
+        });
+
         metadata.domains.forEach(function (domain, index) {
             var valueMetadata = _.clone(domain);
             valueMetadata.hints = {
-                x: index,
-                domain: index
+                x: index + 1,
+                domain: index + 1
             };
             valueMetadatas.push(valueMetadata);
         });
@@ -44,7 +49,7 @@ define([
             valueMetadata.hints = {
                 y: index,
                 range: index,
-                priority: index + metadata.domains.length
+                priority: index + metadata.domains.length + 1
             };
 
             if (valueMetadata.type === 'enum') {
@@ -61,7 +66,7 @@ define([
                 valueMetadata.values = _.pluck(valueMetadata.enumerations, 'value');
                 valueMetadata.max = _.max(valueMetadata.values);
                 valueMetadata.min = _.min(valueMetadata.values);
-            };
+            }
 
             valueMetadatas.push(valueMetadata);
         });
@@ -106,7 +111,7 @@ define([
      */
     TelemetryMetadataManager.prototype.value = function (key) {
         return this.valueMetadatas.filter(function (metadata) {
-            return metadata.key === key
+            return metadata.key === key;
         })[0];
     };
 
@@ -126,6 +131,7 @@ define([
         hints
     ) {
         function hasHint(hint) {
+            /*jshint validthis: true */
             return this.hints.hasOwnProperty(hint);
         }
         function hasHints(metadata) {

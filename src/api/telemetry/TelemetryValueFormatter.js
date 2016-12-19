@@ -37,9 +37,15 @@ define([
         } catch (e) {
             // TODO: Better formatting
             this.formatter = {
-                parse: function (x) { return Number(x); },
-                format: function (x) { return x; },
-                validate: function (x) { return true; }
+                parse: function (x) {
+                    return Number(x);
+                },
+                format: function (x) {
+                    return x;
+                },
+                validate: function (x) {
+                    return true;
+                }
             };
         }
 

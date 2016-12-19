@@ -44,25 +44,29 @@ define([
             utils.makeKeyString(domainObject.identifier)).hasCapability("telemetry");
     };
 
-    function createDatum(metadata, legacySeries, i) {
+    function createDatum(domainObject, metadata, legacySeries, i) {
         var datum = {};
 
-        metadata.domains.reduce(function (telemetryObject, domain) {
-            datum[domain.key] = legacySeries.getDomainValue(i, domain.key);
+        metadata.domains.reduce(function (d, domain) {
+            d[domain.key] = legacySeries.getDomainValue(i, domain.key);
+            return d;
         }, datum);
 
-        metadata.ranges.reduce(function (telemetryObject, range) {
-            datum[range.key] = legacySeries.getRangeValue(i, range.key);
+        metadata.ranges.reduce(function (d, range) {
+            d[range.key] = legacySeries.getRangeValue(i, range.key);
+            return d;
         }, datum);
+
+        datum.name = domainObject.name;
 
         return datum;
     }
 
-    function adaptSeries(metadata, legacySeries) {
+    function adaptSeries(domainObject, metadata, legacySeries) {
         var series = [];
 
-        for (var i=0; i < legacySeries.getPointCount(); i++) {
-            series.push(createDatum(metadata, legacySeries, i));
+        for (var i = 0; i < legacySeries.getPointCount(); i++) {
+            series.push(createDatum(domainObject, metadata, legacySeries, i));
         }
 
         return series;
@@ -90,7 +94,7 @@ define([
         var capability = oldObject.getCapability("telemetry");
 
         return capability.requestData(request).then(function (telemetrySeries) {
-            return Promise.resolve(adaptSeries(capability.getMetadata(), telemetrySeries));
+            return Promise.resolve(adaptSeries(domainObject, capability.getMetadata(), telemetrySeries));
         }).catch(function (error) {
             return Promise.reject(error);
         });
@@ -114,8 +118,8 @@ define([
         var oldObject = this.instantiate(utils.toOldFormat(domainObject), utils.makeKeyString(domainObject.identifier));
         var capability = oldObject.getCapability("telemetry");
 
-        function callbackWrapper(series){
-            callback(createDatum(capability.getMetadata(), series, series.getPointCount()-1));
+        function callbackWrapper(series) {
+            callback(createDatum(domainObject, capability.getMetadata(), series, series.getPointCount() - 1));
         }
 
         return capability.subscribe(callbackWrapper, request);
@@ -125,13 +129,13 @@ define([
         var oldObject = this.instantiate(
             utils.toOldFormat(domainObject),
             utils.makeKeyString(domainObject.identifier));
-        var limitEvaluator = oldObject.getCapability('limit');
+        var limitEvaluator = oldObject.getCapability("limit");
 
         return {
             evaluate: function (datum, property) {
                 return limitEvaluator.evaluate(datum, property.key);
             }
-        }
+        };
     };
 
     return function (openmct, instantiate) {

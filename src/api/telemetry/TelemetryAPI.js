@@ -286,7 +286,9 @@ define([
             });
             return results;
         });
-        var sortKeys = hints.map(function (h) { return 'hints.' + h; });
+        var sortKeys = hints.map(function (h) {
+            return 'hints.' + h;
+        });
         return _.sortByAll(options, sortKeys);
     };
 
