@@ -25,7 +25,6 @@ define([
     "./src/controllers/EditPanesController",
     "./src/controllers/ElementsController",
     "./src/controllers/EditObjectController",
-    "./src/directives/MCTBeforeUnload",
     "./src/actions/EditAndComposeAction",
     "./src/actions/EditAction",
     "./src/actions/PropertiesAction",
@@ -65,7 +64,6 @@ define([
     EditPanesController,
     ElementsController,
     EditObjectController,
-    MCTBeforeUnload,
     EditAndComposeAction,
     EditAction,
     PropertiesAction,
@@ -149,15 +147,6 @@ define([
                         "$scope",
                         "$timeout",
                         "objectService"
-                    ]
-                }
-            ],
-            "directives": [
-                {
-                    "key": "mctBeforeUnload",
-                    "implementation": MCTBeforeUnload,
-                    "depends": [
-                        "$window"
                     ]
                 }
             ],

@@ -39,6 +39,9 @@ define(
             this.callbacks = [];
             this.checks = [];
             this.$window = $window;
+
+            this.oldUnload = $window.onbeforeunload;
+            $window.onbeforeunload = this.onBeforeUnload.bind(this);
         }
 
         /**
@@ -171,6 +174,22 @@ define(
                 return reasons.join('\n');
             }
             return false;
+        };
+
+        /**
+         * Listener for window on before unload event-- will warn before
+         * navigation is allowed.
+         *
+         * @private
+         */
+        NavigationService.prototype.onBeforeUnload = function () {
+            var shouldWarnBeforeNavigate = this.shouldWarnBeforeNavigate();
+            if (shouldWarnBeforeNavigate) {
+                return shouldWarnBeforeNavigate;
+            }
+            if (this.oldUnload) {
+                return this.oldUnload.apply(undefined, [].slice.apply(arguments));
+            }
         };
 
         return NavigationService;

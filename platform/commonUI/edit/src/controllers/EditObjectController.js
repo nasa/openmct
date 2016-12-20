@@ -64,24 +64,6 @@ define(
             };
         }
 
-        /**
-         * Get the warning to show if the user attempts to navigate
-         * away from Edit mode while unsaved changes are present.
-         * @returns {string} the warning to show, or undefined if
-         *          there are no unsaved changes
-         */
-        EditObjectController.prototype.getUnloadWarning = function () {
-            var navigatedObject = this.scope.domainObject,
-                policyMessage;
-
-            this.policyService.allow("navigation", navigatedObject, undefined, function (message) {
-                policyMessage = message;
-            });
-
-            return policyMessage;
-
-        };
-
         return EditObjectController;
     }
 );
