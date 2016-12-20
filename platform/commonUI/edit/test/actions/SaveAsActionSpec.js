@@ -58,7 +58,8 @@ define(
                     [
                         "getCapability",
                         "hasCapability",
-                        "getModel"
+                        "getModel",
+                        "getId"
                     ]
                 );
                 mockDomainObject.hasCapability.andReturn(true);
@@ -66,15 +67,18 @@ define(
                     return capabilities[capability];
                 });
                 mockDomainObject.getModel.andReturn({location: 'a', persisted: undefined});
+                mockDomainObject.getId.andReturn("mockObject");
 
                 mockParent = jasmine.createSpyObj(
                     "parentObject",
                     [
                         "getCapability",
                         "hasCapability",
-                        "getModel"
+                        "getModel",
+                        "getId"
                     ]
                 );
+                mockParent.getId.andReturn("parentId");
 
                 mockEditorCapability = jasmine.createSpyObj(
                     "editor",
@@ -112,6 +116,10 @@ define(
                         "perform"
                     ]
                 );
+
+                mockCopyService.perform.andCallFake(function (object) {
+                    return mockPromise(object);
+                });
 
                 mockNotificationService = jasmine.createSpyObj(
                     "notificationService",
