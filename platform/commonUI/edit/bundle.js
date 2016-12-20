@@ -36,7 +36,6 @@ define([
     "./src/policies/EditActionPolicy",
     "./src/policies/EditableLinkPolicy",
     "./src/policies/EditableMovePolicy",
-    "./src/policies/EditNavigationPolicy",
     "./src/policies/EditContextualActionPolicy",
     "./src/representers/EditRepresenter",
     "./src/representers/EditToolbarRepresenter",
@@ -75,7 +74,6 @@ define([
     EditActionPolicy,
     EditableLinkPolicy,
     EditableMovePolicy,
-    EditNavigationPolicy,
     EditContextualActionPolicy,
     EditRepresenter,
     EditToolbarRepresenter,
@@ -130,7 +128,7 @@ define([
                     "depends": [
                         "$scope",
                         "$location",
-                        "policyService"
+                        "navigationService"
                     ]
                 },
                 {
@@ -261,11 +259,6 @@ define([
                 {
                     "category": "action",
                     "implementation": EditableLinkPolicy
-                },
-                {
-                    "category": "navigation",
-                    "message": "Continuing will cause the loss of any unsaved changes.",
-                    "implementation": EditNavigationPolicy
                 },
                 {
                     "implementation": CreationPolicy,
