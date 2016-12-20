@@ -198,7 +198,10 @@ define([
             "services": [
                 {
                     "key": "navigationService",
-                    "implementation": NavigationService
+                    "implementation": NavigationService,
+                    "depends": [
+                        "$window"
+                    ]
                 }
             ],
             "actions": [
@@ -206,10 +209,7 @@ define([
                     "key": "navigate",
                     "implementation": NavigateAction,
                     "depends": [
-                        "navigationService",
-                        "$q",
-                        "policyService",
-                        "$window"
+                        "navigationService"
                     ]
                 },
                 {
