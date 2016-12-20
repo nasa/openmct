@@ -27,6 +27,7 @@ define(
 
         describe("The Save As action", function () {
             var mockDomainObject,
+                mockClonedObject,
                 mockEditorCapability,
                 mockActionCapability,
                 mockObjectService,
@@ -58,7 +59,8 @@ define(
                     [
                         "getCapability",
                         "hasCapability",
-                        "getModel"
+                        "getModel",
+                        "getId"
                     ]
                 );
                 mockDomainObject.hasCapability.andReturn(true);
@@ -66,6 +68,15 @@ define(
                     return capabilities[capability];
                 });
                 mockDomainObject.getModel.andReturn({location: 'a', persisted: undefined});
+                mockDomainObject.getId.andReturn(0);
+
+                mockClonedObject = jasmine.createSpyObj(
+                    "clonedObject",
+                    [
+                        "getId"
+                    ]
+                );
+                mockClonedObject.getId.andReturn(1);
 
                 mockParent = jasmine.createSpyObj(
                     "parentObject",
@@ -112,6 +123,7 @@ define(
                         "perform"
                     ]
                 );
+                mockCopyService.perform.andReturn(mockPromise(mockClonedObject));
 
                 mockNotificationService = jasmine.createSpyObj(
                     "notificationService",
