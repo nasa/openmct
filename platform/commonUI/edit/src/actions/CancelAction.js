@@ -56,13 +56,13 @@ define(
                     //navigate back to parent because nothing to show.
                     return domainObject.getCapability("location").getOriginal().then(function (original) {
                         parent = original.getCapability("context").getParent();
-                        parent.getCapability("action").perform("navigate");
+                        return parent.getCapability("action").perform("navigate");
                     });
                 }
             }
 
-            function cancel(allowed) {
-                return allowed && domainObject.getCapability("editor").finish();
+            function cancel() {
+                return domainObject.getCapability("editor").finish();
             }
 
             //Do navigation first in order to trigger unsaved changes dialog
