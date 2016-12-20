@@ -48,11 +48,16 @@ define(
             defaultPath
         ) {
             var initialPath = ($route.current.params.ids || defaultPath).split("/");
-
-            var currentIds = $route.current.params.ids;
+            var currentIds;
 
             $scope.treeModel = {
-                selectedObject: undefined
+                selectedObject: undefined,
+                onSelection: function (object) {
+                    navigationService.setNavigation(object, true);
+                },
+                allowSelection: function (object) {
+                    return navigationService.shouldNavigate();
+                }
             };
 
             function idsForObject(domainObject) {
@@ -103,7 +108,6 @@ define(
             function navigateToObject(desiredObject) {
                 $scope.navigatedObject = desiredObject;
                 $scope.treeModel.selectedObject = desiredObject;
-                navigationService.setNavigation(desiredObject);
                 currentIds = idsForObject(desiredObject);
                 $route.current.pathParams.ids = currentIds;
                 $location.path('/browse/' + currentIds);
@@ -114,9 +118,10 @@ define(
                     .then(function (root) {
                         return findViaComposition(root, path);
                     })
-                    .then(navigateToObject);
+                    .then(function (object) {
+                        navigationService.setNavigation(object);
+                    });
             }
-
 
             getObject('ROOT')
                 .then(function (root) {
@@ -136,15 +141,6 @@ define(
 
             // Listen for changes in navigation state.
             navigationService.addListener(navigateDirectlyToModel);
-
-            // Also listen for changes which come from the tree. Changes in
-            // the tree will trigger a change in browse navigation state.
-            $scope.$watch("treeModel.selectedObject", function (newObject, oldObject) {
-                if (oldObject !== newObject) {
-                    navigateDirectlyToModel(newObject);
-                }
-            });
-
 
             // Listen for route changes which are caused by browser events
             // (e.g. bookmarks to pages in OpenMCT) and prevent them.  Instead,
