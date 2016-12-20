@@ -25,7 +25,6 @@ define([
     'legacyRegistry',
     'uuid',
     './api/api',
-    'text!./adapter/templates/edit-object-replacement.html',
     './selection/Selection',
     './api/objects/object-utils',
     './ui/ViewRegistry'
@@ -34,7 +33,6 @@ define([
     legacyRegistry,
     uuid,
     api,
-    editObjectTemplate,
     Selection,
     objectUtils,
     ViewRegistry
