@@ -49,8 +49,8 @@ define([
 
         this.labelView = new TreeLabelView(gestureService);
 
-        $(this.labelView.elements()).on('click', function () {
-            selectFn(this.activeObject);
+        $(this.labelView.elements()).on('click', function (event) {
+            selectFn(this.activeObject, event);
         }.bind(this));
 
         this.li.append($(nodeTemplate));

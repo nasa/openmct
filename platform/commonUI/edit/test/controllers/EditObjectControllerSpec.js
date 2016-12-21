@@ -24,32 +24,19 @@ define(
     ["../../src/controllers/EditObjectController"],
     function (EditObjectController) {
 
-        describe("The Edit mode controller", function () {
+        describe("The Edit Object controller", function () {
             var mockScope,
                 mockObject,
-                mockType,
+                testViews,
+                mockEditorCapability,
                 mockLocation,
+                mockNavigationService,
+                removeCheck,
                 mockStatusCapability,
                 mockCapabilities,
-                mockPolicyService,
                 controller;
 
-            // Utility function; look for a $watch on scope and fire it
-            function fireWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
-                    if (call.args[0] === expr) {
-                        call.args[1](value);
-                    }
-                });
-            }
-
             beforeEach(function () {
-                mockPolicyService = jasmine.createSpyObj(
-                    "policyService",
-                    [
-                        "allow"
-                    ]
-                );
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     ["$on", "$watch"]
@@ -58,16 +45,16 @@ define(
                     "domainObject",
                     ["getId", "getModel", "getCapability", "hasCapability", "useCapability"]
                 );
-                mockType = jasmine.createSpyObj(
-                    "type",
-                    ["hasFeature"]
+                mockEditorCapability = jasmine.createSpyObj(
+                    "mockEditorCapability",
+                    ["isEditContextRoot", "dirty", "finish"]
                 );
                 mockStatusCapability = jasmine.createSpyObj('statusCapability',
                     ["get"]
                 );
 
                 mockCapabilities = {
-                    "type" : mockType,
+                    "editor" : mockEditorCapability,
                     "status": mockStatusCapability
                 };
 
@@ -75,52 +62,70 @@ define(
                     ["search"]
                 );
                 mockLocation.search.andReturn({"view": "fixed"});
+                mockNavigationService = jasmine.createSpyObj('navigationService',
+                    ["checkBeforeNavigation"]
+                );
+
+                removeCheck = jasmine.createSpy('removeCheck');
+                mockNavigationService.checkBeforeNavigation.andReturn(removeCheck);
 
                 mockObject.getId.andReturn("test");
                 mockObject.getModel.andReturn({ name: "Test object" });
                 mockObject.getCapability.andCallFake(function (key) {
                     return mockCapabilities[key];
                 });
-                mockType.hasFeature.andReturn(true);
 
-                mockScope.domainObject = mockObject;
-
-                controller = new EditObjectController(
-                    mockScope,
-                    mockLocation,
-                    mockPolicyService
-                );
-            });
-
-            it("exposes a warning message for unload", function () {
-                var errorMessage = "Unsaved changes";
-
-                // Normally, should be undefined
-                expect(controller.getUnloadWarning()).toBeUndefined();
-
-                // Override the policy service to prevent navigation
-                mockPolicyService.allow.andCallFake(function (category, object, context, callback) {
-                    callback(errorMessage);
-                });
-
-                // Should have some warning message here now
-                expect(controller.getUnloadWarning()).toEqual(errorMessage);
-            });
-
-
-            it("sets the active view from query parameters", function () {
-                var testViews = [
-                        { key: 'abc' },
-                        { key: 'def', someKey: 'some value' },
-                        { key: 'xyz' }
-                    ];
+                testViews = [
+                    { key: 'abc' },
+                    { key: 'def', someKey: 'some value' },
+                    { key: 'xyz' }
+                ];
 
                 mockObject.useCapability.andCallFake(function (c) {
                     return (c === 'view') && testViews;
                 });
                 mockLocation.search.andReturn({ view: 'def' });
 
-                fireWatch('domainObject', mockObject);
+                mockScope.domainObject = mockObject;
+
+                controller = new EditObjectController(
+                    mockScope,
+                    mockLocation,
+                    mockNavigationService
+                );
+            });
+
+            it("adds a check before navigation", function () {
+                expect(mockNavigationService.checkBeforeNavigation)
+                    .toHaveBeenCalledWith(jasmine.any(Function));
+
+                var checkFn = mockNavigationService.checkBeforeNavigation.mostRecentCall.args[0];
+
+                mockEditorCapability.isEditContextRoot.andReturn(false);
+                mockEditorCapability.dirty.andReturn(false);
+
+                expect(checkFn()).toBe(false);
+
+                mockEditorCapability.isEditContextRoot.andReturn(true);
+                expect(checkFn()).toBe(false);
+
+                mockEditorCapability.dirty.andReturn(true);
+                expect(checkFn())
+                    .toBe("Continuing will cause the loss of any unsaved changes.");
+
+            });
+
+            it("cleans up on destroy", function () {
+                expect(mockScope.$on)
+                    .toHaveBeenCalledWith("$destroy", jasmine.any(Function));
+
+                mockScope.$on.mostRecentCall.args[1]();
+
+                expect(mockEditorCapability.finish).toHaveBeenCalled();
+                expect(removeCheck).toHaveBeenCalled();
+            });
+
+            it("sets the active view from query parameters", function () {
                 expect(mockScope.representation.selected)
                     .toEqual(testViews[1]);
             });

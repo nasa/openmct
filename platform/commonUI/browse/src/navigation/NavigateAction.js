@@ -33,12 +33,9 @@ define(
          * @constructor
          * @implements {Action}
          */
-        function NavigateAction(navigationService, $q, policyService, $window, context) {
+        function NavigateAction(navigationService, context) {
             this.domainObject = context.domainObject;
-            this.$q = $q;
             this.navigationService = navigationService;
-            this.policyService = policyService;
-            this.$window = $window;
         }
 
         /**
@@ -47,36 +44,12 @@ define(
          *          navigation has been updated
          */
         NavigateAction.prototype.perform = function () {
-            var self = this,
-                navigateTo = this.domainObject,
-                currentObject = self.navigationService.getNavigation();
-
-            function allow() {
-                var navigationAllowed = true;
-                self.policyService.allow("navigation", currentObject, navigateTo, function (message) {
-                    navigationAllowed = self.$window.confirm(message + "\r\n\r\n" +
-                        " Are you sure you want to continue?");
-                });
-                return navigationAllowed;
+            if (this.navigationService.shouldNavigate()) {
+                this.navigationService.setNavigation(this.domainObject, true);
+                return Promise.resolve({});
             }
 
-            function cancelIfEditing() {
-                var editing = currentObject.hasCapability('editor') &&
-                    currentObject.getCapability('editor').isEditContextRoot();
-
-                return self.$q.when(editing && currentObject.getCapability("editor").finish());
-            }
-
-            function navigate() {
-                return self.navigationService.setNavigation(navigateTo);
-            }
-
-            if (allow()) {
-                return cancelIfEditing().then(navigate);
-            } else {
-                return this.$q.when(false);
-            }
-
+            return Promise.reject('Navigation Prevented by User');
         };
 
         /**

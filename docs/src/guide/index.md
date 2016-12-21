@@ -1338,20 +1338,6 @@ are supported:
 
 Open MCT defines several Angular directives that are intended for use both 
 internally within the platform, and by plugins. 
-
-## Before Unload 
-
-The `mct-before-unload` directive is used to listen for (and prompt for user 
-confirmation) of navigation changes in the browser. This includes reloading, 
-following links out of Open MCT, or changing routes. It is used to hook into 
-both `onbeforeunload` event handling as well as route changes from within 
-Angular.
-
-This directive is useable as an attribute. Its value should be an Angular 
-expression. When an action that would trigger an unload and/or route change 
-occurs, this Angular expression is evaluated. Its result should be a message to 
-display to the user to confirm their navigation change; if this expression 
-evaluates to a falsy value, no message will be displayed. 
  
 ## Chart 
 

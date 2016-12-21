@@ -24,8 +24,14 @@
  * MCTRepresentationSpec. Created by vwoeltje on 11/6/14.
  */
 define(
-    ["../src/BrowseController"],
-    function (BrowseController) {
+    [
+        "../src/BrowseController",
+        "../src/navigation/NavigationService"
+    ],
+    function (
+        BrowseController,
+        NavigationService
+    ) {
 
         describe("The browse controller", function () {
             var mockScope,
@@ -44,7 +50,7 @@ define(
             function waitsForNavigation() {
                 var calls = mockNavigationService.setNavigation.calls.length;
                 waitsFor(function () {
-                    return mockNavigationService.setNavigation.calls.length > calls ;
+                    return mockNavigationService.setNavigation.calls.length > calls;
                 });
             }
 
@@ -92,15 +98,16 @@ define(
                     "objectService",
                     ["getObjects"]
                 );
-                mockNavigationService = jasmine.createSpyObj(
-                    "navigationService",
-                    [
-                        "getNavigation",
-                        "setNavigation",
-                        "addListener",
-                        "removeListener"
-                    ]
-                );
+                mockNavigationService = new NavigationService({});
+                [
+                    "getNavigation",
+                    "setNavigation",
+                    "addListener",
+                    "removeListener"
+                ].forEach(function (method) {
+                    spyOn(mockNavigationService, method)
+                        .andCallThrough();
+                });
                 mockRootObject = jasmine.createSpyObj(
                     "rootObjectContainer",
                     ["getId", "getCapability", "getModel", "useCapability", "hasCapability"]
