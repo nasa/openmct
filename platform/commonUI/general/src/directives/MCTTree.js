@@ -29,7 +29,7 @@ define([
             if (!scope.allowSelection) {
                 scope.allowSelection = function () {
                     return true;
-                }
+                };
             }
             if (!scope.onSelection) {
                 scope.onSelection = function () {};

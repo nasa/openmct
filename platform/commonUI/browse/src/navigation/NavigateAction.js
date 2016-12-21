@@ -44,10 +44,6 @@ define(
          *          navigation has been updated
          */
         NavigateAction.prototype.perform = function () {
-            var self = this,
-                navigateTo = this.domainObject,
-                currentObject = self.navigationService.getNavigation();
-
             if (this.navigationService.shouldNavigate()) {
                 this.navigationService.setNavigation(this.domainObject, true);
                 return Promise.resolve({});

@@ -70,7 +70,7 @@ define(
                 cancelEditing(domainObject);
             });
 
-            function setViewForDomainObject(domainObject) {
+            function setViewForDomainObject() {
 
                 var locationViewKey = $location.search().view;
 
@@ -87,7 +87,7 @@ define(
                 }
             }
 
-            setViewForDomainObject($scope.domainObject);
+            setViewForDomainObject();
 
             $scope.doAction = function (action) {
                 return $scope[action] && $scope[action]();

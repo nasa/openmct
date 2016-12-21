@@ -19,10 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/* global console*/
 
 define([
-    '../../src/directives/MCTTree'
-], function (MCTTree) {
+    '../../src/directives/MCTTree',
+    '../../src/ui/TreeView'
+], function (MCTTree, TreeView) {
     describe("The mct-tree directive", function () {
         var mockParse,
             mockGestureService,
@@ -50,6 +52,7 @@ define([
             mockExpr = jasmine.createSpy('expr');
             mockExpr.assign = jasmine.createSpy('assign');
             mockParse.andReturn(mockExpr);
+            spyOn(TreeView.prototype, 'observe').andCallThrough();
 
             mctTree = new MCTTree(mockParse, mockGestureService);
         });
@@ -58,8 +61,13 @@ define([
             expect(mctTree.restrict).toEqual("E");
         });
 
-        it("two-way binds to mctObject and mctModel", function () {
-            expect(mctTree.scope).toEqual({ mctObject: "=", mctModel: "=" });
+        it("two-way binds", function () {
+            expect(mctTree.scope).toEqual({
+                rootObject: "=",
+                selectedObject: "=",
+                allowSelection: "=?",
+                onSelection: "=?"
+            });
         });
 
         describe("link", function () {
@@ -81,16 +89,16 @@ define([
                 expect(mockElement.append).toHaveBeenCalled();
             });
 
-            it("watches for mct-model's expression in the parent", function () {
+            it("watches for selected-object expression in the parent", function () {
                 expect(mockScope.$watch).toHaveBeenCalledWith(
-                    "mctModel",
+                    "selectedObject",
                     jasmine.any(Function)
                 );
             });
 
-            it("watches for changes to mct-object", function () {
+            it("watches for changes to root-object", function () {
                 expect(mockScope.$watch).toHaveBeenCalledWith(
-                    "mctObject",
+                    "rootObject",
                     jasmine.any(Function)
                 );
             });
@@ -102,6 +110,10 @@ define([
                 );
             });
 
+            it("watches for changes in tree view", function () {
+
+            });
+
             // https://github.com/nasa/openmct/issues/1114
             it("does not trigger $apply during $watches", function () {
                 mockScope.mctObject = makeMockDomainObject('root');
@@ -111,14 +123,18 @@ define([
                 });
                 expect(mockScope.$apply).not.toHaveBeenCalled();
             });
-            it("does trigger $apply from other value changes", function () {
+            it("does trigger $apply from tree manipulation", function () {
+                if (/PhantomJS/g.test(window.navigator.userAgent)) {
+                    console.log('Unable to run test in PhantomJS due to lack of support for event constructors');
+                    return;
+                }
                 // White-boxy; we know this is the setter for the tree's value
-                var treeValueFn = mockScope.$watch.calls[0].args[1];
+                var treeValueFn = TreeView.prototype.observe.calls[0].args[0];
 
                 mockScope.mctObject = makeMockDomainObject('root');
                 mockScope.mctMode = makeMockDomainObject('selection');
 
-                treeValueFn(makeMockDomainObject('other'));
+                treeValueFn(makeMockDomainObject('other'), new MouseEvent("click"));
 
                 expect(mockScope.$apply).toHaveBeenCalled();
             });
