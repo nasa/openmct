@@ -27,6 +27,7 @@ define([
     './api/api',
     './selection/Selection',
     './api/objects/object-utils',
+    './plugins/plugins',
     './ui/ViewRegistry'
 ], function (
     EventEmitter,
@@ -35,6 +36,7 @@ define([
     api,
     Selection,
     objectUtils,
+    plugins,
     ViewRegistry
 ) {
     /**
@@ -277,6 +279,8 @@ define([
     MCT.prototype.install = function (plugin) {
         plugin(this);
     };
+
+    MCT.prototype.plugins = plugins;
 
     return MCT;
 });
