@@ -374,7 +374,6 @@ define([
                 {
                     "implementation": EditRepresenter,
                     "depends": [
-                        "$q",
                         "$log"
                     ]
                 },

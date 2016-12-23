@@ -43,57 +43,51 @@ define(
          * @implements {Representer}
          * @constructor
          */
-        function EditRepresenter($q, $log, scope) {
-            var self = this;
+        function EditRepresenter($log, $scope) {
+            this.$log = $log;
+            this.$scope = $scope;
 
-            this.scope = scope;
-
-            // Mutate and persist a new version of a domain object's model.
-            function doMutate(model) {
-                var domainObject = self.domainObject;
-
-                // First, mutate; then, persist.
-                return $q.when(domainObject.useCapability("mutation", function () {
-                    return model;
-                }));
-            }
-
-            // Handle changes to model and/or view configuration
-            function commit(message) {
-                // Look up from scope; these will have been populated by
-                // mct-representation.
-                var model = scope.model,
-                    configuration = scope.configuration,
-                    domainObject = self.domainObject;
-
-                // Log the commit message
-                $log.debug([
-                    "Committing ",
-                    domainObject && domainObject.getModel().name,
-                    "(" + (domainObject && domainObject.getId()) + "):",
-                    message
-                ].join(" "));
-
-                // Update the configuration stored in the model, and persist.
-                if (domainObject) {
-                    // Configurations for specific views are stored by
-                    // key in the "configuration" field of the model.
-                    if (self.key && configuration) {
-                        model.configuration = model.configuration || {};
-                        model.configuration[self.key] = configuration;
-                    }
-                    doMutate(model);
-                }
-            }
-
-            // Place the "commit" method in the scope
-            scope.commit = commit;
-
+            this.$scope.commit = this.commit.bind(this);
         }
+
+        /**
+         * Commit any changes made to the in-scope model to the domain object.
+         * Also commits any changes made to $scope.configuration to the proper
+         * configuration value for the current representation.
+         *
+         * @param {String} message a message to log with the commit message.
+         */
+        EditRepresenter.prototype.commit = function (message) {
+            var model = this.$scope.model,
+                configuration = this.$scope.configuration,
+                domainObject = this.domainObject;
+
+            this.$log.debug([
+                "Committing ",
+                domainObject && domainObject.getModel().name,
+                "(" + (domainObject && domainObject.getId()) + "):",
+                message
+            ].join(" "));
+
+            if (this.domainObject) {
+                if (this.key && configuration) {
+                    model.configuration = model.configuration || {};
+                    model.configuration[this.key] = configuration;
+                }
+                domainObject.useCapability('mutation', function () {
+                    return model;
+                });
+            }
+        };
 
         // Handle a specific representation of a specific domain object
         EditRepresenter.prototype.represent = function (representation, representedObject) {
             this.domainObject = representedObject;
+            if (representation) {
+                this.key = representation.key;
+            } else {
+                delete this.key;
+            }
         };
 
         // Respond to the destruction of the current representation.
