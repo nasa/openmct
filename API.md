@@ -265,6 +265,26 @@ openmct.install(myPlugin);
 
 The plugin will be invoked to configure Open MCT before it is started.
 
+### Included Plugins
+
+Open MCT is packaged along with a few general-purpose plugins:
+
+* `openmct.plugins.localStorage` provides persistence of user-created
+  objects in browser-local storage. This is particularly useful in
+  development environments.
+* `openmct.plugins.myItems` adds a top-level folder named "My Items"
+  when the application is first started, providing a place for a
+  user to store created items.
+
+Generally, you will want to either install these plugins, or install
+different plugins that provide persistence and an initial folder
+hierarchy. Installation is as described [above](#installing-plugins):
+
+```
+openmct.install(openmct.plugins.localStorage);
+openmct.install(openmct.plugins.myItems);
+```
+
 ### Writing Plugins
 
 Plugins configure Open MCT, and should utilize the
