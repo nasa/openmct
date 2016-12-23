@@ -25,6 +25,9 @@ define([
     return {
         localStorage: function (openmct) {
             openmct.legacyRegistry.enable('platform/persistence/local');
+        },
+        myItems: function (openmct) {
+            openmct.legacyRegistry.enable('platform/features/my-items');
         }
     };
 });
