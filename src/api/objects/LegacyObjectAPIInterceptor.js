@@ -21,11 +21,9 @@
  *****************************************************************************/
 
 define([
-    './object-utils',
-    './objectEventEmitter'
+    './object-utils'
 ], function (
-    utils,
-    objectEventEmitter
+    utils
 ) {
     function ObjectServiceProvider(objectService, instantiate, topic) {
         this.objectService = objectService;
@@ -61,12 +59,12 @@ define([
             var newStyleObject = utils.toNewFormat(legacyObject.getModel(), legacyObject.getId());
 
             //Don't trigger self
-            objectEventEmitter.off('mutation', handleMutation);
-            objectEventEmitter.emit(newStyleObject.identifier.key + ":*", newStyleObject);
-            objectEventEmitter.on('mutation', handleMutation);
+            this.eventEmitter.off('mutation', handleMutation);
+            this.eventEmitter.emit(newStyleObject.identifier.key + ":*", newStyleObject);
+            this.eventEmitter.on('mutation', handleMutation);
         }.bind(this);
 
-        objectEventEmitter.on('mutation', handleMutation);
+        this.eventEmitter.on('mutation', handleMutation);
         removeGeneralTopicListener = this.generalTopic.listen(handleLegacyMutation);
     };
 
@@ -96,6 +94,8 @@ define([
     // Injects new object API as a decorator so that it hijacks all requests.
     // Object providers implemented on new API should just work, old API should just work, many things may break.
     function LegacyObjectAPIInterceptor(openmct, ROOTS, instantiate, topic, objectService) {
+        var eventEmitter = openmct.objects.eventEmitter;
+
         this.getObjects = function (keys) {
             var results = {},
                 promises = keys.map(function (keyString) {
@@ -114,7 +114,12 @@ define([
         };
 
         openmct.objects.supersecretSetFallbackProvider(
-            new ObjectServiceProvider(objectService, instantiate, topic)
+            new ObjectServiceProvider(
+                eventEmitter,
+                objectService,
+                instantiate,
+                topic
+            )
         );
 
         ROOTS.forEach(function (r) {
