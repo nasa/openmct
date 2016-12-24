@@ -78,7 +78,7 @@ gulp.task('scripts', function () {
     var replace = require('gulp-replace-task');
     return gulp.src(paths.main)
         .pipe(sourcemaps.init())
-        .pipe(babel(options.babel))
+        .pipe(babel())
         .pipe(requirejsOptimize(options.requirejsOptimize))
         .pipe(sourcemaps.write('.'))
         .pipe(replace(options.replace))
