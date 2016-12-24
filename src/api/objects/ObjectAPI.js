@@ -26,7 +26,7 @@ define([
     './MutableObject',
     './RootRegistry',
     './RootObjectProvider',
-    './EventEmitter'
+    'EventEmitter'
 ], function (
     _,
     utils,
