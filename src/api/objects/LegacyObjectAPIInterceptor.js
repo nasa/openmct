@@ -25,7 +25,8 @@ define([
 ], function (
     utils
 ) {
-    function ObjectServiceProvider(objectService, instantiate, topic) {
+    function ObjectServiceProvider(eventEmitter, objectService, instantiate, topic) {
+        this.eventEmitter = eventEmitter;
         this.objectService = objectService;
         this.instantiate = instantiate;
 
