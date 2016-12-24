@@ -129,8 +129,10 @@ provider.
 
 The "composition" of a domain object is the list of objects it contains,
 as shown (for example) in the tree for browsing. Open MCT provides a
-default solution for composition, but there may be cases where you want
-to provide the composition of a certain object (or type of object) dynamically.
+[default solution](#default-composition-provider) for composition, but there
+may be cases where you want to provide the composition of a certain object
+(or type of object) dynamically.
+
 For instance, you may want to populate a hierarchy under a custom root-level
 object based on the contents of a telemetry dictionary.
 To do this, you can add a new CompositionProvider:
@@ -144,6 +146,29 @@ openmct.composition.addProvider({
         return Promise.resolve(myDomainObjects);
     }
 });
+```
+
+#### Default Composition Provider
+
+The default composition provider applies to any domain object with
+a `composition` property. The value of `composition` should be an
+array of identifiers, e.g.:
+
+```js
+var domainObject = {
+    name: "My Object",
+    type: 'folder',
+    composition: [
+        {
+            key: '412229c3-922c-444b-8624-736d85516247',
+            namespace: 'foo'
+        },
+        {
+            key: 'd6e0ce02-5b85-4e55-8006-a8a505b64c75',
+            namespace: 'foo'
+        }
+    ]
+};
 ```
 
 ### Adding Telemetry Providers
