@@ -42,9 +42,6 @@ var gulp = require('gulp'),
         specs: [ 'platform/**/*Spec.js', 'src/**/*Spec.js' ],
     },
     options = {
-        babel: {
-            presets: ['es2015']
-        },
         requirejsOptimize: {
             name: 'bower_components/almond/almond.js',
             include: paths.main.replace('.js', ''),

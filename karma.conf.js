@@ -55,7 +55,7 @@ module.exports = function(config) {
         preprocessors: {
             'src/**/src/**/!(*Spec).js': [ 'coverage' ],
             'platform/**/src/**/!(*Spec).js': [ 'coverage' ],
-            'src/**/*.js': ['babel']
+            'src/BundleRegistry.js': ['babel']
         },
 
         // Test results reporter to use
