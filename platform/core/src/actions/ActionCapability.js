@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The ActionCapability allows applicable Actions to be retrieved and
@@ -46,7 +46,8 @@ define(
          * @memberof platform/core
          * @constructor
          */
-        function ActionCapability($q, actionService, domainObject) {
+        class ActionCapability {
+          construct($q, actionService, domainObject) {
             this.$q = $q;
             this.actionService = actionService;
             this.domainObject = domainObject;
@@ -70,11 +71,11 @@ define(
          *       was found.
          * @memberof platform/core.ActionCapability#
          */
-        ActionCapability.prototype.getActions = function (context) {
+        getActions(context) {
             // Get all actions which are valid in this context;
             // this simply redirects to the action service,
             // but additionally adds a domainObject field.
-            var baseContext = typeof context === 'string' ?
+            let baseContext = typeof context === 'string' ?
                         { key: context } : (context || {}),
                 actionContext = Object.create(baseContext);
 
@@ -98,10 +99,10 @@ define(
          * @returns {Action[]} an array of matching actions
          * @memberof platform/core.ActionCapability#
          */
-        ActionCapability.prototype.perform = function (context) {
+        perform(context) {
             // Alias to getActions(context)[0].perform, with a
             // check for empty arrays.
-            var actions = this.getActions(context);
+            let actions = this.getActions(context);
 
             return this.$q.when(
                 (actions && actions.length > 0) ?
@@ -109,8 +110,7 @@ define(
                     undefined
             );
         };
-
-
+      }
         return ActionCapability;
     }
 );

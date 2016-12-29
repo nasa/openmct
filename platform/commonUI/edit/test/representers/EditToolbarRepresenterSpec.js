@@ -22,16 +22,16 @@
 
 define(
     ["../../src/representers/EditToolbarRepresenter"],
-    function (EditToolbarRepresenter) {
+    (EditToolbarRepresenter) => {
 
-        describe("The Edit mode toolbar representer", function () {
-            var mockScope,
+        describe("The Edit mode toolbar representer", () => {
+            let mockScope,
                 mockElement,
                 testAttrs,
                 mockUnwatch,
                 representer;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockScope = jasmine.createSpyObj(
                     '$scope',
                     ['$on', '$watch', '$watchCollection', "commit"]
@@ -53,20 +53,20 @@ define(
                 );
             });
 
-            it("exposes toolbar state under a attr-defined name", function () {
+            it("exposes toolbar state under a attr-defined name", () => {
                 // A structure/state object should have been added to the
                 // parent scope under the name provided in the "toolbar"
                 // attribute
                 expect(mockScope.$parent.testToolbar).toBeDefined();
             });
 
-            it("is robust against lack of a toolbar definition", function () {
-                expect(function () {
+            it("is robust against lack of a toolbar definition", () => {
+                expect( () => {
                     representer.represent({});
                 }).not.toThrow();
             });
 
-            it("watches for toolbar state changes", function () {
+            it("watches for toolbar state changes", () => {
                 representer.represent({});
                 expect(mockScope.$watchCollection).toHaveBeenCalledWith(
                     jasmine.any(Function),
@@ -76,7 +76,7 @@ define(
                     .toBe(mockScope.$parent.testToolbar.state);
             });
 
-            it("removes state from parent scope on destroy", function () {
+            it("removes state from parent scope on destroy", () => {
                 // Verify precondition
                 expect(mockScope.$parent.testToolbar).toBeDefined();
                 // Destroy the representer
@@ -87,8 +87,8 @@ define(
 
             // Verify a simple interaction between selection state and toolbar
             // state; more complicated interactions are tested in EditToolbar.
-            it("conveys state changes", function () {
-                var testObject = { k: 123 };
+            it("conveys state changes", () => {
+                let testObject = { k: 123 };
 
                 // Provide a view which has a toolbar
                 representer.represent({
@@ -115,8 +115,8 @@ define(
                 expect(mockScope.commit).toHaveBeenCalled();
             });
 
-            it("does not commit if nothing changed", function () {
-                var testObject = { k: 123 };
+            it("does not commit if nothing changed", () => {
+                let testObject = { k: 123 };
 
                 // Provide a view which has a toolbar
                 representer.represent({

@@ -33,7 +33,7 @@ define([
     "text!./res/templates/elements/text.html",
     "text!./res/templates/elements/image.html",
     'legacyRegistry'
-], function (
+], (
     LayoutController,
     FixedController,
     LayoutCompositionPolicy,
@@ -46,7 +46,7 @@ define([
     textTemplate,
     imageTemplate,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/features/layout", {
         "name": "Layout components.",

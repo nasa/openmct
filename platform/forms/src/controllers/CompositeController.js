@@ -22,8 +22,12 @@
 
 define(
     [],
-    function () {
-
+    () => {
+      
+        // Check if an element is defined; the map step of isNonEmpty
+        const isDefined = (element) => {
+            return typeof element !== 'undefined';
+        }
         /**
          * The CompositeController supports the "composite" control type,
          * which provides an array of other controls. It is used specifically
@@ -36,13 +40,7 @@ define(
          * @memberof platform/forms
          * @constructor
          */
-        function CompositeController() {
-        }
-
-        // Check if an element is defined; the map step of isNonEmpty
-        function isDefined(element) {
-            return typeof element !== 'undefined';
-        }
+        class CompositeController() {
 
         /**
          * Check if an array contains anything other than
@@ -52,10 +50,10 @@ define(
          *          element is in the array
          * @memberof platform/forms.CompositeController#
          */
-        CompositeController.prototype.isNonEmpty = function (value) {
+        isNonEmpty(value) {
             return Array.isArray(value) && value.some(isDefined);
         };
-
+      }
         return CompositeController;
 
     }

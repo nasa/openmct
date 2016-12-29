@@ -37,7 +37,7 @@ define([
     "./src/services/CopyService",
     "./src/services/LocationService",
     'legacyRegistry'
-], function (
+], (
     MoveAction,
     CopyAction,
     LinkAction,
@@ -54,7 +54,7 @@ define([
     CopyService,
     LocationService,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/entanglement", {
         "name": "Entanglement",

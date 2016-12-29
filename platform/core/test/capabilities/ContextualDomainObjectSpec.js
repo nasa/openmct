@@ -25,10 +25,10 @@
  */
 define(
     ["../../src/capabilities/ContextualDomainObject"],
-    function (ContextualDomainObject) {
+    (ContextualDomainObject) => {
 
 
-        var DOMAIN_OBJECT_METHODS = [
+        let DOMAIN_OBJECT_METHODS = [
             "getId",
             "getModel",
             "getCapability",
@@ -36,14 +36,14 @@ define(
             "useCapability"
         ];
 
-        describe("A contextual domain object", function () {
-            var mockParent,
+        describe("A contextual domain object", () => {
+            let mockParent,
                 mockDomainObject,
                 model,
                 contextualDomainObject;
 
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockParent = jasmine.createSpyObj("parent", DOMAIN_OBJECT_METHODS);
                 mockDomainObject = jasmine.createSpyObj("parent", DOMAIN_OBJECT_METHODS);
 
@@ -59,8 +59,8 @@ define(
             });
 
 
-            it("adds a context capability to a domain object", function () {
-                var context = contextualDomainObject.getCapability('context');
+            it("adds a context capability to a domain object", () => {
+                let context = contextualDomainObject.getCapability('context');
 
                 // Expect something that looks like a context capability
                 expect(context).toBeDefined();
@@ -70,7 +70,7 @@ define(
             });
 
 
-            it("does not shadow other domain object methods", function () {
+            it("does not shadow other domain object methods", () => {
                 expect(contextualDomainObject.getModel())
                     .toEqual(model);
                 expect(contextualDomainObject.getCapability("other"))

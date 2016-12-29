@@ -22,7 +22,7 @@
 
 define(
     ['./ElementProxy', './LineHandle'],
-    function (ElementProxy, LineHandle) {
+    (ElementProxy, LineHandle) => {
 
         /**
          * Selection/diplay proxy for line elements of a fixed position
@@ -35,8 +35,8 @@ define(
          * @param {Array} elements the full array of elements
          * @augments {platform/features/layout.ElementProxy}
          */
-        function LineProxy(element, index, elements) {
-            var proxy = new ElementProxy(element, index, elements),
+        const LineProxy = (element, index, elements) => {
+            let proxy = new ElementProxy(element, index, elements),
                 handles = [
                     new LineHandle(element, 'x', 'y', 'x2', 'y2'),
                     new LineHandle(element, 'x2', 'y2', 'x', 'y')
@@ -48,7 +48,7 @@ define(
              * @returns {number} the x coordinate
              * @memberof platform/features/layout.LineProxy#
              */
-            proxy.x = function (v) {
+            proxy.x = (v) => {
                 var x = Math.min(element.x, element.x2),
                     delta = Math.max(v, 0) - x;
                 if (arguments.length > 0 && delta) {
@@ -64,8 +64,8 @@ define(
              * @returns {number} the y coordinate
              * @memberof platform/features/layout.LineProxy#
              */
-            proxy.y = function (v) {
-                var y = Math.min(element.y, element.y2),
+            proxy.y = (v) => {
+                let y = Math.min(element.y, element.y2),
                     delta = Math.max(v, 0) - y;
                 if (arguments.length > 0 && delta) {
                     element.y += delta;
@@ -80,7 +80,7 @@ define(
              * @returns {number} the width
              * @memberof platform/features/layout.LineProxy#
              */
-            proxy.width = function () {
+            proxy.width = () => {
                 return Math.max(Math.abs(element.x - element.x2), 1);
             };
 
@@ -90,7 +90,7 @@ define(
              * @returns {number} the height
              * @memberof platform/features/layout.LineProxy#
              */
-            proxy.height = function () {
+            proxy.height = () => {
                 return Math.max(Math.abs(element.y - element.y2), 1);
             };
 
@@ -101,7 +101,7 @@ define(
              * @returns {number} the x position of the first point
              * @memberof platform/features/layout.LineProxy#
              */
-            proxy.x1 = function () {
+            proxy.x1 = () => {
                 return element.x - proxy.x();
             };
 
@@ -112,7 +112,7 @@ define(
              * @returns {number} the y position of the first point
              * @memberof platform/features/layout.LineProxy#
              */
-            proxy.y1 = function () {
+            proxy.y1 = () => {
                 return element.y - proxy.y();
             };
 
@@ -134,7 +134,7 @@ define(
              * @returns {number} the y position of the second point
              * @memberof platform/features/layout.LineProxy#
              */
-            proxy.y2 = function () {
+            proxy.y2 = () => {
                 return element.y2 - proxy.y();
             };
 
@@ -144,7 +144,7 @@ define(
              * @returns {LineHandle[]} line handles for both end points
              * @memberof platform/features/layout.LineProxy#
              */
-            proxy.handles = function () {
+            proxy.handles = () => {
                 return handles;
             };
 

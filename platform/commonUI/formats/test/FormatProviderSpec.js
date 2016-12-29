@@ -22,42 +22,42 @@
 
 define(
     ['../src/FormatProvider'],
-    function (FormatProvider) {
+    (FormatProvider) => {
 
-        var KEYS = ['a', 'b', 'c'];
+        let KEYS = ['a', 'b', 'c'];
 
-        describe("The FormatProvider", function () {
-            var mockFormats,
+        describe("The FormatProvider", () => {
+            let mockFormats,
                 mockFormatInstances,
                 provider;
 
-            beforeEach(function () {
-                mockFormatInstances = KEYS.map(function (k) {
+            beforeEach( () => {
+                mockFormatInstances = KEYS.map( (k) => {
                     return jasmine.createSpyObj(
                         'format-' + k,
                         ['parse', 'validate', 'format']
                     );
                 });
                 // Return constructors
-                mockFormats = KEYS.map(function (k, i) {
-                    function MockFormat() {
+                mockFormats = KEYS.map( (k, i) => {
+                    const MockFormat = () => {
                         return mockFormatInstances[i];
-                    }
+                    };
                     MockFormat.key = k;
                     return MockFormat;
                 });
                 provider = new FormatProvider(mockFormats);
             });
 
-            it("looks up formats by key", function () {
-                KEYS.forEach(function (k, i) {
+            it("looks up formats by key", () => {
+                KEYS.forEach( (k, i) => {
                     expect(provider.getFormat(k))
                         .toEqual(mockFormatInstances[i]);
                 });
             });
 
-            it("throws an error about unknown formats", function () {
-                expect(function () {
+            it("throws an error about unknown formats", () => {
+                expect( () => {
                     provider.getFormat('some-unknown-format');
                 }).toThrow();
             });

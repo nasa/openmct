@@ -22,13 +22,13 @@
 
 define([
     '../src/SplashScreenManager'
-], function (SplashScreenManager) {
+], (SplashScreenManager) => {
 
-    describe('SplashScreenManager', function () {
-        var $document,
+    describe('SplashScreenManager', () => {
+        let $document,
             splashElement;
 
-        beforeEach(function () {
+        beforeEach( () => {
             $document = jasmine.createSpyObj(
                 '$document',
                 ['querySelectorAll']
@@ -49,17 +49,17 @@ define([
             $document.querySelectorAll.andReturn([splashElement]);
         });
 
-        describe('when element exists', function () {
-            beforeEach(function () {
+        describe('when element exists', () => {
+            beforeEach( () => {
                 $document.querySelectorAll.andReturn([splashElement]);
                 return new SplashScreenManager([$document]);
             });
 
-            it('adds fade out class', function () {
+            it('adds fade out class', () => {
                 expect(splashElement.className).toBe('some-class-name fadeout');
             });
 
-            it('removes the element when the transition ends', function () {
+            it('removes the element when the transition ends', () => {
                 expect(splashElement.addEventListener)
                     .toHaveBeenCalledWith(
                         'transitionend',
@@ -75,10 +75,10 @@ define([
             });
         });
 
-        it('does not error when element doesn\'t exist', function () {
+        it('does not error when element doesn\'t exist', () =>s {
             $document.querySelectorAll.andReturn([]);
 
-            function run() {
+            const run = () => {
                 return new SplashScreenManager([$document]);
             }
 

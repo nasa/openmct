@@ -22,20 +22,20 @@
 
 define(
     ["../../src/controllers/ContextMenuController"],
-    function (ContextMenuController) {
+    (ContextMenuController) => {
 
-        describe("The context menu controller", function () {
-            var mockScope,
+        describe("The context menu controller", () => {
+            let mockScope,
                 mockActions,
                 controller;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockActions = jasmine.createSpyObj("action", ["getActions"]);
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 controller = new ContextMenuController(mockScope);
             });
 
-            it("watches scope that may change applicable actions", function () {
+            it("watches scope that may change applicable actions", () => {
                 // The action capability
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "action",
@@ -43,7 +43,7 @@ define(
                 );
             });
 
-            it("populates the scope with grouped and ungrouped actions", function () {
+            it("populates the scope with grouped and ungrouped actions", () => {
                 mockScope.action = mockActions;
                 mockScope.parameters = { category: "test" };
 

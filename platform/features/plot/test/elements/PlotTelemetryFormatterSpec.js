@@ -22,13 +22,13 @@
 
 define(
     ["../../src/elements/PlotTelemetryFormatter"],
-    function (PlotTelemetryFormatter) {
+    (PlotTelemetryFormatter) => {
 
-        describe("The PlotTelemetryFormatter", function () {
-            var mockFormatter,
+        describe("The PlotTelemetryFormatter", () => {
+            let mockFormatter,
                 formatter;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockFormatter = jasmine.createSpyObj(
                     'telemetryFormatter',
                     ['formatDomainValue', 'formatRangeValue']
@@ -36,16 +36,16 @@ define(
                 formatter = new PlotTelemetryFormatter(mockFormatter);
             });
 
-            describe("using domain & range format keys", function () {
-                var rangeFormat = "someRangeFormat",
+            describe("using domain & range format keys", () => {
+                let rangeFormat = "someRangeFormat",
                     domainFormat = "someDomainFormat";
 
-                beforeEach(function () {
+                beforeEach(() => {
                     formatter.setRangeFormat(rangeFormat);
                     formatter.setDomainFormat(domainFormat);
                 });
 
-                it("includes format in formatDomainValue calls", function () {
+                it("includes format in formatDomainValue calls", () => {
                     mockFormatter.formatDomainValue.andReturn("formatted!");
                     expect(formatter.formatDomainValue(12321))
                         .toEqual("formatted!");
@@ -53,7 +53,7 @@ define(
                         .toHaveBeenCalledWith(12321, domainFormat);
                 });
 
-                it("includes format in formatRangeValue calls for strings", function () {
+                it("includes format in formatRangeValue calls for strings", () => {
                     mockFormatter.formatRangeValue.andReturn("formatted!");
                     expect(formatter.formatRangeValue('foo'))
                         .toEqual("formatted!");
@@ -61,7 +61,7 @@ define(
                         .toHaveBeenCalledWith('foo', rangeFormat);
                 });
 
-                it("formats numeric values with three fixed digits", function () {
+                it("formats numeric values with three fixed digits", () => {
                     expect(formatter.formatRangeValue(10)).toEqual("10.000");
                 });
             });

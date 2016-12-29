@@ -23,10 +23,10 @@
 define([
     "./src/WorkerService",
     'legacyRegistry'
-], function (
+], (
     WorkerService,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/execution", {
         "extensions": {

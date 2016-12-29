@@ -22,14 +22,14 @@
 
 define(
     ['../../src/elements/TelemetryProxy'],
-    function (TelemetryProxy) {
+    (TelemetryProxy) => {
 
-        describe("A fixed position telemetry proxy", function () {
-            var testElement,
+        describe("A fixed position telemetry proxy", () => {
+            let testElement,
                 testElements,
                 proxy;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testElement = {
                     x: 1,
                     y: 2,
@@ -46,11 +46,11 @@ define(
                 );
             });
 
-            it("exposes the element's id", function () {
+            it("exposes the element's id", () => {
                 expect(proxy.id).toEqual('test-id');
             });
 
-            it("allows title to be shown/hidden", function () {
+            it("allows title to be shown/hidden", () => {
                 // Initially, only showTitle and hideTitle are available
                 expect(proxy.hideTitle).toBeUndefined();
                 proxy.showTitle();

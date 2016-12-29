@@ -25,54 +25,54 @@
  */
 define(
     ["../../src/actions/ActionProvider"],
-    function (ActionProvider) {
+    (ActionProvider) => {
 
-        describe("The action provider", function () {
-            var mockLog,
+        describe("The action provider", () => {
+            let mockLog,
                 actions,
                 actionProvider;
 
-            function SimpleAction() {
-                return { perform: function () {
+            const SimpleAction = () => {
+                return { perform: () => {
                     return "simple";
                 } };
             }
 
-            function CategorizedAction() {
-                return { perform: function () {
+            const CategorizedAction = () {
+                return { perform: () => {
                     return "categorized";
                 } };
             }
             CategorizedAction.category = "someCategory";
 
-            function KeyedAction() {
-                return { perform: function () {
+            const KeyedAction = () => {
+                return { perform: () => {
                     return "keyed";
                 } };
             }
             KeyedAction.key = "someKey";
 
-            function CategorizedKeyedAction() {
-                return { perform: function () {
+            const CategorizedKeyedAction = () => {
+                return { perform: () => {
                     return "both";
                 } };
             }
             CategorizedKeyedAction.key = "someKey";
             CategorizedKeyedAction.category = "someCategory";
 
-            function MetadataAction() {
+            const MetadataAction = () => {
                 return {
-                    perform: function () {
+                    perform: () => {
                         return "metadata";
                     },
-                    getMetadata: function () {
+                    getMetadata: () => {
                         return "custom metadata";
                     }
                 };
             }
             MetadataAction.key = "metadata";
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockLog = jasmine.createSpyObj(
                     '$log',
                     ['error', 'warn', 'info', 'debug']
@@ -87,8 +87,8 @@ define(
                 actionProvider = new ActionProvider(actions);
             });
 
-            it("exposes provided action extensions", function () {
-                var provided = actionProvider.getActions();
+            it("exposes provided action extensions", () => {
+                let provided = actionProvider.getActions();
 
                 // Should have gotten all actions
                 expect(provided.length).toEqual(actions.length);
@@ -97,8 +97,8 @@ define(
                 expect(provided[0].perform()).toEqual("simple");
             });
 
-            it("matches provided actions by key", function () {
-                var provided = actionProvider.getActions({ key: "someKey" });
+            it("matches provided actions by key", () => {
+                let provided = actionProvider.getActions({ key: "someKey" });
 
                 // Only two should have matched
                 expect(provided.length).toEqual(2);
@@ -107,8 +107,8 @@ define(
                 expect(provided[0].perform()).toEqual("keyed");
             });
 
-            it("matches provided actions by category", function () {
-                var provided = actionProvider.getActions({ category: "someCategory" });
+            it("matches provided actions by category", () => {
+                let provided = actionProvider.getActions({ category: "someCategory" });
 
                 // Only two should have matched
                 expect(provided.length).toEqual(2);
@@ -117,8 +117,8 @@ define(
                 expect(provided[0].perform()).toEqual("categorized");
             });
 
-            it("matches provided actions by both category and key", function () {
-                var provided = actionProvider.getActions({
+            it("matches provided actions by both category and key", () => {
+                let provided = actionProvider.getActions({
                     category: "someCategory",
                     key: "someKey"
                 });
@@ -130,8 +130,8 @@ define(
                 expect(provided[0].perform()).toEqual("both");
             });
 
-            it("adds a getMetadata method when none is defined", function () {
-                var provided = actionProvider.getActions({
+            it("adds a getMetadata method when none is defined", () => {
+                let provided = actionProvider.getActions({
                     category: "someCategory",
                     key: "someKey"
                 });
@@ -147,19 +147,19 @@ define(
 
             });
 
-            it("does not override defined getMetadata methods", function () {
-                var provided = actionProvider.getActions({ key: "metadata" });
+            it("does not override defined getMetadata methods", () => {
+                let provided = actionProvider.getActions({ key: "metadata" });
                 expect(provided[0].getMetadata()).toEqual("custom metadata");
             });
 
-            describe("when actions throw errors during instantiation", function () {
-                var errorText,
+            describe("when actions throw errors during instantiation", () => {
+                let errorText,
                     provided;
 
-                beforeEach(function () {
+                beforeEach(() => {
                     errorText = "some error text";
 
-                    function BadAction() {
+                    const BadAction = () => {
                         throw new Error(errorText);
                     }
 
@@ -169,18 +169,18 @@ define(
                     ).getActions();
                 });
 
-                it("logs an error", function () {
+                it("logs an error", () => {
                     expect(mockLog.error)
                         .toHaveBeenCalledWith(jasmine.any(String));
                 });
 
-                it("reports the error's message", function () {
+                it("reports the error's message", () => {
                     expect(
                         mockLog.error.mostRecentCall.args[0].indexOf(errorText)
                     ).not.toEqual(-1);
                 });
 
-                it("still provides valid actions", function () {
+                it("still provides valid actions", () => {
                     expect(provided.length).toEqual(1);
                     expect(provided[0].perform()).toEqual("simple");
                 });

@@ -21,9 +21,9 @@
  *****************************************************************************/
 define(
     ['../../src/directives/MCTScroll'],
-    function (MCTScroll) {
+    (MCTScroll) => {
 
-        var EVENT_PROPERTY = "testProperty",
+        const EVENT_PROPERTY = "testProperty",
             ATTRIBUTE = "testAttribute",
             EXPRESSION = "some.expression";
 
@@ -32,15 +32,15 @@ define(
         // mct-scroll-y; it gets the event property to watch and
         // the attribute which contains the associated assignable
         // expression.
-        describe("An mct-scroll-* directive", function () {
-            var mockParse,
+        describe("An mct-scroll-* directive", () => {
+            let mockParse,
                 mockParsed,
                 mockScope,
                 mockElement,
                 testAttrs,
                 mctScroll;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockParse = jasmine.createSpy('$parse');
                 mockParsed = jasmine.createSpy('parsed');
                 mockParsed.assign = jasmine.createSpy('assign');
@@ -62,15 +62,15 @@ define(
                 mctScroll.link(mockScope, mockElement, testAttrs);
             });
 
-            it("is available for attributes", function () {
+            it("is available for attributes", () => {
                 expect(mctScroll.restrict).toEqual('A');
             });
 
-            it("does not create an isolate scope", function () {
+            it("does not create an isolate scope", () => {
                 expect(mctScroll.scope).toBeUndefined();
             });
 
-            it("watches for changes in observed expression", function () {
+            it("watches for changes in observed expression", () => {
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     EXPRESSION,
                     jasmine.any(Function)
@@ -79,7 +79,7 @@ define(
                 expect(mockScope.$watch.calls.length).toEqual(1);
             });
 
-            it("listens for scroll events", function () {
+            it("listens for scroll events", () => {
                 expect(mockElement.on).toHaveBeenCalledWith(
                     'scroll',
                     jasmine.any(Function)
@@ -88,17 +88,17 @@ define(
                 expect(mockElement.on.calls.length).toEqual(1);
             });
 
-            it("publishes initial scroll state", function () {
+            it("publishes initial scroll state", () => {
                 expect(mockParse).toHaveBeenCalledWith(EXPRESSION);
                 expect(mockParsed.assign).toHaveBeenCalledWith(mockScope, 42);
             });
 
-            it("updates scroll state when scope changes", function () {
+            it("updates scroll state when scope changes", () => {
                 mockScope.$watch.mostRecentCall.args[1](64);
                 expect(mockElement[0].testProperty).toEqual(64);
             });
 
-            it("updates scope when scroll state changes", function () {
+            it("updates scope when scroll state changes", () => {
                 mockElement[0].testProperty = 12321;
                 mockElement.on.mostRecentCall.args[1]({ target: mockElement[0] });
                 expect(mockParsed.assign).toHaveBeenCalledWith(mockScope, 12321);
@@ -106,7 +106,7 @@ define(
             });
 
             // This would trigger an infinite digest exception
-            it("does not call $apply during construction", function () {
+            it("does not call $apply during construction", () => {
                 expect(mockScope.$apply).not.toHaveBeenCalled();
             });
 

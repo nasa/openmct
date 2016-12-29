@@ -22,19 +22,19 @@
 
 define(
     ["../../src/directives/MCTDrag"],
-    function (MCTDrag) {
+    (MCTDrag) => {
 
-        var JQLITE_METHODS = ["on", "off", "find"];
+        const JQLITE_METHODS = ["on", "off", "find"];
 
-        describe("The mct-drag directive", function () {
-            var mockDocument,
+        describe("The mct-drag directive", () => {
+            let mockDocument,
                 mockScope,
                 mockElement,
                 testAttrs,
                 mockBody,
                 mctDrag;
 
-            function testEvent(x, y) {
+            const testEvent = (x, y) => {
                 return {
                     pageX: x,
                     pageY: y,
@@ -42,7 +42,7 @@ define(
                 };
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockDocument =
                     jasmine.createSpyObj("$document", JQLITE_METHODS);
                 mockScope =
@@ -64,11 +64,11 @@ define(
                 mctDrag.link(mockScope, mockElement, testAttrs);
             });
 
-            it("is valid as an attribute", function () {
+            it("is valid as an attribute", () => {
                 expect(mctDrag.restrict).toEqual("A");
             });
 
-            it("listens for mousedown on its element", function () {
+            it("listens for mousedown on its element", () => {
                 expect(mockElement.on).toHaveBeenCalledWith(
                     "mousedown",
                     jasmine.any(Function)
@@ -78,8 +78,8 @@ define(
                 expect(mockBody.on).not.toHaveBeenCalled();
             });
 
-            it("invokes mctDragDown when dragging begins", function () {
-                var event = testEvent(42, 60);
+            it("invokes mctDragDown when dragging begins", () => {
+                let event = testEvent(42, 60);
                 mockElement.on.mostRecentCall.args[1](event);
                 expect(mockScope.$eval).toHaveBeenCalledWith(
                     testAttrs.mctDragDown,
@@ -87,7 +87,7 @@ define(
                 );
             });
 
-            it("listens for mousemove after dragging begins", function () {
+            it("listens for mousemove after dragging begins", () => {
                 mockElement.on.mostRecentCall.args[1](testEvent(42, 60));
                 expect(mockBody.on).toHaveBeenCalledWith(
                     "mousemove",
@@ -99,13 +99,13 @@ define(
                 );
             });
 
-            it("invokes mctDrag expression during drag", function () {
-                var event;
+            it("invokes mctDrag expression during drag", () => {
+                let event;
 
                 mockElement.on.mostRecentCall.args[1](testEvent(42, 60));
 
                 // Find and invoke the mousemove listener
-                mockBody.on.calls.forEach(function (call) {
+                mockBody.on.calls.forEach( (call) => {
                     if (call.args[0] === 'mousemove') {
                         call.args[1](event = testEvent(52, 200));
                     }
@@ -118,19 +118,19 @@ define(
                 );
             });
 
-            it("invokes mctDragUp expression after drag", function () {
-                var event;
+            it("invokes mctDragUp expression after drag", () => {
+                let event;
 
                 mockElement.on.mostRecentCall.args[1](testEvent(42, 60));
 
                 // Find and invoke the mousemove listener
-                mockBody.on.calls.forEach(function (call) {
+                mockBody.on.calls.forEach( (call) => {
                     if (call.args[0] === 'mousemove') {
                         call.args[1](testEvent(52, 200));
                     }
                 });
                 // Find and invoke the mousemove listener
-                mockBody.on.calls.forEach(function (call) {
+                mockBody.on.calls.forEach( (call) => {
                     if (call.args[0] === 'mouseup') {
                         call.args[1](event = testEvent(40, 71));
                     }

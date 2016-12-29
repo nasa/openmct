@@ -20,21 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-    function AdaptedViewController($scope, openmct) {
-        function refresh(legacyObject) {
+define([], () => {
+    const AdaptedViewController = ($scope, openmct) => {
+        const refresh = (legacyObject) => {
             if (!legacyObject) {
                 $scope.view = undefined;
                 return;
             }
 
-            var domainObject = legacyObject.useCapability('adapter');
-            var providers = openmct.mainViews.get(domainObject);
+            let domainObject = legacyObject.useCapability('adapter');
+            let providers = openmct.mainViews.get(domainObject);
             $scope.view = providers[0] && providers[0].view(domainObject);
-        }
+        };
 
         $scope.$watch('domainObject', refresh);
-    }
+    };
 
     return AdaptedViewController;
 });

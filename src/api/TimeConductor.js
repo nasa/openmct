@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['EventEmitter'], function (EventEmitter) {
+define(['EventEmitter'], (EventEmitter) => {
 
     /**
      * The public API for setting and querying time conductor state. The
@@ -35,8 +35,9 @@ define(['EventEmitter'], function (EventEmitter) {
      * @interface
      * @memberof module:openmct
      */
-    function TimeConductor() {
-        EventEmitter.call(this);
+    class TimeConductor extends EventEmitter {
+      constructor() {
+        super();
 
         //The Time System
         this.system = undefined;
@@ -52,8 +53,6 @@ define(['EventEmitter'], function (EventEmitter) {
         this.followMode = false;
     }
 
-    TimeConductor.prototype = Object.create(EventEmitter.prototype);
-
     /**
      * Validate the given bounds. This can be used for pre-validation of
      * bounds, for example by views validating user inputs.
@@ -62,7 +61,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * @memberof module:openmct.TimeConductor#
      * @method validateBounds
      */
-    TimeConductor.prototype.validateBounds = function (bounds) {
+    validateBounds(bounds) {
         if ((bounds.start === undefined) ||
             (bounds.end === undefined) ||
             isNaN(bounds.start) ||
@@ -73,7 +72,7 @@ define(['EventEmitter'], function (EventEmitter) {
             return "Specified start date exceeds end bound";
         }
         return true;
-    };
+    }
 
     /**
      * Get or set the follow mode of the time conductor. In follow mode the
@@ -86,7 +85,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * @memberof module:openmct.TimeConductor#
      * @method follow
      */
-    TimeConductor.prototype.follow = function (followMode) {
+    follow(followMode) {
         if (arguments.length > 0) {
             this.followMode = followMode;
             /**
@@ -99,7 +98,7 @@ define(['EventEmitter'], function (EventEmitter) {
             this.emit('follow', this.followMode);
         }
         return this.followMode;
-    };
+    }
 
     /**
      * @typedef {Object} TimeConductorBounds
@@ -119,9 +118,9 @@ define(['EventEmitter'], function (EventEmitter) {
      * @memberof module:openmct.TimeConductor#
      * @method bounds
      */
-    TimeConductor.prototype.bounds = function (newBounds) {
+    bounds(newBounds) {
         if (arguments.length > 0) {
-            var validationResult = this.validateBounds(newBounds);
+            let validationResult = this.validateBounds(newBounds);
             if (validationResult !== true) {
                 throw new Error(validationResult);
             }
@@ -143,7 +142,7 @@ define(['EventEmitter'], function (EventEmitter) {
         }
         //Return a copy to prevent direct mutation of time conductor bounds.
         return JSON.parse(JSON.stringify(this.boundsVal));
-    };
+    }
 
     /**
      * Get or set the time system of the TimeConductor. Time systems determine
@@ -156,7 +155,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * @memberof module:openmct.TimeConductor#
      * @method timeSystem
      */
-    TimeConductor.prototype.timeSystem = function (newTimeSystem, bounds) {
+    timeSystem(newTimeSystem, bounds) {
         if (arguments.length >= 2) {
             this.system = newTimeSystem;
             /**
@@ -174,7 +173,7 @@ define(['EventEmitter'], function (EventEmitter) {
             throw new Error('Must set bounds when changing time system');
         }
         return this.system;
-    };
+    }
 
     /**
      * Get or set the Time of Interest. The Time of Interest is the temporal
@@ -187,7 +186,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * @memberof module:openmct.TimeConductor#
      * @method timeOfInterest
      */
-    TimeConductor.prototype.timeOfInterest = function (newTOI) {
+    timeOfInterest(newTOI) {
         if (arguments.length > 0) {
             this.toi = newTOI;
             /**
@@ -199,7 +198,7 @@ define(['EventEmitter'], function (EventEmitter) {
             this.emit('timeOfInterest', this.toi);
         }
         return this.toi;
-    };
-
-    return TimeConductor;
+    }
+}
+return TimeConductor;
 });

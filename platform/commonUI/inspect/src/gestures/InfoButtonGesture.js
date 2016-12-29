@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The `info` gesture displays domain object metadata in a
@@ -35,12 +35,12 @@ define(
          * @param {DomainObject} domainObject the domain object for which to
          *        show information
          */
-        function InfoGestureButton($document, agentService, infoService, element, domainObject) {
-            var dismissBubble,
+        const InfoGestureButton = ($document, agentService, infoService, element, domainObject) => {
+            let dismissBubble,
                 touchPosition,
                 body = $document.find('body');
 
-            function trackPosition(event) {
+            const trackPosition = (event) => {
                 // Record touch position, so bubble can be shown at latest
                 // touch position, also offset by 22px to left (accounts for
                 // a finger-sized touch on the info button)
@@ -49,7 +49,7 @@ define(
 
             // Hides the bubble and detaches the
             // body hidebubble listener
-            function hideBubble() {
+            const hideBubble = () => {
                 // If a bubble is showing, dismiss it
                 if (dismissBubble) {
                     dismissBubble();
@@ -63,7 +63,7 @@ define(
             // Displays the bubble by tracking position of
             // touch, using infoService to display the bubble,
             // and then on any body touch the bubble is dismissed
-            function showBubble(event) {
+            const showBubble = (event) => {
                 trackPosition(event);
                 event.stopPropagation();
                 // Show the bubble, but on any touchstart on the
@@ -78,7 +78,7 @@ define(
                 // On any touch on the body, default body touches/events
                 // are prevented, the bubble is dismissed, and the touchstart
                 // body event is unbound, reallowing gestures
-                body.on('touchstart', function (evt) {
+                body.on('touchstart', (evt) => {
                     evt.preventDefault();
                     hideBubble();
                     body.unbind('touchstart');
@@ -99,7 +99,7 @@ define(
                  * @memberof InfoGesture
                  * @method
                  */
-                destroy: function () {
+                destroy: () => {
                     // Dismiss any active bubble...
                     hideBubble();
                     // ...and detach listeners

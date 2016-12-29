@@ -22,7 +22,7 @@
 
 define(
     ['./TypeImpl', './MergeModels'],
-    function (TypeImpl, mergeModels) {
+    (TypeImpl, mergeModels) => {
 
         /**
          * Provides domain object types that are available/recognized within
@@ -45,18 +45,18 @@ define(
          * @returns {Type[]} all known types
          */
 
-        var TO_CONCAT = ['inherits', 'capabilities', 'properties', 'features'],
+        const TO_CONCAT = ['inherits', 'capabilities', 'properties', 'features'],
             TO_MERGE = ['model'];
 
-        function copyKeys(a, b) {
-            Object.keys(b).forEach(function (k) {
+        const copyKeys = (a, b) => {
+            Object.keys(b).forEach( (k) => {
                 a[k] = b[k];
             });
         }
 
-        function removeDuplicates(array) {
-            var set = {};
-            return array ? array.filter(function (element) {
+        const removeDuplicates = (array) => {
+            let set = {};
+            return array ? array.filter( (element) => {
                 // Don't filter objects (e.g. property definitions)
                 if (element instanceof Object && !(element instanceof String)) {
                     return true;
@@ -70,21 +70,21 @@ define(
 
         // Reduce an array of type definitions to a single type definition,
         // which has merged all properties in order.
-        function collapse(typeDefs) {
-            var collapsed = typeDefs.reduce(function (a, b) {
-                var result = {};
+        const collapse = (typeDefs) => {
+            let collapsed = typeDefs.reduce( (a, b) => {
+                let result = {};
                 copyKeys(result, a);
                 copyKeys(result, b);
 
                 // Special case: Do a merge, e.g. on "model"
-                TO_MERGE.forEach(function (k) {
+                TO_MERGE.forEach( (k) => {
                     if (a[k] && b[k]) {
                         result[k] = mergeModels(a[k], b[k]);
                     }
                 });
 
                 // Special case: Concatenate certain arrays
-                TO_CONCAT.forEach(function (k) {
+                TO_CONCAT.forEach( (k) => {
                     if (a[k] || b[k]) {
                         result[k] = (a[k] || []).concat(b[k] || []);
                     }
@@ -93,7 +93,7 @@ define(
             }, {});
 
             // Remove any duplicates from the collapsed array
-            TO_CONCAT.forEach(function (k) {
+            TO_CONCAT.forEach( (k) => {
                 if (collapsed[k]) {
                     collapsed[k] = removeDuplicates(collapsed[k]);
                 }
@@ -110,12 +110,13 @@ define(
          * @memberof platform/core
          * @constructor
          */
-        function TypeProvider(types) {
-            var rawTypeDefinitions = types,
+        class TypeProvider {
+          constructor(types) {
+            let rawTypeDefinitions = types,
                 typeDefinitions = (function (typeDefArray) {
-                    var result = {};
-                    typeDefArray.forEach(function (typeDef) {
-                        var k = typeDef.key;
+                    let result = {};
+                    typeDefArray.forEach( (typeDef) => {
+                        let k = typeDef.key;
                         if (k) {
                             result[k] = (result[k] || []).concat(typeDef);
                         }
@@ -129,41 +130,39 @@ define(
             this.rawTypeDefinitions = types;
         }
 
-        TypeProvider.prototype.listTypes = function () {
-            var self = this;
+        listTypes() {
             return removeDuplicates(
-                this.rawTypeDefinitions.filter(function (def) {
+                this.rawTypeDefinitions.filter( (def) => {
                     return def.key;
-                }).map(function (def) {
+                }).map( (def) => {
                     return def.key;
-                }).map(function (key) {
-                    return self.getType(key);
+                }).map( (key) => {
+                    return this.getType(key);
                 })
             );
         };
 
-        TypeProvider.prototype.getType = function (key) {
-            var typeDefinitions = this.typeDefinitions,
-                self = this;
+        getType(key) {
+            var typeDefinitions = this.typeDefinitions
 
-            function getUndefinedType() {
-                return (self.undefinedType = self.undefinedType || collapse(
-                    self.rawTypeDefinitions.filter(function (typeDef) {
+            const getUndefinedType = () => {
+                return (this.undefinedType = this.undefinedType || collapse(
+                    this.rawTypeDefinitions.filter( (typeDef) => {
                         return !typeDef.key;
                     })
                 ));
             }
 
-            function asArray(value) {
+            const asArray = (value) => {
                 return Array.isArray(value) ? value : [value];
             }
 
-            function lookupTypeDef(typeKey) {
-                function buildTypeDef(typeKeyToBuild) {
-                    var typeDefs = typeDefinitions[typeKeyToBuild] || [],
-                        inherits = typeDefs.map(function (typeDef) {
+            const lookupTypeDef = (typeKey) => {
+                const buildTypeDef = (typeKeyToBuild) => {
+                    let typeDefs = typeDefinitions[typeKeyToBuild] || [],
+                        inherits = typeDefs.map( (typeDef) => {
                             return asArray(typeDef.inherits || []);
-                        }).reduce(function (a, b) {
+                        }).reduce( (a, b) => {
                             return a.concat(b);
                         }, []),
                         def = collapse(
@@ -180,13 +179,13 @@ define(
                     return def;
                 }
 
-                return (self.typeMap[typeKey] =
-                    self.typeMap[typeKey] || buildTypeDef(typeKey));
+                return (this.typeMap[typeKey] =
+                    this.typeMap[typeKey] || buildTypeDef(typeKey));
             }
 
             return new TypeImpl(lookupTypeDef(key));
         };
-
+      }
         return TypeProvider;
     }
 

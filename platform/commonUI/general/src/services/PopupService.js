@@ -22,14 +22,15 @@
 
 define(
     ['./Popup'],
-    function (Popup) {
+    (Popup) => {
 
         /**
          * Displays popup elements at specific positions within the document.
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function PopupService($document, $window) {
+        class PopupService {
+          constructor($document, $window) {
             this.$document = $document;
             this.$window = $window;
         }
@@ -74,8 +75,8 @@ define(
          *        positioning of the popup
          * @returns {platform/commonUI/general.Popup} the popup
          */
-        PopupService.prototype.display = function (element, position, options) {
-            var $document = this.$document,
+        display(element, position, options) => {
+            let $document = this.$document,
                 $window = this.$window,
                 body = $document.find('body'),
                 winDim = [$window.innerWidth, $window.innerHeight],
@@ -83,7 +84,7 @@ define(
                 margin,
                 offset;
 
-            function adjustNegatives(value, index) {
+            const adjustNegatives = (value, index) => {
                 return value < 0 ? (value + winDim[index]) : value;
             }
 
@@ -93,7 +94,7 @@ define(
                 options.offsetX !== undefined ? options.offsetX : 0,
                 options.offsetY !== undefined ? options.offsetY : 0
             ];
-            margin = [options.marginX, options.marginY].map(function (m, i) {
+            margin = [options.marginX, options.marginY].map( (m, i) => {
                 return m === undefined ? (winDim[i] / 2) : m;
             }).map(adjustNegatives);
 
@@ -117,7 +118,7 @@ define(
             // Return a function to dismiss the bubble
             return new Popup(element, styles);
         };
-
+      }
         return PopupService;
     }
 );

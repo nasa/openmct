@@ -23,7 +23,7 @@
 /**
  * @namespace platform/exporters
  */
-define(['csv'], function (CSV) {
+define(['csv'], (CSV) => {
 
     /**
      * Callback used to initiate saving files from the export service;
@@ -43,10 +43,10 @@ define(['csv'], function (CSV) {
      * @constructor
      * @memberof platform/exporters
      */
-    function ExportService(saveAs) {
+    class ExportService {
+      constructor(saveAs) {
         this.saveAs = saveAs;
-    }
-
+      }
     /**
      * Export a set of data as comma-separated values. Triggers a download
      * using the function provided when the ExportService was instantiated.
@@ -56,8 +56,8 @@ define(['csv'], function (CSV) {
      * @param {ExportOptions} [options] additional parameters for the file
      *        export
      */
-    ExportService.prototype.exportCSV = function (rows, options) {
-        var headers = (options && options.headers) ||
+    exportCSV(rows, options) {
+        let headers = (options && options.headers) ||
                 (Object.keys((rows[0] || {})).sort()),
             filename = (options && options.filename) || "export.csv",
             csvText = new CSV(rows, { header: headers }).encode(),
@@ -74,6 +74,6 @@ define(['csv'], function (CSV) {
      *           used to look up values from the data set. Defaults
      *           to the keys in the first object in the data set.
      */
-
+   }
     return ExportService;
 });

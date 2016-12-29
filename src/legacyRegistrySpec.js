@@ -23,10 +23,10 @@
 define([
     './legacyRegistry',
     './BundleRegistry'
-], function (legacyRegistry, BundleRegistry) {
+], (legacyRegistry, BundleRegistry) => {
 
-    describe("legacyRegistry", function () {
-        it("is a BundleRegistry", function () {
+    describe("legacyRegistry", () => {
+        it("is a BundleRegistry", () => {
             expect(legacyRegistry instanceof BundleRegistry).toBe(true);
         });
     });

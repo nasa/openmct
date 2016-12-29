@@ -25,15 +25,15 @@
  */
 define(
     ["../../src/types/TypeCapability"],
-    function (TypeCapability) {
+    (TypeCapability) => {
 
-        describe("The type capability", function () {
-            var mockTypeService,
+        describe("The type capability", () =>  {
+            let mockTypeService,
                 mockDomainObject,
                 mockType,
                 type;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 mockTypeService = jasmine.createSpyObj(
                     "typeService",
                     ["getType"]
@@ -50,7 +50,7 @@ define(
                 type = new TypeCapability(mockTypeService, mockDomainObject);
             });
 
-            it("looks up an object's type from type service", function () {
+            it("looks up an object's type from type service", () =>  {
                 expect(type).toEqual(mockType);
                 expect(mockTypeService.getType).toHaveBeenCalledWith("mockType");
             });

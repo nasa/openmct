@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * A PlotAxis provides a template-ready set of options
@@ -43,7 +43,8 @@ define(
          *        minimum.
          *
          */
-        function PlotAxis(axisType, metadatas, defaultValue) {
+        class PlotAxis {
+          constructor(axisType, metadatas, defaultValue) {
             this.axisType = axisType;
             this.defaultValue = defaultValue;
             this.optionKeys = {};
@@ -75,19 +76,19 @@ define(
          * @param {TelemetryMetadata[]} metadata objects describing
          *        applicable telemetry
          */
-        PlotAxis.prototype.updateMetadata = function (metadatas) {
-            var axisType = this.axisType,
+        updateMetadata(metadatas) {
+            let axisType = this.axisType,
                 optionKeys = this.optionKeys,
                 newOptions = {},
                 toAdd = [];
 
-            function isValid(option) {
+            const isValid = (option) => {
                 return option && optionKeys[option.key];
             }
 
-            metadatas.forEach(function (m) {
-                (m[axisType] || []).forEach(function (option) {
-                    var key = option.key;
+            metadatas.forEach( (m) => {
+                (m[axisType] || []).forEach( (option) => {
+                    let key = option.key;
                     if (!optionKeys[key] && !newOptions[key]) {
                         toAdd.push(option);
                     }
@@ -119,15 +120,14 @@ define(
          * will occur.
          * @param {string} key the identifier for the domain/range
          */
-        PlotAxis.prototype.chooseOption = function (key) {
-            var self = this;
-            this.options.forEach(function (option) {
+        chooseOption(key) {
+            this.options.forEach( (option) => {
                 if (option.key === key) {
-                    self.active = option;
+                    this.active = option;
                 }
             });
         };
-
+      }
         return PlotAxis;
 
     }

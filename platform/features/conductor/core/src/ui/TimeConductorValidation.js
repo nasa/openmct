@@ -22,48 +22,48 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Form validation for the TimeConductorController.
          * @param conductor
          * @constructor
          */
-        function TimeConductorValidation(conductor) {
-            var self = this;
+        class TimeConductorValidation {
+          constructor(conductor) {
             this.conductor = conductor;
 
             /*
              * Bind all class functions to 'this'
              */
-            Object.keys(TimeConductorValidation.prototype).filter(function (key) {
+            Object.keys(TimeConductorValidation.prototype).filter( (key) => {
                 return typeof TimeConductorValidation.prototype[key] === 'function';
-            }).forEach(function (key) {
-                self[key] = self[key].bind(self);
+            }).forEach( (key) => {
+                this[key] = this[key].bind(this);
             });
         }
 
         /**
          * Validation methods below are invoked directly from controls in the TimeConductor form
          */
-        TimeConductorValidation.prototype.validateStart = function (start) {
-            var bounds = this.conductor.bounds();
+        validateStart(start) {
+            let bounds = this.conductor.bounds();
             return this.conductor.validateBounds({start: start, end: bounds.end}) === true;
         };
 
-        TimeConductorValidation.prototype.validateEnd = function (end) {
-            var bounds = this.conductor.bounds();
+        validateEnd(end) {
+            let bounds = this.conductor.bounds();
             return this.conductor.validateBounds({start: bounds.start, end: end}) === true;
         };
 
-        TimeConductorValidation.prototype.validateStartDelta = function (startDelta) {
+        validateStartDelta(startDelta) {
             return !isNaN(startDelta) && startDelta > 0;
         };
 
-        TimeConductorValidation.prototype.validateEndDelta = function (endDelta) {
+        validateEndDelta(endDelta) {
             return !isNaN(endDelta) && endDelta >= 0;
         };
-
+      }
         return TimeConductorValidation;
     }
 );

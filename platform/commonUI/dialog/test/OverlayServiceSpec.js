@@ -25,10 +25,10 @@
  */
 define(
     ["../src/OverlayService"],
-    function (OverlayService) {
+    (OverlayService) => {
 
-        describe("The overlay service", function () {
-            var mockDocument,
+        describe("The overlay service", () => {
+            let mockDocument,
                 mockCompile,
                 mockRootScope,
                 mockBody,
@@ -37,7 +37,7 @@ define(
                 mockScope,
                 overlayService;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockDocument = jasmine.createSpyObj("$document", ["find"]);
                 mockCompile = jasmine.createSpy("$compile");
                 mockRootScope = jasmine.createSpyObj("$rootScope", ["$new"]);
@@ -58,19 +58,19 @@ define(
                 );
             });
 
-            it("prepends an mct-include to create overlays", function () {
+            it("prepends an mct-include to create overlays", () => {
                 overlayService.createOverlay("test", {});
                 expect(mockCompile).toHaveBeenCalled();
                 expect(mockCompile.mostRecentCall.args[0].indexOf("mct-include"))
                     .not.toEqual(-1);
             });
 
-            it("adds the templated element to the body", function () {
+            it("adds the templated element to the body", () => {
                 overlayService.createOverlay("test", {});
                 expect(mockBody.prepend).toHaveBeenCalledWith(mockElement);
             });
 
-            it("places the provided model/key in its template's scope", function () {
+            it("places the provided model/key in its template's scope", () => {
                 overlayService.createOverlay("test", { someKey: 42 });
                 expect(mockScope.overlay).toEqual({ someKey: 42 });
                 expect(mockScope.key).toEqual("test");
@@ -79,8 +79,8 @@ define(
                 expect(mockTemplate).toHaveBeenCalledWith(mockScope);
             });
 
-            it("removes the prepended element on request", function () {
-                var overlay = overlayService.createOverlay("test", {});
+            it("removes the prepended element on request", () => {
+                let overlay = overlayService.createOverlay("test", {});
 
                 // Verify precondition
                 expect(mockElement.remove).not.toHaveBeenCalled();

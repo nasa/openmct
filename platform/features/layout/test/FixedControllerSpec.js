@@ -22,10 +22,10 @@
 
 define(
     ["../src/FixedController"],
-    function (FixedController) {
+    (FixedController) => {
 
-        describe("The Fixed Position controller", function () {
-            var mockScope,
+        describe("The Fixed Position controller", () => {
+            let mockScope,
                 mockQ,
                 mockDialogService,
                 mockHandler,
@@ -40,9 +40,9 @@ define(
                 controller;
 
             // Utility function; find a watch for a given expression
-            function findWatch(expr) {
-                var watch;
-                mockScope.$watch.calls.forEach(function (call) {
+            const findWatch = (expr) => {
+                let watch;
+                mockScope.$watch.calls.forEach( (call) => {
                     if (call.args[0] === expr) {
                         watch = call.args[1];
                     }
@@ -51,9 +51,9 @@ define(
             }
 
             // As above, but for $on calls
-            function findOn(expr) {
-                var on;
-                mockScope.$on.calls.forEach(function (call) {
+            const findOn = (expr) => {
+                let on;
+                mockScope.$on.calls.forEach( (call) => {
                     if (call.args[0] === expr) {
                         on = call.args[1];
                     }
@@ -61,8 +61,8 @@ define(
                 return on;
             }
 
-            function makeMockDomainObject(id) {
-                var mockObject = jasmine.createSpyObj(
+            const makeMockDomainObject = (id) => {
+                let mockObject = jasmine.createSpyObj(
                     'domainObject-' + id,
                     ['getId', 'getModel', 'getCapability']
                 );
@@ -71,7 +71,7 @@ define(
                 return mockObject;
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockScope = jasmine.createSpyObj(
                     '$scope',
                     ["$on", "$watch", "commit"]
@@ -125,11 +125,11 @@ define(
                 mockHandle.getTelemetryObjects.andReturn(
                     testModel.composition.map(makeMockDomainObject)
                 );
-                mockHandle.getRangeValue.andCallFake(function (o) {
+                mockHandle.getRangeValue.andCallFake( (o) => {
                     return testValues[o.getId()];
                 });
                 mockHandle.getDomainValue.andReturn(12321);
-                mockFormatter.formatRangeValue.andCallFake(function (v) {
+                mockFormatter.formatRangeValue.andCallFake( (v) => {
                     return "Formatted " + v;
                 });
                 mockScope.model = testModel;
@@ -151,7 +151,7 @@ define(
                 findWatch("selection")(mockScope.selection);
             });
 
-            it("subscribes when a domain object is available", function () {
+            it("subscribes when a domain object is available", () => {
                 mockScope.domainObject = mockDomainObject;
                 findWatch("domainObject")(mockDomainObject);
                 expect(mockHandler.handle).toHaveBeenCalledWith(
@@ -160,7 +160,7 @@ define(
                 );
             });
 
-            it("releases subscriptions when domain objects change", function () {
+            it("releases subscriptions when domain objects change", () => {
                 mockScope.domainObject = mockDomainObject;
 
                 // First pass - should simply should subscribe
@@ -174,8 +174,8 @@ define(
                 expect(mockHandler.handle.calls.length).toEqual(2);
             });
 
-            it("exposes visible elements based on configuration", function () {
-                var elements;
+            it("exposes visible elements based on configuration", () => {
+                let elements;
 
                 mockScope.model = testModel;
                 testModel.modified = 1;
@@ -188,8 +188,8 @@ define(
                 expect(elements[2].id).toEqual('c');
             });
 
-            it("allows elements to be selected", function () {
-                var elements;
+            it("allows elements to be selected", () => {
+                let elements;
 
                 testModel.modified = 1;
                 findWatch("model.modified")(testModel.modified);
@@ -200,10 +200,10 @@ define(
                     .toHaveBeenCalledWith(elements[1]);
             });
 
-            it("allows selection retrieval", function () {
+            it("allows selection retrieval", () => {
                 // selected with no arguments should give the current
                 // selection
-                var elements;
+                let elements;
 
                 testModel.modified = 1;
                 findWatch("model.modified")(testModel.modified);
@@ -214,8 +214,8 @@ define(
                 expect(controller.selected()).toEqual(elements[1]);
             });
 
-            it("allows selections to be cleared", function () {
-                var elements;
+            it("allows selections to be cleared", () => {
+                let elements;
 
                 testModel.modified = 1;
                 findWatch("model.modified")(testModel.modified);
@@ -226,10 +226,10 @@ define(
                 expect(controller.selected(elements[1])).toBeFalsy();
             });
 
-            it("retains selections during refresh", function () {
+            it("retains selections during refresh", () => {
                 // Get elements; remove one of them; trigger refresh.
                 // Same element (at least by index) should still be selected.
-                var elements;
+                let elements;
 
                 testModel.modified = 1;
                 findWatch("model.modified")(testModel.modified);
@@ -254,8 +254,8 @@ define(
                 expect(mockScope.selection.select.calls.length).toEqual(2);
             });
 
-            it("provides values for telemetry elements", function () {
-                var elements;
+            it("provides values for telemetry elements", () => {
+                let elements;
                 // Initialize
                 mockScope.domainObject = mockDomainObject;
                 mockScope.model = testModel;
@@ -275,8 +275,8 @@ define(
                 expect(elements[2].value).toEqual("Formatted 31.42");
             });
 
-            it("updates elements styles when grid size changes", function () {
-                var originalLeft;
+            it("updates elements styles when grid size changes", () => {
+                let originalLeft;
 
                 mockScope.domainObject = mockDomainObject;
                 mockScope.model = testModel;
@@ -290,7 +290,7 @@ define(
                     .not.toEqual(originalLeft);
             });
 
-            it("listens for drop events", function () {
+            it("listens for drop events", () => {
                 // Layout should position panels according to
                 // where the user dropped them, so it needs to
                 // listen for drop events.
@@ -322,7 +322,7 @@ define(
                     .toHaveBeenCalledWith(jasmine.any(String));
             });
 
-            it("ignores drops when default has been prevented", function () {
+            it("ignores drops when default has been prevented", () => {
                 // Avoids redundant drop-handling, WTD-1233
                 mockEvent.defaultPrevented = true;
 
@@ -338,7 +338,7 @@ define(
                 expect(testConfiguration.elements.length).toEqual(3);
             });
 
-            it("unsubscribes when destroyed", function () {
+            it("unsubscribes when destroyed", () => {
                 // Make an object available
                 findWatch('domainObject')(mockDomainObject);
                 // Also verify precondition
@@ -349,21 +349,21 @@ define(
                 expect(mockHandle.unsubscribe).toHaveBeenCalled();
             });
 
-            it("exposes its grid size", function () {
+            it("exposes its grid size", () => {
                 findWatch('model.layoutGrid')(testGrid);
                 // Template needs to be able to pass this into line
                 // elements to size SVGs appropriately
                 expect(controller.getGridSize()).toEqual(testGrid);
             });
 
-            it("exposes a view-level selection proxy", function () {
+            it("exposes a view-level selection proxy", () => {
                 expect(mockScope.selection.proxy).toHaveBeenCalledWith(
                     jasmine.any(Object)
                 );
             });
 
-            it("exposes drag handles", function () {
-                var handles;
+            it("exposes drag handles", () => {
+                let handles;
 
                 // Select something so that drag handles are expected
                 testModel.modified = 1;
@@ -383,8 +383,8 @@ define(
                 });
             });
 
-            it("exposes a move handle", function () {
-                var handle;
+            it("exposes a move handle", () => {
+                let handle;
 
                 // Select something so that drag handles are expected
                 testModel.modified = 1;
@@ -400,8 +400,8 @@ define(
                 expect(handle.endDrag).toEqual(jasmine.any(Function));
             });
 
-            it("updates selection style during drag", function () {
-                var oldStyle;
+            it("updates selection style during drag", () => {
+                let oldStyle;
 
                 // Select something so that drag handles are expected
                 testModel.modified = 1;
@@ -425,10 +425,10 @@ define(
                 expect(controller.selected().style).not.toEqual(oldStyle);
             });
 
-            describe("on display bounds changes", function () {
-                var testBounds;
+            describe("on display bounds changes", () => {
+                let testBounds;
 
-                beforeEach(function () {
+                beforeEach(() => {
                     testBounds = { start: 123, end: 321 };
                     mockScope.domainObject = mockDomainObject;
                     mockScope.model = testModel;
@@ -438,20 +438,20 @@ define(
                     findOn('telemetry:display:bounds')({}, testBounds);
                 });
 
-                it("issues new requests", function () {
+                it("issues new requests", () => {
                     expect(mockHandle.request).toHaveBeenCalled();
                 });
 
-                it("requests only a single point", function () {
+                it("requests only a single point", () => {
                     expect(mockHandle.request.mostRecentCall.args[0].size)
                         .toEqual(1);
                 });
 
-                describe("and after data has been received", function () {
-                    var mockSeries,
+                describe("and after data has been received", () => {
+                    let mockSeries,
                         testValue;
 
-                    beforeEach(function () {
+                    beforeEach(() => {
                         testValue = 12321;
 
                         mockSeries = jasmine.createSpyObj('series', [
@@ -469,7 +469,7 @@ define(
                         );
                     });
 
-                    it("updates displayed values", function () {
+                    it("updates displayed values", () => {
                         expect(controller.getElements()[0].value)
                             .toEqual("Formatted " + testValue);
                     });
@@ -477,16 +477,16 @@ define(
 
             });
 
-            it("reflects limit status", function () {
-                var elements;
+            it("reflects limit status", () => {
+                let elements;
 
                 mockHandle.getDatum.andReturn({});
-                mockHandle.getTelemetryObjects().forEach(function (mockObject) {
-                    var id = mockObject.getId(),
+                mockHandle.getTelemetryObjects().forEach( (mockObject) => {
+                    let id = mockObject.getId(),
                         mockLimitCapability =
                             jasmine.createSpyObj('limit-' + id, ['evaluate']);
 
-                    mockObject.getCapability.andCallFake(function (key) {
+                    mockObject.getCapability.andCallFake( (key) => {
                         return (key === 'limit') && mockLimitCapability;
                     });
 

@@ -22,26 +22,27 @@
 
 define([
     '../../api/objects/object-utils'
-], function (objectUtils) {
-    function ActionDialogDecorator(mct, actionService) {
+], (objectUtils) => {
+    class ActionDialogDecorator {
+      constructor(mct, actionService) {
         this.mct = mct;
         this.actionService = actionService;
     }
 
-    ActionDialogDecorator.prototype.getActions = function (context) {
-        var mct = this.mct;
+    getActions(context) {
+        let mct = this.mct;
 
-        return this.actionService.getActions(context).map(function (action) {
+        return this.actionService.getActions(context).map( (action) => {
             if (action.dialogService) {
-                var domainObject = objectUtils.toNewFormat(
+                let domainObject = objectUtils.toNewFormat(
                     context.domainObject.getModel(),
                     objectUtils.parseKeyString(context.domainObject.getId())
                 );
-                var providers = mct.propertyEditors.get(domainObject);
+                let providers = mct.propertyEditors.get(domainObject);
 
                 if (providers.length > 0) {
                     action.dialogService = Object.create(action.dialogService);
-                    action.dialogService.getUserInput = function (form, value) {
+                    action.dialogService.getUserInput = (form, value) => {
                         return new mct.Dialog(
                             providers[0].view(context.domainObject),
                             form.title
@@ -51,7 +52,7 @@ define([
             }
             return action;
         });
-    };
-
-    return ActionDialogDecorator;
+    }
+  }
+  return ActionDialogDecorator;
 });

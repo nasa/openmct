@@ -25,10 +25,10 @@
  */
 define(
     ["../../src/creation/CreateWizard"],
-    function (CreateWizard) {
+    (CreateWizard) => {
 
-        describe("The create wizard", function () {
-            var mockType,
+        describe("The create wizard", () => {
+            let mockType,
                 mockParent,
                 mockProperties,
                 mockPolicyService,
@@ -36,8 +36,8 @@ define(
                 mockDomainObject,
                 wizard;
 
-            function createMockProperty(name) {
-                var mockProperty = jasmine.createSpyObj(
+            const createMockProperty = (name) => {
+                let mockProperty = jasmine.createSpyObj(
                     "property" + name,
                     ["getDefinition", "getValue", "setValue"]
                 );
@@ -48,7 +48,7 @@ define(
                 return mockProperty;
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockType = jasmine.createSpyObj(
                     "type",
                     [
@@ -98,18 +98,18 @@ define(
                 );
             });
 
-            it("creates a form model with a Properties section", function () {
+            it("creates a form model with a Properties section", () => {
                 expect(wizard.getFormStructure().sections[0].name)
                     .toEqual("Properties");
             });
 
-            it("adds one row per defined type property", function () {
+            it("adds one row per defined type property", () => {
                 // Three properties were defined in the mock type
                 expect(wizard.getFormStructure().sections[0].rows.length)
                     .toEqual(3);
             });
 
-            it("interprets form data using type-defined properties", function () {
+            it("interprets form data using type-defined properties", () => {
                 // Use key names from mock properties
                 wizard.createModel([
                     "field 0",
@@ -118,7 +118,7 @@ define(
                 ]);
 
                 // Should have gotten a setValue call
-                mockProperties.forEach(function (mockProperty, i) {
+                mockProperties.forEach( (mockProperty, i) => {
                     expect(mockProperty.setValue).toHaveBeenCalledWith(
                         { someKey: "some value", type: 'test' },
                         "field " + i
@@ -126,22 +126,22 @@ define(
                 });
             });
 
-            it("looks up initial values from properties", function () {
-                var initialValue = wizard.getInitialFormValue();
+            it("looks up initial values from properties", () => {
+                let initialValue = wizard.getInitialFormValue();
 
                 expect(initialValue[0]).toEqual("A");
                 expect(initialValue[1]).toEqual("B");
                 expect(initialValue[2]).toEqual("C");
 
                 // Verify that expected argument was passed
-                mockProperties.forEach(function (mockProperty) {
+                mockProperties.forEach( (mockProperty) => {
                     expect(mockProperty.getValue)
                         .toHaveBeenCalledWith(testModel);
                 });
             });
 
-            it("populates the model on the associated object", function () {
-                var formValue = {
+            it("populates the model on the associated object", () => {
+                let formValue = {
                     "A": "ValueA",
                     "B": "ValueB",
                     "C": "ValueC"
@@ -152,8 +152,8 @@ define(
                 expect(mockDomainObject.useCapability.mostRecentCall.args[1]()).toEqual(compareModel);
             });
 
-            it("validates selection types using policy", function () {
-                var mockDomainObj = jasmine.createSpyObj(
+            it("validates selection types using policy", () => {
+                let mockDomainObj = jasmine.createSpyObj(
                         'domainObject',
                         ['getCapability']
                     ),
@@ -179,8 +179,8 @@ define(
                 );
             });
 
-            it("creates a form model without a location if not requested", function () {
-                expect(wizard.getFormStructure(false).sections.some(function (section) {
+            it("creates a form model without a location if not requested", () => {
+                expect(wizard.getFormStructure(false).sections.some( (section) => {
                     return section.name === 'Location';
                 })).toEqual(false);
             });

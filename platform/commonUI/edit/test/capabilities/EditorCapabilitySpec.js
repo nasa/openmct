@@ -22,10 +22,10 @@
 
 define(
     ["../../src/capabilities/EditorCapability"],
-    function (EditorCapability) {
+    (EditorCapability) => {
 
-        describe("The editor capability", function () {
-            var mockDomainObject,
+        describe("The editor capability", () => {
+            let mockDomainObject,
                 capabilities,
                 mockParentObject,
                 mockTransactionService,
@@ -34,15 +34,15 @@ define(
                 mockContextCapability,
                 capability;
 
-            function fastPromise(val) {
+            const fastPromise = (val) => {
                 return {
-                    then: function (callback) {
+                    then: (callback) => {
                         return callback(val);
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     ["getId", "getModel", "hasCapability", "getCapability", "useCapability"]
@@ -82,11 +82,11 @@ define(
                     status: mockStatusCapability
                 };
 
-                mockDomainObject.hasCapability.andCallFake(function (name) {
+                mockDomainObject.hasCapability.andCallFake( (name) => {
                     return capabilities[name] !== undefined;
                 });
 
-                mockDomainObject.getCapability.andCallFake(function (name) {
+                mockDomainObject.getCapability.andCallFake( (name) => {
                     return capabilities[name];
                 });
 
@@ -99,17 +99,17 @@ define(
                 );
             });
 
-            it("starts a transaction when edit is invoked", function () {
+            it("starts a transaction when edit is invoked", () => {
                 capability.edit();
                 expect(mockTransactionService.startTransaction).toHaveBeenCalled();
             });
 
-            it("sets editing status on object", function () {
+            it("sets editing status on object", () => {
                 capability.edit();
                 expect(mockStatusCapability.set).toHaveBeenCalledWith("editing", true);
             });
 
-            it("uses editing status to determine editing context root", function () {
+            it("uses editing status to determine editing context root", () => {
                 capability.edit();
                 mockStatusCapability.get.andReturn(false);
                 expect(capability.isEditContextRoot()).toBe(false);
@@ -118,7 +118,7 @@ define(
             });
 
             it("inEditingContext returns true if parent object is being" +
-                " edited", function () {
+                " edited", () => {
                 mockStatusCapability.get.andReturn(false);
                 mockParentStatus.get.andReturn(false);
                 expect(capability.inEditContext()).toBe(false);
@@ -126,15 +126,15 @@ define(
                 expect(capability.inEditContext()).toBe(true);
             });
 
-            describe("save", function () {
-                beforeEach(function () {
+            describe("save", () => {
+                beforeEach( () => {
                     capability.edit();
                     capability.save();
                 });
-                it("commits the transaction", function () {
+                it("commits the transaction", () => {
                     expect(mockTransactionService.commit).toHaveBeenCalled();
                 });
-                it("begins a new transaction", function () {
+                it("begins a new transaction", () => {
                     expect(mockTransactionService.startTransaction).toHaveBeenCalled();
                 });
             });

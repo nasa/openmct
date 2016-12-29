@@ -22,9 +22,9 @@
 
 define(
     ["./PlotOverlayMode", "./PlotStackMode"],
-    function (PlotOverlayMode, PlotStackMode) {
+    (PlotOverlayMode, PlotStackMode) => {
 
-        var STACKED = {
+        let STACKED = {
                 key: "stacked",
                 name: "Stacked",
                 cssclass: "icon-plot-stacked",
@@ -87,13 +87,14 @@ define(
          * @param {platform/features/plot.SubPlotFactory} subPlotFactory a
          *        factory for creating sub-plots
          */
-        function PlotModeOptions(telemetryObjects, subPlotFactory) {
+        class PlotModeOptions {
+          constructor(telemetryObjects, subPlotFactory) {
             this.options = telemetryObjects.length > 1 ?
                     [OVERLAID, STACKED] : [OVERLAID];
             this.mode = this.options[0]; // Initial selection (overlaid)
             this.telemetryObjects = telemetryObjects;
             this.subPlotFactory = subPlotFactory;
-        }
+          }
 
         /**
          * Get a handler for the current mode. This will handle
@@ -102,7 +103,7 @@ define(
          * @returns {PlotOverlayMode|PlotStackMode} a handler
          *          for the current mode
          */
-        PlotModeOptions.prototype.getModeHandler = function () {
+        getModeHandler() {
             // Lazily initialize
             if (!this.modeHandler) {
                 this.modeHandler = new this.mode.Constructor(
@@ -119,7 +120,7 @@ define(
          * for display in a template.
          * @return {Array} the available modes
          */
-        PlotModeOptions.prototype.getModeOptions = function () {
+        getModeOptions() {
             return this.options;
         };
 
@@ -129,7 +130,7 @@ define(
          * `getModeOptions`.
          * @return {*} the current mode
          */
-        PlotModeOptions.prototype.getMode = function () {
+        getMode() {
             return this.mode;
         };
 
@@ -140,7 +141,7 @@ define(
          * @param {object} option one of the plot mode options
          *        from `getModeOptions`
          */
-        PlotModeOptions.prototype.setMode = function (option) {
+        setMode(option) {
             if (this.mode !== option) {
                 this.mode = option;
                 // Clear the existing mode handler, so it
@@ -148,8 +149,7 @@ define(
                 this.modeHandler = undefined;
             }
         };
-
-
+      }
         return PlotModeOptions;
     }
 );

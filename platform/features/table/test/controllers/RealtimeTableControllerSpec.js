@@ -24,10 +24,10 @@ define(
     [
         "../../src/controllers/RealtimeTableController"
     ],
-    function (TableController) {
+    (TableController) => {
 
-        describe('The real-time table controller', function () {
-            var mockScope,
+        describe('The real-time table controller', () => {
+            let mockScope,
                 mockTelemetryHandler,
                 mockTelemetryHandle,
                 mockTelemetryFormatter,
@@ -39,15 +39,15 @@ define(
                 mockConductor,
                 controller;
 
-            function promise(value) {
+            const promise = (value) => {
                 return {
-                    then: function (callback) {
+                    then: (callback) => {
                         return promise(callback(value));
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 watches = {};
                 mockTableRow = {'col1': 'val1', 'col2': 'row2'};
 
@@ -58,13 +58,13 @@ define(
                     '$digest',
                     '$broadcast'
                 ]);
-                mockScope.$on.andCallFake(function (expression, callback) {
+                mockScope.$on.andCallFake( (expression, callback) => {
                     watches[expression] = callback;
                 });
-                mockScope.$watch.andCallFake(function (expression, callback) {
+                mockScope.$watch.andCallFake( (expression, callback) => {
                     watches[expression] = callback;
                 });
-                mockScope.$watchCollection.andCallFake(function (expression, callback) {
+                mockScope.$watchCollection.andCallFake( (expression, callback) => {
                     watches[expression] = callback;
                 });
 
@@ -94,7 +94,7 @@ define(
                 mockDomainObject.getModel.andReturn({});
                 mockDomainObject.getCapability.andReturn(
                     {
-                        getMetadata: function () {
+                        getMetadata: () => {
                             return {ranges: [{format: 'string'}]};
                         }
                     });
@@ -137,23 +137,23 @@ define(
                 controller.handle = mockTelemetryHandle;
             });
 
-            it('registers for streaming telemetry', function () {
+            it('registers for streaming telemetry', () => {
                 controller.subscribe();
                 expect(mockTelemetryHandler.handle).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Function), true);
             });
 
-            describe('receives new telemetry', function () {
-                beforeEach(function () {
+            describe('receives new telemetry', () => {
+                beforeEach(() => {
                     controller.subscribe();
                     mockScope.rows = [];
                 });
 
-                it('updates table with new streaming telemetry', function () {
+                it('updates table with new streaming telemetry', () => {
                     mockTelemetryHandler.handle.mostRecentCall.args[1]();
                     expect(mockScope.$broadcast).toHaveBeenCalledWith('add:row', 0);
                 });
-                it('observes the row limit', function () {
-                    var i = 0;
+                it('observes the row limit', () => {
+                    let i = 0;
                     controller.maxRows = 10;
 
                     //Fill rows array with elements

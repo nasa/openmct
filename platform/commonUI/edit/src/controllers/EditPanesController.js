@@ -22,19 +22,18 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Supports the Library and Elements panes in Edit mode.
          * @memberof platform/commonUI/edit
          * @constructor
          */
-        function EditPanesController($scope) {
-            var self = this;
+        const EditPanesController = ($scope) => {
 
             // Update root object based on represented object
-            function updateRoot(domainObject) {
-                var root = self.rootDomainObject,
+            const updateRoot = (domainObject) => {
+                let root = this.rootDomainObject,
                     context = domainObject &&
                         domainObject.getCapability('context'),
                     newRoot = context && context.getTrueRoot(),
@@ -44,7 +43,7 @@ define(
                 // Only update if this has actually changed,
                 // to avoid excessive refreshing.
                 if (oldId !== newId) {
-                    self.rootDomainObject = newRoot;
+                    this.rootDomainObject = newRoot;
                 }
             }
 
@@ -56,7 +55,7 @@ define(
          * represented domain object.
          * @returns {DomainObject} the root object
          */
-        EditPanesController.prototype.getRoot = function () {
+        EditPanesController.prototype.getRoot = () => {
             return this.rootDomainObject;
         };
 

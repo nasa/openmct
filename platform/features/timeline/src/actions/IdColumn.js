@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([], () => {
 
     /**
      * A column showing identifying domain objects.
@@ -30,17 +30,18 @@ define([], function () {
      *        should appear in CSV output in their place
      * @implements {platform/features/timeline.TimelineCSVColumn}
      */
-    function IdColumn(idMap) {
+    class IdColumn {
+      constructor(idMap) {
         this.idMap = idMap;
-    }
+      }
 
-    IdColumn.prototype.name = function () {
+      name() {
         return "Index";
-    };
+      };
 
-    IdColumn.prototype.value = function (domainObject) {
+    value(domainObject) {
         return this.idMap[domainObject.getId()];
     };
-
+  }
     return IdColumn;
 });

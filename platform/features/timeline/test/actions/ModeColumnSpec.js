@@ -22,33 +22,33 @@
 
 define(
     ['../../src/actions/ModeColumn'],
-    function (ModeColumn) {
-        var TEST_IDS = ['a', 'b', 'c', 'd', 'e', 'f'];
+    (ModeColumn) => {
+        const TEST_IDS = ['a', 'b', 'c', 'd', 'e', 'f'];
 
-        describe("ModeColumn", function () {
-            var testIndex,
+        describe("ModeColumn", () => {
+            let testIndex,
                 testIdMap,
                 column;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testIndex = 3;
-                testIdMap = TEST_IDS.reduce(function (map, id, index) {
+                testIdMap = TEST_IDS.reduce( (map, id, index) => {
                     map[id] = index;
                     return map;
                 }, {});
                 column = new ModeColumn(testIndex, testIdMap);
             });
 
-            it("includes a one-based index in its name", function () {
+            it("includes a one-based index in its name", () => {
                 expect(column.name().indexOf(String(testIndex + 1)))
                     .not.toEqual(-1);
             });
 
-            describe("value", function () {
-                var mockDomainObject,
+            describe("value", () => {
+                let mockDomainObject,
                     testModel;
 
-                beforeEach(function () {
+                beforeEach(() => {
                     mockDomainObject = jasmine.createSpyObj(
                         'domainObject',
                         ['getId', 'getModel', 'getCapability']
@@ -61,17 +61,17 @@ define(
                     mockDomainObject.getModel.andReturn(testModel);
                 });
 
-                it("returns a corresponding value from the map", function () {
+                it("returns a corresponding value from the map", () => {
                     expect(column.value(mockDomainObject))
                         .toEqual(testIdMap[testModel.relationships.modes[testIndex]]);
                 });
 
-                it("returns nothing when relationships are exceeded", function () {
+                it("returns nothing when relationships are exceeded", () => {
                     testModel.relationships.modes = ['foo'];
                     expect(column.value(mockDomainObject)).toEqual("");
                 });
 
-                it("returns nothing when mode relationships are absent", function () {
+                it("returns nothing when mode relationships are absent", () => {
                     delete testModel.relationships.modes;
                     expect(column.value(mockDomainObject)).toEqual("");
                 });

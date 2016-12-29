@@ -27,11 +27,11 @@ define(
         '../services/MockLinkService',
         '../DomainObjectFactory'
     ],
-    function (LinkAction, MockLinkService, domainObjectFactory) {
+    (LinkAction, MockLinkService, domainObjectFactory) => {
 
-        describe("Link Action", function () {
+        describe("Link Action", () =>  {
 
-            var linkAction,
+            let linkAction,
                 policyService,
                 locationService,
                 locationServicePromise,
@@ -42,7 +42,7 @@ define(
                 currentParent,
                 newParent;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 policyService = jasmine.createSpyObj(
                     'policyService',
                     ['allow']
@@ -100,8 +100,8 @@ define(
             });
 
 
-            describe("with context from context-action", function () {
-                beforeEach(function () {
+            describe("with context from context-action", () =>  {
+                beforeEach(() =>  {
                     context = {
                         domainObject: selectedObject
                     };
@@ -114,16 +114,16 @@ define(
                     );
                 });
 
-                it("initializes happily", function () {
+                it("initializes happily", () =>  {
                     expect(linkAction).toBeDefined();
                 });
 
-                describe("when performed it", function () {
-                    beforeEach(function () {
+                describe("when performed it", () =>  {
+                    beforeEach(() =>  {
                         linkAction.perform();
                     });
 
-                    it("prompts for location", function () {
+                    it("prompts for location", () =>  {
                         expect(locationService.getLocationFromUser)
                             .toHaveBeenCalledWith(
                                 "Link selectedObject To a New Location",
@@ -133,12 +133,12 @@ define(
                             );
                     });
 
-                    it("waits for location from user", function () {
+                    it("waits for location from user", () =>  {
                         expect(locationServicePromise.then)
                             .toHaveBeenCalledWith(jasmine.any(Function));
                     });
 
-                    it("links object to selected location", function () {
+                    it("links object to selected location", () =>  {
                         locationServicePromise
                             .then
                             .mostRecentCall
@@ -150,8 +150,8 @@ define(
                 });
             });
 
-            describe("with context from drag-drop", function () {
-                beforeEach(function () {
+            describe("with context from drag-drop", () =>  {
+                beforeEach(() =>  {
                     context = {
                         selectedObject: selectedObject,
                         domainObject: newParent
@@ -165,12 +165,12 @@ define(
                     );
                 });
 
-                it("initializes happily", function () {
+                it("initializes happily", () =>  {
                     expect(linkAction).toBeDefined();
                 });
 
 
-                it("performs link immediately", function () {
+                it("performs link immediately", () =>  {
                     linkAction.perform();
                     expect(linkService.perform)
                         .toHaveBeenCalledWith(selectedObject, newParent);

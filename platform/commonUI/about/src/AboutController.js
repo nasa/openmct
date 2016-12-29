@@ -25,9 +25,7 @@
  * Implements Open MCT's About dialog.
  * @namespace platform/commonUI/about
  */
-define(
-    [],
-    function () {
+define([], () => {
 
         /**
          * The AboutController provides information to populate the
@@ -38,7 +36,8 @@ define(
          *        injected from `versions[]`
          * @param $window Angular-injected window object
          */
-        function AboutController(versions, $window) {
+        class AboutController {
+          constructor(versions, $window) {
             this.versionDefinitions = versions;
             this.$window = $window;
         }
@@ -49,19 +48,19 @@ define(
          * as a line-item in the version information listing.
          * @returns {object[]} version information
          */
-        AboutController.prototype.versions = function () {
+        versions() {
             return this.versionDefinitions;
-        };
+        }
 
         /**
          * Open a new window (or tab, depending on browser
          * configuration) containing open source licenses.
          */
-        AboutController.prototype.openLicenses = function () {
+        openLicenses() {
             // Open a new browser window at the licenses route
             this.$window.open("#/licenses");
-        };
-
-        return AboutController;
-    }
+        }
+      }
+      return AboutController;
+  }
 );

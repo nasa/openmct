@@ -25,12 +25,12 @@ define([
     './TelemetryValueFormatter',
     'lodash',
     'EventEmitter'
-], function (
+], (
     TelemetryMetadataManager,
     TelemetryValueFormatter,
     _,
     EventEmitter
-) {
+) => {
     /**
      * A LimitEvaluator may be used to detect when telemetry values
      * have exceeded nominal conditions.
@@ -79,14 +79,14 @@ define([
 
     // format map is a placeholder until we figure out format service.
     var FORMAT_MAP = {
-        generic: function (range) {
-            return function (datum) {
+        generic: (range) => {
+            return (datum) => {
                 return datum[range.key];
             };
         },
-        enum: function (range) {
-            var enumMap = _.indexBy(range.enumerations, 'value');
-            return function (datum) {
+        enum: (range) => {
+            let enumMap = _.indexBy(range.enumerations, 'value');
+            return (datum) => {
                 try {
                     return enumMap[datum[range.valueKey]].text;
                 } catch (e) {
@@ -159,14 +159,28 @@ define([
      * @augments module:openmct.TelemetryAPI~TelemetryProvider
      * @memberof module:openmct
      */
-    function TelemetryAPI(MCT) {
+    class TelemetryAPI {
+      constructor(MCT) {
         this.MCT = MCT;
         this.providersByStrategy = {};
         this.defaultProviders = [];
         this.metadataCache = new WeakMap();
         this.formatMapCache = new WeakMap();
         this.valueFormatterCache = new WeakMap();
-    }
+        _.forEach({
+            subscribe: undefined,
+            properties: [],
+            formatter: undefined,
+            limitEvaluator: undefined
+        }, (defaultValue, method) => {
+            this[method] = (domainObject) => {
+                let provider = this.findProvider(domainObject);
+                return provider ?
+                    provider[method].apply(provider, arguments) :
+                    defaultValue;
+            };
+        });
+      }
 
     /**
      * Check if this provider can supply telemetry data associated with
@@ -178,11 +192,11 @@ define([
      * @returns {boolean} true if telemetry can be provided
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
-    TelemetryAPI.prototype.canProvideTelemetry = function (domainObject) {
-        return this.defaultProviders.some(function (provider) {
+    canProvideTelemetry(domainObject) {
+        return this.defaultProviders.some( (provider) => {
             return provider.canProvideTelemetry(domainObject);
         });
-    };
+    }
 
     /**
      * Register a telemetry provider with the telemetry service. This
@@ -196,7 +210,7 @@ define([
      *        default provider (when no strategy is requested or no
      *        matching strategy is found.)
      */
-    TelemetryAPI.prototype.addProvider = function (provider, strategy) {
+    addProvider(provider, strategy) {
         if (!strategy) {
             this.defaultProviders.push(provider);
         } else {
@@ -204,18 +218,18 @@ define([
                 this.providersByStrategy[strategy] || [];
             this.providersByStrategy[strategy].push(provider);
         }
-    };
+    }
 
     /**
      * @private
      */
-    TelemetryAPI.prototype.findProvider = function (domainObject, strategy) {
-        function supportsDomainObject(provider) {
+    findProvider(domainObject, strategy) {
+        const supportsDomainObject = (provider) => {
             return provider.canProvideTelemetry(domainObject);
-        }
+        };
 
         if (strategy) {
-            var eligibleProviders =
+            let eligibleProviders =
                 (this.providersByStrategy[strategy] || [])
                     .filter(supportsDomainObject);
             if (eligibleProviders.length > 0) {
@@ -224,7 +238,7 @@ define([
         }
 
         return this.defaultProviders.filter(supportsDomainObject)[0];
-    };
+    }
 
     /**
      * Request historical telemetry for a domain object.
@@ -241,12 +255,12 @@ define([
      * @returns {Promise.<object[]>} a promise for an array of
      *          telemetry data
      */
-    TelemetryAPI.prototype.request = function (domainObject, options) {
-        var provider = this.findProvider(domainObject, options.strategy);
+    request(domainObject, options) {
+        let provider = this.findProvider(domainObject, options.strategy);
         return provider ?
             provider.request(domainObject, options) :
             Promise.reject([]);
-    };
+    }
 
     /**
      * Get telemetry metadata for a given domain object.  Returns a telemetry
@@ -255,7 +269,7 @@ define([
      *
      * @returns {TelemetryMetadataManager}
      */
-    TelemetryAPI.prototype.getMetadata = function (domainObject) {
+    getMetadata(domainObject) {
         if (!this.metadataCache.has(domainObject)) {
             if (!this.typeService) {
                 this.typeService = this.MCT.$injector.get('typeService');
@@ -266,38 +280,38 @@ define([
             );
         }
         return this.metadataCache.get(domainObject);
-    };
+    }
 
     /**
      * Return an array of valueMetadatas that are common to all supplied
      * telemetry objects and match the requested hints.
      *
      */
-    TelemetryAPI.prototype.commonValuesForHints = function (metadatas, hints) {
-        var options = metadatas.map(function (metadata) {
-            var values = metadata.valuesForHints(hints);
+    commonValuesForHints(metadatas, hints) {
+        let options = metadatas.map( (metadata) => {
+            let values = metadata.valuesForHints(hints);
             return _.indexBy(values, 'key');
-        }).reduce(function (a, b) {
-            var results = {};
-            Object.keys(a).forEach(function (key) {
+        }).reduce( (a, b) => {
+            let results = {};
+            Object.keys(a).forEach( (key) => {
                 if (b.hasOwnProperty(key)) {
                     results[key] = a[key];
                 }
             });
             return results;
         });
-        var sortKeys = hints.map(function (h) {
+        let sortKeys = hints.map( (h) => {
             return 'hints.' + h;
         });
         return _.sortByAll(options, sortKeys);
-    };
+    }
 
     /**
      * Get a value formatter for a given valueMetadata.
      *
      * @returns {TelemetryValueFormatter}
      */
-    TelemetryAPI.prototype.getValueFormatter = function (valueMetadata) {
+    getValueFormatter(valueMetadata) {
         if (!this.valueFormatterCache.has(valueMetadata)) {
             if (!this.formatService) {
                 this.formatService = this.MCT.$injector.get('formatService');
@@ -308,7 +322,7 @@ define([
             );
         }
         return this.valueFormatterCache.get(valueMetadata);
-    };
+    }
 
     /**
      * Get a format map of all value formatters for a given piece of telemetry
@@ -316,16 +330,16 @@ define([
      *
      * @returns {Object<String, {TelemetryValueFormatter}>}
      */
-    TelemetryAPI.prototype.getFormatMap = function (metadata) {
+    getFormatMap(metadata) {
         if (!this.formatMapCache.has(metadata)) {
-            var formatMap = metadata.values().reduce(function (map, valueMetadata) {
+            let formatMap = metadata.values().reduce( (map, valueMetadata) => {
                 map[valueMetadata.key] = this.getValueFormatter(valueMetadata);
                 return map;
-            }.bind(this), {});
+            }, {});
             this.formatMapCache.set(metadata, formatMap);
         }
         return this.formatMapCache.get(metadata);
-    };
+    }
 
     /**
      * Subscribe to realtime telemetry for a specific domain object.
@@ -388,19 +402,6 @@ define([
      * @method limitEvaluator
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
-    _.forEach({
-        subscribe: undefined,
-        properties: [],
-        formatter: undefined,
-        limitEvaluator: undefined
-    }, function (defaultValue, method) {
-        TelemetryAPI.prototype[method] = function (domainObject) {
-            var provider = this.findProvider(domainObject);
-            return provider ?
-                provider[method].apply(provider, arguments) :
-                defaultValue;
-        };
-    });
-
-    return TelemetryAPI;
+}
+return TelemetryAPI;
 });

@@ -25,15 +25,15 @@ define(
     [
         '../../src/services/LocationService'
     ],
-    function (LocationService) {
+    (LocationService) => {
 
-        describe("LocationService", function () {
-            var dialogService,
+        describe("LocationService", () =>  {
+            let dialogService,
                 locationService,
                 dialogServicePromise,
                 chainedPromise;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 dialogService = jasmine.createSpyObj(
                     'dialogService',
                     ['getUserInput']
@@ -51,8 +51,8 @@ define(
                 locationService = new LocationService(dialogService);
             });
 
-            describe("getLocationFromUser", function () {
-                var title,
+            describe("getLocationFromUser", () =>  {
+                let title,
                     label,
                     validate,
                     initialLocation,
@@ -60,10 +60,10 @@ define(
                     formStructure,
                     formState;
 
-                beforeEach(function () {
+                beforeEach(() =>  {
                     title = "Get a location to do something";
                     label = "a location";
-                    validate = function () {
+                    validate = () =>  {
                         return true;
                     };
                     initialLocation = { key: "a key" };
@@ -83,7 +83,7 @@ define(
                         .args[1];
                 });
 
-                it("calls through to dialogService", function () {
+                it("calls through to dialogService", () =>  {
                     expect(dialogService.getUserInput).toHaveBeenCalledWith(
                         jasmine.any(Object),
                         jasmine.any(Object)
@@ -91,25 +91,25 @@ define(
                     expect(formStructure.name).toBe(title);
                 });
 
-                it("returns a promise", function () {
+                it("returns a promise", () =>  {
                     expect(locationResult.then).toBeDefined();
                 });
 
-                describe("formStructure", function () {
-                    var locationSection,
+                describe("formStructure", () =>  {
+                    let locationSection,
                         inputRow;
 
-                    beforeEach(function () {
+                    beforeEach(() =>  {
                         locationSection = formStructure.sections[0];
                         inputRow = locationSection.rows[0];
                     });
 
-                    it("has a location section", function () {
+                    it("has a location section", () =>  {
                         expect(locationSection).toBeDefined();
                         expect(locationSection.name).toBe('Location');
                     });
 
-                    it("has a input row", function () {
+                    it("has a input row", () =>  {
                         expect(inputRow.control).toBe('locator');
                         expect(inputRow.key).toBe('location');
                         expect(inputRow.name).toBe(label);
@@ -117,19 +117,19 @@ define(
                     });
                 });
 
-                describe("formState", function () {
-                    it("has an initial location", function () {
+                describe("formState", () =>  {
+                    it("has an initial location", () =>  {
                         expect(formState.location).toBe(initialLocation);
                     });
                 });
 
-                describe("resolution of dialog service promise", function () {
-                    var resolution,
+                describe("resolution of dialog service promise", () =>  {
+                    let resolution,
                         resolver,
                         dialogResult,
                         selectedLocation;
 
-                    beforeEach(function () {
+                    beforeEach(() =>  {
                         resolver =
                             dialogServicePromise.then.mostRecentCall.args[0];
 
@@ -141,7 +141,7 @@ define(
                         resolution = resolver(dialogResult);
                     });
 
-                    it("returns selectedLocation", function () {
+                    it("returns selectedLocation", () =>  {
                         expect(resolution).toBe(selectedLocation);
                     });
                 });

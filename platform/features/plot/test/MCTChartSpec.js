@@ -25,10 +25,10 @@
  */
 define(
     ["../src/MCTChart"],
-    function (MCTChart) {
+    (MCTChart) => {
 
-        describe("The mct-chart directive", function () {
-            var mockInterval,
+        describe("The mct-chart directive", () => {
+            let mockInterval,
                 mockLog,
                 mockScope,
                 mockElement,
@@ -38,7 +38,7 @@ define(
                 mockPromise,
                 mctChart;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockInterval =
                     jasmine.createSpy("$interval");
                 mockLog =
@@ -91,12 +91,12 @@ define(
 
                 // Echo back names for uniform locations, so we can
                 // test which of these are set for certain operations.
-                mockGL.getUniformLocation.andCallFake(function (a, name) {
+                mockGL.getUniformLocation.andCallFake( (a, name) => {
                     return name;
                 });
 
                 mockElement.find.andReturn([mockCanvas]);
-                mockCanvas.getContext.andCallFake(function (type) {
+                mockCanvas.getContext.andCallFake( (type) => {
                     return { webgl: mockGL, '2d': mockC2d }[type];
                 });
                 mockInterval.andReturn(mockPromise);
@@ -104,22 +104,22 @@ define(
                 mctChart = new MCTChart(mockInterval, mockLog);
             });
 
-            it("is applicable at the element level", function () {
+            it("is applicable at the element level", () => {
                 expect(mctChart.restrict).toEqual("E");
             });
 
-            it("places a 'draw' attribute in-scope", function () {
+            it("places a 'draw' attribute in-scope", () => {
                 // Should ask Angular for the draw attribute
                 expect(mctChart.scope.draw).toEqual("=");
             });
 
-            it("watches for changes in the drawn object", function () {
+            it("watches for changes in the drawn object", () => {
                 mctChart.link(mockScope, mockElement);
                 expect(mockScope.$watchCollection)
                     .toHaveBeenCalledWith("draw", jasmine.any(Function));
             });
 
-            it("issues one draw call per line", function () {
+            it("issues one draw call per line", () => {
                 mctChart.link(mockScope, mockElement);
                 mockScope.$watchCollection.mostRecentCall.args[1]({
                     lines: [{}, {}, {}]
@@ -127,7 +127,7 @@ define(
                 expect(mockGL.drawArrays.calls.length).toEqual(3);
             });
 
-            it("issues one draw call per box", function () {
+            it("issues one draw call per box", () => {
                 mctChart.link(mockScope, mockElement);
                 mockScope.$watchCollection.mostRecentCall.args[1]({
                     boxes: [
@@ -140,13 +140,13 @@ define(
                 expect(mockGL.drawArrays.calls.length).toEqual(4);
             });
 
-            it("does not fail if no draw object is in scope", function () {
+            it("does not fail if no draw object is in scope", () => {
                 mctChart.link(mockScope, mockElement);
                 expect(mockScope.$watchCollection.mostRecentCall.args[1])
                     .not.toThrow();
             });
 
-            it("draws on canvas resize", function () {
+            it("draws on canvas resize", () => {
                 mctChart.link(mockScope, mockElement);
 
                 // Should track canvas size in an interval
@@ -170,13 +170,13 @@ define(
                 expect(mockGL.clear).toHaveBeenCalled();
             });
 
-            it("warns if no WebGL context is available", function () {
+            it("warns if no WebGL context is available", () => {
                 mockCanvas.getContext.andReturn(undefined);
                 mctChart.link(mockScope, mockElement);
                 expect(mockLog.warn).toHaveBeenCalled();
             });
 
-            it("falls back to Canvas 2d API if WebGL context is lost", function () {
+            it("falls back to Canvas 2d API if WebGL context is lost", () => {
                 mctChart.link(mockScope, mockElement);
                 expect(mockCanvas.addEventListener)
                     .toHaveBeenCalledWith("webglcontextlost", jasmine.any(Function));
@@ -185,14 +185,14 @@ define(
                 expect(mockCanvas.getContext).toHaveBeenCalledWith('2d');
             });
 
-            it("logs nothing in nominal situations (WebGL available)", function () {
+            it("logs nothing in nominal situations (WebGL available)", () => {
                 // Complement the previous test
                 mctChart.link(mockScope, mockElement);
                 expect(mockLog.warn).not.toHaveBeenCalled();
             });
 
             // Avoid resource leaks
-            it("stops polling for size changes on destroy", function () {
+            it("stops polling for size changes on destroy", () => {
                 mctChart.link(mockScope, mockElement);
 
                 // Should be listening for a destroy event

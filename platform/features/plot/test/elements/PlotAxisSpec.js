@@ -25,14 +25,14 @@
  */
 define(
     ["../../src/elements/PlotAxis"],
-    function (PlotAxis) {
+    (PlotAxis) => {
 
-        describe("A plot axis", function () {
-            var testMetadatas,
+        describe("A plot axis", () => {
+            let testMetadatas,
                 testDefault,
                 axis;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testMetadatas = [
                     {
                         tests: [
@@ -60,7 +60,7 @@ define(
                 axis = new PlotAxis("tests", testMetadatas, testDefault);
             });
 
-            it("pulls out a list of domain or range options", function () {
+            it("pulls out a list of domain or range options", () => {
                 // Should have filtered out duplicates, etc
                 expect(axis.options).toEqual([
                     { key: "t0", name: "T0" },
@@ -73,21 +73,21 @@ define(
                 ]);
             });
 
-            it("chooses the first option as a default", function () {
+            it("chooses the first option as a default", () => {
                 expect(axis.active).toEqual({ key: "t0", name: "T0" });
             });
 
-            it("falls back to a provided default if no options are present", function () {
+            it("falls back to a provided default if no options are present", () => {
                 expect(new PlotAxis("tests", [{}], testDefault).active)
                     .toEqual(testDefault);
             });
 
-            it("allows options to be chosen by key", function () {
+            it("allows options to be chosen by key", () => {
                 axis.chooseOption("t3");
                 expect(axis.active).toEqual({ key: "t3", name: "T3" });
             });
 
-            it("reflects changes to applicable metadata", function () {
+            it("reflects changes to applicable metadata", () => {
                 axis.updateMetadata([testMetadatas[1]]);
                 expect(axis.options).toEqual([
                     { key: "t0", name: "T0" },
@@ -95,9 +95,9 @@ define(
                 ]);
             });
 
-            it("returns the same array instance for unchanged metadata", function () {
+            it("returns the same array instance for unchanged metadata", () => {
                 // ...to avoid triggering extra digest cycles.
-                var oldInstance = axis.options;
+                let oldInstance = axis.options;
                 axis.updateMetadata(testMetadatas);
                 expect(axis.options).toBe(oldInstance);
             });

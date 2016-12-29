@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([], () => {
 
     /**
      * A column showing relationships to activity modes.
@@ -32,21 +32,22 @@ define([], function () {
      *        should appear in CSV output in their place
      * @implements {platform/features/timeline.TimelineCSVColumn}
      */
-    function ModeColumn(index, idMap) {
+    class ModeColum {
+      constructorn(index, idMap) {
         this.index = index;
         this.idMap = idMap;
-    }
+      }
 
-    ModeColumn.prototype.name = function () {
+      name() {
         return "Activity Mode " + (this.index + 1);
-    };
+      };
 
-    ModeColumn.prototype.value = function (domainObject) {
-        var model = domainObject.getModel(),
+      value(domainObject) {
+        let model = domainObject.getModel(),
             modes = (model.relationships || {}).modes || [];
         return modes.length > this.index ?
             this.idMap[modes[this.index]] : "";
-    };
-
+      };
+    }
     return ModeColumn;
 });

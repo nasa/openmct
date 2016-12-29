@@ -22,37 +22,37 @@
 
 define(
     ["../../src/actions/StartTimerAction"],
-    function (StartTimerAction) {
+    (StartTimerAction) => {
 
-        describe("A timer's start action", function () {
-            var mockNow,
+        describe("A timer's start action", () => {
+            let mockNow,
                 mockDomainObject,
                 testModel,
                 testContext,
                 action;
 
-            function asPromise(value) {
+            const asPromise = (value) => {
                 return (value || {}).then ? value : {
-                    then: function (callback) {
+                    then: (callback) => {
                         return asPromise(callback(value));
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockNow = jasmine.createSpy('now');
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
                     ['getCapability', 'useCapability', 'getModel']
                 );
 
-                mockDomainObject.useCapability.andCallFake(function (c, v) {
+                mockDomainObject.useCapability.andCallFake( (c, v) => {
                     if (c === 'mutation') {
                         testModel = v(testModel) || testModel;
                         return asPromise(true);
                     }
                 });
-                mockDomainObject.getModel.andCallFake(function () {
+                mockDomainObject.getModel.andCallFake( () => {
                     return testModel;
                 });
 
@@ -62,13 +62,13 @@ define(
                 action = new StartTimerAction(mockNow, testContext);
             });
 
-            it("updates the model with a timestamp", function () {
+            it("updates the model with a timestamp", () => {
                 mockNow.andReturn(12000);
                 action.perform();
                 expect(testModel.timestamp).toEqual(12000);
             });
 
-            it("applies only to timers without a target time", function () {
+            it("applies only to timers without a target time", () => {
                 testModel.type = 'timer';
                 testModel.timestamp = 12000;
                 expect(StartTimerAction.appliesTo(testContext)).toBeFalsy();

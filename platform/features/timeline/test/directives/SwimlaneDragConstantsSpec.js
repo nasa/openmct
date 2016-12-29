@@ -22,10 +22,10 @@
 
 define(
     ['../../src/directives/SwimlaneDragConstants'],
-    function (SwimlaneDragConstants) {
+    (SwimlaneDragConstants) => {
 
-        describe("Timeline swimlane drag constants", function () {
-            it("define a custom type for swimlane drag-drop", function () {
+        describe("Timeline swimlane drag constants", () => {
+            it("define a custom type for swimlane drag-drop", () => {
                 expect(SwimlaneDragConstants.TIMELINE_SWIMLANE_DRAG_TYPE)
                     .toEqual(jasmine.any(String));
             });

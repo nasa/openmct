@@ -23,9 +23,7 @@
 /**
  * Module defining DomainObject. Created by vwoeltje on 11/7/14.
  */
-define(
-    [],
-    function () {
+define([], () => {
 
         /**
          * A domain object is an entity of interest to the user.
@@ -102,40 +100,41 @@ define(
          * @memberof platform/core
          * @constructor
          */
-        function DomainObjectImpl(id, model, capabilities) {
+        class DomainObjectImpl {
+          constructor(id, model, capabilities) {
             this.id = id;
             this.model = model;
             this.capabilities = capabilities;
         }
 
-        DomainObjectImpl.prototype.getId = function () {
+        getId() {
             return this.id;
         };
 
-        DomainObjectImpl.prototype.getModel = function () {
+        getModel() {
             return this.model;
         };
 
-        DomainObjectImpl.prototype.getCapability = function (name) {
-            var capability = this.capabilities[name];
+        getCapability(name) {
+            let capability = this.capabilities[name];
             return typeof capability === 'function' ?
                 capability(this) : capability;
         };
 
-        DomainObjectImpl.prototype.hasCapability = function (name) {
+        hasCapability(name) {
             return this.getCapability(name) !== undefined;
         };
 
-        DomainObjectImpl.prototype.useCapability = function (name) {
+        useCapability(name) {
             // Get tail of args to pass to invoke
-            var args = Array.prototype.slice.apply(arguments, [1]),
+            let args = Array.prototype.slice.apply(arguments, [1]),
                 capability = this.getCapability(name);
 
             return (capability && capability.invoke) ?
                 capability.invoke.apply(capability, args) :
                 capability;
         };
-
+      }
         return DomainObjectImpl;
     }
 );

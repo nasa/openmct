@@ -23,9 +23,7 @@
 /**
  * Module defining PersistedModelProvider. Created by vwoeltje on 11/12/14.
  */
-define(
-    [],
-    function () {
+define([], () => {
 
         /**
          * A model service which reads domain object models from an external
@@ -50,29 +48,30 @@ define(
          * @param {string} space the name of the persistence space(s)
          *        from which models should be retrieved by default
          */
-        function PersistedModelProvider(persistenceService, $q, now, space) {
+        class PersistedModelProvider {
+          constructor(persistenceService, $q, now, space) {
             this.persistenceService = persistenceService;
             this.$q = $q;
             this.now = now;
             this.defaultSpace = space;
         }
 
-        PersistedModelProvider.prototype.getModels = function (ids) {
-            var persistenceService = this.persistenceService,
+        getModels(ids) {
+            let persistenceService = this.persistenceService,
                 $q = this.$q,
                 now = this.now,
                 defaultSpace = this.defaultSpace,
                 parsedIds;
 
             // Load a single object model from any persistence spaces
-            function loadModel(parsedId) {
+            const loadModel = (parsedId) => {
                 return persistenceService
                         .readObject(parsedId.space, parsedId.key);
             }
 
             // Ensure that models read from persistence have some
             // sensible timestamp indicating they've been persisted.
-            function addPersistedTimestamp(model) {
+            const addPersistedTimestamp = (model) => {
                 if (model && (model.persisted === undefined)) {
                     model.persisted = model.modified !== undefined ?
                             model.modified : now();
@@ -82,10 +81,10 @@ define(
             }
 
             // Package the result as id->model
-            function packageResult(parsedIdsToPackage, models) {
-                var result = {};
-                parsedIdsToPackage.forEach(function (parsedId, index) {
-                    var id = parsedId.id;
+            const packageResult = (parsedIdsToPackage, models) => {
+                let result = {};
+                parsedIdsToPackage.forEach( (parsedId, index) => {
+                    let id = parsedId.id;
                     if (models[index]) {
                         result[id] = models[index];
                     }
@@ -93,9 +92,9 @@ define(
                 return result;
             }
 
-            function loadModels(parsedIdsToLoad) {
+            const loadModels = (parsedIdsToLoad) => {
                 return $q.all(parsedIdsToLoad.map(loadModel))
-                    .then(function (models) {
+                    .then( (models) => {
                         return packageResult(
                             parsedIdsToLoad,
                             models.map(addPersistedTimestamp)
@@ -103,14 +102,14 @@ define(
                     });
             }
 
-            function restrictToSpaces(spaces) {
-                return parsedIds.filter(function (parsedId) {
+            const restrictToSpaces = (spaces) => {
+                return parsedIds.filter( (parsedId) => {
                     return spaces.indexOf(parsedId.space) !== -1;
                 });
             }
 
-            parsedIds = ids.map(function (id) {
-                var parts = id.split(":");
+            parsedIds = ids.map( (id) => {
+                let parts = id.split(":");
                 return (parts.length > 1) ?
                         { id: id, space: parts[0], key: parts.slice(1).join(":") } :
                         { id: id, space: defaultSpace, key: id };
@@ -120,7 +119,7 @@ define(
                 .then(restrictToSpaces)
                 .then(loadModels);
         };
-
+      }
         return PersistedModelProvider;
     }
 );

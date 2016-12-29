@@ -1,13 +1,11 @@
 define([
     '../object-utils'
-], function (
-    objectUtils
-) {
-    describe('objectUtils', function () {
+],  (objectUtils) => {
+    describe('objectUtils', () => {
 
 
-        describe('keyString util', function () {
-            var EXPECTATIONS = {
+        describe('keyString util', () => {
+            let EXPECTATIONS = {
                 'ROOT': {
                     namespace: '',
                     key: 'ROOT'
@@ -34,19 +32,19 @@ define([
                 }
             };
 
-            Object.keys(EXPECTATIONS).forEach(function (keyString) {
-                it('parses "' + keyString + '".', function () {
+            Object.keys(EXPECTATIONS).forEach( (keyString) => {
+                it('parses "' + keyString + '".', () => {
                     expect(objectUtils.parseKeyString(keyString))
                         .toEqual(EXPECTATIONS[keyString]);
                 });
 
-                it('parses and re-encodes "' + keyString + '"', function () {
-                    var identifier = objectUtils.parseKeyString(keyString);
+                it('parses and re-encodes "' + keyString + '"', () => {
+                    let identifier = objectUtils.parseKeyString(keyString);
                     expect(objectUtils.makeKeyString(identifier))
                         .toEqual(keyString);
                 });
 
-                it('is idempotent for "' + keyString + '".', function () {
+                it('is idempotent for "' + keyString + '".', () => {
                     var identifier = objectUtils.parseKeyString(keyString);
                     var again = objectUtils.parseKeyString(identifier);
                     expect(identifier).toEqual(again);
@@ -64,9 +62,9 @@ define([
             });
         });
 
-        describe('old object conversions', function () {
+        describe('old object conversions', () => {
 
-            it('translate ids', function () {
+            it('translate ids', () => {
                 expect(objectUtils.toNewFormat({
                         prop: 'someValue'
                     }, 'objId'))
@@ -79,7 +77,7 @@ define([
                     });
             });
 
-            it('translates composition', function () {
+            it('translates composition', () => {
                 expect(objectUtils.toNewFormat({
                         prop: 'someValue',
                         composition: [
@@ -107,9 +105,9 @@ define([
             });
         });
 
-        describe('new object conversions', function () {
+        describe('new object conversions', () => {
 
-            it('removes ids', function () {
+            it('removes ids', () => {
                 expect(objectUtils.toOldFormat({
                         prop: 'someValue',
                         identifier: {
@@ -122,7 +120,7 @@ define([
                     });
             });
 
-            it('translates composition', function () {
+            it('translates composition', () => {
                 expect(objectUtils.toOldFormat({
                         prop: 'someValue',
                         composition: [

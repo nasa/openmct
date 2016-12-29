@@ -20,23 +20,22 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+define(() => {
 
 
-        var conversions = {
+        let conversions = {
                 number: {
                     toModelValue: parseFloat,
-                    toFormValue: function (modelValue) {
+                    toFormValue: (modelValue) => {
                         return (typeof modelValue === 'number') ?
                                 modelValue.toString(10) : undefined;
                     }
                 },
                 identity: {
-                    toModelValue: function (v) {
+                    toModelValue: (v) => {
                         return v;
                     },
-                    toFormValue: function (v) {
+                    toFormValue: (v) => {
                         return v;
                     }
                 }
@@ -44,12 +43,12 @@ define(
             ARRAY_SUFFIX = '[]';
 
         // Utility function to handle arrays of conversions
-        function ArrayConversion(conversion) {
+        const ArrayConversion = (conversion) => {
             return {
-                toModelValue: function (formValue) {
+                toModelValue: (formValue) => {
                     return formValue && formValue.map(conversion.toModelValue);
                 },
-                toFormValue: function (modelValue) {
+                toFormValue: (modelValue) => {
                     return modelValue && modelValue.map(conversion.toFormValue);
                 }
             };
@@ -61,7 +60,7 @@ define(
          * @constructor
          * @memberof platform/core
          */
-        function TypePropertyConversion(name) {
+        const TypePropertyConversion = (name) => {
             if (name &&
                     name.length > ARRAY_SUFFIX.length &&
                     name.indexOf(ARRAY_SUFFIX, name.length - ARRAY_SUFFIX.length) !== -1) {
@@ -93,8 +92,6 @@ define(
          * @param {*} modelValue value as stored in a model
          * @returns {*} value to display within a form
          */
-
-
         return TypePropertyConversion;
     }
 );

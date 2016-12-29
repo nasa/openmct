@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The `mct-click-elsewhere` directive will evaluate its
@@ -31,18 +31,18 @@ define(
          * directive attached. This is useful for dismissing popups
          * and the like.
          */
-        function MCTClickElsewhere($document) {
+        const MCTClickElsewhere = ($document) => {
 
             // Link; install event handlers.
-            function link(scope, element, attrs) {
+            const link = (scope, element, attrs) => {
                 // Keep a reference to the body, to attach/detach
                 // mouse event handlers; mousedown and mouseup cannot
                 // only be attached to the element being linked, as the
                 // mouse may leave this element during the drag.
-                var body = $document.find('body');
+                let body = $document.find('body');
 
-                function clickBody(event) {
-                    var x = event.clientX,
+                const clickBody = (event) => {
+                    let x = event.clientX,
                         y = event.clientY,
                         rect = element[0].getBoundingClientRect(),
                         xMin = rect.left,
@@ -51,14 +51,14 @@ define(
                         yMax = yMin + rect.height;
 
                     if (x < xMin || x > xMax || y < yMin || y > yMax) {
-                        scope.$apply(function () {
+                        scope.$apply( () => {
                             scope.$eval(attrs.mctClickElsewhere);
                         });
                     }
                 }
 
                 body.on("mousedown", clickBody);
-                scope.$on("$destroy", function () {
+                scope.$on("$destroy", () => {
                     body.off("mousedown", clickBody);
                 });
             }

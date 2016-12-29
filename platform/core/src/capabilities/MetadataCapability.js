@@ -1,7 +1,7 @@
 
 define(
     ['moment'],
-    function (moment) {
+    (moment) => {
 
         /**
          * A piece of information about a domain object.
@@ -11,7 +11,7 @@ define(
          *           for this specific domain object
          */
 
-        var TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
+        const TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
 
         /**
          * Implements the `metadata` capability of a domain object, providing
@@ -29,7 +29,8 @@ define(
          * @constructor
          * @memberof platform/core
          */
-        function MetadataCapability(domainObject) {
+        class MetadataCapability {
+          constructor(domainObject) {
             this.domainObject = domainObject;
         }
 
@@ -37,25 +38,25 @@ define(
          * Get metadata about this object.
          * @returns {MetadataProperty[]} metadata about this object
          */
-        MetadataCapability.prototype.invoke = function () {
-            var domainObject = this.domainObject,
+        invoke() {
+            let domainObject = this.domainObject,
                 model = domainObject.getModel();
 
-            function hasDisplayableValue(metadataProperty) {
+            const hasDisplayableValue = (metadataProperty) => {
                 var t = typeof metadataProperty.value;
                 return (t === 'string' || t === 'number');
             }
 
-            function formatTimestamp(timestamp) {
+            const formatTimestamp = (timestamp) => {
                 return typeof timestamp === 'number' ?
                         (moment.utc(timestamp).format(TIME_FORMAT) + " UTC") :
                         undefined;
             }
 
-            function getProperties() {
-                var type = domainObject.getCapability('type');
+            const getProperties = () => {
+                let type = domainObject.getCapability('type');
 
-                function lookupProperty(typeProperty) {
+                const lookupProperty = (typeProperty) => {
                     return {
                         name: typeProperty.getDefinition().name,
                         value: typeProperty.getValue(model)
@@ -65,8 +66,8 @@ define(
                 return (type ? type.getProperties() : []).map(lookupProperty);
             }
 
-            function getCommonMetadata() {
-                var type = domainObject.getCapability('type');
+            const getCommonMetadata = () => {
+                let type = domainObject.getCapability('type');
                 // Note that invalid values will be filtered out later
                 return [
                     {
@@ -83,8 +84,7 @@ define(
             return getProperties().concat(getCommonMetadata())
                 .filter(hasDisplayableValue);
         };
-
+      }
         return MetadataCapability;
-    }
 );
 

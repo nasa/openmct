@@ -25,7 +25,7 @@ define(
     [
         '../ControlledPromise'
     ],
-    function (ControlledPromise) {
+    (ControlledPromise) => {
 
         /**
          * MockLinkService provides the same interface as the linkService,
@@ -52,10 +52,10 @@ define(
          * expect(whenLinked).toHaveBeenCalledWith('someArg');
          * ```
          */
-        function MockLinkService() {
+        const MockLinkService = () => {
             // track most recent call of a function,
             // perform automatically returns
-            var mockLinkService = jasmine.createSpyObj(
+            let mockLinkService = jasmine.createSpyObj(
                 'MockLinkService',
                 [
                     'validate',
@@ -63,14 +63,14 @@ define(
                 ]
             );
 
-            mockLinkService.perform.andCallFake(function (object) {
-                var performPromise = new ControlledPromise();
+            mockLinkService.perform.andCallFake( (object) => {
+                let performPromise = new ControlledPromise();
 
                 this.perform.mostRecentCall.promise = performPromise;
                 this.perform.calls[this.perform.calls.length - 1].promise =
                     performPromise;
 
-                return performPromise.then(function (overrideObject) {
+                return performPromise.then( (overrideObject) => {
                     if (overrideObject) {
                         return overrideObject;
                     }

@@ -22,15 +22,15 @@
 
 define([
     '../capabilities/AlternateCompositionCapability'
-], function (AlternateCompositionCapability) {
+], (AlternateCompositionCapability) => {
     // Present to work around the need for openmct to be used
     // from AlternateCompositionCapability.appliesTo, even though it
     // cannot be injected.
-    function AlternateCompositionInitializer(openmct) {
-        AlternateCompositionCapability.appliesTo = function (model) {
+    const AlternateCompositionInitializer = (openmct) => {
+        AlternateCompositionCapability.appliesTo = (model) => {
             return !!openmct.composition.get(model);
         };
-    }
+    };
 
     return AlternateCompositionInitializer;
 });

@@ -22,20 +22,20 @@
 
 define(
     ["../../src/controllers/ToggleController"],
-    function (ToggleController) {
+    (ToggleController) => {
 
-        describe("The toggle controller", function () {
-            var controller;
+        describe("The toggle controller", () => {
+            let controller;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 controller = new ToggleController();
             });
 
-            it("is initially inactive", function () {
+            it("is initially inactive", () => {
                 expect(controller.isActive()).toBe(false);
             });
 
-            it("tracks enabled/disabled state when toggled", function () {
+            it("tracks enabled/disabled state when toggled", () => {
                 controller.toggle();
                 expect(controller.isActive()).toBe(true);
                 controller.toggle();
@@ -46,7 +46,7 @@ define(
                 expect(controller.isActive()).toBe(false);
             });
 
-            it("allows active state to be explicitly specified", function () {
+            it("allows active state to be explicitly specified", () => {
                 controller.setState(true);
                 expect(controller.isActive()).toBe(true);
                 controller.setState(true);

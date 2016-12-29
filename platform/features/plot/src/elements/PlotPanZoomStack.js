@@ -21,8 +21,7 @@
  *****************************************************************************/
 
 define(
-    [],
-    function () {
+    [],() => {
 
         /**
          * The PlotPanZoomStack is responsible for maintaining the
@@ -40,10 +39,11 @@ define(
          * @param {number[]} origin the plot's origin, initially
          * @param {number[]} dimensions the plot's dimensions, initially
          */
-        function PlotPanZoomStack(origin, dimensions) {
+        class PlotPanZoomStack {
+          constructor(origin, dimensions) {
             // Use constructor parameters as the stack's initial state
             this.stack = [{ origin: origin, dimensions: dimensions }];
-        }
+          }
 
         // Various functions which follow are simply wrappers for
         // normal stack-like array methods, with the exception that
@@ -58,7 +58,7 @@ define(
          * been applied.
          * @returns {number} the depth of the stack
          */
-        PlotPanZoomStack.prototype.getDepth = function getDepth() {
+        getDepth() {
             return this.stack.length;
         };
 
@@ -68,7 +68,7 @@ define(
          * @param {number[]} origin the new origin
          * @param {number[]} dimensions the new dimensions
          */
-        PlotPanZoomStack.prototype.pushPanZoom = function (origin, dimensions) {
+        pushPanZoom(origin, dimensions) {
             this.stack.push({ origin: origin, dimensions: dimensions });
         };
 
@@ -80,7 +80,7 @@ define(
          * pan-zoom state on the stack cannot be popped, to ensure
          * that some pan-zoom state is always available.)
          */
-        PlotPanZoomStack.prototype.popPanZoom = function popPanZoom() {
+        popPanZoom() {
             if (this.stack.length > 1) {
                 this.stack.pop();
             }
@@ -95,7 +95,7 @@ define(
          * @param {number[]} dimensions the base dimensions
          * @memberof platform/features/plot.PlotPanZoomStack#
          */
-        PlotPanZoomStack.prototype.setBasePanZoom = function (origin, dimensions) {
+        setBasePanZoom(origin, dimensions) {
             this.stack[0] = { origin: origin, dimensions: dimensions };
         };
 
@@ -104,7 +104,7 @@ define(
          * in effect, pop all elements but the last, e.g. to remove
          * any temporary user modifications to pan-zoom state.
          */
-        PlotPanZoomStack.prototype.clearPanZoom = function clearPanZoom() {
+        clearPanZoom() {
             this.stack = [this.stack[0]];
         };
 
@@ -114,7 +114,7 @@ define(
          * "dimensions" fields.
          * @returns {object} the current pan-zoom state
          */
-        PlotPanZoomStack.prototype.getPanZoom = function getPanZoom() {
+        getPanZoom() {
             return this.stack[this.stack.length - 1];
         };
 
@@ -123,7 +123,7 @@ define(
          * stack.
          * @returns {number[]} the current plot origin
          */
-        PlotPanZoomStack.prototype.getOrigin = function getOrigin() {
+         getOrigin() {
             return this.getPanZoom().origin;
         };
 
@@ -132,10 +132,10 @@ define(
          * the stack.
          * @returns {number[]} the current plot dimensions
          */
-        PlotPanZoomStack.prototype.getDimensions = function getDimensions() {
+        getDimensions() {
             return this.getPanZoom().dimensions;
         };
-
+      }
         return PlotPanZoomStack;
     }
 );

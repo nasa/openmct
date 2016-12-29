@@ -22,7 +22,7 @@
 
 define(
     ['./AbstractComposeAction'],
-    function (AbstractComposeAction) {
+    (AbstractComposeAction) => {
 
         /**
          * The MoveAction is available from context menus and allows a user to

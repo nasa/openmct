@@ -20,8 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+define(() => {
 
         /**
          * Defines the `mct-background-image` directive.
@@ -41,8 +40,8 @@ define(
          * @constructor
          * @memberof platform/features/imagery
          */
-        function MCTBackgroundImage($document) {
-            function link(scope, element) {
+        const MCTBackgroundImage = ($document) => {
+            const link = (scope, element) => {
                 // General strategy here:
                 // - Keep count of how many images have been requested; this
                 //   counter will be used as an internal identifier or sorts
@@ -55,11 +54,11 @@ define(
                 // in which images are actually loaded may be different, so
                 // some strategy like this is necessary to ensure that images
                 // do not display out-of-order.
-                var requested = 0, loaded = 0;
+                let requested = 0, loaded = 0;
 
-                function updateFilters(filters) {
-                    var styleValue = filters ?
-                        Object.keys(filters).map(function (k) {
+                const updateFilters = (filters) => {
+                    let styleValue = filters ?
+                        Object.keys(filters).map( (k) => {
                             return k + "(" + filters[k] + "%)";
                         }).join(' ') :
                         "";
@@ -67,11 +66,11 @@ define(
                     element.css('webkitFilter', styleValue);
                 }
 
-                function nextImage(url) {
-                    var myCounter = requested,
+                const nextImage = (url) => {
+                    let myCounter = requested,
                         image;
 
-                    function useImage() {
+                    const useImage = () => {
                         if (loaded <= myCounter) {
                             loaded = myCounter;
                             element.css('background-image', "url('" + url + "')");

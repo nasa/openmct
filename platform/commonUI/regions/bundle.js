@@ -24,11 +24,11 @@ define([
     './src/InspectorController',
     './src/EditableRegionPolicy',
     'legacyRegistry'
-], function (
+], (
     InspectorController,
     EditableRegionPolicy,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/commonUI/regions", {
         "extensions": {

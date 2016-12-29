@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * @typeDef {object} PartContents
@@ -52,7 +52,8 @@ define(
          * @abstract
          * @constructor
          */
-        function Region(configuration) {
+        class Region {
+          constructor(configuration) {
             configuration = configuration || {};
             this.name = configuration.name;
             this.content = configuration.content;
@@ -67,7 +68,7 @@ define(
          * @param {number} [index] the position to insert the region. By default
          * will add to the end
          */
-        Region.prototype.addRegion = function (region, index) {
+        addRegion(region, index) {
             if (index) {
                 this.regions.splice(index, 0, region);
             } else {
@@ -82,18 +83,18 @@ define(
          * string, will remove the region with the matching name. If an
          * object, will attempt to remove that object from the Region
          */
-        Region.prototype.removeRegion = function (region) {
+        removeRegion(region) {
             if (typeof region === 'number') {
                 this.regions.splice(region, 1);
             } else if (typeof region === 'string') {
-                this.regions = this.regions.filter(function (thisRegion) {
+                this.regions = this.regions.filter( (thisRegion) => {
                     return thisRegion.name !== region;
                 });
             } else {
                 this.regions.splice(this.regions.indexOf(region), 1);
             }
         };
-
+      }
         return Region;
     }
 );

@@ -22,7 +22,7 @@
 
 define(
     ['../objects/DomainObjectImpl'],
-    function (DomainObjectImpl) {
+    (DomainObjectImpl) => {
 
         /**
          * The `instantiate` service allows new domain object instances to be
@@ -42,13 +42,13 @@ define(
          * @param {IdentifierService} identifierService service to generate
          *        new identifiers
          */
-        function Instantiate(
+        const Instantiate = (
             capabilityService,
             identifierService,
             cacheService
-        ) {
-            return function (model, id) {
-                var capabilities = capabilityService.getCapabilities(model);
+        ) => {
+            return (model, id) => {
+                let capabilities = capabilityService.getCapabilities(model);
                 id = id || identifierService.generate();
                 cacheService.put(id, model);
                 return new DomainObjectImpl(id, model, capabilities);

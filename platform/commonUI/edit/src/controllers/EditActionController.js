@@ -25,36 +25,36 @@
  */
 define(
     [],
-    function () {
+    () => {
 
-        var SAVE_ACTION_CONTEXT = { category: 'save' };
-        var OTHERS_ACTION_CONTEXT = { category: 'conclude-editing' };
+        const SAVE_ACTION_CONTEXT = { category: 'save' };
+        const OTHERS_ACTION_CONTEXT = { category: 'conclude-editing' };
 
         /**
          * Controller which supplies action instances for Save/Cancel.
          * @memberof platform/commonUI/edit
          * @constructor
          */
-        function EditActionController($scope) {
+        const EditActionController = ($scope) => {
 
-            function actionToMenuOption(action) {
+            const actionToMenuOption = (action) => {
                 return {
                     key: action,
                     name: action.getMetadata().name,
                     cssclass: action.getMetadata().cssclass
                 };
-            }
+            };
 
             // Maintain all "conclude-editing" and "save" actions in the
             // present context.
-            function updateActions() {
+            const updateActions = () => {
                 $scope.saveActions = $scope.action ?
                         $scope.action.getActions(SAVE_ACTION_CONTEXT) :
                         [];
 
                 $scope.saveActionsAsMenuOptions = $scope.saveActions.map(actionToMenuOption);
 
-                $scope.saveActionMenuClickHandler = function (clickedAction) {
+                $scope.saveActionMenuClickHandler = (clickedAction) => {
                     clickedAction.perform();
                 };
 
@@ -64,7 +64,7 @@ define(
 
                 // Required because Angular does not allow 'bind'
                 // in expressions.
-                $scope.actionPerformer = function (action) {
+                $scope.actionPerformer = (action) => {
                     return action.perform.bind(action);
                 };
             }

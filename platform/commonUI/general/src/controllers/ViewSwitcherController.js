@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Controller for the view switcher; populates and maintains a list
@@ -33,11 +33,11 @@ define(
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function ViewSwitcherController($scope, $timeout) {
+        const ViewSwitcherController = ($scope, $timeout) => {
             // If the view capability gets refreshed, try to
             // keep the same option chosen.
-            function findMatchingOption(options, selected) {
-                var i;
+            const findMatchingOption = (options, selected) => {
+                let i;
 
                 if (selected) {
                     for (i = 0; i < options.length; i += 1) {
@@ -48,24 +48,24 @@ define(
                 }
 
                 return options[0];
-            }
+            };
 
             // Get list of views, read from capability
-            function updateOptions(views) {
+            const updateOptions = (views) => {
                 if (Array.isArray(views)) {
-                    $timeout(function () {
+                    $timeout( () => {
                         $scope.ngModel.selected = findMatchingOption(
                             views,
                             ($scope.ngModel || {}).selected
                         );
                     }, 0);
                 }
-            }
+            };
 
             // Update view options when the in-scope results of using the
             // view capability change.
             $scope.$watch("view", updateOptions);
-        }
+        };
 
         return ViewSwitcherController;
     }

@@ -22,15 +22,15 @@
 
 define([
     "../../src/actions/TimelineTraverser"
-], function (TimelineTraverser) {
+], (TimelineTraverser) => {
 
-    describe("TimelineTraverser", function () {
-        var testModels,
+    describe("TimelineTraverser", () => {
+        let testModels,
             mockDomainObjects,
             traverser;
 
-        function addMockDomainObject(id) {
-            var mockDomainObject = jasmine.createSpyObj(
+        const addMockDomainObject = (id) => {
+            let mockDomainObject = jasmine.createSpyObj(
                     'domainObject-' + id,
                     [
                         'getId',
@@ -46,16 +46,16 @@ define([
             mockDomainObject.getId.andReturn(id);
             mockDomainObject.getModel.andReturn(model);
 
-            mockDomainObject.hasCapability.andCallFake(function (c) {
+            mockDomainObject.hasCapability.andCallFake( (c) => {
                 return c === 'composition' ? !!model.composition :
                     c === 'relationship' ? !!model.relationships :
                         false;
             });
 
             if (!!model.composition) {
-                mockDomainObject.useCapability.andCallFake(function (c) {
+                mockDomainObject.useCapability.andCallFake( (c) => {
                     return c === 'composition' &&
-                        Promise.resolve(model.composition.map(function (cid) {
+                        Promise.resolve(model.composition.map( (cid) => {
                             return mockDomainObjects[cid];
                         }));
                 });
@@ -66,13 +66,13 @@ define([
                     'relationship',
                     ['getRelatedObjects']
                 );
-                mockRelationships.getRelatedObjects.andCallFake(function (k) {
-                    var ids = model.relationships[k] || [];
-                    return Promise.resolve(ids.map(function (objId) {
+                mockRelationships.getRelatedObjects.andCallFake( (k) => {
+                    let ids = model.relationships[k] || [];
+                    return Promise.resolve(ids.map( (objId) => {
                         return mockDomainObjects[objId];
                     }));
                 });
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockDomainObject.getCapability.andCallFake( (c) => {
                     return c === 'relationship' && mockRelationships;
                 });
             }
@@ -80,7 +80,7 @@ define([
             mockDomainObjects[id] = mockDomainObject;
         }
 
-        beforeEach(function () {
+        beforeEach(() => {
             testModels = {
                 a: { composition: ['b', 'c']},
                 b: { composition: ['c'] },
@@ -95,38 +95,38 @@ define([
             traverser = new TimelineTraverser(mockDomainObjects.a);
         });
 
-        describe("buildObjectList", function () {
-            var objects;
+        describe("buildObjectList", () => {
+            let objects;
 
-            function contains(id) {
-                return objects.some(function (object) {
+            const contains = (id) => {
+                return objects.some( (object) => {
                     return object.getId() === id;
                 });
             }
 
-            beforeEach(function () {
-                traverser.buildObjectList().then(function (objectList) {
+            beforeEach(() => {
+                traverser.buildObjectList().then( (objectList) => {
                     objects = objectList;
                 });
-                waitsFor(function () {
+                waitsFor(() => {
                     return objects !== undefined;
                 });
             });
 
-            it("includes the object originally passed in", function () {
+            it("includes the object originally passed in", () => {
                 expect(contains('a')).toBe(true);
             });
 
-            it("includes objects reachable via composition", function () {
+            it("includes objects reachable via composition", () => {
                 expect(contains('b')).toBe(true);
                 expect(contains('c')).toBe(true);
             });
 
-            it("includes objects reachable via relationships", function () {
+            it("includes objects reachable via relationships", () => {
                 expect(contains('d')).toBe(true);
             });
 
-            it("does not include unreachable objects", function () {
+            it("does not include unreachable objects", () => {
                 expect(contains('unreachable')).toBe(false);
             });
         });

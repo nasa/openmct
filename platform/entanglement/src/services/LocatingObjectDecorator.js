@@ -21,8 +21,7 @@
  *****************************************************************************/
 
 
-define(
-    function () {
+define( () => {
 
         /**
          * Ensures that domain objects are loaded with a context capability
@@ -31,24 +30,25 @@ define(
          * @implements {ObjectService}
          * @memberof platform/entanglement
          */
-        function LocatingObjectDecorator(contextualize, $q, $log, objectService) {
+        class LocatingObjectDecorator {
+          constructor(contextualize, $q, $log, objectService) {
             this.contextualize = contextualize;
             this.$log = $log;
             this.objectService = objectService;
             this.$q = $q;
         }
 
-        LocatingObjectDecorator.prototype.getObjects = function (ids) {
-            var $q = this.$q,
+        getObjects(ids) {
+            let $q = this.$q,
                 $log = this.$log,
                 contextualize = this.contextualize,
                 objectService = this.objectService,
                 result = {};
 
             // Load a single object using location to establish a context
-            function loadObjectInContext(id, exclude) {
-                function attachContext(objects) {
-                    var domainObject = (objects || {})[id],
+            const loadObjectInContext = (id, exclude) => {
+                const attachContext = (objects) => {
+                    let domainObject = (objects || {})[id],
                         model = domainObject && domainObject.getModel(),
                         location = (model || {}).location;
 
@@ -74,22 +74,21 @@ define(
 
                     // Do the recursive step to get the parent...
                     return loadObjectInContext(location, exclude)
-                        .then(function (parent) {
+                        .then( (parent) => {
                             // ...and then contextualize with it!
                             return contextualize(domainObject, parent);
                         });
                 }
-
                 return objectService.getObjects([id]).then(attachContext);
             }
 
-            ids.forEach(function (id) {
+            ids.forEach( (id) => {
                 result[id] = loadObjectInContext(id, {});
             });
 
             return $q.all(result);
         };
-
+      }
         return LocatingObjectDecorator;
     }
 );

@@ -20,8 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+define(() => {
 
         /**
          * Implements the "Set Primary Location" action, which sets a
@@ -35,23 +34,24 @@ define(
          * @param {ActionContext} context the context in which the action
          *        will be performed
          */
-        function SetPrimaryLocationAction(context) {
+        class SetPrimaryLocationAction {
+          constructor(context) {
             this.domainObject = context.domainObject;
         }
 
-        SetPrimaryLocationAction.prototype.perform = function () {
-            var location = this.domainObject.getCapability('location');
+        perform() {
+            let location = this.domainObject.getCapability('location');
             return location.setPrimaryLocation(
                 location.getContextualLocation()
             );
         };
 
-        SetPrimaryLocationAction.appliesTo = function (context) {
-            var domainObject = context.domainObject;
+        appliesTo(context) {
+            let domainObject = context.domainObject;
             return domainObject && domainObject.hasCapability("location") &&
                 (domainObject.getModel().location === undefined);
         };
-
+      }
         return SetPrimaryLocationAction;
     }
 );

@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * An ActionProvider (implementing ActionService) provides actions
@@ -37,41 +37,40 @@ define(
          * @imeplements {ActionService}
          * @constructor
          */
-        function ActionProvider(actions, $log) {
-            var self = this;
-
+        class ActionProvider {
+          constructor(actions, $log) {
             this.$log = $log;
 
             // Build up look-up tables
             this.actions = actions;
             this.actionsByKey = {};
             this.actionsByCategory = {};
-            actions.forEach(function (Action) {
+            actions.forEach( (Action) => {
                 // Get an action's category or categories
-                var categories = Action.category || [];
+                let categories = Action.category || [];
 
                 // Convert to an array if necessary
                 categories = Array.isArray(categories) ?
                         categories : [categories];
 
                 // Store action under all relevant categories
-                categories.forEach(function (category) {
-                    self.actionsByCategory[category] =
-                        self.actionsByCategory[category] || [];
-                    self.actionsByCategory[category].push(Action);
+                categories.forEach( (category) => {
+                    this.actionsByCategory[category] =
+                        this.actionsByCategory[category] || [];
+                    this.actionsByCategory[category].push(Action);
                 });
 
                 // Store action by ekey as well
                 if (Action.key) {
-                    self.actionsByKey[Action.key] =
-                        self.actionsByKey[Action.key] || [];
-                    self.actionsByKey[Action.key].push(Action);
+                    this.actionsByKey[Action.key] =
+                        this.actionsByKey[Action.key] || [];
+                    this.actionsByKey[Action.key].push(Action);
                 }
             });
         }
 
-        ActionProvider.prototype.getActions = function (actionContext) {
-            var context = (actionContext || {}),
+        getActions(actionContext) {
+            let context = (actionContext || {}),
                 category = context.category,
                 key = context.key,
                 $log = this.$log,
@@ -81,8 +80,8 @@ define(
             // additionally fills in the action's getMetadata method
             // with the extension definition (if no getMetadata
             // method was supplied.)
-            function instantiateAction(Action, ctxt) {
-                var action = new Action(ctxt),
+            const instantiateAction = (Action, ctxt) => {
+                let action = new Action(ctxt),
                     metadata;
 
                 // Provide a getMetadata method that echos
@@ -91,11 +90,10 @@ define(
                 if (!action.getMetadata) {
                     metadata = Object.create(Action.definition || {});
                     metadata.context = ctxt;
-                    action.getMetadata = function () {
+                    action.getMetadata = () => {
                         return metadata;
                     };
                 }
-
                 return action;
             }
 
@@ -103,12 +101,12 @@ define(
             // applicable in a given context, according to the static
             // appliesTo method of given actions (if defined), and
             // instantiate those applicable actions.
-            function createIfApplicable(actions, ctxt) {
-                function isApplicable(Action) {
+            const createIfApplicable = (actions, ctxt) => {
+                const isApplicable = (Action) => {
                     return Action.appliesTo ? Action.appliesTo(ctxt) : true;
                 }
 
-                function instantiate(Action) {
+                const instantiate = (Action) => {
                     try {
                         return instantiateAction(Action, ctxt);
                     } catch (e) {
@@ -122,7 +120,7 @@ define(
                     }
                 }
 
-                function isDefined(action) {
+                const isDefined = (action) => {
                     return action !== undefined;
                 }
 
@@ -137,7 +135,7 @@ define(
             if (key) {
                 candidates = this.actionsByKey[key];
                 if (category) {
-                    candidates = candidates.filter(function (Action) {
+                    candidates = candidates.filter( (Action) => {
                         return Action.category === category;
                     });
                 }
@@ -150,7 +148,7 @@ define(
             // actions.
             return createIfApplicable(candidates, context);
         };
-
+      }
         return ActionProvider;
     }
 );

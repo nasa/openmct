@@ -22,12 +22,11 @@
 
 define([
     'lodash'
-], function (
-    _
-) {
+], (_) => {
 
     // TODO: needs reference to formatService;
-    function TelemetryValueFormatter(valueMetadata, formatService) {
+    class TelemetryValueFormatter {
+      constructor(valueMetadata, formatService) {
         this.valueMetadata = valueMetadata;
         this.parseCache = new WeakMap();
         this.formatCache = new WeakMap();
@@ -37,13 +36,13 @@ define([
         } catch (e) {
             // TODO: Better formatting
             this.formatter = {
-                parse: function (x) {
+                parse: (x) => {
                     return Number(x);
                 },
-                format: function (x) {
+                format: (x) => {
                     return x;
                 },
-                validate: function (x) {
+                validate: (x) => {
                     return true;
                 }
             };
@@ -51,24 +50,24 @@ define([
 
         if (valueMetadata.type === 'enum') {
             this.formatter = {};
-            this.enumerations = valueMetadata.enumerations.reduce(function (vm, e) {
+            this.enumerations = valueMetadata.enumerations.reduce( (vm, e) => {
                 vm.byValue[e.value] = e.string;
                 vm.byString[e.string] = e.value;
                 return vm;
             }, {byValue: {}, byString: {}});
-            this.formatter.format = function (value) {
+            this.formatter.format = (value) => {
                 return this.enumerations.byValue[value];
-            }.bind(this);
-            this.formatter.parse = function (string) {
+            };
+            this.formatter.parse = (string) => {
                 if (typeof string === "string" && this.enumerations.hasOwnProperty(string)) {
                     return this.enumerations.byString[string];
                 }
                 return Number(string);
-            }.bind(this);
+            };
         }
     }
 
-    TelemetryValueFormatter.prototype.parse = function (datum) {
+    parse(datum) {
         if (_.isObject(datum)) {
             if (!this.parseCache.has(datum)) {
                 this.parseCache.set(
@@ -79,9 +78,9 @@ define([
             return this.parseCache.get(datum);
         }
         return this.formatter.parse(datum);
-    };
+    }
 
-    TelemetryValueFormatter.prototype.format = function (datum) {
+    format(datum) {
         if (_.isObject(datum)) {
             if (!this.formatCache.has(datum)) {
                 this.formatCache.set(
@@ -92,7 +91,7 @@ define([
             return this.formatCache.get(datum);
         }
         return this.formatter.format(datum);
-    };
-
-    return TelemetryValueFormatter;
+    }
+}
+return TelemetryValueFormatter;
 });

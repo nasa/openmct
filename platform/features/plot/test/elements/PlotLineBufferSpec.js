@@ -25,32 +25,32 @@
  */
 define(
     ["../../src/elements/PlotLineBuffer"],
-    function (PlotLineBuffer) {
+    (PlotLineBuffer) => {
 
-        var TEST_INITIAL_SIZE = 10,
+        let TEST_INITIAL_SIZE = 10,
             TEST_MAX_SIZE = 40,
             TEST_DOMAIN_OFFSET = 42;
 
-        describe("A plot line buffer", function () {
-            var mockSeries,
+        describe("A plot line buffer", () => {
+            let mockSeries,
                 testDomainValues,
                 testRangeValues,
                 buffer;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testDomainValues = [1, 3, 7, 9, 14, 15];
                 testRangeValues = [8, 0, 3, 9, 8, 11];
                 mockSeries = jasmine.createSpyObj(
                     "series",
                     ['getPointCount', 'getDomainValue', 'getRangeValue']
                 );
-                mockSeries.getPointCount.andCallFake(function () {
+                mockSeries.getPointCount.andCallFake(() => {
                     return testDomainValues.length;
                 });
-                mockSeries.getDomainValue.andCallFake(function (i) {
+                mockSeries.getDomainValue.andCallFake( (i) => {
                     return testDomainValues[i];
                 });
-                mockSeries.getRangeValue.andCallFake(function (i) {
+                mockSeries.getRangeValue.andCallFake( (i) => {
                     return testRangeValues[i];
                 });
 
@@ -64,7 +64,7 @@ define(
                 buffer.insert(mockSeries, 0);
             });
 
-            it("allows insertion of series data", function () {
+            it("allows insertion of series data", () => {
                 // Convert to a regular array for checking.
                 // Verify that domain/ranges were interleaved and
                 // that domain offset was adjusted for.
@@ -74,7 +74,7 @@ define(
                 expect(buffer.getLength()).toEqual(6);
             });
 
-            it("finds insertion indexes", function () {
+            it("finds insertion indexes", () => {
                 expect(buffer.findInsertionIndex(0)).toEqual(0);
                 expect(buffer.findInsertionIndex(2)).toEqual(1);
                 expect(buffer.findInsertionIndex(5)).toEqual(2);
@@ -83,8 +83,8 @@ define(
                 expect(buffer.findInsertionIndex(20)).toEqual(6);
             });
 
-            it("allows insertion in the middle", function () {
-                var head = [-41, 8, -39, 0, -35, 3],
+            it("allows insertion in the middle", () => {
+                let head = [-41, 8, -39, 0, -35, 3],
                     tail = [-33, 9, -28, 8, -27, 11];
                 buffer.insert(mockSeries, 3);
                 expect(
@@ -93,7 +93,7 @@ define(
                 expect(buffer.getLength()).toEqual(12);
             });
 
-            it("allows values to be trimmed from the start", function () {
+            it("allows values to be trimmed from the start", () => {
                 buffer.trim(2);
                 expect(buffer.getLength()).toEqual(4);
                 expect(
@@ -101,8 +101,8 @@ define(
                 ).toEqual([-35, 3, -33, 9, -28, 8, -27, 11]);
             });
 
-            it("expands buffer when needed to accommodate more data", function () {
-                var i;
+            it("expands buffer when needed to accommodate more data", () => {
+                let i;
 
                 // Initial underlying buffer should be twice initial size...
                 // (Since each pair will take up two elements)
@@ -126,8 +126,8 @@ define(
                 expect(buffer.getBuffer().length).toEqual(80);
             });
 
-            it("ensures a maximum size", function () {
-                var i;
+            it("ensures a maximum size", () => {
+                let i;
 
                 // Should be able to insert 6 series of 6 points each
                 // (After that, we'll hit the test max of 40)
@@ -145,7 +145,7 @@ define(
 
             });
 
-            it("reduces buffer size when space is no longer needed", function () {
+            it("reduces buffer size when space is no longer needed", () => {
                 // Check that actual buffer is sized to the initial size
                 // (double TEST_INITIAL_SIZE, since two elements are needed per
                 // point; one for domain, one for range)

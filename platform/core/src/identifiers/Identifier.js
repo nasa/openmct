@@ -22,9 +22,9 @@
 
 define(
     [],
-    function () {
+    () => {
 
-        var SEPARATOR = ":";
+        const SEPARATOR = ":";
 
         /**
          * Provides an interface for interpreting domain object identifiers;
@@ -37,8 +37,9 @@ define(
          * @param {string} defaultSpace the persistence space to use if
          *        one is not encoded in the identifier
          */
-        function Identifier(id, defaultSpace) {
-            var separatorIndex = id.indexOf(SEPARATOR);
+        class Identifier {
+          constructor(id, defaultSpace) {
+            let separatorIndex = id.indexOf(SEPARATOR);
 
             if (separatorIndex > -1) {
                 this.key = id.substring(separatorIndex + 1);
@@ -56,7 +57,7 @@ define(
          * should be persisted, within its persistence space.
          * @returns {string} the key within its persistence space
          */
-        Identifier.prototype.getKey = function () {
+        getKey() {
             return this.key;
         };
 
@@ -65,7 +66,7 @@ define(
          * be persisted.
          * @returns {string} the persistence space
          */
-        Identifier.prototype.getSpace = function () {
+        getSpace() {
             return this.space;
         };
 
@@ -75,10 +76,10 @@ define(
          * if no such space has been specified.
          * @returns {string} the persistence space, or undefined
          */
-        Identifier.prototype.getDefinedSpace = function () {
+        getDefinedSpace() {
             return this.definedSpace;
         };
-
+      }
         return Identifier;
     }
 );

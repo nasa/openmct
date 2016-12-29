@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * A ClickAwayController is used to toggle things (such as context
@@ -34,62 +34,62 @@ define(
          * @param $scope the scope in which this controller is active
          * @param $document the document element, injected by Angular
          */
-        function ClickAwayController($document, $timeout) {
-            var self = this;
-
+        class ClickAwayController {
+          constructor($document, $timeout) {
             this.state = false;
             this.$document = $document;
 
             // Callback used by the document listener. Timeout ensures that
             // `clickaway` action occurs after `toggle` if `toggle` is
             // triggered by a click/mouseup.
-            this.clickaway = function () {
-                $timeout(function () {
-                    self.deactivate();
+            this.clickaway = () => {
+                $timeout( () => {
+                    this.deactivate();
                 });
             };
         }
 
         // Track state, but also attach and detach a listener for
         // mouseup events on the document.
-        ClickAwayController.prototype.deactivate = function () {
+        deactivate() {
             this.state = false;
             this.$document.off("mouseup", this.clickaway);
-        };
-        ClickAwayController.prototype.activate = function () {
+        }
+        activate() {
             this.state = true;
             this.$document.on("mouseup", this.clickaway);
-        };
+        }
 
         /**
          * Get the current state of the toggle.
          * @return {boolean} true if active
          */
-        ClickAwayController.prototype.isActive = function () {
+        isActive() {
             return this.state;
-        };
+        }
 
         /**
          * Set a new state for the toggle.
          * @return {boolean} true to activate
          */
-        ClickAwayController.prototype.setState = function (newState) {
+        setState(newState) {
             if (this.state !== newState) {
                 this.toggle();
             }
-        };
+        }
 
         /**
          * Toggle the current state; activate if it is inactive,
          * deactivate if it is active.
          */
-        ClickAwayController.prototype.toggle = function () {
+        toggle() {
             if (this.state) {
                 this.deactivate();
             } else {
                 this.activate();
             }
-        };
+        }
+      }
 
         return ClickAwayController;
     }

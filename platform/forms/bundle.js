@@ -40,7 +40,7 @@ define([
     "text!./res/templates/controls/dialog.html",
     "text!./res/templates/controls/radio.html",
     'legacyRegistry'
-], function (
+], (
     MCTForm,
     MCTToolbar,
     MCTControl,
@@ -60,7 +60,7 @@ define([
     dialogTemplate,
     radioTemplate,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/forms", {
         "name": "MCT Forms",

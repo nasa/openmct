@@ -20,22 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-
-], function (
-
-) {
+define([], () => {
 
     /**
      * Wraps the mutation capability and synchronizes the mutation
      */
-    function synchronizeMutationCapability(mutationConstructor) {
+    const synchronizeMutationCapability = (mutationConstructor) => {
 
         return function makeCapability(domainObject) {
-            var capability = mutationConstructor(domainObject);
-            var oldListen = capability.listen.bind(capability);
-            capability.listen = function (listener) {
-                return oldListen(function (newModel) {
+            let capability = mutationConstructor(domainObject);
+            let oldListen = capability.listen.bind(capability);
+            capability.listen = (listener) => {
+                return oldListen((newModel) => {
                     capability.domainObject.model =
                         JSON.parse(JSON.stringify(newModel));
                     listener(newModel);
@@ -43,7 +39,7 @@ define([
             };
             return capability;
         };
-    }
+    };
 
     return synchronizeMutationCapability;
 });

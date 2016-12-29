@@ -23,7 +23,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Wraps persistence capability to enable transactions. Transactions
@@ -38,12 +38,13 @@ define(
          * @param domainObject
          * @constructor
          */
-        function TransactionalPersistenceCapability(
-            $q,
-            transactionManager,
-            persistenceCapability,
-            domainObject
-        ) {
+        class TransactionalPersistenceCapability {
+          constructor(
+              $q,
+              transactionManager,
+              persistenceCapability,
+              domainObject
+          ) {
             this.transactionManager = transactionManager;
             this.persistenceCapability = persistenceCapability;
             this.domainObject = domainObject;
@@ -55,8 +56,8 @@ define(
          * will be queued until the transaction is committed or cancelled.
          * @returns {*}
          */
-        TransactionalPersistenceCapability.prototype.persist = function () {
-            var wrappedPersistence = this.persistenceCapability;
+        persist() {
+            let wrappedPersistence = this.persistenceCapability;
 
             if (this.transactionManager.isActive()) {
                 this.transactionManager.addToTransaction(
@@ -69,22 +70,22 @@ define(
             } else {
                 return this.persistenceCapability.persist();
             }
-        };
+        }
 
-        TransactionalPersistenceCapability.prototype.refresh = function () {
+        refresh() {
             this.transactionManager
                 .clearTransactionsFor(this.domainObject.getId());
             return this.persistenceCapability.refresh();
-        };
+        }
 
-        TransactionalPersistenceCapability.prototype.getSpace = function () {
+        getSpace() {
             return this.persistenceCapability.getSpace();
-        };
+        }
 
-        TransactionalPersistenceCapability.prototype.persisted = function () {
+        persisted() {
             return this.persistenceCapability.persisted();
-        };
-
+        }
+      }
         return TransactionalPersistenceCapability;
     }
 );

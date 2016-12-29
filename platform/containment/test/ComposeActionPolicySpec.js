@@ -22,9 +22,9 @@
 
 define(
     ["../src/ComposeActionPolicy"],
-    function (ComposeActionPolicy) {
-        describe("The compose action policy", function () {
-            var mockInjector,
+    (ComposeActionPolicy) => {
+        describe("The compose action policy", () => {
+            let mockInjector,
                 mockPolicyService,
                 mockTypes,
                 mockDomainObjects,
@@ -32,24 +32,24 @@ define(
                 testContext,
                 policy;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockInjector = jasmine.createSpyObj('$injector', ['get']);
                 mockPolicyService = jasmine.createSpyObj(
                     'policyService',
                     ['allow']
                 );
-                mockTypes = ['a', 'b'].map(function (type) {
-                    var mockType = jasmine.createSpyObj('type-' + type, ['getKey']);
+                mockTypes = ['a', 'b'].map( (type) => {
+                    let mockType = jasmine.createSpyObj('type-' + type, ['getKey']);
                     mockType.getKey.andReturn(type);
                     return mockType;
                 });
-                mockDomainObjects = ['a', 'b'].map(function (id, index) {
-                    var mockDomainObject = jasmine.createSpyObj(
+                mockDomainObjects = ['a', 'b'].map( (id, index) => {
+                    let mockDomainObject = jasmine.createSpyObj(
                         'domainObject-' + id,
                         ['getId', 'getCapability']
                     );
                     mockDomainObject.getId.andReturn(id);
-                    mockDomainObject.getCapability.andCallFake(function (c) {
+                    mockDomainObject.getCapability.andCallFake( (c) => {
                         return c === 'type' && mockTypes[index];
                     });
                     return mockDomainObject;
@@ -63,14 +63,14 @@ define(
                 };
 
                 mockAction.getMetadata.andReturn(testContext);
-                mockInjector.get.andCallFake(function (service) {
+                mockInjector.get.andCallFake( (service) => {
                     return service === 'policyService' && mockPolicyService;
                 });
 
                 policy = new ComposeActionPolicy(mockInjector);
             });
 
-            it("defers to composition policy", function () {
+            it("defers to composition policy", () => {
                 mockPolicyService.allow.andReturn(false);
                 expect(policy.allow(mockAction, testContext)).toBeFalsy();
                 mockPolicyService.allow.andReturn(true);
@@ -83,7 +83,7 @@ define(
                 );
             });
 
-            it("allows actions other than compose", function () {
+            it("allows actions other than compose", () => {
                 testContext.key = 'somethingElse';
                 mockPolicyService.allow.andReturn(false);
                 expect(policy.allow(mockAction, testContext)).toBeTruthy();

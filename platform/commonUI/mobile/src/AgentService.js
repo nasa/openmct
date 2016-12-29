@@ -27,7 +27,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The query service handles calls for browser and userAgent
@@ -37,8 +37,9 @@ define(
          * @param $window Angular-injected instance of the window
          * @memberof platform/commonUI/mobile
          */
-        function AgentService($window) {
-            var userAgent = $window.navigator.userAgent,
+        class AgentService {
+          constructor($window) {
+            let userAgent = $window.navigator.userAgent,
                 matches = userAgent.match(/iPad|iPhone|Android/i) || [];
 
             this.userAgent = userAgent;
@@ -51,7 +52,7 @@ define(
          * Check if the user is on a mobile device.
          * @returns {boolean} true on mobile
          */
-        AgentService.prototype.isMobile = function () {
+        isMobile() {
             return !!this.mobileName;
         };
 
@@ -59,7 +60,7 @@ define(
          * Check if the user is on a phone-sized mobile device.
          * @returns {boolean} true on a phone
          */
-        AgentService.prototype.isPhone = function () {
+        isPhon() {
             // iOS is test-to device for mobile, so only
             // make this distinction for iPhones
             return this.mobileName === 'iPhone';
@@ -69,7 +70,7 @@ define(
          * Check if the user is on a tablet-sized mobile device.
          * @returns {boolean} true on a tablet
          */
-        AgentService.prototype.isTablet = function () {
+        isTablet() {
             return this.isMobile() && !this.isPhone();
         };
 
@@ -78,7 +79,7 @@ define(
          * orientation (display width is narrower than display height.)
          * @returns {boolean} true in portrait mode
          */
-        AgentService.prototype.isPortrait = function () {
+        isPortrait() {
             return this.$window.innerWidth < this.$window.innerHeight;
         };
 
@@ -87,7 +88,7 @@ define(
          * orientation (display width is greater than display height.)
          * @returns {boolean} true in landscape mode
          */
-        AgentService.prototype.isLandscape = function () {
+        isLandscape() {
             return !this.isPortrait();
         };
 
@@ -95,7 +96,7 @@ define(
          * Check if the user's device supports a touch interface.
          * @returns {boolean} true if touch is supported
          */
-        AgentService.prototype.isTouch = function () {
+        isTouch() {
             return this.touchEnabled;
         };
 
@@ -106,11 +107,11 @@ define(
          * @param {string} name the name to check for
          * @returns {boolean} true if the user agent includes that name
          */
-        AgentService.prototype.isBrowser = function (name) {
+        isBrowser(name) {
             name = name.toLowerCase();
             return this.userAgent.toLowerCase().indexOf(name) !== -1;
         };
-
+      }
         return AgentService;
     }
 );

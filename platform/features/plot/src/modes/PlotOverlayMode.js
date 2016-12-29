@@ -22,7 +22,7 @@
 
 define(
     ["../SubPlot", "../elements/PlotPalette", "../elements/PlotPanZoomStack"],
-    function (SubPlot, PlotPalette, PlotPanZoomStack) {
+    (SubPlot, PlotPalette, PlotPanZoomStack) => {
 
         /**
          * Handles plotting in Overlaid mode. In overlaid mode, there
@@ -32,16 +32,17 @@ define(
          * @implements {platform/features/plot.PlotModeHandler}
          * @param {DomainObject[]} the domain objects to be plotted
          */
-        function PlotOverlayMode(telemetryObjects, subPlotFactory) {
+        class PlotOverlayMode {
+          constructor(telemetryObjects, subPlotFactory) {
             this.panZoomStack = new PlotPanZoomStack([], []);
             this.subplot = subPlotFactory.createSubPlot(
                 telemetryObjects,
                 this.panZoomStack
             );
             this.subplots = [this.subplot];
-        }
+          }
 
-        PlotOverlayMode.prototype.plotTelemetry = function (updater) {
+        plotTelemetry(updater) {
             // Fit to the boundaries of the data, but don't
             // override any user-initiated pan-zoom changes.
             this.panZoomStack.setBasePanZoom(
@@ -56,7 +57,7 @@ define(
 
             // Draw the buffers. Select color by index.
             this.subplot.getDrawingObject().lines =
-                updater.getLineBuffers().map(function (buf, i) {
+                updater.getLineBuffers().map( (buf, i) => {
                     return {
                         buffer: buf.getBuffer(),
                         color: PlotPalette.getFloatColor(i),
@@ -65,24 +66,24 @@ define(
                 });
         };
 
-        PlotOverlayMode.prototype.getSubPlots = function () {
+        getSubPlots() {
             return this.subplots;
         };
 
-        PlotOverlayMode.prototype.isZoomed = function () {
+        isZoomed() {
             return this.panZoomStack.getDepth() > 1;
         };
 
-        PlotOverlayMode.prototype.stepBackPanZoom = function () {
+        stepBackPanZoom() {
             this.panZoomStack.popPanZoom();
             this.subplot.update();
         };
 
-        PlotOverlayMode.prototype.unzoom = function () {
+        unzoom() {
             this.panZoomStack.clearPanZoom();
             this.subplot.update();
         };
-
+      }
         return PlotOverlayMode;
     }
 );

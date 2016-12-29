@@ -22,15 +22,15 @@
 
 define(
     ['../../src/elements/ResizeHandle'],
-    function (ResizeHandle) {
+    (ResizeHandle) => {
 
-        var TEST_MIN_WIDTH = 4, TEST_MIN_HEIGHT = 2;
+        let TEST_MIN_WIDTH = 4, TEST_MIN_HEIGHT = 2;
 
-        describe("A fixed position drag handle", function () {
-            var testElement,
+        describe("A fixed position drag handle", () => {
+            let testElement,
                 handle;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testElement = {
                     x: 3,
                     y: 42,
@@ -45,26 +45,26 @@ define(
                 );
             });
 
-            it("provides x/y grid coordinates for lower-right corner", function () {
+            it("provides x/y grid coordinates for lower-right corner", () => {
                 expect(handle.x()).toEqual(33);
                 expect(handle.y()).toEqual(78);
             });
 
-            it("changes width of an element", function () {
+            it("changes width of an element", () => {
                 handle.x(30);
                 // Should change width, not x
                 expect(testElement.x).toEqual(3);
                 expect(testElement.width).toEqual(27);
             });
 
-            it("changes height of an element", function () {
+            it("changes height of an element", () => {
                 handle.y(60);
                 // Should change height, not y
                 expect(testElement.y).toEqual(42);
                 expect(testElement.height).toEqual(18);
             });
 
-            it("enforces minimum width/height", function () {
+            it("enforces minimum width/height", () => {
                 handle.x(testElement.x);
                 handle.y(testElement.y);
                 expect(testElement.x).toEqual(3);

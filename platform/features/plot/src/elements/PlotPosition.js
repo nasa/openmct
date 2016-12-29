@@ -21,8 +21,7 @@
  *****************************************************************************/
 
 define(
-    [],
-    function () {
+    [], () => {
 
         /**
          * A PlotPosition converts from pixel coordinates to domain-range
@@ -43,12 +42,13 @@ define(
          * @param {PanZoomStack} panZoomStack the applicable pan-zoom stack,
          *        used to determine the plot's domain-range boundaries.
          */
-        function PlotPosition(x, y, width, height, panZoomStack) {
-            var panZoom = panZoomStack.getPanZoom(),
+        class PlotPosition {
+          constructor(x, y, width, height, panZoomStack) {
+            let panZoom = panZoomStack.getPanZoom(),
                 origin = panZoom.origin,
                 dimensions = panZoom.dimensions;
 
-            function convert(v, i) {
+            const convert = (v, i) => {
                 return v * dimensions[i] + origin[i];
             }
 
@@ -68,7 +68,7 @@ define(
          * Get the domain value corresponding to this pixel position.
          * @returns {number} the domain value
          */
-        PlotPosition.prototype.getDomain = function () {
+        getDomain() {
             return this.position[0];
         };
 
@@ -76,7 +76,7 @@ define(
          * Get the range value corresponding to this pixel position.
          * @returns {number} the range value
          */
-        PlotPosition.prototype.getRange = function () {
+        getRange() {
             return this.position[1];
         };
 
@@ -86,10 +86,10 @@ define(
          * @returns {number[]} an array containing the domain and
          *          the range value, in that order
          */
-        PlotPosition.prototype.getPosition = function () {
+        getPosition() {
             return this.position;
         };
-
+      }
         return PlotPosition;
     }
 );

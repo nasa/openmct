@@ -22,7 +22,7 @@
 
 define(
     ['./ActivityTimespan'],
-    function (ActivityTimespan) {
+    (ActivityTimespan) => {
 
         /**
          * Implements the `timespan` capability for Activity objects.
@@ -31,9 +31,10 @@ define(
          * @param $q Angular's $q, for promise-handling
          * @param {DomainObject} domainObject the Activity
          */
-        function ActivityTimespanCapability($q, domainObject) {
+        class ActivityTimespanCapability {
+          constructor($q, domainObject)  {
             // Promise time span
-            function promiseTimeSpan() {
+            const promiseTimeSpan = () => {
                 return $q.when(new ActivityTimespan(
                     domainObject.getModel(),
                     domainObject.getCapability('mutation')
@@ -51,9 +52,10 @@ define(
         }
 
         // Only applies to timeline objects
-        ActivityTimespanCapability.appliesTo = function (model) {
+        appliesTo(model) {
             return model && (model.type === 'activity');
         };
+      }
 
         return ActivityTimespanCapability;
 

@@ -22,55 +22,55 @@
 
 define(
     ["../../src/policies/EditableViewPolicy"],
-    function (EditableViewPolicy) {
+    (EditableViewPolicy) => {
 
-        describe("The editable view policy", function () {
-            var mockDomainObject,
+        describe("The editable view policy", () => {
+            let mockDomainObject,
                 testMode,
                 policy;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 testMode = true; // Act as if we're in Edit mode by default
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
                     ['hasCapability', 'getCapability']
                 );
                 mockDomainObject.getCapability.andReturn({
-                    inEditContext: function () {
+                    inEditContext: () => {
                        return true;
                    }
                 });
-                mockDomainObject.hasCapability.andCallFake(function (c) {
+                mockDomainObject.hasCapability.andCallFake( (c) => {
                     return (c === 'editor') && testMode;
                 });
 
                 policy = new EditableViewPolicy();
             });
 
-            it("disallows views in edit mode that are flagged as non-editable", function () {
+            it("disallows views in edit mode that are flagged as non-editable", () => {
                 expect(policy.allow({ editable: false }, mockDomainObject))
                     .toBeFalsy();
             });
 
-            it("allows views in edit mode that are flagged as editable", function () {
+            it("allows views in edit mode that are flagged as editable", () => {
                 expect(policy.allow({ editable: true }, mockDomainObject))
                     .toBeTruthy();
             });
 
-            it("allows any view outside of edit mode", function () {
-                var testViews = [
+            it("allows any view outside of edit mode", () => {
+                let testViews = [
                     { editable: false },
                     { editable: true },
                     { someKey: "some value" }
                 ];
                 testMode = false; // Act as if we're not in Edit mode
 
-                testViews.forEach(function (testView) {
+                testViews.forEach( (testView) => {
                     expect(policy.allow(testView, mockDomainObject)).toBeTruthy();
                 });
             });
 
-            it("treats views with no defined 'editable' property as editable", function () {
+            it("treats views with no defined 'editable' property as editable", () => {
                 expect(policy.allow({ someKey: "some value" }, mockDomainObject))
                     .toBeTruthy();
             });

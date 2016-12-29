@@ -25,10 +25,10 @@
  */
 define(
     ["../../src/controllers/ObjectInspectorController"],
-    function (ObjectInspectorController) {
+    (ObjectInspectorController) => {
 
-        describe("The object inspector controller ", function () {
-            var mockScope,
+        describe("The object inspector controller ", () => {
+            let mockScope,
                 mockObjectService,
                 mockPromise,
                 mockDomainObject,
@@ -36,7 +36,7 @@ define(
                 mockLocationCapability,
                 controller;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     ["$watch"]
@@ -69,7 +69,7 @@ define(
                     "location capability",
                     ["isLink"]
                 );
-                mockDomainObject.getCapability.andCallFake(function (param) {
+                mockDomainObject.getCapability.andCallFake( (param) => {
                     if (param === 'location') {
                         return mockLocationCapability;
                     } else if (param === 'context') {
@@ -83,16 +83,16 @@ define(
                 mockScope.ngModel.selectedObject = mockDomainObject;
             });
 
-            it("watches for changes to the selected object", function () {
+            it("watches for changes to the selected object", () => {
                 expect(mockScope.$watch).toHaveBeenCalledWith('ngModel.selectedObject', jasmine.any(Function));
             });
 
-            it("looks for contextual parent objects", function () {
+            it("looks for contextual parent objects", () => {
                 mockScope.$watch.mostRecentCall.args[1]();
                 expect(mockContextCapability.getParent).toHaveBeenCalled();
             });
 
-            it("if link, looks for primary parent objects", function () {
+            it("if link, looks for primary parent objects", () => {
                 mockLocationCapability.isLink.andReturn(true);
 
                 mockScope.$watch.mostRecentCall.args[1]();
@@ -101,7 +101,7 @@ define(
                 mockPromise.then.mostRecentCall.args[0]({'somewhere': mockDomainObject});
             });
 
-            it("gets metadata", function () {
+            it("gets metadata", () => {
                 mockScope.$watch.mostRecentCall.args[1]();
                 expect(mockDomainObject.useCapability).toHaveBeenCalledWith('metadata');
             });

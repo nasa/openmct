@@ -22,17 +22,17 @@
 
 define(
     ['../src/FixedDragHandle'],
-    function (FixedDragHandle) {
+    (FixedDragHandle) => {
 
-        var TEST_GRID_SIZE = [13, 33];
+        let TEST_GRID_SIZE = [13, 33];
 
-        describe("A fixed position drag handle", function () {
-            var mockElementHandle,
+        describe("A fixed position drag handle", () => {
+            let mockElementHandle,
                 mockUpdate,
                 mockCommit,
                 handle;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockElementHandle = jasmine.createSpyObj(
                     'elementHandle',
                     ['x', 'y']
@@ -51,15 +51,15 @@ define(
                 );
             });
 
-            it("provides a style for positioning", function () {
-                var style = handle.style();
+            it("provides a style for positioning", () => {
+                let style = handle.style();
                 // 6 grid coords * 13 pixels - 3 pixels for centering
                 expect(style.left).toEqual('75px');
                 // 8 grid coords * 33 pixels - 3 pixels for centering
                 expect(style.top).toEqual('261px');
             });
 
-            it("allows handles to be dragged", function () {
+            it("allows handles to be dragged", () => {
                 handle.startDrag();
                 handle.continueDrag([16, 8]);
 

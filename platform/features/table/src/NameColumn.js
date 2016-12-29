@@ -24,8 +24,7 @@
  * Module defining NameColumn. Created by vwoeltje on 11/18/14.
  */
 define(
-    [],
-    function () {
+    [], () => {
 
         /**
          * A column which will report the name of the domain object
@@ -34,19 +33,18 @@ define(
          * @memberof platform/features/table
          * @constructor
          */
-        function NameColumn() {
-        }
+        class NameColumn {
 
-        NameColumn.prototype.getTitle = function () {
+        getTitle() {
             return "Name";
         };
 
-        NameColumn.prototype.getValue = function (domainObject) {
+        getValue(domainObject) {
             return {
                 text: domainObject.getModel().name
             };
         };
-
+      }
         return NameColumn;
     }
 );

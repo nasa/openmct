@@ -25,16 +25,16 @@
  */
 define(
     ["../../src/actions/ActionCapability"],
-    function (ActionCapability) {
+    (ActionCapability) => {
 
-        describe("The action capability", function () {
-            var mockQ,
+        describe("The action capability", () => {
+            let mockQ,
                 mockAction,
                 mockActionService,
                 mockDomainObject,
                 capability;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockAction = jasmine.createSpyObj(
                     "action",
                     ["perform", "getMetadata"]
@@ -61,7 +61,7 @@ define(
                 );
             });
 
-            it("retrieves action for domain objects from the action service", function () {
+            it("retrieves action for domain objects from the action service", () => {
                 // Verify precondition
                 expect(mockActionService.getActions).not.toHaveBeenCalled();
 
@@ -75,8 +75,8 @@ define(
                 });
             });
 
-            it("promises the result of performed actions", function () {
-                var mockPromise = jasmine.createSpyObj("promise", ["then"]);
+            it("promises the result of performed actions", () => {
+                let mockPromise = jasmine.createSpyObj("promise", ["then"]);
                 mockQ.when.andReturn(mockPromise);
                 mockAction.perform.andReturn("the action's result");
 

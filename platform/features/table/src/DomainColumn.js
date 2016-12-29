@@ -24,8 +24,7 @@
  * Module defining DomainColumn.
  */
 define(
-    [],
-    function () {
+    [], () => {
 
         /**
          * A column which will report telemetry domain values
@@ -39,16 +38,17 @@ define(
          * @param {TelemetryFormatter} telemetryFormatter the telemetry
          *        formatting service, for making values human-readable.
          */
-        function DomainColumn(domainMetadata, telemetryFormatter) {
+        class DomainColumn {
+          constructor(domainMetadata, telemetryFormatter) {
             this.domainMetadata = domainMetadata;
             this.telemetryFormatter = telemetryFormatter;
         }
 
-        DomainColumn.prototype.getTitle = function () {
+        getTitle() {
             return this.domainMetadata.name;
         };
 
-        DomainColumn.prototype.getValue = function (domainObject, datum) {
+        getValue(domainObject, datum) {
             return {
                 text: this.telemetryFormatter.formatDomainValue(
                     datum[this.domainMetadata.key],
@@ -56,7 +56,7 @@ define(
                 )
             };
         };
-
+      }
         return DomainColumn;
     }
 );

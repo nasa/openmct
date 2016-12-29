@@ -22,30 +22,28 @@
 
 define([
     '../../src/representers/EditRepresenter'
-], function (
-    EditRepresenter
-) {
-    describe('EditRepresenter', function () {
-        var $log,
+], (EditRepresenter) => {
+    describe('EditRepresenter', () => {
+        let $log,
             $scope,
             representer;
 
 
-        beforeEach(function () {
+        beforeEach( () => {
             $log = jasmine.createSpyObj('$log', ['debug']);
             $scope = {};
             representer = new EditRepresenter($log, $scope);
         });
 
-        it('injects a commit function in scope', function () {
+        it('injects a commit function in scope', () => {
             expect($scope.commit).toEqual(jasmine.any(Function));
         });
 
-        describe('representation', function () {
-            var domainObject,
+        describe('representation', () => {
+            let domainObject,
                 representation;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 domainObject = jasmine.createSpyObj('domainObject', [
                     'getId',
                     'getModel',
@@ -63,13 +61,13 @@ define([
                 representer.represent(representation, domainObject);
             });
 
-            it('logs a message when commiting', function () {
+            it('logs a message when commiting', () => {
                 $scope.commit('Test Message');
                 expect($log.debug)
                     .toHaveBeenCalledWith('Committing  anObject (anId): Test Message');
             });
 
-            it('mutates the object when committing', function () {
+            it('mutates the object when committing', () => {
                 $scope.commit('Test Message');
 
                 expect(domainObject.useCapability)

@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The TreeNodeController supports the tree node representation;
@@ -58,19 +58,19 @@ define(
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function TreeNodeController($scope, $timeout) {
-            var self = this,
-                selectedObject = ($scope.ngModel || {}).selectedObject;
+        class TreeNodeController {
+          constructor($scope, $timeout) {
+            let selectedObject = ($scope.ngModel || {}).selectedObject;
 
             // Look up the id for a domain object. A convenience
             // for mapping; additionally does some undefined-checking.
-            function getId(obj) {
+            const getId = (obj) => {
                 return obj && obj.getId && obj.getId();
-            }
+            };
 
             // Verify that id paths are equivalent, staring at
             // index, ending at the end of the node path.
-            function checkPath(nodePath, navPath, index) {
+            const checkPath = (nodePath, navPath, index) => {
                 index = index || 0;
 
                 // The paths overlap if we have made it past the
@@ -81,11 +81,11 @@ define(
                 return (index >= nodePath.length) ||
                         ((navPath[index] === nodePath[index]) &&
                                 checkPath(nodePath, navPath, index + 1));
-            }
+            };
 
             // Consider the currently-navigated object and update
             // parameters which support display.
-            function checkSelection() {
+            const checkSelection = () => {
                 var nodeObject = $scope.domainObject,
                     navObject = selectedObject,
                     nodeContext = nodeObject &&
@@ -97,7 +97,7 @@ define(
 
                 // Deselect; we will reselect below, iff we are
                 // exactly at the end of the path.
-                self.isSelectedFlag = false;
+                this.isSelectedFlag = false;
 
                 // Expand if necessary (if the navigated object will
                 // be in this node's subtree)
@@ -121,19 +121,19 @@ define(
                             if ($scope.toggle) {
                                 $scope.toggle.setState(true);
                             }
-                            self.trackExpansion();
+                            this.trackExpansion();
                         }
 
                     }
                 }
-            }
+            };
 
             // Callback for the selection updates; track the currently
             // navigated object and update display parameters as needed.
-            function setSelection(object) {
+            const setSelection = (object) => {
                 selectedObject = object;
                 checkSelection();
-            }
+            };
 
             this.isSelectedFlag = false;
             this.hasBeenExpandedFlag = false;
@@ -151,7 +151,7 @@ define(
          * the object passed in via `ng-model`, and will fire any `callback`
          * passed in via `parameters`.
          */
-        TreeNodeController.prototype.select = function () {
+        select() {
             if (this.$scope.ngModel) {
                 this.$scope.ngModel.selectedObject =
                     this.$scope.domainObject;
@@ -159,32 +159,32 @@ define(
             if ((this.$scope.parameters || {}).callback) {
                 this.$scope.parameters.callback(this.$scope.domainObject);
             }
-        };
+        }
 
         /**
          * This method should be called when a node is expanded
          * to record that this has occurred, to support one-time
          * lazy loading of the node's subtree.
          */
-        TreeNodeController.prototype.trackExpansion = function () {
+        trackExpansion() {
             var self = this;
             if (!self.hasBeenExpanded()) {
                 // Run on a timeout; if a lot of expansion needs to
                 // occur (e.g. if the selection is several nodes deep) we
                 // want this to be spread across multiple digest cycles.
-                self.$timeout(function () {
-                    self.hasBeenExpandedFlag = true;
+                self.$timeout( () => {
+                    this.hasBeenExpandedFlag = true;
                 }, 0);
             }
-        };
+        }
 
         /**
          * Check if this not has ever been expanded.
          * @returns true if it has been expanded
          */
-        TreeNodeController.prototype.hasBeenExpanded = function () {
+        hasBeenExpanded() {
             return this.hasBeenExpandedFlag;
-        };
+        }
 
         /**
          * Check whether or not the domain object represented by
@@ -193,10 +193,10 @@ define(
          * ngModel.selectedObject
          * @returns true if this should be highlighted
          */
-        TreeNodeController.prototype.isSelected = function () {
+        isSelected() {
             return this.isSelectedFlag;
-        };
-
+        }
+      }
         return TreeNodeController;
     }
 );

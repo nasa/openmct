@@ -22,15 +22,15 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The ElementsController prepares the elements view for display
          *
          * @constructor
          */
-        function ElementsController($scope) {
-            function filterBy(text) {
+        const ElementsController = ($scope) => {
+            const filterBy = (text) => {
                 if (typeof text === 'undefined') {
                     return $scope.searchText;
                 } else {
@@ -38,7 +38,7 @@ define(
                 }
             }
 
-            function searchElements(value) {
+            const searchElements = (value) => {
                 if ($scope.searchText) {
                     return value.getModel().name.toLowerCase().search(
                             $scope.searchText.toLowerCase()) !== -1;

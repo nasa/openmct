@@ -20,50 +20,49 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['EventEmitter'], function (EventEmitter) {
+define(['EventEmitter'], (EventEmitter) => {
 
     /**
      * Manages selection state for Open MCT
      * @private
      */
-    function Selection() {
-        EventEmitter.call(this);
+    class Selection extends EventEmitter {
+      constructor() {
+        super();
         this.selected = [];
+      }
+
+    add(context) {
+      this.clear(); // Only allow single select as initial simplification
+      this.selected.push(context);
+      this.emit('change');
     }
 
-    Selection.prototype = Object.create(EventEmitter.prototype);
+    remove(path) {
+      this.selected = this.selected.filter( (otherPath) => {
+        return !path.matches(otherPath);
+      });
+      this.emit('change');
+    }
 
-    Selection.prototype.add = function (context) {
-        this.clear(); // Only allow single select as initial simplification
-        this.selected.push(context);
-        this.emit('change');
-    };
-
-    Selection.prototype.remove = function (path) {
-        this.selected = this.selected.filter(function (otherPath) {
-            return !path.matches(otherPath);
-        });
-        this.emit('change');
-    };
-
-    Selection.prototype.contains = function (path) {
-        return this.selected.some(function (otherPath) {
-            return path.matches(otherPath);
-        });
-    };
-
-    Selection.prototype.clear = function () {
+    contains(path) {
+      return this.selected.some(function (otherPath) {
+        return path.matches(otherPath);
+      });
+    }
+    
+    clear() {
         this.selected = [];
         this.emit('change');
-    };
+    }
 
-    Selection.prototype.primary = function () {
-        return this.selected[this.selected.length - 1];
-    };
-
-    Selection.prototype.all = function () {
-        return this.selected;
-    };
-
-    return Selection;
+    primary() {
+      return this.selected[this.selected.length - 1];
+    }
+    
+    all() {
+      return this.selected;
+    }
+}
+return Selection;
 });

@@ -24,8 +24,8 @@ define(
     [
         './TelemetryTableController'
     ],
-    function (TableController) {
-        var BATCH_SIZE = 1000;
+    (TableController) => {
+        let BATCH_SIZE = 1000;
 
         /**
          * Extends TelemetryTableController and adds real-time streaming
@@ -36,29 +36,27 @@ define(
          * @param telemetryFormatter
          * @constructor
          */
-        function HistoricalTableController($scope, telemetryHandler, telemetryFormatter, $timeout, openmct) {
-            var self = this;
-
+        class HistoricalTableController extends TableController {
+          constructor($scope, telemetryHandler, telemetryFormatter, $timeout, openmct) {
+            super();
             this.$timeout = $timeout;
             this.timeoutHandle = undefined;
             this.batchSize = BATCH_SIZE;
 
-            $scope.$on("$destroy", function () {
-                if (self.timeoutHandle) {
-                    self.$timeout.cancel(self.timeoutHandle);
+            $scope.$on("$destroy", () => {
+                if (this.timeoutHandle) {
+                    this.$timeout.cancel(this.timeoutHandle);
                 }
             });
 
             TableController.call(this, $scope, telemetryHandler, telemetryFormatter, openmct);
         }
 
-        HistoricalTableController.prototype = Object.create(TableController.prototype);
-
         /**
          * Set provided row data on scope, and cancel loading spinner
          * @private
          */
-        HistoricalTableController.prototype.doneProcessing = function (rowData) {
+        doneProcessing(rowData) {
             this.$scope.rows = rowData;
             this.$scope.loading = false;
         };
@@ -66,8 +64,8 @@ define(
         /**
          * @private
          */
-        HistoricalTableController.prototype.registerChangeListeners = function () {
-            TableController.prototype.registerChangeListeners.call(this);
+        registerChangeListeners() {
+            TableController.registerChangeListeners.call(this);
             //Change of bounds in time conductor
             this.changeListeners.push(this.$scope.$on('telemetry:display:bounds',
                     this.boundsChange.bind(this))
@@ -77,7 +75,7 @@ define(
         /**
          * @private
          */
-        HistoricalTableController.prototype.boundsChange = function (event, bounds, follow) {
+        boundsChange(event, bounds, follow) {
             // If in follow mode, don't bother re-subscribing, data will be
             // received from existing subscription.
             if (follow !== true) {
@@ -90,8 +88,8 @@ define(
          * for them and setting it on scope when done
          * @private
          */
-        HistoricalTableController.prototype.processTelemetryObjects = function (objects, offset, start, rowData) {
-            var telemetryObject = objects[offset],
+        processTelemetryObjects(objects, offset, start, rowData) {
+            let telemetryObject = objects[offset],
                 series,
                 i = start,
                 pointCount,
@@ -128,14 +126,14 @@ define(
         * Populates historical data on scope when it becomes available from
         * the telemetry API
         */
-        HistoricalTableController.prototype.addHistoricalData = function () {
+        addHistoricalData() {
             if (this.timeoutHandle) {
                 this.$timeout.cancel(this.timeoutHandle);
             }
 
             this.timeoutHandle = this.$timeout(this.processTelemetryObjects.bind(this, this.handle.getTelemetryObjects(), 0, 0, []));
         };
-
+      }
         return HistoricalTableController;
     }
 );

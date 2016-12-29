@@ -23,17 +23,17 @@
 define([
     '../../src/policies/CopyPolicy',
     '../DomainObjectFactory'
-], function (CopyPolicy, domainObjectFactory) {
+], (CopyPolicy, domainObjectFactory) => {
 
-    describe("CopyPolicy", function () {
-        var testMetadata,
+    describe("CopyPolicy", () =>  {
+        let testMetadata,
             testContext,
             mockDomainObject,
             mockType,
             mockAction,
             policy;
 
-        beforeEach(function () {
+        beforeEach(() =>  {
             mockType =
                 jasmine.createSpyObj('type', ['hasFeature']);
 
@@ -43,7 +43,7 @@ define([
                 capabilities: { type: mockType }
             });
 
-            mockType.hasFeature.andCallFake(function (feature) {
+            mockType.hasFeature.andCallFake( (feature) => {
                 return feature === 'creation';
             });
 
@@ -55,34 +55,34 @@ define([
             policy = new CopyPolicy();
         });
 
-        describe("for copy actions", function () {
-            beforeEach(function () {
+        describe("for copy actions", () =>  {
+            beforeEach(() =>  {
                 testMetadata.key = 'copy';
             });
 
-            describe("when an object is non-creatable", function () {
-                beforeEach(function () {
+            describe("when an object is non-creatable", () =>  {
+                beforeEach(() =>  {
                     mockType.hasFeature.andReturn(false);
                 });
 
-                it("disallows the action", function () {
+                it("disallows the action", () =>  {
                     expect(policy.allow(mockAction, testContext)).toBe(false);
                 });
             });
 
-            describe("when an object is creatable", function () {
-                it("allows the action", function () {
+            describe("when an object is creatable", () =>  {
+                it("allows the action", () =>  {
                     expect(policy.allow(mockAction, testContext)).toBe(true);
                 });
             });
         });
 
-        describe("for other actions", function () {
-            beforeEach(function () {
+        describe("for other actions", () =>  {
+            beforeEach(() =>  {
                 testMetadata.key = 'foo';
             });
 
-            it("simply allows the action", function () {
+            it("simply allows the action", () =>  {
                 expect(policy.allow(mockAction, testContext)).toBe(true);
                 mockType.hasFeature.andReturn(false);
                 expect(policy.allow(mockAction, testContext)).toBe(true);

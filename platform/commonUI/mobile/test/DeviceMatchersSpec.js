@@ -23,12 +23,12 @@
 
 define(
     ["../src/DeviceMatchers"],
-    function (DeviceMatchers) {
+    (DeviceMatchers) => {
 
-        describe("DeviceMatchers", function () {
-            var mockAgentService;
+        describe("DeviceMatchers", () => {
+            let mockAgentService;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockAgentService = jasmine.createSpyObj(
                     'agentService',
                     [
@@ -42,7 +42,7 @@ define(
                 );
             });
 
-            it("detects when a device is a desktop device", function () {
+            it("detects when a device is a desktop device", () => {
                 mockAgentService.isMobile.andReturn(false);
                 expect(DeviceMatchers.desktop(mockAgentService))
                     .toBe(true);
@@ -51,7 +51,7 @@ define(
                     .toBe(false);
             });
 
-            function method(deviceType) {
+            const method = (deviceType) => {
                 return "is" + deviceType[0].toUpperCase() + deviceType.slice(1);
             }
 
@@ -63,8 +63,8 @@ define(
                 "portrait",
                 "landscape",
                 "touch"
-            ].forEach(function (deviceType) {
-                it("detects when a device is a " + deviceType + " device", function () {
+            ].forEach( (deviceType) => {
+                it("detects when a device is a " + deviceType + " device", () => {
                     mockAgentService[method(deviceType)].andReturn(true);
                     expect(DeviceMatchers[deviceType](mockAgentService))
                         .toBe(true);

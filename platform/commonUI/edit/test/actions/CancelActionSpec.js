@@ -22,25 +22,25 @@
 
 define(
     ["../../src/actions/CancelAction"],
-    function (CancelAction) {
+    (CancelAction) => {
 
-        describe("The Cancel action", function () {
-            var mockDomainObject,
+        describe("The Cancel action", () => {
+            let mockDomainObject,
                 mockParentObject,
                 capabilities = {},
                 parentCapabilities = {},
                 actionContext,
                 action;
 
-            function mockPromise(value) {
+            const mockPromise = (value) => {
                 return {
-                    then: function (callback) {
+                    then: (callback) => {
                         return mockPromise(callback(value));
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     [
@@ -57,7 +57,7 @@ define(
                         "getCapability"
                     ]
                 );
-                mockParentObject.getCapability.andCallFake(function (name) {
+                mockParentObject.getCapability.andCallFake( (name) => {
                     return parentCapabilities[name];
                 });
 
@@ -97,11 +97,11 @@ define(
                     domainObject: mockDomainObject
                 };
 
-                mockDomainObject.getCapability.andCallFake(function (name) {
+                mockDomainObject.getCapability.andCallFake( (name) => {
                     return capabilities[name];
                 });
 
-                mockDomainObject.hasCapability.andCallFake(function (name) {
+                mockDomainObject.hasCapability.andCallFake( (name) => {
                     return !!capabilities[name];
                 });
 
@@ -111,7 +111,7 @@ define(
 
             });
 
-            it("only applies to domain object that is being edited", function () {
+            it("only applies to domain object that is being edited", () => {
                 capabilities.editor.isEditContextRoot.andReturn(true);
                 expect(CancelAction.appliesTo(actionContext)).toBeTruthy();
                 expect(mockDomainObject.hasCapability).toHaveBeenCalledWith("editor");
@@ -124,7 +124,7 @@ define(
             });
 
             it("invokes the editor capability's cancel functionality when" +
-                " performed", function () {
+                " performed", () => {
                 mockDomainObject.getModel.andReturn({persisted: 1});
                 //Return true from navigate action
                 capabilities.action.perform.andReturn(mockPromise(true));
@@ -137,7 +137,7 @@ define(
                 expect(capabilities.editor.save).not.toHaveBeenCalled();
             });
 
-            it("navigates to object if existing using navigate action", function () {
+            it("navigates to object if existing using navigate action", () => {
                 mockDomainObject.getModel.andReturn({persisted: 1});
                 //Return true from navigate action
                 capabilities.action.perform.andReturn(mockPromise(true));
@@ -145,7 +145,7 @@ define(
                 expect(capabilities.action.perform).toHaveBeenCalledWith("navigate");
             });
 
-            it("navigates to parent if new using navigate action", function () {
+            it("navigates to parent if new using navigate action", () => {
                 mockDomainObject.getModel.andReturn({persisted: undefined});
                 action.perform();
                 expect(parentCapabilities.action.perform).toHaveBeenCalledWith("navigate");

@@ -22,14 +22,14 @@
 
 define(
     ["../src/CapabilityTable"],
-    function (CapabilityTable) {
-        describe("Composition policy's capability table", function () {
-            var mockTypeService,
+    (CapabilityTable) => {
+        describe("Composition policy's capability table", () => {
+            let mockTypeService,
                 mockCapabilityService,
                 mockTypes,
                 table;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockTypeService = jasmine.createSpyObj(
                     'typeService',
                     ['listTypes']
@@ -39,8 +39,8 @@ define(
                     ['getCapabilities']
                 );
                 // Both types can only contain b, let's say
-                mockTypes = ['a', 'b'].map(function (type) {
-                    var mockType = jasmine.createSpyObj(
+                mockTypes = ['a', 'b'].map( (type) => {
+                    let mockType = jasmine.createSpyObj(
                         'type-' + type,
                         ['getKey', 'getDefinition', 'getInitialModel']
                     );
@@ -51,8 +51,8 @@ define(
                 });
 
                 mockTypeService.listTypes.andReturn(mockTypes);
-                mockCapabilityService.getCapabilities.andCallFake(function (model) {
-                    var capabilities = {};
+                mockCapabilityService.getCapabilities.andCallFake( (model) => {
+                    let capabilities = {};
                     capabilities[model.id + '-capability'] = true;
                     return capabilities;
                 });
@@ -63,7 +63,7 @@ define(
                 );
             });
 
-            it("provides for lookup of capabilities by type", function () {
+            it("provides for lookup of capabilities by type", () => {
                 // Based on initial model, should report the presence
                 // of particular capabilities - suffixed above with -capability
                 expect(table.hasCapability('a', 'a-capability'))

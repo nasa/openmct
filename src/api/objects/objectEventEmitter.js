@@ -22,9 +22,7 @@
 
 define([
     "EventEmitter"
-], function (
-    EventEmitter
-) {
+], (EventEmitter) => {
     /**
      * Provides a singleton event bus for sharing between objects.
      */

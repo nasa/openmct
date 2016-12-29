@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The ObjectInspectorController gets and formats the data for
@@ -33,14 +33,14 @@ define(
          *
          * @constructor
          */
-        function ObjectInspectorController($scope, objectService) {
+        const ObjectInspectorController = ($scope, objectService) => {
             $scope.primaryParents = [];
             $scope.contextutalParents = [];
             //$scope.isLink = false;
 
             // Gets an array of the contextual parents/ancestors of the selected object
-            function getContextualPath() {
-                var currentObj = $scope.ngModel.selectedObject,
+            const getContextualPath = () => {
+                let currentObj = $scope.ngModel.selectedObject,
                     currentParent,
                     parents = [];
 
@@ -63,8 +63,8 @@ define(
 
             // Gets an array of the parents/ancestors of the selected object's
             //   primary location (locational of original non-link)
-            function getPrimaryPath(current) {
-                var location;
+            const getPrimaryPath = (current) => {
+                let location;
 
                 // If this the the initial call of this recursive function
                 if (!current) {
@@ -75,8 +75,8 @@ define(
                 location = current.getModel().location;
 
                 if (location && location !== 'root') {
-                    objectService.getObjects([location]).then(function (obj) {
-                        var next = obj[location];
+                    objectService.getObjects([location]).then( (obj) => {
+                        let next = obj[location];
 
                         $scope.primaryParents.unshift(next);
                         getPrimaryPath(next);
@@ -86,14 +86,14 @@ define(
             }
 
             // Gets the metadata for the selected object
-            function getMetadata() {
+            const getMetadata = () => {
                 $scope.metadata = $scope.ngModel.selectedObject &&
                     $scope.ngModel.selectedObject.hasCapability('metadata') &&
                     $scope.ngModel.selectedObject.useCapability('metadata');
-            }
+            };
 
             // Set scope variables when the selected object changes
-            $scope.$watch('ngModel.selectedObject', function () {
+            $scope.$watch('ngModel.selectedObject', () => {
                 $scope.isLink = $scope.ngModel.selectedObject &&
                     $scope.ngModel.selectedObject.hasCapability('location') &&
                     $scope.ngModel.selectedObject.getCapability('location').isLink();

@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () =>  {
 
         /**
          * Representer that provides a compatibility layer between the new
@@ -36,11 +36,12 @@ define(
          * @deprecated
          * @constructor
          */
-        function ConductorRepresenter(
-            openmct,
-            scope,
-            element
-        ) {
+        class ConductorRepresenter {
+          constructor(
+              openmct,
+              scope,
+              element
+          ) {
             this.conductor = openmct.conductor;
             this.scope = scope;
             this.element = element;
@@ -50,7 +51,7 @@ define(
             this.followListener = this.followListener.bind(this);
         }
 
-        ConductorRepresenter.prototype.boundsListener = function (bounds) {
+        boundsListener(bounds) {
             this.scope.$broadcast('telemetry:display:bounds', {
                 start: bounds.start,
                 end: bounds.end,
@@ -58,8 +59,8 @@ define(
             }, this.conductor.follow());
         };
 
-        ConductorRepresenter.prototype.timeSystemListener = function (timeSystem) {
-            var bounds = this.conductor.bounds();
+        timeSystemListener(timeSystem) {
+            let bounds = this.conductor.bounds();
             this.scope.$broadcast('telemetry:display:bounds', {
                 start: bounds.start,
                 end: bounds.end,
@@ -67,12 +68,12 @@ define(
             }, this.conductor.follow());
         };
 
-        ConductorRepresenter.prototype.followListener = function () {
+        followListener() {
             this.boundsListener(this.conductor.bounds());
         };
 
         // Handle a specific representation of a specific domain object
-        ConductorRepresenter.prototype.represent = function represent(representation) {
+        represent(representation) {
             if (representation.key === 'browse-object') {
                 this.destroy();
 
@@ -82,12 +83,12 @@ define(
             }
         };
 
-        ConductorRepresenter.prototype.destroy = function destroy() {
+        destroy() {
             this.conductor.off("bounds", this.boundsListener);
             this.conductor.off("timeSystem", this.timeSystemListener);
             this.conductor.off("follow", this.followListener);
         };
-
+      }
         return ConductorRepresenter;
     }
 );

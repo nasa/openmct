@@ -22,10 +22,10 @@
 
 define(
     ['../../src/capabilities/TimelineTimespanCapability'],
-    function (TimelineTimespanCapability) {
+    (TimelineTimespanCapability) => {
 
-        describe("A Timeline's timespan capability", function () {
-            var mockQ,
+        describe("A Timeline's timespan capability", () => {
+            let mockQ,
                 mockDomainObject,
                 mockChildA,
                 mockChildB,
@@ -33,15 +33,15 @@ define(
                 mockTimespanB,
                 capability;
 
-            function asPromise(v) {
+            const asPromise = (v) => {
                 return (v || {}).then ? v : {
-                    then: function (callback) {
+                    then: (callback) => {
                         return asPromise(callback(v));
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockQ = jasmine.createSpyObj('$q', ['when', 'all']);
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
@@ -65,12 +65,12 @@ define(
                 );
 
                 mockQ.when.andCallFake(asPromise);
-                mockQ.all.andCallFake(function (values) {
-                    var result = [];
-                    function addResult(v) {
+                mockQ.all.andCallFake( (values) => {
+                    let result = [];
+                    const addResult = (v) => {
                         result.push(v);
                     }
-                    function promiseResult(v) {
+                    const promiseResult = (v) => {
                         asPromise(v).then(addResult);
                     }
                     values.forEach(promiseResult);
@@ -85,17 +85,17 @@ define(
                         timestamp: 12321
                     }
                 });
-                mockDomainObject.useCapability.andCallFake(function (c) {
+                mockDomainObject.useCapability.andCallFake( (c) => {
                     if (c === 'composition') {
                         return asPromise([mockChildA, mockChildB]);
                     }
                 });
                 mockChildA.hasCapability.andReturn(true);
                 mockChildB.hasCapability.andReturn(true);
-                mockChildA.useCapability.andCallFake(function (c) {
+                mockChildA.useCapability.andCallFake( (c) => {
                     return c === 'timespan' && mockTimespanA;
                 });
-                mockChildB.useCapability.andCallFake(function (c) {
+                mockChildB.useCapability.andCallFake( (c) => {
                     return c === 'timespan' && mockTimespanB;
                 });
 
@@ -105,7 +105,7 @@ define(
                 );
             });
 
-            it("applies only to timeline objects", function () {
+            it("applies only to timeline objects", () => {
                 expect(TimelineTimespanCapability.appliesTo({
                     type: 'timeline'
                 })).toBeTruthy();
@@ -114,8 +114,8 @@ define(
                 })).toBeFalsy();
             });
 
-            it("provides timespan based on model", function () {
-                var mockCallback = jasmine.createSpy('callback');
+            it("provides timespan based on model", () => {
+                let mockCallback = jasmine.createSpy('callback');
                 capability.invoke().then(mockCallback);
                 // We verify other methods in ActivityTimespanSpec,
                 // so just make sure we got something that looks right.

@@ -24,20 +24,19 @@ define([
     'angular',
     './Region',
     '../../api/objects/object-utils'
-], function (
+], (
     angular,
     Region,
     objectUtils
-) {
-    function MCTView() {
+) => {
+    const MCTView = () => {
         return {
             restrict: 'A',
-            link: function (scope, element, attrs) {
-                var region = new Region(element[0]);
+            link: (scope, element, attrs) => {
+                let region = new Region(element[0]);
                 scope.$watch(attrs.mctView, region.show.bind(region));
             }
         };
-    }
-
+    };
     return MCTView;
 });

@@ -25,7 +25,7 @@
  */
 define(
     ["./CreateAction"],
-    function (CreateAction) {
+    (CreateAction) => {
 
         /**
          * The CreateActionProvider is an ActionProvider which introduces
@@ -44,16 +44,16 @@ define(
          *        introduced in this bundle), responsible for handling actual
          *        object creation.
          */
-        function CreateActionProvider(typeService, policyService) {
+        class CreateActionProvider {
+          constructor(typeService, policyService) {
             this.typeService = typeService;
             this.policyService = policyService;
         }
 
-        CreateActionProvider.prototype.getActions = function (actionContext) {
-            var context = actionContext || {},
+        getActions(actionContext) {
+            let context = actionContext || {},
                 key = context.key,
-                destination = context.domainObject,
-                self = this;
+                destination = context.domainObject
 
             // We only provide Create actions, and we need a
             // domain object to serve as the container for the
@@ -64,17 +64,17 @@ define(
             }
 
             // Introduce one create action per type
-            return this.typeService.listTypes().filter(function (type) {
-                return self.policyService.allow("creation", type);
-            }).map(function (type) {
+            return this.typeService.listTypes().filter( (type) => {
+                return this.policyService.allow("creation", type);
+            }).map( (type) => {
                 return new CreateAction(
                     type,
                     destination,
                     context
                 );
             });
-        };
-
+        }
+      }
         return CreateActionProvider;
     }
 );

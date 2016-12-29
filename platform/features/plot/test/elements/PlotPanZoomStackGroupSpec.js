@@ -25,15 +25,15 @@
  */
 define(
     ["../../src/elements/PlotPanZoomStackGroup"],
-    function (PlotPanZoomStackGroup) {
+    (PlotPanZoomStackGroup) => {
 
-        var COUNT = 8;
+        let COUNT = 8;
 
-        describe("A plot pan-zoom stack group", function () {
-            var stacks,
+        describe("A plot pan-zoom stack group", () => {
+            let stacks,
                 group;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 group = new PlotPanZoomStackGroup(COUNT);
                 stacks = [];
                 while (stacks.length < COUNT) {
@@ -41,23 +41,23 @@ define(
                 }
             });
 
-            it("creates a number of separate stacks", function () {
+            it("creates a number of separate stacks", () => {
                 expect(group.getPanZoomStack(0)).toBeDefined();
                 expect(group.getPanZoomStack(COUNT - 1)).toBeDefined();
                 expect(group.getPanZoomStack(COUNT)).toBeUndefined();
             });
 
-            it("synchronizes pan-zoom stack depth", function () {
+            it("synchronizes pan-zoom stack depth", () => {
                 expect(group.getDepth()).toEqual(1);
                 group.getPanZoomStack(1).pushPanZoom([10, 20], [30, 40]);
-                stacks.forEach(function (stack) {
+                stacks.forEach( (stack) => {
                     expect(stack.getDepth()).toEqual(2);
                 });
             });
 
-            it("synchronizes domain but not range", function () {
+            it("synchronizes domain but not range", () => {
                 // Set up different initial states
-                stacks.forEach(function (stack, i) {
+                stacks.forEach( (stack, i) => {
                     stack.pushPanZoom([i, i], [i, i]);
                 });
 
@@ -66,7 +66,7 @@ define(
 
                 // Should changed domain values for all stacks, but
                 // only changed range values for stack 1
-                stacks.forEach(function (stack, i) {
+                stacks.forEach( (stack, i) => {
                     expect(stack.getOrigin())
                         .toEqual([99, i === 1 ? 99 : i]);
                     expect(stack.getDimensions())
@@ -74,17 +74,17 @@ define(
                 });
             });
 
-            it("synchronizes base pan-zoom", function () {
+            it("synchronizes base pan-zoom", () => {
                 group.setBasePanZoom([10, 9], [8, 7]);
-                stacks.forEach(function (stack) {
+                stacks.forEach( (stack) => {
                     expect(stack.getOrigin()).toEqual([10, 9]);
                     expect(stack.getDimensions()).toEqual([8, 7]);
                 });
             });
 
-            it("clears pan-zoom on request", function () {
+            it("clears pan-zoom on request", () => {
                 // Set up different initial states
-                stacks.forEach(function (stack, i) {
+                stacks.forEach( (stack, i) => {
                     stack.pushPanZoom([i, i], [i, i]);
                 });
 
@@ -96,14 +96,14 @@ define(
 
                 // Should be back down to our initial state
                 expect(group.getDepth()).toEqual(1);
-                stacks.forEach(function (stack) {
+                stacks.forEach( (stack) => {
                     expect(stack.getDepth()).toEqual(1);
                 });
             });
 
-            it("pops pan-zoom on request", function () {
+            it("pops pan-zoom on request", () => {
                 // Set up different initial states
-                stacks.forEach(function (stack, i) {
+                stacks.forEach( (stack, i) => {
                     stack.pushPanZoom([i, i], [i, i]);
                 });
 
@@ -115,7 +115,7 @@ define(
 
                 // Should be back down to our initial state
                 expect(group.getDepth()).toEqual(COUNT);
-                stacks.forEach(function (stack) {
+                stacks.forEach( (stack) => {
                     expect(stack.getDepth()).toEqual(COUNT);
                 });
             });

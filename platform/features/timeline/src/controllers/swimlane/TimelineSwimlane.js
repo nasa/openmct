@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Describes a swimlane in a timeline view. This will be
@@ -39,8 +39,8 @@ define(
          * @param configuration the view's configuration object
          * @param {TimelineSwimlane} parent the parent swim lane (if any)
          */
-        function TimelineSwimlane(domainObject, assigner, configuration, parent, index) {
-            var id = domainObject.getId(),
+        const TimelineSwimlane = (domainObject, assigner, configuration, parent, index) => {
+            let id = domainObject.getId(),
                 highlight = false, // Drop highlight (middle)
                 highlightBottom = false, // Drop highlight (lower)
                 idPath = (parent ? parent.idPath : []).concat([domainObject.getId()]),
@@ -50,7 +50,7 @@ define(
                         parent.domainObject.getModel().name + " > ";
 
             // Look up timespan for this object
-            domainObject.useCapability('timespan').then(function (t) {
+            domainObject.useCapability('timespan').then( (t) => {
                 timespan = t;
             });
 
@@ -60,20 +60,20 @@ define(
                  * check to see if its parents are expanded.)
                  * @returns {boolean} true if it is visible
                  */
-                visible: function () {
+                visible: () => {
                     return !parent || (parent.expanded && parent.visible());
                 },
                 /**
                  * Show the Edit Properties dialog.
                  */
-                properties: function () {
+                properties: () => {
                     return domainObject.getCapability("action").perform("properties");
                 },
                 /**
                  * Toggle inclusion of this swimlane's represented object in
                  * the resource graph area.
                  */
-                toggleGraph: function () {
+                toggleGraph: () => {
                     configuration.graph = configuration.graph || {};
                     configuration.graph[id] = !configuration.graph[id];
                     // Assign or release legend color
@@ -86,7 +86,7 @@ define(
                  * @param {boolean} [value] the state to set (if setting)
                  * @returns {boolean} true if included; otherwise false
                  */
-                graph: function (value) {
+                graph: (value) => {
                     // Set if an argument was provided
                     if (arguments.length > 0) {
                         configuration.graph = configuration.graph || {};
@@ -104,7 +104,7 @@ define(
                  * @param {string} [value] the color to set (if setting)
                  * @returns {string} the color for resource graphing
                  */
-                color: function (value) {
+                color: (value) => {
                     // Set if an argument was provided
                     if (arguments.length > 0) {
                         // Defer to the color assigner
@@ -118,7 +118,7 @@ define(
                  * highlight state for this swimlane. True means the body
                  * of the swimlane should be highlighted for drop into.
                  */
-                highlight: function (value) {
+                highlight: (value) => {
                     // Set if an argument was provided
                     if (arguments.length > 0) {
                         highlight = value;
@@ -131,7 +131,7 @@ define(
                  * highlight state for this swimlane. True means the body
                  * of the swimlane should be highlighted for drop after.
                  */
-                highlightBottom: function (value) {
+                highlightBottom: (value) => {
                     // Set if an argument was provided
                     if (arguments.length > 0) {
                         highlightBottom = value;
@@ -143,8 +143,8 @@ define(
                  * Check if a swimlane exceeds the bounds of its parent.
                  * @returns {boolean} true if there is a bounds violation
                  */
-                exceeded: function () {
-                    var parentTimespan = parent && parent.timespan();
+                exceeded: () => {
+                    let parentTimespan = parent && parent.timespan();
                     return timespan && parentTimespan &&
                             (timespan.getStart() < parentTimespan.getStart() ||
                                 timespan.getEnd() > parentTimespan.getEnd());
@@ -152,7 +152,7 @@ define(
                 /**
                  * Get the timespan associated with this swimlane
                  */
-                timespan: function () {
+                timespan: () => {
                     return timespan;
                 },
                 // Expose domain object, expansion state, indentation depth

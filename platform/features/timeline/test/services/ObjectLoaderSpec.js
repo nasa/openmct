@@ -22,28 +22,28 @@
 
 define(
     ['../../src/services/ObjectLoader'],
-    function (ObjectLoader) {
+    (ObjectLoader) => {
 
-        describe("The domain object loader", function () {
-            var mockQ,
+        describe("The domain object loader", () => {
+            let mockQ,
                 mockCallback,
                 mockDomainObjects,
                 testCompositions,
                 objectLoader;
 
-            function asPromise(value) {
+            const asPromise = (value) => {
                 return (value || {}).then ? value : {
-                    then: function (callback) {
+                    then: (callback) => {
                         return asPromise(callback(value));
                     }
                 };
             }
 
-            function lookupObject(id) {
+            const lookupObject = (id) => {
                 return mockDomainObjects[id];
             }
 
-            function fullSubgraph(id) {
+            const fullSubgraph = (id) => {
                 return {
                     domainObject: mockDomainObjects[id],
                     composition: (testCompositions[id] || [])
@@ -51,19 +51,19 @@ define(
                 };
             }
 
-            function addDomainObject(id, children, capabilities) {
-                var mockDomainObject = jasmine.createSpyObj(
+            const addDomainObject = (id, children, capabilities) => {
+                let mockDomainObject = jasmine.createSpyObj(
                     'object-' + id,
                     ['useCapability', 'hasCapability', 'getId']
                 );
 
                 mockDomainObject.getId.andReturn(id);
-                mockDomainObject.useCapability.andCallFake(function (c) {
+                mockDomainObject.useCapability.andCallFake( (c) => {
                     return c === 'composition' ?
                             asPromise(children.map(lookupObject)) :
                             undefined;
                 });
-                mockDomainObject.hasCapability.andCallFake(function (c) {
+                mockDomainObject.hasCapability.andCallFake( (c) => {
                     return (capabilities.indexOf(c) !== -1) || (c === 'composition');
                 });
                 mockDomainObjects[id] = mockDomainObject;
@@ -71,7 +71,7 @@ define(
                 testCompositions[id] = children;
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockQ = jasmine.createSpyObj('$q', ['when', 'all']);
                 mockCallback = jasmine.createSpy('callback');
                 mockDomainObjects = {};
@@ -80,12 +80,12 @@ define(
                 // Provide subset of q's actual behavior which we
                 // expect object loader to really need
                 mockQ.when.andCallFake(asPromise);
-                mockQ.all.andCallFake(function (values) {
-                    var result = [];
-                    function addResult(v) {
+                mockQ.all.andCallFake( (values) => {
+                    let result = [];
+                    const addResult = (v) => {
                         result.push(v);
                     }
-                    function promiseResult(v) {
+                    const promiseResult = (v) => {
                         asPromise(v).then(addResult);
                     }
                     values.forEach(promiseResult);
@@ -105,13 +105,13 @@ define(
 
 
 
-            it("loads sub-graphs of composition hierarchy", function () {
+            it("loads sub-graphs of composition hierarchy", () => {
                 objectLoader.load(mockDomainObjects.a).then(mockCallback);
                 // Should have loaded full graph
                 expect(mockCallback).toHaveBeenCalledWith(fullSubgraph('a'));
             });
 
-            it("filters based on capabilities, if requested", function () {
+            it("filters based on capabilities, if requested", () => {
                 objectLoader.load(mockDomainObjects.a, 'test')
                     .then(mockCallback);
                 // Should have pruned 'b'
@@ -124,8 +124,8 @@ define(
                 });
             });
 
-            it("filters with a function, if requested", function () {
-                function shortName(domainObject) {
+            it("filters with a function, if requested", () => {
+                const shortName = (domainObject) => {
                     return domainObject.getId().length === 1;
                 }
                 objectLoader.load(mockDomainObjects.a, shortName)

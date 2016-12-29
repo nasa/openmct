@@ -25,17 +25,17 @@
  */
 define(
     ["../src/DialogService"],
-    function (DialogService) {
+    (DialogService) => {
 
-        describe("The dialog service", function () {
-            var mockOverlayService,
+        describe("The dialog service", () => {
+            let mockOverlayService,
                 mockQ,
                 mockLog,
                 mockOverlay,
                 mockDeferred,
                 dialogService;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockOverlayService = jasmine.createSpyObj(
                     "overlayService",
                     ["createOverlay"]
@@ -68,27 +68,27 @@ define(
                 );
             });
 
-            it("adds an overlay when user input is requested", function () {
+            it("adds an overlay when user input is requested", () => {
                 dialogService.getUserInput({}, {});
                 expect(mockOverlayService.createOverlay).toHaveBeenCalled();
             });
 
-            it("allows user input to be canceled", function () {
+            it("allows user input to be canceled", () => {
                 dialogService.getUserInput({}, { someKey: "some value" });
                 mockOverlayService.createOverlay.mostRecentCall.args[1].cancel();
                 expect(mockDeferred.reject).toHaveBeenCalled();
                 expect(mockDeferred.resolve).not.toHaveBeenCalled();
             });
 
-            it("passes back the result of user input when confirmed", function () {
-                var value = { someKey: 42 };
+            it("passes back the result of user input when confirmed", () => {
+                let value = { someKey: 42 };
                 dialogService.getUserInput({}, value);
                 mockOverlayService.createOverlay.mostRecentCall.args[1].confirm();
                 expect(mockDeferred.reject).not.toHaveBeenCalled();
                 expect(mockDeferred.resolve).toHaveBeenCalledWith(value);
             });
 
-            it("logs a warning when a dialog is already showing", function () {
+            it("logs a warning when a dialog is already showing", () => {
                 dialogService.getUserInput({}, {});
                 expect(mockLog.warn).not.toHaveBeenCalled();
                 dialogService.getUserInput({}, {});
@@ -96,7 +96,7 @@ define(
                 expect(mockDeferred.reject).toHaveBeenCalled();
             });
 
-            it("can show multiple dialogs if prior ones are dismissed", function () {
+            it("can show multiple dialogs if prior ones are dismissed", () => {
                 dialogService.getUserInput({}, {});
                 expect(mockLog.warn).not.toHaveBeenCalled();
                 mockOverlayService.createOverlay.mostRecentCall.args[1].confirm();
@@ -105,8 +105,8 @@ define(
                 expect(mockDeferred.reject).not.toHaveBeenCalled();
             });
 
-            it("provides an options dialogs", function () {
-                var dialogModel = {};
+            it("provides an options dialogs", () => {
+                let dialogModel = {};
                 dialogService.getUserChoice(dialogModel);
                 expect(mockOverlayService.createOverlay).toHaveBeenCalledWith(
                     'overlay-options',
@@ -120,8 +120,8 @@ define(
             });
 
             it("invokes the overlay service with the correct parameters when" +
-                " a blocking dialog is requested", function () {
-                var dialogModel = {};
+                " a blocking dialog is requested", () => {
+                let dialogModel = {};
                 expect(dialogService.showBlockingMessage(dialogModel)).not.toBe(false);
                 expect(mockOverlayService.createOverlay).toHaveBeenCalledWith(
                     "overlay-blocking-message",
@@ -130,25 +130,25 @@ define(
                 );
             });
 
-            describe("the blocking message dialog", function () {
-                var dialogModel = {};
-                var dialogHandle;
+            describe("the blocking message dialog", () => {
+                let dialogModel = {};
+                let dialogHandle;
 
-                beforeEach(function () {
+                beforeEach( () => {
                     dialogHandle = dialogService.showBlockingMessage(dialogModel);
                 });
 
-                it("returns a handle to the dialog", function () {
+                it("returns a handle to the dialog", () => {
                     expect(dialogHandle).not.toBe(undefined);
                 });
 
-                it("dismissing the dialog dismisses the overlay", function () {
+                it("dismissing the dialog dismisses the overlay", () => {
                     dialogHandle.dismiss();
                     expect(mockOverlay.dismiss).toHaveBeenCalled();
                 });
 
-                it("individual dialogs can be dismissed", function () {
-                    var secondDialogHandle,
+                it("individual dialogs can be dismissed", () => {
+                    let secondDialogHandle,
                         secondMockOverlay;
 
                     dialogHandle.dismiss();

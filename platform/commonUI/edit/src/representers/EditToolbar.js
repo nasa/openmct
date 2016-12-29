@@ -21,13 +21,13 @@
  *****************************************************************************/
 define(
     [],
-    function () {
+    () => {
 
         // Utility functions for reducing truth arrays
-        function and(a, b) {
+        const and = (a, b) => {
             return a && b;
         }
-        function or(a, b) {
+        const or = (a, b) => {
             return a || b;
         }
 
@@ -43,20 +43,20 @@ define(
          * @memberof platform/commonUI/edit
          * @constructor
          */
-        function EditToolbar(structure, commit) {
-            var self = this;
+        class EditToolbar {
+          constructor(structure, commit) {
 
             // Generate a new key for an item's property
-            function addKey(property) {
-                self.properties.push(property);
-                return self.properties.length - 1; // Return index of property
+            const addKey = (property) => {
+                this.properties.push(property);
+                return this.properties.length - 1; // Return index of property
             }
 
             // Invoke all functions in selections with the given name
-            function invoke(method, value) {
+            const invoke = (method, value) => {
                 if (method) {
                     // Make the change in the selection
-                    self.selection.forEach(function (selected) {
+                    this.selection.forEach( (selected) => {
                         if (typeof selected[method] === 'function') {
                             selected[method](value);
                         }
@@ -67,13 +67,13 @@ define(
             }
 
             // Prepare a toolbar item based on current selection
-            function convertItem(item) {
-                var converted = Object.create(item || {});
+            const convertItem = (item) => {
+                let converted = Object.create(item || {});
                 if (item.property) {
                     converted.key = addKey(item.property);
                 }
                 if (item.method) {
-                    converted.click = function (v) {
+                    converted.click =  (v) => {
                         invoke(item.method, v);
                     };
                 }
@@ -81,8 +81,8 @@ define(
             }
 
             // Prepare a toolbar section
-            function convertSection(section) {
-                var converted = Object.create(section || {});
+            const convertSection = (section) => {
+                let converted = Object.create(section || {});
                 converted.items =
                     ((section || {}).items || [])
                             .map(convertItem);
@@ -99,7 +99,7 @@ define(
 
         // Check if all elements of the selection which have this
         // property have the same value for this property.
-        EditToolbar.prototype.isConsistent = function (property) {
+        isConsistent(property) {
             var self = this,
                 consistent = true,
                 observed = false,
@@ -107,12 +107,12 @@ define(
 
             // Check if a given element of the selection is consistent
             // with previously-observed elements for this property.
-            function checkConsistency(selected) {
-                var next;
+            const checkConsistency = (selected) => {
+                let next;
                 // Ignore selections which don't have this property
                 if (selected[property] !== undefined) {
                     // Look up state of this element in the selection
-                    next = self.lookupState(property, selected);
+                    next = this.lookupState(property, selected);
                     // Detect inconsistency
                     if (observed) {
                         consistent = consistent && (next === state);
@@ -121,7 +121,7 @@ define(
                     state = next;
                     observed = true;
                 }
-            }
+            };
 
             // Iterate through selections
             self.selection.forEach(checkConsistency);

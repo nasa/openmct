@@ -22,7 +22,15 @@
 
 define(
     [],
-    function () {
+    () => {
+      
+        // For phantomjs compatibility, for headless testing
+        // (Function.prototype.bind unsupported)
+        const bind = (fn, thisObj) => {
+            return fn.bind ? fn.bind(thisObj) : () => {
+                return fn.apply(thisObj, arguments);
+            };
+        }
 
         /**
          * The PlotTickGenerator provides labels for ticks along the
@@ -36,24 +44,17 @@ define(
          * @param {TelemetryFormatter} formatter used to format (for display)
          *        domain and range values.
          */
-        function PlotTickGenerator(panZoomStack, formatter) {
+        class PlotTickGenerator {
+          constructor(panZoomStack, formatter) {
             this.panZoomStack = panZoomStack;
             this.formatter = formatter;
-        }
-
-        // For phantomjs compatibility, for headless testing
-        // (Function.prototype.bind unsupported)
-        function bind(fn, thisObj) {
-            return fn.bind ? fn.bind(thisObj) : function () {
-                return fn.apply(thisObj, arguments);
-            };
-        }
+          }
 
         // Generate ticks; interpolate from start up to
         // start + span in count steps, using the provided
         // formatter to represent each value.
-        PlotTickGenerator.prototype.generateTicks = function (start, span, count, format) {
-            var step = span / (count - 1),
+        generateTicks(start, span, count, format) {
+            let step = span / (count - 1),
                 result = [],
                 i;
 
@@ -72,8 +73,8 @@ define(
          * @param {number} count the number of ticks
          * @returns {string[]} labels for those ticks
          */
-        PlotTickGenerator.prototype.generateDomainTicks = function (count) {
-            var panZoom = this.panZoomStack.getPanZoom();
+        generateDomainTicks(count) {
+            let panZoom = this.panZoomStack.getPanZoom();
             return this.generateTicks(
                 panZoom.origin[0],
                 panZoom.dimensions[0],
@@ -87,8 +88,8 @@ define(
          * @param {number} count the number of ticks
          * @returns {string[]} labels for those ticks
          */
-        PlotTickGenerator.prototype.generateRangeTicks = function (count) {
-            var panZoom = this.panZoomStack.getPanZoom();
+        generateRangeTicks(count) {
+            let panZoom = this.panZoomStack.getPanZoom();
             return this.generateTicks(
                 panZoom.origin[1],
                 panZoom.dimensions[1],
@@ -96,7 +97,7 @@ define(
                 bind(this.formatter.formatRangeValue, this.formatter)
             );
         };
-
+      }
         return PlotTickGenerator;
     }
 );

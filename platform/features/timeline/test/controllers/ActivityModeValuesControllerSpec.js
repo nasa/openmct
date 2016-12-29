@@ -22,13 +22,13 @@
 
 define(
     ['../../src/controllers/ActivityModeValuesController'],
-    function (ActivityModeValuesController) {
+    (ActivityModeValuesController) => {
 
-        describe("An Activity Mode's Values view controller", function () {
-            var testResources,
+        describe("An Activity Mode's Values view controller", () => {
+            let testResources,
                 controller;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testResources = [
                     { key: 'abc', name: "Some name" },
                     { key: 'def', name: "Test type", units: "Test units" },
@@ -37,13 +37,13 @@ define(
                 controller = new ActivityModeValuesController(testResources);
             });
 
-            it("exposes resource metadata by key", function () {
+            it("exposes resource metadata by key", () => {
                 expect(controller.metadata('abc')).toEqual(testResources[0]);
                 expect(controller.metadata('def')).toEqual(testResources[1]);
                 expect(controller.metadata('xyz')).toEqual(testResources[2]);
             });
 
-            it("exposes no metadata for unknown keys", function () {
+            it("exposes no metadata for unknown keys", () => {
                 expect(controller.metadata('???')).toBeUndefined();
             });
         });

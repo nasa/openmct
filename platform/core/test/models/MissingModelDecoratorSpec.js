@@ -22,22 +22,22 @@
 
 define(
     ["../../src/models/MissingModelDecorator"],
-    function (MissingModelDecorator) {
+    (MissingModelDecorator) => {
 
-        describe("The missing model decorator", function () {
-            var mockModelService,
+        describe("The missing model decorator", () => {
+            let mockModelService,
                 testModels,
                 decorator;
 
-            function asPromise(value) {
+            const asPromise = (value) => {
                 return (value || {}).then ? value : {
-                    then: function (callback) {
+                    then: (callback) => {
                         return asPromise(callback(value));
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockModelService = jasmine.createSpyObj(
                     "modelService",
                     ["getModels"]
@@ -52,14 +52,14 @@ define(
                 decorator = new MissingModelDecorator(mockModelService);
             });
 
-            it("delegates to the wrapped model service", function () {
+            it("delegates to the wrapped model service", () => {
                 decorator.getModels(['a', 'b', 'c']);
                 expect(mockModelService.getModels)
                     .toHaveBeenCalledWith(['a', 'b', 'c']);
             });
 
-            it("provides models for any IDs which are missing", function () {
-                var models;
+            it("provides models for any IDs which are missing", () => {
+                let models;
                 decorator.getModels(['testId', 'otherId'])
                     .then(function (m) {
                         models = m;
@@ -67,8 +67,8 @@ define(
                 expect(models.otherId).toBeDefined();
             });
 
-            it("does not overwrite existing models", function () {
-                var models;
+            it("does not overwrite existing models", () => {
+                let models;
                 decorator.getModels(['testId', 'otherId'])
                     .then(function (m) {
                         models = m;
@@ -76,7 +76,7 @@ define(
                 expect(models.testId).toEqual({ someKey: "some value" });
             });
 
-            it("does not modify the wrapped service's response", function () {
+            it("does not modify the wrapped service's response", () => {
                 decorator.getModels(['testId', 'otherId']);
                 expect(testModels.otherId).toBeUndefined();
             });

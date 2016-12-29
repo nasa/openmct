@@ -22,10 +22,10 @@
 
 define(
     ['./TextProxy'],
-    function (TextProxy) {
+    (TextProxy) => {
 
         // Method names to expose from this proxy
-        var HIDE = 'hideTitle', SHOW = 'showTitle';
+        let HIDE = 'hideTitle', SHOW = 'showTitle';
 
         /**
          * Selection proxy for telemetry elements in a fixed position view.
@@ -41,11 +41,11 @@ define(
          * @param {Array} elements the full array of elements
          * @augments {platform/features/layout.ElementProxy}
          */
-        function TelemetryProxy(element, index, elements) {
-            var proxy = new TextProxy(element, index, elements);
+        const TelemetryProxy = (element, index, elements) => {
+            let proxy = new TextProxy(element, index, elements);
 
             // Toggle the visibility of the title
-            function toggle() {
+            const toggle = () => {
                 // Toggle the state
                 element.titled = !element.titled;
 

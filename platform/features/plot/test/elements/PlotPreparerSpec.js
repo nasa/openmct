@@ -25,29 +25,29 @@
  */
 define(
     ["../../src/elements/PlotPreparer"],
-    function (PlotPreparer) {
+    (PlotPreparer) => {
 
-        var START = 123456;
+        let START = 123456;
 
-        describe("A plot preparer", function () {
+        describe("A plot preparer", () => {
 
-            function makeMockData(scale) {
-                var mockData = jasmine.createSpyObj(
+            const makeMockData = (scale) => {
+                let mockData = jasmine.createSpyObj(
                     "data" + scale,
                     ["getPointCount", "getDomainValue", "getRangeValue"]
                 );
                 mockData.getPointCount.andReturn(1000);
-                mockData.getDomainValue.andCallFake(function (i) {
+                mockData.getDomainValue.andCallFake( (i) => {
                     return START + i * 1000;
                 });
-                mockData.getRangeValue.andCallFake(function (i) {
+                mockData.getRangeValue.andCallFake( (i) => {
                     return Math.sin(i / 100) * scale;
                 });
                 return mockData;
             }
 
-            it("fits to provided data sets", function () {
-                var datas = [1, 2, 3].map(makeMockData),
+            it("fits to provided data sets", () => {
+                let datas = [1, 2, 3].map(makeMockData),
                     preparer = new PlotPreparer(datas);
 
                 expect(preparer.getDomainOffset()).toEqual(START);
@@ -57,8 +57,8 @@ define(
                 expect(preparer.getDimensions()[1]).toBeCloseTo(6, 3);
             });
 
-            it("looks up values using a specified domain and range", function () {
-                var datas = [makeMockData(1)],
+            it("looks up values using a specified domain and range", () => {
+                let datas = [makeMockData(1)],
                     preparer = new PlotPreparer(datas, "testDomain", "testRange");
 
                 expect(preparer).toBeDefined();
@@ -74,15 +74,15 @@ define(
                 );
             });
 
-            it("provides a default range if data set is flat", function () {
-                var datas = [makeMockData(0)],
+            it("provides a default range if data set is flat", () => {
+                let datas = [makeMockData(0)],
                     preparer = new PlotPreparer(datas);
 
                 expect(preparer.getDimensions[1]).not.toEqual(0);
             });
 
-            it("provides buffers", function () {
-                var datas = [makeMockData(0)],
+            it("provides buffers", () => {
+                let datas = [makeMockData(0)],
                     preparer = new PlotPreparer(datas);
                 expect(preparer.getBuffers()[0] instanceof Float32Array)
                     .toBeTruthy();

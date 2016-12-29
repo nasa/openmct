@@ -21,50 +21,50 @@
  *****************************************************************************/
 /*global define,describe,it,expect,beforeEach,jasmine*/
 
-define(["../../src/services/NestedTransaction"], function (NestedTransaction) {
-    var TRANSACTION_METHODS = ['add', 'commit', 'cancel', 'size'];
+define(["../../src/services/NestedTransaction"], (NestedTransaction) => {
+    let TRANSACTION_METHODS = ['add', 'commit', 'cancel', 'size'];
 
-    describe("A NestedTransaction", function () {
-        var mockTransaction,
+    describe("A NestedTransaction", () => {
+        let mockTransaction,
             nestedTransaction;
 
-        beforeEach(function () {
+        beforeEach( () => {
             mockTransaction =
                 jasmine.createSpyObj('transaction', TRANSACTION_METHODS);
             nestedTransaction = new NestedTransaction(mockTransaction);
         });
 
-        it("exposes a Transaction's interface", function () {
-            TRANSACTION_METHODS.forEach(function (method) {
+        it("exposes a Transaction's interface", () => {
+            TRANSACTION_METHODS.forEach( (method) => {
                 expect(nestedTransaction[method])
                     .toEqual(jasmine.any(Function));
             });
         });
 
-        describe("when callbacks are added", function () {
-            var mockCommit,
+        describe("when callbacks are added", () => {
+            let mockCommit,
                 mockCancel,
                 remove;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockCommit = jasmine.createSpy('commit');
                 mockCancel = jasmine.createSpy('cancel');
                 remove = nestedTransaction.add(mockCommit, mockCancel);
             });
 
-            it("does not interact with its parent transaction", function () {
-                TRANSACTION_METHODS.forEach(function (method) {
+            it("does not interact with its parent transaction", () => {
+                TRANSACTION_METHODS.forEach( (method) => {
                     expect(mockTransaction[method])
                         .not.toHaveBeenCalled();
                 });
             });
 
-            describe("and the transaction is committed", function () {
-                beforeEach(function () {
+            describe("and the transaction is committed", () => {
+                beforeEach( () => {
                     nestedTransaction.commit();
                 });
 
-                it("adds to its parent transaction", function () {
+                it("adds to its parent transaction", () => {
                     expect(mockTransaction.add).toHaveBeenCalledWith(
                         jasmine.any(Function),
                         jasmine.any(Function)

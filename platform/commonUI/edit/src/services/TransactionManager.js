@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([], () => {
     /**
      * Manages transactions to support the TransactionalPersistenceCapability.
      * This assumes that all commit/cancel callbacks for a given domain
@@ -29,7 +29,8 @@ define([], function () {
      * @constructor
      * @memberof platform/commonUI/edit
      */
-    function TransactionManager(transactionService) {
+    class TransactionManager {
+      constructor(transactionService) {
         this.transactionService = transactionService;
         this.clearTransactionFns = {};
     }
@@ -38,7 +39,7 @@ define([], function () {
      * Check if a transaction is currently active.
      * @returns {boolean} true if there is a transaction active
      */
-    TransactionManager.prototype.isActive = function () {
+    isActive() {
         return this.transactionService.isActive();
     };
 
@@ -49,9 +50,9 @@ define([], function () {
      * @param {string} id the identifier of the domain object to check
      * @returns {boolean} true if callbacks have been added
      */
-    TransactionManager.prototype.isScheduled = function (id) {
+    isScheduled(id) {
         return !!this.clearTransactionFns[id];
-    };
+    }
 
     /**
      * Add callbacks associated with this domain object to the active
@@ -65,15 +66,11 @@ define([], function () {
      * @param {Function} onCommit behavior to invoke when committing transaction
      * @param {Function} onCancel behavior to invoke when cancelling transaction
      */
-    TransactionManager.prototype.addToTransaction = function (
-        id,
-        onCommit,
-        onCancel
-    ) {
-        var release = this.releaseClearFn.bind(this, id);
+    addToTransaction(id,onCommit,onCancel) {
+        let release = this.releaseClearFn.bind(this, id);
 
-        function chain(promiseFn, nextFn) {
-            return function () {
+        const chain = (promiseFn, nextFn) => {
+            return  () => {
                 return promiseFn().then(nextFn);
             };
         }
@@ -92,12 +89,12 @@ define([], function () {
      * active transaction.
      * @param {string} id the identifier for the domain object
      */
-    TransactionManager.prototype.clearTransactionsFor = function (id) {
+    clearTransactionsFor(id) {
         if (this.isScheduled(id)) {
             this.clearTransactionFns[id]();
             this.releaseClearFn(id);
         }
-    };
+    }
 
     /**
      * Release the cached "remove from transaction" function that has been
@@ -105,9 +102,10 @@ define([], function () {
      * @param {string} id the identifier for the domain object
      * @private
      */
-    TransactionManager.prototype.releaseClearFn = function (id) {
+    releaseClearFn(id) {
         delete this.clearTransactionFns[id];
-    };
-
+    }
+  }
     return TransactionManager;
+  }
 });

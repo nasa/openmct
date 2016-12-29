@@ -22,7 +22,7 @@
 
 define(
     ['./ElementProxy', './AccessorMutator'],
-    function (ElementProxy, AccessorMutator) {
+    (ElementProxy, AccessorMutator) => {
 
         /**
          * Selection proxy for Image elements in a fixed position view.
@@ -38,8 +38,8 @@ define(
          * @param {Array} elements the full array of elements
          * @augments {platform/features/layout.ElementProxy}
          */
-        function ImageProxy(element, index, elements) {
-            var proxy = new ElementProxy(element, index, elements);
+        const ImageProxy = (element, index, elements) => {
+            let proxy = new ElementProxy(element, index, elements);
 
             /**
              * Get and/or set the displayed text of this element.

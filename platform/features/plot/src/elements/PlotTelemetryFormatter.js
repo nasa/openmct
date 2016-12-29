@@ -22,9 +22,9 @@
 
 define(
     [],
-    function () {
+    () => {
 
-        var DIGITS = 3;
+        let DIGITS = 3;
 
         /**
          * Wraps a `TelemetryFormatter` to provide formats for domain and
@@ -37,15 +37,16 @@ define(
          * @param {TelemetryFormatter} telemetryFormatter the formatter
          *        to wrap.
          */
-        function PlotTelemetryFormatter(telemetryFormatter) {
+        class PlotTelemetryFormatter {
+          constructor(telemetryFormatter) {
             this.telemetryFormatter = telemetryFormatter;
-        }
+          }
 
         /**
          * Specify the format to use for domain values.
          * @param {string} key the format's identifier
          */
-        PlotTelemetryFormatter.prototype.setDomainFormat = function (key) {
+        setDomainFormat(key) {
             this.domainFormat = key;
         };
 
@@ -53,16 +54,16 @@ define(
          * Specify the format to use for range values.
          * @param {string} key the format's identifier
          */
-        PlotTelemetryFormatter.prototype.setRangeFormat = function (key) {
+        setRangeFormat(key) {
             this.rangeFormat = key;
         };
 
-        PlotTelemetryFormatter.prototype.formatDomainValue = function (value) {
+        formatDomainValue(value) {
             return this.telemetryFormatter
                 .formatDomainValue(value, this.domainFormat);
         };
 
-        PlotTelemetryFormatter.prototype.formatRangeValue = function (value) {
+        formatRangeValue(value) {
             if (typeof value === 'number') {
                 return value.toFixed(DIGITS);
             }
@@ -70,7 +71,7 @@ define(
             return this.telemetryFormatter
                 .formatRangeValue(value, this.rangeFormat);
         };
-
+      }
         return PlotTelemetryFormatter;
     }
 );

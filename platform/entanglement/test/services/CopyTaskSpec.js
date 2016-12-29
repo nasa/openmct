@@ -26,21 +26,21 @@ define(
         '../../src/services/CopyTask',
         '../DomainObjectFactory'
     ],
-    function (CopyTask, domainObjectFactory) {
+     (CopyTask, domainObjectFactory) => {
 
-        var ID_A = "some-string-with-vaguely-uuidish-uniqueness",
+        let ID_A = "some-string-with-vaguely-uuidish-uniqueness",
             ID_B = "some-other-similarly-unique-string";
 
-        function synchronousPromise(value) {
+        const synchronousPromise = (value) => {
             return (value && value.then) ? value : {
-                then: function (callback) {
+                then: (callback) => {
                     return synchronousPromise(callback(value));
                 }
             };
         }
 
-        describe("CopyTask", function () {
-            var mockDomainObject,
+        describe("CopyTask", () =>  {
+            let mockDomainObject,
                 mockParentObject,
                 mockFilter,
                 mockQ,
@@ -50,8 +50,8 @@ define(
                 cloneIds,
                 task;
 
-            function makeMockCapabilities(childIds) {
-                var mockCapabilities = {
+            const makeMockCapabilities = (childIds) => {
+                let mockCapabilities = {
                         persistence: jasmine.createSpyObj(
                             'persistence',
                             ['persist']
@@ -65,7 +65,7 @@ define(
                             ['instantiate', 'invoke']
                         )
                     },
-                    mockChildren = (childIds || []).map(function (id) {
+                    mockChildren = (childIds || []).map( (id) => {
                         return domainObjectFactory({
                             id: id,
                             capabilities: makeMockCapabilities([]),
@@ -75,14 +75,14 @@ define(
 
                 mockCapabilities.persistence.persist
                     .andReturn(synchronousPromise(true));
-                mockCapabilities.composition.add.andCallFake(function (obj) {
+                mockCapabilities.composition.add.andCallFake( (obj) => {
                     return synchronousPromise(obj);
                 });
                 mockCapabilities.composition.invoke
                     .andReturn(synchronousPromise(mockChildren));
                 mockCapabilities.instantiation.invoke
-                    .andCallFake(function (model) {
-                        var id = "some-id-" + counter;
+                    .andCallFake( (model) => {
+                        let id = "some-id-" + counter;
                         cloneIds[model.originalId] = id;
                         counter += 1;
                         return domainObjectFactory({
@@ -95,7 +95,7 @@ define(
                 return mockCapabilities;
             }
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 counter = 0;
                 cloneIds = {};
 
@@ -127,17 +127,17 @@ define(
 
                 mockQ.when.andCallFake(synchronousPromise);
                 mockQ.defer.andReturn(mockDeferred);
-                mockQ.all.andCallFake(function (promises) {
-                    return synchronousPromise(promises.map(function (promise) {
-                        var value;
-                        promise.then(function (v) {
+                mockQ.all.andCallFake( (promises) => {
+                    return synchronousPromise(promises.map( (promise) => {
+                        let value;
+                        promise.then( (v) => {
                             value = v;
                         });
                         return value;
                     }));
                 });
 
-                mockDeferred.resolve.andCallFake(function (value) {
+                mockDeferred.resolve.andCallFake( (value) => {
                     mockDeferred.promise = synchronousPromise(value);
                 });
 
@@ -145,10 +145,10 @@ define(
             });
 
 
-            describe("produces models which", function () {
-                var model;
+            describe("produces models which", () =>  {
+                let model;
 
-                beforeEach(function () {
+                beforeEach(() =>  {
                     task = new CopyTask(
                         mockDomainObject,
                         mockParentObject,
@@ -156,46 +156,46 @@ define(
                         mockQ
                     );
 
-                    task.perform().then(function (clone) {
+                    task.perform().then( (clone) => {
                         model = clone.getModel();
                     });
                 });
 
-                it("contain rewritten identifiers in arrays", function () {
+                it("contain rewritten identifiers in arrays", () =>  {
                     expect(model.someArr)
-                        .toEqual(testModel.someArr.map(function (id) {
+                        .toEqual(testModel.someArr.map( (id) => {
                             return cloneIds[id];
                         }));
                 });
 
-                it("contain rewritten identifiers in properties", function () {
+                it("contain rewritten identifiers in properties", () =>  {
                     expect(model.someObj.someProperty)
                         .toEqual(cloneIds[testModel.someObj.someProperty]);
                 });
 
 
-                it("contain rewritten identifiers in property names", function () {
+                it("contain rewritten identifiers in property names", () =>  {
                     expect(model.someObj[cloneIds[ID_A]])
                         .toEqual(testModel.someObj[ID_A]);
                 });
 
-                it("contain rewritten identifiers in single-element arrays", function () {
+                it("contain rewritten identifiers in single-element arrays", () =>  {
                     expect(model.singleElementArr)
-                        .toEqual(testModel.singleElementArr.map(function (id) {
+                        .toEqual(testModel.singleElementArr.map( (id) => {
                             return cloneIds[id];
                         }));
                 });
             });
 
             describe("copies object trees with multiple references to the" +
-                " same object", function () {
-                var mockDomainObjectB,
+                " same object", () =>  {
+                let mockDomainObjectB,
                     mockComposingObject,
                     composingObjectModel,
                     domainObjectClone,
                     domainObjectBClone;
 
-                beforeEach(function () {
+                beforeEach(() =>  {
                     mockDomainObjectB = domainObjectFactory({
                         capabilities: makeMockCapabilities(testModel.composition),
                         model: testModel
@@ -229,8 +229,8 @@ define(
                  * because they are each now referencing different child
                  * objects. This tests the issue reported in #428
                  */
-                it(" and correctly updates child identifiers in models ", function () {
-                    var childA_ID = task.clones[0].getId(),
+                it(" and correctly updates child identifiers in models ", () =>  {
+                    let childA_ID = task.clones[0].getId(),
                         childB_ID = task.clones[1].getId(),
                         childC_ID = task.clones[3].getId(),
                         childD_ID = task.clones[4].getId();
@@ -251,8 +251,8 @@ define(
                  * This a bug found in testathon when testing issue #428
                  */
                 it(" and correctly updates child identifiers in object" +
-                    " arrays within models ", function () {
-                    var childA_ID = task.clones[0].getId(),
+                    " arrays within models ", () =>  {
+                    let childA_ID = task.clones[0].getId(),
                         childB_ID = task.clones[1].getId();
 
                     expect(domainObjectClone.model.objArr[0].id).not.toBe(ID_A);

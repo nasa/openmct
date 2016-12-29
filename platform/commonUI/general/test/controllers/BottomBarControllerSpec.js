@@ -22,24 +22,24 @@
 
 define(
     ["../../src/controllers/BottomBarController"],
-    function (BottomBarController) {
+    (BottomBarController) => {
 
-        describe("The bottom bar controller", function () {
-            var testIndicators,
+        describe("The bottom bar controller", () => {
+            let testIndicators,
                 testIndicatorA,
                 testIndicatorB,
                 testIndicatorC,
                 mockIndicator,
                 controller;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockIndicator = jasmine.createSpyObj(
                     "indicator",
                     ["getGlyph", "getCssClass", "getText"]
                 );
 
                 testIndicatorA = {};
-                testIndicatorB = function () {
+                testIndicatorB = () => {
                     return mockIndicator;
                 };
                 testIndicatorC = { template: "someTemplate" };
@@ -53,21 +53,21 @@ define(
                 controller = new BottomBarController(testIndicators);
             });
 
-            it("exposes one indicator description per extension", function () {
+            it("exposes one indicator description per extension", () => {
                 expect(controller.getIndicators().length)
                     .toEqual(testIndicators.length);
             });
 
-            it("uses template field provided, or its own default", function () {
+            it("uses template field provided, or its own default", () => {
                 // "indicator" is the default;
                 // only testIndicatorC overrides this.
-                var indicators = controller.getIndicators();
+                let indicators = controller.getIndicators();
                 expect(indicators[0].template).toEqual("indicator");
                 expect(indicators[1].template).toEqual("indicator");
                 expect(indicators[2].template).toEqual("someTemplate");
             });
 
-            it("instantiates indicators given as constructors", function () {
+            it("instantiates indicators given as constructors", () => {
                 // testIndicatorB constructs to mockIndicator
                 expect(controller.getIndicators()[1].ngModel).toBe(mockIndicator);
             });

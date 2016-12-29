@@ -24,9 +24,9 @@ define(
     ["../../src/services/Instantiate"],
     function (Instantiate) {
 
-        describe("The 'instantiate' service", function () {
+        describe("The 'instantiate' service", () =>  {
 
-            var mockCapabilityService,
+            let mockCapabilityService,
                 mockIdentifierService,
                 mockCapabilityConstructor,
                 mockCapabilityInstance,
@@ -36,7 +36,7 @@ define(
                 instantiate,
                 domainObject;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 idCounter = 0;
 
                 mockCapabilityService = jasmine.createSpyObj(
@@ -54,7 +54,7 @@ define(
                 });
                 mockCapabilityConstructor.andReturn(mockCapabilityInstance);
 
-                mockIdentifierService.generate.andCallFake(function (space) {
+                mockIdentifierService.generate.andCallFake( (space) => {
                     return (space ? (space + ":") : "") +
                             "some-id-" + (idCounter += 1);
                 });
@@ -74,29 +74,29 @@ define(
                 domainObject = instantiate(testModel);
             });
 
-            it("loads capabilities from the capability service", function () {
+            it("loads capabilities from the capability service", () =>  {
                 expect(mockCapabilityService.getCapabilities)
                     .toHaveBeenCalledWith(testModel);
             });
 
-            it("exposes loaded capabilities from the created object", function () {
+            it("exposes loaded capabilities from the created object", () =>  {
                 expect(domainObject.getCapability('something'))
                     .toBe(mockCapabilityInstance);
                 expect(mockCapabilityConstructor)
                     .toHaveBeenCalledWith(domainObject);
             });
 
-            it("exposes the provided model", function () {
+            it("exposes the provided model", () =>  {
                 expect(domainObject.getModel()).toEqual(testModel);
             });
 
-            it("provides unique identifiers", function () {
+            it("provides unique identifiers", () =>  {
                 expect(domainObject.getId()).toEqual(jasmine.any(String));
                 expect(instantiate(testModel).getId())
                     .not.toEqual(domainObject.getId());
             });
 
-            it("caches the instantiated model", function () {
+            it("caches the instantiated model", () =>  {
                 expect(mockCacheService.put).toHaveBeenCalledWith(
                     domainObject.getId(),
                     testModel

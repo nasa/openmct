@@ -23,10 +23,10 @@
 define([
     '../../src/policies/MovePolicy',
     '../DomainObjectFactory'
-], function (MovePolicy, domainObjectFactory) {
+], (MovePolicy, domainObjectFactory) => {
 
-    describe("MovePolicy", function () {
-        var testMetadata,
+    describe("MovePolicy", () =>  {
+        let testMetadata,
             testContext,
             mockDomainObject,
             mockParent,
@@ -35,8 +35,8 @@ define([
             mockAction,
             policy;
 
-        beforeEach(function () {
-            var mockContextCapability =
+        beforeEach(() =>  {
+            let mockContextCapability =
                     jasmine.createSpyObj('context', ['getParent']);
 
             mockType =
@@ -61,10 +61,10 @@ define([
 
             mockContextCapability.getParent.andReturn(mockParent);
 
-            mockType.hasFeature.andCallFake(function (feature) {
+            mockType.hasFeature.andCallFake( (feature) => {
                 return feature === 'creation';
             });
-            mockParentType.hasFeature.andCallFake(function (feature) {
+            mockParentType.hasFeature.andCallFake( (feature) => {
                 return feature === 'creation';
             });
 
@@ -76,44 +76,44 @@ define([
             policy = new MovePolicy();
         });
 
-        describe("for move actions", function () {
-            beforeEach(function () {
+        describe("for move actions", () =>  {
+            beforeEach(() =>  {
                 testMetadata.key = 'move';
             });
 
-            describe("when an object is non-modifiable", function () {
-                beforeEach(function () {
+            describe("when an object is non-modifiable", () =>  {
+                beforeEach(() =>  {
                     mockType.hasFeature.andReturn(false);
                 });
 
-                it("disallows the action", function () {
+                it("disallows the action", () =>  {
                     expect(policy.allow(mockAction, testContext)).toBe(false);
                 });
             });
 
-            describe("when a parent is non-modifiable", function () {
-                beforeEach(function () {
+            describe("when a parent is non-modifiable", () =>  {
+                beforeEach(() =>  {
                     mockParentType.hasFeature.andReturn(false);
                 });
 
-                it("disallows the action", function () {
+                it("disallows the action", () =>  {
                     expect(policy.allow(mockAction, testContext)).toBe(false);
                 });
             });
 
-            describe("when an object and its parent are modifiable", function () {
-                it("allows the action", function () {
+            describe("when an object and its parent are modifiable", () =>  {
+                it("allows the action", () =>  {
                     expect(policy.allow(mockAction, testContext)).toBe(true);
                 });
             });
         });
 
-        describe("for other actions", function () {
-            beforeEach(function () {
+        describe("for other actions", () =>  {
+            beforeEach(() =>  {
                 testMetadata.key = 'foo';
             });
 
-            it("simply allows the action", function () {
+            it("simply allows the action", () =>  {
                 expect(policy.allow(mockAction, testContext)).toBe(true);
                 mockType.hasFeature.andReturn(false);
                 expect(policy.allow(mockAction, testContext)).toBe(true);

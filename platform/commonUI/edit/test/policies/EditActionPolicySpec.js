@@ -22,10 +22,10 @@
 
 define(
     ["../../src/policies/EditActionPolicy"],
-    function (EditActionPolicy) {
+    (EditActionPolicy) => {
 
-        describe("The Edit action policy", function () {
-            var editableView,
+        describe("The Edit action policy", () => {
+            let editableView,
                 nonEditableView,
                 undefinedView,
                 testViews,
@@ -39,7 +39,7 @@ define(
                 plotView,
                 policy;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
                     [
@@ -58,10 +58,10 @@ define(
                 mockEditAction = jasmine.createSpyObj('edit', ['getMetadata']);
                 mockPropertiesAction = jasmine.createSpyObj('edit', ['getMetadata']);
 
-                mockDomainObject.getCapability.andCallFake(function (capability) {
+                mockDomainObject.getCapability.andCallFake( (capability) => {
                     return capabilities[capability];
                 });
-                mockDomainObject.hasCapability.andCallFake(function (capability) {
+                mockDomainObject.hasCapability.andCallFake( (capability) => {
                     return !!capabilities[capability];
                 });
 
@@ -71,7 +71,7 @@ define(
                 plotView = { key: "plot", editable: false };
                 testViews = [];
 
-                mockDomainObject.useCapability.andCallFake(function (c) {
+                mockDomainObject.useCapability.andCallFake( (c) => {
                     // Provide test views, only for the view capability
                     return c === 'view' && testViews;
                 });
@@ -87,42 +87,42 @@ define(
                 policy = new EditActionPolicy();
             });
 
-            it("allows the edit action when there are editable views", function () {
+            it("allows the edit action when there are editable views", () => {
                 testViews = [editableView];
                 expect(policy.allow(mockEditAction, testContext)).toBe(true);
             });
 
-            it("allows the edit properties action when there are no editable views", function () {
+            it("allows the edit properties action when there are no editable views", () => {
                 testViews = [nonEditableView, nonEditableView];
                 expect(policy.allow(mockPropertiesAction, testContext)).toBe(true);
             });
 
-            it("disallows the edit action when there are no editable views", function () {
+            it("disallows the edit action when there are no editable views", () => {
                 testViews = [nonEditableView, nonEditableView];
                 expect(policy.allow(mockEditAction, testContext)).toBe(false);
             });
 
             it("disallows the edit properties action when there are" +
-                " editable views", function () {
+                " editable views", () => {
                 testViews = [editableView];
                 expect(policy.allow(mockPropertiesAction, testContext)).toBe(false);
             });
 
             it("disallows the edit action when object is already being" +
-                " edited", function () {
+                " edited", () => {
                 testViews = [editableView];
                 mockEditorCapability.isEditContextRoot.andReturn(true);
                 expect(policy.allow(mockEditAction, testContext)).toBe(false);
             });
 
-            it("allows editing of panels in plot view", function () {
+            it("allows editing of panels in plot view", () => {
                 testViews = [plotView];
                 mockTypeCapability.getKey.andReturn('telemetry.panel');
 
                 expect(policy.allow(mockEditAction, testContext)).toBe(true);
             });
 
-            it("disallows editing of plot view when object not a panel type", function () {
+            it("disallows editing of plot view when object not a panel type", () => {
                 testViews = [plotView];
                 mockTypeCapability.getKey.andReturn('something.else');
 
@@ -130,7 +130,7 @@ define(
             });
 
 
-            it("allows the edit properties outside of the 'view-control' category", function () {
+            it("allows the edit properties outside of the 'view-control' category", () => {
                 testViews = [nonEditableView];
                 testContext.category = "something-else";
                 expect(policy.allow(mockPropertiesAction, testContext)).toBe(true);

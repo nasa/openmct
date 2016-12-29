@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(function () {
+define( () => {
 
     /**
      * Implements the `reverse` filter, which reverses text strings.
@@ -32,7 +32,7 @@ define(function () {
      * @constructor
      * @memberof platform/commonUI/general
      */
-    function ReverseFilter() {
+    const ReverseFilter = () => {
         return function reverse(value) {
             return value && value.toString().split('').reverse().join('');
         };

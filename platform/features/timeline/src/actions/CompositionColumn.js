@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([], () => {
 
     /**
      * A column containing references to other objects contained
@@ -33,22 +33,23 @@ define([], function () {
      * @constructor
      * @implements {platform/features/timeline.TimelineCSVColumn}
      */
-    function CompositionColumn(index, idMap) {
+    class CompositionColumn {
+      constructor(index, idMap) {
         this.index = index;
         this.idMap = idMap;
-    }
+      }
 
-    CompositionColumn.prototype.name = function () {
+    name() {
         return "Child " + (this.index + 1);
     };
 
-    CompositionColumn.prototype.value = function (domainObject) {
-        var model = domainObject.getModel(),
+    value(domainObject) {
+        let model = domainObject.getModel(),
             composition = model.composition || [];
 
         return composition.length > this.index ?
             this.idMap[composition[this.index]] : "";
     };
-
+  }
     return CompositionColumn;
 });

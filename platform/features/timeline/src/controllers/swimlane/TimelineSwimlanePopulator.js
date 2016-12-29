@@ -27,27 +27,27 @@ define(
         './TimelineColorAssigner',
         './TimelineProxy'
     ],
-    function (
+    (
         TimelineSwimlane,
         TimelineSwimlaneDecorator,
         TimelineColorAssigner,
         TimelineProxy
-    ) {
+    ) => {
 
         /**
          * Populates and maintains a list of swimlanes for a given
          * timeline view.
          * @constructor
          */
-        function TimelineSwimlanePopulator(objectLoader, configuration, selection) {
-            var swimlanes = [],
+        const TimelineSwimlanePopulator = (objectLoader, configuration, selection) => {
+            let swimlanes = [],
                 start = Number.POSITIVE_INFINITY,
                 end = Number.NEGATIVE_INFINITY,
                 assigner,
                 lastDomainObject;
 
             // Track extremes of start/end times
-            function trackStartEnd(timespan) {
+            const trackStartEnd = (timespan) => {
                 if (timespan) {
                     start = Math.min(start, timespan.getStart());
                     end = Math.max(end, timespan.getEnd());
@@ -55,12 +55,12 @@ define(
             }
 
             // Add domain object (and its subgraph) in as swimlanes
-            function populateSwimlanes(subgraph, parent, index) {
-                var domainObject = subgraph.domainObject,
+            const populateSwimlanes = (subgraph, parent, index) => {
+                let domainObject = subgraph.domainObject,
                     swimlane;
 
                 // For the recursive step
-                function populate(childSubgraph, nextIndex) {
+                const populate = (childSubgraph, nextIndex) => {
                     populateSwimlanes(childSubgraph, swimlane, nextIndex);
                 }
 
@@ -86,16 +86,16 @@ define(
             }
 
             // Restore a selection
-            function reselect(path, candidates, depth) {
+            const reselect = (path, candidates, depth) => {
                 // Next ID on the path
-                var next = path[depth || 0];
+                let next = path[depth || 0];
 
                 // Ensure a default
                 depth = depth || 0;
 
                 // Search through this layer of candidates to see
                 // if they might contain our selection (based on id path)
-                candidates.forEach(function (swimlane) {
+                candidates.forEach( (swimlane) => {
                     // Check if we're on the right path...
                     if (swimlane.id === next) {
                         // Do we still have ids to check?
@@ -111,10 +111,10 @@ define(
             }
 
             // Handle population of swimlanes
-            function recalculateSwimlanes(domainObject) {
-                function populate(subgraph) {
+            const recalculateSwimlanes = (domainObject) => {
+                const populate = (subgraph) => {
                     // Cache current selection state during refresh
-                    var selected = selection && selection.get(),
+                    let selected = selection && selection.get(),
                         selectedIdPath = selected && selected.idPath;
 
                     // Clear existing swimlanes
@@ -146,13 +146,13 @@ define(
                 lastDomainObject = domainObject;
             }
 
-            function setSelectionObject(s) {
+            const setSelectionObject = (s) => {
                 selection = s;
                 recalculateSwimlanes(lastDomainObject);
             }
 
-            function initialize() {
-                var colors = (configuration.colors || {});
+            const initialize = () => {
+                let colors = (configuration.colors || {});
                 assigner = new TimelineColorAssigner(colors);
                 configuration.colors = colors;
                 recalculateSwimlanes(lastDomainObject);
@@ -178,21 +178,21 @@ define(
                  * Get a list of swimlanes for this timeline view.
                  * @returns {TimelineSwimlane[]} current swimlanes
                  */
-                get: function () {
+                get: () => {
                     return swimlanes;
                 },
                 /**
                  * Get the first timestamp in the set of swimlanes.
                  * @returns {number} first timestamp
                  */
-                start: function () {
+                start: () => {
                     return start;
                 },
                 /**
                  * Get the last timestamp in the set of swimlanes.
                  * @returns {number} first timestamp
                  */
-                end: function () {
+                end: () => {
                     return end;
                 },
                 /**
@@ -200,7 +200,7 @@ define(
                  * swimlane configuration)
                  * @param newConfig
                  */
-                configure: function (newConfig) {
+                configure: (newConfig) => {
                     configuration = newConfig;
                     initialize();
                 }

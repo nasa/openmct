@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The LoggingActionDecorator decorates an ActionService such that
@@ -38,24 +38,25 @@ define(
          * @param $log Angular's logging service
          * @param {ActionService} actionService the decorated action service
          */
-        function LoggingActionDecorator($log, actionService) {
+        class LoggingActionDecorator {
+          constructor($log, actionService) {
             this.$log = $log;
             this.actionService = actionService;
         }
 
-        LoggingActionDecorator.prototype.getActions = function () {
-            var actionService = this.actionService,
+        getActions() {
+            let actionService = this.actionService,
                 $log = this.$log;
 
             // Decorate the perform method of the specified action, such that
             // it emits a log message whenever performed.
-            function addLogging(action) {
-                var logAction = Object.create(action),
+            const addLogging = (action) => {
+                let logAction = Object.create(action),
                     metadata = action.getMetadata() || {},
                     context = metadata.context || {},
                     domainObject = context.domainObject;
 
-                logAction.perform = function () {
+                logAction.perform = () => {
                     $log.info([
                         "Performing action ",
                         metadata.key,
@@ -73,7 +74,7 @@ define(
                 arguments
             ).map(addLogging);
         };
-
+      }
         return LoggingActionDecorator;
     }
 );

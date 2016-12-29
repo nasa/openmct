@@ -24,9 +24,10 @@ define([
     'zepto',
     './TreeNodeView',
     'text!../../res/templates/tree/wait-node.html'
-], function ($, TreeNodeView, spinnerTemplate) {
+], ($, TreeNodeView, spinnerTemplate) => {
 
-    function TreeView(gestureService, selectFn) {
+    class TreeView {
+      constructor(gestureService, selectFn) {
         this.ul = $('<ul class="tree"></ul>');
         this.nodeViews = [];
         this.callbacks = [];
@@ -35,12 +36,12 @@ define([
         this.pending = false;
     }
 
-    TreeView.prototype.newTreeView = function () {
+    newTreeView() {
         return new TreeView(this.gestureService, this.selectFn);
     };
 
-    TreeView.prototype.setSize = function (sz) {
-        var nodeView;
+    setSize(sz) {
+        let nodeView;
 
         while (this.nodeViews.length < sz) {
             nodeView = new TreeNodeView(
@@ -58,25 +59,24 @@ define([
         }
     };
 
-    TreeView.prototype.loadComposition = function () {
-        var self = this,
-            domainObject = this.activeObject;
+    loadComposition() {
+        var domainObject = this.activeObject;
 
-        function addNode(domainObj, index) {
-            self.nodeViews[index].model(domainObj);
+        const addNode = (domainObj, index) => {
+            this.nodeViews[index].model(domainObj);
         }
 
-        function addNodes(domainObjects) {
-            if (self.pending) {
-                self.pending = false;
-                self.nodeViews = [];
-                self.ul.empty();
+        const addNodes = (domainObjects) => {
+            if (this.pending) {
+                this.pending = false;
+                this.nodeViews = [];
+                this.ul.empty();
             }
 
-            if (domainObject === self.activeObject) {
-                self.setSize(domainObjects.length);
+            if (domainObject === this.activeObject) {
+                this.setSize(domainObjects.length);
                 domainObjects.forEach(addNode);
-                self.updateNodeViewSelection();
+                this.updateNodeViewSelection();
             }
         }
 
@@ -84,7 +84,7 @@ define([
             .then(addNodes);
     };
 
-    TreeView.prototype.model = function (domainObject) {
+    model(domainObject) {
         if (this.unlisten) {
             this.unlisten();
         }
@@ -103,37 +103,36 @@ define([
         }
     };
 
-    TreeView.prototype.updateNodeViewSelection = function () {
-        this.nodeViews.forEach(function (nodeView) {
+    updateNodeViewSelection() {
+        this.nodeViews.forEach( (nodeView) => {
             nodeView.value(this.selectedObject);
-        }.bind(this));
+        });
     };
 
-    TreeView.prototype.value = function (domainObject, event) {
+    value(domainObject, event) {
         this.selectedObject = domainObject;
         this.updateNodeViewSelection();
-        this.callbacks.forEach(function (callback) {
+        this.callbacks.forEach( (callback) => {
             callback(domainObject, event);
         });
     };
 
-    TreeView.prototype.observe = function (callback) {
+    observe(callback) {
         this.callbacks.push(callback);
-        return function () {
-            this.callbacks = this.callbacks.filter(function (c) {
+        return () => {
+            this.callbacks = this.callbacks.filter( (c) => {
                 return c !== callback;
             });
-        }.bind(this);
+        }
     };
 
     /**
      *
      * @returns {HTMLElement[]}
      */
-    TreeView.prototype.elements = function () {
+    elements() {
         return this.ul;
     };
-
-
+  }
     return TreeView;
 });

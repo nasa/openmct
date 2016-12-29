@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Handles business logic (mutation of objects, retrieval of start/end
@@ -33,24 +33,24 @@ define(
          * @param {ObjectLoader} objectLoader service to assist in loading
          *        subtrees
          */
-        function TimelineDragHandler(domainObject, objectLoader) {
-            var timespans = {},
+        const TimelineDragHandler = (domainObject, objectLoader) => {
+            let timespans = {},
                 mutations = {},
                 compositions = {},
                 dirty = {};
 
             // "Cast" a domainObject to an id, if necessary
-            function toId(value) {
+            const toId = (value) => {
                 return (typeof value !== 'string' && value.getId) ?
                         value.getId() : value;
             }
 
             // Get the timespan associated with this domain object
-            function populateCapabilityMaps(object) {
-                var id = object.getId(),
+            const populateCapabilityMaps = (object) => {
+                let id = object.getId(),
                     timespanPromise = object.useCapability('timespan');
                 if (timespanPromise) {
-                    timespanPromise.then(function (timespan) {
+                    timespanPromise.then( (timespan) => {
                         // Cache that timespan
                         timespans[id] = timespan;
                         // And its mutation capability
@@ -62,19 +62,19 @@ define(
             }
 
             // Populate the id->timespan map
-            function populateTimespans(subgraph) {
+            const populateTimespans = (subgraph) => {
                 populateCapabilityMaps(subgraph.domainObject);
                 subgraph.composition.forEach(populateTimespans);
             }
 
             // Persist changes for objects by id (when dragging ends)
-            function finalMutate(id) {
-                var mutation = mutations[id];
+            const finalMutate = (id) => {
+                let mutation = mutations[id];
                 if (mutation) {
                     // Mutate just to update the timestamp (since we
                     // explicitly don't do this during the drag to
                     // avoid firing a ton of refreshes.)
-                    mutation.mutate(function () {});
+                    mutation.mutate(() => {});
                 }
             }
 
@@ -88,14 +88,14 @@ define(
                  * @returns {string[]} ids for all objects which have managed
                  *          timespans here
                  */
-                ids: function () {
+                ids: () => {
                     return Object.keys(timespans).sort();
                 },
                 /**
                  * Persist any changes to timespans that have been made through
                  * this handler.
                  */
-                persist: function () {
+                persist: () => {
                     // Persist every dirty object...
                     Object.keys(dirty).forEach(finalMutate);
                     // Clear out the dirty list
@@ -110,9 +110,9 @@ define(
                  * @param {string|DomainObject} id the domain object to modify
                  * @param {number} [value] the new value
                  */
-                start: function (id, value) {
+                start: (id, value) => {
                     // Convert to domain object id, look up timespan
-                    var timespan = timespans[toId(id)];
+                    let timespan = timespans[toId(id)];
                     // Use as setter if argument is present
                     if ((typeof value === 'number') && timespan) {
                         // Set the start (ensuring that it's non-negative,
@@ -135,9 +135,9 @@ define(
                  * @param {string|DomainObject} id the domain object to modify
                  * @param {number} [value] the new value
                  */
-                end: function (id, value) {
+                end: (id, value) => {
                     // Convert to domain object id, look up timespan
-                    var timespan = timespans[toId(id)];
+                    let timespan = timespans[toId(id)];
                     // Use as setter if argument is present
                     if ((typeof value === 'number') && timespan) {
                         // Set the end (ensuring it doesn't precede start)
@@ -159,9 +159,9 @@ define(
                  * @param {string|DomainObject} id the domain object to modify
                  * @param {number} [value] the new value
                  */
-                duration: function (id, value) {
+                duration: (id, value) => {
                     // Convert to domain object id, look up timespan
-                    var timespan = timespans[toId(id)];
+                    let timespan = timespans[toId(id)];
                     // Use as setter if argument is present
                     if ((typeof value === 'number') && timespan) {
                         // Set duration (ensure that it's non-negative)
@@ -180,19 +180,19 @@ define(
                  * @param {string|DomainObject} id the domain object to modify
                  * @param {number} delta the amount by which to change
                  */
-                move: function (id, delta) {
+                move: (id, delta) => {
                     // Overview of algorithm used here:
                     // - Build up list of ids to actually move
                     // - Find the minimum start time
                     // - Change delta so it cannot move minimum past 0
                     // - Update start, then end time
-                    var ids = {},
+                    let ids = {},
                         queue = [toId(id)],
                         minStart;
 
                     // Update start & end, in that order
-                    function updateStartEnd(spanId) {
-                        var timespan = timespans[spanId], start, end;
+                    const updateStartEnd = (spanId) => {
+                        let timespan = timespans[spanId], start, end;
                         if (timespan) {
                             // Get start/end so we don't get fooled by our
                             // own adjustments
@@ -220,14 +220,14 @@ define(
                     }
 
                     // Find the minimum start time
-                    minStart = Object.keys(ids).map(function (spanId) {
+                    minStart = Object.keys(ids).map( (spanId) => {
                         // Get the start time; default to +Inf if not
                         // found, since this will not survive a min
                         // test if any real timespans are present
                         return timespans[spanId] ?
                                 timespans[spanId].getStart() :
                                 Number.POSITIVE_INFINITY;
-                    }).reduce(function (a, b) {
+                    }).reduce( (a, b) => {
                         // Reduce with a minimum test
                         return Math.min(a, b);
                     }, Number.POSITIVE_INFINITY);

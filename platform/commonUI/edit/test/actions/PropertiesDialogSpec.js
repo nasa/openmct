@@ -22,28 +22,28 @@
 
 define(
     ["../../src/actions/PropertiesDialog"],
-    function (PropertiesDialog) {
+    (PropertiesDialog) => {
 
-        describe("Properties dialog", function () {
+        describe("Properties dialog", () => {
 
-            var type, properties, model, dialog;
+            let type, properties, model, dialog;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 type = {
-                    getProperties: function () {
+                    getProperties: () => {
                         return properties;
                     }
                 };
                 model = { x: "initial value" };
-                properties = ["x", "y", "z"].map(function (k) {
+                properties = ["x", "y", "z"].map( (k) => {
                     return {
-                        getValue: function (m) {
+                        getValue: (m) => {
                             return m[k];
                         },
-                        setValue: function (m, v) {
+                        setValue: (m, v) => {
                             m[k] = v;
                         },
-                        getDefinition: function () {
+                        getDefinition: () => {
                             return { control: 'textfield '};
                         }
                     };
@@ -52,17 +52,17 @@ define(
                 dialog = new PropertiesDialog(type, model);
             });
 
-            it("provides sections based on type properties", function () {
+            it("provides sections based on type properties", () => {
                 expect(dialog.getFormStructure().sections[0].rows.length)
                     .toEqual(properties.length);
             });
 
-            it("pulls initial values from object model", function () {
+            it("pulls initial values from object model", () => {
                 expect(dialog.getInitialFormValue()[0])
                     .toEqual("initial value");
             });
 
-            it("populates models with form results", function () {
+            it("populates models with form results", () => {
                 dialog.updateModel(model, [
                     "new value",
                     "other new value",

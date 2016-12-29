@@ -20,9 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [],
-    function () {
+define([], () => {
 
         /**
          * The LogoController provides functionality to the application
@@ -31,7 +29,8 @@ define(
          * @constructor
          * @param {OverlayService} overlayService the overlay service
          */
-        function LogoController(overlayService) {
+        class LogoController {
+          constructor(overlayService) {
             this.overlayService = overlayService;
         }
 
@@ -40,10 +39,10 @@ define(
          * @memberof LogoController#
          * @memberof platform/commonUI/about.LogoController#
          */
-        LogoController.prototype.showAboutDialog = function () {
+        showAboutDialog() {
             this.overlayService.createOverlay("overlay-about");
-        };
-
-        return LogoController;
+        }
+      }
+      return LogoController;
     }
 );

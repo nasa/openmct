@@ -20,8 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+define( () => {
 
         /**
          * Decorates the `telemetryService` such that requests are
@@ -36,52 +35,52 @@ define(
          *        the service which exposes the global time conductor
          * @param {TelemetryService} telemetryService the decorated service
          */
-        function ConductorTelemetryDecorator(openmct, telemetryService) {
+         const amendRequest = (request, bounds, timeSystem) => {
+             request = request || {};
+             request.start = bounds.start;
+             request.end = bounds.end;
+             request.domain = timeSystem.metadata.key;
+
+             return request;
+         }
+         
+        class ConductorTelemetryDecorator {
+          constructor(openmct, telemetryService) {
             this.conductor = openmct.conductor;
             this.telemetryService = telemetryService;
 
             this.amendRequests = ConductorTelemetryDecorator.prototype.amendRequests.bind(this);
         }
 
-        function amendRequest(request, bounds, timeSystem) {
-            request = request || {};
-            request.start = bounds.start;
-            request.end = bounds.end;
-            request.domain = timeSystem.metadata.key;
-
-            return request;
-        }
-
-        ConductorTelemetryDecorator.prototype.amendRequests = function (requests) {
-            var bounds = this.conductor.bounds(),
+        amendRequests(requests) {
+            let bounds = this.conductor.bounds(),
                 timeSystem = this.conductor.timeSystem();
 
-            return (requests || []).map(function (request) {
+            return (requests || []).map( (request) => {
                 return amendRequest(request, bounds, timeSystem);
             });
         };
 
-        ConductorTelemetryDecorator.prototype.requestTelemetry = function (requests) {
+        requestTelemetry(requests) {
             return this.telemetryService
                 .requestTelemetry(this.amendRequests(requests));
         };
 
-        ConductorTelemetryDecorator.prototype.subscribe = function (callback, requests) {
-            var unsubscribeFunc = this.telemetryService.subscribe(callback, this.amendRequests(requests)),
-                conductor = this.conductor,
-                self = this;
+        subscribe(callback, requests) {
+            let unsubscribeFunc = this.telemetryService.subscribe(callback, this.amendRequests(requests)),
+                conductor = this.conductor
 
-            function amendRequests() {
-                return self.amendRequests(requests);
+            const amendRequests = () => {
+                return this.amendRequests(requests);
             }
 
             conductor.on('bounds', amendRequests);
-            return function () {
+            return () => {
                 unsubscribeFunc();
                 conductor.off('bounds', amendRequests);
             };
         };
-
+      }
         return ConductorTelemetryDecorator;
     }
 );

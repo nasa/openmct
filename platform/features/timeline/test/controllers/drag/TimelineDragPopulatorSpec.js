@@ -23,16 +23,16 @@
 
 define(
     ['../../../src/controllers/drag/TimelineDragPopulator'],
-    function (TimelineDragPopulator) {
+    (TimelineDragPopulator) => {
 
-        describe("The timeline drag populator", function () {
-            var mockObjectLoader,
+        describe("The timeline drag populator", () => {
+            let mockObjectLoader,
                 mockPromise,
                 mockSwimlane,
                 mockDomainObject,
                 populator;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockObjectLoader = jasmine.createSpyObj("objectLoader", ["load"]);
                 mockPromise = jasmine.createSpyObj("promise", ["then"]);
                 mockSwimlane = jasmine.createSpyObj("swimlane", ["color"]);
@@ -47,7 +47,7 @@ define(
                 populator = new TimelineDragPopulator(mockObjectLoader);
             });
 
-            it("loads timespans for the represented object's subgraph", function () {
+            it("loads timespans for the represented object's subgraph", () => {
                 populator.populate(mockDomainObject);
                 expect(mockObjectLoader.load).toHaveBeenCalledWith(
                     mockDomainObject,
@@ -55,7 +55,7 @@ define(
                 );
             });
 
-            it("updates handles for selections", function () {
+            it("updates handles for selections", () => {
                 // Ensure we have a represented object context
                 populator.populate(mockDomainObject);
                 // Initially, no selection and no handles

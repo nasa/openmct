@@ -22,7 +22,7 @@
 
 define(
     ['../../TimelineConstants'],
-    function (Constants) {
+    (Constants) => {
 
         /**
          * Handle for changing the start time of a timeline or
@@ -34,11 +34,11 @@ define(
          * @param {TimelineSnapHandler} snapHandler the handler which
          *        provides candidate snap-to locations.
          */
-        function TimelineStartHandle(id, dragHandler, snapHandler) {
-            var initialStart;
+        const TimelineStartHandle = (id, dragHandler, snapHandler) => {
+            let initialStart;
 
             // Get the snap-to location for a timestamp
-            function snap(timestamp, zoom) {
+            const snap = (timestamp, zoom) => {
                 return snapHandler.snap(
                     timestamp,
                     zoom.toMillis(Constants.SNAP_WIDTH),
@@ -50,7 +50,7 @@ define(
                 /**
                  * Start dragging this handle.
                  */
-                begin: function () {
+                begin: () => {
                     // Cache the initial state
                     initialStart = dragHandler.start(id);
                 },
@@ -59,7 +59,7 @@ define(
                  * @param {number} delta pixel delta from start
                  * @param {TimelineZoomController} zoom provider of zoom state
                  */
-                drag: function (delta, zoom) {
+                drag: (delta, zoom) => {
                     if (initialStart !== undefined) {
                         // Update the state
                         dragHandler.start(
@@ -71,7 +71,7 @@ define(
                 /**
                  * Finish dragging this handle.
                  */
-                finish: function () {
+                finish: () => {
                     // Clear initial state
                     initialStart = undefined;
                     // Persist changes
@@ -82,7 +82,7 @@ define(
                  * for this handle.
                  * @param {TimelineZoomController} zoom provider of zoom state
                  */
-                style: function (zoom) {
+                style: (zoom) => {
                     return {
                         left: zoom.toPixels(dragHandler.start(id)) + 'px',
                         width: Constants.HANDLE_WIDTH + 'px'

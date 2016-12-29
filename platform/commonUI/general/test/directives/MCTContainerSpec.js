@@ -22,10 +22,10 @@
 
 define(
     ["../../src/directives/MCTContainer"],
-    function (MCTContainer) {
+    (MCTContainer) => {
 
-        describe("The mct-container directive", function () {
-            var testContainers = [
+        describe("The mct-container directive", () => {
+            let testContainers = [
                     {
                         bundle: { path: "a", resources: "b" },
                         template: "<div>foo</div>",
@@ -40,19 +40,19 @@ define(
                 ],
                 mctContainer;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mctContainer = new MCTContainer(testContainers);
             });
 
-            it("is applicable to elements", function () {
+            it("is applicable to elements", () => {
                 expect(mctContainer.restrict).toEqual("E");
             });
 
-            it("creates a new (non-isolate) scope", function () {
+            it("creates a new (non-isolate) scope", () => {
                 expect(mctContainer.scope).toBe(true);
             });
 
-            it("chooses a template based on key", function () {
+            it("chooses a template based on key", () => {
                 expect(mctContainer.template(
                     undefined,
                     { key: "abc" }
@@ -64,8 +64,8 @@ define(
                 )).toEqual(testContainers[1].template);
             });
 
-            it("copies attributes needed by the container", function () {
-                var scope = {};
+            it("copies attributes needed by the container", () => {
+                let scope = {};
 
                 mctContainer.link(
                     scope,

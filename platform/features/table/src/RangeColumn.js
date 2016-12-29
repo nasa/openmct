@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * A column which will report telemetry range values
@@ -39,17 +39,18 @@ define(
          * @param {TelemetryFormatter} telemetryFormatter the telemetry
          *        formatting service, for making values human-readable.
          */
-        function RangeColumn(rangeMetadata, telemetryFormatter) {
+        class RangeColumn {
+          constructor(rangeMetadata, telemetryFormatter) {
             this.rangeMetadata = rangeMetadata;
             this.telemetryFormatter = telemetryFormatter;
-        }
+          }
 
-        RangeColumn.prototype.getTitle = function () {
+        getTitle() {
             return this.rangeMetadata.name;
         };
 
-        RangeColumn.prototype.getValue = function (domainObject, datum) {
-            var range = this.rangeMetadata.key,
+        getValue(domainObject, datum) {
+            let range = this.rangeMetadata.key,
                 limit = domainObject.getCapability('limit'),
                 value = isNaN(datum[range]) ? datum[range] : parseFloat(datum[range]),
                 alarm = limit && limit.evaluate(datum, range);
@@ -59,7 +60,7 @@ define(
                 text: typeof (value) === 'undefined' ? undefined : this.telemetryFormatter.formatRangeValue(value)
             };
         };
-
+      }
         return RangeColumn;
     }
 );

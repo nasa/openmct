@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([], () => {
     /**
      * A tick source is an event generator such as a timing signal, or
      * indicator of data availability, which can be used to advance the Time
@@ -30,18 +30,19 @@ define([], function () {
      * @interface
      * @constructor
      */
-    function TickSource() {
+    class TickSource {
+      constructor() {
         this.listeners = [];
-    }
+      }
 
     /**
      * @param callback Function to be called when this tick source ticks.
      * @returns an 'unlisten' function that will remove the callback from
      * the registered listeners
      */
-    TickSource.prototype.listen = function (callback) {
+    listen(callback) {
         throw new Error('Not implemented');
     };
-
+  }
     return TickSource;
 });

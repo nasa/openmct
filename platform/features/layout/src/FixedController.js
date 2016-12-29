@@ -22,9 +22,9 @@
 
 define(
     ['./FixedProxy', './elements/ElementProxies', './FixedDragHandle'],
-    function (FixedProxy, ElementProxies, FixedDragHandle) {
+    (FixedProxy, ElementProxies, FixedDragHandle) => {
 
-        var DEFAULT_DIMENSIONS = [2, 1];
+        let DEFAULT_DIMENSIONS = [2, 1];
 
         /**
          * The FixedController is responsible for supporting the
@@ -35,9 +35,9 @@ define(
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
-        function FixedController($scope, $q, dialogService, telemetryHandler, telemetryFormatter) {
-            var self = this,
-                handle,
+        class FixedController {
+          constructor($scope, $q, dialogService, telemetryHandler, telemetryFormatter) {
+            let handle,
                 names = {}, // Cache names by ID
                 values = {}, // Cache values by ID
                 elementProxiesById = {},
@@ -45,8 +45,8 @@ define(
 
             // Convert from element x/y/width/height to an
             // appropriate ng-style argument, to position elements.
-            function convertPosition(elementProxy) {
-                var gridSize = self.gridSize;
+            const convertPosition = (elementProxy) => {
+                let gridSize = this.gridSize;
                 // Multiply position/dimensions by grid size
                 return {
                     left: (gridSize[0] * elementProxy.x()) + 'px',
@@ -57,32 +57,32 @@ define(
             }
 
             // Update the style for a selected element
-            function updateSelectionStyle() {
-                var element = self.selection && self.selection.get();
+            const updateSelectionStyle = () => {
+                var element = this.selection && this.selection.get();
                 if (element) {
                     element.style = convertPosition(element);
                 }
             }
 
             // Generate a specific drag handle
-            function generateDragHandle(elementHandle) {
+            const generateDragHandle = (elementHandle) => {
                 return new FixedDragHandle(
                     elementHandle,
-                    self.gridSize,
+                    this.gridSize,
                     updateSelectionStyle,
                     $scope.commit
                 );
             }
 
             // Generate drag handles for an element
-            function generateDragHandles(element) {
+            const generateDragHandles = (element) => {
                 return element.handles().map(generateDragHandle);
             }
 
             // Update the value displayed in elements of this telemetry object
-            function setDisplayedValue(telemetryObject, value, alarm) {
-                var id = telemetryObject.getId();
-                (elementProxiesById[id] || []).forEach(function (element) {
+            const setDisplayedValue = (telemetryObject, value, alarm) => {
+                let id = telemetryObject.getId();
+                (elementProxiesById[id] || []).forEach( (element) => {
                     names[id] = telemetryObject.getModel().name;
                     values[id] = telemetryFormatter.formatRangeValue(value);
                     element.name = names[id];
@@ -93,8 +93,8 @@ define(
 
             // Update the displayed value for this object, from a specific
             // telemetry series
-            function updateValueFromSeries(telemetryObject, telemetrySeries) {
-                var index = telemetrySeries.getPointCount() - 1,
+            const updateValueFromSeries = (telemetryObject, telemetrySeries) => {
+                let index = telemetrySeries.getPointCount() - 1,
                     limit = telemetryObject &&
                         telemetryObject.getCapability('limit'),
                     datum = telemetryObject && handle.getDatum(
@@ -112,8 +112,8 @@ define(
             }
 
             // Update the displayed value for this object
-            function updateValue(telemetryObject) {
-                var limit = telemetryObject &&
+            const updateValue = (telemetryObject) => {
+                let limit = telemetryObject &&
                         telemetryObject.getCapability('limit'),
                     datum = telemetryObject &&
                         handle.getDatum(telemetryObject);
@@ -129,25 +129,25 @@ define(
             }
 
             // Update element positions when grid size changes
-            function updateElementPositions(layoutGrid) {
+            const updateElementPositions = (layoutGrid) => {
                 // Update grid size from model
-                self.gridSize = layoutGrid;
+                this.gridSize = layoutGrid;
 
-                self.elementProxies.forEach(function (elementProxy) {
+                this.elementProxies.forEach( (elementProxy) => {
                     elementProxy.style = convertPosition(elementProxy);
                 });
             }
 
             // Update telemetry values based on new data available
-            function updateValues() {
+            const updateValues = () => {
                 if (handle) {
                     handle.getTelemetryObjects().forEach(updateValue);
                 }
             }
 
             // Decorate an element for display
-            function makeProxyElement(element, index, elements) {
-                var ElementProxy = ElementProxies[element.type],
+            const makeProxyElement = (element, index, elements) => {
+                let ElementProxy = ElementProxies[element.type],
                     e = ElementProxy && new ElementProxy(element, index, elements);
 
                 if (e) {
@@ -161,10 +161,10 @@ define(
             }
 
             // Decorate elements in the current configuration
-            function refreshElements() {
+            const refreshElements = () => {
                 // Cache selection; we are instantiating new proxies
                 // so we may want to restore this.
-                var selected = self.selection && self.selection.get(),
+                let selected = this.selection && this.selection.get(),
                     elements = (($scope.configuration || {}).elements || []),
                     index = -1; // Start with a 'not-found' value
 
@@ -174,21 +174,21 @@ define(
                 }
 
                 // Create the new proxies...
-                self.elementProxies = elements.map(makeProxyElement);
+                this.elementProxies = elements.map(makeProxyElement);
 
                 // Clear old selection, and restore if appropriate
-                if (self.selection) {
-                    self.selection.deselect();
+                if (this.selection) {
+                    this.selection.deselect();
                     if (index > -1) {
-                        self.select(self.elementProxies[index]);
+                        this.select(this.elementProxies[index]);
                     }
                 }
 
                 // Finally, rebuild lists of elements by id to
                 // facilitate faster update when new telemetry comes in.
                 elementProxiesById = {};
-                self.elementProxies.forEach(function (elementProxy) {
-                    var id = elementProxy.id;
+                this.elementProxies.forEach( (elementProxy) => {
+                    let id = elementProxy.id;
                     if (elementProxy.element.type === 'fixed.telemetry') {
                         // Provide it a cached name/value to avoid flashing
                         elementProxy.name = names[id];
@@ -202,7 +202,7 @@ define(
             }
 
             // Free up subscription to telemetry
-            function releaseSubscription() {
+            const releaseSubscription = () => {
                 if (handle) {
                     handle.unsubscribe();
                     handle = undefined;
@@ -210,7 +210,7 @@ define(
             }
 
             // Subscribe to telemetry updates for this domain object
-            function subscribe(domainObject) {
+            const subscribe = (domainObject) => {
                 // Release existing subscription (if any)
                 if (handle) {
                     handle.unsubscribe();
@@ -229,7 +229,7 @@ define(
             }
 
             // Handle changes in the object's composition
-            function updateComposition() {
+            const updateComposition = () => {
                 // Populate panel positions
                 // TODO: Ensure defaults here
                 // Resubscribe - objects in view have changed
@@ -237,7 +237,7 @@ define(
             }
 
             // Trigger a new query for telemetry data
-            function updateDisplayBounds(event, bounds) {
+            const updateDisplayBounds = (event, bounds) => {
                 maxDomainValue = bounds.end;
                 if (handle) {
                     handle.request(
@@ -248,7 +248,7 @@ define(
             }
 
             // Add an element to this view
-            function addElement(element) {
+            const addElement = (element) => {
                 // Ensure that configuration field is populated
                 $scope.configuration = $scope.configuration || {};
                 // Make sure there is a "elements" field in the
@@ -260,8 +260,8 @@ define(
                 // Refresh displayed elements
                 refreshElements();
                 // Select the newly-added element
-                self.select(
-                    self.elementProxies[self.elementProxies.length - 1]
+                this.select(
+                    this.elementProxies[this.elementProxies.length - 1]
                 );
                 // Mark change as persistable
                 if ($scope.commit) {
@@ -270,7 +270,7 @@ define(
             }
 
             // Position a panel after a drop event
-            function handleDrop(e, id, position) {
+            const handleDrop = (e, id, position) => {
                 // Don't handle this event if it has already been handled
                 // color is set to "" to let the CSS theme determine the default color
                 if (e.defaultPrevented) {
@@ -281,8 +281,8 @@ define(
                 // Store the position of this element.
                 addElement({
                     type: "fixed.telemetry",
-                    x: Math.floor(position.x / self.gridSize[0]),
-                    y: Math.floor(position.y / self.gridSize[1]),
+                    x: Math.floor(position.x / this.gridSize[0]),
+                    y: Math.floor(position.y / this.gridSize[1]),
                     id: id,
                     stroke: "transparent",
                     color: "",
@@ -297,7 +297,7 @@ define(
             this.generateDragHandles = generateDragHandles;
 
             // Track current selection state
-            $scope.$watch("selection", function (selection) {
+            $scope.$watch("selection", (selection) => {
                 this.selection = selection;
 
                 // Expose the view's selection proxy
@@ -306,7 +306,7 @@ define(
                         new FixedProxy(addElement, $q, dialogService)
                     );
                 }
-            }.bind(this));
+            });
 
             // Detect changes to grid size
             $scope.$watch("model.layoutGrid", updateElementPositions);
@@ -336,7 +336,7 @@ define(
          * @returns {number[]} the grid size
          * @memberof platform/features/layout.FixedController#
          */
-        FixedController.prototype.getGridSize = function () {
+        getGridSize() {
             return this.gridSize;
         };
 
@@ -345,7 +345,7 @@ define(
          * decorated proxies for both selection and display.
          * @returns {Array} elements in this panel
          */
-        FixedController.prototype.getElements = function () {
+        getElements() {
             return this.elementProxies;
         };
 
@@ -354,8 +354,8 @@ define(
          * argument is supplied) get the currently selected element.
          * @returns {boolean} true if selected
          */
-        FixedController.prototype.selected = function (element) {
-            var selection = this.selection;
+        selected(element) {
+            let selection = this.selection;
             return selection && ((arguments.length > 0) ?
                     selection.selected(element) : selection.get());
         };
@@ -364,7 +364,7 @@ define(
          * Set the active user selection in this view.
          * @param element the element to select
          */
-        FixedController.prototype.select = function select(element) {
+        select(element) {
             if (this.selection) {
                 // Update selection...
                 this.selection.select(element);
@@ -377,7 +377,7 @@ define(
         /**
          * Clear the current user selection.
          */
-        FixedController.prototype.clearSelection = function () {
+        clearSelection() {
             if (this.selection) {
                 this.selection.deselect();
                 this.resizeHandles = [];
@@ -390,7 +390,7 @@ define(
          * @returns {platform/features/layout.FixedDragHandle[]}
          *          drag handles for the current selection
          */
-        FixedController.prototype.handles = function () {
+        handles() {
             return this.resizeHandles;
         };
 
@@ -398,10 +398,10 @@ define(
          * Get the handle to handle dragging to reposition an element.
          * @returns {platform/features/layout.FixedDragHandle} the drag handle
          */
-        FixedController.prototype.moveHandle = function () {
+        moveHandle() {
             return this.mvHandle;
         };
-
+      }
         return FixedController;
     }
 );

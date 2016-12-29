@@ -24,11 +24,7 @@
 define([
     '../creation/CreateWizard',
     './SaveInProgressDialog'
-],
-    function (
-        CreateWizard,
-        SaveInProgressDialog
-    ) {
+], (CreateWizard,SaveInProgressDialog) => {
 
         /**
          * The "Save" action; the action triggered by clicking Save from
@@ -38,16 +34,17 @@ define([
          * @implements {Action}
          * @memberof platform/commonUI/edit
          */
-        function SaveAsAction(
-            $injector,
-            policyService,
-            dialogService,
-            copyService,
-            notificationService,
-            context
-        ) {
+        class SaveAsAction {
+          constructor(
+              $injector,
+              policyService,
+              dialogService,
+              copyService,
+              notificationService,
+              context
+          ) {
             this.domainObject = (context || {}).domainObject;
-            this.injectObjectService = function () {
+            this.injectObjectService = () => {
                 this.objectService = $injector.get("objectService");
             };
             this.policyService = policyService;
@@ -59,30 +56,30 @@ define([
         /**
          * @private
          */
-        SaveAsAction.prototype.createWizard = function (parent) {
+        ScreateWizard(parent) {
             return new CreateWizard(
                 this.domainObject,
                 parent,
                 this.policyService
             );
-        };
+        }
 
         /**
          * @private
          */
-        SaveAsAction.prototype.getObjectService = function () {
+        getObjectService() {
             // Lazily acquire object service (avoids cyclical dependency)
             if (!this.objectService) {
                 this.injectObjectService();
             }
             return this.objectService;
-        };
+        }
 
-        function resolveWith(object) {
-            return function () {
+        const resolveWith = (object) => {
+            return () => {
                 return object;
             };
-        }
+        };
 
         /**
          * Save changes and conclude editing.
@@ -91,107 +88,107 @@ define([
          *          cancellation has completed
          * @memberof platform/commonUI/edit.SaveAction#
          */
-        SaveAsAction.prototype.perform = function () {
+        perform() {
             // Discard the current root view (which will be the editing
             // UI, which will have been pushed atop the Browse UI.)
-            function returnToBrowse(object) {
+            const returnToBrowse = (object) => {
                 if (object) {
                     object.getCapability("action").perform("navigate");
                 }
                 return object;
-            }
+            };
 
             return this.save().then(returnToBrowse);
-        };
+        }
 
         /**
          * @private
          */
-        SaveAsAction.prototype.save = function () {
-            var self = this,
+        save() {
+            var 
                 domainObject = this.domainObject,
                 copyService = this.copyService,
                 dialog = new SaveInProgressDialog(this.dialogService),
                 toUndirty = [];
 
-            function doWizardSave(parent) {
-                var wizard = self.createWizard(parent);
+            const doWizardSave = (parent) => {
+                let wizard = this.createWizard(parent);
 
-                return self.dialogService
+                return this.dialogService
                     .getUserInput(wizard.getFormStructure(true),
                         wizard.getInitialFormValue())
-                    .then(wizard.populateObjectFromInput.bind(wizard), function (failureReason) {
+                    .then(wizard.populateObjectFromInput.bind(wizard), (failureReason) => {
                         return Promise.reject("user canceled");
                     });
-            }
+            };
 
-            function showBlockingDialog(object) {
+            const showBlockingDialog = (object) => {
                 dialog.show();
                 return object;
-            }
+            };
 
-            function hideBlockingDialog(object) {
+            const hideBlockingDialog = (object) => {
                 dialog.hide();
                 return object;
-            }
+            };
 
-            function fetchObject(objectId) {
-                return self.getObjectService().getObjects([objectId]).then(function (objects) {
+            const fetchObject = (objectId) => {
+                return this.getObjectService().getObjects([objectId]).then( (objects) => {
                     return objects[objectId];
                 });
-            }
+            };
 
-            function getParent(object) {
+            const getParent = (object) => {
                 return fetchObject(object.getModel().location);
-            }
+            };
 
-            function allowClone(objectToClone) {
-                var allowed =
+            const allowClone = (objectToClone) => {
+                let allowed =
                     (objectToClone.getId() === domainObject.getId()) ||
                         objectToClone.getCapability('location').isOriginal();
                 if (allowed) {
                     toUndirty.push(objectToClone);
                 }
                 return allowed;
-            }
+            };
 
-            function cloneIntoParent(parent) {
+            const cloneIntoParent = (parent) => {
                 return copyService.perform(domainObject, parent, allowClone);
-            }
+            };
 
-            function undirty(object) {
+            const undirty = (object) => {
                 return object.getCapability('persistence').refresh();
-            }
+            };
 
-            function undirtyOriginals(object) {
+            const undirtyOriginals = (object) => {
                 return Promise.all(toUndirty.map(undirty))
                     .then(resolveWith(object));
-            }
+            };
 
-            function saveAfterClone(clonedObject) {
+            const saveAfterClone = (clonedObject) => {
                 return domainObject.getCapability("editor").save()
                     .then(resolveWith(clonedObject));
-            }
+            };
 
-            function finishEditing(clonedObject) {
+            const finishEditing = (clonedObject) => {
                 return domainObject.getCapability("editor").finish()
-                    .then(function () {
+                    .then( () => {
                         return fetchObject(clonedObject.getId());
                     });
-            }
+            };
 
-            function onSuccess(object) {
-                self.notificationService.info("Save Succeeded");
+            const onSuccess = (object) => {
+                this.notificationService.info("Save Succeeded");
                 return object;
-            }
+            };
 
-            function onFailure(reason) {
+            const onFailure = (reason) => {
                 hideBlockingDialog();
                 if (reason !== "user canceled") {
-                    self.notificationService.error("Save Failed");
+                    this.notificationService.error("Save Failed");
                 }
                 return false;
-            }
+            };
 
             return getParent(domainObject)
                 .then(doWizardSave)
@@ -213,14 +210,14 @@ define([
          * and that this domain object is in Edit mode.
          * @returns true if applicable
          */
-        SaveAsAction.appliesTo = function (context) {
-            var domainObject = (context || {}).domainObject;
+        appliesTo(context) {
+            let domainObject = (context || {}).domainObject;
             return domainObject !== undefined &&
-                domainObject.hasCapability('editor') &&
-                domainObject.getCapability('editor').isEditContextRoot() &&
-                domainObject.getModel().persisted === undefined;
-        };
-
+                this.domainObject.hasCapability('editor') &&
+                this.domainObject.getCapability('editor').isEditContextRoot() &&
+                this.domainObject.getModel().persisted === undefined;
+        }
+}
         return SaveAsAction;
     }
 );

@@ -22,10 +22,10 @@
 
 define(
     [],
-    function () {
+    () => {
 
         // Pixel width to allocate for the splitter itself
-        var DEFAULT_ANCHOR = 'left',
+        const DEFAULT_ANCHOR = 'left',
             POLLING_INTERVAL = 15, // milliseconds
             CHILDREN_WARNING_MESSAGE = [
                 "Invalid mct-split-pane contents.",
@@ -93,25 +93,25 @@ define(
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function MCTSplitPane($parse, $log, $interval) {
-            function controller($scope, $element, $attrs) {
-                var anchorKey = $attrs.anchor || DEFAULT_ANCHOR,
+        const MCTSplitPane = ($parse, $log, $interval) => {
+            const controller = ($scope, $element, $attrs) => {
+                let anchorKey = $attrs.anchor || DEFAULT_ANCHOR,
                     anchor,
                     activeInterval,
                     positionParsed = $parse($attrs.position),
                     position; // Start undefined, until explicitly set
 
                 // Get relevant size (height or width) of DOM element
-                function getSize(domElement) {
+                const getSize = (domElement) => {
                     return (anchor.orientation === 'vertical' ?
                             domElement.offsetWidth : domElement.offsetHeight);
                 }
 
                 // Apply styles to child elements
-                function updateChildren(children) {
+                const updateChildren = (children) => {
                     // Pick out correct elements to update, flowing from
                     // selected anchor edge.
-                    var first = children.eq(anchor.reversed ? 2 : 0),
+                    let first = children.eq(anchor.reversed ? 2 : 0),
                         splitter = children.eq(1),
                         last = children.eq(anchor.reversed ? 0 : 2),
                         splitterSize = getSize(splitter[0]),
@@ -133,8 +133,8 @@ define(
                 }
 
                 // Update positioning of contained elements
-                function updateElementPositions() {
-                    var children = $element.children();
+                const updateElementPositions = () => {
+                    let children = $element.children();
 
                     // Check to make sure contents are well-formed
                     if (children.length !== 3 ||
@@ -147,15 +147,15 @@ define(
                 }
 
                 // Enforce minimum/maximum positions
-                function enforceExtrema() {
+                const enforceExtrema = () => {
                     position = Math.max(position, 0);
                     position = Math.min(position, getSize($element[0]));
                 }
 
                 // Getter-setter for the pixel offset of the splitter,
                 // relative to the current edge.
-                function getSetPosition(value) {
-                    var prior = position;
+                const getSetPosition = (value) => {
+                    let prior = position;
                     if (typeof value === 'number') {
                         position = value;
                         enforceExtrema();
@@ -171,7 +171,7 @@ define(
 
                 // Dynamically apply a CSS class to elements when the user
                 // is actively resizing
-                function toggleClass(classToToggle) {
+                const toggleClass = (classToToggle) => {
                     $element.children().toggleClass(classToToggle);
                 }
 
@@ -193,12 +193,12 @@ define(
                 ));
 
                 // And poll for position changes enforced by styles
-                activeInterval = $interval(function () {
+                activeInterval = $interval( () => {
                     getSetPosition(getSetPosition());
                 }, POLLING_INTERVAL, 0, false);
 
                 // ...and stop polling when we're destroyed.
-                $scope.$on('$destroy', function () {
+                $scope.$on('$destroy', () => {
                     $interval.cancel(activeInterval);
                 });
 
@@ -206,7 +206,7 @@ define(
                 return {
                     position: getSetPosition,
                     toggleClass: toggleClass,
-                    anchor: function () {
+                    anchor: () => {
                         return anchor;
                     }
                 };

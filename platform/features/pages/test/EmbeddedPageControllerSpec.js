@@ -22,27 +22,27 @@
 
 define(
     ["../src/EmbeddedPageController"],
-    function (EmbeddedPageController) {
+    (EmbeddedPageController) => {
 
-        describe("The controller for embedded pages", function () {
-            var mockSCE,
+        describe("The controller for embedded pages", () => {
+            let mockSCE,
                 controller;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockSCE = jasmine.createSpyObj(
                     '$sce',
                     ["trustAsResourceUrl"]
                 );
 
-                mockSCE.trustAsResourceUrl.andCallFake(function (v) {
+                mockSCE.trustAsResourceUrl.andCallFake( (v) => {
                     return v;
                 });
 
                 controller = new EmbeddedPageController(mockSCE);
             });
 
-            it("allows URLs to be marked as trusted", function () {
-                var testURL = "http://www.nasa.gov";
+            it("allows URLs to be marked as trusted", () => {
+                let testURL = "http://www.nasa.gov";
 
                 expect(controller.trust(testURL))
                     .toEqual(testURL);

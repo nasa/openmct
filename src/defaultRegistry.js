@@ -92,9 +92,9 @@ define([
     '../platform/search/bundle',
     '../platform/status/bundle',
     '../platform/telemetry/bundle'
-], function (legacyRegistry) {
+], (legacyRegistry) => {
 
-    var DEFAULTS = [
+    let DEFAULTS = [
         'src/adapter',
         'src/api/objects',
         'src/api/telemetry',
@@ -134,7 +134,7 @@ define([
         'platform/commonUI/regions'
     ];
 
-    DEFAULTS.forEach(function (bundlePath) {
+    DEFAULTS.forEach( (bundlePath) => {
         legacyRegistry.enable(bundlePath);
     });
 

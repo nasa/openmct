@@ -26,9 +26,9 @@
  */
 define(
     ['moment'],
-    function (moment) {
+    (moment) => {
 
-        var DATE_FORMAT = "YYYY-MM-DD",
+        const DATE_FORMAT = "YYYY-MM-DD",
             TIME_FORMAT = "HH:mm:ss.SSS";
 
         /**
@@ -37,29 +37,29 @@ define(
          * @constructor
          * @memberof platform/features/imagery
          */
-        function ImageryController($scope, telemetryHandler) {
-            var self = this;
+        class ImageryController {
+          constructor($scope, telemetryHandler) {
 
-            function releaseSubscription() {
-                if (self.handle) {
-                    self.handle.unsubscribe();
-                    self.handle = undefined;
+            const releaseSubscription = () => {
+                if (this.handle) {
+                    this.handle.unsubscribe();
+                    this.handle = undefined;
                 }
             }
 
-            function updateValuesCallback() {
-                return self.updateValues();
+            const updateValuesCallback = () => {
+                return this.updateValues();
             }
 
             // Create a new subscription; telemetrySubscriber gets
             // to do the meaningful work here.
-            function subscribe(domainObject) {
+            const subscribe = (domainObject) => {
                 releaseSubscription();
-                self.date = "";
-                self.time = "";
-                self.zone = "";
-                self.imageUrl = "";
-                self.handle = domainObject && telemetryHandler.handle(
+                this.date = "";
+                this.time = "";
+                this.zone = "";
+                this.imageUrl = "";
+                this.handle = domainObject && telemetryHandler.handle(
                     domainObject,
                     updateValuesCallback,
                     true // Lossless
@@ -79,8 +79,8 @@ define(
         }
 
         // Update displayable values to reflect latest image telemetry
-        ImageryController.prototype.updateValues = function () {
-            var imageObject =
+        updateValues() {
+            let imageObject =
                     this.handle && this.handle.getTelemetryObjects()[0],
                 timestamp,
                 m;
@@ -101,7 +101,7 @@ define(
          * timestamp associated with the incoming image telemetry.
          * @returns {string} the time
          */
-        ImageryController.prototype.getTime = function () {
+         getTime() {
             return this.time;
         };
 
@@ -110,7 +110,7 @@ define(
          * timestamp associated with the incoming image telemetry.
          * @returns {string} the date
          */
-        ImageryController.prototype.getDate = function () {
+        getDate() {
             return this.date;
         };
 
@@ -120,7 +120,7 @@ define(
          * telemetry.
          * @returns {string} the time
          */
-        ImageryController.prototype.getZone = function () {
+        getZone() {
             return this.zone;
         };
 
@@ -128,7 +128,7 @@ define(
          * Get the URL of the image telemetry to display.
          * @returns {string} URL for telemetry image
          */
-        ImageryController.prototype.getImageUrl = function () {
+        getImageUrl() {
             return this.imageUrl;
         };
 
@@ -138,7 +138,7 @@ define(
          * @param {boolean} [state] the state to set
          * @returns {boolean} the current state
          */
-        ImageryController.prototype.paused = function (state) {
+        paused(state) {
             if (arguments.length > 0 && state !== this.isPaused) {
                 this.isPaused = state;
                 // Switch to latest image
@@ -146,7 +146,7 @@ define(
             }
             return this.isPaused;
         };
-
+      }
         return ImageryController;
     }
 );

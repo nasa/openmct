@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([], () => {
 
     /**
      * Policy suppressing links when the linked-to domain object is in
@@ -31,21 +31,21 @@ define([], function () {
      * @constructor
      * @implements {Policy.<View, DomainObject>}
      */
-    function EditableLinkPolicy() {
-    }
+    class EditableLinkPolicy {
 
-    EditableLinkPolicy.prototype.allow = function (action, context) {
-        var key = action.getMetadata().key,
-            object;
+        allow(action, context) {
+            let key = action.getMetadata().key,
+                object;
 
-        if (key === 'link') {
-            object = context.selectedObject || context.domainObject;
-            return !(object.hasCapability("editor") && object.getCapability("editor").inEditContext());
+            if (key === 'link') {
+                object = context.selectedObject || context.domainObject;
+                return !(object.hasCapability("editor") && object.getCapability("editor").inEditContext());
+            }
+
+            // Like all policies, allow by default.
+            return true;
         }
-
-        // Like all policies, allow by default.
-        return true;
-    };
-
+    }
     return EditableLinkPolicy;
+  }
 });

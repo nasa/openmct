@@ -22,36 +22,34 @@
 
 define([
     'lodash'
-], function (
-    _
-) {
+],  (_) => {
 
-    function RootRegistry() {
+    class RootRegistry {
+      constructor() {
         this.providers = [];
     }
 
-    RootRegistry.prototype.getRoots = function () {
-        var promises = this.providers.map(function (provider) {
+    getRoots() {
+        let promises = this.providers.map( (provider) => {
             return provider();
         });
         return Promise.all(promises)
             .then(_.flatten);
-    };
+    }
 
-    function isKey(key) {
+    isKey(key) {
         return _.isObject(key) && _.has(key, 'key') && _.has(key, 'namespace');
     }
 
-    RootRegistry.prototype.addRoot = function (key) {
-        if (isKey(key) || (_.isArray(key) && _.every(key, isKey))) {
-            this.providers.push(function () {
+    addRoot(key) {
+        if (this.isKey(key) || (_.isArray(key) && _.every(key, this.isKey))) {
+            this.providers.push( () => {
                 return key;
             });
         } else if (_.isFunction(key)) {
             this.providers.push(key);
         }
-    };
-
-    return RootRegistry;
-
+    }
+}
+return RootRegistry;
 });

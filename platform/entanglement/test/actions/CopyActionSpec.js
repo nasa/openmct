@@ -27,11 +27,11 @@ define(
         '../services/MockCopyService',
         '../DomainObjectFactory'
     ],
-    function (CopyAction, MockCopyService, domainObjectFactory) {
+    (CopyAction, MockCopyService, domainObjectFactory) => {
 
-        describe("Copy Action", function () {
+        describe("Copy Action", () =>  {
 
-            var copyAction,
+            let copyAction,
                 policyService,
                 locationService,
                 locationServicePromise,
@@ -49,7 +49,7 @@ define(
                 abstractComposePromise,
                 progress = {phase: "copying", totalObjects: 10, processed: 1};
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 policyService = jasmine.createSpyObj(
                     'policyService',
                     ['allow']
@@ -106,12 +106,12 @@ define(
                     ]
                 );
 
-                abstractComposePromise.then.andCallFake(function (success, error, notify) {
+                abstractComposePromise.then.andCallFake( (success, error, notify) => {
                     notify(progress);
                     success();
                 });
 
-                locationServicePromise.then.andCallFake(function (callback) {
+                locationServicePromise.then.andCallFake( (callback) => {
                     callback(newParent);
                     return abstractComposePromise;
                 });
@@ -143,8 +143,8 @@ define(
             });
 
 
-            describe("with context from context-action", function () {
-                beforeEach(function () {
+            describe("with context from context-action", () =>  {
+                beforeEach(() =>  {
                     context = {
                         domainObject: selectedObject
                     };
@@ -160,17 +160,17 @@ define(
                     );
                 });
 
-                it("initializes happily", function () {
+                it("initializes happily", () =>  {
                     expect(copyAction).toBeDefined();
                 });
 
-                describe("when performed it", function () {
-                    beforeEach(function () {
+                describe("when performed it", () =>  {
+                    beforeEach(() =>  {
                         spyOn(copyAction, 'progress').andCallThrough();
                         copyAction.perform();
                     });
 
-                    it("prompts for location", function () {
+                    it("prompts for location", () =>  {
                         expect(locationService.getLocationFromUser)
                             .toHaveBeenCalledWith(
                                 "Duplicate selectedObject To a Location",
@@ -180,12 +180,12 @@ define(
                             );
                     });
 
-                    it("waits for location from user", function () {
+                    it("waits for location from user", () =>  {
                         expect(locationServicePromise.then)
                             .toHaveBeenCalledWith(jasmine.any(Function));
                     });
 
-                    it("copies object to selected location", function () {
+                    it("copies object to selected location", () =>  {
                         locationServicePromise
                             .then
                             .mostRecentCall
@@ -195,15 +195,15 @@ define(
                             .toHaveBeenCalledWith(selectedObject, newParent);
                     });
 
-                    it("notifies the user of progress", function () {
+                    it("notifies the user of progress", () =>  {
                         expect(notificationService.info).toHaveBeenCalled();
                     });
 
                 });
             });
 
-            describe("with context from drag-drop", function () {
-                beforeEach(function () {
+            describe("with context from drag-drop", () =>  {
+                beforeEach(() =>  {
                     context = {
                         selectedObject: selectedObject,
                         domainObject: newParent
@@ -220,12 +220,12 @@ define(
                     );
                 });
 
-                it("initializes happily", function () {
+                it("initializes happily", () =>  {
                     expect(copyAction).toBeDefined();
                 });
 
 
-                it("performs copy immediately", function () {
+                it("performs copy immediately", () =>  {
                     copyAction.perform();
                     expect(copyService.perform)
                         .toHaveBeenCalledWith(selectedObject, newParent);

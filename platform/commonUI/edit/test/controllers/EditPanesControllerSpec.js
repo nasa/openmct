@@ -22,15 +22,15 @@
 
 define(
     ["../../src/controllers/EditPanesController"],
-    function (EditPanesController) {
+    (EditPanesController) => {
 
-        describe("The Edit Panes controller", function () {
-            var mockScope,
+        describe("The Edit Panes controller", () => {
+            let mockScope,
                 mockDomainObject,
                 mockContext,
                 controller;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
@@ -45,8 +45,8 @@ define(
                 mockDomainObject.getCapability.andReturn(mockContext);
 
                 // Return a new instance of the root object each time
-                mockContext.getTrueRoot.andCallFake(function () {
-                    var mockRoot = jasmine.createSpyObj('root', ['getId']);
+                mockContext.getTrueRoot.andCallFake( () => {
+                    let mockRoot = jasmine.createSpyObj('root', ['getId']);
                     mockRoot.getId.andReturn('root-id');
                     return mockRoot;
                 });
@@ -55,14 +55,14 @@ define(
                 controller = new EditPanesController(mockScope);
             });
 
-            it("watches for the domain object in view", function () {
+            it("watches for the domain object in view", () => {
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "domainObject",
                     jasmine.any(Function)
                 );
             });
 
-            it("exposes the root object found via the object's context capability", function () {
+            it("exposes the root object found via the object's context capability", () => {
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
 
                 // Verify that the correct capability was used
@@ -73,8 +73,8 @@ define(
                 expect(controller.getRoot().getId()).toEqual('root-id');
             });
 
-            it("preserves the same root instance to avoid excessive refreshing", function () {
-                var firstRoot;
+            it("preserves the same root instance to avoid excessive refreshing", () => {
+                let firstRoot;
                 // Expose the domain object
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
                 firstRoot = controller.getRoot();
@@ -87,15 +87,15 @@ define(
 
             // Complements the test above; the object pointed to should change
             // when the actual root has changed (detected by identifier)
-            it("updates the root when it changes", function () {
-                var firstRoot;
+            it("updates the root when it changes", () => {
+                let firstRoot;
                 // Expose the domain object
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
                 firstRoot = controller.getRoot();
 
                 // Change the exposed root
-                mockContext.getTrueRoot.andCallFake(function () {
-                    var mockRoot = jasmine.createSpyObj('root', ['getId']);
+                mockContext.getTrueRoot.andCallFake( () => {
+                    let mockRoot = jasmine.createSpyObj('root', ['getId']);
                     mockRoot.getId.andReturn('other-root-id');
                     return mockRoot;
                 });

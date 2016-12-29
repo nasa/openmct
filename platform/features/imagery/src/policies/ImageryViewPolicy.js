@@ -20,8 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+define(() => {
 
         /**
          * Policy preventing the Imagery view from being made available for
@@ -29,29 +28,28 @@ define(
          * @implements {Policy.<View, DomainObject>}
          * @constructor
          */
-        function ImageryViewPolicy() {
-        }
+         const hasImageTelemetry = (domainObject) => {
+             let telemetry = domainObject &&
+                     domainObject.getCapability('telemetry'),
+                 metadata = telemetry ? telemetry.getMetadata() : {},
+                 ranges = metadata.ranges || [];
 
-        function hasImageTelemetry(domainObject) {
-            var telemetry = domainObject &&
-                    domainObject.getCapability('telemetry'),
-                metadata = telemetry ? telemetry.getMetadata() : {},
-                ranges = metadata.ranges || [];
+             return ranges.some( (range) => {
+                 return range.format === 'imageUrl' ||
+                     range.format === 'image';
+             });
+         }
+        class ImageryViewPolicy {
+        
 
-            return ranges.some(function (range) {
-                return range.format === 'imageUrl' ||
-                    range.format === 'image';
-            });
-        }
-
-        ImageryViewPolicy.prototype.allow = function (view, domainObject) {
+        allow(view, domainObject) {
             if (view.key === 'imagery') {
                 return hasImageTelemetry(domainObject);
             }
 
             return true;
         };
-
+      }
         return ImageryViewPolicy;
     }
 );

@@ -21,29 +21,29 @@
  *****************************************************************************/
 define(
     [],
-    function () {
-        var PADDING = 0.25;
+    () => {
+        let PADDING = 0.25;
 
         /**
          * Controls the pan-zoom state of a timeline view.
          * @constructor
          */
-        function TimelineZoomController($scope, $window, ZOOM_CONFIGURATION) {
+        const TimelineZoomController = ($scope, $window, ZOOM_CONFIGURATION) => {
             // Prefer to start with the middle index
-            var zoomLevels = ZOOM_CONFIGURATION.levels || [1000],
+            let zoomLevels = ZOOM_CONFIGURATION.levels || [1000],
                 zoomIndex = Math.floor(zoomLevels.length / 2),
                 tickWidth = ZOOM_CONFIGURATION.width || 200;
 
-            function toMillis(pixels) {
+            const toMillis = (pixels) => {
                 return (pixels / tickWidth) * zoomLevels[zoomIndex];
             }
 
-            function toPixels(millis) {
+            const toPixels = (millis) => {
                 return tickWidth * millis / zoomLevels[zoomIndex];
             }
 
             // Get/set zoom level
-            function setZoomLevel(level) {
+            const setZoomLevel = (level) => {
                 if (!isNaN(level)) {
                     // Modify zoom level, keeping it in range
                     zoomIndex = Math.min(
@@ -53,15 +53,15 @@ define(
                 }
             }
 
-            function setScroll(x) {
-                $window.requestAnimationFrame(function () {
+            const setScroll = (x) => {
+                $window.requestAnimationFrame( () => {
                     $scope.scroll.x = x;
                     $scope.$apply();
                 });
             }
 
-            function initializeZoomFromTimespan(timespan) {
-                var timelineDuration = timespan.getDuration();
+            const initializeZoomFromTimespan=  (timespan) => {
+                let timelineDuration = timespan.getDuration();
                 zoomIndex = 0;
                 while (toMillis($scope.scroll.width) < timelineDuration &&
                         zoomIndex < zoomLevels.length - 1) {
@@ -70,7 +70,7 @@ define(
                 setScroll(toPixels(timespan.getStart()));
             }
 
-            function initializeZoom() {
+            const initializeZoom = () => {
                 if ($scope.domainObject) {
                     $scope.domainObject.useCapability('timespan')
                         .then(initializeZoomFromTimespan);
@@ -91,11 +91,11 @@ define(
                  * @returns {number} current zoom level (as the size of a
                  *          major tick mark, in pixels)
                  */
-                zoom: function (amount) {
+                zoom: (amount) => {
                     // Update the zoom level if called with an argument
                     if (arguments.length > 0 && !isNaN(amount)) {
-                        var bounds = $scope.scroll;
-                        var center = this.toMillis(bounds.x + bounds.width / 2);
+                        let bounds = $scope.scroll;
+                        let center = this.toMillis(bounds.x + bounds.width / 2);
                         setZoomLevel(zoomIndex + amount);
                         setScroll(this.toPixels(center) - bounds.width / 2);
                     }
@@ -124,8 +124,8 @@ define(
                  * the start of the timeline.
                  * @param {number} timestamp the time to display
                  */
-                width: function (timestamp) {
-                    var pixels = Math.ceil(toPixels(timestamp * (1 + PADDING)));
+                width: (timestamp) => {
+                    let pixels = Math.ceil(toPixels(timestamp * (1 + PADDING)));
                     return Math.max($scope.scroll.width, pixels);
                 }
             };

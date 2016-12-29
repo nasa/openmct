@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Restrict `compose` actions to cases where composition
@@ -36,15 +36,16 @@ define(
          * @memberof platform/containment
          * @implements {Policy.<Action, ActionContext>}
          */
-        function ComposeActionPolicy($injector) {
-            this.getPolicyService = function () {
+        class ComposeActionPolicy {
+          constructor($injector) {
+            this.getPolicyService = () => {
                 return $injector.get('policyService');
             };
         }
 
-        ComposeActionPolicy.prototype.allowComposition = function (containerObject, selectedObject) {
+        allowComposition(containerObject, selectedObject) {
             // Get the object types involved in the compose action
-            var containerType = containerObject &&
+            let containerType = containerObject &&
                     containerObject.getCapability('type'),
                 selectedType = selectedObject &&
                     selectedObject.getCapability('type');
@@ -67,7 +68,7 @@ define(
          * @returns {boolean} true if it may be allowed
          * @memberof platform/containment.ComposeActionPolicy#
          */
-        ComposeActionPolicy.prototype.allow = function (candidate, context) {
+        allow(candidate, context) {
             if (candidate.getMetadata().key === 'compose') {
                 return this.allowComposition(
                     (context || {}).domainObject,
@@ -76,8 +77,7 @@ define(
             }
             return true;
         };
-
+      }
         return ComposeActionPolicy;
-
     }
 );

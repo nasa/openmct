@@ -22,9 +22,9 @@
 
 define([
     '../../api/objects/object-utils'
-], function (
+], (
     objectUtils
-) {
+) => {
 
     /**
      * Compatibility decorator for New API.
@@ -35,7 +35,8 @@ define([
      * a single time.
      *
      */
-    function MissingModelCompatibilityDecorator(api, modelService) {
+    class MissingModelCompatibilityDecorator {
+      constructor(api, modelService) {
         this.api = api;
         this.modelService = modelService;
         this.apiFetching = {}; // to prevent loops, if we have already
@@ -45,33 +46,33 @@ define([
      * Fetch a set of ids from the public api and return a promise for their
      * models.  If a model is requested twice, respond with a missing result.
      */
-    MissingModelCompatibilityDecorator.prototype.apiFetch = function (ids) {
-        var results = {},
-            promises = ids.map(function (id) {
+    apiFetch(ids) {
+        let results = {},
+            promises = ids.map( (id) => {
                 if (this.apiFetching[id]) {
                     return Promise.resolve();
                 }
                 this.apiFetching[id] = true;
 
                 return this.api.objects.get(objectUtils.parseKeyString(id))
-                    .then(function (newDO) {
+                    .then( (newDO) => {
                         results[id] = objectUtils.toOldFormat(newDO);
                     });
             }, this);
 
-        return Promise.all(promises).then(function () {
+        return Promise.all(promises).then( () => {
                 return results;
             });
-    };
+    }
 
     /**
      * Return a promise for model results based on provided ids.  Will attempt
      * to fetch any missing results from the object api.
      */
-    MissingModelCompatibilityDecorator.prototype.getModels = function (ids) {
+    getModels(ids) {
         return this.modelService.getModels(ids)
-            .then(function (models) {
-                var missingIds = ids.filter(function (id) {
+            .then( (models) => {
+                let missingIds = ids.filter( (id) => {
                         return !models[id];
                     });
 
@@ -80,15 +81,15 @@ define([
                 }
 
                 return this.apiFetch(missingIds)
-                    .then(function (apiResults) {
-                        Object.keys(apiResults).forEach(function (k) {
+                    .then( (apiResults) => {
+                        Object.keys(apiResults).forEach( (k) => {
                             models[k] = apiResults[k];
                         });
                         return models;
                     });
-            }.bind(this));
-    };
-
-    return MissingModelCompatibilityDecorator;
+            });
+    }
+}
+return MissingModelCompatibilityDecorator;
 });
 

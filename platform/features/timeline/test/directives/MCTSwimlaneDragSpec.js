@@ -22,18 +22,18 @@
 
 define(
     ['../../src/directives/MCTSwimlaneDrag', '../../src/directives/SwimlaneDragConstants'],
-    function (MCTSwimlaneDrag, SwimlaneDragConstants) {
+    (MCTSwimlaneDrag, SwimlaneDragConstants) => {
 
-        describe("The mct-swimlane-drag directive", function () {
-            var mockDndService,
+        describe("The mct-swimlane-drag directive", () => {
+            let mockDndService,
                 mockScope,
                 mockElement,
                 testAttrs,
                 handlers,
                 directive;
 
-            beforeEach(function () {
-                var scopeExprs = {
+            beforeEach(() => {
+                let scopeExprs = {
                     someTestExpr: "some swimlane"
                 };
 
@@ -48,7 +48,7 @@ define(
                 testAttrs = { mctSwimlaneDrag: "someTestExpr" };
 
                 // Simulate evaluation of expressions in scope
-                mockScope.$eval.andCallFake(function (expr) {
+                mockScope.$eval.andCallFake( (expr) => {
                     return scopeExprs[expr];
                 });
 
@@ -58,17 +58,17 @@ define(
                 // for testing.
                 directive.link(mockScope, mockElement, testAttrs);
 
-                mockElement.on.calls.forEach(function (call) {
+                mockElement.on.calls.forEach( (call) => {
                     handlers[call.args[0]] = call.args[1];
                 });
 
             });
 
-            it("is available as an attribute", function () {
+            it("is available as an attribute", () => {
                 expect(directive.restrict).toEqual("A");
             });
 
-            it("exposes the swimlane when dragging starts", function () {
+            it("exposes the swimlane when dragging starts", () => {
                 // Verify precondition
                 expect(mockDndService.setData).not.toHaveBeenCalled();
                 // Start a drag
@@ -80,7 +80,7 @@ define(
                 );
             });
 
-            it("clears the swimlane when dragging ends", function () {
+            it("clears the swimlane when dragging ends", () => {
                 // Verify precondition
                 expect(mockDndService.removeData).not.toHaveBeenCalled();
                 // Start a drag

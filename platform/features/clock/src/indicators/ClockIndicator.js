@@ -22,7 +22,7 @@
 
 define(
     ['moment'],
-    function (moment) {
+    (moment) => {
 
         /**
          * Indicator that displays the current UTC time in the status area.
@@ -33,33 +33,32 @@ define(
          * @param {string} indicatorFormat format string for timestamps
          *        shown in this indicator
          */
-        function ClockIndicator(tickerService, indicatorFormat) {
-            var self = this;
-
+        class ClockIndicator {
+          constructor(tickerService, indicatorFormat) {
             this.text = "";
 
-            tickerService.listen(function (timestamp) {
-                self.text = moment.utc(timestamp)
+            tickerService.listen( (timestamp) => {
+                this.text = moment.utc(timestamp)
                     .format(indicatorFormat) + " UTC";
             });
         }
 
-        ClockIndicator.prototype.getGlyphClass = function () {
+        getGlyphClass() {
             return "no-collapse float-right subdued";
         };
 
-        ClockIndicator.prototype.getCssClass = function () {
+        getCssClass() {
             return "icon-clock";
         };
 
-        ClockIndicator.prototype.getText = function () {
+        getText() {
             return this.text;
         };
 
-        ClockIndicator.prototype.getDescription = function () {
+        getDescription() {
             return "";
         };
-
+      }
         return ClockIndicator;
     }
 );

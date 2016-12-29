@@ -27,7 +27,7 @@
  */
 define(
     ['./ContainmentTable'],
-    function (ContainmentTable) {
+    (ContainmentTable) => {
 
         /**
          * Defines composition policy as driven by type metadata.
@@ -35,12 +35,13 @@ define(
          * @memberof platform/containment
          * @implements {Policy.<Type, Type>}
          */
-        function CompositionPolicy($injector) {
+        class CompositionPolicy {
+          constructor($injector) {
             // We're really just wrapping the containment table and rephrasing
             // it as a policy decision.
-            var table;
+            let table;
 
-            this.getTable = function () {
+            this.getTable = () => {
                 return (table = table || new ContainmentTable(
                     $injector.get('typeService'),
                     $injector.get('capabilityService')
@@ -48,10 +49,10 @@ define(
             };
         }
 
-        CompositionPolicy.prototype.allow = function (candidate, context) {
+        allow(candidate, context) {
             return this.getTable().canContain(candidate, context);
         };
-
+      }
         return CompositionPolicy;
     }
 );

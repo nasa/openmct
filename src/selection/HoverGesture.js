@@ -20,39 +20,39 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['zepto'], function ($) {
-    function HoverGesture(hoverManager) {
+define(['zepto'], ($) => {
+    class HoverGesture {
+      constructor(hoverManager) {
         this.hoverManager = hoverManager;
-    }
-
-    HoverGesture.prototype.apply = function (htmlElement) {
-        var $element = $(htmlElement);
-        var hoverManager = this.hoverManager;
-
-        function update() {
+      }
+      apply(htmlElement) {
+        let $element = $(htmlElement);
+        let hoverManager = this.hoverManager;
+        
+        const update = () => {
             $(hoverManager.all()).removeClass('hovering');
             $(hoverManager.top()).addClass('hovering');
-        }
+        };
 
-        function enter() {
+        const enter = () => {
             hoverManager.add(htmlElement);
             update();
-        }
+        };
 
-        function leave() {
+        const leave = () =>{
             hoverManager.remove(htmlElement);
             update();
-        }
+        };
 
         $element.on('mouseenter', enter);
         $element.on('mouseleave', leave);
 
-        return function () {
+        return () => {
             leave();
             $element.off('mouseenter', enter);
             $element.off('mouseleave', leave);
-        }.bind(this);
-    };
-
-    return HoverGesture;
+        };
+    }
+}
+return HoverGesture;
 });

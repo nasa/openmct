@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * A policy for determining whether a region part should be visible or
@@ -32,10 +32,9 @@ define(
          * @implements {Policy}
          * @memberof platform/commonUI/regions
          */
-        function EditableRegionPolicy() {
-        }
+        class EditableRegionPolicy() {
 
-        EditableRegionPolicy.prototype.allow = function (regionPart, domainObject) {
+        allow(regionPart, domainObject) {
             if (!regionPart.modes) {
                 return true;
             }
@@ -49,7 +48,7 @@ define(
                 return regionPart.modes.indexOf('browse') !== -1;
             }
         };
-
+      }
         return EditableRegionPolicy;
     }
 );

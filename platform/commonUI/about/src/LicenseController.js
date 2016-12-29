@@ -20,9 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [],
-    function () {
+define([], () => {
 
         /**
          * Provides extension-introduced licenses information to the
@@ -30,7 +28,8 @@ define(
          * @memberof platform/commonUI/about
          * @constructor
          */
-        function LicenseController(licenses) {
+        class LicenseController {
+          constructor(licenses) {
             this.licenseDefinitions = licenses;
         }
 
@@ -39,10 +38,10 @@ define(
          * @returns {Array} license extensions
          * @memberof platform/commonUI/about.LicenseController#
          */
-        LicenseController.prototype.licenses = function () {
+        licenses() {
             return this.licenseDefinitions;
         };
-
-        return LicenseController;
+      }
+      return LicenseController;
     }
 );

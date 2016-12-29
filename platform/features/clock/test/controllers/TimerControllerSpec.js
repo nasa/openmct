@@ -25,10 +25,10 @@ define(
     function (TimerController) {
 
         // Wed, 03 Jun 2015 17:56:14 GMT
-        var TEST_TIMESTAMP = 1433354174000;
+        const TEST_TIMESTAMP = 1433354174000;
 
-        describe("A timer view's controller", function () {
-            var mockScope,
+        describe("A timer view's controller", () =>  {
+            let mockScope,
                 mockWindow,
                 mockNow,
                 mockDomainObject,
@@ -38,15 +38,15 @@ define(
                 testModel,
                 controller;
 
-            function invokeWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
+            const invokeWatch = (expr, value) => {
+                mockScope.$watch.calls.forEach( (call) => {
                     if (call.args[0] ===  expr) {
                         call.args[1](value);
                     }
                 });
             }
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 mockScope = jasmine.createSpyObj(
                     '$scope',
                     ['$watch', '$on', '$apply']
@@ -73,13 +73,13 @@ define(
                 );
                 mockNow = jasmine.createSpy('now');
 
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockDomainObject.getCapability.andCallFake( (c) => {
                     return (c === 'action') && mockActionCapability;
                 });
-                mockDomainObject.getModel.andCallFake(function () {
+                mockDomainObject.getModel.andCallFake(() =>  {
                     return testModel;
                 });
-                mockActionCapability.getActions.andCallFake(function (k) {
+                mockActionCapability.getActions.andCallFake( (k) => {
                     return [{
                         'timer.start': mockStart,
                         'timer.restart': mockRestart
@@ -94,26 +94,26 @@ define(
                 controller = new TimerController(mockScope, mockWindow, mockNow);
             });
 
-            it("watches for the domain object in view", function () {
+            it("watches for the domain object in view", () =>  {
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "domainObject",
                     jasmine.any(Function)
                 );
             });
 
-            it("watches for domain object modifications", function () {
+            it("watches for domain object modifications", () =>  {
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "model.modified",
                     jasmine.any(Function)
                 );
             });
 
-            it("updates on a timer", function () {
+            it("updates on a timer", () =>  {
                 expect(mockWindow.requestAnimationFrame)
                     .toHaveBeenCalledWith(jasmine.any(Function));
             });
 
-            it("displays nothing when there is no target", function () {
+            it("displays nothing when there is no target", () =>  {
                 // Notify that domain object is available via scope
                 invokeWatch('domainObject', mockDomainObject);
                 mockNow.andReturn(TEST_TIMESTAMP);
@@ -122,7 +122,7 @@ define(
                 expect(controller.text()).toEqual("");
             });
 
-            it("formats time to display relative to target", function () {
+            it("formats time to display relative to target", () =>  {
                 testModel.timestamp = TEST_TIMESTAMP;
                 testModel.timerFormat = 'long';
                 // Notify that domain object is available via scope
@@ -144,7 +144,7 @@ define(
                 expect(controller.text()).toEqual("0D 00:00:00");
             });
 
-            it("shows cssclass & name for the applicable start/restart action", function () {
+            it("shows cssclass & name for the applicable start/restart action", () =>  {
                 invokeWatch('domainObject', mockDomainObject);
                 expect(controller.buttonCssClass()).toEqual("icon-play");
                 expect(controller.buttonText()).toEqual("Start");
@@ -155,7 +155,7 @@ define(
                 expect(controller.buttonText()).toEqual("Restart");
             });
 
-            it("performs correct start/restart action on click", function () {
+            it("performs correct start/restart action on click", () =>  {
                 invokeWatch('domainObject', mockDomainObject);
                 expect(mockStart.perform).not.toHaveBeenCalled();
                 controller.clickButton();
@@ -168,8 +168,8 @@ define(
                 expect(mockRestart.perform).toHaveBeenCalled();
             });
 
-            it("stops requesting animation frames when destroyed", function () {
-                var initialCount = mockWindow.requestAnimationFrame.calls.length;
+            it("stops requesting animation frames when destroyed", () =>  {
+                let initialCount = mockWindow.requestAnimationFrame.calls.length;
 
                 // First, check that normally new frames keep getting requested
                 mockWindow.requestAnimationFrame.mostRecentCall.args[0]();

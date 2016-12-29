@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([], () => {
 
     /**
      * Disallow moves when either the parent or the child are not
@@ -29,33 +29,30 @@ define([], function () {
      * @implements {Policy}
      * @memberof platform/entanglement
      */
-    function MovePolicy() {
-    }
+     const parentOf = (domainObject) => {
+         let context = domainObject.getCapability('context');
+         return context && context.getParent();
+     }
 
-    function parentOf(domainObject) {
-        var context = domainObject.getCapability('context');
-        return context && context.getParent();
-    }
+     const allowMutation = (domainObject) => {
+         let type = domainObject && domainObject.getCapability('type');
+         return !!(type && type.hasFeature('creation'));
+     }
 
-    function allowMutation(domainObject) {
-        var type = domainObject && domainObject.getCapability('type');
-        return !!(type && type.hasFeature('creation'));
-    }
+     const selectedObject = (context) => {
+         return context.selectedObject || context.domainObject;
+     }
+    class MovePolicy {
 
-    function selectedObject(context) {
-        return context.selectedObject || context.domainObject;
-    }
-
-    MovePolicy.prototype.allow = function (action, context) {
-        var key = action.getMetadata().key;
+      allow(action, context) {
+        let key = action.getMetadata().key;
 
         if (key === 'move') {
             return allowMutation(selectedObject(context)) &&
                 allowMutation(parentOf(selectedObject(context)));
         }
-
         return true;
     };
-
+  }
     return MovePolicy;
 });

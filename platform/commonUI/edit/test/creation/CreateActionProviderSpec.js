@@ -25,18 +25,18 @@
  */
 define(
     ["../../src/creation/CreateActionProvider"],
-    function (CreateActionProvider) {
+    (CreateActionProvider) => {
 
-        describe("The create action provider", function () {
-            var mockTypeService,
+        describe("The create action provider", () => {
+            let mockTypeService,
                 mockPolicyService,
                 mockCreationPolicy,
                 mockPolicyMap = {},
                 mockTypes,
                 provider;
 
-            function createMockType(name) {
-                var mockType = jasmine.createSpyObj(
+            const createMockType = (name) => {
+                let mockType = jasmine.createSpyObj(
                     "type" + name,
                     [
                         "getKey",
@@ -54,7 +54,7 @@ define(
                 return mockType;
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockTypeService = jasmine.createSpyObj(
                     "typeService",
                     ["listTypes"]
@@ -66,15 +66,15 @@ define(
 
                 mockTypes = ["A", "B", "C"].map(createMockType);
 
-                mockTypes.forEach(function (type) {
+                mockTypes.forEach( (type) => {
                     mockPolicyMap[type.getName()] = true;
                 });
 
-                mockCreationPolicy = function (type) {
+                mockCreationPolicy = (type) => {
                     return mockPolicyMap[type.getName()];
                 };
 
-                mockPolicyService.allow.andCallFake(function (category, type) {
+                mockPolicyService.allow.andCallFake( (category, type) => {
                     return category === "creation" && mockCreationPolicy(type) ? true : false;
                 });
 
@@ -86,21 +86,21 @@ define(
                 );
             });
 
-            it("exposes one create action per type", function () {
+            it("exposes one create action per type", () => {
                 expect(provider.getActions({
                     key: "create",
                     domainObject: {}
                 }).length).toEqual(3);
             });
 
-            it("exposes no non-create actions", function () {
+            it("exposes no non-create actions", () => {
                 expect(provider.getActions({
                     key: "somethingElse",
                     domainObject: {}
                 }).length).toEqual(0);
             });
 
-            it("does not expose non-creatable types", function () {
+            it("does not expose non-creatable types", () => {
                 // One of the types won't have the creation feature...
                 mockPolicyMap[mockTypes[0].getName()] = false;
                 // ...so it should have been filtered out.

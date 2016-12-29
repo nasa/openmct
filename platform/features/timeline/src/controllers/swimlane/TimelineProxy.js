@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Selection proxy for the Timeline view. Implements
@@ -30,23 +30,23 @@ define(
          * timeline's toolbar.
          * @constructor
          */
-        function TimelineProxy(domainObject, selection) {
-            var actionMap = {};
+        const TimelineProxy = (domainObject, selection) => {
+            let actionMap = {};
 
             // Populate available Create actions for this domain object
-            function populateActionMap(object) {
-                var actionCapability = object.getCapability('action'),
+            const populateActionMap = (object) => {
+                let actionCapability = object.getCapability('action'),
                     actions = actionCapability ?
                             actionCapability.getActions('add') : [];
-                actions.forEach(function (action) {
+                actions.forEach( (action) => {
                     actionMap[action.getMetadata().type] = action;
                 });
             }
 
             // Populate available actions based on current selection
             // (defaulting to object-in-view if there is none.)
-            function populateForSelection() {
-                var swimlane = selection && selection.get(),
+            const populateForSelection = () => {
+                let swimlane = selection && selection.get(),
                     selectedObject = swimlane && swimlane.domainObject;
                 populateActionMap(selectedObject || domainObject);
             }
@@ -58,7 +58,7 @@ define(
                  * Add a domain object of the specified type.
                  * @param {string} type the type of domain object to add
                  */
-                add: function (type) {
+                add: (type) => {
                     // Update list of create actions; this needs to reflect
                     // the current selection so that Save in defaults
                     // appropriately.

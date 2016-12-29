@@ -21,8 +21,7 @@
  *****************************************************************************/
 
 /*global jasmine*/
-define(
-    function () {
+define(() => {
 
         /**
          * @typedef DomainObjectConfig
@@ -35,20 +34,20 @@ define(
          *     capability definitions.
          */
 
-        var configObjectProps = ['model', 'capabilities'];
+        let configObjectProps = ['model', 'capabilities'];
 
         /**
          * Internal function for ensuring an object is an instance of a
          * DomainObjectConfig.
          */
-        function ensureValidConfigObject(config) {
+        const ensureValidConfigObject = (config) => {
             if (!config || !config.hasOwnProperty) {
                 config = {};
             }
             if (!config.name) {
                 config.name = 'domainObject';
             }
-            configObjectProps.forEach(function (prop) {
+            configObjectProps.forEach( (prop) => {
                 if (!config[prop] || !config[prop].hasOwnProperty) {
                     config[prop] = {};
                 }
@@ -65,10 +64,10 @@ define(
          * @param {Object} [config] initial configuration for a domain object.
          * @returns {Object} mockDomainObject
          */
-        function domainObjectFactory(config) {
+        const domainObjectFactory = (config) => {
             config = ensureValidConfigObject(config);
 
-            var domainObject = jasmine.createSpyObj(config.name, [
+            let domainObject = jasmine.createSpyObj(config.name, [
                 'getId',
                 'getModel',
                 'getCapability',
@@ -85,7 +84,7 @@ define(
              *
              * @returns {string} id
              */
-            domainObject.getId.andCallFake(function () {
+            domainObject.getId.andCallFake( () => {
                 return domainObject.id;
             });
 
@@ -94,7 +93,7 @@ define(
              *
              * @returns {object} model
              */
-            domainObject.getModel.andCallFake(function () {
+            domainObject.getModel.andCallFake( () => {
                 return domainObject.model;
             });
 
@@ -106,7 +105,7 @@ define(
              * @param {string} capability name of the capability to return.
              * @returns {*} capability object
              */
-            domainObject.getCapability.andCallFake(function (capability) {
+            domainObject.getCapability.andCallFake( (capability) => {
                 if (config.capabilities.hasOwnProperty(capability)) {
                     return config.capabilities[capability];
                 }
@@ -120,7 +119,7 @@ define(
              *     existence of.
              * @returns {boolean}
              */
-            domainObject.hasCapability.andCallFake(function (capability) {
+            domainObject.hasCapability.andCallFake( (capability) => {
                 return config.capabilities.hasOwnProperty(capability);
             });
 
@@ -133,14 +132,14 @@ define(
              * @param {...*} params to pass to the capability's `invoke` method.
              * @returns {*} result whatever was returned by `invoke`.
              */
-            domainObject.useCapability.andCallFake(function (capability) {
+            domainObject.useCapability.andCallFake( (capability) => {
                 if (config.capabilities.hasOwnProperty(capability)) {
                     if (!config.capabilities[capability].invoke) {
                         throw new Error(
                             capability + ' missing invoke function.'
                         );
                     }
-                    var passThroughArgs = [].slice.call(arguments, 1);
+                    let passThroughArgs = [].slice.call(arguments, 1);
                     return config
                         .capabilities[capability]
                         .invoke

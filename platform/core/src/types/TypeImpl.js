@@ -22,7 +22,7 @@
 
 define(
     ['./TypeProperty'],
-    function (TypeProperty) {
+    (TypeProperty) => {
 
         /**
          * Describes a type of domain object.
@@ -119,8 +119,9 @@ define(
          * @constructor
          * @memberof platform/core
          */
-        function TypeImpl(typeDef) {
-            var inheritList = typeDef.inherits || [],
+        class TypeImpl {
+          constructor(typeDef) {
+            let inheritList = typeDef.inherits || [],
                 featureSet = {};
 
             (typeDef.features || []).forEach(function (feature) {
@@ -132,24 +133,24 @@ define(
             this.inheritList = inheritList;
         }
 
-        TypeImpl.prototype.getKey = function () {
+        getKey() {
             return this.typeDef.key;
         };
 
-        TypeImpl.prototype.getName = function () {
+        getName() {
             return this.typeDef.name;
         };
 
-        TypeImpl.prototype.getDescription = function () {
+        getDescription() {
             return this.typeDef.description;
         };
 
-        TypeImpl.prototype.getCssClass = function () {
+        getCssClass() {
             return this.typeDef.cssclass;
         };
 
-        TypeImpl.prototype.getProperties = function () {
-            return (this.typeDef.properties || []).map(function (propertyDef) {
+        getProperties() {
+            return (this.typeDef.properties || []).map( (propertyDef) => {
                 return new TypeProperty(propertyDef);
             });
         };
@@ -161,16 +162,16 @@ define(
          *
          * @return {object} The default model for an object of this type.
          */
-        TypeImpl.prototype.getInitialModel = function () {
+        getInitialModel() {
             return JSON.parse(JSON.stringify(this.typeDef.model || {}));
         };
 
-        TypeImpl.prototype.getDefinition = function () {
+        getDefinition() {
             return this.typeDef;
         };
 
-        TypeImpl.prototype.instanceOf = function instanceOf(key) {
-            var typeDef = this.typeDef,
+        instanceOf(key) {
+            let typeDef = this.typeDef,
                 inheritList = this.inheritList;
 
             if (key === typeDef.key) {
@@ -186,10 +187,10 @@ define(
             }
         };
 
-        TypeImpl.prototype.hasFeature = function (feature) {
+        hasFeature(feature) {
             return this.featureSet[feature] || false;
         };
-
+      }
         return TypeImpl;
     }
 );

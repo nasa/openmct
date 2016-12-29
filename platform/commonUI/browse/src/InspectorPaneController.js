@@ -23,7 +23,7 @@
 
 define(
     ["./PaneController"],
-    function (PaneController) {
+    (PaneController) => {
 
         /**
          * Pane controller that reveals inspector, if hidden, when object
@@ -35,10 +35,10 @@ define(
          * @param navigationService
          * @constructor
          */
-        function InspectorPaneController($scope, agentService, $window, navigationService) {
+        const InspectorPaneController = ($scope, agentService, $window, navigationService) => {
             PaneController.call(this, $scope, agentService, $window);
-
-            var statusListener,
+            // I'll leave this for now, as an arrow function would bind to "this" in default.
+            let statusListener,
                 self = this;
 
             function showInspector(statuses) {
@@ -47,7 +47,7 @@ define(
                 }
             }
 
-            function attachStatusListener(domainObject) {
+            const attachStatusListener = (domainObject) => {
                 // Remove existing status listener if existing
                 if (statusListener) {
                     statusListener();
@@ -59,14 +59,14 @@ define(
                 return statusListener;
             }
 
-            var domainObject = navigationService.getNavigation();
+            let domainObject = navigationService.getNavigation();
             if (domainObject) {
                 attachStatusListener(domainObject);
             }
 
             navigationService.addListener(attachStatusListener);
 
-            $scope.$on("$destroy", function () {
+            $scope.$on("$destroy", () => {
                 statusListener();
                 navigationService.removeListener(attachStatusListener);
             });

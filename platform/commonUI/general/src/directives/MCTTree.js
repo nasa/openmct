@@ -23,21 +23,21 @@
 define([
     'angular',
     '../ui/TreeView'
-], function (angular, TreeView) {
-    function MCTTree(gestureService) {
-        function link(scope, element) {
+], (angular, TreeView) => {
+    const MCTTree = (gestureService) => {
+        const link = (scope, element) => {
             if (!scope.allowSelection) {
-                scope.allowSelection = function () {
+                scope.allowSelection = () => {
                     return true;
                 };
             }
             if (!scope.onSelection) {
-                scope.onSelection = function () {};
+                scope.onSelection = () => {};
             }
-            var currentSelection = scope.selectedObject;
-            var treeView = new TreeView(gestureService);
+            let currentSelection = scope.selectedObject;
+            let treeView = new TreeView(gestureService);
 
-            function setSelection(domainObject, event) {
+            const setSelection = (domainObject, event) => {
                 if (currentSelection === domainObject) {
                     return;
                 }
@@ -53,11 +53,11 @@ define([
                 }
             }
 
-            var unobserve = treeView.observe(setSelection);
+            let unobserve = treeView.observe(setSelection);
 
             element.append(angular.element(treeView.elements()));
 
-            scope.$watch('selectedObject', function (object) {
+            scope.$watch('selectedObject', (object) => {
                 currentSelection = object;
                 treeView.value(object);
             });

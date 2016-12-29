@@ -25,17 +25,17 @@
  */
 define(
     ["../../src/services/UrlService"],
-    function (UrlService) {
+    (UrlService) => {
 
-        describe("The url service", function () {
-            var urlService,
+        describe("The url service", () => {
+            let urlService,
                 mockLocation,
                 mockDomainObject,
                 mockContext,
                 mockMode,
                 testViews;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 // Creates a mockLocation, used to
                 // do the view search
                 mockLocation = jasmine.createSpyObj(
@@ -65,14 +65,14 @@ define(
                 );
 
                 // view capability used with the testviews made
-                mockDomainObject.useCapability.andCallFake(function (c) {
+                mockDomainObject.useCapability.andCallFake( (c) => {
                     return (c === 'view') && testViews;
                 });
 
                 // context capability used with the mockContext created
                 // so the variables including context in the urlFor are
                 // initialized and reached
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockDomainObject.getCapability.andCallFake( (c) => {
                     return c === 'context' && mockContext;
                 });
 
@@ -83,11 +83,11 @@ define(
                 urlService = new UrlService(mockLocation);
             });
 
-            it("get url for a location using domainObject and mode", function () {
+            it("get url for a location using domainObject and mode", () => {
                 urlService.urlForLocation(mockMode, mockDomainObject);
             });
 
-            it("get url for a new tab using domainObject and mode", function () {
+            it("get url for a new tab using domainObject and mode", () => {
                 urlService.urlForNewTab(mockMode, mockDomainObject);
             });
         });

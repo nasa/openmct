@@ -22,29 +22,29 @@
 
 define(
     ['./TimelineSwimlaneDropHandler'],
-    function (TimelineSwimlaneDropHandler) {
+    (TimelineSwimlaneDropHandler) => {
 
-        var ACTIVITY_RELATIONSHIP = "modes";
+        let ACTIVITY_RELATIONSHIP = "modes";
 
         /**
          * Adds optional methods to TimelineSwimlanes, in order
          * to conditionally make available options in the toolbar.
          * @constructor
          */
-        function TimelineSwimlaneDecorator(swimlane, selection) {
-            var domainObject = swimlane && swimlane.domainObject,
+        const TimelineSwimlaneDecorator = (swimlane, selection) => {
+            let domainObject = swimlane && swimlane.domainObject,
                 model = (domainObject && domainObject.getModel()) || {},
                 mutator = domainObject && domainObject.getCapability('mutation'),
                 type = domainObject && domainObject.getCapability('type'),
                 dropHandler = new TimelineSwimlaneDropHandler(swimlane);
 
             // Activity Modes dialog
-            function modes(value) {
+            const modes = (value) => {
                 // Can be used as a setter...
                 if (arguments.length > 0 && Array.isArray(value)) {
                     if ((model.relationships || {})[ACTIVITY_RELATIONSHIP] !== value) {
                         // Update the relationships
-                        mutator.mutate(function (m) {
+                        mutator.mutate( (m) => {
                             m.relationships = m.relationships || {};
                             m.relationships[ACTIVITY_RELATIONSHIP] = value;
                         });
@@ -55,7 +55,7 @@ define(
             }
 
             // Activity Link dialog
-            function link(value) {
+            const link = (value) => {
                 // Can be used as a setter...
                 if (arguments.length > 0 && (typeof value === 'string') &&
                         value !== model.link) {
@@ -68,17 +68,17 @@ define(
             }
 
             // Fire the Remove action
-            function remove() {
+            const remove = () => {
                 return domainObject.getCapability("action").perform("remove");
             }
 
             // Select the current swimlane
-            function select() {
+            const select = () => {
                 selection.select(swimlane);
             }
 
             // Check if the swimlane is selected
-            function selected() {
+            const selected = () => {
                 return selection.get() === swimlane;
             }
 

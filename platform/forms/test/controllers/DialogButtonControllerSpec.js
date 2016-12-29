@@ -22,16 +22,16 @@
 
 define(
     ["../../src/controllers/DialogButtonController"],
-    function (DialogButtonController) {
+    (DialogButtonController) => {
 
-        describe("A dialog button controller", function () {
-            var mockScope,
+        describe("A dialog button controller", () => {
+            let mockScope,
                 mockDialogService,
                 mockPromise,
                 testStructure,
                 controller;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockScope = jasmine.createSpyObj(
                     '$scope',
                     ['$watch']
@@ -68,8 +68,8 @@ define(
                 );
             });
 
-            it("provides a structure for a button control", function () {
-                var buttonStructure;
+            it("provides a structure for a button control", () => {
+                let buttonStructure;
 
                 // Template is just a mct-control pointing to a button
                 // control, so this controller needs to set up all the
@@ -89,7 +89,7 @@ define(
                 expect(buttonStructure.click).toEqual(jasmine.any(Function));
             });
 
-            it("shows a dialog when clicked", function () {
+            it("shows a dialog when clicked", () => {
                 mockScope.$watch.mostRecentCall.args[1](testStructure);
                 // Verify precondition - no dialog shown
                 expect(mockDialogService.getUserInput).not.toHaveBeenCalled();
@@ -99,8 +99,8 @@ define(
                 expect(mockDialogService.getUserInput).toHaveBeenCalled();
             });
 
-            it("stores user input to the model", function () {
-                var key, input = {};
+            it("stores user input to the model", () => {
+                let key, input = {};
                 // Show dialog, click...
                 mockScope.$watch.mostRecentCall.args[1](testStructure);
                 controller.getButtonStructure().click();
@@ -118,8 +118,8 @@ define(
                 expect(mockScope.ngModel.testKey).toEqual("test user input");
             });
 
-            it("supplies initial model state to the dialog", function () {
-                var key, state;
+            it("supplies initial model state to the dialog", () => {
+                let key, state;
                 mockScope.$watch.mostRecentCall.args[1](testStructure);
                 controller.getButtonStructure().click();
                 // Find the key that the dialog should return

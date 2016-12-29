@@ -22,11 +22,11 @@
 
 define(
     ['../../src/types/TypeProvider'],
-    function (TypeProvider) {
+    (TypeProvider) => {
 
-        describe("Type provider", function () {
+        describe("Type provider", () =>  {
 
-            var captured = {},
+            let captured = {},
                 testTypeDefinitions = [
                     {
                         key: 'basic',
@@ -62,12 +62,12 @@ define(
                 ],
                 provider;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 captured = {};
                 provider = new TypeProvider(testTypeDefinitions);
             });
 
-            it("looks up non-inherited types by name", function () {
+            it("looks up non-inherited types by name", () =>  {
                 captured.type = provider.getType('basic');
 
                 expect(captured.type.getCssClass()).toEqual("icon-magnify-in");
@@ -75,7 +75,7 @@ define(
                 expect(captured.type.getDescription()).toBeUndefined();
             });
 
-            it("supports single inheritance", function () {
+            it("supports single inheritance", () =>  {
                 captured.type = provider.getType('single-subtype');
 
                 expect(captured.type.getCssClass()).toEqual("icon-magnify-in");
@@ -83,7 +83,7 @@ define(
                 expect(captured.type.getDescription()).toEqual("A test subtype");
             });
 
-            it("supports multiple inheritance", function () {
+            it("supports multiple inheritance", () =>  {
                 captured.type = provider.getType('multi-subtype');
 
                 expect(captured.type.getCssClass()).toEqual("icon-magnify-out");
@@ -91,7 +91,7 @@ define(
                 expect(captured.type.getDescription()).toEqual("Multi1 Description");
             });
 
-            it("concatenates capabilities in order", function () {
+            it("concatenates capabilities in order", () =>  {
                 captured.type = provider.getType('multi-subtype');
 
                 expect(captured.type.getDefinition().capabilities).toEqual(
@@ -99,13 +99,13 @@ define(
                 );
             });
 
-            it("allows lookup of the undefined type", function () {
+            it("allows lookup of the undefined type", () =>  {
                 captured.type = provider.getType(undefined);
 
                 expect(captured.type.getName()).toEqual("Default");
             });
 
-            it("concatenates capabilities of all undefined types", function () {
+            it("concatenates capabilities of all undefined types", () =>  {
                 captured.type = new TypeProvider(
                     testTypeDefinitions.concat([
                         { capabilities: ['a', 'b', 'c'] },
@@ -120,7 +120,7 @@ define(
 
             });
 
-            it("includes capabilities from undefined type in all types", function () {
+            it("includes capabilities from undefined type in all types", () =>  {
                 captured.type = new TypeProvider(
                     testTypeDefinitions.concat([
                         { capabilities: ['a', 'b', 'c'] },
@@ -133,11 +133,11 @@ define(
                 );
             });
 
-            it("allows types to be listed", function () {
+            it("allows types to be listed", () =>  {
                 captured.types = provider.listTypes();
 
                 expect(captured.types.length).toEqual(
-                    testTypeDefinitions.filter(function (t) {
+                    testTypeDefinitions.filter( (t) => {
                         return t.key;
                     }).length
                 );

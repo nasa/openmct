@@ -22,7 +22,7 @@
 
 define(
     ['./ResourceGraph', './CumulativeGraph'],
-    function (ResourceGraph, CumulativeGraph) {
+    (ResourceGraph, CumulativeGraph) => {
 
         /**
          * Implements the `graph` capability for Timeline and
@@ -31,24 +31,24 @@ define(
          * @constructor
          * @param {DomainObject} domainObject the Timeline or Activity
          */
-        function GraphCapability($q, domainObject) {
+        const GraphCapability = ($q, domainObject) => {
 
 
             // Build graphs for this group of utilizations
-            function buildGraphs(utilizations) {
-                var utilizationMap = {},
+            const buildGraphs = (utilizations) => {
+                let utilizationMap = {},
                     result = {},
                     startingSOC;
 
                 // Bucket utilizations by type
-                utilizations.forEach(function (u) {
-                    var k = u.key;
+                utilizations.forEach( (u) => {
+                    let k = u.key;
                     utilizationMap[k] = utilizationMap[k] || [];
                     utilizationMap[k].push(u);
                 });
 
                 // ...then convert to graphs
-                Object.keys(utilizationMap).forEach(function (k) {
+                Object.keys(utilizationMap).forEach( (k) => {
                     result[k] = new ResourceGraph(utilizationMap[k]);
                 });
 
@@ -79,7 +79,7 @@ define(
                  * objects.
                  * @returns {Promise} a promise for resource graphs
                  */
-                invoke: function () {
+                invoke: () => {
                     return $q.when(
                         domainObject.useCapability('utilization') || []
                     ).then(buildGraphs);
@@ -88,7 +88,7 @@ define(
         }
 
         // Only applies to timeline objects
-        GraphCapability.appliesTo = function (model) {
+        GraphCapability.appliesTo = (model) => {
             return model &&
                 ((model.type === 'timeline') ||
                         (model.type === 'activity'));

@@ -22,16 +22,16 @@
 
 define(
     ["../src/WorkerService"],
-    function (WorkerService) {
+    (WorkerService) => {
 
-        describe("The worker service", function () {
-            var mockWindow,
+        describe("The worker service", () => {
+            let mockWindow,
                 testWorkers,
                 mockWorker,
                 mockSharedWorker,
                 service;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockWindow = jasmine.createSpyObj(
                     '$window',
                     ['Worker', 'SharedWorker']
@@ -68,23 +68,23 @@ define(
                 service = new WorkerService(mockWindow, testWorkers);
             });
 
-            it("instantiates workers at registered paths", function () {
+            it("instantiates workers at registered paths", () => {
                 expect(service.run('abc')).toBe(mockWorker);
                 expect(mockWindow.Worker).toHaveBeenCalledWith('a/b/c.js');
             });
 
-            it("prefers the first worker when multiple keys are found", function () {
+            it("prefers the first worker when multiple keys are found", () => {
                 expect(service.run('xyz')).toBe(mockWorker);
                 expect(mockWindow.Worker).toHaveBeenCalledWith('x/y/z.js');
             });
 
-            it("allows workers to be shared", function () {
+            it("allows workers to be shared", () => {
                 expect(service.run('a-shared-worker')).toBe(mockSharedWorker);
                 expect(mockWindow.SharedWorker)
                     .toHaveBeenCalledWith('a/b/c.js');
             });
 
-            it("returns undefined for unknown workers", function () {
+            it("returns undefined for unknown workers", () =>  {
                 expect(service.run('def')).toBeUndefined();
             });
 

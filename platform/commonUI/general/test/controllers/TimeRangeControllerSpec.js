@@ -22,15 +22,15 @@
 
 define(
     ["../../src/controllers/TimeRangeController", "moment"],
-    function (TimeRangeController, moment) {
+    (TimeRangeController, moment) => {
 
-        var SEC = 1000,
+        let SEC = 1000,
             MIN = 60 * SEC,
             HOUR = 60 * MIN,
             DAY = 24 * HOUR;
 
-        describe("The TimeRangeController", function () {
-            var mockScope,
+        describe("The TimeRangeController", () => {
+            let mockScope,
                 mockFormatService,
                 testDefaultFormat,
                 mockTimeout,
@@ -38,24 +38,24 @@ define(
                 mockFormat,
                 controller;
 
-            function fireWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
+            const fireWatch = (expr, value) => {
+                mockScope.$watch.calls.forEach( (call) => {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
                 });
             }
 
-            function fireWatchCollection(expr, value) {
-                mockScope.$watchCollection.calls.forEach(function (call) {
+            const fireWatchCollection = (expr, value) => {
+                mockScope.$watchCollection.calls.forEach( (call) => {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
                 });
             }
 
-            beforeEach(function () {
-                mockTimeout = function (fn) {
+            beforeEach( () => {
+                mockTimeout = (fn) => {
                     return fn();
                 };
 
@@ -75,7 +75,7 @@ define(
 
                 mockFormatService.getFormat.andReturn(mockFormat);
 
-                mockFormat.format.andCallFake(function (value) {
+                mockFormat.format.andCallFake( (value) => {
                     return moment.utc(value).format("YYYY-MM-DD HH:mm:ss");
                 });
 
@@ -90,13 +90,13 @@ define(
                 );
             });
 
-            it("watches the model that was passed in", function () {
+            it("watches the model that was passed in", () => {
                 expect(mockScope.$watchCollection)
                     .toHaveBeenCalledWith("ngModel", jasmine.any(Function));
             });
 
-            it("exposes start time validator", function () {
-                var testValue = 42000000;
+            it("exposes start time validator", () => {
+                let testValue = 42000000;
                 mockScope.formModel = { end: testValue };
                 expect(controller.validateStart(testValue + 1))
                     .toBe(false);
@@ -104,8 +104,8 @@ define(
                     .toBe(true);
             });
 
-            it("exposes end time validator", function () {
-                var testValue = 42000000;
+            it("exposes end time validator", () => {
+                let testValue = 42000000;
                 mockScope.formModel = { start:  testValue };
                 expect(controller.validateEnd(testValue - 1))
                     .toBe(false);
@@ -113,8 +113,8 @@ define(
                     .toBe(true);
             });
 
-            describe("when changes are made via form entry", function () {
-                beforeEach(function () {
+            describe("when changes are made via form entry", () => {
+                beforeEach( () => {
                     mockScope.ngModel = {
                         outer: { start: DAY * 2, end: DAY * 3 },
                         inner: { start: DAY * 2.25, end: DAY * 2.75 }
@@ -125,7 +125,7 @@ define(
                     };
                 });
 
-                it('updates all changed bounds when requested', function () {
+                it('updates all changed bounds when requested', () => {
                     fireWatchCollection("formModel", mockScope.formModel);
                     fireWatch("formModel.start", mockScope.formModel.start);
                     fireWatch("formModel.end", mockScope.formModel.end);
@@ -153,7 +153,7 @@ define(
                         .toEqual(mockScope.formModel.end);
                 });
 
-                it('updates changed start bound when requested', function () {
+                it('updates changed start bound when requested', () => {
                     fireWatchCollection("formModel", mockScope.formModel);
                     fireWatch("formModel.start", mockScope.formModel.start);
 
@@ -180,7 +180,7 @@ define(
                         .not.toEqual(mockScope.formModel.end);
                 });
 
-                it('updates changed end bound when requested', function () {
+                it('updates changed end bound when requested', () => {
                     fireWatchCollection("formModel", mockScope.formModel);
                     fireWatch("formModel.end", mockScope.formModel.end);
 
@@ -208,8 +208,8 @@ define(
                 });
             });
 
-            describe("when dragged", function () {
-                beforeEach(function () {
+            describe("when dragged", () => {
+                beforeEach( () => {
                     mockScope.ngModel = {
                         outer: {
                             start: DAY * 1000,
@@ -225,21 +225,21 @@ define(
                     fireWatchCollection("ngModel", mockScope.ngModel);
                 });
 
-                it("updates the start time for left drags", function () {
+                it("updates the start time for left drags", () => {
                     controller.startLeftDrag();
                     controller.leftDrag(250);
                     expect(mockScope.ngModel.inner.start)
                         .toEqual(DAY * 1000 + HOUR * 9);
                 });
 
-                it("updates the end time for right drags", function () {
+                it("updates the end time for right drags", () => {
                     controller.startRightDrag();
                     controller.rightDrag(-250);
                     expect(mockScope.ngModel.inner.end)
                         .toEqual(DAY * 1000 + HOUR * 15);
                 });
 
-                it("updates both start and end for middle drags", function () {
+                it("updates both start and end for middle drags", () => {
                     controller.startMiddleDrag();
                     controller.middleDrag(-125);
                     expect(mockScope.ngModel.inner).toEqual({
@@ -253,7 +253,7 @@ define(
                     });
                 });
 
-                it("enforces a minimum inner span", function () {
+                it("enforces a minimum inner span", () => {
                     controller.startRightDrag();
                     controller.rightDrag(-9999999);
                     expect(mockScope.ngModel.inner.end)
@@ -261,8 +261,8 @@ define(
                 });
             });
 
-            describe("when outer bounds are changed", function () {
-                beforeEach(function () {
+            describe("when outer bounds are changed", () => {
+                beforeEach( () => {
                     mockScope.ngModel = {
                         outer: {
                             start: DAY * 1000,
@@ -278,7 +278,7 @@ define(
                     fireWatchCollection("ngModel", mockScope.ngModel);
                 });
 
-                it("enforces a minimum inner span when outer span changes", function () {
+                it("enforces a minimum inner span when outer span changes", () => {
                     mockScope.ngModel.outer.end =
                         mockScope.ngModel.outer.start - DAY * 100;
                     fireWatch(
@@ -291,7 +291,7 @@ define(
 
             });
 
-            it("watches for changes in format selection", function () {
+            it("watches for changes in format selection", () => {
                 expect(mockFormatService.getFormat)
                     .not.toHaveBeenCalledWith('test-format');
                 fireWatch("parameters.format", 'test-format');
@@ -299,9 +299,9 @@ define(
                     .toHaveBeenCalledWith('test-format');
             });
 
-            it("throws an error for unknown formats", function () {
+            it("throws an error for unknown formats", () => {
                 mockFormatService.getFormat.andReturn(undefined);
-                expect(function () {
+                expect( () => {
                     fireWatch("parameters.format", "some-format");
                 }).toThrow();
             });

@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * A controller for banner notifications. Banner notifications are a
@@ -37,10 +37,10 @@ define(
          * @param dialogService
          * @constructor
          */
-        function BannerController($scope, notificationService, dialogService) {
+        const BannerController = ($scope, notificationService, dialogService) => {
             $scope.active = notificationService.active;
 
-            $scope.action = function (action, $event) {
+            $scope.action = (action, $event) => {
                 /*
                  Prevents default 'maximize' behaviour when clicking on
                   notification button
@@ -48,19 +48,19 @@ define(
                 $event.stopPropagation();
                 return action();
             };
-            $scope.dismiss = function (notification, $event) {
+            $scope.dismiss = (notification, $event) => {
                 $event.stopPropagation();
                 notification.dismissOrMinimize();
             };
-            $scope.maximize = function (notification) {
+            $scope.maximize = (notification) => {
                 if (notification.model.severity !== "info") {
                     var dialog;
-                    notification.model.cancel = function () {
+                    notification.model.cancel = () => {
                         dialog.dismiss();
                     };
                     //If the notification is dismissed by the user, close
                     // the dialog.
-                    notification.onDismiss(function () {
+                    notification.onDismiss( () => {
                         dialog.dismiss();
                     });
 

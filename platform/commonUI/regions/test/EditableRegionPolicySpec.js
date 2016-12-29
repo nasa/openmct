@@ -22,11 +22,11 @@
 
 define(
     ['../src/EditableRegionPolicy'],
-    function (EditableRegionPolicy) {
+    (EditableRegionPolicy) => {
 
-        describe("The editable region policy ", function () {
+        describe("The editable region policy ", () => {
 
-            var editableRegionPolicy,
+            let editableRegionPolicy,
                 mockDomainObject,
                 mockEditorCapability,
                 mockBrowseRegionPart = {
@@ -37,7 +37,7 @@ define(
                 },
                 mockAllModesRegionPart = {};
 
-            beforeEach(function () {
+            beforeEach( () => {
                 editableRegionPolicy = new EditableRegionPolicy();
 
                 mockEditorCapability = jasmine.createSpyObj("editorCapability", [
@@ -50,19 +50,19 @@ define(
                 mockDomainObject.getCapability.andReturn(mockEditorCapability);
             });
 
-            it("includes only browse region parts for object not in edit mode", function () {
+            it("includes only browse region parts for object not in edit mode", () => {
                 mockEditorCapability.inEditContext.andReturn(false);
                 expect(editableRegionPolicy.allow(mockBrowseRegionPart, mockDomainObject)).toBe(true);
                 expect(editableRegionPolicy.allow(mockEditRegionPart, mockDomainObject)).toBe(false);
             });
 
-            it("includes only edit region parts for object in edit mode", function () {
+            it("includes only edit region parts for object in edit mode", () => {
                 mockEditorCapability.inEditContext.andReturn(true);
                 expect(editableRegionPolicy.allow(mockBrowseRegionPart, mockDomainObject)).toBe(false);
                 expect(editableRegionPolicy.allow(mockEditRegionPart, mockDomainObject)).toBe(true);
             });
 
-            it("includes region parts with no mode specification", function () {
+            it("includes region parts with no mode specification", () => {
                 mockEditorCapability.inEditContext.andReturn(false);
                 expect(editableRegionPolicy.allow(mockAllModesRegionPart, mockDomainObject)).toBe(true);
                 mockEditorCapability.inEditContext.andReturn(true);

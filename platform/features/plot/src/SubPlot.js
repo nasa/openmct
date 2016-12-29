@@ -25,11 +25,16 @@ define(
         './elements/PlotPosition',
         './elements/PlotTickGenerator'
     ],
-    function (PlotPosition, PlotTickGenerator) {
+    (PlotPosition, PlotTickGenerator) => {
 
-        var DOMAIN_TICKS = 5,
+        let DOMAIN_TICKS = 5,
             RANGE_TICKS = 7;
 
+        // Utility function for filtering out empty strings.
+        const isNonEmpty = (v) => {
+            return typeof v === 'string' && v !== "";
+        }
+            
         /**
          * A SubPlot is an individual plot within a Plot View (which
          * may contain multiple plots, specifically when in Stacked
@@ -44,7 +49,8 @@ define(
          *        formatting service; used to convert domain/range values
          *        from telemetry data sets to a human-readable form.
          */
-        function SubPlot(telemetryObjects, panZoomStack, telemetryFormatter) {
+         class SubPlot {
+           constructor(telemetryObjects, panZoomStack, telemetryFormatter) {
             // We are used from a template often, so maintain
             // state in local variables to allow for fast look-up,
             // as is normal for controllers.
@@ -67,19 +73,15 @@ define(
          * implies that there is no range data displayed either
          * @returns {boolean} true if domain data exists for the current pan/zoom level
          */
-        SubPlot.prototype.hasDomainData = function () {
+        hasDomainData() {
             return this.panZoomStack &&
                 this.panZoomStack.getDimensions()[0] > 0;
         };
 
-        // Utility function for filtering out empty strings.
-        function isNonEmpty(v) {
-            return typeof v === 'string' && v !== "";
-        }
 
         // Converts from pixel coordinates to domain-range,
         // to interpret mouse gestures.
-        SubPlot.prototype.mousePositionToDomainRange = function (mousePosition) {
+        mousePositionToDomainRange(mousePosition) {
             return new PlotPosition(
                 mousePosition.x,
                 mousePosition.y,
@@ -92,8 +94,8 @@ define(
         // Utility function to get the mouse position (in x,y
         // pixel coordinates in the canvas area) from a mouse
         // event object.
-        SubPlot.prototype.toMousePosition = function ($event) {
-            var bounds = this.subPlotBounds;
+        toMousePosition($event) {
+            let bounds = this.subPlotBounds;
 
             return {
                 x: $event.clientX - bounds.left,
@@ -107,18 +109,18 @@ define(
         // position. This will subtract the domain offset, which
         // is used to bias domain values to minimize loss-of-precision
         // associated with conversion to a 32-bit floating point
-        // format (which is needed in the chart area itself, by WebGL.)
-        SubPlot.prototype.toDisplayable = function (position) {
+        // format (which is needed in the chart area itthis, by WebGL.)
+        toDisplayable(position) {
             return [position[0] - this.domainOffset, position[1]];
         };
 
         // Update the current hover coordinates
-        SubPlot.prototype.updateHoverCoordinates = function () {
-            var formatter = this.formatter;
+        updateHoverCoordinates() {
+            let formatter = this.formatter;
 
             // Utility, for map/forEach loops. Index 0 is domain,
             // index 1 is range.
-            function formatValue(v, i) {
+            const formatValue = (v, i) => {
                 return i ?
                     formatter.formatRangeValue(v) :
                     formatter.formatDomainValue(v);
@@ -134,7 +136,7 @@ define(
         // Update the drawable marquee area to reflect current
         // mouse position (or don't show it at all, if no marquee
         // zoom is in progress)
-        SubPlot.prototype.updateMarqueeBox = function () {
+        updateMarqueeBox() {
             // Express this as a box in the draw object, which
             // is passed to an mct-chart in the template for rendering.
             this.draw.boxes = this.marqueeStart ?
@@ -150,8 +152,8 @@ define(
         };
 
         // Update the bounds (origin and dimensions) of the drawing area.
-        SubPlot.prototype.updateDrawingBounds = function () {
-            var panZoom = this.panZoomStack.getPanZoom();
+        updateDrawingBounds() {
+            let panZoom = this.panZoomStack.getPanZoom();
 
             // Communicate pan-zoom state from stack to the draw object
             // which is passed to mct-chart in the template.
@@ -163,8 +165,8 @@ define(
         };
 
         // Update tick marks in scope.
-        SubPlot.prototype.updateTicks = function () {
-            var tickGenerator =
+        updateTicks() {
+            let tickGenerator =
                 new PlotTickGenerator(this.panZoomStack, this.formatter);
 
             this.domainTicks =
@@ -173,8 +175,8 @@ define(
                 tickGenerator.generateRangeTicks(RANGE_TICKS);
         };
 
-        SubPlot.prototype.updatePan = function () {
-            var start, current, delta, nextOrigin;
+        updatePan() {
+            let start, current, delta, nextOrigin;
 
             // Clear the previous panning pan-zoom state
             this.panZoomStack.popPanZoom();
@@ -206,7 +208,7 @@ define(
          * @returns {DomainObject[]} the domain objects which
          *          will have data plotted in this sub-plot
          */
-        SubPlot.prototype.getTelemetryObjects = function () {
+        getTelemetryObjects() {
             return this.telemetryObjects;
         };
 
@@ -216,7 +218,7 @@ define(
          * by the PlotTickGenerator.
          * @returns {Array} tick marks for the domain axis
          */
-        SubPlot.prototype.getDomainTicks = function () {
+        getDomainTicks() {
             return this.domainTicks;
         };
 
@@ -226,7 +228,7 @@ define(
          * by the PlotTickGenerator.
          * @returns {Array} tick marks for the range axis
          */
-        SubPlot.prototype.getRangeTicks = function () {
+        getRangeTicks() {
             return this.rangeTicks;
         };
 
@@ -238,7 +240,7 @@ define(
          * expected by that directive.
          * @return {object} the drawing object
          */
-        SubPlot.prototype.getDrawingObject = function () {
+        getDrawingObject() {
             return this.draw;
         };
 
@@ -248,7 +250,7 @@ define(
          * @returns {string[]} the displayable domain and range
          *          coordinates over which the mouse is hovered
          */
-        SubPlot.prototype.getHoverCoordinates = function () {
+        getHoverCoordinates() {
             return this.hoverCoordinates;
         };
 
@@ -257,7 +259,7 @@ define(
          * @param $event the mouse event
          * @memberof platform/features/plot.SubPlot#
          */
-        SubPlot.prototype.hover = function ($event) {
+        hover($event) {
             this.hovering = true;
             this.subPlotBounds = $event.target.getBoundingClientRect();
             this.mousePosition = this.toMousePosition($event);
@@ -280,7 +282,7 @@ define(
          * @param $event the mouse event
          * @memberof platform/features/plot.SubPlot#
          */
-        SubPlot.prototype.continueDrag = function ($event) {
+        continueDrag($event) {
             this.mousePosition = this.toMousePosition($event);
             if (this.marqueeStart) {
                 this.updateMarqueeBox();
@@ -296,7 +298,7 @@ define(
          * Initiate a marquee zoom action.
          * @param $event the mouse event
          */
-        SubPlot.prototype.startDrag = function ($event) {
+        startDrag($event) {
             this.subPlotBounds = $event.target.getBoundingClientRect();
             this.mousePosition = this.toMousePosition($event);
             // Treat any modifier key as a pan
@@ -323,16 +325,15 @@ define(
          * Complete a marquee zoom action.
          * @param $event the mouse event
          */
-        SubPlot.prototype.endDrag = function ($event) {
-            var self = this;
+        endDrag($event) {
 
             // Perform a marquee zoom.
-            function marqueeZoom(start, end) {
+            const marqueeZoom = (start, end) => {
                 // Determine what boundary is described by the marquee,
                 // in domain-range values. Use the minima for origin, so that
                 // it doesn't matter what direction the user marqueed in.
-                var a = self.mousePositionToDomainRange(start),
-                    b = self.mousePositionToDomainRange(end),
+                let a = this.mousePositionToDomainRange(start),
+                    b = this.mousePositionToDomainRange(end),
                     origin = [
                         Math.min(a[0], b[0]),
                         Math.min(a[1], b[1])
@@ -345,10 +346,10 @@ define(
                 // Proceed with zoom if zoom dimensions are non zeros
                 if (!(dimensions[0] === 0 && dimensions[1] === 0)) {
                     // Push the new state onto the pan-zoom stack
-                    self.panZoomStack.pushPanZoom(origin, dimensions);
+                    this.panZoomStack.pushPanZoom(origin, dimensions);
 
                     // Make sure tick marks reflect new bounds
-                    self.updateTicks();
+                    this.updateTicks();
                 }
             }
 
@@ -372,7 +373,7 @@ define(
          * Update the drawing bounds, marquee box, and
          * tick marks for this subplot.
          */
-        SubPlot.prototype.update = function () {
+        update() {
             this.updateDrawingBounds();
             this.updateMarqueeBox();
             this.updateTicks();
@@ -390,7 +391,7 @@ define(
          * correctly.
          * @param {number} value the domain offset
          */
-        SubPlot.prototype.setDomainOffset = function (value) {
+        setDomainOffset(value) {
             this.domainOffset = value;
         };
 
@@ -401,13 +402,13 @@ define(
          * @param {boolean} [state] the new hovering state
          * @returns {boolean} the hovering state
          */
-        SubPlot.prototype.isHovering = function (state) {
+        isHovering(state) {
             if (state !== undefined) {
                 this.hovering = state;
             }
             return this.hovering;
         };
-
+      }
         return SubPlot;
 
     }

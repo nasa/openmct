@@ -22,10 +22,10 @@
 
 define(
     ['../../src/representers/EditToolbar'],
-    function (EditToolbar) {
+    (EditToolbar) => {
 
-        describe("An Edit mode toolbar", function () {
-            var mockCommit,
+        describe("An Edit mode toolbar", () => {
+            let mockCommit,
                 testStructure,
                 testAB,
                 testABC,
@@ -35,11 +35,11 @@ define(
                 testM,
                 toolbar;
 
-            function getVisibility(obj) {
+            const getVisibility = (obj) => {
                 return !obj.hidden;
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockCommit = jasmine.createSpy('commit');
                 testStructure = {
                     sections: [
@@ -74,7 +74,7 @@ define(
                 toolbar = new EditToolbar(testStructure, mockCommit);
             });
 
-            it("provides properties from the original structure", function () {
+            it("provides properties from the original structure", () => {
                 expect(
                     new EditToolbar(testStructure, [testABC])
                         .getStructure()
@@ -85,7 +85,7 @@ define(
             });
 
             // This is needed by mct-toolbar
-            it("adds keys to form structure", function () {
+            it("adds keys to form structure", () => {
                 expect(
                     new EditToolbar(testStructure, [testABC])
                         .getStructure()
@@ -95,7 +95,7 @@ define(
                 ).not.toBeUndefined();
             });
 
-            it("marks empty sections as hidden", function () {
+            it("marks empty sections as hidden", () => {
                 // Verify that all sections are included when applicable...
                 toolbar.setSelection([testABCXYZ]);
                 expect(toolbar.getStructure().sections.map(getVisibility))
@@ -107,8 +107,8 @@ define(
                     .toEqual([true, false, false]);
             });
 
-            it("reads properties from selections", function () {
-                var structure, state;
+            it("reads properties from selections", () => {
+                let structure, state;
 
                 toolbar.setSelection([testABC]);
 
@@ -123,10 +123,10 @@ define(
                     .toEqual(testABC.c);
             });
 
-            it("reads properties from getters", function () {
-                var structure, state;
+            it("reads properties from getters", () => {
+                let structure, state;
 
-                testABC.a = function () {
+                testABC.a = () => {
                     return "from a getter!";
                 };
 
@@ -138,7 +138,7 @@ define(
                     .toEqual("from a getter!");
             });
 
-            it("sets properties on update", function () {
+            it("sets properties on update", () => {
                 toolbar.setSelection([testABC]);
                 toolbar.updateState(
                     toolbar.getStructure().sections[0].items[0].key,
@@ -148,8 +148,8 @@ define(
                 expect(testABC.a).toEqual("new value");
             });
 
-            it("invokes setters on update", function () {
-                var structure;
+            it("invokes setters on update", () => {
+                let structure;
 
                 testABC.a = jasmine.createSpy('a');
 
@@ -164,16 +164,16 @@ define(
                 expect(testABC.a).toHaveBeenCalledWith("new value");
             });
 
-            it("provides a return value describing update status", function () {
+            it("provides a return value describing update status", () => {
                 // Should return true if actually updated, otherwise false
-                var key;
+                let key;
                 toolbar.setSelection([testABC]);
                 key = toolbar.getStructure().sections[0].items[0].key;
                 expect(toolbar.updateState(key, testABC.a)).toBeFalsy();
                 expect(toolbar.updateState(key, "new value")).toBeTruthy();
             });
 
-            it("removes inapplicable items", function () {
+            it("removes inapplicable items", () => {
                 // First, verify with all items
                 toolbar.setSelection([testABC]);
                 expect(toolbar.getStructure().sections[0].items.map(getVisibility))
@@ -184,14 +184,14 @@ define(
                     .toEqual([true, true, false]);
             });
 
-            it("removes inconsistent states", function () {
+            it("removes inconsistent states", () => {
                 // Only two of three values match among these selections
                 toolbar.setSelection([testABC, testABC2]);
                 expect(toolbar.getStructure().sections[0].items.map(getVisibility))
                     .toEqual([false, true, true]);
             });
 
-            it("allows inclusive items", function () {
+            it("allows inclusive items", () => {
                 // One inclusive item is in the set, property 'x' of the
                 // second section; make sure items are pruned down
                 // when only some of the selection has x,y,z properties
@@ -200,13 +200,13 @@ define(
                     .toEqual([true, false, false]);
             });
 
-            it("removes inclusive items when there are no matches", function () {
+            it("removes inclusive items when there are no matches", () => {
                 toolbar.setSelection([testABCYZ]);
                 expect(toolbar.getStructure().sections[1].items.map(getVisibility))
                     .toEqual([false, true, true]);
             });
 
-            it("adds click functions when a method is specified", function () {
+            it("adds click functions when a method is specified", () => {
                 toolbar.setSelection([testM]);
                 // Verify precondition
                 expect(testM.m).not.toHaveBeenCalled();

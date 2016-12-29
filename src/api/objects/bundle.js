@@ -24,10 +24,7 @@
 define([
     './LegacyObjectAPIInterceptor',
     'legacyRegistry'
-], function (
-    LegacyObjectAPIInterceptor,
-    legacyRegistry
-) {
+], (LegacyObjectAPIInterceptor,legacyRegistry) => {
     legacyRegistry.register('src/api/objects', {
         name: 'Object API',
         description: 'The public Objects API',

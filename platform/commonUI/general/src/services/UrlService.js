@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The url service handles calls for url paths
@@ -33,7 +33,8 @@ define(
          * @constructor
          * @memberof platform/commonUI/general
          */
-        function UrlService($location) {
+        class UrlService {
+          constructor($location) {
             this.$location = $location;
         }
 
@@ -46,11 +47,11 @@ define(
          *        to get the path of
          * @returns {string} URL for the domain object
          */
-        UrlService.prototype.urlForLocation = function (mode, domainObject) {
-            var context = domainObject &&
+        urlForLocation(mode, domainObject) {
+            let context = domainObject &&
                     domainObject.getCapability('context'),
                 objectPath = context ? context.getPath() : [],
-                ids = objectPath.map(function (domainObj) {
+                ids = objectPath.map( (domainObj) => {
                     return domainObj.getId();
                 });
 
@@ -72,8 +73,8 @@ define(
          *        to get the path of
          * @returns {string} URL for the domain object
          */
-        UrlService.prototype.urlForNewTab = function (mode, domainObject) {
-            var viewPath = "?view=" + this.$location.search().view,
+        urlForNewTab(mode, domainObject) {
+            let viewPath = "?view=" + this.$location.search().view,
                 newTabPath =
                     "index.html#" + this.urlForLocation(mode, domainObject) +
                             viewPath;

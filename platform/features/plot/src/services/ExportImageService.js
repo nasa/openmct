@@ -28,12 +28,38 @@ define(
         "html2canvas",
         "saveAs"
     ],
-    function (
+    (
         html2canvas,
         saveAs
-    ) {
-        var self = this;
+    ) => {
+        
+        
+        
+        
+      /**
+       * canvas.toBlob() not supported in IE < 10, Opera, and Safari. This polyfill
+       * implements the method in browsers that would not otherwise support it.
+       * https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob
+       */
+       const polyfillToBlob = () => {
+          if (!HTMLCanvasElement.prototype.toBlob) {
+              Object.defineProperty(HTMLCanvasElement.prototype, "toBlob", {
+                  value: function (callback, type, quality) {
 
+                      var binStr = atob(this.toDataURL(type, quality).split(',')[1]),
+                          len = binStr.length,
+                          arr = new Uint8Array(len);
+
+                      for (var i = 0; i < len; i++) {
+                          arr[i] = binStr.charCodeAt(i);
+                      }
+
+                      callback(new Blob([arr], {type: type || "image/png"}));
+                  }
+              });
+          }
+      }
+      
         /**
          * The export image service will export any HTML node to
          * JPG, or PNG.
@@ -43,14 +69,15 @@ define(
          * @param {constant} EXPORT_IMAGE_TIMEOUT time in milliseconds before a timeout error is returned
          * @constructor
          */
-        function ExportImageService($q, $timeout, $log, EXPORT_IMAGE_TIMEOUT, injHtml2Canvas, injSaveAs, injFileReader) {
-            self.$q = $q;
-            self.$timeout = $timeout;
-            self.$log = $log;
-            self.EXPORT_IMAGE_TIMEOUT = EXPORT_IMAGE_TIMEOUT;
-            self.html2canvas = injHtml2Canvas || html2canvas;
-            self.saveAs = injSaveAs || saveAs;
-            self.reader = injFileReader || new FileReader();
+        class ExportImageService {
+          constructor($q, $timeout, $log, EXPORT_IMAGE_TIMEOUT, injHtml2Canvas, injSaveAs, injFileReader) {
+            this.$q = $q;
+            this.$timeout = $timeout;
+            this.$log = $log;
+            this.EXPORT_IMAGE_TIMEOUT = EXPORT_IMAGE_TIMEOUT;
+            this.html2canvas = injHtml2Canvas || html2canvas;
+            this.saveAs = injSaveAs || saveAs;
+            this.reader = injFileReader || new FileReader();
         }
 
         /**
@@ -60,24 +87,24 @@ define(
          * @param {string} type of image to convert the element to
          * @returns {promise}
          */
-        function renderElement(element, type) {
-            var defer = self.$q.defer(),
+        renderElement(element, type) {
+            let defer = this.$q.defer(),
                 validTypes = ["png", "jpg", "jpeg"],
                 renderTimeout;
 
             if (validTypes.indexOf(type) === -1) {
-                self.$log.error("Invalid type requested. Try: (" + validTypes.join(",") + ")");
+                this.$log.error("Invalid type requested. Try: (" + validTypes.join(",") + ")");
                 return;
             }
 
-            renderTimeout = self.$timeout(function () {
+            renderTimeout = this.$timeout( () => {
                 defer.reject("html2canvas timed out");
-                self.$log.warn("html2canvas timed out");
-            }, self.EXPORT_IMAGE_TIMEOUT);
+                this.$log.warn("html2canvas timed out");
+            }, this.EXPORT_IMAGE_TIMEOUT);
 
             try {
-                self.html2canvas(element, {
-                    onrendered: function (canvas) {
+                this.html2canvas(element, {
+                    onrendered: (canvas) => {
                         switch (type.toLowerCase()) {
                             case "png":
                                 canvas.toBlob(defer.resolve, "image/png");
@@ -93,7 +120,7 @@ define(
                 });
             } catch (e) {
                 defer.reject(e);
-                self.$log.warn("html2canvas failed with error: " + e);
+                this.$log.warn("html2canvas failed with error: " + e);
             }
 
             defer.promise.finally(renderTimeout.cancel);
@@ -102,38 +129,14 @@ define(
         }
 
         /**
-         * canvas.toBlob() not supported in IE < 10, Opera, and Safari. This polyfill
-         * implements the method in browsers that would not otherwise support it.
-         * https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob
-         */
-        function polyfillToBlob() {
-            if (!HTMLCanvasElement.prototype.toBlob) {
-                Object.defineProperty(HTMLCanvasElement.prototype, "toBlob", {
-                    value: function (callback, type, quality) {
-
-                        var binStr = atob(this.toDataURL(type, quality).split(',')[1]),
-                            len = binStr.length,
-                            arr = new Uint8Array(len);
-
-                        for (var i = 0; i < len; i++) {
-                            arr[i] = binStr.charCodeAt(i);
-                        }
-
-                        callback(new Blob([arr], {type: type || "image/png"}));
-                    }
-                });
-            }
-        }
-
-        /**
          * Takes a screenshot of a DOM node and exports to JPG.
          * @param {node} element to be exported
          * @param {string} filename the exported image
          * @returns {promise}
          */
-        ExportImageService.prototype.exportJPG = function (element, filename) {
-            return renderElement(element, "jpeg").then(function (img) {
-                self.saveAs(img, filename);
+        exportJPG (element, filename) {
+            return renderElement(element, "jpeg").then( (img) => {
+                this.saveAs(img, filename);
             });
         };
 
@@ -143,11 +146,12 @@ define(
          * @param {string} filename the exported image
          * @returns {promise}
          */
-        ExportImageService.prototype.exportPNG = function (element, filename) {
-            return renderElement(element, "png").then(function (img) {
-                self.saveAs(img, filename);
+        exportPNG(element, filename) {
+            return renderElement(element, "png").then( (img) => {
+                this.saveAs(img, filename);
             });
         };
+      }
 
         polyfillToBlob();
 

@@ -23,9 +23,9 @@
 
 define(
     ["../src/DeviceClassifier", "../src/DeviceMatchers"],
-    function (DeviceClassifier, DeviceMatchers) {
+    (DeviceClassifier, DeviceMatchers) => {
 
-        var AGENT_SERVICE_METHODS = [
+        const AGENT_SERVICE_METHODS = [
                 'isMobile',
                 'isPhone',
                 'isTablet',
@@ -42,12 +42,12 @@ define(
                 []
             ];
 
-        describe("DeviceClassifier", function () {
-            var mockAgentService,
+        describe("DeviceClassifier", () => {
+            let mockAgentService,
                 mockDocument,
                 mockBody;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockAgentService = jasmine.createSpyObj(
                     'agentService',
                     AGENT_SERVICE_METHODS
@@ -60,24 +60,24 @@ define(
                     'body',
                     ['addClass']
                 );
-                mockDocument.find.andCallFake(function (sel) {
+                mockDocument.find.andCallFake( (sel) => {
                     return sel === 'body' && mockBody;
                 });
-                AGENT_SERVICE_METHODS.forEach(function (m) {
+                AGENT_SERVICE_METHODS.forEach( (m) => {
                     mockAgentService[m].andReturn(false);
                 });
             });
 
-            TEST_PERMUTATIONS.forEach(function (trueMethods) {
-                var summary = trueMethods.length === 0 ?
+            TEST_PERMUTATIONS.forEach( (trueMethods) => {
+                let summary = trueMethods.length === 0 ?
                         "device has no detected characteristics" :
                         "device " + (trueMethods.join(", "));
 
-                describe("when " + summary, function () {
-                    var classifier;
+                describe("when " + summary, () => {
+                    let classifier;
 
-                    beforeEach(function () {
-                        trueMethods.forEach(function (m) {
+                    beforeEach( () => {
+                        trueMethods.forEach( (m) => {
                             mockAgentService[m].andReturn(true);
                         });
                         classifier = new DeviceClassifier(
@@ -86,19 +86,19 @@ define(
                         );
                     });
 
-                    it("adds classes for matching, detected characteristics", function () {
-                        Object.keys(DeviceMatchers).filter(function (m) {
+                    it("adds classes for matching, detected characteristics", () => {
+                        Object.keys(DeviceMatchers).filter( (m) => {
                             return DeviceMatchers[m](mockAgentService);
-                        }).forEach(function (key) {
+                        }).forEach( (key) => {
                             expect(mockBody.addClass)
                                 .toHaveBeenCalledWith(key);
                         });
                     });
 
-                    it("does not add classes for non-matching characteristics", function () {
-                        Object.keys(DeviceMatchers).filter(function (m) {
+                    it("does not add classes for non-matching characteristics", () => {
+                        Object.keys(DeviceMatchers).filter( (m) => {
                             return !DeviceMatchers[m](mockAgentService);
-                        }).forEach(function (key) {
+                        }).forEach( (key) => {
                             expect(mockBody.addClass)
                                 .not.toHaveBeenCalledWith(key);
                         });

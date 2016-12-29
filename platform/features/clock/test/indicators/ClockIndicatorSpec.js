@@ -22,18 +22,18 @@
 
 define(
     ["../../src/indicators/ClockIndicator"],
-    function (ClockIndicator) {
+    (ClockIndicator) => {
 
         // Wed, 03 Jun 2015 17:56:14 GMT
-        var TEST_TIMESTAMP = 1433354174000,
+        const TEST_TIMESTAMP = 1433354174000,
             TEST_FORMAT = "YYYY-DDD HH:mm:ss";
 
-        describe("The clock indicator", function () {
-            var mockTicker,
+        describe("The clock indicator", () =>  {
+            let mockTicker,
                 mockUnticker,
                 indicator;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 mockTicker = jasmine.createSpyObj('ticker', ['listen']);
                 mockUnticker = jasmine.createSpy('unticker');
 
@@ -42,12 +42,12 @@ define(
                 indicator = new ClockIndicator(mockTicker, TEST_FORMAT);
             });
 
-            it("displays the current time", function () {
+            it("displays the current time", () =>  {
                 mockTicker.listen.mostRecentCall.args[0](TEST_TIMESTAMP);
                 expect(indicator.getText()).toEqual("2015-154 17:56:14 UTC");
             });
 
-            it("implements the Indicator interface", function () {
+            it("implements the Indicator interface", () =>  {
                 expect(indicator.getCssClass()).toEqual(jasmine.any(String));
                 expect(indicator.getText()).toEqual(jasmine.any(String));
                 expect(indicator.getDescription()).toEqual(jasmine.any(String));

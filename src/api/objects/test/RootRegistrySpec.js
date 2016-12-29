@@ -21,79 +21,79 @@
  *****************************************************************************/
 define([
     '../RootRegistry'
-], function (
+], (
     RootRegistry
-) {
-    describe('RootRegistry', function () {
-        var idA,
+) => {
+    describe('RootRegistry', () => {
+        let idA,
             idB,
             idC,
             registry;
 
-        function done() {
-            var isDone = false;
-            waitsFor(function () {
+        const done = () => {
+            let isDone = false;
+            waitsFor( () => {
                 return isDone;
             });
-            return function () {
+            return () => {
                 isDone = true;
             };
-        }
+        };
 
-        beforeEach(function () {
+        beforeEach( () => {
             idA = {key: 'keyA', namespace: 'something'};
             idB = {key: 'keyB', namespace: 'something'};
             idC = {key: 'keyC', namespace: 'something'};
             registry = new RootRegistry();
         });
 
-        it('can register a root by key', function () {
+        it('can register a root by key', () => {
             registry.addRoot(idA);
             registry.getRoots()
-                .then(function (roots) {
+                .then( (roots) => {
                     expect(roots).toEqual([idA]);
                 })
                 .then(done());
         });
 
-        it('can register multiple roots by key', function () {
+        it('can register multiple roots by key', () => {
             registry.addRoot([idA, idB]);
             registry.getRoots()
-                .then(function (roots) {
+                .then( (roots) => {
                     expect(roots).toEqual([idA, idB]);
                 })
                 .then(done());
         });
 
-        it('can register an asynchronous root ', function () {
-            registry.addRoot(function () {
+        it('can register an asynchronous root ', () => {
+            registry.addRoot( () => {
                 return Promise.resolve(idA);
             });
             registry.getRoots()
-                .then(function (roots) {
+                .then( (roots) => {
                     expect(roots).toEqual([idA]);
                 })
                 .then(done());
         });
 
-        it('can register multiple asynchronous roots', function () {
-            registry.addRoot(function () {
+        it('can register multiple asynchronous roots', () => {
+            registry.addRoot( () => {
                 return Promise.resolve([idA, idB]);
             });
             registry.getRoots()
-                .then(function (roots) {
+                .then( (roots) => {
                     expect(roots).toEqual([idA, idB]);
                 })
                 .then(done());
         });
 
-        it('can combine different types of registration', function () {
+        it('can combine different types of registration', () => {
             registry.addRoot([idA, idB]);
-            registry.addRoot(function () {
+            registry.addRoot( () => {
                 return Promise.resolve([idC]);
             });
             registry.getRoots()
-                .then(function (roots) {
+                .then( (roots) => {
                     expect(roots).toEqual([idA, idB, idC]);
                 })
                 .then(done());

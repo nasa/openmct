@@ -25,9 +25,9 @@
  */
 define(
     ["../../src/capabilities/ContextCapability"],
-    function (ContextCapability) {
+    (ContextCapability) => {
 
-        var DOMAIN_OBJECT_METHODS = [
+        let DOMAIN_OBJECT_METHODS = [
             "getId",
             "getModel",
             "getCapability",
@@ -35,14 +35,14 @@ define(
             "useCapability"
         ];
 
-        describe("The context capability", function () {
-            var mockDomainObject,
+        describe("The context capability", () => {
+            let mockDomainObject,
                 mockParent,
                 mockGrandparent,
                 mockContext,
                 context;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
                 mockParent = jasmine.createSpyObj("parent", DOMAIN_OBJECT_METHODS);
                 mockGrandparent = jasmine.createSpyObj("grandparent", DOMAIN_OBJECT_METHODS);
@@ -56,19 +56,19 @@ define(
                 context = new ContextCapability(mockParent, mockDomainObject);
             });
 
-            it("allows an object's parent to be retrieved", function () {
+            it("allows an object's parent to be retrieved", () => {
                 expect(context.getParent()).toEqual(mockParent);
             });
 
-            it("allows an object's full ancestry to be retrieved", function () {
+            it("allows an object's full ancestry to be retrieved", () => {
                 expect(context.getPath()).toEqual([mockGrandparent, mockParent, mockDomainObject]);
             });
 
-            it("allows the deepest ancestor of an object to be retrieved", function () {
+            it("allows the deepest ancestor of an object to be retrieved", () => {
                 expect(context.getRoot()).toEqual(mockGrandparent);
             });
 
-            it("treats ancestors with no context capability as deepest ancestors", function () {
+            it("treats ancestors with no context capability as deepest ancestors", () => {
                 mockParent.getCapability.andReturn(undefined);
                 expect(context.getPath()).toEqual([mockParent, mockDomainObject]);
                 expect(context.getRoot()).toEqual(mockParent);

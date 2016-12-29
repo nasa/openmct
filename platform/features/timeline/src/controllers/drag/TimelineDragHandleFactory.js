@@ -22,7 +22,7 @@
 
 define(
     ['./TimelineStartHandle', './TimelineEndHandle', './TimelineMoveHandle'],
-    function (TimelineStartHandle, TimelineEndHandle, TimelineMoveHandle) {
+    (TimelineStartHandle, TimelineEndHandle, TimelineMoveHandle) => {
 
 
         var DEFAULT_HANDLES = [
@@ -40,7 +40,7 @@ define(
          * in a timeline view.
          * @constructor
          */
-        function TimelineDragHandleFactory(dragHandler, snapHandler) {
+        const TimelineDragHandleFactory = (dragHandler, snapHandler) => {
             return {
                 /**
                  * Create drag handles for this domain object.
@@ -48,12 +48,12 @@ define(
                  *        manipulated by these gestures
                  * @returns {Array} array of drag handles
                  */
-                handles: function (domainObject) {
-                    var type = domainObject.getCapability('type'),
+                handles: (domainObject) => {
+                    let type = domainObject.getCapability('type'),
                         id = domainObject.getId();
 
                     // Instantiate a handle
-                    function instantiate(Handle) {
+                    const instantiate = (Handle) => {
                         return new Handle(
                             id,
                             dragHandler,

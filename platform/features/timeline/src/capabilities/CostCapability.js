@@ -22,14 +22,15 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Exposes costs associated with a subsystem mode.
          * @constructor
          */
-        function CostCapability(domainObject) {
-            var model = domainObject.getModel();
+        class CostCapability {
+          constructor(domainObject) {
+            let model = domainObject.getModel();
 
             return {
                 /**
@@ -39,7 +40,7 @@ define(
                  * presentation (see category of extension `resources`).
                  * @returns {string[]} resource types
                  */
-                resources: function () {
+                resources: () => {
                     return Object.keys(model.resources || {}).sort();
                 },
                 /**
@@ -49,7 +50,7 @@ define(
                  * @param {string} key the resource type
                  * @returns {number} the associated cost
                  */
-                cost: function (key) {
+                cost: (key) => {
                     return (model.resources || {})[key] || 0;
                 },
                 /**
@@ -59,17 +60,17 @@ define(
                  * resource utilization.
                  * @returns {object} resource utilizations
                  */
-                invoke: function () {
+                invoke: () => {
                     return model.resources || {};
                 }
             };
         }
 
         // Only applies to subsystem modes.
-        CostCapability.appliesTo = function (model) {
+        appliesTo(model) {
             return (model || {}).type === 'mode';
         };
-
+      }
         return CostCapability;
     }
 );

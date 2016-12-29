@@ -20,11 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-
-], function (
-
-) {
+define([], () => {
 
     /**
      * Utility for checking if a thing is an Open MCT Identifier.

@@ -22,14 +22,14 @@
 
 define(
     ['../../src/controllers/TimelineGraphController'],
-    function (TimelineGraphController) {
+    (TimelineGraphController) => {
 
-        describe("The Timeline graph controller", function () {
-            var mockScope,
+        describe("The Timeline graph controller", () => {
+            let mockScope,
                 testResources,
                 controller;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockScope = jasmine.createSpyObj(
                     '$scope',
                     ['$watchCollection']
@@ -45,15 +45,15 @@ define(
                 );
             });
 
-            it("watches for parameter changes", function () {
+            it("watches for parameter changes", () => {
                 expect(mockScope.$watchCollection).toHaveBeenCalledWith(
                     'parameters',
                     jasmine.any(Function)
                 );
             });
 
-            it("updates graphs when parameters change", function () {
-                var mockGraphA = jasmine.createSpyObj('graph-a', ['setBounds']),
+            it("updates graphs when parameters change", () => {
+                let mockGraphA = jasmine.createSpyObj('graph-a', ['setBounds']),
                     mockGraphB = jasmine.createSpyObj('graph-b', ['setBounds']);
 
                 // Supply new parameters
@@ -68,8 +68,8 @@ define(
                 expect(mockGraphB.setBounds).toHaveBeenCalledWith(9, 144);
             });
 
-            it("provides labels for graphs", function () {
-                var mockGraph = jasmine.createSpyObj('graph', ['minimum', 'maximum']);
+            it("provides labels for graphs", () => {
+                let mockGraph = jasmine.createSpyObj('graph', ['minimum', 'maximum']);
 
                 mockGraph.minimum.andReturn(12.3412121);
                 mockGraph.maximum.andReturn(88.7555555);

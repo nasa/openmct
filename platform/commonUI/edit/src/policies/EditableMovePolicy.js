@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([], () => {
 
     /**
      * Policy suppressing move actions among editable and non-editable
@@ -29,11 +29,10 @@ define([], function () {
      * @constructor
      * @implements {Policy.<View, DomainObject>}
      */
-    function EditableMovePolicy() {
-    }
+    class EditableMovePolicy {
 
-    EditableMovePolicy.prototype.allow = function (action, context) {
-        var domainObject = context.domainObject,
+    allow(action, context) {
+        let domainObject = context.domainObject,
             selectedObject = context.selectedObject,
             key = action.getMetadata().key,
             isDomainObjectEditing = domainObject.hasCapability('editor') &&
@@ -46,7 +45,8 @@ define([], function () {
 
         // Like all policies, allow by default.
         return true;
-    };
-
+    }
+  }
     return EditableMovePolicy;
+  }
 });

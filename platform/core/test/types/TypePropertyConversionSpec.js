@@ -22,33 +22,33 @@
 
 define(
     ['../../src/types/TypePropertyConversion'],
-    function (TypePropertyConversion) {
+    (TypePropertyConversion) => {
 
-        describe("Type property conversion", function () {
+        describe("Type property conversion", () =>  {
 
-            it("allows non-conversion when parameter is 'identity'", function () {
-                var conversion = new TypePropertyConversion("identity");
-                [42, "42", { a: 42 }].forEach(function (v) {
+            it("allows non-conversion when parameter is 'identity'", () =>  {
+                let conversion = new TypePropertyConversion("identity");
+                [42, "42", { a: 42 }].forEach( (v) => {
                     expect(conversion.toFormValue(v)).toBe(v);
                     expect(conversion.toModelValue(v)).toBe(v);
                 });
             });
 
-            it("allows numeric conversion", function () {
-                var conversion = new TypePropertyConversion("number");
+            it("allows numeric conversion", () =>  {
+                let conversion = new TypePropertyConversion("number");
                 expect(conversion.toFormValue(42)).toBe("42");
                 expect(conversion.toModelValue("42")).toBe(42);
             });
 
-            it("supports array conversions", function () {
-                var conversion = new TypePropertyConversion("number[]");
+            it("supports array conversions", () =>  {
+                let conversion = new TypePropertyConversion("number[]");
                 expect(conversion.toFormValue([42, 44]).length).toEqual(2);
                 expect(conversion.toFormValue([42, 44])[0]).toBe("42");
                 expect(conversion.toModelValue(["11", "42"])[1]).toBe(42);
             });
 
-            it("throws exceptions on unrecognized conversions", function () {
-                var caught = false, tmp;
+            it("throws exceptions on unrecognized conversions", () =>  {
+                let caught = false, tmp;
 
                 try {
                     tmp = new TypePropertyConversion("some-unknown-conversion");

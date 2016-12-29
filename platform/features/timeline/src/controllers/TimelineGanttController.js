@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Control for Gantt bars in a timeline view.
@@ -34,9 +34,9 @@ define(
          * @param {number} MAXIMUM_OFFSCREEN the maximum number of pixels
          *        allowed to go off-screen (to either the left or the right)
          */
-        function TimelineGanttController(MAXIMUM_OFFSCREEN) {
+        const TimelineGanttController = (MAXIMUM_OFFSCREEN) => {
             // Pixel position for the CSS left property
-            function left(timespan, scroll, toPixels) {
+            const left = (timespan, scroll, toPixels) => {
                 return Math.max(
                     toPixels(timespan.getStart()),
                     scroll.x - MAXIMUM_OFFSCREEN
@@ -44,8 +44,8 @@ define(
             }
 
             // Pixel value for the CSS width property
-            function width(timespan, scroll, toPixels) {
-                var x = left(timespan, scroll, toPixels),
+            const width = (timespan, scroll, toPixels) => {
+                let x = left(timespan, scroll, toPixels),
                     right = Math.min(
                         toPixels(timespan.getEnd()),
                         scroll.x + scroll.width + MAXIMUM_OFFSCREEN

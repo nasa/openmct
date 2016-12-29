@@ -27,14 +27,14 @@ define(
         '../DomainObjectFactory',
         '../ControlledPromise'
     ],
-    function (LinkService, domainObjectFactory, ControlledPromise) {
+    (LinkService, domainObjectFactory, ControlledPromise) => {
 
-        describe("LinkService", function () {
+        describe("LinkService", () =>  {
 
-            var linkService,
+            let linkService,
                 mockPolicyService;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 mockPolicyService = jasmine.createSpyObj(
                     'policyService',
                     ['allow']
@@ -43,13 +43,13 @@ define(
                 linkService = new LinkService(mockPolicyService);
             });
 
-            describe("validate", function () {
+            describe("validate", () =>  {
 
-                var object,
+                let object,
                     parentCandidate,
                     validate;
 
-                beforeEach(function () {
+                beforeEach(() =>  {
                     object = domainObjectFactory({
                         name: 'object'
                     });
@@ -62,44 +62,44 @@ define(
                             )
                         }
                     });
-                    validate = function () {
+                    validate = () =>  {
                         return linkService.validate(object, parentCandidate);
                     };
                 });
 
-                it("does not allow invalid parentCandidate", function () {
+                it("does not allow invalid parentCandidate", () =>  {
                     parentCandidate = undefined;
                     expect(validate()).toBe(false);
                     parentCandidate = {};
                     expect(validate()).toBe(false);
                 });
 
-                it("does not allow parent to be object", function () {
+                it("does not allow parent to be object", () =>  {
                     parentCandidate.id = object.id = 'abc';
                     expect(validate()).toBe(false);
                 });
 
-                it("does not allow parent that contains object", function () {
+                it("does not allow parent that contains object", () =>  {
                     object.id = 'abc';
                     parentCandidate.id = 'xyz';
                     parentCandidate.model.composition = ['abc'];
                     expect(validate()).toBe(false);
                 });
 
-                it("does not allow parents without composition", function () {
+                it("does not allow parents without composition", () =>  {
                     parentCandidate = domainObjectFactory({
                         name: 'parentCandidate'
                     });
                     object.id = 'abc';
                     parentCandidate.id = 'xyz';
-                    parentCandidate.hasCapability.andCallFake(function (c) {
+                    parentCandidate.hasCapability.andCallFake( (c) => {
                         return c !== 'composition';
                     });
                     expect(validate()).toBe(false);
                 });
 
-                describe("defers to policyService", function () {
-                    beforeEach(function () {
+                describe("defers to policyService", () =>  {
+                    beforeEach(() =>  {
                         object.id = 'abc';
                         object.capabilities.type = { type: 'object' };
                         parentCandidate.id = 'xyz';
@@ -109,7 +109,7 @@ define(
                         parentCandidate.model.composition = [];
                     });
 
-                    it("calls policy service with correct args", function () {
+                    it("calls policy service with correct args", () =>  {
                         validate();
                         expect(mockPolicyService.allow).toHaveBeenCalledWith(
                             "composition",
@@ -118,13 +118,13 @@ define(
                         );
                     });
 
-                    it("and returns false", function () {
+                    it("and returns false", () =>  {
                         mockPolicyService.allow.andReturn(true);
                         expect(validate()).toBe(true);
                         expect(mockPolicyService.allow).toHaveBeenCalled();
                     });
 
-                    it("and returns true", function () {
+                    it("and returns true", () =>  {
                         mockPolicyService.allow.andReturn(false);
                         expect(validate()).toBe(false);
                         expect(mockPolicyService.allow).toHaveBeenCalled();
@@ -132,9 +132,9 @@ define(
                 });
             });
 
-            describe("perform", function () {
+            describe("perform", () =>  {
 
-                var object,
+                let object,
                     linkedObject,
                     parentModel,
                     parentObject,
@@ -142,7 +142,7 @@ define(
                     addPromise,
                     compositionCapability;
 
-                beforeEach(function () {
+                beforeEach(() =>  {
                     compositionPromise = new ControlledPromise();
                     addPromise = new ControlledPromise();
                     compositionCapability = jasmine.createSpyObj(
@@ -159,7 +159,7 @@ define(
                         model: parentModel,
                         capabilities: {
                             mutation: {
-                                invoke: function (mutator) {
+                                invoke: (mutator) => {
                                     mutator(parentModel);
                                     return new ControlledPromise();
                                 }
@@ -181,15 +181,15 @@ define(
                 });
 
 
-                it("adds to the parent's composition", function () {
+                it("adds to the parent's composition", () =>  {
                     expect(compositionCapability.add).not.toHaveBeenCalled();
                     linkService.perform(object, parentObject);
                     expect(compositionCapability.add)
                         .toHaveBeenCalledWith(object);
                 });
 
-                it("returns object representing new link", function () {
-                    var returnPromise, whenComplete;
+                it("returns object representing new link", () =>  {
+                    let returnPromise, whenComplete;
                     returnPromise = linkService.perform(object, parentObject);
                     whenComplete = jasmine.createSpy('whenComplete');
                     returnPromise.then(whenComplete);
@@ -199,8 +199,8 @@ define(
                     expect(whenComplete).toHaveBeenCalledWith(linkedObject);
                 });
 
-                it("throws an error when performed on invalid inputs", function () {
-                    function perform() {
+                it("throws an error when performed on invalid inputs", () =>  {
+                    const perform = () => {
                         linkService.perform(object, parentObject);
                     }
 

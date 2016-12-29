@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['text!./dialog.html', 'zepto'], function (dialogTemplate, $) {
+define(['text!./dialog.html', 'zepto'], (dialogTemplate, $) => {
 
     /**
      * A dialog may be displayed to show blocking content to users.
@@ -29,7 +29,8 @@ define(['text!./dialog.html', 'zepto'], function (dialogTemplate, $) {
      * @constructor
      * @memberof module:openmct
      */
-    function Dialog(view, title) {
+    class Dialog {
+      constructor(view, title) {
         this.view = view;
         this.title = title;
         this.showing = false;
@@ -43,18 +44,18 @@ define(['text!./dialog.html', 'zepto'], function (dialogTemplate, $) {
      * @method show
      * @memberof module:openmct.Dialog#
      */
-    Dialog.prototype.show = function () {
+    show() {
         if (this.showing) {
             throw new Error("Dialog already showing.");
         }
 
-        var $body = $('body');
-        var $dialog = $(dialogTemplate);
-        var $contents = $dialog.find('.contents .editor');
-        var $close = $dialog.find('.close');
+        let $body = $('body');
+        let $dialog = $(dialogTemplate);
+        let $contents = $dialog.find('.contents .editor');
+        let $close = $dialog.find('.close');
 
-        var $ok = $dialog.find('.ok');
-        var $cancel = $dialog.find('.cancel');
+        let $ok = $dialog.find('.ok');
+        let $cancel = $dialog.find('.cancel');
 
         if (this.title) {
             $dialog.find('.title').text(this.title);
@@ -66,25 +67,25 @@ define(['text!./dialog.html', 'zepto'], function (dialogTemplate, $) {
         this.$ok = $ok;
         this.showing = true;
 
-        [$ok, $cancel, $close].forEach(function ($button) {
+        [$ok, $cancel, $close].forEach( ($button) => {
             $button.on('click', this.hide.bind(this));
-        }.bind(this));
+        });
 
-        return new Promise(function (resolve, reject) {
+        return new Promise( (resolve, reject) => {
             $ok.on('click', resolve);
             $cancel.on('click', reject);
             $close.on('click', reject);
         });
-    };
+    }
 
-    Dialog.prototype.hide = function () {
+    hide() {
         if (!this.showing) {
             return;
         }
         this.$dialog.remove();
         this.view.destroy();
         this.showing = false;
-    };
+    }
 
     /**
      * Get or set the "enabled" state of the OK button for this dialog.
@@ -93,7 +94,7 @@ define(['text!./dialog.html', 'zepto'], function (dialogTemplate, $) {
      * @method enabled
      * @memberof module:openmct.Dialog#
      */
-    Dialog.prototype.enabled = function (state) {
+    enabled(state) {
         if (state !== undefined) {
             this.enabledState = state;
             if (this.showing) {
@@ -101,7 +102,7 @@ define(['text!./dialog.html', 'zepto'], function (dialogTemplate, $) {
             }
         }
         return this.enabledState;
-    };
-
-    return Dialog;
+    }
+}
+return Dialog;
 });

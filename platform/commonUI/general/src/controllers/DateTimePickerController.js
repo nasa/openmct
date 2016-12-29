@@ -22,16 +22,16 @@
 
 define(
     ['moment'],
-    function (moment) {
+    (moment) => {
 
-        var TIME_NAMES = {
+        let TIME_NAMES = {
                 'hours': "Hour",
                 'minutes': "Minute",
                 'seconds': "Second"
             },
             MONTHS = moment.months(),
             TIME_OPTIONS = (function makeRanges() {
-                var arr = [];
+                let arr = [];
                 while (arr.length < 60) {
                     arr.push(arr.length);
                 }
@@ -64,13 +64,13 @@ define(
          *
          * Months are zero-indexed, day-of-months are one-indexed.
          */
-        function DateTimePickerController($scope, now) {
-            var year,
+        const DateTimePickerController = ($scope, now) => {
+            let year,
                 month, // For picker state, not model state
                 interacted = false;
 
-            function generateTable() {
-                var m = moment.utc({ year: year, month: month }).day(0),
+            const generateTable = () => {
+                let m = moment.utc({ year: year, month: month }).day(0),
                     table = [],
                     row,
                     col;
@@ -89,16 +89,16 @@ define(
                 }
 
                 return table;
-            }
+            };
 
-            function updateScopeForMonth() {
+            const updateScopeForMonth = () => {
                 $scope.month = MONTHS[month];
                 $scope.year = year;
                 $scope.table = generateTable();
-            }
+            };
 
-            function updateFromModel(ngModel) {
-                var m;
+            const updateFromModel = (ngModel) => {
+                let m;
 
                 m = moment.utc(ngModel);
 
@@ -124,7 +124,7 @@ define(
                 }
             }
 
-            function updateFromView() {
+            const updateFromView = () => {
                 var m = moment.utc({
                     year: $scope.date.year,
                     month: $scope.date.month,
@@ -136,18 +136,18 @@ define(
                 $scope.ngModel[$scope.field] = m.valueOf();
             }
 
-            $scope.isInCurrentMonth = function (cell) {
+            $scope.isInCurrentMonth = (cell) => {
                 return cell.month === month;
             };
 
-            $scope.isSelected = function (cell) {
-                var date = $scope.date || {};
+            $scope.isSelected = (cell) => {
+                let date = $scope.date || {};
                 return cell.day === date.day &&
                     cell.month === date.month &&
                     cell.year === date.year;
             };
 
-            $scope.select = function (cell) {
+            $scope.select = (cell) => {
                 $scope.date = $scope.date || {};
                 $scope.date.month = cell.month;
                 $scope.date.year = cell.year;
@@ -155,13 +155,13 @@ define(
                 updateFromView();
             };
 
-            $scope.dateEquals = function (d1, d2) {
+            $scope.dateEquals = (d1, d2) => {
                 return d1.year === d2.year &&
                     d1.month === d2.month &&
                     d1.day === d2.day;
             };
 
-            $scope.changeMonth = function (delta) {
+            $scope.changeMonth = (delta) => {
                 month += delta;
                 if (month > 11) {
                     month = 0;
@@ -175,11 +175,11 @@ define(
                 updateScopeForMonth();
             };
 
-            $scope.nameFor = function (key) {
+            $scope.nameFor = (key) => {
                 return TIME_NAMES[key];
             };
 
-            $scope.optionsFor = function (key) {
+            $scope.optionsFor = (key) => {
                 return TIME_OPTIONS[key];
             };
 

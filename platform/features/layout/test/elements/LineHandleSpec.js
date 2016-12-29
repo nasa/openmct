@@ -22,13 +22,13 @@
 
 define(
     ['../../src/elements/LineHandle'],
-    function (LineHandle) {
+    (LineHandle) => {
 
-        describe("A fixed position drag handle", function () {
-            var testElement,
+        describe("A fixed position drag handle", () => {
+            let testElement,
                 handle;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 testElement = {
                     x: 3,
                     y: 42,
@@ -39,26 +39,26 @@ define(
                 handle = new LineHandle(testElement, 'x', 'y', 'x2', 'y2');
             });
 
-            it("provides x/y grid coordinates for its corner", function () {
+            it("provides x/y grid coordinates for its corner", () => {
                 expect(handle.x()).toEqual(3);
                 expect(handle.y()).toEqual(42);
             });
 
-            it("changes x and y positions", function () {
+            it("changes x and y positions", () => {
                 handle.x(30);
                 expect(testElement.x).toEqual(30);
                 handle.y(40);
                 expect(testElement.y).toEqual(40);
             });
 
-            it("disallows values less than zero", function () {
+            it("disallows values less than zero", () => {
                 handle.x(-1);
                 handle.y(-400);
                 expect(testElement.x).toEqual(0);
                 expect(testElement.y).toEqual(0);
             });
 
-            it("ensures that end points remain different", function () {
+            it("ensures that end points remain different", () => {
                 handle.x(testElement.x2);
                 handle.y(testElement.y2);
                 // First change should have been fine, because y was different

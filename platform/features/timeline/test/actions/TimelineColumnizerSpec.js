@@ -22,14 +22,14 @@
 
 define(
     ['../../src/actions/TimelineColumnizer'],
-    function (TimelineColumnizer) {
-        describe("TimelineColumnizer", function () {
-            var mockDomainObjects,
+    (TimelineColumnizer) => {
+        describe("TimelineColumnizer", () => {
+            let mockDomainObjects,
                 testMetadata,
                 exporter;
 
-            function makeMockDomainObject(model, index) {
-                var mockDomainObject = jasmine.createSpyObj(
+            const makeMockDomainObject = (model, index) => {
+                let mockDomainObject = jasmine.createSpyObj(
                     'domainObject-' + index,
                     [
                         'getId',
@@ -41,14 +41,14 @@ define(
                 );
                 mockDomainObject.getId.andReturn('id-' + index);
                 mockDomainObject.getModel.andReturn(model);
-                mockDomainObject.useCapability.andCallFake(function (c) {
+                mockDomainObject.useCapability.andCallFake( (c) => {
                     return c === 'metadata' && [];
                 });
                 return mockDomainObject;
             }
 
-            beforeEach(function () {
-                var mockTimespan = jasmine.createSpyObj(
+            beforeEach(() => {
+                let mockTimespan = jasmine.createSpyObj(
                     'timespan',
                     ['getStart', 'getEnd']
                 );
@@ -64,53 +64,53 @@ define(
                     { }
                 ].map(makeMockDomainObject);
 
-                mockDomainObjects[1].hasCapability.andCallFake(function (c) {
+                mockDomainObjects[1].hasCapability.andCallFake( (c) => {
                     return c === 'timespan';
                 });
-                mockDomainObjects[1].useCapability.andCallFake(function (c) {
+                mockDomainObjects[1].useCapability.andCallFake( (c) => {
                     return c === 'timespan' ? Promise.resolve(mockTimespan) :
                         c === 'metadata' ? [] : undefined;
                 });
-                mockDomainObjects[2].useCapability.andCallFake(function (c) {
+                mockDomainObjects[2].useCapability.andCallFake( (c) => {
                     return c === 'metadata' && testMetadata;
                 });
 
                 exporter = new TimelineColumnizer(mockDomainObjects, []);
             });
 
-            describe("rows", function () {
-                var rows;
+            describe("rows", () => {
+                let rows;
 
-                beforeEach(function () {
-                    exporter.rows().then(function (r) {
+                beforeEach(() => {
+                    exporter.rows().then( (r) => {
                         rows = r;
                     });
-                    waitsFor(function () {
+                    waitsFor(() => {
                         return rows !== undefined;
                     });
                 });
 
 
-                it("include one row per domain object", function () {
+                it("include one row per domain object", () => {
                     expect(rows.length).toEqual(mockDomainObjects.length);
                 });
             });
 
-            describe("headers", function () {
-                var headers;
+            describe("headers", () => {
+                let headers;
 
-                beforeEach(function () {
+                beforeEach(() => {
                     headers = exporter.headers();
                 });
 
-                it("contains all metadata properties", function () {
-                    testMetadata.forEach(function (property) {
+                it("contains all metadata properties", () => {
+                    testMetadata.forEach( (property) => {
                         expect(headers.indexOf(property.name))
                             .not.toEqual(-1);
                     });
                 });
 
-                it("contains timespan properties", function () {
+                it("contains timespan properties", () => {
                     expect(headers.indexOf("Start")).not.toEqual(-1);
                     expect(headers.indexOf("End")).not.toEqual(-1);
                 });

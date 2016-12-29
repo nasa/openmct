@@ -21,8 +21,7 @@
  *****************************************************************************/
 
 
-define(
-    function () {
+define(() => {
 
         /**
          * Adds a `location` property to newly-created domain objects.
@@ -30,17 +29,18 @@ define(
          * @augments {platform/commonUI/browse.CreationService}
          * @memberof platform/entanglement
          */
-        function LocatingCreationDecorator(creationService) {
+        class LocatingCreationDecorator {
+          constructor(creationService) {
             this.creationService = creationService;
         }
 
-        LocatingCreationDecorator.prototype.createObject = function (model, parent) {
+        createObject(model, parent) {
             if (parent && parent.getId) {
                 model.location = parent.getId();
             }
             return this.creationService.createObject(model, parent);
         };
-
+      }
         return LocatingCreationDecorator;
     }
 );

@@ -34,7 +34,7 @@ define(
         "./modes/PlotModeOptions",
         "./SubPlotFactory"
     ],
-    function (
+     (
         PlotUpdater,
         PlotPalette,
         PlotAxis,
@@ -42,9 +42,9 @@ define(
         PlotTelemetryFormatter,
         PlotModeOptions,
         SubPlotFactory
-    ) {
+    ) => {
 
-        var AXIS_DEFAULTS = [
+        let AXIS_DEFAULTS = [
                 { "name": "Time" },
                 { "name": "Value" }
             ];
@@ -61,18 +61,18 @@ define(
          * @memberof platform/features/plot
          * @constructor
          */
-        function PlotController(
-            $scope,
-            $element,
-            exportImageService,
-            telemetryFormatter,
-            telemetryHandler,
-            throttle,
-            PLOT_FIXED_DURATION,
-            openmct
-        ) {
-            var self = this,
-                plotTelemetryFormatter =
+        class PlotController {
+          constructor(
+              $scope,
+              $element,
+              exportImageService,
+              telemetryFormatter,
+              telemetryHandler,
+              throttle,
+              PLOT_FIXED_DURATION,
+              openmct
+          ) {
+            let plotTelemetryFormatter =
                     new PlotTelemetryFormatter(telemetryFormatter),
                 subPlotFactory =
                     new SubPlotFactory(plotTelemetryFormatter),
@@ -82,28 +82,28 @@ define(
                 lastRange,
                 lastDomain,
                 handle;
-            var conductor = openmct.conductor;
+            let conductor = openmct.conductor;
 
             // Populate the scope with axis information (specifically, options
             // available for each axis.)
-            function setupAxes(metadatas) {
-                $scope.axes.forEach(function (axis) {
+            const setupAxes = (metadatas) => {
+                $scope.axes.forEach( (axis) => {
                     axis.updateMetadata(metadatas);
                 });
             }
 
             // Trigger an update of a specific subplot;
             // used in a loop to update all subplots.
-            function updateSubplot(subplot) {
+            const updateSubplot = (subplot) => {
                 subplot.update();
             }
 
             // Set up available modes (stacked/overlaid), based on the
             // set of telemetry objects in this plot view.
-            function setupModes(telemetryObjects) {
+            const setupModes = (telemetryObjects) => {
                 if (cachedObjects !== telemetryObjects) {
                     cachedObjects = telemetryObjects;
-                    self.modeOptions = new PlotModeOptions(
+                    this.modeOptions = new PlotModeOptions(
                         telemetryObjects || [],
                         subPlotFactory
                     );
@@ -111,20 +111,20 @@ define(
             }
 
             // Change the displayable bounds
-            function setBasePanZoom(bounds) {
-                var start = bounds.start,
+            const setBasePanZoom = (bounds) => {
+                let start = bounds.start,
                     end = bounds.end;
                 if (updater) {
                     updater.setDomainBounds(start, end);
-                    self.update();
+                    this.update();
                 }
                 lastBounds = bounds;
             }
 
             // Reinstantiate the plot updater (e.g. because we have a
             // new subscription.) This will clear the plot.
-            function recreateUpdater() {
-                var domain = $scope.axes[0].active.key,
+            const recreateUpdater = () => {
+                let domain = $scope.axes[0].active.key,
                     range = $scope.axes[1].active.key,
                     duration = PLOT_FIXED_DURATION;
 
@@ -132,7 +132,7 @@ define(
                 lastDomain = domain;
                 lastRange = range;
 
-                self.limitTracker = new PlotLimitTracker(handle, range);
+                this.limitTracker = new PlotLimitTracker(handle, range);
 
                 // Keep any externally-provided bounds
                 if (lastBounds) {
@@ -140,7 +140,7 @@ define(
                 }
             }
 
-            function getUpdater() {
+            const getUpdater = () => {
                 if (!updater) {
                     recreateUpdater();
                 }
@@ -148,45 +148,45 @@ define(
             }
 
             // Handle new telemetry data in this plot
-            function updateValues() {
-                self.pending = false;
+            const updateValues = () => {
+                this.pending = false;
                 if (handle) {
                     setupModes(handle.getTelemetryObjects());
                     setupAxes(handle.getMetadata());
                     getUpdater().update();
-                    self.modeOptions.getModeHandler().plotTelemetry(updater);
-                    self.limitTracker.update();
-                    self.update();
+                    this.modeOptions.getModeHandler().plotTelemetry(updater);
+                    this.limitTracker.update();
+                    this.update();
                 }
             }
 
             // Display new historical data as it becomes available
-            function addHistoricalData(domainObject, series) {
-                self.pending = false;
+            const addHistoricalData = (domainObject, series) => {
+                this.pending = false;
                 getUpdater().addHistorical(domainObject, series);
-                self.modeOptions.getModeHandler().plotTelemetry(updater);
-                self.update();
+                this.modeOptions.getModeHandler().plotTelemetry(updater);
+                this.update();
             }
 
             // Issue a new request for historical telemetry
-            function requestTelemetry() {
+            const requestTelemetry = () => {
                 if (handle) {
                     handle.request({}, addHistoricalData);
                 }
             }
 
             // Requery for data entirely
-            function replot() {
+            const replot = () => {
                 if (handle) {
                     updater = undefined;
                     requestTelemetry();
                 }
             }
 
-            function changeTimeOfInterest(timeOfInterest) {
+            const changeTimeOfInterest = (timeOfInterest) => {
                 if (timeOfInterest !== undefined) {
-                    var bounds = conductor.bounds();
-                    var range = bounds.end - bounds.start;
+                    let bounds = conductor.bounds();
+                    let range = bounds.end - bounds.start;
                     $scope.toiPerc = ((timeOfInterest - bounds.start) / range) * 100;
                     $scope.toiPinned = true;
                 } else {
@@ -197,7 +197,7 @@ define(
 
             // Create a new subscription; telemetrySubscriber gets
             // to do the meaningful work here.
-            function subscribe(domainObject) {
+            const subscribe = (domainObject) => {
                 if (handle) {
                     handle.unsubscribe();
                 }
@@ -213,7 +213,7 @@ define(
             }
 
             // Release the current subscription (called when scope is destroyed)
-            function releaseSubscription() {
+            const releaseSubscription = () => {
                 if (handle) {
                     handle.unsubscribe();
                     handle = undefined;
@@ -221,38 +221,38 @@ define(
                 }
             }
 
-            function requery() {
-                self.pending = true;
+            const requery = () => {
+                this.pending = true;
                 releaseSubscription();
                 subscribe($scope.domainObject);
             }
 
-            function updateDomainFormat() {
-                var domainAxis = $scope.axes[0];
+            const updateDomainFormat = () => {
+                let domainAxis = $scope.axes[0];
                 plotTelemetryFormatter
                     .setDomainFormat(domainAxis.active.format);
             }
 
-            function domainRequery(newDomain) {
+            const domainRequery = (newDomain) => {
                 if (newDomain !== lastDomain) {
                     updateDomainFormat();
                     requery();
                 }
             }
 
-            function rangeRequery(newRange) {
+            const rangeRequery = (newRange) => {
                 if (newRange !== lastRange) {
                     requery();
                 }
             }
 
             // Respond to a display bounds change (requery for data)
-            function changeDisplayBounds(event, bounds, follow) {
+            const changeDisplayBounds = (event, bounds, follow) => {
                 //'hack' for follow mode
                 if (follow === true) {
                     setBasePanZoom(bounds);
                 } else {
-                    var domainAxis = $scope.axes[0];
+                    let domainAxis = $scope.axes[0];
 
                     if (bounds.domain) {
                         domainAxis.chooseOption(bounds.domain);
@@ -261,7 +261,7 @@ define(
                     setBasePanZoom(bounds);
                     requery();
                 }
-                self.setUnsynchedStatus($scope.domainObject, follow && self.isZoomed());
+                this.setUnsynchedStatus($scope.domainObject, follow && this.isZoomed());
                 changeTimeOfInterest(conductor.timeOfInterest());
             }
 
@@ -269,14 +269,14 @@ define(
             this.updateValues = updateValues;
 
             // Create a throttled update function
-            this.scheduleUpdate = throttle(function () {
-                self.modeOptions.getModeHandler().getSubPlots()
+            this.scheduleUpdate = throttle( () => {
+                this.modeOptions.getModeHandler().getSubPlots()
                     .forEach(updateSubplot);
             });
 
-            self.pending = true;
-            self.$element = $element;
-            self.exportImageService = exportImageService;
+            this.pending = true;
+            this.$element = $element;
+            this.exportImageService = exportImageService;
 
             // Initialize axes; will get repopulated when telemetry
             // metadata becomes available.
@@ -286,7 +286,7 @@ define(
             ];
 
             //Are some initialized bounds defined?
-            var bounds = conductor.bounds();
+            let bounds = conductor.bounds();
             if (bounds &&
                 bounds.start !== undefined &&
                 bounds.end !== undefined) {
@@ -313,7 +313,7 @@ define(
          * @param {number} index the index of the trace
          * @returns {string} the color, in #RRGGBB form
          */
-        PlotController.prototype.getColor = function (index) {
+        getColor(index) {
             return PlotPalette.getStringColor(index);
         };
 
@@ -323,7 +323,7 @@ define(
          * controls should be shown)
          * @returns {boolean} true if not in default state
          */
-        PlotController.prototype.isZoomed = function () {
+        isZoomed() {
             return this.modeOptions.getModeHandler().isZoomed();
         };
 
@@ -331,14 +331,14 @@ define(
          * Undo the most recent pan/zoom change and restore
          * the prior state.
          */
-        PlotController.prototype.stepBackPanZoom = function () {
+        stepBackPanZoom() {
             return this.modeOptions.getModeHandler().stepBackPanZoom();
         };
 
         /**
          * Undo all pan/zoom changes and restore the initial state.
          */
-        PlotController.prototype.unzoom = function () {
+        unzoom() {
             return this.modeOptions.getModeHandler().unzoom();
         };
 
@@ -346,7 +346,7 @@ define(
          * Get the mode options (Stacked/Overlaid) that are applicable
          * for this plot.
          */
-        PlotController.prototype.getModeOptions = function () {
+        getModeOptions() {
             return this.modeOptions.getModeOptions();
         };
 
@@ -354,7 +354,7 @@ define(
          * Get the current mode that is applicable to this plot. This
          * will include key, name, and cssclass fields.
          */
-        PlotController.prototype.getMode = function () {
+        getMode() {
             return this.modeOptions.getMode();
         };
 
@@ -363,7 +363,7 @@ define(
          * @param mode one of the mode options returned from
          *        getModeOptions()
          */
-        PlotController.prototype.setMode = function (mode) {
+        setMode(mode) {
             this.modeOptions.setMode(mode);
             this.updateValues();
         };
@@ -373,7 +373,7 @@ define(
          * (Multiple may be contained when in Stacked mode).
          * @returns {SubPlot[]} all subplots in this Plot view
          */
-        PlotController.prototype.getSubPlots = function () {
+        getSubPlots() {
             return this.modeOptions.getModeHandler().getSubPlots();
         };
 
@@ -382,7 +382,7 @@ define(
          * object; this will reflect limit state.
          * @returns {string} the CSS class
          */
-        PlotController.prototype.getLegendClass = function (telemetryObject) {
+        getLegendClass(telemetryObject) {
             return this.limitTracker &&
                 this.limitTracker.getLegendClass(telemetryObject);
         };
@@ -390,20 +390,20 @@ define(
         /**
          * Explicitly update all plots.
          */
-        PlotController.prototype.update = function () {
+        update() {
             this.scheduleUpdate();
         };
 
         /**
          * Check if a request is pending (to show the wait spinner)
          */
-        PlotController.prototype.isRequestPending = function () {
+        isRequestPending() {
             // Placeholder; this should reflect request state
             // when requesting historical telemetry
             return this.pending;
         };
 
-        PlotController.prototype.setUnsynchedStatus = function (domainObject, status) {
+        setUnsynchedStatus(domainObject, status) {
             if (domainObject.hasCapability('status')) {
                 domainObject.getCapability('status').set('timeconductor-unsynced', status);
             }
@@ -412,25 +412,23 @@ define(
         /**
          * Export the plot to PNG
          */
-        PlotController.prototype.exportPNG = function () {
-            var self = this;
-            self.hideExportButtons = true;
-            self.exportImageService.exportPNG(self.$element[0], "plot.png").finally(function () {
-                self.hideExportButtons = false;
+        exportPNG() {
+            this.hideExportButtons = true;
+            this.exportImageService.exportPNG(this.$element[0], "plot.png").finally( () => {
+                this.hideExportButtons = false;
             });
         };
 
         /**
          * Export the plot to JPG
          */
-        PlotController.prototype.exportJPG = function () {
-            var self = this;
-            self.hideExportButtons = true;
-            self.exportImageService.exportJPG(self.$element[0], "plot.jpg").finally(function () {
-                self.hideExportButtons = false;
+        exportJPG() {
+            this.hideExportButtons = true;
+            this.exportImageService.exportJPG(this.$element[0], "plot.jpg").finally( () => {
+                this.hideExportButtons = false;
             });
         };
-
+      }
         return PlotController;
     }
 );

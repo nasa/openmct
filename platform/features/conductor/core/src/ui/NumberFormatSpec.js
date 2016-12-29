@@ -20,26 +20,26 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./NumberFormat'], function (NumberFormat) {
-    describe("The NumberFormat class", function () {
-        var format;
-        beforeEach(function () {
+define(['./NumberFormat'], (NumberFormat) => {
+    describe("The NumberFormat class", () => {
+        let format;
+        beforeEach( () => {
             format = new NumberFormat();
         });
 
-        it("The format function takes a string and produces a number", function () {
-            var text = format.format(1);
+        it("The format function takes a string and produces a number", () => {
+            let text = format.format(1);
             expect(text).toBe("1");
             expect(typeof text).toBe("string");
         });
 
-        it("The parse function takes a string and produces a number", function () {
-            var number = format.parse("1");
+        it("The parse function takes a string and produces a number", () => {
+            let number = format.parse("1");
             expect(number).toBe(1);
             expect(typeof number).toBe("number");
         });
 
-        it("validates that the input is a number", function () {
+        it("validates that the input is a number", () => {
             expect(format.validate("1")).toBe(true);
             expect(format.validate(1)).toBe(true);
             expect(format.validate("1.1")).toBe(true);

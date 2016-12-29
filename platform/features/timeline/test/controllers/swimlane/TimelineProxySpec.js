@@ -22,16 +22,16 @@
 
 define(
     ['../../../src/controllers/swimlane/TimelineProxy'],
-    function (TimelineProxy) {
+    (TimelineProxy) => {
 
-        describe("The Timeline's selection proxy", function () {
-            var mockDomainObject,
+        describe("The Timeline's selection proxy", () => {
+            let mockDomainObject,
                 mockSelection,
                 mockActionCapability,
                 mockActions,
                 proxy;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
                     ['getCapability']
@@ -44,8 +44,8 @@ define(
                     'action',
                     ['getActions']
                 );
-                mockActions = ['a', 'b', 'c'].map(function (type) {
-                    var mockAction = jasmine.createSpyObj(
+                mockActions = ['a', 'b', 'c'].map( (type) => {
+                    let mockAction = jasmine.createSpyObj(
                         'action-' + type,
                         ['perform', 'getMetadata']
                     );
@@ -59,7 +59,7 @@ define(
                 proxy = new TimelineProxy(mockDomainObject, mockSelection);
             });
 
-            it("triggers a create action on add", function () {
+            it("triggers a create action on add", () => {
                 // Should trigger b's create action
                 proxy.add('b');
                 expect(mockActions[1].perform).toHaveBeenCalled();
@@ -75,8 +75,8 @@ define(
                     .toHaveBeenCalledWith('add');
             });
 
-            it("invokes the action on the selection, if any", function () {
-                var mockOtherObject = jasmine.createSpyObj(
+            it("invokes the action on the selection, if any", () => {
+                let mockOtherObject = jasmine.createSpyObj(
                         'other',
                         ['getCapability']
                     ),

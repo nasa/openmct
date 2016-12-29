@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Controller for the `datetime` form control.
@@ -32,11 +32,11 @@ define(
          *
          * @constructor
          */
-        function DateTimeController($scope) {
+        const DateTimeController = ($scope) => {
 
             // Update the data model
-            function updateModel(datetime) {
-                var days = parseInt(datetime.days, 10) || 0,
+            const updateModel = (datetime) => {
+                let days = parseInt(datetime.days, 10) || 0,
                     hour = parseInt(datetime.hours, 10) || 0,
                     min = parseInt(datetime.minutes, 10) || 0,
                     sec = parseInt(datetime.seconds, 10) || 0,
@@ -57,8 +57,8 @@ define(
             }
 
             // Update the displayed state
-            function updateForm(modelState) {
-                var timestamp = (modelState || {}).timestamp || 0,
+            const updateForm = (modelState) => {
+                let timestamp = (modelState || {}).timestamp || 0,
                     datetime = $scope.datetime;
 
                 timestamp = Math.floor(timestamp / 1000);
@@ -72,7 +72,7 @@ define(
             }
 
             // Retrieve state from field, for watch
-            function getModelState() {
+            const getModelState = () => {
                 return $scope.ngModel[$scope.field];
             }
 

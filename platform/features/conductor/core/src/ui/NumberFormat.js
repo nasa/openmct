@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([], () => {
 
     /**
      * Formatter for basic numbers. Provides basic support for non-UTC
@@ -30,10 +30,9 @@ define([], function () {
      * @constructor
      * @memberof platform/commonUI/formats
      */
-    function NumberFormat() {
-    }
+    class NumberFormat {
 
-    NumberFormat.prototype.format = function (value) {
+    format(value) {
         if (isNaN(value)) {
             return '';
         } else {
@@ -41,13 +40,13 @@ define([], function () {
         }
     };
 
-    NumberFormat.prototype.parse = function (text) {
+    parse(text) {
         return parseFloat(text);
     };
 
-    NumberFormat.prototype.validate = function (text) {
+    validate(text) {
         return !isNaN(text);
     };
-
+  }
     return NumberFormat;
 });

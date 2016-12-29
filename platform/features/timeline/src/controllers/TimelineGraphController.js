@@ -21,7 +21,7 @@
  *****************************************************************************/
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Controller for the graph area of a timeline view.
@@ -30,13 +30,13 @@ define(
          * in scope.
          * @constructor
          */
-        function TimelineGraphController($scope, resources) {
-            var resourceMap = {},
+        const TimelineGraphController = ($scope, resources) => {
+            let resourceMap = {},
                 labelCache = {};
 
             // Add an element to the resource map
-            function addToResourceMap(resource) {
-                var key = resource.key;
+            const addToResourceMap = (resource) => {
+                let key = resource.key;
                 if (key && !resourceMap[key]) {
                     resourceMap[key] = resource;
                 }
@@ -44,8 +44,8 @@ define(
 
             // Update the display bounds for all graphs to match
             // scroll and/or width.
-            function updateGraphs(parameters) {
-                (parameters.graphs || []).forEach(function (graph) {
+            const updateGraphs = (parameters) => {
+                (parameters.graphs || []).forEach( (graph) => {
                     graph.setBounds(parameters.origin, parameters.duration);
                 });
             }
@@ -64,8 +64,8 @@ define(
                  * @param {TimelineGraph} the graph to label
                  * @returns {object} an object containing labels
                  */
-                label: function (graph) {
-                    var key = graph.key,
+                label: (graph) => {
+                    let key = graph.key,
                         resource = resourceMap[key] || {},
                         name = resource.name || "",
                         units = resource.units,

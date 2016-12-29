@@ -22,29 +22,30 @@
 
 define(
     ["zepto"],
-    function ($) {
+    ($) => {
 
         /**
          * Controller for the Time of Interest indicator in the conductor itself. Sets the horizontal position of the
          * TOI indicator based on the current value of the TOI, and the width of the TOI conductor.
          * @memberof platform.features.conductor
          */
-        function ConductorTOIController($scope, openmct, conductorViewService) {
+        class ConductorTOIController {
+          constructor($scope, openmct, conductorViewService) {
             this.conductor = openmct.conductor;
             this.conductorViewService = conductorViewService;
 
             //Bind all class functions to 'this'
-            Object.keys(ConductorTOIController.prototype).filter(function (key) {
+            Object.keys(ConductorTOIController.prototype).filter( (key) => {
                 return typeof ConductorTOIController.prototype[key] === 'function';
-            }).forEach(function (key) {
+            }).forEach( (key) => {
                 this[key] = ConductorTOIController.prototype[key].bind(this);
-            }.bind(this));
+            });
 
             this.conductor.on('timeOfInterest', this.changeTimeOfInterest);
             this.conductorViewService.on('zoom', this.setOffsetFromZoom);
             this.conductorViewService.on('pan', this.setOffsetFromBounds);
 
-            var timeOfInterest = this.conductor.timeOfInterest();
+            let timeOfInterest = this.conductor.timeOfInterest();
             if (timeOfInterest) {
                 this.changeTimeOfInterest(timeOfInterest);
             }
@@ -55,7 +56,7 @@ define(
         /**
          * @private
          */
-        ConductorTOIController.prototype.destroy = function () {
+         destroy() {
             this.conductor.off('timeOfInterest', this.changeTimeOfInterest);
             this.conductorViewService.off('zoom', this.setOffsetFromZoom);
             this.conductorViewService.off('pan', this.setOffsetFromBounds);
@@ -69,11 +70,11 @@ define(
          * realtime during scroll and zoom.
          * @param {TimeConductorBounds} bounds
          */
-        ConductorTOIController.prototype.setOffsetFromBounds = function (bounds) {
-            var toi = this.conductor.timeOfInterest();
+        setOffsetFromBounds(bounds) {
+            let toi = this.conductor.timeOfInterest();
             if (toi !== undefined) {
-                var offset = toi - bounds.start;
-                var duration = bounds.end - bounds.start;
+                let offset = toi - bounds.start;
+                let duration = bounds.end - bounds.start;
                 this.left = offset / duration * 100;
                 this.pinned = true;
             } else {
@@ -85,7 +86,7 @@ define(
         /**
          * @private
          */
-        ConductorTOIController.prototype.setOffsetFromZoom = function (zoom) {
+        setOffsetFromZoom(zoom) {
             return this.setOffsetFromBounds(zoom.bounds);
         };
 
@@ -93,8 +94,8 @@ define(
          * Invoked when time of interest changes. Will set the horizontal offset of the TOI indicator.
          * @private
          */
-        ConductorTOIController.prototype.changeTimeOfInterest = function () {
-            var bounds = this.conductor.bounds();
+        changeTimeOfInterest() {
+            let bounds = this.conductor.bounds();
             if (bounds) {
                 this.setOffsetFromBounds(bounds);
             }
@@ -105,20 +106,20 @@ define(
          * set the time of interest on the conductor.
          * @param e The angular $event object
          */
-        ConductorTOIController.prototype.setTOIFromPosition = function (e) {
+        setTOIFromPosition(e) {
             //TOI is set using the alt key modified + primary click
             if (e.altKey) {
-                var element = $(e.currentTarget);
-                var width = element.width();
-                var relativeX = e.pageX - element.offset().left;
-                var percX = relativeX / width;
-                var bounds = this.conductor.bounds();
-                var timeRange = bounds.end - bounds.start;
+                let element = $(e.currentTarget);
+                let width = element.width();
+                let relativeX = e.pageX - element.offset().left;
+                let percX = relativeX / width;
+                let bounds = this.conductor.bounds();
+                let timeRange = bounds.end - bounds.start;
 
                 this.conductor.timeOfInterest(timeRange * percX + bounds.start);
             }
         };
-
+      }
         return ConductorTOIController;
     }
 );

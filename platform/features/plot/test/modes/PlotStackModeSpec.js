@@ -25,18 +25,18 @@
  */
 define(
     ["../../src/modes/PlotStackMode"],
-    function (PlotStackMode) {
+    (PlotStackMode) => {
 
-        describe("Stacked plot mode", function () {
-            var mockDomainObject,
+        describe("Stacked plot mode", () => {
+            let mockDomainObject,
                 mockSubPlotFactory,
                 mockPrepared,
                 testBuffers,
                 testDrawingObjects,
                 mode;
 
-            function createMockSubPlot() {
-                var mockSubPlot = jasmine.createSpyObj(
+            const createMockSubPlot = () => {
+                let mockSubPlot = jasmine.createSpyObj(
                         "subPlot",
                         [
                             "setDomainOffset",
@@ -55,7 +55,7 @@ define(
                 return mockSubPlot;
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     ["getId", "getModel", "getCapability"]
@@ -73,8 +73,8 @@ define(
                 mockSubPlotFactory.createSubPlot.andCallFake(createMockSubPlot);
 
                 // Act as if we have three buffers full of data
-                testBuffers = ['a', 'b', 'c'].map(function (id) {
-                    var mockBuffer = jasmine.createSpyObj(
+                testBuffers = ['a', 'b', 'c'].map( (id) => {
+                    let mockBuffer = jasmine.createSpyObj(
                         'buffer-' + id,
                         ['getBuffer', 'getLength']
                     );
@@ -97,13 +97,13 @@ define(
                 ], mockSubPlotFactory);
             });
 
-            it("creates one sub-plot per domain object", function () {
+            it("creates one sub-plot per domain object", () => {
                 expect(mode.getSubPlots().length).toEqual(3);
             });
 
-            it("draws telemetry to subplots", function () {
+            it("draws telemetry to subplots", () => {
                 // Verify precondition
-                mode.getSubPlots().forEach(function (subplot) {
+                mode.getSubPlots().forEach( (subplot) => {
                     // Either empty list or undefined is fine;
                     // just want to make sure there are no lines.
                     expect(subplot.getDrawingObject().lines || [])
@@ -113,7 +113,7 @@ define(
                 mode.plotTelemetry(mockPrepared);
 
                 // Should all each have one line
-                testDrawingObjects.forEach(function (testDrawingObject, i) {
+                testDrawingObjects.forEach( (testDrawingObject, i) => {
                     // Either empty list or undefined is fine;
                     // just want to make sure there are no lines.
                     expect(testDrawingObject.lines.length)
@@ -125,12 +125,12 @@ define(
                 });
             });
 
-            it("tracks zoomed state of subplots", function () {
+            it("tracks zoomed state of subplots", () => {
                 // Should start out unzoomed
                 expect(mode.isZoomed()).toBeFalsy();
 
                 // Trigger some zoom changes
-                mockSubPlotFactory.createSubPlot.calls.forEach(function (c) {
+                mockSubPlotFactory.createSubPlot.calls.forEach( (c) => {
                     // Second argument to the factory was pan-zoom stack
                     c.args[1].pushPanZoom([1, 2], [3, 4]);
                 });
@@ -139,9 +139,9 @@ define(
                 expect(mode.isZoomed()).toBeTruthy();
             });
 
-            it("supports unzooming", function () {
+            it("supports unzooming", () => {
                 // Trigger some zoom changes
-                mockSubPlotFactory.createSubPlot.calls.forEach(function (c) {
+                mockSubPlotFactory.createSubPlot.calls.forEach( (c) => {
                     // Second argument to the factory was pan-zoom stack
                     c.args[1].pushPanZoom([1, 2], [3, 4]);
                 });
@@ -155,15 +155,15 @@ define(
                 expect(mode.isZoomed()).toBeFalsy();
             });
 
-            it("supports stepping back through zoom states", function () {
+            it("supports stepping back through zoom states", () => {
                 // Trigger some zoom changes
-                mockSubPlotFactory.createSubPlot.calls.forEach(function (c) {
+                mockSubPlotFactory.createSubPlot.calls.forEach( (c) => {
                     // Second argument to the factory was pan-zoom stack
                     c.args[1].pushPanZoom([1, 2], [3, 4]);
                 });
 
                 // Step back the same number of zoom changes
-                mockSubPlotFactory.createSubPlot.calls.forEach(function () {
+                mockSubPlotFactory.createSubPlot.calls.forEach(() => {
                     // Should still be zoomed at start of each iteration
                     expect(mode.isZoomed()).toBeTruthy();
                     // Step back

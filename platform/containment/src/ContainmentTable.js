@@ -22,11 +22,11 @@
 
 define(
     ['./CapabilityTable'],
-    function (CapabilityTable) {
+    (CapabilityTable) => {
 
         // Symbolic value for the type table for cases when any type
         // is allowed to be contained.
-        var ANY = true;
+        let ANY = true;
 
         /**
          * Supports composition policy by maintaining a table of
@@ -38,27 +38,27 @@ define(
          * @constructor
          * @memberof platform/containment
          */
-        function ContainmentTable(typeService, capabilityService) {
-            var self = this,
-                types = typeService.listTypes(),
+        class ContainmentTable {
+          constructor(typeService, capabilityService) {
+            var types = typeService.listTypes(),
                 capabilityTable = new CapabilityTable(typeService, capabilityService);
 
             // Add types which have all these capabilities to the set
             // of allowed types
-            function addToSetByCapability(set, has) {
+            const addToSetByCapability = (set, has) => {
                 has = Array.isArray(has) ? has : [has];
-                types.forEach(function (type) {
-                    var typeKey = type.getKey();
-                    set[typeKey] = has.map(function (capabilityKey) {
+                types.forEach( (type) => {
+                    let typeKey = type.getKey();
+                    set[typeKey] = has.map( (capabilityKey) => {
                         return capabilityTable.hasCapability(typeKey, capabilityKey);
-                    }).reduce(function (a, b) {
+                    }).reduce( (a, b) => {
                         return a && b;
                     }, true);
                 });
             }
 
             // Add this type (or type description) to the set of allowed types
-            function addToSet(set, type) {
+            const addToSet = (set, type) => {
                 // Is this a simple case of an explicit type identifier?
                 if (typeof type === 'string') {
                     // If so, add it to the set of allowed types
@@ -70,23 +70,23 @@ define(
             }
 
             // Add to the lookup table for this type
-            function addToTable(type) {
-                var key = type.getKey(),
+            const addToTable = (type) => {
+                let key = type.getKey(),
                     definition = type.getDefinition() || {},
                     contains = definition.contains;
 
                 // Check for defined containment restrictions
                 if (contains === undefined) {
                     // If not, accept anything
-                    self.table[key] = ANY;
+                    this.table[key] = ANY;
                 } else {
                     // Start with an empty set...
-                    self.table[key] = {};
+                    this.table[key] = {};
                     // ...cast accepted types to array if necessary...
                     contains = Array.isArray(contains) ? contains : [contains];
                     // ...and add all containment rules to that set
-                    contains.forEach(function (c) {
-                        addToSet(self.table[key], c);
+                    contains.forEach( (c) => {
+                        addToSet(this.table[key], c);
                     });
                 }
             }
@@ -104,12 +104,13 @@ define(
          *        to be contained
          * @returns {boolean} true if allowable
          */
-        ContainmentTable.prototype.canContain = function (containerType, containedType) {
-            var set = this.table[containerType.getKey()] || {};
+        canContain(containerType, containedType) {
+            let set = this.table[containerType.getKey()] || {};
             // Recognize either the symbolic value for "can contain
             // anything", or lookup the specific type from the set.
             return (set === ANY) || set[containedType.getKey()];
         };
+      }
 
         return ContainmentTable;
     }

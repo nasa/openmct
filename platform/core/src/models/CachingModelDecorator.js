@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The caching model decorator maintains a cache of loaded domain
@@ -33,13 +33,14 @@ define(
          * @param {ModelService} modelService this service to decorate
          * @implements {ModelService}
          */
-        function CachingModelDecorator(cacheService, modelService) {
+        class CachingModelDecorator {
+          constructor(cacheService, modelService) {
             this.cacheService = cacheService;
             this.modelService = modelService;
         }
 
-        CachingModelDecorator.prototype.getModels = function (ids) {
-            var loadFromCache = ids.filter(function cached(id) {
+        getModels(ids) {
+            let loadFromCache = ids.filter(function cached(id) {
                     return this.cacheService.has(id);
                 }, this),
                 loadFromService = ids.filter(function notCached(id) {
@@ -51,14 +52,14 @@ define(
             }
 
             return this.modelService.getModels(loadFromService)
-                .then(function (modelResults) {
-                    loadFromCache.forEach(function (id) {
+                .then( (modelResults) => {
+                    loadFromCache.forEach( (id) => {
                         modelResults[id] = this.cacheService.get(id);
                     }, this);
                     return modelResults;
-                }.bind(this));
+                });
         };
-
+      }
         return CachingModelDecorator;
     }
 );

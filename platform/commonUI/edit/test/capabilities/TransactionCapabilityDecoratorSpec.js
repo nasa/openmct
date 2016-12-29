@@ -25,27 +25,27 @@ define(
         "../../src/capabilities/TransactionalPersistenceCapability",
         "../../src/capabilities/TransactionCapabilityDecorator"
     ],
-    function (TransactionalPersistenceCapability, TransactionCapabilityDecorator) {
+    (TransactionalPersistenceCapability, TransactionCapabilityDecorator) => {
 
-        describe("The transaction capability decorator", function () {
-            var mockQ,
+        describe("The transaction capability decorator", () => {
+            let mockQ,
                 mockTransactionService,
                 mockCapabilityService,
                 provider;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockQ = {};
                 mockTransactionService = {};
                 mockCapabilityService = jasmine.createSpyObj("capabilityService", ["getCapabilities"]);
                 mockCapabilityService.getCapabilities.andReturn({
-                    persistence: function () {}
+                    persistence:  () => {}
                 });
 
                 provider = new TransactionCapabilityDecorator(mockQ, mockTransactionService, mockCapabilityService);
 
             });
-            it("decorates the persistence capability", function () {
-                var capabilities = provider.getCapabilities();
+            it("decorates the persistence capability", () => {
+                let capabilities = provider.getCapabilities();
                 expect(capabilities.persistence({}) instanceof TransactionalPersistenceCapability).toBe(true);
             });
 

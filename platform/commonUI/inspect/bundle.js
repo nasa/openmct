@@ -29,7 +29,7 @@ define([
     "text!./res/bubble.html",
     "text!./res/templates/info-button.html",
     'legacyRegistry'
-], function (
+], (
     InfoGesture,
     InfoButtonGesture,
     InfoService,
@@ -38,7 +38,7 @@ define([
     bubbleTemplate,
     infoButtonTemplate,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/commonUI/inspect", {
         "extensions": {

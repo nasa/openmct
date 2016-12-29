@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Adds placeholder domain object models for any models which
@@ -32,21 +32,22 @@ define(
          * @param {ModelService} modelService this service to decorate
          * @implements {ModelService}
          */
-        function MissingModelDecorator(modelService) {
+        class MissingModelDecorator {
+          constructor(modelService) {
             this.modelService = modelService;
         }
 
-        function missingModel(id) {
+        const missingModel = (id) => {
             return {
                 type: "unknown",
                 name: "Missing: " + id
             };
         }
 
-        MissingModelDecorator.prototype.getModels = function (ids) {
-            function addMissingModels(models) {
-                var result = {};
-                ids.forEach(function (id) {
+        getModels(ids) {
+            const addMissingModels = (models) => {
+                let result = {};
+                ids.forEach( (id) => {
                     result[id] = models[id] || missingModel(id);
                 });
                 return result;
@@ -54,7 +55,7 @@ define(
 
             return this.modelService.getModels(ids).then(addMissingModels);
         };
-
+      }
         return MissingModelDecorator;
     }
 );

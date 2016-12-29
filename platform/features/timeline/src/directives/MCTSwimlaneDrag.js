@@ -22,7 +22,7 @@
 
 define(
     ['./SwimlaneDragConstants'],
-    function (SwimlaneDragConstants) {
+    (SwimlaneDragConstants) => {
 
         /**
          * Defines the `mct-swimlane-drag` directive. When a drag is initiated
@@ -32,21 +32,21 @@ define(
          * state.
          * @param {DndService} dndService drag-and-drop service
          */
-        function MCTSwimlaneDrag(dndService) {
-            function link(scope, element, attrs) {
+        const MCTSwimlaneDrag = (dndService) => {
+            const link = (scope, element, attrs) => {
                 // Look up the swimlane from the provided expression
-                function swimlane() {
+                const swimlane = () => {
                     return scope.$eval(attrs.mctSwimlaneDrag);
                 }
                 // When drag starts, publish via dndService
-                element.on('dragstart', function () {
+                element.on('dragstart', () => {
                     dndService.setData(
                         SwimlaneDragConstants.TIMELINE_SWIMLANE_DRAG_TYPE,
                         swimlane()
                     );
                 });
                 // When drag ends, clear via dndService
-                element.on('dragend', function () {
+                element.on('dragend', () => {
                     dndService.removeData(
                         SwimlaneDragConstants.TIMELINE_SWIMLANE_DRAG_TYPE
                     );

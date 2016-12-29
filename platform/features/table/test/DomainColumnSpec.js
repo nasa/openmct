@@ -25,17 +25,17 @@
  */
 define(
     ["../src/DomainColumn"],
-    function (DomainColumn) {
+    (DomainColumn) => {
 
-        var TEST_DOMAIN_VALUE = "some formatted domain value";
+        let TEST_DOMAIN_VALUE = "some formatted domain value";
 
-        describe("A domain column", function () {
-            var mockDatum,
+        describe("A domain column", () => {
+            let mockDatum,
                 testMetadata,
                 mockFormatter,
                 column;
 
-            beforeEach(function () {
+            beforeEach(() => {
 
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
@@ -51,23 +51,23 @@ define(
                 column = new DomainColumn(testMetadata, mockFormatter);
             });
 
-            it("reports a column header from domain metadata", function () {
+            it("reports a column header from domain metadata", () => {
                 expect(column.getTitle()).toEqual("Test Name");
             });
 
-            describe("when given a datum", function () {
-                beforeEach(function () {
+            describe("when given a datum", () => {
+                beforeEach(() => {
                     mockDatum = {
                         testKey: "testKeyValue"
                     };
                 });
 
-                it("looks up data from the given datum", function () {
+                it("looks up data from the given datum", () => {
                     expect(column.getValue(undefined, mockDatum))
                         .toEqual({ text: TEST_DOMAIN_VALUE });
                 });
 
-                it("uses formatter to format domain values as requested", function () {
+                it("uses formatter to format domain values as requested", () => {
                     column.getValue(undefined, mockDatum);
                     expect(mockFormatter.formatDomainValue)
                         .toHaveBeenCalledWith("testKeyValue", "Test Format");

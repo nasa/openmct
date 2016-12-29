@@ -23,8 +23,8 @@
 define([
     '../../core/src/timeSystems/TimeSystem',
     '../../core/src/timeSystems/LocalClock'
-], function (TimeSystem, LocalClock) {
-    var FIFTEEN_MINUTES = 15 * 60 * 1000,
+], (TimeSystem, LocalClock) => {
+    const FIFTEEN_MINUTES = 15 * 60 * 1000,
         DEFAULT_PERIOD = 1000;
 
     /**
@@ -32,8 +32,9 @@ define([
      * @implements TimeSystem
      * @constructor
      */
-    function UTCTimeSystem($timeout) {
-        TimeSystem.call(this);
+    class UTCTimeSystem extends TimeSystem {
+      constructor($timeout) {
+        super();
 
         /**
          * Some metadata, which will be used to identify the time system in
@@ -50,24 +51,22 @@ define([
         this.sources = [new LocalClock($timeout, DEFAULT_PERIOD)];
     }
 
-    UTCTimeSystem.prototype = Object.create(TimeSystem.prototype);
-
-    UTCTimeSystem.prototype.formats = function () {
+    formats() {
         return this.fmts;
     };
 
-    UTCTimeSystem.prototype.deltaFormat = function () {
+    deltaFormat() {
         return 'duration';
     };
 
-    UTCTimeSystem.prototype.tickSources = function () {
+    tickSources() {
         return this.sources;
     };
 
-    UTCTimeSystem.prototype.defaults = function () {
-        var now = Math.ceil(Date.now() / 1000) * 1000;
-        var ONE_MINUTE = 60 * 1 * 1000;
-        var FIFTY_YEARS = 50 * 365 * 24 * 60 * 60 * 1000;
+    defaults() {
+        let now = Math.ceil(Date.now() / 1000) * 1000;
+        let ONE_MINUTE = 60 * 1 * 1000;
+        let FIFTY_YEARS = 50 * 365 * 24 * 60 * 60 * 1000;
 
         return {
             key: 'utc-default',
@@ -77,6 +76,6 @@ define([
             zoom: {min: FIFTY_YEARS, max: ONE_MINUTE}
         };
     };
-
+  }
     return UTCTimeSystem;
 });

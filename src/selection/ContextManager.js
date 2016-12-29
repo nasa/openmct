@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['zepto'], function ($) {
+define(['zepto'], ($) => {
     /**
      * @typedef Context
      * @property {*} item
@@ -28,21 +28,18 @@ define(['zepto'], function ($) {
      * @property {Context} parent the containing context (may be undefined)
      * @memberof module:openmct
      */
-
-
-    function ContextManager() {
+    class ContextManager {
+      constructor() {
         this.counter = 0;
         this.contexts = {};
-    }
-
-    ContextManager.prototype.nextId = function () {
+      }
+      nextId() {
         this.counter += 1;
         return "context-" + this.counter;
-    };
-
-    ContextManager.prototype.context = function (item, htmlElement) {
-        var $element = $(htmlElement);
-        var id = $element.attr('data-context') || this.nextId();
+      }
+      context(item, htmlElement) {
+        let $element = $(htmlElement);
+        let id = $element.attr('data-context') || this.nextId();
 
         $element.attr('data-context', id);
 
@@ -60,19 +57,18 @@ define(['zepto'], function ($) {
                 parent: parentContext
             };
         }
-
+        
         return this.contexts[id];
-    };
-
-    ContextManager.prototype.release = function (htmlElement) {
-        var $element = $(htmlElement);
-        var id = $element.attr('data-context');
+    }
+    release(htmlElement) {
+        let $element = $(htmlElement);
+        let id = $element.attr('data-context');
 
         if (id) {
             delete this.contexts[id];
             $element.removeAttr('data-context');
         }
-    };
-
-    return ContextManager;
+    }
+  }
+  return ContextManager;
 });

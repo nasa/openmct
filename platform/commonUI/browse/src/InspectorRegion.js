@@ -24,7 +24,8 @@ define(
     [
         '../../regions/src/Region'
     ],
-    function (Region) {
+    (Region) => {
+      // Awaiting for this, needs subclassing?
 
         /**
          * Defines the a default Inspector region. Captured in a class to

@@ -22,10 +22,10 @@
 
 define(
     ['../src/InspectorController'],
-    function (InspectorController) {
+    (InspectorController) => {
 
-        describe("The inspector controller ", function () {
-            var mockScope,
+        describe("The inspector controller ", () => {
+            let mockScope,
                 mockDomainObject,
                 mockTypeCapability,
                 mockTypeDefinition,
@@ -34,7 +34,7 @@ define(
                 capabilities = {},
                 controller;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockTypeDefinition = {
                     inspector:
                         {
@@ -59,7 +59,7 @@ define(
                 mockDomainObject = jasmine.createSpyObj('domainObject', [
                     'getCapability'
                 ]);
-                mockDomainObject.getCapability.andCallFake(function (name) {
+                mockDomainObject.getCapability.andCallFake( (name) => {
                     return capabilities[name];
                 });
 
@@ -74,19 +74,19 @@ define(
                 mockScope.domainObject = mockDomainObject;
             });
 
-            it("filters out regions disallowed by region policy", function () {
+            it("filters out regions disallowed by region policy", () => {
                 mockPolicyService.allow.andReturn(false);
                 controller = new InspectorController(mockScope, mockPolicyService);
                 expect(mockScope.regions.length).toBe(0);
             });
 
-            it("does not filter out regions allowed by region policy", function () {
+            it("does not filter out regions allowed by region policy", () => {
                 mockPolicyService.allow.andReturn(true);
                 controller = new InspectorController(mockScope, mockPolicyService);
                 expect(mockScope.regions.length).toBe(2);
             });
 
-            it("Responds to status changes", function () {
+            it("Responds to status changes", () => {
                 mockPolicyService.allow.andReturn(true);
                 controller = new InspectorController(mockScope, mockPolicyService);
                 expect(mockScope.regions.length).toBe(2);
@@ -96,8 +96,8 @@ define(
                 expect(mockScope.regions.length).toBe(0);
             });
 
-            it("Unregisters status listener", function () {
-                var mockListener = jasmine.createSpy('listener');
+            it("Unregisters status listener", () => {
+                let mockListener = jasmine.createSpy('listener');
                 mockStatusCapability.listen.andReturn(mockListener);
                 controller = new InspectorController(mockScope, mockPolicyService);
                 expect(mockScope.$on).toHaveBeenCalledWith("$destroy", jasmine.any(Function));

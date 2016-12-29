@@ -22,31 +22,31 @@
 
 define(
     ['../../../src/controllers/swimlane/TimelineColorAssigner'],
-    function (TimelineColorAssigner) {
+    (TimelineColorAssigner) => {
 
-        describe("The Timeline legend color assigner", function () {
-            var testConfiguration,
+        describe("The Timeline legend color assigner", () => {
+            let testConfiguration,
                 assigner;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testConfiguration = {};
                 assigner = new TimelineColorAssigner(testConfiguration);
             });
 
-            it("assigns colors by identifier", function () {
+            it("assigns colors by identifier", () => {
                 expect(assigner.get('xyz')).toBeUndefined();
                 assigner.assign('xyz');
                 expect(assigner.get('xyz')).toEqual(jasmine.any(String));
             });
 
-            it("releases colors", function () {
+            it("releases colors", () => {
                 assigner.assign('xyz');
                 assigner.release('xyz');
                 expect(assigner.get('xyz')).toBeUndefined();
             });
 
-            it("provides at least 30 unique colors", function () {
-                var colors = {}, i, ids = [];
+            it("provides at least 30 unique colors", () => {
+                let colors = {}, i, ids = [];
 
                 // Add item to set
                 function set(c) {
@@ -67,13 +67,13 @@ define(
                 expect(Object.keys(colors).length).toEqual(30);
             });
 
-            it("populates the configuration with colors", function () {
+            it("populates the configuration with colors", () => {
                 assigner.assign('xyz');
                 expect(testConfiguration.xyz).toBeDefined();
             });
 
-            it("preserves other colors when releases occur", function () {
-                var c;
+            it("preserves other colors when releases occur", () => {
+                let c;
                 assigner.assign('xyz');
                 c = assigner.get('xyz');
                 // Assign/release a different color

@@ -22,9 +22,9 @@
 
 define(
     ['../src/TimelineConstants'],
-    function (TimelineConstants) {
-        describe("The set of Timeline constants", function () {
-            it("specifies a handle width", function () {
+    (TimelineConstants) => {
+        describe("The set of Timeline constants", () => {
+            it("specifies a handle width", () => {
                 expect(TimelineConstants.HANDLE_WIDTH)
                     .toEqual(jasmine.any(Number));
             });

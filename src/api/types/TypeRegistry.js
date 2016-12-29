@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./Type'], function (Type) {
+define(['./Type'], (Type) => {
     /**
      * @typedef TypeDefinition
      * @memberof module:openmct.TypeRegistry~
@@ -39,7 +39,8 @@ define(['./Type'], function (Type) {
      * @interface TypeRegistry
      * @memberof module:openmct
      */
-    function TypeRegistry() {
+    class TypeRegistry {
+      constructor() {
         this.types = {};
     }
 
@@ -51,9 +52,9 @@ define(['./Type'], function (Type) {
      * @method addType
      * @memberof module:openmct.TypeRegistry#
      */
-    TypeRegistry.prototype.addType = function (typeKey, typeDef) {
+    addType(typeKey, typeDef) {
         this.types[typeKey] = new Type(typeDef);
-    };
+    }
 
     /**
      * List keys for all registered types.
@@ -61,9 +62,9 @@ define(['./Type'], function (Type) {
      * @memberof module:openmct.TypeRegistry#
      * @returns {string[]} all registered type keys
      */
-    TypeRegistry.prototype.listKeys = function () {
+    listKeys() {
         return Object.keys(this.types);
-    };
+    }
 
     /**
      * Retrieve a registered type by its key.
@@ -72,11 +73,11 @@ define(['./Type'], function (Type) {
      * @memberof module:openmct.TypeRegistry#
      * @returns {module:openmct.Type} the registered type
      */
-    TypeRegistry.prototype.get = function (typeKey) {
+    get(typeKey) {
         return this.types[typeKey];
-    };
-
-    return TypeRegistry;
+    }
+}
+return TypeRegistry;
 });
 
 

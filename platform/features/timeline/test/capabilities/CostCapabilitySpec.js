@@ -22,14 +22,14 @@
 
 define(
     ['../../src/capabilities/CostCapability'],
-    function (CostCapability) {
+    (CostCapability) => {
 
-        describe("A subsystem mode's cost capability", function () {
-            var testModel,
+        describe("A subsystem mode's cost capability", () => {
+            let testModel,
                 capability;
 
-            beforeEach(function () {
-                var mockDomainObject = jasmine.createSpyObj(
+            beforeEach(() => {
+                let mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
                     ['getModel', 'getId']
                 );
@@ -47,22 +47,22 @@ define(
                 capability = new CostCapability(mockDomainObject);
             });
 
-            it("provides a list of resource types", function () {
+            it("provides a list of resource types", () => {
                 expect(capability.resources())
                     .toEqual(['abc', 'comms', 'power']);
             });
 
-            it("provides resource costs", function () {
+            it("provides resource costs", () => {
                 expect(capability.cost('abc')).toEqual(-1);
                 expect(capability.cost('power')).toEqual(12321);
                 expect(capability.cost('comms')).toEqual(42);
             });
 
-            it("provides all resources in a group", function () {
+            it("provides all resources in a group", () => {
                 expect(capability.invoke()).toEqual(testModel.resources);
             });
 
-            it("applies to subsystem modes", function () {
+            it("applies to subsystem modes", () => {
                 expect(CostCapability.appliesTo({
                     type: "mode"
                 })).toBeTruthy();

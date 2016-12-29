@@ -25,29 +25,29 @@
  */
 define(
     [],
-    function () {
+    () => {
 
-        var GENERAL_TOPIC = "mutation",
+        let GENERAL_TOPIC = "mutation",
             TOPIC_PREFIX = "mutation:";
 
         // Utility function to overwrite a destination object
         // with the contents of a source object.
-        function copyValues(destination, source) {
+        const copyValues = (destination, source) => {
             // First, remove all previously-existing keys
-            Object.keys(destination).forEach(function (k) {
+            Object.keys(destination).forEach( (k) => {
                 delete destination[k];
             });
             // Second, write all new keys
-            Object.keys(source).forEach(function (k) {
+            Object.keys(source).forEach( (k) => {
                 destination[k] = source[k];
             });
         }
 
         // Utility function to cast to a promise, without waiting
         // for nextTick if a value is non-promise-like.
-        function fastPromise(value) {
+        const fastPromise = (value) => {
             return (value || {}).then ? value : {
-                then: function (callback) {
+                then: (callback) => {
                     return fastPromise(callback(value));
                 }
             };
@@ -76,7 +76,8 @@ define(
          * @constructor
          * @implements {Capability}
          */
-        function MutationCapability(topic, now, domainObject) {
+        class MutationCapability {
+          constructor(topic, now, domainObject) {
             this.generalMutationTopic =
                 topic(GENERAL_TOPIC);
             this.specificMutationTopic =
@@ -113,10 +114,10 @@ define(
          * @returns {Promise.<boolean>} a promise for the result
          *         of the mutation; true if changes were made.
          */
-        MutationCapability.prototype.mutate = function (mutator, timestamp) {
+        mutate(mutator, timestamp) {
             // Get the object's model and clone it, so the
             // mutator function has a temporary copy to work with.
-            var domainObject = this.domainObject,
+            let domainObject = this.domainObject,
                 now = this.now,
                 generalTopic = this.generalMutationTopic,
                 specificTopic = this.specificMutationTopic,
@@ -124,17 +125,17 @@ define(
                 clone = JSON.parse(JSON.stringify(model)),
                 useTimestamp = arguments.length > 1;
 
-            function notifyListeners(newModel) {
+            const notifyListeners = (newModel) => {
                 generalTopic.notify(domainObject);
                 specificTopic.notify(newModel);
             }
 
             // Function to handle copying values to the actual
-            function handleMutation(mutationResult) {
+            const handleMutation = (mutationResult) => {
                 // If mutation result was undefined, just use
                 // the clone; this allows the mutator to omit return
                 // values and just change the model directly.
-                var result = mutationResult || clone;
+                let result = mutationResult || clone;
 
                 // Allow mutators to change their mind by
                 // returning false.
@@ -166,16 +167,17 @@ define(
          * @returns {Function} a function to stop listening
          * @memberof platform/core.MutationCapability#
          */
-        MutationCapability.prototype.listen = function (listener) {
+        listen(listener) {
             return this.specificMutationTopic.listen(listener);
         };
 
         /**
          * Alias of `mutate`, used to support useCapability.
          */
-        MutationCapability.prototype.invoke =
-            MutationCapability.prototype.mutate;
-
+         invoke() {
+           return this.mutate
+         }
+       }
         return MutationCapability;
     }
 );

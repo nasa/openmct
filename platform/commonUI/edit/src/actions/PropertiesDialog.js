@@ -20,8 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+define(() => {
 
         /**
          * Construct a new Properties dialog.
@@ -32,7 +31,8 @@ define(
          * @memberof platform/commonUI/edit
          * @constructor
          */
-        function PropertiesDialog(type, model) {
+        class PropertiesDialog {
+          constructor(type, model) {
             this.type = type;
             this.model = model;
             this.properties = type.getProperties();
@@ -42,36 +42,36 @@ define(
          * Get sections provided by this dialog.
          * @return {FormStructure} the structure of this form
          */
-        PropertiesDialog.prototype.getFormStructure = function () {
+        getFormStructure() {
             return {
                 name: "Edit " + this.model.name,
                 sections: [{
                     name: "Properties",
-                    rows: this.properties.map(function (property, index) {
+                    rows: this.properties.map( (property, index) => {
                         // Property definition is same as form row definition
-                        var row = Object.create(property.getDefinition());
+                        let row = Object.create(property.getDefinition());
                         row.key = index;
                         return row;
-                    }).filter(function (row) {
+                    }).filter( (row) => {
                         // Only show properties which are editable
                         return row.control;
                     })
                 }]
             };
-        };
+        }
 
         /**
          * Get the initial state of the form shown by this dialog
          * (based on the object model)
          * @returns {object} initial state of the form
          */
-        PropertiesDialog.prototype.getInitialFormValue = function () {
-            var model = this.model;
+        getInitialFormValue() {
+            let model = this.model;
 
             // Start with initial values for properties
             // Note that index needs to correlate to row.key
             // from getFormStructure
-            return this.properties.map(function (property) {
+            return this.properties.map( (property) => {
                 return property.getValue(model);
             });
         };
@@ -79,13 +79,13 @@ define(
         /**
          * Update a domain object model based on the value of a form.
          */
-        PropertiesDialog.prototype.updateModel = function (model, formValue) {
+        updateModel(model, formValue) {
             // Update all properties
-            this.properties.forEach(function (property, index) {
+            this.properties.forEach( (property, index) => {
                 property.setValue(model, formValue[index]);
             });
-        };
-
+        }
+      }
         return PropertiesDialog;
     }
 );

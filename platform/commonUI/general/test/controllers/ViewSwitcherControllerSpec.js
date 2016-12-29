@@ -25,24 +25,24 @@
  */
 define(
     ["../../src/controllers/ViewSwitcherController"],
-    function (ViewSwitcherController) {
+    (ViewSwitcherController) => {
 
-        describe("The view switcher controller", function () {
-            var mockScope,
+        describe("The view switcher controller", () => {
+            let mockScope,
                 mockTimeout,
                 controller;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 mockTimeout = jasmine.createSpy("$timeout");
-                mockTimeout.andCallFake(function (cb) {
+                mockTimeout.andCallFake( (cb) => {
                     cb();
                 });
                 mockScope.ngModel = {};
                 controller = new ViewSwitcherController(mockScope, mockTimeout);
             });
 
-            it("watches for changes in applicable views", function () {
+            it("watches for changes in applicable views", () => {
                 // The view capability is used by associated
                 // representations, so "view" in scope should always
                 // be the list of applicable views. The view switcher
@@ -53,8 +53,8 @@ define(
                 );
             });
 
-            it("maintains the current selection when views change", function () {
-                var views = [
+            it("maintains the current selection when views change", () => {
+                let views = [
                     { key: "a", name: "View A" },
                     { key: "b", name: "View B" },
                     { key: "c", name: "View C" },
@@ -74,8 +74,8 @@ define(
                 expect(mockScope.ngModel.selected).toEqual(views[1]);
             });
 
-            it("chooses a default if a selected view becomes inapplicable", function () {
-                var views = [
+            it("chooses a default if a selected view becomes inapplicable", () => {
+                let views = [
                     { key: "a", name: "View A" },
                     { key: "b", name: "View B" },
                     { key: "c", name: "View C" },
@@ -97,7 +97,7 @@ define(
 
             // Use of a timeout avoids infinite digest problems when deeply
             // nesting switcher-driven views (e.g. in a layout.) See WTD-689
-            it("updates initial selection on a timeout", function () {
+            it("updates initial selection on a timeout", () => {
                 // Verify precondition
                 expect(mockTimeout).not.toHaveBeenCalled();
 

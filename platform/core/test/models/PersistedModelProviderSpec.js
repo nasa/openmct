@@ -25,32 +25,32 @@
  */
 define(
     ["../../src/models/PersistedModelProvider"],
-    function (PersistedModelProvider) {
+    (PersistedModelProvider) => {
 
-        describe("The persisted model provider", function () {
-            var mockQ,
+        describe("The persisted model provider", () =>  {
+            let mockQ,
                 mockPersistenceService,
                 SPACE = "space0",
                 modTimes,
                 mockNow,
                 provider;
 
-            function mockPromise(value) {
+            const mockPromise = (value) => {
                 return (value || {}).then ? value : {
-                    then: function (callback) {
+                    then: (callback) => {
                         return mockPromise(callback(value));
                     },
                     testValue: value
                 };
             }
 
-            function mockAll(mockPromises) {
-                return mockPromise(mockPromises.map(function (p) {
+            const mockAll = (mockPromises) => {
+                return mockPromise(mockPromises.map( (p) => {
                     return p.testValue;
                 }));
             }
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 modTimes = {};
                 mockQ = { when: mockPromise, all: mockAll };
                 mockPersistenceService = jasmine.createSpyObj(
@@ -67,7 +67,7 @@ define(
                 mockNow = jasmine.createSpy("now");
 
                 mockPersistenceService.readObject
-                    .andCallFake(function (space, id) {
+                    .andCallFake( (space, id) => {
                         return mockPromise({
                             space: space,
                             id: id,
@@ -86,10 +86,10 @@ define(
                 );
             });
 
-            it("reads object models from persistence", function () {
-                var models;
+            it("reads object models from persistence", () =>  {
+                let models;
 
-                provider.getModels(["a", "x", "zz"]).then(function (m) {
+                provider.getModels(["a", "x", "zz"]).then( (m) => {
                     models = m;
                 });
 
@@ -101,8 +101,8 @@ define(
             });
 
 
-            it("ensures that persisted timestamps are present", function () {
-                var mockCallback = jasmine.createSpy("callback"),
+            it("ensures that persisted timestamps are present", () =>  {
+                let mockCallback = jasmine.createSpy("callback"),
                     testModels = {
                         a: { modified: 123, persisted: 1984, name: "A" },
                         b: { persisted: 1977, name: "B" },

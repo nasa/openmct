@@ -22,10 +22,10 @@
 
 define(
     ["../../src/controllers/EditObjectController"],
-    function (EditObjectController) {
+    (EditObjectController) => {
 
-        describe("The Edit Object controller", function () {
-            var mockScope,
+        describe("The Edit Object controller", () => {
+            let mockScope,
                 mockObject,
                 testViews,
                 mockEditorCapability,
@@ -36,7 +36,7 @@ define(
                 mockCapabilities,
                 controller;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     ["$on", "$watch"]
@@ -71,7 +71,7 @@ define(
 
                 mockObject.getId.andReturn("test");
                 mockObject.getModel.andReturn({ name: "Test object" });
-                mockObject.getCapability.andCallFake(function (key) {
+                mockObject.getCapability.andCallFake( (key) => {
                     return mockCapabilities[key];
                 });
 
@@ -81,7 +81,7 @@ define(
                     { key: 'xyz' }
                 ];
 
-                mockObject.useCapability.andCallFake(function (c) {
+                mockObject.useCapability.andCallFake( (c) => {
                     return (c === 'view') && testViews;
                 });
                 mockLocation.search.andReturn({ view: 'def' });
@@ -95,11 +95,11 @@ define(
                 );
             });
 
-            it("adds a check before navigation", function () {
+            it("adds a check before navigation", () => {
                 expect(mockNavigationService.checkBeforeNavigation)
                     .toHaveBeenCalledWith(jasmine.any(Function));
 
-                var checkFn = mockNavigationService.checkBeforeNavigation.mostRecentCall.args[0];
+                let checkFn = mockNavigationService.checkBeforeNavigation.mostRecentCall.args[0];
 
                 mockEditorCapability.isEditContextRoot.andReturn(false);
                 mockEditorCapability.dirty.andReturn(false);
@@ -115,7 +115,7 @@ define(
 
             });
 
-            it("cleans up on destroy", function () {
+            it("cleans up on destroy", () => {
                 expect(mockScope.$on)
                     .toHaveBeenCalledWith("$destroy", jasmine.any(Function));
 
@@ -125,7 +125,7 @@ define(
                 expect(removeCheck).toHaveBeenCalled();
             });
 
-            it("sets the active view from query parameters", function () {
+            it("sets the active view from query parameters", () => {
                 expect(mockScope.representation.selected)
                     .toEqual(testViews[1]);
             });

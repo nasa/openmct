@@ -21,7 +21,7 @@
  *****************************************************************************/
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Provides a window on a telemetry data series, to support
@@ -30,23 +30,24 @@ define(
          * @memberof platform/features/plot
          * @implements {TelemetrySeries}
          */
-        function PlotSeriesWindow(series, domain, range, start, end) {
+        class PlotSeriesWindow {
+          constructor(series, domain, range, start, end) {
             this.series = series;
             this.domain = domain;
             this.range = range;
             this.start = start;
             this.end = end;
-        }
+          }
 
-        PlotSeriesWindow.prototype.getPointCount = function () {
+        getPointCount() {
             return this.end - this.start;
         };
 
-        PlotSeriesWindow.prototype.getDomainValue = function (index) {
+        getDomainValue(index) {
             return this.series.getDomainValue(index + this.start, this.domain);
         };
 
-        PlotSeriesWindow.prototype.getRangeValue = function (index) {
+        getRangeValue(index) {
             return this.series.getRangeValue(index + this.start, this.range);
         };
 
@@ -54,8 +55,8 @@ define(
          * Split this series into two series of equal (or nearly-equal) size.
          * @returns {PlotSeriesWindow[]} two series
          */
-        PlotSeriesWindow.prototype.split = function () {
-            var mid = Math.floor((this.end + this.start) / 2);
+        split() {
+            let mid = Math.floor((this.end + this.start) / 2);
             return ((this.end - this.start) > 1) ?
                 [
                     new PlotSeriesWindow(
@@ -74,7 +75,7 @@ define(
                     )
                 ] : [];
         };
-
+      }
         return PlotSeriesWindow;
     }
 );

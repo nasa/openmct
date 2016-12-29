@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Tracks selection state for editable views. Selection is
@@ -38,27 +38,28 @@ define(
          * @memberof platform/commonUI/edit
          * @constructor
          */
-        function EditToolbarSelection() {
+        class EditToolbarSelection {
+          constructor() {
             this.selection = [{}];
             this.selecting = false;
             this.selectedObj = undefined;
-        }
+          }
 
         /**
          * Check if an object is currently selected.
          * @param {*} obj the object to check for selection
          * @returns {boolean} true if selected, otherwise false
          */
-        EditToolbarSelection.prototype.selected = function (obj) {
+        selected(obj) {
             return (obj === this.selectedObj) || (obj === this.selection[0]);
-        };
+        }
 
         /**
          * Select an object.
          * @param obj the object to select
          * @returns {boolean} true if selection changed
          */
-        EditToolbarSelection.prototype.select = function (obj) {
+        select(obj) {
             // Proxy is always selected
             if (obj === this.selection[0]) {
                 return false;
@@ -73,13 +74,13 @@ define(
 
             // Add the selection
             this.selection.push(obj);
-        };
+        }
 
         /**
          * Clear the current selection.
          * @returns {boolean} true if selection changed
          */
-        EditToolbarSelection.prototype.deselect = function () {
+        deselect() {
             // Nothing to do if we don't have a selected object
             if (this.selecting) {
                 // Clear state tracking
@@ -92,15 +93,15 @@ define(
                 return true;
             }
             return false;
-        };
+        }
 
         /**
          * Get the currently-selected object.
          * @returns the currently selected object
          */
-        EditToolbarSelection.prototype.get = function () {
+        get() {
             return this.selectedObj;
-        };
+        }
 
         /**
          * Get/set the view proxy (for toolbar actions taken upon
@@ -108,12 +109,12 @@ define(
          * @param [proxy] the view proxy (if setting)
          * @returns the current view proxy
          */
-        EditToolbarSelection.prototype.proxy = function (p) {
+        proxy(p) {
             if (arguments.length > 0) {
                 this.selection[0] = p;
             }
             return this.selection[0];
-        };
+        }
 
         /**
          * Get an array containing all selections, including the
@@ -121,10 +122,10 @@ define(
          * mutate this array directly.
          * @returns {Array} all selections
          */
-        EditToolbarSelection.prototype.all = function () {
+        all() {
             return this.selection;
-        };
-
+        }
+      }
         return EditToolbarSelection;
     }
 );

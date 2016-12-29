@@ -24,7 +24,7 @@ define(
     [
         './TelemetryTableController'
     ],
-    function (TableController) {
+    (TableController) => {
 
         /**
          * Extends TelemetryTableController and adds real-time streaming
@@ -35,23 +35,22 @@ define(
          * @param telemetryFormatter
          * @constructor
          */
-        function RealtimeTableController($scope, telemetryHandler, telemetryFormatter, openmct) {
+        class RealtimeTableController extends TableController {
+          constructor($scope, telemetryHandler, telemetryFormatter, openmct) {
+            super()
             TableController.call(this, $scope, telemetryHandler, telemetryFormatter, openmct);
 
             this.maxRows = 100000;
         }
 
-        RealtimeTableController.prototype = Object.create(TableController.prototype);
-
         /**
          * Overrides method on TelemetryTableController providing handling
          * for realtime data.
          */
-        RealtimeTableController.prototype.addRealtimeData = function () {
-            var self = this,
-                datum,
+        addRealtimeData() {
+            let datum,
                 row;
-            this.handle.getTelemetryObjects().forEach(function (telemetryObject) {
+            this.handle.getTelemetryObjects().forEach( (telemetryObject) => {
                 datum = self.handle.getDatum(telemetryObject);
                 if (datum) {
                     //Populate row values from telemetry datum
@@ -70,7 +69,7 @@ define(
             });
             this.$scope.loading = false;
         };
-
+      }
         return RealtimeTableController;
     }
 );

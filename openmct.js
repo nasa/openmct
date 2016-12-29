@@ -75,11 +75,9 @@ define([
     './platform/framework/src/Main',
     './src/defaultRegistry',
     './src/MCT'
-], function (Main, defaultRegistry, MCT) {
-    var openmct = new MCT();
-
-    openmct.legacyRegistry = defaultRegistry;
-
+], (Main, defaultRegistry, MCT) => {
+    let openmct = new MCT(defaultRegistry);
+    
     openmct.on('start', function () {
         return new Main().run(defaultRegistry);
     });

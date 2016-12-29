@@ -22,10 +22,10 @@
 
 define(
     ['../../../src/controllers/drag/TimelineDragHandler'],
-    function (TimelineDragHandler) {
+    (TimelineDragHandler) => {
 
-        describe("A Timeline drag handler", function () {
-            var mockLoader,
+        describe("A Timeline drag handler", () => {
+            let mockLoader,
                 mockSelection,
                 testConfiguration,
                 mockDomainObject,
@@ -35,16 +35,16 @@ define(
                 mockCallback,
                 handler;
 
-            function asPromise(value) {
+            const asPromise = (value) => {
                 return (value || {}).then ? value : {
-                    then: function (callback) {
+                    then: (callback) => {
                         return asPromise(callback(value));
                     }
                 };
             }
 
-            function subgraph(domainObject, objects) {
-                function lookupSubgraph(id) {
+            const subgraph = (domainObject, objects) => {
+                const lookupSubgraph = (id) => {
                     return subgraph(objects[id], objects);
                 }
                 return {
@@ -54,8 +54,8 @@ define(
                 };
             }
 
-            function makeMockDomainObject(id, composition) {
-                var mockDomainObj = jasmine.createSpyObj(
+            const makeMockDomainObject = (id, composition) => {
+                let mockDomainObj = jasmine.createSpyObj(
                     'domainObject-' + id,
                     ['getId', 'getModel', 'getCapability', 'useCapability']
                 );
@@ -63,7 +63,7 @@ define(
                 mockDomainObj.getId.andReturn(id);
                 mockDomainObj.getModel.andReturn({ composition: composition });
                 mockDomainObj.useCapability.andReturn(asPromise(mockTimespans[id]));
-                mockDomainObj.getCapability.andCallFake(function (c) {
+                mockDomainObj.getCapability.andCallFake( (c) => {
                     return {
                         mutation: mockMutations[id]
                     }[c];
@@ -72,10 +72,10 @@ define(
                 return mockDomainObj;
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockTimespans = {};
                 mockMutations = {};
-                ['a', 'b', 'c', 'd', 'e', 'f'].forEach(function (id, index) {
+                ['a', 'b', 'c', 'd', 'e', 'f'].forEach( (id, index) => {
                     mockTimespans[id] = jasmine.createSpyObj(
                         'timespan-' + id,
                         ['getStart', 'getEnd', 'getDuration', 'setStart', 'setEnd', 'setDuration']
@@ -114,19 +114,19 @@ define(
                 );
             });
 
-            it("uses the loader to find subgraph", function () {
+            it("uses the loader to find subgraph", () => {
                 expect(mockLoader.load).toHaveBeenCalledWith(
                     mockDomainObject,
                     'timespan'
                 );
             });
 
-            it("reports available object identifiers", function () {
+            it("reports available object identifiers", () => {
                 expect(handler.ids())
                     .toEqual(Object.keys(mockDomainObjects).sort());
             });
 
-            it("exposes start/end/duration from timespan capabilities", function () {
+            it("exposes start/end/duration from timespan capabilities", () => {
                 expect(handler.start('a')).toEqual(0);
                 expect(handler.start('b')).toEqual(1000);
                 expect(handler.start('c')).toEqual(2000);
@@ -138,15 +138,15 @@ define(
                 expect(handler.end('c')).toEqual(6002);
             });
 
-            it("accepts objects instead of identifiers for start/end/duration calls", function () {
-                Object.keys(mockDomainObjects).forEach(function (id) {
+            it("accepts objects instead of identifiers for start/end/duration calls", () => {
+                Object.keys(mockDomainObjects).forEach( (id) => {
                     expect(handler.start(mockDomainObjects[id])).toEqual(handler.start(id));
                     expect(handler.duration(mockDomainObjects[id])).toEqual(handler.duration(id));
                     expect(handler.end(mockDomainObjects[id])).toEqual(handler.end(id));
                 });
             });
 
-            it("mutates objects", function () {
+            it("mutates objects", () => {
                 handler.start('a', 123);
                 expect(mockTimespans.a.setStart).toHaveBeenCalledWith(123);
                 handler.duration('b', 42);
@@ -155,43 +155,43 @@ define(
                 expect(mockTimespans.c.setEnd).toHaveBeenCalledWith(12321);
             });
 
-            it("disallows negative starts, durations", function () {
+            it("disallows negative starts, durations", () => {
                 handler.start('a', -100);
                 handler.duration('b', -1000);
                 expect(mockTimespans.a.setStart).toHaveBeenCalledWith(0);
                 expect(mockTimespans.b.setDuration).toHaveBeenCalledWith(0);
             });
 
-            it("disallows starts greater than ends violations", function () {
+            it("disallows starts greater than ends violations", () => {
                 handler.start('a', 5000);
                 handler.end('b', 500);
                 expect(mockTimespans.a.setStart).toHaveBeenCalledWith(4000); // end time
                 expect(mockTimespans.b.setEnd).toHaveBeenCalledWith(1000); // start time
             });
 
-            it("moves objects in groups", function () {
+            it("moves objects in groups", () => {
                 handler.move('b', 42);
                 expect(mockTimespans.b.setStart).toHaveBeenCalledWith(1042);
                 expect(mockTimespans.b.setEnd).toHaveBeenCalledWith(5043);
                 expect(mockTimespans.d.setStart).toHaveBeenCalledWith(3042);
                 expect(mockTimespans.d.setEnd).toHaveBeenCalledWith(7045);
                 // Verify no other interactions
-                ['a', 'c', 'e', 'f'].forEach(function (id) {
+                ['a', 'c', 'e', 'f'].forEach( (id) => {
                     expect(mockTimespans[id].setStart).not.toHaveBeenCalled();
                     expect(mockTimespans[id].setEnd).not.toHaveBeenCalled();
                 });
             });
 
-            it("moves whole subtrees", function () {
+            it("moves whole subtrees", () => {
                 handler.move('a', 12321);
                 // We verify the math in the previous test, so just verify
                 // that the whole tree is effected here.
-                Object.keys(mockTimespans).forEach(function (id) {
+                Object.keys(mockTimespans).forEach( (id) => {
                     expect(mockTimespans[id].setStart).toHaveBeenCalled();
                 });
             });
 
-            it("prevents bulk moves past 0", function () {
+            it("prevents bulk moves past 0", () => {
                 // Have a start later; new lowest start is b, at 1000
                 mockTimespans.a.getStart.andReturn(10000);
                 handler.move('a', -10000);

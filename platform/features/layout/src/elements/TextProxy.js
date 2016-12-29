@@ -22,7 +22,7 @@
 
 define(
     ['./BoxProxy', './AccessorMutator'],
-    function (BoxProxy, AccessorMutator) {
+    (BoxProxy, AccessorMutator) => {
 
         /**
          * Selection proxy for Text elements in a fixed position view.
@@ -38,8 +38,8 @@ define(
          * @param {Array} elements the full array of elements
          * @augments {platform/features/layout.ElementProxy}
          */
-        function TextProxy(element, index, elements) {
-            var proxy = new BoxProxy(element, index, elements);
+        const TextProxy = (element, index, elements) => {
+            let proxy = new BoxProxy(element, index, elements);
 
             /**
              * Get and/or set the text color of this element.

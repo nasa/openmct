@@ -25,18 +25,18 @@
  */
 define(
     ["../src/RangeColumn"],
-    function (RangeColumn) {
+    (RangeColumn) => {
 
-        var TEST_RANGE_VALUE = "some formatted range value";
+        let TEST_RANGE_VALUE = "some formatted range value";
 
-        describe("A range column", function () {
-            var testDatum,
+        describe("A range column", () => {
+            let testDatum,
                 testMetadata,
                 mockFormatter,
                 mockDomainObject,
                 column;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testDatum = { testKey: 123, otherKey: 456 };
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
@@ -55,11 +55,11 @@ define(
                 column = new RangeColumn(testMetadata, mockFormatter);
             });
 
-            it("reports a column header from range metadata", function () {
+            it("reports a column header from range metadata", () => {
                 expect(column.getTitle()).toEqual("Test Name");
             });
 
-            it("formats range values as numbers", function () {
+            it("formats range values as numbers", () => {
                 expect(column.getValue(mockDomainObject, testDatum).text)
                     .toEqual(TEST_RANGE_VALUE);
 

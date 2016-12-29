@@ -23,7 +23,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Build a table indicating which types are expected to expose
@@ -33,27 +33,27 @@ define(
          * @constructor
          * @memberof platform/containment
          */
-        function CapabilityTable(typeService, capabilityService) {
-            var self = this;
+        class CapabilityTable {
+          constructor(typeService, capabilityService) {
 
             // Build an initial model for a type
-            function buildModel(type) {
-                var model = Object.create(type.getInitialModel() || {});
+            const buildModel = (type) => {
+                let model = Object.create(type.getInitialModel() || {});
                 model.type = type.getKey();
                 return model;
             }
 
             // Get capabilities expected for this type
-            function getCapabilities(type) {
+            const getCapabilities = (type) => {
                 return capabilityService.getCapabilities(buildModel(type));
             }
 
             // Populate the lookup table for this type's capabilities
-            function addToTable(type) {
-                var typeKey = type.getKey();
-                Object.keys(getCapabilities(type)).forEach(function (key) {
-                    self.table[key] = self.table[key] || {};
-                    self.table[key][typeKey] = true;
+            const addToTable = (type) => {
+                let typeKey = type.getKey();
+                Object.keys(getCapabilities(type)).forEach( (key) => {
+                    this.table[key] = this.table[key] || {};
+                    this.table[key][typeKey] = true;
                 });
             }
 
@@ -68,10 +68,10 @@ define(
          * @param {string} capabilityKey the capability identifier
          * @returns {boolean} true if expected to be exposed
          */
-        CapabilityTable.prototype.hasCapability = function (typeKey, capabilityKey) {
+        hasCapability(typeKey, capabilityKey) {
             return (this.table[capabilityKey] || {})[typeKey];
         };
-
+      }
         return CapabilityTable;
     }
 );

@@ -22,15 +22,15 @@
 
 define(
     ["../../src/services/Topic"],
-    function (Topic) {
+    (Topic) => {
 
-        describe("The 'topic' service", function () {
-            var topic,
+        describe("The 'topic' service", () =>  {
+            let topic,
                 mockLog,
                 testMessage,
                 mockCallback;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 testMessage = { someKey: "some value"};
                 mockLog = jasmine.createSpyObj(
                     '$log',
@@ -40,26 +40,26 @@ define(
                 topic = new Topic(mockLog);
             });
 
-            it("notifies listeners on a topic", function () {
+            it("notifies listeners on a topic", () =>  {
                 topic("abc").listen(mockCallback);
                 topic("abc").notify(testMessage);
                 expect(mockCallback).toHaveBeenCalledWith(testMessage);
             });
 
-            it("does not notify listeners across topics", function () {
+            it("does not notify listeners across topics", () =>  {
                 topic("abc").listen(mockCallback);
                 topic("xyz").notify(testMessage);
                 expect(mockCallback).not.toHaveBeenCalledWith(testMessage);
             });
 
-            it("does not notify listeners after unlistening", function () {
+            it("does not notify listeners after unlistening", () =>  {
                 topic("abc").listen(mockCallback)(); // Unlisten immediately
                 topic("abc").notify(testMessage);
                 expect(mockCallback).not.toHaveBeenCalledWith(testMessage);
             });
 
-            it("provides anonymous private topics", function () {
-                var t1 = topic(), t2 = topic();
+            it("provides anonymous private topics", () =>  {
+                let t1 = topic(), t2 = topic();
 
                 t1.listen(mockCallback);
                 t2.notify(testMessage);
@@ -68,11 +68,11 @@ define(
                 expect(mockCallback).toHaveBeenCalledWith(testMessage);
             });
 
-            it("is robust against errors thrown by listeners", function () {
-                var mockBadCallback = jasmine.createSpy("bad-callback"),
+            it("is robust against errors thrown by listeners", () =>  {
+                let mockBadCallback = jasmine.createSpy("bad-callback"),
                     t = topic();
 
-                mockBadCallback.andCallFake(function () {
+                mockBadCallback.andCallFake(() =>  {
                     throw new Error("I'm afraid I can't do that.");
                 });
 

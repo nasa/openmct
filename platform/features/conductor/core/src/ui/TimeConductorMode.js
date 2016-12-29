@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Supports mode-specific time conductor behavior.
@@ -31,7 +31,8 @@ define(
          * @memberof platform.features.conductor
          * @param {TimeConductorMetadata} metadata
          */
-        function TimeConductorMode(metadata, conductor, timeSystems) {
+        class TimeConductorMode {
+          constructor(metadata, conductor, timeSystems) {
             this.conductor = conductor;
 
             this.mdata = metadata;
@@ -55,10 +56,10 @@ define(
                 //Fixed automatically supports all time systems
                 this.availableSystems = timeSystems;
             } else {
-                this.availableSystems = timeSystems.filter(function (timeSystem) {
+                this.availableSystems = timeSystems.filter( (timeSystem) => {
                     //Only include time systems that have tick sources that
                     // support the current mode
-                    return timeSystem.tickSources().some(function (tickSource) {
+                    return timeSystem.tickSources().some( (tickSource) => {
                         return metadata.key === tickSource.metadata.mode;
                     });
                 });
@@ -70,9 +71,9 @@ define(
          * @param timeSystem
          * @returns {TimeSystem} the currently selected time system
          */
-        TimeConductorMode.prototype.changeTimeSystem = function (timeSystem) {
+        changeTimeSystem(timeSystem) {
             // On time system change, apply default deltas
-            var defaults = timeSystem.defaults() || {
+            let defaults = timeSystem.defaults() || {
                     bounds: {
                         start: 0,
                         end: 0
@@ -87,10 +88,10 @@ define(
             this.deltas(defaults.deltas);
 
             // Tick sources are mode-specific, so restrict tick sources to only those supported by the current mode.
-            var key = this.mdata.key;
-            var tickSources = timeSystem.tickSources();
+            let key = this.mdata.key;
+            let tickSources = timeSystem.tickSources();
             if (tickSources) {
-                this.availableSources = tickSources.filter(function (source) {
+                this.availableSources = tickSources.filter( (source) => {
                     return source.metadata.mode === key;
                 });
             }
@@ -102,11 +103,11 @@ define(
         /**
          * @returns {ModeMetadata}
          */
-        TimeConductorMode.prototype.metadata = function () {
+        metadata() {
             return this.mdata;
         };
 
-        TimeConductorMode.prototype.availableTimeSystems = function () {
+        availableTimeSystems() {
             return this.availableSystems;
         };
 
@@ -115,7 +116,7 @@ define(
          * @param timeSystem
          * @returns {Array.<T>}
          */
-        TimeConductorMode.prototype.availableTickSources = function (timeSystem) {
+        availableTickSources(timeSystem) {
             return this.availableSources;
         };
 
@@ -125,7 +126,7 @@ define(
          * @param tickSource
          * @returns {TickSource}
          */
-        TimeConductorMode.prototype.tickSource = function (tickSource) {
+        tickSource(tickSource) {
             if (arguments.length > 0) {
                 if (this.sourceUnlisten) {
                     this.sourceUnlisten();
@@ -145,7 +146,7 @@ define(
         /**
          * @private
          */
-        TimeConductorMode.prototype.destroy = function () {
+        destroy() {
             this.conductor.off('timeSystem', this.changeTimeSystem);
 
             if (this.sourceUnlisten) {
@@ -157,10 +158,10 @@ define(
          * @private
          * @param {number} time some value that is valid in the current TimeSystem
          */
-        TimeConductorMode.prototype.tick = function (time) {
-            var deltas = this.deltas();
-            var startTime = time;
-            var endTime = time;
+        tick(time) {
+            let deltas = this.deltas();
+            let startTime = time;
+            let endTime = time;
 
             if (deltas) {
                 startTime = time - deltas.start;
@@ -179,7 +180,7 @@ define(
          * @param deltas
          * @returns {TimeSystemDeltas}
          */
-        TimeConductorMode.prototype.deltas = function (deltas) {
+        deltas(deltas) {
             if (arguments.length !== 0) {
                 var bounds = this.calculateBoundsFromDeltas(deltas);
                 this.deltasVal = deltas;
@@ -194,8 +195,8 @@ define(
          * @param deltas
          * @returns {TimeConductorBounds}
          */
-        TimeConductorMode.prototype.calculateBoundsFromDeltas = function (deltas) {
-            var oldEnd = this.conductor.bounds().end;
+        calculateBoundsFromDeltas(deltas) {
+            let oldEnd = this.conductor.bounds().end;
 
             if (this.deltasVal && this.deltasVal.end !== undefined) {
                 //Calculate the previous raw end value (without delta)
@@ -220,8 +221,8 @@ define(
          * @param {number} timeSpan time duration in ms.
          * @return {ZoomLevel} The new zoom bounds and delta calculated for the provided time span
          */
-        TimeConductorMode.prototype.calculateZoom = function (timeSpan) {
-            var zoom = {};
+        calculateZoom(timeSpan) {
+            let zoom = {};
 
             // If a tick source is defined, then the concept of 'now' is
             // important. Calculate zoom based on 'now'.
@@ -233,8 +234,8 @@ define(
                 zoom.bounds = this.calculateBoundsFromDeltas(zoom.deltas);
                 // Calculate bounds based on deltas;
             } else {
-                var bounds = this.conductor.bounds();
-                var center = bounds.start + ((bounds.end - bounds.start)) / 2;
+                let bounds = this.conductor.bounds();
+                let center = bounds.start + ((bounds.end - bounds.start)) / 2;
                 bounds.start = center - timeSpan / 2;
                 bounds.end = center + timeSpan / 2;
                 zoom.bounds = bounds;
@@ -242,7 +243,7 @@ define(
 
             return zoom;
         };
-
+      }
         return TimeConductorMode;
     }
 );

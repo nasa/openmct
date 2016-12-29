@@ -25,18 +25,19 @@
  */
 define([
     '../../api/objects/object-utils'
-], function (objectUtils) {
-        function AlternateCompositionCapability($injector, domainObject) {
+], (objectUtils) => {
+        class AlternateCompositionCapability {
+          constructor($injector, domainObject) {
             this.domainObject = domainObject;
-            this.getDependencies = function () {
+            this.getDependencies = () => {
                 this.instantiate = $injector.get("instantiate");
                 this.contextualize = $injector.get("contextualize");
                 this.getDependencies = undefined;
                 this.openmct = $injector.get("openmct");
-            }.bind(this);
+            };
         }
 
-        AlternateCompositionCapability.prototype.add = function (child, index) {
+        add(child, index) {
             if (typeof index !== 'undefined') {
                 // At first glance I don't see a location in the existing
                 // codebase where add is called with an index.  Won't support.
@@ -45,41 +46,39 @@ define([
                 );
             }
 
-            function addChildToComposition(model) {
-                var existingIndex = model.composition.indexOf(child.getId());
+            const addChildToComposition = (model) => {
+                let existingIndex = model.composition.indexOf(child.getId());
                 if (existingIndex === -1) {
                     model.composition.push(child.getId());
                 }
-            }
+            };
 
             return this.domainObject.useCapability(
                     'mutation',
                     addChildToComposition
                 )
                 .then(this.invoke.bind(this))
-                .then(function (children) {
-                    return children.filter(function (c) {
+                .then( (children) => {
+                    return children.filter( (c) => {
                         return c.getId() === child.getId();
                     })[0];
                 });
-        };
+        }
 
-        AlternateCompositionCapability.prototype.contextualizeChild = function (
-            child
-        ) {
+        contextualizeChild(child) {
             if (this.getDependencies) {
                 this.getDependencies();
             }
 
-            var keyString = objectUtils.makeKeyString(child.identifier);
-            var oldModel = objectUtils.toOldFormat(child);
-            var newDO = this.instantiate(oldModel, keyString);
+            let keyString = objectUtils.makeKeyString(child.identifier);
+            let oldModel = objectUtils.toOldFormat(child);
+            let newDO = this.instantiate(oldModel, keyString);
             return this.contextualize(newDO, this.domainObject);
 
-        };
+        }
 
-        AlternateCompositionCapability.prototype.invoke = function () {
-            var newFormatDO = objectUtils.toNewFormat(
+        invoke() {
+            let newFormatDO = objectUtils.toNewFormat(
                 this.domainObject.getModel(),
                 this.domainObject.getId()
             );
@@ -88,20 +87,19 @@ define([
                 this.getDependencies();
             }
 
-            var collection = this.openmct.composition.get(newFormatDO);
+            let collection = this.openmct.composition.get(newFormatDO);
 
             return collection.load()
-                .then(function (children) {
+                .then( (children) => {
                     return children.map(this.contextualizeChild, this);
-                }.bind(this));
-        };
+                });
+        }
 
-        AlternateCompositionCapability.appliesTo = function (model) {
+        appliesTo(model) {
             // Will get replaced by a runs exception to properly
             // bind to running openmct instance
             return false;
-        };
-
-        return AlternateCompositionCapability;
+        }
     }
-);
+    return AlternateCompositionCapability;
+});

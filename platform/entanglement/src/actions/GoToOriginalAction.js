@@ -20,8 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+define(() => {
 
         /**
          * Implements the "Go To Original" action, which follows a link back
@@ -34,11 +33,12 @@ define(
          * @param {ActionContext} context the context in which the action
          *        will be performed
          */
-        function GoToOriginalAction(context) {
+        class GoToOriginalAction {
+          constructor(context) {
             this.domainObject = context.domainObject;
         }
 
-        GoToOriginalAction.prototype.perform = function () {
+        perform() {
             return this.domainObject.getCapability("location").getOriginal()
                 .then(function (originalObject) {
                     var actionCapability =
@@ -48,12 +48,12 @@ define(
                 });
         };
 
-        GoToOriginalAction.appliesTo = function (context) {
-            var domainObject = context.domainObject;
+        appliesTo(context) {
+            let domainObject = context.domainObject;
             return domainObject && domainObject.hasCapability("location") &&
                 domainObject.getCapability("location").isLink();
         };
-
+      }
         return GoToOriginalAction;
     }
 );

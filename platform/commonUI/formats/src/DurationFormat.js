@@ -22,11 +22,9 @@
 
 define([
     'moment'
-], function (
-    moment
-) {
+], (moment) => {
 
-    var DATE_FORMAT = "HH:mm:ss",
+    let DATE_FORMAT = "HH:mm:ss",
         DATE_FORMATS = [
             DATE_FORMAT
         ];
@@ -43,20 +41,20 @@ define([
      * @constructor
      * @memberof platform/commonUI/formats
      */
-    function DurationFormat() {
+    class DurationFormat {
+
+    format(value) {
+        return moment.utc(value).format(DATE_FORMAT);
     }
 
-    DurationFormat.prototype.format = function (value) {
-        return moment.utc(value).format(DATE_FORMAT);
-    };
-
-    DurationFormat.prototype.parse = function (text) {
+    parse(text) {
         return moment.duration(text).asMilliseconds();
-    };
+    }
 
-    DurationFormat.prototype.validate = function (text) {
+    validate(text) {
         return moment.utc(text, DATE_FORMATS).isValid();
-    };
+    }
 
     return DurationFormat;
+  }
 });

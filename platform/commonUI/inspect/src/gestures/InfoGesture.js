@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The `info` gesture displays domain object metadata in a
@@ -38,19 +38,18 @@ define(
          * @param {DomainObject} domainObject the domain object for which to
          *        show information
          */
-        function InfoGesture($timeout, agentService, infoService, delay, element, domainObject) {
-            var self = this;
-
+        class InfoGesture {
+          constructor($timeout, agentService, infoService, delay, element, domainObject) {
             // Callback functions to preserve the "this" pointer (in the
             // absence of Function.prototype.bind)
-            this.showBubbleCallback = function (event) {
-                self.showBubble(event);
+            this.showBubbleCallback = (event) => {
+                this.showBubble(event);
             };
-            this.hideBubbleCallback = function (event) {
-                self.hideBubble(event);
+            this.hideBubbleCallback = (event) => {
+                this.hideBubble(event);
             };
-            this.trackPositionCallback = function (event) {
-                self.trackPosition(event);
+            this.trackPositionCallback = (event) => {
+                this.trackPosition(event);
             };
 
             this.element = element;
@@ -68,13 +67,13 @@ define(
             }
         }
 
-        InfoGesture.prototype.trackPosition = function (event) {
+        trackPosition(event) {
             // Record mouse position, so bubble can be shown at latest
             // mouse position (not just where the mouse entered)
             this.mousePosition = [event.clientX, event.clientY];
         };
 
-        InfoGesture.prototype.hideBubble = function () {
+        hideBubble() {
             // If a bubble is showing, dismiss it
             if (this.dismissBubble) {
                 this.dismissBubble();
@@ -93,18 +92,17 @@ define(
             this.mousePosition = undefined;
         };
 
-        InfoGesture.prototype.showBubble = function (event) {
-            var self = this;
+        showBubble(event) {
 
-            function displayBubble() {
-                self.dismissBubble = self.infoService.display(
+            const displayBubble = () => {
+                this.dismissBubble = this.infoService.display(
                     "info-table",
-                    self.domainObject.getModel().name,
-                    self.domainObject.useCapability('metadata'),
-                    self.mousePosition
+                    this.domainObject.getModel().name,
+                    this.domainObject.useCapability('metadata'),
+                    this.mousePosition
                 );
-                self.element.off('mousemove', self.trackPositionCallback);
-                self.pendingBubble = undefined;
+                this.element.off('mousemove', this.trackPositionCallback);
+                this.pendingBubble = undefined;
             }
 
             this.trackPosition(event);
@@ -131,15 +129,14 @@ define(
          * Detach any event handlers associated with this gesture.
          * @method
          */
-        InfoGesture.prototype.destroy = function () {
+        destroy() {
             // Dismiss any active bubble...
             this.hideBubble();
             // ...and detach listeners
             this.element.off('mouseenter', this.showBubbleCallback);
         };
-
+      }
         return InfoGesture;
-
     }
 
 );

@@ -27,7 +27,7 @@
  */
 define(
     [],
-    function () {
+    () => {
         /**
          * The dialog service is responsible for handling window-modal
          * communication with the user, such as displaying forms for user
@@ -35,7 +35,8 @@ define(
          * @memberof platform/commonUI/dialog
          * @constructor
          */
-        function DialogService(overlayService, $q, $log) {
+        class DialogService {
+          constructor(overlayService, $q, $log) {
             this.overlayService = overlayService;
             this.$q = $q;
             this.$log = $log;
@@ -45,7 +46,7 @@ define(
         /**
          * @private
          */
-        DialogService.prototype.dismissOverlay = function (overlay) {
+        dismissOverlay(overlay) {
             //Dismiss the overlay
             overlay.dismiss();
 
@@ -53,30 +54,29 @@ define(
             if (overlay === this.activeOverlay) {
                 this.activeOverlay = undefined;
             }
-        };
+        }
 
-        DialogService.prototype.getDialogResponse = function (key, model, resultGetter, typeClass) {
+        getDialogResponse(key, model, resultGetter, typeClass) {
             // We will return this result as a promise, because user
             // input is asynchronous.
             var deferred = this.$q.defer(),
-                self = this,
                 overlay;
 
             // Confirm function; this will be passed in to the
             // overlay-dialog template and associated with a
             // OK button click
-            function confirm(value) {
+            const confirm = (value) => {
                 // Pass along the result
                 deferred.resolve(resultGetter ? resultGetter() : value);
-                self.dismissOverlay(overlay);
+                this.dismissOverlay(overlay);
             }
 
             // Cancel function; this will be passed in to the
             // overlay-dialog template and associated with a
             // Cancel or X button click
-            function cancel() {
+            const cancel = () => {
                 deferred.reject();
-                self.dismissOverlay(overlay);
+                this.dismissOverlay(overlay);
             }
 
             // Add confirm/cancel callbacks
@@ -96,7 +96,7 @@ define(
             }
 
             return deferred.promise;
-        };
+        }
 
         /**
          * Request user input via a window-modal dialog.
@@ -109,8 +109,8 @@ define(
          *          user input cannot be obtained (for instance,
          *          because the user cancelled the dialog)
          */
-        DialogService.prototype.getUserInput = function (formModel, value) {
-            var overlayModel = {
+        getUserInput(formModel, value) {
+            let overlayModel = {
                 title: formModel.name,
                 message: formModel.message,
                 structure: formModel,
@@ -118,7 +118,7 @@ define(
             };
 
             // Provide result from the model
-            function resultGetter() {
+            const resultGetter = () => {
                 return overlayModel.value;
             }
 
@@ -128,7 +128,7 @@ define(
                 overlayModel,
                 resultGetter
             );
-        };
+        }
 
         /**
          * Request that the user chooses from a set of options,
@@ -137,13 +137,13 @@ define(
          * @param dialogModel a description of the dialog to show
          * @return {Promise} a promise for the user's choice
          */
-        DialogService.prototype.getUserChoice = function (dialogModel) {
+        getUserChoice(dialogModel) {
             // Show the overlay-options dialog
             return this.getDialogResponse(
                 "overlay-options",
                 { dialog: dialogModel }
             );
-        };
+        }
 
         /**
          * Tests if a dialog can be displayed. A modal dialog may only be
@@ -152,7 +152,7 @@ define(
          * @returns {boolean} true if dialog is currently visible, false
          * otherwise
          */
-        DialogService.prototype.canShowDialog = function (dialogModel) {
+        canShowDialog(dialogModel) {
             if (this.activeOverlay) {
                 // Only one dialog should be shown at a time.
                 // The application design should be such that
@@ -167,7 +167,7 @@ define(
             } else {
                 return true;
             }
-        };
+        }
 
         /**
          * A user action that can be performed from a blocking dialog. These
@@ -229,12 +229,11 @@ define(
          * @param {typeClass} string tells overlayService that this overlay should use appropriate CSS class
          * @returns {boolean | {DialogHandle}}
          */
-        DialogService.prototype.showBlockingMessage = function (dialogModel) {
+        showBlockingMessage(dialogModel) {
             if (this.canShowDialog(dialogModel)) {
                 // Add the overlay using the OverlayService, which
                 // will handle actual insertion into the DOM
-                var self = this,
-                    overlay = this.overlayService.createOverlay(
+                var overlay = this.overlayService.createOverlay(
                         "overlay-blocking-message",
                         dialogModel,
                         "t-dialog-sm"
@@ -243,15 +242,15 @@ define(
                 this.activeOverlay = overlay;
 
                 return {
-                    dismiss: function () {
-                        self.dismissOverlay(overlay);
+                    dismiss: () => {
+                        this.dismissOverlay(overlay);
                     }
                 };
             } else {
                 return false;
             }
         };
-
+      }
         return DialogService;
     }
 );

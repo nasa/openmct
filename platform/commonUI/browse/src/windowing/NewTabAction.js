@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
         /**
          * The new tab action allows a domain object to be opened
          * into a new browser tab.
@@ -33,8 +33,9 @@ define(
          * @constructor
          * @implements {Action}
          */
-        function NewTabAction(urlService, $window, context) {
-            context = context || {};
+        class NewTabAction {
+          constructor(urlService, $window, context) {
+            this.context = context || {};
 
             this.urlService = urlService;
             this.open = function () {
@@ -45,13 +46,13 @@ define(
             this.domainObject = context.selectedObject || context.domainObject;
         }
 
-        NewTabAction.prototype.perform = function () {
+        Nperform() {
             this.open(
                 this.urlService.urlForNewTab("browse", this.domainObject),
                 "_blank"
             );
-        };
-
+        }
+      }
         return NewTabAction;
     }
 );

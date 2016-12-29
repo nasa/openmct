@@ -22,10 +22,10 @@
 
 define(
     ['../../../src/controllers/swimlane/TimelineSwimlaneDecorator'],
-    function (TimelineSwimlaneDecorator) {
+    (TimelineSwimlaneDecorator) => {
 
-        describe("A Timeline swimlane decorator", function () {
-            var mockSwimlane,
+        describe("A Timeline swimlane decorator", () => {
+            let mockSwimlane,
                 mockSelection,
                 mockCapabilities,
                 testModel,
@@ -33,7 +33,7 @@ define(
                 testModes,
                 decorator;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockSwimlane = {};
                 mockCapabilities = {};
                 testModel = {};
@@ -56,7 +56,7 @@ define(
                 );
                 mockPromise = jasmine.createSpyObj('promise', ['then']);
 
-                mockSwimlane.domainObject.getCapability.andCallFake(function (c) {
+                mockSwimlane.domainObject.getCapability.andCallFake( (c) => {
                     return mockCapabilities[c];
                 });
                 mockSwimlane.domainObject.getModel.andReturn(testModel);
@@ -70,24 +70,24 @@ define(
                 );
             });
 
-            it("returns the same object instance", function () {
+            it("returns the same object instance", () => {
                 // Decoration should occur in-place
                 expect(decorator).toBe(mockSwimlane);
             });
 
-            it("adds a 'modes' getter-setter to activities", function () {
+            it("adds a 'modes' getter-setter to activities", () => {
                 expect(mockSwimlane.modes).toEqual(jasmine.any(Function));
                 expect(mockCapabilities.type.instanceOf)
                     .toHaveBeenCalledWith('activity');
             });
 
-            it("adds a 'link' getter-setter to activities", function () {
+            it("adds a 'link' getter-setter to activities", () => {
                 expect(mockSwimlane.link).toEqual(jasmine.any(Function));
                 expect(mockCapabilities.type.instanceOf)
                     .toHaveBeenCalledWith('activity');
             });
 
-            it("gets modes from the domain object model", function () {
+            it("gets modes from the domain object model", () => {
                 testModel.relationships = { modes: ['a', 'b', 'c'] };
                 expect(decorator.modes()).toEqual(['a', 'b', 'c']);
                 testModel.relationships = { modes: ['x', 'y', 'z'] };
@@ -97,7 +97,7 @@ define(
                     .not.toHaveBeenCalled();
             });
 
-            it("gets links from the domain object model", function () {
+            it("gets links from the domain object model", () => {
                 testModel.link = "http://www.nasa.gov";
                 expect(decorator.link()).toEqual("http://www.nasa.gov");
                 // Verify that it worked as a getter
@@ -105,7 +105,7 @@ define(
                     .not.toHaveBeenCalled();
             });
 
-            it("mutates modes when used as a setter", function () {
+            it("mutates modes when used as a setter", () => {
                 decorator.modes(['abc', 'xyz']);
                 expect(mockCapabilities.mutation.mutate)
                     .toHaveBeenCalledWith(jasmine.any(Function));
@@ -113,7 +113,7 @@ define(
                 expect(testModel.relationships.modes).toEqual(['abc', 'xyz']);
             });
 
-            it("mutates modes when used as a setter", function () {
+            it("mutates modes when used as a setter", () => {
                 decorator.link("http://www.noaa.gov");
                 expect(mockCapabilities.mutation.mutate)
                     .toHaveBeenCalledWith(jasmine.any(Function));
@@ -121,15 +121,15 @@ define(
                 expect(testModel.link).toEqual("http://www.noaa.gov");
             });
 
-            it("does not mutate modes when unchanged", function () {
+            it("does not mutate modes when unchanged", () => {
                 testModel.relationships = { modes: testModes };
                 decorator.modes(testModes);
                 expect(mockCapabilities.mutation.mutate).not.toHaveBeenCalled();
                 expect(testModel.relationships.modes).toEqual(testModes);
             });
 
-            it("does mutate modes when changed", function () {
-                var testModes2 = ['d', 'e', 'f'];
+            it("does mutate modes when changed", () => {
+                let testModes2 = ['d', 'e', 'f'];
                 testModel.relationships = { modes: testModes };
                 decorator.modes(testModes2);
                 expect(mockCapabilities.mutation.mutate).toHaveBeenCalled();
@@ -137,12 +137,12 @@ define(
                 expect(testModel.relationships.modes).toBe(testModes2);
             });
 
-            it("does not provide a 'remove' method with no parent", function () {
+            it("does not provide a 'remove' method with no parent", () => {
                 expect(decorator.remove).not.toEqual(jasmine.any(Function));
             });
 
-            it("fires the 'remove' action when remove is called", function () {
-                var mockChild = jasmine.createSpyObj(
+            it("fires the 'remove' action when remove is called", () => {
+                let mockChild = jasmine.createSpyObj(
                         'childObject',
                         ['getCapability', 'getModel']
                     ),
@@ -151,7 +151,7 @@ define(
                         ['perform']
                     );
 
-                mockChild.getCapability.andCallFake(function (c) {
+                mockChild.getCapability.andCallFake( (c) => {
                     return c === 'action' ? mockAction : undefined;
                 });
 
@@ -166,12 +166,12 @@ define(
                 expect(mockAction.perform).toHaveBeenCalledWith('remove');
             });
 
-            it("allows the swimlane to be selected", function () {
+            it("allows the swimlane to be selected", () => {
                 decorator.select();
                 expect(mockSelection.select).toHaveBeenCalledWith(decorator);
             });
 
-            it("allows checking for swimlane selection state", function () {
+            it("allows checking for swimlane selection state", () => {
                 expect(decorator.selected()).toBeFalsy();
                 mockSelection.get.andReturn(decorator);
                 expect(decorator.selected()).toBeTruthy();

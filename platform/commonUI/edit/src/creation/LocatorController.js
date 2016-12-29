@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Controller for the "locator" control, which provides the
@@ -31,14 +31,14 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function LocatorController($scope, $timeout, objectService) {
+        const LocatorController = ($scope, $timeout, objectService) => {
             // Populate values needed by the locator control. These are:
             // * rootObject: The top-level object, since we want to show
             //               the full tree
             // * treeModel: The model for the embedded tree representation,
             //              used for bi-directional object selection.
-            function setLocatingObject(domainObject, priorObject) {
-                var context = domainObject &&
+            const setLocatingObject = (domainObject, priorObject) => {
+                let context = domainObject &&
                     domainObject.getCapability("context"),
                     contextRoot = context && context.getRoot();
 
@@ -46,7 +46,7 @@ define(
                     $scope.rootObject = undefined;
                     // Update the displayed tree on a timeout to avoid
                     // an infinite digest exception.
-                    $timeout(function () {
+                    $timeout( () => {
                         $scope.rootObject =
                             (context && context.getRoot()) || $scope.rootObject;
                     }, 0);
@@ -54,8 +54,8 @@ define(
                     // Update the displayed tree on a timeout to avoid
                     // an infinite digest exception.
                     objectService.getObjects(['ROOT'])
-                        .then(function (objects) {
-                            $timeout(function () {
+                        .then( (objects) => {
+                            $timeout( () => {
                                 $scope.rootObject = objects.ROOT;
                             }, 0);
                         });

@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Provides an indicator that is visible when there are
@@ -35,14 +35,14 @@ define(
          * @param dialogService
          * @constructor
          */
-        function NotificationIndicatorController($scope, notificationService, dialogService) {
+        const NotificationIndicatorController = ($scope, notificationService, dialogService) => {
             $scope.notifications = notificationService.notifications;
             $scope.highest = notificationService.highest;
 
             /**
              * Launch a dialog showing a list of current notifications.
              */
-            $scope.showNotificationsList = function () {
+            $scope.showNotificationsList =  () => {
                 dialogService.getDialogResponse('overlay-message-list', {
                     dialog: {
                         title: "Messages",

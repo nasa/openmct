@@ -26,26 +26,26 @@
  */
 define(
     [],
-    function () {
+    () => {
 
-        function isDirty(domainObject) {
-            var navigatedObject = domainObject,
+        const isDirty = (domainObject) => {
+            let navigatedObject = domainObject,
                 editorCapability = navigatedObject &&
                     navigatedObject.getCapability("editor");
 
             return editorCapability &&
                 editorCapability.isEditContextRoot() &&
                 editorCapability.dirty();
-        }
+        };
 
-        function cancelEditing(domainObject) {
-            var navigatedObject = domainObject,
+        const cancelEditing = (domainObject) => {
+            let navigatedObject = domainObject,
                 editorCapability = navigatedObject &&
                     navigatedObject.getCapability("editor");
 
             return editorCapability &&
                 editorCapability.finish();
-        }
+        };
 
         /**
          * Controller which is responsible for populating the scope for
@@ -53,33 +53,33 @@ define(
          * @memberof platform/commonUI/edit
          * @constructor
          */
-        function EditObjectController($scope, $location, navigationService) {
+        const EditObjectController = ($scope, $location, navigationService) => {
             this.scope = $scope;
-            var domainObject = $scope.domainObject;
+            let domainObject = $scope.domainObject;
 
-            var removeCheck = navigationService
-                .checkBeforeNavigation(function () {
+            let removeCheck = navigationService
+                .checkBeforeNavigation( () => {
                     if (isDirty(domainObject)) {
                         return "Continuing will cause the loss of any unsaved changes.";
                     }
                     return false;
                 });
 
-            $scope.$on('$destroy', function () {
+            $scope.$on('$destroy', () => {
                 removeCheck();
                 cancelEditing(domainObject);
             });
 
-            function setViewForDomainObject() {
+            const setViewForDomainObject = () => {
 
-                var locationViewKey = $location.search().view;
+                let locationViewKey = $location.search().view;
 
-                function selectViewIfMatching(view) {
+                const selectViewIfMatching = (view) => {
                     if (view.key === locationViewKey) {
                         $scope.representation = $scope.representation || {};
                         $scope.representation.selected = view;
                     }
-                }
+                };
 
                 if (locationViewKey) {
                     ((domainObject && domainObject.useCapability('view')) || [])
@@ -89,7 +89,7 @@ define(
 
             setViewForDomainObject();
 
-            $scope.doAction = function (action) {
+            $scope.doAction = (action) => {
                 return $scope[action] && $scope[action]();
             };
         }

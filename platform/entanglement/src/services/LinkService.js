@@ -21,8 +21,7 @@
  *****************************************************************************/
 
 
-define(
-    function () {
+define( () => {
 
         /**
          * LinkService provides an interface for linking objects to additional
@@ -32,11 +31,12 @@ define(
          * @memberof platform/entanglement
          * @implements {platform/entanglement.AbstractComposeService}
          */
-        function LinkService(policyService) {
+        class LinkService {
+          constructor(policyService) {
             this.policyService = policyService;
         }
 
-        LinkService.prototype.validate = function (object, parentCandidate) {
+        validate(object, parentCandidate) {
             if (!parentCandidate || !parentCandidate.getId) {
                 return false;
             }
@@ -56,7 +56,7 @@ define(
             );
         };
 
-        LinkService.prototype.perform = function (object, parentObject) {
+        perform(object, parentObject) {
             if (!this.validate(object, parentObject)) {
                 throw new Error(
                     "Tried to link objects without validating first."
@@ -65,7 +65,7 @@ define(
 
             return parentObject.getCapability('composition').add(object);
         };
-
+      }
         return LinkService;
     }
 );

@@ -20,33 +20,33 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./BundleRegistry'], function (BundleRegistry) {
+define(['./BundleRegistry'], (BundleRegistry) => {
 
-    describe("BundleRegistry", function () {
-        var testPath,
+    describe("BundleRegistry", () => {
+        let testPath,
             bundleRegistry;
 
-        beforeEach(function () {
+        beforeEach( () => {
             testPath = 'some/bundle';
             bundleRegistry = new BundleRegistry();
         });
 
-        it("initially lists no bundles", function () {
+        it("initially lists no bundles", () => {
             expect(bundleRegistry.list()).toEqual([]);
         });
 
-        it("initially contains no bundles", function () {
+        it("initially contains no bundles", () => {
             expect(bundleRegistry.contains(testPath))
                 .toBe(false);
         });
 
-        it("initially provides no bundles", function () {
+        it("initially provides no bundles", () => {
             expect(bundleRegistry.get(testPath))
                 .toBeUndefined();
         });
 
-        describe("when a bundle has been registered", function () {
-            var testBundleDef;
+        describe("when a bundle has been registered", () => {
+            let testBundleDef;
 
             beforeEach(function () {
                 testBundleDef = { someKey: "some value" };
@@ -54,30 +54,30 @@ define(['./BundleRegistry'], function (BundleRegistry) {
                 bundleRegistry.enable(testPath);
             });
 
-            it("lists registered bundles", function () {
+            it("lists registered bundles", () => {
                 expect(bundleRegistry.list()).toEqual([testPath]);
             });
 
-            it("contains registered bundles", function () {
+            it("contains registered bundles", () => {
                 expect(bundleRegistry.contains(testPath))
                     .toBe(true);
             });
 
-            it("provides registered bundles", function () {
+            it("provides registered bundles", () => {
                 expect(bundleRegistry.get(testPath))
                     .toBe(testBundleDef);
             });
 
-            describe("and then removed", function () {
-                beforeEach(function () {
+            describe("and then removed", () => {
+                beforeEach( () => {
                     bundleRegistry.remove(testPath);
                 });
 
-                it("appears empty again", function () {
+                it("appears empty again", () => {
                     expect(bundleRegistry.list()).toEqual([]);
                 });
 
-                it("does not contain the removed bundle", function () {
+                it("does not contain the removed bundle", () => {
                     expect(bundleRegistry.contains(testPath))
                         .toBe(false);
                 });

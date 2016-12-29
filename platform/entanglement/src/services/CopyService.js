@@ -23,7 +23,7 @@
 
 define(
     ["./CopyTask"],
-    function (CopyTask) {
+    (CopyTask) => {
 
         /**
          * CopyService provides an interface for deep copying objects from one
@@ -33,12 +33,13 @@ define(
          * @memberof platform/entanglement
          * @implements {platform/entanglement.AbstractComposeService}
          */
-        function CopyService($q, policyService) {
+        class CopyService {
+          constructor($q, policyService) {
             this.$q = $q;
             this.policyService = policyService;
         }
 
-        CopyService.prototype.validate = function (object, parentCandidate) {
+        validate(object, parentCandidate) {
             if (!parentCandidate || !parentCandidate.getId) {
                 return false;
             }
@@ -78,12 +79,12 @@ define(
          * @returns a promise that will be completed with the clone of
          * domainObject when the duplication is successful.
          */
-        CopyService.prototype.perform = function (domainObject, parent, filter) {
-            var policyService = this.policyService;
+        perform(domainObject, parent, filter) {
+            let policyService = this.policyService;
 
             // Combines caller-provided filter (if any) with the
             // baseline behavior of respecting creation policy.
-            function filterWithPolicy(domainObj) {
+            const filterWithPolicy = (domainObj) => {
                 return (!filter || filter(domainObj)) &&
                     policyService.allow(
                         "creation",
@@ -104,7 +105,7 @@ define(
                 );
             }
         };
-
+      }
         return CopyService;
     }
 );

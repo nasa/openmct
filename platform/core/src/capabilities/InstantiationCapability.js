@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Implements the `instantiation` capability. This allows new domain
@@ -33,12 +33,13 @@ define(
          * @param $injector Angular's `$injector`
          * @implements {Capability}
          */
-        function InstantiationCapability(
-            $injector,
-            identifierService,
-            now,
-            domainObject
-        ) {
+        class InstantiationCapability {
+          constructor(
+              $injector,
+              identifierService,
+              now,
+              domainObject
+          ) {
             this.$injector = $injector;
             this.identifierService = identifierService;
             this.domainObject = domainObject;
@@ -55,8 +56,8 @@ define(
          * @param {object} the model for the new domain object
          * @returns {DomainObject} the new domain object
          */
-        InstantiationCapability.prototype.instantiate = function (model) {
-            var parsedId =
+        instantiate(model) {
+            let parsedId =
                     this.identifierService.parse(this.domainObject.getId()),
                 space = parsedId.getDefinedSpace(),
                 id = this.identifierService.generate(space);
@@ -81,8 +82,10 @@ define(
          * Alias of `instantiate`.
          * @see {platform/core.CreationCapability#instantiate}
          */
-        InstantiationCapability.prototype.invoke =
-            InstantiationCapability.prototype.instantiate;
+         invoke() {
+           return this.instantiate
+         }
+       }
 
         return InstantiationCapability;
     }

@@ -27,17 +27,17 @@ define(
         '../DomainObjectFactory',
         '../ControlledPromise'
     ],
-    function (GoToOriginalAction, domainObjectFactory, ControlledPromise) {
+    (GoToOriginalAction, domainObjectFactory, ControlledPromise) => {
 
-        describe("The 'go to original' action", function () {
-            var testContext,
+        describe("The 'go to original' action", () =>  {
+            let testContext,
                 originalDomainObject,
                 mockLocationCapability,
                 mockOriginalActionCapability,
                 originalPromise,
                 action;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 mockLocationCapability = jasmine.createSpyObj(
                     'location',
                     ['isLink', 'isOriginal', 'getOriginal']
@@ -49,7 +49,7 @@ define(
                 originalPromise = new ControlledPromise();
                 mockLocationCapability.getOriginal.andReturn(originalPromise);
                 mockLocationCapability.isLink.andReturn(true);
-                mockLocationCapability.isOriginal.andCallFake(function () {
+                mockLocationCapability.isOriginal.andCallFake(() =>  {
                     return !mockLocationCapability.isLink();
                 });
                 testContext = {
@@ -68,18 +68,18 @@ define(
                 action = new GoToOriginalAction(testContext);
             });
 
-            it("is applicable to links", function () {
+            it("is applicable to links", () =>  {
                 expect(GoToOriginalAction.appliesTo(testContext))
                     .toBeTruthy();
             });
 
-            it("is not applicable to originals", function () {
+            it("is not applicable to originals", () =>  {
                 mockLocationCapability.isLink.andReturn(false);
                 expect(GoToOriginalAction.appliesTo(testContext))
                     .toBeFalsy();
             });
 
-            it("navigates to original objects when performed", function () {
+            it("navigates to original objects when performed", () =>  {
                 expect(mockOriginalActionCapability.perform)
                     .not.toHaveBeenCalled();
                 action.perform();

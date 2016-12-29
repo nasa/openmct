@@ -20,12 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./TickSource'], function (TickSource) {
+define(['./TickSource'], (TickSource) => {
     /**
      * @implements TickSource
      * @constructor
      */
-    function LocalClock($timeout, period) {
+    class LocalClock extends TickSource {
+      constructor($timeout, period) {
+        super();
         TickSource.call(this);
 
         this.metadata = {
@@ -42,21 +44,19 @@ define(['./TickSource'], function (TickSource) {
         this.timeoutHandle = undefined;
     }
 
-    LocalClock.prototype = Object.create(TickSource.prototype);
-
-    LocalClock.prototype.start = function () {
+      start() {
         this.timeoutHandle = this.$timeout(this.tick.bind(this), this.period);
     };
 
-    LocalClock.prototype.stop = function () {
+    stop() {
         if (this.timeoutHandle) {
             this.$timeout.cancel(this.timeoutHandle);
         }
     };
 
-    LocalClock.prototype.tick = function () {
-        var now = Date.now();
-        this.listeners.forEach(function (listener) {
+    tick() {
+        let now = Date.now();
+        this.listeners.forEach( (listener) => {
             listener(now);
         });
         this.timeoutHandle = this.$timeout(this.tick.bind(this), this.period);
@@ -69,21 +69,21 @@ define(['./TickSource'], function (TickSource) {
      * @param listener
      * @returns {function} a function for deregistering the provided listener
      */
-    LocalClock.prototype.listen = function (listener) {
-        var listeners = this.listeners;
+    listen(listener) {
+        let listeners = this.listeners;
         listeners.push(listener);
 
         if (listeners.length === 1) {
             this.start();
         }
 
-        return function () {
+        return () => {
             listeners.splice(listeners.indexOf(listener));
             if (listeners.length === 0) {
                 this.stop();
             }
-        }.bind(this);
+        }
     };
-
+  }
     return LocalClock;
 });

@@ -20,19 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([], () => {
     /**
      * A column showing utilization costs associated with activities.
      * @constructor
      * @param {string} key the key for the particular cost
      * @implements {platform/features/timeline.TimelineCSVColumn}
      */
-    function UtilizationColumn(resource) {
+    class UtilizationColumn {
+      constructor(resource) {
         this.resource = resource;
-    }
+      }
 
-    UtilizationColumn.prototype.name = function () {
-        var units = {
+      name() {
+        let units = {
             "Kbps": "Kb",
             "watts": "watt-seconds"
         }[this.resource.units] || "unknown units";
@@ -40,16 +41,16 @@ define([], function () {
         return this.resource.name + " (" + units + ")";
     };
 
-    UtilizationColumn.prototype.value = function (domainObject) {
-        var resource = this.resource;
+      value(domainObject) {
+        let resource = this.resource;
 
-        function getCost(utilization) {
-            var seconds = (utilization.end - utilization.start) / 1000;
+        const getCost = (utilization) => {
+            let seconds = (utilization.end - utilization.start) / 1000;
             return seconds * utilization.value;
         }
 
-        function getUtilizationValue(utilizations) {
-            utilizations = utilizations.filter(function (utilization) {
+        const getUtilizationValue = (utilizations) => {
+            utilizations = utilizations.filter( (utilization) => {
                 return utilization.key === resource.key;
             });
 
@@ -57,7 +58,7 @@ define([], function () {
                 return "";
             }
 
-            return utilizations.map(getCost).reduce(function (a, b) {
+            return utilizations.map(getCost).reduce( (a, b) => {
                 return a + b;
             }, 0);
         }
@@ -67,6 +68,6 @@ define([], function () {
                 .then(getUtilizationValue) :
             "";
     };
-
+  }
     return UtilizationColumn;
 });

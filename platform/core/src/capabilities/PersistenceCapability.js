@@ -20,8 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+define(() => {
 
         /**
          * Defines the `persistence` capability, used to trigger the
@@ -41,14 +40,15 @@ define(
          * @constructor
          * @implements {Capability}
          */
-        function PersistenceCapability(
-            cacheService,
-            persistenceService,
-            identifierService,
-            notificationService,
-            $q,
-            domainObject
-        ) {
+        class PersistenceCapability {
+          constructor(
+              cacheService,
+              persistenceService,
+              identifierService,
+              notificationService,
+              $q,
+              domainObject
+          ) {
             // Cache modified timestamp
             this.modified = domainObject.getModel().modified;
 
@@ -64,7 +64,7 @@ define(
          * Checks if the value returned is falsey, and if so returns a
          * rejected promise
          */
-        function rejectIfFalsey(value, $q) {
+        const rejectIfFalsey = (value, $q) => {
             if (!value) {
                 return $q.reject("Error persisting object");
             } else {
@@ -72,7 +72,7 @@ define(
             }
         }
 
-        function formatError(error) {
+        const formatError = (error) => {
             if (error && error.message) {
                 return error.message;
             } else if (error && typeof error === "string") {
@@ -86,8 +86,8 @@ define(
          * Display a notification message if an error has occurred during
          * persistence.
          */
-        function notifyOnError(error, domainObject, notificationService, $q) {
-            var errorMessage = "Unable to persist " + domainObject.getModel().name;
+        const notifyOnError = (error, domainObject, notificationService, $q) => {
+            let errorMessage = "Unable to persist " + domainObject.getModel().name;
             if (error) {
                 errorMessage += ": " + formatError(error);
             }
@@ -108,9 +108,8 @@ define(
          *          if persistence is successful, and rejected
          *          if not.
          */
-        PersistenceCapability.prototype.persist = function () {
-            var self = this,
-                domainObject = this.domainObject,
+        persist() {
+            let domainObject = this.domainObject,
                 model = domainObject.getModel(),
                 modified = model.modified,
                 persisted = model.persisted,
@@ -124,7 +123,7 @@ define(
             }
 
             // Update persistence timestamp...
-            domainObject.useCapability("mutation", function (m) {
+            domainObject.useCapability("mutation", (m) => {
                 m.persisted = modified;
             }, modified);
 
@@ -133,10 +132,10 @@ define(
                 this.getSpace(),
                 this.getKey(),
                 domainObject.getModel()
-            ]).then(function (result) {
-                return rejectIfFalsey(result, self.$q);
-            }).catch(function (error) {
-                return notifyOnError(error, domainObject, self.notificationService, self.$q);
+            ]).then( (result) => {
+                return rejectIfFalsey(result, this.$q);
+            }).catch( (error) => {
+                return notifyOnError(error, domainObject, this.notificationService, this.$q);
             });
         };
 
@@ -146,13 +145,13 @@ define(
          * @returns {Promise} a promise which will be resolved
          *          when the update is complete
          */
-        PersistenceCapability.prototype.refresh = function () {
-            var domainObject = this.domainObject;
+        refresh() {
+            let domainObject = this.domainObject;
 
             // Update a domain object's model upon refresh
-            function updateModel(model) {
-                var modified = model.modified;
-                return domainObject.useCapability("mutation", function () {
+            const updateModel = (model) => {
+                let modified = model.modified;
+                return domainObject.useCapability("mutation", () => {
                     return model;
                 }, modified);
             }
@@ -177,8 +176,8 @@ define(
          * @returns {string} the name of the space which should
          *          be used to persist this object
          */
-        PersistenceCapability.prototype.getSpace = function () {
-            var id = this.domainObject.getId();
+        getSpace() {
+            let id = this.domainObject.getId();
             return this.identifierService.parse(id).getSpace();
         };
 
@@ -188,7 +187,7 @@ define(
          * point.
          * @returns {boolean} true if the object has been persisted
          */
-        PersistenceCapability.prototype.persisted = function () {
+        persisted() {
             return this.domainObject.getModel().persisted !== undefined;
         };
 
@@ -197,11 +196,11 @@ define(
          *
          * @returns {string} the key of the object in it's space.
          */
-        PersistenceCapability.prototype.getKey = function () {
-            var id = this.domainObject.getId();
+        getKey() {
+            let id = this.domainObject.getId();
             return this.identifierService.parse(id).getKey();
         };
-
+      }
         return PersistenceCapability;
     }
 );

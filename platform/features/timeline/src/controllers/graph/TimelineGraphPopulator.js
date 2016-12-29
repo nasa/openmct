@@ -21,7 +21,7 @@
  *****************************************************************************/
 define(
     ['./TimelineGraph', './TimelineGraphRenderer'],
-    function (TimelineGraph, TimelineGraphRenderer) {
+    (TimelineGraph, TimelineGraphRenderer) => {
 
         /**
          * Responsible for determining which resource graphs
@@ -30,27 +30,27 @@ define(
          * graphs.
          * @constructor
          */
-        function TimelineGraphPopulator($q) {
-            var graphs =  [],
+        const TimelineGraphPopulator = ($q) => {
+            let graphs =  [],
                 cachedAssignments = {},
                 renderer = new TimelineGraphRenderer();
 
             // Compare two domain objects
-            function idsMatch(objA, objB) {
+            const idsMatch = (objA, objB) => {
                 return (objA && objA.getId && objA.getId()) ===
                         (objB && objB.getId && objB.getId());
             }
 
             // Compare two object sets for equality, to detect
             // when graph updates are truly needed.
-            function deepEquals(objA, objB) {
-                var keysA, keysB;
+            const deepEquals = (objA, objB) => {
+                let keysA, keysB;
 
                 // Check if all keys in both objects match
-                function keysMatch(keys) {
-                    return keys.map(function (k) {
+                const keysMatch = (keys) => {
+                    return keys.map( (k) => {
                         return deepEquals(objA[k], objB[k]);
-                    }).reduce(function (a, b) {
+                    }).reduce( (a, b) => {
                         return a && b;
                     }, true);
                 }
@@ -68,16 +68,16 @@ define(
             }
 
             // Populate the graphs for these swimlanes
-            function populate(swimlanes) {
+            const populate = (swimlanes) => {
                 // Somewhere to store resource assignments
                 // (as key -> swimlane[])
-                var assignments = {};
+                let assignments = {};
 
                 // Look up resources for a domain object
-                function lookupResources(swimlane) {
-                    var graphPromise =
+                const lookupResources = (swimlane) => {
+                    let graphPromise =
                         swimlane.domainObject.useCapability('graph');
-                    function getKeys(obj) {
+                    const getKeys = (obj) => {
                         return Object.keys(obj);
                     }
                     return $q.when(
@@ -86,10 +86,10 @@ define(
                 }
 
                 // Add all graph assignments appropriate for this swimlane
-                function buildAssignments(swimlane) {
+                const buildAssignments = (swimlane) => {
                     // Assign this swimlane to graphs for its resource keys
-                    return lookupResources(swimlane).then(function (resources) {
-                        resources.forEach(function (key) {
+                    return lookupResources(swimlane).then( (resources) => {
+                        resources.forEach( (key) => {
                             assignments[key] = assignments[key] || {};
                             assignments[key][swimlane.color()] =
                                 swimlane.domainObject;
@@ -98,7 +98,7 @@ define(
                 }
 
                 // Make a graph for this resource (after assigning)
-                function makeGraph(key) {
+                const makeGraph = (key) => {
                     return new TimelineGraph(
                         key,
                         assignments[key],
@@ -107,14 +107,14 @@ define(
                 }
 
                 // Used to filter down to swimlanes which need graphs
-                function needsGraph(swimlane) {
+                const needsGraph = (swimlane) => {
                     // Only show swimlanes with graphs & resources to graph
                     return swimlane.graph() &&
                         swimlane.domainObject.hasCapability('graph');
                 }
 
                 // Create graphs according to assignments that have been built
-                function createGraphs() {
+                const createGraphs = () => {
                     // Only refresh graphs if our assignments actually changed
                     if (!deepEquals(cachedAssignments, assignments)) {
                         // Make new graphs
@@ -123,7 +123,7 @@ define(
                         cachedAssignments = assignments;
                     } else {
                         // Just refresh the existing graphs
-                        graphs.forEach(function (graph) {
+                        graphs.forEach( (graph) => {
                             graph.refresh();
                         });
                     }
@@ -146,7 +146,7 @@ define(
                  * Get the current list of displayable resource graphs.
                  * @returns {TimelineGraph[]} the resource graphs
                  */
-                get: function () {
+                get: () => {
                     return graphs;
                 }
             };

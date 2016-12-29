@@ -22,16 +22,16 @@
 
 define(
     ["../src/MCTControl"],
-    function (MCTControl) {
+    (MCTControl) => {
 
-        describe("The mct-control directive", function () {
-            var testControls,
+        describe("The mct-control directive", () => {
+            let testControls,
                 mockScope,
                 mockLinker,
                 mockChangeTemplate,
                 mctControl;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testControls = [
                     {
                         key: "abc",
@@ -53,11 +53,11 @@ define(
                 mctControl = new MCTControl(mockLinker, testControls);
             });
 
-            it("is restricted to the element level", function () {
+            it("is restricted to the element level", () => {
                 expect(mctControl.restrict).toEqual("E");
             });
 
-            it("watches its passed key to choose a template", function () {
+            it("watches its passed key to choose a template", () => {
                 mctControl.link(mockScope);
 
                 expect(mockScope.$watch).toHaveBeenCalledWith(
@@ -66,7 +66,7 @@ define(
                 );
             });
 
-            it("changes its template dynamically", function () {
+            it("changes its template dynamically", () => {
                 mctControl.link(mockScope);
 
                 expect(mockChangeTemplate)

@@ -22,43 +22,43 @@
 
 define(
     ["../src/LayoutCompositionPolicy"],
-    function (LayoutCompositionPolicy) {
-        describe("Layout's composition policy", function () {
-            var mockCandidate,
+    (LayoutCompositionPolicy) => {
+        describe("Layout's composition policy", () => {
+            let mockCandidate,
                 mockContext,
                 candidateType,
                 contextType,
                 policy;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockCandidate =
                     jasmine.createSpyObj('candidateType', ['instanceOf']);
                 mockContext =
                     jasmine.createSpyObj('contextType', ['instanceOf']);
 
-                mockCandidate.instanceOf.andCallFake(function (t) {
+                mockCandidate.instanceOf.andCallFake( (t) => {
                     return t === candidateType;
                 });
-                mockContext.instanceOf.andCallFake(function (t) {
+                mockContext.instanceOf.andCallFake( (t) => {
                     return t === contextType;
                 });
 
                 policy = new LayoutCompositionPolicy();
             });
 
-            it("disallows folders in layouts", function () {
+            it("disallows folders in layouts", () => {
                 candidateType = 'layout';
                 contextType = 'folder';
                 expect(policy.allow(mockCandidate, mockContext)).toBe(false);
             });
 
-            it("does not disallow folders elsewhere", function () {
+            it("does not disallow folders elsewhere", () => {
                 candidateType = 'nonlayout';
                 contextType = 'folder';
                 expect(policy.allow(mockCandidate, mockContext)).toBe(true);
             });
 
-            it("allows things other than folders in layouts", function () {
+            it("allows things other than folders in layouts", () => {
                 candidateType = 'layout';
                 contextType = 'nonfolder';
                 expect(policy.allow(mockCandidate, mockContext)).toBe(true);

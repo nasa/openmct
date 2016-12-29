@@ -1,10 +1,11 @@
-define([], function () {
-    function SaveInProgressDialog(dialogService) {
+define([], () => {
+    class SaveInProgressDialog {
+      constructor(dialogService) {
         this.dialogService = dialogService;
         this.dialog = undefined;
     }
 
-    SaveInProgressDialog.prototype.show = function () {
+    show() {
         this.dialog = this.dialogService.showBlockingMessage({
             title: "Saving...",
             hint: "Do not navigate away from this page or close this browser tab while this message is displayed.",
@@ -12,13 +13,13 @@ define([], function () {
             severity: "info",
             delay: true
         });
-    };
+    }
 
-    SaveInProgressDialog.prototype.hide = function () {
+    hide() {
         if (this.dialog) {
             this.dialog.dismiss();
         }
-    };
-
+    }
+  }
     return SaveInProgressDialog;
 });

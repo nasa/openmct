@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Provides data to populate resource graphs associated
@@ -30,15 +30,15 @@ define(
          * This is a placeholder until WTD-918.
          * @constructor
          */
-        function ActivityUtilization() {
+        const ActivityUtilization = () => {
             return {
-                getPointCount: function () {
+                getPointCount: () => {
                     return 0;
                 },
-                getDomainValue: function () {
+                getDomainValue: () => {
                     return 0;
                 },
-                getRangeValue: function () {
+                getRangeValue: () => {
                     return 0;
                 }
             };

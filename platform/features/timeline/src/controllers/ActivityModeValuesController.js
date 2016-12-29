@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Controller which support the Values view of Activity Modes.
@@ -30,12 +30,12 @@ define(
          * @param {Array} resources definitions for extensions of
          *        category `resources`
          */
-        function ActivityModeValuesController(resources) {
-            var metadata = {};
+        const ActivityModeValuesController = (resources) => {
+            let metadata = {};
 
             // Store metadata for a specific resource type
-            function storeMetadata(resource) {
-                var key = (resource || {}).key;
+            const storeMetadata = (resource) => {
+                let key = (resource || {}).key;
                 if (key) {
                     metadata[key] = resource;
                 }
@@ -49,7 +49,7 @@ define(
                  * Look up metadata associated with the specified
                  * resource type.
                  */
-                metadata: function (key) {
+                metadata: (key) => {
                     return metadata[key];
                 }
             };

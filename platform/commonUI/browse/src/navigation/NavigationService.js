@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The navigation service maintains the application's current
@@ -34,7 +34,8 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function NavigationService($window) {
+        class NavigationService {
+          constructor($window) {
             this.navigated = undefined;
             this.callbacks = [];
             this.checks = [];
@@ -49,9 +50,9 @@ define(
          *
          * @returns {DomainObject} the object that is navigated-to
          */
-        NavigationService.prototype.getNavigation = function () {
+        getNavigation() {
             return this.navigated;
-        };
+        }
 
         /**
          * Navigate to a specified object.  If navigation checks exist and
@@ -66,7 +67,7 @@ define(
          * @param {Boolean} force if true, force navigation to occur.
          * @returns {Boolean} true if navigation occured, otherwise false.
          */
-        NavigationService.prototype.setNavigation = function (domainObject, force) {
+        setNavigation(domainObject, force) {
             if (force) {
                 this.doNavigation(domainObject);
                 return true;
@@ -75,14 +76,14 @@ define(
                 return true;
             }
 
-            var doNotNavigate = this.shouldWarnBeforeNavigate();
+            let doNotNavigate = this.shouldWarnBeforeNavigate();
             if (doNotNavigate && !this.$window.confirm(doNotNavigate)) {
                 return false;
             }
 
             this.doNavigation(domainObject);
             return true;
-        };
+        }
 
         /**
          * Listen for changes in navigation. The passed callback will
@@ -92,9 +93,9 @@ define(
          * @param {function} callback the callback to invoke when
          *        navigation state changes
          */
-        NavigationService.prototype.addListener = function (callback) {
+        addListener(callback) {
             this.callbacks.push(callback);
-        };
+        }
 
         /**
          * Stop listening for changes in navigation state.
@@ -103,11 +104,11 @@ define(
          *        no longer be invoked when navigation state
          *        changes
          */
-        NavigationService.prototype.removeListener = function (callback) {
-            this.callbacks = this.callbacks.filter(function (cb) {
+        removeListener(callback) {
+            this.callbacks = this.callbacks.filter( (cb) => {
                 return cb !== callback;
             });
-        };
+        }
 
         /**
          * Check if navigation should proceed.  May prompt a user for input
@@ -118,10 +119,10 @@ define(
          *
          * @returns {Boolean} true if the user wishes to navigate, otherwise false.
          */
-        NavigationService.prototype.shouldNavigate = function () {
-            var doNotNavigate = this.shouldWarnBeforeNavigate();
+        shouldNavigate() {
+            let doNotNavigate = this.shouldWarnBeforeNavigate();
             return !doNotNavigate || this.$window.confirm(doNotNavigate);
-        };
+        }
 
         /**
          * Register a check function to be called before any navigation occurs.
@@ -133,10 +134,10 @@ define(
          * @param {Function} checkFn a function to call before navigation occurs.
          * @returns {Function} removeCheck call to remove check
          */
-        NavigationService.prototype.checkBeforeNavigation = function (checkFn) {
+        checkBeforeNavigation(checkFn) {
             this.checks.push(checkFn);
             return function removeCheck() {
-                this.checks = this.checks.filter(function (fn) {
+                this.checks = this.checks.filter( (fn) => {
                     return checkFn !== fn;
                 });
             }.bind(this);
@@ -147,9 +148,9 @@ define(
          *
          * @private
          */
-        NavigationService.prototype.doNavigation = function (value) {
+        doNavigation(value) {
             this.navigated = value;
-            this.callbacks.forEach(function (callback) {
+            this.callbacks.forEach( (callback) => {
                 callback(value);
             });
         };
@@ -160,10 +161,10 @@ define(
          *
          * @private
          */
-        NavigationService.prototype.shouldWarnBeforeNavigate = function () {
-            var reasons = [];
+        shouldWarnBeforeNavigate() {
+            let reasons = [];
 
-            this.checks.forEach(function (checkFn) {
+            this.checks.forEach( (checkFn) => {
                 var reason = checkFn();
                 if (reason) {
                     reasons.push(reason);
@@ -182,16 +183,16 @@ define(
          *
          * @private
          */
-        NavigationService.prototype.onBeforeUnload = function () {
-            var shouldWarnBeforeNavigate = this.shouldWarnBeforeNavigate();
+        onBeforeUnload() {
+            let shouldWarnBeforeNavigate = this.shouldWarnBeforeNavigate();
             if (shouldWarnBeforeNavigate) {
                 return shouldWarnBeforeNavigate;
             }
             if (this.oldUnload) {
                 return this.oldUnload.apply(undefined, [].slice.apply(arguments));
             }
-        };
-
+        }
+      }
         return NavigationService;
     }
 );

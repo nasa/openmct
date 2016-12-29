@@ -25,7 +25,7 @@
  */
 define(
     ["./ContextCapability"],
-    function (ContextCapability) {
+    (ContextCapability) => {
 
         /**
          * Wraps a domain object, such that it exposes a `context` capability.
@@ -44,7 +44,8 @@ define(
          * @constructor
          * @implements {DomainObject}
          */
-        function ContextualDomainObject(domainObject, parentObject) {
+        class ContextualDomainObject {
+          constructor(domainObject, parentObject) {
             // Prototypally inherit from the domain object, and
             // instantiate its context capability ahead of time.
             var contextualObject = Object.create(domainObject),
@@ -52,7 +53,7 @@ define(
                     new ContextCapability(parentObject, domainObject);
 
             // Intercept requests for a context capability.
-            contextualObject.getCapability = function (name) {
+            contextualObject.getCapability = (name) => {
                 return name === "context" ?
                         contextCapability :
                         domainObject.getCapability.apply(this, arguments);
@@ -60,7 +61,7 @@ define(
 
             return contextualObject;
         }
-
+      }
         return ContextualDomainObject;
     }
 );

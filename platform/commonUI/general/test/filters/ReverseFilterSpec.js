@@ -22,20 +22,20 @@
 
 define(
     ['../../src/filters/ReverseFilter'],
-    function (ReverseFilter) {
+    (ReverseFilter) => {
 
-        describe("The reverse filter", function () {
-            var reverse;
+        describe("The reverse filter", () => {
+            let reverse;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 reverse = new ReverseFilter();
             });
 
-            it("reverses text", function () {
+            it("reverses text", () => {
                 expect(reverse('foo')).toEqual('oof');
             });
 
-            it("returns undefined for undefined inputs", function () {
+            it("returns undefined for undefined inputs", () => {
                 expect(reverse(undefined)).toBeUndefined();
             });
         });

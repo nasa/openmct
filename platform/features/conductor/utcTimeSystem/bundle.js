@@ -23,10 +23,10 @@
 define([
     "./src/UTCTimeSystem",
     'legacyRegistry'
-], function (
+], (
     UTCTimeSystem,
     legacyRegistry
-) {
+) => {
     legacyRegistry.register("platform/features/conductor/utcTimeSystem", {
         "extensions": {
             "timeSystems": [

@@ -23,7 +23,7 @@
 
 define(
     ['./TransactionalPersistenceCapability'],
-    function (TransactionalPersistenceCapability) {
+    (TransactionalPersistenceCapability) => {
 
         /**
          * Wraps the [PersistenceCapability]{@link PersistenceCapability} with
@@ -34,11 +34,12 @@ define(
          * @see TransactionalPersistenceCapability
          * @constructor
          */
-        function TransactionCapabilityDecorator(
-            $q,
-            transactionService,
-            capabilityService
-        ) {
+        class TransactionCapabilityDecorator {
+            constructor(
+                $q,
+                transactionService,
+                capabilityService
+            ) {
             this.capabilityService = capabilityService;
             this.transactionService = transactionService;
             this.$q = $q;
@@ -48,26 +49,26 @@ define(
          * Decorate PersistenceCapability to queue persistence calls when a
          * transaction is in progress.
          */
-        TransactionCapabilityDecorator.prototype.getCapabilities = function (model) {
-            var self = this,
+        getCapabilities(model) {
+            var 
                 capabilities = this.capabilityService.getCapabilities(model),
                 persistenceCapability = capabilities.persistence;
 
-            capabilities.persistence = function (domainObject) {
-                var original =
+            capabilities.persistence = (domainObject) => {
+                let original =
                     (typeof persistenceCapability === 'function') ?
                         persistenceCapability(domainObject) :
                         persistenceCapability;
                 return new TransactionalPersistenceCapability(
-                    self.$q,
-                    self.transactionService,
+                    this.$q,
+                    this.transactionService,
                     original,
                     domainObject
                 );
             };
             return capabilities;
-        };
-
+        }
+      }
         return TransactionCapabilityDecorator;
     }
 );

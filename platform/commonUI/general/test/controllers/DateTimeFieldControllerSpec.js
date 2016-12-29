@@ -22,25 +22,25 @@
 
 define(
     ["../../src/controllers/DateTimeFieldController", "moment"],
-    function (DateTimeFieldController, moment) {
+    (DateTimeFieldController, moment) => {
 
-        var TEST_FORMAT = "YYYY-MM-DD HH:mm:ss";
+        const TEST_FORMAT = "YYYY-MM-DD HH:mm:ss";
 
-        describe("The DateTimeFieldController", function () {
-            var mockScope,
+        describe("The DateTimeFieldController", () => {
+            let mockScope,
                 mockFormatService,
                 mockFormat,
                 controller;
 
-            function fireWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
+            const fireWatch = (expr, value) => {
+                mockScope.$watch.calls.forEach( (call) => {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
                 });
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockScope = jasmine.createSpyObj('$scope', ['$watch']);
                 mockFormatService =
                     jasmine.createSpyObj('formatService', ['getFormat']);
@@ -52,13 +52,13 @@ define(
 
                 mockFormatService.getFormat.andReturn(mockFormat);
 
-                mockFormat.validate.andCallFake(function (text) {
+                mockFormat.validate.andCallFake( (text) => {
                     return moment.utc(text, TEST_FORMAT).isValid();
                 });
-                mockFormat.parse.andCallFake(function (text) {
+                mockFormat.parse.andCallFake( (text) => {
                     return moment.utc(text, TEST_FORMAT).valueOf();
                 });
-                mockFormat.format.andCallFake(function (value) {
+                mockFormat.format.andCallFake( (value) => {
                     return moment.utc(value).format(TEST_FORMAT);
                 });
 
@@ -74,59 +74,59 @@ define(
                 fireWatch("ngModel[field]", mockScope.ngModel.testField);
             });
 
-            it("updates text from model values", function () {
+            it("updates text from model values",  () => {
                 var testTime = mockFormat.parse("1977-05-25 17:30:00");
                 mockScope.ngModel.testField = testTime;
                 fireWatch("ngModel[field]", testTime);
                 expect(mockScope.textValue).toEqual("1977-05-25 17:30:00");
             });
 
-            describe("when valid text is entered", function () {
-                var newText;
+            describe("when valid text is entered", () => {
+                let newText;
 
-                beforeEach(function () {
+                beforeEach( () => {
                     newText = "1977-05-25 17:30:00";
                     mockScope.textValue = newText;
                     fireWatch("textValue", newText);
                 });
 
-                it("updates models from user-entered text", function () {
+                it("updates models from user-entered text", () => {
                     expect(mockScope.ngModel.testField)
                         .toEqual(mockFormat.parse(newText));
                     expect(mockScope.textInvalid).toBeFalsy();
                 });
 
-                it("does not indicate a blur event", function () {
+                it("does not indicate a blur event", () => {
                     expect(mockScope.ngBlur).not.toHaveBeenCalled();
                 });
             });
 
-            describe("when a date is chosen via the date picker", function () {
-                var newValue;
+            describe("when a date is chosen via the date picker", () => {
+                let newValue;
 
-                beforeEach(function () {
+                beforeEach( () => {
                     newValue = 12345654321;
                     mockScope.pickerModel.value = newValue;
                     fireWatch("pickerModel.value", newValue);
                 });
 
-                it("updates models", function () {
+                it("updates models", () => {
                     expect(mockScope.ngModel.testField).toEqual(newValue);
                 });
 
-                it("fires a blur event", function () {
+                it("fires a blur event", () => {
                     expect(mockScope.ngBlur).toHaveBeenCalled();
                 });
             });
 
-            it("exposes toggle state for date-time picker", function () {
+            it("exposes toggle state for date-time picker", () => {
                 expect(mockScope.picker.active).toBe(false);
             });
 
-            describe("when user input is invalid", function () {
-                var newText, oldText, oldValue;
+            describe("when user input is invalid", () => {
+                let newText, oldText, oldValue;
 
-                beforeEach(function () {
+                beforeEach( () => {
                     newText = "Not a date";
                     oldValue = mockScope.ngModel.testField;
                     oldText = mockScope.textValue;
@@ -134,29 +134,29 @@ define(
                     fireWatch("textValue", newText);
                 });
 
-                it("displays error state", function () {
+                it("displays error state", () => {
                     expect(mockScope.textInvalid).toBeTruthy();
                 });
 
-                it("does not modify model state", function () {
+                it("does not modify model state", () => {
                     expect(mockScope.ngModel.testField).toEqual(oldValue);
                 });
 
-                it("does not modify user input", function () {
+                it("does not modify user input", () => {
                     expect(mockScope.textValue).toEqual(newText);
                 });
 
-                it("restores valid text values on request", function () {
+                it("restores valid text values on request", () => {
                     mockScope.restoreTextValue();
                     expect(mockScope.textValue).toEqual(oldText);
                 });
             });
 
-            it("does not modify valid but irregular user input", function () {
+            it("does not modify valid but irregular user input", () => {
                 // Don't want the controller "fixing" bad or
                 // irregularly-formatted input out from under
                 // the user's fingertips.
-                var newText = "2015-3-3 01:02:04",
+                let newText = "2015-3-3 01:02:04",
                     oldValue = mockScope.ngModel.testField;
 
                 mockFormat.validate.andReturn(true);
@@ -169,46 +169,46 @@ define(
                 expect(mockScope.ngModel.testField).not.toEqual(oldValue);
             });
 
-            it("obtains a format from the format service", function () {
+            it("obtains a format from the format service", () => {
                 fireWatch('structure.format', mockScope.structure.format);
                 expect(mockFormatService.getFormat)
                     .toHaveBeenCalledWith(mockScope.structure.format);
             });
 
-            it("throws an error for unknown formats", function () {
+            it("throws an error for unknown formats", () => {
                 mockFormatService.getFormat.andReturn(undefined);
-                expect(function () {
+                expect( () => {
                     fireWatch("structure.format", "some-format");
                 }).toThrow();
             });
 
-            describe("using the obtained format", function () {
-                var testValue = 1234321,
+            describe("using the obtained format", () => {
+                let testValue = 1234321,
                     testText = "some text";
 
-                beforeEach(function () {
+                beforeEach( () => {
                     mockFormat.validate.andReturn(true);
                     mockFormat.parse.andReturn(testValue);
                     mockFormat.format.andReturn(testText);
                 });
 
-                it("parses user input", function () {
-                    var newText = "some other new text";
+                it("parses user input", () => {
+                    let newText = "some other new text";
                     mockScope.textValue = newText;
                     fireWatch("textValue", newText);
                     expect(mockFormat.parse).toHaveBeenCalledWith(newText);
                     expect(mockScope.ngModel.testField).toEqual(testValue);
                 });
 
-                it("validates user input", function () {
-                    var newText = "some other new text";
+                it("validates user input", () => {
+                    let newText = "some other new text";
                     mockScope.textValue = newText;
                     fireWatch("textValue", newText);
                     expect(mockFormat.validate).toHaveBeenCalledWith(newText);
                 });
 
-                it("formats model data for display", function () {
-                    var newValue = 42;
+                it("formats model data for display", () => {
+                    let newValue = 42;
                     mockScope.ngModel.testField = newValue;
                     fireWatch("ngModel[field]", newValue);
                     expect(mockFormat.format).toHaveBeenCalledWith(newValue);

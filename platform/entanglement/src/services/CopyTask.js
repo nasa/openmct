@@ -23,8 +23,7 @@
 
 define(
     [],
-    function () {
-
+    () => {
         /**
          * This class encapsulates the process of copying a domain object
          * and all of its children.
@@ -37,7 +36,64 @@ define(
          * @param $q Angular's $q, for promises
          * @constructor
          */
-        function CopyTask(domainObject, parent, filter, $q) {
+         const composeChild = (child, parent, setLocation) => {
+             //Once copied, associate each cloned
+             // composee with its parent clone
+
+             parent.getModel().composition.push(child.getId());
+
+             //If a location is not specified, set it.
+             if (setLocation && child.getModel().location === undefined) {
+                 child.getModel().location = parent.getId();
+             }
+
+             return child;
+         }
+         const cloneObjectModel = (objectModel) => {
+             let clone = JSON.parse(JSON.stringify(objectModel));
+
+             /**
+              * Reset certain fields.
+              */
+             //If has a composition, set it to an empty array. Will be
+             // recomposed later with the ids of its cloned children.
+             if (clone.composition) {
+                 //Important to set it to an empty array here, otherwise
+                 // hasCapability("composition") returns false;
+                 clone.composition = [];
+             }
+             delete clone.persisted;
+             delete clone.modified;
+             delete clone.location;
+
+             return clone;
+         }
+         const persistObjects = (this) => {
+             return this.$q.all(this.clones.map( (clone) => {
+                 return clone.getCapability("persistence").persist().then( () => {
+                     this.deferred.notify({phase: "copying", totalObjects: this.clones.length, processed: ++this.persisted});
+                 });
+             })).then( () => {
+                 return this;
+             });
+         }
+
+         /**
+          * Will add a list of clones to the specified parent's composition
+          */
+         const addClonesToParent = (this) => {
+             return this.parent.getCapability("composition")
+                 .add(this.firstClone)
+                 .then( (addedClone) => {
+                     return this.parent.getCapability("persistence").persist()
+                         .then( () => {
+                             return addedClone;
+                         });
+                 });
+         }
+         
+        class CopyTask {
+          constructor(domainObject, parent, filter, $q) {
             this.domainObject = domainObject;
             this.parent = parent;
             this.firstClone = undefined;
@@ -49,68 +105,12 @@ define(
             this.idMap = {};
         }
 
-        function composeChild(child, parent, setLocation) {
-            //Once copied, associate each cloned
-            // composee with its parent clone
-
-            parent.getModel().composition.push(child.getId());
-
-            //If a location is not specified, set it.
-            if (setLocation && child.getModel().location === undefined) {
-                child.getModel().location = parent.getId();
-            }
-
-            return child;
-        }
-
-        function cloneObjectModel(objectModel) {
-            var clone = JSON.parse(JSON.stringify(objectModel));
-
-            /**
-             * Reset certain fields.
-             */
-            //If has a composition, set it to an empty array. Will be
-            // recomposed later with the ids of its cloned children.
-            if (clone.composition) {
-                //Important to set it to an empty array here, otherwise
-                // hasCapability("composition") returns false;
-                clone.composition = [];
-            }
-            delete clone.persisted;
-            delete clone.modified;
-            delete clone.location;
-
-            return clone;
-        }
 
         /**
          * Will persist a list of {@link objectClones}. It will persist all
          * simultaneously, irrespective of order in the list. This may
          * result in automatic request batching by the browser.
          */
-        function persistObjects(self) {
-            return self.$q.all(self.clones.map(function (clone) {
-                return clone.getCapability("persistence").persist().then(function () {
-                    self.deferred.notify({phase: "copying", totalObjects: self.clones.length, processed: ++self.persisted});
-                });
-            })).then(function () {
-                return self;
-            });
-        }
-
-        /**
-         * Will add a list of clones to the specified parent's composition
-         */
-        function addClonesToParent(self) {
-            return self.parent.getCapability("composition")
-                .add(self.firstClone)
-                .then(function (addedClone) {
-                    return self.parent.getCapability("persistence").persist()
-                        .then(function () {
-                            return addedClone;
-                        });
-                });
-        }
 
         /**
          * Update identifiers in a cloned object model (or part of
@@ -118,19 +118,19 @@ define(
          * copying.
          * @private
          */
-        CopyTask.prototype.rewriteIdentifiers = function (obj, idMap) {
-            function lookupValue(value) {
+        rewriteIdentifiers(obj, idMap) {
+            const lookupValue = (value) => {
                 return (typeof value === 'string' && idMap[value]) || value;
             }
 
             if (Array.isArray(obj)) {
-                obj.forEach(function (value, index) {
+                obj.forEach( (value, index) => {
                     obj[index] = lookupValue(value);
                     this.rewriteIdentifiers(obj[index], idMap);
                 }, this);
             } else if (obj && typeof obj === 'object') {
-                Object.keys(obj).forEach(function (key) {
-                    var value = obj[key];
+                Object.keys(obj).forEach( (key) => {
+                    let value = obj[key];
                     obj[key] = lookupValue(value);
                     if (idMap[key]) {
                         delete obj[key];
@@ -147,16 +147,15 @@ define(
          * @private
          * @returns {*}
          */
-        CopyTask.prototype.copyComposees = function (composees, clonedParent, originalParent) {
-            var self = this,
-                idMap = {};
+        copyComposees(composees, clonedParent, originalParent) {
+            let idMap = {};
 
-            return (composees || []).reduce(function (promise, originalComposee) {
+            return (composees || []).reduce( (promise, originalComposee) => {
                 //If the composee is composed of other
                 // objects, chain a promise..
-                return promise.then(function () {
+                return promise.then( () => {
                     // ...to recursively copy it (and its children)
-                    return self.copy(originalComposee, originalParent).then(function (clonedComposee) {
+                    return this.copy(originalComposee, originalParent).then( (clonedComposee) => {
                         //Map the original composee's ID to that of its
                         // clone so that we can replace any references to it
                         // in the parent
@@ -168,16 +167,16 @@ define(
                         return composeChild(clonedComposee, clonedParent, clonedComposee !== originalComposee);
                     });
                 });
-            }, self.$q.when(undefined)
-            ).then(function () {
+            }, this.$q.when(undefined)
+          ).then( () => {
                 //Replace any references in the cloned parent to
                 // contained objects that have been composed with the
                 // Ids of the clones
-                self.rewriteIdentifiers(clonedParent.getModel(), idMap);
+                this.rewriteIdentifiers(clonedParent.getModel(), idMap);
 
                 //Add the clone to the list of clones that will
                 //be returned by this function
-                self.clones.push(clonedParent);
+                this.clones.push(clonedParent);
                 return clonedParent;
             });
         };
@@ -191,11 +190,10 @@ define(
          * @private
          * @returns {DomainObject} If the type of the original object allows for
          * duplication, then a duplicate of the object, otherwise the object
-         * itself (to allow linking to non duplicatable objects).
+         * itthis (to allow linking to non duplicatable objects).
          */
-        CopyTask.prototype.copy = function (originalObject) {
-            var self = this,
-                clone;
+        copy(originalObject) {
+            let clone;
 
             //Check if the type of the object being copied allows for
             // creation of new instances. If it does not, then a link to the
@@ -208,16 +206,16 @@ define(
                 clone = this.parent.useCapability("instantiation", cloneObjectModel(originalObject.getModel()));
 
                 //Iterate through child tree
-                return this.$q.when(originalObject.useCapability('composition')).then(function (composees) {
-                    self.deferred.notify({phase: "preparing"});
+                return this.$q.when(originalObject.useCapability('composition')).then( (composees) => {
+                    this.deferred.notify({phase: "preparing"});
                     //Duplicate the object's children, and their children, and
                     // so on down to the leaf nodes of the tree.
                     //If it is a link, don't both with children
-                    return self.copyComposees(composees, clone, originalObject);
+                    return this.copyComposees(composees, clone, originalObject);
                 });
             } else {
                 //Creating a link, no need to iterate children
-                return self.$q.when(originalObject);
+                return this.$q.when(originalObject);
             }
 
 
@@ -235,15 +233,14 @@ define(
          * object being copied. The clones are all full composed with
          * references to their own children.
          */
-        CopyTask.prototype.buildCopyPlan = function () {
-            var self = this;
+        buildCopyPlan() {
 
-            return this.copy(self.domainObject, self.parent).then(function (domainObjectClone) {
-                if (domainObjectClone !== self.domainObject) {
-                    domainObjectClone.getModel().location = self.parent.getId();
+            return this.copy(this.domainObject, this.parent).then( (domainObjectClone) => {
+                if (domainObjectClone !== this.domainObject) {
+                    domainObjectClone.getModel().location = this.parent.getId();
                 }
-                self.firstClone = domainObjectClone;
-                return self;
+                this.firstClone = domainObjectClone;
+                return this;
             });
         };
 
@@ -252,7 +249,7 @@ define(
          * @returns {promise} Which will resolve with a clone of the object
          * once complete.
          */
-        CopyTask.prototype.perform = function () {
+        perform() {
             this.deferred = this.$q.defer();
 
             this.buildCopyPlan()
@@ -262,7 +259,7 @@ define(
 
             return this.deferred.promise;
         };
-
+      }
         return CopyTask;
     }
 );

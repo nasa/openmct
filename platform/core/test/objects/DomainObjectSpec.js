@@ -25,26 +25,26 @@
  */
 define(
     ["../../src/objects/DomainObjectImpl"],
-    function (DomainObject) {
+    (DomainObject) => {
 
-        describe("A domain object", function () {
-            var testId = "test id",
+        describe("A domain object", () =>  {
+            let testId = "test id",
                 testModel = { someKey: "some value"},
                 testCapabilities = {
                     "static": "some static capability",
-                    "dynamic": function (domainObject) {
+                    "dynamic": (domainObject) => {
                         return "Dynamically generated for " +
                                     domainObject.getId();
                     },
                     "invokable": {
-                        invoke: function (arg) {
+                        invoke: (arg) => {
                             return "invoked with " + arg;
                         }
                     }
                 },
                 domainObject;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 domainObject = new DomainObject(
                     testId,
                     testModel,
@@ -52,32 +52,32 @@ define(
                 );
             });
 
-            it("reports its id", function () {
+            it("reports its id", () =>  {
                 expect(domainObject.getId()).toEqual(testId);
             });
 
-            it("reports its model", function () {
+            it("reports its model", () =>  {
                 expect(domainObject.getModel()).toEqual(testModel);
             });
 
-            it("reports static capabilities", function () {
+            it("reports static capabilities", () =>  {
                 expect(domainObject.getCapability("static"))
                     .toEqual("some static capability");
             });
 
-            it("instantiates dynamic capabilities", function () {
+            it("instantiates dynamic capabilities", () =>  {
                 expect(domainObject.getCapability("dynamic"))
                     .toEqual("Dynamically generated for test id");
             });
 
-            it("allows for checking for the presence of capabilities", function () {
-                Object.keys(testCapabilities).forEach(function (capability) {
+            it("allows for checking for the presence of capabilities", () =>  {
+                Object.keys(testCapabilities).forEach( (capability) => {
                     expect(domainObject.hasCapability(capability)).toBeTruthy();
                 });
                 expect(domainObject.hasCapability("somethingElse")).toBeFalsy();
             });
 
-            it("allows for shorthand capability invocation", function () {
+            it("allows for shorthand capability invocation", () =>  {
                 expect(domainObject.useCapability("invokable", "a specific value"))
                     .toEqual("invoked with a specific value");
             });

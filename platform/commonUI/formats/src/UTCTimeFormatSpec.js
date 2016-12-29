@@ -23,30 +23,27 @@
 define([
     "./UTCTimeFormat",
     "moment"
-], function (
-    UTCTimeFormat,
-    moment
-) {
-    describe("The UTCTimeFormat class", function () {
-        var format;
-        var scale;
+], (UTCTimeFormat,moment) => {
+    describe("The UTCTimeFormat class", () => {
+        let format;
+        let scale;
 
-        beforeEach(function () {
+        beforeEach( () => {
             format = new UTCTimeFormat();
             scale = {min: 0, max: 0};
         });
 
         it("Provides an appropriately scaled time format based on the input" +
-            " time", function () {
-            var TWO_HUNDRED_MS = 200;
-            var THREE_SECONDS = 3000;
-            var FIVE_MINUTES = 5 * 60 * 1000;
-            var ONE_HOUR_TWENTY_MINS = (1 * 60 * 60 * 1000) + (20 * 60 * 1000);
-            var TEN_HOURS = (10 * 60 * 60 * 1000);
+            " time", () => {
+            let TWO_HUNDRED_MS = 200;
+            let THREE_SECONDS = 3000;
+            let FIVE_MINUTES = 5 * 60 * 1000;
+            let ONE_HOUR_TWENTY_MINS = (1 * 60 * 60 * 1000) + (20 * 60 * 1000);
+            let TEN_HOURS = (10 * 60 * 60 * 1000);
 
-            var JUNE_THIRD = moment.utc("2016-06-03", "YYYY-MM-DD");
-            var APRIL = moment.utc("2016-04", "YYYY-MM");
-            var TWENTY_SIXTEEN = moment.utc("2016", "YYYY");
+            let JUNE_THIRD = moment.utc("2016-06-03", "YYYY-MM-DD");
+            let APRIL = moment.utc("2016-04", "YYYY-MM");
+            let TWENTY_SIXTEEN = moment.utc("2016", "YYYY");
 
             expect(format.format(TWO_HUNDRED_MS, scale)).toBe(".200");
             expect(format.format(THREE_SECONDS, scale)).toBe(":03");
@@ -59,14 +56,14 @@ define([
             expect(format.format(TWENTY_SIXTEEN, scale)).toBe("2016");
         });
 
-        it("Returns appropriate time units for a given time span", function () {
-            var ONE_DAY = 1000 * 60 * 60 * 24;
-            var FIVE_DAYS = 5 * ONE_DAY;
-            var FIVE_MONTHS = 60 * ONE_DAY;
+        it("Returns appropriate time units for a given time span", () => {
+            let ONE_DAY = 1000 * 60 * 60 * 24;
+            let FIVE_DAYS = 5 * ONE_DAY;
+            let FIVE_MONTHS = 60 * ONE_DAY;
 
-            var ONE_YEAR = 365 * ONE_DAY;
-            var SEVEN_YEARS = 7 * ONE_YEAR;
-            var TWO_DECADES = 20 * ONE_YEAR;
+            let ONE_YEAR = 365 * ONE_DAY;
+            let SEVEN_YEARS = 7 * ONE_YEAR;
+            let TWO_DECADES = 20 * ONE_YEAR;
 
             //A span of one day should show a zoom label of "Hours"
             expect(format.timeUnits(ONE_DAY)).toEqual("Hours");

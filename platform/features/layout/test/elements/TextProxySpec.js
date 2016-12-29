@@ -22,14 +22,14 @@
 
 define(
     ['../../src/elements/TextProxy'],
-    function (TextProxy) {
+    (TextProxy) => {
 
-        describe("A fixed position text proxy", function () {
-            var testElement,
+        describe("A fixed position text proxy", () => {
+            let testElement,
                 testElements,
                 proxy;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testElement = {
                     x: 1,
                     y: 2,
@@ -45,7 +45,7 @@ define(
                 );
             });
 
-            it("provides getter/setter for fill color", function () {
+            it("provides getter/setter for fill color", () => {
                 expect(proxy.fill()).toEqual('transparent');
                 expect(proxy.fill('#FFF')).toEqual('#FFF');
                 expect(proxy.fill()).toEqual('#FFF');

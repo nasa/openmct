@@ -22,31 +22,31 @@
 
 define(
     ['../../../src/controllers/graph/TimelineGraphPopulator'],
-    function (TimelineGraphPopulator) {
+    (TimelineGraphPopulator) => {
 
-        describe("A Timeline's resource graph populator", function () {
-            var mockSwimlanes,
+        describe("A Timeline's resource graph populator", () => {
+            let mockSwimlanes,
                 mockQ,
                 testResources,
                 populator;
 
-            function asPromise(v) {
+            const asPromise = (v) => {
                 return (v || {}).then ? v : {
-                    then: function (callback) {
+                    then: (callback) => {
                         return asPromise(callback(v));
                     },
                     testValue: v
                 };
             }
 
-            function allPromises(promises) {
-                return asPromise(promises.map(function (p) {
+            const allPromises = (promises) => {
+                return asPromise(promises.map( (p) => {
                     return (p || {}).then ? p.testValue : p;
                 }));
             }
 
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testResources = {
                     a: ['xyz', 'abc'],
                     b: ['xyz'],
@@ -55,8 +55,8 @@ define(
 
                 mockQ = jasmine.createSpyObj('$q', ['when', 'all']);
 
-                mockSwimlanes = ['a', 'b', 'c'].map(function (k) {
-                    var mockSwimlane = jasmine.createSpyObj(
+                mockSwimlanes = ['a', 'b', 'c'].map( (k) => {
+                    let mockSwimlane = jasmine.createSpyObj(
                             'swimlane-' + k,
                             ['graph', 'color']
                         ),
@@ -72,9 +72,9 @@ define(
                     mockSwimlane.color.andReturn('#' + k);
                     // Provide just enough information about graphs to support
                     // determination of which graphs to show
-                    mockSwimlane.domainObject.useCapability.andCallFake(function () {
-                        var obj = {};
-                        testResources[k].forEach(function (r) {
+                    mockSwimlane.domainObject.useCapability.andCallFake(() => {
+                        let obj = {};
+                        testResources[k].forEach( (r) => {
                             obj[r] = mockGraph;
                         });
                         return asPromise(obj);
@@ -94,17 +94,17 @@ define(
                 populator = new TimelineGraphPopulator(mockQ);
             });
 
-            it("provides no graphs by default", function () {
+            it("provides no graphs by default", () => {
                 expect(populator.get()).toEqual([]);
             });
 
-            it("provides one graph per resource type", function () {
+            it("provides one graph per resource type", () => {
                 populator.populate(mockSwimlanes);
                 // There are 4 unique resource types shared here...
                 expect(populator.get().length).toEqual(4);
             });
 
-            it("does not include graphs based on swimlane configuration", function () {
+            it("does not include graphs based on swimlane configuration", () => {
                 mockSwimlanes[2].graph.andReturn(false);
                 populator.populate(mockSwimlanes);
                 // Only two unique swimlanes in the other two
@@ -118,8 +118,8 @@ define(
                     .not.toHaveBeenCalled();
             });
 
-            it("does not recreate graphs when swimlanes don't change", function () {
-                var initialValue;
+            it("does not recreate graphs when swimlanes don't change", () => {
+                let initialValue;
                 // Get an initial set of graphs
                 populator.populate(mockSwimlanes);
                 initialValue = populator.get();
@@ -134,8 +134,8 @@ define(
             });
 
             // Regression test for WTD-1155
-            it("does recreate graphs when inclusions change", function () {
-                var initialValue;
+            it("does recreate graphs when inclusions change", () => {
+                let initialValue;
                 // Get an initial set of graphs
                 populator.populate(mockSwimlanes);
                 initialValue = populator.get();

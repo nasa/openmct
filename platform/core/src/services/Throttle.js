@@ -20,9 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [],
-    function () {
+define([], () => {
 
         /**
          * Throttler for function executions, registered as the `throttle`
@@ -47,7 +45,7 @@ define(
          * @returns {Function}
          * @memberof platform/core
          */
-        function Throttle($timeout) {
+        const Throttle = ($timeout) => {
             /**
              * Throttle this function.
              * @param {Function} fn the function to throttle
@@ -58,11 +56,11 @@ define(
              *        `false`.
              * @memberof platform/core.Throttle#
              */
-            return function (fn, delay, apply) {
-                var promise,
+            return (fn, delay, apply) => {
+                let promise,
                     args = [];
 
-                function invoke() {
+                const invoke = () => {
                     // Clear the active timeout so a new one starts next time.
                     promise = undefined;
                     // Invoke the function with the latest supplied arguments.
@@ -73,7 +71,7 @@ define(
                 delay = delay || 0;
                 apply = apply || false;
 
-                return function () {
+                return () => {
                     // Store arguments from this invocation
                     args = Array.prototype.slice.apply(arguments, [0]);
                     // Start a timeout if needed
@@ -84,7 +82,6 @@ define(
                 };
             };
         }
-
         return Throttle;
     }
 );

@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * A capability that implements an editing 'session' for a domain
@@ -34,10 +34,11 @@ define(
          * @param domainObject
          * @constructor
          */
-        function EditorCapability(
-            transactionService,
-            domainObject
-        ) {
+        class EditorCapability {
+          constructor(
+              transactionService,
+              domainObject
+          ) {
             this.transactionService = transactionService;
             this.domainObject = domainObject;
         }
@@ -47,16 +48,16 @@ define(
          * which any persist operations will be deferred until either save()
          * or finish() are called.
          */
-        EditorCapability.prototype.edit = function () {
+        edit() {
             this.transactionService.startTransaction();
             this.domainObject.getCapability('status').set('editing', true);
-        };
+        }
 
-        function isEditContextRoot(domainObject) {
+        const isEditContextRoot = (domainObject) => {
             return domainObject.getCapability('status').get('editing');
         }
 
-        function isEditing(domainObject) {
+        const isEditing = (domainObject) => {
             return isEditContextRoot(domainObject) ||
                 domainObject.hasCapability('context') &&
                 isEditing(domainObject.getCapability('context').getParent());
@@ -67,54 +68,55 @@ define(
          * currently being edited.
          * @returns boolean
          */
-        EditorCapability.prototype.inEditContext = function () {
+        inEditContext() {
             return isEditing(this.domainObject);
-        };
+        }
 
         /**
          * Is this the root editing object (ie. the object that the user
          * clicked 'edit' on)?
          * @returns {*}
          */
-        EditorCapability.prototype.isEditContextRoot = function () {
+        isEditContextRoot() {
             return isEditContextRoot(this.domainObject);
-        };
+        }
 
         /**
          * Save any unsaved changes from this editing session. This will
          * end the current transaction and continue with a new one.
          * @returns {*}
          */
-        EditorCapability.prototype.save = function () {
-            var transactionService = this.transactionService;
-            return transactionService.commit().then(function () {
+        save() {
+            let transactionService = this.transactionService;
+            return transactionService.commit().then( () => {
                 transactionService.startTransaction();
             });
-        };
-
-        EditorCapability.prototype.invoke = EditorCapability.prototype.edit;
+        }
+        invoke() {
+          return this.edit()
+        }
 
         /**
          * Finish the current editing session. This will discard any pending
          * persist operations
          * @returns {*}
          */
-        EditorCapability.prototype.finish = function () {
-            var domainObject = this.domainObject;
-            return this.transactionService.cancel().then(function () {
+        finish() {
+            let domainObject = this.domainObject;
+            return this.transactionService.cancel().then( () => {
                 domainObject.getCapability("status").set("editing", false);
                 return domainObject;
             });
-        };
+        }
 
         /**
          * @returns {boolean} true if there have been any domain model
          * modifications since the last persist, false otherwise.
          */
-        EditorCapability.prototype.dirty = function () {
+        dirty() {
             return this.transactionService.size() > 0;
-        };
-
+        }
+}
         return EditorCapability;
     }
 );

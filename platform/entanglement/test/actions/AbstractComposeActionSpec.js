@@ -27,11 +27,11 @@ define(
         '../services/MockCopyService',
         '../DomainObjectFactory'
     ],
-    function (AbstractComposeAction, MockCopyService, domainObjectFactory) {
+    (AbstractComposeAction, MockCopyService, domainObjectFactory) => {
 
-        describe("Move/copy/link Actions", function () {
+        describe("Move/copy/link Actions", () => {
 
-            var action,
+            let action,
                 policyService,
                 locationService,
                 locationServicePromise,
@@ -42,7 +42,7 @@ define(
                 currentParent,
                 newParent;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 policyService = jasmine.createSpyObj(
                     'policyService',
                     ['allow']
@@ -100,8 +100,8 @@ define(
                 composeService = new MockCopyService();
             });
 
-            it("are only applicable to domain objects with a context", function () {
-                var noContextObject = domainObjectFactory({
+            it("are only applicable to domain objects with a context", () => {
+                let noContextObject = domainObjectFactory({
                     name: 'selectedObject',
                     model: { name: 'selectedObject' },
                     capabilities: {}
@@ -123,8 +123,8 @@ define(
             });
 
 
-            describe("with context from context-action", function () {
-                beforeEach(function () {
+            describe("with context from context-action", () =>  {
+                beforeEach(() =>  {
                     context = {
                         domainObject: selectedObject
                     };
@@ -138,16 +138,16 @@ define(
                     );
                 });
 
-                it("initializes happily", function () {
+                it("initializes happily", () =>  {
                     expect(action).toBeDefined();
                 });
 
-                describe("when performed it", function () {
-                    beforeEach(function () {
+                describe("when performed it", () =>  {
+                    beforeEach(() =>  {
                         action.perform();
                     });
 
-                    it("prompts for location", function () {
+                    it("prompts for location", () =>  {
                         expect(locationService.getLocationFromUser)
                             .toHaveBeenCalledWith(
                                 "Compose selectedObject To a New Location",
@@ -157,12 +157,12 @@ define(
                             );
                     });
 
-                    it("waits for location from user", function () {
+                    it("waits for location from user", () =>  {
                         expect(locationServicePromise.then)
                             .toHaveBeenCalledWith(jasmine.any(Function));
                     });
 
-                    it("copies object to selected location", function () {
+                    it("copies object to selected location", () =>  {
                         locationServicePromise
                             .then
                             .mostRecentCall
@@ -172,23 +172,23 @@ define(
                             .toHaveBeenCalledWith(selectedObject, newParent);
                     });
 
-                    describe("provides a validator which", function () {
-                        var validator;
+                    describe("provides a validator which", () =>  {
+                        let validator;
 
-                        beforeEach(function () {
+                        beforeEach(() =>  {
                             validator = locationService.getLocationFromUser
                                 .mostRecentCall.args[2];
                             composeService.validate.andReturn(true);
                             policyService.allow.andReturn(true);
                         });
 
-                        it("is sensitive to policy", function () {
+                        it("is sensitive to policy", () =>  {
                             expect(validator()).toBe(true);
                             policyService.allow.andReturn(false);
                             expect(validator()).toBe(false);
                         });
 
-                        it("is sensitive to service-specific validation", function () {
+                        it("is sensitive to service-specific validation", () =>  {
                             expect(validator()).toBe(true);
                             composeService.validate.andReturn(false);
                             expect(validator()).toBe(false);
@@ -198,8 +198,8 @@ define(
                 });
             });
 
-            describe("with context from drag-drop", function () {
-                beforeEach(function () {
+            describe("with context from drag-drop", () =>  {
+                beforeEach(() =>  {
                     context = {
                         selectedObject: selectedObject,
                         domainObject: newParent
@@ -214,12 +214,12 @@ define(
                     );
                 });
 
-                it("initializes happily", function () {
+                it("initializes happily", () =>  {
                     expect(action).toBeDefined();
                 });
 
 
-                it("performs copy immediately", function () {
+                it("performs copy immediately", () =>  {
                     action.perform();
                     expect(composeService.perform)
                         .toHaveBeenCalledWith(selectedObject, newParent);

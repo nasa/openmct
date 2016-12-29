@@ -28,7 +28,7 @@ define(
     [
         '../TableConfiguration'
     ],
-    function (TableConfiguration) {
+    (TableConfiguration) => {
 
         /**
          * The TableController is responsible for getting data onto the page
@@ -40,13 +40,13 @@ define(
          * @param telemetryFormatter
          * @constructor
          */
-        function TelemetryTableController(
-            $scope,
-            telemetryHandler,
-            telemetryFormatter,
-            openmct
-        ) {
-            var self = this;
+        class TelemetryTableController {
+          constructor(
+              $scope,
+              telemetryHandler,
+              telemetryFormatter,
+              openmct
+          ) {
 
             this.$scope = $scope;
             this.columns = {}; //Range and Domain columns
@@ -60,9 +60,9 @@ define(
             $scope.rows = [];
 
             // Subscribe to telemetry when a domain object becomes available
-            this.$scope.$watch('domainObject', function () {
-                self.subscribe();
-                self.registerChangeListeners();
+            this.$scope.$watch('domainObject',  () => {
+                this.subscribe();
+                this.registerChangeListeners();
             });
 
             this.destroy = this.destroy.bind(this);
@@ -82,11 +82,11 @@ define(
          * to sort by. By default will just match on key.
          * @param timeSystem
          */
-        TelemetryTableController.prototype.sortByTimeSystem = function (timeSystem) {
-            var scope = this.$scope;
+        sortByTimeSystem(timeSystem) {
+            let scope = this.$scope;
             scope.defaultSort = undefined;
             if (timeSystem) {
-                this.table.columns.forEach(function (column) {
+                this.table.columns.forEach( (column) => {
                     if (column.domainMetadata && column.domainMetadata.key === timeSystem.metadata.key) {
                         scope.defaultSort = column.getTitle();
                     }
@@ -94,8 +94,8 @@ define(
             }
         };
 
-        TelemetryTableController.prototype.unregisterChangeListeners = function () {
-            this.changeListeners.forEach(function (listener) {
+        unregisterChangeListeners() {
+            this.changeListeners.forEach( (listener) => {
                 return listener && listener();
             });
             this.changeListeners = [];
@@ -106,17 +106,16 @@ define(
          * available in order to avoid race conditions
          * @private
          */
-        TelemetryTableController.prototype.registerChangeListeners = function () {
-            var self = this;
+        registerChangeListeners() {
             this.unregisterChangeListeners();
 
             // When composition changes, re-subscribe to the various
             // telemetry subscriptions
             this.changeListeners.push(this.$scope.$watchCollection(
                 'domainObject.getModel().composition',
-                function (newVal, oldVal) {
+                 (newVal, oldVal) => {
                     if (newVal !== oldVal) {
-                        self.subscribe();
+                        this.subscribe();
                     }
                 })
             );
@@ -125,7 +124,7 @@ define(
         /**
          * Release the current subscription (called when scope is destroyed)
          */
-        TelemetryTableController.prototype.destroy = function () {
+        destroy() {
             if (this.handle) {
                 this.handle.unsubscribe();
                 this.handle = undefined;
@@ -139,7 +138,7 @@ define(
          *
          * Method should be overridden by specializing class.
          */
-        TelemetryTableController.prototype.addRealtimeData = function () {
+        addRealtimeData() {
         };
 
         /**
@@ -147,7 +146,7 @@ define(
          * telemetry framework when requested historical data is available.
          * Should be overridden by specializing class.
          */
-        TelemetryTableController.prototype.addHistoricalData = function () {
+        addHistoricalData() {
         };
 
         /**
@@ -155,7 +154,7 @@ define(
          change default behaviour (which is to retrieve historical telemetry
          only).
          */
-        TelemetryTableController.prototype.subscribe = function () {
+         subscribe() {
             if (this.handle) {
                 this.handle.unsubscribe();
             }
@@ -172,18 +171,18 @@ define(
             this.setup();
         };
 
-        TelemetryTableController.prototype.populateColumns = function (telemetryMetadata) {
+        populateColumns(telemetryMetadata) {
             this.table.populateColumns(telemetryMetadata);
 
             //Identify time columns
-            telemetryMetadata.forEach(function (metadatum) {
+            telemetryMetadata.forEach( (metadatum) => {
                 //Push domains first
-                (metadatum.domains || []).forEach(function (domainMetadata) {
+                (metadatum.domains || []).forEach( (domainMetadata) => {
                     this.timeColumns.push(domainMetadata.name);
-                }.bind(this));
-            }.bind(this));
+                });
+            });
 
-            var timeSystem = this.conductor.timeSystem();
+            let timeSystem = this.conductor.timeSystem();
             if (timeSystem) {
                 this.sortByTimeSystem(timeSystem);
             }
@@ -192,24 +191,23 @@ define(
         /**
          * Setup table columns based on domain object metadata
          */
-        TelemetryTableController.prototype.setup = function () {
-            var handle = this.handle,
-                self = this;
+        setup() {
+            let handle = this.handle
 
             if (handle) {
                 this.timeColumns = [];
-                handle.promiseTelemetryObjects().then(function () {
-                    self.$scope.headers = [];
-                    self.$scope.rows = [];
+                handle.promiseTelemetryObjects().then( () => {
+                    this.$scope.headers = [];
+                    this.$scope.rows = [];
 
-                    self.populateColumns(handle.getMetadata());
-                    self.filterColumns();
+                    this.populateColumns(handle.getMetadata());
+                    this.filterColumns();
 
                     // When table column configuration changes, (due to being
                     // selected or deselected), filter columns appropriately.
-                    self.changeListeners.push(self.$scope.$watchCollection(
+                    this.changeListeners.push(this.$scope.$watchCollection(
                         'domainObject.getModel().configuration.table.columns',
-                        self.filterColumns.bind(self)
+                        this.filterColumns.bind(this)
                     ));
                 });
             }
@@ -220,15 +218,15 @@ define(
          * accordingly.
          * @private
          */
-        TelemetryTableController.prototype.filterColumns = function () {
-            var columnConfig = this.table.buildColumnConfiguration();
+        filterColumns() {
+            let columnConfig = this.table.buildColumnConfiguration();
 
             //Populate headers with visible columns (determined by configuration)
-            this.$scope.headers = Object.keys(columnConfig).filter(function (column) {
+            this.$scope.headers = Object.keys(columnConfig).filter( (column) => {
                 return columnConfig[column];
             });
         };
-
+      }
         return TelemetryTableController;
     }
 );

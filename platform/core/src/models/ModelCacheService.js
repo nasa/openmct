@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([], () => {
 
     /**
      * Provides a cache for domain object models which exist in memory,
@@ -28,16 +28,17 @@ define([], function () {
      * @constructor
      * @memberof platform/core
      */
-    function ModelCacheService() {
+    class ModelCacheService {
+      constructor() {
         this.cache = {};
-    }
+      }
 
     /**
      * Put a domain object model in the cache.
      * @param {string} id the domain object's identifier
      * @param {object} model the domain object's model
      */
-    ModelCacheService.prototype.put = function (id, model) {
+    put(id, model) {
         this.cache[id] = model;
     };
 
@@ -46,7 +47,7 @@ define([], function () {
      * @param {string} id the domain object's identifier
      * @returns {object} the domain object's model
      */
-    ModelCacheService.prototype.get = function (id) {
+    get(id) {
         return this.cache[id];
     };
 
@@ -55,7 +56,7 @@ define([], function () {
      * @param {string} id the domain object's identifier
      * @returns {boolean} true if present; false if not
      */
-    ModelCacheService.prototype.has = function (id) {
+    has(id) {
         return this.cache.hasOwnProperty(id);
     };
 
@@ -63,7 +64,7 @@ define([], function () {
      * Remove a domain object model from the cache.
      * @param {string} id the domain object's identifier
      */
-    ModelCacheService.prototype.remove = function (id) {
+    remove(id) {
         delete this.cache[id];
     };
 
@@ -73,13 +74,13 @@ define([], function () {
      * domain object identifiers and values are domain object models.
      * @returns {object} all domain object models
      */
-    ModelCacheService.prototype.all = function () {
+    all() {
         return this.cache;
     };
 
-    ModelCacheService.prototype.flush = function () {
+    flush() {
         this.cache = {};
     };
-
+  }
     return ModelCacheService;
 });

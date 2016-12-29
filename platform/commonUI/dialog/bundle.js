@@ -31,7 +31,7 @@ define([
     "text!./res/templates/overlay-message-list.html",
     "text!./res/templates/overlay.html",
     'legacyRegistry'
-], function (
+], (
     DialogService,
     OverlayService,
     overlayDialogTemplate,
@@ -42,7 +42,7 @@ define([
     overlayMessageListTemplate,
     overlayTemplate,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/commonUI/dialog", {
         "extensions": {

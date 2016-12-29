@@ -25,13 +25,13 @@
  */
 define(
     ["../../src/modes/PlotModeOptions"],
-    function (PlotModeOptions) {
+    (PlotModeOptions) => {
 
-        describe("Plot mode options", function () {
-            var mockDomainObject,
+        describe("Plot mode options", () => {
+            let mockDomainObject,
                 mockSubPlotFactory;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     ["getId", "getModel", "getCapability"]
@@ -42,15 +42,15 @@ define(
                 );
             });
 
-            it("offers only one option when one object is present", function () {
+            it("offers only one option when one object is present", () => {
                 expect(
                     new PlotModeOptions([mockDomainObject], mockSubPlotFactory)
                             .getModeOptions().length
                 ).toEqual(1);
             });
 
-            it("offers two options when multiple objects are present", function () {
-                var objects = [
+            it("offers two options when multiple objects are present", () => {
+                let objects = [
                         mockDomainObject,
                         mockDomainObject,
                         mockDomainObject,
@@ -62,8 +62,8 @@ define(
                 ).toEqual(2);
             });
 
-            it("allows modes to be changed", function () {
-                var plotModeOptions = new PlotModeOptions([
+            it("allows modes to be changed", () => {
+                let plotModeOptions = new PlotModeOptions([
                         mockDomainObject,
                         mockDomainObject,
                         mockDomainObject,
@@ -72,7 +72,7 @@ define(
                     initialHandler = plotModeOptions.getModeHandler();
 
                 // Change the mode
-                plotModeOptions.getModeOptions().forEach(function (option) {
+                plotModeOptions.getModeOptions().forEach( (option) => {
                     if (option !== plotModeOptions.getMode()) {
                         plotModeOptions.setMode(option);
                     }

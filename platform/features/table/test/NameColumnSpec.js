@@ -25,13 +25,13 @@
  */
 define(
     ["../src/NameColumn"],
-    function (NameColumn) {
+    (NameColumn) => {
 
-        describe("A name column", function () {
-            var mockDomainObject,
+        describe("A name column", () => {
+            let mockDomainObject,
                 column;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     ["getModel"]
@@ -42,11 +42,11 @@ define(
                 column = new NameColumn();
             });
 
-            it("reports a column header", function () {
+            it("reports a column header", () => {
                 expect(column.getTitle()).toEqual("Name");
             });
 
-            it("looks up name from an object's model", function () {
+            it("looks up name from an object's model", () => {
                 expect(column.getValue(mockDomainObject).text)
                     .toEqual("Test object name");
             });

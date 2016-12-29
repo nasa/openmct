@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([], () => {
 
     /**
      * Builds a list of domain objects which should be included
@@ -28,33 +28,34 @@ define([], function () {
      * @param {DomainObject} domainObject the object being exported
      * @constructor
      */
-    function TimelineTraverser(domainObject) {
+    class TimelineTraverser {
+      constructor(domainObject) {
         this.domainObject = domainObject;
-    }
+      }
 
     /**
      * Get a list of domain objects for CSV export.
      * @returns {Promise.<DomainObject[]>} a list of domain objects
      */
-    TimelineTraverser.prototype.buildObjectList = function () {
-        var idSet = {},
+    buildObjectList() {
+        let idSet = {},
             objects = [];
 
-        function addObject(domainObject) {
-            var id = domainObject.getId(),
+        const addObject = (domainObject) => {
+            let id = domainObject.getId(),
                 subtasks = [];
 
-            function addCompositionObjects() {
+            const addCompositionObjects = () => {
                 return domainObject.useCapability('composition')
-                    .then(function (childObjects) {
+                    .then( (childObjects) => {
                         return Promise.all(childObjects.map(addObject));
                     });
             }
 
-            function addRelationships() {
-                var relationship = domainObject.getCapability('relationship');
+            const addRelationships = () => {
+                let relationship = domainObject.getCapability('relationship');
                 relationship.getRelatedObjects('modes')
-                    .then(function (modeObjects) {
+                    .then( (modeObjects) => {
                         return Promise.all(modeObjects.map(addObject));
                     });
             }
@@ -73,11 +74,11 @@ define([], function () {
             return Promise.all(subtasks);
         }
 
-        return addObject(this.domainObject).then(function () {
+        return addObject(this.domainObject).then( () => {
             return objects;
         });
     };
-
+  }
     return TimelineTraverser;
 
 });

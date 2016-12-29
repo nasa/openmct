@@ -27,11 +27,11 @@ define(
         '../services/MockMoveService',
         '../DomainObjectFactory'
     ],
-    function (MoveAction, MockMoveService, domainObjectFactory) {
+    (MoveAction, MockMoveService, domainObjectFactory) => {
 
-        describe("Move Action", function () {
+        describe("Move Action", () =>  {
 
-            var moveAction,
+            let moveAction,
                 policyService,
                 locationService,
                 locationServicePromise,
@@ -42,7 +42,7 @@ define(
                 currentParent,
                 newParent;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 policyService = jasmine.createSpyObj(
                     'policyService',
                     ['allow']
@@ -100,8 +100,8 @@ define(
             });
 
 
-            describe("with context from context-action", function () {
-                beforeEach(function () {
+            describe("with context from context-action", () =>  {
+                beforeEach(() =>  {
                     context = {
                         domainObject: selectedObject
                     };
@@ -114,16 +114,16 @@ define(
                     );
                 });
 
-                it("initializes happily", function () {
+                it("initializes happily", () =>  {
                     expect(moveAction).toBeDefined();
                 });
 
-                describe("when performed it", function () {
-                    beforeEach(function () {
+                describe("when performed it", () =>  {
+                    beforeEach(() =>  {
                         moveAction.perform();
                     });
 
-                    it("prompts for location", function () {
+                    it("prompts for location", () =>  {
                         expect(locationService.getLocationFromUser)
                             .toHaveBeenCalledWith(
                                 "Move selectedObject To a New Location",
@@ -133,12 +133,12 @@ define(
                             );
                     });
 
-                    it("waits for location from user", function () {
+                    it("waits for location from user", () =>  {
                         expect(locationServicePromise.then)
                             .toHaveBeenCalledWith(jasmine.any(Function));
                     });
 
-                    it("moves object to selected location", function () {
+                    it("moves object to selected location", () =>  {
                         locationServicePromise
                             .then
                             .mostRecentCall
@@ -150,8 +150,8 @@ define(
                 });
             });
 
-            describe("with context from drag-drop", function () {
-                beforeEach(function () {
+            describe("with context from drag-drop", () =>  {
+                beforeEach(() =>  {
                     context = {
                         selectedObject: selectedObject,
                         domainObject: newParent
@@ -165,12 +165,12 @@ define(
                     );
                 });
 
-                it("initializes happily", function () {
+                it("initializes happily", () =>  {
                     expect(moveAction).toBeDefined();
                 });
 
 
-                it("performs move immediately", function () {
+                it("performs move immediately", () =>  {
                     moveAction.perform();
                     expect(moveService.perform)
                         .toHaveBeenCalledWith(selectedObject, newParent);

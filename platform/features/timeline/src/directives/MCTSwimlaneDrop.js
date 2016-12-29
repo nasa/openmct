@@ -22,7 +22,7 @@
 
 define(
     ['./SwimlaneDragConstants'],
-    function (SwimlaneDragConstants) {
+    (SwimlaneDragConstants) => {
 
         /**
          * Defines the `mct-swimlane-drop` directive. When a drop occurs
@@ -32,11 +32,11 @@ define(
          * the drop, typically by inserting/reordering.)
          * @param {DndService} dndService drag-and-drop service
          */
-        function MCTSwimlaneDrop(dndService) {
+        const MCTSwimlaneDrop = (dndService) => {
 
             // Handle dragover events
-            function dragOver(e, element, swimlane) {
-                var event = (e || {}).originalEvent || e,
+            const dragOver = (e, element, swimlane) => {
+                let event = (e || {}).originalEvent || e,
                     height = element[0].offsetHeight,
                     rect = element[0].getBoundingClientRect(),
                     offset = event.pageY - rect.top,
@@ -71,8 +71,8 @@ define(
             }
 
             // Handle drop events
-            function drop(e, element, swimlane) {
-                var event = (e || {}).originalEvent || e,
+            const drop = (e, element, swimlane) => {
+                let event = (e || {}).originalEvent || e,
                     dataTransfer = event.dataTransfer,
                     id = dataTransfer.getData(
                         SwimlaneDragConstants.MCT_DRAG_TYPE
@@ -98,14 +98,14 @@ define(
                 swimlane.highlightBottom(false);
             }
 
-            function link(scope, element, attrs) {
+            const link = (scope, element, attrs) => {
                 // Lookup swimlane by evaluating this attribute
-                function lookupSwimlane() {
+                const lookupSwimlane = () => {
                     return scope.$eval(attrs.mctSwimlaneDrop);
                 }
                 // Handle dragover
-                element.on('dragover', function (e) {
-                    var swimlane = lookupSwimlane(),
+                element.on('dragover', (e) => {
+                    let swimlane = lookupSwimlane(),
                         highlight = swimlane.highlight(),
                         highlightBottom = swimlane.highlightBottom();
 
@@ -117,13 +117,13 @@ define(
                     }
                 });
                 // Handle drops
-                element.on('drop', function (e) {
+                element.on('drop', (e) => {
                     drop(e, element, lookupSwimlane());
                     scope.$apply();
                 });
                 // Clear highlights when drag leaves this swimlane
-                element.on('dragleave', function () {
-                    var swimlane = lookupSwimlane(),
+                element.on('dragleave', () => {
+                    let swimlane = lookupSwimlane(),
                         wasHighlighted = swimlane.highlight() ||
                                 swimlane.highlightBottom();
                     swimlane.highlight(false);

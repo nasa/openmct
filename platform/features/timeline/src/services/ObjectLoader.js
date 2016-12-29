@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The ObjectLoader is a utility service for loading subgraphs
@@ -31,42 +31,42 @@ define(
          * criteria.
          * @constructor
          */
-        function ObjectLoader($q) {
+        const ObjectLoader = ($q) => {
 
             // Build up an object containing id->object pairs
             // for the subset of the graph that is relevant.
-            function loadSubGraph(domainObject, criterion) {
-                var result = { domainObject: domainObject, composition: [] },
+            const loadSubGraph = (domainObject, criterion) => {
+                let result = { domainObject: domainObject, composition: [] },
                     visiting = {},
                     filter;
 
                 // Check object existence (for criterion-less filtering)
-                function exists(object) {
+                const exists = (object) => {
                     return !!object;
                 }
 
                 // Check for capability matching criterion
-                function hasCapability(object) {
+                const hasCapability = (object) => {
                     return object && object.hasCapability(criterion);
                 }
 
                 // For the recursive step...
-                function loadSubGraphFor(childObject) {
+                const loadSubGraphFor = (childObject) => {
                     return loadSubGraph(childObject, filter);
                 }
 
                 // Store loaded subgraphs into the result
-                function storeSubgraphs(subgraphs) {
+                const storeSubgraphs = (subgraphs) => {
                     result.composition = subgraphs;
                 }
 
                 // Avoid infinite recursion
-                function notVisiting(object) {
+                const notVisiting = (object) => {
                     return !visiting[object.getId()];
                 }
 
                 // Put the composition of this domain object into the result
-                function mapIntoResult(composition) {
+                const mapIntoResult = (composition) => {
                     return $q.all(
                         composition.filter(filter).filter(notVisiting)
                             .map(loadSubGraphFor)
@@ -74,7 +74,7 @@ define(
                 }
 
                 // Used to give the final result after promise chaining
-                function giveResult() {
+                const giveResult = () => {
                     // Stop suppressing recursive visitation
                     visiting[domainObject.getId()] = true;
                     // And return the expecting result value
@@ -82,7 +82,7 @@ define(
                 }
 
                 // Load composition for
-                function loadComposition() {
+                const loadComposition = () => {
                     // First, record that we're looking at this domain
                     // object to detect cycles and avoid an infinite loop
                     visiting[domainObject.getId()] = true;

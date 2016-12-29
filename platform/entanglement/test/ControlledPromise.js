@@ -20,27 +20,27 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /*global spyOn*/
-define(
-    function () {
+define(() => {
 
         /**
          * An instrumented promise implementation for better control of promises
          * during tests.
          *
          */
-        function ControlledPromise() {
+        class ControlledPromise {
+          constructor() {
             this.resolveHandlers = [];
             this.rejectHandlers = [];
             spyOn(this, 'then').andCallThrough();
-        }
+          }
 
 
         /**
          * Resolve the promise, passing the supplied value to all resolve
          * handlers.
          */
-        ControlledPromise.prototype.resolve = function (value) {
-            this.resolveHandlers.forEach(function (handler) {
+        resolve(value) {
+            this.resolveHandlers.forEach( (handler) => {
                 handler(value);
             });
         };
@@ -49,8 +49,8 @@ define(
          * Reject the promise, passing the supplied value to all rejection
          * handlers.
          */
-        ControlledPromise.prototype.reject = function (value) {
-            this.rejectHandlers.forEach(function (handler) {
+        reject(value) {
+            this.rejectHandlers.forEach( (handler) => {
                 handler(value);
             });
         };
@@ -59,15 +59,15 @@ define(
          * Standard promise.then, returns a promise that support chaining.
          * TODO: Need to support resolve/reject handlers that return promises.
          */
-        ControlledPromise.prototype.then = function (onResolve, onReject) {
-            var returnPromise = new ControlledPromise();
+        then(onResolve, onReject) {
+            let returnPromise = new ControlledPromise();
 
             if (onResolve) {
-                this.resolveHandlers.push(function (resolveWith) {
+                this.resolveHandlers.push( (resolveWith) => {
                     var chainResult = onResolve(resolveWith);
                     if (chainResult && chainResult.then) {
                         // chainResult is a promise, resolve when it resolves.
-                        chainResult.then(function (pipedResult) {
+                        chainResult.then( (pipedResult) => {
                             return returnPromise.resolve(pipedResult);
                         });
                     } else {
@@ -77,10 +77,10 @@ define(
             }
 
             if (onReject) {
-                this.rejectHandlers.push(function (rejectWith) {
+                this.rejectHandlers.push( (rejectWith) => {
                     var chainResult = onReject(rejectWith);
                     if (chainResult && chainResult.then) {
-                        chainResult.then(function (pipedResult) {
+                        chainResult.then( (pipedResult) => {
                             returnPromise.reject(pipedResult);
                         });
                     } else {
@@ -91,7 +91,7 @@ define(
 
             return returnPromise;
         };
-
+      }
         return ControlledPromise;
 
     }

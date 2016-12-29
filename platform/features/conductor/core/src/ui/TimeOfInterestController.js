@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Controller for the Time of Interest element used in various views to display the TOI. Responsible for setting
@@ -30,7 +30,8 @@ define(
          * indicator is visible.
          * @constructor
          */
-        function TimeOfInterestController($scope, openmct, formatService) {
+        class TimeOfInterestController {
+          constructor($scope, openmct, formatService) {
             this.conductor = openmct.conductor;
             this.formatService = formatService;
             this.format = undefined;
@@ -38,17 +39,17 @@ define(
             this.$scope = $scope;
 
             //Bind all class functions to 'this'
-            Object.keys(TimeOfInterestController.prototype).filter(function (key) {
+            Object.keys(TimeOfInterestController.prototype).filter( (key) => {
                 return typeof TimeOfInterestController.prototype[key] === 'function';
-            }).forEach(function (key) {
-                this[key] = TimeOfInterestController.prototype[key].bind(this);
-            }.bind(this));
+            }).forEach( (key) => {
+                this[key] = this[key].bind(this);
+            });
 
             this.conductor.on('timeOfInterest', this.changeTimeOfInterest);
             this.conductor.on('timeSystem', this.changeTimeSystem);
             if (this.conductor.timeSystem()) {
                 this.changeTimeSystem(this.conductor.timeSystem());
-                var toi = this.conductor.timeOfInterest();
+                let toi = this.conductor.timeOfInterest();
                 if (toi) {
                     this.changeTimeOfInterest(toi);
                 }
@@ -63,7 +64,7 @@ define(
          * @private
          * @param {integer} toi Current time of interest in ms
          */
-        TimeOfInterestController.prototype.changeTimeOfInterest = function (toi) {
+        changeTimeOfInterest(toi) {
             if (toi !== undefined) {
                 this.$scope.pinned = true;
                 this.toiText = this.format.format(toi);
@@ -76,14 +77,14 @@ define(
          * When time system is changed, update the formatter used to
          * display the current TOI label
          */
-        TimeOfInterestController.prototype.changeTimeSystem = function (timeSystem) {
+        changeTimeSystem(timeSystem) {
             this.format = this.formatService.getFormat(timeSystem.formats()[0]);
         };
 
         /**
          * @private
          */
-        TimeOfInterestController.prototype.destroy = function () {
+        destroy() {
             this.conductor.off('timeOfInterest', this.changeTimeOfInterest);
             this.conductor.off('timeSystem', this.changeTimeSystem);
         };
@@ -92,7 +93,7 @@ define(
          * Will unpin (hide) the TOI indicator. Has the effect of setting the time of interest to `undefined` on the
          * Time Conductor
          */
-        TimeOfInterestController.prototype.dismiss = function () {
+        dismiss() {
             this.conductor.timeOfInterest(undefined);
         };
 
@@ -100,10 +101,10 @@ define(
          * Sends out a time of interest event with the effect of resetting
          * the TOI displayed in views.
          */
-        TimeOfInterestController.prototype.resync = function () {
+        resync() {
             this.conductor.timeOfInterest(this.conductor.timeOfInterest());
         };
-
+      }
         return TimeOfInterestController;
     }
 );

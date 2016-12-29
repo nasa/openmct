@@ -24,15 +24,16 @@ define(
     [
         "d3"
     ],
-    function (d3) {
-        var PADDING = 1;
+    (d3) => {
+        let PADDING = 1;
 
         /**
          * Controller that renders a horizontal time scale spanning the current bounds defined in the time conductor.
          * Used by the mct-conductor-axis directive
          * @constructor
          */
-        function ConductorAxisController(openmct, formatService, conductorViewService, scope, element) {
+        class ConductorAxisController {
+          constructor(openmct, formatService, conductorViewService, scope, element) {
             // Dependencies
             this.formatService = formatService;
             this.conductor = openmct.conductor;
@@ -45,11 +46,11 @@ define(
             this.timeSystem = this.conductor.timeSystem();
 
             //Bind all class functions to 'this'
-            Object.keys(ConductorAxisController.prototype).filter(function (key) {
+            Object.keys(ConductorAxisController.prototype).filter( (key) => {
                 return typeof ConductorAxisController.prototype[key] === 'function';
-            }).forEach(function (key) {
+            }).forEach( (key) => {
                 this[key] = ConductorAxisController.prototype[key].bind(this);
-            }.bind(this));
+            });
 
             this.initialize(element);
         }
@@ -57,7 +58,7 @@ define(
         /**
          * @private
          */
-        ConductorAxisController.prototype.destroy = function () {
+        destroy() {
             this.conductor.off('timeSystem', this.changeTimeSystem);
             this.conductor.off('bounds', this.changeBounds);
             this.conductorViewService.off("zoom", this.onZoom);
@@ -67,10 +68,10 @@ define(
         /**
          * @private
          */
-        ConductorAxisController.prototype.initialize = function (element) {
+        initialize(element) {
             this.target = element[0].firstChild;
-            var height = this.target.offsetHeight;
-            var vis = d3.select(this.target)
+            let height = this.target.offsetHeight;
+            let vis = d3.select(this.target)
                 .append("svg:svg")
                 .attr("width", "100%")
                 .attr("height", height);
@@ -99,7 +100,7 @@ define(
         /**
          * @private
          */
-        ConductorAxisController.prototype.changeBounds = function (bounds) {
+        changeBounds(bounds) {
             this.bounds = bounds;
             if (!this.zooming) {
                 this.setScale();
@@ -109,10 +110,10 @@ define(
         /**
          * Set the scale of the axis, based on current conductor bounds.
          */
-        ConductorAxisController.prototype.setScale = function () {
-            var width = this.target.offsetWidth;
-            var timeSystem = this.conductor.timeSystem();
-            var bounds = this.bounds;
+        setScale() {
+            let width = this.target.offsetWidth;
+            let timeSystem = this.conductor.timeSystem();
+            let bounds = this.bounds;
 
             if (timeSystem.isUTCBased()) {
                 this.xScale = this.xScale || d3.scaleUtc();
@@ -134,7 +135,7 @@ define(
          * When the time system changes, update the scale and formatter used for showing times.
          * @param timeSystem
          */
-        ConductorAxisController.prototype.changeTimeSystem = function (timeSystem) {
+        changeTimeSystem(timeSystem) {
             this.timeSystem = timeSystem;
 
             var key = timeSystem.formats()[0];
@@ -153,7 +154,7 @@ define(
                 this.xAxis.scale(this.xScale);
 
                 //Define a custom format function
-                this.xAxis.tickFormat(function (tickValue) {
+                this.xAxis.tickFormat( (tickValue) => {
                     // Normalize date representations to numbers
                     if (tickValue instanceof Date) {
                         tickValue = tickValue.getTime();
@@ -175,7 +176,7 @@ define(
          * Called on release of mouse button after dragging the scale left or right.
          * @fires platform.features.conductor.ConductorAxisController~panStop
          */
-        ConductorAxisController.prototype.panStop = function () {
+        panStop() {
             //resync view bounds with time conductor bounds
             this.conductorViewService.emit("pan-stop");
             this.conductor.bounds(this.bounds);
@@ -188,7 +189,7 @@ define(
          * @private
          * @param {ZoomLevel}
          */
-        ConductorAxisController.prototype.onZoom = function (zoom) {
+        onZoom(zoom) {
             this.zooming = true;
 
             this.bounds = zoom.bounds;
@@ -198,7 +199,7 @@ define(
         /**
          * @private
          */
-        ConductorAxisController.prototype.onZoomStop = function (zoom) {
+        onZoomStop(zoom) {
             this.zooming = false;
         };
 
@@ -213,7 +214,7 @@ define(
          * @see TimeConductorViewService#
          * @fires platform.features.conductor.ConductorAxisController~pan
          */
-        ConductorAxisController.prototype.pan = function (delta) {
+        pan(delta) {
             if (!this.conductor.follow()) {
                 var deltaInMs = delta[0] * this.msPerPixel;
                 var bounds = this.conductor.bounds();
@@ -231,10 +232,10 @@ define(
         /**
          * Invoked on element resize. Will rebuild the scale based on the new dimensions of the element.
          */
-        ConductorAxisController.prototype.resize = function () {
+        resize() {
             this.setScale();
         };
-
+      }
         return ConductorAxisController;
     }
 );

@@ -23,10 +23,10 @@
 define([
     'lodash',
     '../objects/object-utils'
-], function (
+], (
     _,
     objectUtils
-) {
+) => {
 
     /**
      * A CompositionCollection represents the list of domain objects contained
@@ -51,7 +51,8 @@ define([
      *        policy checks
      * @memberof module:openmct
      */
-    function CompositionCollection(domainObject, provider, publicAPI) {
+    class CompositionCollection {
+      constructor(domainObject, provider, publicAPI) {
         this.domainObject = domainObject;
         this.provider = provider;
         this.publicAPI = publicAPI;
@@ -73,32 +74,32 @@ define([
      * @param callback to trigger when event occurs.
      * @param [context] context to use when invoking callback, optional.
      */
-    CompositionCollection.prototype.on = function (event, callback, context) {
-        if (!this.listeners[event]) {
-            throw new Error('Event not supported by composition: ' + event);
-        }
-
-        if (event === 'add') {
-            this.provider.on(
-                this.domainObject,
-                'add',
-                this.onProviderAdd,
-                this
-            );
-        } if (event === 'remove') {
-            this.provider.on(
-                this.domainObject,
-                'remove',
-                this.onProviderRemove,
-                this
-            );
-        }
-
-        this.listeners[event].push({
-            callback: callback,
-            context: context
-        });
-    };
+    on(event, callback, context) {
+      if (!this.listeners[event]) {
+        throw new Error('Event not supported by composition: ' + event);
+      }
+      
+      if (event === 'add') {
+        this.provider.on(
+          this.domainObject,
+          'add',
+          this.onProviderAdd,
+          this
+        );
+      } 
+      if (event === 'remove') {
+        this.provider.on(
+          this.domainObject,
+          'remove',
+          this.onProviderRemove,
+          this
+        );
+      }
+      this.listeners[event].push({
+        callback: callback,
+        context: context
+      });
+    }
 
     /**
      * Remove a listener.  Must be called with same exact parameters as
@@ -109,12 +110,12 @@ define([
      * @param [context]
      */
 
-    CompositionCollection.prototype.off = function (event, callback, context) {
+    off(event, callback, context) {
         if (!this.listeners[event]) {
             throw new Error('Event not supported by composition: ' + event);
         }
 
-        var index = _.findIndex(this.listeners[event], function (l) {
+        let index = _.findIndex(this.listeners[event], (l) => {
             return l.callback === callback && l.context === context;
         });
 
@@ -142,7 +143,7 @@ define([
                 );
             }
         }
-    };
+    }
 
     /**
      * Add a domain object to this composition.
@@ -156,13 +157,13 @@ define([
      * @memberof module:openmct.CompositionCollection#
      * @name add
      */
-    CompositionCollection.prototype.add = function (child, skipMutate) {
+    add(child, skipMutate) {
         if (!skipMutate) {
             this.provider.add(this.domainObject, child.identifier);
         } else {
             this.emit('add', child);
         }
-    };
+    }
 
     /**
      * Load the domain objects in this composition.
@@ -172,16 +173,16 @@ define([
      * @memberof {module:openmct.CompositionCollection#}
      * @name load
      */
-    CompositionCollection.prototype.load = function () {
+    load() {
         return this.provider.load(this.domainObject)
-            .then(function (children) {
+            .then( (children) => {
                 return Promise.all(children.map(this.onProviderAdd, this));
-            }.bind(this))
-            .then(function (children) {
+            })
+            .then( (children) => {
                 this.emit('load');
                 return children;
-            }.bind(this));
-    };
+            });
+    }
 
     /**
      * Remove a domain object from this composition.
@@ -195,46 +196,46 @@ define([
      * @memberof module:openmct.CompositionCollection#
      * @name remove
      */
-    CompositionCollection.prototype.remove = function (child, skipMutate) {
+    remove(child, skipMutate) {
         if (!skipMutate) {
             this.provider.remove(this.domainObject, child.identifier);
         } else {
             this.emit('remove', child);
         }
-    };
+    }
 
     /**
      * Handle adds from provider.
      * @private
      */
-    CompositionCollection.prototype.onProviderAdd = function (childId) {
-        return this.publicAPI.objects.get(childId).then(function (child) {
+    onProviderAdd(childId) {
+        return this.publicAPI.objects.get(childId).then( (child) => {
             this.add(child, true);
             return child;
-        }.bind(this));
-    };
+        });
+    }
 
     /**
      * Handle removal from provider.
      * @private
      */
-    CompositionCollection.prototype.onProviderRemove = function (child) {
+    onProviderRemove(child) {
         this.remove(child, true);
-    };
+    }
 
     /**
      * Emit events.
      * @private
      */
-    CompositionCollection.prototype.emit = function (event, payload) {
-        this.listeners[event].forEach(function (l) {
+    emit(event, payload) {
+        this.listeners[event].forEach( (l) => {
             if (l.context) {
                 l.callback.call(l.context, payload);
             } else {
                 l.callback(payload);
             }
         });
-    };
-
-    return CompositionCollection;
+    }
+}
+return CompositionCollection;
 });

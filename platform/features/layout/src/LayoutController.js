@@ -27,11 +27,23 @@
  */
 define(
     ['./LayoutDrag'],
-    function (LayoutDrag) {
+    (LayoutDrag) => {
 
-        var DEFAULT_DIMENSIONS = [12, 8],
+        let DEFAULT_DIMENSIONS = [12, 8],
             DEFAULT_GRID_SIZE = [32, 32],
             MINIMUM_FRAME_SIZE = [320, 180];
+            
+            
+            // Utility function to copy raw positions from configuration,
+            // without writing directly to configuration (to avoid triggering
+            // persistence from watchers during drags).
+            const shallowCopy = (obj, keys) => {
+                let copy = {};
+                keys.forEach( (k) => {
+                    copy[k] = obj[k];
+                });
+                return copy;
+            }
 
         /**
          * The LayoutController is responsible for supporting the
@@ -42,25 +54,25 @@ define(
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
-        function LayoutController($scope) {
-            var self = this,
-                callbackCount = 0;
+        class LayoutController {
+          constructor($scope) {
+            let callbackCount = 0;
 
             // Update grid size when it changed
-            function updateGridSize(layoutGrid) {
-                var oldSize = self.gridSize;
+            const updateGridSize = (layoutGrid) => {
+                let oldSize = this.gridSize;
 
-                self.gridSize = layoutGrid || DEFAULT_GRID_SIZE;
+                this.gridSize = layoutGrid || DEFAULT_GRID_SIZE;
 
                 // Only update panel positions if this actually changed things
-                if (self.gridSize[0] !== oldSize[0] ||
-                        self.gridSize[1] !== oldSize[1]) {
-                    self.layoutPanels(Object.keys(self.positions));
+                if (this.gridSize[0] !== oldSize[0] ||
+                        this.gridSize[1] !== oldSize[1]) {
+                    this.layoutPanels(Object.keys(this.positions));
                 }
             }
 
             // Position a panel after a drop event
-            function handleDrop(e, id, position) {
+            const handleDrop = (e, id, position) => {
                 if (e.defaultPrevented) {
                     return;
                 }
@@ -74,19 +86,19 @@ define(
                 // Store the position of this panel.
                 $scope.configuration.panels[id] = {
                     position: [
-                        Math.floor(position.x / self.gridSize[0]),
-                        Math.floor(position.y / self.gridSize[1])
+                        Math.floor(position.x / this.gridSize[0]),
+                        Math.floor(position.y / this.gridSize[1])
                     ],
-                    dimensions: self.defaultDimensions()
+                    dimensions: this.defaultDimensions()
                 };
                 // Mark change as persistable
                 if ($scope.commit) {
                     $scope.commit("Dropped a frame.");
                 }
                 // Populate template-facing position for this id
-                self.rawPositions[id] =
+                this.rawPositions[id] =
                     $scope.configuration.panels[id];
-                self.populatePosition(id);
+                this.populatePosition(id);
                 // Layout may contain embedded views which will
                 // listen for drops, so call preventDefault() so
                 // that they can recognize that this event is handled.
@@ -95,22 +107,22 @@ define(
 
             //Will fetch fully contextualized composed objects, and populate
             // scope with them.
-            function refreshComposition() {
+            const refreshComposition = () => {
                 //Keep a track of how many composition callbacks have been made
-                var thisCount = ++callbackCount;
+                let thisCount = ++callbackCount;
 
-                $scope.domainObject.useCapability('composition').then(function (composition) {
-                    var ids;
+                $scope.domainObject.useCapability('composition').then( (composition) => {
+                    let ids;
 
                     //Is this callback for the most recent composition
                     // request? If not, discard it. Prevents race condition
                     if (thisCount === callbackCount) {
-                        ids = composition.map(function (object) {
+                        ids = composition.map( (object) => {
                                 return object.getId();
                             }) || [];
 
                         $scope.composition = composition;
-                        self.layoutPanels(ids);
+                        this.layoutPanels(ids);
                     }
                 });
             }
@@ -118,7 +130,7 @@ define(
             // End drag; we don't want to put $scope into this
             // because it triggers "cpws" (copy window or scope)
             // errors in Angular.
-            this.endDragInScope = function () {
+            this.endDragInScope = () => {
                 // Write to configuration; this is watched and
                 // saved by the EditRepresenter.
                 $scope.configuration =
@@ -128,8 +140,8 @@ define(
                 $scope.configuration.panels =
                     $scope.configuration.panels || {};
                 // Store the position of this panel.
-                $scope.configuration.panels[self.activeDragId] =
-                    self.rawPositions[self.activeDragId];
+                $scope.configuration.panels[this.activeDragId] =
+                    this.rawPositions[this.activeDragId];
                 // Mark this object as dirty to encourage persistence
                 if ($scope.commit) {
                     $scope.commit("Moved frame.");
@@ -153,8 +165,8 @@ define(
 
         // Convert from { positions: ..., dimensions: ... } to an
         // appropriate ng-style argument, to position frames.
-        LayoutController.prototype.convertPosition = function (raw) {
-            var gridSize = this.gridSize;
+        convertPosition(raw) {
+            let gridSize = this.gridSize;
             // Multiply position/dimensions by grid size
             return {
                 left: (gridSize[0] * raw.position[0]) + 'px',
@@ -165,9 +177,9 @@ define(
         };
 
         // Generate default positions for a new panel
-        LayoutController.prototype.defaultDimensions = function () {
-            var gridSize = this.gridSize;
-            return MINIMUM_FRAME_SIZE.map(function (min, i) {
+        defaultDimensions() {
+            let gridSize = this.gridSize;
+            return MINIMUM_FRAME_SIZE.map( (min, i) => {
                 return Math.max(
                     Math.ceil(min / gridSize[i]),
                     DEFAULT_DIMENSIONS[i]
@@ -177,7 +189,7 @@ define(
 
         // Generate a default position (in its raw format) for a frame.
         // Use an index to ensure that default positions are unique.
-        LayoutController.prototype.defaultPosition = function (index) {
+        defaultPosition(index) {
             return {
                 position: [index, index],
                 dimensions: this.defaultDimensions()
@@ -187,7 +199,7 @@ define(
         // Store a computed position for a contained frame by its
         // domain object id. Called in a forEach loop, so arguments
         // are as expected there.
-        LayoutController.prototype.populatePosition = function (id, index) {
+        populatePosition(id, index) {
             this.rawPositions[id] =
                 this.rawPositions[id] || this.defaultPosition(index || 0);
             this.positions[id] =
@@ -202,7 +214,7 @@ define(
          * @returns {Object.<string, string>} an object with
          *          appropriate left, width, etc fields for positioning
          */
-        LayoutController.prototype.getFrameStyle = function (id) {
+        getFrameStyle(id) {
             // Called in a loop, so just look up; the "positions"
             // object is kept up to date by a watch.
             return this.positions[id];
@@ -228,7 +240,7 @@ define(
          * @param {number[]} posFactor the position factor
          * @param {number[]} dimFactor the dimensions factor
          */
-        LayoutController.prototype.startDrag = function (id, posFactor, dimFactor) {
+        startDrag(id, posFactor, dimFactor) {
             this.activeDragId = id;
             this.activeDrag = new LayoutDrag(
                 this.rawPositions[id],
@@ -243,33 +255,21 @@ define(
          *        of the current pointer position, relative
          *        to its position when the drag started
          */
-        LayoutController.prototype.continueDrag = function (delta) {
+        continueDrag(delta) {
             if (this.activeDrag) {
                 this.rawPositions[this.activeDragId] =
                     this.activeDrag.getAdjustedPosition(delta);
                 this.populatePosition(this.activeDragId);
             }
         };
-
-        // Utility function to copy raw positions from configuration,
-        // without writing directly to configuration (to avoid triggering
-        // persistence from watchers during drags).
-        function shallowCopy(obj, keys) {
-            var copy = {};
-            keys.forEach(function (k) {
-                copy[k] = obj[k];
-            });
-            return copy;
-        }
-
         /**
          * Compute panel positions based on the layout's object model.
          * Defined as member function to facilitate testing.
          * @private
          */
-        LayoutController.prototype.layoutPanels = function (ids) {
-            var configuration = this.$scope.configuration || {},
-                self = this;
+        layoutPanels(ids) {
+            let configuration = this.$scope.configuration || {},
+                this = this;
 
             // Pull panel positions from configuration
             this.rawPositions =
@@ -283,8 +283,8 @@ define(
                 (this.$scope.model || {}).layoutGrid || DEFAULT_GRID_SIZE;
 
             // Compute positions and add defaults where needed
-            ids.forEach(function (id, index) {
-                self.populatePosition(id, index);
+            ids.forEach( (id, index) => {
+                this.populatePosition(id, index);
             });
         };
 
@@ -292,10 +292,10 @@ define(
          * End the active drag gesture. This will update the
          * view configuration.
          */
-        LayoutController.prototype.endDrag = function () {
+        endDrag() {
             this.endDragInScope();
         };
-
+      }
         return LayoutController;
     }
 );

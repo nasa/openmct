@@ -20,17 +20,17 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./TimeOfInterestController'], function (TimeOfInterestController) {
+define(['./TimeOfInterestController'], (TimeOfInterestController) => {
 
-    describe("The time of interest controller", function () {
-        var controller;
-        var mockScope;
-        var mockConductor;
-        var mockFormatService;
-        var mockTimeSystem;
-        var mockFormat;
+    describe("The time of interest controller", () => {
+        let controller;
+        let mockScope;
+        let mockConductor;
+        let mockFormatService;
+        let mockTimeSystem;
+        let mockFormat;
 
-        beforeEach(function () {
+        beforeEach(() => {
             mockConductor = jasmine.createSpyObj("conductor", [
                 "on",
                 "timeSystem"
@@ -50,7 +50,7 @@ define(['./TimeOfInterestController'], function (TimeOfInterestController) {
             mockFormatService.getFormat.andReturn(mockFormat);
 
             mockTimeSystem = {
-                formats: function () {
+                formats: () => {
                     return ["mockFormat"];
                 }
             };
@@ -58,29 +58,29 @@ define(['./TimeOfInterestController'], function (TimeOfInterestController) {
             controller = new TimeOfInterestController(mockScope, {conductor: mockConductor}, mockFormatService);
         });
 
-        function getCallback(target, event) {
-            return target.calls.filter(function (call) {
+        const getCallback = (target, event) => {
+            return target.calls.filter( (call) => {
                 return call.args[0] === event;
             })[0].args[1];
         }
 
-        it("Listens for changes to TOI", function () {
+        it("Listens for changes to TOI", () => {
             expect(mockConductor.on).toHaveBeenCalledWith("timeOfInterest", controller.changeTimeOfInterest);
         });
 
-        it("updates format when time system changes", function () {
+        it("updates format when time system changes", () => {
             expect(mockConductor.on).toHaveBeenCalledWith("timeSystem", controller.changeTimeSystem);
             getCallback(mockConductor.on, "timeSystem")(mockTimeSystem);
             expect(controller.format).toBe(mockFormat);
         });
 
-        describe("When TOI changes", function () {
-            var toi;
-            var toiCallback;
-            var formattedTOI;
+        describe("When TOI changes", () => {
+            let toi;
+            let toiCallback;
+            let formattedTOI;
 
-            beforeEach(function () {
-                var timeSystemCallback = getCallback(mockConductor.on, "timeSystem");
+            beforeEach(() => {
+                let timeSystemCallback = getCallback(mockConductor.on, "timeSystem");
                 toi = 1;
                 mockConductor.timeSystem.andReturn(mockTimeSystem);
 
@@ -93,18 +93,18 @@ define(['./TimeOfInterestController'], function (TimeOfInterestController) {
                 mockFormatService.getFormat.andReturn("mockFormat");
                 mockFormat.format.andReturn(formattedTOI);
             });
-            it("Uses the time system formatter to produce TOI text", function () {
+            it("Uses the time system formatter to produce TOI text", () => {
                 toiCallback = getCallback(mockConductor.on, "timeOfInterest");
                 //Set TOI
                 toiCallback(toi);
                 expect(mockFormat.format).toHaveBeenCalled();
             });
-            it("Sets the time of interest text", function () {
+            it("Sets the time of interest text", () => {
                 //Set TOI
                 toiCallback(toi);
                 expect(controller.toiText).toBe(formattedTOI);
             });
-            it("Pins the time of interest", function () {
+            it("Pins the time of interest", () => {
                 //Set TOI
                 toiCallback(toi);
                 expect(mockScope.pinned).toBe(true);

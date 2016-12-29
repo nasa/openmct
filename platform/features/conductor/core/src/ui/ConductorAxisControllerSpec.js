@@ -24,13 +24,13 @@ define([
     './ConductorAxisController',
     'zepto',
     'd3'
-], function (
+], (
     ConductorAxisController,
     $,
     d3
-) {
-    describe("The ConductorAxisController", function () {
-        var controller,
+) => {
+    describe("The ConductorAxisController", () => {
+        let controller,
             mockConductor,
             mockConductorViewService,
             mockFormatService,
@@ -42,13 +42,13 @@ define([
             mockTimeSystem,
             mockFormat;
 
-        function getCallback(target, name) {
-            return target.calls.filter(function (call) {
+        const getCallback = (target, name) => {
+            return target.calls.filter( (call) => {
                 return call.args[0] === name;
             })[0].args[1];
         }
 
-        beforeEach(function () {
+        beforeEach( () => {
             mockScope = jasmine.createSpyObj("scope", [
                 "$on"
             ]);
@@ -105,20 +105,20 @@ define([
             mockTimeSystem.isUTCBased.andReturn(false);
         });
 
-        it("listens for changes to time system and bounds", function () {
+        it("listens for changes to time system and bounds", () => {
             expect(mockConductor.on).toHaveBeenCalledWith("timeSystem", controller.changeTimeSystem);
             expect(mockConductor.on).toHaveBeenCalledWith("bounds", controller.changeBounds);
         });
 
-        it("on scope destruction, deregisters listeners", function () {
+        it("on scope destruction, deregisters listeners", () => {
             expect(mockScope.$on).toHaveBeenCalledWith("$destroy", controller.destroy);
             controller.destroy();
             expect(mockConductor.off).toHaveBeenCalledWith("timeSystem", controller.changeTimeSystem);
             expect(mockConductor.off).toHaveBeenCalledWith("bounds", controller.changeBounds);
         });
 
-        describe("when the time system changes", function () {
-            it("uses a UTC scale for UTC time systems", function () {
+        describe("when the time system changes", () => {
+            it("uses a UTC scale for UTC time systems", () => {
                 mockTimeSystem.isUTCBased.andReturn(true);
                 controller.changeTimeSystem(mockTimeSystem);
 
@@ -126,46 +126,46 @@ define([
                 expect(d3.scaleLinear).not.toHaveBeenCalled();
             });
 
-            it("uses a linear scale for non-UTC time systems", function () {
+            it("uses a linear scale for non-UTC time systems", () => {
                 mockTimeSystem.isUTCBased.andReturn(false);
                 controller.changeTimeSystem(mockTimeSystem);
                 expect(d3.scaleLinear).toHaveBeenCalled();
                 expect(d3.scaleUtc).not.toHaveBeenCalled();
             });
 
-            it("sets axis domain to time conductor bounds", function () {
+            it("sets axis domain to time conductor bounds", () => {
                 mockTimeSystem.isUTCBased.andReturn(false);
                 controller.setScale();
                 expect(controller.xScale.domain()).toEqual([mockBounds.start, mockBounds.end]);
             });
 
             it("uses the format specified by the time system to format tick" +
-                " labels", function () {
+                " labels", () => {
                 controller.changeTimeSystem(mockTimeSystem);
                 expect(mockFormat.format).toHaveBeenCalled();
             });
 
-            it('responds to zoom events', function () {
+            it('responds to zoom events', () => {
                 expect(mockConductorViewService.on).toHaveBeenCalledWith("zoom", controller.onZoom);
-                var cb = getCallback(mockConductorViewService.on, "zoom");
+                let cb = getCallback(mockConductorViewService.on, "zoom");
                 spyOn(controller, 'setScale').andCallThrough();
                 cb({bounds: {start: 0, end: 100}});
                 expect(controller.setScale).toHaveBeenCalled();
             });
 
-            it('adjusts scale on pan', function () {
+            it('adjusts scale on pan', () => {
                 spyOn(controller, 'setScale').andCallThrough();
                 controller.pan(100);
                 expect(controller.setScale).toHaveBeenCalled();
             });
 
-            it('emits event on pan', function () {
+            it('emits event on pan', () => {
                 spyOn(controller, 'setScale').andCallThrough();
                 controller.pan(100);
                 expect(mockConductorViewService.emit).toHaveBeenCalledWith("pan", jasmine.any(Object));
             });
 
-            it('cleans up listeners on destruction', function () {
+            it('cleans up listeners on destruction', () => {
                 controller.destroy();
                 expect(mockConductor.off).toHaveBeenCalledWith("bounds", controller.changeBounds);
                 expect(mockConductor.off).toHaveBeenCalledWith("timeSystem", controller.changeTimeSystem);

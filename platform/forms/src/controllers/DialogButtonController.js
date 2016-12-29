@@ -21,7 +21,7 @@
  *****************************************************************************/
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Controller for the `dialog-button` control type. Provides
@@ -33,19 +33,19 @@ define(
          * @param {DialogService} dialogService service to use to prompt
          *        for user input
          */
-        function DialogButtonController($scope, dialogService) {
-            var self = this,
-                buttonForm;
+        class DialogButtonController {
+          constructor($scope, dialogService)  {
+            let buttonForm;
 
             // Store the result of user input to the model
-            function storeResult(result) {
+            const storeResult = (result) => {
                 $scope.ngModel[$scope.field] = result[$scope.field];
             }
 
             // Prompt for user input
-            function showDialog() {
+            const showDialog = () => {
                 // Prepare initial state
-                var state = {};
+                let state = {};
                 state[$scope.field] = $scope.ngModel[$scope.field];
 
                 // Show dialog, then store user input (if any)
@@ -53,20 +53,20 @@ define(
             }
 
             // Refresh state based on structure for this control
-            function refreshStructure(structure) {
-                var row = Object.create(structure.dialog || {});
+            const refreshStructure = (structure) => {
+                let row = Object.create(structure.dialog || {});
 
                 structure = structure || {};
 
                 // Add the key, to read back from that row
                 row.key = $scope.field;
 
-                // Prepare the structure for the button itself
-                self.buttonStructure = {};
-                self.buttonStructure.cssclass = structure.cssclass;
-                self.buttonStructure.name = structure.name;
-                self.buttonStructure.description = structure.description;
-                self.buttonStructure.click = showDialog;
+                // Prepare the structure for the button itthis
+                this.buttonStructure = {};
+                this.buttonStructure.cssclass = structure.cssclass;
+                this.buttonStructure.name = structure.name;
+                this.buttonStructure.description = structure.description;
+                this.buttonStructure.click = showDialog;
 
                 // Prepare the form; a single row
                 buttonForm = {
@@ -84,10 +84,10 @@ define(
          * is clicked.
          * @returns dialog structure
          */
-        DialogButtonController.prototype.getButtonStructure = function () {
+        getButtonStructure() {
             return this.buttonStructure;
         };
-
+      }
         return DialogButtonController;
     }
 );

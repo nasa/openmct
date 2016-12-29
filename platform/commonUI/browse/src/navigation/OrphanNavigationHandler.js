@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([], () => {
 
     /**
      * Navigates away from orphan objects whenever they are detected.
@@ -35,41 +35,40 @@ define([], function () {
      * @param navigationService the `navigationService`
      * @constructor
      */
-    function OrphanNavigationHandler(throttle, topic, navigationService) {
-        var throttledCheckNavigation;
+    const OrphanNavigationHandler = (throttle, topic, navigationService) => {
+        let throttledCheckNavigation;
 
-        function getParent(domainObject) {
-            var context = domainObject.getCapability('context');
+        const getParent = (domainObject) => {
+            let context = domainObject.getCapability('context');
             return context.getParent();
         }
 
-        function isOrphan(domainObject) {
-            var parent = getParent(domainObject),
+        const isOrphan = (domainObject) => {
+            let parent = getParent(domainObject),
                 composition = parent.getModel().composition,
                 id = domainObject.getId();
             return !composition || (composition.indexOf(id) === -1);
         }
 
-        function navigateToParent(domainObject) {
-            var parent = getParent(domainObject);
+        const navigateToParent = (domainObject) => {
+            let parent = getParent(domainObject);
             return parent.getCapability('action').perform('navigate');
-        }
+        };
 
-        function checkNavigation() {
-            var navigatedObject = navigationService.getNavigation();
+        const checkNavigation = () => {
+            let navigatedObject = navigationService.getNavigation();
             if (navigatedObject.hasCapability('context') &&
                 isOrphan(navigatedObject)) {
                 if (!navigatedObject.getCapability('editor').isEditContextRoot()) {
                     navigateToParent(navigatedObject);
                 }
             }
-        }
+        };
 
         throttledCheckNavigation = throttle(checkNavigation);
 
         navigationService.addListener(throttledCheckNavigation);
         topic('mutation').listen(throttledCheckNavigation);
-    }
-
+    };
     return OrphanNavigationHandler;
 });

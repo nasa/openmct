@@ -22,16 +22,16 @@
 
 define(
     ["../TimelineFormatter"],
-    function (TimelineFormatter) {
+    (TimelineFormatter) => {
 
-        var FORMATTER = new TimelineFormatter();
+        let FORMATTER = new TimelineFormatter();
 
         /**
          * Provides tabular data for the Timeline's tabular view area.
          */
-        function TimelineTableController() {
+        const TimelineTableController = () => {
 
-            function getNiceTime(millis) {
+            const getNiceTime = (millis) => {
                 return FORMATTER.format(millis);
             }
 

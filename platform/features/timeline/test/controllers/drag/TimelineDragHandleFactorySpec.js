@@ -22,17 +22,17 @@
 
 define(
     ['../../../src/controllers/drag/TimelineDragHandleFactory'],
-    function (TimelineDragHandleFactory) {
+    (TimelineDragHandleFactory) => {
 
-        describe("A Timeline drag handle factory", function () {
-            var mockDragHandler,
+        describe("A Timeline drag handle factory", () => {
+            let mockDragHandler,
                 mockSnapHandler,
                 mockDomainObject,
                 mockType,
                 testType,
                 factory;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockDragHandler = jasmine.createSpyObj(
                     'dragHandler',
                     ['start']
@@ -52,7 +52,7 @@ define(
 
                 mockDomainObject.getId.andReturn('test-id');
                 mockDomainObject.getCapability.andReturn(mockType);
-                mockType.instanceOf.andCallFake(function (t) {
+                mockType.instanceOf.andCallFake( (t) => {
                     return t === testType;
                 });
 
@@ -62,19 +62,19 @@ define(
                 );
             });
 
-            it("inspects an object's type capability", function () {
+            it("inspects an object's type capability", () => {
                 factory.handles(mockDomainObject);
                 expect(mockDomainObject.getCapability)
                     .toHaveBeenCalledWith('type');
             });
 
-            it("provides three handles for activities", function () {
+            it("provides three handles for activities", () => {
                 testType = "activity";
                 expect(factory.handles(mockDomainObject).length)
                     .toEqual(3);
             });
 
-            it("provides two handles for timelines", function () {
+            it("provides two handles for timelines", () => {
                 testType = "timeline";
                 expect(factory.handles(mockDomainObject).length)
                     .toEqual(2);

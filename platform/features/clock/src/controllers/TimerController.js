@@ -22,9 +22,9 @@
 
 define(
     ['./TimerFormatter'],
-    function (TimerFormatter) {
+    (TimerFormatter) => {
 
-        var FORMATTER = new TimerFormatter();
+        let FORMATTER = new TimerFormatter();
 
 
         /**
@@ -37,39 +37,39 @@ define(
          * @param {Function} now a function which returns the current
          *        time (typically wrapping `Date.now`)
          */
-        function TimerController($scope, $window, now) {
-            var formatter,
+        class TimerController {
+          constructor($scope, $window, now) {
+            let formatter,
                 active = true,
                 relativeTimestamp,
-                lastTimestamp,
-                self = this;
+                lastTimestamp
 
-            function update() {
-                var timeDelta = lastTimestamp - relativeTimestamp;
+            const update = () => {
+                let timeDelta = lastTimestamp - relativeTimestamp;
 
                 if (formatter && !isNaN(timeDelta)) {
-                    self.textValue = formatter(timeDelta);
-                    self.signValue = timeDelta < 0 ? "-" :
+                    this.textValue = formatter(timeDelta);
+                    this.signValue = timeDelta < 0 ? "-" :
                         timeDelta >= 1000 ? "+" : "";
-                    self.signCssClass = timeDelta < 0 ? "icon-minus" :
+                    this.signCssClass = timeDelta < 0 ? "icon-minus" :
                         timeDelta >= 1000 ? "icon-plus" : "";
                 } else {
-                    self.textValue = "";
-                    self.signValue = "";
-                    self.signCssClass = "";
+                    this.textValue = "";
+                    this.signValue = "";
+                    this.signCssClass = "";
                 }
             }
 
-            function updateFormat(key) {
+            const updateFormat = (key) => {
                 formatter = FORMATTER[key] || FORMATTER.long;
             }
 
-            function updateTimestamp(timestamp) {
+            const updateTimestamp = (timestamp) => {
                 relativeTimestamp = timestamp;
             }
 
-            function updateObject(domainObject) {
-                var model = domainObject.getModel(),
+            const updateObject = (domainObject) => {
+                let model = domainObject.getModel(),
                     timestamp = model.timestamp,
                     formatKey = model.timerFormat,
                     actionCapability = domainObject.getCapability('action'),
@@ -79,31 +79,31 @@ define(
                 updateFormat(formatKey);
                 updateTimestamp(timestamp);
 
-                self.relevantAction = actionCapability &&
+                this.relevantAction = actionCapability &&
                     actionCapability.getActions(actionKey)[0];
 
                 update();
             }
 
-            function handleObjectChange(domainObject) {
+            const handleObjectChange = (domainObject) => {
                 if (domainObject) {
                     updateObject(domainObject);
                 }
             }
 
-            function handleModification() {
+            const handleModification = () => {
                 handleObjectChange($scope.domainObject);
             }
 
-            function tick() {
-                var lastSign = self.signValue,
-                    lastText = self.textValue;
+            const tick = () => {
+                let lastSign = this.signValue,
+                    lastText = this.textValue;
                 lastTimestamp = now();
                 update();
                 // We're running in an animation frame, not in a digest cycle.
                 // We need to trigger a digest cycle if our displayable data
                 // changes.
-                if (lastSign !== self.signValue || lastText !== self.textValue) {
+                if (lastSign !== this.signValue || lastText !== this.textValue) {
                     $scope.$apply();
                 }
                 if (active) {
@@ -118,7 +118,7 @@ define(
             $scope.$watch('model.modified', handleModification);
 
             // When the scope is destroyed, stop requesting anim. frames
-            $scope.$on('$destroy', function () {
+            $scope.$on('$destroy', () => {
                 active = false;
             });
 
@@ -133,7 +133,7 @@ define(
          * for the start/restart button.
          * @returns {string} cssclass to display
          */
-        TimerController.prototype.buttonCssClass = function () {
+        buttonCssClass() {
             return this.relevantAction ?
                     this.relevantAction.getMetadata().cssclass : "";
         };
@@ -143,7 +143,7 @@ define(
          * (e.g. in a tooltip)
          * @returns {string} name of the action
          */
-        TimerController.prototype.buttonText = function () {
+        buttonText() {
             return this.relevantAction ?
                     this.relevantAction.getMetadata().name : "";
         };
@@ -152,7 +152,7 @@ define(
         /**
          * Perform the action associated with the start/restart button.
          */
-        TimerController.prototype.clickButton = function () {
+        clickButton() {
             if (this.relevantAction) {
                 this.relevantAction.perform();
                 this.updateObject(this.$scope.domainObject);
@@ -164,7 +164,7 @@ define(
          * displayable text.
          * @returns {string} sign of the current timer value
          */
-        TimerController.prototype.sign = function () {
+        sign() {
             return this.signValue;
         };
 
@@ -173,7 +173,7 @@ define(
          * a CSS class.
          * @returns {string} sign of the current timer value
          */
-        TimerController.prototype.signClass = function () {
+        signClass() {
             return this.signCssClass;
         };
 
@@ -181,10 +181,10 @@ define(
          * Get the text to display for the current timer value.
          * @returns {string} current timer value
          */
-        TimerController.prototype.text = function () {
+        text() {
             return this.textValue;
         };
-
+      }
         return TimerController;
     }
 );
