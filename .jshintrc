@@ -3,6 +3,7 @@
     "browser": true,
     "curly": true,
     "eqeqeq": true,
+    "esversion": 6,
     "forin": true,
     "freeze": true,
     "funcscope": false,
