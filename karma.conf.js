@@ -53,7 +53,8 @@ module.exports = function(config) {
         // Preprocess matching files before serving them to the browser.
         // https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            '*.js': ['babel'],
+            'openmct.js': ['babel'],
+            'test-main.js': ['babel'],
             'src/**/*.js': ['babel'],
             'platform/**/src/**/*.js': ['babel'],
             'platform/**/test/**/*.js': ['babel'],
