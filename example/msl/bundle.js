@@ -37,74 +37,79 @@ define([
     legacyRegistry.register("example/msl", {
         "name" : "Mars Science Laboratory Data Adapter",
         "extensions" : {
-        "types": [
-            {
-                "name":"Mars Science Laboratory",
-                "key": "msl.curiosity",
-                "cssclass": "icon-object"
-            },
-            {
-                "name": "Instrument",
-                "key": "msl.instrument",
-                "cssclass": "icon-object",
-                "model": {"composition": []}
-            },
-            {
-                "name": "Measurement",
-                "key": "msl.measurement",
-                "cssclass": "icon-telemetry",
-                "model": {"telemetry": {}},
-                "telemetry": {
-                    "source": "rems.source",
-                    "domains": [
-                        {
-                            "name": "Time",
-                            "key": "utc",
-                            "format": "utc"
-                        }
-                    ]
+            "types": [
+                {
+                    "name":"Mars Science Laboratory",
+                    "key": "msl.curiosity",
+                    "cssclass": "icon-object"
+                },
+                {
+                    "name": "Instrument",
+                    "key": "msl.instrument",
+                    "cssclass": "icon-object",
+                    "model": {"composition": []}
+                },
+                {
+                    "name": "Measurement",
+                    "key": "msl.measurement",
+                    "cssclass": "icon-telemetry",
+                    "model": {"telemetry": {}},
+                    "telemetry": {
+                        "source": "rems.source",
+                        "domains": [
+                            {
+                                "name": "Time",
+                                "key": "utc",
+                                "format": "utc"
+                            }
+                        ]
+                    }
                 }
-            }
-        ],
-        "constants": [
-            {
-                "key": "REMS_WS_URL",
-                "value": "/proxyUrl?url=http://cab.inta-csic.es/rems/wp-content/plugins/marsweather-widget/api.php"
-            }
-        ],
-        "roots": [
-            {
-                "id": "msl:curiosity",
-                "priority" : "preferred",
-                "model": {
-                    "type": "msl.curiosity",
-                    "name": "Mars Science Laboratory",
-                    "composition": ["msl_tlm:rems"]
+            ],
+            "constants": [
+                {
+                    "key": "REMS_WS_URL",
+                    "value": "/proxyUrl?url=http://cab.inta-csic.es/rems/wp-content/plugins/marsweather-widget/api.php"
                 }
-            }
-        ],
-        "services": [
-            {
-                "key":"rems.adapter",
-                "implementation": RemsTelemetryServerAdapter,
-                "depends": ["$q", "$http", "$log", "REMS_WS_URL"]
-            }
-        ],
-        "components": [
-            {
-                "provides": "modelService",
-                "type": "provider",
-                "implementation": RemsTelemetryModelProvider,
-                "depends": ["rems.adapter"]
-            },
-            {
-                "provides": "telemetryService",
-                "type": "provider",
-                "implementation": RemsTelemetryProvider,
-                "depends": ["rems.adapter", "$q"]
-            }
-        ]
-    }
+            ],
+            "roots": [
+                {
+                    "id": "msl:curiosity"
+                }
+            ],
+            "models": [
+                {
+                    "id": "msl:curiosity",
+                    "priority": "preferred",
+                    "model": {
+                        "type": "msl.curiosity",
+                        "name": "Mars Science Laboratory",
+                        "composition": ["msl_tlm:rems"]
+                    }
+                }
+            ],
+            "services": [
+                {
+                    "key":"rems.adapter",
+                    "implementation": RemsTelemetryServerAdapter,
+                    "depends": ["$q", "$http", "$log", "REMS_WS_URL"]
+                }
+            ],
+            "components": [
+                {
+                    "provides": "modelService",
+                    "type": "provider",
+                    "implementation": RemsTelemetryModelProvider,
+                    "depends": ["rems.adapter"]
+                },
+                {
+                    "provides": "telemetryService",
+                    "type": "provider",
+                    "implementation": RemsTelemetryProvider,
+                    "depends": ["rems.adapter", "$q"]
+                }
+            ]
+        }
     });
 });
 
