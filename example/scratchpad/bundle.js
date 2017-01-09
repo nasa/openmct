@@ -34,6 +34,11 @@ define([
         "extensions": {
             "roots": [
                 {
+                    "id": "scratch:root"
+                }
+            ],
+            "models": [
+                {
                     "id": "scratch:root",
                     "model": {
                         "type": "folder",
