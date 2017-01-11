@@ -53,10 +53,14 @@ module.exports = function(config) {
         // Preprocess matching files before serving them to the browser.
         // https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
+            'openmct.js': ['babel'],
+            'test-main.js': ['babel'],
+            'src/**/*.js': ['babel'],
+            'platform/**/src/**/*.js': ['babel'],
+            'platform/**/test/**/*.js': ['babel'],
             'src/**/src/**/!(*Spec).js': [ 'coverage' ],
             'platform/**/src/**/!(*Spec).js': [ 'coverage' ]
         },
-
         // Test results reporter to use
         // Possible values: 'dots', 'progress'
         // Available reporters: https://npmjs.org/browse/keyword/karma-reporter

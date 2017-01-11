@@ -59,8 +59,8 @@ define(() => class BundleRegistry {
         return Object.keys(this.bundles);
     }
 
-    remove() {
-        this.disable.call(this, arguments);
+    remove(path) {
+        this.disable(path);
     }
 
     ["delete"](path) {
