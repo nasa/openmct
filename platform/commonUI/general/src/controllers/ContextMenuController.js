@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Controller for the context menu. Maintains an up-to-date
@@ -34,9 +34,9 @@ define(
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function ContextMenuController($scope) {
+        const ContextMenuController = ($scope) => {
             // Refresh variable "menuActions" in the scope
-            function updateActions() {
+            const updateActions = () => {
                 $scope.menuActions = $scope.action ?
                         $scope.action.getActions({ category: 'contextual' }) :
                         [];
@@ -44,7 +44,7 @@ define(
 
             // Update using the action capability
             $scope.$watch("action", updateActions);
-        }
+        };
 
         return ContextMenuController;
     }

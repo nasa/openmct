@@ -22,15 +22,15 @@
 
 define(
     ['../../../src/controllers/drag/TimelineMoveHandle', '../../../src/TimelineConstants'],
-    function (TimelineMoveHandle, TimelineConstants) {
+    (TimelineMoveHandle, TimelineConstants) => {
 
-        describe("A Timeline move drag handle", function () {
-            var mockDragHandler,
+        describe("A Timeline move drag handle", () => {
+            let mockDragHandler,
                 mockSnapHandler,
                 mockZoomController,
                 handle;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockDragHandler = jasmine.createSpyObj(
                     'dragHandler',
                     ['start', 'duration', 'end', 'move', 'persist']
@@ -49,16 +49,16 @@ define(
                 mockDragHandler.end.andReturn(12321 + 4200);
 
                 // Echo back the value from snapper for most tests
-                mockSnapHandler.snap.andCallFake(function (ts) {
+                mockSnapHandler.snap.andCallFake( (ts) => {
                     return ts;
                 });
 
                 // Double pixels to get millis, for test purposes
-                mockZoomController.toMillis.andCallFake(function (px) {
+                mockZoomController.toMillis.andCallFake( (px) => {
                     return px * 2;
                 });
 
-                mockZoomController.toPixels.andCallFake(function (ms) {
+                mockZoomController.toPixels.andCallFake( (ms) => {
                     return ms / 2;
                 });
 
@@ -69,8 +69,8 @@ define(
                 );
             });
 
-            it("provides a style for templates", function () {
-                var w = TimelineConstants.HANDLE_WIDTH;
+            it("provides a style for templates", () => {
+                let w = TimelineConstants.HANDLE_WIDTH;
                 expect(handle.style(mockZoomController)).toEqual({
                     // Left should be adjusted by zoom controller
                     left: (12321 / 2) + w + 'px',
@@ -79,7 +79,7 @@ define(
                 });
             });
 
-            it("forwards drags to the drag handler", function () {
+            it("forwards drags to the drag handler", () => {
                 handle.begin();
                 handle.drag(100, mockZoomController);
                 // Should have been interpreted as a +200 ms change
@@ -89,7 +89,7 @@ define(
                 );
             });
 
-            it("tracks drags incrementally", function () {
+            it("tracks drags incrementally", () => {
                 handle.begin();
 
                 handle.drag(100, mockZoomController);
@@ -111,8 +111,8 @@ define(
                 );
             });
 
-            it("snaps drags to other end points", function () {
-                mockSnapHandler.snap.andCallFake(function (ts) {
+            it("snaps drags to other end points", () => {
+                mockSnapHandler.snap.andCallFake( (ts) => {
                     return ts + 10;
                 });
                 handle.begin();
@@ -125,21 +125,21 @@ define(
                 );
             });
 
-            it("considers snaps for both endpoints", function () {
+            it("considers snaps for both endpoints", () => {
                 handle.begin();
                 expect(mockSnapHandler.snap).not.toHaveBeenCalled();
                 handle.drag(100, mockZoomController);
                 expect(mockSnapHandler.snap.calls.length).toEqual(2);
             });
 
-            it("chooses the closest snap-to location", function () {
+            it("chooses the closest snap-to location", () => {
                 // Use a toggle to give snapped timestamps that are
                 // different distances away from the original.
                 // The move handle needs to choose the closest snap-to,
                 // regardless of whether it is the start/end (which
-                // will vary based on the initial state of this toggle.)
-                var toggle = false;
-                mockSnapHandler.snap.andCallFake(function (ts) {
+                // will lety based on the initial state of this toggle.)
+                let toggle = false;
+                mockSnapHandler.snap.andCallFake( (ts) => {
                     toggle = !toggle;
                     return ts + (toggle ? -5 : 10);
                 });
@@ -165,7 +165,7 @@ define(
                 );
             });
 
-            it("persists when a move is complete", function () {
+            it("persists when a move is complete", () => {
                 // Simulate normal drag cycle
                 handle.begin();
                 handle.drag(100, mockZoomController);

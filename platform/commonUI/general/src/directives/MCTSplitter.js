@@ -22,10 +22,10 @@
 
 define(
     [],
-    function () {
+    () => {
 
         // Pixel width to allocate for the splitter itself
-        var SPLITTER_TEMPLATE = "<div class='abs'" +
+        const SPLITTER_TEMPLATE = "<div class='abs'" +
                 "mct-drag-down=\"splitter.startMove()\" " +
                 "mct-drag=\"splitter.move(delta)\" " +
                 "mct-drag-up=\"splitter.endMove()\"></div>";
@@ -35,21 +35,21 @@ define(
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function MCTSplitter() {
-            function link(scope, element, attrs, mctSplitPane) {
-                var initialPosition;
+        const MCTSplitter = () => {
+            const link = (scope, element, attrs, mctSplitPane) => {
+                let initialPosition;
 
                 element.addClass("splitter");
 
                 scope.splitter = {
                     // Begin moving this splitter
-                    startMove: function () {
+                    startMove: () => {
                         initialPosition = mctSplitPane.position();
                         mctSplitPane.toggleClass('resizing');
                     },
                     // Handle user changes to splitter position
-                    move: function (delta) {
-                        var anchor = mctSplitPane.anchor(),
+                    move: (delta) => {
+                        let anchor = mctSplitPane.anchor(),
                             index = anchor.orientation === "vertical" ? 0 : 1,
                             pixelDelta = delta[index] *
                                 (anchor.reversed ? -1 : 1);
@@ -59,7 +59,7 @@ define(
                     },
                     // Grab the event when the user is done moving
                     // the splitter and pass it on
-                    endMove: function () {
+                    endMove: () => {
                         mctSplitPane.toggleClass('resizing');
                     }
                 };

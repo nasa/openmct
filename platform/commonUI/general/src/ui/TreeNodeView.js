@@ -25,15 +25,16 @@ define([
     'text!../../res/templates/tree/node.html',
     './ToggleView',
     './TreeLabelView'
-], function ($, nodeTemplate, ToggleView, TreeLabelView) {
+], ($, nodeTemplate, ToggleView, TreeLabelView) => {
 
-    function TreeNodeView(gestureService, subtreeFactory, selectFn) {
+    class TreeNodeView {
+      constructor(gestureService, subtreeFactory, selectFn) {
         this.li = $('<li>');
 
         this.statusClasses = [];
 
         this.toggleView = new ToggleView(false);
-        this.toggleView.observe(function (state) {
+        this.toggleView.observe( (state) => {
             if (state) {
                 if (!this.subtreeView) {
                     this.subtreeView = subtreeFactory();
@@ -45,13 +46,13 @@ define([
             } else if (this.subtreeView) {
                 $(this.subtreeView.elements()).addClass('hidden');
             }
-        }.bind(this));
+        });
 
         this.labelView = new TreeLabelView(gestureService);
 
-        $(this.labelView.elements()).on('click', function (event) {
+        $(this.labelView.elements()).on('click', (event) => {
             selectFn(this.activeObject, event);
-        }.bind(this));
+        });
 
         this.li.append($(nodeTemplate));
         this.li.find('span').eq(0)
@@ -61,21 +62,21 @@ define([
         this.model(undefined);
     }
 
-    TreeNodeView.prototype.updateStatusClasses = function (statuses) {
-        this.statusClasses.forEach(function (statusClass) {
+    updateStatusClasses(statuses) {
+        this.statusClasses.forEach( (statusClass) => {
             this.li.removeClass(statusClass);
-        }.bind(this));
+        });
 
-        this.statusClasses = statuses.map(function (status) {
+        this.statusClasses = statuses.map( (status) => {
             return 's-status-' + status;
         });
 
-        this.statusClasses.forEach(function (statusClass) {
+        this.statusClasses.forEach( (statusClass) => {
             this.li.addClass(statusClass);
-        }.bind(this));
+        });
     };
 
-    TreeNodeView.prototype.model = function (domainObject) {
+    model(domainObject) {
         if (this.unlisten) {
             this.unlisten();
         }
@@ -102,8 +103,8 @@ define([
         }
     };
 
-    function getIdPath(domainObject) {
-        var context = domainObject && domainObject.getCapability('context');
+    getIdPath(domainObject) {
+        let context = domainObject && domainObject.getCapability('context');
 
         function getId(domainObj) {
             return domainObj.getId();
@@ -112,9 +113,9 @@ define([
         return context ? context.getPath().map(getId) : [];
     }
 
-    TreeNodeView.prototype.value = function (domainObject) {
-        var activeIdPath = getIdPath(this.activeObject),
-            selectedIdPath = getIdPath(domainObject);
+    value(domainObject) {
+        let activeIdPath = this.getIdPath(this.activeObject),
+            selectedIdPath = this.getIdPath(domainObject);
 
         if (this.onSelectionPath) {
             this.li.find('.tree-item').eq(0).removeClass('selected');
@@ -127,7 +128,7 @@ define([
             !!domainObject &&
             !!this.activeObject &&
             (activeIdPath.length <= selectedIdPath.length) &&
-                activeIdPath.every(function (id, index) {
+                activeIdPath.every( (id, index) => {
                     return selectedIdPath[index] === id;
                 });
 
@@ -146,10 +147,9 @@ define([
      *
      * @returns {HTMLElement[]}
      */
-    TreeNodeView.prototype.elements = function () {
+    elements() {
         return this.li;
     };
-
-
+  }
     return TreeNodeView;
 });

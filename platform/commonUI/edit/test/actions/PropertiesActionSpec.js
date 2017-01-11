@@ -22,23 +22,23 @@
 
 define(
     ['../../src/actions/PropertiesAction'],
-    function (PropertiesAction) {
+    (PropertiesAction) => {
 
-        describe("Properties action", function () {
-            var capabilities, model, object, context, input, dialogService, action;
+        describe("Properties action", () => {
+            let capabilities, model, object, context, input, dialogService, action;
 
-            function mockPromise(value) {
+            const mockPromise = (value) => {
                 return {
-                    then: function (callback) {
+                    then: (callback) => {
                         return mockPromise(callback(value));
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 capabilities = {
                     type: {
-                        getProperties: function () {
+                        getProperties: () => {
                             return [];
                         },
                         hasFeature: jasmine.createSpy('hasFeature')
@@ -48,25 +48,25 @@ define(
                 model = {};
                 input = {};
                 object = {
-                    getId: function () {
+                    getId: () => {
                         return 'test-id';
                     },
-                    getCapability: function (k) {
+                    getCapability: (k) => {
                         return capabilities[k];
                     },
-                    getModel: function () {
+                    getModel: () => {
                         return model;
                     },
-                    useCapability: function (k, v) {
+                    useCapability: (k, v) => {
                         return capabilities[k](v);
                     },
-                    hasCapability: function () {
+                    hasCapability: () => {
                         return true;
                     }
                 };
                 context = { someKey: "some value", domainObject: object };
                 dialogService = {
-                    getUserInput: function () {
+                    getUserInput: () => {
                         return mockPromise(input);
                     }
                 };
@@ -77,19 +77,19 @@ define(
                 action = new PropertiesAction(dialogService, context);
             });
 
-            it("mutates an object when performed", function () {
+            it("mutates an object when performed", () => {
                 action.perform();
                 expect(capabilities.mutation).toHaveBeenCalled();
                 capabilities.mutation.mostRecentCall.args[0]({});
             });
 
-            it("does not muate object upon cancel", function () {
+            it("does not muate object upon cancel", () => {
                 input = undefined;
                 action.perform();
                 expect(capabilities.mutation).not.toHaveBeenCalled();
             });
 
-            it("is only applicable when a domain object is in context", function () {
+            it("is only applicable when a domain object is in context", () => {
                 expect(PropertiesAction.appliesTo(context)).toBeTruthy();
                 expect(PropertiesAction.appliesTo({})).toBeFalsy();
                 // Make sure it checked for creatability

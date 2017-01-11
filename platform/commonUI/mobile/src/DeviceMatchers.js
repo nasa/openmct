@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define(function () {
+define( () => {
 
     /**
      * An object containing key-value pairs, where keys are symbolic of
@@ -33,25 +33,25 @@ define(function () {
      * @private
      */
     return {
-        mobile: function (agentService) {
+        mobile: (agentService) => {
             return agentService.isMobile();
         },
-        phone: function (agentService) {
+        phone: (agentService) => {
             return agentService.isPhone();
         },
-        tablet: function (agentService) {
+        tablet: (agentService) => {
             return agentService.isTablet();
         },
-        desktop: function (agentService) {
+        desktop: (agentService) => {
             return !agentService.isMobile();
         },
-        portrait: function (agentService) {
+        portrait: (agentService) => {
             return agentService.isPortrait();
         },
-        landscape: function (agentService) {
+        landscape: (agentService) => {
             return agentService.isLandscape();
         },
-        touch: function (agentService) {
+        touch: (agentService) => {
             return agentService.isTouch();
         }
     };

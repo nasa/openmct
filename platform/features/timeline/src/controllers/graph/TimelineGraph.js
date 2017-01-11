@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Provides data to populate a graph in a timeline view.
@@ -35,8 +35,8 @@ define(
          * @param {TimelineGraphRenderer} renderer a renderer which
          *        can be used to prepare Float32Array instances
          */
-        function TimelineGraph(key, domainObjects, renderer) {
-            var drawingObject = { origin: [0, 0], dimensions: [0, 0], modified: 0},
+        const TimelineGraph = (key, domainObjects, renderer) => {
+            let drawingObject = { origin: [0, 0], dimensions: [0, 0], modified: 0},
                 // lines for the drawing object, by swimlane index
                 lines = [],
                 // min/max seen for a given swimlane, by swimlane index
@@ -49,28 +49,28 @@ define(
                 colors = Object.keys(domainObjects);
 
             // Get minimum value, ensure there's some room
-            function minimum() {
+            const minimum = () => {
                 return (min >= max) ? (max - 1) : min;
             }
 
             // Get maximum value, ensure there's some room
-            function maximum() {
+            const maximum =  () => {
                 return (min >= max) ? (min + 1) : max;
             }
 
             // Update minimum and maximum values
-            function updateMinMax() {
+            const updateMinMax = () => {
                 // Find the minimum among plot lines
-                min = extrema.map(function (ex) {
+                min = extrema.map( (ex) => {
                     return ex.min;
-                }).reduce(function (a, b) {
+                }).reduce( (a, b) => {
                     return Math.min(a, b);
                 }, Number.POSITIVE_INFINITY);
 
                 // Do the same for the maximum
-                max = extrema.map(function (ex) {
+                max = extrema.map( (ex) => {
                     return ex.max;
-                }).reduce(function (a, b) {
+                }).reduce( (a, b) => {
                     return Math.max(a, b);
                 }, Number.NEGATIVE_INFINITY);
 
@@ -81,9 +81,9 @@ define(
             }
 
             // Change contents of the drawing object (to trigger redraw)
-            function updateDrawingObject() {
+            const updateDrawingObject = () => {
                 // Update drawing object to include non-empty lines
-                drawingObject.lines = lines.filter(function (line) {
+                drawingObject.lines = lines.filter( (line) => {
                     return line.points > 1;
                 });
 
@@ -93,8 +93,8 @@ define(
             }
 
             // Update a specific line, by index
-            function updateLine(graph, index) {
-                var buffer = renderer.render(graph),
+            const updateLine = (graph, index) => {
+                let buffer = renderer.render(graph),
                     line = lines[index],
                     ex = extrema[index],
                     i;
@@ -120,12 +120,12 @@ define(
             }
 
             // Request initialization for a line's contents
-            function populateLine(color, index) {
-                var domainObject = domainObjects[color],
+            const populateLine = (color, index) => {
+                let domainObject = domainObjects[color],
                     graphPromise = domainObject.useCapability('graph');
 
                 if (graphPromise) {
-                    graphPromise.then(function (g) {
+                    graphPromise.then( (g) => {
                         if (g[key]) {
                             updateLine(g[key], index);
                         }
@@ -134,13 +134,13 @@ define(
             }
 
             // Create empty lines
-            lines = colors.map(function () {
+            lines = colors.map( () => {
                 // Sentinel value to exclude these lines
                 return { points: 0 };
             });
 
             // Specify initial min/max state per-line
-            extrema = colors.map(function () {
+            extrema = colors.map( () => {
                 return {
                     min: Number.POSITIVE_INFINITY,
                     max: Number.NEGATIVE_INFINITY
@@ -165,7 +165,7 @@ define(
                  * Set the displayed origin and duration, in milliseconds.
                  * @param {number} [value] value to set, if setting
                  */
-                setBounds: function (offset, duration) {
+                setBounds: (offset, duration) => {
                     // We don't update in-place, because we need the change
                     // to trigger a watch in mct-chart.
                     drawingObject.origin = [offset, drawingObject.origin[1]];
@@ -174,7 +174,7 @@ define(
                 /**
                  * Redraw lines in this graph.
                  */
-                refresh: function () {
+                refresh: () => {
                     colors.forEach(populateLine);
                 },
                 // Expose key, drawing object directly for use in templates

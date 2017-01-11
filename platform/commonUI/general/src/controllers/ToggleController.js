@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * A ToggleController is used to activate/deactivate things.
@@ -31,7 +31,8 @@ define(
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function ToggleController() {
+        class ToggleController {
+          constructor() {
             this.state = false;
 
             this.setState = this.setState.bind(this);
@@ -41,26 +42,26 @@ define(
          * Get the current state of the toggle.
          * @return {boolean} true if active
          */
-        ToggleController.prototype.isActive = function () {
+        isActive() {
             return this.state;
-        };
+        }
 
         /**
          * Set a new state for the toggle.
          * @return {boolean} true to activate
          */
-        ToggleController.prototype.setState = function (newState) {
+        setState(newState) {
             this.state = newState;
-        };
+        }
 
         /**
          * Toggle the current state; activate if it is inactive,
          * deactivate if it is active.
          */
-        ToggleController.prototype.toggle = function () {
+        toggle() {
             this.state = !this.state;
-        };
-
+        }
+      }
         return ToggleController;
     }
 );

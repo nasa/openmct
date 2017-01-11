@@ -23,92 +23,90 @@
 define([
     './object-utils',
     './objectEventEmitter'
-], function (
-    utils,
-    objectEventEmitter
-) {
-    function ObjectServiceProvider(objectService, instantiate, topic) {
+], (utils,objectEventEmitter) => {
+    class ObjectServiceProvider {
+      constructor(objectService, instantiate, topic) {
         this.objectService = objectService;
         this.instantiate = instantiate;
 
         this.generalTopic = topic('mutation');
         this.bridgeEventBuses();
-    }
+      }
 
     /**
      * Bridges old and new style mutation events to provide compatibility between the two APIs
      * @private
      */
-    ObjectServiceProvider.prototype.bridgeEventBuses = function () {
-        var removeGeneralTopicListener;
-        var handleLegacyMutation;
+      bridgeEventBuses() {
+          let removeGeneralTopicListener;
+          let handleLegacyMutation;
 
-        var handleMutation = function (newStyleObject) {
-            var keyString = utils.makeKeyString(newStyleObject.key);
-            var oldStyleObject = this.instantiate(utils.toOldFormat(newStyleObject), keyString);
+          let handleMutation = (newStyleObject) => {
+              let keyString = utils.makeKeyString(newStyleObject.key);
+              let oldStyleObject = this.instantiate(utils.toOldFormat(newStyleObject), keyString);
 
-            // Don't trigger self
-            removeGeneralTopicListener();
+              // Don't trigger self
+              removeGeneralTopicListener();
 
-            oldStyleObject.getCapability('mutation').mutate(function () {
-                return utils.toOldFormat(newStyleObject);
-            });
+              oldStyleObject.getCapability('mutation').mutate( () => {
+                  return utils.toOldFormat(newStyleObject);
+              });
 
-            removeGeneralTopicListener = this.generalTopic.listen(handleLegacyMutation);
-        }.bind(this);
+              removeGeneralTopicListener = this.generalTopic.listen(handleLegacyMutation);
+          };
 
-        handleLegacyMutation = function (legacyObject) {
-            var newStyleObject = utils.toNewFormat(legacyObject.getModel(), legacyObject.getId());
+          handleLegacyMutation = (legacyObject) => {
+              let newStyleObject = utils.toNewFormat(legacyObject.getModel(), legacyObject.getId());
 
-            //Don't trigger self
-            objectEventEmitter.off('mutation', handleMutation);
-            objectEventEmitter.emit(newStyleObject.identifier.key + ":*", newStyleObject);
-            objectEventEmitter.on('mutation', handleMutation);
-        }.bind(this);
+              //Don't trigger self
+              objectEventEmitter.off('mutation', handleMutation);
+              objectEventEmitter.emit(newStyleObject.identifier.key + ":*", newStyleObject);
+              objectEventEmitter.on('mutation', handleMutation);
+          };
 
-        objectEventEmitter.on('mutation', handleMutation);
-        removeGeneralTopicListener = this.generalTopic.listen(handleLegacyMutation);
-    };
+          objectEventEmitter.on('mutation', handleMutation);
+          removeGeneralTopicListener = this.generalTopic.listen(handleLegacyMutation);
+      }
 
-    ObjectServiceProvider.prototype.save = function (object) {
-        var key = object.key;
+    save(object) {
+        let key = object.key;
 
         return object.getCapability('persistence')
                 .persist()
-                .then(function () {
+                .then( () => {
                     return utils.toNewFormat(object, key);
                 });
-    };
+    }
 
-    ObjectServiceProvider.prototype.delete = function (object) {
+    delete(object) {
         // TODO!
-    };
+    }
 
-    ObjectServiceProvider.prototype.get = function (key) {
-        var keyString = utils.makeKeyString(key);
+    get(key) {
+        let keyString = utils.makeKeyString(key);
         return this.objectService.getObjects([keyString])
-            .then(function (results) {
-                var model = results[keyString].getModel();
+            .then( (results) => {
+                let model = results[keyString].getModel();
                 return utils.toNewFormat(model, key);
             });
-    };
+    }
 
     // Injects new object API as a decorator so that it hijacks all requests.
     // Object providers implemented on new API should just work, old API should just work, many things may break.
-    function LegacyObjectAPIInterceptor(openmct, ROOTS, instantiate, topic, objectService) {
-        this.getObjects = function (keys) {
-            var results = {},
-                promises = keys.map(function (keyString) {
-                    var key = utils.parseKeyString(keyString);
+    LegacyObjectAPIInterceptor(openmct, ROOTS, instantiate, topic, objectService) {
+        this.getObjects = (keys) => {
+            let results = {},
+                promises = keys.map( (keyString) => {
+                    let key = utils.parseKeyString(keyString);
                     return openmct.objects.get(key)
-                        .then(function (object) {
+                        .then( (object) => {
                             object = utils.toOldFormat(object);
                             results[keyString] = instantiate(object, keyString);
                         });
                 });
 
             return Promise.all(promises)
-                .then(function () {
+                .then( () => {
                     return results;
                 });
         };
@@ -117,12 +115,12 @@ define([
             new ObjectServiceProvider(objectService, instantiate, topic)
         );
 
-        ROOTS.forEach(function (r) {
+        ROOTS.forEach( (r) => {
             openmct.objects.addRoot(utils.parseKeyString(r.id));
         });
 
         return this;
     }
-
-    return LegacyObjectAPIInterceptor;
+  }
+  return ObjectServiceProvider;
 });

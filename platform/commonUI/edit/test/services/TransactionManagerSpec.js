@@ -23,9 +23,9 @@
 
 define(
     ["../../src/services/TransactionManager"],
-    function (TransactionManager) {
-        describe("TransactionManager", function () {
-            var mockTransactionService,
+    (TransactionManager) => {
+        describe("TransactionManager", () => {
+            let mockTransactionService,
                 testId,
                 mockOnCommit,
                 mockOnCancel,
@@ -33,7 +33,7 @@ define(
                 mockPromise,
                 manager;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockRemoves = [];
                 mockTransactionService = jasmine.createSpyObj(
                     "transactionService",
@@ -47,8 +47,8 @@ define(
                 mockOnCommit.andReturn(mockPromise);
                 mockOnCancel.andReturn(mockPromise);
 
-                mockTransactionService.addToTransaction.andCallFake(function () {
-                    var mockRemove =
+                mockTransactionService.addToTransaction.andCallFake( () => {
+                    let mockRemove =
                         jasmine.createSpy('remove-' + mockRemoves.length);
                     mockRemoves.push(mockRemove);
                     return mockRemove;
@@ -57,15 +57,15 @@ define(
                 manager = new TransactionManager(mockTransactionService);
             });
 
-            it("delegates isActive calls", function () {
-                [false, true].forEach(function (state) {
+            it("delegates isActive calls", () => {
+                [false, true].forEach( (state) => {
                     mockTransactionService.isActive.andReturn(state);
                     expect(manager.isActive()).toBe(state);
                 });
             });
 
-            describe("when addToTransaction is called", function () {
-                beforeEach(function () {
+            describe("when addToTransaction is called", () => {
+                beforeEach( () => {
                     manager.addToTransaction(
                         testId,
                         mockOnCommit,
@@ -73,7 +73,7 @@ define(
                     );
                 });
 
-                it("adds callbacks to the active transaction", function () {
+                it("adds callbacks to the active transaction", () => {
                     expect(mockTransactionService.addToTransaction)
                         .toHaveBeenCalledWith(
                             jasmine.any(Function),
@@ -81,7 +81,7 @@ define(
                         );
                 });
 
-                it("invokes passed-in callbacks from its own callbacks", function () {
+                it("invokes passed-in callbacks from its own callbacks", () => {
                     expect(mockOnCommit).not.toHaveBeenCalled();
                     mockTransactionService.addToTransaction
                         .mostRecentCall.args[0]();
@@ -93,7 +93,7 @@ define(
                     expect(mockOnCancel).toHaveBeenCalled();
                 });
 
-                it("ignores subsequent calls for the same object", function () {
+                it("ignores subsequent calls for the same object", () => {
                     manager.addToTransaction(
                         testId,
                         jasmine.createSpy(),
@@ -103,7 +103,7 @@ define(
                         .toEqual(1);
                 });
 
-                it("accepts subsequent calls for other objects", function () {
+                it("accepts subsequent calls for other objects", () => {
                     manager.addToTransaction(
                         'other-id',
                         jasmine.createSpy(),
@@ -113,16 +113,16 @@ define(
                         .toEqual(2);
                 });
 
-                it("does not remove callbacks from the transaction", function () {
+                it("does not remove callbacks from the transaction", () => {
                     expect(mockRemoves[0]).not.toHaveBeenCalled();
                 });
 
-                describe("and clearTransactionsFor is subsequently called", function () {
-                    beforeEach(function () {
+                describe("and clearTransactionsFor is subsequently called", () => {
+                    beforeEach( () => {
                         manager.clearTransactionsFor(testId);
                     });
 
-                    it("removes callbacks from the transaction", function () {
+                    it("removes callbacks from the transaction", () => {
                         expect(mockRemoves[0]).toHaveBeenCalled();
                     });
                 });

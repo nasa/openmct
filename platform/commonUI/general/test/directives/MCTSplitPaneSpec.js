@@ -22,9 +22,9 @@
 
 define(
     ["../../src/directives/MCTSplitPane"],
-    function (MCTSplitPane) {
+    (MCTSplitPane) => {
 
-        var JQLITE_METHODS = [
+        const JQLITE_METHODS = [
                 'on',
                 'addClass',
                 'children',
@@ -33,14 +33,14 @@ define(
                 'css'
             ];
 
-        describe("The mct-split-pane directive", function () {
-            var mockParse,
+        describe("The mct-split-pane directive", () => {
+            let mockParse,
                 mockLog,
                 mockInterval,
                 mockParsed,
                 mctSplitPane;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockParse = jasmine.createSpy('$parse');
                 mockLog =
                     jasmine.createSpyObj('$log', ['warn', 'info', 'debug']);
@@ -58,12 +58,12 @@ define(
                 );
             });
 
-            it("is only applicable as an element", function () {
+            it("is only applicable as an element", () => {
                 expect(mctSplitPane.restrict).toEqual("E");
             });
 
-            describe("when its controller is applied", function () {
-                var mockScope,
+            describe("when its controller is applied", () => {
+                let mockScope,
                     mockElement,
                     testAttrs,
                     mockChildren,
@@ -72,15 +72,15 @@ define(
                     mockSecondPane,
                     controller;
 
-                function fireOn(eventType) {
-                    mockScope.$on.calls.forEach(function (call) {
+                const fireOn = (eventType) => {
+                    mockScope.$on.calls.forEach( (call) => {
                         if (call.args[0] === eventType) {
                             call.args[1]();
                         }
                     });
                 }
 
-                beforeEach(function () {
+                beforeEach( () => {
                     mockScope =
                         jasmine.createSpyObj('$scope', ['$apply', '$watch', '$on']);
                     mockElement =
@@ -100,7 +100,7 @@ define(
                         offsetWidth: 12321,
                         offsetHeight: 45654
                     };
-                    mockChildren.eq.andCallFake(function (i) {
+                    mockChildren.eq.andCallFake( (i) => {
                         return [mockFirstPane, mockSplitter, mockSecondPane][i];
                     });
                     mockFirstPane[0] = { offsetWidth: 123, offsetHeight: 456 };
@@ -123,17 +123,17 @@ define(
                     );
                 });
 
-                it("sets an interval which does not trigger digests", function () {
+                it("sets an interval which does not trigger digests", () => {
                     expect(mockInterval.mostRecentCall.args[3]).toBe(false);
                 });
 
-                it("exposes its splitter's initial position", function () {
+                it("exposes its splitter's initial position", () => {
                     expect(controller.position()).toEqual(
                         mockFirstPane[0].offsetWidth + mockSplitter[0].offsetWidth
                     );
                 });
 
-                it("exposes the current anchoring mode", function () {
+                it("exposes the current anchoring mode", () => {
                     expect(controller.anchor()).toEqual({
                         edge : 'left',
                         opposite : 'right',
@@ -142,14 +142,14 @@ define(
                     });
                 });
 
-                it("allows classes to be toggled on contained elements", function () {
+                it("allows classes to be toggled on contained elements", () => {
                     controller.toggleClass('resizing');
                     expect(mockChildren.toggleClass)
                         .toHaveBeenCalledWith('resizing');
                 });
 
-                it("allows positions to be set", function () {
-                    var testValue = mockChildren[0].offsetWidth + 50;
+                it("allows positions to be set", () => {
+                    let testValue = mockChildren[0].offsetWidth + 50;
                     controller.position(testValue);
                     expect(mockFirstPane.css).toHaveBeenCalledWith(
                         'width',
@@ -157,11 +157,11 @@ define(
                     );
                 });
 
-                it("issues no warnings under nominal usage", function () {
+                it("issues no warnings under nominal usage", () => {
                     expect(mockLog.warn).not.toHaveBeenCalled();
                 });
 
-                it("warns if no mct-splitter is present", function () {
+                it("warns if no mct-splitter is present", () => {
                     mockSplitter[0].nodeName = "not-mct-splitter";
                     controller = mctSplitPane.controller[3](
                         mockScope,
@@ -171,7 +171,7 @@ define(
                     expect(mockLog.warn).toHaveBeenCalled();
                 });
 
-                it("warns if an unknown anchor key is given", function () {
+                it("warns if an unknown anchor key is given", () => {
                     testAttrs.anchor = "middle";
                     controller = mctSplitPane.controller[3](
                         mockScope,
@@ -181,7 +181,7 @@ define(
                     expect(mockLog.warn).toHaveBeenCalled();
                 });
 
-                it("updates positions on a timer", function () {
+                it("updates positions on a timer", () => {
                     mockFirstPane[0].offsetWidth += 100;
                     // Should not reflect the change yet
                     expect(controller.position()).not.toEqual(
@@ -193,7 +193,7 @@ define(
                     );
                 });
 
-                it("cancels the active interval when scope is destroyed", function () {
+                it("cancels the active interval when scope is destroyed", () => {
                     expect(mockInterval.cancel).not.toHaveBeenCalled();
                     fireOn('$destroy');
                     expect(mockInterval.cancel).toHaveBeenCalled();

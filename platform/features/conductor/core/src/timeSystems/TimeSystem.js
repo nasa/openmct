@@ -20,12 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([], () => {
     /**
      * @interface
      * @constructor
      */
-    function TimeSystem() {
+    class TimeSystem {
+      constructor() {
         /**
          * @typedef TimeSystemMetadata
          * @property {string} key
@@ -43,7 +44,7 @@ define([], function () {
      *
      * @returns {string[]} An array of time format keys
      */
-    TimeSystem.prototype.formats = function () {
+    formats() {
         throw new Error('Not implemented');
     };
 
@@ -60,7 +61,7 @@ define([], function () {
      *
      * @returns {DeltaFormat} a delta format specifier
      */
-    TimeSystem.prototype.deltaFormat = function () {
+    deltaFormat() {
         throw new Error('Not implemented');
     };
 
@@ -69,7 +70,7 @@ define([], function () {
      * are event generators that can be used to advance the time conductor
      * @returns {TickSource[]} The tick sources supported by this time system.
      */
-    TimeSystem.prototype.tickSources = function () {
+    tickSources() {
         throw new Error('Not implemented');
     };
 
@@ -92,16 +93,16 @@ define([], function () {
      * @returns {TimeSystemDefault[]} At least one set of default values for
      * this time system.
      */
-    TimeSystem.prototype.defaults = function () {
+    defaults() {
         throw new Error('Not implemented');
     };
 
     /**
      * @return {boolean}
      */
-    TimeSystem.prototype.isUTCBased = function () {
+    isUTCBased() {
         return true;
     };
-
+  }
     return TimeSystem;
 });

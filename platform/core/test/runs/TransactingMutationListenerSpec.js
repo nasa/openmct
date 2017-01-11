@@ -22,16 +22,16 @@
 
 define(
     ["../../src/runs/TransactingMutationListener"],
-    function (TransactingMutationListener) {
+    (TransactingMutationListener) => {
 
-        xdescribe("TransactingMutationListener", function () {
-            var mockTopic,
+        xdescribe("TransactingMutationListener", () =>  {
+            let mockTopic,
                 mockMutationTopic,
                 mockTransactionService,
                 mockDomainObject,
                 mockPersistence;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 mockTopic = jasmine.createSpy('topic');
                 mockMutationTopic =
                     jasmine.createSpyObj('mutation', ['listen']);
@@ -51,11 +51,11 @@ define(
                     ['persist', 'refresh', 'persisted']
                 );
 
-                mockTopic.andCallFake(function (t) {
+                mockTopic.andCallFake( (t) => {
                     return (t === 'mutation') && mockMutationTopic;
                 });
 
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockDomainObject.getCapability.andCallFake( (c) => {
                     return (c === 'persistence') && mockPersistence;
                 });
 
@@ -67,39 +67,39 @@ define(
                 );
             });
 
-            it("listens for mutation", function () {
+            it("listens for mutation", () =>  {
                 expect(mockMutationTopic.listen)
                     .toHaveBeenCalledWith(jasmine.any(Function));
             });
 
-            [false, true].forEach(function (isActive) {
-                var verb = isActive ? "is" : "isn't";
+            [false, true].forEach( (isActive) => {
+                let verb = isActive ? "is" : "isn't";
 
-                function onlyWhenInactive(expectation) {
+                const onlyWhenInactive = (expectation) => {
                     return isActive ? expectation.not : expectation;
                 }
 
-                describe("when a transaction " + verb + " active", function () {
-                    var innerVerb = isActive ? "does" : "doesn't";
+                describe("when a transaction " + verb + " active", () =>  {
+                    let innerVerb = isActive ? "does" : "doesn't";
 
-                    beforeEach(function () {
+                    beforeEach(() =>  {
                         mockTransactionService.isActive.andReturn(isActive);
                     });
 
-                    describe("and mutation occurs", function () {
-                        beforeEach(function () {
+                    describe("and mutation occurs", () =>  {
+                        beforeEach(() =>  {
                             mockMutationTopic.listen.mostRecentCall
                                 .args[0](mockDomainObject);
                         });
 
 
-                        it(innerVerb + " start a new transaction", function () {
+                        it(innerVerb + " start a new transaction", () =>  {
                             onlyWhenInactive(
                                 expect(mockTransactionService.startTransaction)
                             ).toHaveBeenCalled();
                         });
 
-                        it("adds to the active transaction", function () {
+                        it("adds to the active transaction", () =>  {
                             expect(mockTransactionService.addToTransaction)
                                 .toHaveBeenCalledWith(
                                 jasmine.any(Function),
@@ -107,7 +107,7 @@ define(
                             );
                         });
 
-                        it(innerVerb + " immediately commit", function () {
+                        it(innerVerb + " immediately commit", () =>  {
                             onlyWhenInactive(
                                 expect(mockTransactionService.commit)
                             ).toHaveBeenCalled();

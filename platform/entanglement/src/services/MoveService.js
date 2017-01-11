@@ -21,8 +21,7 @@
  *****************************************************************************/
 
 
-define(
-    function () {
+define( () => {
         /**
          * MoveService provides an interface for moving objects from one
          * location to another.  It also provides a method for determining if
@@ -31,13 +30,14 @@ define(
          * @memberof platform/entanglement
          * @implements {platform/entanglement.AbstractComposeService}
          */
-        function MoveService(policyService, linkService) {
+        class MoveService {
+          constructor(policyService, linkService) {
             this.policyService = policyService;
             this.linkService = linkService;
         }
 
-        MoveService.prototype.validate = function (object, parentCandidate) {
-            var currentParent = object
+        validate(object, parentCandidate) {
+            let currentParent = object
                 .getCapability('context')
                 .getParent();
 
@@ -60,9 +60,9 @@ define(
             );
         };
 
-        MoveService.prototype.perform = function (object, parentObject) {
-            function relocate(objectInNewContext) {
-                var newLocationCapability = objectInNewContext
+        perform(object, parentObject) {
+            const relocate = (objectInNewContext) => {
+                let newLocationCapability = objectInNewContext
                         .getCapability('location'),
                     oldLocationCapability = object
                         .getCapability('location');
@@ -89,13 +89,13 @@ define(
             return this.linkService
                 .perform(object, parentObject)
                 .then(relocate)
-                .then(function () {
+                .then( () => {
                     return object
                         .getCapability('action')
                         .perform('remove');
                 });
         };
-
+      }
         return MoveService;
     }
 );

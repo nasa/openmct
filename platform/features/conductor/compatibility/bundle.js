@@ -24,11 +24,11 @@ define([
     "./src/ConductorTelemetryDecorator",
     "./src/ConductorRepresenter",
     'legacyRegistry'
-], function (
+], (
     ConductorTelemetryDecorator,
     ConductorRepresenter,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/features/conductor/compatibility", {
         "extensions": {

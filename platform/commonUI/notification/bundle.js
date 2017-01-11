@@ -26,13 +26,13 @@ define([
     "./src/NotificationService",
     "text!./res/notification-indicator.html",
     'legacyRegistry'
-], function (
+], (
     NotificationIndicatorController,
     NotificationIndicator,
     NotificationService,
     notificationIndicatorTemplate,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/commonUI/notification", {
         "extensions": {

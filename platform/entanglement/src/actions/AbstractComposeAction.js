@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define(
-    function () {
+    () =>  {
 
         /**
          * Common interface exposed by services which support move, copy,
@@ -71,14 +71,15 @@ define(
          * @param {string} [suffix] a string to display in the dialog title;
          *        default is "to a new location"
          */
-        function AbstractComposeAction(
-            policyService,
-            locationService,
-            composeService,
-            context,
-            verb,
-            suffix
-        ) {
+        class AbstractComposeAction {
+          constructor(
+              policyService,
+              locationService,
+              composeService,
+              context,
+              verb,
+              suffix
+          ) {
             if (context.selectedObject) {
                 this.newParent = context.domainObject;
                 this.object = context.selectedObject;
@@ -98,19 +99,18 @@ define(
             this.suffix = suffix || "To a New Location";
         }
 
-        AbstractComposeAction.prototype.cloneContext = function () {
-            var clone = {}, original = this.context;
-            Object.keys(original).forEach(function (k) {
+        cloneContext() {
+            let clone = {}, original = this.context;
+            Object.keys(original).forEach( (k) => {
                 clone[k] = original[k];
             });
             return clone;
         };
 
-        AbstractComposeAction.prototype.perform = function () {
-            var dialogTitle,
+        perform() {
+            let dialogTitle,
                 label,
                 validateLocation,
-                self = this,
                 locationService = this.locationService,
                 composeService = this.composeService,
                 currentParent = this.currentParent,
@@ -126,12 +126,12 @@ define(
 
             label = this.verb + " To";
 
-            validateLocation = function (newParentObj) {
-                var newContext = self.cloneContext();
+            validateLocation = (newParentObj) => {
+                let newContext = this.cloneContext();
                 newContext.selectedObject =  object;
                 newContext.domainObject = newParentObj;
                 return composeService.validate(object, newParentObj) &&
-                    self.policyService.allow("action", self, newContext);
+                    this.policyService.allow("action", this, newContext);
             };
 
             return locationService.getLocationFromUser(
@@ -139,19 +139,19 @@ define(
                 label,
                 validateLocation,
                 currentParent
-            ).then(function (newParentObj) {
+            ).then( (newParentObj) => {
                 return composeService.perform(object, newParentObj);
             });
         };
 
-        AbstractComposeAction.appliesTo = function (context) {
-            var applicableObject =
+        appliesTo(context) {
+            let applicableObject =
                 context.selectedObject || context.domainObject;
 
             return !!(applicableObject &&
                 applicableObject.hasCapability('context'));
         };
-
+      }
         return AbstractComposeAction;
     }
 );

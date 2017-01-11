@@ -23,13 +23,12 @@
 /**
  * Plot palette. Defines colors for various plot lines.
  */
-define(
-    function () {
+define(() => {
 
         // Prepare different forms of the palette, since we wish to
         // describe colors in several ways (as RGB 0-255, as
         // RGB 0.0-1.0, or as stylesheet-appropriate #-prefixed colors).
-        var integerPalette = [
+        let integerPalette = [
             [0x20, 0xB2, 0xAA],
             [0x9A, 0xCD, 0x32],
             [0xFF, 0x8C, 0x00],
@@ -60,13 +59,13 @@ define(
             [0xCD, 0xC1, 0xC5],
             [0xA0, 0x52, 0x2D],
             [0x64, 0x95, 0xED]
-        ], stringPalette = integerPalette.map(function (arr) {
+        ], stringPalette = integerPalette.map( (arr) => {
             // Convert to # notation for use in styles
-            return '#' + arr.map(function (c) {
+            return '#' + arr.map( (c) => {
                 return (c < 16 ? '0' : '') + c.toString(16);
             }).join('');
-        }), floatPalette = integerPalette.map(function (arr) {
-            return arr.map(function (c) {
+        }), floatPalette = integerPalette.map( (arr) => {
+            return arr.map( (c) => {
                 return c / 255.0;
             }).concat([1]); // RGBA
         });
@@ -79,9 +78,7 @@ define(
          * @memberof platform/features/plot
          * @constructor
          */
-        function PlotPalette() {
-            return PlotPalette;
-        }
+        class PlotPalette {
 
         /**
          * Look up a color in the plot's palette, by index.
@@ -90,7 +87,7 @@ define(
          * @param {number} i the index of the color to look up
          * @return {number[]} the color, as integer RGB values
          */
-        PlotPalette.getIntegerColor = function (i) {
+        getIntegerColor(i) {
             return integerPalette[Math.floor(i) % integerPalette.length];
         };
 
@@ -106,7 +103,7 @@ define(
          * @param {number} i the index of the color to look up
          * @return {number[]} the color, as floating-point RGB values
          */
-        PlotPalette.getFloatColor = function (i) {
+        getFloatColor(i) {
             return floatPalette[Math.floor(i) % floatPalette.length];
         };
 
@@ -123,10 +120,10 @@ define(
          * @param {number} i the index of the color to look up
          * @return {string} the color, as a style-friendly string
          */
-        PlotPalette.getStringColor = function (i) {
+        getStringColor(i) {
             return stringPalette[Math.floor(i) % stringPalette.length];
         };
-
+      }
         return PlotPalette;
 
     }

@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * A left-click on the menu arrow should display a
@@ -34,7 +34,8 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function MenuArrowController($scope) {
+        class MenuArrowController {
+          constructor($scope) {
             this.$scope = $scope;
         }
 
@@ -44,16 +45,16 @@ define(
          * @param event the browser event which caused this (used to
          *        position the menu)
          */
-        MenuArrowController.prototype.showMenu = function (event) {
-            var actionContext = {
+        showMenu(event) {
+            let actionContext = {
                 key: 'menu',
                 domainObject: this.$scope.domainObject,
                 event: event
             };
 
             this.$scope.domainObject.getCapability('action').perform(actionContext);
-        };
-
+        }
+      }
         return MenuArrowController;
     }
 );

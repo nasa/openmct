@@ -20,21 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./TimeConductorViewService'], function (TimeConductorViewService) {
-    describe("The Time Conductor view service", function () {
-        var mockTimeConductor;
-        var basicTimeSystem;
-        var tickingTimeSystem;
-        var viewService;
-        var tickingTimeSystemDefaults;
+define(['./TimeConductorViewService'], (TimeConductorViewService) => {
+    describe("The Time Conductor view service", () => {
+        let mockTimeConductor;
+        let basicTimeSystem;
+        let tickingTimeSystem;
+        let viewService;
+        let tickingTimeSystemDefaults;
 
         function mockConstructor(object) {
-            return function () {
+            return () => {
                 return object;
             };
         }
 
-        beforeEach(function () {
+        beforeEach(() => {
             mockTimeConductor = jasmine.createSpyObj("timeConductor", [
                "timeSystem",
                 "bounds",
@@ -85,17 +85,17 @@ define(['./TimeConductorViewService'], function (TimeConductorViewService) {
             tickingTimeSystem.defaults.andReturn(tickingTimeSystemDefaults);
         });
 
-        it("At a minimum supports fixed mode", function () {
-            var mockTimeSystems = [mockConstructor(basicTimeSystem)];
+        it("At a minimum supports fixed mode", () => {
+            let mockTimeSystems = [mockConstructor(basicTimeSystem)];
             viewService = new TimeConductorViewService({conductor: mockTimeConductor}, mockTimeSystems);
 
-            var availableModes = viewService.availableModes();
+            let availableModes = viewService.availableModes();
             expect(availableModes.fixed).toBeDefined();
         });
 
-        it("Supports realtime mode if appropriate tick source(s) availables", function () {
-            var mockTimeSystems = [mockConstructor(tickingTimeSystem)];
-            var mockRealtimeTickSource = {
+        it("Supports realtime mode if appropriate tick source(s) availables", () => {
+            let mockTimeSystems = [mockConstructor(tickingTimeSystem)];
+            let mockRealtimeTickSource = {
                 metadata: {
                     mode: 'realtime'
                 }
@@ -104,13 +104,13 @@ define(['./TimeConductorViewService'], function (TimeConductorViewService) {
 
             viewService = new TimeConductorViewService({conductor: mockTimeConductor}, mockTimeSystems);
 
-            var availableModes = viewService.availableModes();
+            let availableModes = viewService.availableModes();
             expect(availableModes.realtime).toBeDefined();
         });
 
-        it("Supports LAD mode if appropriate tick source(s) available", function () {
-            var mockTimeSystems = [mockConstructor(tickingTimeSystem)];
-            var mockLADTickSource = {
+        it("Supports LAD mode if appropriate tick source(s) available", () => {
+            let mockTimeSystems = [mockConstructor(tickingTimeSystem)];
+            let mockLADTickSource = {
                 metadata: {
                     mode: 'lad'
                 }
@@ -119,16 +119,16 @@ define(['./TimeConductorViewService'], function (TimeConductorViewService) {
 
             viewService = new TimeConductorViewService({conductor: mockTimeConductor}, mockTimeSystems);
 
-            var availableModes = viewService.availableModes();
+            let availableModes = viewService.availableModes();
             expect(availableModes.lad).toBeDefined();
         });
 
-        describe("when mode is changed", function () {
+        describe("when mode is changed", () => {
 
-            it("destroys previous mode", function () {
-                var mockTimeSystems = [mockConstructor(basicTimeSystem)];
+            it("destroys previous mode", () => {
+                let mockTimeSystems = [mockConstructor(basicTimeSystem)];
 
-                var oldMode = jasmine.createSpyObj("conductorMode", [
+                let oldMode = jasmine.createSpyObj("conductorMode", [
                     "destroy"
                 ]);
 
@@ -138,14 +138,14 @@ define(['./TimeConductorViewService'], function (TimeConductorViewService) {
                 expect(oldMode.destroy).toHaveBeenCalled();
             });
 
-            describe("the time system", function () {
-                it("is retained if available in new mode", function () {
-                    var mockTimeSystems = [mockConstructor(basicTimeSystem), mockConstructor(tickingTimeSystem)];
-                    var mockRealtimeTickSource = {
+            describe("the time system", () => {
+                it("is retained if available in new mode", () => {
+                    let mockTimeSystems = [mockConstructor(basicTimeSystem), mockConstructor(tickingTimeSystem)];
+                    let mockRealtimeTickSource = {
                         metadata: {
                             mode: 'realtime'
                         },
-                        listen: function () {}
+                        listen: () => {}
                     };
                     tickingTimeSystem.tickSources.andReturn([mockRealtimeTickSource]);
 
@@ -159,13 +159,13 @@ define(['./TimeConductorViewService'], function (TimeConductorViewService) {
                     viewService.mode('realtime');
                     expect(mockTimeConductor.timeSystem).not.toHaveBeenCalledWith(tickingTimeSystem, tickingTimeSystemDefaults.bounds);
                 });
-                it("is defaulted if selected time system not available in new mode", function () {
-                    var mockTimeSystems = [mockConstructor(basicTimeSystem), mockConstructor(tickingTimeSystem)];
-                    var mockRealtimeTickSource = {
+                it("is defaulted if selected time system not available in new mode", () => {
+                    let mockTimeSystems = [mockConstructor(basicTimeSystem), mockConstructor(tickingTimeSystem)];
+                    let mockRealtimeTickSource = {
                         metadata: {
                             mode: 'realtime'
                         },
-                        listen: function () {}
+                        listen: () => {}
                     };
                     tickingTimeSystem.tickSources.andReturn([mockRealtimeTickSource]);
 

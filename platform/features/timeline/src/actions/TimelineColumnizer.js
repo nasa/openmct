@@ -27,14 +27,14 @@ define([
     "./MetadataColumn",
     "./TimespanColumn",
     "./UtilizationColumn"
-], function (
+], (
     IdColumn,
     ModeColumn,
     CompositionColumn,
     MetadataColumn,
     TimespanColumn,
     UtilizationColumn
-) {
+) => {
 
     /**
      * A description of how to populate a given column within a
@@ -69,8 +69,9 @@ define([
      * @constructor
      * @memberof {platform/features/timeline}
      */
-    function TimelineColumnizer(domainObjects, resources) {
-        var maxComposition = 0,
+    class TimelineColumnizer {
+      constructor(domainObjects, resources) {
+        let maxComposition = 0,
             maxRelationships = 0,
             columnNames = {},
             columns = [],
@@ -78,23 +79,23 @@ define([
             idMap,
             i;
 
-        function addMetadataProperty(property) {
-            var name = property.name;
+        const addMetadataProperty = (property) => {
+            let name = property.name;
             if (!columnNames[name]) {
                 columnNames[name] = true;
                 columns.push(new MetadataColumn(name));
             }
         }
 
-        idMap = domainObjects.reduce(function (map, domainObject, index) {
+        idMap = domainObjects.reduce( (map, domainObject, index) => {
             map[domainObject.getId()] = index + 1;
             return map;
         }, {});
 
         columns.push(new IdColumn(idMap));
 
-        domainObjects.forEach(function (domainObject) {
-            var model = domainObject.getModel(),
+        domainObjects.forEach( (domainObject) => {
+            let model = domainObject.getModel(),
                 composition = model.composition,
                 relationships = model.relationships,
                 modes = relationships && relationships.modes,
@@ -145,11 +146,11 @@ define([
      * the `headers`, correlated by index.
      * @returns {Promise.<string[][]>} domain object data
      */
-    TimelineColumnizer.prototype.rows = function () {
-        var columns = this.columns;
+     rows() {
+        let columns = this.columns;
 
         function toRow(domainObject) {
-            return Promise.all(columns.map(function (column) {
+            return Promise.all(columns.map( (column) => {
                 return column.value(domainObject);
             }));
         }
@@ -162,11 +163,11 @@ define([
      * representation of objects.
      * @returns {string[]} column headers
      */
-    TimelineColumnizer.prototype.headers = function () {
-        return this.columns.map(function (column) {
+    headers() {
+        return this.columns.map( (column) => {
             return column.name();
         });
     };
-
+  }
     return TimelineColumnizer;
 });

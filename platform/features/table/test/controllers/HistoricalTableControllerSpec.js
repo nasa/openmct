@@ -24,10 +24,10 @@ define(
     [
         "../../src/controllers/HistoricalTableController"
     ],
-    function (TableController) {
+    (TableController) => {
 
-        describe('The Table Controller', function () {
-            var mockScope,
+        describe('The Table Controller', () => {
+            let mockScope,
                 mockTelemetryHandler,
                 mockTelemetryHandle,
                 mockTelemetryFormatter,
@@ -40,21 +40,21 @@ define(
                 mockConductor,
                 controller;
 
-            function promise(value) {
+            const promise = (value) => {
                 return {
-                    then: function (callback) {
+                    then: (callback) => {
                         return promise(callback(value));
                     }
                 };
             }
 
-            function getCallback(target, event) {
-                return target.calls.filter(function (call) {
+            const getCallback = (target, event) => {
+                return target.calls.filter( (call) => {
                     return call.args[0] === event;
                 })[0].args[1];
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 watches = {};
                 mockScope = jasmine.createSpyObj('scope', [
                     '$on',
@@ -62,13 +62,13 @@ define(
                     '$watchCollection'
                 ]);
 
-                mockScope.$on.andCallFake(function (expression, callback) {
+                mockScope.$on.andCallFake( (expression, callback) => {
                     watches[expression] = callback;
                 });
-                mockScope.$watch.andCallFake(function (expression, callback) {
+                mockScope.$watch.andCallFake( (expression, callback) => {
                     watches[expression] = callback;
                 });
-                mockScope.$watchCollection.andCallFake(function (expression, callback) {
+                mockScope.$watchCollection.andCallFake( (expression, callback) => {
                     watches[expression] = callback;
                 });
 
@@ -135,49 +135,49 @@ define(
                 controller.handle = mockTelemetryHandle;
             });
 
-            it('subscribes to telemetry handler for telemetry updates', function () {
+            it('subscribes to telemetry handler for telemetry updates', () => {
                 controller.subscribe();
                 expect(mockTelemetryHandler.handle).toHaveBeenCalled();
                 expect(mockTelemetryHandle.request).toHaveBeenCalled();
             });
 
-            it('Unsubscribes from telemetry when scope is destroyed', function () {
+            it('Unsubscribes from telemetry when scope is destroyed', () => {
                 controller.handle = mockTelemetryHandle;
                 watches.$destroy();
                 expect(mockTelemetryHandle.unsubscribe).toHaveBeenCalled();
             });
 
-            describe('makes use of the table', function () {
+            describe('makes use of the table', () => {
 
                 it('to create column definitions from telemetry' +
-                    ' metadata', function () {
+                    ' metadata', () => {
                     controller.setup();
                     expect(mockTable.populateColumns).toHaveBeenCalled();
                 });
 
                 it('to create column configuration, which is written to the' +
-                    ' object model', function () {
+                    ' object model', () => {
                     controller.setup();
                     expect(mockTable.buildColumnConfiguration).toHaveBeenCalled();
                 });
             });
 
-            it('updates the rows on scope when historical telemetry is received', function () {
-                var mockSeries = {
-                        getPointCount: function () {
+            it('updates the rows on scope when historical telemetry is received', () => {
+                let mockSeries = {
+                        getPointCount: () => {
                             return 5;
                         },
-                        getDomainValue: function () {
+                        getDomainValue: () => {
                             return 'Domain Value';
                         },
-                        getRangeValue: function () {
+                        getRangeValue: () => {
                             return 'Range Value';
                         }
                     },
                     mockRow = {'domain': 'Domain Value', 'range': 'Range' +
                     ' Value'};
 
-                mockTelemetryHandle.makeDatum.andCallFake(function () {
+                mockTelemetryHandle.makeDatum.andCallFake(() => {
                     return mockRow;
                 });
                 mockTable.getRowValues.andReturn(mockRow);
@@ -197,7 +197,7 @@ define(
                 expect(controller.$scope.rows[0]).toBe(mockRow);
             });
 
-            it('filters the visible columns based on configuration', function () {
+            it('filters the visible columns based on configuration', () => {
                 controller.filterColumns();
                 expect(controller.$scope.headers.length).toBe(3);
                 expect(controller.$scope.headers[2]).toEqual('domain1');
@@ -208,14 +208,14 @@ define(
                 expect(controller.$scope.headers[2]).toBeUndefined();
             });
 
-            describe('creates event listeners', function () {
-                beforeEach(function () {
+            describe('creates event listeners', () => {
+                beforeEach(() => {
                     spyOn(controller, 'subscribe');
                     spyOn(controller, 'filterColumns');
                 });
 
                 it('triggers telemetry subscription update when domain' +
-                    ' object changes', function () {
+                    ' object changes', () => {
                     controller.registerChangeListeners();
                     //'watches' object is populated by fake scope watch and
                     // watchCollection functions defined above
@@ -225,7 +225,7 @@ define(
                 });
 
                 it('triggers telemetry subscription update when domain' +
-                    ' object composition changes', function () {
+                    ' object composition changes', () => {
                     controller.registerChangeListeners();
                     expect(watches['domainObject.getModel().composition']).toBeDefined();
                     watches['domainObject.getModel().composition']([], []);
@@ -233,7 +233,7 @@ define(
                 });
 
                 it('triggers telemetry subscription update when time' +
-                    ' conductor bounds change', function () {
+                    ' conductor bounds change', () => {
                     controller.registerChangeListeners();
                     expect(watches['telemetry:display:bounds']).toBeDefined();
                     watches['telemetry:display:bounds']();
@@ -241,7 +241,7 @@ define(
                 });
 
                 it('triggers refiltering of the columns when configuration' +
-                    ' changes', function () {
+                    ' changes', () => {
                     controller.setup();
                     expect(watches['domainObject.getModel().configuration.table.columns']).toBeDefined();
                     watches['domainObject.getModel().configuration.table.columns']();
@@ -249,21 +249,21 @@ define(
                 });
 
             });
-            describe('After populating columns', function () {
-                var metadata;
-                beforeEach(function () {
+            describe('After populating columns', () => {
+                let metadata;
+                beforeEach(() => {
                     metadata = [{domains: [{name: 'time domain 1'}, {name: 'time domain 2'}]}, {domains: [{name: 'time domain 3'}, {name: 'time domain 4'}]}];
                     controller.populateColumns(metadata);
                 });
 
-                it('Automatically identifies time columns', function () {
+                it('Automatically identifies time columns', () => {
                     expect(controller.timeColumns.length).toBe(4);
                     expect(controller.timeColumns[0]).toBe('time domain 1');
                 });
 
                 it('Automatically sorts by time column that matches current' +
-                    ' time system', function () {
-                    var key = 'time_domain_1',
+                    ' time system', () => {
+                    let key = 'time_domain_1',
                         name = 'time domain 1',
                         mockTimeSystem = {
                             metadata: {
@@ -276,7 +276,7 @@ define(
                             domainMetadata: {
                                 key: key
                             },
-                            getTitle: function () {
+                            getTitle: () => {
                                 return name;
                             }
                         },
@@ -284,7 +284,7 @@ define(
                             domainMetadata: {
                                 key: 'anotherColumn'
                             },
-                            getTitle: function () {
+                            getTitle: () => {
                                 return 'some other column';
                             }
                         },
@@ -292,7 +292,7 @@ define(
                             domainMetadata: {
                                 key: 'thirdColumn'
                             },
-                            getTitle: function () {
+                            getTitle: () => {
                                 return 'a third column';
                             }
                         }
@@ -303,32 +303,32 @@ define(
                     expect(controller.$scope.defaultSort).toBe(name);
                 });
             });
-            describe('Yields thread', function () {
-                var mockSeries,
+            describe('Yields thread', () => {
+                let mockSeries,
                     mockRow;
 
-                beforeEach(function () {
+                beforeEach(() => {
                     mockSeries = {
-                        getPointCount: function () {
+                        getPointCount: () => {
                             return 5;
                         },
-                        getDomainValue: function () {
+                        getDomainValue: () => {
                             return 'Domain Value';
                         },
-                        getRangeValue: function () {
+                        getRangeValue: () => {
                             return 'Range Value';
                         }
                     };
                     mockRow = {'domain': 'Domain Value', 'range': 'Range Value'};
 
-                    mockTelemetryHandle.makeDatum.andCallFake(function () {
+                    mockTelemetryHandle.makeDatum.andCallFake(() => {
                         return mockRow;
                     });
                     mockTable.getRowValues.andReturn(mockRow);
                     mockTelemetryHandle.getTelemetryObjects.andReturn([mockDomainObject]);
                     mockTelemetryHandle.getSeries.andReturn(mockSeries);
                 });
-                it('when row count exceeds batch size', function () {
+                it('when row count exceeds batch size', () => {
                     controller.batchSize = 3;
                     controller.addHistoricalData(mockDomainObject, mockSeries);
 
@@ -347,7 +347,7 @@ define(
                     expect(controller.$scope.rows.length).toBe(5);
                     expect(controller.$scope.rows[0]).toBe(mockRow);
                 });
-                it('cancelling any outstanding timeouts', function () {
+                it('cancelling any outstanding timeouts', () => {
                     controller.batchSize = 3;
                     controller.addHistoricalData(mockDomainObject, mockSeries);
 
@@ -358,13 +358,13 @@ define(
 
                     expect(mockAngularTimeout.cancel).toHaveBeenCalledWith(mockTimeoutHandle);
                 });
-                it('cancels timeout on scope destruction', function () {
+                it('cancels timeout on scope destruction', () => {
                     controller.batchSize = 3;
                     controller.addHistoricalData(mockDomainObject, mockSeries);
 
                     //Destroy is used by parent class as well, so multiple
                     // calls are made to scope.$on
-                    var destroyCalls = mockScope.$on.calls.filter(function (call) {
+                    let destroyCalls = mockScope.$on.calls.filter( (call) => {
                         return call.args[0] === '$destroy';
                     });
                     //Call destroy function

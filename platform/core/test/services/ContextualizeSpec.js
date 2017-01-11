@@ -22,9 +22,9 @@
 
 define(
     ["../../src/services/Contextualize"],
-    function (Contextualize) {
+    (Contextualize) => {
 
-        var DOMAIN_OBJECT_METHODS = [
+        let DOMAIN_OBJECT_METHODS = [
             'getId',
             'getModel',
             'getCapability',
@@ -32,15 +32,15 @@ define(
             'useCapability'
         ];
 
-        describe("The 'contextualize' service", function () {
-            var mockLog,
+        describe("The 'contextualize' service", () =>  {
+            let mockLog,
                 mockDomainObject,
                 mockParentObject,
                 mockEditor,
                 testParentModel,
                 contextualize;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 testParentModel = { composition: ["abc"] };
 
                 mockLog = jasmine.createSpyObj(
@@ -62,15 +62,15 @@ define(
                 mockParentObject.getModel.andReturn(testParentModel);
 
                 mockEditor.inEditContext.andReturn(false);
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockDomainObject.getCapability.andCallFake( (c) => {
                     return c === 'editor' && mockEditor;
                 });
 
                 contextualize = new Contextualize(mockLog);
             });
 
-            it("attaches a context capability", function () {
-                var contextualizedObject =
+            it("attaches a context capability", () =>  {
+                let contextualizedObject =
                     contextualize(mockDomainObject, mockParentObject);
 
                 expect(contextualizedObject.getId()).toEqual("abc");
@@ -80,7 +80,7 @@ define(
                     .toBe(mockParentObject);
             });
 
-            it("issues a warning if composition does not match", function () {
+            it("issues a warning if composition does not match", () =>  {
                 // Precondition - normally it should not issue a warning
                 contextualize(mockDomainObject, mockParentObject);
                 expect(mockLog.warn).not.toHaveBeenCalled();
@@ -91,7 +91,7 @@ define(
                 expect(mockLog.warn).toHaveBeenCalled();
             });
 
-            it("does not issue warnings for objects being edited", function () {
+            it("does not issue warnings for objects being edited", () =>  {
                 mockEditor.inEditContext.andReturn(true);
                 testParentModel.composition = ["xyz"];
                 contextualize(mockDomainObject, mockParentObject);

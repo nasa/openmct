@@ -22,30 +22,30 @@
 
 define(
     ["../../src/actions/AbstractStartTimerAction"],
-    function (AbstractStartTimerAction) {
+    (AbstractStartTimerAction) => {
 
-        describe("A timer's start/restart action", function () {
-            var mockNow,
+        describe("A timer's start/restart action", () => {
+            let mockNow,
                 mockDomainObject,
                 testModel,
                 action;
 
-            function asPromise(value) {
+            const asPromise = (value) => {
                 return (value || {}).then ? value : {
-                    then: function (callback) {
+                    then: (callback) => {
                         return asPromise(callback(value));
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockNow = jasmine.createSpy('now');
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
                     ['getCapability', 'useCapability']
                 );
 
-                mockDomainObject.useCapability.andCallFake(function (c, v) {
+                mockDomainObject.useCapability.andCallFake( (c, v) => {
                     if (c === 'mutation') {
                         testModel = v(testModel) || testModel;
                         return asPromise(true);
@@ -59,13 +59,13 @@ define(
                 });
             });
 
-            it("updates the model with a timestamp", function () {
+            it("updates the model with a timestamp", () => {
                 mockNow.andReturn(12000);
                 action.perform();
                 expect(testModel.timestamp).toEqual(12000);
             });
 
-            it("does not truncate milliseconds", function () {
+            it("does not truncate milliseconds", () => {
                 mockNow.andReturn(42321);
                 action.perform();
                 expect(testModel.timestamp).toEqual(42321);

@@ -23,13 +23,13 @@
 
 define(
     ["../../src/services/Transaction"],
-    function (Transaction) {
+    (Transaction) => {
 
-        describe("A Transaction", function () {
-            var mockLog,
+        describe("A Transaction", () => {
+            let mockLog,
                 transaction;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockLog = jasmine.createSpyObj(
                     '$log',
                     ['warn', 'info', 'error', 'debug']
@@ -37,68 +37,68 @@ define(
                 transaction = new Transaction(mockLog);
             });
 
-            it("initially has a size of zero", function () {
+            it("initially has a size of zero", () => {
                 expect(transaction.size()).toEqual(0);
             });
 
-            describe("when callbacks are added", function () {
-                var mockCommit,
+            describe("when callbacks are added", () => {
+                let mockCommit,
                     mockCancel,
                     remove;
 
-                beforeEach(function () {
+                beforeEach( () => {
                     mockCommit = jasmine.createSpy('commit');
                     mockCancel = jasmine.createSpy('cancel');
                     remove = transaction.add(mockCommit, mockCancel);
                 });
 
-                it("reports a new size", function () {
+                it("reports a new size", () => {
                     expect(transaction.size()).toEqual(1);
                 });
 
-                it("returns a function to remove those callbacks", function () {
+                it("returns a function to remove those callbacks", () => {
                     expect(remove).toEqual(jasmine.any(Function));
                     remove();
                     expect(transaction.size()).toEqual(0);
                 });
 
-                describe("and the transaction is committed", function () {
-                    beforeEach(function () {
+                describe("and the transaction is committed", () => {
+                    beforeEach( () => {
                         transaction.commit();
                     });
 
-                    it("triggers the commit callback", function () {
+                    it("triggers the commit callback", () => {
                         expect(mockCommit).toHaveBeenCalled();
                     });
 
-                    it("does not trigger the cancel callback", function () {
+                    it("does not trigger the cancel callback", () => {
                         expect(mockCancel).not.toHaveBeenCalled();
                     });
                 });
 
-                describe("and the transaction is cancelled", function () {
-                    beforeEach(function () {
+                describe("and the transaction is cancelled", () => {
+                    beforeEach( () => {
                         transaction.cancel();
                     });
 
-                    it("triggers the cancel callback", function () {
+                    it("triggers the cancel callback", () => {
                         expect(mockCancel).toHaveBeenCalled();
                     });
 
-                    it("does not trigger the commit callback", function () {
+                    it("does not trigger the commit callback", () => {
                         expect(mockCommit).not.toHaveBeenCalled();
                     });
                 });
 
-                describe("and an exception is encountered during commit", function () {
-                    beforeEach(function () {
-                        mockCommit.andCallFake(function () {
+                describe("and an exception is encountered during commit", () => {
+                    beforeEach( () => {
+                        mockCommit.andCallFake( () => {
                             throw new Error("test error");
                         });
                         transaction.commit();
                     });
 
-                    it("logs an error", function () {
+                    it("logs an error", () => {
                         expect(mockLog.error).toHaveBeenCalled();
                     });
                 });

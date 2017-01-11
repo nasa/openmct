@@ -22,26 +22,26 @@
 
 define(
     ["../../src/controllers/TreeNodeController"],
-    function (TreeNodeController) {
+    (TreeNodeController) => {
 
-        describe("The tree node controller", function () {
-            var mockScope,
+        describe("The tree node controller", () => {
+            let mockScope,
                 mockTimeout,
                 mockDomainObject,
                 controller;
 
-            function TestObject(id, context) {
+            const TestObject = (id, context) => {
                 return {
-                    getId: function () {
+                    getId: () => {
                         return id;
                     },
-                    getCapability: function (key) {
+                    getCapability: (key) => {
                         return key === 'context' ? context : undefined;
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockScope = jasmine.createSpyObj("$scope", ["$watch", "$on", "$emit"]);
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockDomainObject = jasmine.createSpyObj(
@@ -52,7 +52,7 @@ define(
                 controller = new TreeNodeController(mockScope, mockTimeout);
             });
 
-            it("allows tracking of expansion state", function () {
+            it("allows tracking of expansion state", () => {
                 // The tree node tracks whether or not it has ever
                 // been expanded in order to lazily load the expanded
                 // portion of the tree.
@@ -69,9 +69,9 @@ define(
                 expect(controller.hasBeenExpanded()).toBeTruthy();
             });
 
-            it("tracks whether or not the represented object is currently navigated-to", function () {
+            it("tracks whether or not the represented object is currently navigated-to", () => {
                 // This is needed to highlight the current selection
-                var mockContext = jasmine.createSpyObj(
+                let mockContext = jasmine.createSpyObj(
                         "context",
                         ["getParent", "getPath", "getRoot"]
                     ),
@@ -91,8 +91,8 @@ define(
                 expect(controller.isSelected()).toBeTruthy();
             });
 
-            it("expands a node if it is on the navigation path", function () {
-                var mockParentContext = jasmine.createSpyObj(
+            it("expands a node if it is on the navigation path", () => {
+                let mockParentContext = jasmine.createSpyObj(
                         "parentContext",
                         ["getParent", "getPath", "getRoot"]
                     ),
@@ -127,8 +127,8 @@ define(
 
             });
 
-            it("does not expand a node if it is not on the navigation path", function () {
-                var mockParentContext = jasmine.createSpyObj(
+            it("does not expand a node if it is not on the navigation path", () => {
+                let mockParentContext = jasmine.createSpyObj(
                         "parentContext",
                         ["getParent", "getPath", "getRoot"]
                     ),
@@ -160,8 +160,8 @@ define(
             });
 
 
-            it("does not expand a node if no context is available", function () {
-                var mockParentContext = jasmine.createSpyObj(
+            it("does not expand a node if no context is available", () => {
+                let mockParentContext = jasmine.createSpyObj(
                         "parentContext",
                         ["getParent", "getPath", "getRoot"]
                     ),
@@ -190,7 +190,7 @@ define(
 
             });
 
-            it("exposes selected objects in scope", function () {
+            it("exposes selected objects in scope", () => {
                 mockScope.domainObject = mockDomainObject;
                 mockScope.ngModel = {};
                 controller.select();
@@ -198,7 +198,7 @@ define(
                     .toEqual(mockDomainObject);
             });
 
-            it("invokes optional callbacks upon selection", function () {
+            it("invokes optional callbacks upon selection", () => {
                 mockScope.parameters =
                     { callback: jasmine.createSpy('callback') };
                 controller.select();

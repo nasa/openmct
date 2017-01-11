@@ -22,14 +22,14 @@
 
 define(
     ['../../../src/controllers/drag/TimelineSnapHandler'],
-    function (TimelineSnapHandler) {
+    (TimelineSnapHandler) => {
 
-        describe("A Timeline snap handler", function () {
-            var mockDragHandler,
+        describe("A Timeline snap handler", () => {
+            let mockDragHandler,
                 handler;
 
-            beforeEach(function () {
-                var starts = { a: 1000, b: 2000, c: 2500, d: 2600 },
+            beforeEach(() => {
+                let starts = { a: 1000, b: 2000, c: 2500, d: 2600 },
                     ends = { a: 2050, b: 3000, c: 2700, d: 10000 };
 
                 mockDragHandler = jasmine.createSpyObj(
@@ -38,24 +38,24 @@ define(
                 );
 
                 mockDragHandler.ids.andReturn(['a', 'b', 'c', 'd']);
-                mockDragHandler.start.andCallFake(function (id) {
+                mockDragHandler.start.andCallFake( (id) => {
                     return starts[id];
                 });
-                mockDragHandler.end.andCallFake(function (id) {
+                mockDragHandler.end.andCallFake( (id) => {
                     return ends[id];
                 });
 
                 handler = new TimelineSnapHandler(mockDragHandler);
             });
 
-            it("provides a preferred snap location within tolerance", function () {
+            it("provides a preferred snap location within tolerance", () => {
                 expect(handler.snap(2511, 15, 'a')).toEqual(2500); // c's start
                 expect(handler.snap(2488, 15, 'a')).toEqual(2500); // c's start
                 expect(handler.snap(10, 1000, 'b')).toEqual(1000); // a's start
                 expect(handler.snap(2711, 20, 'd')).toEqual(2700); // c's end
             });
 
-            it("excludes provided id from snapping", function () {
+            it("excludes provided id from snapping", () => {
                 // Don't want objects to snap to themselves, so we need
                 // this exclusion.
                 expect(handler.snap(2010, 50, 'b')).toEqual(2050); // a's end
@@ -64,12 +64,12 @@ define(
                 expect(handler.snap(2010, 50, 'd')).toEqual(2000);
             });
 
-            it("snaps to the closest point, when multiple match", function () {
+            it("snaps to the closest point, when multiple match", () => {
                 // 2600 and 2700 (plus others) are both in range here
                 expect(handler.snap(2651, 1000, 'a')).toEqual(2700);
             });
 
-            it("does not snap if no points are within tolerance", function () {
+            it("does not snap if no points are within tolerance", () => {
                 // Closest are 1000 and 2000, which are well outside of tolerance
                 expect(handler.snap(1503, 100, 'd')).toEqual(1503);
             });

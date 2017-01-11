@@ -25,10 +25,10 @@
  */
 define(
     ["../../src/types/MergeModels"],
-    function (mergeModels) {
+    (mergeModels) => {
 
-        describe("Model merger", function () {
-            it("merges models", function () {
+        describe("Model merger", () =>  {
+            it("merges models", () =>  {
                 expect(mergeModels(
                     {
                         "a": "property a",

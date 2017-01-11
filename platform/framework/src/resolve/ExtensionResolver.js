@@ -66,6 +66,7 @@ define(
 
                 // Wrap a constructor function (to avoid modifying the original)
                 function constructorFor(impl) {
+                  console.log(impl)
                     function Constructor() {
                         return impl.apply(this, arguments);
                     }

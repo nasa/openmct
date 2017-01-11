@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
 
         /**
@@ -49,9 +49,9 @@ define(
          * @constructor
          * @implements {Capability}
          */
-        function DelegationCapability($q, domainObject) {
-            var type = domainObject.getCapability("type"),
-                self = this;
+        class DelegationCapability {
+          constructor($q, domainObject) {
+            let type = domainObject.getCapability("type")
 
             this.$q = $q;
             this.delegateCapabilities = {};
@@ -59,8 +59,8 @@ define(
 
             // Generate set for easy lookup of capability delegation
             if (type && type.getDefinition) {
-                (type.getDefinition().delegates || []).forEach(function (key) {
-                    self.delegateCapabilities[key] = true;
+                (type.getDefinition().delegates || []).forEach( (key) => {
+                    this.delegateCapabilities[key] = true;
                 });
             }
         }
@@ -75,18 +75,18 @@ define(
          *          responsibility for this capability is delegated.
          * @memberof platform/core.DelegationCapability#
          */
-        DelegationCapability.prototype.getDelegates = function (key) {
-            var domainObject = this.domainObject;
+        getDelegates(key) {
+            let domainObject = this.domainObject;
 
-            function filterObjectsWithCapability(capability) {
-                return function (objects) {
-                    return objects.filter(function (obj) {
+            const filterObjectsWithCapability = (capability) => {
+                return (objects) => {
+                    return objects.filter( (obj) => {
                         return obj.hasCapability(capability);
                     });
                 };
             }
 
-            function promiseChildren() {
+            const promiseChildren = () => {
                 return domainObject.useCapability('composition');
             }
 
@@ -104,7 +104,7 @@ define(
          * @param {string} key the capability to check for
          * @returns {boolean} true if the capability is delegated
          */
-        DelegationCapability.prototype.doesDelegateCapability = function (key) {
+        doesDelegateCapability(key) {
             return !!(this.delegateCapabilities[key]);
         };
 
@@ -122,10 +122,10 @@ define(
          *          responsibility for this capability is delegated.
          * @memberof platform/core.DelegationCapability#
          */
-        DelegationCapability.prototype.invoke =
-            DelegationCapability.prototype.getDelegates;
-
+        invoke() {
+          return this.getDelegates
+        }
+      }
         return DelegationCapability;
-
     }
 );

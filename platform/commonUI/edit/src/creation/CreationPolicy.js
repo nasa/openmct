@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * A policy for determining whether objects of a given type can be
@@ -31,13 +31,11 @@ define(
          * @implements {Policy}
          * @memberof platform/commonUI/browse
          */
-        function CreationPolicy() {
+        class CreationPolicy {
+          allow(type) {
+              return type.hasFeature("creation");
+          }
         }
-
-        CreationPolicy.prototype.allow = function (type) {
-            return type.hasFeature("creation");
-        };
-
         return CreationPolicy;
     }
 );

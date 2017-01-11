@@ -22,7 +22,7 @@
 
 define(
     ["../SubPlot", "../elements/PlotPalette", "../elements/PlotPanZoomStackGroup"],
-    function (SubPlot, PlotPalette, PlotPanZoomStackGroup) {
+    (SubPlot, PlotPalette, PlotPanZoomStackGroup) => {
 
         /**
          * Handles plotting in Stacked mode. In stacked mode, there
@@ -32,13 +32,13 @@ define(
          * @implements {platform/features/plot.PlotModeHandler}
          * @param {DomainObject[]} the domain objects to be plotted
          */
-        function PlotStackMode(telemetryObjects, subPlotFactory) {
-            var self = this;
+        class PlotStackMode {
+          constructor(telemetryObjects, subPlotFactory) {
 
             this.panZoomStackGroup =
                 new PlotPanZoomStackGroup(telemetryObjects.length);
 
-            this.subplots = telemetryObjects.map(function (telemetryObject, i) {
+            this.subplots = telemetryObjects.map( (telemetryObject, i) => {
                     return subPlotFactory.createSubPlot(
                         [telemetryObject],
                         self.panZoomStackGroup.getPanZoomStack(i)
@@ -46,8 +46,8 @@ define(
                 });
         }
 
-        PlotStackMode.prototype.plotTelemetryTo = function (subplot, prepared, index) {
-            var buffer = prepared.getLineBuffers()[index];
+        plotTelemetryTo(subplot, prepared, index) {
+            let buffer = prepared.getLineBuffers()[index];
 
             // Track the domain offset, used to bias domain values
             // to minimize loss of precision when converted to 32-bit
@@ -63,8 +63,7 @@ define(
             }];
         };
 
-        PlotStackMode.prototype.plotTelemetry = function (prepared) {
-            var self = this;
+        plotTelemetry(prepared) {
             // Fit to the boundaries of the data, but don't
             // override any user-initiated pan-zoom changes.
             this.panZoomStackGroup.setBasePanZoom(
@@ -72,33 +71,33 @@ define(
                 prepared.getDimensions()
             );
 
-            this.subplots.forEach(function (subplot, index) {
+            this.subplots.forEach( (subplot, index) => {
                 self.plotTelemetryTo(subplot, prepared, index);
             });
         };
 
-        PlotStackMode.prototype.getSubPlots = function () {
+        getSubPlots() {
             return this.subplots;
         };
 
-        PlotStackMode.prototype.isZoomed = function () {
+        isZoomed() {
             return this.panZoomStackGroup.getDepth() > 1;
         };
 
-        PlotStackMode.prototype.stepBackPanZoom = function () {
+        stepBackPanZoom() {
             this.panZoomStackGroup.popPanZoom();
-            this.subplots.forEach(function (subplot) {
+            this.subplots.forEach( (subplot) => {
                 subplot.update();
             });
         };
 
-        PlotStackMode.prototype.unzoom = function () {
+        unzoom() {
             this.panZoomStackGroup.clearPanZoom();
-            this.subplots.forEach(function (subplot) {
+            this.subplots.forEach( (subplot) => {
                 subplot.update();
             });
         };
-
+      }
         return PlotStackMode;
     }
 );

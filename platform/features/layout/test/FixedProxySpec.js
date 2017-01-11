@@ -22,16 +22,16 @@
 
 define(
     ['../src/FixedProxy'],
-    function (FixedProxy) {
+    (FixedProxy) => {
 
-        describe("Fixed Position view's selection proxy", function () {
-            var mockCallback,
+        describe("Fixed Position view's selection proxy", () => {
+            let mockCallback,
                 mockQ,
                 mockDialogService,
                 mockPromise,
                 proxy;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockCallback = jasmine.createSpy('callback');
                 mockQ = jasmine.createSpyObj('$q', ['when']);
                 mockDialogService = jasmine.createSpyObj('dialogService', ['getUserInput']);
@@ -42,14 +42,14 @@ define(
                 proxy = new FixedProxy(mockCallback, mockQ, mockDialogService);
             });
 
-            it("handles promised element creation", function () {
+            it("handles promised element creation", () => {
                 // The element factory may return promises (e.g. if
                 // user input is required) so make sure proxy is wrapping these
                 proxy.add("fixed.box");
                 expect(mockQ.when).toHaveBeenCalled();
             });
 
-            it("notifies its callback when an element is created", function () {
+            it("notifies its callback when an element is created", () => {
                 proxy.add("fixed.box");
                 // Callback should not have been invoked yet
                 expect(mockCallback).not.toHaveBeenCalled();

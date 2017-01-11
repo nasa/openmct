@@ -22,7 +22,7 @@
 
 define(
     ['./AbstractStartTimerAction'],
-    function (AbstractStartTimerAction) {
+    (AbstractStartTimerAction) => {
 
         /**
          * Implements the "Start" action for timers.
@@ -38,15 +38,14 @@ define(
          *        time (typically wrapping `Date.now`)
          * @param {ActionContext} context the context for this action
          */
-        function StartTimerAction(now, context) {
+        class StartTimerAction extends AbstractStartTimerAction {
+          constructor(now, context) {
+            super();
             AbstractStartTimerAction.apply(this, [now, context]);
-        }
+          }
 
-        StartTimerAction.prototype =
-            Object.create(AbstractStartTimerAction.prototype);
-
-        StartTimerAction.appliesTo = function (context) {
-            var model =
+          appliesTo(context) {
+            let model =
                 (context.domainObject && context.domainObject.getModel()) ||
                 {};
 
@@ -54,9 +53,8 @@ define(
             // a target time.
             return model.type === 'timer' &&
                     model.timestamp === undefined;
-        };
-
+            };
+          }
         return StartTimerAction;
-
     }
 );

@@ -22,7 +22,7 @@
 
 define(
     ["./SubPlot"],
-    function (SubPlot) {
+    (SubPlot) => {
 
         /**
          * Utility factory; wraps the SubPlot constructor and adds
@@ -32,9 +32,10 @@ define(
          * @memberof platform/features/plot
          * @constructor
          */
-        function SubPlotFactory(telemetryFormatter) {
+        class SubPlotFactory {
+          constructor(telemetryFormatter) {
             this.telemetryFormatter = telemetryFormatter;
-        }
+          }
 
         /**
          * Instantiate a new sub-plot.
@@ -45,14 +46,14 @@ define(
          * @returns {SubPlot} the instantiated sub-plot
          * @method
          */
-        SubPlotFactory.prototype.createSubPlot = function (telemetryObjects, panZoomStack) {
+        createSubPlot(telemetryObjects, panZoomStack) {
             return new SubPlot(
                 telemetryObjects,
                 panZoomStack,
                 this.telemetryFormatter
             );
         };
-
+      }
         return SubPlotFactory;
 
     }

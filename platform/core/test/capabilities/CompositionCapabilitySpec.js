@@ -28,9 +28,9 @@ define(
         "../../src/capabilities/CompositionCapability",
         "../../src/capabilities/ContextualDomainObject"
     ],
-    function (CompositionCapability, ContextualDomainObject) {
+    (CompositionCapability, ContextualDomainObject) => {
 
-        var DOMAIN_OBJECT_METHODS = [
+        let DOMAIN_OBJECT_METHODS = [
             "getId",
             "getModel",
             "getCapability",
@@ -38,8 +38,8 @@ define(
             "useCapability"
         ];
 
-        describe("The composition capability", function () {
-            var mockDomainObject,
+        describe("The composition capability", () => {
+            let mockDomainObject,
                 mockInjector,
                 mockContextualize,
                 mockObjectService,
@@ -48,15 +48,15 @@ define(
             // Composition Capability makes use of promise chaining,
             // so support that, but don't introduce complication of
             // native promises.
-            function mockPromise(value) {
+            const mockPromise = (value) => {
                 return (value || {}).then ? value : {
-                    then: function (callback) {
+                    then: (callback) => {
                         return mockPromise(callback(value));
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     DOMAIN_OBJECT_METHODS
@@ -68,7 +68,7 @@ define(
                 );
 
                 mockInjector = {
-                    get: function (name) {
+                    get: (name) => {
                         return (name === "objectService") && mockObjectService;
                     }
                 };
@@ -76,7 +76,7 @@ define(
 
                 // Provide a minimal (e.g. no error-checking) implementation
                 // of contextualize for simplicity
-                mockContextualize.andCallFake(function (domainObject, parentObject) {
+                mockContextualize.andCallFake( (domainObject, parentObject) => {
                     return new ContextualDomainObject(domainObject, parentObject);
                 });
 
@@ -89,15 +89,15 @@ define(
                 );
             });
 
-            it("applies only to models with a composition field", function () {
+            it("applies only to models with a composition field", () => {
                 expect(CompositionCapability.appliesTo({ composition: [] }))
                     .toBeTruthy();
                 expect(CompositionCapability.appliesTo({}))
                     .toBeFalsy();
             });
 
-            it("requests ids found in model's composition from the object service", function () {
-                var ids = ["a", "b", "c", "xyz"];
+            it("requests ids found in model's composition from the object service", () => {
+                let ids = ["a", "b", "c", "xyz"];
 
                 mockDomainObject.getModel.andReturn({ composition: ids });
 
@@ -106,15 +106,15 @@ define(
                 expect(mockObjectService.getObjects).toHaveBeenCalledWith(ids);
             });
 
-            it("adds a context capability to returned domain objects", function () {
-                var result,
+            it("adds a context capability to returned domain objects", () => {
+                let result,
                     mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
 
                 mockDomainObject.getModel.andReturn({ composition: ["x"] });
                 mockObjectService.getObjects.andReturn(mockPromise({x: mockChild}));
                 mockChild.getCapability.andReturn(undefined);
 
-                composition.invoke().then(function (c) {
+                composition.invoke().then( (c) => {
                     result = c;
                 });
 
@@ -123,8 +123,8 @@ define(
 
             });
 
-            it("allows domain objects to be added", function () {
-                var result,
+            it("allows domain objects to be added", () => {
+                let result,
                     testModel = { composition: [] },
                     mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
 
@@ -133,14 +133,14 @@ define(
                 mockChild.getCapability.andReturn(undefined);
                 mockChild.getId.andReturn('a');
 
-                mockDomainObject.useCapability.andCallFake(function (key, mutator) {
+                mockDomainObject.useCapability.andCallFake( (key, mutator) => {
                     if (key === 'mutation') {
                         mutator(testModel);
                         return mockPromise(true);
                     }
                 });
 
-                composition.add(mockChild).then(function (domainObject) {
+                composition.add(mockChild).then( (domainObject) => {
                     result = domainObject;
                 });
 
@@ -153,8 +153,8 @@ define(
                     .toEqual(mockDomainObject);
             });
 
-            it("does not re-add IDs which are already present", function () {
-                var result,
+            it("does not re-add IDs which are already present", () => {
+                let result,
                     testModel = { composition: ['a'] },
                     mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
 
@@ -163,14 +163,14 @@ define(
                 mockChild.getCapability.andReturn(undefined);
                 mockChild.getId.andReturn('a');
 
-                mockDomainObject.useCapability.andCallFake(function (key, mutator) {
+                mockDomainObject.useCapability.andCallFake( (key, mutator) => {
                     if (key === 'mutation') {
                         mutator(testModel);
                         return mockPromise(true);
                     }
                 });
 
-                composition.add(mockChild).then(function (domainObject) {
+                composition.add(mockChild).then( (domainObject) => {
                     result = domainObject;
                 });
 
@@ -184,8 +184,8 @@ define(
                     .toEqual(mockDomainObject);
             });
 
-            it("can add objects at a specified index", function () {
-                var result,
+            it("can add objects at a specified index", () => {
+                let result,
                     testModel = { composition: ['a', 'b', 'c'] },
                     mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
 
@@ -194,14 +194,14 @@ define(
                 mockChild.getCapability.andReturn(undefined);
                 mockChild.getId.andReturn('a');
 
-                mockDomainObject.useCapability.andCallFake(function (key, mutator) {
+                mockDomainObject.useCapability.andCallFake( (key, mutator) => {
                     if (key === 'mutation') {
                         mutator(testModel);
                         return mockPromise(true);
                     }
                 });
 
-                composition.add(mockChild, 1).then(function (domainObject) {
+                composition.add(mockChild, 1).then( (domainObject) => {
                     result = domainObject;
                 });
 

@@ -33,7 +33,7 @@ define([
     './policies/AdaptedViewPolicy',
     './runs/AlternateCompositionInitializer',
     'text!./templates/adapted-view-template.html'
-], function (
+], (
     legacyRegistry,
     ActionDialogDecorator,
     AdapterCapability,
@@ -46,7 +46,7 @@ define([
     AdaptedViewPolicy,
     AlternateCompositionInitializer,
     adaptedViewTemplate
-) {
+) => {
     legacyRegistry.register('src/adapter', {
         "extensions": {
             "directives": [

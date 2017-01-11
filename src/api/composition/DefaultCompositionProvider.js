@@ -23,10 +23,10 @@
 define([
     'lodash',
     '../objects/object-utils'
-], function (
+], (
     _,
     objectUtils
-) {
+) => {
     /**
      * A CompositionProvider provides the underlying implementation of
      * composition-related behavior for certain types of domain object.
@@ -43,10 +43,11 @@ define([
      * @memberof module:openmct
      */
 
-    function DefaultCompositionProvider(publicAPI) {
+    class DefaultCompositionProvider {
+      constructor(publicAPI) {
         this.publicAPI = publicAPI;
         this.listeningTo = {};
-    }
+      }
 
     /**
      * Check if this provider should be used to load composition for a
@@ -58,9 +59,9 @@ define([
      * @memberof module:openmct.CompositionProvider#
      * @method appliesTo
      */
-    DefaultCompositionProvider.prototype.appliesTo = function (domainObject) {
+    appliesTo(domainObject) {
         return !!domainObject.composition;
-    };
+    }
 
     /**
      * Load any domain objects contained in the composition of this domain
@@ -72,9 +73,9 @@ define([
      * @memberof module:openmct.CompositionProvider#
      * @method load
      */
-    DefaultCompositionProvider.prototype.load = function (domainObject) {
+    load(domainObject) {
         return Promise.all(domainObject.composition);
-    };
+    }
 
     /**
      * Attach listeners for changes to the composition of a given domain object.
@@ -85,16 +86,11 @@ define([
      * @param Function callback callback to invoke when event is triggered.
      * @param [context] context to use when invoking callback.
      */
-    DefaultCompositionProvider.prototype.on = function (
-        domainObject,
-        event,
-        callback,
-        context
-    ) {
+    on(domainObject, event, callback,context) {
         this.establishTopicListener();
 
-        var keyString = objectUtils.makeKeyString(domainObject.identifier);
-        var objectListeners = this.listeningTo[keyString];
+        let keyString = objectUtils.makeKeyString(domainObject.identifier);
+        let objectListeners = this.listeningTo[keyString];
 
         if (!objectListeners) {
             objectListeners = this.listeningTo[keyString] = {
@@ -108,7 +104,7 @@ define([
             callback: callback,
             context: context
         });
-    };
+    }
 
     /**
      * Remove a listener that was previously added for a given domain object.
@@ -120,16 +116,11 @@ define([
      * @param Function callback callback to remove.
      * @param [context] context of callback to remove.
      */
-    DefaultCompositionProvider.prototype.off = function (
-        domainObject,
-        event,
-        callback,
-        context
-    ) {
-        var keyString = objectUtils.makeKeyString(domainObject.identifier);
-        var objectListeners = this.listeningTo[keyString];
+    off(domainObject,event,callback,context) {
+        let keyString = objectUtils.makeKeyString(domainObject.identifier);
+        let objectListeners = this.listeningTo[keyString];
 
-        var index = _.findIndex(objectListeners[event], function (l) {
+        let index = _.findIndex(objectListeners[event], (l) => {
             return l.callback === callback && l.context === context;
         });
 
@@ -137,7 +128,7 @@ define([
         if (!objectListeners.add.length && !objectListeners.remove.length) {
             delete this.listeningTo[keyString];
         }
-    };
+    }
 
     /**
      * Remove a domain object from another domain object's composition.
@@ -151,10 +142,10 @@ define([
      * @memberof module:openmct.CompositionProvider#
      * @method remove
      */
-    DefaultCompositionProvider.prototype.remove = function (domainObject, childId) {
+    remove(domainObject, childId) {
         // TODO: this needs to be synchronized via mutation.
         throw new Error('Default Provider does not implement removal.');
-    };
+    }
 
     /**
      * Add a domain object to another domain object's composition.
@@ -168,10 +159,10 @@ define([
      * @memberof module:openmct.CompositionProvider#
      * @method add
      */
-    DefaultCompositionProvider.prototype.add = function (domainObject, child) {
+    add(domainObject, child) {
         throw new Error('Default Provider does not implement adding.');
         // TODO: this needs to be synchronized via mutation
-    };
+    }
 
     /**
      * Listens on general mutation topic, using injector to fetch to avoid
@@ -179,14 +170,14 @@ define([
      *
      * @private
      */
-    DefaultCompositionProvider.prototype.establishTopicListener = function () {
+    establishTopicListener() {
         if (this.topicListener) {
             return;
         }
-        var topic = this.publicAPI.$injector.get('topic');
-        var mutation = topic('mutation');
+        let topic = this.publicAPI.$injector.get('topic');
+        let mutation = topic('mutation');
         this.topicListener = mutation.listen(this.onMutation.bind(this));
-    };
+    }
 
     /**
      * Handles mutation events.  If there are active listeners for the mutated
@@ -194,40 +185,40 @@ define([
      *
      * @private
      */
-    DefaultCompositionProvider.prototype.onMutation = function (oldDomainObject) {
-        var id = oldDomainObject.getId();
-        var listeners = this.listeningTo[id];
+    onMutation(oldDomainObject) {
+        let id = oldDomainObject.getId();
+        let listeners = this.listeningTo[id];
 
         if (!listeners) {
             return;
         }
 
-        var oldComposition = listeners.composition.map(objectUtils.makeKeyString);
-        var newComposition = oldDomainObject.getModel().composition;
+        let oldComposition = listeners.composition.map(objectUtils.makeKeyString);
+        let newComposition = oldDomainObject.getModel().composition;
 
-        var added = _.difference(newComposition, oldComposition).map(objectUtils.parseKeyString);
-        var removed = _.difference(oldComposition, newComposition).map(objectUtils.parseKeyString);
+        let added = _.difference(newComposition, oldComposition).map(objectUtils.parseKeyString);
+        let removed = _.difference(oldComposition, newComposition).map(objectUtils.parseKeyString);
 
-        function notify(value) {
-            return function (listener) {
+        const notify = (value) => {
+            return (listener) => {
                 if (listener.context) {
                     listener.callback.call(listener.context, value);
                 } else {
                     listener.callback(value);
                 }
             };
-        }
+        };
 
-        added.forEach(function (addedChild) {
+        added.forEach( (addedChild) => {
             listeners.add.forEach(notify(addedChild));
         });
 
-        removed.forEach(function (removedChild) {
+        removed.forEach( (removedChild) => {
             listeners.remove.forEach(notify(removedChild));
         });
 
         listeners.composition = newComposition.map(objectUtils.parseKeyString);
-    };
-
-    return DefaultCompositionProvider;
+    }
+}
+return DefaultCompositionProvider;
 });

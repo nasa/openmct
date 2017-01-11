@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./ConductorAxisController'], function (ConductorAxisController) {
-    function MctConductorAxis() {
+define(['./ConductorAxisController'], (ConductorAxisController) => {
+    const MctConductorAxis = () => {
         /**
          * The mct-conductor-axis renders a horizontal axis with regular
          * labelled 'ticks'. It requires 'start' and 'end' integer values to

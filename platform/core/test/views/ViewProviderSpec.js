@@ -25,10 +25,10 @@
  */
 define(
     ["../../src/views/ViewProvider"],
-    function (ViewProvider) {
+    (ViewProvider) => {
 
-        describe("The view provider", function () {
-            var viewA = {
+        describe("The view provider", () =>  {
+            let viewA = {
                     key: "a"
                 },
                 viewB = {
@@ -47,15 +47,15 @@ define(
                 mockLog,
                 provider;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 // Simulate the expected API
-                mockDomainObject.hasCapability = function (c) {
+                mockDomainObject.hasCapability = (c) => {
                     return capabilities[c] !== undefined;
                 };
-                mockDomainObject.getCapability = function (c) {
+                mockDomainObject.getCapability = (c) => {
                     return capabilities[c];
                 };
-                mockDomainObject.useCapability = function (c, v) {
+                mockDomainObject.useCapability = (c, v) => {
                     return capabilities[c] && capabilities[c].invoke(v);
                 };
                 mockLog = jasmine.createSpyObj("$log", ["warn", "info", "debug"]);
@@ -64,7 +64,7 @@ define(
                 delegates = {};
 
                 delegation = {
-                    doesDelegateCapability: function (c) {
+                    doesDelegateCapability: (c) => {
                         return delegates[c] !== undefined;
                     }
                 };
@@ -72,19 +72,19 @@ define(
                 provider = new ViewProvider([viewA, viewB, viewC], mockLog);
             });
 
-            it("reports views provided as extensions", function () {
+            it("reports views provided as extensions", () =>  {
                 capabilities.someCapability = true;
                 expect(provider.getViews(mockDomainObject))
                     .toEqual([viewA, viewB, viewC]);
             });
 
-            it("filters views by needed capabilities", function () {
+            it("filters views by needed capabilities", () =>  {
                 //capabilities.someCapability = true;
                 expect(provider.getViews(mockDomainObject))
                     .toEqual([viewA]);
             });
 
-            it("allows delegation of needed capabilities when specified", function () {
+            it("allows delegation of needed capabilities when specified", () =>  {
                 //capabilities.someCapability = true;
                 capabilities.delegation = delegation;
                 delegates.someCapability = true;
@@ -92,7 +92,7 @@ define(
                     .toEqual([viewA, viewC]);
             });
 
-            it("warns if keys are omitted from views", function () {
+            it("warns if keys are omitted from views", () =>  {
                 // Verify that initial construction issued no warning
                 expect(mockLog.warn).not.toHaveBeenCalled();
                 // Recreate with no keys; that view should be filtered out
@@ -106,8 +106,8 @@ define(
                 expect(mockLog.warn).toHaveBeenCalledWith(jasmine.any(String));
             });
 
-            it("restricts typed views to matching types", function () {
-                var testType = "testType",
+            it("restricts typed views to matching types", () =>  {
+                let testType = "testType",
                     testView = { key: "x", type: testType },
                     viewProvider = new ViewProvider([testView], mockLog);
 
@@ -132,8 +132,8 @@ define(
 
             });
 
-            it("enforces view restrictions from types", function () {
-                var testView = { key: "x" },
+            it("enforces view restrictions from types", () =>  {
+                let testView = { key: "x" },
                     viewProvider = new ViewProvider([testView], mockLog);
 
                 // Include a "type" capability

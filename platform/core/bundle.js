@@ -52,7 +52,7 @@ define([
     "./src/services/Contextualize",
     "./src/services/Instantiate",
     'legacyRegistry'
-], function (
+], (
     DomainObjectProvider,
     CoreCapabilityProvider,
     StaticModelProvider,
@@ -84,7 +84,7 @@ define([
     Contextualize,
     Instantiate,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/core", {
         "name": "Open MCT Core",

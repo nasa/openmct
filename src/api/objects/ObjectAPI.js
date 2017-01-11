@@ -26,13 +26,13 @@ define([
     './MutableObject',
     './RootRegistry',
     './RootObjectProvider'
-], function (
+], (
     _,
     utils,
     MutableObject,
     RootRegistry,
     RootObjectProvider
-) {
+) => {
 
 
     /**
@@ -41,31 +41,48 @@ define([
      * @memberof module:openmct
      */
 
-    function ObjectAPI() {
+    class ObjectAPI {
+      constructor() {
         this.providers = {};
         this.rootRegistry = new RootRegistry();
         this.rootProvider = new RootObjectProvider(this.rootRegistry);
+        ['save','delete','get'].forEach( (method) => {
+            this[method] = () => {
+                let identifier = arguments[0],
+                    provider = this.getProvider(identifier);
+
+                if (!provider) {
+                    throw new Error('No Provider Matched');
+                }
+
+                if (!provider[method]) {
+                    throw new Error('Provider does not support [' + method + '].');
+                }
+
+                return provider[method].apply(provider, arguments);
+            };
+        });
     }
 
-    ObjectAPI.prototype.supersecretSetFallbackProvider = function (p) {
+    supersecretSetFallbackProvider(p) {
         this.fallbackProvider = p;
-    };
+    }
 
     // Retrieve the provider for a given key.
-    ObjectAPI.prototype.getProvider = function (identifier) {
+    getProvider(identifier) {
         if (identifier.key === 'ROOT') {
             return this.rootProvider;
         }
         return this.providers[identifier.namespace] || this.fallbackProvider;
-    };
+    }
 
     /**
      * Get the root-level object.
      * @returns {Promise.<DomainObject>} a promise for the root object
      */
-    ObjectAPI.prototype.getRoot = function () {
+    getRoot() {
         return this.rootProvider.get();
-    };
+    }
 
     /**
      * Register a new object provider for a particular namespace.
@@ -76,9 +93,9 @@ define([
      * @memberof {module:openmct.ObjectAPI#}
      * @name addProvider
      */
-    ObjectAPI.prototype.addProvider = function (namespace, provider) {
+    addProvider(namespace, provider) {
         this.providers[namespace] = provider;
-    };
+    }
 
     /**
      * Provides the ability to read, write, and delete domain objects.
@@ -132,28 +149,6 @@ define([
      * @returns {Promise} a promise which will resolve when the domain object
      *          has been saved, or be rejected if it cannot be saved
      */
-
-    [
-        'save',
-        'delete',
-        'get'
-    ].forEach(function (method) {
-        ObjectAPI.prototype[method] = function () {
-            var identifier = arguments[0],
-                provider = this.getProvider(identifier);
-
-            if (!provider) {
-                throw new Error('No Provider Matched');
-            }
-
-            if (!provider[method]) {
-                throw new Error('Provider does not support [' + method + '].');
-            }
-
-            return provider[method].apply(provider, arguments);
-        };
-    });
-
     /**
      * Add a root-level object.
      * @param {module:openmct.ObjectAPI~Identifier|function} an array of
@@ -162,9 +157,9 @@ define([
      * @method addRoot
      * @memberof module:openmct.ObjectAPI#
      */
-    ObjectAPI.prototype.addRoot = function (key) {
+    addRoot(key) {
         this.rootRegistry.addRoot(key);
-    };
+    }
 
     /**
      * Modify a domain object.
@@ -174,9 +169,9 @@ define([
      * @method mutate
      * @memberof module:openmct.ObjectAPI#
      */
-    ObjectAPI.prototype.mutate = function (domainObject, path, value) {
+    mutate(domainObject, path, value) {
         return new MutableObject(domainObject).set(path, value);
-    };
+    }
 
     /**
      * Observe changes to a domain object.
@@ -187,11 +182,11 @@ define([
      * @method observe
      * @memberof module:openmct.ObjectAPI#
      */
-    ObjectAPI.prototype.observe = function (domainObject, path, callback) {
-        var mutableObject = new MutableObject(domainObject);
+    observe(domainObject, path, callback) {
+        let mutableObject = new MutableObject(domainObject);
         mutableObject.on(path, callback);
         return mutableObject.stopListening.bind(mutableObject);
-    };
+    }
 
     /**
      * Uniquely identifies a domain object.
@@ -227,6 +222,6 @@ define([
      * @typedef DomainObject
      * @memberof module:openmct
      */
-
-    return ObjectAPI;
+}
+return ObjectAPI;
 });

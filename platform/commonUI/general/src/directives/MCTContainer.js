@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The mct-container is similar to the mct-include directive
@@ -40,11 +40,11 @@ define(
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function MCTContainer(containers) {
-            var containerMap = {};
+        const MCTContainer = (containers) => {
+            let containerMap = {};
 
             // Initialize container map from extensions
-            containers.forEach(function (container) {
+            containers.forEach( (container) => {
                 containerMap[container.key] = container;
             });
 
@@ -61,15 +61,15 @@ define(
 
                 // Populate initial scope based on attributes requested
                 // by the container definition
-                link: function (scope, element, attrs) {
-                    var key = attrs.key,
+                link: (scope, element, attrs) => {
+                    let key = attrs.key,
                         container = containerMap[key],
                         alias = "container",
                         copiedAttributes = {};
 
                     if (container) {
                         alias = container.alias || alias;
-                        (container.attributes || []).forEach(function (attr) {
+                        (container.attributes || []).forEach( (attr) => {
                             copiedAttributes[attr] = attrs[attr];
                         });
                     }
@@ -77,8 +77,8 @@ define(
                     scope[alias] = copiedAttributes;
                 },
 
-                template: function (element, attrs) {
-                    var key = attrs.key,
+                template: (element, attrs) => {
+                    let key = attrs.key,
                         container = containerMap[key];
                     return container ? container.template : "";
                 }

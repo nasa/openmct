@@ -20,9 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [],
-    function () {
+define([], () {
 
         /**
          * Defines the `now` service, which is a simple wrapper upon
@@ -31,14 +29,14 @@ define(
          * @returns {Function} a function which returns current system time
          * @memberof platform/core
          */
-        function Now() {
+        const Now = () => {
             /**
              * Get the current time.
              * @returns {number} current time, in milliseconds since
              *          1970-01-01 00:00:00Z
              * @memberof platform/core.Now#
              */
-            return function () {
+            return () => {
                 return Date.now();
             };
         }

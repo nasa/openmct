@@ -23,9 +23,7 @@
 /**
  * Module defining TypeCapability. Created by vwoeltje on 11/10/14.
  */
-define(
-    [],
-    function () {
+define([], () => {
 
         /**
          * The `type` capability makes information about a domain object's
@@ -41,15 +39,14 @@ define(
          * @param {DomainObject} domainObject the domain object
          *        which exposes the type capability
          */
-        function TypeCapability(typeService, domainObject) {
-            var typeKey = domainObject.getModel().type,
+        const TypeCapability = (typeService, domainObject) => {
+            let typeKey = domainObject.getModel().type,
                 type = typeService.getType(typeKey);
 
             // Simply return the type, but wrap with Object.create
             // to avoid exposing the type object directly.
             return Object.create(type);
         }
-
         return TypeCapability;
     }
 );

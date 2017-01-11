@@ -22,17 +22,17 @@
 
 define(
     ['../src/PlotOptionsForm'],
-    function (PlotOptionsForm) {
+    (PlotOptionsForm) => {
 
-        describe("The Plot Options form", function () {
-            var plotOptionsForm;
+        describe("The Plot Options form", () => {
+            let plotOptionsForm;
 
-            beforeEach(function () {
+            beforeEach(() => {
 
                 plotOptionsForm = new PlotOptionsForm();
             });
 
-            it("defines form specs for x-axis, y-axis, and series data", function () {
+            it("defines form specs for x-axis, y-axis, and series data", () => {
                 expect(plotOptionsForm.xAxisForm).toBeDefined();
                 expect(plotOptionsForm.xAxisForm.sections).toBeDefined();
                 expect(plotOptionsForm.xAxisForm.sections[0].rows).toBeDefined();

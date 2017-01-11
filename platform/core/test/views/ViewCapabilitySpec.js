@@ -25,15 +25,15 @@
  */
 define(
     ["../../src/views/ViewCapability"],
-    function (ViewCapability) {
+    (ViewCapability) => {
 
-        describe("A view capability", function () {
-            var mockViewService,
+        describe("A view capability", () =>  {
+            let mockViewService,
                 mockDomainObject,
                 views = [{key: "someView"}],
                 view;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 mockViewService = jasmine.createSpyObj(
                     "viewService",
                     ["getViews"]
@@ -46,7 +46,7 @@ define(
                 view = new ViewCapability(mockViewService, mockDomainObject);
             });
 
-            it("issues invocations to the view service", function () {
+            it("issues invocations to the view service", () =>  {
                 expect(view.invoke()).toEqual(views);
                 expect(mockViewService.getViews).toHaveBeenCalledWith(
                     mockDomainObject

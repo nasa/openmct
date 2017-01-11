@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Controller which keeps an up-to-date list of actions of
@@ -43,16 +43,16 @@ define(
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function ActionGroupController($scope) {
+        const ActionGroupController = ($scope) => {
 
             // Separate out the actions that have been retrieved
             // into groups, and populate scope with this.
-            function groupActions(actions) {
-                var groups = {},
+            const groupActions = (actions) => {
+                let groups = {},
                     ungrouped = [];
 
-                function assignToGroup(action) {
-                    var metadata = action.getMetadata(),
+                const assignToGroup = (action) => {
+                    let metadata = action.getMetadata(),
                         group = metadata.group;
                     if (group) {
                         groups[group] = groups[group] || [];
@@ -65,15 +65,15 @@ define(
                 (actions || []).forEach(assignToGroup);
 
                 $scope.ungrouped = ungrouped;
-                $scope.groups = Object.keys(groups).sort().map(function (k) {
+                $scope.groups = Object.keys(groups).sort().map( (k) => {
                     return groups[k];
                 });
             }
 
             // Callback for when state which might influence action groupings
             // changes.
-            function updateGroups() {
-                var actionCapability = $scope.action,
+            const updateGroups = () => {
+                let actionCapability = $scope.action,
                     params = $scope.parameters || {},
                     category = params.category;
 

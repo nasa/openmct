@@ -22,9 +22,9 @@
 
 define(
     [],
-    function () {
+    () => {
 
-        var DISALLOWED_ACTIONS = ["move"];
+        const DISALLOWED_ACTIONS = ["move"];
 
         /**
          * This policy prevents performing move/copy/link actions across
@@ -34,25 +34,23 @@ define(
          * @constructor
          * @implements {Policy}
          */
-        function CrossSpacePolicy() {
-        }
+         const lookupSpace = (domainObject) => {
+             let persistence = domainObject &&
+                 domainObject.getCapability("persistence");
+             return persistence && persistence.getSpace();
+         }
+         const isCrossSpace = (context) => {
+             let domainObject = context.domainObject,
+                 selectedObject = context.selectedObject;
+             return selectedObject !== undefined &&
+                 domainObject !== undefined &&
+                 lookupSpace(domainObject) !== lookupSpace(selectedObject);
+         }
+         
+        class CrossSpacePolicy {
 
-        function lookupSpace(domainObject) {
-            var persistence = domainObject &&
-                domainObject.getCapability("persistence");
-            return persistence && persistence.getSpace();
-        }
-
-        function isCrossSpace(context) {
-            var domainObject = context.domainObject,
-                selectedObject = context.selectedObject;
-            return selectedObject !== undefined &&
-                domainObject !== undefined &&
-                lookupSpace(domainObject) !== lookupSpace(selectedObject);
-        }
-
-        CrossSpacePolicy.prototype.allow = function (action, context) {
-            var key = action.getMetadata().key;
+        allow(action, context) {
+            let key = action.getMetadata().key;
 
             if (DISALLOWED_ACTIONS.indexOf(key) !== -1) {
                 return !isCrossSpace(context);
@@ -60,8 +58,7 @@ define(
 
             return true;
         };
-
-        return CrossSpacePolicy;
-
+      }
+      return CrossSpacePolicy;
     }
 );

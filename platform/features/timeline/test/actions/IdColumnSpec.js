@@ -22,25 +22,25 @@
 
 define(
     ['../../src/actions/IdColumn'],
-    function (IdColumn) {
-        describe("IdColumn", function () {
-            var testIdMap,
+    (IdColumn) => {
+        describe("IdColumn", () => {
+            let testIdMap,
                 column;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testIdMap = { "foo": "bar" };
                 column = new IdColumn(testIdMap);
             });
 
-            it("has a name", function () {
+            it("has a name", () => {
                 expect(column.name()).toEqual(jasmine.any(String));
             });
 
-            describe("value", function () {
-                var mockDomainObject,
+            describe("value", () => {
+                let mockDomainObject,
                     testId;
 
-                beforeEach(function () {
+                beforeEach(() => {
                     testId = "foo";
                     mockDomainObject = jasmine.createSpyObj(
                         'domainObject',
@@ -49,7 +49,7 @@ define(
                     mockDomainObject.getId.andReturn(testId);
                 });
 
-                it("provides a value mapped from domain object's identifier", function () {
+                it("provides a value mapped from domain object's identifier", () => {
                     expect(column.value(mockDomainObject))
                         .toEqual(testIdMap[testId]);
                 });

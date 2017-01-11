@@ -23,10 +23,7 @@
 define([
 
     'legacyRegistry'
-], function (
-
-    legacyRegistry
-) {
+], (legacyRegistry) => {
 
     legacyRegistry.register("platform/commonUI/themes/snow", {
         "name": "Snow",

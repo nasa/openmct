@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['../TimelineFormatter'], function (TimelineFormatter) {
+define(['../TimelineFormatter'], (TimelineFormatter) => {
 
-    var FORMATTER = new TimelineFormatter();
+    let FORMATTER = new TimelineFormatter();
 
     /**
      * A column showing start or end times associated with a domain object.
@@ -31,23 +31,24 @@ define(['../TimelineFormatter'], function (TimelineFormatter) {
      *        start time; false if it refers to the object's end time
      * @implements {platform/features/timeline.TimelineCSVColumn}
      */
-    function TimespanColumn(isStart) {
+    class TimespanColumn {
+      constructor(isStart) {
         this.isStart = isStart;
-    }
+      }
 
-    TimespanColumn.prototype.name = function () {
+      name() {
         return this.isStart ? "Start" : "End";
-    };
+      };
 
-    TimespanColumn.prototype.value = function (domainObject) {
-        var isStart = this.isStart;
+      value(domainObject) {
+        let isStart = this.isStart;
         return domainObject.hasCapability('timespan') ?
-            domainObject.useCapability('timespan').then(function (timespan) {
+            domainObject.useCapability('timespan').then( (timespan) => {
                 return FORMATTER.format(
                     isStart ? timespan.getStart() : timespan.getEnd()
                 );
             }) : "";
     };
-
+  }
     return TimespanColumn;
 });

@@ -23,35 +23,35 @@
 
 define(
     ["../../src/services/TransactionService"],
-    function (TransactionService) {
+    (TransactionService) => {
 
-        describe("The Transaction Service", function () {
-            var mockQ,
+        describe("The Transaction Service", () => {
+            let mockQ,
                 mockLog,
                 transactionService;
 
-            function fastPromise(val) {
+            const fastPromise = (val) => {
                 return {
-                    then: function (callback) {
+                    then: (callback) => {
                         return fastPromise(callback(val));
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockQ = jasmine.createSpyObj("$q", ["all"]);
                 mockQ.all.andReturn(fastPromise());
                 mockLog = jasmine.createSpyObj("$log", ["error"]);
                 transactionService = new TransactionService(mockQ, mockLog);
             });
 
-            it("isActive returns true if a transaction is in progress", function () {
+            it("isActive returns true if a transaction is in progress", () => {
                 expect(transactionService.isActive()).toBe(false);
                 transactionService.startTransaction();
                 expect(transactionService.isActive()).toBe(true);
             });
 
-            it("addToTransaction queues onCommit and onCancel functions", function () {
+            it("addToTransaction queues onCommit and onCancel functions", () => {
                 var onCommit = jasmine.createSpy('onCommit'),
                     onCancel = jasmine.createSpy('onCancel');
 
@@ -60,7 +60,7 @@ define(
                 expect(transactionService.size()).toBe(1);
             });
 
-            it("size function returns size of commit and cancel queues", function () {
+            it("size function returns size of commit and cancel queues", () => {
                 var onCommit = jasmine.createSpy('onCommit'),
                     onCancel = jasmine.createSpy('onCancel');
 
@@ -71,11 +71,11 @@ define(
                 expect(transactionService.size()).toBe(3);
             });
 
-            describe("commit", function () {
-                var onCommits;
+            describe("commit", () => {
+                let onCommits;
 
-                beforeEach(function () {
-                    onCommits = [0, 1, 2].map(function (val) {
+                beforeEach( () => {
+                    onCommits = [0, 1, 2].map( (val) => {
                             return jasmine.createSpy("onCommit" + val);
                         });
 
@@ -83,15 +83,15 @@ define(
                     onCommits.forEach(transactionService.addToTransaction.bind(transactionService));
                 });
 
-                it("commit calls all queued commit functions", function () {
+                it("commit calls all queued commit functions", () => {
                     expect(transactionService.size()).toBe(3);
                     transactionService.commit();
-                    onCommits.forEach(function (spy) {
+                    onCommits.forEach( (spy) => {
                         expect(spy).toHaveBeenCalled();
                     });
                 });
 
-                it("commit resets active state and clears queues", function () {
+                it("commit resets active state and clears queues", () => {
                     transactionService.commit();
                     expect(transactionService.isActive()).toBe(false);
                     expect(transactionService.size()).toBe(0);
@@ -100,21 +100,21 @@ define(
 
             });
 
-            describe("cancel", function () {
-                var onCancels;
+            describe("cancel", () => {
+                let onCancels;
 
-                beforeEach(function () {
-                    onCancels = [0, 1, 2].map(function (val) {
+                beforeEach( () => {
+                    onCancels = [0, 1, 2].map( (val) => {
                         return jasmine.createSpy("onCancel" + val);
                     });
 
                     transactionService.startTransaction();
-                    onCancels.forEach(function (onCancel) {
+                    onCancels.forEach( (onCancel) => {
                         transactionService.addToTransaction(undefined, onCancel);
                     });
                 });
 
-                it("cancel calls all queued cancel functions", function () {
+                it("cancel calls all queued cancel functions", () => {
                     expect(transactionService.size()).toBe(3);
                     transactionService.cancel();
                     onCancels.forEach(function (spy) {
@@ -122,7 +122,7 @@ define(
                     });
                 });
 
-                it("cancel resets active state and clears queues", function () {
+                it("cancel resets active state and clears queues", () => {
                     transactionService.cancel();
                     expect(transactionService.isActive()).toBe(false);
                     expect(transactionService.size()).toBe(0);

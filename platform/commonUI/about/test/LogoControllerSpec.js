@@ -22,13 +22,13 @@
 
 define(
     ['../src/LogoController'],
-    function (LogoController) {
+    (LogoController) => {
 
-        describe("The About controller", function () {
-            var mockOverlayService,
+        describe("The About controller", () => {
+            let mockOverlayService,
                 controller;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockOverlayService = jasmine.createSpyObj(
                     "overlayService",
                     ["createOverlay"]
@@ -36,7 +36,7 @@ define(
                 controller = new LogoController(mockOverlayService);
             });
 
-            it("shows the about dialog", function () {
+            it("shows the about dialog", () => {
                 //Verify precondition
                 expect(mockOverlayService.createOverlay)
                     .not.toHaveBeenCalled();

@@ -26,13 +26,13 @@ define([
     "./src/directives/MCTBackgroundImage",
     "text!./res/templates/imagery.html",
     'legacyRegistry'
-], function (
+], (
     ImageryViewPolicy,
     ImageryController,
     MCTBackgroundImage,
     imageryTemplate,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/features/imagery", {
         "name": "Plot view for telemetry",

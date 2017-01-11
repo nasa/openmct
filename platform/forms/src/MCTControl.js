@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The mct-control will dynamically include the control
@@ -34,17 +34,17 @@ define(
          * @constructor
          * @memberof platform/forms
          */
-        function MCTControl(templateLinker, controls) {
-            var controlMap = {};
+        const MCTControl = (templateLinker, controls) => {
+            let controlMap = {};
 
             // Prepopulate controlMap for easy look up by key
-            controls.forEach(function (control) {
+            controls.forEach( (control) => {
                 controlMap[control.key] = control;
             });
 
-            function link(scope, element, attrs, ngModelController) {
-                var changeTemplate = templateLinker.link(scope, element);
-                scope.$watch("key", function (key) {
+            const link = (scope, element, attrs, ngModelController) => {
+                let changeTemplate = templateLinker.link(scope, element);
+                scope.$watch("key", (key) => {
                     changeTemplate(controlMap[key]);
                 });
                 scope.ngModelController = ngModelController;

@@ -22,9 +22,9 @@
 
 define(
     ['../../src/controllers/TimelineController'],
-    function (TimelineController) {
+    (TimelineController) => {
 
-        var DOMAIN_OBJECT_METHODS = [
+        const DOMAIN_OBJECT_METHODS = [
             'getModel',
             'getId',
             'useCapability',
@@ -32,8 +32,8 @@ define(
             'getCapability'
         ];
 
-        describe("The timeline controller", function () {
-            var mockScope,
+        describe("The timeline controller", () => {
+            let mockScope,
                 mockQ,
                 mockLoader,
                 mockDomainObject,
@@ -42,23 +42,23 @@ define(
                 testConfiguration,
                 controller;
 
-            function asPromise(v) {
+            const asPromise = (v) => {
                 return (v || {}).then ? v : {
-                    then: function (callback) {
+                    then: (callback) => {
                         return asPromise(callback(v));
                     },
                     testValue: v
                 };
             }
 
-            function allPromises(promises) {
-                return asPromise(promises.map(function (p) {
+            const allPromises = (promises) => {
+                return asPromise(promises.map( (p) => {
                     return (p || {}).then ? p.testValue : p;
                 }));
             }
 
-            function subgraph(domainObject, objects) {
-                function lookupSubgraph(id) {
+            const subgraph = (domainObject, objects) => {
+                const lookupSubgraph = (id) => {
                     return subgraph(objects[id], objects);
                 }
                 return {
@@ -68,8 +68,8 @@ define(
                 };
             }
 
-            function fireWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
+            const fireWatch = (expr, value) => {
+                mockScope.$watch.calls.forEach( (call) => {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
@@ -77,14 +77,14 @@ define(
             }
 
 
-            beforeEach(function () {
-                var mockA, mockB, mockUtilization, mockPromise, mockGraph, testCapabilities;
+            beforeEach(() => {
+                let mockA, mockB, mockUtilization, mockPromise, mockGraph, testCapabilities;
 
-                function getCapability(c) {
+                const getCapability = (c) => {
                     return testCapabilities[c];
                 }
 
-                function useCapability(c) {
+                const useCapability = (c) => {
                     return c === 'timespan' ? asPromise(mockSpan) :
                             c === 'graph' ? asPromise({ abc: mockGraph, xyz: mockGraph }) :
                                     undefined;
@@ -130,7 +130,7 @@ define(
                 mockSpan.getEnd.andReturn(12321);
                 mockUtilization.resources.andReturn(['abc', 'xyz']);
                 mockUtilization.utilization.andReturn(mockPromise);
-                mockLoader.load.andCallFake(function () {
+                mockLoader.load.andCallFake(() => {
                     return asPromise(subgraph(mockA, {
                         a: mockA,
                         b: mockB
@@ -144,23 +144,23 @@ define(
                 controller = new TimelineController(mockScope, mockQ, mockLoader, 0);
             });
 
-            it("exposes scroll state tracker in scope", function () {
+            it("exposes scroll state tracker in scope", () => {
                 expect(mockScope.scroll.x).toEqual(0);
                 expect(mockScope.scroll.y).toEqual(0);
             });
 
-            it("watches for a configuration object", function () {
+            it("watches for a configuration object", () => {
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "configuration",
                     jasmine.any(Function)
                 );
             });
 
-            it("repopulates when modifications are made", function () {
-                var fnWatchCall;
+            it("repopulates when modifications are made", () => {
+                let fnWatchCall;
 
                 // Find the $watch that was given a function
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$watch.calls.forEach( (call) => {
                     if (typeof call.args[0] === 'function') {
                         // white-box: we know the first call is
                         // the one we're looking for
@@ -184,8 +184,8 @@ define(
                 expect(controller.swimlanes().length).toEqual(1);
             });
 
-            it("repopulates graphs when graph choices change", function () {
-                var tmp;
+            it("repopulates graphs when graph choices change", () => {
+                let tmp;
 
                 // Note that this test is brittle; it relies upon the
                 // order of $watch calls in TimelineController.
@@ -214,14 +214,14 @@ define(
 
             });
 
-            it("provides drag handles", function () {
+            it("provides drag handles", () => {
                 // TimelineDragPopulator et al are tested for these,
                 // so just verify that handles are indeed exposed.
                 expect(controller.handles()).toEqual(jasmine.any(Array));
             });
 
-            it("refreshes graphs on request", function () {
-                var mockGraph = jasmine.createSpyObj('graph', ['refresh']);
+            it("refreshes graphs on request", () => {
+                let mockGraph = jasmine.createSpyObj('graph', ['refresh']);
 
                 // Sneak a mock graph into the graph populator...
                 // This is whiteboxy and will have to change if

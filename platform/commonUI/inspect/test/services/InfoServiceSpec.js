@@ -22,10 +22,10 @@
 
 define(
     ['../../src/services/InfoService'],
-    function (InfoService) {
+    (InfoService) => {
 
-        describe("The info service", function () {
-            var mockCompile,
+        describe("The info service", () => {
+            let mockCompile,
                 mockRootScope,
                 mockPopupService,
                 mockAgentService,
@@ -34,7 +34,7 @@ define(
                 mockPopup,
                 service;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockCompile = jasmine.createSpy('$compile');
                 mockRootScope = jasmine.createSpyObj('$rootScope', ['$new']);
                 mockAgentService = jasmine.createSpyObj('agentService', ['isMobile', 'isPhone']);
@@ -54,8 +54,8 @@ define(
                 mockElements = [];
 
                 mockPopupService.display.andReturn(mockPopup);
-                mockCompile.andCallFake(function () {
-                    var mockCompiledTemplate = jasmine.createSpy('template'),
+                mockCompile.andCallFake( () => {
+                    let mockCompiledTemplate = jasmine.createSpy('template'),
                         mockElement = jasmine.createSpyObj('element', [
                             'css',
                             'remove',
@@ -75,7 +75,7 @@ define(
                 );
             });
 
-            it("creates elements and displays them as popups", function () {
+            it("creates elements and displays them as popups", () => {
                 service.display('', '', {}, [123, 456]);
                 expect(mockPopupService.display).toHaveBeenCalledWith(
                     mockElements[0],
@@ -84,14 +84,14 @@ define(
                 );
             });
 
-            it("provides a function to remove displayed info bubbles", function () {
+            it("provides a function to remove displayed info bubbles", () => {
                 var fn = service.display('', '', {}, [0, 0]);
                 expect(mockPopup.dismiss).not.toHaveBeenCalled();
                 fn();
                 expect(mockPopup.dismiss).toHaveBeenCalled();
             });
 
-            it("when on phone device, positions at  bottom", function () {
+            it("when on phone device, positions at  bottom", () => {
                 mockAgentService.isPhone.andReturn(true);
                 service = new InfoService(
                     mockCompile,
@@ -107,18 +107,18 @@ define(
                 );
             });
 
-            [false, true].forEach(function (goesLeft) {
-                [false, true].forEach(function (goesUp) {
-                    var vertical = goesUp ? "up" : "down",
+            [false, true].forEach( (goesLeft) => {
+                [false, true].forEach( (goesUp) => {
+                    let vertical = goesUp ? "up" : "down",
                         horizontal = goesLeft ? "left" : "right",
                         location = [vertical, horizontal].join('-');
-                    describe("when bubble goes " + location, function () {
-                        var expectedLocation = [
+                    describe("when bubble goes " + location, () => {
+                        let expectedLocation = [
                                 goesUp ? "bottom" : "top",
                                 goesLeft ? "right" : "left"
                             ].join('-');
 
-                        beforeEach(function () {
+                        beforeEach( () => {
                             mockPopup.goesUp.andReturn(goesUp);
                             mockPopup.goesDown.andReturn(!goesUp);
                             mockPopup.goesLeft.andReturn(goesLeft);
@@ -126,7 +126,7 @@ define(
                             service.display('', '', {}, [10, 10]);
                         });
 
-                        it("positions the arrow in the " + expectedLocation, function () {
+                        it("positions the arrow in the " + expectedLocation, () => {
                             expect(mockScope.bubbleLayout).toEqual([
                                 goesUp ? "arw-btm" : "arw-top",
                                 goesLeft ? "arw-right" : "arw-left"

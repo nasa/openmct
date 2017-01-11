@@ -22,21 +22,21 @@
 
 define(
     ['../../src/capabilities/MetadataCapability'],
-    function (MetadataCapability) {
+    (MetadataCapability) => {
 
-        describe("The metadata capability", function () {
-            var mockDomainObject,
+        describe("The metadata capability", () => {
+            let mockDomainObject,
                 mockType,
                 mockProperties,
                 testModel,
                 metadata;
 
-            function getCapability(key) {
+            const getCapability = (key) => {
                 return key === 'type' ? mockType : undefined;
             }
 
-            function findValue(properties, name) {
-                var i;
+            const findValue = (properties, name) => {
+                let i;
                 for (i = 0; i < properties.length; i += 1) {
                     if (properties[i].name === name) {
                         return properties[i].value;
@@ -44,7 +44,7 @@ define(
                 }
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
                     ['getId', 'getCapability', 'useCapability', 'getModel']
@@ -53,8 +53,8 @@ define(
                     'type',
                     ['getProperties', 'getName']
                 );
-                mockProperties = ['a', 'b', 'c'].map(function (k) {
-                    var mockProperty = jasmine.createSpyObj(
+                mockProperties = ['a', 'b', 'c'].map( (k) => {
+                    let mockProperty = jasmine.createSpyObj(
                             'property-' + k,
                             ['getValue', 'getDefinition']
                         );
@@ -74,22 +74,22 @@ define(
                 metadata = new MetadataCapability(mockDomainObject);
             });
 
-            it("reads properties from the domain object model", function () {
+            it("reads properties from the domain object model", () => {
                 metadata.invoke();
-                mockProperties.forEach(function (mockProperty) {
+                mockProperties.forEach( (mockProperty) => {
                     expect(mockProperty.getValue).toHaveBeenCalledWith(testModel);
                 });
             });
 
-            it("reports type-specific properties", function () {
-                var properties = metadata.invoke();
+            it("reports type-specific properties", () => {
+                let properties = metadata.invoke();
                 expect(findValue(properties, 'Property a')).toEqual("Value a");
                 expect(findValue(properties, 'Property b')).toEqual("Value b");
                 expect(findValue(properties, 'Property c')).toEqual("Value c");
             });
 
-            it("reports generic properties", function () {
-                var properties = metadata.invoke();
+            it("reports generic properties", () => {
+                let properties = metadata.invoke();
                 expect(findValue(properties, 'Type')).toEqual("Test type");
             });
 

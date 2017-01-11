@@ -22,58 +22,58 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Describes the time span of a timeline object.
          * @param model the timeline's object model
          * @param {Timespan[]} time spans of contained activities
          */
-        function TimelineTimespan(model, mutation, timespans) {
+        const TimelineTimespan = (model, mutation, timespans) => {
             // Get the start time for this timeline
-            function getStart() {
+            const getStart = () => {
                 return model.start.timestamp;
             }
 
             // Get the end time for another time span
-            function getTimespanEnd(timespan) {
+            const getTimespanEnd = (timespan) => {
                 return timespan.getEnd();
             }
 
             // Wrapper for Math.max; used for max-finding of end time
-            function max(a, b) {
+            const max = (a, b) => {
                 return Math.max(a, b);
             }
 
             // Get the end time for this timeline
-            function getEnd() {
+            const getEnd = () => {
                 return timespans.map(getTimespanEnd).reduce(max, getStart());
             }
 
             // Get the duration of this timeline
-            function getDuration() {
+            const getDuration = () => {
                 return getEnd() - getStart();
             }
 
             // Set the start time associated with this object
-            function setStart(value) {
-                mutation.mutate(function (m) {
+            const setStart = (value) => {
+                mutation.mutate( (m) => {
                     m.start.timestamp = Math.max(value, 0);
                 }, model.modified);
             }
 
             // Set the duration associated with this object
-            function setDuration() {
+            const setDuration = () => {
                 // No-op; duration is implicit
             }
 
             // Set the end time associated with this object
-            function setEnd() {
+            const setEnd = () => {
                 // No-op; end time is implicit
             }
 
             // Get the epoch used by this timeline
-            function getEpoch() {
+            const getEpoch = () => {
                 return model.start.epoch;
             }
 

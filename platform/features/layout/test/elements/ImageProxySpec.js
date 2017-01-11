@@ -22,14 +22,14 @@
 
 define(
     ['../../src/elements/ImageProxy'],
-    function (ImageProxy) {
+    (ImageProxy) => {
 
-        describe("A fixed position image proxy", function () {
-            var testElement,
+        describe("A fixed position image proxy", () => {
+            let testElement,
                 testElements,
                 proxy;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testElement = {
                     x: 1,
                     y: 2,
@@ -45,7 +45,7 @@ define(
                 );
             });
 
-            it("provides getter/setter for image URL", function () {
+            it("provides getter/setter for image URL", () => {
                 expect(proxy.url()).toEqual("http://www.nasa.gov");
                 expect(proxy.url("http://www.nasa.gov/some.jpg"))
                     .toEqual("http://www.nasa.gov/some.jpg");

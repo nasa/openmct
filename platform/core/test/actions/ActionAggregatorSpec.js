@@ -25,19 +25,19 @@
  */
 define(
     ["../../src/actions/ActionAggregator"],
-    function (ActionAggregator) {
+    (ActionAggregator) => {
 
-        describe("Action aggregator", function () {
-            var mockAggregators,
+        describe("Action aggregator", () => {
+            let mockAggregators,
                 aggregator;
 
-            function createMockActionProvider(actions, i) {
-                var spy = jasmine.createSpyObj("agg" + i, ["getActions"]);
+            const createMockActionProvider = (actions, i) => {
+                let spy = jasmine.createSpyObj("agg" + i, ["getActions"]);
                 spy.getActions.andReturn(actions);
                 return spy;
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockAggregators = [
                     ["a", "b"],
                     ["c"],
@@ -46,24 +46,24 @@ define(
                 aggregator = new ActionAggregator(mockAggregators);
             });
 
-            it("consolidates results from aggregated services", function () {
+            it("consolidates results from aggregated services", () => {
                 expect(aggregator.getActions()).toEqual(
                     ["a", "b", "c", "d", "e", "f"]
                 );
             });
 
-            it("passes context along to all aggregated services", function () {
-                var context = { domainObject: "something" };
+            it("passes context along to all aggregated services", () => {
+                let context = { domainObject: "something" };
 
                 // Verify precondition
-                mockAggregators.forEach(function (mockAgg) {
+                mockAggregators.forEach( (mockAgg) => {
                     expect(mockAgg.getActions).not.toHaveBeenCalled();
                 });
 
                 aggregator.getActions(context);
 
                 // All services should have been called with this context
-                mockAggregators.forEach(function (mockAgg) {
+                mockAggregators.forEach( (mockAgg) => {
                     expect(mockAgg.getActions).toHaveBeenCalledWith(context);
                 });
             });

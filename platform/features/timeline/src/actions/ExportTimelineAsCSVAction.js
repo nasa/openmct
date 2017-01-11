@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(["./ExportTimelineAsCSVTask"], function (ExportTimelineAsCSVTask) {
+define(["./ExportTimelineAsCSVTask"], (ExportTimelineAsCSVTask) => {
 
     /**
      * Implements the "Export Timeline as CSV" action.
@@ -33,13 +33,14 @@ define(["./ExportTimelineAsCSVTask"], function (ExportTimelineAsCSVTask) {
      * @constructor
      * @memberof {platform/features/timeline}
      */
-    function ExportTimelineAsCSVAction(
-        $log,
-        exportService,
-        notificationService,
-        resources,
-        context
-    ) {
+    class ExportTimelineAsCSVAction {
+      constructor(
+          $log,
+          exportService,
+          notificationService,
+          resources,
+          context
+      ) {
         this.$log = $log;
         this.task = new ExportTimelineAsCSVTask(
             exportService,
@@ -49,8 +50,8 @@ define(["./ExportTimelineAsCSVTask"], function (ExportTimelineAsCSVTask) {
         this.notificationService = notificationService;
     }
 
-    ExportTimelineAsCSVAction.prototype.perform = function () {
-        var notificationService = this.notificationService,
+      perform() {
+        let notificationService = this.notificationService,
             notification = notificationService.notify({
                 title: "Exporting CSV",
                 unknownProgress: true
@@ -58,22 +59,22 @@ define(["./ExportTimelineAsCSVTask"], function (ExportTimelineAsCSVTask) {
             $log = this.$log;
 
         return this.task.run()
-            .then(function () {
+            .then( () => {
                 notification.dismiss();
             })
-            .catch(function (err) {
+            .catch( (err) => {
                 $log.warn(err);
                 notification.dismiss();
                 notificationService.error("Error exporting CSV");
             });
     };
 
-    ExportTimelineAsCSVAction.appliesTo = function (context) {
+    appliesTo(context) {
         return context.domainObject &&
             context.domainObject.hasCapability('type') &&
                 context.domainObject.getCapability('type')
                     .instanceOf('timeline');
     };
-
+  }
     return ExportTimelineAsCSVAction;
 });

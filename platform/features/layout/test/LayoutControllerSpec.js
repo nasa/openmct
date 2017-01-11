@@ -22,10 +22,10 @@
 
 define(
     ["../src/LayoutController"],
-    function (LayoutController) {
+    (LayoutController) => {
 
-        describe("The Layout controller", function () {
-            var mockScope,
+        describe("The Layout controller", () => {
+            let mockScope,
                 mockEvent,
                 testModel,
                 testConfiguration,
@@ -34,26 +34,26 @@ define(
                 mockComposition,
                 mockCompositionObjects;
 
-            function mockPromise(value) {
+            const mockPromise = (value) => {
                 return {
-                    then: function (thenFunc) {
+                    then: (thenFunc) => {
                         return mockPromise(thenFunc(value));
                     }
                 };
             }
 
-            function mockDomainObject(id) {
+            const mockDomainObject = (id) => {
                 return {
-                    getId: function () {
+                    getId: () => {
                         return id;
                     },
-                    useCapability: function () {
+                    useCapability: () => {
                         return mockCompositionCapability;
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     ["$watch", "$watchCollection", "$on", "commit"]
@@ -90,14 +90,14 @@ define(
 
             // Model changes will indicate that panel positions
             // may have changed, for instance.
-            it("watches for changes to composition", function () {
+            it("watches for changes to composition", () => {
                 expect(mockScope.$watchCollection).toHaveBeenCalledWith(
                     "model.composition",
                     jasmine.any(Function)
                 );
             });
 
-            it("Retrieves updated composition from composition capability", function () {
+            it("Retrieves updated composition from composition capability", () => {
                 mockScope.$watchCollection.mostRecentCall.args[1]();
                 expect(mockScope.domainObject.useCapability).toHaveBeenCalledWith(
                     "composition"
@@ -107,8 +107,8 @@ define(
                 );
             });
 
-            it("Is robust to concurrent changes to composition", function () {
-                var secondMockComposition = ["a", "b", "c", "d"],
+            it("Is robust to concurrent changes to composition", () => {
+                let secondMockComposition = ["a", "b", "c", "d"],
                     secondMockCompositionObjects = secondMockComposition.map(mockDomainObject),
                     firstCompositionCB,
                     secondCompositionCB;
@@ -131,7 +131,7 @@ define(
             });
 
 
-            it("provides styles for frames, from configuration", function () {
+            it("provides styles for frames, from configuration", () => {
                 mockScope.$watchCollection.mostRecentCall.args[1]();
                 expect(controller.getFrameStyle("a")).toEqual({
                     top: "320px",
@@ -141,8 +141,8 @@ define(
                 });
             });
 
-            it("provides default styles for frames", function () {
-                var styleB, styleC;
+            it("provides default styles for frames", () => {
+                let styleB, styleC;
 
                 // b and c do not have configured positions
                 mockScope.$watchCollection.mostRecentCall.args[1]();
@@ -160,7 +160,7 @@ define(
                 expect(styleB).not.toEqual(styleC);
             });
 
-            it("allows panels to be dragged", function () {
+            it("allows panels to be dragged", () => {
                 // Populate scope
                 mockScope.$watchCollection.mostRecentCall.args[1]();
 
@@ -179,7 +179,7 @@ define(
             });
 
 
-            it("invokes commit after drag", function () {
+            it("invokes commit after drag", () => {
                 // Populate scope
                 mockScope.$watchCollection.mostRecentCall.args[1]();
 
@@ -194,7 +194,7 @@ define(
                     .toHaveBeenCalledWith(jasmine.any(String));
             });
 
-            it("listens for drop events", function () {
+            it("listens for drop events", () => {
                 // Layout should position panels according to
                 // where the user dropped them, so it needs to
                 // listen for drop events.
@@ -221,7 +221,7 @@ define(
                     .toHaveBeenCalledWith(jasmine.any(String));
             });
 
-            it("ignores drops when default has been prevented", function () {
+            it("ignores drops when default has been prevented", () => {
                 // Avoids redundant drop-handling, WTD-1233
                 mockEvent.defaultPrevented = true;
 
@@ -234,8 +234,8 @@ define(
                 expect(testConfiguration.panels.d).not.toBeDefined();
             });
 
-            it("ensures a minimum frame size", function () {
-                var styleB;
+            it("ensures a minimum frame size", () => {
+                let styleB;
 
                 // Start with a very small frame size
                 testModel.layoutGrid = [1, 1];
@@ -251,8 +251,8 @@ define(
                 expect(parseInt(styleB.width, 10)).toBeGreaterThan(31);
             });
 
-            it("ensures a minimum frame size on drop", function () {
-                var style;
+            it("ensures a minimum frame size on drop", () => {
+                let style;
 
                 // Start with a very small frame size
                 testModel.layoutGrid = [1, 1];
@@ -273,8 +273,8 @@ define(
                 expect(parseInt(style.height, 10)).toBeGreaterThan(31);
             });
 
-            it("updates positions of existing objects on a drop", function () {
-                var oldStyle;
+            it("updates positions of existing objects on a drop", () => {
+                let oldStyle;
 
                 mockScope.$watchCollection.mostRecentCall.args[1]();
 

@@ -20,9 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./TimeConductorMode'], function (TimeConductorMode) {
-    describe("The Time Conductor Mode", function () {
-        var mockTimeConductor,
+define(['./TimeConductorMode'], (TimeConductorMode) => {
+    describe("The Time Conductor Mode", () => {
+        let mockTimeConductor,
             fixedModeMetaData,
             mockTimeSystems,
             fixedTimeSystem,
@@ -34,7 +34,7 @@ define(['./TimeConductorMode'], function (TimeConductorMode) {
             mockBounds,
             mode;
 
-        beforeEach(function () {
+        beforeEach( () => {
             fixedModeMetaData = {
                 key: "fixed"
             };
@@ -78,32 +78,32 @@ define(['./TimeConductorMode'], function (TimeConductorMode) {
             mockTimeConductor.bounds.andReturn(mockBounds);
         });
 
-        it("Reacts to changes in conductor time system", function () {
+        it("Reacts to changes in conductor time system", () => {
             mode = new TimeConductorMode(fixedModeMetaData, mockTimeConductor, mockTimeSystems);
             expect(mockTimeConductor.on).toHaveBeenCalledWith("timeSystem", mode.changeTimeSystem);
         });
 
-        it("Stops listening to time system changes on destroy", function () {
+        it("Stops listening to time system changes on destroy", () => {
             mode = new TimeConductorMode(fixedModeMetaData, mockTimeConductor, mockTimeSystems);
             mode.destroy();
             expect(mockTimeConductor.off).toHaveBeenCalledWith("timeSystem", mode.changeTimeSystem);
         });
 
         it("Filters available time systems to those with tick sources that" +
-            " support this mode", function () {
+            " support this mode", () => {
             mockTimeSystems = [fixedTimeSystem, realtimeTimeSystem];
             mode = new TimeConductorMode(realtimeModeMetaData, mockTimeConductor, mockTimeSystems);
 
-            var availableTimeSystems = mode.availableTimeSystems();
+            let availableTimeSystems = mode.availableTimeSystems();
             expect(availableTimeSystems.length).toBe(1);
             expect(availableTimeSystems.indexOf(fixedTimeSystem)).toBe(-1);
             expect(availableTimeSystems.indexOf(realtimeTimeSystem)).toBe(0);
         });
 
-        describe("Changing the time system", function () {
-            var defaults;
+        describe("Changing the time system", () => {
+            let defaults;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 defaults = {
                     bounds: {
                         start: 1,
@@ -118,7 +118,7 @@ define(['./TimeConductorMode'], function (TimeConductorMode) {
                 fixedTimeSystem.defaults.andReturn(defaults);
 
             });
-            it ("sets defaults from new time system", function () {
+            it ("sets defaults from new time system", () => {
                 mode = new TimeConductorMode(fixedModeMetaData, mockTimeConductor, mockTimeSystems);
                 spyOn(mode, "deltas");
                 mode.deltas.andCallThrough();
@@ -127,7 +127,7 @@ define(['./TimeConductorMode'], function (TimeConductorMode) {
                 expect(mockTimeConductor.bounds).toHaveBeenCalledWith(defaults.bounds);
                 expect(mode.deltas).toHaveBeenCalledWith(defaults.deltas);
             });
-            it ("If a tick source is available, sets the tick source", function () {
+            it ("If a tick source is available, sets the tick source", () => {
                 mode = new TimeConductorMode(realtimeModeMetaData, mockTimeConductor, mockTimeSystems);
                 mode.changeTimeSystem(realtimeTimeSystem);
 
@@ -136,10 +136,10 @@ define(['./TimeConductorMode'], function (TimeConductorMode) {
             });
         });
 
-        describe("Setting a tick source", function () {
-            var mockUnlistener;
+        describe("Setting a tick source", () => {
+            let mockUnlistener;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockUnlistener = jasmine.createSpy("unlistener");
                 mockTickSource.listen.andReturn(mockUnlistener);
 
@@ -147,32 +147,32 @@ define(['./TimeConductorMode'], function (TimeConductorMode) {
                 mode.tickSource(mockTickSource);
             });
 
-            it ("Unlistens from old tick source", function () {
+            it ("Unlistens from old tick source", () => {
                 mode.tickSource(mockTickSource);
                 expect(mockUnlistener).toHaveBeenCalled();
             });
 
-            it ("Listens to new tick source", function () {
+            it ("Listens to new tick source", () => {
                 expect(mockTickSource.listen).toHaveBeenCalledWith(mode.tick);
             });
 
-            it ("Sets 'follow' state on time conductor", function () {
+            it ("Sets 'follow' state on time conductor", () => {
                 expect(mockTimeConductor.follow).toHaveBeenCalledWith(true);
             });
 
-            it ("on destroy, unlistens from tick source", function () {
+            it ("on destroy, unlistens from tick source", () => {
                 mode.destroy();
                 expect(mockUnlistener).toHaveBeenCalled();
             });
         });
 
-        describe("setting deltas", function () {
-            beforeEach(function () {
+        describe("setting deltas", () => {
+            beforeEach( () => {
                 mode = new TimeConductorMode(realtimeModeMetaData, mockTimeConductor, mockTimeSystems);
             });
             it ("sets the bounds on the time conductor based on new delta" +
-                " values", function () {
-                var deltas = {
+                " values", () => {
+                let deltas = {
                     start: 20,
                     end: 10
                 };
@@ -186,16 +186,16 @@ define(['./TimeConductorMode'], function (TimeConductorMode) {
             });
         });
 
-        describe("ticking", function () {
-            beforeEach(function () {
+        describe("ticking", () => {
+            beforeEach( () => {
                 mode = new TimeConductorMode(realtimeModeMetaData, mockTimeConductor, mockTimeSystems);
             });
-            it ("sets bounds based on current delta values", function () {
-                var deltas = {
+            it ("sets bounds based on current delta values", () => {
+                let deltas = {
                     start: 20,
                     end: 10
                 };
-                var time = 100;
+                let time = 100;
 
                 mode.deltas(deltas);
                 mode.tick(time);

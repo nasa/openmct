@@ -25,10 +25,10 @@
  */
 define(
     ["../../src/creation/AddActionProvider"],
-    function (AddActionProvider) {
+    (AddActionProvider) => {
 
-        describe("The add action provider", function () {
-            var mockTypeService,
+        describe("The add action provider", () => {
+            let mockTypeService,
                 mockDialogService,
                 mockPolicyService,
                 mockCreationPolicy,
@@ -39,8 +39,8 @@ define(
                 mockQ,
                 provider;
 
-            function createMockType(name) {
-                var mockType = jasmine.createSpyObj(
+            const createMockType = (name) => {
+                let mockType = jasmine.createSpyObj(
                     "type" + name,
                     [
                         "getKey",
@@ -58,7 +58,7 @@ define(
                 return mockType;
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockTypeService = jasmine.createSpyObj(
                     "typeService",
                     ["listTypes"]
@@ -83,15 +83,15 @@ define(
 
                 mockTypes = ["A", "B", "C"].map(createMockType);
 
-                mockTypes.forEach(function (type) {
+                mockTypes.forEach( (type) => {
                     mockPolicyMap[type.getName()] = true;
                 });
 
-                mockCreationPolicy = function (type) {
+                mockCreationPolicy = (type) => {
                     return mockPolicyMap[type.getName()];
                 };
 
-                mockCompositionPolicy = function () {
+                mockCompositionPolicy = () => {
                     return true;
                 };
 
@@ -107,7 +107,7 @@ define(
                 );
             });
 
-            it("checks for creatability", function () {
+            it("checks for creatability", () => {
                 provider.getActions({
                     key: "add",
                     domainObject: mockDomainObject
@@ -117,7 +117,7 @@ define(
                     .toHaveBeenCalledWith("creation", mockTypes[0]);
             });
 
-            it("checks for composability of type", function () {
+            it("checks for composability of type", () => {
                 provider.getActions({
                     key: "add",
                     domainObject: mockDomainObject

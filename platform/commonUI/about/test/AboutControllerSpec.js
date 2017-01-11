@@ -22,14 +22,14 @@
 
 define(
     ['../src/AboutController'],
-    function (AboutController) {
+    (AboutController) => {
 
-        describe("The About controller", function () {
-            var testVersions,
+        describe("The About controller", () => {
+            let testVersions,
                 mockWindow,
                 controller;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 testVersions = [
                     { name: "Some name", value: "1.2.3" },
                     { name: "Some other name", value: "3.2.1" }
@@ -38,13 +38,13 @@ define(
                 controller = new AboutController(testVersions, mockWindow);
             });
 
-            it("exposes version information", function () {
+            it("exposes version information", () => {
                 // This will be injected, so it should just give back
                 // what it got in.
                 expect(controller.versions()).toEqual(testVersions);
             });
 
-            it("opens license information in a window", function () {
+            it("opens license information in a window", () => {
                 //Verify precondition
                 expect(mockWindow.open).not.toHaveBeenCalled();
                 controller.openLicenses();

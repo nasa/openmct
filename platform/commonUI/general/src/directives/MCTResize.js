@@ -22,10 +22,10 @@
 
 define(
     [],
-    function () {
+    () => {
 
         // Default resize interval
-        var DEFAULT_INTERVAL = 100;
+        const DEFAULT_INTERVAL = 100;
 
         /**
          * The mct-resize directive allows the size of a displayed
@@ -51,23 +51,23 @@ define(
          * @constructor
          *
          */
-        function MCTResize($timeout) {
+        const MCTResize = ($timeout) => {
 
             // Link; start listening for changes to an element's size
-            function link(scope, element, attrs) {
-                var lastBounds,
+            const link = (scope, element, attrs) => {
+                let lastBounds,
                     linking = true,
                     active = true;
 
                 // Determine how long to wait before the next update
-                function currentInterval() {
+                const currentInterval = () => {
                     return attrs.mctResizeInterval ?
                             scope.$eval(attrs.mctResizeInterval) :
                             DEFAULT_INTERVAL;
                 }
 
                 // Evaluate mct-resize with the current bounds
-                function fireEval(bounds) {
+                const fireEval = (bounds) => {
                     // Only update when bounds actually change
                     if (!lastBounds ||
                             lastBounds.width !== bounds.width ||
@@ -82,7 +82,7 @@ define(
 
                 // Callback to fire after each timeout;
                 // update bounds and schedule another timeout
-                function onInterval() {
+                const onInterval = () => {
                     fireEval({
                         width: element[0].offsetWidth,
                         height: element[0].offsetHeight
@@ -93,7 +93,7 @@ define(
                 }
 
                 // Stop running in the background
-                function deactivate() {
+                const deactivate = () => {
                     active = false;
                 }
 

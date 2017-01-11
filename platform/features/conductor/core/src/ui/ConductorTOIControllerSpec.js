@@ -22,25 +22,25 @@
 
 define([
     './ConductorTOIController'
-], function (
+], (
     ConductorTOIController
-) {
-    var mockConductor;
-    var mockConductorViewService;
-    var mockScope;
-    var mockAPI;
-    var conductorTOIController;
+) => {
+    let mockConductor;
+    let mockConductorViewService;
+    let mockScope;
+    let mockAPI;
+    let conductorTOIController;
 
-    function getNamedCallback(thing, name) {
-        return thing.calls.filter(function (call) {
+    const getNamedCallback = (thing, name) => {
+        return thing.calls.filter( (call) => {
             return call.args[0] === name;
-        }).map(function (call) {
+        }).map( (call) => {
             return call.args;
         })[0][1];
     }
 
-    describe("The ConductorTOIController", function () {
-        beforeEach(function () {
+    describe("The ConductorTOIController", () =>  {
+        beforeEach(() =>  {
             mockConductor = jasmine.createSpyObj("conductor", [
                 "bounds",
                 "timeOfInterest",
@@ -61,14 +61,14 @@ define([
             conductorTOIController = new ConductorTOIController(mockScope, mockAPI, mockConductorViewService);
         });
 
-        it("listens to changes in the time of interest on the conductor", function () {
+        it("listens to changes in the time of interest on the conductor", () =>  {
             expect(mockConductor.on).toHaveBeenCalledWith("timeOfInterest", jasmine.any(Function));
         });
 
-        describe("when responding to changes in the time of interest", function () {
-            var toiCallback;
-            beforeEach(function () {
-                var bounds = {
+        describe("when responding to changes in the time of interest", () =>  {
+            let toiCallback;
+            beforeEach(() =>  {
+                let bounds = {
                     start: 0,
                     end: 200
                 };
@@ -76,7 +76,7 @@ define([
                 toiCallback = getNamedCallback(mockConductor.on, "timeOfInterest");
             });
 
-            it("calculates the correct horizontal offset based on bounds and current TOI", function () {
+            it("calculates the correct horizontal offset based on bounds and current TOI", () =>  {
                 //Expect time of interest position to be 50% of element width
                 mockConductor.timeOfInterest.andReturn(100);
                 toiCallback();
@@ -98,7 +98,7 @@ define([
                 expect(conductorTOIController.left).toBe(100);
             });
 
-            it("renders the TOI indicator visible", function () {
+            it("renders the TOI indicator visible", () =>  {
                 expect(conductorTOIController.pinned).toBeFalsy();
                 mockConductor.timeOfInterest.andReturn(100);
                 toiCallback();
@@ -106,8 +106,8 @@ define([
             });
         });
 
-        it("responds to zoom events", function () {
-            var mockZoom = {
+        it("responds to zoom events", () =>  {
+            let mockZoom = {
                 bounds: {
                     start: 500,
                     end: 1000
@@ -117,13 +117,13 @@ define([
 
             // Should correspond to horizontal offset of 50%
             mockConductor.timeOfInterest.andReturn(750);
-            var zoomCallback = getNamedCallback(mockConductorViewService.on, "zoom");
+            let zoomCallback = getNamedCallback(mockConductorViewService.on, "zoom");
             zoomCallback(mockZoom);
             expect(conductorTOIController.left).toBe(50);
         });
 
-        it("responds to pan events", function () {
-            var mockPanBounds = {
+        it("responds to pan events", () =>  {
+            let mockPanBounds = {
                 start: 1000,
                 end: 3000
             };
@@ -132,16 +132,16 @@ define([
 
             // Should correspond to horizontal offset of 25%
             mockConductor.timeOfInterest.andReturn(1500);
-            var panCallback = getNamedCallback(mockConductorViewService.on, "pan");
+            let panCallback = getNamedCallback(mockConductorViewService.on, "pan");
             panCallback(mockPanBounds);
             expect(conductorTOIController.left).toBe(25);
         });
 
 
-        it("Cleans up all listeners when controller destroyed", function () {
-            var zoomCB = getNamedCallback(mockConductorViewService.on, "zoom");
-            var panCB = getNamedCallback(mockConductorViewService.on, "pan");
-            var toiCB = getNamedCallback(mockConductor.on, "timeOfInterest");
+        it("Cleans up all listeners when controller destroyed", () =>  {
+            let zoomCB = getNamedCallback(mockConductorViewService.on, "zoom");
+            let panCB = getNamedCallback(mockConductorViewService.on, "pan");
+            let toiCB = getNamedCallback(mockConductor.on, "timeOfInterest");
 
             expect(mockScope.$on).toHaveBeenCalledWith("$destroy", jasmine.any(Function));
             getNamedCallback(mockScope.$on, "$destroy")();

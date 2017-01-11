@@ -22,7 +22,7 @@
 
 define(
     ['./TimelineTimespan'],
-    function (TimelineTimespan) {
+    (TimelineTimespan) => {
 
         /**
          * Implements the `timespan` capability for Timeline objects.
@@ -31,21 +31,21 @@ define(
          * @param $q Angular's $q, for promise-handling
          * @param {DomainObject} domainObject the Timeline
          */
-        function TimelineTimespanCapability($q, domainObject) {
+        const TimelineTimespanCapability = ($q, domainObject) => {
             // Check if a capability is defin
 
             // Look up a child object's time span
-            function lookupTimeSpan(childObject) {
+            const lookupTimeSpan = (childObject) => {
                 return childObject.useCapability('timespan');
             }
 
             // Check if a child object exposes a time span
-            function hasTimeSpan(childObject) {
+            const hasTimeSpan = (childObject) => {
                 return childObject.hasCapability('timespan');
             }
 
             // Instantiate a time span bounding other time spans
-            function giveTimeSpan(timespans) {
+            const giveTimeSpan = (timespans) => {
                 return new TimelineTimespan(
                     domainObject.getModel(),
                     domainObject.getCapability('mutation'),
@@ -54,14 +54,14 @@ define(
             }
 
             // Build a time span object that fits all children
-            function buildTimeSpan(childObjects) {
+            const buildTimeSpan = (childObjects) => {
                 return $q.all(
                     childObjects.filter(hasTimeSpan).map(lookupTimeSpan)
                 ).then(giveTimeSpan);
             }
 
             // Promise
-            function promiseTimeSpan() {
+            const promiseTimeSpan = () => {
                 return domainObject.useCapability('composition')
                     .then(buildTimeSpan);
             }
@@ -77,7 +77,7 @@ define(
         }
 
         // Only applies to timeline objects
-        TimelineTimespanCapability.appliesTo = function (model) {
+        TimelineTimespanCapability.appliesTo = (model) => {
             return model && (model.type === 'timeline');
         };
 

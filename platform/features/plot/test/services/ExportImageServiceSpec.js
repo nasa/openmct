@@ -25,8 +25,8 @@
  */
 define(
     ["../../src/services/ExportImageService"],
-    function (ExportImageService) {
-        var mockQ,
+    (ExportImageService) => {
+        let mockQ,
             mockDeferred,
             mockPromise,
             mockTimeout,
@@ -39,8 +39,8 @@ define(
             testElement,
             exportImageService;
 
-        describe("ExportImageService", function () {
-            beforeEach(function () {
+        describe("ExportImageService", () => {
+            beforeEach( () => {
                 mockDeferred = jasmine.createSpyObj(
                     "deferred",
                     ["reject", "resolve"]
@@ -49,11 +49,11 @@ define(
                     "promise",
                     ["then", "finally"]
                 );
-                mockPromise.then = function (callback) {
+                mockPromise.then = (callback) => {
                     callback();
                 };
                 mockQ = {
-                    "defer": function () {
+                    "defer": () => {
                         return {
                             "resolve": mockDeferred.resolve,
                             "reject": mockDeferred.reject,
@@ -61,16 +61,16 @@ define(
                         };
                     }
                 };
-                mockTimeout = function (fn, time) {
+                mockTimeout = (fn, time) => {
                     return {
-                        "cancel": function () {}
+                        "cancel": () => {}
                     };
                 };
                 mockLog = jasmine.createSpyObj(
                     "$log",
                     ["warn"]
                 );
-                mockHtml2Canvas = jasmine.createSpy("html2canvas").andCallFake(function (element, opts) {
+                mockHtml2Canvas = jasmine.createSpy("html2canvas").andCallFake((element, opts) => {
                     opts.onrendered(mockCanvas);
                 });
                 mockCanvas = jasmine.createSpyObj(
@@ -96,7 +96,7 @@ define(
                 );
             });
 
-            it("runs html2canvas and tries to save a png", function () {
+            it("runs html2canvas and tries to save a png", () => {
                 exportImageService.exportPNG(testElement, "plot.png");
 
                 expect(mockHtml2Canvas).toHaveBeenCalledWith(testElement, { onrendered: jasmine.any(Function) });
@@ -106,7 +106,7 @@ define(
                 expect(mockPromise.finally).toHaveBeenCalled();
             });
 
-            it("runs html2canvas and tries to save a jpg", function () {
+            it("runs html2canvas and tries to save a jpg", () => {
                 exportImageService.exportJPG(testElement, "plot.png");
 
                 expect(mockHtml2Canvas).toHaveBeenCalledWith(testElement, { onrendered: jasmine.any(Function) });

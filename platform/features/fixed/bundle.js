@@ -23,10 +23,10 @@
 define([
     "text!../layout/res/templates/fixed.html",
     'legacyRegistry'
-], function (
+], (
     fixedTemplate,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/features/fixed", {
         "name": "Fixed position components.",

@@ -22,10 +22,10 @@
 
 define(
     ["../../src/actions/EditAction"],
-    function (EditAction) {
+    (EditAction) => {
 
-        describe("The Edit action", function () {
-            var mockLocation,
+        describe("The Edit action", () => {
+            let mockLocation,
                 mockNavigationService,
                 mockLog,
                 mockDomainObject,
@@ -35,7 +35,7 @@ define(
                 capabilities,
                 action;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockLocation = jasmine.createSpyObj(
                     "$location",
                     ["path"]
@@ -66,7 +66,7 @@ define(
                     editor: mockEditor
                 };
 
-                mockDomainObject.getCapability.andCallFake(function (name) {
+                mockDomainObject.getCapability.andCallFake( (name) => {
                     return capabilities[name];
                 });
                 mockDomainObject.hasCapability.andReturn(true);
@@ -82,7 +82,7 @@ define(
                 );
             });
 
-            it("is only applicable when an editable domain object is present", function () {
+            it("is only applicable when an editable domain object is present", () => {
                 expect(EditAction.appliesTo(actionContext)).toBeTruthy();
                 expect(EditAction.appliesTo({})).toBeFalsy();
 
@@ -91,14 +91,14 @@ define(
                 expect(mockType.hasFeature).toHaveBeenCalledWith('creation');
             });
 
-            it("is only applicable to objects not already in edit mode", function () {
+            it("is only applicable to objects not already in edit mode", () => {
                 mockEditor.isEditContextRoot.andReturn(false);
                 expect(EditAction.appliesTo(actionContext)).toBe(true);
                 mockEditor.isEditContextRoot.andReturn(true);
                 expect(EditAction.appliesTo(actionContext)).toBe(false);
             });
 
-            it ("invokes the Edit capability on the object", function () {
+            it ("invokes the Edit capability on the object", () => {
                 action.perform();
                 expect(mockDomainObject.useCapability).toHaveBeenCalledWith("editor");
             });

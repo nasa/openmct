@@ -22,17 +22,17 @@
 
 define(
     ["../../src/controllers/RefreshingController"],
-    function (RefreshingController) {
+    (RefreshingController) => {
 
 
 
-        describe("The refreshing controller", function () {
-            var mockScope,
+        describe("The refreshing controller", () => {
+            let mockScope,
                 mockTicker,
                 mockUnticker,
                 controller;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 mockScope = jasmine.createSpyObj('$scope', ['$on']);
                 mockTicker = jasmine.createSpyObj('ticker', ['listen']);
                 mockUnticker = jasmine.createSpy('unticker');
@@ -42,8 +42,8 @@ define(
                 controller = new RefreshingController(mockScope, mockTicker);
             });
 
-            it("refreshes the represented object on every tick", function () {
-                var mockDomainObject = jasmine.createSpyObj(
+            it("refreshes the represented object on every tick", () =>  {
+                let mockDomainObject = jasmine.createSpyObj(
                         'domainObject',
                         ['getCapability']
                     ),
@@ -52,7 +52,7 @@ define(
                         ['persist', 'refresh']
                     );
 
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockDomainObject.getCapability.andCallFake( (c) => {
                     return (c === 'persistence') && mockPersistence;
                 });
 
@@ -63,12 +63,12 @@ define(
                 expect(mockPersistence.persist).not.toHaveBeenCalled();
             });
 
-            it("subscribes to clock ticks", function () {
+            it("subscribes to clock ticks", () =>  {
                 expect(mockTicker.listen)
                     .toHaveBeenCalledWith(jasmine.any(Function));
             });
 
-            it("unsubscribes to ticks when destroyed", function () {
+            it("unsubscribes to ticks when destroyed", () =>  {
                 // Make sure $destroy is being listened for...
                 expect(mockScope.$on.mostRecentCall.args[0]).toEqual('$destroy');
                 expect(mockUnticker).not.toHaveBeenCalled();

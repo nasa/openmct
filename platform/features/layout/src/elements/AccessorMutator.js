@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Utility function for creating getter-setter functions,
@@ -42,8 +42,8 @@ define(
          * @param {string} key the property to get/set
          * @param {function} [updater] function used to process updates
          */
-        function AccessorMutator(object, key, updater) {
-            return function (value) {
+        const AccessorMutator = (object, key, updater) => {
+            return (value) => {
                 if (arguments.length > 0) {
                     object[key] = updater ?
                             updater(value, object[key]) :

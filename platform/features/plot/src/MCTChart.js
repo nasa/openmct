@@ -25,9 +25,9 @@
  */
 define(
     ["./GLChart", "./Canvas2DChart"],
-    function (GLChart, Canvas2DChart) {
+    (GLChart, Canvas2DChart) => {
 
-        var TEMPLATE = "<canvas style='position: absolute; background: none; width: 100%; height: 100%;'></canvas>";
+        let TEMPLATE = "<canvas style='position: absolute; background: none; width: 100%; height: 100%;'></canvas>";
 
         /**
          * The mct-chart directive provides a canvas element which can be
@@ -62,11 +62,11 @@ define(
          * @memberof platform/features/plot
          * @constructor
          */
-        function MCTChart($interval, $log) {
+        const MCTChart = ($interval, $log) => {
             // Get an underlying chart implementation
-            function getChart(Charts, canvas) {
+            const getChart = (Charts, canvas) => {
                 // Try the first available option...
-                var Chart = Charts[0];
+                let Chart = Charts[0];
 
                 // This function recursively try-catches all options;
                 // if these all fail, issue a warning.
@@ -90,14 +90,14 @@ define(
                 }
             }
 
-            function linkChart(scope, element) {
-                var canvas = element.find("canvas")[0],
+            const linkChart = (scope, element) => {
+                let canvas = element.find("canvas")[0],
                     activeInterval,
                     chart;
 
                 // Handle drawing, based on contents of the "draw" object
                 // in scope
-                function doDraw(draw) {
+                const doDraw = (draw) => {
                     // Ensure canvas context has same resolution
                     // as canvas element
                     canvas.width = canvas.offsetWidth;
@@ -118,7 +118,7 @@ define(
                     );
 
                     // Draw line segments
-                    (draw.lines || []).forEach(function (line) {
+                    (draw.lines || []).forEach( (line) => {
                         chart.drawLine(
                             line.buffer,
                             line.color,
@@ -127,7 +127,7 @@ define(
                     });
 
                     // Draw boxes (e.g. marquee zoom rect)
-                    (draw.boxes || []).forEach(function (box) {
+                    (draw.boxes || []).forEach( (box) => {
                         chart.drawSquare(
                             box.start,
                             box.end,
@@ -140,7 +140,7 @@ define(
                 // Issue a drawing call, if-and-only-if canvas size
                 // has changed. This will be called on a timer, since
                 // there is no event to depend on.
-                function drawIfResized() {
+                const drawIfResized = () => {
                     if (canvas.width !== canvas.offsetWidth ||
                             canvas.height !== canvas.offsetHeight) {
                         doDraw(scope.draw);
@@ -149,14 +149,14 @@ define(
                 }
 
                 // Stop watching for changes to size (scope destroyed)
-                function releaseInterval() {
+                const releaseInterval = () => {
                     if (activeInterval) {
                         $interval.cancel(activeInterval);
                     }
                 }
 
                 // Switch from WebGL to plain 2D if context is lost
-                function fallbackFromWebGL() {
+                const fallbackFromWebGL = () => {
                     element.html(TEMPLATE);
                     canvas = element.find("canvas")[0];
                     chart = getChart([Canvas2DChart], canvas);

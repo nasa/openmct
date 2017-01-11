@@ -22,16 +22,16 @@
 
 define(
     ["../../src/directives/MCTResize"],
-    function (MCTResize) {
+    (MCTResize) => {
 
-        describe("The mct-resize directive", function () {
-            var mockTimeout,
+        describe("The mct-resize directive", () => {
+            let mockTimeout,
                 mockScope,
                 testElement,
                 testAttrs,
                 mctResize;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockScope = jasmine.createSpyObj("$scope", ["$eval", "$on", "$apply"]);
 
@@ -41,11 +41,11 @@ define(
                 mctResize = new MCTResize(mockTimeout);
             });
 
-            it("is applicable as an attribute only", function () {
+            it("is applicable as an attribute only", () => {
                 expect(mctResize.restrict).toEqual("A");
             });
 
-            it("starts tracking size changes upon link", function () {
+            it("starts tracking size changes upon link", () => {
                 expect(mockTimeout).not.toHaveBeenCalled();
                 mctResize.link(mockScope, [testElement], testAttrs);
                 expect(mockTimeout).toHaveBeenCalledWith(
@@ -59,7 +59,7 @@ define(
                 );
             });
 
-            it("reports size changes on a timeout", function () {
+            it("reports size changes on a timeout", () => {
                 mctResize.link(mockScope, [testElement], testAttrs);
 
                 // Change the element's apparent size
@@ -83,7 +83,7 @@ define(
                 );
             });
 
-            it("stops size checking for size changes after destroy", function () {
+            it("stops size checking for size changes after destroy", () => {
                 mctResize.link(mockScope, [testElement], testAttrs);
 
                 // First, make sure there's a $destroy observer
@@ -109,8 +109,8 @@ define(
                 expect(mockTimeout.calls.length).toEqual(2);
             });
 
-            it("triggers a digest cycle when size changes", function () {
-                var applyCount;
+            it("triggers a digest cycle when size changes", () => {
+                let applyCount;
                 mctResize.link(mockScope, [testElement], testAttrs);
                 applyCount = mockScope.$apply.calls.length;
 
@@ -126,8 +126,8 @@ define(
                     .toBeGreaterThan(applyCount);
             });
 
-            it("does not trigger a digest cycle when size does not change", function () {
-                var applyCount;
+            it("does not trigger a digest cycle when size does not change", () => {
+                let applyCount;
                 mctResize.link(mockScope, [testElement], testAttrs);
                 applyCount = mockScope.$apply.calls.length;
 

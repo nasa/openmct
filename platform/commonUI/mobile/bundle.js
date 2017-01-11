@@ -25,12 +25,12 @@ define([
     "./src/AgentService",
     "./src/DeviceClassifier",
     'legacyRegistry'
-], function (
+], (
     MCTDevice,
     AgentService,
     DeviceClassifier,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/commonUI/mobile", {
         "extensions": {

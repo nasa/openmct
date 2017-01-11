@@ -22,15 +22,15 @@
 
 define(
     ["../../src/services/Throttle"],
-    function (Throttle) {
+    (Throttle) => {
 
-        describe("The 'throttle' service", function () {
-            var throttle,
+        describe("The 'throttle' service", () =>  {
+            let throttle,
                 mockTimeout,
                 mockFn,
                 mockPromise;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockPromise = jasmine.createSpyObj("promise", ["then"]);
                 mockFn = jasmine.createSpy("fn");
@@ -38,8 +38,8 @@ define(
                 throttle = new Throttle(mockTimeout);
             });
 
-            it("provides functions which run on a timeout", function () {
-                var throttled = throttle(mockFn);
+            it("provides functions which run on a timeout", () =>  {
+                let throttled = throttle(mockFn);
                 // Verify precondition: Not called at throttle-time
                 expect(mockTimeout).not.toHaveBeenCalled();
                 expect(throttled()).toEqual(mockPromise);
@@ -48,16 +48,16 @@ define(
                     .toHaveBeenCalledWith(jasmine.any(Function), 0, false);
             });
 
-            it("schedules only one timeout at a time", function () {
-                var throttled = throttle(mockFn);
+            it("schedules only one timeout at a time", () =>  {
+                let throttled = throttle(mockFn);
                 throttled();
                 throttled();
                 throttled();
                 expect(mockTimeout.calls.length).toEqual(1);
             });
 
-            it("schedules additional invocations after resolution", function () {
-                var throttled = throttle(mockFn);
+            it("schedules additional invocations after resolution", () =>  {
+                let throttled = throttle(mockFn);
                 throttled();
                 mockTimeout.mostRecentCall.args[0](); // Resolve timeout
                 throttled();

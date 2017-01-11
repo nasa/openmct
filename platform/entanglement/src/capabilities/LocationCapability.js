@@ -21,8 +21,7 @@
  *****************************************************************************/
 
 
-define(
-    function () {
+define(() => {
 
         /**
          * The location capability allows a domain object to know its current
@@ -32,12 +31,12 @@ define(
          *
          * @constructor
          */
-        function LocationCapability($q, $injector, domainObject) {
+        class LocationCapability {
+          constructor($q, $injector, domainObject) {
             this.domainObject = domainObject;
             this.$q = $q;
             this.$injector = $injector;
-            return this;
-        }
+          }
 
         /**
          * Get an instance of this domain object in its original location.
@@ -45,8 +44,8 @@ define(
          * @returns {Promise.<DomainObject>} a promise for the original
          *          instance of this domain object
          */
-        LocationCapability.prototype.getOriginal = function () {
-            var id;
+        getOriginal() {
+            let id;
 
             if (this.isOriginal()) {
                 return this.$q.when(this.domainObject);
@@ -62,7 +61,7 @@ define(
             // so long as LocatingObjectDecorator is present, and that
             // decorator is also contained in this bundle.
             return this.objectService.getObjects([id])
-                .then(function (objects) {
+                .then( (objects) => {
                     return objects[id];
                 });
         };
@@ -75,10 +74,10 @@ define(
          * @returns {Promise} a promise that is resolved when the operation
          * completes.
          */
-        LocationCapability.prototype.setPrimaryLocation = function (location) {
+        setPrimaryLocation(location) {
             return this.domainObject.useCapability(
                 'mutation',
-                function (model) {
+                (model) => {
                     model.location = location;
                 }
             );
@@ -91,8 +90,8 @@ define(
          * @returns {String} the contextual location of the object; the id of
          * its parent.
          */
-        LocationCapability.prototype.getContextualLocation = function () {
-            var context = this.domainObject.getCapability("context");
+        getContextualLocation() {
+            let context = this.domainObject.getCapability("context");
 
             if (!context) {
                 return;
@@ -107,8 +106,8 @@ define(
          *
          * @returns {Boolean}
          */
-        LocationCapability.prototype.isLink = function () {
-            var model = this.domainObject.getModel();
+        isLink() {
+            let model = this.domainObject.getModel();
 
             return model.location !== this.getContextualLocation();
         };
@@ -119,10 +118,10 @@ define(
          *
          * @returns {Boolean}
          */
-        LocationCapability.prototype.isOriginal = function () {
+        isOriginal() {
             return !this.isLink();
         };
-
+      }
         return LocationCapability;
     }
 );

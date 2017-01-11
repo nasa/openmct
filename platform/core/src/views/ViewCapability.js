@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * A `view` capability can be used to retrieve an array of
@@ -37,7 +37,8 @@ define(
          * @implements {Capability}
          * @constructor
          */
-        function ViewCapability(viewService, domainObject) {
+        class ViewCapability {
+          constructor(viewService, domainObject) {
             this.viewService = viewService;
             this.domainObject = domainObject;
         }
@@ -49,10 +50,10 @@ define(
          *          which are applicable to this object.
          * @memberof platform/core.ViewCapability#
          */
-        ViewCapability.prototype.invoke = function () {
+        invoke() {
             return this.viewService.getViews(this.domainObject);
         };
-
+      }
         return ViewCapability;
     }
 );

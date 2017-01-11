@@ -20,10 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+define(() => {
 
-        var TEMPLATE = "<div></div>";
+        const TEMPLATE = "<div></div>";
 
         /**
          * The `mct-popup` directive may be used to display elements
@@ -42,19 +41,19 @@ define(
          * @param $compile Angular's $compile service
          * @param {platform/commonUI/general.PopupService} popupService
          */
-        function MCTPopup($compile, popupService) {
-            function link(scope, element, attrs, ctrl, transclude) {
-                var div = $compile(TEMPLATE)(scope),
+        const MCTPopup = ($compile, popupService) => {
+            const link = (scope, element, attrs, ctrl, transclude) => {
+                let div = $compile(TEMPLATE)(scope),
                     rect = element.parent()[0].getBoundingClientRect(),
                     position = [rect.left, rect.top],
                     popup = popupService.display(div, position);
 
                 div.addClass('t-popup');
-                transclude(function (clone) {
+                transclude((clone) => {
                     div.append(clone);
                 });
 
-                scope.$on('$destroy', function () {
+                scope.$on('$destroy', () => {
                     popup.dismiss();
                 });
             }

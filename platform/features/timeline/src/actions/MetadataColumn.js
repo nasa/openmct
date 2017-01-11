@@ -20,29 +20,30 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([], () => {
 
     /**
      * A column reflecting properties from domain object metadata.
      * @constructor
      * @implements {platform/features/timeline.TimelineCSVColumn}
      */
-    function MetadataColumn(propertyName) {
+    class MetadataColumn {
+      constructor(propertyName) {
         this.propertyName = propertyName;
-    }
+      }
 
-    MetadataColumn.prototype.name = function () {
-        return this.propertyName;
-    };
+      name() {
+          return this.propertyName;
+      };
 
-    MetadataColumn.prototype.value = function (domainObject) {
-        var properties = domainObject.useCapability('metadata'),
+      value(domainObject) {
+        let properties = domainObject.useCapability('metadata'),
             name = this.propertyName;
-        return properties.reduce(function (value, property) {
+        return properties.reduce( (value, property) => {
             return property.name === name ?
                 property.value : value;
         }, "");
     };
-
+  }
     return MetadataColumn;
 });

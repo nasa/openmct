@@ -20,16 +20,17 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([], () => {
     /**
      * Allows support for common user actions to be attached to views.
      * @interface GestureAPI
      * @memberof module:openmct
      */
-    function GestureAPI(selectGesture, contextMenuGesture) {
+    class GestureAPI {
+      constructor(selectGesture, contextMenuGesture) {
         this.selectGesture = selectGesture;
         this.contextMenuGesture = contextMenuGesture;
-    }
+      }
 
     /**
      * Designate an HTML element as selectable, and associated with a
@@ -43,9 +44,9 @@ define([], function () {
      * @method selectable
      * @memberof module:openmct.GestureAPI#
      */
-    GestureAPI.prototype.selectable = function (htmlElement, item) {
+    selectable(htmlElement, item) {
         return this.selectGesture.apply(htmlElement, item);
-    };
+    }
 
 
     /**
@@ -60,9 +61,9 @@ define([], function () {
      * @method selectable
      * @memberof module:openmct.GestureAPI#
      */
-    GestureAPI.prototype.contextMenu = function (htmlElement, item) {
+    contextMenu(htmlElement, item) {
         return this.contextMenuGesture.apply(htmlElement, item);
-    };
-
-    return GestureAPI;
+    }
+}
+return GestureAPI;
 });

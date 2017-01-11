@@ -33,7 +33,7 @@ define([
     "text!./res/templates/mode-selector/mode-menu.html",
     "text!./res/templates/time-of-interest.html",
     "legacyRegistry"
-], function (
+], (
     TimeConductorViewService,
     TimeConductorController,
     ConductorAxisController,
@@ -46,7 +46,7 @@ define([
     modeMenuTemplate,
     timeOfInterest,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/features/conductor/core", {
         "extensions": {

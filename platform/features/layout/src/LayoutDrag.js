@@ -22,7 +22,38 @@
 
 define(
     [],
-    function () {
+    () => {
+      
+      
+      
+      // Convert a delta from pixel coordinates to grid coordinates,
+      // rounding to whole-number grid coordinates.
+      const toGridDelta = (gridSize, pixelDelta) => {
+          return pixelDelta.map( (v, i) => {
+              return Math.round(v / gridSize[i]);
+          });
+      }
+
+      // Utility function to perform element-by-element multiplication
+      const multiply = (array, factors) => {
+          return array.map( (v, i) => {
+              return v * factors[i];
+          });
+      }
+
+      // Utility function to perform element-by-element addition
+      const add = (array, other) => {
+          return array.map( (v, i) => {
+              return v + other[i];
+          });
+      }
+
+      // Utility function to perform element-by-element max-choosing
+      const max = (array, other) => {
+          return array.map( (v, i) => {
+              return Math.max(v, other[i]);
+          });
+      }
 
         /**
          * Handles drag interactions on frames in layouts. This will
@@ -51,40 +82,13 @@ define(
          * @constructor
          * @memberof platform/features/layout
          */
-        function LayoutDrag(rawPosition, posFactor, dimFactor, gridSize) {
+         
+        class LayoutDrag {
+          constructor(rawPosition, posFactor, dimFactor, gridSize) {
             this.rawPosition = rawPosition;
             this.posFactor = posFactor;
             this.dimFactor = dimFactor;
             this.gridSize = gridSize;
-        }
-
-        // Convert a delta from pixel coordinates to grid coordinates,
-        // rounding to whole-number grid coordinates.
-        function toGridDelta(gridSize, pixelDelta) {
-            return pixelDelta.map(function (v, i) {
-                return Math.round(v / gridSize[i]);
-            });
-        }
-
-        // Utility function to perform element-by-element multiplication
-        function multiply(array, factors) {
-            return array.map(function (v, i) {
-                return v * factors[i];
-            });
-        }
-
-        // Utility function to perform element-by-element addition
-        function add(array, other) {
-            return array.map(function (v, i) {
-                return v + other[i];
-            });
-        }
-
-        // Utility function to perform element-by-element max-choosing
-        function max(array, other) {
-            return array.map(function (v, i) {
-                return Math.max(v, other[i]);
-            });
         }
 
 
@@ -95,8 +99,8 @@ define(
          * @param {number[]} pixelDelta the offset from the
          *        original position, in pixels
          */
-        LayoutDrag.prototype.getAdjustedPosition = function (pixelDelta) {
-            var gridDelta = toGridDelta(this.gridSize, pixelDelta);
+        getAdjustedPosition(pixelDelta) {
+            let gridDelta = toGridDelta(this.gridSize, pixelDelta);
             return {
                 position: max(add(
                     this.rawPosition.position,
@@ -108,7 +112,7 @@ define(
                 ), [1, 1])
             };
         };
-
+      }
         return LayoutDrag;
 
     }

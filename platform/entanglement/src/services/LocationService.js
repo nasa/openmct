@@ -26,8 +26,7 @@
  * (move, copy, link.)
  * @namespace platform/entanglement
  */
-define(
-    function () {
+define( () => {
 
         /**
          * The LocationService allows for easily prompting the user for a
@@ -35,7 +34,7 @@ define(
          * @constructor
          * @memberof platform/entanglement
          */
-        function LocationService(dialogService) {
+        const LocationService = (dialogService) => {
             return {
                 /** Prompt the user to select a location.  Returns a promise
                  * that is resolved with a domainObject representing the
@@ -50,8 +49,8 @@ define(
                  * @returns {Promise} promise for a domain object.
                  * @memberof platform/entanglement.LocationService#
                  */
-                getLocationFromUser: function (title, label, validate, initialLocation) {
-                    var formStructure,
+                getLocationFromUser: (title, label, validate, initialLocation) => {
+                    let formStructure,
                         formState;
 
                     formStructure = {
@@ -78,7 +77,7 @@ define(
 
                     return dialogService
                         .getUserInput(formStructure, formState)
-                        .then(function (userFormState) {
+                        .then( (userFormState) => {
                             return userFormState.location;
                         });
                 }

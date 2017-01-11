@@ -20,8 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+define(() => {
 
         /**
          * A popup is an element that has been displayed at a particular
@@ -32,7 +31,8 @@ define(
          * @param {object} styles an object containing key-value pairs
          *        of styles used to position the element.
          */
-        function Popup(element, styles) {
+        class Popup {
+          constructor(element, styles) {
             this.styles = styles;
             this.element = element;
 
@@ -42,7 +42,7 @@ define(
         /**
          * Stop showing this popup.
          */
-        Popup.prototype.dismiss = function () {
+        dismiss() {
             this.element.remove();
         };
 
@@ -51,7 +51,7 @@ define(
          * left of its original location.
          * @returns {boolean} true if the popup goes left
          */
-        Popup.prototype.goesLeft = function () {
+        goesLeft() {
             return !this.styles.left;
         };
 
@@ -60,7 +60,7 @@ define(
          * right of its original location.
          * @returns {boolean} true if the popup goes right
          */
-        Popup.prototype.goesRight = function () {
+        goesRight() {
             return !this.styles.right;
         };
 
@@ -69,7 +69,7 @@ define(
          * its original location.
          * @returns {boolean} true if the popup goes up
          */
-        Popup.prototype.goesUp = function () {
+        goesUp() {
             return !this.styles.top;
         };
 
@@ -78,10 +78,10 @@ define(
          * its original location.
          * @returns {boolean} true if the popup goes down
          */
-        Popup.prototype.goesDown = function () {
+        goesDown() {
             return !this.styles.bottom;
         };
-
+      }
         return Popup;
     }
 );

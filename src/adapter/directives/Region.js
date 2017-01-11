@@ -20,26 +20,27 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-    function Region(element) {
+define([], () => {
+    class Region {
+      constructor(element) {
         this.activeView = undefined;
         this.element = element;
     }
 
-    Region.prototype.clear = function () {
+    clear() {
         if (this.activeView) {
             this.activeView.destroy();
             this.activeView = undefined;
         }
-    };
+    }
 
-    Region.prototype.show = function (view) {
+    show(view) {
         this.clear();
         this.activeView = view;
         if (this.activeView) {
             this.activeView.show(this.element);
         }
-    };
-
-    return Region;
+    }
+}
+return Region;
 });

@@ -24,10 +24,9 @@
  * Prepares data to be rendered in a GL Plot. Handles
  * the conversion from data API to displayable buffers.
  */
-define(
-    function () {
+define(() => {
 
-        function identity(x) {
+        const identity = (x) => {
             return x;
         }
 
@@ -42,8 +41,9 @@ define(
          * @param {string} domain the key to use when looking up domain values
          * @param {string} range the key to use when looking up range values
          */
-        function PlotPreparer(datas, domain, range) {
-            var index,
+        class PlotPreparer {
+          constructor(datas, domain, range) {
+            let index,
                 vertices = [],
                 max = [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY],
                 min = [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY],
@@ -58,12 +58,12 @@ define(
             // This will be use to reduce the magnitude of domain values
             // in the buffer, to minimize loss-of-precision when
             // converting to a 32-bit float.
-            datas.forEach(function (data) {
+            datas.forEach( (data) => {
                 domainOffset = Math.min(data.getDomainValue(0, domain), domainOffset);
             });
 
             // Assemble buffers, and track bounds of the data present
-            datas.forEach(function (data, i) {
+            datas.forEach( (data, i) => {
                 vertices.push([]);
                 for (index = 0; index < data.getPointCount(); index += 1) {
                     x = data.getDomainValue(index, domain);
@@ -84,7 +84,7 @@ define(
             }
 
             // Convert to Float32Array
-            this.buffers = vertices.map(function (v) {
+            this.buffers = vertices.map( (v) => {
                 return new Float32Array(v);
             });
 
@@ -99,8 +99,8 @@ define(
          * first element is domain, and second is range.
          * @returns {number[]} the dimensions which bound this data set
          */
-        PlotPreparer.prototype.getDimensions = function () {
-            var max = this.max, min = this.min;
+        getDimensions() {
+            let max = this.max, min = this.min;
             return [max[0] - min[0], max[1] - min[1]];
         };
 
@@ -111,7 +111,7 @@ define(
          * The domain value here is not adjusted by the domain offset.
          * @returns {number[]} the origin of this data set's boundary
          */
-        PlotPreparer.prototype.getOrigin = function () {
+        getOrigin() {
             return this.min;
         };
 
@@ -122,7 +122,7 @@ define(
          * conversion to the 32-bit float format needed by WebGL.
          * @returns {number} the domain offset
          */
-        PlotPreparer.prototype.getDomainOffset = function () {
+        getDomainOffset() {
             return this.domainOffset;
         };
 
@@ -143,10 +143,10 @@ define(
          *
          * @returns {Float32Array[]} the buffers for these traces
          */
-        PlotPreparer.prototype.getBuffers = function () {
+        getBuffers() {
             return this.buffers;
         };
-
+      }
         return PlotPreparer;
 
     }

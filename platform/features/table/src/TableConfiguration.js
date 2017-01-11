@@ -26,46 +26,58 @@ define(
         './RangeColumn',
         './NameColumn'
     ],
-    function (DomainColumn, RangeColumn, NameColumn) {
+    (DomainColumn, RangeColumn, NameColumn) => {
+      
+      const configChanged = (config1, config2) => {
+          let config1Keys = Object.keys(config1),
+              config2Keys = Object.keys(config2);
 
+          return (config1Keys.length !== config2Keys.length) ||
+              config1Keys.some( (key) => {
+                  return config1[key] !== config2[key];
+              });
+      }
+      
+      
+      
         /**
          * Class that manages table metadata, state, and contents.
          * @memberof platform/features/table
          * @param domainObject
          * @constructor
          */
-        function TableConfiguration(domainObject, telemetryFormatter) {
+        class TableConfiguration {
+          constructor(domainObject, telemetryFormatter) {
             this.domainObject = domainObject;
             this.columns = [];
             this.telemetryFormatter = telemetryFormatter;
-        }
+          }
 
         /**
          * Build column definitions based on supplied telemetry metadata
          * @param metadata Metadata describing the domains and ranges available
          * @returns {TableConfiguration} This object
          */
-        TableConfiguration.prototype.populateColumns = function (metadata) {
-            var self = this;
+         populateColumns(metadata) {
 
             this.columns = [];
 
             if (metadata) {
 
-                metadata.forEach(function (metadatum) {
+                metadata.forEach( (metadatum) => {
                     //Push domains first
-                    (metadatum.domains || []).forEach(function (domainMetadata) {
-                        self.addColumn(new DomainColumn(domainMetadata,
-                            self.telemetryFormatter));
+                    (metadatum.domains || []).forEach( (domainMetadata) => {
+                        this.addColumn(new DomainColumn(domainMetadata,
+                            this.telemetryFormatter));
                     });
-                    (metadatum.ranges || []).forEach(function (rangeMetadata) {
-                        self.addColumn(new RangeColumn(rangeMetadata,
-                            self.telemetryFormatter));
+                    (metadatum.ranges || []).forEach( (rangeMetadata) => {
+                        this.addColumn(new RangeColumn(rangeMetadata,
+                            this.telemetryFormatter));
                     });
                 });
 
                 if (this.columns.length > 0) {
-                    self.addColumn(new NameColumn(), 0);
+                    this.addColumn(new NameColumn(), 0);
                 }
             }
             return this;
@@ -77,7 +89,7 @@ define(
          * @param {Number} [index] Where the column should appear (will be
          * affected by column filtering)
          */
-        TableConfiguration.prototype.addColumn = function (column, index) {
+        addColumn(column, index) {
             if (typeof index === 'undefined') {
                 this.columns.push(column);
             } else {
@@ -90,7 +102,7 @@ define(
          * @param column
          * @returns {*|string}
          */
-        TableConfiguration.prototype.getColumnTitle = function (column) {
+        getColumnTitle(column) {
             return column.getTitle();
         };
 
@@ -98,10 +110,9 @@ define(
          * Get a simple list of column titles
          * @returns {Array} The titles of the columns
          */
-        TableConfiguration.prototype.getHeaders = function () {
-            var self = this;
-            return this.columns.map(function (column, i) {
-                return self.getColumnTitle(column) || 'Column ' + (i + 1);
+        getHeaders() {
+            return this.columns.map( (column, i) => {
+                return this.getColumnTitle(column) || 'Column ' + (i + 1);
             });
         };
 
@@ -113,10 +124,9 @@ define(
          * @returns {Object} Key value pairs where the key is the column
          * title, and the value is the formatted value from the provided datum.
          */
-        TableConfiguration.prototype.getRowValues = function (telemetryObject, datum) {
-            var self = this;
-            return this.columns.reduce(function (rowObject, column, i) {
-                var columnTitle = self.getColumnTitle(column) || 'Column ' + (i + 1),
+        getRowValues(telemetryObject, datum) {
+            return this.columns.reduce( (rowObject, column, i) => {
+                let columnTitle = this.getColumnTitle(column) || 'Column ' + (i + 1),
                     columnValue = column.getValue(telemetryObject, datum);
 
                 if (columnValue !== undefined && columnValue.text === undefined) {
@@ -137,7 +147,7 @@ define(
         /**
          * @private
          */
-        TableConfiguration.prototype.defaultColumnConfiguration = function () {
+        defaultColumnConfiguration() {
             return ((this.domainObject.getModel().configuration || {}).table || {}).columns || {};
         };
 
@@ -145,23 +155,13 @@ define(
          * Set the established configuration on the domain object
          * @private
          */
-        TableConfiguration.prototype.saveColumnConfiguration = function (columnConfig) {
-            this.domainObject.useCapability('mutation', function (model) {
+        saveColumnConfiguration(columnConfig) {
+            this.domainObject.useCapability('mutation', (model) => {
                 model.configuration = model.configuration || {};
                 model.configuration.table = model.configuration.table || {};
                 model.configuration.table.columns = columnConfig;
             });
         };
-
-        function configChanged(config1, config2) {
-            var config1Keys = Object.keys(config1),
-                config2Keys = Object.keys(config2);
-
-            return (config1Keys.length !== config2Keys.length) ||
-                config1Keys.some(function (key) {
-                    return config1[key] !== config2[key];
-                });
-        }
 
         /**
          * As part of the process of building the table definition, extract
@@ -170,8 +170,8 @@ define(
          * pairs where the key is the column title, and the value is a
          * boolean indicating whether the column should be shown.
          */
-        TableConfiguration.prototype.buildColumnConfiguration = function () {
-            var configuration = {},
+        buildColumnConfiguration() {
+            let configuration = {},
                 //Use existing persisted config, or default it
                 defaultConfig = this.defaultColumnConfiguration();
 
@@ -180,7 +180,7 @@ define(
              * specifying whether the column is visible or not. Default to
              * existing (persisted) configuration if available
              */
-            this.getHeaders().forEach(function (columnTitle) {
+            this.getHeaders().forEach( (columnTitle) => {
                 configuration[columnTitle] =
                     typeof defaultConfig[columnTitle] === 'undefined' ? true :
                         defaultConfig[columnTitle];
@@ -193,7 +193,7 @@ define(
 
             return configuration;
         };
-
+      }
         return TableConfiguration;
     }
 );

@@ -26,18 +26,18 @@ define(
         './graph/TimelineGraphPopulator',
         './drag/TimelineDragPopulator'
     ],
-    function (
+    (
         TimelineSwimlanePopulator,
         TimelineGraphPopulator,
         TimelineDragPopulator
-    ) {
+    ) => {
 
         /**
          * Controller for the Timeline view.
          * @constructor
          */
-        function TimelineController($scope, $q, objectLoader, MINIMUM_DURATION) {
-            var swimlanePopulator = new TimelineSwimlanePopulator(
+        const TimelineController = ($scope, $q, objectLoader, MINIMUM_DURATION) => {
+            let swimlanePopulator = new TimelineSwimlanePopulator(
                     objectLoader,
                     $scope.configuration || {},
                     $scope.selection
@@ -47,9 +47,9 @@ define(
 
             // Hash together all modification times. A sum is sufficient here,
             // since modified timestamps should be non-decreasing.
-            function modificationSum() {
-                var sum = 0;
-                swimlanePopulator.get().forEach(function (swimlane) {
+            const modificationSum = () => {
+                let sum = 0;
+                swimlanePopulator.get().forEach( (swimlane) => {
                     sum += swimlane.domainObject.getModel().modified || 0;
                 });
                 return sum;
@@ -58,9 +58,9 @@ define(
             // Reduce graph states to a watch-able number. A bitmask is
             // sufficient here, since only ~30 graphed elements make sense
             // (due to limits on recognizably unique line colors)
-            function graphMask() {
-                var mask = 0, bit = 1;
-                swimlanePopulator.get().forEach(function (swimlane) {
+            const graphMask = () => {
+                let mask = 0, bit = 1;
+                swimlanePopulator.get().forEach( (swimlane) => {
                     mask += swimlane.graph() ? 0 : bit;
                     bit *= 2;
                 });
@@ -68,21 +68,21 @@ define(
             }
 
             // Repopulate based on detected modification to in-view objects
-            function repopulateSwimlanes() {
+            const repopulateSwimlanes = () => {
                 swimlanePopulator.populate($scope.domainObject);
                 dragPopulator.populate($scope.domainObject);
                 graphPopulator.populate(swimlanePopulator.get());
             }
 
             // Repopulate graphs based on modification to swimlane graph state
-            function repopulateGraphs() {
+            const repopulateGraphs = () => {
                 graphPopulator.populate(swimlanePopulator.get());
             }
 
             // Refresh resource graphs
-            function refresh() {
+            const refresh = () => {
                 if (graphPopulator) {
-                    graphPopulator.get().forEach(function (graph) {
+                    graphPopulator.get().forEach( (graph) => {
                         graph.refresh();
                     });
                 }

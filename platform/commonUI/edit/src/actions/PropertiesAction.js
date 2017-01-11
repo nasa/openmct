@@ -27,7 +27,7 @@
  */
 define(
     ['./PropertiesDialog'],
-    function (PropertiesDialog) {
+    (PropertiesDialog) => {
 
         /**
          * Implements the "Edit Properties" action, which prompts the user
@@ -40,55 +40,55 @@ define(
          * @implements {Action}
          * @constructor
          */
-        function PropertiesAction(dialogService, context) {
+        class PropertiesAction {
+          constructor(dialogService, context) {
             this.domainObject = (context || {}).domainObject;
             this.dialogService = dialogService;
         }
 
-        PropertiesAction.prototype.perform = function () {
-            var type = this.domainObject.getCapability('type'),
+        perform() {
+            let type = this.domainObject.getCapability('type'),
                 domainObject = this.domainObject,
                 dialogService = this.dialogService;
 
             // Update the domain object model based on user input
-            function updateModel(userInput, dialog) {
-                return domainObject.useCapability('mutation', function (model) {
+            const updateModel = (userInput, dialog) => {
+                return domainObject.useCapability('mutation', (model) => {
                     dialog.updateModel(model, userInput);
                 });
             }
 
-            function showDialog(objType) {
+            const showDialog = (objType) => {
                 // Create a dialog object to generate the form structure, etc.
-                var dialog =
+                let dialog =
                     new PropertiesDialog(objType, domainObject.getModel());
 
                 // Show the dialog
                 return dialogService.getUserInput(
                     dialog.getFormStructure(),
                     dialog.getInitialFormValue()
-                ).then(function (userInput) {
+                ).then( (userInput) => {
                     // Update the model, if user input was provided
                     return userInput && updateModel(userInput, dialog);
                 });
             }
 
             return type && showDialog(type);
-        };
+        }
 
         /**
          * Filter this action for applicability against a given context.
          * This will ensure that a domain object is present in the
          * context.
          */
-        PropertiesAction.appliesTo = function (context) {
-            var domainObject = (context || {}).domainObject,
+        appliesTo(context) {
+            let domainObject = (context || {}).domainObject,
                 type = domainObject && domainObject.getCapability('type'),
                 creatable = type && type.hasFeature('creation');
-
             // Only allow creatable types to be edited
             return domainObject && creatable;
-        };
-
+        }
+      }
         return PropertiesAction;
     }
 

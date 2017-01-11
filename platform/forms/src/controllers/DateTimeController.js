@@ -22,9 +22,9 @@
 
 define(
     ["moment"],
-    function (moment) {
+    (moment) => {
 
-        var DATE_FORMAT = "YYYY-MM-DD";
+        const DATE_FORMAT = "YYYY-MM-DD";
 
         /**
          * Controller for the `datetime` form control.
@@ -35,11 +35,11 @@ define(
          * @memberof platform/forms
          * @constructor
          */
-        function DateTimeController($scope) {
+        const DateTimeController = ($scope) => {
 
             // Update the
-            function update() {
-                var date = $scope.datetime.date,
+            const update = () => {
+                let date = $scope.datetime.date,
                     hour = $scope.datetime.hour,
                     min = $scope.datetime.min,
                     sec = $scope.datetime.sec,
@@ -57,7 +57,7 @@ define(
                 // allow datetime to be optional while still permitting
                 // incomplete input)
                 $scope.partiallyComplete =
-                    Object.keys($scope.datetime).some(function (key) {
+                    Object.keys($scope.datetime).some( (key) => {
                         return $scope.datetime[key];
                     });
 
@@ -67,8 +67,8 @@ define(
                 }
             }
 
-            function updateDateTime(value) {
-                var m;
+            const updateDateTime = (value) => {
+                let m;
                 if (value !== undefined) {
                     m = moment.utc(value);
                     $scope.datetime = {

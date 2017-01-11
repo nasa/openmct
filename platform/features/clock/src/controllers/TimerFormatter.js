@@ -22,9 +22,9 @@
 
 define(
     ['moment', 'moment-duration-format'],
-    function (moment) {
+    (moment) => {
 
-        var SHORT_FORMAT = "HH:mm:ss",
+        const SHORT_FORMAT = "HH:mm:ss",
             LONG_FORMAT = "d[D] HH:mm:ss";
 
         /**
@@ -37,12 +37,11 @@ define(
          * @constructor
          * @memberof platform/features/clock
          */
-        function TimerFormatter() {
-        }
+        class TimerFormatter {
 
         // Round this timestamp down to the second boundary
         // (e.g. 1124ms goes down to 1000ms, -2400ms goes down to -3000ms)
-        function toWholeSeconds(duration) {
+         toWholeSeconds(duration) {
             return Math.abs(Math.floor(duration / 1000) * 1000);
         }
 
@@ -52,7 +51,7 @@ define(
          * @param {number} duration the duration, in milliseconds
          * @param {boolean} sign true if positive
          */
-        TimerFormatter.prototype.short = function (duration) {
+        short(duration) {
             return moment.duration(toWholeSeconds(duration), 'ms')
                 .format(SHORT_FORMAT, { trim: false });
         };
@@ -63,11 +62,11 @@ define(
          * @param {number} duration the duration, in milliseconds
          * @param {boolean} sign true if positive
          */
-        TimerFormatter.prototype.long = function (duration) {
+        long(duration) {
             return moment.duration(toWholeSeconds(duration), 'ms')
                 .format(LONG_FORMAT, { trim: false });
         };
-
+      }
         return TimerFormatter;
     }
 );

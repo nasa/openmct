@@ -25,15 +25,15 @@ define(
     [
         '../../src/services/LocatingCreationDecorator'
     ],
-    function (LocatingCreationDecorator) {
+    (LocatingCreationDecorator) => {
 
-        describe("LocatingCreationDecorator", function () {
-            var mockCreationService,
+        describe("LocatingCreationDecorator", () =>  {
+            let mockCreationService,
                 mockPromise,
                 mockParent,
                 decorator;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 mockCreationService = jasmine.createSpyObj(
                     'creationService',
                     ['createObject']
@@ -51,14 +51,14 @@ define(
                 decorator = new LocatingCreationDecorator(mockCreationService);
             });
 
-            it("delegates to its decorated service", function () {
+            it("delegates to its decorated service", () =>  {
                 expect(decorator.createObject(
                     { someKey: "some value" },
                     mockParent
                 )).toEqual(mockPromise); // promise returned by decoratee
             });
 
-            it("adds a location property", function () {
+            it("adds a location property", () =>  {
                 decorator.createObject(
                     { someKey: "some value" },
                     mockParent

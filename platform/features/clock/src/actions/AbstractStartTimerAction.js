@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Implements the "Start" and "Restart" action for timers.
@@ -40,22 +40,23 @@ define(
          *        time (typically wrapping `Date.now`)
          * @param {ActionContext} context the context for this action
          */
-        function AbstractStartTimerAction(now, context) {
+        class AbstractStartTimerAction {
+          constructor(now, context) {
             this.domainObject = context.domainObject;
             this.now = now;
-        }
+          }
 
-        AbstractStartTimerAction.prototype.perform = function () {
-            var domainObject = this.domainObject,
+        perform () {
+            let domainObject = this.domainObject,
                 now = this.now;
 
-            function setTimestamp(model) {
+            const setTimestamp = (model) => {
                 model.timestamp = now();
             }
 
             return domainObject.useCapability('mutation', setTimestamp);
         };
-
+      }
         return AbstractStartTimerAction;
     }
 );

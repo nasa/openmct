@@ -25,7 +25,7 @@ define(
         "../controllers/MCTTableController",
         "text!../../res/templates/mct-table.html"
     ],
-    function (MCTTableController, TableTemplate) {
+    (MCTTableController, TableTemplate) => {
         /**
          * Defines a generic 'Table' component. The table can be populated
          * en-masse by setting the rows attribute, or rows can be added as
@@ -77,7 +77,7 @@ define(
          *
          * @constructor
          */
-        function MCTTable($timeout) {
+        const MCTTable = ($timeout) => {
             return {
                 restrict: "E",
                 template: TableTemplate,

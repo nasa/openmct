@@ -22,13 +22,13 @@
 
 define(
     ['../../src/capabilities/ActivityUtilization'],
-    function (ActivityUtilization) {
+    (ActivityUtilization) => {
 
-        describe("An Activity's resource utilization", function () {
+        describe("An Activity's resource utilization", () => {
 
             // Placeholder; WTD-918 will implement
-            it("has the expected interface", function () {
-                var utilization = new ActivityUtilization();
+            it("has the expected interface", () => {
+                let utilization = new ActivityUtilization();
                 expect(utilization.getPointCount()).toEqual(jasmine.any(Number));
                 expect(utilization.getDomainValue()).toEqual(jasmine.any(Number));
                 expect(utilization.getRangeValue()).toEqual(jasmine.any(Number));

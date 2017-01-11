@@ -22,9 +22,9 @@
 
 define(
     ['../InfoConstants'],
-    function (InfoConstants) {
+    (InfoConstants) => {
 
-        var BUBBLE_TEMPLATE = InfoConstants.BUBBLE_TEMPLATE,
+        let BUBBLE_TEMPLATE = InfoConstants.BUBBLE_TEMPLATE,
             MOBILE_POSITION = InfoConstants.BUBBLE_MOBILE_POSITION,
             OPTIONS = InfoConstants.BUBBLE_OPTIONS;
 
@@ -33,7 +33,8 @@ define(
          * @memberof platform/commonUI/inspect
          * @constructor
          */
-        function InfoService($compile, $rootScope, popupService, agentService) {
+        class InfoService {
+          constructor($compile, $rootScope, popupService, agentService) {
             this.$compile = $compile;
             this.$rootScope = $rootScope;
             this.popupService = popupService;
@@ -51,8 +52,8 @@ define(
          * @returns {Function} a function that may be invoked to
          *          dismiss the info bubble
          */
-        InfoService.prototype.display = function (templateKey, title, content, position) {
-            var $compile = this.$compile,
+        display(templateKey, title, content, position) {
+            let $compile = this.$compile,
                 $rootScope = this.$rootScope,
                 scope = $rootScope.$new(),
                 span = $compile('<span></span>')(scope),
@@ -95,7 +96,7 @@ define(
                 scope.$destroy();
             };
         };
-
+      }
         return InfoService;
     }
 );

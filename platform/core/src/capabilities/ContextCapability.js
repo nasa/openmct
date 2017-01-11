@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The `context` capability of a domain object (retrievable with
@@ -38,7 +38,8 @@ define(
          * @constructor
          * @implements {Capability}
          */
-        function ContextCapability(parentObject, domainObject) {
+        class ContextCapability {
+          constructor(parentObject, domainObject) {
             this.parentObject = parentObject;
             this.domainObject = domainObject;
         }
@@ -54,7 +55,7 @@ define(
          * @returns {DomainObject} the immediate parent of this
          *          domain object.
          */
-        ContextCapability.prototype.getParent = function () {
+        getParent() {
             return this.parentObject;
         };
 
@@ -77,8 +78,8 @@ define(
          *          of the domain object which exposed this
          *          capability.
          */
-        ContextCapability.prototype.getPath = function () {
-            var parentObject = this.parentObject,
+        getPath() {
+            let parentObject = this.parentObject,
                 parentContext =
                     parentObject && parentObject.getCapability('context'),
                 parentPath = parentContext ?
@@ -97,15 +98,15 @@ define(
          * @returns {DomainObject} the deepest ancestor of the domain
          *          object which exposed this capability.
          */
-        ContextCapability.prototype.getRoot = function () {
-            var parentContext = this.parentObject &&
+        getRoot() {
+            let parentContext = this.parentObject &&
                 this.parentObject.getCapability('context');
 
             return parentContext ?
                     parentContext.getRoot() :
                     (this.parentObject || this.domainObject);
         };
-
+      }
         return ContextCapability;
     }
 );

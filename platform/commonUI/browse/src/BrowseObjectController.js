@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Controller for the `browse-object` representation of a domain
@@ -30,13 +30,13 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function BrowseObjectController($scope, $location, $route) {
-            var navigatedObject;
-            function setViewForDomainObject(domainObject) {
+        const BrowseObjectController = ($scope, $location, $route) => {
+            let navigatedObject;
+            const setViewForDomainObject = (domainObject) => {
 
-                var locationViewKey = $location.search().view;
+                let locationViewKey = $location.search().view;
 
-                function selectViewIfMatching(view) {
+                const selectViewIfMatching = (view) => {
                     if (view.key === locationViewKey) {
                         $scope.representation = $scope.representation || {};
                         $scope.representation.selected = view;
@@ -50,7 +50,7 @@ define(
                 navigatedObject = domainObject;
             }
 
-            function updateQueryParam(viewKey) {
+            const updateQueryParam = (viewKey) => {
                 if (viewKey && $location.search().view !== viewKey) {
                     $location.search('view', viewKey);
                 }
@@ -58,16 +58,15 @@ define(
 
             $scope.$watch('domainObject', setViewForDomainObject);
             $scope.$watch('representation.selected.key', updateQueryParam);
-            $scope.$on('$locationChangeSuccess', function () {
+            $scope.$on('$locationChangeSuccess', () => {
                 setViewForDomainObject($scope.domainObject);
             });
 
-            $scope.doAction = function (action) {
+            $scope.doAction = (action) => {
                 return $scope[action] && $scope[action]();
             };
 
         }
-
         return BrowseObjectController;
     }
 );

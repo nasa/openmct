@@ -25,10 +25,10 @@
  */
 define(
     ["../../src/creation/CreateAction"],
-    function (CreateAction) {
+    (CreateAction) => {
 
-        describe("The create action", function () {
-            var mockType,
+        describe("The create action", () => {
+            let mockType,
                 mockParent,
                 mockContext,
                 mockDomainObject,
@@ -37,15 +37,15 @@ define(
                 mockSaveAction,
                 action;
 
-            function mockPromise(value) {
+            const mockPromise = (value) => {
                 return {
-                    then: function (callback) {
+                    then: (callback) => {
                         return mockPromise(callback(value));
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockType = jasmine.createSpyObj(
                     "type",
                     [
@@ -77,10 +77,10 @@ define(
                         "useCapability"
                     ]
                 );
-                mockDomainObject.hasCapability.andCallFake(function (name) {
+                mockDomainObject.hasCapability.andCallFake( (name) => {
                     return !!capabilities[name];
                 });
-                mockDomainObject.getCapability.andCallFake(function (name) {
+                mockDomainObject.getCapability.andCallFake( (name) => {
                     return capabilities[name];
                 });
                 mockSaveAction = jasmine.createSpyObj(
@@ -133,32 +133,32 @@ define(
                 );
             });
 
-            it("exposes type-appropriate metadata", function () {
-                var metadata = action.getMetadata();
+            it("exposes type-appropriate metadata", () => {
+                let metadata = action.getMetadata();
 
                 expect(metadata.name).toEqual("Test");
                 expect(metadata.description).toEqual("a test type");
                 expect(metadata.cssclass).toEqual("icon-telemetry");
             });
 
-            describe("the perform function", function () {
-                var promise = jasmine.createSpyObj("promise", ["then"]);
-                beforeEach(function () {
+            describe("the perform function", () => {
+                let promise = jasmine.createSpyObj("promise", ["then"]);
+                beforeEach( () => {
                     capabilities.action.getActions.andReturn([mockEditAction]);
                 });
 
-                it("uses the instantiation capability when performed", function () {
+                it("uses the instantiation capability when performed", () => {
                     action.perform();
                     expect(mockParent.useCapability).toHaveBeenCalledWith("instantiation", jasmine.any(Object));
                 });
 
-                it("uses the edit action if available", function () {
+                it("uses the edit action if available", () => {
                     action.perform();
                     expect(mockEditAction.perform).toHaveBeenCalled();
                 });
 
                 it("uses the save-as action if object does not have an edit action" +
-                    " available", function () {
+                    " available", () => {
                     capabilities.action.getActions.andReturn([]);
                     capabilities.action.perform.andReturn(mockPromise(undefined));
                     capabilities.editor.save.andReturn(promise);
@@ -166,21 +166,21 @@ define(
                     expect(capabilities.action.perform).toHaveBeenCalledWith("save-as");
                 });
 
-                describe("uses to editor capability", function () {
-                    beforeEach(function () {
+                describe("uses to editor capability", () => {
+                    beforeEach( () => {
                         capabilities.action.getActions.andReturn([]);
                         capabilities.action.perform.andReturn(promise);
                         capabilities.editor.save.andReturn(promise);
                     });
 
-                    it("to save the edit if user saves dialog", function () {
+                    it("to save the edit if user saves dialog", () => {
                         action.perform();
                         expect(promise.then).toHaveBeenCalled();
                         promise.then.mostRecentCall.args[0]();
                         expect(capabilities.editor.save).toHaveBeenCalled();
                     });
 
-                    it("to finish the edit if user cancels dialog", function () {
+                    it("to finish the edit if user cancels dialog", () => {
                         action.perform();
                         promise.then.mostRecentCall.args[1]();
                         expect(capabilities.editor.finish).toHaveBeenCalled();

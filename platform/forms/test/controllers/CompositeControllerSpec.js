@@ -22,30 +22,30 @@
 
 define(
     ["../../src/controllers/CompositeController"],
-    function (CompositeController) {
+    (CompositeController) => {
 
-        describe("The composite controller", function () {
-            var controller;
+        describe("The composite controller", () => {
+            let controller;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 controller = new CompositeController();
             });
 
-            it("detects non-empty arrays", function () {
+            it("detects non-empty arrays", () => {
                 expect(controller.isNonEmpty(["a", "b", undefined]))
                     .toBeTruthy();
                 expect(controller.isNonEmpty([3]))
                     .toBeTruthy();
             });
 
-            it("detects empty arrays", function () {
+            it("detects empty arrays", () => {
                 expect(controller.isNonEmpty([undefined, undefined, undefined]))
                     .toBeFalsy();
                 expect(controller.isNonEmpty([]))
                     .toBeFalsy();
             });
 
-            it("ignores non-arrays", function () {
+            it("ignores non-arrays", () => {
                 expect(controller.isNonEmpty("this is not an array"))
                     .toBeFalsy();
             });

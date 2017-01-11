@@ -22,10 +22,10 @@
 
 define(
     ["../src/StyleSheetLoader"],
-    function (StyleSheetLoader) {
+    (StyleSheetLoader) => {
 
-        describe("The style sheet loader", function () {
-            var testStyleSheets,
+        describe("The style sheet loader", () => {
+            let testStyleSheets,
                 mockDocument,
                 mockPlainDocument,
                 mockHead,
@@ -33,7 +33,7 @@ define(
                 testBundle,
                 loader;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 testBundle = {
                     path: "a/b",
                     resources: "c"
@@ -58,24 +58,24 @@ define(
                 loader = new StyleSheetLoader(testStyleSheets, mockDocument);
             });
 
-            it("appends one link per stylesheet extension", function () {
+            it("appends one link per stylesheet extension", () => {
                 expect(mockHead.append.calls.length)
                     .toEqual(testStyleSheets.length);
             });
 
-            it("appends links to the head", function () {
+            it("appends links to the head", () => {
                 expect(mockDocument.find).toHaveBeenCalledWith('head');
             });
 
-            it("adjusts link locations", function () {
+            it("adjusts link locations", () => {
                 expect(mockElement.setAttribute)
                     .toHaveBeenCalledWith('href', "./a/b/c/d.css");
             });
 
-            describe("for themed stylesheets", function () {
-                var testTheme = "test-theme";
+            describe("for themed stylesheets", () => {
+                let testTheme = "test-theme";
 
-                beforeEach(function () {
+                beforeEach( () => {
                     testStyleSheets = [{
                         stylesheetUrl: "themed.css",
                         bundle: testBundle,
@@ -93,12 +93,12 @@ define(
                     );
                 });
 
-                it("includes matching themes", function () {
+                it("includes matching themes", () => {
                     expect(mockElement.setAttribute)
                         .toHaveBeenCalledWith('href', "./a/b/c/themed.css");
                 });
 
-                it("excludes mismatching themes", function () {
+                it("excludes mismatching themes", () => {
                     expect(mockElement.setAttribute)
                         .not
                         .toHaveBeenCalledWith('href', "./a/b/c/bad-theme.css");

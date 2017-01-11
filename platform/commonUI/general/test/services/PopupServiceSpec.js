@@ -23,16 +23,16 @@
 
 define(
     ["../../src/services/PopupService"],
-    function (PopupService) {
+    (PopupService) => {
 
-        describe("PopupService", function () {
-            var mockDocument,
+        describe("PopupService", () => {
+            let mockDocument,
                 testWindow,
                 mockBody,
                 mockElement,
                 popupService;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockDocument = jasmine.createSpyObj('$document', ['find']);
                 testWindow = { innerWidth: 1000, innerHeight: 800 };
                 mockBody = jasmine.createSpyObj('body', ['append']);
@@ -41,20 +41,20 @@ define(
                     'remove'
                 ]);
 
-                mockDocument.find.andCallFake(function (query) {
+                mockDocument.find.andCallFake( (query) => {
                     return query === 'body' && mockBody;
                 });
 
                 popupService = new PopupService(mockDocument, testWindow);
             });
 
-            it("adds elements to the body of the document", function () {
+            it("adds elements to the body of the document", () => {
                 popupService.display(mockElement, [0, 0]);
                 expect(mockBody.append).toHaveBeenCalledWith(mockElement);
             });
 
-            describe("when positioned in appropriate quadrants", function () {
-                it("orients elements relative to the top-left", function () {
+            describe("when positioned in appropriate quadrants", () => {
+                it("orients elements relative to the top-left",  () => {
                     popupService.display(mockElement, [25, 50]);
                     expect(mockElement.css).toHaveBeenCalledWith({
                         position: 'absolute',
@@ -63,7 +63,7 @@ define(
                     });
                 });
 
-                it("orients elements relative to the top-right", function () {
+                it("orients elements relative to the top-right", () => {
                     popupService.display(mockElement, [800, 50]);
                     expect(mockElement.css).toHaveBeenCalledWith({
                         position: 'absolute',
@@ -72,7 +72,7 @@ define(
                     });
                 });
 
-                it("orients elements relative to the bottom-right", function () {
+                it("orients elements relative to the bottom-right", () => {
                     popupService.display(mockElement, [800, 650]);
                     expect(mockElement.css).toHaveBeenCalledWith({
                         position: 'absolute',
@@ -81,7 +81,7 @@ define(
                     });
                 });
 
-                it("orients elements relative to the bottom-left", function () {
+                it("orients elements relative to the bottom-left", () => {
                     popupService.display(mockElement, [120, 650]);
                     expect(mockElement.css).toHaveBeenCalledWith({
                         position: 'absolute',

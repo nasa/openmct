@@ -22,17 +22,17 @@
 
 define(
     ["../../src/services/TickerService"],
-    function (TickerService) {
+    (TickerService) => {
 
-        var TEST_TIMESTAMP = 1433354174000;
+        const TEST_TIMESTAMP = 1433354174000;
 
-        describe("The ticker service", function () {
-            var mockTimeout,
+        describe("The ticker service", () =>  {
+            let mockTimeout,
                 mockNow,
                 mockCallback,
                 tickerService;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 mockTimeout = jasmine.createSpy('$timeout');
                 mockNow = jasmine.createSpy('now');
                 mockCallback = jasmine.createSpy('callback');
@@ -42,7 +42,7 @@ define(
                 tickerService = new TickerService(mockTimeout, mockNow);
             });
 
-            it("notifies listeners of clock ticks", function () {
+            it("notifies listeners of clock ticks", () =>  {
                 tickerService.listen(mockCallback);
                 mockNow.andReturn(TEST_TIMESTAMP + 12321);
                 mockTimeout.mostRecentCall.args[0]();
@@ -50,7 +50,7 @@ define(
                     .toHaveBeenCalledWith(TEST_TIMESTAMP + 12321);
             });
 
-            it("allows listeners to unregister", function () {
+            it("allows listeners to unregister", () =>  {
                 tickerService.listen(mockCallback)(); // Unregister immediately
                 mockNow.andReturn(TEST_TIMESTAMP + 12321);
                 mockTimeout.mostRecentCall.args[0]();

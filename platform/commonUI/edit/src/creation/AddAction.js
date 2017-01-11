@@ -27,7 +27,7 @@ define(
     [
         './CreateWizard'
     ],
-    function (CreateWizard) {
+    (CreateWizard) => {
 
         /**
          * The Add Action is performed to create new instances of
@@ -48,7 +48,8 @@ define(
          *        action is being performed
          * @param {DialogService} dialogService
          */
-        function AddAction(type, parent, context, $q, dialogService, policyService) {
+        class AddAction {
+          constructor(type, parent, context, $q, dialogService, policyService) {
             this.metadata = {
                 key: 'add',
                 cssclass: type.getCssClass(),
@@ -73,28 +74,28 @@ define(
          * @returns {Promise} that will be resolved with the object that the
          * action was originally invoked on (ie. the 'parent')
          */
-        AddAction.prototype.perform = function () {
-            var newModel = this.type.getInitialModel(),
+        perform() {
+            let newModel = this.type.getInitialModel(),
                 newObject,
                 parentObject = this.parent,
                 wizard;
 
             newModel.type = this.type.getKey();
             newObject = parentObject.getCapability('instantiation').instantiate(newModel);
-            newObject.useCapability('mutation', function (model) {
+            newObject.useCapability('mutation', (model) => {
                 model.location = parentObject.getId();
             });
 
             wizard = new CreateWizard(newObject, this.parent, this.policyService);
 
-            function populateObjectFromInput(formValue) {
+            const populateObjectFromInput = (formValue) => {
                 return wizard.populateObjectFromInput(formValue, newObject);
-            }
+            };
 
-            function persistAndReturn(domainObject) {
+            const persistAndReturn = (domainObject) => {
                 return domainObject.getCapability('persistence')
                     .persist()
-                    .then(function () {
+                    .then( () => {
                         return domainObject;
                     });
             }
@@ -124,10 +125,10 @@ define(
          * Get metadata about this action.
          * @returns {AddActionMetadata} metadata about this action
          */
-        AddAction.prototype.getMetadata = function () {
+        getMetadata() {
             return this.metadata;
-        };
-
+        }
+      }
         return AddAction;
     }
 );

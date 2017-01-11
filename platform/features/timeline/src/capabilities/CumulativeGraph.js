@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Provide points for a cumulative resource summary graph, using
@@ -37,13 +37,13 @@ define(
          *        of domain values (that is, per millisecond)
          * @constructor
          */
-        function CumulativeGraph(graph, minimum, maximum, initial, rate) {
-            var values;
+        const CumulativeGraph = (graph, minimum, maximum, initial, rate) => {
+            let values;
 
             // Calculate the domain value at which a line starting at
             // (domain, range) and proceeding with the specified slope
             // will have the specified range value.
-            function intercept(domain, range, slope, value) {
+            const intercept = (domain, range, slope, value) => {
                 // value = slope * (intercept - domain) + range
                 // value - range = slope * ...
                 // intercept - domain = (value - range) / slope
@@ -52,15 +52,15 @@ define(
             }
 
             // Initialize the data values
-            function initializeValues() {
-                var vals = [],
+            const initializeValues = () => {
+                let vals = [],
                     slope = 0,
                     i;
 
                 // Add a point (or points, if needed) reaching to the provided
                 // domain and/or range value
-                function addPoint(domain, range) {
-                    var previous = vals[vals.length - 1],
+                const addPoint = (domain, range) => {
+                    let previous = vals[vals.length - 1],
                         delta = domain - previous.domain, // time delta
                         change = delta * slope * rate, // change
                         next = previous.range + change;
@@ -110,7 +110,7 @@ define(
                 return vals;
             }
 
-            function convertToPercent(point) {
+            const convertToPercent = (point) => {
                 point.range = 100 *
                     (point.range - minimum) / (maximum - minimum);
             }
@@ -126,14 +126,14 @@ define(
                  * Get the total number of points in this graph.
                  * @returns {number} the total number of points
                  */
-                getPointCount: function () {
+                getPointCount: () => {
                     return values.length;
                 },
                 /**
                  * Get the domain value (timestamp) for a point in this graph.
                  * @returns {number} the domain value
                  */
-                getDomainValue: function (index) {
+                getDomainValue: (index) => {
                     return values[index].domain;
                 },
                 /**
@@ -141,7 +141,7 @@ define(
                  * this graph.
                  * @returns {number} the range value
                  */
-                getRangeValue: function (index) {
+                getRangeValue: (index) => {
                     return values[index].range;
                 }
             };

@@ -25,14 +25,14 @@
  */
 define(
     ["../../src/elements/PlotTickGenerator"],
-    function (PlotTickGenerator) {
+    (PlotTickGenerator) => {
 
-        describe("A plot tick generator", function () {
-            var mockPanZoomStack,
+        describe("A plot tick generator", () => {
+            let mockPanZoomStack,
                 mockFormatter,
                 generator;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockPanZoomStack = jasmine.createSpyObj(
                     "panZoomStack",
                     ["getPanZoom"]
@@ -51,7 +51,7 @@ define(
                     new PlotTickGenerator(mockPanZoomStack, mockFormatter);
             });
 
-            it("provides tick marks for range", function () {
+            it("provides tick marks for range", () => {
                 expect(generator.generateRangeTicks(11).length).toEqual(11);
 
                 // Should have used range formatter
@@ -60,7 +60,7 @@ define(
 
             });
 
-            it("provides tick marks for domain", function () {
+            it("provides tick marks for domain", () => {
                 expect(generator.generateDomainTicks(11).length).toEqual(11);
 
                 // Should have used domain formatter

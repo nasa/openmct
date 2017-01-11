@@ -23,8 +23,7 @@
 /**
  * Module defining CompositionCapability. Created by vwoeltje on 11/7/14.
  */
-define(
-    function () {
+define(() => {
 
         /**
          * Composition capability. A domain object's composition is the set of
@@ -38,9 +37,10 @@ define(
          * @constructor
          * @implements {Capability}
          */
-        function CompositionCapability($injector, contextualize, domainObject) {
+        class CompositionCapability {
+          constructor($injector, contextualize, domainObject) {
             // Get a reference to the object service from $injector
-            this.injectObjectService = function () {
+            this.injectObjectService = () => {
                 this.objectService = $injector.get("objectService");
             };
 
@@ -59,7 +59,7 @@ define(
          * @returns {Promise.<DomainObject>} a promise for the added object
          *          in its new context
          */
-        CompositionCapability.prototype.add = function (domainObject, index) {
+        add(domainObject, index) {
             var self = this,
                 id = typeof domainObject === 'string' ?
                         domainObject : domainObject.getId(),
@@ -68,8 +68,8 @@ define(
                 oldIndex = composition.indexOf(id);
 
             // Find the object with the above id, used to contextualize
-            function findObject(objects) {
-                var i;
+            const findObject = (objects) => {
+                let i;
                 for (i = 0; i < objects.length; i += 1) {
                     if (objects[i].getId() === id) {
                         return objects[i];
@@ -77,11 +77,11 @@ define(
                 }
             }
 
-            function contextualize(mutationResult) {
+            const contextualize = (mutationResult) => {
                 return mutationResult && self.invoke().then(findObject);
             }
 
-            function addIdToModel(objModel) {
+            const addIdToModel = (objModel) => {
                 // Pick a specific index if needed.
                 index = isNaN(index) ? composition.length : index;
                 // Also, don't put past the end of the array
@@ -112,8 +112,8 @@ define(
          * @returns {Promise.<DomainObject[]>} a list of all domain
          *     objects which compose this domain object.
          */
-        CompositionCapability.prototype.invoke = function () {
-            var domainObject = this.domainObject,
+        invoke() {
+            let domainObject = this.domainObject,
                 model = domainObject.getModel(),
                 contextualize = this.contextualize,
                 ids;
@@ -121,10 +121,10 @@ define(
             // Then filter out non-existent objects,
             // and wrap others (such that they expose a
             // "context" capability)
-            function contextualizeObjects(objects) {
-                return ids.filter(function (id) {
+            const contextualizeObjects = (objects) => {
+                return ids.filter( (id) => {
                     return objects[id];
-                }).map(function (id) {
+                }).map( (id) => {
                     return contextualize(objects[id], domainObject);
                 });
             }
@@ -154,10 +154,10 @@ define(
          * @param model the domain object model
          * @returns {boolean} true if this object has a composition
          */
-        CompositionCapability.appliesTo = function (model) {
+        appliesTo(model) {
             return Array.isArray((model || {}).composition);
         };
-
+      }
         return CompositionCapability;
     }
 );

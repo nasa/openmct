@@ -22,23 +22,23 @@
 
 define(
     ['../../src/capabilities/GraphCapability'],
-    function (GraphCapability) {
+    (GraphCapability) => {
 
-        describe("A Timeline's graph capability", function () {
-            var mockQ,
+        describe("A Timeline's graph capability", () => {
+            let mockQ,
                 mockDomainObject,
                 testModel,
                 capability;
 
-            function asPromise(v) {
+            const asPromise = (v) => {
                 return (v || {}).then ? v : {
-                    then: function (cb) {
+                    then: (cb) => {
                         return asPromise(cb(v));
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockQ = jasmine.createSpyObj('$q', ['when']);
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
@@ -62,25 +62,25 @@ define(
                 );
             });
 
-            it("is applicable to timelines", function () {
+            it("is applicable to timelines", () => {
                 expect(GraphCapability.appliesTo({
                     type: "timeline"
                 })).toBeTruthy();
             });
 
-            it("is applicable to activities", function () {
+            it("is applicable to activities", () => {
                 expect(GraphCapability.appliesTo(testModel))
                     .toBeTruthy();
             });
 
-            it("is not applicable to other objects", function () {
+            it("is not applicable to other objects", () => {
                 expect(GraphCapability.appliesTo({
                     type: "something"
                 })).toBeFalsy();
             });
 
-            it("provides one graph per resource type", function () {
-                var mockCallback = jasmine.createSpy('callback');
+            it("provides one graph per resource type", () => {
+                let mockCallback = jasmine.createSpy('callback');
 
                 mockDomainObject.useCapability.andReturn(asPromise([
                     { key: "abc", start: 0, end: 15 },
@@ -98,8 +98,8 @@ define(
                 });
             });
 
-            it("provides a battery graph for timelines with capacity", function () {
-                var mockCallback = jasmine.createSpy('callback');
+            it("provides a battery graph for timelines with capacity", () => {
+                let mockCallback = jasmine.createSpy('callback');
                 testModel.capacity = 1000;
                 testModel.startingSOC = 100;
                 testModel.type = "timeline";

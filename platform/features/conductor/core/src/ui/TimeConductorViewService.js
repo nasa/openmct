@@ -25,7 +25,7 @@ define(
         'EventEmitter',
         './TimeConductorMode'
     ],
-    function (EventEmitter, TimeConductorMode) {
+    (EventEmitter, TimeConductorMode) => {
 
         /**
          * A class representing the state of the time conductor view. This
@@ -37,11 +37,9 @@ define(
          * @param timeSystems
          * @constructor
          */
-        function TimeConductorViewService(openmct, timeSystems) {
-
-            EventEmitter.call(this);
-
-            this.systems = timeSystems.map(function (timeSystemConstructor) {
+        class TimeConductorViewService extends EventEmitter {
+          constructor(openmct, timeSystems) {
+            this.systems = timeSystems.map( (timeSystemConstructor) => {
                 return timeSystemConstructor();
             });
 
@@ -67,19 +65,19 @@ define(
                 }
             };
 
-            function hasTickSource(sourceType, timeSystem) {
-                return timeSystem.tickSources().some(function (tickSource) {
+            const hasTickSource = (sourceType, timeSystem) => {
+                return timeSystem.tickSources().some( (tickSource) => {
                     return tickSource.metadata.mode === sourceType;
                 });
             }
 
-            var timeSystemsForMode = function (sourceType) {
+            const timeSystemsForMode = (sourceType) => {
                 return this.systems.filter(hasTickSource.bind(this, sourceType));
-            }.bind(this);
+            };
 
             //Only show 'real-time mode' if appropriate time systems available
             if (timeSystemsForMode('realtime').length > 0) {
-                var realtimeMode = {
+                let realtimeMode = {
                     key: 'realtime',
                     cssclass: 'icon-clock',
                     label: 'Real-time',
@@ -91,7 +89,7 @@ define(
 
             //Only show 'LAD mode' if appropriate time systems available
             if (timeSystemsForMode('lad').length > 0) {
-                var ladMode = {
+                let ladMode = {
                     key: 'lad',
                     cssclass: 'icon-database',
                     label: 'LAD',
@@ -101,9 +99,6 @@ define(
                 this.availModes[ladMode.key] = ladMode;
             }
         }
-
-        TimeConductorViewService.prototype = Object.create(EventEmitter.prototype);
-
         /**
          * Getter/Setter for the Time Conductor Mode. Modes determine the
          * behavior of the time conductor, especially with regards to the
@@ -123,17 +118,17 @@ define(
          * or 'LAD'.
          *
          */
-        TimeConductorViewService.prototype.mode = function (newModeKey) {
-            function contains(timeSystems, ts) {
-                return timeSystems.filter(function (t) {
+        mode(newModeKey) {
+            const contains = (timeSystems, ts) => {
+                return timeSystems.filter( (t) => {
                         return t.metadata.key === ts.metadata.key;
                     }).length > 0;
             }
 
             if (arguments.length === 1) {
-                var timeSystem = this.conductor.timeSystem();
-                var modes = this.availableModes();
-                var modeMetaData = modes[newModeKey];
+                let timeSystem = this.conductor.timeSystem();
+                let modes = this.availableModes();
+                let modeMetaData = modes[newModeKey];
 
                 if (this.currentMode) {
                     this.currentMode.destroy();
@@ -180,7 +175,7 @@ define(
          *     which will be used to determine the 'end' bound on tick
          * @returns {TimeConductorDeltas} current value of the deltas
          */
-        TimeConductorViewService.prototype.deltas = function () {
+        deltas() {
             //Deltas stored on mode. Use .apply to preserve arguments
             return this.currentMode.deltas.apply(this.currentMode, arguments);
         };
@@ -192,7 +187,7 @@ define(
          * that support LAD mode.
          * @returns {ModeMetadata[]}
          */
-        TimeConductorViewService.prototype.availableModes = function () {
+        availableModes() {
             return this.availModes;
         };
 
@@ -200,7 +195,7 @@ define(
          * Availability of time systems depends on the currently selected
          * mode. Time systems and tick sources are mode dependent
          */
-        TimeConductorViewService.prototype.availableTimeSystems = function () {
+        availableTimeSystems() {
             return this.currentMode.availableTimeSystems();
         };
 
@@ -218,12 +213,12 @@ define(
          * @fires platform.features.conductor.TimeConductorViewService~zoom
          * @see module:openmct.TimeConductor#bounds
          */
-        TimeConductorViewService.prototype.zoom = function (timeSpan) {
-            var zoom = this.currentMode.calculateZoom(timeSpan);
+        zoom(timeSpan) {
+            let zoom = this.currentMode.calculateZoom(timeSpan);
             this.emit("zoom", zoom);
             return zoom;
         };
-
+      }
         return TimeConductorViewService;
     }
 );

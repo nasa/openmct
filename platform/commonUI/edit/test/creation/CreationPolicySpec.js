@@ -22,13 +22,13 @@
 
 define(
     ["../../src/creation/CreationPolicy"],
-    function (CreationPolicy) {
+    (CreationPolicy) => {
 
-        describe("The creation policy", function () {
-            var mockType,
+        describe("The creation policy", () => {
+            let mockType,
                 policy;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockType = jasmine.createSpyObj(
                     'type',
                     ['hasFeature']
@@ -37,12 +37,12 @@ define(
                 policy = new CreationPolicy();
             });
 
-            it("allows creation of types with the creation feature", function () {
+            it("allows creation of types with the creation feature", () => {
                 mockType.hasFeature.andReturn(true);
                 expect(policy.allow(mockType)).toBeTruthy();
             });
 
-            it("disallows creation of types without the creation feature", function () {
+            it("disallows creation of types without the creation feature", () => {
                 mockType.hasFeature.andReturn(false);
                 expect(policy.allow(mockType)).toBeFalsy();
             });

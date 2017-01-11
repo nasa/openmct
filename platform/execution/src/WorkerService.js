@@ -28,19 +28,20 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Handles the execution of WebWorkers.
          * @memberof platform/execution
          * @constructor
          */
-        function WorkerService($window, workers) {
-            var workerUrls = {},
+        class WorkerService {
+          constructor($window, workers) {
+            let workerUrls = {},
                 sharedWorkers = {};
 
-            function addWorker(worker) {
-                var key = worker.key;
+            const addWorker = (worker) => {
+                let key = worker.key;
                 if (!workerUrls[key]) {
                     if (worker.scriptUrl) {
                         workerUrls[key] = [
@@ -49,7 +50,7 @@ define(
                             worker.scriptUrl
                         ].join("/");
                     } else if (worker.scriptText) {
-                        var blob = new Blob(
+                        let blob = new Blob(
                             [worker.scriptText],
                             {type: 'application/javascript'}
                         );
@@ -78,13 +79,13 @@ define(
          * @param {string} key symbolic identifier for the worker
          * @returns {Worker | SharedWorker} the running Worker
          */
-        WorkerService.prototype.run = function (key) {
-            var scriptUrl = this.workerUrls[key],
+        run(key) {
+            let scriptUrl = this.workerUrls[key],
                 Worker = this.sharedWorkers[key] ?
                         this.SharedWorker : this.Worker;
             return scriptUrl && Worker && new Worker(scriptUrl);
         };
-
+      }
         return WorkerService;
     }
 );

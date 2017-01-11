@@ -23,19 +23,17 @@
 
 define([
 
-], function (
+], () => {
 
-) {
-
-    function SplashScreenManager($document) {
-        var splash;
+    const SplashScreenManager = ($document) => {
+        let splash;
         $document = $document[0];
         splash = $document.querySelectorAll('.l-splash-holder')[0];
         if (!splash) {
             return;
         }
         splash.className += ' fadeout';
-        splash.addEventListener('transitionend', function () {
+        splash.addEventListener('transitionend', () => {
             splash.parentNode.removeChild(splash);
         });
     }

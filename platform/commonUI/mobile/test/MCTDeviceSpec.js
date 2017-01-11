@@ -22,23 +22,23 @@
 
 define(
     ['../src/MCTDevice'],
-    function (MCTDevice) {
+    (MCTDevice) => {
 
-        var JQLITE_METHODS = ['replaceWith'];
+        const JQLITE_METHODS = ['replaceWith'];
 
-        describe("The mct-device directive", function () {
-            var mockAgentService,
+        describe("The mct-device directive", () => {
+            let mockAgentService,
                 mockTransclude,
                 mockElement,
                 mockClone,
                 testAttrs,
                 directive;
 
-            function link() {
+            const link = () => {
                 directive.link(null, mockElement, testAttrs, null, mockTransclude);
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockAgentService = jasmine.createSpyObj(
                     "agentService",
                     ["isMobile", "isPhone", "isTablet", "isPortrait", "isLandscape"]
@@ -47,7 +47,7 @@ define(
                 mockElement = jasmine.createSpyObj(name, JQLITE_METHODS);
                 mockClone = jasmine.createSpyObj(name, JQLITE_METHODS);
 
-                mockTransclude.andCallFake(function (fn) {
+                mockTransclude.andCallFake( (fn) => {
                     fn(mockClone);
                 });
 
@@ -59,28 +59,28 @@ define(
                 directive = new MCTDevice(mockAgentService);
             });
 
-            function expectInclusion() {
+            const expectInclusion = () => {
                 expect(mockElement.replaceWith)
                     .toHaveBeenCalledWith(mockClone);
             }
 
-            function expectExclusion() {
+            const expectExclusion = () => {
                 expect(mockElement.replaceWith).not.toHaveBeenCalled();
             }
 
-            it("is applicable at the attribute level", function () {
+            it("is applicable at the attribute level", () => {
                 expect(directive.restrict).toEqual("A");
             });
 
-            it("transcludes at the element level", function () {
+            it("transcludes at the element level", () => {
                 expect(directive.transclude).toEqual('element');
             });
 
-            it("has a greater priority number than ng-if", function () {
+            it("has a greater priority number than ng-if", () => {
                 expect(directive.priority > 600).toBeTruthy();
             });
 
-            it("restricts element inclusion for mobile devices", function () {
+            it("restricts element inclusion for mobile devices", () => {
                 testAttrs.mctDevice = "mobile";
                 link();
                 expectExclusion();
@@ -90,7 +90,7 @@ define(
                 expectInclusion();
             });
 
-            it("restricts element inclusion for tablet devices", function () {
+            it("restricts element inclusion for tablet devices", () => {
                 testAttrs.mctDevice = "tablet";
                 mockAgentService.isMobile.andReturn(true);
                 link();
@@ -101,7 +101,7 @@ define(
                 expectInclusion();
             });
 
-            it("restricts element inclusion for phone devices", function () {
+            it("restricts element inclusion for phone devices", () => {
                 testAttrs.mctDevice = "phone";
                 mockAgentService.isMobile.andReturn(true);
                 link();
@@ -112,7 +112,7 @@ define(
                 expectInclusion();
             });
 
-            it("restricts element inclusion for desktop devices", function () {
+            it("restricts element inclusion for desktop devices", () => {
                 testAttrs.mctDevice = "desktop";
                 mockAgentService.isMobile.andReturn(true);
                 link();
@@ -123,7 +123,7 @@ define(
                 expectInclusion();
             });
 
-            it("restricts element inclusion for portrait orientation", function () {
+            it("restricts element inclusion for portrait orientation", () => {
                 testAttrs.mctDevice = "portrait";
                 link();
                 expectExclusion();
@@ -133,7 +133,7 @@ define(
                 expectInclusion();
             });
 
-            it("restricts element inclusion for landscape orientation", function () {
+            it("restricts element inclusion for landscape orientation", () => {
                 testAttrs.mctDevice = "landscape";
                 mockAgentService.isLandscape.andReturn(false);
                 mockAgentService.isPortrait.andReturn(true);
@@ -145,7 +145,7 @@ define(
                 expectInclusion();
             });
 
-            it("allows multiple device characteristics to be requested", function () {
+            it("allows multiple device characteristics to be requested", () => {
                 // Won't try to test every permutation here, just
                 // make sure the multi-characteristic feature has support.
                 testAttrs.mctDevice = "portrait mobile";

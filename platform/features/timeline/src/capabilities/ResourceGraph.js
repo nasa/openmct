@@ -22,11 +22,11 @@
 
 define(
     [],
-    function () {
+    () => {
 
         // Utility function to copy an array, sorted by a specific field
-        function sort(array, field) {
-            return array.slice().sort(function (a, b) {
+        const sort = (array, field) => {
+            return array.slice().sort( (a, b) => {
                 return a[field] - b[field];
             });
         }
@@ -37,7 +37,7 @@ define(
          * @param {Array} utilizations resource utilizations
          * @constructor
          */
-        function ResourceGraph(utilizations) {
+        const ResourceGraph = (utilizations) => {
             // Overview of algorithm here:
             // * Goal: Have a list of time/value pairs which represents
             //   points along a stepped chart of resource utilization.
@@ -65,14 +65,14 @@ define(
             //   spike if we don't filter out the extra points from their
             //   start/end times.)
             //
-            var starts = sort(utilizations, "start"),
+            let starts = sort(utilizations, "start"),
                 ends = sort(utilizations, "end"),
                 values = [],
                 running = 0;
 
             // If there are sequences of points with the same timestamp,
             // allow only the first and last.
-            function filterPoint(value, index, vals) {
+            const filterPoint = (value, index, vals) => {
                 // Allow the first or last point as a base case; aside from
                 // that, allow only points that have different timestamps
                 // from their predecessor or successor.
@@ -82,27 +82,27 @@ define(
             }
 
             // Add a step up or down (Step 3c above)
-            function addDelta(time, delta) {
+            const addDelta = (time, delta) => {
                 values.push({ domain: time, range: running });
                 running += delta;
                 values.push({ domain: time, range: running });
             }
 
             // Add a start time (Step 3b above)
-            function addStart() {
-                var next = starts.shift();
+            const addStart = () => {
+                let next = starts.shift();
                 addDelta(next.start, next.value);
             }
 
             // Add an end time (Step 3b above)
-            function addEnd() {
-                var next = ends.shift();
+            const addEnd = () => {
+                let next = ends.shift();
                 addDelta(next.end, -next.value);
             }
 
             // Decide whether next step should correspond to a start or
             // an end. (Step 3c above)
-            function pickStart() {
+            const pickStart = () => {
                 return ends.length < 1 ||
                     (starts.length > 0 && starts[0].start <= ends[0].end);
             }
@@ -120,14 +120,14 @@ define(
                  * Get the total number of points in this graph.
                  * @returns {number} the total number of points
                  */
-                getPointCount: function () {
+                getPointCount: () => {
                     return values.length;
                 },
                 /**
                  * Get the domain value (timestamp) for a point in this graph.
                  * @returns {number} the domain value
                  */
-                getDomainValue: function (index) {
+                getDomainValue: (index) => {
                     return values[index].domain;
                 },
                 /**
@@ -135,7 +135,7 @@ define(
                  * this graph.
                  * @returns {number} the range value
                  */
-                getRangeValue: function (index) {
+                getRangeValue: (index) => {
                     return values[index].range;
                 }
             };

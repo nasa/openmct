@@ -22,7 +22,7 @@
 
 define(
     ['./elements/ElementFactory'],
-    function (ElementFactory) {
+    (ElementFactory) => {
 
         /**
          * Proxy for configuring a fixed position view via the toolbar.
@@ -34,11 +34,12 @@ define(
          * @param {DialogService} dialogService dialog service to use
          *        when adding a new element will require user input
          */
-        function FixedProxy(addElementCallback, $q, dialogService) {
+        class FixedProxy {
+          constructor(addElementCallback, $q, dialogService) {
             this.factory = new ElementFactory(dialogService);
             this.$q = $q;
             this.addElementCallback = addElementCallback;
-        }
+          }
 
         /**
          * Add a new visual element to this view. Supported types are:
@@ -50,11 +51,11 @@ define(
          *
          * @param {string} type the type of element to add
          */
-        FixedProxy.prototype.add = function (type) {
-            var addElementCallback = this.addElementCallback;
+         add(type) {
+            let addElementCallback = this.addElementCallback;
 
             // Place a configured element into the view configuration
-            function addElement(element) {
+            const addElement = (element) => {
                 // Configure common properties of the element
                 element.x = element.x || 0;
                 element.y = element.y || 0;
@@ -69,7 +70,7 @@ define(
             // Defer creation to the factory
             this.$q.when(this.factory.createElement(type)).then(addElement);
         };
-
+      }
         return FixedProxy;
     }
 );

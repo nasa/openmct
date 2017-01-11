@@ -49,7 +49,7 @@ define([
     "text!./res/templates/ticks.html",
     "text!./res/templates/controls/datetime.html",
     'legacyRegistry'
-], function (
+], (
     ExportTimelineAsCSVAction,
     TimelineController,
     TimelineGraphController,
@@ -78,7 +78,7 @@ define([
     ticksTemplate,
     datetimeTemplate,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/features/timeline", {
         "name": "Timelines",

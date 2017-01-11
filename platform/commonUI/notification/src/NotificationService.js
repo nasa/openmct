@@ -32,7 +32,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * A representation of a user action. Options are provided to
@@ -115,7 +115,8 @@ define(
          * animation is shown. This animation requires some time to execute,
          * so a timeout is required before the notification is hidden
          */
-        function NotificationService($timeout, topic, defaultAutoDismissTimeout, minimizeAnimationTimeout) {
+        class NotificationService {
+          constructor($timeout, topic, defaultAutoDismissTimeout, minimizeAnimationTimeout) {
             this.notifications = [];
             this.$timeout = $timeout;
             this.highest = { severity: "info" };
@@ -139,9 +140,9 @@ define(
          *
          * @private
          */
-        NotificationService.prototype.minimize = function (service, notification) {
+        minimize(service, notification) {
             //Check this is a known notification
-            var index = service.notifications.indexOf(notification);
+            let index = service.notifications.indexOf(notification);
 
             if (service.active.timeout) {
                 /*
@@ -160,7 +161,7 @@ define(
                 notification.model.minimized = true;
                 //Add a brief timeout before showing the next notification
                 // in order to allow the minimize animation to run through.
-                service.$timeout(function () {
+                service.$timeout( () => {
                     service.setActiveNotification(service.selectNextNotification());
                 }, service.MINIMIZE_ANIMATION_TIMEOUT);
             }
@@ -176,9 +177,9 @@ define(
          *
          * @private
          */
-        NotificationService.prototype.dismiss = function (service, notification) {
+        dismiss(service, notification) {
             //Check this is a known notification
-            var index = service.notifications.indexOf(notification);
+            let index = service.notifications.indexOf(notification);
 
             if (service.active.timeout) {
                 /* Method can be called manually (clicking dismiss) or
@@ -207,7 +208,7 @@ define(
          *
          * @private
          */
-        NotificationService.prototype.dismissOrMinimize = function (notification) {
+        dismissOrMinimize(notification) {
             var model = notification.model;
             if (model.severity === "info") {
                 if (model.autoDismiss === false) {
@@ -224,7 +225,7 @@ define(
          * Returns the notification that is currently visible in the banner area
          * @returns {Notification}
          */
-        NotificationService.prototype.getActiveNotification = function () {
+        getActiveNotification() {
             return this.active.notification;
         };
 
@@ -240,8 +241,8 @@ define(
          * @returns {Notification} the provided notification decorated with
          * functions to dismiss or minimize
          */
-        NotificationService.prototype.info = function (message) {
-            var notificationModel = typeof message === "string" ? {title: message} : message;
+        info(message) {
+            let notificationModel = typeof message === "string" ? {title: message} : message;
             notificationModel.severity = "info";
             return this.notify(notificationModel);
         };
@@ -256,8 +257,8 @@ define(
          * @returns {Notification} the provided notification decorated with
          * functions to dismiss or minimize
          */
-        NotificationService.prototype.alert = function (message) {
-            var notificationModel = typeof message === "string" ? {title: message} : message;
+        alert(message) {
+            let notificationModel = typeof message === "string" ? {title: message} : message;
             notificationModel.severity = "alert";
             return this.notify(notificationModel);
         };
@@ -272,8 +273,8 @@ define(
          * @returns {Notification} the provided notification decorated with
          * functions to dismiss or minimize
          */
-        NotificationService.prototype.error = function (message) {
-            var notificationModel = typeof message === "string" ? {title: message} : message;
+        error(message) {
+            let notificationModel = typeof message === "string" ? {title: message} : message;
             notificationModel.severity = "error";
             return this.notify(notificationModel);
         };
@@ -281,13 +282,13 @@ define(
         /**
          * @private
          */
-        NotificationService.prototype.setHighestSeverity = function () {
-            var severity = {
+        setHighestSeverity() {
+            let severity = {
                     "info": 1,
                     "alert": 2,
                     "error": 3
                 };
-            this.highest.severity = this.notifications.reduce(function (previous, notification) {
+            this.highest.severity = this.notifications.reduce( (previous, notification) => {
                 if (severity[notification.model.severity] > severity[previous]) {
                     return notification.model.severity;
                 } else {
@@ -306,7 +307,7 @@ define(
          * @returns {Notification} the provided notification decorated with
          * functions to {@link Notification#dismiss} or {@link Notification#minimize}
          */
-        NotificationService.prototype.notify = function (notificationModel) {
+        notify(notificationModel) {
             var self = this,
                 notification,
                 activeNotification = self.active.notification,
@@ -317,20 +318,20 @@ define(
             notification = {
                 model: notificationModel,
 
-                minimize: function () {
-                    self.minimize(self, notification);
+                minimize: () => {
+                    this.minimize(self, notification);
                 },
 
-                dismiss: function () {
-                    self.dismiss(self, notification);
+                dismiss: () => {
+                    this.dismiss(self, notification);
                     topic.notify();
                 },
 
-                dismissOrMinimize: function () {
-                    self.dismissOrMinimize(notification);
+                dismissOrMinimize: () => {
+                    this.dismissOrMinimize(notification);
                 },
 
-                onDismiss: function (callback) {
+                onDismiss: (callback) => {
                     topic.listen(callback);
                 }
             };
@@ -344,7 +345,7 @@ define(
                 notificationModel.options = notificationModel.options || [];
                 notificationModel.options.unshift({
                     label: "Dismiss",
-                    callback: function () {
+                    callback: () => {
                         notification.dismiss();
                     }
                 });
@@ -371,7 +372,7 @@ define(
                  This notification has been added to queue and will be
                   serviced as soon as possible.
                  */
-                this.active.timeout = this.$timeout(function () {
+                this.active.timeout = this.$timeout( () => {
                     activeNotification.dismissOrMinimize();
                 }, this.AUTO_DISMISS_TIMEOUT);
             }
@@ -383,8 +384,8 @@ define(
          * Used internally by the NotificationService
          * @private
          */
-        NotificationService.prototype.setActiveNotification = function (notification) {
-            var shouldAutoDismiss;
+        setActiveNotification(notification) {
+            let shouldAutoDismiss;
             this.active.notification = notification;
 
             if (!notification) {
@@ -399,7 +400,7 @@ define(
             }
 
             if (shouldAutoDismiss || this.selectNextNotification()) {
-                this.active.timeout = this.$timeout(function () {
+                this.active.timeout = this.$timeout( () => {
                     notification.dismissOrMinimize();
                 }, this.AUTO_DISMISS_TIMEOUT);
             } else {
@@ -412,8 +413,8 @@ define(
          *
          * @private
          */
-        NotificationService.prototype.selectNextNotification = function () {
-            var notification,
+        selectNextNotification() {
+            let notification,
                 i = 0;
 
             /*
@@ -430,6 +431,7 @@ define(
                 }
             }
         };
+      }
 
         return NotificationService;
     }

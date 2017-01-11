@@ -26,15 +26,15 @@ define(
         '../../src/services/CopyService',
         '../DomainObjectFactory'
     ],
-    function (CopyService, domainObjectFactory) {
+    (CopyService, domainObjectFactory) => {
 
-        function synchronousPromise(value) {
+        const synchronousPromise = (value) => {
             if (value && value.then) {
                 return value;
             }
 
-            var promise = {
-                then: function (callback) {
+            let promise = {
+                then: (callback) => {
                     return synchronousPromise(callback(value));
                 }
             };
@@ -42,24 +42,24 @@ define(
             return promise;
         }
 
-        describe("CopyService", function () {
-            var policyService;
+        describe("CopyService", () =>  {
+            let policyService;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 policyService = jasmine.createSpyObj(
                     'policyService',
                     ['allow']
                 );
             });
 
-            describe("validate", function () {
+            describe("validate", () =>  {
 
-                var copyService,
+                let copyService,
                     object,
                     parentCandidate,
                     validate;
 
-                beforeEach(function () {
+                beforeEach(() =>  {
                     copyService = new CopyService(
                         null,
                         policyService
@@ -76,30 +76,30 @@ define(
                             type: { type: 'parentCandidate' }
                         }
                     });
-                    validate = function () {
+                    validate = () =>  {
                         return copyService.validate(object, parentCandidate);
                     };
                 });
 
-                it("does not allow invalid parentCandidate", function () {
+                it("does not allow invalid parentCandidate", () =>  {
                     parentCandidate = undefined;
                     expect(validate()).toBe(false);
                     parentCandidate = {};
                     expect(validate()).toBe(false);
                 });
 
-                it("does not allow copying into source object", function () {
+                it("does not allow copying into source object", () =>  {
                     object.id = parentCandidate.id = 'abc';
                     expect(validate()).toBe(false);
                 });
 
-                describe("defers to policyService", function () {
-                    beforeEach(function () {
+                describe("defers to policyService", () =>  {
+                    beforeEach(() =>  {
                         object.id = 'a';
                         parentCandidate.id = 'b';
                     });
 
-                    it("calls policy service with correct args", function () {
+                    it("calls policy service with correct args", () =>  {
                         validate();
                         expect(policyService.allow).toHaveBeenCalledWith(
                             "composition",
@@ -108,21 +108,21 @@ define(
                         );
                     });
 
-                    it("and returns false", function () {
+                    it("and returns false", () =>  {
                         policyService.allow.andReturn(false);
                         expect(validate()).toBe(false);
                     });
 
-                    it("and returns true", function () {
+                    it("and returns true", () =>  {
                         policyService.allow.andReturn(true);
                         expect(validate()).toBe(true);
                     });
                 });
             });
 
-            describe("perform", function () {
+            describe("perform", () =>  {
 
-                var mockQ,
+                let mockQ,
                     mockDeferred,
                     createObjectPromise,
                     copyService,
@@ -137,7 +137,7 @@ define(
                     locationCapability,
                     resolvedValue;
 
-                beforeEach(function () {
+                beforeEach(() =>  {
                     createObjectPromise = synchronousPromise(undefined);
                     policyService.allow.andReturn(true);
 
@@ -170,12 +170,12 @@ define(
                         'mockDeferred',
                         ['notify', 'resolve', 'reject']
                     );
-                    mockDeferred.notify.andCallFake(function () {});
-                    mockDeferred.resolve.andCallFake(function (value) {
+                    mockDeferred.notify.andCallFake(() =>  {});
+                    mockDeferred.resolve.andCallFake( (value) => {
                         resolvedValue = value;
                     });
                     mockDeferred.promise = {
-                        then: function (callback) {
+                        then: (callback) => {
                             return synchronousPromise(callback(resolvedValue));
                         }
                     };
@@ -186,10 +186,10 @@ define(
                     );
                     mockQ.reject.andReturn(synchronousPromise(undefined));
                     mockQ.when.andCallFake(synchronousPromise);
-                    mockQ.all.andCallFake(function (promises) {
-                        var result = {};
-                        Object.keys(promises).forEach(function (k) {
-                            promises[k].then(function (v) {
+                    mockQ.all.andCallFake( (promises) => {
+                        let result = {};
+                        Object.keys(promises).forEach( (k) => {
+                            promises[k].then( (v) => {
                                 result[k] = v;
                             });
                         });
@@ -199,9 +199,9 @@ define(
 
                 });
 
-                describe("on domain object without composition", function () {
-                    beforeEach(function () {
-                        var objectCopy;
+                describe("on domain object without composition", () =>  {
+                    beforeEach(() =>  {
+                        let objectCopy;
 
                         newParent = domainObjectFactory({
                             name: 'newParent',
@@ -242,7 +242,7 @@ define(
                         });
 
                         instantiationCapability.invoke.andCallFake(
-                            function (model) {
+                             (model) => {
                                 objectCopy.model = model;
                                 return objectCopy;
                             }
@@ -254,37 +254,37 @@ define(
                         copyResult.then(copyFinished);
                     });
 
-                    it("uses persistence capability", function () {
+                    it("uses persistence capability", () =>  {
                         expect(persistenceCapability.persist)
                             .toHaveBeenCalled();
                     });
 
-                    it("deep clones object model", function () {
-                        var newModel = copyFinished.calls[0].args[0].getModel();
+                    it("deep clones object model", () =>  {
+                        let newModel = copyFinished.calls[0].args[0].getModel();
                         expect(newModel).toEqual(object.model);
                         expect(newModel).not.toBe(object.model);
                     });
 
-                    it("returns a promise", function () {
+                    it("returns a promise", () =>  {
                         expect(copyResult).toBeDefined();
                         expect(copyFinished).toHaveBeenCalled();
                     });
 
                 });
 
-                describe("on domainObject with composition", function () {
-                    var childObject,
+                describe("on domainObject with composition", () =>  {
+                    let childObject,
                         objectClone,
                         childObjectClone,
                         compositionPromise;
 
-                    beforeEach(function () {
-                        var invocationCount = 0,
+                    beforeEach(() =>  {
+                        let invocationCount = 0,
                             objectClones;
 
                         instantiationCapability.invoke.andCallFake(
                             function (model) {
-                                var cloneToReturn = objectClones[invocationCount++];
+                                let cloneToReturn = objectClones[invocationCount++];
                                 cloneToReturn.model = model;
                                 return cloneToReturn;
                             }
@@ -366,31 +366,31 @@ define(
                         copyService = new CopyService(mockQ, policyService);
                     });
 
-                    describe("the cloning process", function () {
-                        beforeEach(function () {
+                    describe("the cloning process", () =>  {
+                        beforeEach(() =>  {
                             copyResult = copyService.perform(object, newParent);
                             copyFinished = jasmine.createSpy('copyFinished');
                             copyResult.then(copyFinished);
                         });
 
-                        it("returns a promise", function () {
+                        it("returns a promise", () =>  {
                             expect(copyResult.then).toBeDefined();
                             expect(copyFinished).toHaveBeenCalled();
                         });
 
-                        it("returns a promise", function () {
+                        it("returns a promise", () =>  {
                             expect(copyResult.then).toBeDefined();
                             expect(copyFinished).toHaveBeenCalled();
                         });
 
-                        it ("correctly locates cloned objects", function () {
+                        it ("correctly locates cloned objects", () =>  {
                             expect(childObjectClone.getModel().location).toEqual(objectClone.getId());
                         });
                     });
 
-                    describe("when cloning non-creatable objects", function () {
-                        beforeEach(function () {
-                            policyService.allow.andCallFake(function (category) {
+                    describe("when cloning non-creatable objects", () =>  {
+                        beforeEach(() =>  {
+                            policyService.allow.andCallFake( (category) => {
                                 //Return false for 'creation' policy
                                 return category !== 'creation';
                             });
@@ -399,24 +399,24 @@ define(
                             copyFinished = jasmine.createSpy('copyFinished');
                             copyResult.then(copyFinished);
                         });
-                        it ("creates link instead of clone", function () {
-                            var copiedObject = copyFinished.calls[0].args[0];
+                        it ("creates link instead of clone", () =>  {
+                            let copiedObject = copyFinished.calls[0].args[0];
                             expect(copiedObject).toBe(object);
                             expect(compositionCapability.add)
                                 .toHaveBeenCalledWith(copiedObject);
                         });
                     });
 
-                    describe("when provided a filtering function", function () {
-                        function accept() {
+                    describe("when provided a filtering function", () =>  {
+                        const accept = () => {
                             return true;
                         }
-                        function reject() {
+                        const reject = () => {
                             return false;
                         }
 
                         it("does not create new instances of objects " +
-                            "rejected by the filter", function () {
+                            "rejected by the filter", () =>  {
                             copyService.perform(object, newParent, reject)
                                 .then(copyFinished);
                             expect(copyFinished.mostRecentCall.args[0])
@@ -424,7 +424,7 @@ define(
                         });
 
                         it("does create new instances of objects " +
-                            "accepted by the filter", function () {
+                            "accepted by the filter", () =>  {
                             copyService.perform(object, newParent, accept)
                                 .then(copyFinished);
                             expect(copyFinished.mostRecentCall.args[0])
@@ -433,8 +433,8 @@ define(
                     });
                 });
 
-                describe("on invalid inputs", function () {
-                    beforeEach(function () {
+                describe("on invalid inputs", () =>  {
+                    beforeEach(() =>  {
                         object = domainObjectFactory({
                             name: 'object',
                             capabilities: {
@@ -457,11 +457,11 @@ define(
                         instantiationCapability.invoke.andReturn(object);
                     });
 
-                    it("throws an error", function () {
-                        var service =
+                    it("throws an error", () =>  {
+                        let service =
                             new CopyService(mockQ, policyService);
 
-                        function perform() {
+                        const perform = () => {
                             service.perform(object, newParent);
                         }
 

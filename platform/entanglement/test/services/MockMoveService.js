@@ -21,8 +21,7 @@
  *****************************************************************************/
 
 /*global jasmine*/
-define(
-    function () {
+define(() => {
 
         /**
          * MockMoveService provides the same interface as the moveService,
@@ -49,10 +48,10 @@ define(
          * expect(whenCopied).toHaveBeenCalledWith('someArg');
          * ```
          */
-        function MockMoveService() {
+        const MockMoveService = () => {
             // track most recent call of a function,
             // perform automatically returns
-            var mockMoveService = jasmine.createSpyObj(
+            let mockMoveService = jasmine.createSpyObj(
                 'MockMoveService',
                 [
                     'validate',
@@ -60,7 +59,7 @@ define(
                 ]
             );
 
-            mockMoveService.perform.andCallFake(function () {
+            mockMoveService.perform.andCallFake( () => {
                 var performPromise,
                     callExtensions,
                     spy;
@@ -72,8 +71,8 @@ define(
 
                 callExtensions = {
                     promise: performPromise,
-                    resolve: function (resolveWith) {
-                        performPromise.then.calls.forEach(function (call) {
+                    resolve: (resolveWith) => {
+                        performPromise.then.calls.forEach( (call) => {
                             call.args[0](resolveWith);
                         });
                     }
@@ -81,7 +80,7 @@ define(
 
                 spy = this.perform;
 
-                Object.keys(callExtensions).forEach(function (key) {
+                Object.keys(callExtensions).forEach( (key) => {
                     spy.mostRecentCall[key] = callExtensions[key];
                     spy.calls[spy.calls.length - 1][key] = callExtensions[key];
                 });

@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Policy controlling whether the context menu is visible when
@@ -40,7 +40,8 @@ define(
          * from context menu of non-editable objects, when navigated object
          * @implements {Policy.<Action, ActionContext>}
          */
-        function EditContextualActionPolicy(navigationService, editModeBlacklist, nonEditContextBlacklist) {
+        class EditContextualActionPolicy {
+          constructor(navigationService, editModeBlacklist, nonEditContextBlacklist) {
             this.navigationService = navigationService;
 
             //The list of objects disallowed on target object when in edit mode
@@ -48,10 +49,10 @@ define(
             //The list of objects disallowed on target object that is not in
             // edit mode (ie. the context menu in the tree on the LHS).
             this.nonEditContextBlacklist = nonEditContextBlacklist;
-        }
+          }
 
-        EditContextualActionPolicy.prototype.allow = function (action, context) {
-            var selectedObject = context.domainObject,
+          allow(action, context) {
+            let selectedObject = context.domainObject,
                 navigatedObject = this.navigationService.getNavigation(),
                 actionMetadata = action.getMetadata ? action.getMetadata() : {};
 
@@ -65,8 +66,8 @@ define(
             } else {
                 return true;
             }
-        };
-
+        }
+      }
         return EditContextualActionPolicy;
     }
 );

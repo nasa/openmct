@@ -25,15 +25,15 @@
  */
 define(
     ["../src/SubPlotFactory"],
-    function (SubPlotFactory) {
+    (SubPlotFactory) => {
 
-        describe("The sub-plot factory", function () {
-            var mockDomainObject,
+        describe("The sub-plot factory", () => {
+            let mockDomainObject,
                 mockPanZoomStack,
                 mockFormatter,
                 factory;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     ["getId", "getModel", "getCapability"]
@@ -55,7 +55,7 @@ define(
                 factory = new SubPlotFactory(mockFormatter);
             });
 
-            it("creates sub-plots", function () {
+            it("creates sub-plots", () => {
                 expect(factory.createSubPlot(
                     [mockDomainObject],
                     mockPanZoomStack

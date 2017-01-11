@@ -20,41 +20,41 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['zepto'], function ($) {
-    function SelectGesture(selection, contextManager) {
+define(['zepto'], ($) => {
+    class SelectGesture {
+      constructor(selection, contextManager) {
         this.selection = selection;
         this.contextManager = contextManager;
     }
+    apply(htmlElement, item) {
+        let $element = $(htmlElement);
+        let contextManager = this.contextManager;
+        let selection = this.selection;
+        let path = contextManager.path(item, htmlElement);
 
-    SelectGesture.prototype.apply = function (htmlElement, item) {
-        var $element = $(htmlElement);
-        var contextManager = this.contextManager;
-        var selection = this.selection;
-        var path = contextManager.path(item, htmlElement);
-
-        function select() {
+        const select = () => {
             selection.add(path);
-        }
+        };
 
-        function change() {
-            var selected = selection.primary();
+        const change = () => {
+            let selected = selection.primary();
             $element.toggleClass(
                 'selected',
                 selected && path.matches(selected)
             );
-        }
+        };
 
         $element.addClass('selectable');
         $element.on('click', select);
         selection.on('change', change);
         change(); // Initialize
 
-        return function () {
+        return () => {
             contextManager.release(htmlElement);
             $element.off('click', select);
             selection.off('change', change);
         };
-    };
-
-    return SelectGesture;
+    }
+}
+return SelectGesture;
 });

@@ -22,26 +22,26 @@
 
 define(
     ['../../src/actions/MetadataColumn'],
-    function (MetadataColumn) {
-        describe("MetadataColumn", function () {
-            var testName,
+    (MetadataColumn) => {
+        describe("MetadataColumn", () => {
+            let testName,
                 column;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testName = 'Foo';
                 column = new MetadataColumn(testName);
             });
 
-            it("reports its property name", function () {
+            it("reports its property name", () => {
                 expect(column.name()).toEqual(testName);
             });
 
-            describe("value", function () {
-                var mockDomainObject,
+            describe("value", () => {
+                let mockDomainObject,
                     testMetadata,
                     testIndex;
 
-                beforeEach(function () {
+                beforeEach(() => {
                     mockDomainObject = jasmine.createSpyObj(
                         'domainObject',
                         ['getId', 'getModel', 'getCapability', 'useCapability']
@@ -54,17 +54,17 @@ define(
                     testIndex = 1;
                     testMetadata[testIndex].name = testName;
 
-                    mockDomainObject.useCapability.andCallFake(function (c) {
+                    mockDomainObject.useCapability.andCallFake( (c) => {
                         return (c === 'metadata') && testMetadata;
                     });
                 });
 
-                it("returns a corresponding value", function () {
+                it("returns a corresponding value", () => {
                     expect(column.value(mockDomainObject))
                         .toEqual(testMetadata[testIndex].value);
                 });
 
-                it("returns nothing when no such property is present", function () {
+                it("returns nothing when no such property is present", () => {
                     testMetadata[testIndex].name = "Not " + testName;
                     expect(column.value(mockDomainObject)).toEqual("");
                 });

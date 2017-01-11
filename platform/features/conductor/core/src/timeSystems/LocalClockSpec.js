@@ -20,13 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(["./LocalClock"], function (LocalClock) {
-    describe("The LocalClock class", function () {
-        var clock,
+define(["./LocalClock"], (LocalClock) => {
+    describe("The LocalClock class", () => {
+        let clock,
             mockTimeout,
             timeoutHandle = {};
 
-        beforeEach(function () {
+        beforeEach( () => {
             mockTimeout = jasmine.createSpy("timeout");
             mockTimeout.andReturn(timeoutHandle);
             mockTimeout.cancel = jasmine.createSpy("cancel");
@@ -35,14 +35,14 @@ define(["./LocalClock"], function (LocalClock) {
             clock.start();
         });
 
-        it("calls listeners on tick with current time", function () {
-            var mockListener = jasmine.createSpy("listener");
+        it("calls listeners on tick with current time", () => {
+            let mockListener = jasmine.createSpy("listener");
             clock.listen(mockListener);
             clock.tick();
             expect(mockListener).toHaveBeenCalledWith(jasmine.any(Number));
         });
 
-        it("stops ticking when stop is called", function () {
+        it("stops ticking when stop is called", () => {
             clock.stop();
             expect(mockTimeout.cancel).toHaveBeenCalledWith(timeoutHandle);
         });

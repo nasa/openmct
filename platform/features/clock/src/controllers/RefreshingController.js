@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Continually refreshes the represented domain object.
@@ -36,11 +36,11 @@ define(
          * @param {platform/features/clock.TickerService} tickerService
          *        a service used to align behavior with clock ticks
          */
-        function RefreshingController($scope, tickerService) {
-            var unlisten;
+        const RefreshingController = ($scope, tickerService) => {
+            let unlisten;
 
-            function triggerRefresh() {
-                var persistence = $scope.domainObject &&
+            const triggerRefresh = () => {
+                let persistence = $scope.domainObject &&
                     $scope.domainObject.getCapability('persistence');
                 return persistence && persistence.refresh();
             }

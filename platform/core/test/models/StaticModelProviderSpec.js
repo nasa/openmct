@@ -25,10 +25,10 @@
  */
 define(
     ["../../src/models/StaticModelProvider"],
-    function (StaticModelProvider) {
+    (StaticModelProvider) => {
 
-        describe("The static model provider", function () {
-            var models = [
+        describe("The static model provider", () =>  {
+            let models = [
                     {
                         "id": "a",
                         "model": {
@@ -48,14 +48,14 @@ define(
                 mockQ,
                 provider;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 mockQ = jasmine.createSpyObj("$q", ["when"]);
                 mockLog = jasmine.createSpyObj("$log", ["error", "warn", "info", "debug"]);
                 provider = new StaticModelProvider(models, mockQ, mockLog);
             });
 
-            it("provides models from extension declarations", function () {
-                var mockPromise = { then: function () {
+            it("provides models from extension declarations", () =>  {
+                let mockPromise = { then: () =>  {
                     return;
                 } };
                 mockQ.when.andReturn(mockPromise);
@@ -72,7 +72,7 @@ define(
             });
 
 
-            it("does not provide models which are not in extension declarations", function () {
+            it("does not provide models which are not in extension declarations", () =>  {
                 provider.getModels(["c"]);
 
                 // Verify that the promise has the desired models
@@ -80,7 +80,7 @@ define(
                 expect(mockQ.when.mostRecentCall.args[0].c).toBeUndefined();
             });
 
-            it("logs a warning when model definitions are malformed", function () {
+            it("logs a warning when model definitions are malformed", () =>  {
                 // Verify precondition
                 expect(mockLog.warn).not.toHaveBeenCalled();
 

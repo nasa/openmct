@@ -25,9 +25,9 @@
  */
 define(
     [],
-    function () {
+    () => {
 
-        var NON_PERSISTENT_WARNING =
+        const NON_PERSISTENT_WARNING =
                 "Tried to create an object in non-persistent container.";
 
         /**
@@ -38,10 +38,11 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function CreationService($q, $log) {
+        class CreationService {
+          constructor($q, $log) {
             this.$q = $q;
             this.$log = $log;
-        }
+          }
 
         /**
          * Create a new domain object with the provided model, as
@@ -62,27 +63,26 @@ define(
          * @return {Promise} a promise that will resolve when the domain
          *         object has been created
          */
-        CreationService.prototype.createObject = function (model, parent) {
-            var persistence = parent.getCapability("persistence"),
+        createObject(model, parent) {
+            let persistence = parent.getCapability("persistence"),
                 newObject = parent.useCapability("instantiation", model),
-                newObjectPersistence = newObject.getCapability("persistence"),
-                self = this;
+                newObjectPersistence = newObject.getCapability("persistence")
 
             // Add the newly-created object's id to the parent's
             // composition, so that it will subsequently appear
             // as a child contained by that parent.
-            function addToComposition() {
-                var compositionCapability = parent.getCapability('composition'),
+            const addToComposition = () => {
+                let compositionCapability = parent.getCapability('composition'),
                     addResult = compositionCapability &&
                         compositionCapability.add(newObject);
 
-                return self.$q.when(addResult).then(function (result) {
+                return this.$q.when(addResult).then( (result) => {
                     if (!result) {
-                        self.$log.error("Could not modify " + parent.getId());
+                        this.$log.error("Could not modify " + parent.getId());
                         return undefined;
                     }
 
-                    return persistence.persist().then(function () {
+                    return persistence.persist().then( () => {
                         return result;
                     });
                 });
@@ -97,10 +97,8 @@ define(
 
             // Persist the new object, then add it to composition.
             return newObjectPersistence.persist().then(addToComposition);
-        };
-
-
-
+        }
+      }
         return CreationService;
     }
 );

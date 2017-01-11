@@ -22,19 +22,19 @@
 
 define(
     ["../../src/controllers/DateTimeController"],
-    function (DateTimeController) {
+    (DateTimeController) => {
 
-        describe("The date-time controller", function () {
-            var mockScope,
+        describe("The date-time controller", () => {
+            let mockScope,
                 controller;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 controller = new DateTimeController(mockScope);
             });
 
-            it("watches for changes in fields", function () {
-                ["date", "hour", "min", "sec"].forEach(function (fieldName) {
+            it("watches for changes in fields", () => {
+                ["date", "hour", "min", "sec"].forEach( (fieldName) => {
                     expect(mockScope.$watch).toHaveBeenCalledWith(
                         "datetime." + fieldName,
                         jasmine.any(Function)
@@ -42,7 +42,7 @@ define(
                 });
             });
 
-            it("converts date-time input into a timestamp", function () {
+            it("converts date-time input into a timestamp", () => {
                 mockScope.ngModel = {};
                 mockScope.field = "test";
                 mockScope.datetime.date = "2014-11-28";
@@ -55,7 +55,7 @@ define(
                 expect(mockScope.ngModel.test).toEqual(1417215313000);
             });
 
-            it("reports when form input is partially complete", function () {
+            it("reports when form input is partially complete", () => {
                 // This is needed to flag the control's state as invalid
                 // when it is partially complete without having it treated
                 // as required.
@@ -71,7 +71,7 @@ define(
                 expect(mockScope.partiallyComplete).toBeTruthy();
             });
 
-            it("reports 'undefined' for empty input", function () {
+            it("reports 'undefined' for empty input", () => {
                 mockScope.ngModel = { test: 12345 };
                 mockScope.field = "test";
                 mockScope.$watch.mostRecentCall.args[1]();
@@ -84,14 +84,14 @@ define(
             });
 
 
-            it("exposes date-time format for placeholder", function () {
+            it("exposes date-time format for placeholder", () => {
                 expect(mockScope.format).toEqual(jasmine.any(String));
                 expect(mockScope.format.length).toBeGreaterThan(0);
             });
-            it("initializes form fields with values from ng-model", function () {
+            it("initializes form fields with values from ng-model", () => {
                 mockScope.ngModel = { test: 1417215313000 };
                 mockScope.field = "test";
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$watch.calls.forEach( (call) => {
                     if (call.args[0] === 'ngModel[field]') {
                         call.args[1](mockScope.ngModel.test);
                     }

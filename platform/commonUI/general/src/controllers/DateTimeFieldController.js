@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Controller to support the date-time entry field.
@@ -41,10 +41,10 @@ define(
          * @param {string} defaultFormat the format to request when no
          *        format has been otherwise specified
          */
-        function DateTimeFieldController($scope, formatService, defaultFormat) {
-            var formatter = formatService.getFormat(defaultFormat);
+        const DateTimeFieldController = ($scope, formatService, defaultFormat) => {
+            let formatter = formatService.getFormat(defaultFormat);
 
-            function updateFromModel(value) {
+            const updateFromModel = (value) => {
                 // Only reformat if the value is different from user
                 // input (to avoid reformatting valid input while typing.)
                 if (!formatter.validate($scope.textValue) ||
@@ -54,18 +54,18 @@ define(
                     $scope.lastValidValue = $scope.textValue;
                 }
                 $scope.pickerModel = { value: value };
-            }
+            };
 
-            function updateFromView(textValue) {
+            const updateFromView = (textValue) => {
                 $scope.textInvalid = !formatter.validate(textValue);
                 if (!$scope.textInvalid) {
                     $scope.ngModel[$scope.field] =
                         formatter.parse(textValue);
                     $scope.lastValidValue = $scope.textValue;
                 }
-            }
+            };
 
-            function updateFromPicker(value) {
+            const updateFromPicker = (value) => {
                 if (value !== $scope.ngModel[$scope.field]) {
                     $scope.ngModel[$scope.field] = value;
                     updateFromModel(value);
@@ -84,17 +84,17 @@ define(
                         }
                     }
                 }
-            }
+            };
 
-            function setFormat(format) {
+            const setFormat = (format) => {
                 formatter = formatService.getFormat(format || defaultFormat);
                 updateFromModel($scope.ngModel[$scope.field]);
-            }
+            };
 
-            function restoreTextValue() {
+            const restoreTextValue = () => {
                 $scope.textValue = $scope.lastValidValue;
                 updateFromView($scope.textValue);
-            }
+            };
 
             $scope.restoreTextValue = restoreTextValue;
 
@@ -104,8 +104,7 @@ define(
             $scope.$watch('ngModel[field]', updateFromModel);
             $scope.$watch('pickerModel.value', updateFromPicker);
             $scope.$watch('textValue', updateFromView);
-        }
-
+        };
         return DateTimeFieldController;
     }
 );

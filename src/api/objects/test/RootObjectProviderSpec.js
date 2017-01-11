@@ -21,32 +21,30 @@
  *****************************************************************************/
 define([
     '../RootObjectProvider'
-], function (
-    RootObjectProvider
-) {
-    describe('RootObjectProvider', function () {
-        var rootRegistry,
+], (RootObjectProvider) => {
+    describe('RootObjectProvider', () => {
+        let rootRegistry,
             rootObjectProvider;
 
-        function done() {
-            var isDone = false;
-            waitsFor(function () {
+        const done = () => {
+            let isDone = false;
+            waitsFor( () => {
                 return isDone;
             });
-            return function () {
+            return () => {
                 isDone = true;
             };
-        }
+        };
 
-        beforeEach(function () {
+        beforeEach( () => {
             rootRegistry = jasmine.createSpyObj('rootRegistry', ['getRoots']);
             rootRegistry.getRoots.andReturn(Promise.resolve(['some root']));
             rootObjectProvider = new RootObjectProvider(rootRegistry);
         });
 
-        it('supports fetching root', function () {
+        it('supports fetching root', () => {
             rootObjectProvider.get()
-                .then(function (root) {
+                .then( (root) => {
                     expect(root).toEqual({
                         identifier: {
                             key: "ROOT",

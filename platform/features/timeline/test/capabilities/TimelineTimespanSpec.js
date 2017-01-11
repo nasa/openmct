@@ -22,17 +22,17 @@
 
 define(
     ['../../src/capabilities/TimelineTimespan'],
-    function (TimelineTimespan) {
+    (TimelineTimespan) => {
 
-        describe("A Timeline's timespan", function () {
-            var testModel,
+        describe("A Timeline's timespan", () => {
+            let testModel,
                 mockTimespans,
                 mockMutation,
                 mutationModel,
                 timespan;
 
-            function makeMockTimespan(end) {
-                var mockTimespan = jasmine.createSpyObj(
+            const makeMockTimespan = (end) => {
+                let mockTimespan = jasmine.createSpyObj(
                     'timespan-' + end,
                     ['getEnd']
                 );
@@ -40,7 +40,7 @@ define(
                 return mockTimespan;
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testModel = {
                     start: {
                         timestamp: 42000,
@@ -53,7 +53,7 @@ define(
                 mockMutation = jasmine.createSpyObj("mutation", ["mutate"]);
                 mockTimespans = [44000, 65000, 1100].map(makeMockTimespan);
 
-                mockMutation.mutate.andCallFake(function (mutator) {
+                mockMutation.mutate.andCallFake( (mutator) => {
                     mutator(mutationModel);
                 });
 
@@ -64,42 +64,42 @@ define(
                 );
             });
 
-            it("provides a start time", function () {
+            it("provides a start time", () => {
                 expect(timespan.getStart()).toEqual(42000);
             });
 
-            it("provides an end time", function () {
+            it("provides an end time", () => {
                 expect(timespan.getEnd()).toEqual(65000);
             });
 
-            it("provides duration", function () {
+            it("provides duration", () => {
                 expect(timespan.getDuration()).toEqual(65000 - 42000);
             });
 
-            it("provides an epoch", function () {
+            it("provides an epoch", () => {
                 expect(timespan.getEpoch()).toEqual("TEST");
             });
 
 
-            it("sets start time using mutation capability", function () {
+            it("sets start time using mutation capability", () => {
                 timespan.setStart(52000);
                 expect(mutationModel.start.timestamp).toEqual(52000);
                 // Original model should still be the same
                 expect(testModel.start.timestamp).toEqual(42000);
             });
 
-            it("makes no changes with setEnd", function () {
+            it("makes no changes with setEnd", () => {
                 // Copy initial state to verify that it doesn't change
-                var initialModel = JSON.parse(JSON.stringify(testModel));
+                let initialModel = JSON.parse(JSON.stringify(testModel));
                 timespan.setEnd(123454321);
                 // Neither model should have changed
                 expect(testModel).toEqual(initialModel);
                 expect(mutationModel).toEqual(initialModel);
             });
 
-            it("makes no changes with setDuration", function () {
+            it("makes no changes with setDuration", () => {
                 // Copy initial state to verify that it doesn't change
-                var initialModel = JSON.parse(JSON.stringify(testModel));
+                let initialModel = JSON.parse(JSON.stringify(testModel));
                 timespan.setDuration(123454321);
                 // Neither model should have changed
                 expect(testModel).toEqual(initialModel);

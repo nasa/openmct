@@ -22,41 +22,41 @@
 
 define(
     ["../../src/controllers/ColorController"],
-    function (ColorController) {
+    (ColorController) => {
 
-        var COLOR_REGEX = /^#[0-9a-fA-F]{6}$/;
+        const COLOR_REGEX = /^#[0-9a-fA-F]{6}$/;
 
-        describe("The color picker's controller", function () {
-            var controller;
+        describe("The color picker's controller", () => {
+            let controller;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 controller = new ColorController();
             });
 
-            it("exposes groups of colors", function () {
-                var groups = controller.groups();
+            it("exposes groups of colors", () => {
+                let groups = controller.groups();
 
                 // Make sure that the groups array is non-empty
                 expect(Array.isArray(groups)).toBeTruthy();
                 expect(groups.length).not.toEqual(0);
 
-                groups.forEach(function (group) {
+                groups.forEach((group) => {
                     // Make sure each group is a non-empty array
                     expect(Array.isArray(group)).toBeTruthy();
                     expect(group.length).not.toEqual(0);
                     // Make sure they're valid web colors
-                    group.forEach(function (color) {
+                    group.forEach( (color) => {
                         expect(COLOR_REGEX.test(color)).toBeTruthy();
                     });
                 });
             });
 
-            it("exposes unique colors", function () {
-                var count = 0, set = {};
+            it("exposes unique colors", () => {
+                let count = 0, set = {};
 
                 // Count each color, and add them to the set
-                controller.groups().forEach(function (group) {
-                    group.forEach(function (color) {
+                controller.groups().forEach( (group) => {
+                    group.forEach( (color) => {
                         count += 1;
                         set[color] = true;
                     });

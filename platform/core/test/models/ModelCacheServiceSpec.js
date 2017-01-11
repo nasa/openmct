@@ -20,45 +20,45 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['../../src/models/ModelCacheService'], function (ModelCacheService) {
-    describe("ModelCacheService", function () {
-        var testIds,
+define(['../../src/models/ModelCacheService'], (ModelCacheService) => {
+    describe("ModelCacheService", () => {
+        let testIds,
             testModels,
             cacheService;
 
-        beforeEach(function () {
+        beforeEach(() => {
             testIds = ['a', 'b', 'c', 'd'];
-            testModels = testIds.reduce(function (models, id) {
+            testModels = testIds.reduce( (models, id) => {
                 models[id] = { someKey: "some value for " + id };
                 return models;
             }, {});
             cacheService = new ModelCacheService();
         });
 
-        describe("when populated with models", function () {
-            beforeEach(function () {
-                testIds.forEach(function (id) {
+        describe("when populated with models", () => {
+            beforeEach(() => {
+                testIds.forEach( (id) => {
                     cacheService.put(id, testModels[id]);
                 });
             });
 
-            it("indicates that it has these models", function () {
-                testIds.forEach(function (id) {
+            it("indicates that it has these models", () => {
+                testIds.forEach( (id) => {
                     expect(cacheService.has(id)).toBe(true);
                 });
             });
 
-            it("provides all of these models", function () {
+            it("provides all of these models", () => {
                 expect(cacheService.all()).toEqual(testModels);
             });
 
-            it("allows models to be retrieved", function () {
-                testIds.forEach(function (id) {
+            it("allows models to be retrieved", () => {
+                testIds.forEach( (id) => {
                     expect(cacheService.get(id)).toEqual(testModels[id]);
                 });
             });
 
-            it("allows models to be removed", function () {
+            it("allows models to be removed", () => {
                 cacheService.remove('a');
                 expect(cacheService.has('a')).toBe(false);
             });

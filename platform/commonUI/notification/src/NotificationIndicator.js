@@ -22,9 +22,9 @@
 
 define(
     [],
-    function () {
+    () => {
 
-        function NotificationIndicator() {}
+        const NotificationIndicator = () => {}
 
         NotificationIndicator.template = 'notificationIndicatorTemplate';
 

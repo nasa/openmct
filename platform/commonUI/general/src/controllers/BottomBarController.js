@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Controller for the bottombar template. Exposes
@@ -30,10 +30,11 @@ define(
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function BottomBarController(indicators) {
+        class BottomBarController {
+          constructor(indicators) {
             // Utility function used to make indicators presentable
             // for display.
-            function present(Indicator) {
+            const present = (Indicator) => {
                 return {
                     template: Indicator.template || "indicator",
                     ngModel: typeof Indicator === 'function' ?
@@ -50,10 +51,10 @@ define(
          *          to display in the bottom bar.
          * @memberof platform/commonUI/general.BottomBarController#
          */
-        BottomBarController.prototype.getIndicators = function () {
+        getIndicators() {
             return this.indicators;
-        };
-
+        }
+      }
         return BottomBarController;
     }
 );

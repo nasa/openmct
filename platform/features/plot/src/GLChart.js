@@ -25,10 +25,10 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         // WebGL shader sources (for drawing plain colors)
-        var FRAGMENT_SHADER = [
+        let FRAGMENT_SHADER = [
                 "precision mediump float;",
                 "uniform vec4 uColor;",
                 "void main(void) {",
@@ -53,7 +53,8 @@ define(
          * @param {CanvasElement} canvas the canvas object to render upon
          * @throws {Error} an error is thrown if WebGL is unavailable.
          */
-        function GLChart(canvas) {
+        class GLChart {
+          constructor(canvas) {
             var gl = canvas.getContext("webgl", { preserveDrawingBuffer: true }) ||
                     canvas.getContext("experimental-webgl", { preserveDrawingBuffer: true }),
                 vertexShader,
@@ -111,8 +112,8 @@ define(
 
         // Utility function to handle drawing of a buffer;
         // drawType will determine whether this is a box, line, etc.
-        GLChart.prototype.doDraw = function (drawType, buf, color, points) {
-            var gl = this.gl;
+        doDraw(drawType, buf, color, points) {
+            let gl = this.gl;
             gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
             gl.bufferData(gl.ARRAY_BUFFER, buf, gl.DYNAMIC_DRAW);
             gl.vertexAttribPointer(this.aVertexPosition, 2, gl.FLOAT, false, 0, 0);
@@ -120,8 +121,8 @@ define(
             gl.drawArrays(drawType, 0, points);
         };
 
-        GLChart.prototype.clear = function () {
-            var gl = this.gl;
+        clear() {
+            let gl = this.gl;
 
             // Set the viewport size; note that we use the width/height
             // that our WebGL context reports, which may be lower
@@ -136,8 +137,8 @@ define(
         };
 
 
-        GLChart.prototype.setDimensions = function (dimensions, origin) {
-            var gl = this.gl;
+        setDimensions(dimensions, origin) {
+            let gl = this.gl;
             if (dimensions && dimensions.length > 0 &&
                 origin && origin.length > 0) {
                 gl.uniform2fv(this.uDimensions, dimensions);
@@ -145,16 +146,16 @@ define(
             }
         };
 
-        GLChart.prototype.drawLine = function (buf, color, points) {
+        drawLine(buf, color, points) {
             this.doDraw(this.gl.LINE_STRIP, buf, color, points);
         };
 
-        GLChart.prototype.drawSquare = function (min, max, color) {
+        drawSquare(min, max, color) {
             this.doDraw(this.gl.TRIANGLE_FAN, new Float32Array(
                 min.concat([min[0], max[1]]).concat(max).concat([max[0], min[1]])
             ), color, 4);
         };
-
+      }
         return GLChart;
     }
 );

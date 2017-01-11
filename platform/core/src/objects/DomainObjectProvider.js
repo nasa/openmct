@@ -25,9 +25,7 @@
  * infrastructure and information model.
  * @namespace platform/core
  */
-define(
-    [],
-    function () {
+define([], () => {
 
         /**
          * Provides instances of domain objects, as retrieved by their
@@ -61,21 +59,22 @@ define(
          * @memberof platform/core
          * @constructor
          */
-        function DomainObjectProvider(modelService, instantiate) {
+        class DomainObjectProvider {
+          constructor(modelService, instantiate) {
             this.modelService = modelService;
             this.instantiate = instantiate;
         }
 
-        DomainObjectProvider.prototype.getObjects = function getObjects(ids) {
-            var modelService = this.modelService,
+        getObjects(ids) {
+            let modelService = this.modelService,
                 instantiate = this.instantiate;
 
             // Assemble the results from the model service and the
             // capability service into one value, suitable to return
             // from this service.
-            function assembleResult(models) {
-                var result = {};
-                ids.forEach(function (id) {
+            const assembleResult = (models) => {
+                let result = {};
+                ids.forEach( (id) => {
                     if (models[id]) {
                         // Create the domain object
                         result[id] = instantiate(models[id], id);
@@ -86,7 +85,7 @@ define(
 
             return modelService.getModels(ids).then(assembleResult);
         };
-
+      }
         return DomainObjectProvider;
     }
 );

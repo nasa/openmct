@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define([], function () {
+define([], () => {
     /**
      * A Transaction represents a set of changes that are intended to
      * be kept or discarded as a unit.
@@ -27,10 +27,30 @@ define([], function () {
      * @constructor
      * @memberof platform/commonUI/edit/services
      */
-    function Transaction($log) {
+    class Transaction {
+      constructor($log) {
         this.$log = $log;
         this.callbacks = [];
-    }
+        
+        ['commit', 'cancel'].forEach( (method) => {
+            this[method] = () => {
+                let promises = [];
+                let callback;
+
+                while (this.callbacks.length > 0) {
+                    callback = this.callbacks.shift();
+                    try {
+                        promises.push(callback[method]());
+                    } catch (e) {
+                        this.$log
+                            .error("Error trying to " + method + " transaction.");
+                    }
+                }
+
+                return Promise.all(promises);
+            };
+        });
+      }
 
     /**
      * Add a change to the current transaction, as expressed by functions
@@ -40,23 +60,23 @@ define([], function () {
      * @returns {Function) a function which may be called to remove this
      *          pair of callbacks from the transaction
      */
-    Transaction.prototype.add = function (commit, cancel) {
-        var callback = { commit: commit, cancel: cancel };
+    add(commit, cancel) {
+        let callback = { commit: commit, cancel: cancel };
         this.callbacks.push(callback);
-        return function () {
-            this.callbacks = this.callbacks.filter(function (c) {
+        return () => {
+            this.callbacks = this.callbacks.filter( (c) => {
                 return c !== callback;
             });
-        }.bind(this);
-    };
+        };
+    }
 
     /**
      * Get the number of changes in the current transaction.
      * @returns {number} the size of the current transaction
      */
-    Transaction.prototype.size = function () {
+    size() {
         return this.callbacks.length;
-    };
+    }
 
     /**
      * Keep all changes associated with this transaction.
@@ -71,26 +91,6 @@ define([], function () {
      * @returns {Promise} a promise which will resolve when all callbacks
      *          have been handled.
      */
-
-    ['commit', 'cancel'].forEach(function (method) {
-        Transaction.prototype[method] = function () {
-            var promises = [];
-            var callback;
-
-            while (this.callbacks.length > 0) {
-                callback = this.callbacks.shift();
-                try {
-                    promises.push(callback[method]());
-                } catch (e) {
-                    this.$log
-                        .error("Error trying to " + method + " transaction.");
-                }
-            }
-
-            return Promise.all(promises);
-        };
-    });
-
-
+   }
     return Transaction;
 });

@@ -22,13 +22,13 @@
 
 define(
     ['../../src/capabilities/TimelineUtilization'],
-    function (TimelineUtilization) {
+    (TimelineUtilization) => {
 
-        describe("A Timeline's resource utilization", function () {
+        describe("A Timeline's resource utilization", () => {
 
             // Placeholder; WTD-918 will implement
-            it("has the expected interface", function () {
-                var utilization = new TimelineUtilization();
+            it("has the expected interface", () => {
+                let utilization = new TimelineUtilization();
                 expect(utilization.getPointCount()).toEqual(jasmine.any(Number));
                 expect(utilization.getDomainValue()).toEqual(jasmine.any(Number));
                 expect(utilization.getRangeValue()).toEqual(jasmine.any(Number));

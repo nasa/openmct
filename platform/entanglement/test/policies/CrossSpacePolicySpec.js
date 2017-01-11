@@ -25,17 +25,17 @@ define(
         '../../src/policies/CrossSpacePolicy',
         '../DomainObjectFactory'
     ],
-    function (CrossSpacePolicy, domainObjectFactory) {
+    (CrossSpacePolicy, domainObjectFactory) => {
 
-        describe("CrossSpacePolicy", function () {
-            var mockAction,
+        describe("CrossSpacePolicy", () =>  {
+            let mockAction,
                 testActionMetadata,
                 sameSpaceContext,
                 crossSpaceContext,
                 policy;
 
-            function makeObject(space) {
-                var mockPersistence = jasmine.createSpyObj(
+            const makeObject = (space) => {
+                let mockPersistence = jasmine.createSpyObj(
                     'persistence',
                     ['getSpace']
                 );
@@ -47,7 +47,7 @@ define(
                 });
             }
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 testActionMetadata = {};
 
                 // Policy should only call passive methods, so
@@ -70,41 +70,41 @@ define(
                 policy = new CrossSpacePolicy();
             });
 
-            describe("for move actions", function () {
-                beforeEach(function () {
+            describe("for move actions", () =>  {
+                beforeEach(() =>  {
                     testActionMetadata.key = 'move';
                 });
 
-                it("allows same-space changes", function () {
+                it("allows same-space changes", () =>  {
                     expect(policy.allow(mockAction, sameSpaceContext))
                         .toBe(true);
                 });
 
-                it("disallows cross-space changes", function () {
+                it("disallows cross-space changes", () =>  {
                     expect(policy.allow(mockAction, crossSpaceContext))
                         .toBe(false);
                 });
 
-                it("allows actions with no selectedObject", function () {
+                it("allows actions with no selectedObject", () =>  {
                     expect(policy.allow(mockAction, {
                         domainObject: makeObject('a')
                     })).toBe(true);
                 });
             });
 
-            describe("for other actions", function () {
-                beforeEach(function () {
+            describe("for other actions", () =>  {
+                beforeEach(() =>  {
                     testActionMetadata.key = "some-other-action";
                 });
 
-                it("allows same-space and cross-space changes", function () {
+                it("allows same-space and cross-space changes", () =>  {
                     expect(policy.allow(mockAction, crossSpaceContext))
                         .toBe(true);
                     expect(policy.allow(mockAction, sameSpaceContext))
                         .toBe(true);
                 });
 
-                it("allows actions with no selectedObject", function () {
+                it("allows actions with no selectedObject", () =>  {
                     expect(policy.allow(mockAction, {
                         domainObject: makeObject('a')
                     })).toBe(true);

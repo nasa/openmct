@@ -21,12 +21,11 @@
  *****************************************************************************/
 
 define(
-    [],
-    function () {
+    [], () => {
 
 
         // Drag handle dimensions
-        var DRAG_HANDLE_SIZE = [6, 6];
+        let DRAG_HANDLE_SIZE = [6, 6];
 
         /**
          * Template-displayable drag handle for an element in fixed
@@ -34,7 +33,8 @@ define(
          * @memberof platform/features/layout
          * @constructor
          */
-        function FixedDragHandle(elementHandle, gridSize, update, commit) {
+        class FixedDragHandle {
+          constructor(elementHandle, gridSize, update, commit) {
             this.elementHandle = elementHandle;
             this.gridSize = gridSize;
             this.update = update;
@@ -46,9 +46,9 @@ define(
          * @returns CSS style object (for `ng-style`)
          * @memberof platform/features/layout.FixedDragHandle#
          */
-        FixedDragHandle.prototype.style = function () {
+         style() {
             // Adjust from grid to pixel coordinates
-            var x = this.elementHandle.x() * this.gridSize[0],
+            let x = this.elementHandle.x() * this.gridSize[0],
                 y = this.elementHandle.y() * this.gridSize[1];
 
             // Convert to a CSS style centered on that point
@@ -64,7 +64,7 @@ define(
          * Start a drag gesture. This should be called when a drag
          * begins to track initial state.
          */
-        FixedDragHandle.prototype.startDrag = function startDrag() {
+        startDrag() {
             // Cache initial x/y positions
             this.dragging = {
                 x: this.elementHandle.x(),
@@ -77,7 +77,7 @@ define(
          * @param {number[]} delta x/y pixel difference since drag
          *                   started
          */
-        FixedDragHandle.prototype.continueDrag = function (delta) {
+        continueDrag(delta) {
             if (this.dragging) {
                 // Update x/y positions (snapping to grid)
                 this.elementHandle.x(
@@ -97,7 +97,7 @@ define(
          * End a drag gesture. This should be called when a drag
          * concludes to trigger commit of changes.
          */
-        FixedDragHandle.prototype.endDrag = function () {
+        endDrag() {
             // Clear cached state
             this.dragging = undefined;
             // Mark change as complete
@@ -105,7 +105,7 @@ define(
                 this.commit("Dragged handle.");
             }
         };
-
+      }
         return FixedDragHandle;
     }
 );

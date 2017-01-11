@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Calls functions every second, as close to the actual second
@@ -32,19 +32,19 @@ define(
          * @param $timeout Angular's $timeout
          * @param {Function} now function to provide the current time in ms
          */
-        function TickerService($timeout, now) {
-            var self = this;
+        class TickerService {
+          constructor($timeout, now) {
 
-            function tick() {
-                var timestamp = now(),
+            const tick = () => {
+                let timestamp = now(),
                     millis = timestamp % 1000;
 
                 // Only update callbacks if a second has actually passed.
-                if (timestamp >= self.last + 1000) {
-                    self.callbacks.forEach(function (callback) {
+                if (timestamp >= this.last + 1000) {
+                    this.callbacks.forEach( (callback) => {
                         callback(timestamp);
                     });
-                    self.last = timestamp - millis;
+                    this.last = timestamp - millis;
                 }
 
                 // Try to update at exactly the next second
@@ -66,22 +66,21 @@ define(
          * @param {Function} callback callback to invoke
          * @returns {Function} a function to unregister this listener
          */
-        TickerService.prototype.listen = function (callback) {
-            var self = this;
+        listen(callback) {
 
-            self.callbacks.push(callback);
+            this.callbacks.push(callback);
 
             // Provide immediate feedback
             callback(this.last);
 
             // Provide a deregistration function
-            return function () {
-                self.callbacks = self.callbacks.filter(function (cb) {
+            return () => {
+                this.callbacks = this.callbacks.filter( (cb) => {
                     return cb !== callback;
                 });
             };
         };
-
+      }
         return TickerService;
     }
 );

@@ -22,24 +22,24 @@
 
 define(
     ['../../../src/controllers/graph/TimelineGraphRenderer'],
-    function (TimelineGraphRenderer) {
+    (TimelineGraphRenderer) => {
 
-        describe("A Timeline's graph renderer", function () {
-            var renderer;
+        describe("A Timeline's graph renderer", () => {
+            let renderer;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 renderer = new TimelineGraphRenderer();
             });
 
-            it("converts utilizations to buffers", function () {
-                var utilization = {
-                        getPointCount: function () {
+            it("converts utilizations to buffers", () => {
+                let utilization = {
+                        getPointCount: () => {
                             return 10;
                         },
-                        getDomainValue: function (i) {
+                        getDomainValue: (i) => {
                             return i * 10;
                         },
-                        getRangeValue: function (i) {
+                        getRangeValue: (i) => {
                             return Math.sin(i);
                         }
                     },
@@ -59,7 +59,7 @@ define(
                 }
             });
 
-            it("decodes color strings", function () {
+            it("decodes color strings", () => {
                 // Note that decoded color should have alpha channel as well
                 expect(renderer.decode('#FFFFFF'))
                     .toEqual([1, 1, 1, 1]);

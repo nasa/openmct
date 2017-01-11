@@ -27,24 +27,24 @@ define(
         '../DomainObjectFactory',
         '../ControlledPromise'
     ],
-    function (LocationCapability, domainObjectFactory, ControlledPromise) {
+    (LocationCapability, domainObjectFactory, ControlledPromise) => {
 
-        describe("LocationCapability", function () {
+        describe("LocationCapability", () =>  {
 
-            describe("instantiated with domain object", function () {
-                var locationCapability,
+            describe("instantiated with domain object", () =>  {
+                let locationCapability,
                     mutationPromise,
                     mockQ,
                     mockInjector,
                     mockObjectService,
                     domainObject;
 
-                beforeEach(function () {
+                beforeEach(() =>  {
                     domainObject = domainObjectFactory({
                         id: "testObject",
                         capabilities: {
                             context: {
-                                getParent: function () {
+                                getParent: () =>  {
                                     return domainObjectFactory({id: 'root'});
                                 }
                             },
@@ -62,8 +62,8 @@ define(
 
                     mutationPromise = new ControlledPromise();
                     domainObject.capabilities.mutation.invoke.andCallFake(
-                        function (mutator) {
-                            return mutationPromise.then(function () {
+                        (mutator) => {
+                            return mutationPromise.then(() =>  {
                                 mutator(domainObject.model);
                             });
                         }
@@ -76,25 +76,25 @@ define(
                     );
                 });
 
-                it("returns contextual location", function () {
+                it("returns contextual location", () =>  {
                     expect(locationCapability.getContextualLocation())
                         .toBe('root');
                 });
 
-                it("knows when the object is an original", function () {
+                it("knows when the object is an original", () =>  {
                     domainObject.model.location = 'root';
                     expect(locationCapability.isOriginal()).toBe(true);
                     expect(locationCapability.isLink()).toBe(false);
                 });
 
-                it("knows when the object is a link.", function () {
+                it("knows when the object is a link.", () =>  {
                     domainObject.model.location = 'different-root';
                     expect(locationCapability.isLink()).toBe(true);
                     expect(locationCapability.isOriginal()).toBe(false);
                 });
 
-                it("can mutate location", function () {
-                    var result = locationCapability
+                it("can mutate location", () =>  {
+                    let result = locationCapability
                             .setPrimaryLocation('root'),
                         whenComplete = jasmine.createSpy('whenComplete');
 
@@ -107,13 +107,13 @@ define(
                     expect(whenComplete).toHaveBeenCalled();
                 });
 
-                describe("when used to load an original instance", function () {
-                    var objectPromise,
+                describe("when used to load an original instance", () =>  {
+                    let objectPromise,
                         qPromise,
                         originalObjects,
                         mockCallback;
 
-                    function resolvePromises() {
+                    const resolvePromises = () => {
                         if (mockQ.when.calls.length > 0) {
                             qPromise.resolve(mockQ.when.mostRecentCall.args[0]);
                         }
@@ -122,14 +122,14 @@ define(
                         }
                     }
 
-                    beforeEach(function () {
+                    beforeEach(() =>  {
                         objectPromise = new ControlledPromise();
                         qPromise = new ControlledPromise();
                         originalObjects = {
                             testObject: domainObjectFactory()
                         };
 
-                        mockInjector.get.andCallFake(function (key) {
+                        mockInjector.get.andCallFake( (key) => {
                             return key === 'objectService' && mockObjectService;
                         });
                         mockObjectService.getObjects.andReturn(objectPromise);
@@ -138,7 +138,7 @@ define(
                         mockCallback = jasmine.createSpy('callback');
                     });
 
-                    it("provides originals directly", function () {
+                    it("provides originals directly", () =>  {
                         domainObject.model.location = 'root';
                         locationCapability.getOriginal().then(mockCallback);
                         expect(mockCallback).not.toHaveBeenCalled();
@@ -147,7 +147,7 @@ define(
                             .toHaveBeenCalledWith(domainObject);
                     });
 
-                    it("loads from the object service for links", function () {
+                    it("loads from the object service for links", () =>  {
                         domainObject.model.location = 'some-other-root';
                         locationCapability.getOriginal().then(mockCallback);
                         expect(mockCallback).not.toHaveBeenCalled();

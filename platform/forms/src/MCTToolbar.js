@@ -25,7 +25,7 @@
  */
 define(
     ["./MCTForm", "text!../res/templates/toolbar.html"],
-    function (MCTForm, toolbarTemplate) {
+    (MCTForm, toolbarTemplate) => {
 
         /**
          * The mct-toolbar directive allows generation of displayable
@@ -47,10 +47,10 @@ define(
          * @memberof platform/forms
          * @constructor
          */
-        function MCTToolbar() {
+        const MCTToolbar = () => {
             // Use Directive Definition Object from mct-form,
             // but use the toolbar's template instead.
-            var ddo = new MCTForm();
+            let ddo = new MCTForm();
             ddo.template = toolbarTemplate;
             return ddo;
         }

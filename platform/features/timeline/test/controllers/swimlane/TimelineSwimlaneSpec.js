@@ -22,10 +22,10 @@
 
 define(
     ['../../../src/controllers/swimlane/TimelineSwimlane'],
-    function (TimelineSwimlane) {
+    (TimelineSwimlane) => {
 
-        describe("A Timeline swimlane", function () {
-            var parent,
+        describe("A Timeline swimlane", () => {
+            let parent,
                 child,
                 mockParentObject,
                 mockChildObject,
@@ -35,13 +35,13 @@ define(
                 mockChildTimespan,
                 testConfiguration;
 
-            function asPromise(v) {
-                return { then: function (cb) {
+            const asPromise = (v) => {
+                return { then: (cb) => {
                     cb(v);
                 } };
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockParentObject = jasmine.createSpyObj(
                     'parent',
                     ['getId', 'getCapability', 'useCapability', 'getModel']
@@ -86,20 +86,20 @@ define(
                 );
             });
 
-            it("exposes its domain object", function () {
+            it("exposes its domain object", () => {
                 expect(parent.domainObject).toEqual(mockParentObject);
                 expect(child.domainObject).toEqual(mockChildObject);
             });
 
-            it("exposes its depth", function () {
+            it("exposes its depth", () => {
                 expect(parent.depth).toEqual(0);
                 expect(child.depth).toEqual(1);
                 expect(new TimelineSwimlane(mockParentObject, {}, {}, child).depth)
                     .toEqual(2);
             });
 
-            it("exposes its path as readable text", function () {
-                var grandchild = new TimelineSwimlane(mockParentObject, {}, {}, child),
+            it("exposes its path as readable text", () => {
+                let grandchild = new TimelineSwimlane(mockParentObject, {}, {}, child),
                     ggc = new TimelineSwimlane(mockParentObject, {}, {}, grandchild);
 
                 expect(parent.path).toEqual("");
@@ -108,29 +108,29 @@ define(
                 expect(ggc.path).toEqual("Test Child > Test Parent > ");
             });
 
-            it("starts off expanded", function () {
+            it("starts off expanded", () => {
                 expect(parent.expanded).toBeTruthy();
                 expect(child.expanded).toBeTruthy();
             });
 
-            it("determines visibility based on parent expansion", function () {
+            it("determines visibility based on parent expansion", () => {
                 parent.expanded = false;
                 expect(child.visible()).toBeFalsy();
                 parent.expanded = true;
                 expect(child.visible()).toBeTruthy();
             });
 
-            it("is visible when it is the root of the timeline subgraph", function () {
+            it("is visible when it is the root of the timeline subgraph", () => {
                 expect(parent.visible()).toBeTruthy();
             });
 
-            it("fires the Edit Properties action on request", function () {
+            it("fires the Edit Properties action on request", () => {
                 parent.properties();
                 expect(mockParentObject.getCapability).toHaveBeenCalledWith('action');
                 expect(mockActionCapability.perform).toHaveBeenCalledWith('properties');
             });
 
-            it("allows resource graph inclusion to be toggled", function () {
+            it("allows resource graph inclusion to be toggled", () => {
                 expect(testConfiguration.graph['test-parent']).toBeFalsy();
                 parent.toggleGraph();
                 expect(testConfiguration.graph['test-parent']).toBeTruthy();
@@ -138,7 +138,7 @@ define(
                 expect(testConfiguration.graph['test-parent']).toBeFalsy();
             });
 
-            it("provides a getter-setter for graph inclusion", function () {
+            it("provides a getter-setter for graph inclusion", () => {
                 expect(testConfiguration.graph['test-parent']).toBeFalsy();
                 expect(parent.graph(true)).toBeTruthy();
                 expect(parent.graph()).toBeTruthy();
@@ -148,7 +148,7 @@ define(
                 expect(testConfiguration.graph['test-parent']).toBeFalsy();
             });
 
-            it("gets colors from the provided assigner", function () {
+            it("gets colors from the provided assigner", () => {
                 mockAssigner.get.andReturn("#ABCABC");
                 expect(parent.color()).toEqual("#ABCABC");
                 // Verify that id was passed, and no other interactions
@@ -157,7 +157,7 @@ define(
                 expect(mockAssigner.release).not.toHaveBeenCalled();
             });
 
-            it("allows colors to be set", function () {
+            it("allows colors to be set", () => {
                 parent.color("#F0000D");
                 expect(mockAssigner.assign).toHaveBeenCalledWith(
                     'test-parent',
@@ -165,7 +165,7 @@ define(
                 );
             });
 
-            it("assigns colors when resource graph state is toggled", function () {
+            it("assigns colors when resource graph state is toggled", () => {
                 expect(mockAssigner.assign).not.toHaveBeenCalled();
                 parent.toggleGraph();
                 expect(mockAssigner.assign).toHaveBeenCalledWith('test-parent');
@@ -174,7 +174,7 @@ define(
                 expect(mockAssigner.release).toHaveBeenCalledWith('test-parent');
             });
 
-            it("assigns colors when resource graph state is set", function () {
+            it("assigns colors when resource graph state is set", () => {
                 expect(mockAssigner.assign).not.toHaveBeenCalled();
                 parent.graph(true);
                 expect(mockAssigner.assign).toHaveBeenCalledWith('test-parent');
@@ -183,7 +183,7 @@ define(
                 expect(mockAssigner.release).toHaveBeenCalledWith('test-parent');
             });
 
-            it("provides getter-setters for drag-drop highlights", function () {
+            it("provides getter-setters for drag-drop highlights", () => {
                 expect(parent.highlight()).toBeFalsy();
                 parent.highlight(true);
                 expect(parent.highlight()).toBeTruthy();
@@ -193,7 +193,7 @@ define(
                 expect(parent.highlightBottom()).toBeTruthy();
             });
 
-            it("detects start/end violations", function () {
+            it("detects start/end violations", () => {
                 mockParentTimespan.getStart.andReturn(42);
                 mockParentTimespan.getEnd.andReturn(12321);
 

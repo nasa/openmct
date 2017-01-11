@@ -22,58 +22,58 @@
 
 define(
     ['../../src/elements/LineProxy'],
-    function (LineProxy) {
+    (LineProxy) => {
 
-        describe("A fixed position line proxy", function () {
-            var vertical, horizontal, diagonal, reversed;
+        describe("A fixed position line proxy", () => {
+            let vertical, horizontal, diagonal, reversed;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 vertical = { x: 1, y: 4, x2: 1, y2: 8 };
                 horizontal = { x: 3, y: 3, x2: 12, y2: 3 };
                 diagonal = { x: 3, y: 8, x2: 5, y2: 11 };
                 reversed = { x2: 3, y2: 8, x: 5, y: 11 };
             });
 
-            it("ensures visible width for vertical lines", function () {
+            it("ensures visible width for vertical lines", () => {
                 expect(new LineProxy(vertical).width()).toEqual(1);
             });
 
-            it("ensures visible height for horizontal lines", function () {
+            it("ensures visible height for horizontal lines", () => {
                 expect(new LineProxy(horizontal).height()).toEqual(1);
             });
 
-            it("provides a bounding box for lines", function () {
-                var proxy = new LineProxy(diagonal);
+            it("provides a bounding box for lines", () => {
+                let proxy = new LineProxy(diagonal);
                 expect(proxy.x()).toEqual(3);
                 expect(proxy.y()).toEqual(8);
                 expect(proxy.width()).toEqual(2);
                 expect(proxy.height()).toEqual(3);
             });
 
-            it("bounds lines identically regardless of point order", function () {
+            it("bounds lines identically regardless of point order", () => {
                 // That is, x(), width(), y(), and height() should always give
                 // the same results for the same line segments, regardless of
                 // which point is x,y and which is x2,y2
-                ['x', 'y', 'width', 'height'].forEach(function (method) {
+                ['x', 'y', 'width', 'height'].forEach( (method) => {
                     expect(new LineProxy(diagonal)[method]())
                         .toEqual(new LineProxy(reversed)[method]());
                 });
             });
 
-            it("adjusts both ends when mutating x", function () {
-                var proxy = new LineProxy(diagonal);
+            it("adjusts both ends when mutating x", () => {
+                let proxy = new LineProxy(diagonal);
                 proxy.x(6);
                 expect(diagonal).toEqual({ x: 6, y: 8, x2: 8, y2: 11 });
             });
 
-            it("adjusts both ends when mutating y", function () {
-                var proxy = new LineProxy(diagonal);
+            it("adjusts both ends when mutating y", () => {
+                let proxy = new LineProxy(diagonal);
                 proxy.y(6);
                 expect(diagonal).toEqual({ x: 3, y: 6, x2: 5, y2: 9 });
             });
 
-            it("provides internal positions for SVG lines", function () {
-                var proxy;
+            it("provides internal positions for SVG lines", () => {
+                let proxy;
                 proxy = new LineProxy(diagonal);
                 expect(proxy.x1()).toEqual(0);
                 expect(proxy.y1()).toEqual(0);
@@ -86,7 +86,7 @@ define(
                 expect(proxy.y2()).toEqual(0);
             });
 
-            it("provides handles for both ends", function () {
+            it("provides handles for both ends", () => {
                 expect(new LineProxy(diagonal).handles().length).toEqual(2);
             });
 

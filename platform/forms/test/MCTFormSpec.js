@@ -22,28 +22,28 @@
 
 define(
     ["../src/MCTForm"],
-    function (MCTForm) {
+    (MCTForm) => {
 
-        describe("The mct-form directive", function () {
-            var mockScope,
+        describe("The mct-form directive", () => {
+            let mockScope,
                 mctForm;
 
-            function installController() {
-                var Controller = mctForm.controller[1];
+            const installController = () => {
+                let Controller = mctForm.controller[1];
                 return new Controller(mockScope);
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 mockScope.$parent = {};
                 mctForm = new MCTForm();
             });
 
-            it("is restricted to elements", function () {
+            it("is restricted to elements", () => {
                 expect(mctForm.restrict).toEqual("E");
             });
 
-            it("watches for changes in form by name", function () {
+            it("watches for changes in form by name", () => {
                 // mct-form needs to watch for the form by name
                 // in order to convey changes in $valid, $dirty, etc
                 // up to the parent scope.
@@ -55,8 +55,8 @@ define(
                 );
             });
 
-            it("conveys form status to parent scope", function () {
-                var someState = { someKey: "some value" };
+            it("conveys form status to parent scope", () => {
+                let someState = { someKey: "some value" };
                 mockScope.name = "someName";
 
                 installController();
@@ -66,7 +66,7 @@ define(
                 expect(mockScope.$parent.someName).toBe(someState);
             });
 
-            it("allows strings to be converted to RegExps", function () {
+            it("allows strings to be converted to RegExps", () => {
                 // This is needed to support ng-pattern in the template
                 installController();
 
@@ -75,9 +75,9 @@ define(
                 expect(mockScope.getRegExp("^\\d+$")).toEqual(/^\d+$/);
             });
 
-            it("returns the same regexp instance for the same string", function () {
+            it("returns the same regexp instance for the same string", () => {
                 // Don't want new instances each digest cycle, for performance
-                var strRegExp = "^[a-z]\\d+$",
+                let strRegExp = "^[a-z]\\d+$",
                     regExp;
 
                 // Add getRegExp to scope
@@ -89,9 +89,9 @@ define(
                 expect(mockScope.getRegExp(strRegExp)).toBe(regExp);
             });
 
-            it("passes RegExp objects through untouched", function () {
+            it("passes RegExp objects through untouched", () => {
                 // Permit using forms to simply provide their own RegExp object
-                var regExp = /^\d+[a-d]$/;
+                let regExp = /^\d+[a-d]$/;
 
                 // Add getRegExp to scope
                 installController();
@@ -101,7 +101,7 @@ define(
                 expect(mockScope.getRegExp(regExp)).toBe(regExp);
             });
 
-            it("passes a non-whitespace regexp when no pattern is defined", function () {
+            it("passes a non-whitespace regexp when no pattern is defined", () => {
                 // If no pattern is supplied, ng-pattern should match anything
                 installController();
                 expect(mockScope.getRegExp()).toEqual(/\S/);

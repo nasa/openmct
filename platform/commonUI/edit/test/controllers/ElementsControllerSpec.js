@@ -23,26 +23,26 @@
 
 define(
     ["../../src/controllers/ElementsController"],
-    function (ElementsController) {
+    (ElementsController) => {
 
-        describe("The Elements Pane controller", function () {
-            var mockScope,
+        describe("The Elements Pane controller", () => {
+            let mockScope,
                 controller;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockScope = jasmine.createSpy("$scope");
                 controller = new ElementsController(mockScope);
             });
 
-            function getModel(model) {
-                return function () {
+            const getModel = (model) => {
+                return () => {
                     return model;
                 };
             }
 
             it("filters objects in elements pool based on input text and" +
-                " object name", function () {
-                var objects = [
+                " object name", () => {
+                let objects = [
                     {
                         getModel: getModel({name: "first element"})
                     },

@@ -1,18 +1,18 @@
 
 define(
     ["../src/CompositionModelPolicy"],
-    function (CompositionModelPolicy) {
+    (CompositionModelPolicy) => {
 
-        describe("The composition model policy", function () {
-            var mockType,
+        describe("The composition model policy", () => {
+            let mockType,
                 policy;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockType = jasmine.createSpyObj('type', ['getInitialModel']);
                 policy = new CompositionModelPolicy();
             });
 
-            it("only allows composition for types which will have a composition property", function () {
+            it("only allows composition for types which will have a composition property", () => {
                 mockType.getInitialModel.andReturn({});
                 expect(policy.allow(mockType)).toBeFalsy();
                 mockType.getInitialModel.andReturn({ composition: [] });

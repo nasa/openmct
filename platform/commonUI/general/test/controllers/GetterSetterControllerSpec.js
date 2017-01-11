@@ -22,21 +22,21 @@
 
 define(
     ["../../src/controllers/GetterSetterController"],
-    function (GetterSetterController) {
+    (GetterSetterController) => {
 
-        describe("The getter-setter controller", function () {
-            var mockScope,
+        describe("The getter-setter controller", () => {
+            let mockScope,
                 mockModel,
                 controller;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 mockModel = jasmine.createSpy("ngModel");
                 mockScope.ngModel = mockModel;
                 controller = new GetterSetterController(mockScope);
             });
 
-            it("watches for changes to external and internal mode", function () {
+            it("watches for changes to external and internal mode", () => {
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "ngModel()",
                     jasmine.any(Function)
@@ -47,13 +47,13 @@ define(
                 );
             });
 
-            it("updates an external function when changes are detected", function () {
+            it("updates an external function when changes are detected", () => {
                 mockScope.getterSetter.value = "some new value";
                 // Verify precondition
                 expect(mockScope.ngModel)
                     .not.toHaveBeenCalledWith("some new value");
                 // Fire the matching watcher
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$watch.calls.forEach( (call) => {
                     if (call.args[0] === "getterSetter.value") {
                         call.args[1](mockScope.getterSetter.value);
                     }
@@ -63,12 +63,12 @@ define(
                     .toHaveBeenCalledWith("some new value");
             });
 
-            it("updates internal state when external changes are detected", function () {
+            it("updates internal state when external changes are detected", () => {
                 mockScope.ngModel.andReturn("some other new value");
                 // Verify precondition
                 expect(mockScope.getterSetter.value).toBeUndefined();
                 // Fire the matching watcher
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$watch.calls.forEach( (call) => {
                     if (call.args[0] === "ngModel()") {
                         call.args[1]("some other new value");
                     }

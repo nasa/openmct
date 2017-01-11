@@ -22,17 +22,17 @@
 
 define(
     ['../../src/elements/ElementFactory'],
-    function (ElementFactory) {
+    (ElementFactory) => {
 
-        var DIALOG_ELEMENTS = ['image', 'text'],
+        let DIALOG_ELEMENTS = ['image', 'text'],
             NON_DIALOG_ELEMENTS = ['box', 'line'];
 
-        describe("The fixed position element factory", function () {
-            var mockDialogService,
+        describe("The fixed position element factory", () => {
+            let mockDialogService,
                 mockPromise,
                 factory;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockDialogService = jasmine.createSpyObj(
                     'dialogService',
                     ['getUserInput']
@@ -48,17 +48,17 @@ define(
                 factory = new ElementFactory(mockDialogService);
             });
 
-            DIALOG_ELEMENTS.forEach(function (type) {
-                it("shows a dialog for " + type + " elements", function () {
+            DIALOG_ELEMENTS.forEach( (type) => {
+                it("shows a dialog for " + type + " elements", () => {
                     expect(factory.createElement('fixed.' + type))
                         .toEqual(mockPromise);
                     expect(mockDialogService.getUserInput).toHaveBeenCalled();
                 });
             });
 
-            NON_DIALOG_ELEMENTS.forEach(function (type) {
-                it("immediately provides " + type + " elements", function () {
-                    var result = factory.createElement('fixed.' + type);
+            NON_DIALOG_ELEMENTS.forEach( (type) => {
+                it("immediately provides " + type + " elements", () => {
+                    let result = factory.createElement('fixed.' + type);
                     expect(result).toBeDefined();
                     expect(result).not.toEqual(mockPromise);
                     expect(mockDialogService.getUserInput).not.toHaveBeenCalled();

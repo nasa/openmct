@@ -29,7 +29,7 @@ define([
     "text!./res/templates/plot.html",
     "text!./res/templates/plot-options-browse.html",
     'legacyRegistry'
-], function (
+], (
     MCTChart,
     PlotController,
     PlotViewPolicy,
@@ -38,7 +38,7 @@ define([
     plotTemplate,
     plotOptionsBrowseTemplate,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/features/plot", {
         "name": "Plot view for telemetry",

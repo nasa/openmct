@@ -25,20 +25,20 @@ define(
         '../../src/controllers/TimelineTableController',
         '../../src/TimelineFormatter'
     ],
-    function (TimelineTableController, TimelineFormatter) {
+    (TimelineTableController, TimelineFormatter) => {
 
-        describe("The timeline table controller", function () {
-            var formatter, controller;
+        describe("The timeline table controller", () => {
+            let formatter, controller;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 controller = new TimelineTableController();
                 formatter = new TimelineFormatter();
             });
 
             // This controller's job is just to expose the formatter
             // in scope, so simply verify that the two agree.
-            it("formats durations", function () {
-                [0, 100, 4123, 93600, 748801230012].forEach(function (n) {
+            it("formats durations", () => {
+                [0, 100, 4123, 93600, 748801230012].forEach( (n) => {
                     expect(controller.niceTime(n))
                         .toEqual(formatter.format(n));
                 });

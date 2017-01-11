@@ -24,11 +24,11 @@ define([
     './TelemetryAPI',
     './LegacyTelemetryProvider',
     'legacyRegistry'
-], function (
+], (
     TelemetryAPI,
     LegacyTelemetryProvider,
     legacyRegistry
-) {
+) => {
     legacyRegistry.register('src/api/telemetry', {
         name: 'Telemetry API',
         description: 'The public Telemetry API',

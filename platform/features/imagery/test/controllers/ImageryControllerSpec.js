@@ -22,24 +22,24 @@
 
 define(
     ["../../src/controllers/ImageryController"],
-    function (ImageryController) {
+    (ImageryController) => {
 
-        describe("The Imagery controller", function () {
-            var mockScope,
+        describe("The Imagery controller", () => {
+            let mockScope,
                 mockTelemetryHandler,
                 mockHandle,
                 mockDomainObject,
                 controller;
 
-            function invokeWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
+            const invokeWatch = (expr, value) => {
+                mockScope.$watch.calls.forEach( (call) => {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
                 });
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockScope = jasmine.createSpyObj('$scope', ['$on', '$watch']);
                 mockTelemetryHandler = jasmine.createSpyObj(
                     'telemetryHandler',
@@ -69,11 +69,11 @@ define(
                 invokeWatch('domainObject', mockDomainObject);
             });
 
-            it("unsubscribes when scope is destroyed", function () {
+            it("unsubscribes when scope is destroyed", () => {
                 expect(mockHandle.unsubscribe).not.toHaveBeenCalled();
 
                 // Find the $destroy listener and call it
-                mockScope.$on.calls.forEach(function (call) {
+                mockScope.$on.calls.forEach( (call) => {
                     if (call.args[0] === '$destroy') {
                         call.args[1]();
                     }
@@ -81,9 +81,9 @@ define(
                 expect(mockHandle.unsubscribe).toHaveBeenCalled();
             });
 
-            it("exposes the latest telemetry values", function () {
+            it("exposes the latest telemetry values", () => {
                 // 06/18/2015 4:04am UTC
-                var testTimestamp = 1434600258123,
+                let testTimestamp = 1434600258123,
                     testUrl = "some/url",
                     nextTimestamp = 1434600259456, // 4:05.456
                     nextUrl = "some/other/url";
@@ -109,9 +109,9 @@ define(
                 expect(controller.getImageUrl()).toEqual(nextUrl);
             });
 
-            it("allows updates to be paused", function () {
+            it("allows updates to be paused", () => {
                 // 06/18/2015 4:04am UTC
-                var testTimestamp = 1434600258123,
+                let testTimestamp = 1434600258123,
                     testUrl = "some/url",
                     nextTimestamp = 1434600259456, // 4:05.456
                     nextUrl = "some/other/url";
@@ -144,7 +144,7 @@ define(
                 expect(controller.getImageUrl()).toEqual(testUrl);
             });
 
-            it("initially shows an empty string for date/time", function () {
+            it("initially shows an empty string for date/time", () => {
                 // Call the subscription listener while domain/range
                 // values are still undefined
                 mockHandle.getDomainValue.andReturn(undefined);

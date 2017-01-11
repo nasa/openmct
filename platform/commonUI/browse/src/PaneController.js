@@ -23,7 +23,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Controller to provide the ability to show/hide the tree in
@@ -31,8 +31,8 @@ define(
          * @constructor
          * @memberof platform/commonUI/browse
          */
-        function PaneController($scope, agentService, $window) {
-            var self = this;
+        class PaneController {
+          constructor($scope, agentService, $window) {
             this.agentService = agentService;
 
             // Fast and cheap: if this has been opened in a new window, hide panes by default
@@ -46,14 +46,14 @@ define(
              * @property {Function} callback
              * @memberof platform/commonUI/browse.PaneController#
              */
-            this.callback = function () {
+            this.callback = () => {
                 // Note that, since this is a callback to pass, this is not
                 // declared as a method but as a property which happens to
                 // be a function.
                 if (agentService.isPhone() && agentService.isPortrait()) {
                     // On phones, trees should collapse in portrait mode
                     // when something is navigated-to.
-                    self.state = false;
+                    this.state = false;
                 }
             };
         }
@@ -61,18 +61,18 @@ define(
         /**
          * Toggle the visibility of the pane.
          */
-        PaneController.prototype.toggle = function () {
+        toggle() {
             this.state = !this.state;
-        };
+        }
 
         /**
          * Get the desired visibility state of the pane.
          * @returns {boolean} true when visible
          */
-        PaneController.prototype.visible = function () {
+        visible() {
             return this.state;
-        };
-
+        }
+      }
         return PaneController;
     }
 );

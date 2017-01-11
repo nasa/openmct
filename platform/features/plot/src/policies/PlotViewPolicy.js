@@ -20,21 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
-
-        /**
-         * Policy preventing the Plot view from being made available for
-         * domain objects which have non-numeric telemetry.
-         * @implements {Policy.<View, DomainObject>}
-         * @constructor
-         * @memberof platform/features/plot
-         */
-        function PlotViewPolicy() {
-        }
-
-        function hasNumericTelemetry(domainObject) {
-            var telemetry = domainObject &&
+define(() => {
+  
+        const hasNumericTelemetry = (domainObject) => {
+            let telemetry = domainObject &&
                     domainObject.getCapability('telemetry'),
                 metadata = telemetry ? telemetry.getMetadata() : {},
                 ranges = metadata.ranges || [];
@@ -43,7 +32,7 @@ define(
             // objects (most telemetry is plottable.) We only want to
             // suppress this for telemetry which only has explicitly
             // non-numeric values.
-            return ranges.length === 0 || ranges.some(function (range) {
+            return ranges.length === 0 || ranges.some( (range) => {
                     // Assume format is numeric if it is undefined
                     // (numeric telemetry is the common case)
                     return range.format === undefined ||
@@ -51,14 +40,23 @@ define(
                 });
         }
 
-        PlotViewPolicy.prototype.allow = function (view, domainObject) {
+        /**
+         * Policy preventing the Plot view from being made available for
+         * domain objects which have non-numeric telemetry.
+         * @implements {Policy.<View, DomainObject>}
+         * @constructor
+         * @memberof platform/features/plot
+         */
+        class PlotViewPolicy {
+
+        allow(view, domainObject) {
             if (view.key === 'plot') {
                 return hasNumericTelemetry(domainObject);
             }
 
             return true;
         };
-
+      }
         return PlotViewPolicy;
     }
 );

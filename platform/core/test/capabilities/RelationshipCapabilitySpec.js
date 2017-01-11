@@ -25,9 +25,9 @@
  */
 define(
     ["../../src/capabilities/RelationshipCapability"],
-    function (RelationshipCapability) {
+    (RelationshipCapability) => {
 
-        var DOMAIN_OBJECT_METHODS = [
+        const DOMAIN_OBJECT_METHODS = [
             "getId",
             "getModel",
             "getCapability",
@@ -35,8 +35,8 @@ define(
             "useCapability"
         ];
 
-        describe("The relationship capability", function () {
-            var mockDomainObject,
+        describe("The relationship capability", () => {
+            let mockDomainObject,
                 mockInjector,
                 mockObjectService,
                 relationship;
@@ -44,15 +44,15 @@ define(
             // Composition Capability makes use of promise chaining,
             // so support that, but don't introduce complication of
             // native promises.
-            function mockPromise(value) {
+            const mockPromise = (value) => {
                 return {
-                    then: function (callback) {
+                    then: (callback) => {
                         return mockPromise(callback(value));
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     DOMAIN_OBJECT_METHODS
@@ -64,7 +64,7 @@ define(
                 );
 
                 mockInjector = {
-                    get: function (name) {
+                    get: (name) => {
                         return (name === "objectService") && mockObjectService;
                     }
                 };
@@ -77,15 +77,15 @@ define(
                 );
             });
 
-            it("applies only to models with a 'relationships' field", function () {
+            it("applies only to models with a 'relationships' field", () => {
                 expect(RelationshipCapability.appliesTo({ relationships: {} }))
                     .toBeTruthy();
                 expect(RelationshipCapability.appliesTo({}))
                     .toBeFalsy();
             });
 
-            it("requests ids found in model's composition from the object service", function () {
-                var ids = ["a", "b", "c", "xyz"];
+            it("requests ids found in model's composition from the object service", () => {
+                let ids = ["a", "b", "c", "xyz"];
 
                 mockDomainObject.getModel.andReturn({ relationships: { xyz: ids } });
 
@@ -94,7 +94,7 @@ define(
                 expect(mockObjectService.getObjects).toHaveBeenCalledWith(ids);
             });
 
-            it("provides a list of relationship types", function () {
+            it("provides a list of relationship types", () => {
                 mockDomainObject.getModel.andReturn({ relationships: {
                     abc: ['a', 'b'],
                     def: "not an array, should be ignored",
@@ -103,7 +103,7 @@ define(
                 expect(relationship.listRelationships()).toEqual(['abc', 'xyz']);
             });
 
-            it("avoids redundant requests", function () {
+            it("avoids redundant requests", () => {
                 // Lookups can be expensive, so this capability
                 // should have some self-caching
                 mockDomainObject.getModel
@@ -118,10 +118,10 @@ define(
                     .toEqual(1);
             });
 
-            it("makes new requests on modification", function () {
+            it("makes new requests on modification", () => {
                 // Lookups can be expensive, so this capability
                 // should have some self-caching
-                var testModel;
+                let testModel;
 
                 testModel = { relationships: { xyz: ['a'] } };
 

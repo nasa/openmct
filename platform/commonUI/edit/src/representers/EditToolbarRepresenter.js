@@ -22,12 +22,12 @@
 
 define(
     ['./EditToolbar', './EditToolbarSelection'],
-    function (EditToolbar, EditToolbarSelection) {
+    (EditToolbar, EditToolbarSelection) => {
 
         // No operation
-        var NOOP_REPRESENTER = {
-            represent: function () {},
-            destroy: function () {}
+        const NOOP_REPRESENTER = {
+            represent: () => {},
+            destroy: () => {}
         };
 
         /**
@@ -38,47 +38,47 @@ define(
          * @constructor
          * @implements {Representer}
          */
-        function EditToolbarRepresenter(scope, element, attrs) {
-            var self = this;
+        class EditToolbarRepresenter {
+          constructor(scope, element, attrs) {
 
             // Mark changes as ready to persist
-            function commit(message) {
+            const commit = (message) => {
                 if (scope.commit) {
                     scope.commit(message);
                 }
             }
 
             // Handle changes to the current selection
-            function updateSelection(selection) {
+            const updateSelection = (selection) => {
                 // Only update if there is a toolbar to update
-                if (self.toolbar) {
+                if (this.toolbar) {
                     // Make sure selection is array-like
                     selection = Array.isArray(selection) ?
                             selection :
                             (selection ? [selection] : []);
 
                     // Update the toolbar's selection
-                    self.toolbar.setSelection(selection);
+                    this.toolbar.setSelection(selection);
 
                     // ...and expose its structure/state
-                    self.toolbarObject.structure =
-                        self.toolbar.getStructure();
-                    self.toolbarObject.state =
-                        self.toolbar.getState();
+                    this.toolbarObject.structure =
+                        this.toolbar.getStructure();
+                    this.toolbarObject.state =
+                        this.toolbar.getState();
                 }
             }
 
             // Get state (to watch it)
-            function getState() {
-                return self.toolbarObject.state;
+            const getState = () => {
+                return this.toolbarObject.state;
             }
 
             // Update selection models to match changed toolbar state
-            function updateState(state) {
+            const updateState = (state) => {
                 // Update underlying state based on toolbar changes
-                var changed = (state || []).map(function (value, index) {
-                    return self.toolbar.updateState(index, value);
-                }).reduce(function (a, b) {
+                let changed = (state || []).map( (value, index) => {
+                    return this.toolbar.updateState(index, value);
+                }).reduce( (a, b) => {
                     return a || b;
                 }, false);
 
@@ -91,17 +91,17 @@ define(
 
             // Avoid attaching scope to this;
             // http://errors.angularjs.org/1.2.26/ng/cpws
-            this.setSelection = function (s) {
+            this.setSelection = (s) => {
                 scope.selection = s;
             };
-            this.clearExposedToolbar = function () {
+            this.clearExposedToolbar = () => {
                 // Clear exposed toolbar state (if any)
                 if (attrs.toolbar) {
                     delete scope.$parent[attrs.toolbar];
                 }
             };
-            this.exposeToolbar = function () {
-                scope.$parent[self.attrs.toolbar] = self.toolbarObject;
+            this.exposeToolbar = () => {
+                scope.$parent[this.attrs.toolbar] = this.toolbarObject;
             };
 
             this.commit = commit;
@@ -127,19 +127,18 @@ define(
         }
 
         // Represent a domain object using this definition
-        EditToolbarRepresenter.prototype.represent = function (representation) {
+        represent(representation) {
             // Get the newest toolbar definition from the view
-            var definition = (representation || {}).toolbar || {},
-                self = this;
+            let definition = (representation || {}).toolbar || {}
 
             // Initialize toolbar (expose object to parent scope)
-            function initialize(def) {
+            const initialize = (def) => {
                 // If we have been asked to expose toolbar state...
-                if (self.attrs.toolbar) {
+                if (this.attrs.toolbar) {
                     // Initialize toolbar object
-                    self.toolbar = new EditToolbar(def, self.commit);
+                    this.toolbar = new EditToolbar(def, this.commit);
                     // Ensure toolbar state is exposed
-                    self.exposeToolbar();
+                    this.exposeToolbar();
                 }
             }
 
@@ -152,10 +151,10 @@ define(
         };
 
         // Destroy; remove toolbar object from parent scope
-        EditToolbarRepresenter.prototype.destroy = function () {
+        destroy() {
             this.clearExposedToolbar();
         };
-
+      }
         return EditToolbarRepresenter;
     }
 );

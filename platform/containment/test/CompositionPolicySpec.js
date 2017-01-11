@@ -22,15 +22,15 @@
 
 define(
     ["../src/CompositionPolicy"],
-    function (CompositionPolicy) {
-        describe("Composition policy", function () {
-            var mockInjector,
+    (CompositionPolicy) => {
+        describe("Composition policy", () => {
+            let mockInjector,
                 mockTypeService,
                 mockCapabilityService,
                 mockTypes,
                 policy;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockInjector = jasmine.createSpyObj('$injector', ['get']);
                 mockTypeService = jasmine.createSpyObj(
                     'typeService',
@@ -41,8 +41,8 @@ define(
                     ['getCapabilities']
                 );
                 // Both types can only contain b, let's say
-                mockTypes = ['a', 'b'].map(function (type) {
-                    var mockType = jasmine.createSpyObj(
+                mockTypes = ['a', 'b'].map( (type) => {
+                    let mockType = jasmine.createSpyObj(
                         'type-' + type,
                         ['getKey', 'getDefinition', 'getInitialModel']
                     );
@@ -54,7 +54,7 @@ define(
                     return mockType;
                 });
 
-                mockInjector.get.andCallFake(function (name) {
+                mockInjector.get.andCallFake( (name) => {
                     return {
                         typeService: mockTypeService,
                         capabilityService: mockCapabilityService
@@ -69,7 +69,7 @@ define(
 
             // Test basic composition policy here; test more closely at
             // the unit level in ContainmentTable for 'has' support, et al
-            it("enforces containment rules defined by types", function () {
+            it("enforces containment rules defined by types", () => {
                 expect(policy.allow(mockTypes[0], mockTypes[1]))
                     .toBeTruthy();
                 expect(policy.allow(mockTypes[1], mockTypes[1]))

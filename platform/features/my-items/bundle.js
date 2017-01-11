@@ -22,9 +22,9 @@
 
 define([
     'legacyRegistry'
-], function (
+], (
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/features/my-items", {
         "name": "My Items",

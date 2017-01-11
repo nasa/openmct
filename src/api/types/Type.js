@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(function () {
+define( () => {
 
     /**
      * A Type describes a kind of domain object that may appear or be
@@ -30,9 +30,10 @@ define(function () {
      * @class Type
      * @memberof module:openmct
      */
-    function Type(definition) {
+    class Type {
+      constructor(definition) {
         this.definition = definition;
-    }
+      }
 
     /**
      * Check if a domain object is an instance of this type.
@@ -41,18 +42,18 @@ define(function () {
      * @memberof module:openmct.Type#
      * @method check
      */
-    Type.prototype.check = function (domainObject) {
+    check(domainObject) {
         // Depends on assignment from MCT.
         return domainObject.type === this.key;
-    };
+    }
 
     /**
      * Get a definition for this type that can be registered using the
      * legacy bundle format.
      * @private
      */
-    Type.prototype.toLegacyDefinition = function () {
-        var def = {};
+    toLegacyDefinition() {
+        let def = {};
         def.name = this.definition.label;
         def.cssclass = this.definition.cssclass;
         def.description = this.definition.description;
@@ -68,7 +69,7 @@ define(function () {
         }
 
         return def;
-    };
-
-    return Type;
+    }
+}
+return Type;
 });

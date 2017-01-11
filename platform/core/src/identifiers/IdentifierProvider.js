@@ -22,7 +22,7 @@
 
 define(
     ["uuid", "./Identifier"],
-    function (uuid, Identifier) {
+    (uuid, Identifier) => {
 
         /**
          * Parses and generates domain object identifiers.
@@ -30,7 +30,8 @@ define(
          * @constructor
          * @memberof {platform/core}
          */
-        function IdentifierProvider(defaultSpace) {
+        class IdentifierProvider {
+          constructor(defaultSpace) {
             this.defaultSpace = defaultSpace;
         }
 
@@ -42,8 +43,8 @@ define(
          *        in this identifier
          * @returns {string} a new domain object identifier
          */
-        IdentifierProvider.prototype.generate = function (space) {
-            var id = uuid();
+        generate(space) {
+            let id = uuid();
             if (space !== undefined) {
                 id = space + ":" + id;
             }
@@ -55,10 +56,10 @@ define(
          * parts (e.g. its persistence space.)
          * @returns {platform/core.Identifier} the parsed identifier
          */
-        IdentifierProvider.prototype.parse = function (id) {
+        parse(id) {
             return new Identifier(id, this.defaultSpace);
         };
-
+      }
         return IdentifierProvider;
     }
 );

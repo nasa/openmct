@@ -23,9 +23,7 @@
 /**
  * Module defining ModelAggregator. Created by vwoeltje on 11/7/14.
  */
-define(
-    [],
-    function () {
+define([], () => {
 
         /**
          * Allow domain object models to be looked up by their identifiers.
@@ -57,25 +55,26 @@ define(
          * @param {ModelService[]} providers the model providers to be
          *        aggregated
          */
-        function ModelAggregator($q, providers) {
+        class ModelAggregator {
+          constructor($q, providers) {
             this.providers = providers;
             this.$q = $q;
-        }
+          }
 
         // Pick a domain object model to use, favoring the one
         // with the most recent timestamp
-        function pick(a, b) {
-            var aModified = (a || {}).modified || Number.NEGATIVE_INFINITY,
+        const pick = (a, b) => {
+            let aModified = (a || {}).modified || Number.NEGATIVE_INFINITY,
                 bModified = (b || {}).modified || Number.NEGATIVE_INFINITY;
             return (aModified > bModified) ? a : (b || a);
         }
 
         // Merge results from multiple providers into one
         // large result object.
-        function mergeModels(provided, ids) {
-            var result = {};
-            ids.forEach(function (id) {
-                provided.forEach(function (models) {
+        const mergeModels = (provided, ids) => {
+            let result = {};
+            ids.forEach( (id) => {
+                provided.forEach( (models) => {
                     if (models[id]) {
                         result[id] = pick(result[id], models[id]);
                     }
@@ -84,14 +83,14 @@ define(
             return result;
         }
 
-        ModelAggregator.prototype.getModels = function (ids) {
-            return this.$q.all(this.providers.map(function (provider) {
+        getModels(ids) {
+            return this.$q.all(this.providers.map( (provider) => {
                 return provider.getModels(ids);
-            })).then(function (provided) {
+            })).then( (provided) => {
                 return mergeModels(provided, ids);
             });
         };
-
+      }
         return ModelAggregator;
     }
 );

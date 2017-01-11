@@ -26,13 +26,13 @@ define([
     "./src/CompositionModelPolicy",
     "./src/ComposeActionPolicy",
     'legacyRegistry'
-], function (
+], (
     CompositionPolicy,
     CompositionMutabilityPolicy,
     CompositionModelPolicy,
     ComposeActionPolicy,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/containment", {
         "extensions": {

@@ -25,10 +25,10 @@
  */
 define(
     ["../../src/elements/PlotUpdater"],
-    function (PlotUpdater) {
+    (PlotUpdater) => {
 
-        describe("A plot updater", function () {
-            var mockSubscription,
+        describe("A plot updater", () => {
+            let mockSubscription,
                 testDomain,
                 testRange,
                 testDomainValues,
@@ -36,8 +36,8 @@ define(
                 mockSeries,
                 updater;
 
-            function makeMockDomainObject(id) {
-                var mockDomainObject = jasmine.createSpyObj(
+            const makeMockDomainObject = (id) => {
+                let mockDomainObject = jasmine.createSpyObj(
                     "object-" + id,
                     ["getId", "getCapability", "getModel"]
                 );
@@ -45,8 +45,8 @@ define(
                 return mockDomainObject;
             }
 
-            beforeEach(function () {
-                var ids = ['a', 'b', 'c'],
+            beforeEach(() => {
+                let ids = ['a', 'b', 'c'],
                     mockObjects = ids.map(makeMockDomainObject);
 
                 mockSubscription = jasmine.createSpyObj(
@@ -63,10 +63,10 @@ define(
                 testRangeValues = { a: 123, b: 456, c: 789 };
 
                 mockSubscription.getTelemetryObjects.andReturn(mockObjects);
-                mockSubscription.getDomainValue.andCallFake(function (mockObject) {
+                mockSubscription.getDomainValue.andCallFake( (mockObject) => {
                     return testDomainValues[mockObject.getId()];
                 });
-                mockSubscription.getRangeValue.andCallFake(function (mockObject) {
+                mockSubscription.getRangeValue.andCallFake( (mockObject) => {
                     return testRangeValues[mockObject.getId()];
                 });
 
@@ -78,23 +78,23 @@ define(
                 );
             });
 
-            it("provides one buffer per telemetry object", function () {
+            it("provides one buffer per telemetry object", () => {
                 expect(updater.getLineBuffers().length).toEqual(3);
             });
 
-            it("changes buffer count if telemetry object counts change", function () {
+            it("changes buffer count if telemetry object counts change", () => {
                 mockSubscription.getTelemetryObjects
                     .andReturn([makeMockDomainObject('a')]);
                 updater.update();
                 expect(updater.getLineBuffers().length).toEqual(1);
             });
 
-            it("can handle delayed telemetry object availability", function () {
+            it("can handle delayed telemetry object availability", () => {
                 // The case can occur where getTelemetryObjects() returns an
                 // empty array - specifically, while objects are still being
                 // loaded. The updater needs to be able to cope with that
                 // case.
-                var tmp = mockSubscription.getTelemetryObjects();
+                let tmp = mockSubscription.getTelemetryObjects();
                 mockSubscription.getTelemetryObjects.andReturn([]);
 
                 // Reinstantiate with the empty subscription
@@ -116,11 +116,11 @@ define(
                 expect(updater.getLineBuffers().length).toEqual(3);
             });
 
-            it("accepts historical telemetry updates", function () {
-                var mockObject = mockSubscription.getTelemetryObjects()[0];
+            it("accepts historical telemetry updates", () => {
+                let mockObject = mockSubscription.getTelemetryObjects()[0];
 
                 mockSeries.getPointCount.andReturn(3);
-                mockSeries.getDomainValue.andCallFake(function (i) {
+                mockSeries.getDomainValue.andCallFake((i) => {
                     return 1000 + i * 1000;
                 });
                 mockSeries.getRangeValue.andReturn(10);
@@ -133,18 +133,18 @@ define(
                 expect(updater.getLineBuffers()[0].getLength()).toEqual(4);
             });
 
-            it("clears the domain offset if no objects are present", function () {
+            it("clears the domain offset if no objects are present", () => {
                 mockSubscription.getTelemetryObjects.andReturn([]);
                 updater.update();
                 expect(updater.getDomainOffset()).toBeUndefined();
             });
 
-            it("handles empty historical telemetry updates", function () {
+            it("handles empty historical telemetry updates", () => {
                 // General robustness check for when a series is empty
-                var mockObject = mockSubscription.getTelemetryObjects()[0];
+                let mockObject = mockSubscription.getTelemetryObjects()[0];
 
                 mockSeries.getPointCount.andReturn(0);
-                mockSeries.getDomainValue.andCallFake(function (i) {
+                mockSeries.getDomainValue.andCallFake( (i) => {
                     return 1000 + i * 1000;
                 });
                 mockSeries.getRangeValue.andReturn(10);
@@ -157,8 +157,8 @@ define(
                 expect(updater.getLineBuffers()[0].getLength()).toEqual(1);
             });
 
-            it("can initialize domain offset from historical telemetry", function () {
-                var tmp = mockSubscription.getTelemetryObjects();
+            it("can initialize domain offset from historical telemetry", () => {
+                let tmp = mockSubscription.getTelemetryObjects();
 
                 mockSubscription.getTelemetryObjects.andReturn([]);
 
@@ -172,7 +172,7 @@ define(
                 // Restore subscription, provide some historical data
                 mockSubscription.getTelemetryObjects.andReturn(tmp);
                 mockSeries.getPointCount.andReturn(3);
-                mockSeries.getDomainValue.andCallFake(function (i) {
+                mockSeries.getDomainValue.andCallFake((i) => {
                     return 1000 + i * 1000;
                 });
                 mockSeries.getRangeValue.andReturn(10);
@@ -185,14 +185,14 @@ define(
                 expect(updater.getDomainOffset()).toBeDefined();
             });
 
-            it("provides some margin for the range", function () {
-                var mockObject = mockSubscription.getTelemetryObjects()[0];
+            it("provides some margin for the range", () => {
+                let mockObject = mockSubscription.getTelemetryObjects()[0];
 
                 mockSeries.getPointCount.andReturn(3);
-                mockSeries.getDomainValue.andCallFake(function (i) {
+                mockSeries.getDomainValue.andCallFake((i) => {
                     return 1000 + i * 1000;
                 });
-                mockSeries.getRangeValue.andCallFake(function (i) {
+                mockSeries.getRangeValue.andCallFake( (i) => {
                     return 10 + i; // 10, 20, 30
                 });
                 updater.addHistorical(mockObject, mockSeries);
@@ -200,8 +200,8 @@ define(
                 expect(updater.getDimensions()[1]).toBeGreaterThan(20);
             });
 
-            describe("when no data is initially available", function () {
-                beforeEach(function () {
+            describe("when no data is initially available", () => {
+                beforeEach(() => {
                     testDomainValues = {};
                     testRangeValues = {};
                     updater = new PlotUpdater(
@@ -212,16 +212,16 @@ define(
                     );
                 });
 
-                it("has no line data", function () {
+                it("has no line data", () => {
                     // Either no lines, or empty lines are fine
-                    expect(updater.getLineBuffers().map(function (lineBuffer) {
+                    expect(updater.getLineBuffers().map((lineBuffer) => {
                         return lineBuffer.getLength();
-                    }).reduce(function (a, b) {
+                    }).reduce((a, b) => {
                         return a + b;
                     }, 0)).toEqual(0);
                 });
 
-                it("determines initial domain bounds from first available data", function () {
+                it("determines initial domain bounds from first available data", () => {
                     testDomainValues.a = 123;
                     testRangeValues.a = 456;
                     updater.update();

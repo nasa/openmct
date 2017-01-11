@@ -20,17 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-], function (
-) {
+define([], () => {
 
-    function RootObjectProvider(rootRegistry) {
+    class RootObjectProvider {
+      constructor(rootRegistry) {
         this.rootRegistry = rootRegistry;
     }
 
-    RootObjectProvider.prototype.get = function () {
+    get() {
         return this.rootRegistry.getRoots()
-            .then(function (roots) {
+            .then( (roots) => {
                 return {
                     identifier: {
                         key: "ROOT",
@@ -41,7 +40,7 @@ define([
                     composition: roots
                 };
             });
-    };
-
-    return RootObjectProvider;
+    }
+}
+return RootObjectProvider;
 });

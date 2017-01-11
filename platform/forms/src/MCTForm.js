@@ -27,7 +27,7 @@
  */
 define(
     ["./controllers/FormController", "text!../res/templates/form.html"],
-    function (FormController, formTemplate) {
+    (FormController, formTemplate) => {
 
         /**
          * The mct-form directive allows generation of displayable
@@ -49,7 +49,7 @@ define(
          * @memberof platform/forms
          * @constructor
          */
-        function MCTForm() {
+        const MCTForm = () => {
             return {
                 // Only show at the element level
                 restrict: "E",

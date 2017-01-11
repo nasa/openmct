@@ -22,10 +22,10 @@
 
 define(
     ['../../src/capabilities/UtilizationCapability'],
-    function (UtilizationCapability) {
+    (UtilizationCapability) => {
 
-        describe("A Timeline's utilization capability", function () {
-            var mockQ,
+        describe("A Timeline's utilization capability", () => {
+            let mockQ,
                 mockDomainObject,
                 testModel,
                 testCapabilities,
@@ -34,53 +34,53 @@ define(
                 mockCallback,
                 capability;
 
-            function asPromise(v) {
+            const asPromise = (v) => {
                 return (v || {}).then ? v : {
-                    then: function (callback) {
+                    then: (callback) => {
                         return asPromise(callback(v));
                     },
                     testValue: v
                 };
             }
 
-            function allPromises(promises) {
-                return asPromise(promises.map(function (p) {
+            const allPromises = (promises) => {
+                return asPromise(promises.map( (p) => {
                     return (p || {}).then ? p.testValue : p;
                 }));
             }
 
             // Utility function for making domain objects with utilization
             // and/or cost capabilities
-            function fakeDomainObject(resources, start, end, costs) {
+            const fakeDomainObject = (resources, start, end, costs) => {
                 return {
-                    getCapability: function (c) {
+                    getCapability: (c) => {
                         return ((c === 'utilization') && {
                             // Utilization capability
-                            resources: function () {
+                            resources: () => {
                                 return asPromise(resources);
                             },
-                            invoke: function () {
-                                return asPromise(resources.map(function (k) {
+                            invoke: () => {
+                                return asPromise(resources.map( (k) => {
                                     return { key: k, start: start, end: end };
                                 }));
                             }
                         }) || ((c === 'cost') && {
                             // Cost capability
-                            resources: function () {
+                            resources: () => {
                                 return Object.keys(costs).sort();
                             },
-                            cost: function (k) {
+                            cost: (k) => {
                                 return costs[k];
                             }
                         });
                     },
-                    useCapability: function (c) {
+                    useCapability: (c) => {
                         return this.getCapability(c).invoke();
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockQ = jasmine.createSpyObj('$q', ['when', 'all']);
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
@@ -111,10 +111,10 @@ define(
                 mockQ.when.andCallFake(asPromise);
                 mockQ.all.andCallFake(allPromises);
                 mockDomainObject.getModel.andReturn(testModel);
-                mockDomainObject.getCapability.andCallFake(function (c) {
+                mockDomainObject.getCapability.andCallFake( (c) => {
                     return testCapabilities[c];
                 });
-                mockDomainObject.useCapability.andCallFake(function (c) {
+                mockDomainObject.useCapability.andCallFake( (c) => {
                     return testCapabilities[c] && testCapabilities[c].invoke();
                 });
 
@@ -124,24 +124,24 @@ define(
                 );
             });
 
-            it("is applicable to timelines", function () {
+            it("is applicable to timelines", () => {
                 expect(UtilizationCapability.appliesTo({
                     type: "timeline"
                 })).toBeTruthy();
             });
 
-            it("is applicable to activities", function () {
+            it("is applicable to activities", () => {
                 expect(UtilizationCapability.appliesTo(testModel))
                     .toBeTruthy();
             });
 
-            it("is not applicable to other objects", function () {
+            it("is not applicable to other objects", () => {
                 expect(UtilizationCapability.appliesTo({
                     type: "something"
                 })).toBeFalsy();
             });
 
-            it("accumulates resources from composition", function () {
+            it("accumulates resources from composition", () => {
                 mockComposition.invoke.andReturn(asPromise([
                     fakeDomainObject(['abc', 'def']),
                     fakeDomainObject(['def', 'xyz']),
@@ -154,7 +154,7 @@ define(
                     .toHaveBeenCalledWith(['abc', 'def', 'xyz']);
             });
 
-            it("accumulates utilizations from composition", function () {
+            it("accumulates utilizations from composition", () => {
                 mockComposition.invoke.andReturn(asPromise([
                     fakeDomainObject(['abc', 'def'], 10, 100),
                     fakeDomainObject(['def', 'xyz'], 50, 90)
@@ -170,8 +170,8 @@ define(
                 ]);
             });
 
-            it("provides intrinsic utilization from related objects", function () {
-                var mockTimespan = jasmine.createSpyObj(
+            it("provides intrinsic utilization from related objects", () => {
+                let mockTimespan = jasmine.createSpyObj(
                         'timespan',
                         ['getStart', 'getEnd', 'getEpoch']
                     ),
@@ -198,7 +198,7 @@ define(
                 ]);
             });
 
-            it("provides resource keys from related objects", function () {
+            it("provides resource keys from related objects", () => {
                 mockComposition.invoke.andReturn(asPromise([]));
                 mockRelationship.getRelatedObjects.andReturn(asPromise([
                     fakeDomainObject([], 0, 0, { abc: 5, xyz: 15 })

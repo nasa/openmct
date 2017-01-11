@@ -22,13 +22,13 @@
 
 define(
     ['../src/LicenseController'],
-    function (LicenseController) {
+    (LicenseController) => {
 
-        describe("The License controller", function () {
-            var testLicenses,
+        describe("The License controller", () => {
+            let testLicenses,
                 controller;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 testLicenses = [
                     { name: "A" },
                     { name: "B" },
@@ -37,7 +37,7 @@ define(
                 controller = new LicenseController(testLicenses);
             });
 
-            it("exposes license information", function () {
+            it("exposes license information", () => {
                 // LicenseController is just there to pass licenses[]
                 // extensions down to the template.
                 expect(controller.licenses()).toEqual(testLicenses);

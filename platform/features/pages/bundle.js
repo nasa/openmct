@@ -24,11 +24,11 @@ define([
     "./src/EmbeddedPageController",
     "text!./res/iframe.html",
     'legacyRegistry'
-], function (
+], (
     EmbeddedPageController,
     iframeTemplate,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/features/pages", {
         "extensions": {

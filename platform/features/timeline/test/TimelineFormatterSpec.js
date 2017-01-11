@@ -22,37 +22,37 @@
 
 define(
     ['../src/TimelineFormatter'],
-    function (TimelineFormatter) {
+    (TimelineFormatter) => {
 
-        var SECOND = 1000,
+        let SECOND = 1000,
             MINUTE = SECOND * 60,
             HOUR = MINUTE * 60,
             DAY = HOUR * 24;
 
-        describe("The timeline formatter", function () {
-            var formatter;
+        describe("The timeline formatter", () => {
+            let formatter;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 formatter = new TimelineFormatter();
             });
 
-            it("formats durations with seconds", function () {
+            it("formats durations with seconds", () => {
                 expect(formatter.format(SECOND)).toEqual("000 00:00:01.000");
             });
 
-            it("formats durations with milliseconds", function () {
+            it("formats durations with milliseconds", () => {
                 expect(formatter.format(SECOND + 42)).toEqual("000 00:00:01.042");
             });
 
-            it("formats durations with days", function () {
+            it("formats durations with days", () => {
                 expect(formatter.format(3 * DAY + SECOND)).toEqual("003 00:00:01.000");
             });
 
-            it("formats durations with hours", function () {
+            it("formats durations with hours", () => {
                 expect(formatter.format(DAY + HOUR * 11 + SECOND)).toEqual("001 11:00:01.000");
             });
 
-            it("formats durations with minutes", function () {
+            it("formats durations with minutes", () => {
                 expect(formatter.format(HOUR + MINUTE * 21)).toEqual("000 01:21:00.000");
             });
         });

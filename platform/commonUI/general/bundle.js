@@ -69,7 +69,7 @@ define([
     "text!./res/templates/controls/datetime-picker.html",
     "text!./res/templates/controls/datetime-field.html",
     'legacyRegistry'
-], function (
+], (
     UrlService,
     PopupService,
     SplashScreenManager,
@@ -118,7 +118,7 @@ define([
     datetimePickerTemplate,
     datetimeFieldTemplate,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/commonUI/general", {
         "name": "General UI elements",

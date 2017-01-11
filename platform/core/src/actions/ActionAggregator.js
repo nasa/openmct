@@ -20,8 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+define(() => {
 
         /**
          * Actions are reusable processes/behaviors performed by users within
@@ -105,20 +104,21 @@ define(
          * @param {ActionService[]} actionProviders an array
          *        of action services
          */
-        function ActionAggregator(actionProviders) {
+        class ActionAggregator {
+          constructor(actionProviders) {
             this.actionProviders = actionProviders;
         }
 
-        ActionAggregator.prototype.getActions = function (context) {
+        getActions(context) {
             // Get all actions from all providers, reduce down
             // to one array by concatenation
-            return this.actionProviders.map(function (provider) {
+            return this.actionProviders.map( (provider) => {
                 return provider.getActions(context);
             }).reduce(function (a, b) {
                 return a.concat(b);
             }, []);
         };
-
+      }
         return ActionAggregator;
     }
 );

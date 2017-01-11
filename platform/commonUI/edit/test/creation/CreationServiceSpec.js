@@ -25,10 +25,10 @@
  */
 define(
     ["../../src/creation/CreationService"],
-    function (CreationService) {
+    (CreationService) => {
 
-        describe("The creation service", function () {
-            var mockQ,
+        describe("The creation service", () => {
+            let mockQ,
                 mockLog,
                 mockParentObject,
                 mockNewObject,
@@ -41,23 +41,23 @@ define(
                 mockNewPersistenceCapability,
                 creationService;
 
-            function mockPromise(value) {
+            const mockPromise = (value) => {
                 return (value && value.then) ? value : {
-                    then: function (callback) {
+                    then: (callback) => {
                         return mockPromise(callback(value));
                     }
                 };
             }
 
-            function mockReject(value) {
+            const mockReject = (value) => {
                 return {
-                    then: function (callback, error) {
+                    then: (callback, error) => {
                         return mockPromise(error(value));
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockQ = { when: mockPromise, reject: mockReject };
                 mockLog = jasmine.createSpyObj(
                     "$log",
@@ -103,16 +103,16 @@ define(
                     ["persist", "getSpace"]
                 );
 
-                mockParentObject.getCapability.andCallFake(function (key) {
+                mockParentObject.getCapability.andCallFake( (key) => {
                     return mockCapabilities[key];
                 });
-                mockParentObject.useCapability.andCallFake(function (key, value) {
+                mockParentObject.useCapability.andCallFake( (key, value) => {
                     return mockCapabilities[key].invoke(value);
                 });
                 mockParentObject.getId.andReturn('parentId');
 
                 mockNewObject.getId.andReturn('newId');
-                mockNewObject.getCapability.andCallFake(function (c) {
+                mockNewObject.getCapability.andCallFake( (c) => {
                     return c === 'persistence' ?
                             mockNewPersistenceCapability : undefined;
                 });
@@ -129,7 +129,7 @@ define(
                 );
                 mockCompositionCapability.add.andReturn(mockPromise(true));
                 mockCreationCapability.instantiate.andReturn(mockNewObject);
-                mockCreationCapability.invoke.andCallFake(function (model) {
+                mockCreationCapability.invoke.andCallFake( (model) => {
                     return mockCreationCapability.instantiate(model);
                 });
 
@@ -139,15 +139,15 @@ define(
                 );
             });
 
-            it("allows new objects to be created", function () {
+            it("allows new objects to be created", () => {
                 var model = { someKey: "some value" };
                 creationService.createObject(model, mockParentObject);
                 expect(mockCreationCapability.instantiate)
                     .toHaveBeenCalledWith(model);
             });
 
-            it("adds new objects to the parent's composition", function () {
-                var model = { someKey: "some value" };
+            it("adds new objects to the parent's composition", () => {
+                let model = { someKey: "some value" };
                 creationService.createObject(model, mockParentObject);
 
                 // Verify that a new ID was added
@@ -155,7 +155,7 @@ define(
                     .toHaveBeenCalledWith(mockNewObject);
             });
 
-            it("provides the newly-created object", function () {
+            it("provides the newly-created object", () => {
                 var mockDomainObject = jasmine.createSpyObj(
                         'newDomainObject',
                         ['getId', 'getModel', 'getCapability']
@@ -163,7 +163,7 @@ define(
                     mockCallback = jasmine.createSpy('callback');
 
                 // Act as if the object had been created
-                mockCompositionCapability.add.andCallFake(function (id) {
+                mockCompositionCapability.add.andCallFake( (id) => {
                     mockDomainObject.getId.andReturn(id);
                     mockCompositionCapability.invoke
                         .andReturn(mockPromise([mockDomainObject]));

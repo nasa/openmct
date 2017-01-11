@@ -22,7 +22,7 @@
 
 define(
     ['./AbstractComposeAction'],
-    function (AbstractComposeAction) {
+    (AbstractComposeAction) => {
 
         /**
          * The CopyAction is available from context menus and allows a user to
@@ -32,15 +32,17 @@ define(
          * @constructor
          * @memberof platform/entanglement
          */
-        function CopyAction(
-            $log,
-            policyService,
-            locationService,
-            copyService,
-            dialogService,
-            notificationService,
-            context
-        ) {
+        class CopyAction extends AbstractComposeAction {
+          constructor(
+              $log,
+              policyService,
+              locationService,
+              copyService,
+              dialogService,
+              notificationService,
+              context
+          ) {
+            super();
             this.dialog = undefined;
             this.notification = undefined;
             this.dialogService = dialogService;
@@ -58,8 +60,6 @@ define(
             );
         }
 
-        CopyAction.prototype = Object.create(AbstractComposeAction.prototype);
-
         /**
          * Updates user about progress of copy. Should not be invoked by
          * client code under any circumstances.
@@ -69,7 +69,7 @@ define(
          * @param totalObjects
          * @param processed
          */
-        CopyAction.prototype.progress = function (phase, totalObjects, processed) {
+        progress(phase, totalObjects, processed) {
             /*
              Copy has two distinct phases. In the first phase a copy plan is
              made in memory. During this phase of execution, the user is
@@ -108,16 +108,15 @@ define(
          * the AbstractComposeAction, but extends it to support notification
          * updates of progress on copy.
          */
-        CopyAction.prototype.perform = function () {
-            var self = this;
+        perform() {
 
-            function success() {
-                self.notification.dismiss();
-                self.notificationService.info("Copying complete.");
+            const success = () => {
+                this.notification.dismiss();
+                this.notificationService.info("Copying complete.");
             }
 
-            function error(errorDetails) {
-                var errorDialog,
+            const error = (errorDetails) => {
+                let errorDialog,
                     errorMessage = {
                     title: "Error copying objects.",
                     severity: "error",
@@ -125,33 +124,34 @@ define(
                     minimized: true, // want the notification to be minimized initially (don't show banner)
                     options: [{
                         label: "OK",
-                        callback: function () {
+                        callback: () => {
                             errorDialog.dismiss();
                         }
                     }]
                 };
 
-                self.dialog.dismiss();
-                if (self.notification) {
-                    self.notification.dismiss(); // Clear the progress notification
+                this.dialog.dismiss();
+                if (this.notification) {
+                    this.notification.dismiss(); // Clear the progress notification
                 }
-                self.$log.error("Error copying objects. ", errorDetails);
+                this.$log.error("Error copying objects. ", errorDetails);
                 //Show a minimized notification of error for posterity
-                self.notificationService.notify(errorMessage);
+                this.notificationService.notify(errorMessage);
                 //Display a blocking message
-                errorDialog = self.dialogService.showBlockingMessage(errorMessage);
+                errorDialog = this.dialogService.showBlockingMessage(errorMessage);
 
             }
-            function notification(details) {
-                self.progress(details.phase, details.totalObjects, details.processed);
+            const notification = (details) => {
+                this.progress(details.phase, details.totalObjects, details.processed);
             }
 
-            return AbstractComposeAction.prototype.perform.call(this)
+            return AbstractComposeAction.perform.call(this)
                 .then(success, error, notification);
         };
-
-        CopyAction.appliesTo = AbstractComposeAction.appliesTo;
-
+        appliesTo() {
+          return AbstractComposeAction.appliesTo
+        }
+      }
         return CopyAction;
     }
 );

@@ -22,7 +22,7 @@
 
 define(
     ['moment'],
-    function (moment) {
+    (moment) => {
 
         /**
          * Controller for views of a Clock domain object.
@@ -33,31 +33,31 @@ define(
          * @param {platform/features/clock.TickerService} tickerService
          *        a service used to align behavior with clock ticks
          */
-        function ClockController($scope, tickerService) {
-            var lastTimestamp,
+        class ClockController {
+          constructor($scope, tickerService) {
+            let lastTimestamp,
                 unlisten,
-                timeFormat,
-                self = this;
+                timeFormat
 
-            function update() {
-                var m = moment.utc(lastTimestamp);
-                self.textValue = timeFormat && m.format(timeFormat);
-                self.ampmValue = m.format("A"); // Just the AM or PM part
+            const update = () => {
+                let m = moment.utc(lastTimestamp);
+                this.textValue = timeFormat && m.format(timeFormat);
+                this.ampmValue = m.format("A"); // Just the AM or PM part
             }
 
-            function tick(timestamp) {
+            const tick = (timestamp) => {
                 lastTimestamp = timestamp;
                 update();
             }
 
-            function updateFormat(clockFormat) {
-                var baseFormat;
+            const updateFormat = (clockFormat) => {
+                let baseFormat;
 
                 if (clockFormat !== undefined) {
                     baseFormat = clockFormat[0];
 
-                    self.use24 = clockFormat[1] === 'clock24';
-                    timeFormat = self.use24 ?
+                    this.use24 = clockFormat[1] === 'clock24';
+                    timeFormat = this.use24 ?
                             baseFormat.replace('hh', "HH") : baseFormat;
 
                     update();
@@ -75,7 +75,7 @@ define(
          * Get the clock's time zone, as displayable text.
          * @returns {string}
          */
-        ClockController.prototype.zone = function () {
+        zone() {
             return "UTC";
         };
 
@@ -83,7 +83,7 @@ define(
          * Get the current time, as displayable text.
          * @returns {string}
          */
-        ClockController.prototype.text = function () {
+        text() {
             return this.textValue;
         };
 
@@ -91,10 +91,10 @@ define(
          * Get the text to display to qualify a time as AM or PM.
          * @returns {string}
          */
-        ClockController.prototype.ampm = function () {
+        ampm() {
             return this.use24 ? '' : this.ampmValue;
         };
-
+      }
         return ClockController;
     }
 );

@@ -23,15 +23,15 @@
 
 define(
     ['../../src/controllers/TimelineZoomController'],
-    function (TimelineZoomController) {
+    (TimelineZoomController) => {
 
-        describe("The timeline zoom state controller", function () {
-            var testConfiguration,
+        describe("The timeline zoom state controller", () => {
+            let testConfiguration,
                 mockScope,
                 mockWindow,
                 controller;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testConfiguration = {
                     levels: [1000, 2000, 3500],
                     width: 12321
@@ -50,35 +50,35 @@ define(
                 );
             });
 
-            it("starts off at a middle zoom level", function () {
+            it("starts off at a middle zoom level", () => {
                 expect(controller.zoom()).toEqual(2000);
             });
 
-            it("handles time-to-pixel conversions", function () {
-                var zoomLevel = controller.zoom();
+            it("handles time-to-pixel conversions", () => {
+                let zoomLevel = controller.zoom();
                 expect(controller.toPixels(zoomLevel)).toEqual(12321);
                 expect(controller.toPixels(zoomLevel * 2)).toEqual(24642);
             });
 
-            it("handles pixel-to-time conversions", function () {
-                var zoomLevel = controller.zoom();
+            it("handles pixel-to-time conversions", () => {
+                let zoomLevel = controller.zoom();
                 expect(controller.toMillis(12321)).toEqual(zoomLevel);
                 expect(controller.toMillis(24642)).toEqual(zoomLevel * 2);
             });
 
-            it("allows zoom to be changed", function () {
+            it("allows zoom to be changed", () => {
                 controller.zoom(1);
                 expect(controller.zoom()).toEqual(3500);
             });
 
-            describe("when watches have fired", function () {
-                var mockDomainObject,
+            describe("when watches have fired", () => {
+                let mockDomainObject,
                     mockPromise,
                     mockTimespan,
                     testStart,
                     testEnd;
 
-                beforeEach(function () {
+                beforeEach(() => {
                     testStart = 3000;
                     testEnd = 5500;
 
@@ -95,10 +95,10 @@ define(
                         'getDuration'
                     ]);
 
-                    mockDomainObject.useCapability.andCallFake(function (c) {
+                    mockDomainObject.useCapability.andCallFake( (c) => {
                         return c === 'timespan' && mockPromise;
                     });
-                    mockPromise.then.andCallFake(function (callback) {
+                    mockPromise.then.andCallFake( (callback) => {
                         callback(mockTimespan);
                     });
                     mockTimespan.getStart.andReturn(testStart);
@@ -108,17 +108,17 @@ define(
                     mockScope.scroll = { x: 0, width: 20000 };
                     mockScope.domainObject = mockDomainObject;
 
-                    mockScope.$watch.calls.forEach(function (call) {
+                    mockScope.$watch.calls.forEach( (call) => {
                         call.args[1](mockScope[call.args[0]]);
                     });
 
-                    mockWindow.requestAnimationFrame.calls.forEach(function (call) {
+                    mockWindow.requestAnimationFrame.calls.forEach( (call) => {
                         call.args[0]();
                     });
                 });
 
-                it("zooms to fit the timeline", function () {
-                    var x1 = mockScope.scroll.x,
+                it("zooms to fit the timeline", () => {
+                    let x1 = mockScope.scroll.x,
                         x2 = mockScope.scroll.x + mockScope.scroll.width;
                     expect(Math.round(controller.toMillis(x1)))
                         .toEqual(testStart);
@@ -126,22 +126,22 @@ define(
                         .toBeGreaterThan(testEnd);
                 });
 
-                it("provides a width which is not less than scroll area width", function () {
-                    var testPixel = mockScope.scroll.width / 4,
+                it("provides a width which is not less than scroll area width", () => {
+                    let testPixel = mockScope.scroll.width / 4,
                         testMillis = controller.toMillis(testPixel);
                     expect(controller.width(testMillis))
                         .not.toBeLessThan(mockScope.scroll.width);
                 });
 
-                it("provides a width with some margin past timestamp", function () {
-                    var testPixel = mockScope.scroll.width * 4,
+                it("provides a width with some margin past timestamp", () => {
+                    let testPixel = mockScope.scroll.width * 4,
                         testMillis = controller.toMillis(testPixel);
                     expect(controller.width(testMillis))
                         .toBeGreaterThan(controller.toPixels(testMillis));
                 });
 
-                it("provides a width which does not greatly exceed timestamp", function () {
-                    var testPixel = mockScope.scroll.width * 4,
+                it("provides a width which does not greatly exceed timestamp", () => {
+                    let testPixel = mockScope.scroll.width * 4,
                         testMillis = controller.toMillis(testPixel);
                     expect(controller.width(testMillis))
                         .toBeLessThan(controller.toPixels(testMillis * 2));

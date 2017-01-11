@@ -22,7 +22,7 @@
 
 define(
     ['../../TimelineConstants'],
-    function (Constants) {
+    (Constants) => {
 
         /**
          * Handle for moving (by drag) a timeline or
@@ -34,12 +34,12 @@ define(
          * @param {TimelineSnapHandler} snapHandler the handler which
          *        provides candidate snap-to locations.
          */
-        function TimelineMoveHandle(id, dragHandler, snapHandler) {
-            var initialStart,
+        const TimelineMoveHandle = (id, dragHandler, snapHandler) => {
+            let initialStart,
                 initialEnd;
 
             // Get the snap-to location for a timestamp
-            function snap(timestamp, zoom) {
+            const snap = (timestamp, zoom) => {
                 return snapHandler.snap(
                     timestamp,
                     zoom.toMillis(Constants.SNAP_WIDTH),
@@ -49,8 +49,8 @@ define(
 
             // Convert a pixel delta to a millisecond delta that will align
             // with some useful snap location
-            function snapDelta(delta, zoom) {
-                var timeDelta = zoom.toMillis(delta),
+            const snapDelta = (delta, zoom) => {
+                let timeDelta = zoom.toMillis(delta),
                     desiredStart = initialStart + timeDelta,
                     desiredEnd = initialEnd + timeDelta,
                     snappedStart = snap(desiredStart, zoom),
@@ -82,7 +82,7 @@ define(
                 /**
                  * Start dragging this handle.
                  */
-                begin: function () {
+                begin: () => {
                     // Cache the initial state
                     initialStart = dragHandler.start(id);
                     initialEnd = dragHandler.end(id);
@@ -92,7 +92,7 @@ define(
                  * @param {number} delta pixel delta from start
                  * @param {TimelineZoomController} zoom provider of zoom state
                  */
-                drag: function (delta, zoom) {
+                drag: (delta, zoom) => {
                     if (initialStart !== undefined && initialEnd !== undefined) {
                         if (delta !== 0) {
                             dragHandler.move(id, snapDelta(delta, zoom));
@@ -102,7 +102,7 @@ define(
                 /**
                  * Finish dragging this handle.
                  */
-                finish: function () {
+                finish: () => {
                     // Clear initial state
                     initialStart = undefined;
                     initialEnd = undefined;
@@ -115,7 +115,7 @@ define(
                  * @param {TimelineZoomController} zoom provider of zoom state
                  */
 
-                style: function (zoom) {
+                style: (zoom) => {
                     return {
                         left: (zoom.toPixels(dragHandler.start(id)) +
                             Constants.HANDLE_WIDTH) + 'px',

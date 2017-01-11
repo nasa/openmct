@@ -31,7 +31,7 @@ define([
     "text!./res/templates/rt-table.html",
     "text!./res/templates/historical-table.html",
     "legacyRegistry"
-], function (
+], (
     MCTTable,
     RealtimeTableController,
     HistoricalTableController,
@@ -42,14 +42,14 @@ define([
     rtTableTemplate,
     historicalTableTemplate,
     legacyRegistry
-) {
+) => {
     /**
      * Two region parts are defined here. One that appears only in browse
      * mode, and one that appears only in edit mode. For not they both point
      * to the same representation, but a different key could be used here to
      * include a customized representation for edit mode.
      */
-    var tableInspector = new InspectorRegion(),
+    let tableInspector = new InspectorRegion(),
         tableOptionsEditRegion = new Region({
             name: "table-options",
             title: "Table Options",

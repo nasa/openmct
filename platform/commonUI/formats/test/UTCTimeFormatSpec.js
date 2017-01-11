@@ -22,35 +22,35 @@
 
 define(
     ['../src/UTCTimeFormat', 'moment'],
-    function (UTCTimeFormat, moment) {
+    (UTCTimeFormat, moment) => {
 
-        describe("The UTCTimeFormat", function () {
-            var format;
+        describe("The UTCTimeFormat", () => {
+            let format;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 format = new UTCTimeFormat();
             });
 
-            it("formats UTC timestamps", function () {
-                var timestamp = 12345670000,
+            it("formats UTC timestamps", () => {
+                let timestamp = 12345670000,
                     formatted = format.format(timestamp);
                 expect(formatted).toEqual(jasmine.any(String));
                 expect(moment.utc(formatted).valueOf()).toEqual(timestamp);
             });
 
-            it("displays with millisecond precision", function () {
-                var timestamp = 12345670789,
+            it("displays with millisecond precision", () => {
+                let timestamp = 12345670789,
                     formatted = format.format(timestamp);
                 expect(moment.utc(formatted).valueOf()).toEqual(timestamp);
             });
 
-            it("validates time inputs", function () {
+            it("validates time inputs", () => {
                 expect(format.validate("1977-05-25 11:21:22")).toBe(true);
                 expect(format.validate("garbage text")).toBe(false);
             });
 
-            it("parses valid input", function () {
-                var text = "1977-05-25 11:21:22",
+            it("parses valid input", () => {
+                let text = "1977-05-25 11:21:22",
                     parsed = format.parse(text);
                 expect(parsed).toEqual(jasmine.any(Number));
                 expect(parsed).toEqual(moment.utc(text).valueOf());

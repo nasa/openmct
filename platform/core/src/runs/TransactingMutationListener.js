@@ -21,7 +21,7 @@
  *****************************************************************************/
 /*global define*/
 
-define([], function () {
+define([], () => {
 
     /**
      * Listens for mutation on domain objects and triggers persistence when
@@ -29,15 +29,15 @@ define([], function () {
      * @param {Topic} topic the `topic` service; used to listen for mutation
      * @memberof platform/core
      */
-    function TransactingMutationListener(
+    const TransactingMutationListener = (
         topic,
         transactionService,
         cacheService
-    ) {
-        var mutationTopic = topic('mutation');
-        mutationTopic.listen(function (domainObject) {
-            var persistence = domainObject.getCapability('persistence');
-            var wasActive = transactionService.isActive();
+    ) => {
+        let mutationTopic = topic('mutation');
+        mutationTopic.listen( (domainObject) => {
+            let persistence = domainObject.getCapability('persistence');
+            let wasActive = transactionService.isActive();
             cacheService.put(domainObject.getId(), domainObject.getModel());
 
             if (!wasActive) {
@@ -54,6 +54,5 @@ define([], function () {
             }
         });
     }
-
     return TransactingMutationListener;
 });

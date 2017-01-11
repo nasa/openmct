@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Policy controlling when the `edit` and/or `properties` actions
@@ -32,16 +32,17 @@ define(
          * @constructor
          * @implements {Policy.<Action, ActionContext>}
          */
-        function EditActionPolicy(policyService) {
+        class EditActionPolicy {
+          constructor(policyService) {
             this.policyService = policyService;
-        }
+          }
 
         /**
          * Get a count of views which are not flagged as non-editable.
          * @private
          */
-        EditActionPolicy.prototype.countEditableViews = function (context) {
-            var domainObject = context.domainObject,
+        countEditableViews(context) {
+            let domainObject = context.domainObject,
                 count = 0,
                 type, views;
 
@@ -54,7 +55,7 @@ define(
 
 
             // A view is editable unless explicitly flagged as not
-            (views || []).forEach(function (view) {
+            (views || []).forEach( (view) => {
                 if (view.editable === true ||
                     (view.key === 'plot' && type.getKey() === 'telemetry.panel') ||
                     (view.key === 'table' && type.getKey() === 'table') ||
@@ -65,7 +66,7 @@ define(
             });
 
             return count;
-        };
+        }
 
         /**
          * Checks whether the domain object is currently being edited. If
@@ -73,15 +74,15 @@ define(
          * @param context
          * @returns {*|boolean}
          */
-        function isEditing(context) {
-            var domainObject = (context || {}).domainObject;
+        const isEditing = (context) => {
+            let domainObject = (context || {}).domainObject;
             return domainObject &&
                 domainObject.hasCapability('editor') &&
                 domainObject.getCapability('editor').isEditContextRoot();
         }
 
-        EditActionPolicy.prototype.allow = function (action, context) {
-            var key = action.getMetadata().key,
+        allow(action, context) {
+            let key = action.getMetadata().key,
                 category = (context || {}).category;
 
             // Restrict 'edit' to cases where there are editable
@@ -96,8 +97,8 @@ define(
 
             // Like all policies, allow by default.
             return true;
-        };
-
+        }
+      }
         return EditActionPolicy;
     }
 );

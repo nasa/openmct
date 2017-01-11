@@ -25,10 +25,10 @@
  */
 define(
     ["../../src/capabilities/DelegationCapability"],
-    function (DelegationCapability) {
+    (DelegationCapability) => {
 
-        describe("The delegation capability", function () {
-            var captured,
+        describe("The delegation capability", () => {
+            let captured,
                 typeDef = {},
                 type,
                 capabilities,
@@ -36,31 +36,31 @@ define(
                 object = {},
                 delegation;
 
-            function capture(k) {
-                return function (v) {
+            const capture = (k) => {
+                return (v) => {
                     captured[k] = v;
                 };
             }
-            function TestDomainObject(caps, id) {
+            const TestDomainObject = (caps, id) => {
                 return {
-                    getId: function () {
+                    getId: () => {
                         return id;
                     },
-                    getCapability: function (name) {
+                    getCapability: (name) => {
                         return caps[name];
                     },
-                    useCapability: function (name) {
+                    useCapability: (name) => {
                         return this.getCapability(name).invoke();
                     },
-                    hasCapability: function (name) {
+                    hasCapability: (name) => {
                         return this.getCapability(name) !== undefined;
                     }
                 };
             }
 
-            function mockPromise(value) {
+            const mockPromise = (value) => {
                 return {
-                    then: function (callback) {
+                    then: (callback) => {
                         return value.then ?
                                 value : mockPromise(callback(value));
                     }
@@ -68,17 +68,17 @@ define(
             }
 
 
-            beforeEach(function () {
+            beforeEach(() => {
                 captured = {};
                 typeDef = {};
                 typeDef.delegates = ["foo"];
-                type = { getDefinition: function () {
+                type = { getDefinition: () => {
                     return typeDef;
                 } };
                 children = [];
                 capabilities = {
                     type: type,
-                    composition: { invoke: function () {
+                    composition: { invoke: () => {
                         return mockPromise(children);
                     } }
                 };
@@ -87,7 +87,7 @@ define(
                 delegation = new DelegationCapability({ when: mockPromise }, object);
             });
 
-            it("provides a list of children which expose a desired capability", function () {
+            it("provides a list of children which expose a desired capability", () => {
 
                 children = [
                     new TestDomainObject({ foo: true }, 'has-capability'),

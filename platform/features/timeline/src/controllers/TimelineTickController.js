@@ -22,9 +22,9 @@
 
 define(
     ["../TimelineFormatter"],
-    function (TimelineFormatter) {
+    (TimelineFormatter) => {
 
-        var FORMATTER = new TimelineFormatter();
+        let FORMATTER = new TimelineFormatter();
 
         /**
          * Provides labels for the tick mark area of a timeline view.
@@ -33,8 +33,8 @@ define(
          * view are provided.
          * @constructor
          */
-        function TimelineTickController() {
-            var labels = [],
+        const TimelineTickController = () => {
+            let labels = [],
                 lastFirst,
                 lastStep,
                 lastCount,
@@ -42,8 +42,8 @@ define(
                 lastEndMillis;
 
             // Actually recalculate the labels from scratch
-            function calculateLabels(first, count, step, toMillis) {
-                var result = [],
+            const calculateLabels = (first, count, step, toMillis) => {
+                let result = [],
                     current;
 
                 // Create enough labels to fill the visible area
@@ -61,10 +61,10 @@ define(
             }
 
             // Get tick labels for this pixel span (recalculating if needed)
-            function getLabels(start, width, step, toMillis) {
+            const getLabels = (start, width, step, toMillis) => {
                 // Calculate parameters for labels (first pixel position, last
                 // pixel position.) These are checked to detect changes.
-                var first = Math.floor(start / step) * step,
+                let first = Math.floor(start / step) * step,
                     last = Math.ceil((start + width) / step) * step,
                     count = ((last - first) / step) + 1,
                     startMillis = toMillis(first),

@@ -22,7 +22,7 @@
 
 define(
     ['./DeviceMatchers'],
-    function (DeviceMatchers) {
+    (DeviceMatchers) => {
 
         /**
          * Runs at application startup and adds a subset of the following
@@ -42,9 +42,9 @@ define(
          * @param $document Angular's jqLite-wrapped document element
          * @constructor
          */
-        function MobileClassifier(agentService, $document) {
-            var body = $document.find('body');
-            Object.keys(DeviceMatchers).forEach(function (key) {
+        const MobileClassifier = (agentService, $document) => {
+            let body = $document.find('body');
+            Object.keys(DeviceMatchers).forEach( (key) => {
                 if (DeviceMatchers[key](agentService)) {
                     body.addClass(key);
                 }

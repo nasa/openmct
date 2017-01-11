@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The Create Action is performed to create new instances of
@@ -44,7 +44,8 @@ define(
          * @param {ActionContext} context the context in which the
          *        action is being performed
          */
-        function CreateAction(type, parent, context) {
+        class CreateAction {
+          constructor(type, parent, context) {
             this.metadata = {
                 key: 'create',
                 cssclass: type.getCssClass(),
@@ -61,24 +62,24 @@ define(
          * Create a new object of the given type.
          * This will prompt for user input first.
          */
-        CreateAction.prototype.perform = function () {
+        perform() {
             var newModel = this.type.getInitialModel(),
                 newObject,
                 editAction,
                 editorCapability;
 
-            function closeEditor() {
+            const closeEditor = () => {
                 return editorCapability.finish();
-            }
+            };
 
-            function onSave() {
+            const onSave = () => {
                 return editorCapability.save()
                     .then(closeEditor);
-            }
+            };
 
-            function onCancel() {
+            const onCancel = () => {
                 return closeEditor();
-            }
+            };
 
             newModel.type = this.type.getKey();
             newModel.location = this.parent.getId();
@@ -94,7 +95,7 @@ define(
                 editorCapability.edit();
                 return newObject.getCapability("action").perform("save-as").then(onSave, onCancel);
             }
-        };
+        }
 
 
         /**
@@ -108,10 +109,10 @@ define(
          * Get metadata about this action.
          * @returns {CreateActionMetadata} metadata about this action
          */
-        CreateAction.prototype.getMetadata = function () {
+        getMetadata() {
             return this.metadata;
-        };
-
+        }
+      }
         return CreateAction;
     }
 );

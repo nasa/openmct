@@ -20,26 +20,26 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./UTCTimeSystem'], function (UTCTimeSystem) {
-    describe("The UTCTimeSystem class", function () {
-        var timeSystem,
+define(['./UTCTimeSystem'], (UTCTimeSystem) => {
+    describe("The UTCTimeSystem class", () => {
+        let timeSystem,
             mockTimeout;
 
-        beforeEach(function () {
+        beforeEach( () => {
             mockTimeout = jasmine.createSpy("timeout");
             timeSystem = new UTCTimeSystem(mockTimeout);
         });
 
-        it("defines at least one format", function () {
+        it("defines at least one format", () => {
             expect(timeSystem.formats().length).toBeGreaterThan(0);
         });
 
-        it("defines a tick source", function () {
-            var tickSources = timeSystem.tickSources();
+        it("defines a tick source", () => {
+            let tickSources = timeSystem.tickSources();
             expect(tickSources.length).toBeGreaterThan(0);
         });
 
-        it("defines some defaults", function () {
+        it("defines some defaults", () => {
             expect(timeSystem.defaults()).toBeDefined();
         });
     });

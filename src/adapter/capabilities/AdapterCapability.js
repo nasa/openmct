@@ -20,17 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['../../api/objects/object-utils'], function (objectUtils) {
-    function AdapterCapability(domainObject) {
+define(['../../api/objects/object-utils'], (objectUtils) => {
+    class AdapterCapability {
+      constructor(domainObject) {
         this.domainObject = domainObject;
     }
 
-    AdapterCapability.prototype.invoke = function () {
+    invoke() {
         return objectUtils.toNewFormat(
             this.domainObject.getModel(),
             this.domainObject.getId()
         );
-    };
-
-    return AdapterCapability;
+    }
+}
+return AdapterCapability;
 });

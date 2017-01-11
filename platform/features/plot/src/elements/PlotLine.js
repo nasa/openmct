@@ -22,7 +22,7 @@
 
 define(
     ['./PlotSeriesWindow'],
-    function (PlotSeriesWindow) {
+    (PlotSeriesWindow) => {
 
 
         /**
@@ -30,17 +30,18 @@ define(
          * @param {{PlotLineBuffer}} buffer the plot buffer
          * @constructor
          */
-        function PlotLine(buffer) {
+        class PlotLine {
+          constructor(buffer) {
             this.buffer = buffer;
-        }
+          }
 
         /**
          * Add a point to this plot line.
          * @param {number} domainValue the domain value
          * @param {number} rangeValue the range value
          */
-        PlotLine.prototype.addPoint = function (domainValue, rangeValue) {
-            var buffer = this.buffer,
+        addPoint(domainValue, rangeValue) {
+            let buffer = this.buffer,
                 index;
 
             // Make sure we got real/useful values here...
@@ -70,15 +71,15 @@ define(
          * @param {string} [range] the key indicating which range
          *        to use when looking up data from this series
          */
-        PlotLine.prototype.addSeries = function (series, domain, range) {
-            var buffer = this.buffer;
+        addSeries(series, domain, range) {
+            let buffer = this.buffer;
 
             // Insert a time-windowed data series into the buffer
-            function insertSeriesWindow(seriesWindow) {
-                var count = seriesWindow.getPointCount();
+            const insertSeriesWindow = (seriesWindow) => {
+                let count = seriesWindow.getPointCount();
 
-                function doInsert() {
-                    var firstTimestamp = seriesWindow.getDomainValue(0),
+                const doInsert = () => {
+                    let firstTimestamp = seriesWindow.getDomainValue(0),
                         lastTimestamp = seriesWindow.getDomainValue(count - 1),
                         startIndex = buffer.findInsertionIndex(firstTimestamp),
                         endIndex = buffer.findInsertionIndex(lastTimestamp);
@@ -112,7 +113,7 @@ define(
                 series.getPointCount()
             ));
         };
-
+      }
         return PlotLine;
     }
 );

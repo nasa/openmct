@@ -28,16 +28,16 @@ define(
         "../../src/objects/DomainObjectProvider",
         "../../src/objects/DomainObjectImpl"
     ],
-    function (DomainObjectProvider, DomainObjectImpl) {
+    (DomainObjectProvider, DomainObjectImpl) => {
 
-        describe("The domain object provider", function () {
-            var mockModelService,
+        describe("The domain object provider", () =>  {
+            let mockModelService,
                 mockInstantiate,
                 provider;
 
-            function mockPromise(value) {
+            const mockPromise = (value) => {
                 return (value && value.then) ? value : {
-                    then: function (callback) {
+                    then: (callback) => {
                         return mockPromise(callback(value));
                     },
                     // Provide a synchronous way to get a value out
@@ -46,14 +46,14 @@ define(
                 };
             }
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 mockModelService = jasmine.createSpyObj(
                     "modelService",
                     ["getModels"]
                 );
                 mockInstantiate = jasmine.createSpy("instantiate");
 
-                mockInstantiate.andCallFake(function (model, id) {
+                mockInstantiate.andCallFake( (model, id) => {
                     return new DomainObjectImpl(id, model, {});
                 });
 
@@ -63,16 +63,16 @@ define(
                 );
             });
 
-            it("requests models from the model service", function () {
-                var ids = ["a", "b", "c"];
+            it("requests models from the model service", () =>  {
+                let ids = ["a", "b", "c"];
                 mockModelService.getModels.andReturn(mockPromise({}));
                 provider.getObjects(ids);
                 expect(mockModelService.getModels).toHaveBeenCalledWith(ids);
             });
 
 
-            it("instantiates objects with provided models", function () {
-                var ids = ["a", "b", "c"],
+            it("instantiates objects with provided models", () =>  {
+                let ids = ["a", "b", "c"],
                     model = { someKey: "some value"},
                     result;
                 mockModelService.getModels.andReturn(mockPromise({ a: model }));

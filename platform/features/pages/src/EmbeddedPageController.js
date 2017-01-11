@@ -27,7 +27,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Controller for embedded web pages; serves simply as a
@@ -35,20 +35,20 @@ define(
          * @constructor
          * @memberof platform/features/pages
          */
-        function EmbeddedPageController($sce) {
+        class EmbeddedPageController {
+          constructor($sce) {
             this.$sce = $sce;
-        }
+          }
 
         /**
          * Alias of `$sce.trustAsResourceUrl`.
          * @param {string} url the URL to trust
          * @returns {string} the trusted URL
          */
-        EmbeddedPageController.prototype.trust = function (url) {
+        trust(url) {
             return this.$sce.trustAsResourceUrl(url);
         };
-
-
+      }
         return EmbeddedPageController;
     }
 

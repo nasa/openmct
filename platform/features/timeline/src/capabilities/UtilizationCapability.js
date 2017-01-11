@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Provide the resource utilization over time for a timeline
@@ -35,54 +35,54 @@ define(
          * * `epoch`: The epoch to which `start` is relative.
          * @constructor
          */
-        function UtilizationCapability($q, domainObject) {
+        const UtilizationCapability = ($q, domainObject) => {
 
             // Utility function for array reduction
-            function concatenate(a, b) {
+            const concatenate = (a, b) => {
                 return (a || []).concat(b || []);
             }
 
             // Check whether an element in an array looks unique (for below)
-            function unique(element, index, array) {
+            const unique = (element, index, array) => {
                 return (index === 0) || (array[index - 1] !== element);
             }
 
             // Utility function to ensure sorted array is all unique
-            function uniquify(array) {
+            const uniquify = (array) => {
                 return array.filter(unique);
             }
 
             // Utility function for sorting strings arrays
-            function sort(array) {
+            const sort = (array) => {
                 return array.sort();
             }
 
             // Combine into one big array
-            function flatten(arrayOfArrays) {
+            const flatten = (arrayOfArrays) => {
                 return arrayOfArrays.reduce(concatenate, []);
             }
 
             // Promise the objects contained by this timeline/activity
-            function promiseComposition() {
+            const promiseComposition = () => {
                 return $q.when(domainObject.useCapability('composition') || []);
             }
 
             // Promise all subsystem modes associated with this object
-            function promiseModes() {
-                var relationship = domainObject.getCapability('relationship'),
+            const promiseModes = () => {
+                let relationship = domainObject.getCapability('relationship'),
                     modes = relationship && relationship.getRelatedObjects('modes');
                 return $q.when(modes || []);
             }
 
             // Promise the utilization which results directly from this object
-            function promiseInternalUtilization() {
-                var utilizations = {};
+            const promiseInternalUtilization = () => {
+                let utilizations = {};
 
                 // Record the cost of a given activity mode
-                function addUtilization(mode) {
-                    var cost = mode.getCapability('cost');
+                const addUtilization = (mode) => {
+                    let cost = mode.getCapability('cost');
                     if (cost) {
-                        cost.resources().forEach(function (k) {
+                        cost.resources().forEach( (k) => {
                             utilizations[k] = utilizations[k] || 0;
                             utilizations[k] += cost.cost(k);
                         });
@@ -90,19 +90,19 @@ define(
                 }
 
                 // Record costs for these modes
-                function addUtilizations(modes) {
+                const addUtilizations = (modes) => {
                     modes.forEach(addUtilization);
                 }
 
                 // Look up start/end times for this object
-                function lookupTimespan() {
+                const lookupTimespan = () => {
                     return domainObject.useCapability('timespan');
                 }
 
                 // Provide the result
-                function giveResult(timespan) {
+                const giveResult = (timespan) => {
                     // Convert to utilization objects
-                    return Object.keys(utilizations).sort().map(function (k) {
+                    return Object.keys(utilizations).sort().map( (k) => {
                         return {
                             key: k,
                             value: utilizations[k],
@@ -120,57 +120,57 @@ define(
             }
 
             // Look up a specific object's resource utilization
-            function lookupUtilization(object) {
+            const lookupUtilization = (object) => {
                 return object.useCapability('utilization');
             }
 
             // Look up a specific object's resource utilization keys
-            function lookupUtilizationResources(object) {
-                var utilization = object.getCapability('utilization');
+            const lookupUtilizationResources = (object) => {
+                let utilization = object.getCapability('utilization');
                 return utilization && utilization.resources();
             }
 
             // Promise a consolidated list of resource utilizations
-            function mapUtilization(objects) {
+            const mapUtilization = (objects) => {
                 return $q.all(objects.map(lookupUtilization))
                     .then(flatten);
             }
 
             // Promise a consolidated list of resource utilization keys
-            function mapUtilizationResources(objects) {
+            const mapUtilizationResources = (objects) => {
                 return $q.all(objects.map(lookupUtilizationResources))
                     .then(flatten);
             }
 
             // Promise utilization associated with contained objects
-            function promiseExternalUtilization() {
+            const promiseExternalUtilization = () => {
                 // Get the composition, then consolidate their utilizations
                 return promiseComposition().then(mapUtilization);
             }
 
             // Get resource keys for this mode
-            function getModeKeys(mode) {
-                var cost = mode.getCapability('cost');
+            const getModeKeys = (mode) => {
+                let cost = mode.getCapability('cost');
                 return cost ? cost.resources() : [];
             }
 
             // Map the above (for use in below)
-            function mapModeKeys(modes) {
+            const mapModeKeys = (modes) => {
                 return modes.map(getModeKeys);
             }
 
             // Promise identifiers for resources associated with modes
-            function promiseInternalKeys() {
+            const promiseInternalKeys = () => {
                 return promiseModes().then(mapModeKeys).then(flatten);
             }
 
             // Promise identifiers for resources associated with modes
-            function promiseExternalKeys() {
+            const promiseExternalKeys = () => {
                 return promiseComposition().then(mapUtilizationResources);
             }
 
             // Promise identifiers for resources used
-            function promiseResourceKeys() {
+            const promiseResourceKeys = () => {
                 return $q.all([
                     promiseInternalKeys(),
                     promiseExternalKeys()
@@ -178,7 +178,7 @@ define(
             }
 
             // Promise all utilization
-            function promiseAllUtilization() {
+            const promiseAllUtilization = () => {
                 // Concatenate internal utilization (from activity modes)
                 // with external utilization (from subactivities)
                 return $q.all([
@@ -213,7 +213,7 @@ define(
         }
 
         // Only applies to timelines and activities
-        UtilizationCapability.appliesTo = function (model) {
+        UtilizationCapability.appliesTo = (model) => {
             return model &&
                 ((model.type === 'timeline') ||
                         (model.type === 'activity'));

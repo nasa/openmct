@@ -22,30 +22,30 @@
 
 define(
     ["../../src/controllers/DateTimePickerController", "moment"],
-    function (DateTimePickerController, moment) {
+    (DateTimePickerController, moment) => {
 
-        describe("The DateTimePickerController", function () {
-            var mockScope,
+        describe("The DateTimePickerController", () => {
+            let mockScope,
                 mockNow,
                 controller;
 
-            function fireWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
+            const fireWatch = (expr, value) => {
+                mockScope.$watch.calls.forEach( (call) => {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
                 });
             }
 
-            function fireWatchCollection(expr, value) {
-                mockScope.$watchCollection.calls.forEach(function (call) {
+            const fireWatchCollection = (expr, value) => {
+                mockScope.$watchCollection.calls.forEach( (call) => {
                     if (call.args[0] === expr) {
                         call.args[1](value);
                     }
                 });
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     ["$apply", "$watch", "$watchCollection"]
@@ -56,14 +56,14 @@ define(
                 controller = new DateTimePickerController(mockScope, mockNow);
             });
 
-            it("watches the model that was passed in", function () {
+            it("watches the model that was passed in", () => {
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "ngModel[field]",
                     jasmine.any(Function)
                 );
             });
 
-            it("updates value in model when values in scope change", function () {
+            it("updates value in model when values in scope change", () => {
                 mockScope.date = {
                     year: 1998,
                     month: 0,
@@ -79,14 +79,14 @@ define(
                     .toEqual(moment.utc("1998-01-06 12:34:56").valueOf());
             });
 
-            describe("once initialized with model state", function () {
-                var testTime = moment.utc("1998-01-06 12:34:56").valueOf();
+            describe("once initialized with model state", () => {
+                let testTime = moment.utc("1998-01-06 12:34:56").valueOf();
 
-                beforeEach(function () {
+                beforeEach( () => {
                     fireWatch("ngModel[field]", testTime);
                 });
 
-                it("exposes date/time values in scope", function () {
+                it("exposes date/time values in scope", () => {
                     expect(mockScope.date.year).toEqual(1998);
                     expect(mockScope.date.month).toEqual(0); // Months are zero-indexed
                     expect(mockScope.date.day).toEqual(6);
@@ -95,21 +95,21 @@ define(
                     expect(mockScope.time.seconds).toEqual(56);
                 });
 
-                it("provides names for time properties", function () {
-                    Object.keys(mockScope.time).forEach(function (key) {
+                it("provides names for time properties", () => {
+                    Object.keys(mockScope.time).forEach( (key) => {
                         expect(mockScope.nameFor(key))
                             .toEqual(jasmine.any(String));
                     });
                 });
 
-                it("provides options for time properties", function () {
-                    Object.keys(mockScope.time).forEach(function (key) {
+                it("provides options for time properties", () => {
+                    Object.keys(mockScope.time).forEach( (key) => {
                         expect(mockScope.optionsFor(key))
                             .toEqual(jasmine.any(Array));
                     });
                 });
 
-                it("exposes times to populate calendar as a table", function () {
+                it("exposes times to populate calendar as a table", () => {
                     // Verify that data structure is as expected by template
                     expect(mockScope.table).toEqual(jasmine.any(Array));
                     expect(mockScope.table[0]).toEqual(jasmine.any(Array));
@@ -121,11 +121,11 @@ define(
                     });
                 });
 
-                it("contains the current date in its initial table", function () {
-                    var matchingCell;
+                it("contains the current date in its initial table", () => {
+                    let matchingCell;
                     // Should be able to find the selected date
-                    mockScope.table.forEach(function (row) {
-                        row.forEach(function (cell) {
+                    mockScope.table.forEach( (row) => {
+                        row.forEach( (cell) => {
                             if (cell.dayOfYear === 6) {
                                 matchingCell = cell;
                             }
@@ -139,13 +139,13 @@ define(
                     });
                 });
 
-                it("allows the displayed month to be advanced", function () {
+                it("allows the displayed month to be advanced", () => {
                     // Around the edges of the displayed calendar we
                     // may be in previous or subsequent month, so
                     // test around the middle.
-                    var i, originalMonth = mockScope.table[2][0].month;
+                    let i, originalMonth = mockScope.table[2][0].month;
 
-                    function mod12(month) {
+                    const mod12 = (month) => {
                         return ((month % 12) + 12) % 12;
                     }
 
@@ -162,12 +162,12 @@ define(
                     }
                 });
 
-                it("allows checking if a cell is in the current month", function () {
+                it("allows checking if a cell is in the current month", () => {
                     expect(mockScope.isInCurrentMonth(mockScope.table[2][0]))
                         .toBe(true);
                 });
 
-                it("allows cells to be selected", function () {
+                it("allows cells to be selected", () => {
                     mockScope.select(mockScope.table[2][0]);
                     expect(mockScope.isSelected(mockScope.table[2][0]))
                         .toBe(true);
@@ -178,17 +178,14 @@ define(
                         .toBe(true);
                 });
 
-                it("allows cells to be compared", function () {
-                    var table = mockScope.table;
+                it("allows cells to be compared", () => {
+                    let table = mockScope.table;
                     expect(mockScope.dateEquals(table[2][0], table[2][1]))
                         .toBe(false);
                     expect(mockScope.dateEquals(table[2][1], table[2][1]))
                         .toBe(true);
                 });
-
             });
-
-
         });
     }
 );

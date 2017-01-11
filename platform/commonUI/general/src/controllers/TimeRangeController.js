@@ -20,27 +20,25 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
+define([], () => {
 
-], function () {
-
-    var TICK_SPACING_PX = 150;
+    const TICK_SPACING_PX = 150;
 
     /* format number as percent; 0.0-1.0 to "0%"-"100%" */
-    function toPercent(p) {
+    const toPercent = (p) => {
         return (100 * p) + "%";
-    }
+    };
 
-    function clamp(value, low, high) {
+    const clamp = (value, low, high) => {
         return Math.max(low, Math.min(high, value));
-    }
+    };
 
-    function copyBounds(bounds) {
+    const copyBounds = (bounds) => {
         return {
             start: bounds.start,
             end: bounds.end
         };
-    }
+    };
 
     /**
      * Controller used by the `time-controller` template.
@@ -53,7 +51,8 @@ define([
      *        format has been otherwise specified
      * @param {Function} now a function to return current system time
      */
-    function TimeRangeController($scope, $timeout, formatService, defaultFormat, now) {
+    class TimeRangeController {
+      constructor($scope, $timeout, formatService, defaultFormat, now) {
         this.$scope = $scope;
         this.formatService = formatService;
         this.defaultFormat = defaultFormat;
@@ -83,7 +82,7 @@ define([
             'validateEnd',
             'onFormStartChange',
             'onFormEndChange'
-        ].forEach(function (boundFn) {
+        ].forEach( (boundFn) => {
             this[boundFn] = this[boundFn].bind(this);
         }, this);
 
@@ -96,12 +95,12 @@ define([
         this.$scope.$watch("formModel.end", this.onFormEndChange);
     }
 
-    TimeRangeController.prototype.formatTimestamp = function (ts) {
+    formatTimestamp(ts) {
         return this.formatter.format(ts);
     };
 
-    TimeRangeController.prototype.updateTicks = function () {
-        var i, p, ts, start, end, span;
+    updateTicks() {
+        let i, p, ts, start, end, span;
         end = this.$scope.ngModel.outer.end;
         start = this.$scope.ngModel.outer.start;
         span = end - start;
@@ -111,17 +110,15 @@ define([
             ts = p * span + start;
             this.$scope.ticks.push(this.formatTimestamp(ts));
         }
-    };
+    }
 
-    TimeRangeController.prototype.updateSpanWidth = function (w) {
+    updateSpanWidth(w) {
         this.tickCount = Math.max(Math.floor(w / TICK_SPACING_PX), 2);
         this.updateTicks();
-    };
+    }
 
-    TimeRangeController.prototype.updateViewForInnerSpanFromModel = function (
-        ngModel
-    ) {
-        var span = ngModel.outer.end - ngModel.outer.start;
+    updateViewForInnerSpanFromModel(ngModel) {
+        let span = ngModel.outer.end - ngModel.outer.start;
 
         // Expose readable dates for the knobs
         this.$scope.startInnerText = this.formatTimestamp(ngModel.inner.start);
@@ -134,16 +131,16 @@ define([
             toPercent((ngModel.outer.end - ngModel.inner.end) / span);
     };
 
-    TimeRangeController.prototype.defaultBounds = function () {
-        var t = this.now();
+    defaultBounds() {
+        let t = this.now();
         return {
             start: t - 24 * 3600 * 1000, // One day
             end: t
         };
-    };
+    }
 
 
-    TimeRangeController.prototype.updateViewFromModel = function (ngModel) {
+    updateViewFromModel(ngModel) {
         ngModel = ngModel || {};
         ngModel.outer = ngModel.outer || this.defaultBounds();
         ngModel.inner = ngModel.inner || copyBounds(ngModel.outer);
@@ -153,51 +150,51 @@ define([
 
         this.updateViewForInnerSpanFromModel(ngModel);
         this.updateTicks();
-    };
+    }
 
-    TimeRangeController.prototype.startLeftDrag = function () {
+    startLeftDrag() {
         this.initialDragValue = this.$scope.ngModel.inner.start;
-    };
+    }
 
-    TimeRangeController.prototype.startRightDrag = function () {
+    startRightDrag() {
         this.initialDragValue = this.$scope.ngModel.inner.end;
-    };
+    }
 
-    TimeRangeController.prototype.startMiddleDrag = function () {
+    startMiddleDrag() {
         this.initialDragValue = {
             start: this.$scope.ngModel.inner.start,
             end: this.$scope.ngModel.inner.end
         };
-    };
+    }
 
-    TimeRangeController.prototype.toMillis = function (pixels) {
-        var span =
+    toMillis(pixels) {
+        let span =
             this.$scope.ngModel.outer.end - this.$scope.ngModel.outer.start;
         return (pixels / this.$scope.spanWidth) * span;
-    };
+    }
 
-    TimeRangeController.prototype.leftDrag = function (pixels) {
-        var delta = this.toMillis(pixels);
+    leftDrag(pixels) {
+        let delta = this.toMillis(pixels);
         this.$scope.ngModel.inner.start = clamp(
             this.initialDragValue + delta,
             this.$scope.ngModel.outer.start,
             this.$scope.ngModel.inner.end - this.innerMinimumSpan
         );
         this.updateViewFromModel(this.$scope.ngModel);
-    };
+    }
 
-    TimeRangeController.prototype.rightDrag = function (pixels) {
-        var delta = this.toMillis(pixels);
+    rightDrag(pixels) {
+        let delta = this.toMillis(pixels);
         this.$scope.ngModel.inner.end = clamp(
             this.initialDragValue + delta,
             this.$scope.ngModel.inner.start + this.innerMinimumSpan,
             this.$scope.ngModel.outer.end
         );
         this.updateViewFromModel(this.$scope.ngModel);
-    };
+    }
 
-    TimeRangeController.prototype.middleDrag = function (pixels) {
-        var delta = this.toMillis(pixels),
+    middleDrag(pixels) {
+        let delta = this.toMillis(pixels),
             edge = delta < 0 ? 'start' : 'end',
             opposite = delta < 0 ? 'end' : 'start';
 
@@ -214,17 +211,17 @@ define([
             this.initialDragValue[edge];
 
         this.updateViewFromModel(this.$scope.ngModel);
-    };
+    }
 
-    TimeRangeController.prototype.updateFormModel = function () {
+    updateFormModel() {
         this.$scope.formModel = {
             start: ((this.$scope.ngModel || {}).outer || {}).start,
             end: ((this.$scope.ngModel || {}).outer || {}).end
         };
-    };
+    }
 
-    TimeRangeController.prototype.updateOuterStart = function () {
-        var ngModel = this.$scope.ngModel;
+    updateOuterStart() {
+        let ngModel = this.$scope.ngModel;
 
         ngModel.inner.start =
             Math.max(ngModel.outer.start, ngModel.inner.start);
@@ -236,10 +233,10 @@ define([
         this.updateFormModel();
         this.updateViewForInnerSpanFromModel(ngModel);
         this.updateTicks();
-    };
+    }
 
-    TimeRangeController.prototype.updateOuterEnd = function () {
-        var ngModel = this.$scope.ngModel;
+    updateOuterEnd() {
+        let ngModel = this.$scope.ngModel;
 
         ngModel.inner.end =
             Math.min(ngModel.outer.end, ngModel.inner.end);
@@ -251,61 +248,54 @@ define([
         this.updateFormModel();
         this.updateViewForInnerSpanFromModel(ngModel);
         this.updateTicks();
-    };
+    }
 
-    TimeRangeController.prototype.updateFormat = function (key) {
+    updateFormat(key) {
         this.formatter = this.formatService.getFormat(key || this.defaultFormat);
         this.updateViewForInnerSpanFromModel(this.$scope.ngModel);
         this.updateTicks();
-    };
+    }
 
-    TimeRangeController.prototype.updateBoundsFromForm = function () {
-        var self = this;
+    updateBoundsFromForm() {
 
         //Allow Angular to trigger watches and determine whether values have changed.
-        this.$timeout(function () {
-            if (self.formStartChanged) {
-                self.$scope.ngModel.outer.start =
-                    self.$scope.ngModel.inner.start =
-                        self.$scope.formModel.start;
-                self.formStartChanged = false;
+        this.$timeout( () => {
+            if (this.formStartChanged) {
+                this.$scope.ngModel.outer.start =
+                    this.$scope.ngModel.inner.start =
+                        this.$scope.formModel.start;
+                this.formStartChanged = false;
             }
-            if (self.formEndChanged) {
-                self.$scope.ngModel.outer.end =
-                    self.$scope.ngModel.inner.end =
-                        self.$scope.formModel.end;
-                self.formEndChanged = false;
+            if (this.formEndChanged) {
+                this.$scope.ngModel.outer.end =
+                    this.$scope.ngModel.inner.end =
+                        this.$scope.formModel.end;
+                this.formEndChanged = false;
             }
         });
-    };
+    }
 
-    TimeRangeController.prototype.onFormStartChange = function (
-        newValue,
-        oldValue
-    ) {
+    onFormStartChange(newValue,oldValue) {
         if (!this.formStartChanged && newValue !== oldValue) {
             this.formStartChanged = true;
         }
-    };
+    }
 
-    TimeRangeController.prototype.onFormEndChange = function (
-        newValue,
-        oldValue
-    ) {
+    onFormEndChange(newValue,oldValue) {
         if (!this.formEndChanged && newValue !== oldValue) {
             this.formEndChanged = true;
         }
-    };
+    }
 
-    TimeRangeController.prototype.validateStart = function (startValue) {
+    validateStart(startValue) {
         return startValue <=
             this.$scope.formModel.end - this.outerMinimumSpan;
-    };
+    }
 
-    TimeRangeController.prototype.validateEnd = function (endValue) {
+    validateEnd(endValue) {
         return endValue >=
             this.$scope.formModel.start + this.outerMinimumSpan;
-    };
-
+    }
+  }
     return TimeRangeController;
 });

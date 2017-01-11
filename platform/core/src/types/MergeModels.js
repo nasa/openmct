@@ -25,8 +25,7 @@
  * models, or JSONifiable JavaScript objects generally.
  *
  */
-define(
-    function () {
+define(() => {
 
         /**
          * Utility function for merging domain object models (or any
@@ -65,21 +64,21 @@ define(
          * @constructor
          * @memberof platform/core
          */
-        function mergeModels(modelA, modelB, merger) {
-            var mergeFunction;
+        const mergeModels = (modelA, modelB, merger) => {
+            let mergeFunction;
 
-            function mergeArrays(a, b) {
+            const mergeArrays = (a, b) => {
                 return a.concat(b);
             }
 
-            function mergeObjects(a, b) {
-                var result = {};
-                Object.keys(a).forEach(function (k) {
+            const mergeObjects = (a, b) => {
+                let result = {};
+                Object.keys(a).forEach( (k) => {
                     result[k] = b.hasOwnProperty(k) ?
                             mergeModels(a[k], b[k], (merger || {})[k]) :
                             a[k];
                 });
-                Object.keys(b).forEach(function (k) {
+                Object.keys(b).forEach( (k) => {
                     // Copy any properties not already merged
                     if (!a.hasOwnProperty(k)) {
                         result[k] = b[k];
@@ -88,7 +87,7 @@ define(
                 return result;
             }
 
-            function mergeOther(a, b) {
+            const mergeOther = (a, b) => {
                 return b;
             }
 
@@ -99,7 +98,6 @@ define(
 
             return mergeFunction(modelA, modelB);
         }
-
         return mergeModels;
     }
 );

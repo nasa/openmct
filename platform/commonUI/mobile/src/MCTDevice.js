@@ -22,7 +22,7 @@
 
 define(
     ['./DeviceMatchers'],
-    function (DeviceMatchers) {
+    (DeviceMatchers) => {
 
         /**
          * The `mct-device` directive, when applied as an attribute,
@@ -50,19 +50,19 @@ define(
          * @param {AgentService} agentService used to detect device type
          *        based on information about the user agent
          */
-        function MCTDevice(agentService) {
+        const MCTDevice = (agentService) => {
 
-            function deviceMatches(tokens) {
+            const deviceMatches = (tokens) => {
                 tokens = tokens || "";
-                return tokens.split(" ").every(function (token) {
+                return tokens.split(" ").every( (token) => {
                     var fn = DeviceMatchers[token];
                     return fn && fn(agentService);
                 });
             }
 
-            function link(scope, element, attrs, ctrl, transclude) {
+            const link = (scope, element, attrs, ctrl, transclude) => {
                 if (deviceMatches(attrs.mctDevice)) {
-                    transclude(function (clone) {
+                    transclude( (clone) => {
                         element.replaceWith(clone);
                     });
                 }

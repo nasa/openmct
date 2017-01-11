@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Implements `mct-scroll-x` and `mct-scroll-y` directives. Listens
@@ -42,18 +42,18 @@ define(
          * @param {string} attribute attribute to look at for the assignable
          *        Angular expression
          */
-        function MCTScroll($parse, property, attribute) {
-            function link(scope, element, attrs) {
-                var expr = attrs[attribute],
+        const MCTScroll = ($parse, property, attribute) => {
+            const link = (scope, element, attrs) => {
+                let expr = attrs[attribute],
                     parsed = $parse(expr);
 
                 // Set the element's scroll to match the scope's state
-                function updateElement(value) {
+                const updateElement = (value) => {
                     element[0][property] = value;
                 }
 
                 // Handle event; assign to scroll state to scope
-                function updateScope() {
+                const updateScope = () => {
                     parsed.assign(scope, element[0][property]);
                     scope.$apply(expr);
                 }

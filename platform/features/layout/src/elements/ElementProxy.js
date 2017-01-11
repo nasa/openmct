@@ -22,10 +22,10 @@
 
 define(
     ['./AccessorMutator', './ResizeHandle'],
-    function (AccessorMutator, ResizeHandle) {
+    (AccessorMutator, ResizeHandle) => {
 
         // Index deltas for changes in order
-        var ORDERS = {
+        let ORDERS = {
             top: Number.POSITIVE_INFINITY,
             up: 1,
             down: -1,
@@ -33,7 +33,7 @@ define(
         };
 
         // Ensure a value is non-negative (for x/y setters)
-        function clamp(value) {
+        const clamp = (value) => {
             return Math.max(value, 0);
         }
 
@@ -53,7 +53,8 @@ define(
          * @param index the element's index within its array
          * @param {Array} elements the full array of elements
          */
-        function ElementProxy(element, index, elements) {
+        class ElementProxy {
+          constructor(element, index, elements) {
             this.resizeHandles = [new ResizeHandle(element, 1, 1)];
 
             /**
@@ -115,8 +116,8 @@ define(
          * @param {string} o where to move this element;
          *        one of "top", "up", "down", or "bottom"
          */
-        ElementProxy.prototype.order = function (o) {
-            var index = this.index,
+        order(o) {
+            let index = this.index,
                 elements = this.elements,
                 element = this.element,
                 delta = ORDERS[o] || 0,
@@ -139,8 +140,8 @@ define(
         /**
          * Remove this element from the fixed position view.
          */
-        ElementProxy.prototype.remove = function () {
-            var index = this.index;
+        remove() {
+            let index = this.index;
             if (this.elements[index] === this.element) {
                 this.elements.splice(index, 1);
             }
@@ -152,10 +153,10 @@ define(
          * @return {platform/features/layout.ElementHandle[]} handles
          *         for moving/resizing this element
          */
-        ElementProxy.prototype.handles = function () {
+        handles() {
             return this.resizeHandles;
         };
-
+      }
         return ElementProxy;
     }
 );

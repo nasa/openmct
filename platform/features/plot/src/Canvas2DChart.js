@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Create a new chart which uses Canvas's 2D API for rendering.
@@ -33,7 +33,8 @@ define(
          * @param {CanvasElement} canvas the canvas object to render upon
          * @throws {Error} an error is thrown if Canvas's 2D API is unavailable.
          */
-        function Canvas2DChart(canvas) {
+        class Canvas2DChart {
+          constructor(canvas) {
             this.canvas = canvas;
             this.c2d = canvas.getContext('2d');
             this.width = canvas.width;
@@ -47,19 +48,19 @@ define(
         }
 
         // Convert from logical to physical x coordinates
-        Canvas2DChart.prototype.x = function (v) {
+        x(v) {
             return ((v - this.origin[0]) / this.dimensions[0]) * this.width;
         };
 
         // Convert from logical to physical y coordinates
-        Canvas2DChart.prototype.y = function (v) {
+        y(v) {
             return this.height -
                 ((v - this.origin[1]) / this.dimensions[1]) * this.height;
         };
 
         // Set the color to be used for drawing operations
-        Canvas2DChart.prototype.setColor = function (color) {
-            var mappedColor = color.map(function (c, i) {
+        setColor(color) {
+            let mappedColor = color.map( (c, i) => {
                 return i < 3 ? Math.floor(c * 255) : (c);
             }).join(',');
             this.c2d.strokeStyle = "rgba(" + mappedColor + ")";
@@ -67,20 +68,20 @@ define(
         };
 
 
-        Canvas2DChart.prototype.clear = function () {
-            var canvas = this.canvas;
+        clear() {
+            let canvas = this.canvas;
             this.width = canvas.width;
             this.height = canvas.height;
             this.c2d.clearRect(0, 0, this.width, this.height);
         };
 
-        Canvas2DChart.prototype.setDimensions = function (newDimensions, newOrigin) {
+        setDimensions(newDimensions, newOrigin) {
             this.dimensions = newDimensions;
             this.origin = newOrigin;
         };
 
-        Canvas2DChart.prototype.drawLine = function (buf, color, points) {
-            var i;
+        drawLine(buf, color, points) {
+            let i;
 
             this.setColor(color);
 
@@ -102,8 +103,8 @@ define(
             this.c2d.stroke();
         };
 
-        Canvas2DChart.prototype.drawSquare = function (min, max, color) {
-            var x1 = this.x(min[0]),
+        drawSquare(min, max, color) {
+            let x1 = this.x(min[0]),
                 y1 = this.y(min[1]),
                 w = this.x(max[0]) - x1,
                 h = this.y(max[1]) - y1;
@@ -111,7 +112,7 @@ define(
             this.setColor(color);
             this.c2d.fillRect(x1, y1, w, h);
         };
-
+      }
         return Canvas2DChart;
     }
 );

@@ -22,16 +22,16 @@
 
 define(
     ["../src/LayoutDrag"],
-    function (LayoutDrag) {
+    (LayoutDrag) => {
 
-        describe("A Layout drag handler", function () {
-            var testPosition = {
+        describe("A Layout drag handler", () => {
+            let testPosition = {
                     position: [8, 11],
                     dimensions: [3, 2]
                 };
 
-            it("changes position by a supplied factor, rounding by grid size", function () {
-                var handler = new LayoutDrag(
+            it("changes position by a supplied factor, rounding by grid size", () => {
+                let handler = new LayoutDrag(
                     testPosition,
                     [1, 1],
                     [0, 0],
@@ -48,8 +48,8 @@ define(
                 });
             });
 
-            it("changes dimensions by a supplied factor, rounding by grid size", function () {
-                var handler = new LayoutDrag(
+            it("changes dimensions by a supplied factor, rounding by grid size", () => {
+                let handler = new LayoutDrag(
                     testPosition,
                     [0, 0],
                     [1, 1],
@@ -62,8 +62,8 @@ define(
                 });
             });
 
-            it("allows mixing dimension and position factors", function () {
-                var handler = new LayoutDrag(
+            it("allows mixing dimension and position factors", () => {
+                let handler = new LayoutDrag(
                     testPosition,
                     [0, 1],
                     [-1, 0],

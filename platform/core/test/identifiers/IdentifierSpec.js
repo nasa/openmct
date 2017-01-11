@@ -22,55 +22,55 @@
 
 define(
     ["../../src/identifiers/Identifier"],
-    function (Identifier) {
+    (Identifier) => {
 
-        describe("A parsed domain object identifier", function () {
-            var id,
+        describe("A parsed domain object identifier", () => {
+            let id,
                 defaultSpace,
                 identifier;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 defaultSpace = "someDefaultSpace";
             });
 
-            describe("when space is encoded", function () {
-                var idSpace, idKey;
+            describe("when space is encoded", () => {
+                let idSpace, idKey;
 
-                beforeEach(function () {
+                beforeEach(() => {
                     idSpace = "a-specific-space";
                     idKey = "a-specific-key";
                     id = idSpace + ":" + idKey;
                     identifier = new Identifier(id, defaultSpace);
                 });
 
-                it("provides the encoded space", function () {
+                it("provides the encoded space", () => {
                     expect(identifier.getSpace()).toEqual(idSpace);
                 });
 
-                it("provides the key within that space", function () {
+                it("provides the key within that space", () => {
                     expect(identifier.getKey()).toEqual(idKey);
                 });
 
-                it("provides the defined space", function () {
+                it("provides the defined space", () => {
                     expect(identifier.getDefinedSpace()).toEqual(idSpace);
                 });
             });
 
-            describe("when space is not encoded", function () {
-                beforeEach(function () {
+            describe("when space is not encoded", () => {
+                beforeEach(() => {
                     id = "a-generic-id";
                     identifier = new Identifier(id, defaultSpace);
                 });
 
-                it("provides the default space", function () {
+                it("provides the default space", () => {
                     expect(identifier.getSpace()).toEqual(defaultSpace);
                 });
 
-                it("provides the id as the key", function () {
+                it("provides the id as the key", () => {
                     expect(identifier.getKey()).toEqual(id);
                 });
 
-                it("provides no defined space", function () {
+                it("provides no defined space", () => {
                     expect(identifier.getDefinedSpace()).toEqual(undefined);
                 });
             });

@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Relationship capability. Describes a domain objects relationship
@@ -40,9 +40,10 @@ define(
          * @constructor
          * @implements {Capability}
          */
-        function RelationshipCapability($injector, domainObject) {
+        class RelationshipCapability {
+          constructor($injector, domainObject) {
             // Get a reference to the object service from $injector
-            this.injectObjectService = function () {
+            this.injectObjectService = () => {
                 this.objectService = $injector.get("objectService");
             };
 
@@ -55,8 +56,8 @@ define(
          * object.
          * @returns {string[]} a list of all relationship types
          */
-        RelationshipCapability.prototype.listRelationships = function listRelationships() {
-            var relationships =
+        listRelationships() {
+            let relationships =
                 (this.domainObject.getModel() || {}).relationships || {};
 
             // Check if this key really does expose an array of ids
@@ -76,15 +77,15 @@ define(
          * @returns {Promise.<DomainObject[]>} a promise for related
          *          domain objects
          */
-        RelationshipCapability.prototype.getRelatedObjects = function (key) {
-            var model = this.domainObject.getModel(),
+        getRelatedObjects(key) {
+            let model = this.domainObject.getModel(),
                 ids;
 
             // Package objects as an array
-            function packageObject(objects) {
-                return ids.map(function (id) {
+            const packageObject = (objects) => {
+                return ids.map( (id) => {
                     return objects[id];
-                }).filter(function (obj) {
+                }).filter( (obj) => {
                     return obj;
                 });
             }
@@ -119,10 +120,10 @@ define(
          * @param model the domain object model
          * @returns {boolean} true if this object has relationships
          */
-        RelationshipCapability.appliesTo = function (model) {
+        appliesTo(model) {
             return !!(model || {}).relationships;
         };
-
+      }
         return RelationshipCapability;
     }
 );

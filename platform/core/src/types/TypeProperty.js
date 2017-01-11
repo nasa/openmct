@@ -22,7 +22,7 @@
 
 define(
     ['./TypePropertyConversion'],
-    function (TypePropertyConversion) {
+    (TypePropertyConversion) => {
 
         /**
          * Instantiate a property associated with domain objects of a
@@ -31,7 +31,8 @@ define(
          * @memberof platform/core
          * @constructor
          */
-        function TypeProperty(propertyDefinition) {
+        class TypeProperty {
+          constructor(propertyDefinition) {
             // Load an appropriate conversion
             this.conversion = new TypePropertyConversion(
                 propertyDefinition.conversion || "identity"
@@ -41,7 +42,7 @@ define(
 
         // Check if a value is defined; used to check if initial array
         // values have been populated.
-        function isUnpopulatedArray(value) {
+        const isUnpopulatedArray = (value) => {
             var i;
 
             if (!Array.isArray(value) || value.length === 0) {
@@ -58,7 +59,7 @@ define(
         }
 
         // Specify a field deeply within an object
-        function specifyValue(object, propertyPath, value) {
+        const specifyValue = (object, propertyPath, value) => {
             // If path is not an array, just set the property
             if (!Array.isArray(propertyPath)) {
                 object[propertyPath] = value;
@@ -78,8 +79,8 @@ define(
         // Perform a lookup for a value from an object,
         // which may recursively look at contained objects
         // based on the path provided.
-        function lookupValue(object, propertyPath) {
-            var value;
+        const lookupValue = (object, propertyPath) => {
+            let value;
 
             // Can't look up from a non-object
             if (!object) {
@@ -109,8 +110,8 @@ define(
          * @param {object} model a domain object model to read from
          * @returns {*} the value for this property, as read from the model
          */
-        TypeProperty.prototype.getValue = function (model) {
-            var property = this.propertyDefinition.property ||
+        getValue(model) {
+            let property = this.propertyDefinition.property ||
                     this.propertyDefinition.key,
                 initialValue =
                     property && lookupValue(model, property);
@@ -131,8 +132,8 @@ define(
          * @param {object} model a domain object model to update
          * @param {*} value the new value to set for this property
          */
-        TypeProperty.prototype.setValue = function (model, value) {
-            var property = this.propertyDefinition.property ||
+        setValue(model, value) => {
+            let property = this.propertyDefinition.property ||
                     this.propertyDefinition.key;
 
             // If an array contains all undefined values, treat it
@@ -153,10 +154,10 @@ define(
          * Get the raw definition for this property.
          * @returns {TypePropertyDefinition}
          */
-        TypeProperty.prototype.getDefinition = function () {
+        getDefinition() {
             return this.propertyDefinition;
         };
-
+      }
         return TypeProperty;
     }
 );

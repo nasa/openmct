@@ -25,20 +25,20 @@
  */
 define(
     ["../../src/creation/CreateMenuController"],
-    function (CreateMenuController) {
+    (CreateMenuController) => {
 
-        describe("The create menu controller", function () {
-            var mockScope,
+        describe("The create menu controller", () => {
+            let mockScope,
                 mockActions,
                 controller;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockActions = jasmine.createSpyObj("action", ["getActions"]);
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 controller = new CreateMenuController(mockScope);
             });
 
-            it("watches scope that may change applicable actions", function () {
+            it("watches scope that may change applicable actions", () => {
                 // The action capability
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "action",
@@ -46,7 +46,7 @@ define(
                 );
             });
 
-            it("populates the scope with create actions", function () {
+            it("populates the scope with create actions", () => {
                 mockScope.action = mockActions;
 
                 mockActions.getActions.andReturn(["a", "b", "c"]);

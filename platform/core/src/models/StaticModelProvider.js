@@ -23,19 +23,18 @@
 /**
  * Module defining StaticModelProvider. Created by vwoeltje on 11/7/14.
  */
-define(
-    [],
-    function () {
+define([], () => {
 
         /**
          * Loads static models, provided as declared extensions of bundles.
          * @memberof platform/core
          * @constructor
          */
-        function StaticModelProvider(models, $q, $log) {
-            var modelMap = {};
+        class StaticModelProvider {
+          constructor(models, $q, $log) {
+            let modelMap = {};
 
-            function addModelToMap(model) {
+            const addModelToMap = (model) => {
                 // Skip models which don't look right
                 if (typeof model !== 'object' ||
                         typeof model.id !== 'string' ||
@@ -56,15 +55,15 @@ define(
             this.$q = $q;
         }
 
-        StaticModelProvider.prototype.getModels = function (ids) {
-            var modelMap = this.modelMap,
+        getModels(ids) {
+            let modelMap = this.modelMap,
                 result = {};
-            ids.forEach(function (id) {
+            ids.forEach( (id) => {
                 result[id] = modelMap[id];
             });
             return this.$q.when(result);
         };
-
+      }
         return StaticModelProvider;
     }
 );

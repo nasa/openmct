@@ -22,24 +22,24 @@
 
 define(
     ["../../src/elements/PlotLimitTracker"],
-    function (PlotLimitTracker) {
+    (PlotLimitTracker) => {
 
-        describe("A plot's limit tracker", function () {
-            var mockHandle,
+        describe("A plot's limit tracker", () => {
+            let mockHandle,
                 testRange,
                 mockTelemetryObjects,
                 testData,
                 tracker;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testRange = "some-range";
                 testData = {};
                 mockHandle = jasmine.createSpyObj(
                     'handle',
                     ['getTelemetryObjects', 'getDatum']
                 );
-                mockTelemetryObjects = ['a', 'b', 'c'].map(function (id, i) {
-                    var mockTelemetryObject = jasmine.createSpyObj(
+                mockTelemetryObjects = ['a', 'b', 'c'].map( (id, i) => {
+                    let mockTelemetryObject = jasmine.createSpyObj(
                             'object-' + id,
                             ['getId', 'getCapability', 'getModel']
                         ),
@@ -49,7 +49,7 @@ define(
                         );
                     testData[id] = { id: id, value: i };
                     mockTelemetryObject.getId.andReturn(id);
-                    mockTelemetryObject.getCapability.andCallFake(function (key) {
+                    mockTelemetryObject.getCapability.andCallFake( (key) => {
                         return key === 'limit' && mockLimitCapability;
                     });
                     mockLimitCapability.evaluate
@@ -57,28 +57,28 @@ define(
                     return mockTelemetryObject;
                 });
                 mockHandle.getTelemetryObjects.andReturn(mockTelemetryObjects);
-                mockHandle.getDatum.andCallFake(function (telemetryObject) {
+                mockHandle.getDatum.andCallFake( (telemetryObject) => {
                     return testData[telemetryObject.getId()];
                 });
 
                 tracker = new PlotLimitTracker(mockHandle, testRange);
             });
 
-            it("initially provides no limit state", function () {
-                mockTelemetryObjects.forEach(function (mockTelemetryObject) {
+            it("initially provides no limit state", () => {
+                mockTelemetryObjects.forEach( (mockTelemetryObject) => {
                     expect(tracker.getLegendClass(mockTelemetryObject))
                         .toBeUndefined();
                 });
             });
 
-            describe("when asked to update", function () {
-                beforeEach(function () {
+            describe("when asked to update", () => {
+                beforeEach(() => {
                     tracker.update();
                 });
 
-                it("evaluates limits using the limit capability", function () {
-                    mockTelemetryObjects.forEach(function (mockTelemetryObject) {
-                        var id = mockTelemetryObject.getId(),
+                it("evaluates limits using the limit capability", () => {
+                    mockTelemetryObjects.forEach( (mockTelemetryObject) => {
+                        let id = mockTelemetryObject.getId(),
                             mockLimit =
                                 mockTelemetryObject.getCapability('limit');
                         expect(mockLimit.evaluate)
@@ -86,9 +86,9 @@ define(
                     });
                 });
 
-                it("exposes legend classes returned by the limit capability", function () {
-                    mockTelemetryObjects.forEach(function (mockTelemetryObject) {
-                        var id = mockTelemetryObject.getId();
+                it("exposes legend classes returned by the limit capability", () => {
+                    mockTelemetryObjects.forEach( (mockTelemetryObject) => {
+                        let id = mockTelemetryObject.getId();
                         expect(tracker.getLegendClass(mockTelemetryObject))
                             .toEqual('alarm-' + id);
                     });

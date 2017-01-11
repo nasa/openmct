@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * A capability provides an interface with dealing with some
@@ -51,10 +51,10 @@ define(
          * @memberof platform/core
          * @constructor
          */
-        function CoreCapabilityProvider(capabilities, $log) {
+        const CoreCapabilityProvider = (capabilities, $log) => {
             // Filter by invoking the capability's appliesTo method
-            function filterCapabilities(model) {
-                return capabilities.filter(function (capability) {
+            const filterCapabilities = (model) => {
+                return capabilities.filter( (capability) => {
                     return capability.appliesTo ?
                             capability.appliesTo(model) :
                             true;
@@ -62,9 +62,9 @@ define(
             }
 
             // Package capabilities as key-value pairs
-            function packageCapabilities(caps) {
-                var result = {};
-                caps.forEach(function (capability) {
+            const packageCapabilities = (caps) => {
+                let result = {};
+                caps.forEach( (capability) => {
                     if (capability.key) {
                         result[capability.key] =
                             result[capability.key] || capability;
@@ -75,7 +75,7 @@ define(
                 return result;
             }
 
-            function getCapabilities(model) {
+            const getCapabilities = (model) => {
                 return packageCapabilities(filterCapabilities(model));
             }
 

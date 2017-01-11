@@ -22,7 +22,7 @@
 
 define(
     ["./SaveAction"],
-    function (SaveAction) {
+    (SaveAction) => {
 
         /**
          * The "Save and Stop Editing" action performs a [Save action]{@link SaveAction}
@@ -31,11 +31,8 @@ define(
          * @implements {Action}
          * @memberof platform/commonUI/edit
          */
-        function SaveAndStopEditingAction(
-            dialogService,
-            notificationService,
-            context
-        ) {
+        class SaveAndStopEditingAction extends SaveAction {
+          constructor(dialogService,notificationService,context) {
             this.context = context;
             this.domainObject = (context || {}).domainObject;
             this.dialogService = dialogService;
@@ -49,18 +46,18 @@ define(
          *          cancellation has completed
          * @memberof platform/commonUI/edit.SaveAndStopEditingAction#
          */
-        SaveAndStopEditingAction.prototype.perform = function () {
-            var domainObject = this.domainObject,
+        perform() {
+            let domainObject = this.domainObject,
                 saveAction = new SaveAction(this.dialogService, this.notificationService, this.context);
 
-            function closeEditor() {
+            const closeEditor = () => {
                 return domainObject.getCapability("editor").finish();
-            }
+            };
 
             return saveAction.perform()
                 .then(closeEditor)
                 .catch(closeEditor);
-        };
+        }
 
         /**
          * Check if this action is applicable in a given context.

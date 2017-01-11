@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Provides data to populate resource graphs associated
@@ -30,15 +30,15 @@ define(
          * This is a placeholder until WTD-918.
          * @constructor
          */
-        function TimelineUtilization() {
+        const TimelineUtilization = () => {
             return {
-                getPointCount: function () {
+                getPointCount: () => {
                     return 1000;
                 },
-                getDomainValue: function (index) {
+                getDomainValue: (index) => {
                     return 60000 * index;
                 },
-                getRangeValue: function (index) {
+                getRangeValue: (index) => {
                     return Math.sin(index) * (index % 10);
                 }
             };

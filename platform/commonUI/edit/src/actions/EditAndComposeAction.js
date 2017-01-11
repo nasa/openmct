@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
 
         /**
@@ -31,20 +31,20 @@ define(
          * @memberof platform/commonUI/edit
          * @implements {Action}
          */
-        function EditAndComposeAction(context) {
+        class EditAndComposeAction {
+          constructor(context) {
             this.domainObject = (context || {}).domainObject;
             this.selectedObject = (context || {}).selectedObject;
         }
 
-        EditAndComposeAction.prototype.perform = function () {
-            var self = this,
-                editAction = this.domainObject.getCapability('action').getActions("edit")[0];
+        perform() {
+            var editAction = this.domainObject.getCapability('action').getActions("edit")[0];
 
             // Link these objects
-            function doLink() {
-                var composition = self.domainObject &&
-                        self.domainObject.getCapability('composition');
-                return composition && composition.add(self.selectedObject);
+            const doLink = () => {
+                let composition = self.domainObject &&
+                        this.domainObject.getCapability('composition');
+                return composition && composition.add(this.selectedObject);
             }
 
             if (editAction) {
@@ -52,8 +52,8 @@ define(
             }
 
             return this.selectedObject && doLink();
-        };
-
+        }
+      }
         return EditAndComposeAction;
     }
 );

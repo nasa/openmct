@@ -23,38 +23,39 @@
 define([
     'zepto',
     'text!../../res/templates/tree/tree-label.html'
-], function ($, labelTemplate) {
+], ($, labelTemplate) => {
 
-    function TreeLabelView(gestureService) {
+    class TreeLabelView {
+      constructor(gestureService) {
         this.el = $(labelTemplate);
         this.gestureService = gestureService;
     }
 
-    function isLink(domainObject) {
-        var location = domainObject.getCapability('location');
+     isLink(domainObject) {
+        let location = domainObject.getCapability('location');
         return location.isLink();
     }
 
-    function getClass(domainObject) {
-        var type = domainObject.getCapability('type');
+    getClass(domainObject) {
+        let type = domainObject.getCapability('type');
         return type.getCssClass();
     }
 
-    TreeLabelView.prototype.updateView = function (domainObject) {
-        var titleEl = this.el.find('.t-title-label'),
+    updateView(domainObject) {
+        let titleEl = this.el.find('.t-title-label'),
             iconEl = this.el.find('.t-item-icon');
 
         titleEl.text(domainObject ? domainObject.getModel().name : "");
-        iconEl.addClass(domainObject ? getClass(domainObject) : "");
+        iconEl.addClass(domainObject ? this.getClass(domainObject) : "");
 
-        if (domainObject && isLink(domainObject)) {
+        if (domainObject && this.isLink(domainObject)) {
             iconEl.addClass('l-icon-link');
         } else {
             iconEl.removeClass('l-icon-link');
         }
     };
 
-    TreeLabelView.prototype.model = function (domainObject) {
+    model(domainObject) {
         if (this.unlisten) {
             this.unlisten();
             delete this.unlisten;
@@ -79,9 +80,9 @@ define([
         }
     };
 
-    TreeLabelView.prototype.elements = function () {
+    elements() {
         return this.el;
     };
-
+  }
     return TreeLabelView;
 });

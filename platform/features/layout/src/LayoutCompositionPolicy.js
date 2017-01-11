@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Defines composition policy for Display Layout objects.
@@ -31,18 +31,17 @@ define(
          * @memberof platform/features/layout
          * @implements {Policy.<View, DomainObject>}
          */
-        function LayoutCompositionPolicy() {
-        }
-
-        LayoutCompositionPolicy.prototype.allow = function (candidate, context) {
-            var isFolderInLayout =
+        class LayoutCompositionPolicy {
+        
+        allow(candidate, context) {
+            let isFolderInLayout =
                 candidate &&
                 context &&
                 candidate.instanceOf('layout') &&
                 context.instanceOf('folder');
             return !isFolderInLayout;
         };
-
+      }
         return LayoutCompositionPolicy;
     }
 );

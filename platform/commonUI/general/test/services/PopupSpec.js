@@ -23,27 +23,27 @@
 
 define(
     ["../../src/services/Popup"],
-    function (Popup) {
+    (Popup) => {
 
-        describe("Popup", function () {
-            var mockElement,
+        describe("Popup", () => {
+            let mockElement,
                 testStyles,
                 popup;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockElement =
                     jasmine.createSpyObj('element', ['css', 'remove']);
                 testStyles = { left: '12px', top: '14px' };
                 popup = new Popup(mockElement, testStyles);
             });
 
-            it("applies CSS styles when instantiated", function () {
+            it("applies CSS styles when instantiated", () => {
                 expect(mockElement.css)
                     .toHaveBeenCalledWith(testStyles);
             });
 
-            it("reports the orientation of the popup", function () {
-                var otherStyles = {
+            it("reports the orientation of the popup", () => {
+                let otherStyles = {
                         right: '12px',
                         bottom: '14px'
                     },
@@ -60,7 +60,7 @@ define(
                 expect(otherPopup.goesDown()).toBeFalsy();
             });
 
-            it("removes elements when dismissed", function () {
+            it("removes elements when dismissed", () => {
                 expect(mockElement.remove).not.toHaveBeenCalled();
                 popup.dismiss();
                 expect(mockElement.remove).toHaveBeenCalled();

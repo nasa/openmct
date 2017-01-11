@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define([], () => {
 
     /**
      * Disallow duplication when the object to be duplicated is not
@@ -29,27 +29,25 @@ define([], function () {
      * @implements {Policy}
      * @memberof platform/entanglement
      */
-    function CopyPolicy() {
-    }
+     const allowCreation = (domainObject) => {
+         let type = domainObject && domainObject.getCapability('type');
+         return !!(type && type.hasFeature('creation'));
+     }
 
-    function allowCreation(domainObject) {
-        var type = domainObject && domainObject.getCapability('type');
-        return !!(type && type.hasFeature('creation'));
-    }
+     const selectedObject = (context) => {
+         return context.selectedObject || context.domainObject;
+     }
+     
+    class CopyPolicy {
 
-    function selectedObject(context) {
-        return context.selectedObject || context.domainObject;
-    }
-
-    CopyPolicy.prototype.allow = function (action, context) {
-        var key = action.getMetadata().key;
+      allow(action, context) {
+        let key = action.getMetadata().key;
 
         if (key === 'copy') {
             return allowCreation(selectedObject(context));
         }
-
         return true;
     };
-
+  }
     return CopyPolicy;
 });

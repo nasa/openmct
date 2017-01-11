@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Tracks the limit state of telemetry objects being plotted.
@@ -32,7 +32,8 @@ define(
          *        to telemetry access
          * @param {string} range the key to use when looking up range values
          */
-        function PlotLimitTracker(handle, range) {
+        class PlotLimitTracker {
+          constructor(handle, range) {
             this.handle = handle;
             this.range = range;
             this.legendClasses = {};
@@ -41,13 +42,13 @@ define(
         /**
          * Update limit states to reflect the latest data.
          */
-        PlotLimitTracker.prototype.update = function () {
-            var legendClasses = {},
+        update() {
+            let legendClasses = {},
                 range = this.range,
                 handle = this.handle;
 
-            function updateLimit(telemetryObject) {
-                var limit = telemetryObject.getCapability('limit'),
+            const updateLimit = (telemetryObject) => {
+                let limit = telemetryObject.getCapability('limit'),
                     datum = handle.getDatum(telemetryObject);
 
                 if (limit && datum) {
@@ -67,11 +68,11 @@ define(
          * @param {DomainObject} domainObject the telemetry object to check
          * @returns {string} the CSS class name, if any
          */
-        PlotLimitTracker.prototype.getLegendClass = function (domainObject) {
-            var id = domainObject && domainObject.getId();
+        getLegendClass(domainObject) {
+            let id = domainObject && domainObject.getId();
             return id && this.legendClasses[id];
         };
-
+      }
         return PlotLimitTracker;
 
     }

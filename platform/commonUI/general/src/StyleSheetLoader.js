@@ -27,7 +27,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The StyleSheetLoader adds links to style sheets exposed from
@@ -40,14 +40,14 @@ define(
          * @param {string} [assetPath] the directory relative to which
          *        stylesheets will be found
          */
-        function StyleSheetLoader(stylesheets, $document, activeTheme, assetPath) {
-            var head = $document.find('head'),
+        const StyleSheetLoader = (stylesheets, $document, activeTheme, assetPath) => {
+            let head = $document.find('head'),
                 document = $document[0];
 
             // Procedure for adding a single stylesheet
-            function addStyleSheet(stylesheet) {
+            const addStyleSheet = (stylesheet) => {
                 // Create a link element, and construct full path
-                var link = document.createElement('link'),
+                let link = document.createElement('link'),
                     path = [
                         assetPath,
                         stylesheet.bundle.path,
@@ -66,7 +66,7 @@ define(
 
             // Stylesheets which specify themes should only be applied
             // when that theme has been declared.
-            function matchesTheme(stylesheet) {
+            const matchesTheme = (stylesheet) => {
                 return stylesheet.theme === undefined ||
                     stylesheet.theme === activeTheme;
             }

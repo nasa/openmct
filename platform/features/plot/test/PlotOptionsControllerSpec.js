@@ -22,10 +22,10 @@
 
 define(
     ['../src/PlotOptionsController'],
-    function (PlotOptionsController) {
+    (PlotOptionsController) => {
 
-        describe("The Plot Options controller", function () {
-            var plotOptionsController,
+        describe("The Plot Options controller", () => {
+            let plotOptionsController,
                 mockDomainObject,
                 mockMutationCapability,
                 mockUseCapabilities,
@@ -37,7 +37,7 @@ define(
                 model,
                 mockScope;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 model = {
                     composition: ['childOne']
                 };
@@ -58,7 +58,7 @@ define(
                 mockComposition = [
                     mockChildOne
                 ];
-                mockCompositionCapability.then.andCallFake(function (callback) {
+                mockCompositionCapability.then.andCallFake( (callback) => {
                     callback(mockComposition);
                 });
 
@@ -79,7 +79,7 @@ define(
                     'useCapability',
                     'getCapability'
                 ]);
-                mockDomainObject.useCapability.andCallFake(function (capability) {
+                mockDomainObject.useCapability.andCallFake( (capability) => {
                     return mockUseCapabilities[capability]();
                 });
                 mockDomainObject.getCapability.andReturn(mockMutationCapability);
@@ -91,23 +91,23 @@ define(
                 ]);
                 mockScope.domainObject = mockDomainObject;
 
-                function noop() {}
+                const noop = () => {}
                 mockScope.$watchCollection.andReturn(noop);
 
                 plotOptionsController = new PlotOptionsController(mockScope);
             });
 
-            it("sets form definitions on scope", function () {
+            it("sets form definitions on scope", () => {
                 expect(mockScope.xAxisForm).toBeDefined();
                 expect(mockScope.yAxisForm).toBeDefined();
                 expect(mockScope.plotSeriesForm).toBeDefined();
             });
 
-            it("sets object children on scope", function () {
+            it("sets object children on scope", () => {
                 expect(mockScope.children).toBe(mockComposition);
             });
 
-            it("on changes in object composition, updates the form", function () {
+            it("on changes in object composition, updates the form", () => {
                 expect(mockMutationCapability.listen).toHaveBeenCalled();
                 expect(mockScope.children).toBe(mockComposition);
                 expect(mockScope.children.length).toBe(1);
@@ -118,8 +118,8 @@ define(
                 expect(mockScope.children.length).toBe(2);
             });
 
-            it("on changes in form values, updates the object model", function () {
-                var scopeConfiguration = mockScope.configuration,
+            it("on changes in form values, updates the object model", () => {
+                let scopeConfiguration = mockScope.configuration,
                     objModel = mockDomainObject.getModel();
 
                 scopeConfiguration.plot.yAxis.autoScale = true;
@@ -137,7 +137,7 @@ define(
 
             });
 
-            it("cleans up listeners on destruction of the controller", function () {
+            it("cleans up listeners on destruction of the controller", () => {
                 mockScope.$on.mostRecentCall.args[1]();
                 expect(mockUnlisten).toHaveBeenCalled();
             });

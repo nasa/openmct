@@ -22,10 +22,10 @@
 
 define(
     ["../../src/capabilities/InstantiationCapability"],
-    function (InstantiationCapability) {
+    (InstantiationCapability) => {
 
-        describe("The 'instantiation' capability", function () {
-            var mockInjector,
+        describe("The 'instantiation' capability", () => {
+            let mockInjector,
                 mockIdentifierService,
                 mockInstantiate,
                 mockContextualize,
@@ -34,7 +34,7 @@ define(
                 mockDomainObject,
                 instantiation;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockInjector = jasmine.createSpyObj("$injector", ["get"]);
                 mockInstantiate = jasmine.createSpy("instantiate");
                 mockContextualize = jasmine.createSpy("contextualize");
@@ -51,7 +51,7 @@ define(
                     ['getId', 'getCapability', 'getModel']
                 );
 
-                mockInjector.get.andCallFake(function (key) {
+                mockInjector.get.andCallFake( (key) => {
                     return {
                         'instantiate': mockInstantiate,
                         'contextualize': mockContextualize
@@ -72,12 +72,12 @@ define(
             });
 
 
-            it("aliases 'instantiate' as 'invoke'", function () {
+            it("aliases 'instantiate' as 'invoke'", () => {
                 expect(instantiation.invoke).toBe(instantiation.instantiate);
             });
 
-            it("uses instantiate and contextualize to create domain objects", function () {
-                var mockDomainObj = jasmine.createSpyObj('domainObject', [
+            it("uses instantiate and contextualize to create domain objects", () => {
+                let mockDomainObj = jasmine.createSpyObj('domainObject', [
                     'getId',
                     'getModel',
                     'getCapability',
@@ -85,7 +85,7 @@ define(
                     'hasCapability'
                 ]), testModel = { someKey: "some value" };
                 mockInstantiate.andReturn(mockDomainObj);
-                mockContextualize.andCallFake(function (x) {
+                mockContextualize.andCallFake( (x) => {
                     return x;
                 });
                 expect(instantiation.instantiate(testModel))

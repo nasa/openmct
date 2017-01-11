@@ -22,9 +22,9 @@
 
 define(
     ["../../src/directives/MCTPopup"],
-    function (MCTPopup) {
+    (MCTPopup) => {
 
-        var JQLITE_METHODS = [
+        const JQLITE_METHODS = [
             "on",
             "off",
             "find",
@@ -34,8 +34,8 @@ define(
             "append"
         ];
 
-        describe("The mct-popup directive", function () {
-            var mockCompile,
+        describe("The mct-popup directive", () => {
+            let mockCompile,
                 mockPopupService,
                 mockPopup,
                 mockScope,
@@ -48,7 +48,7 @@ define(
                 testRect,
                 mctPopup;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockCompile =
                     jasmine.createSpy("$compile");
                 mockPopupService =
@@ -78,8 +78,8 @@ define(
                     height: 75
                 };
 
-                mockCompile.andCallFake(function () {
-                    var mockFn = jasmine.createSpy();
+                mockCompile.andCallFake( () => {
+                    let mockFn = jasmine.createSpy();
                     mockFn.andReturn(mockNewElement);
                     return mockFn;
                 });
@@ -98,29 +98,29 @@ define(
                 );
             });
 
-            it("is valid as an element", function () {
+            it("is valid as an element", () => {
                 expect(mctPopup.restrict).toEqual("E");
             });
 
-            describe("creates an element which", function () {
-                it("displays as a popup", function () {
+            describe("creates an element which", () => {
+                it("displays as a popup", () => {
                     expect(mockPopupService.display).toHaveBeenCalledWith(
                         mockNewElement,
                         [testRect.left, testRect.top]
                     );
                 });
 
-                it("displays transcluded content", function () {
-                    var mockClone =
+                it("displays transcluded content", () => {
+                    let mockClone =
                         jasmine.createSpyObj('clone', JQLITE_METHODS);
                     mockTransclude.mostRecentCall.args[0](mockClone);
                     expect(mockNewElement.append)
                         .toHaveBeenCalledWith(mockClone);
                 });
 
-                it("is removed when its containing scope is destroyed", function () {
+                it("is removed when its containing scope is destroyed", () => {
                     expect(mockPopup.dismiss).not.toHaveBeenCalled();
-                    mockScope.$on.calls.forEach(function (call) {
+                    mockScope.$on.calls.forEach( (call) => {
                         if (call.args[0] === '$destroy') {
                             call.args[1]();
                         }

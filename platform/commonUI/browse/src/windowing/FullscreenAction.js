@@ -25,9 +25,9 @@
  */
 define(
     ["screenfull"],
-    function (screenfull) {
+    (screenfull) => {
 
-        var ENTER_FULLSCREEN = "Enter full screen mode",
+        let ENTER_FULLSCREEN = "Enter full screen mode",
             EXIT_FULLSCREEN = "Exit full screen mode";
 
         /**
@@ -37,28 +37,29 @@ define(
          * @constructor
          * @implements {Action}
          */
-        function FullscreenAction(context) {
+        class FullscreenAction {
+          constructor(context) {
             this.context = context;
         }
 
-        FullscreenAction.prototype.perform = function () {
+        perform() {
             screenfull.toggle();
-        };
+        }
 
-        FullscreenAction.prototype.getMetadata = function () {
+        getMetadata() {
             // We override getMetadata, because the icon cssclass and
             // description need to be determined at run-time
             // based on whether or not we are currently
             // full screen.
-            var metadata = Object.create(FullscreenAction);
+            let metadata = Object.create(FullscreenAction);
             metadata.cssclass = screenfull.isFullscreen ? "icon-fullscreen-expand" : "icon-fullscreen-collapse";
             metadata.description = screenfull.isFullscreen ?
                 EXIT_FULLSCREEN : ENTER_FULLSCREEN;
             metadata.group = "windowing";
             metadata.context = this.context;
             return metadata;
-        };
-
+        }
+      }
         return FullscreenAction;
     }
 );

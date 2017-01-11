@@ -22,7 +22,7 @@
 
 define(
     ['../../browse/src/InspectorRegion'],
-    function (InspectorRegion) {
+    (InspectorRegion) => {
 
         /**
          * The InspectorController adds region data for a domain object's type
@@ -30,8 +30,8 @@ define(
          *
          * @constructor
          */
-        function InspectorController($scope, policyService) {
-            var domainObject = $scope.domainObject,
+        const InspectorController = ($scope, policyService) => {
+            let domainObject = $scope.domainObject,
                 typeCapability = domainObject.getCapability('type'),
                 statusListener;
 
@@ -40,19 +40,19 @@ define(
              * @param regions
              * @returns {{}}
              */
-            function filterRegions(inspector) {
+            const filterRegions = (inspector) => {
                 //Dupe so we're not modifying the type definition.
-                return inspector.regions && inspector.regions.filter(function (region) {
+                return inspector.regions && inspector.regions.filter( (region) => {
                     return policyService.allow('region', region, domainObject);
                 });
             }
 
-            function setRegions() {
+            const setRegions = () => {
                 $scope.regions = filterRegions(typeCapability.getDefinition().inspector || new InspectorRegion());
             }
 
             statusListener = domainObject.getCapability("status").listen(setRegions);
-            $scope.$on("$destroy", function () {
+            $scope.$on("$destroy", () => {
                 statusListener();
             });
 

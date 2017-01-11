@@ -22,27 +22,27 @@
 
 define(
     ['./TimelineDragHandler', './TimelineSnapHandler', './TimelineDragHandleFactory'],
-    function (TimelineDragHandler, TimelineSnapHandler, TimelineDragHandleFactory) {
+    (TimelineDragHandler, TimelineSnapHandler, TimelineDragHandleFactory) => {
 
         /**
          * Provides drag handles for the active selection in a timeline view.
          * @constructor
          */
-        function TimelineDragPopulator(objectLoader) {
-            var handles = [],
+        const TimelineDragPopulator = (objectLoader) => {
+            let handles = [],
                 factory,
                 selectedObject;
 
             // Refresh active set of drag handles
-            function refreshHandles() {
+            const refreshHandles = () => {
                 handles = (factory && selectedObject) ?
                         factory.handles(selectedObject) :
                         [];
             }
 
             // Create a new factory for handles, based on root object in view
-            function populateForObject(domainObject) {
-                var dragHandler = domainObject && new TimelineDragHandler(
+            const populateForObject = (domainObject) => {
+                let dragHandler = domainObject && new TimelineDragHandler(
                         domainObject,
                         objectLoader
                     );
@@ -58,7 +58,7 @@ define(
             }
 
             // Change the current selection
-            function select(swimlane) {
+            const select = (swimlane) => {
                 // Cache selection to restore handles if other changes occur
                 selectedObject = swimlane && swimlane.domainObject;
 
@@ -71,7 +71,7 @@ define(
                  * Get the currently-applicable set of drag handles.
                  * @returns {Array} drag handles
                  */
-                get: function () {
+                get: () => {
                     return handles;
                 },
                 /**

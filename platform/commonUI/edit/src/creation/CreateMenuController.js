@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Controller for the Create menu; maintains an up-to-date
@@ -35,9 +35,9 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function CreateMenuController($scope) {
+        const  CreateMenuController = ($scope) => {
             // Update the set of Create actions
-            function refreshActions() {
+            const refreshActions  = () => {
                 $scope.createActions = $scope.action ?
                         $scope.action.getActions('create') :
                         [];

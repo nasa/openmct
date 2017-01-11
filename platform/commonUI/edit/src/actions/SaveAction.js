@@ -22,7 +22,7 @@
 
 define(
     ['./SaveInProgressDialog'],
-    function (SaveInProgressDialog) {
+    (SaveInProgressDialog) => {
 
         /**
          * The "Save" action; it invokes object capabilities to persist
@@ -31,15 +31,12 @@ define(
          * @implements {Action}
          * @memberof platform/commonUI/edit
          */
-        function SaveAction(
-            dialogService,
-            notificationService,
-            context
-        ) {
+        class SaveAction {
+          constructor(dialogService,notificationService,context) {
             this.domainObject = (context || {}).domainObject;
             this.dialogService = dialogService;
             this.notificationService = notificationService;
-        }
+          }
 
         /**
          * Save changes.
@@ -48,27 +45,26 @@ define(
          *          cancellation has completed
          * @memberof platform/commonUI/edit.SaveAction#
          */
-        SaveAction.prototype.perform = function () {
-            var self = this,
-                domainObject = this.domainObject,
+        perform() {
+            var domainObject = this.domainObject,
                 dialog = new SaveInProgressDialog(this.dialogService);
 
             // Invoke any save behavior introduced by the editor capability;
             // this is introduced by EditableDomainObject which is
             // used to insulate underlying objects from changes made
             // during editing.
-            function doSave() {
+            const doSave = () => {
                 return domainObject.getCapability("editor").save();
             }
 
-            function onSuccess() {
+            const onSuccess = () => {
                 dialog.hide();
-                self.notificationService.info("Save Succeeded");
+                this.notificationService.info("Save Succeeded");
             }
 
-            function onFailure() {
+            const onFailure = () => {
                 dialog.hide();
-                self.notificationService.error("Save Failed");
+                this.notificationService.error("Save Failed");
             }
 
             dialog.show();
@@ -76,7 +72,7 @@ define(
             return doSave()
                 .then(onSuccess)
                 .catch(onFailure);
-        };
+        }
 
         /**
          * Check if this action is applicable in a given context.
@@ -84,14 +80,14 @@ define(
          * and that this domain object is in Edit mode.
          * @returns true if applicable
          */
-        SaveAction.appliesTo = function (context) {
-            var domainObject = (context || {}).domainObject;
+        appliesTo(context) {
+            let domainObject = (context || {}).domainObject;
             return domainObject !== undefined &&
-                domainObject.hasCapability('editor') &&
-                domainObject.getCapability('editor').isEditContextRoot() &&
-                domainObject.getModel().persisted !== undefined;
-        };
-
+                this.domainObject.hasCapability('editor') &&
+                this.domainObject.getCapability('editor').isEditContextRoot() &&
+                this.domainObject.getModel().persisted !== undefined;
+        }
+      }
         return SaveAction;
     }
 );

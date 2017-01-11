@@ -21,7 +21,7 @@
  *****************************************************************************/
 define(
     [],
-    function () {
+    () => {
 
         /**
          * @interface platform/features/layout.ElementHandle
@@ -35,7 +35,8 @@ define(
          * @memberof platform/features/layout
          * @constructor
          */
-        function ResizeHandle(element, minWidth, minHeight) {
+        class ResizeHandle {
+          constructor(element, minWidth, minHeight) {
             this.element = element;
 
             // Ensure reasonable defaults
@@ -43,8 +44,8 @@ define(
             this.minHeight = minHeight || 0;
         }
 
-        ResizeHandle.prototype.x = function (value) {
-            var element = this.element;
+          x(value) {
+            let element = this.element;
             if (arguments.length > 0) {
                 element.width = Math.max(
                     this.minWidth,
@@ -54,8 +55,8 @@ define(
             return element.x + element.width;
         };
 
-        ResizeHandle.prototype.y = function (value) {
-            var element = this.element;
+        y(value) {
+            let element = this.element;
             if (arguments.length > 0) {
                 element.height = Math.max(
                     this.minHeight,
@@ -64,7 +65,7 @@ define(
             }
             return element.y + element.height;
         };
-
+      }
         return ResizeHandle;
 
     }

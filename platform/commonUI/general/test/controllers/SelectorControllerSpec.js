@@ -22,26 +22,26 @@
 
 define(
     ["../../src/controllers/SelectorController"],
-    function (SelectorController) {
+    (SelectorController) => {
 
-        describe("The controller for the 'selector' control", function () {
-            var mockObjectService,
+        describe("The controller for the 'selector' control", () => {
+            let mockObjectService,
                 mockScope,
                 mockDomainObject,
                 mockType,
                 mockDomainObjects,
                 controller;
 
-            function promiseOf(v) {
+            const promiseOf = (v) => {
                 return (v || {}).then ? v : {
-                    then: function (callback) {
+                    then: (callback) => {
                         return promiseOf(callback(v));
                     }
                 };
             }
 
-            function makeMockObject(id) {
-                var mockObject = jasmine.createSpyObj(
+            const makeMockObject = (id) => {
+                let mockObject = jasmine.createSpyObj(
                     'object-' + id,
                     ['getId']
                 );
@@ -49,7 +49,7 @@ define(
                 return mockObject;
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockObjectService = jasmine.createSpyObj(
                     'objectService',
                     ['getObjects']
@@ -68,7 +68,7 @@ define(
                 );
                 mockDomainObjects = {};
 
-                ["ROOT", "abc", "def", "xyz"].forEach(function (id) {
+                ["ROOT", "abc", "def", "xyz"].forEach( (id) => {
                     mockDomainObjects[id] = makeMockObject(id);
                 });
 
@@ -83,13 +83,13 @@ define(
                 );
             });
 
-            it("loads the root object", function () {
+            it("loads the root object", () => {
                 expect(mockObjectService.getObjects)
                     .toHaveBeenCalledWith(["ROOT"]);
             });
 
-            it("watches for changes in selection in left-hand tree", function () {
-                var testObject = { a: 123, b: 456 };
+            it("watches for changes in selection in left-hand tree", () => {
+                let testObject = { a: 123, b: 456 };
                 // This test is sensitive to ordering of watch calls
                 expect(mockScope.$watch.calls.length).toEqual(1);
                 // Make sure we're watching the correct object
@@ -97,8 +97,8 @@ define(
                 expect(mockScope.$watch.calls[0].args[0]()).toBe(testObject);
             });
 
-            it("watches for changes in controlled property", function () {
-                var testValue = ["a", "b", 1, 2];
+            it("watches for changes in controlled property", () => {
+                let testValue = ["a", "b", 1, 2];
                 // This test is sensitive to ordering of watch calls
                 expect(mockScope.$watchCollection.calls.length).toEqual(1);
                 // Make sure we're watching the correct object
@@ -106,7 +106,7 @@ define(
                 expect(mockScope.$watchCollection.calls[0].args[0]()).toBe(testValue);
             });
 
-            it("rejects selection of incorrect types", function () {
+            it("rejects selection of incorrect types", () => {
                 mockScope.structure = { type: "someType" };
                 mockType.instanceOf.andReturn(false);
                 controller.treeModel.selectedObject = mockDomainObject;
@@ -118,7 +118,7 @@ define(
                 expect(mockType.instanceOf).toHaveBeenCalledWith("someType");
             });
 
-            it("permits selection of matching types", function () {
+            it("permits selection of matching types", () => {
                 mockScope.structure = { type: "someType" };
                 mockType.instanceOf.andReturn(true);
                 controller.treeModel.selectedObject = mockDomainObject;
@@ -130,8 +130,8 @@ define(
                 expect(mockType.instanceOf).toHaveBeenCalledWith("someType");
             });
 
-            it("loads objects when the underlying list changes", function () {
-                var testIds = ["abc", "def", "xyz"];
+            it("loads objects when the underlying list changes", () => {
+                let testIds = ["abc", "def", "xyz"];
                 // This test is sensitive to ordering of watch calls
                 expect(mockScope.$watchCollection.calls.length).toEqual(1);
                 // Make sure we're watching the correct object
@@ -142,11 +142,11 @@ define(
                 expect(mockObjectService.getObjects).toHaveBeenCalledWith(testIds);
             });
 
-            it("exposes the root object to populate the left-hand tree", function () {
+            it("exposes the root object to populate the left-hand tree", () => {
                 expect(controller.root()).toEqual(mockDomainObjects.ROOT);
             });
 
-            it("adds objects to the underlying model", function () {
+            it("adds objects to the underlying model", () => {
                 expect(mockScope.ngModel.testField).toBeUndefined();
                 controller.select(mockDomainObjects.def);
                 expect(mockScope.ngModel.testField).toEqual(["def"]);
@@ -154,7 +154,7 @@ define(
                 expect(mockScope.ngModel.testField).toEqual(["def", "abc"]);
             });
 
-            it("removes objects to the underlying model", function () {
+            it("removes objects to the underlying model", () => {
                 controller.select(mockDomainObjects.def);
                 controller.select(mockDomainObjects.abc);
                 expect(mockScope.ngModel.testField).toEqual(["def", "abc"]);
@@ -162,7 +162,7 @@ define(
                 expect(mockScope.ngModel.testField).toEqual(["abc"]);
             });
 
-            it("provides a list of currently-selected objects", function () {
+            it("provides a list of currently-selected objects", () => {
                 // Verify precondition
                 expect(controller.selected()).toEqual([]);
                 // Select some objects

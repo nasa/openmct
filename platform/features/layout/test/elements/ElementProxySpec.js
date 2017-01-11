@@ -22,14 +22,14 @@
 
 define(
     ['../../src/elements/ElementProxy'],
-    function (ElementProxy) {
+    (ElementProxy) => {
 
-        describe("A fixed position element proxy", function () {
-            var testElement,
+        describe("A fixed position element proxy", () => {
+            let testElement,
                 testElements,
                 proxy;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testElement = {
                     x: 1,
                     y: 2,
@@ -45,18 +45,18 @@ define(
                 );
             });
 
-            it("exposes element properties", function () {
-                Object.keys(testElement).forEach(function (k) {
+            it("exposes element properties", () => {
+                Object.keys(testElement).forEach( (k) => {
                     expect(proxy[k]()).toEqual(testElement[k]);
                 });
             });
 
-            it("allows elements to be removed", function () {
+            it("allows elements to be removed", () => {
                 proxy.remove();
                 expect(testElements).toEqual([{}, {}, {}]);
             });
 
-            it("allows order to be changed", function () {
+            it("allows order to be changed", () => {
                 proxy.order("down");
                 expect(testElements).toEqual([{}, testElement, {}, {}]);
                 proxy.order("up");
@@ -67,7 +67,7 @@ define(
                 expect(testElements).toEqual([{}, {}, {}, testElement]);
             });
 
-            it("ensures x/y values are non-negative", function () {
+            it("ensures x/y values are non-negative", () => {
                 proxy.x(-1);
                 proxy.y(-400);
                 expect(proxy.x()).toEqual(0);

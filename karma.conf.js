@@ -49,12 +49,11 @@ module.exports = function(config) {
         exclude: [
             'platform/framework/src/Main.js'
         ],
-
         // Preprocess matching files before serving them to the browser.
         // https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'src/**/src/**/!(*Spec).js': [ 'coverage' ],
-            'platform/**/src/**/!(*Spec).js': [ 'coverage' ]
+            'src/**/src/**/!(*Spec).js': [ 'babel', 'coverage' ],
+           'platform/**/src/**/!(*Spec).js': [ 'babel', 'coverage' ]
         },
 
         // Test results reporter to use

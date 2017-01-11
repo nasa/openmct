@@ -26,7 +26,7 @@
 define([
     "./TimelineTraverser",
     "./TimelineColumnizer"
-], function (TimelineTraverser, TimelineColumnizer) {
+], (TimelineTraverser, TimelineColumnizer) => {
 
     /**
      * Runs (and coordinates) the preparation and export of CSV data
@@ -38,11 +38,12 @@ define([
      * @param resources the `resources` extension category
      * @param {DomainObject} domainObject the timeline being exported
      */
-    function ExportTimelineAsCSVTask(exportService, resources, domainObject) {
+    class ExportTimelineAsCSVTask {
+      constructor(exportService, resources, domainObject) {
         this.domainObject = domainObject;
         this.exportService = exportService;
         this.resources = resources;
-    }
+      }
 
     /**
      * Run this CSV export task.
@@ -50,14 +51,14 @@ define([
      * @returns {Promise} a promise that will be resolved when the
      *          export has finished (or rejected if there are problems.)
      */
-    ExportTimelineAsCSVTask.prototype.run = function () {
-        var exportService = this.exportService;
-        var resources = this.resources;
+    run() {
+        let exportService = this.exportService;
+        let resources = this.resources;
 
-        function doExport(objects) {
-            var exporter = new TimelineColumnizer(objects, resources),
+        const doExport = (objects) => {
+            let exporter = new TimelineColumnizer(objects, resources),
                 options = { headers: exporter.headers() };
-            return exporter.rows().then(function (rows) {
+            return exporter.rows().then( (rows) => {
                 return exportService.exportCSV(rows, options);
             });
         }
@@ -66,6 +67,6 @@ define([
             .buildObjectList()
             .then(doExport);
     };
-
+  }
     return ExportTimelineAsCSVTask;
 });

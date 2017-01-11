@@ -24,14 +24,14 @@ define([
     "./ExportService",
     "saveAs",
     "legacyRegistry"
-], function (ExportService, saveAs, legacyRegistry) {
+], (ExportService, saveAs, legacyRegistry) => {
 
     legacyRegistry.register("platform/exporters", {
         extensions: {
             services: [
                 {
                     key: "exportService",
-                    implementation: function () {
+                    implementation: () => {
                         return new ExportService(saveAs);
                     }
                 }

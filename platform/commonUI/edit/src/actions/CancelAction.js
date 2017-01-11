@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define(
-    function () {
+    () => {
 
         /**
          * The "Cancel" action; the action triggered by clicking Cancel from
@@ -31,7 +31,8 @@ define(
          * @memberof platform/commonUI/edit
          * @implements {Action}
          */
-        function CancelAction(context) {
+        class CancelAction {
+          constructor(context) {
             this.domainObject = context.domainObject;
         }
 
@@ -41,11 +42,11 @@ define(
          * @returns {Promise} a promise that will be fulfilled when
          *          cancellation has completed
          */
-        CancelAction.prototype.perform = function () {
-            var domainObject = this.domainObject;
+        perform() {
+            let domainObject = this.domainObject;
 
-            function returnToBrowse() {
-                var parent;
+            const returnToBrowse = () => {
+                let parent;
 
                 //If the object existed already, navigate to refresh view
                 // with previous object state.
@@ -54,21 +55,21 @@ define(
                 } else {
                     //If the object was new, and user has cancelled, then
                     //navigate back to parent because nothing to show.
-                    return domainObject.getCapability("location").getOriginal().then(function (original) {
+                    return domainObject.getCapability("location").getOriginal().then( (original) => {
                         parent = original.getCapability("context").getParent();
                         return parent.getCapability("action").perform("navigate");
                     });
                 }
             }
 
-            function cancel() {
+            const cancel = () => {
                 return domainObject.getCapability("editor").finish();
             }
 
             //Do navigation first in order to trigger unsaved changes dialog
             return returnToBrowse()
                 .then(cancel);
-        };
+        }
 
         /**
          * Check if this action is applicable in a given context.
@@ -76,13 +77,13 @@ define(
          * and that this domain object is in Edit mode.
          * @returns {boolean} true if applicable
          */
-        CancelAction.appliesTo = function (context) {
-            var domainObject = (context || {}).domainObject;
+        appliesTo(context) {
+            let domainObject = (context || {}).domainObject;
             return domainObject !== undefined &&
                 domainObject.hasCapability('editor') &&
                 domainObject.getCapability('editor').isEditContextRoot();
-        };
-
+        }
+      }
         return CancelAction;
     }
 );

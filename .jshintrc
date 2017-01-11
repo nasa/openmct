@@ -4,6 +4,7 @@
     "curly": true,
     "eqeqeq": true,
     "forin": true,
+    "esversion": 6,
     "freeze": true,
     "funcscope": false,
     "futurehostile": true,

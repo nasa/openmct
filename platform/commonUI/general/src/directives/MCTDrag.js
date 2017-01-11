@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The mct-drag directive allows drag functionality
@@ -46,22 +46,22 @@ define(
          * @constructor
          *
          */
-        function MCTDrag($document) {
+        const MCTDrag = ($document) => {
 
             // Link; install event handlers.
-            function link(scope, element, attrs) {
+            const link = (scope, element, attrs) => {
                 // Keep a reference to the body, to attach/detach
                 // mouse event handlers; mousedown and mouseup cannot
                 // only be attached to the element being linked, as the
                 // mouse may leave this element during the drag.
-                var body = $document.find('body'),
+                let body = $document.find('body'),
                     initialPosition,
                     $event,
                     delta;
 
                 // Utility function to cause evaluation of mctDrag,
                 // mctDragUp, etc
-                function fireListener(name) {
+                const fireListener = (name) => {
                     // Evaluate the expression, with current delta
                     scope.$eval(attrs[name], {
                         delta: delta,
@@ -74,15 +74,15 @@ define(
 
                 // Update positions (both actual and relative)
                 // based on a new mouse event object.
-                function updatePosition(event) {
+                const updatePosition = (event) => {
                     // Get the current position, as an array
-                    var currentPosition = [event.pageX, event.pageY];
+                    let currentPosition = [event.pageX, event.pageY];
 
                     // Track the initial position, if one hasn't been observed
                     initialPosition = initialPosition || currentPosition;
 
                     // Compute relative position
-                    delta = currentPosition.map(function (v, i) {
+                    delta = currentPosition.map((v, i) => {
                         return v - initialPosition[i];
                     });
 
@@ -91,7 +91,7 @@ define(
                 }
 
                 // Called during a drag, on mousemove
-                function continueDrag(event) {
+                const continueDrag = (event) => {
                     updatePosition(event);
                     fireListener("mctDrag");
 
@@ -101,7 +101,7 @@ define(
                 }
 
                 // Called only when the drag ends (on mouseup)
-                function endDrag(event) {
+                const endDrag = (event) => {
                     // Detach event handlers
                     body.off("mouseup", endDrag);
                     body.off("mousemove", continueDrag);
@@ -121,7 +121,7 @@ define(
                 }
 
                 // Called on mousedown on the element
-                function startDrag(event) {
+                const startDrag = (event) => {
                     // Listen for mouse events at the body level,
                     // since the mouse may leave the element during
                     // the drag.

@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Snaps timestamps to match other timestamps within a
@@ -33,21 +33,21 @@ define(
          *        for drag interactions, which maintains start/end
          *        information for timelines in this view.
          */
-        function TimelineSnapHandler(dragHandler) {
+        const TimelineSnapHandler = (dragHandler) => {
             // Snap to other end points
-            function snap(timestamp, tolerance, exclude) {
-                var result = timestamp,
+            const snap = (timestamp, tolerance, exclude) => {
+                let result = timestamp,
                     closest = tolerance,
                     ids,
                     candidates;
 
                 // Filter an id for inclusion
-                function include(id) {
+                const include = (id) => {
                     return id !== exclude;
                 }
 
                 // Evaluate a candidate timestamp as a snap-to location
-                function evaluate(candidate) {
+                const evaluate = (candidate) => {
                     var difference = Math.abs(candidate - timestamp);
                     // Is this closer than anything else we've found?
                     if (difference < closest) {
@@ -59,12 +59,12 @@ define(
                 }
 
                 // Look up start time; for mapping below
-                function getStart(id) {
+                const getStart = (id) => {
                     return dragHandler.start(id);
                 }
 
                 // Look up end time; for mapping below
-                function getEnd(id) {
+                const getEnd = (id) => {
                     return dragHandler.end(id);
                 }
 

@@ -23,20 +23,18 @@
 
 define([
     'lodash'
-], function (
-    _
-) {
+], (_) => {
 
-    function valueMetadatasFromOldFormat(metadata) {
-        var valueMetadatas = [];
+    const valueMetadatasFromOldFormat = (metadata) => {
+        let valueMetadatas = [];
 
         valueMetadatas.push({
             key: 'name',
             name: 'Name'
         });
 
-        metadata.domains.forEach(function (domain, index) {
-            var valueMetadata = _.clone(domain);
+        metadata.domains.forEach( (domain, index) => {
+            let valueMetadata = _.clone(domain);
             valueMetadata.hints = {
                 x: index + 1,
                 domain: index + 1
@@ -44,8 +42,8 @@ define([
             valueMetadatas.push(valueMetadata);
         });
 
-        metadata.ranges.forEach(function (range, index) {
-            var valueMetadata = _.clone(range);
+        metadata.ranges.forEach( (range, index) => {
+            let valueMetadata = _.clone(range);
             valueMetadata.hints = {
                 y: index,
                 range: index,
@@ -57,7 +55,7 @@ define([
                 valueMetadata.hints.y -= 10;
                 valueMetadata.hints.range -= 10;
                 valueMetadata.enumerations =
-                    _.sortBy(valueMetadata.enumerations.map(function (e) {
+                    _.sortBy(valueMetadata.enumerations.map( (e) => {
                         return {
                             string: e.string,
                             value: +e.value
@@ -72,9 +70,9 @@ define([
         });
 
         return valueMetadatas;
-    }
+    };
 
-    function applyReasonableDefaults(valueMetadata, index) {
+    const applyReasonableDefaults = (valueMetadata, index) => {
         valueMetadata.source = valueMetadata.source || valueMetadata.key;
         valueMetadata.hints = valueMetadata.hints || {};
 
@@ -82,20 +80,21 @@ define([
             valueMetadata.hints.priority = index;
         }
         return valueMetadata;
-    }
+    };
 
     /**
      * Utility class for handling telemetry metadata for a domain object.
      * Wraps old format metadata to new format metadata.
      * Provides methods for interrogating telemetry metadata.
      */
-    function TelemetryMetadataManager(domainObject, typeService) {
+    class TelemetryMetadataManager {
+      constructor(domainObject, typeService) {
         this.metadata = domainObject.telemetry || {};
 
         if (this.metadata.values) {
             this.valueMetadatas = this.metadata.values;
         } else {
-            var typeMetadata = typeService
+            let typeMetadata = typeService
                 .getType(domainObject.type).typeDef.telemetry;
 
             _.extend(this.metadata, typeMetadata);
@@ -109,44 +108,40 @@ define([
     /**
      * Get value metadata for a single key.
      */
-    TelemetryMetadataManager.prototype.value = function (key) {
-        return this.valueMetadatas.filter(function (metadata) {
+    value(key) {
+        return this.valueMetadatas.filter( (metadata) => {
             return metadata.key === key;
         })[0];
-    };
+    }
 
     /**
      * Returns all value metadatas, sorted by priority.
      */
-    TelemetryMetadataManager.prototype.values = function () {
+    values() {
         return this.valuesForHints(['priority']);
-    };
+    }
 
     /**
      * Get an array of valueMetadatas that posess all hints requested.
      * Array is sorted based on hint priority.
      *
      */
-    TelemetryMetadataManager.prototype.valuesForHints = function (
-        hints
-    ) {
-        function hasHint(hint) {
+    valuesForHints(hints) {
+        const hasHint = (hint) => {
             /*jshint validthis: true */
             return this.hints.hasOwnProperty(hint);
-        }
-        function hasHints(metadata) {
+        };
+        const hasHints = (metadata) => {
             return hints.every(hasHint, metadata);
-        }
-        var matchingMetadata = this.valueMetadatas.filter(hasHints);
-        var sortedMetadata = _.sortBy(matchingMetadata, function (metadata) {
-            return hints.map(function (hint) {
+        };
+        let matchingMetadata = this.valueMetadatas.filter(hasHints);
+        let sortedMetadata = _.sortBy(matchingMetadata, (metadata) => {
+            return hints.map( (hint) => {
                 return metadata.hints[hint];
             });
         });
         return sortedMetadata;
-    };
-
-
-    return TelemetryMetadataManager;
-
+    }
+}
+return TelemetryMetadataManager;
 });

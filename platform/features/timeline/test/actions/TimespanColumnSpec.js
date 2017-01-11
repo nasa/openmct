@@ -22,14 +22,14 @@
 
 define(
     ['../../src/actions/TimespanColumn', '../../src/TimelineFormatter'],
-    function (TimespanColumn, TimelineFormatter) {
-        describe("TimespanColumn", function () {
-            var testTimes,
+    (TimespanColumn, TimelineFormatter) => {
+        describe("TimespanColumn", () => {
+            let testTimes,
                 mockTimespan,
                 mockDomainObject,
                 column;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testTimes = {
                     start: 101000,
                     end: 987654321
@@ -44,43 +44,43 @@ define(
                 );
                 mockTimespan.getStart.andReturn(testTimes.start);
                 mockTimespan.getEnd.andReturn(testTimes.end);
-                mockDomainObject.useCapability.andCallFake(function (c) {
+                mockDomainObject.useCapability.andCallFake( (c) => {
                     return c === 'timespan' && Promise.resolve(mockTimespan);
                 });
-                mockDomainObject.hasCapability.andCallFake(function (c) {
+                mockDomainObject.hasCapability.andCallFake( (c) => {
                     return c === 'timespan';
                 });
             });
 
-            ["start", "end"].forEach(function (bound) {
-                describe("when referring to " + bound + " times", function () {
-                    var name = bound.charAt(0).toUpperCase() + bound.slice(1);
+            ["start", "end"].forEach( (bound) => {
+                describe("when referring to " + bound + " times", () => {
+                    let name = bound.charAt(0).toUpperCase() + bound.slice(1);
 
-                    beforeEach(function () {
+                    beforeEach(() => {
                         column = new TimespanColumn(bound === "start");
                     });
 
-                    it("is named \"" + name + "\"", function () {
+                    it("is named \"" + name + "\"", () => {
                         expect(column.name()).toEqual(name);
                     });
 
-                    describe("value", function () {
-                        var testFormatter,
+                    describe("value", () => {
+                        let testFormatter,
                             value;
 
-                        beforeEach(function () {
+                        beforeEach(() => {
                             value = undefined;
                             testFormatter = new TimelineFormatter();
-                            column.value(mockDomainObject).then(function (v) {
+                            column.value(mockDomainObject).then( (v) => {
                                 value = v;
                             });
-                            waitsFor(function () {
+                            waitsFor(() => {
                                 return value !== undefined;
                             });
                         });
 
-                        it("returns a formatted " + bound + " time", function () {
-                            var expected =
+                        it("returns a formatted " + bound + " time", () => {
+                            let expected =
                                 testFormatter.format(testTimes[bound]);
                             expect(value).toEqual(expected);
                         });

@@ -22,37 +22,37 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Describes the time span of an activity object.
          * @param model the activity's object model
          */
-        function ActivityTimespan(model, mutation) {
+        const ActivityTimespan = (model, mutation) => {
             // Get the start time for this timeline
-            function getStart() {
+            const getStart = () => {
                 return model.start.timestamp;
             }
 
             // Get the end time for this timeline
-            function getEnd() {
+            const getEnd = () => {
                 return model.start.timestamp + model.duration.timestamp;
             }
 
             // Get the duration of this timeline
-            function getDuration() {
+            const getDuration = () => {
                 return model.duration.timestamp;
             }
 
             // Get the epoch used by this timeline
-            function getEpoch() {
+            const getEpoch = () => {
                 return model.start.epoch; // Surface elapsed time
             }
 
             // Set the start time associated with this object
-            function setStart(value) {
-                var end = getEnd();
-                mutation.mutate(function (m) {
+            const setStart = (value) => {
+                let end = getEnd();
+                mutation.mutate( (m) => {
                     m.start.timestamp = Math.max(value, 0);
                     // Update duration to keep end time
                     m.duration.timestamp = Math.max(end - value, 0);
@@ -60,16 +60,16 @@ define(
             }
 
             // Set the duration associated with this object
-            function setDuration(value) {
-                mutation.mutate(function (m) {
+            const setDuration = (value) => {
+                mutation.mutate( (m) => {
                     m.duration.timestamp = Math.max(value, 0);
                 }, model.modified);
             }
 
             // Set the end time associated with this object
-            function setEnd(value) {
-                var start = getStart();
-                mutation.mutate(function (m) {
+            const setEnd = (value) => {
+                let start = getStart();
+                mutation.mutate( (m) => {
                     m.duration.timestamp = Math.max(value - start, 0);
                 }, model.modified);
             }

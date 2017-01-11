@@ -25,12 +25,12 @@ define([
     "./src/UTCTimeFormat",
     "./src/DurationFormat",
     'legacyRegistry'
-], function (
+], (
     FormatProvider,
     UTCTimeFormat,
     DurationFormat,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/commonUI/formats", {
         "name": "Time services bundle",

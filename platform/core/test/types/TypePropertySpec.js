@@ -22,19 +22,19 @@
 
 define(
     ['../../src/types/TypeProperty'],
-    function (TypeProperty) {
+    (TypeProperty) => {
 
-        describe("Type property", function () {
+        describe("Type property", () =>  {
 
-            it("allows retrieval of its definition", function () {
-                var definition = { key: "hello", someOtherKey: "hm?" };
+            it("allows retrieval of its definition", () =>  {
+                let definition = { key: "hello", someOtherKey: "hm?" };
                 expect(
                     new TypeProperty(definition).getDefinition()
                 ).toEqual(definition);
             });
 
-            it("sets properties in object models", function () {
-                var definition = {
+            it("sets properties in object models", () =>  {
+                let definition = {
                         key: "someKey",
                         property: "someProperty"
                     },
@@ -44,8 +44,8 @@ define(
                 expect(model.someProperty).toEqual("some value");
             });
 
-            it("gets properties from object models", function () {
-                var definition = {
+            it("gets properties from object models", () =>  {
+                let definition = {
                         key: "someKey",
                         property: "someProperty"
                     },
@@ -54,8 +54,8 @@ define(
                 expect(property.getValue(model)).toEqual("some value");
             });
 
-            it("sets properties by path", function () {
-                var definition = {
+            it("sets properties by path", () =>  {
+                let definition = {
                         key: "someKey",
                         property: ["some", "property"]
                     },
@@ -65,8 +65,8 @@ define(
                 expect(model.some.property).toEqual("some value");
             });
 
-            it("gets properties by path", function () {
-                var definition = {
+            it("gets properties by path", () =>  {
+                let definition = {
                         key: "someKey",
                         property: ["some", "property"]
                     },
@@ -75,8 +75,8 @@ define(
                 expect(property.getValue(model)).toEqual("some value");
             });
 
-            it("stops looking for properties when a path is invalid", function () {
-                var definition = {
+            it("stops looking for properties when a path is invalid", () =>  {
+                let definition = {
                         key: "someKey",
                         property: ["some", "property"]
                     },
@@ -84,8 +84,8 @@ define(
                 expect(property.getValue(undefined)).toBeUndefined();
             });
 
-            it("gives undefined for empty paths", function () {
-                var definition = {
+            it("gives undefined for empty paths", () =>  {
+                let definition = {
                         key: "someKey",
                         property: []
                     },
@@ -94,8 +94,8 @@ define(
                 expect(property.getValue(model)).toBeUndefined();
             });
 
-            it("provides empty arrays for values that are array-like", function () {
-                var definition = {
+            it("provides empty arrays for values that are array-like", () =>  {
+                let definition = {
                         property: "someProperty",
                         items: [{}, {}, {}]
                     },
@@ -105,8 +105,8 @@ define(
                     .toEqual([undefined, undefined, undefined]);
             });
 
-            it("detects and ignores empty arrays on setValue", function () {
-                var definition = {
+            it("detects and ignores empty arrays on setValue", () =>  {
+                let definition = {
                         property: "someProperty",
                         items: [{}, {}, {}]
                     },

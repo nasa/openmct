@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Provides definitions for views that are available for specific
@@ -75,13 +75,14 @@ define(
          * @param $log Angular's logging service
          * @implements {ViewService}
          */
-        function ViewProvider(views, $log) {
+        class ViewProvider {
+          constructor(views, $log) {
 
             // Views without defined keys cannot be used in the user
             // interface, and can result in unexpected behavior. These
             // are filtered out using this function.
-            function validate(view) {
-                var key = view.key;
+            const validate = (view) => {
+                let key = view.key;
 
                 // Leave a log message to support detection of this issue.
                 if (!key) {
@@ -99,26 +100,26 @@ define(
             this.views = views.filter(validate);
         }
 
-        ViewProvider.prototype.getViews = function (domainObject) {
-            var type = domainObject.useCapability("type");
+        getViews(domainObject) {
+            let type = domainObject.useCapability("type");
 
             // Check if an object has all capabilities designated as `needs`
             // for a view. Exposing a capability via delegation is taken to
             // satisfy this filter if `allowDelegation` is true.
-            function capabilitiesMatch(domainObj, capabilities, allowDelegation) {
-                var delegation = domainObj.getCapability("delegation");
+            const capabilitiesMatch = (domainObj, capabilities, allowDelegation) => {
+                let delegation = domainObj.getCapability("delegation");
 
                 allowDelegation = allowDelegation && (delegation !== undefined);
 
                 // Check if an object has (or delegates, if allowed) a
                 // capability.
-                function hasCapability(c) {
+                const hasCapability = (c) => {
                     return domainObj.hasCapability(c) ||
                         (allowDelegation && delegation.doesDelegateCapability(c));
                 }
 
                 // For the reduce step below.
-                function and(a, b) {
+                const and = (a, b) => {
                     return a && b;
                 }
 
@@ -128,8 +129,8 @@ define(
 
             // Check if a view and domain object type can be paired;
             // both can restrict the others they accept.
-            function viewMatchesType(view, objType) {
-                var views = objType && (objType.getDefinition() || {}).views,
+            const viewMatchesType = (view, objType) => {
+                let views = objType && (objType.getDefinition() || {}).views,
                     matches = true;
 
                 // View is restricted to a certain type
@@ -147,7 +148,7 @@ define(
 
             // First, filter views by type (matched to domain object type.)
             // Second, filter by matching capabilities.
-            return this.views.filter(function (view) {
+            return this.views.filter( (view) => {
                 return viewMatchesType(view, type) && capabilitiesMatch(
                         domainObject,
                         view.needs || [],
@@ -155,7 +156,7 @@ define(
                     );
             });
         };
-
+      }
         return ViewProvider;
     }
 );

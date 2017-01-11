@@ -22,22 +22,22 @@
 
 define(
     ['../../src/elements/AccessorMutator'],
-    function (AccessorMutator) {
+    (AccessorMutator) => {
 
-        describe("An accessor-mutator", function () {
-            var testObject,
+        describe("An accessor-mutator", () => {
+            let testObject,
                 am;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testObject = { t: 42, other: 100 };
                 am = new AccessorMutator(testObject, 't');
             });
 
-            it("allows access to a property", function () {
+            it("allows access to a property", () => {
                 expect(am()).toEqual(42);
             });
 
-            it("allows mutation of a property", function () {
+            it("allows mutation of a property", () => {
                 expect(am("some other value")).toEqual("some other value");
                 expect(testObject).toEqual({
                     t: "some other value",

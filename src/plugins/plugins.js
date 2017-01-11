@@ -21,12 +21,12 @@
  *****************************************************************************/
 
 define([
-], function () {
+], () => {
     return {
-        localStorage: function (openmct) {
+        localStorage: (openmct) => {
             openmct.legacyRegistry.enable('platform/persistence/local');
         },
-        myItems: function (openmct) {
+        myItems: (openmct) => {
             openmct.legacyRegistry.enable('platform/features/my-items');
         }
     };

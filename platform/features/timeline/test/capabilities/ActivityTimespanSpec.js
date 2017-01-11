@@ -22,15 +22,15 @@
 
 define(
     ['../../src/capabilities/ActivityTimespan'],
-    function (ActivityTimespan) {
+    (ActivityTimespan) => {
 
-        describe("An Activity's timespan", function () {
-            var testModel,
+        describe("An Activity's timespan", () => {
+            let testModel,
                 mutatorModel,
                 mockMutation,
                 timespan;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testModel = {
                     start: {
                         timestamp: 42000,
@@ -47,29 +47,29 @@ define(
                 // not intended usage.)
                 mutatorModel = JSON.parse(JSON.stringify(testModel));
                 mockMutation = jasmine.createSpyObj("mutation", ["mutate"]);
-                mockMutation.mutate.andCallFake(function (mutator) {
+                mockMutation.mutate.andCallFake( (mutator) => {
                     mutator(mutatorModel);
                 });
                 timespan = new ActivityTimespan(testModel, mockMutation);
             });
 
-            it("provides a start time", function () {
+            it("provides a start time", () => {
                 expect(timespan.getStart()).toEqual(42000);
             });
 
-            it("provides an end time", function () {
+            it("provides an end time", () => {
                 expect(timespan.getEnd()).toEqual(54321);
             });
 
-            it("provides duration", function () {
+            it("provides duration", () => {
                 expect(timespan.getDuration()).toEqual(12321);
             });
 
-            it("provides an epoch", function () {
+            it("provides an epoch", () => {
                 expect(timespan.getEpoch()).toEqual("TEST");
             });
 
-            it("sets start time using mutation capability", function () {
+            it("sets start time using mutation capability", () => {
                 timespan.setStart(52000);
                 expect(mutatorModel.start.timestamp).toEqual(52000);
                 // Should have also changed duration to preserve end
@@ -78,7 +78,7 @@ define(
                 expect(testModel.start.timestamp).toEqual(42000);
             });
 
-            it("sets end time using mutation capability", function () {
+            it("sets end time using mutation capability", () => {
                 timespan.setEnd(44000);
                 // Should have also changed duration to preserve end
                 expect(mutatorModel.duration.timestamp).toEqual(2000);
@@ -86,7 +86,7 @@ define(
                 expect(testModel.duration.timestamp).toEqual(12321);
             });
 
-            it("sets duration using mutation capability", function () {
+            it("sets duration using mutation capability", () => {
                 timespan.setDuration(8000);
                 // Should have also changed duration to preserve end
                 expect(mutatorModel.duration.timestamp).toEqual(8000);

@@ -23,18 +23,18 @@
 
 define(
     ["../src/AgentService"],
-    function (AgentService) {
+    (AgentService) => {
 
-        var TEST_USER_AGENTS = {
+        const TEST_USER_AGENTS = {
             DESKTOP: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36",
             IPAD: "Mozilla/5.0 (iPad; CPU OS 7_0 like Mac OS X) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53",
             IPHONE: "Mozilla/5.0 (iPhone; CPU iPhone OS 7_0 like Mac OS X; en-us) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53"
         };
 
-        describe("The AgentService", function () {
-            var testWindow, agentService;
+        describe("The AgentService", () => {
+            let testWindow, agentService;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 testWindow = {
                     innerWidth: 640,
                     innerHeight: 480,
@@ -44,7 +44,7 @@ define(
                 };
             });
 
-            it("recognizes desktop devices as non-mobile", function () {
+            it("recognizes desktop devices as non-mobile", () => {
                 testWindow.navigator.userAgent = TEST_USER_AGENTS.DESKTOP;
                 agentService = new AgentService(testWindow);
                 expect(agentService.isMobile()).toBeFalsy();
@@ -52,7 +52,7 @@ define(
                 expect(agentService.isTablet()).toBeFalsy();
             });
 
-            it("detects iPhones", function () {
+            it("detects iPhones", () => {
                 testWindow.navigator.userAgent = TEST_USER_AGENTS.IPHONE;
                 agentService = new AgentService(testWindow);
                 expect(agentService.isMobile()).toBeTruthy();
@@ -60,7 +60,7 @@ define(
                 expect(agentService.isTablet()).toBeFalsy();
             });
 
-            it("detects iPads", function () {
+            it("detects iPads", () => {
                 testWindow.navigator.userAgent = TEST_USER_AGENTS.IPAD;
                 agentService = new AgentService(testWindow);
                 expect(agentService.isMobile()).toBeTruthy();
@@ -68,7 +68,7 @@ define(
                 expect(agentService.isTablet()).toBeTruthy();
             });
 
-            it("detects display orientation", function () {
+            it("detects display orientation", () => {
                 agentService = new AgentService(testWindow);
                 testWindow.innerWidth = 1024;
                 testWindow.innerHeight = 400;
@@ -80,7 +80,7 @@ define(
                 expect(agentService.isLandscape()).toBeFalsy();
             });
 
-            it("detects touch support", function () {
+            it("detects touch support", () => {
                 testWindow.ontouchstart = null;
                 expect(new AgentService(testWindow).isTouch())
                     .toBe(true);
@@ -89,7 +89,7 @@ define(
                     .toBe(false);
             });
 
-            it("allows for checking browser type", function () {
+            it("allows for checking browser type", () => {
                 testWindow.navigator.userAgent = "Chromezilla Safarifox";
                 agentService = new AgentService(testWindow);
                 expect(agentService.isBrowser("Chrome")).toBe(true);

@@ -22,7 +22,7 @@
 
 define(
     ['./PlotPanZoomStack'],
-    function (PlotPanZoomStack) {
+    (PlotPanZoomStack) => {
 
         /**
          * A plot pan zoom stack group provides a collection of individual
@@ -35,14 +35,14 @@ define(
          * @param {number} count the number of stacks to include in this
          *        group
          */
-        function PlotPanZoomStackGroup(count) {
-            var self = this;
+        class PlotPanZoomStackGroup {
+          constructor(count)  {
 
             // Push a pan-zoom state; the index argument identifies
             // which stack originated the request (all other stacks
             // will ignore the range part of the change.)
-            function pushPanZoom(origin, dimensions, index) {
-                self.stacks.forEach(function (stack, i) {
+            const pushPanZoom = (origin, dimensions, index) => {
+                this.stacks.forEach( (stack, i) => {
                     if (i === index) {
                         // Do a normal push for the specified stack
                         stack.pushPanZoom(origin, dimensions);
@@ -61,21 +61,21 @@ define(
             // Decorate a pan-zoom stack; returns an object with
             // the same interface, but whose stack-mutation methods
             // effect all items in the group.
-            function decorateStack(stack, index) {
-                var result = Object.create(stack);
+            const decorateStack = (stack, index) => {
+                let result = Object.create(stack);
 
                 // Use the methods defined above
-                result.pushPanZoom = function (origin, dimensions) {
+                result.pushPanZoom = (origin, dimensions) => {
                     pushPanZoom(origin, dimensions, index);
                 };
-                result.setBasePanZoom = function () {
-                    self.setBasePanZoom.apply(self, arguments);
+                result.setBasePanZoom = () => {
+                    self.setBasePanZoom.apply(this, arguments);
                 };
-                result.popPanZoom = function () {
-                    self.popPanZoom.apply(self, arguments);
+                result.popPanZoom = () => {
+                    self.popPanZoom.apply(this, arguments);
                 };
-                result.clearPanZoom = function () {
-                    self.clearPanZoom.apply(self, arguments);
+                result.clearPanZoom = () => {
+                    self.clearPanZoom.apply(this, arguments);
                 };
 
                 return result;
@@ -97,8 +97,8 @@ define(
          * pan-zoom state on the stack cannot be popped, to ensure
          * that some pan-zoom state is always available.)
          */
-        PlotPanZoomStackGroup.prototype.popPanZoom = function () {
-            this.stacks.forEach(function (stack) {
+        popPanZoom() {
+            this.stacks.forEach( (stack) => {
                 stack.popPanZoom();
             });
         };
@@ -112,8 +112,8 @@ define(
          * @param {number[]} origin the base origin
          * @param {number[]} dimensions the base dimensions
          */
-        PlotPanZoomStackGroup.prototype.setBasePanZoom = function (origin, dimensions) {
-            this.stacks.forEach(function (stack) {
+        setBasePanZoom(origin, dimensions) {
+            this.stacks.forEach( (stack) => {
                 stack.setBasePanZoom(origin, dimensions);
             });
         };
@@ -124,8 +124,8 @@ define(
          * but the last, e.g. to remove any temporary user
          * modifications to pan-zoom state.
          */
-        PlotPanZoomStackGroup.prototype.clearPanZoom = function () {
-            this.stacks.forEach(function (stack) {
+        clearPanZoom() {
+            this.stacks.forEach( (stack) => {
                 stack.clearPanZoom();
             });
         };
@@ -138,7 +138,7 @@ define(
          * been applied.
          * @returns {number} the depth of the stacks in this group
          */
-        PlotPanZoomStackGroup.prototype.getDepth = function () {
+        getDepth() {
             // All stacks are kept in sync, so look up depth
             // from the first one.
             return this.stacks.length > 0 ? this.stacks[0].getDepth() : 0;
@@ -158,10 +158,10 @@ define(
          * @returns {PlotPanZoomStack} the pan-zoom stack in the
          *          group identified by that index
          */
-        PlotPanZoomStackGroup.prototype.getPanZoomStack = function (index) {
+        getPanZoomStack(index) {
             return this.decoratedStacks[index];
         };
-
+      }
         return PlotPanZoomStackGroup;
     }
 );

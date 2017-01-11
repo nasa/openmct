@@ -22,14 +22,14 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Responsible for preparing data for display by
          * `mct-chart` in a timeline's resource graph.
          * @constructor
          */
-        function TimelineGraphRenderer() {
+        const TimelineGraphRenderer = () => {
             return {
                 /**
                  * Render a resource utilization to a Float32Array,
@@ -37,8 +37,8 @@ define(
                  * @param {ResourceGraph} graph the resource utilization
                  * @returns {Float32Array} the rendered buffer
                  */
-                render: function (graph) {
-                    var count = graph.getPointCount(),
+                render: (graph) => {
+                    let count = graph.getPointCount(),
                         buffer = new Float32Array(count * 2),
                         i;
 
@@ -58,7 +58,7 @@ define(
                  * @param {string} the color
                  * @returns {number[]} the same color, in floating-point format
                  */
-                decode: function (color) {
+                decode: (color) => {
                     // Check for bad input, default to black if needed
                     color = /^#[A-Fa-f0-9]{6}$/.test(color) ? color : "#000000";
 
@@ -67,7 +67,7 @@ define(
                         color.substring(1, 3),
                         color.substring(3, 5),
                         color.substring(5, 7)
-                    ].map(function (c) {
+                    ].map( (c) => {
                         // Hex -> number
                         return parseInt(c, 16) / 255;
                     }).concat([1]); // Add the alpha channel

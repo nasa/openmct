@@ -25,29 +25,29 @@ define(
     [
         "../../src/capabilities/TransactionalPersistenceCapability"
     ],
-    function (TransactionalPersistenceCapability) {
+    (TransactionalPersistenceCapability) => {
 
-        function fastPromise(val) {
+        const fastPromise = (val) => {
             return {
-                then: function (callback) {
+                then: (callback) => {
                     return callback(val);
                 }
             };
         }
 
-        describe("The transactional persistence decorator", function () {
-            var mockQ,
+        describe("The transactional persistence decorator", () => {
+            let mockQ,
                 mockTransactionManager,
                 mockPersistence,
                 mockDomainObject,
                 testId,
                 capability;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 testId = "test-id";
 
                 mockQ = jasmine.createSpyObj("$q", ["when"]);
-                mockQ.when.andCallFake(function (val) {
+                mockQ.when.andCallFake( (val) => {
                     return fastPromise(val);
                 });
                 mockTransactionManager = jasmine.createSpyObj(
@@ -77,14 +77,14 @@ define(
             });
 
             it("if no transaction is active, passes through to persistence" +
-                " provider", function () {
+                " provider", () => {
                 mockTransactionManager.isActive.andReturn(false);
                 capability.persist();
                 expect(mockPersistence.persist).toHaveBeenCalled();
             });
 
             it("if transaction is active, persist and cancel calls are" +
-                " queued", function () {
+                " queued", () => {
                 mockTransactionManager.isActive.andReturn(true);
                 capability.persist();
                 expect(mockTransactionManager.addToTransaction).toHaveBeenCalled();
@@ -94,12 +94,12 @@ define(
                 expect(mockPersistence.refresh).toHaveBeenCalled();
             });
 
-            it("wraps getSpace", function () {
+            it("wraps getSpace", () => {
                 mockPersistence.getSpace.andReturn('foo');
                 expect(capability.getSpace()).toEqual('foo');
             });
 
-            it("clears transactions and delegates refresh calls", function () {
+            it("clears transactions and delegates refresh calls", () => {
                 capability.refresh();
                 expect(mockTransactionManager.clearTransactionsFor)
                     .toHaveBeenCalledWith(testId);

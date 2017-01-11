@@ -26,15 +26,15 @@ define(
         '../../src/actions/SetPrimaryLocationAction',
         '../DomainObjectFactory'
     ],
-    function (SetPrimaryLocation, domainObjectFactory) {
+    (SetPrimaryLocation, domainObjectFactory) => {
 
-        describe("The 'set primary location' action", function () {
-            var testContext,
+        describe("The 'set primary location' action", () =>  {
+            let testContext,
                 testModel,
                 testId,
                 mockLocationCapability;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 testId = "some-id";
                 testModel = { name: "some name" };
 
@@ -55,7 +55,7 @@ define(
                 };
             });
 
-            it("is applicable to objects with no location specified", function () {
+            it("is applicable to objects with no location specified", () =>  {
                 expect(SetPrimaryLocation.appliesTo(testContext))
                     .toBe(true);
                 testContext.domainObject.getModel.andReturn({
@@ -66,7 +66,7 @@ define(
                     .toBe(false);
             });
 
-            it("sets the location contextually when performed", function () {
+            it("sets the location contextually when performed", () =>  {
                 new SetPrimaryLocation(testContext).perform();
                 expect(mockLocationCapability.setPrimaryLocation)
                     .toHaveBeenCalledWith(testId);

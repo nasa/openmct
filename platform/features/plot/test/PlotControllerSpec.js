@@ -27,10 +27,10 @@
  */
 define(
     ["../src/PlotController"],
-    function (PlotController) {
+    (PlotController) => {
 
-        describe("The plot controller", function () {
-            var mockScope,
+        describe("The plot controller", () => {
+            let mockScope,
                 mockElement,
                 mockExportImageService,
                 mockFormatter,
@@ -43,22 +43,22 @@ define(
                 controller,
                 mockConductor;
 
-            function bind(method, thisObj) {
-                return function () {
+            const bind = (method, thisObj) => {
+                return () => {
                     return method.apply(thisObj, arguments);
                 };
             }
 
-            function fireEvent(name, args) {
-                mockScope.$on.calls.forEach(function (call) {
+            const fireEvent = (name, args) => {
+                mockScope.$on.calls.forEach( (call) => {
                     if (call.args[0] === name) {
                         call.args[1].apply(null, args || []);
                     }
                 });
             }
 
-            function fireWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
+            const fireWatch = (expr, value) => {
+                mockScope.$watch.calls.forEach( (call) => {
                     if (call.args[0] === expr) {
                         call.args[1].apply(null, [value]);
                     }
@@ -66,7 +66,7 @@ define(
             }
 
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     ["$watch", "$on", "$emit"]
@@ -112,7 +112,7 @@ define(
                 );
 
                 mockHandler.handle.andReturn(mockHandle);
-                mockThrottle.andCallFake(function (fn) {
+                mockThrottle.andCallFake( (fn) => {
                     return fn;
                 });
                 mockHandle.getTelemetryObjects.andReturn([mockDomainObject]);
@@ -144,7 +144,7 @@ define(
                 );
             });
 
-            it("provides plot colors", function () {
+            it("provides plot colors", () => {
                 // PlotPalette will have its own tests
                 expect(controller.getColor(0))
                     .toEqual(jasmine.any(String));
@@ -154,7 +154,7 @@ define(
                     .not.toEqual(controller.getColor(1));
             });
 
-            it("subscribes to telemetry when a domain object appears in scope", function () {
+            it("subscribes to telemetry when a domain object appears in scope", () => {
                 // Make sure we're using the right watch here
                 expect(mockScope.$watch.mostRecentCall.args[0])
                     .toEqual("domainObject");
@@ -168,12 +168,12 @@ define(
                 );
             });
 
-            it("draws lines when data becomes available", function () {
+            it("draws lines when data becomes available", () => {
                 // Make an object available
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
 
                 // Verify precondition
-                controller.getSubPlots().forEach(function (subplot) {
+                controller.getSubPlots().forEach( (subplot) => {
                     expect(subplot.getDrawingObject().lines)
                         .not.toBeDefined();
                 });
@@ -184,13 +184,13 @@ define(
                 // Broadcast data
                 mockHandler.handle.mostRecentCall.args[1]();
 
-                controller.getSubPlots().forEach(function (subplot) {
+                controller.getSubPlots().forEach( (subplot) => {
                     expect(subplot.getDrawingObject().lines)
                         .toBeDefined();
                 });
             });
 
-            it("unsubscribes when domain object changes", function () {
+            it("unsubscribes when domain object changes", () => {
                 // Make an object available
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
                 // Verify precondition - shouldn't unsubscribe yet
@@ -202,7 +202,7 @@ define(
             });
 
 
-            it("changes modes depending on number of objects", function () {
+            it("changes modes depending on number of objects", () => {
                 // Act like one object is available
                 mockHandle.getTelemetryObjects.andReturn([
                     mockDomainObject
@@ -230,41 +230,41 @@ define(
 
             // Interface tests follow; these will be delegated (mostly
             // to PlotModeOptions, which is tested separately).
-            it("provides access to available plot mode options", function () {
+            it("provides access to available plot mode options", () => {
                 expect(Array.isArray(controller.getModeOptions()))
                     .toBeTruthy();
             });
 
-            it("provides a current plot mode", function () {
+            it("provides a current plot mode", () => {
                 expect(controller.getMode().name)
                     .toEqual(jasmine.any(String));
             });
 
-            it("allows plot mode to be changed", function () {
-                expect(function () {
+            it("allows plot mode to be changed", () => {
+                expect(() => {
                     controller.setMode(controller.getMode());
                 }).not.toThrow();
             });
 
-            it("provides an array of sub-plots", function () {
+            it("provides an array of sub-plots", () => {
                 expect(Array.isArray(controller.getSubPlots()))
                     .toBeTruthy();
             });
 
-            it("allows plots to be updated", function () {
+            it("allows plots to be updated", () => {
                 expect(bind(controller.update, controller)).not.toThrow();
             });
 
-            it("allows changing pan-zoom state", function () {
+            it("allows changing pan-zoom state", () => {
                 expect(bind(controller.isZoomed, controller)).not.toThrow();
                 expect(bind(controller.stepBackPanZoom, controller)).not.toThrow();
                 expect(bind(controller.unzoom, controller)).not.toThrow();
             });
 
-            it("sets status when plot becomes detached from time conductor", function () {
+            it("sets status when plot becomes detached from time conductor", () => {
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
 
-                function boundsEvent() {
+                const boundsEvent = () => {
                     fireEvent("telemetry:display:bounds", [
                         {},
                         { start: 10, end: 100 },
@@ -272,7 +272,7 @@ define(
                     ]);
                 }
 
-                mockDomainObject.hasCapability.andCallFake(function (name) {
+                mockDomainObject.hasCapability.andCallFake( (name) => {
                     return name === "status";
                 });
                 mockDomainObject.getCapability.andReturn(mockStatusCapability);
@@ -289,7 +289,7 @@ define(
                 expect(mockStatusCapability.set).toHaveBeenCalledWith("timeconductor-unsynced", false);
             });
 
-            it("indicates if a request is pending", function () {
+            it("indicates if a request is pending", () => {
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
                 expect(controller.isRequestPending()).toBeTruthy();
                 mockHandle.request.mostRecentCall.args[1](
@@ -299,7 +299,7 @@ define(
                 expect(controller.isRequestPending()).toBeFalsy();
             });
 
-            it("requests historical telemetry", function () {
+            it("requests historical telemetry", () => {
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
                 expect(mockHandle.request).toHaveBeenCalled();
                 mockHandle.request.mostRecentCall.args[1](
@@ -308,7 +308,7 @@ define(
                 );
             });
 
-            it("unsubscribes when destroyed", function () {
+            it("unsubscribes when destroyed", () => {
                 // Make an object available
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
                 // Make sure $destroy is what's listened for
@@ -321,7 +321,7 @@ define(
                 expect(mockHandle.unsubscribe).toHaveBeenCalled();
             });
 
-            it("requeries when displayable bounds change", function () {
+            it("requeries when displayable bounds change", () => {
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
                 expect(mockHandle.request.calls.length).toEqual(1);
                 fireEvent("telemetry:display:bounds", [
@@ -331,24 +331,24 @@ define(
                 expect(mockHandle.request.calls.length).toEqual(2);
             });
 
-            it("requeries when user changes domain selection", function () {
+            it("requeries when user changes domain selection", () => {
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
                 expect(mockHandle.request.calls.length).toEqual(1);
                 fireWatch("axes[0].active.key", 'someNewKey');
                 expect(mockHandle.request.calls.length).toEqual(2);
             });
 
-            it("requeries when user changes range selection", function () {
+            it("requeries when user changes range selection", () => {
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
                 expect(mockHandle.request.calls.length).toEqual(1);
                 fireWatch("axes[1].active.key", 'someNewKey');
                 expect(mockHandle.request.calls.length).toEqual(2);
             });
 
-            it("maintains externally-provided domain axis bounds after data is received", function () {
+            it("maintains externally-provided domain axis bounds after data is received", () => {
                 mockSeries.getPointCount.andReturn(3);
                 mockSeries.getRangeValue.andReturn(42);
-                mockSeries.getDomainValue.andCallFake(function (i) {
+                mockSeries.getDomainValue.andCallFake( (i) => {
                     return 2500 + i * 2500;
                 });
 
@@ -372,17 +372,17 @@ define(
                 ).toEqual(10000);
             });
 
-            it("provides classes for legends based on limit state", function () {
-                var mockTelemetryObjects = mockHandle.getTelemetryObjects();
+            it("provides classes for legends based on limit state", () => {
+                let mockTelemetryObjects = mockHandle.getTelemetryObjects();
 
                 mockHandle.getDatum.andReturn({});
-                mockTelemetryObjects.forEach(function (mockObject, i) {
-                    var id = 'object-' + i,
+                mockTelemetryObjects.forEach( (mockObject, i) => {
+                    let id = 'object-' + i,
                         mockLimitCapability =
                             jasmine.createSpyObj('limit-' + id, ['evaluate']);
 
                     mockObject.getId.andReturn(id);
-                    mockObject.getCapability.andCallFake(function (key) {
+                    mockObject.getCapability.andCallFake( (key) => {
                         return (key === 'limit') && mockLimitCapability;
                     });
 
@@ -393,7 +393,7 @@ define(
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
                 mockHandler.handle.mostRecentCall.args[1]();
 
-                mockTelemetryObjects.forEach(function (mockTelemetryObject) {
+                mockTelemetryObjects.forEach( (mockTelemetryObject) => {
                     expect(controller.getLegendClass(mockTelemetryObject))
                         .toEqual('alarm-' + mockTelemetryObject.getId());
                 });

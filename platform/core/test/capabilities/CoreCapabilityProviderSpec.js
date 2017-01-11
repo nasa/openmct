@@ -25,30 +25,30 @@
  */
 define(
     ["../../src/capabilities/CoreCapabilityProvider"],
-    function (CoreCapabilityProvider) {
+    (CoreCapabilityProvider) => {
 
-        describe("The core capability provider", function () {
-            var mockLog,
+        describe("The core capability provider", () => {
+            let mockLog,
                 provider;
 
-            function BasicCapability() {
+            const BasicCapability = () => {
                 return;
             }
             BasicCapability.key = "basic";
 
-            function ApplicableCapability() {
+            const ApplicableCapability = () => {
                 return;
             }
             ApplicableCapability.key = "applicable";
-            ApplicableCapability.appliesTo = function (model) {
+            ApplicableCapability.appliesTo = (model) => {
                 return !model.isNotApplicable;
             };
 
-            function KeylessCapability() {
+            const KeylessCapability = () => {
                 return;
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockLog = jasmine.createSpyObj(
                     "$log",
                     ["error", "warn", "info", "debug"]
@@ -61,20 +61,20 @@ define(
                 ], mockLog);
             });
 
-            it("returns capabilities for models, from extensions", function () {
+            it("returns capabilities for models, from extensions", () => {
                 expect(provider.getCapabilities({})).toEqual({
                     basic: BasicCapability,
                     applicable: ApplicableCapability
                 });
             });
 
-            it("filters out capabilities which do not apply to models", function () {
+            it("filters out capabilities which do not apply to models", () => {
                 expect(provider.getCapabilities({ isNotApplicable: true })).toEqual({
                     basic: BasicCapability
                 });
             });
 
-            it("logs a warning when capability extensions have not defined keys", function () {
+            it("logs a warning when capability extensions have not defined keys", () => {
                 // Verify precondition
                 expect(mockLog.warn).not.toHaveBeenCalled();
 
@@ -84,20 +84,20 @@ define(
 
             });
 
-            it("does not log a warning when all capability extensions are valid", function () {
+            it("does not log a warning when all capability extensions are valid", () => {
                 KeylessCapability.key = "someKey";
                 provider.getCapabilities({});
                 expect(mockLog.warn).not.toHaveBeenCalled();
             });
 
-            it("prefers higher-priority capability", function () {
+            it("prefers higher-priority capability", () => {
                 KeylessCapability.key = BasicCapability.key;
                 expect(provider.getCapabilities({}).basic)
                     .toEqual(BasicCapability);
             });
 
             // https://github.com/nasa/openmctweb/issues/49
-            it("does not log a warning for multiple capabilities with the same key", function () {
+            it("does not log a warning for multiple capabilities with the same key", () => {
                 KeylessCapability.key = BasicCapability.key;
                 provider.getCapabilities({});
                 expect(mockLog.warn).not.toHaveBeenCalled();

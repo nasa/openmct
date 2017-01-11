@@ -22,18 +22,18 @@
 
 define(
     ["../src/CompositionMutabilityPolicy"],
-    function (CompositionMutabilityPolicy) {
+    (CompositionMutabilityPolicy) => {
 
-        describe("The composition mutability policy", function () {
-            var mockType,
+        describe("The composition mutability policy", () => {
+            let mockType,
                 policy;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockType = jasmine.createSpyObj('type', ['hasFeature']);
                 policy = new CompositionMutabilityPolicy();
             });
 
-            it("only allows composition for types which can be created/modified", function () {
+            it("only allows composition for types which can be created/modified", () => {
                 expect(policy.allow(mockType)).toBeFalsy();
                 mockType.hasFeature.andReturn(true);
                 expect(policy.allow(mockType)).toBeTruthy();

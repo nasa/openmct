@@ -22,13 +22,13 @@
 
 define(
     ["../../src/services/Now"],
-    function (Now) {
+    (Now) => {
 
-        describe("The 'now' service", function () {
-            var now = new Now();
+        describe("The 'now' service", () =>  {
+            let now = new Now();
 
-            it("reports system time", function () {
-                var a = Date.now(),
+            it("reports system time", () =>  {
+                let a = Date.now(),
                     b = now(),
                     c = Date.now();
 

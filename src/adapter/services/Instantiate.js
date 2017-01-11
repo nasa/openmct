@@ -22,18 +22,18 @@
 
 define(
     ['../../../platform/core/src/objects/DomainObjectImpl'],
-    function (DomainObjectImpl) {
+    (DomainObjectImpl) => {
 
         /**
          * Overrides platform version of instantiate, passes Id with model such
          * that capability detection can utilize new format domain objects.
          */
-        function Instantiate(
+        const Instantiate = (
             capabilityService,
             identifierService,
             cacheService
-        ) {
-            return function (model, id) {
+        ) => {
+            return (model, id) => {
                 id = id || identifierService.generate();
                 var old_id = model.id;
                 model.id = id;
@@ -42,7 +42,7 @@ define(
                 cacheService.put(id, model);
                 return new DomainObjectImpl(id, model, capabilities);
             };
-        }
+        };
 
         return Instantiate;
     }

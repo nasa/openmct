@@ -22,19 +22,19 @@
 
 define(
     ["./ExportService", "csv"],
-    function (ExportService, CSV) {
+    (ExportService, CSV) => {
 
-        describe("ExportService", function () {
-            var mockSaveAs,
+        describe("ExportService", () => {
+            let mockSaveAs,
                 testRows,
                 csvContents,
                 exportService;
 
-            function finishedReadingCSV() {
+            const finishedReadingCSV = () => {
                 return !!csvContents;
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 csvContents = undefined;
                 testRows = [
                     { a: 1, b: 2, c: 3 },
@@ -42,9 +42,9 @@ define(
                     { a: 7, b: 8, c: 9 }
                 ];
                 mockSaveAs = jasmine.createSpy('saveAs');
-                mockSaveAs.andCallFake(function (blob) {
-                    var reader = new FileReader();
-                    reader.onloadend = function () {
+                mockSaveAs.andCallFake( (blob) => {
+                    let reader = new FileReader();
+                    reader.onloadend = () => {
                         csvContents = new CSV(reader.result).parse();
                     };
                     reader.readAsText(blob);
@@ -52,28 +52,28 @@ define(
                 exportService = new ExportService(mockSaveAs);
             });
 
-            describe("#exportCSV(rows)", function () {
-                beforeEach(function () {
+            describe("#exportCSV(rows)", () => {
+                beforeEach( () => {
                     exportService.exportCSV(testRows);
                     waitsFor(finishedReadingCSV);
                 });
 
-                it("triggers saving of a file", function () {
+                it("triggers saving of a file", () => {
                     expect(mockSaveAs).toHaveBeenCalledWith(
                         jasmine.any(Blob),
                         jasmine.any(String)
                     );
                 });
 
-                it("includes headers from the data set", function () {
+                it("includes headers from the data set", () =>  {
                     expect(csvContents[0])
                         .toEqual(Object.keys(testRows[0]).sort());
                 });
 
-                it("includes data from the data set", function () {
-                    var headers = csvContents[0],
-                        expectedData = testRows.map(function (row) {
-                            return headers.map(function (key) {
+                it("includes data from the data set", () =>  {
+                    let headers = csvContents[0],
+                        expectedData = testRows.map( (row) => {
+                            return headers.map( (key) => {
                                 return String(row[key]);
                             });
                         });
@@ -82,34 +82,34 @@ define(
                 });
             });
 
-            describe("#exportCSV(rows, options.headers)", function () {
-                var testHeaders;
+            describe("#exportCSV(rows, options.headers)", () =>  {
+                let testHeaders;
 
-                beforeEach(function () {
+                beforeEach(() =>  {
                     testHeaders = ['a', 'b'];
                     exportService
                         .exportCSV(testRows, { headers: testHeaders });
                     waitsFor(finishedReadingCSV);
                 });
 
-                it("triggers saving of a file", function () {
+                it("triggers saving of a file", () =>  {
                     expect(mockSaveAs).toHaveBeenCalledWith(
                         jasmine.any(Blob),
                         jasmine.any(String)
                     );
                 });
 
-                it("includes only the specified headers", function () {
+                it("includes only the specified headers", () =>  {
                     expect(csvContents[0])
                         .toEqual(testHeaders);
                     expect(csvContents[0])
                         .not.toEqual(Object.keys(testRows[0]).sort());
                 });
 
-                it("includes a subset data from the data set", function () {
-                    var headers = testHeaders,
-                        expectedData = testRows.map(function (row) {
-                            return headers.map(function (key) {
+                it("includes a subset data from the data set", () =>  {
+                    let headers = testHeaders,
+                        expectedData = testRows.map( (row) => {
+                            return headers.map( (key) => {
                                 return String(row[key]);
                             });
                         });
@@ -117,17 +117,17 @@ define(
                 });
             });
 
-            describe("#exportCSV(rows, options.filename)", function () {
-                var testFilename;
+            describe("#exportCSV(rows, options.filename)", () =>  {
+                let testFilename;
 
-                beforeEach(function () {
+                beforeEach(() =>  {
                     testFilename = "some-test-filename.csv";
                     exportService
                         .exportCSV(testRows, { filename: testFilename });
                     waitsFor(finishedReadingCSV);
                 });
 
-                it("saves a file with the specified name", function () {
+                it("saves a file with the specified name", () =>  {
                     expect(mockSaveAs).toHaveBeenCalledWith(
                         jasmine.any(Blob),
                         testFilename

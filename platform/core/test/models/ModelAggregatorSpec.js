@@ -25,10 +25,10 @@
  */
 define(
     ["../../src/models/ModelAggregator"],
-    function (ModelAggregator) {
+    (ModelAggregator) => {
 
-        describe("The model aggregator", function () {
-            var mockQ,
+        describe("The model aggregator", () => {
+            let mockQ,
                 mockProviders,
                 modelList = [
                     { "a": { someKey: "some value" }, "b": undefined },
@@ -36,10 +36,10 @@ define(
                 ],
                 aggregator;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockQ = jasmine.createSpyObj("$q", ["all"]);
-                mockProviders = modelList.map(function (models, i) {
-                    var mockProvider = jasmine.createSpyObj(
+                mockProviders = modelList.map( (models, i) => {
+                    let mockProvider = jasmine.createSpyObj(
                         "mockProvider" + i,
                         ["getModels"]
                     );
@@ -48,7 +48,7 @@ define(
                 });
 
                 mockQ.all.andReturn({
-                    then: function (c) {
+                    then: (c) => {
                         return c(modelList);
                     }
                 });
@@ -56,17 +56,17 @@ define(
                 aggregator = new ModelAggregator(mockQ, mockProviders);
             });
 
-            it("aggregates results promised by multiple providers", function () {
+            it("aggregates results promised by multiple providers", () => {
                 expect(aggregator.getModels(["a", "b"])).toEqual({
                     "a": { someKey: "some value" },
                     "b": { someOtherKey: "some other value" }
                 });
             });
 
-            it("passes ids to all aggregated providers", function () {
+            it("passes ids to all aggregated providers", () => {
                 aggregator.getModels(["a", "b"]);
 
-                mockProviders.forEach(function (mockProvider) {
+                mockProviders.forEach( (mockProvider) => {
                     expect(mockProvider.getModels)
                         .toHaveBeenCalledWith(["a", "b"]);
                 });

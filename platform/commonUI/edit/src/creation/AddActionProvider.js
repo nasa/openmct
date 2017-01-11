@@ -25,7 +25,7 @@
  */
 define(
     ["./AddAction"],
-    function (AddAction) {
+    (AddAction) => {
 
         /**
          * The AddActionProvider is an ActionProvider which introduces
@@ -44,18 +44,18 @@ define(
          *        introduced in this bundle), responsible for handling actual
          *        object creation.
          */
-        function AddActionProvider($q, typeService, dialogService, policyService) {
+        class AddActionProvider {
+          constructor($q, typeService, dialogService, policyService) {
             this.typeService = typeService;
             this.dialogService = dialogService;
             this.$q = $q;
             this.policyService = policyService;
         }
 
-        AddActionProvider.prototype.getActions = function (actionContext) {
-            var context = actionContext || {},
+        getActions(actionContext) {
+            let context = actionContext || {},
                 key = context.key,
-                destination = context.domainObject,
-                self = this;
+                destination = context.domainObject
 
             // We only provide Add actions, and we need a
             // domain object to serve as the container for the
@@ -66,20 +66,20 @@ define(
             }
 
             // Introduce one create action per type
-            return this.typeService.listTypes().filter(function (type) {
-                return self.policyService.allow("creation", type) && self.policyService.allow("composition", destination.getCapability('type'), type);
-            }).map(function (type) {
+            return this.typeService.listTypes().filter( (type) => {
+                return this.policyService.allow("creation", type) && this.policyService.allow("composition", destination.getCapability('type'), type);
+            }).map( (type) => {
                 return new AddAction(
                     type,
                     destination,
                     context,
-                    self.$q,
-                    self.dialogService,
-                    self.policyService
+                    this.$q,
+                    this.dialogService,
+                    this.policyService
                 );
             });
         };
-
+      }
         return AddActionProvider;
     }
 );

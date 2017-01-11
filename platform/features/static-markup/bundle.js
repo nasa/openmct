@@ -24,11 +24,10 @@ define([
 
     "text!./res/markup.html",
     'legacyRegistry'
-], function (
-
+], (
     markupTemplate,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/features/static-markup", {
         "extensions": {

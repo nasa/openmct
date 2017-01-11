@@ -22,10 +22,10 @@
 
 define(
     ["../../src/actions/EditAndComposeAction"],
-    function (EditAndComposeAction) {
+    (EditAndComposeAction) => {
 
-        describe("The Link action", function () {
-            var mockQ,
+        describe("The Link action", () => {
+            let mockQ,
                 mockDomainObject,
                 mockParent,
                 mockContext,
@@ -38,15 +38,15 @@ define(
                 capabilities,
                 action;
 
-            function mockPromise(value) {
+            const mockPromise = (value) => {
                 return {
-                    then: function (callback) {
+                    then: (callback) => {
                         return mockPromise(callback(value));
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
 
 
                 mockDomainObject = jasmine.createSpyObj(
@@ -55,13 +55,13 @@ define(
                 );
                 mockQ = { when: mockPromise };
                 mockParent = {
-                    getModel: function () {
+                    getModel: () => {
                         return model;
                     },
-                    getCapability: function (k) {
+                    getCapability: (k) => {
                         return capabilities[k];
                     },
-                    useCapability: function (k, v) {
+                    useCapability: (k, v) => {
                         return capabilities[k].invoke(v);
                     }
                 };
@@ -98,20 +98,20 @@ define(
             });
 
 
-            it("adds to the parent's composition when performed", function () {
+            it("adds to the parent's composition when performed", () => {
                 action.perform();
                 expect(mockComposition.add)
                     .toHaveBeenCalledWith(mockDomainObject);
             });
 
-            it("enables edit mode for objects that have an edit action", function () {
+            it("enables edit mode for objects that have an edit action", () => {
                 mockActionCapability.getActions.andReturn([mockEditAction]);
                 action.perform();
                 expect(mockEditAction.perform).toHaveBeenCalled();
             });
 
             it("Does not enable edit mode for objects that do not have an" +
-                " edit action", function () {
+                " edit action", () => {
                 mockActionCapability.getActions.andReturn([]);
                 action.perform();
                 expect(mockEditAction.perform).not.toHaveBeenCalled();

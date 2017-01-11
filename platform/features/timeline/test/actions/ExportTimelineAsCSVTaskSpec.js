@@ -22,16 +22,16 @@
 
 define(
     ['../../src/actions/ExportTimelineAsCSVTask'],
-    function (ExportTimelineAsCSVTask) {
+    (ExportTimelineAsCSVTask) => {
 
         // Note that most responsibility is delegated to helper
         // classes, so testing here is minimal.
-        describe("EXportTimelineAsCSVTask", function () {
-            var mockExportService,
+        describe("EXportTimelineAsCSVTask", () => {
+            let mockExportService,
                 mockDomainObject,
                 task;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockExportService = jasmine.createSpyObj(
                     'exportService',
                     ['exportCSV']
@@ -57,18 +57,18 @@ define(
                 );
             });
 
-            describe("when run", function () {
-                var mockCallback;
+            describe("when run", () => {
+                let mockCallback;
 
-                beforeEach(function () {
+                beforeEach(() => {
                     mockCallback = jasmine.createSpy('callback');
                     task.run().then(mockCallback);
-                    waitsFor(function () {
+                    waitsFor(() => {
                         return mockCallback.calls.length > 0;
                     });
                 });
 
-                it("exports to CSV", function () {
+                it("exports to CSV", () => {
                     expect(mockExportService.exportCSV)
                         .toHaveBeenCalled();
                 });

@@ -22,14 +22,14 @@
 
 define(
     ["../../src/controllers/ClickAwayController"],
-    function (ClickAwayController) {
+    (ClickAwayController) => {
 
-        describe("The click-away controller", function () {
-            var mockDocument,
+        describe("The click-away controller", () => {
+            let mockDocument,
                 mockTimeout,
                 controller;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockDocument = jasmine.createSpyObj(
                     "$document",
                     ["on", "off"]
@@ -41,15 +41,15 @@ define(
                 );
             });
 
-            it("is initially inactive", function () {
+            it("is initially inactive", () => {
                 expect(controller.isActive()).toBe(false);
             });
 
-            it("does not listen to the document before being toggled", function () {
+            it("does not listen to the document before being toggled", () => {
                 expect(mockDocument.on).not.toHaveBeenCalled();
             });
 
-            it("tracks enabled/disabled state when toggled", function () {
+            it("tracks enabled/disabled state when toggled", () => {
                 controller.toggle();
                 expect(controller.isActive()).toBe(true);
                 controller.toggle();
@@ -60,7 +60,7 @@ define(
                 expect(controller.isActive()).toBe(false);
             });
 
-            it("allows active state to be explicitly specified", function () {
+            it("allows active state to be explicitly specified", () => {
                 controller.setState(true);
                 expect(controller.isActive()).toBe(true);
                 controller.setState(true);
@@ -71,13 +71,13 @@ define(
                 expect(controller.isActive()).toBe(false);
             });
 
-            it("registers a mouse listener when activated", function () {
+            it("registers a mouse listener when activated", () => {
                 controller.setState(true);
                 expect(mockDocument.on).toHaveBeenCalled();
             });
 
-            it("deactivates and detaches listener on document click", function () {
-                var callback, timeout;
+            it("deactivates and detaches listener on document click", () => {
+                let callback, timeout;
                 controller.setState(true);
                 callback = mockDocument.on.mostRecentCall.args[1];
                 callback();
@@ -86,9 +86,6 @@ define(
                 expect(controller.isActive()).toEqual(false);
                 expect(mockDocument.off).toHaveBeenCalledWith("mouseup", callback);
             });
-
-
-
         });
     }
 );

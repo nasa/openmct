@@ -25,10 +25,10 @@ define(
     [
         '../../src/services/LocatingObjectDecorator'
     ],
-    function (LocatingObjectDecorator) {
+    (LocatingObjectDecorator) => {
 
-        describe("LocatingObjectDecorator", function () {
-            var mockContextualize,
+        describe("LocatingObjectDecorator", () =>  {
+            let mockContextualize,
                 mockQ,
                 mockLog,
                 mockObjectService,
@@ -37,15 +37,15 @@ define(
                 testModels,
                 decorator;
 
-            function testPromise(v) {
+            const testPromise = (v) => {
                 return (v || {}).then ? v : {
-                    then: function (callback) {
+                    then: (callback) => {
                         return testPromise(callback(v));
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 // A <- B <- C
                 // D <-> E, to verify cycle detection
                 testModels = {
@@ -64,7 +64,7 @@ define(
                 mockObjectService =
                     jasmine.createSpyObj("objectService", ["getObjects"]);
 
-                mockContextualize.andCallFake(function (domainObject, parentObject) {
+                mockContextualize.andCallFake( (domainObject, parentObject) => {
                     // Not really what contextualize does, but easy to test!
                     return {
                         testObject: domainObject,
@@ -73,10 +73,10 @@ define(
                 });
 
                 mockQ.when.andCallFake(testPromise);
-                mockQ.all.andCallFake(function (promises) {
-                    var result = {};
-                    Object.keys(promises).forEach(function (k) {
-                        promises[k].then(function (v) {
+                mockQ.all.andCallFake( (promises) => {
+                    let result = {};
+                    Object.keys(promises).forEach( (k) => {
+                        promises[k].then( (v) => {
                             result[k] = v;
                         });
                     });
@@ -87,7 +87,7 @@ define(
 
                 mockCallback = jasmine.createSpy("callback");
 
-                Object.keys(testModels).forEach(function (id) {
+                Object.keys(testModels).forEach( (id) => {
                     testObjects[id] = jasmine.createSpyObj(
                         "domainObject-" + id,
                         ["getId", "getModel", "getCapability"]
@@ -104,7 +104,7 @@ define(
                 );
             });
 
-            it("contextualizes domain objects by location", function () {
+            it("contextualizes domain objects by location", () =>  {
                 decorator.getObjects(['b', 'c']).then(mockCallback);
                 expect(mockCallback).toHaveBeenCalledWith({
                     b: {
@@ -121,7 +121,7 @@ define(
                 });
             });
 
-            it("warns on cycle detection", function () {
+            it("warns on cycle detection", () =>  {
                 // Base case, no cycle, no warning
                 decorator.getObjects(['a', 'b', 'c']);
                 expect(mockLog.warn).not.toHaveBeenCalled();

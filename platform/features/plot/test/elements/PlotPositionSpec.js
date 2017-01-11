@@ -25,14 +25,14 @@
  */
 define(
     ["../../src/elements/PlotPosition"],
-    function (PlotPosition) {
+    (PlotPosition) => {
 
-        describe("A plot position", function () {
-            var mockPanZoom,
+        describe("A plot position", () => {
+            let mockPanZoom,
                 testOrigin = [10, 20],
                 testDimensions = [800, 10];
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockPanZoom = jasmine.createSpyObj(
                     "panZoomStack",
                     ["getPanZoom"]
@@ -43,8 +43,8 @@ define(
                 });
             });
 
-            it("transforms pixel coordinates to domain-range", function () {
-                var position = new PlotPosition(42, 450, 100, 1000, mockPanZoom);
+            it("transforms pixel coordinates to domain-range", () => {
+                let position = new PlotPosition(42, 450, 100, 1000, mockPanZoom);
                 // Domain: .42 * 800 + 10 = 346
                 // Range: .55 * 10 + 20 = 25.5
                 // Notably, y-axis is reversed between pixel space and range
@@ -53,8 +53,8 @@ define(
                 expect(position.getRange()).toEqual(25.5);
             });
 
-            it("treats a position as undefined if no pan-zoom state is present", function () {
-                var position;
+            it("treats a position as undefined if no pan-zoom state is present", () => {
+                let position;
 
                 mockPanZoom.getPanZoom.andReturn({});
                 position = new PlotPosition(1, 2, 100, 100, mockPanZoom);

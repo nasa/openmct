@@ -25,10 +25,10 @@
  */
 define(
     ["../../src/elements/PlotPanZoomStack"],
-    function (PlotPanZoomStack) {
+    (PlotPanZoomStack) => {
 
-        describe("A plot pan-zoom stack", function () {
-            var panZoomStack,
+        describe("A plot pan-zoom stack", () => {
+            let panZoomStack,
                 initialOrigin,
                 initialDimensions,
                 otherOrigins,
@@ -36,7 +36,7 @@ define(
 
             // Shorthand for verifying getOrigin, getDimensions, and getPanZoom,
             // which should always agree.
-            function verifyPanZoom(origin, dimensions) {
+            const verifyPanZoom = (origin, dimensions) => {
                 expect(panZoomStack.getOrigin()).toEqual(origin);
                 expect(panZoomStack.getDimensions()).toEqual(dimensions);
                 expect(panZoomStack.getPanZoom()).toEqual({
@@ -45,7 +45,7 @@ define(
                 });
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 initialOrigin = [4, 2];
                 initialDimensions = [600, 400];
                 otherOrigins = [[8, 6], [12, 9]];
@@ -54,11 +54,11 @@ define(
                     new PlotPanZoomStack(initialOrigin, initialDimensions);
             });
 
-            it("starts off reporting its initial values", function () {
+            it("starts off reporting its initial values", () => {
                 verifyPanZoom(initialOrigin, initialDimensions);
             });
 
-            it("allows origin/dimensions pairs to be pushed/popped", function () {
+            it("allows origin/dimensions pairs to be pushed/popped", () => {
                 panZoomStack.pushPanZoom(otherOrigins[0], otherDimensions[0]);
                 verifyPanZoom(otherOrigins[0], otherDimensions[0]);
                 panZoomStack.pushPanZoom(otherOrigins[1], otherDimensions[1]);
@@ -69,7 +69,7 @@ define(
                 verifyPanZoom(initialOrigin, initialDimensions);
             });
 
-            it("reports current stack depth", function () {
+            it("reports current stack depth", () => {
                 expect(panZoomStack.getDepth()).toEqual(1);
                 panZoomStack.pushPanZoom(otherOrigins[0], otherDimensions[0]);
                 expect(panZoomStack.getDepth()).toEqual(2);
@@ -77,14 +77,14 @@ define(
                 expect(panZoomStack.getDepth()).toEqual(3);
             });
 
-            it("allows base pan zoom to be restored", function () {
+            it("allows base pan zoom to be restored", () => {
                 panZoomStack.pushPanZoom(otherOrigins[0], otherDimensions[0]);
                 panZoomStack.pushPanZoom(otherOrigins[1], otherDimensions[1]);
                 panZoomStack.clearPanZoom();
                 verifyPanZoom(initialOrigin, initialDimensions);
             });
 
-            it("allows base pan zoom to be changed", function () {
+            it("allows base pan zoom to be changed", () => {
                 panZoomStack.pushPanZoom(otherOrigins[0], otherDimensions[0]);
                 panZoomStack.setBasePanZoom(otherOrigins[1], otherDimensions[1]);
                 // Should not have changed current top-of-stack

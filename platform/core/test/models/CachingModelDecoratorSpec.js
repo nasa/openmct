@@ -25,42 +25,42 @@ define(
         "../../src/models/CachingModelDecorator",
         "../../src/models/ModelCacheService"
     ],
-    function (CachingModelDecorator, ModelCacheService) {
+    (CachingModelDecorator, ModelCacheService) => {
 
-        xdescribe("The caching model decorator", function () {
-            var mockModelService,
+        xdescribe("The caching model decorator", () => {
+            let mockModelService,
                 mockCallback,
                 testModels,
                 decorator;
 
-            function asPromise(value) {
+            const asPromise = (value) => {
                 return (value || {}).then ? value : {
-                    then: function (callback) {
+                    then: (callback) => {
                         return asPromise(callback(value));
                     }
                 };
             }
 
-            function fakePromise() {
-                var chains = [],
+            const fakePromise = () => {
+                let chains = [],
                     callbacks = [];
 
                 return {
-                    then: function (callback) {
-                        var next = fakePromise();
+                    then: (callback) => {
+                        let next = fakePromise();
                         callbacks.push(callback);
                         chains.push(next);
                         return next;
                     },
-                    resolve: function (value) {
-                        callbacks.forEach(function (cb, i) {
+                    resolve: (value) => {
+                        callbacks.forEach( (cb, i) => {
                             chains[i].resolve(cb(value));
                         });
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockCallback = jasmine.createSpy();
                 mockModelService = jasmine.createSpyObj('modelService', ['getModels']);
                 testModels = {
@@ -74,12 +74,12 @@ define(
                 );
             });
 
-            it("loads models from its wrapped model service", function () {
+            it("loads models from its wrapped model service", () => {
                 decorator.getModels(['a', 'b']).then(mockCallback);
                 expect(mockCallback).toHaveBeenCalledWith(testModels);
             });
 
-            it("does not try to reload cached models", function () {
+            it("does not try to reload cached models", () => {
                 mockModelService.getModels.andReturn(asPromise({ a: testModels.a }));
                 decorator.getModels(['a']);
                 mockModelService.getModels.andReturn(asPromise(testModels));
@@ -88,7 +88,7 @@ define(
                 expect(mockModelService.getModels.mostRecentCall.args[0]).toEqual(['b']);
             });
 
-            it("does not call its wrapped model service if not needed", function () {
+            it("does not call its wrapped model service if not needed", () => {
                 decorator.getModels(['a', 'b']);
                 expect(mockModelService.getModels.calls.length).toEqual(1);
                 decorator.getModels(['a', 'b']).then(mockCallback);
@@ -98,8 +98,8 @@ define(
                 expect(mockCallback).toHaveBeenCalledWith(testModels);
             });
 
-            it("ensures a single object instance, even for multiple concurrent calls", function () {
-                var promiseA, promiseB;
+            it("ensures a single object instance, even for multiple concurrent calls", () => {
+                let promiseA, promiseB;
 
                 promiseA = fakePromise();
                 promiseB = fakePromise();
@@ -125,8 +125,8 @@ define(
                     .toBe(testModels.a);
             });
 
-            it("is robust against updating with undefined values", function () {
-                var promiseA, promiseB;
+            it("is robust against updating with undefined values", () => {
+                let promiseA, promiseB;
 
                 promiseA = fakePromise();
                 promiseB = fakePromise();

@@ -22,10 +22,10 @@
 
 define(
     ['../../../src/controllers/swimlane/TimelineSwimlanePopulator'],
-    function (TimelineSwimlanePopulator) {
+    (TimelineSwimlanePopulator) => {
 
-        describe("A Timeline swimlane populator", function () {
-            var mockLoader,
+        describe("A Timeline swimlane populator", () => {
+            let mockLoader,
                 mockSelection,
                 testConfiguration,
                 mockDomainObject,
@@ -33,16 +33,16 @@ define(
                 mockCallback,
                 populator;
 
-            function asPromise(value) {
+            const asPromise = (value) => {
                 return (value || {}).then ? value : {
-                    then: function (callback) {
+                    then: (callback) => {
                         return asPromise(callback(value));
                     }
                 };
             }
 
-            function makeMockDomainObject(id, composition) {
-                var mockDomainObj = jasmine.createSpyObj(
+            const makeMockDomainObject = (id, composition) => {
+                let mockDomainObj = jasmine.createSpyObj(
                     'domainObject-' + id,
                     ['getId', 'getModel', 'getCapability', 'useCapability']
                 );
@@ -54,7 +54,7 @@ define(
                 return mockDomainObj;
             }
 
-            function subgraph(domainObject, objects) {
+            const subgraph = (domainObject, objects) => {
                 function lookupSubgraph(id) {
                     return subgraph(objects[id], objects);
                 }
@@ -65,7 +65,7 @@ define(
                 };
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockLoader = jasmine.createSpyObj('objectLoader', ['load']);
                 mockDomainObject = makeMockDomainObject('a', ['b', 'c']);
                 mockDomainObjects = {
@@ -96,7 +96,7 @@ define(
                 );
             });
 
-            it("uses the loader to find subgraph", function () {
+            it("uses the loader to find subgraph", () => {
                 populator.populate(mockDomainObject);
                 expect(mockLoader.load).toHaveBeenCalledWith(
                     mockDomainObject,
@@ -104,10 +104,10 @@ define(
                 );
             });
 
-            it("provides a list of swimlanes", function () {
+            it("provides a list of swimlanes", () => {
                 populator.populate(mockDomainObject);
                 // Ensure swimlane order matches depth-first search
-                expect(populator.get().map(function (swimlane) {
+                expect(populator.get().map( (swimlane) => {
                     return swimlane.domainObject;
                 })).toEqual([
                     mockDomainObjects.a,
@@ -119,12 +119,12 @@ define(
                 ]);
             });
 
-            it("clears swimlanes if no object is provided", function () {
+            it("clears swimlanes if no object is provided", () => {
                 populator.populate();
                 expect(populator.get()).toEqual([]);
             });
 
-            it("preserves selection state when possible", function () {
+            it("preserves selection state when possible", () => {
                 // Repopulate swimlanes
                 populator.populate(mockDomainObject);
 
@@ -143,13 +143,13 @@ define(
                     .toEqual(mockDomainObjects.b);
             });
 
-            it("exposes a selection proxy for the timeline", function () {
+            it("exposes a selection proxy for the timeline", () => {
                 populator.populate(mockDomainObject);
                 expect(mockSelection.proxy).toHaveBeenCalled();
             });
 
-            it("allows selection object to be changed", function () {
-                var mockNewSelectionObject = jasmine.createSpyObj(
+            it("allows selection object to be changed", () => {
+                let mockNewSelectionObject = jasmine.createSpyObj(
                     'new-selection',
                     ['get', 'select', 'proxy']
                 );

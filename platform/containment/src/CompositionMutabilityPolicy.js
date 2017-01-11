@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Disallow composition changes to objects which are not mutable.
@@ -30,16 +30,15 @@ define(
          * @constructor
          * @implements {Policy.<Type, Type>}
          */
-        function CompositionMutabilityPolicy() {
-        }
+        class CompositionMutabilityPolicy {
 
-        CompositionMutabilityPolicy.prototype.allow = function (candidate) {
+        allow(candidate) {
             // Equate creatability with mutability; that is, users
             // can only modify objects of types they can create, and
             // vice versa.
             return candidate.hasFeature('creation');
         };
-
+      }
         return CompositionMutabilityPolicy;
     }
 );

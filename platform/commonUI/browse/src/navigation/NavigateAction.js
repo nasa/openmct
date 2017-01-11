@@ -25,7 +25,7 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The navigate action navigates to a specific domain object.
@@ -33,24 +33,25 @@ define(
          * @constructor
          * @implements {Action}
          */
-        function NavigateAction(navigationService, context) {
+        class NavigateAction {
+          constructor(navigationService, context) {
             this.domainObject = context.domainObject;
             this.navigationService = navigationService;
-        }
+          }
 
         /**
          * Navigate to the object described in the context.
          * @returns {Promise} a promise that is resolved once the
          *          navigation has been updated
          */
-        NavigateAction.prototype.perform = function () {
+        perform() {
             if (this.navigationService.shouldNavigate()) {
                 this.navigationService.setNavigation(this.domainObject, true);
                 return Promise.resolve({});
             }
 
             return Promise.reject('Navigation Prevented by User');
-        };
+        }
 
         /**
          * Navigate as an action is only applicable when a domain object
@@ -59,10 +60,10 @@ define(
          *        will be performed
          * @returns {boolean} true if applicable
          */
-        NavigateAction.appliesTo = function (context) {
+        appliesTo(context) {
             return context.domainObject !== undefined;
         };
-
+      }
         return NavigateAction;
     }
 );

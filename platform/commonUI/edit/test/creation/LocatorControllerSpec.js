@@ -25,10 +25,10 @@
  */
 define(
     ["../../src/creation/LocatorController"],
-    function (LocatorController) {
+    (LocatorController) => {
 
-        describe("The locator controller", function () {
-            var mockScope,
+        describe("The locator controller", () => {
+            let mockScope,
                 mockTimeout,
                 mockDomainObject,
                 mockRootObject,
@@ -37,7 +37,7 @@ define(
                 getObjectsPromise,
                 controller;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     ["$watch"]
@@ -73,18 +73,18 @@ define(
 
                 controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
             });
-            describe("when context is available", function () {
+            describe("when context is available", () => {
 
-                beforeEach(function () {
+                beforeEach( () => {
                         mockContext.getRoot.andReturn(mockRootObject);
                         controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
                     });
 
-                it("adds a treeModel to scope", function () {
+                it("adds a treeModel to scope", () => {
                         expect(mockScope.treeModel).toBeDefined();
                     });
 
-                it("watches for changes to treeModel", function () {
+                it("watches for changes to treeModel", () => {
                         // This is what the embedded tree representation
                         // will be modifying.
                         expect(mockScope.$watch).toHaveBeenCalledWith(
@@ -93,7 +93,7 @@ define(
                         );
                     });
 
-                it("changes its own model on embedded model updates", function () {
+                it("changes its own model on embedded model updates", () => {
                         // Need to pass on selection changes as updates to
                         // the control's value
                         mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
@@ -107,7 +107,7 @@ define(
                             .toHaveBeenCalledWith("context");
                     });
 
-                it("rejects changes which fail validation", function () {
+                it("rejects changes which fail validation", () => {
                         mockScope.structure = { validate: jasmine.createSpy('validate') };
                         mockScope.structure.validate.andReturn(false);
 
@@ -120,7 +120,7 @@ define(
                         expect(mockScope.ngModel.someField).not.toEqual(mockDomainObject);
                     });
 
-                it("treats a lack of a selection as invalid", function () {
+                it("treats a lack of a selection as invalid", () => {
                         mockScope.ngModelController = jasmine.createSpyObj(
                             'ngModelController',
                             ['$setValidity']
@@ -137,24 +137,24 @@ define(
                             .toHaveBeenCalledWith(jasmine.any(String), false);
                     });
             });
-            describe("when no context is available", function () {
-                var defaultRoot = "DEFAULT_ROOT";
+            describe("when no context is available", () => {
+                let defaultRoot = "DEFAULT_ROOT";
 
-                beforeEach(function () {
+                beforeEach( () => {
                     mockContext.getRoot.andReturn(undefined);
-                    getObjectsPromise.then.andCallFake(function (callback) {
+                    getObjectsPromise.then.andCallFake( (callback) => {
                         callback({'ROOT': defaultRoot});
                     });
                     controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
                 });
 
-                it("provides a default context where none is available", function () {
+                it("provides a default context where none is available",  () => {
                     mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
                     mockTimeout.mostRecentCall.args[0]();
                     expect(mockScope.rootObject).toBe(defaultRoot);
                 });
 
-                it("does not issue redundant requests for the root object", function () {
+                it("does not issue redundant requests for the root object",  () => {
                     mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
                     mockTimeout.mostRecentCall.args[0]();
                     mockScope.$watch.mostRecentCall.args[1](undefined);

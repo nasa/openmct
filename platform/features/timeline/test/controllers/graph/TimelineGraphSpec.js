@@ -22,25 +22,25 @@
 
 define(
     ['../../../src/controllers/graph/TimelineGraph'],
-    function (TimelineGraph) {
+    (TimelineGraph) => {
 
-        describe("A Timeline's resource graph", function () {
-            var mockDomainObjects,
+        describe("A Timeline's resource graph", () => {
+            let mockDomainObjects,
                 mockRenderer,
                 testColors,
                 mockGraphs,
                 graph;
 
-            function asPromise(v) {
+            const asPromise = (v) => {
                 return (v || {}).then ? v : {
-                    then: function (callback) {
+                    then: (callback) => {
                         return asPromise(callback(v));
                     }
                 };
             }
 
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testColors = {
                     a: [0, 1, 0],
                     b: [1, 0, 1],
@@ -50,8 +50,8 @@ define(
                 mockGraphs = [];
                 mockDomainObjects = {};
 
-                ['a', 'b', 'c'].forEach(function (k, i) {
-                    var mockGraph = jasmine.createSpyObj(
+                ['a', 'b', 'c'].forEach( (k, i) => {
+                    let mockGraph = jasmine.createSpyObj(
                             'utilization-' + k,
                             ['getPointCount', 'getDomainValue', 'getRangeValue']
                         );
@@ -75,8 +75,8 @@ define(
                     ['render', 'decode']
                 );
 
-                mockRenderer.render.andCallFake(function (utilization) {
-                    var result = [];
+                mockRenderer.render.andCallFake( (utilization) => {
+                    let result = [];
                     while (result.length < (utilization.testIndex + 2) * 2) {
                         result.push(Math.floor(result.length / 2));
                         // Alternate +/- to give something to test to
@@ -88,7 +88,7 @@ define(
                     return result;
                 });
 
-                mockRenderer.decode.andCallFake(function (color) {
+                mockRenderer.decode.andCallFake( (color) => {
                     return testColors[color];
                 });
 
@@ -99,16 +99,16 @@ define(
                 );
             });
 
-            it("exposes minimum/maximum", function () {
+            it("exposes minimum/maximum", () => {
                 expect(graph.minimum()).toEqual(-20);
                 expect(graph.maximum()).toEqual(20);
             });
 
-            it("exposes resource key", function () {
+            it("exposes resource key", () => {
                 expect(graph.key).toEqual('testResource');
             });
 
-            it("exposes a rendered drawing object", function () {
+            it("exposes a rendered drawing object", () => {
                 // Much of the work here is done by the renderer,
                 // so just check that it got used and assigned
                 expect(graph.drawingObject.lines).toEqual([
@@ -130,14 +130,14 @@ define(
                 ]);
             });
 
-            it("allows its bounds to be specified", function () {
+            it("allows its bounds to be specified", () => {
                 graph.setBounds(42, 12321);
                 expect(graph.drawingObject.origin[0]).toEqual(42);
                 expect(graph.drawingObject.dimensions[0]).toEqual(12321);
             });
 
-            it("provides a minimum/maximum even with no data", function () {
-                mockGraphs.forEach(function (mockGraph) {
+            it("provides a minimum/maximum even with no data", () => {
+                mockGraphs.forEach( (mockGraph) => {
                     mockGraph.getPointCount.andReturn(0);
                 });
 
@@ -154,7 +154,7 @@ define(
                 expect(graph.maximum() > graph.minimum()).toBeTruthy();
             });
 
-            it("refreshes lines upon request", function () {
+            it("refreshes lines upon request", () => {
                 // Mock renderer looks at testIndex, so change it here...
                 mockGraphs[0].testIndex = 3;
                 // Should trigger a new render

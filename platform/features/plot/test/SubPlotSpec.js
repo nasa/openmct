@@ -25,10 +25,10 @@
  */
 define(
     ["../src/SubPlot"],
-    function (SubPlot) {
+    (SubPlot) => {
 
-        describe("A sub-plot", function () {
-            var mockDomainObject,
+        describe("A sub-plot", () => {
+            let mockDomainObject,
                 mockPanZoomStack,
                 mockFormatter,
                 mockElement,
@@ -37,7 +37,7 @@ define(
                 testDimensions,
                 subplot;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     ["getId", "getModel", "getCapability"]
@@ -85,12 +85,12 @@ define(
             });
 
 
-            it("provides a getter for its plotted objects", function () {
+            it("provides a getter for its plotted objects", () => {
                 expect(subplot.getTelemetryObjects())
                     .toEqual(testDomainObjects);
             });
 
-            it("exposes tick marks", function () {
+            it("exposes tick marks", () => {
                 // Just test availability; details are tested
                 // in PlotTickFormatter
                 expect(Array.isArray(subplot.getDomainTicks()))
@@ -99,7 +99,7 @@ define(
                     .toBeTruthy();
             });
 
-            it("allows hovering state to be tracked", function () {
+            it("allows hovering state to be tracked", () => {
                 expect(subplot.isHovering()).toBeFalsy();
                 expect(subplot.isHovering(true)).toBeTruthy();
                 expect(subplot.isHovering()).toBeTruthy();
@@ -107,7 +107,7 @@ define(
                 expect(subplot.isHovering()).toBeFalsy();
             });
 
-            it("provides hovering coordinates", function () {
+            it("provides hovering coordinates", () => {
                 // Should be empty when not hovering
                 expect(subplot.getHoverCoordinates())
                     .toBeUndefined();
@@ -120,7 +120,7 @@ define(
                     .toEqual(jasmine.any(String));
             });
 
-            it("supports marquee zoom", function () {
+            it("supports marquee zoom", () => {
                 expect(mockPanZoomStack.pushPanZoom).not.toHaveBeenCalled();
 
                 // Simulate a marquee zoom. Note that the mockElement
@@ -155,16 +155,16 @@ define(
                 );
             });
 
-            it ("indicates when there is domain data shown", function () {
+            it ("indicates when there is domain data shown", () => {
                 expect(subplot.hasDomainData()).toEqual(true);
             });
 
-            it ("indicates when there is no domain data shown", function () {
+            it ("indicates when there is no domain data shown", () => {
                 mockPanZoomStack.getDimensions.andReturn([0,0]);
                 expect(subplot.hasDomainData()).toEqual(false);
             });
 
-            it("disallows marquee zoom when start and end Marquee is at the same position", function () {
+            it("disallows marquee zoom when start and end Marquee is at the same position", () => {
                 expect(mockPanZoomStack.pushPanZoom).not.toHaveBeenCalled();
 
                 // Simulate a marquee zoom. Note that the mockElement
@@ -188,11 +188,11 @@ define(
                 expect(mockPanZoomStack.pushPanZoom).not.toHaveBeenCalled();
             });
 
-            it("provides access to a drawable object", function () {
+            it("provides access to a drawable object", () => {
                 expect(typeof subplot.getDrawingObject()).toEqual('object');
             });
 
-            it("allows a domain offset to be provided", function () {
+            it("allows a domain offset to be provided", () => {
                 // Domain object is needed to adjust canvas coordinates
                 // to avoid loss-of-precision associated with converting
                 // to 32 bit floats.

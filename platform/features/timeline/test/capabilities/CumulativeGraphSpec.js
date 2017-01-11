@@ -22,14 +22,14 @@
 
 define(
     ['../../src/capabilities/CumulativeGraph'],
-    function (CumulativeGraph) {
+    (CumulativeGraph) => {
 
-        describe("A cumulative resource graph", function () {
-            var mockGraph,
+        describe("A cumulative resource graph", () => {
+            let mockGraph,
                 points,
                 graph;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 points = [0, 10, -10, -100, 20, 100, 0];
 
                 mockGraph = jasmine.createSpyObj(
@@ -38,10 +38,10 @@ define(
                 );
 
                 mockGraph.getPointCount.andReturn(points.length * 2);
-                mockGraph.getDomainValue.andCallFake(function (i) {
+                mockGraph.getDomainValue.andCallFake( (i) => {
                     return Math.floor(i / 2) * 100 + 25;
                 });
-                mockGraph.getRangeValue.andCallFake(function (i) {
+                mockGraph.getRangeValue.andCallFake( (i) => {
                     return points[Math.floor(i / 2) + i % 2];
                 });
 
@@ -54,7 +54,7 @@ define(
                 );
             });
 
-            it("accumulates its wrapped instantaneous graph", function () {
+            it("accumulates its wrapped instantaneous graph", () => {
                 // Note that range values are percentages
                 expect(graph.getDomainValue(0)).toEqual(0);
                 expect(graph.getRangeValue(0)).toEqual(50); // initial state

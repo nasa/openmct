@@ -21,7 +21,7 @@
  *****************************************************************************/
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Handle for changing x/y position of a line's end point.
@@ -37,7 +37,8 @@ define(
          * @param {string} yOther field which stores y of other end
          * @implements {platform/features/layout.ElementHandle}
          */
-        function LineHandle(element, xProperty, yProperty, xOther, yOther) {
+        class LineHandle {
+          constructor(element, xProperty, yProperty, xOther, yOther) {
             this.element = element;
             this.xProperty = xProperty;
             this.yProperty = yProperty;
@@ -45,8 +46,8 @@ define(
             this.yOther = yOther;
         }
 
-        LineHandle.prototype.x = function (value) {
-            var element = this.element,
+          x(value) {
+            let element = this.element,
                 xProperty = this.xProperty,
                 yProperty = this.yProperty,
                 xOther = this.xOther,
@@ -64,8 +65,8 @@ define(
             return element[xProperty];
         };
 
-        LineHandle.prototype.y = function (value) {
-            var element = this.element,
+        y(value) {
+            let element = this.element,
                 xProperty = this.xProperty,
                 yProperty = this.yProperty,
                 xOther = this.xOther,
@@ -82,7 +83,7 @@ define(
             }
             return element[yProperty];
         };
-
+      }
         return LineHandle;
 
     }

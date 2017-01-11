@@ -22,15 +22,15 @@
 
 define(
     ['../src/NotificationIndicatorController'],
-    function (NotificationIndicatorController) {
+    (NotificationIndicatorController) => {
 
-        describe("The notification indicator controller ", function () {
-            var mockNotificationService,
+        describe("The notification indicator controller ", () => {
+            let mockNotificationService,
                 mockScope,
                 mockDialogService,
                 controller;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockNotificationService = jasmine.createSpy("notificationService");
                 mockScope = jasmine.createSpy("$scope");
                 mockDialogService = jasmine.createSpyObj(
@@ -43,12 +43,12 @@ define(
                 controller = new NotificationIndicatorController(mockScope, mockNotificationService, mockDialogService);
             });
 
-            it("exposes the highest notification severity to the template", function () {
+            it("exposes the highest notification severity to the template", () => {
                 expect(mockScope.highest).toBeTruthy();
                 expect(mockScope.highest.severity).toBe("error");
             });
 
-            it("invokes the dialog service to show list of messages", function () {
+            it("invokes the dialog service to show list of messages", () => {
                 expect(mockScope.showNotificationsList).toBeDefined();
                 mockScope.showNotificationsList();
                 expect(mockDialogService.getDialogResponse).toHaveBeenCalled();

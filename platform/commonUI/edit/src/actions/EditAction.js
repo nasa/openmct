@@ -25,12 +25,12 @@
  */
 define(
     [],
-    function () {
+    () => {
 
         // A no-op action to return in the event that the action cannot
         // be completed.
-        var NULL_ACTION = {
-            perform: function () {
+        let NULL_ACTION = {
+            perform: () => {
                 return undefined;
             }
         };

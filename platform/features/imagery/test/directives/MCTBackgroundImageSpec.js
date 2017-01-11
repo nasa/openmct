@@ -22,16 +22,16 @@
 
 define(
     ["../../src/directives/MCTBackgroundImage"],
-    function (MCTBackgroundImage) {
+    (MCTBackgroundImage) => {
 
-        describe("The mct-background-image directive", function () {
-            var mockDocument,
+        describe("The mct-background-image directive", () => {
+            let mockDocument,
                 mockScope,
                 mockElement,
                 testImage,
                 directive;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockDocument = [
                     jasmine.createSpyObj('document', ['createElement'])
                 ];
@@ -47,28 +47,28 @@ define(
                 directive = new MCTBackgroundImage(mockDocument);
             });
 
-            it("is applicable as an attribute", function () {
+            it("is applicable as an attribute", () => {
                 expect(directive.restrict).toEqual("A");
             });
 
-            it("two-way-binds its own value", function () {
+            it("two-way-binds its own value", () => {
                 expect(directive.scope.mctBackgroundImage).toEqual("=");
             });
 
-            describe("once linked", function () {
-                beforeEach(function () {
+            describe("once linked", () => {
+                beforeEach(() => {
                     directive.link(mockScope, mockElement, {});
                 });
 
-                it("watches for changes to the URL", function () {
+                it("watches for changes to the URL", () => {
                     expect(mockScope.$watch).toHaveBeenCalledWith(
                         'mctBackgroundImage',
                         jasmine.any(Function)
                     );
                 });
 
-                it("updates images in-order, even when they load out-of-order", function () {
-                    var firstOnload;
+                it("updates images in-order, even when they load out-of-order", () => {
+                    let firstOnload;
 
                     mockScope.$watch.mostRecentCall.args[1]("some/url/0");
                     firstOnload = testImage.onload;
@@ -86,7 +86,7 @@ define(
                     ]);
                 });
 
-                it("clears the background image when undefined is passed in", function () {
+                it("clears the background image when undefined is passed in", () => {
                     mockScope.$watch.mostRecentCall.args[1]("some/url/0");
                     testImage.onload();
                     mockScope.$watch.mostRecentCall.args[1](undefined);
@@ -97,9 +97,9 @@ define(
                     ]);
                 });
 
-                it("updates filters on change", function () {
-                    var filters = { brightness: 123, contrast: 21 };
-                    mockScope.$watchCollection.calls.forEach(function (call) {
+                it("updates filters on change", () => {
+                    let filters = { brightness: 123, contrast: 21 };
+                    mockScope.$watchCollection.calls.forEach( (call) => {
                         if (call.args[0] === 'filters') {
                             call.args[1](filters);
                         }
@@ -110,8 +110,8 @@ define(
                     );
                 });
 
-                it("clears filters when none are present", function () {
-                    mockScope.$watchCollection.calls.forEach(function (call) {
+                it("clears filters when none are present", () => {
+                    mockScope.$watchCollection.calls.forEach( (call) => {
                         if (call.args[0] === 'filters') {
                             call.args[1](undefined);
                         }

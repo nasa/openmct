@@ -20,8 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+define(() => {
 
         /**
          * A class for capturing user input data from an object creation
@@ -34,7 +33,8 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function CreateWizard(domainObject, parent, policyService) {
+        class CreateWizard {
+          constructor(domainObject, parent, policyService) {
             this.type = domainObject.getCapability('type');
             this.model = domainObject.getModel();
             this.domainObject = domainObject;
@@ -54,13 +54,13 @@ define(
          * @return {FormModel} formModel the form model to
          *         show in the create dialog
          */
-        CreateWizard.prototype.getFormStructure = function (includeLocation) {
-            var sections = [],
+        getFormStructure(includeLocation) {
+            let sections = [],
                 type = this.type,
                 policyService = this.policyService;
 
-            function validateLocation(locatingObject) {
-                var locatingType = locatingObject &&
+            const validateLocation = (locatingObject) => {
+                let locatingType = locatingObject &&
                     locatingObject.getCapability('type');
                 return locatingType && policyService.allow(
                     "composition",
@@ -71,9 +71,9 @@ define(
 
             sections.push({
                 name: "Properties",
-                rows: this.properties.map(function (property, index) {
+                rows: this.properties.map( (property, index) => {
                     // Property definition is same as form row definition
-                    var row = Object.create(property.getDefinition());
+                    let row = Object.create(property.getDefinition());
 
                     // Use index as the key into the formValue;
                     // this correlates to the indexing provided by
@@ -81,7 +81,7 @@ define(
                     row.key = index;
 
                     return row;
-                }).filter(function (row) {
+                }).filter( (row) => {
                     // Only show rows which have defined controls
                     return row && row.control;
                 })
@@ -113,16 +113,16 @@ define(
          * @param formValue
          * @returns {DomainObject}
          */
-        CreateWizard.prototype.populateObjectFromInput = function (formValue) {
+        populateObjectFromInput(formValue) {
             var parent = this.getLocation(formValue),
                 formModel = this.createModel(formValue);
 
             formModel.location = parent.getId();
-            this.domainObject.useCapability("mutation", function () {
+            this.domainObject.useCapability("mutation", () => {
                 return formModel;
             });
             return this.domainObject;
-        };
+        }
 
         /**
          * Get the initial value for the form being described.
@@ -131,10 +131,10 @@ define(
          *
          * @returns {object} the initial value of the form
          */
-        CreateWizard.prototype.getInitialFormValue = function () {
+        getInitialFormValue() {
             // Start with initial values for properties
-            var model = this.model,
-                formValue = this.properties.map(function (property) {
+            let model = this.model,
+                formValue = this.properties.map( (property) => {
                     return property.getValue(model);
                 });
 
@@ -142,7 +142,7 @@ define(
             formValue.createParent = this.parent;
 
             return formValue;
-        };
+        }
 
         /**
          * Based on a populated form, get the domain object which
@@ -150,9 +150,9 @@ define(
          * @private
          * @return {DomainObject}
          */
-        CreateWizard.prototype.getLocation = function (formValue) {
+        getLocation(formValue) {
             return formValue.createParent || this.parent;
-        };
+        }
 
         /**
          * Create the domain object model for a newly-created object,
@@ -160,21 +160,21 @@ define(
          * @private
          * @return {object} the domain object model
          */
-        CreateWizard.prototype.createModel = function (formValue) {
+        createModel(formValue) {
             // Clone
-            var newModel = JSON.parse(JSON.stringify(this.model));
+            let newModel = JSON.parse(JSON.stringify(this.model));
 
             // Always use the type from the type definition
             newModel.type = this.type.getKey();
 
             // Update all properties
-            this.properties.forEach(function (property, index) {
+            this.properties.forEach( (property, index) => {
                 property.setValue(newModel, formValue[index]);
             });
 
             return newModel;
-        };
-
+        }
+      }
         return CreateWizard;
     }
 );

@@ -22,7 +22,7 @@
 
 define(
     ['../capabilities/ContextualDomainObject'],
-    function (ContextualDomainObject) {
+    (ContextualDomainObject) => {
 
         /**
          * Wrap a domain object such that it has a `context` capability
@@ -39,9 +39,9 @@ define(
          * @returns {Function}
          * @memberof platform/core
          */
-        function Contextualize($log) {
-            function validate(id, parentObject) {
-                var model = parentObject && parentObject.getModel(),
+        const Contextualize = ($log) => {
+            const validate = (id, parentObject) => {
+                let model = parentObject && parentObject.getModel(),
                     composition = (model || {}).composition || [];
                 if (composition.indexOf(id) === -1) {
                     $log.warn([
@@ -64,10 +64,10 @@ define(
              * @param {DomainObject} parentObject the domain object
              *        which should appear as the contextual parent
              */
-            return function (domainObject, parentObject) {
+            return (domainObject, parentObject) => {
                 // Don't validate while editing; consistency is not
                 // necessarily expected due to unsaved changes.
-                var editor = domainObject.getCapability('editor');
+                let editor = domainObject.getCapability('editor');
                 if (!editor || !editor.inEditContext()) {
                     validate(domainObject.getId(), parentObject);
                 }

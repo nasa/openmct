@@ -23,10 +23,10 @@
 
 define(
     ["../../src/policies/EditContextualActionPolicy"],
-    function (EditContextualActionPolicy) {
+    (EditContextualActionPolicy) => {
 
-        describe("The Edit contextual action policy", function () {
-            var policy,
+        describe("The Edit contextual action policy", () => {
+            let policy,
                 navigationService,
                 mockAction,
                 context,
@@ -37,7 +37,7 @@ define(
                 editModeBlacklist = ["copy", "follow", "window", "link", "locate"],
                 nonEditContextBlacklist = ["copy", "follow", "properties", "move", "link", "remove", "locate"];
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockEditorCapability = jasmine.createSpyObj("editorCapability", ["isEditContextRoot", "inEditContext"]);
 
                 navigatedObject = jasmine.createSpyObj("navigatedObject", ["hasCapability", "getCapability"]);
@@ -61,12 +61,12 @@ define(
                 policy = new EditContextualActionPolicy(navigationService, editModeBlacklist, nonEditContextBlacklist);
             });
 
-            it('Allows all actions when navigated object not in edit mode', function () {
+            it('Allows all actions when navigated object not in edit mode', () => {
                 expect(policy.allow(mockAction, context)).toBe(true);
             });
 
             it('Allows "window" action when navigated object in edit mode,' +
-                ' but selected object not in edit mode ', function () {
+                ' but selected object not in edit mode ', () => {
                 navigatedObject.hasCapability.andReturn(true);
                 mockEditorCapability.isEditContextRoot.andReturn(true);
                 metadata.key = "window";
@@ -75,8 +75,8 @@ define(
 
             it('Allows "remove" action when navigated object in edit mode,' +
                 ' and selected object not editable, but its parent is.',
-                function () {
-                    var mockParent = jasmine.createSpyObj("parentObject", ["hasCapability"]),
+                 () => {
+                    let mockParent = jasmine.createSpyObj("parentObject", ["hasCapability"]),
                         mockContextCapability = jasmine.createSpyObj("contextCapability", ["getParent"]);
 
                     mockParent.hasCapability.andReturn(true);
@@ -84,7 +84,7 @@ define(
                     navigatedObject.hasCapability.andReturn(true);
 
                     mockDomainObject.getCapability.andReturn(mockContextCapability);
-                    mockDomainObject.hasCapability.andCallFake(function (capability) {
+                    mockDomainObject.hasCapability.andCallFake( (capability) => {
                         switch (capability) {
                             case "editor": return false;
                             case "context": return true;
@@ -96,7 +96,7 @@ define(
                 });
 
             it('Disallows "move" action when navigated object in edit mode,' +
-                ' but selected object not in edit mode ', function () {
+                ' but selected object not in edit mode ', () => {
                 navigatedObject.hasCapability.andReturn(true);
                 mockEditorCapability.isEditContextRoot.andReturn(true);
                 mockEditorCapability.inEditContext.andReturn(false);
@@ -105,7 +105,7 @@ define(
             });
 
             it('Disallows copy action when navigated object and' +
-                ' selected object in edit mode', function () {
+                ' selected object in edit mode', () => {
                 navigatedObject.hasCapability.andReturn(true);
                 mockDomainObject.hasCapability.andReturn(true);
                 mockEditorCapability.isEditContextRoot.andReturn(true);

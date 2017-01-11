@@ -22,9 +22,9 @@
 
 define(
     [],
-    function () {
+    () => {
 
-        var BASE_COLORS = [
+        let BASE_COLORS = [
                 [136, 32, 32],
                 [224, 64, 64],
                 [240, 160, 72],
@@ -39,14 +39,14 @@ define(
             GRADIENTS = [0.75, 0.50, 0.25, -0.25, -0.50, -0.75],
             GROUPS = [];
 
-        function toWebColor(triplet) {
-            return '#' + triplet.map(function (v) {
+        const toWebColor = (triplet) => {
+            return '#' + triplet.map( (v) => {
                 return (v < 16 ? '0' : '') + v.toString(16);
             }).join('');
         }
 
-        function toGradient(triplet, value) {
-            return triplet.map(function (v) {
+        const toGradient = (triplet, value) => {
+            return triplet.map( (v) => {
                 return Math.round(value > 0 ?
                         (v + (255 - v) * value) :
                         (v * (1 + value))
@@ -54,8 +54,8 @@ define(
             });
         }
 
-        function initializeGroups() {
-            var group;
+        const initializeGroups = () => {
+            let group;
 
             // Ten grayscale colors
             group = [];
@@ -73,18 +73,23 @@ define(
 
             // ...and some gradients of those colors
             group = [];
-            GRADIENTS.forEach(function (v) {
-                group = group.concat(BASE_COLORS.map(function (c) {
+            GRADIENTS.forEach( (v) => {
+                group = group.concat(BASE_COLORS.map( (c) => {
                     return toWebColor(toGradient(c, v));
                 }));
             });
             GROUPS.push(group);
         }
 
-        function ColorController() {
+        class ColorController {
+          constructor() {
             if (GROUPS.length === 0) {
                 initializeGroups();
             }
+          }
+          groups() {
+                return GROUPS;
+            };
         }
 
         /**
@@ -94,9 +99,6 @@ define(
          * grayscale colors, web colors, gradients...)
          * @returns {string[][]} groups of colors
          */
-        ColorController.prototype.groups = function () {
-            return GROUPS;
-        };
 
         return ColorController;
     }

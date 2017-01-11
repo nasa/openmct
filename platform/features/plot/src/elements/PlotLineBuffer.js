@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Contains the buffer used to draw a plot.
@@ -32,7 +32,8 @@ define(
          * @memberof platform/features/plot
          * @constructor
          */
-        function PlotLineBuffer(domainOffset, initialSize, maxSize) {
+        class PlotLineBuffer {
+          constructor(domainOffset, initialSize, maxSize) {
             this.buffer = new Float32Array(initialSize * 2);
             this.rangeExtrema =
                 [Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY];
@@ -43,8 +44,8 @@ define(
         }
 
         // Binary search for an insertion index
-        PlotLineBuffer.prototype.binSearch = function (value, min, max) {
-            var mid = Math.floor((min + max) / 2),
+        binSearch(value, min, max) {
+            let mid = Math.floor((min + max) / 2),
                 found = this.buffer[mid * 2];
 
             // On collisions, insert at same index
@@ -69,8 +70,8 @@ define(
         };
 
         // Increase the size of the buffer
-        PlotLineBuffer.prototype.doubleBufferSize = function () {
-            var sz = Math.min(this.maxSize * 2, this.buffer.length * 2),
+        doubleBufferSize() {
+            let sz = Math.min(this.maxSize * 2, this.buffer.length * 2),
                 canDouble = sz > this.buffer.length,
                 doubled = canDouble && new Float32Array(sz);
 
@@ -83,8 +84,8 @@ define(
         };
 
         // Decrease the size of the buffer
-        PlotLineBuffer.prototype.halveBufferSize = function () {
-            var sz = Math.max(this.initialSize * 2, this.buffer.length / 2),
+        halveBufferSize() {
+            let sz = Math.max(this.initialSize * 2, this.buffer.length / 2),
                 canHalve = sz < this.buffer.length;
 
             if (canHalve) {
@@ -95,7 +96,7 @@ define(
         };
 
         // Set a value in the buffer
-        PlotLineBuffer.prototype.setValue = function (index, domainValue, rangeValue) {
+        setValue(index, domainValue, rangeValue) {
             this.buffer[index * 2] = domainValue - this.domainOffset;
             this.buffer[index * 2 + 1] = rangeValue;
             // Track min/max of range values (min/max for
@@ -108,7 +109,7 @@ define(
          * Get the WebGL-displayable buffer of points to plot.
          * @returns {Float32Array} displayable buffer for this line
          */
-        PlotLineBuffer.prototype.getBuffer = function () {
+        getBuffer() {
             return this.buffer;
         };
 
@@ -116,7 +117,7 @@ define(
          * Get the number of points stored in this buffer.
          * @returns {number} the number of points stored
          */
-        PlotLineBuffer.prototype.getLength = function () {
+        getLength() {
             return this.length;
         };
 
@@ -126,7 +127,7 @@ define(
          * buffer gets trimmed.
          * @returns {number[]} min, max domain values
          */
-        PlotLineBuffer.prototype.getDomainExtrema = function () {
+        getDomainExtrema() {
             // Since these are ordered in the buffer, assume
             // these are the values at the first and last index
             return [
@@ -141,7 +142,7 @@ define(
          * some point.
          * @returns {number[]} min, max range values
          */
-        PlotLineBuffer.prototype.getRangeExtrema = function () {
+        getRangeExtrema() {
             return this.rangeExtrema;
         };
 
@@ -154,7 +155,7 @@ define(
          * @param {boolean} [fromEnd] true if the most recent
          *        values should be removed
          */
-        PlotLineBuffer.prototype.trim = function (count, fromEnd) {
+        trim(count, fromEnd) {
             // If we're removing values from the start...
             if (!fromEnd) {
                 // ...do so by shifting buffer contents over
@@ -179,8 +180,8 @@ define(
          * @returns {boolean} true if insertion succeeded; otherwise
          *          false
          */
-        PlotLineBuffer.prototype.insert = function (series, index) {
-            var sz = series.getPointCount(),
+        insert(series, index) {
+            let sz = series.getPointCount(),
                 i;
 
             // Don't allow append after the end; that doesn't make sense
@@ -222,7 +223,7 @@ define(
          * Append a single data point.
          * @memberof platform/features/plot.PlotLineBuffer#
          */
-        PlotLineBuffer.prototype.insertPoint = function (domainValue, rangeValue) {
+        insertPoint(domainValue, rangeValue) {
             // Ensure there is space for this point
             if (this.length >= (this.buffer.length / 2)) {
                 if (!this.doubleBufferSize()) {
@@ -250,8 +251,8 @@ define(
          * @param {number} timestamp timestamp to insert
          * @returns {number} the index for insertion (or -1)
          */
-        PlotLineBuffer.prototype.findInsertionIndex = function (timestamp) {
-            var value = timestamp - this.domainOffset;
+        findInsertionIndex(timestamp) {
+            let value = timestamp - this.domainOffset;
 
             // Handle empty buffer case and check for an
             // append opportunity (which is most common case for
@@ -261,7 +262,7 @@ define(
                 (value > this.buffer[this.length * 2 - 2]) ? this.length :
                     this.binSearch(value, 0, this.length - 1);
         };
-
+      }
         return PlotLineBuffer;
     }
 );

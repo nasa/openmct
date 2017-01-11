@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * A class for encapsulating structure and behaviour of the plot
@@ -31,7 +31,8 @@ define(
          * @param topic
          * @constructor
          */
-        function PlotOptionsForm() {
+        class PlotOptionsForm {
+          constructor() {
 
             /*
              Defined below are the form structures for the plot options.
@@ -143,7 +144,7 @@ define(
                 ]
             };
         }
-
+      }
         return PlotOptionsForm;
     }
 );

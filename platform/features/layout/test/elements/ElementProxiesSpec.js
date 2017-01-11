@@ -22,10 +22,10 @@
 
 define(
     ['../../src/elements/ElementProxies'],
-    function (ElementProxies) {
+    (ElementProxies) => {
 
         // Expect these element types to have proxies
-        var ELEMENT_TYPES = [
+        let ELEMENT_TYPES = [
             "fixed.telemetry",
             "fixed.line",
             "fixed.box",
@@ -35,14 +35,14 @@ define(
 
         // Verify that the set of proxies exposed matches the specific
         // list above.
-        describe("The set of element proxies", function () {
-            ELEMENT_TYPES.forEach(function (t) {
-                it("exposes a proxy wrapper for " + t + " elements", function () {
+        describe("The set of element proxies", () => {
+            ELEMENT_TYPES.forEach( (t) => {
+                it("exposes a proxy wrapper for " + t + " elements", () => {
                     expect(typeof ElementProxies[t]).toEqual('function');
                 });
             });
 
-            it("exposes no additional wrappers", function () {
+            it("exposes no additional wrappers", () => {
                 expect(Object.keys(ElementProxies).length)
                     .toEqual(ELEMENT_TYPES.length);
             });

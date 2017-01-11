@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * This controller acts as an adapter to permit getter-setter
@@ -56,23 +56,23 @@ define(
          * @constructor
          * @param {Scope} $scope the controller's scope
          */
-        function GetterSetterController($scope) {
+        const GetterSetterController = ($scope) => {
 
             // Update internal assignable state based on changes
             // to the getter-setter function.
-            function updateGetterSetter() {
+            const updateGetterSetter = () => {
                 if (typeof $scope.ngModel === 'function') {
                     $scope.getterSetter.value = $scope.ngModel();
                 }
-            }
+            };
 
             // Update the external getter-setter based on changes
             // to the assignable state.
-            function updateNgModel() {
+            const updateNgModel = () => {
                 if (typeof $scope.ngModel === 'function') {
                     $scope.ngModel($scope.getterSetter.value);
                 }
-            }
+            };
 
             // Watch for changes to both expressions
             $scope.$watch("ngModel()", updateGetterSetter);
@@ -81,7 +81,7 @@ define(
             // Publish an assignable field into scope.
             $scope.getterSetter = {};
 
-        }
+        };
 
         return GetterSetterController;
 

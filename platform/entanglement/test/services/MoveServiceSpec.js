@@ -27,16 +27,16 @@ define(
         '../DomainObjectFactory',
         '../ControlledPromise'
     ],
-    function (
+    (
         MoveService,
         MockLinkService,
         domainObjectFactory,
         ControlledPromise
-    ) {
+    ) => {
 
-        describe("MoveService", function () {
+        describe("MoveService", () =>  {
 
-            var moveService,
+            let moveService,
                 policyService,
                 object,
                 objectContextCapability,
@@ -44,7 +44,7 @@ define(
                 parentCandidate,
                 linkService;
 
-            beforeEach(function () {
+            beforeEach(() =>  {
                 objectContextCapability = jasmine.createSpyObj(
                     'objectContextCapability',
                     [
@@ -85,41 +85,41 @@ define(
                 moveService = new MoveService(policyService, linkService);
             });
 
-            describe("validate", function () {
-                var validate;
+            describe("validate", () =>  {
+                let validate;
 
-                beforeEach(function () {
-                    validate = function () {
+                beforeEach(() =>  {
+                    validate = () =>  {
                         return moveService.validate(object, parentCandidate);
                     };
                 });
 
-                it("does not allow an invalid parent", function () {
+                it("does not allow an invalid parent", () =>  {
                     parentCandidate = undefined;
                     expect(validate()).toBe(false);
                     parentCandidate = {};
                     expect(validate()).toBe(false);
                 });
 
-                it("does not allow moving to current parent", function () {
+                it("does not allow moving to current parent", () =>  {
                     parentCandidate.id = currentParent.id = 'xyz';
                     expect(validate()).toBe(false);
                 });
 
-                it("does not allow moving to self", function () {
+                it("does not allow moving to self", () =>  {
                     object.id = parentCandidate.id = 'xyz';
                     expect(validate()).toBe(false);
                 });
 
-                it("does not allow moving to the same location", function () {
+                it("does not allow moving to the same location", () =>  {
                     object.id = 'abc';
                     parentCandidate.model.composition = ['abc'];
                     expect(validate()).toBe(false);
                 });
 
-                describe("defers to policyService", function () {
+                describe("defers to policyService", () =>  {
 
-                    it("calls policy service with correct args", function () {
+                    it("calls policy service with correct args", () =>  {
                         validate();
                         expect(policyService.allow).toHaveBeenCalledWith(
                             "composition",
@@ -128,27 +128,27 @@ define(
                         );
                     });
 
-                    it("and returns false", function () {
+                    it("and returns false", () =>  {
                         policyService.allow.andReturn(false);
                         expect(validate()).toBe(false);
                     });
 
-                    it("and returns true", function () {
+                    it("and returns true", () =>  {
                         policyService.allow.andReturn(true);
                         expect(validate()).toBe(true);
                     });
                 });
             });
 
-            describe("perform", function () {
+            describe("perform", () =>  {
 
-                var actionCapability,
+                let actionCapability,
                     locationCapability,
                     locationPromise,
                     newParent,
                     moveResult;
 
-                beforeEach(function () {
+                beforeEach(() =>  {
                     newParent = parentCandidate;
 
                     actionCapability = jasmine.createSpyObj(
@@ -182,20 +182,20 @@ define(
                     moveResult = moveService.perform(object, newParent);
                 });
 
-                it("links object to newParent", function () {
+                it("links object to newParent", () =>  {
                     expect(linkService.perform).toHaveBeenCalledWith(
                         object,
                         newParent
                     );
                 });
 
-                it("waits for result of link", function () {
+                it("waits for result of link", () =>  {
                     expect(linkService.perform.mostRecentCall.promise.then)
                         .toHaveBeenCalledWith(jasmine.any(Function));
                 });
 
-                it("throws an error when performed on invalid inputs", function () {
-                    function perform() {
+                it("throws an error when performed on invalid inputs", () =>  {
+                    const perform = () => {
                         moveService.perform(object, newParent);
                     }
 
@@ -206,25 +206,25 @@ define(
                     expect(perform).toThrow();
                 });
 
-                describe("when moving an original", function () {
-                    beforeEach(function () {
+                describe("when moving an original", () =>  {
+                    beforeEach(() =>  {
                         locationCapability.getContextualLocation
                             .andReturn('new-location');
                         locationCapability.isOriginal.andReturn(true);
                         linkService.perform.mostRecentCall.promise.resolve();
                     });
 
-                    it("updates location", function () {
+                    it("updates location", () =>  {
                         expect(locationCapability.setPrimaryLocation)
                             .toHaveBeenCalledWith('new-location');
                     });
 
-                    describe("after location update", function () {
-                        beforeEach(function () {
+                    describe("after location update", () =>  {
+                        beforeEach(() =>  {
                             locationPromise.resolve();
                         });
 
-                        it("removes object from parent", function () {
+                        it("removes object from parent", () =>  {
                             expect(actionCapability.perform)
                                 .toHaveBeenCalledWith('remove');
                         });
@@ -232,19 +232,19 @@ define(
 
                 });
 
-                describe("when moving a link", function () {
-                    beforeEach(function () {
+                describe("when moving a link", () =>  {
+                    beforeEach(() =>  {
                         locationCapability.isOriginal.andReturn(false);
                         linkService.perform.mostRecentCall.promise.resolve();
                     });
 
-                    it("does not update location", function () {
+                    it("does not update location", () =>  {
                         expect(locationCapability.setPrimaryLocation)
                             .not
                             .toHaveBeenCalled();
                     });
 
-                    it("removes object from parent", function () {
+                    it("removes object from parent", () =>  {
                         expect(actionCapability.perform)
                             .toHaveBeenCalledWith('remove');
                     });

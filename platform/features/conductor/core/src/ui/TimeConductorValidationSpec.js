@@ -20,12 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./TimeConductorValidation'], function (TimeConductorValidation) {
-    describe("The Time Conductor Validation class", function () {
-        var timeConductorValidation,
+define(['./TimeConductorValidation'], (TimeConductorValidation) => {
+    describe("The Time Conductor Validation class", () => {
+        let timeConductorValidation,
             mockTimeConductor;
 
-        beforeEach(function () {
+        beforeEach( () => {
             mockTimeConductor = jasmine.createSpyObj("timeConductor", [
                 "validateBounds",
                 "bounds"
@@ -33,9 +33,9 @@ define(['./TimeConductorValidation'], function (TimeConductorValidation) {
             timeConductorValidation = new TimeConductorValidation(mockTimeConductor);
         });
 
-        describe("Validates start and end values using Time Conductor", function () {
-            beforeEach(function () {
-                var mockBounds = {
+        describe("Validates start and end values using Time Conductor", () => {
+            beforeEach( () => {
+                let mockBounds = {
                     start: 10,
                     end: 20
                 };
@@ -43,26 +43,26 @@ define(['./TimeConductorValidation'], function (TimeConductorValidation) {
                 mockTimeConductor.bounds.andReturn(mockBounds);
 
             });
-            it("Validates start values using Time Conductor", function () {
-                var startValue = 30;
+            it("Validates start values using Time Conductor", () => {
+                let startValue = 30;
                 timeConductorValidation.validateStart(startValue);
                 expect(mockTimeConductor.validateBounds).toHaveBeenCalled();
             });
-            it("Validates end values using Time Conductor", function () {
-                var endValue = 40;
+            it("Validates end values using Time Conductor", () => {
+                let endValue = 40;
                 timeConductorValidation.validateEnd(endValue);
                 expect(mockTimeConductor.validateBounds).toHaveBeenCalled();
             });
         });
 
-        it("Validates that start delta is valid number > 0", function () {
+        it("Validates that start delta is valid number > 0", () => {
             expect(timeConductorValidation.validateStartDelta(-1)).toBe(false);
             expect(timeConductorValidation.validateStartDelta("abc")).toBe(false);
             expect(timeConductorValidation.validateStartDelta("1")).toBe(true);
             expect(timeConductorValidation.validateStartDelta(1)).toBe(true);
         });
 
-        it("Validates that end delta is valid number >= 0", function () {
+        it("Validates that end delta is valid number >= 0", () => {
             expect(timeConductorValidation.validateEndDelta(-1)).toBe(false);
             expect(timeConductorValidation.validateEndDelta("abc")).toBe(false);
             expect(timeConductorValidation.validateEndDelta("1")).toBe(true);

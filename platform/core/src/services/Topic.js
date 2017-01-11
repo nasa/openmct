@@ -20,11 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [],
-    function () {
+define([], () => {
 
-        var ERROR_PREFIX = "Error when notifying listener: ";
+        const ERROR_PREFIX = "Error when notifying listener: ";
 
         /**
          * The `topic` service provides a way to create both named,
@@ -46,23 +44,23 @@ define(
          * @returns {Function}
          * @memberof platform/core
          */
-        function Topic($log) {
-            var topics = {};
+        const Topic = ($log) => {
+            let topics = {};
 
-            function createTopic() {
-                var listeners = [];
+            const createTopic = () => {
+                let listeners = [];
 
                 return {
-                    listen: function (listener) {
+                    listen: (listener) => {
                         listeners.push(listener);
                         return function unlisten() {
-                            listeners = listeners.filter(function (l) {
+                            listeners = listeners.filter( (l) => {
                                 return l !== listener;
                             });
                         };
                     },
-                    notify: function (message) {
-                        listeners.forEach(function (listener) {
+                    notify: (message) => {
+                        listeners.forEach( (listener) => {
                             try {
                                 listener(message);
                             } catch (e) {
@@ -79,7 +77,7 @@ define(
              * @param {string} [key] name of the topic to use
              * @memberof platform/core.Topic#
              */
-            return function (key) {
+            return (key) => {
                 if (arguments.length < 1) {
                     return createTopic();
                 } else {
@@ -88,7 +86,6 @@ define(
                 }
             };
         }
-
         return Topic;
     }
 );

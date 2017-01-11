@@ -31,7 +31,7 @@ define([
     "text!./res/templates/clock.html",
     "text!./res/templates/timer.html",
     'legacyRegistry'
-], function (
+], (
     ClockIndicator,
     TickerService,
     ClockController,
@@ -42,7 +42,7 @@ define([
     clockTemplate,
     timerTemplate,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/features/clock", {
         "name": "Clocks/Timers",

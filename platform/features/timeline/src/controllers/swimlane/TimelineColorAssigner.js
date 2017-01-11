@@ -21,9 +21,9 @@
  *****************************************************************************/
 define(
     [],
-    function () {
+    () => {
 
-        var COLOR_OPTIONS = [
+        let COLOR_OPTIONS = [
                 "#20b2aa",
                 "#9acd32",
                 "#ff8c00",
@@ -66,19 +66,19 @@ define(
          *        typically, this should be a property from the view's
          *        configuration, but TimelineSwimlane manages this.
          */
-        function TimelineColorAssigner(colors) {
+        const TimelineColorAssigner = (colors) => {
             // Find an unused color
-            function freeColor() {
+            const freeColor = () => {
                 // Set of used colors
-                var set = {}, found;
+                let set = {}, found;
 
                 // Build up a set of used colors
-                Object.keys(colors).forEach(function (id) {
+                Object.keys(colors).forEach( (id) => {
                     set[colors[id]] = true;
                 });
 
                 // Find an unused color
-                COLOR_OPTIONS.forEach(function (c) {
+                COLOR_OPTIONS.forEach( (c) => {
                     found = (!set[c] && !found) ? c : found;
                 });
 
@@ -91,7 +91,7 @@ define(
                  * Get the current color assignment.
                  * @param {string} id the id to which the color is assigned
                  */
-                get: function (id) {
+                get: (id) => {
                     return colors[id];
                 },
                 /**
@@ -100,7 +100,7 @@ define(
                  * @param {string} id the id to which the color is assigned
                  * @param {string} [color] the new color to assign
                  */
-                assign: function (id, color) {
+                assign: (id, color) => {
                     colors[id] = typeof color === 'string' ? color : freeColor();
                 },
                 /**
@@ -109,7 +109,7 @@ define(
                  * will be free to use in subsequent calls.
                  * @param {string} id the id whose color should be released
                  */
-                release: function (id) {
+                release: (id) => {
                     delete colors[id];
                 }
             };

@@ -22,7 +22,7 @@
 /*global define*/
 define(
     ['./Transaction', './NestedTransaction'],
-    function (Transaction, NestedTransaction) {
+    (Transaction, NestedTransaction) => {
         /**
          * Implements an application-wide transaction state. Once a
          * transaction is started, calls to
@@ -34,12 +34,13 @@ define(
          * @param $q
          * @constructor
          */
-        function TransactionService($q, $log, cacheService) {
+        class TransactionService {
+          constructor($q, $log, cacheService) {
             this.$q = $q;
             this.$log = $log;
             this.cacheService = cacheService;
             this.transactions = [];
-        }
+          }
 
         /**
          * Starts a transaction. While a transaction is active all calls to
@@ -47,20 +48,20 @@ define(
          * will be queued until [commit]{@link #commit} or [cancel]{@link
          * #cancel} are called
          */
-        TransactionService.prototype.startTransaction = function () {
-            var transaction = this.isActive() ?
+        startTransaction() {
+            let transaction = this.isActive() ?
                 new NestedTransaction(this.transactions[0]) :
                 new Transaction(this.$log);
 
             this.transactions.push(transaction);
-        };
+        }
 
         /**
          * @returns {boolean} If true, indicates that a transaction is in progress
          */
-        TransactionService.prototype.isActive = function () {
+        isActive() {
             return this.transactions.length > 0;
-        };
+        }
 
         /**
          * Adds provided functions to a queue to be called on
@@ -69,22 +70,22 @@ define(
          * @param onCommit A function to call on commit
          * @param onCancel A function to call on cancel
          */
-        TransactionService.prototype.addToTransaction = function (onCommit, onCancel) {
+        addToTransaction(onCommit, onCancel) {
             if (this.isActive()) {
                 return this.activeTransaction().add(onCommit, onCancel);
             } else {
                 //Log error because this is a programming error if it occurs.
                 this.$log.error("No transaction in progress");
             }
-        };
+        }
 
         /**
          * Get the transaction at the top of the stack.
          * @private
          */
-        TransactionService.prototype.activeTransaction = function () {
+        activeTransaction() {
             return this.transactions[this.transactions.length - 1];
-        };
+        }
 
         /**
          * All persist calls deferred since the beginning of the transaction
@@ -94,17 +95,17 @@ define(
          * @returns {Promise} resolved when all persist operations have
          * completed. Will reject if any commit operations fail
          */
-        TransactionService.prototype.commit = function () {
-            var transaction = this.transactions.pop();
+        commit() {
+            let transaction = this.transactions.pop();
             if (!transaction) {
                 return Promise.reject();
             }
             if (!this.isActive()) {
                 return transaction.commit()
-                    .then(function (r) {
+                    .then( (r) => {
                         this.cacheService.flush();
                         return r;
-                    }.bind(this));
+                    });
             }
             return transaction.commit();
         };
@@ -117,19 +118,19 @@ define(
          *
          * @returns {*}
          */
-        TransactionService.prototype.cancel = function () {
-            var transaction = this.transactions.pop();
+        cancel() {
+            let transaction = this.transactions.pop();
             return transaction ? transaction.cancel() : Promise.reject();
-        };
+        }
 
         /**
          * Get the size (the number of commit/cancel callbacks) of
          * the active transaction.
          * @returns {number} size of the active transaction
          */
-        TransactionService.prototype.size = function () {
+        size() {
             return this.isActive() ? this.activeTransaction().size() : 0;
-        };
-
+        }
+      }
         return TransactionService;
     });

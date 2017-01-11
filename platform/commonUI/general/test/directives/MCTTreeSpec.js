@@ -24,15 +24,15 @@
 define([
     '../../src/directives/MCTTree',
     '../../src/ui/TreeView'
-], function (MCTTree, TreeView) {
-    describe("The mct-tree directive", function () {
-        var mockParse,
+], (MCTTree, TreeView) => {
+    describe("The mct-tree directive", () => {
+        let mockParse,
             mockGestureService,
             mockExpr,
             mctTree;
 
-        function makeMockDomainObject(id) {
-            var mockDomainObject = jasmine.createSpyObj('domainObject-' + id, [
+        const makeMockDomainObject = (id) => {
+            let mockDomainObject = jasmine.createSpyObj('domainObject-' + id, [
                 'getId',
                 'getModel',
                 'getCapability',
@@ -43,7 +43,7 @@ define([
             return mockDomainObject;
         }
 
-        beforeEach(function () {
+        beforeEach( () => {
             mockGestureService = jasmine.createSpyObj(
                 'gestureService',
                 ['attachGestures']
@@ -57,11 +57,11 @@ define([
             mctTree = new MCTTree(mockParse, mockGestureService);
         });
 
-        it("is applicable as an element", function () {
+        it("is applicable as an element", () => {
             expect(mctTree.restrict).toEqual("E");
         });
 
-        it("two-way binds", function () {
+        it("two-way binds", () => {
             expect(mctTree.scope).toEqual({
                 rootObject: "=",
                 selectedObject: "=",
@@ -70,12 +70,12 @@ define([
             });
         });
 
-        describe("link", function () {
-            var mockScope,
+        describe("link", () => {
+            let mockScope,
                 mockElement,
                 testAttrs;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockScope =
                     jasmine.createSpyObj('$scope', ['$watch', '$on', '$apply']);
                 mockElement = jasmine.createSpyObj('element', ['append']);
@@ -85,45 +85,45 @@ define([
                 mctTree.link(mockScope, mockElement, testAttrs);
             });
 
-            it("populates the mct-tree element", function () {
+            it("populates the mct-tree element", () => {
                 expect(mockElement.append).toHaveBeenCalled();
             });
 
-            it("watches for selected-object expression in the parent", function () {
+            it("watches for selected-object expression in the parent", () => {
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "selectedObject",
                     jasmine.any(Function)
                 );
             });
 
-            it("watches for changes to root-object", function () {
+            it("watches for changes to root-object", () => {
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "rootObject",
                     jasmine.any(Function)
                 );
             });
 
-            it("listens for the $destroy event", function () {
+            it("listens for the $destroy event", () => {
                 expect(mockScope.$on).toHaveBeenCalledWith(
                     "$destroy",
                     jasmine.any(Function)
                 );
             });
 
-            it("watches for changes in tree view", function () {
+            it("watches for changes in tree view", () => {
 
             });
 
             // https://github.com/nasa/openmct/issues/1114
-            it("does not trigger $apply during $watches", function () {
+            it("does not trigger $apply during $watches", () => {
                 mockScope.mctObject = makeMockDomainObject('root');
                 mockScope.mctMode = makeMockDomainObject('selection');
-                mockScope.$watch.calls.forEach(function (call) {
+                mockScope.$watch.calls.forEach( (call) => {
                     call.args[1](mockScope[call.args[0]]);
                 });
                 expect(mockScope.$apply).not.toHaveBeenCalled();
             });
-            it("does trigger $apply from tree manipulation", function () {
+            it("does trigger $apply from tree manipulation", () => {
                 if (/PhantomJS/g.test(window.navigator.userAgent)) {
                     console.log('Unable to run test in PhantomJS due to lack of support for event constructors');
                     return;

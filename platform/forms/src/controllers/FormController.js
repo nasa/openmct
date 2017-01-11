@@ -22,24 +22,24 @@
 
 define(
     [],
-    function () {
+    () => {
 
         // Default ng-pattern; any non whitespace
-        var NON_WHITESPACE = /\S/;
+        const NON_WHITESPACE = /\S/;
 
         /**
          * Controller for mct-form and mct-toolbar directives.
          * @memberof platform/forms
          * @constructor
          */
-        function FormController($scope) {
-            var regexps = [];
+        const FormController = ($scope) => {
+            let regexps = []; 
 
             // ng-pattern seems to want a RegExp, and not a
             // string (despite what documentation says) but
             // we want form structure to be JSON-expressible,
             // so we make RegExp's from strings as-needed
-            function getRegExp(pattern) {
+            const getRegExp = (pattern) => {
                 // If undefined, don't apply a pattern
                 if (!pattern) {
                     return NON_WHITESPACE;
@@ -62,7 +62,7 @@ define(
 
             // Publish the form state under the requested
             // name in the parent scope
-            $scope.$watch("mctForm", function (mctForm) {
+            $scope.$watch("mctForm", (mctForm) => {
                 if ($scope.name) {
                     $scope.$parent[$scope.name] = mctForm;
                 }

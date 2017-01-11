@@ -24,15 +24,15 @@ define(
     [
         "../../src/controllers/TableOptionsController"
     ],
-    function (TableOptionsController) {
+    (TableOptionsController) => {
 
-        describe('The Table Options Controller', function () {
-            var mockDomainObject,
+        describe('The Table Options Controller', () => {
+            let mockDomainObject,
                 mockCapability,
                 controller,
                 mockScope;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockCapability = jasmine.createSpyObj('mutationCapability', [
                     'listen'
                 ]);
@@ -53,33 +53,33 @@ define(
                 controller = new TableOptionsController(mockScope);
             });
 
-            it('Listens for changing domain object', function () {
+            it('Listens for changing domain object', () => {
                 expect(mockScope.$watch).toHaveBeenCalledWith('domainObject', jasmine.any(Function));
             });
 
-            it('On destruction of controller, destroys listeners', function () {
-                var unlistenFunc = jasmine.createSpy("unlisten");
+            it('On destruction of controller, destroys listeners', () => {
+                let unlistenFunc = jasmine.createSpy("unlisten");
                 controller.listeners.push(unlistenFunc);
                 expect(mockScope.$on).toHaveBeenCalledWith('$destroy', jasmine.any(Function));
                 mockScope.$on.mostRecentCall.args[1]();
                 expect(unlistenFunc).toHaveBeenCalled();
             });
 
-            it('Registers a listener for mutation events on the object', function () {
+            it('Registers a listener for mutation events on the object', () => {
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
                 expect(mockCapability.listen).toHaveBeenCalled();
             });
 
             it('Listens for changes to object composition and updates' +
-                ' options accordingly', function () {
+                ' options accordingly', () => {
                 expect(mockScope.$watchCollection).toHaveBeenCalledWith('configuration.table.columns', jasmine.any(Function));
             });
 
             describe('Populates scope with a form definition based on provided' +
-                ' column configuration', function () {
-                var mockModel;
+                ' column configuration', () => {
+                let mockModel;
 
-                beforeEach(function () {
+                beforeEach(() => {
                     mockModel = {
                         configuration: {
                             table: {
@@ -95,15 +95,15 @@ define(
                     controller.populateForm(mockModel);
                 });
 
-                it('creates form on scope', function () {
+                it('creates form on scope', () => {
                     expect(mockScope.columnsForm).toBeDefined();
                     expect(mockScope.columnsForm.sections[0]).toBeDefined();
                     expect(mockScope.columnsForm.sections[0].rows).toBeDefined();
                     expect(mockScope.columnsForm.sections[0].rows.length).toBe(4);
                 });
 
-                it('presents columns as checkboxes', function () {
-                    expect(mockScope.columnsForm.sections[0].rows.every(function (row) {
+                it('presents columns as checkboxes', () => {
+                    expect(mockScope.columnsForm.sections[0].rows.every( (row) => {
                         return row.control === 'checkbox';
                     })).toBe(true);
                 });

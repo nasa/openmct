@@ -23,17 +23,18 @@
 define([
     'zepto',
     'text!../../res/templates/tree/toggle.html'
-], function ($, toggleTemplate) {
-    function ToggleView(state) {
+], ($, toggleTemplate) => {
+    class ToggleView {
+      constructor(state) {
         this.expanded = !!state;
         this.callbacks = [];
         this.el = $(toggleTemplate);
-        this.el.on('click', function () {
+        this.el.on('click', () => {
             this.value(!this.expanded);
-        }.bind(this));
+        });
     }
 
-    ToggleView.prototype.value = function (state) {
+    value(state) {
         this.expanded = state;
 
         if (state) {
@@ -42,23 +43,23 @@ define([
             this.el.removeClass('expanded');
         }
 
-        this.callbacks.forEach(function (callback) {
+        this.callbacks.forEach( (callback) => {
             callback(state);
         });
     };
 
-    ToggleView.prototype.observe = function (callback) {
+    observe(callback) {
         this.callbacks.push(callback);
-        return function () {
-            this.callbacks = this.callbacks.filter(function (c) {
+        return () => {
+            this.callbacks = this.callbacks.filter( (c) => {
                 return c !== callback;
             });
-        }.bind(this);
+        }
     };
 
-    ToggleView.prototype.elements = function () {
+    elements() {
         return this.el;
     };
-
+  }
     return ToggleView;
 });

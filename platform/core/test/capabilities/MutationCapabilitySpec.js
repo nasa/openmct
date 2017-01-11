@@ -28,23 +28,23 @@ define(
         "../../src/capabilities/MutationCapability",
         "../../src/services/Topic"
     ],
-    function (MutationCapability, Topic) {
+    (MutationCapability, Topic) => {
 
-        describe("The mutation capability", function () {
-            var testModel,
+        describe("The mutation capability", () => {
+            let testModel,
                 topic,
                 mockNow,
                 domainObject = {
-                    getId: function () {
+                    getId: () => {
                         return "test-id";
                     },
-                    getModel: function () {
+                    getModel: () => {
                         return testModel;
                     }
                 },
                 mutation;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testModel = { number: 6 };
                 topic = new Topic();
                 mockNow = jasmine.createSpy('now');
@@ -56,23 +56,23 @@ define(
                 );
             });
 
-            it("allows mutation of a model", function () {
-                mutation.invoke(function (m) {
+            it("allows mutation of a model", () => {
+                mutation.invoke( (m) => {
                     m.number = m.number * 7;
                 });
                 expect(testModel.number).toEqual(42);
             });
 
-            it("allows setting a model", function () {
-                mutation.invoke(function () {
+            it("allows setting a model", () => {
+                mutation.invoke(() => {
                     return { someKey: "some value" };
                 });
                 expect(testModel.number).toBeUndefined();
                 expect(testModel.someKey).toEqual("some value");
             });
 
-            it("allows model mutation to be aborted", function () {
-                mutation.invoke(function (m) {
+            it("allows model mutation to be aborted", () => {
+                mutation.invoke( (m) => {
                     m.number = m.number * 7;
                     return false; // Should abort change
                 });
@@ -80,28 +80,28 @@ define(
                 expect(testModel.number).toEqual(6);
             });
 
-            it("attaches a timestamp on mutation", function () {
+            it("attaches a timestamp on mutation", () => {
                 // Verify precondition
                 expect(testModel.modified).toBeUndefined();
-                mutation.invoke(function (m) {
+                mutation.invoke( (m) => {
                     m.number = m.number * 7;
                 });
                 // Should have gotten a timestamp from 'now'
                 expect(testModel.modified).toEqual(12321);
             });
 
-            it("allows a timestamp to be provided", function () {
-                mutation.invoke(function (m) {
+            it("allows a timestamp to be provided", () => {
+                mutation.invoke( (m) => {
                     m.number = m.number * 7;
                 }, 42);
                 // Should have gotten a timestamp from 'now'
                 expect(testModel.modified).toEqual(42);
             });
 
-            it("notifies listeners of mutation", function () {
-                var mockCallback = jasmine.createSpy('callback');
+            it("notifies listeners of mutation", () => {
+                let mockCallback = jasmine.createSpy('callback');
                 mutation.listen(mockCallback);
-                mutation.invoke(function (m) {
+                mutation.invoke( (m) => {
                     m.number = 8;
                 });
                 expect(mockCallback).toHaveBeenCalled();
@@ -109,24 +109,24 @@ define(
                     .toEqual(8);
             });
 
-            it("allows listeners to stop listening", function () {
-                var mockCallback = jasmine.createSpy('callback');
+            it("allows listeners to stop listening", () => {
+                let mockCallback = jasmine.createSpy('callback');
                 mutation.listen(mockCallback)(); // Unlisten immediately
-                mutation.invoke(function (m) {
+                mutation.invoke( (m) => {
                     m.number = 8;
                 });
                 expect(mockCallback).not.toHaveBeenCalled();
             });
 
-            it("shares listeners across instances", function () {
-                var mockCallback = jasmine.createSpy('callback'),
+            it("shares listeners across instances", () => {
+                let mockCallback = jasmine.createSpy('callback'),
                     otherMutation = new MutationCapability(
                         topic,
                         mockNow,
                         domainObject
                     );
                 mutation.listen(mockCallback);
-                otherMutation.invoke(function (m) {
+                otherMutation.invoke( (m) => {
                     m.number = 8;
                 });
                 expect(mockCallback).toHaveBeenCalled();

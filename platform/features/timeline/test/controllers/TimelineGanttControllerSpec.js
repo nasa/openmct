@@ -22,25 +22,25 @@
 
 define(
     ['../../src/controllers/TimelineGanttController'],
-    function (TimelineGanttController) {
+    (TimelineGanttController) => {
 
-        var TEST_MAX_OFFSCREEN = 50;
+        const TEST_MAX_OFFSCREEN = 50;
 
-        describe("The timeline Gantt bar controller", function () {
-            var mockTimespan,
+        describe("The timeline Gantt bar controller", () => {
+            let mockTimespan,
                 testScroll,
                 mockToPixels,
                 controller;
 
             // Shorthands for passing these arguments to the controller
-            function width() {
+            const width = () => {
                 return controller.width(
                     mockTimespan,
                     testScroll,
                     mockToPixels
                 );
             }
-            function left() {
+            const left = () => {
                 return controller.left(
                     mockTimespan,
                     testScroll,
@@ -49,7 +49,7 @@ define(
             }
 
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockTimespan = jasmine.createSpyObj(
                     'timespan',
                     ['getStart', 'getEnd', 'getDuration']
@@ -61,33 +61,33 @@ define(
                 mockTimespan.getDuration.andReturn(50);
                 mockTimespan.getEnd.andReturn(150);
 
-                mockToPixels.andCallFake(function (t) {
+                mockToPixels.andCallFake( (t) => {
                     return t * 10;
                 });
 
                 controller = new TimelineGanttController(TEST_MAX_OFFSCREEN);
             });
 
-            it("positions start and end points correctly on-screen", function () {
+            it("positions start and end points correctly on-screen", () => {
                 // Test's initial conditions are nominal, so should have
                 // the same return value as mockToPixels
                 expect(left()).toEqual(1000);
                 expect(width()).toEqual(500);
             });
 
-            it("prevents excessive off screen values to the left", function () {
+            it("prevents excessive off screen values to the left", () => {
                 testScroll.x = 1200;
                 expect(left()).toEqual(1150);
                 expect(width()).toEqual(350); // ...such that right edge is 1500
             });
 
-            it("prevents excessive off screen values to the right", function () {
+            it("prevents excessive off screen values to the right", () => {
                 testScroll.width = 1200;
                 expect(left()).toEqual(1000);
                 expect(width()).toEqual(250); // ...such that right edge is 1250
             });
 
-            it("prevents excessive off screen values on both edges", function () {
+            it("prevents excessive off screen values on both edges", () => {
                 testScroll.x = 1100;
                 testScroll.width = 200; // Visible right edge is now 1300
                 expect(left()).toEqual(1050);

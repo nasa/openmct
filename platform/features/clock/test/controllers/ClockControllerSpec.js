@@ -22,18 +22,18 @@
 
 define(
     ["../../src/controllers/ClockController"],
-    function (ClockController) {
+    (ClockController) => {
 
         // Wed, 03 Jun 2015 17:56:14 GMT
-        var TEST_TIMESTAMP = 1433354174000;
+        const TEST_TIMESTAMP = 1433354174000;
 
-        describe("A clock view's controller", function () {
-            var mockScope,
+        describe("A clock view's controller", () => {
+            let mockScope,
                 mockTicker,
                 mockUnticker,
                 controller;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockScope = jasmine.createSpyObj('$scope', ['$watch', '$on']);
                 mockTicker = jasmine.createSpyObj('ticker', ['listen']);
                 mockUnticker = jasmine.createSpy('unticker');
@@ -43,19 +43,19 @@ define(
                 controller = new ClockController(mockScope, mockTicker);
             });
 
-            it("watches for clock format from the domain object model", function () {
+            it("watches for clock format from the domain object model", () => {
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "model.clockFormat",
                     jasmine.any(Function)
                 );
             });
 
-            it("subscribes to clock ticks", function () {
+            it("subscribes to clock ticks",  () => {
                 expect(mockTicker.listen)
                     .toHaveBeenCalledWith(jasmine.any(Function));
             });
 
-            it("unsubscribes to ticks when destroyed", function () {
+            it("unsubscribes to ticks when destroyed", () => {
                 // Make sure $destroy is being listened for...
                 expect(mockScope.$on.mostRecentCall.args[0]).toEqual('$destroy');
                 expect(mockUnticker).not.toHaveBeenCalled();
@@ -65,7 +65,7 @@ define(
                 expect(mockUnticker).toHaveBeenCalled();
             });
 
-            it("formats using the format string from the model", function () {
+            it("formats using the format string from the model", () => {
                 mockTicker.listen.mostRecentCall.args[0](TEST_TIMESTAMP);
                 mockScope.$watch.mostRecentCall.args[1]([
                     "YYYY-DDD hh:mm:ss",
@@ -77,7 +77,7 @@ define(
                 expect(controller.ampm()).toEqual("");
             });
 
-            it("formats 12-hour time", function () {
+            it("formats 12-hour time", () => {
                 mockTicker.listen.mostRecentCall.args[0](TEST_TIMESTAMP);
                 mockScope.$watch.mostRecentCall.args[1]([
                     "YYYY-DDD hh:mm:ss",
@@ -89,9 +89,9 @@ define(
                 expect(controller.ampm()).toEqual("PM");
             });
 
-            it("does not throw exceptions when clockFormat is undefined", function () {
+            it("does not throw exceptions when clockFormat is undefined", () => {
                 mockTicker.listen.mostRecentCall.args[0](TEST_TIMESTAMP);
-                expect(function () {
+                expect( () => {
                     mockScope.$watch.mostRecentCall.args[1](undefined);
                 }).not.toThrow();
             });

@@ -22,17 +22,17 @@
 
 define(
     ["../../src/elements/PlotLine"],
-    function (PlotLine) {
+    (PlotLine) => {
 
-        describe("A plot line", function () {
-            var mockBuffer,
+        describe("A plot line", () => {
+            let mockBuffer,
                 mockSeries,
                 testDomainBuffer,
                 testRangeBuffer,
                 testSeries,
                 line;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testDomainBuffer = [];
                 testRangeBuffer = [];
                 testSeries = [];
@@ -46,19 +46,19 @@ define(
                     ['getPointCount', 'getDomainValue', 'getRangeValue']
                 );
 
-                mockSeries.getPointCount.andCallFake(function () {
+                mockSeries.getPointCount.andCallFake(() => {
                     return testSeries.length;
                 });
-                mockSeries.getDomainValue.andCallFake(function (i) {
+                mockSeries.getDomainValue.andCallFake( (i) => {
                     return (testSeries[i] || [])[0];
                 });
-                mockSeries.getRangeValue.andCallFake(function (i) {
+                mockSeries.getRangeValue.andCallFake( (i) => {
                     return (testSeries[i] || [])[1];
                 });
 
                 // Function like PlotLineBuffer, to aid in testability
-                mockBuffer.findInsertionIndex.andCallFake(function (v) {
-                    var index = 0;
+                mockBuffer.findInsertionIndex.andCallFake( (v) => {
+                    let index = 0;
                     if (testDomainBuffer.indexOf(v) !== -1) {
                         return -1;
                     }
@@ -68,8 +68,8 @@ define(
                     }
                     return index;
                 });
-                mockBuffer.insert.andCallFake(function (series, index) {
-                    var domains = [], ranges = [], i;
+                mockBuffer.insert.andCallFake( (series, index) => {
+                    let domains = [], ranges = [], i;
                     for (i = 0; i < series.getPointCount(); i += 1) {
                         domains.push(series.getDomainValue(i));
                         ranges.push(series.getRangeValue(i));
@@ -82,7 +82,7 @@ define(
                         .concat(testRangeBuffer.slice(index));
                     return true;
                 });
-                mockBuffer.insertPoint.andCallFake(function (dv, rv, index) {
+                mockBuffer.insertPoint.andCallFake( (dv, rv, index) => {
                     testDomainBuffer.splice(index, 0, dv);
                     testRangeBuffer.splice(index, 0, rv);
                     return true;
@@ -91,7 +91,7 @@ define(
                 line = new PlotLine(mockBuffer);
             });
 
-            it("allows single point insertion", function () {
+            it("allows single point insertion", () => {
                 line.addPoint(100, 200);
                 line.addPoint(50, 42);
                 line.addPoint(150, 12321);
@@ -100,7 +100,7 @@ define(
                 expect(testRangeBuffer).toEqual([42, 200, 12321]);
             });
 
-            it("allows series insertion", function () {
+            it("allows series insertion", () => {
                 testSeries = [[50, 42], [100, 200], [150, 12321]];
                 line.addSeries(mockSeries);
                 // Should have managed insertion index choices to get to...
@@ -108,7 +108,7 @@ define(
                 expect(testRangeBuffer).toEqual([42, 200, 12321]);
             });
 
-            it("splits series insertion when necessary", function () {
+            it("splits series insertion when necessary", () => {
                 testSeries = [[50, 42], [100, 200], [150, 12321]];
                 line.addPoint(75, 1);
                 line.addSeries(mockSeries);
@@ -117,7 +117,7 @@ define(
                 expect(testRangeBuffer).toEqual([42, 1, 200, 12321]);
             });
 
-            it("attempts to remove points when insertion fails", function () {
+            it("attempts to remove points when insertion fails", () => {
                 // Verify precondition - normally doesn't try to trim
                 line.addPoint(1, 2);
                 expect(mockBuffer.trim).not.toHaveBeenCalled();

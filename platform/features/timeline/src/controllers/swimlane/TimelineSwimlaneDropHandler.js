@@ -22,28 +22,28 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Handles drop (from drag-and-drop) initiated changes to a swimlane.
          * @constructor
          */
-        function TimelineSwimlaneDropHandler(swimlane) {
+        const TimelineSwimlaneDropHandler = (swimlane) => {
             // Check if we are in edit mode (also check parents)
-            function inEditMode() {
+            const inEditMode = () => {
                 return swimlane.domainObject.hasCapability('editor') &&
                     swimlane.domainObject.getCapability('editor').inEditContext();
             }
 
             // Boolean and (for reduce below)
-            function or(a, b) {
+            const or = (a, b) => {
                 return a || b;
             }
 
             // Check if pathA entirely contains pathB
-            function pathContains(swimlaneToCheck, id) {
+            const pathContains = (swimlaneToCheck, id) => {
                 // Check if id at a specific index matches (for map below)
-                function matches(pathId) {
+                const matches = (pathId) => {
                     return pathId === id;
                 }
 
@@ -53,9 +53,9 @@ define(
             }
 
             // Check if a swimlane contains a child with the specified id
-            function contains(swimlaneToCheck, id) {
+            const contains = (swimlaneToCheck, id) => {
                 // Check if a child swimlane has a matching domain object id
-                function matches(child) {
+                const matches = (child) => {
                     return child.domainObject.getId() === id;
                 }
 
@@ -64,24 +64,24 @@ define(
             }
 
             // Initiate mutation of a domain object
-            function doMutate(domainObject, mutator) {
+            const doMutate = (domainObject, mutator) => {
                 return domainObject.useCapability("mutation", mutator);
             }
 
             // Check if this swimlane is in a state where a drop-after will
             // act as a drop-into-at-first position (expanded and non-empty)
-            function expandedForDropInto() {
+            const expandedForDropInto =  () => {
                 return swimlane.expanded && swimlane.children.length > 0;
             }
 
             // Check if the swimlane is ready to accept a drop-into
             // (instead of drop-after)
-            function isDropInto() {
+            const isDropInto = () => {
                 return swimlane.highlight() || expandedForDropInto();
             }
 
-            function isReorder(targetObject, droppedObject) {
-                var droppedContext = droppedObject.getCapability('context'),
+            const isReorder = (targetObject, droppedObject) => {
+                let droppedContext = droppedObject.getCapability('context'),
                     droppedParent =
                         droppedContext && droppedContext.getParent(),
                     droppedParentId = droppedParent && droppedParent.getId();
@@ -89,8 +89,8 @@ define(
             }
 
             // Choose an appropriate composition action for the drag-and-drop
-            function chooseAction(targetObject, droppedObject) {
-                var actionCapability =
+            const chooseAction = (targetObject, droppedObject) => {
+                let actionCapability =
                         targetObject.getCapability('action'),
                     actionKey = droppedObject.hasCapability('editor') ?
                         'move' : 'link';
@@ -102,7 +102,7 @@ define(
             }
 
             // Choose an index for insertion in a domain object's composition
-            function chooseTargetIndex(id, offset, composition) {
+            const chooseTargetIndex = (id, offset, composition) => {
                 return Math.max(
                     Math.min(
                         (composition || []).indexOf(id) + offset,
@@ -113,11 +113,11 @@ define(
             }
 
             // Insert an id into target's composition
-            function insert(id, target, indexOffset) {
-                var myId = swimlane.domainObject.getId();
-                return doMutate(target, function (model) {
+            const insert = (id, target, indexOffset) => {
+                let myId = swimlane.domainObject.getId();
+                return doMutate(target,  (model) => {
                     model.composition =
-                        model.composition.filter(function (compId) {
+                        model.composition.filter( (compId) => {
                             return compId !== id;
                         });
                     model.composition.splice(
@@ -128,15 +128,15 @@ define(
                 });
             }
 
-            function canDrop(targetObject, droppedObject) {
+            const canDrop = (targetObject, droppedObject) => {
 
                 return isReorder(targetObject, droppedObject) ||
                         !!chooseAction(targetObject, droppedObject);
             }
 
-            function drop(domainObject, targetObject, indexOffset) {
-                function changeIndex() {
-                    var id = domainObject.getId();
+            const drop = (domainObject, targetObject, indexOffset) => {
+                const changeIndex = () => {
+                    let id = domainObject.getId();
                     return insert(id, targetObject, indexOffset);
                 }
 
@@ -154,7 +154,7 @@ define(
                  *        dropped
                  * @returns {boolean} true if this should be allowed
                  */
-                allowDropIn: function (id, domainObject) {
+                allowDropIn: (id, domainObject) => {
                     return inEditMode() &&
                         !pathContains(swimlane, id) &&
                         !contains(swimlane, id) &&
@@ -167,8 +167,8 @@ define(
                  *        dropped
                  * @returns {boolean} true if this should be allowed
                  */
-                allowDropAfter: function (id, domainObject) {
-                    var target = expandedForDropInto() ?
+                allowDropAfter: (id, domainObject) => {
+                    let target = expandedForDropInto() ?
                             swimlane : swimlane.parent;
                     return inEditMode() &&
                         target &&
@@ -184,9 +184,9 @@ define(
                  * @param {string} id the identifier for the domain object
                  * @param {DomainObject} [domainObject] the object itself
                  */
-                drop: function (id, domainObject) {
+                drop: (id, domainObject) => {
                     // Get the desired drop object, and destination index
-                    var dropInto = isDropInto(),
+                    let dropInto = isDropInto(),
                         dropTarget = dropInto ?
                                 swimlane.domainObject :
                                 swimlane.parent.domainObject,

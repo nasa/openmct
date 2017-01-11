@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * The EditRepresenter is responsible for implementing
@@ -43,12 +43,13 @@ define(
          * @implements {Representer}
          * @constructor
          */
-        function EditRepresenter($log, $scope) {
+        class EditRepresenter {
+          constructor($log, $scope) {
             this.$log = $log;
             this.$scope = $scope;
 
             this.$scope.commit = this.commit.bind(this);
-        }
+          }
 
         /**
          * Commit any changes made to the in-scope model to the domain object.
@@ -57,8 +58,8 @@ define(
          *
          * @param {String} message a message to log with the commit message.
          */
-        EditRepresenter.prototype.commit = function (message) {
-            var model = this.$scope.model,
+        commit(message) {
+            let model = this.$scope.model,
                 configuration = this.$scope.configuration,
                 domainObject = this.domainObject;
 
@@ -74,25 +75,25 @@ define(
                     model.configuration = model.configuration || {};
                     model.configuration[this.key] = configuration;
                 }
-                domainObject.useCapability('mutation', function () {
+                domainObject.useCapability('mutation', () => {
                     return model;
                 });
             }
-        };
+        }
 
         // Handle a specific representation of a specific domain object
-        EditRepresenter.prototype.represent = function (representation, representedObject) {
+        represent(representation, representedObject) {
             this.domainObject = representedObject;
             if (representation) {
                 this.key = representation.key;
             } else {
                 delete this.key;
             }
-        };
+        }
 
         // Respond to the destruction of the current representation.
-        EditRepresenter.prototype.destroy = function () {};
-
+        destroy() {}
+      }
         return EditRepresenter;
     }
 );

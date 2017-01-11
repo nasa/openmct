@@ -22,30 +22,30 @@
 
 define(
     ["../../src/directives/MCTSplitter"],
-    function (MCTSplitter) {
+    (MCTSplitter) => {
 
-        describe("The mct-splitter directive", function () {
-            var mctSplitter;
+        describe("The mct-splitter directive", () => {
+            let mctSplitter;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mctSplitter = new MCTSplitter();
             });
 
-            it("is applicable to elements", function () {
+            it("is applicable to elements", () => {
                 expect(mctSplitter.restrict).toEqual("E");
             });
 
-            it("depends on the mct-split-pane controller", function () {
+            it("depends on the mct-split-pane controller", () => {
                 expect(mctSplitter.require).toEqual("^mctSplitPane");
             });
 
-            describe("when linked", function () {
-                var mockScope,
+            describe("when linked", () => {
+                let mockScope,
                     mockElement,
                     testAttrs,
                     mockSplitPane;
 
-                beforeEach(function () {
+                beforeEach( () => {
                     mockScope = jasmine.createSpyObj(
                         '$scope',
                         ['$on', '$watch']
@@ -68,15 +68,15 @@ define(
                     );
                 });
 
-                it("adds a splitter class", function () {
+                it("adds a splitter class", () => {
                     expect(mockElement.addClass)
                         .toHaveBeenCalledWith('splitter');
                 });
 
-                describe("and then manipulated", function () {
-                    var testPosition;
+                describe("and then manipulated", () => {
+                    let testPosition;
 
-                    beforeEach(function () {
+                    beforeEach( () => {
                         testPosition = 12321;
                         mockSplitPane.position.andReturn(testPosition);
                         mockSplitPane.anchor.andReturn({
@@ -86,18 +86,18 @@ define(
                         mockScope.splitter.startMove();
                     });
 
-                    it("adds a 'resizing' class", function () {
+                    it("adds a 'resizing' class", () => {
                         expect(mockSplitPane.toggleClass)
                             .toHaveBeenCalledWith('resizing');
                     });
 
-                    it("repositions during drag", function () {
+                    it("repositions during drag", () => {
                         mockScope.splitter.move([10, 0]);
                         expect(mockSplitPane.position)
                             .toHaveBeenCalledWith(testPosition + 10);
                     });
 
-                    it("removes the 'resizing' class when finished", function () {
+                    it("removes the 'resizing' class when finished", () => {
                         mockSplitPane.toggleClass.reset();
                         mockScope.splitter.endMove();
                         expect(mockSplitPane.toggleClass)

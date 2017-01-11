@@ -1,7 +1,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Policy allowing composition only for domain object types which
@@ -10,15 +10,14 @@ define(
          * @memberof platform/containment
          * @implements {Policy.<Type, Type>}
          */
-        function CompositionModelPolicy() {
-        }
+        class CompositionModelPolicy {
 
-        CompositionModelPolicy.prototype.allow = function (candidate) {
+        allow(candidate) {
             return Array.isArray(
                 (candidate.getInitialModel() || {}).composition
             );
         };
-
+      }
         return CompositionModelPolicy;
     }
 );

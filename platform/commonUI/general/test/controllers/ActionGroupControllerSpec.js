@@ -22,15 +22,15 @@
 
 define(
     ["../../src/controllers/ActionGroupController"],
-    function (ActionGroupController) {
+    (ActionGroupController) => {
 
-        describe("The action group controller", function () {
-            var mockScope,
+        describe("The action group controller", () => {
+            let mockScope,
                 mockActions,
                 controller;
 
-            function mockAction(metadata, index) {
-                var action = jasmine.createSpyObj(
+            const mockAction = (metadata, index) => {
+                let action = jasmine.createSpyObj(
                     "action" + index,
                     ["perform", "getMetadata"]
                 );
@@ -38,13 +38,13 @@ define(
                 return action;
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockActions = jasmine.createSpyObj("action", ["getActions"]);
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 controller = new ActionGroupController(mockScope);
             });
 
-            it("watches scope that may change applicable actions", function () {
+            it("watches scope that may change applicable actions",  () => {
                 // The action capability
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "action",
@@ -57,7 +57,7 @@ define(
                 );
             });
 
-            it("populates the scope with grouped and ungrouped actions", function () {
+            it("populates the scope with grouped and ungrouped actions", () => {
                 mockScope.action = mockActions;
                 mockScope.parameters = { category: "test" };
 
@@ -83,7 +83,7 @@ define(
                 expect(mockScope.ungrouped.length).toEqual(3); // ungrouped
             });
 
-            it("provides empty arrays when no action capability is available", function () {
+            it("provides empty arrays when no action capability is available", () => {
                 // Call the watch
                 mockScope.$watch.mostRecentCall.args[1]();
 

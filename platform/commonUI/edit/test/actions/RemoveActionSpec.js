@@ -22,10 +22,10 @@
 
 define(
     ["../../src/actions/RemoveAction"],
-    function (RemoveAction) {
+    (RemoveAction) => {
 
-        describe("The Remove action", function () {
-            var mockQ,
+        describe("The Remove action", () => {
+            let mockQ,
                 mockNavigationService,
                 mockDomainObject,
                 mockParent,
@@ -43,15 +43,15 @@ define(
                 capabilities,
                 action;
 
-            function mockPromise(value) {
+            const mockPromise = (value) => {
                 return {
-                    then: function (callback) {
+                    then: (callback) => {
                         return mockPromise(callback(value));
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     ["getId", "getCapability"]
@@ -70,13 +70,13 @@ define(
                 );
                 mockQ = { when: mockPromise };
                 mockParent = {
-                    getModel: function () {
+                    getModel: () => {
                         return model;
                     },
-                    getCapability: function (k) {
+                    getCapability: (k) => {
                         return capabilities[k];
                     },
-                    useCapability: function (k, v) {
+                    useCapability: (k, v) => {
                         return capabilities[k].invoke(v);
                     }
                 };
@@ -116,7 +116,7 @@ define(
                 action = new RemoveAction(mockNavigationService, actionContext);
             });
 
-            it("only applies to objects with parents", function () {
+            it("only applies to objects with parents", () => {
                 expect(RemoveAction.appliesTo(actionContext)).toBeTruthy();
 
                 mockContext.getParent.andReturn(undefined);
@@ -127,14 +127,14 @@ define(
                 expect(mockType.hasFeature).toHaveBeenCalledWith('creation');
             });
 
-            it("mutates the parent when performed", function () {
+            it("mutates the parent when performed", () => {
                 action.perform();
                 expect(mockMutation.invoke)
                     .toHaveBeenCalledWith(jasmine.any(Function));
             });
 
-            it("changes composition from its mutation function", function () {
-                var mutator, result;
+            it("changes composition from its mutation function", () => {
+                let mutator, result;
                 action.perform();
                 mutator = mockMutation.invoke.mostRecentCall.args[0];
                 result = mutator(model);
@@ -151,7 +151,7 @@ define(
                 expect(result.composition).toEqual(["a", "b"]);
             });
 
-            it("removes parent of object currently navigated to", function () {
+            it("removes parent of object currently navigated to", () => {
                 // Navigates to child object
                 mockNavigationService.getNavigation.andReturn(mockChildObject);
 
@@ -176,7 +176,7 @@ define(
                 expect(mockNavigationService.setNavigation).toHaveBeenCalledWith(mockParent);
             });
 
-            it("checks if removing object not in ascendent path (reaches ROOT)", function () {
+            it("checks if removing object not in ascendent path (reaches ROOT)", () => {
                 // Navigates to grandchild of ROOT
                 mockNavigationService.getNavigation.andReturn(mockGrandchildObject);
 

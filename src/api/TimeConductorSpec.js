@@ -20,16 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./TimeConductor'], function (TimeConductor) {
-    describe("The Time Conductor", function () {
-        var tc,
+define(['./TimeConductor'], (TimeConductor) => {
+    describe("The Time Conductor", () => {
+        let tc,
             timeSystem,
             bounds,
             eventListener,
             toi,
             follow;
 
-        beforeEach(function () {
+        beforeEach( () => {
             tc = new TimeConductor();
             timeSystem = {};
             bounds = {start: 0, end: 0};
@@ -38,7 +38,7 @@ define(['./TimeConductor'], function (TimeConductor) {
             follow = true;
         });
 
-        it("Supports setting and querying of time of interest and and follow mode", function () {
+        it("Supports setting and querying of time of interest and and follow mode", () => {
             expect(tc.timeOfInterest()).not.toBe(toi);
             tc.timeOfInterest(toi);
             expect(tc.timeOfInterest()).toBe(toi);
@@ -48,14 +48,14 @@ define(['./TimeConductor'], function (TimeConductor) {
             expect(tc.follow()).toBe(follow);
         });
 
-        it("Allows setting of valid bounds", function () {
+        it("Allows setting of valid bounds", () => {
             bounds = {start: 0, end: 1};
             expect(tc.bounds()).not.toBe(bounds);
             expect(tc.bounds.bind(tc, bounds)).not.toThrow();
             expect(tc.bounds()).toEqual(bounds);
         });
 
-        it("Disallows setting of invalid bounds", function () {
+        it("Disallows setting of invalid bounds", () => {
             bounds = {start: 1, end: 0};
             expect(tc.bounds()).not.toEqual(bounds);
             expect(tc.bounds.bind(tc, bounds)).toThrow();
@@ -67,53 +67,53 @@ define(['./TimeConductor'], function (TimeConductor) {
             expect(tc.bounds()).not.toEqual(bounds);
         });
 
-        it("Allows setting of time system with bounds", function () {
+        it("Allows setting of time system with bounds", () => {
             expect(tc.timeSystem()).not.toBe(timeSystem);
             expect(tc.timeSystem.bind(tc, timeSystem, bounds)).not.toThrow();
             expect(tc.timeSystem()).toBe(timeSystem);
         });
 
-        it("Disallows setting of time system without bounds", function () {
+        it("Disallows setting of time system without bounds", () => {
             expect(tc.timeSystem()).not.toBe(timeSystem);
             expect(tc.timeSystem.bind(tc, timeSystem)).toThrow();
             expect(tc.timeSystem()).not.toBe(timeSystem);
         });
 
-        it("Emits an event when time system changes", function () {
+        it("Emits an event when time system changes", () => {
             expect(eventListener).not.toHaveBeenCalled();
             tc.on("timeSystem", eventListener);
             tc.timeSystem(timeSystem, bounds);
             expect(eventListener).toHaveBeenCalledWith(timeSystem);
         });
 
-        it("Emits an event when time of interest changes", function () {
+        it("Emits an event when time of interest changes", () => {
             expect(eventListener).not.toHaveBeenCalled();
             tc.on("timeOfInterest", eventListener);
             tc.timeOfInterest(toi);
             expect(eventListener).toHaveBeenCalledWith(toi);
         });
 
-        it("Emits an event when bounds change", function () {
+        it("Emits an event when bounds change", () => {
             expect(eventListener).not.toHaveBeenCalled();
             tc.on("bounds", eventListener);
             tc.bounds(bounds);
             expect(eventListener).toHaveBeenCalledWith(bounds);
         });
 
-        it("Emits an event when follow mode changes", function () {
+        it("Emits an event when follow mode changes", () => {
             expect(eventListener).not.toHaveBeenCalled();
             tc.on("follow", eventListener);
             tc.follow(follow);
             expect(eventListener).toHaveBeenCalledWith(follow);
         });
 
-        it("If bounds are set and TOI lies inside them, do not change TOI", function () {
+        it("If bounds are set and TOI lies inside them, do not change TOI", () => {
             tc.timeOfInterest(6);
             tc.bounds({start: 1, end: 10});
             expect(tc.timeOfInterest()).toEqual(6);
         });
 
-        it("If bounds are set and TOI lies outside them, reset TOI", function () {
+        it("If bounds are set and TOI lies outside them, reset TOI", () => {
             tc.timeOfInterest(11);
             tc.bounds({start: 1, end: 10});
             expect(tc.timeOfInterest()).toBeUndefined();

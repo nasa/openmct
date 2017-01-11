@@ -22,11 +22,9 @@
 
 define([
     'moment'
-], function (
-    moment
-) {
+], (moment) => {
 
-    var DATE_FORMAT = "YYYY-MM-DD HH:mm:ss.SSS",
+    let DATE_FORMAT = "YYYY-MM-DD HH:mm:ss.SSS",
         DATE_FORMATS = [
             DATE_FORMAT,
             "YYYY-MM-DD HH:mm:ss",
@@ -48,15 +46,14 @@ define([
      * @constructor
      * @memberof platform/commonUI/formats
      */
-    function UTCTimeFormat() {
-    }
+    class UTCTimeFormat {
 
     /**
      * Returns an appropriate time format based on the provided value and
      * the threshold required.
      * @private
      */
-    function getScaledFormat(d) {
+    getScaledFormat(d) {
         var momentified = moment.utc(d);
         /**
          * Uses logic from d3 Time-Scales, v3 of the API. See
@@ -65,32 +62,32 @@ define([
          * Licensed
          */
         return [
-            [".SSS", function (m) {
+            [".SSS", (m) => {
                 return m.milliseconds();
             }],
-            [":ss", function (m) {
+            [":ss", (m) => {
                 return m.seconds();
             }],
-            ["HH:mm", function (m) {
+            ["HH:mm", (m) => {
                 return m.minutes();
             }],
-            ["HH", function (m) {
+            ["HH", (m) => {
                 return m.hours();
             }],
-            ["ddd DD", function (m) {
+            ["ddd DD", (m) => {
                 return m.days() &&
                     m.date() !== 1;
             }],
-            ["MMM DD", function (m) {
+            ["MMM DD", (m) => {
                 return m.date() !== 1;
             }],
-            ["MMMM", function (m) {
+            ["MMMM", (m) => {
                 return m.month();
             }],
-            ["YYYY", function () {
+            ["YYYY", () => {
                 return true;
             }]
-        ].filter(function (row) {
+        ].filter( (row) => {
             return row[1](momentified);
         })[0][0];
     }
@@ -101,38 +98,38 @@ define([
      * @param timeRange
      * @returns {*}
      */
-    UTCTimeFormat.prototype.timeUnits = function (timeRange) {
-        var momentified = moment.duration(timeRange);
+    timeUnits(timeRange) {
+        let momentified = moment.duration(timeRange);
 
         return [
-            ["Decades", function (r) {
+            ["Decades", (r) => {
                 return r.years() > 15;
             }],
-            ["Years", function (r) {
+            ["Years", (r) => {
                 return r.years() > 1;
             }],
-            ["Months", function (r) {
+            ["Months", (r) => {
                 return r.years() === 1 || r.months() > 1;
             }],
-            ["Days", function (r) {
+            ["Days", (r) => {
                 return r.months() === 1 || r.days() > 1;
             }],
-            ["Hours", function (r) {
+            ["Hours", (r) => {
                 return r.days() === 1 || r.hours() > 1;
             }],
-            ["Minutes", function (r) {
+            ["Minutes", (r) => {
                 return r.hours() === 1 || r.minutes() > 1;
             }],
-            ["Seconds", function (r) {
+            ["Seconds", (r) => {
                 return r.minutes() === 1 || r.seconds() > 1;
             }],
-            ["Milliseconds", function (r) {
+            ["Milliseconds", (r) => {
                 return true;
             }]
-        ].filter(function (row) {
+        ].filter( (row) => {
             return row[1](momentified);
         })[0][0];
-    };
+    }
 
     /**
      *
@@ -141,21 +138,21 @@ define([
      * format request, allowing for scale-appropriate formatting.
      * @returns {string} the formatted date
      */
-    UTCTimeFormat.prototype.format = function (value, scale) {
+    format(value, scale) {
         if (scale !== undefined) {
-            var scaledFormat = getScaledFormat(value, scale);
+            let scaledFormat = getScaledFormat(value, scale);
             if (scaledFormat) {
                 return moment.utc(value).format(scaledFormat);
             }
         }
         return moment.utc(value).format(DATE_FORMAT) + "Z";
-    };
+    }
 
-    UTCTimeFormat.prototype.parse = function (text) {
+    parse(text) {
         return moment.utc(text, DATE_FORMATS).valueOf();
-    };
+    }
 
-    UTCTimeFormat.prototype.validate = function (text) {
+    validate(text) {
         return moment.utc(text, DATE_FORMATS).isValid();
     };
 

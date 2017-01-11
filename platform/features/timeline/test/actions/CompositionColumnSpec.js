@@ -23,32 +23,32 @@
 define(
     ['../../src/actions/CompositionColumn'],
     function (CompositionColumn) {
-        var TEST_IDS = ['a', 'b', 'c', 'd', 'e', 'f'];
+        const TEST_IDS = ['a', 'b', 'c', 'd', 'e', 'f'];
 
-        describe("CompositionColumn", function () {
-            var testIndex,
+        describe("CompositionColumn", () => {
+            let testIndex,
                 testIdMap,
                 column;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 testIndex = 3;
-                testIdMap = TEST_IDS.reduce(function (map, id, index) {
+                testIdMap = TEST_IDS.reduce( (map, id, index) => {
                     map[id] = index;
                     return map;
                 }, {});
                 column = new CompositionColumn(testIndex, testIdMap);
             });
 
-            it("includes a one-based index in its name", function () {
+            it("includes a one-based index in its name", () => {
                 expect(column.name().indexOf(String(testIndex + 1)))
                     .not.toEqual(-1);
             });
 
-            describe("value", function () {
-                var mockDomainObject,
+            describe("value", () => {
+                let mockDomainObject,
                     testModel;
 
-                beforeEach(function () {
+                beforeEach(() => {
                     mockDomainObject = jasmine.createSpyObj(
                         'domainObject',
                         ['getId', 'getModel', 'getCapability']
@@ -57,17 +57,17 @@ define(
                     mockDomainObject.getModel.andReturn(testModel);
                 });
 
-                it("returns a corresponding value from the map", function () {
+                it("returns a corresponding value from the map", () => {
                     expect(column.value(mockDomainObject))
                         .toEqual(testIdMap[testModel.composition[testIndex]]);
                 });
 
-                it("returns nothing when composition is exceeded", function () {
+                it("returns nothing when composition is exceeded", () => {
                     testModel.composition = ['foo'];
                     expect(column.value(mockDomainObject)).toEqual("");
                 });
 
-                it("returns nothing when composition is absent", function () {
+                it("returns nothing when composition is absent", () => {
                     delete testModel.composition;
                     expect(column.value(mockDomainObject)).toEqual("");
                 });

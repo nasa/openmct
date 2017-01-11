@@ -25,15 +25,15 @@ define(
         "../src/TableConfiguration",
         "../src/DomainColumn"
     ],
-    function (Table, DomainColumn) {
+    (Table, DomainColumn) => {
 
-        describe("A table", function () {
-            var mockDomainObject,
+        describe("A table", () => {
+            let mockDomainObject,
                 mockTelemetryFormatter,
                 table,
                 mockModel;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockDomainObject = jasmine.createSpyObj('domainObject',
                     ['getModel', 'useCapability', 'getCapability']
                 );
@@ -44,18 +44,18 @@ define(
                         'formatDomainValue',
                         'formatRangeValue'
                     ]);
-                mockTelemetryFormatter.formatDomainValue.andCallFake(function (valueIn) {
+                mockTelemetryFormatter.formatDomainValue.andCallFake( (valueIn) => {
                     return valueIn;
                 });
-                mockTelemetryFormatter.formatRangeValue.andCallFake(function (valueIn) {
+                mockTelemetryFormatter.formatRangeValue.andCallFake( (valueIn) => {
                     return valueIn;
                 });
 
                 table = new Table(mockDomainObject, mockTelemetryFormatter);
             });
 
-            it("Add column with no index adds new column to the end", function () {
-                var firstColumn = {title: 'First Column'},
+            it("Add column with no index adds new column to the end", () => {
+                let firstColumn = {title: 'First Column'},
                     secondColumn = {title: 'Second Column'},
                     thirdColumn = {title: 'Third Column'};
 
@@ -71,8 +71,8 @@ define(
             });
 
             it("Add column with index adds new column at the specified" +
-                " position", function () {
-                var firstColumn = {title: 'First Column'},
+                " position", () => {
+                let firstColumn = {title: 'First Column'},
                     secondColumn = {title: 'Second Column'},
                     thirdColumn = {title: 'Third Column'};
 
@@ -87,8 +87,8 @@ define(
                 expect(table.columns[2]).toBe(thirdColumn);
             });
 
-            describe("Building columns from telemetry metadata", function () {
-                var metadata = [{
+            describe("Building columns from telemetry metadata", () => {
+                let metadata = [{
                     ranges: [
                         {
                             name: 'Range 1',
@@ -113,22 +113,22 @@ define(
                     ]
                 }];
 
-                beforeEach(function () {
+                beforeEach(() => {
                     table.populateColumns(metadata);
                 });
 
-                it("populates columns", function () {
+                it("populates columns", () => {
                     expect(table.columns.length).toBe(5);
                 });
 
-                it("Build columns populates columns with domains to the left", function () {
+                it("Build columns populates columns with domains to the left", () => {
                     expect(table.columns[1] instanceof DomainColumn).toBeTruthy();
                     expect(table.columns[2] instanceof DomainColumn).toBeTruthy();
                     expect(table.columns[3] instanceof DomainColumn).toBeFalsy();
                 });
 
-                it("Produces headers for each column based on title", function () {
-                    var headers,
+                it("Produces headers for each column based on title", () => {
+                    let headers,
                         firstColumn = table.columns[0];
 
                     spyOn(firstColumn, 'getTitle');
@@ -138,17 +138,17 @@ define(
                 });
 
                 it("Provides a default configuration with all columns" +
-                    " visible", function () {
-                    var configuration = table.buildColumnConfiguration();
+                    " visible", () => {
+                    let configuration = table.buildColumnConfiguration();
 
                     expect(configuration).toBeDefined();
-                    expect(Object.keys(configuration).every(function (key) {
+                    expect(Object.keys(configuration).every( (key) => {
                         return configuration[key];
                     }));
                 });
 
-                it("Column configuration exposes persisted configuration", function () {
-                    var tableConfig,
+                it("Column configuration exposes persisted configuration", () => {
+                    let tableConfig,
                         modelConfig = {
                         table: {
                             columns : {
@@ -164,11 +164,11 @@ define(
                     expect(tableConfig['Range 1']).toBe(false);
                 });
 
-                describe('retrieving row values', function () {
-                    var datum,
+                describe('retrieving row values', () => {
+                    let datum,
                         rowValues;
 
-                    beforeEach(function () {
+                    beforeEach(() => {
                         datum = {
                             'range1': 'range 1 value',
                             'range2': 'range 2 value',
@@ -178,14 +178,14 @@ define(
                         rowValues = table.getRowValues(mockDomainObject, datum);
                     });
 
-                    it("Returns a value for every column", function () {
+                    it("Returns a value for every column", () => {
                         expect(rowValues['Range 1'].text).toBeDefined();
                         expect(rowValues['Range 1'].text).toEqual('range 1' +
                             ' value');
                     });
 
                     it("Uses the telemetry formatter to appropriately format" +
-                        " telemetry values", function () {
+                        " telemetry values", () => {
                         expect(mockTelemetryFormatter.formatRangeValue).toHaveBeenCalled();
                     });
                 });

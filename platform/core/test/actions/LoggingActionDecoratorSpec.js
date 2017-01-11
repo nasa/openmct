@@ -25,15 +25,15 @@
  */
 define(
     ["../../src/actions/LoggingActionDecorator"],
-    function (LoggingActionDecorator) {
+    (LoggingActionDecorator) => {
 
-        describe("The logging action decorator", function () {
-            var mockLog,
+        describe("The logging action decorator", () => {
+            let mockLog,
                 mockAction,
                 mockActionService,
                 decorator;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockAction = jasmine.createSpyObj(
                     "action",
                     ["perform", "getMetadata"]
@@ -55,7 +55,7 @@ define(
                 );
             });
 
-            it("logs when actions are performed", function () {
+            it("logs when actions are performed", () => {
                 // Verify precondition
                 expect(mockLog.info).not.toHaveBeenCalled();
 

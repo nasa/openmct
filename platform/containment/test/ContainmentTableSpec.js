@@ -22,14 +22,14 @@
 
 define(
     ["../src/ContainmentTable"],
-    function (ContainmentTable) {
-        describe("Composition policy's containment table", function () {
-            var mockTypeService,
+    (ContainmentTable) => {
+        describe("Composition policy's containment table", () => {
+            let mockTypeService,
                 mockCapabilityService,
                 mockTypes,
                 table;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockTypeService = jasmine.createSpyObj(
                     'typeService',
                     ['listTypes']
@@ -39,8 +39,8 @@ define(
                     ['getCapabilities']
                 );
                 // Both types can only contain b, let's say
-                mockTypes = ['a', 'b', 'c'].map(function (type, index) {
-                    var mockType = jasmine.createSpyObj(
+                mockTypes = ['a', 'b', 'c'].map( (type, index) => {
+                    let mockType = jasmine.createSpyObj(
                         'type-' + type,
                         ['getKey', 'getDefinition', 'getInitialModel']
                     );
@@ -56,8 +56,8 @@ define(
                 });
 
                 mockTypeService.listTypes.andReturn(mockTypes);
-                mockCapabilityService.getCapabilities.andCallFake(function (model) {
-                    var capabilities = {};
+                mockCapabilityService.getCapabilities.andCallFake( (model) => {
+                    let capabilities = {};
                     capabilities[model.id] = true;
                     return capabilities;
                 });
@@ -70,7 +70,7 @@ define(
 
             // The plain type case is tested in CompositionPolicySpec,
             // so just test for special syntax ('has', or no contains rules) here
-            it("enforces 'has' containment rules related to capabilities", function () {
+            it("enforces 'has' containment rules related to capabilities", () => {
                 expect(table.canContain(mockTypes[0], mockTypes[1]))
                     .toBeTruthy();
                 expect(table.canContain(mockTypes[1], mockTypes[1]))
@@ -81,7 +81,7 @@ define(
                     .toBeFalsy();
             });
 
-            it("allows anything when no containership rules are defined", function () {
+            it("allows anything when no containership rules are defined", () => {
                 expect(table.canContain(mockTypes[2], mockTypes[0]))
                     .toBeTruthy();
                 expect(table.canContain(mockTypes[2], mockTypes[1]))

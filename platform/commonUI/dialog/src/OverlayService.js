@@ -22,11 +22,11 @@
 
 define(
     [],
-    function () {
+    () => {
 
         // Template to inject into the DOM to show the dialog; really just points to
         // the a specific template that can be included via mct-include
-        var TEMPLATE = '<mct-include ng-model="overlay" key="key" ng-class="typeClass"></mct-include>';
+        let TEMPLATE = '<mct-include ng-model="overlay" key="key" ng-class="typeClass"></mct-include>';
 
 
         /**
@@ -44,15 +44,16 @@ define(
          * @memberof platform/commonUI/dialog
          * @constructor
          */
-        function OverlayService($document, $compile, $rootScope) {
+        class OverlayService {
+          constructor($document, $compile, $rootScope){
             this.$compile = $compile;
 
             // Don't include $document and $rootScope directly;
             // avoids https://docs.angularjs.org/error/ng/cpws
-            this.findBody = function () {
+            this.findBody = () => {
                 return $document.find('body');
             };
-            this.newScope = function () {
+            this.newScope = () => {
                 return $rootScope.$new();
             };
         }
@@ -73,14 +74,14 @@ define(
          *        the overlay. Can be specified to provide custom styling of
          *        overlays
          */
-        OverlayService.prototype.createOverlay = function (key, overlayModel, typeClass) {
+        createOverlay(key, overlayModel, typeClass) {
             // Create a new scope for this overlay
-            var scope = this.newScope(),
+            let scope = this.newScope(),
                 element;
 
             // Stop showing the overlay; additionally, release the scope
             // that it uses.
-            function dismiss() {
+            const dismiss = () => {
                 scope.$destroy();
                 element.remove();
             }
@@ -100,7 +101,8 @@ define(
             return {
                 dismiss: dismiss
             };
-        };
+        }
+      }
 
         return OverlayService;
     }

@@ -22,7 +22,7 @@
 
 define(
     [],
-    function () {
+    () => {
 
         /**
          * Notes on implementation of plot options
@@ -43,9 +43,8 @@ define(
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
-        function TableOptionsController($scope) {
-
-            var self = this;
+        class TableOptionsController {
+          constructor($scope) {
 
             this.$scope = $scope;
             this.domainObject = $scope.domainObject;
@@ -53,18 +52,18 @@ define(
 
             $scope.columnsForm = {};
 
-            function unlisten() {
-                self.listeners.forEach(function (listener) {
+            const unlisten = () => {
+                this.listeners.forEach( (listener) => {
                     listener();
                 });
             }
 
-            $scope.$watch('domainObject', function (domainObject) {
+            $scope.$watch('domainObject',  (domainObject) => {
                 unlisten();
-                self.populateForm(domainObject.getModel());
+                this.populateForm(domainObject.getModel());
 
-                self.listeners.push(self.domainObject.getCapability('mutation').listen(function (model) {
-                    self.populateForm(model);
+                this.listeners.push(this.domainObject.getCapability('mutation').listen( (model) => {
+                    this.populateForm(model);
                 }));
             });
 
@@ -72,12 +71,12 @@ define(
              * Maintain a configuration object on scope that stores column
              * configuration. On change, synchronize with object model.
              */
-            $scope.$watchCollection('configuration.table.columns', function (newColumns, oldColumns) {
+            $scope.$watchCollection('configuration.table.columns', (newColumns, oldColumns) => {
                 if (newColumns !== oldColumns) {
-                    self.domainObject.useCapability('mutation', function (model) {
+                    this.domainObject.useCapability('mutation', (model) => {
                         model.configuration.table.columns = newColumns;
                     });
-                    self.domainObject.getCapability('persistence').persist();
+                    this.domainObject.getCapability('persistence').persist();
                 }
             });
 
@@ -88,8 +87,8 @@ define(
 
         }
 
-        TableOptionsController.prototype.populateForm = function (model) {
-            var columnsDefinition = (((model.configuration || {}).table || {}).columns || {}),
+        populateForm(model) {
+            let columnsDefinition = (((model.configuration || {}).table || {}).columns || {}),
                 rows = [];
             this.$scope.columnsForm = {
                 'name': 'Columns',
@@ -98,7 +97,7 @@ define(
                     'rows': rows
                 }]};
 
-            Object.keys(columnsDefinition).forEach(function (key) {
+            Object.keys(columnsDefinition).forEach( (key) => {
                 rows.push({
                     'name': key,
                     'control': 'checkbox',
@@ -107,7 +106,7 @@ define(
             });
             this.$scope.configuration = JSON.parse(JSON.stringify(model.configuration || {}));
         };
-
+      }
         return TableOptionsController;
     }
 );

@@ -22,22 +22,22 @@
 
 define(
     ['../../src/capabilities/ActivityTimespanCapability'],
-    function (ActivityTimespanCapability) {
+    (ActivityTimespanCapability) => {
 
-        describe("An Activity's timespan capability", function () {
-            var mockQ,
+        describe("An Activity's timespan capability", () => {
+            let mockQ,
                 mockDomainObject,
                 capability;
 
-            function asPromise(v) {
+            const asPromise = (v) => {
                 return (v || {}).then ? v : {
-                    then: function (callback) {
+                    then: (callback) => {
                         return asPromise(callback(v));
                     }
                 };
             }
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockQ = jasmine.createSpyObj('$q', ['when']);
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
@@ -61,7 +61,7 @@ define(
                 );
             });
 
-            it("applies only to activity objects", function () {
+            it("applies only to activity objects", () => {
                 expect(ActivityTimespanCapability.appliesTo({
                     type: 'activity'
                 })).toBeTruthy();
@@ -70,8 +70,8 @@ define(
                 })).toBeFalsy();
             });
 
-            it("provides timespan based on model", function () {
-                var mockCallback = jasmine.createSpy('callback');
+            it("provides timespan based on model", () => {
+                let mockCallback = jasmine.createSpy('callback');
                 capability.invoke().then(mockCallback);
                 // We verify other methods in ActivityTimespanSpec,
                 // so just make sure we got something that looks right.

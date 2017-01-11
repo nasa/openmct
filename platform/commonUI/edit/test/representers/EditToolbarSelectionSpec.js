@@ -22,15 +22,15 @@
 
 define(
     ['../../src/representers/EditToolbarSelection'],
-    function (EditToolbarSelection) {
+    (EditToolbarSelection) => {
 
-        describe("The Edit mode selection manager", function () {
-            var testProxy,
+        describe("The Edit mode selection manager", () => {
+            let testProxy,
                 testElement,
                 otherElement,
                 selection;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 testProxy = { someKey: "some value" };
                 testElement = { someOtherKey: "some other value" };
                 otherElement = { yetAnotherKey: 42 };
@@ -38,39 +38,39 @@ define(
                 selection.proxy(testProxy);
             });
 
-            it("adds the proxy to the selection array", function () {
+            it("adds the proxy to the selection array", () => {
                 expect(selection.all()).toEqual([testProxy]);
             });
 
-            it("exposes view proxy", function () {
+            it("exposes view proxy", () => {
                 expect(selection.proxy()).toBe(testProxy);
             });
 
-            it("includes selected objects alongside the proxy", function () {
+            it("includes selected objects alongside the proxy", () => {
                 selection.select(testElement);
                 expect(selection.all()).toEqual([testProxy, testElement]);
             });
 
-            it("allows elements to be deselected", function () {
+            it("allows elements to be deselected", () => {
                 selection.select(testElement);
                 selection.deselect();
                 expect(selection.all()).toEqual([testProxy]);
             });
 
-            it("replaces old selections with new ones", function () {
+            it("replaces old selections with new ones", () => {
                 selection.select(testElement);
                 selection.select(otherElement);
                 expect(selection.all()).toEqual([testProxy, otherElement]);
             });
 
-            it("allows retrieval of the current selection", function () {
+            it("allows retrieval of the current selection", () => {
                 selection.select(testElement);
                 expect(selection.get()).toBe(testElement);
                 selection.select(otherElement);
                 expect(selection.get()).toBe(otherElement);
             });
 
-            it("can check if an element is selected", function () {
+            it("can check if an element is selected", () => {
                 selection.select(testElement);
                 expect(selection.selected(testElement)).toBeTruthy();
                 expect(selection.selected(otherElement)).toBeFalsy();
@@ -79,14 +79,14 @@ define(
                 expect(selection.selected(otherElement)).toBeTruthy();
             });
 
-            it("considers the proxy to be selected", function () {
+            it("considers the proxy to be selected", () => {
                 expect(selection.selected(testProxy)).toBeTruthy();
                 selection.select(testElement);
                 // Even when something else is selected...
                 expect(selection.selected(testProxy)).toBeTruthy();
             });
 
-            it("treats selection of the proxy as a no-op", function () {
+            it("treats selection of the proxy as a no-op", () => {
                 selection.select(testProxy);
                 expect(selection.all()).toEqual([testProxy]);
             });

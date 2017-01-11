@@ -22,13 +22,13 @@
 
 define(
     ['../../src/directives/MCTSwimlaneDrop'],
-    function (MCTSwimlaneDrop) {
+    (MCTSwimlaneDrop) => {
 
-        var TEST_HEIGHT = 100,
+        let TEST_HEIGHT = 100,
             TEST_TOP = 600;
 
-        describe("The mct-swimlane-drop directive", function () {
-            var mockDndService,
+        describe("The mct-swimlane-drop directive", () => {
+            let mockDndService,
                 mockScope,
                 mockElement,
                 testAttrs,
@@ -37,14 +37,14 @@ define(
                 handlers,
                 directive;
 
-            function getterSetter(value) {
-                return function (newValue) {
+            const getterSetter = (value) => {
+                return (newValue) => {
                     return (value = (arguments.length > 0) ? newValue : value);
                 };
             }
 
-            beforeEach(function () {
-                var scopeExprs = {};
+            beforeEach(() => {
+                let scopeExprs = {};
 
                 handlers = {};
 
@@ -68,7 +68,7 @@ define(
 
                 // Simulate evaluation of expressions in scope
                 scopeExprs.mockSwimlane = mockSwimlane;
-                mockScope.$eval.andCallFake(function (expr) {
+                mockScope.$eval.andCallFake( (expr) => {
                     return scopeExprs[expr];
                 });
 
@@ -97,17 +97,17 @@ define(
                 // for testing.
                 directive.link(mockScope, mockElement, testAttrs);
 
-                mockElement.on.calls.forEach(function (call) {
+                mockElement.on.calls.forEach( (call) => {
                     handlers[call.args[0]] = call.args[1];
                 });
 
             });
 
-            it("is available as an attribute", function () {
+            it("is available as an attribute", () => {
                 expect(directive.restrict).toEqual("A");
             });
 
-            it("updates highlights on drag over", function () {
+            it("updates highlights on drag over", () => {
                 // Near the top
                 testEvent.pageY = TEST_TOP + TEST_HEIGHT / 10;
 
@@ -118,7 +118,7 @@ define(
                 expect(mockScope.$apply).toHaveBeenCalled();
             });
 
-            it("updates bottom highlights on drag over", function () {
+            it("updates bottom highlights on drag over", () => {
                 // Near the bottom
                 testEvent.pageY = TEST_TOP + TEST_HEIGHT - TEST_HEIGHT / 10;
 
@@ -129,7 +129,7 @@ define(
                 expect(mockScope.$apply).toHaveBeenCalled();
             });
 
-            it("respects swimlane's allowDropIn response", function () {
+            it("respects swimlane's allowDropIn response", () => {
                 // Near the top
                 testEvent.pageY = TEST_TOP + TEST_HEIGHT / 10;
 
@@ -141,7 +141,7 @@ define(
                 expect(mockSwimlane.highlightBottom).toHaveBeenCalledWith(false);
             });
 
-            it("respects swimlane's allowDropAfter response", function () {
+            it("respects swimlane's allowDropAfter response", () => {
                 // Near the top
                 testEvent.pageY = TEST_TOP + TEST_HEIGHT - TEST_HEIGHT / 10;
 
@@ -153,18 +153,18 @@ define(
                 expect(mockSwimlane.highlightBottom).toHaveBeenCalledWith(false);
             });
 
-            it("notifies swimlane on drop", function () {
+            it("notifies swimlane on drop", () => {
                 handlers.drop(testEvent);
                 expect(mockSwimlane.drop).toHaveBeenCalledWith('abc', 'someDomainObject');
                 expect(mockScope.$apply).toHaveBeenCalled();
             });
 
-            it("invokes preventDefault on drop", function () {
+            it("invokes preventDefault on drop", () => {
                 handlers.drop(testEvent);
                 expect(testEvent.preventDefault).toHaveBeenCalled();
             });
 
-            it("clears highlights when drag leaves", function () {
+            it("clears highlights when drag leaves", () => {
                 mockSwimlane.highlight.andReturn(true);
                 handlers.dragleave();
                 expect(mockSwimlane.highlight).toHaveBeenCalledWith(false);

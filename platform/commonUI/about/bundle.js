@@ -33,7 +33,7 @@ define([
     "text!./res/templates/licenses.html",
     "text!./res/templates/licenses-export-md.html",
     'legacyRegistry'
-], function (
+], (
     aboutDialogTemplate,
     LogoController,
     AboutController,
@@ -46,7 +46,7 @@ define([
     licensesTemplate,
     licensesExportMdTemplate,
     legacyRegistry
-) {
+) => {
 
     legacyRegistry.register("platform/commonUI/about", {
         "name": "About Open MCT",

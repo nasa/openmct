@@ -20,11 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-
-], function (
-
-) {
+define([], () => {
 
     /**
      * An object used to convert between numeric values and text values,
@@ -89,10 +85,11 @@ define([
      * @param {Array.<function(new : Format)>} format constructors,
      *        from the `formats` extension category.
      */
-    function FormatProvider(formats) {
+    class FormatProvider {
+      constructor(formats) {
         var formatMap = {};
 
-        function addToMap(Format) {
+        const addToMap = (Format) => {
             var key = Format.key;
             if (key && !formatMap[key]) {
                 formatMap[key] = new Format();
@@ -103,14 +100,14 @@ define([
         this.formatMap = formatMap;
     }
 
-    FormatProvider.prototype.getFormat = function (key) {
-        var format = this.formatMap[key];
+    getFormat(key) {
+        let format = this.formatMap[key];
         if (!format) {
             throw new Error("FormatProvider: No format found for " + key);
         }
         return format;
-    };
-
+    }
+  }
     return FormatProvider;
 
 });

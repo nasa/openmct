@@ -22,7 +22,7 @@
 
 define(
     ['./TelemetryProxy', './ImageProxy', './LineProxy', './BoxProxy', './TextProxy'],
-    function (TelemetryProxy, ImageProxy, LineProxy, BoxProxy, TextProxy) {
+    (TelemetryProxy, ImageProxy, LineProxy, BoxProxy, TextProxy) => {
 
         return {
             "fixed.telemetry": TelemetryProxy,

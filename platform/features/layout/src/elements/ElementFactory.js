@@ -22,9 +22,9 @@
 
 define(
     [],
-    function () {
+    () => {
 
-        var INITIAL_STATES = {
+        let INITIAL_STATES = {
                 "fixed.image": {
                     stroke: "transparent"
                 },
@@ -86,9 +86,10 @@ define(
          * @memberof platform/features/layout
          * @constructor
          */
-        function ElementFactory(dialogService) {
+        class ElementFactory {
+          constructor(dialogService) {
             this.dialogService = dialogService;
-        }
+          }
 
         /**
          * Create a new element for the fixed position view.
@@ -96,8 +97,8 @@ define(
          * @returns {Promise|object} the created element, or a promise
          *          for that element
          */
-        ElementFactory.prototype.createElement = function (type) {
-            var initialState = INITIAL_STATES[type] || {};
+        createElement(type) {
+            let initialState = INITIAL_STATES[type] || {};
 
             // Clone that state
             initialState = JSON.parse(JSON.stringify(initialState));
@@ -108,7 +109,7 @@ define(
                 initialState
             ) : initialState;
         };
-
+      }
         return ElementFactory;
     }
 );

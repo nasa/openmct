@@ -23,21 +23,21 @@
 
 define(
     ["../../src/controllers/EditActionController"],
-    function (EditActionController) {
+    (EditActionController) => {
 
-        describe("The Edit Action controller", function () {
-            var mockSaveActionMetadata = {
+        describe("The Edit Action controller", () => {
+            let mockSaveActionMetadata = {
                 name: "mocked-save-action",
                 cssclass: "mocked-save-action-css"
             };
 
-            function fakeGetActions(actionContext) {
+            const fakeGetActions = (actionContext) => {
                 if (actionContext.category === "save") {
-                    var mockedSaveActions = [
+                    let mockedSaveActions = [
                         jasmine.createSpyObj("mockSaveAction", ["getMetadata", "perform"]),
                         jasmine.createSpyObj("mockSaveAction", ["getMetadata", "perform"])
                     ];
-                    mockedSaveActions.forEach(function (action) {
+                    mockedSaveActions.forEach( (action) => {
                         action.getMetadata.andReturn(mockSaveActionMetadata);
                     });
                     return mockedSaveActions;
@@ -48,11 +48,11 @@ define(
                 }
             }
 
-            var mockScope,
+            let mockScope,
                 mockActions,
                 controller;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockActions = jasmine.createSpyObj("action", ["getActions"]);
                 mockActions.getActions.andCallFake(fakeGetActions);
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
@@ -60,11 +60,11 @@ define(
                 controller = new EditActionController(mockScope);
             });
 
-            function makeControllerUpdateActions() {
+            const makeControllerUpdateActions = () => {
                 mockScope.$watch.mostRecentCall.args[1]();
             }
 
-            it("watches scope that may change applicable actions", function () {
+            it("watches scope that may change applicable actions", () => {
                 // The action capability
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "action",
@@ -72,32 +72,32 @@ define(
                 );
             });
 
-            it("populates the scope with 'save' actions", function () {
+            it("populates the scope with 'save' actions", () => {
                 makeControllerUpdateActions();
                 expect(mockScope.saveActions.length).toEqual(2);
             });
 
-            it("converts 'save' actions to their menu counterparts", function () {
+            it("converts 'save' actions to their menu counterparts", () => {
                 makeControllerUpdateActions();
-                var menuOptions = mockScope.saveActionsAsMenuOptions;
+                let menuOptions = mockScope.saveActionsAsMenuOptions;
 
                 expect(menuOptions.length).toEqual(2);
                 expect(menuOptions[0].key).toEqual(mockScope.saveActions[0]);
                 expect(menuOptions[1].key).toEqual(mockScope.saveActions[1]);
-                menuOptions.forEach(function (option) {
+                menuOptions.forEach( (option) => {
                     expect(option.name).toEqual(mockSaveActionMetadata.name);
                     expect(option.cssclass).toEqual(mockSaveActionMetadata.cssclass);
                 });
             });
 
-            it("uses a click handler to perform the clicked action", function () {
+            it("uses a click handler to perform the clicked action", () => {
                 makeControllerUpdateActions();
-                var sampleSaveAction = mockScope.saveActions[0];
+                let sampleSaveAction = mockScope.saveActions[0];
                 mockScope.saveActionMenuClickHandler(sampleSaveAction);
                 expect(sampleSaveAction.perform).toHaveBeenCalled();
             });
 
-            it("populates the scope with other editing actions", function () {
+            it("populates the scope with other editing actions", () => {
                 makeControllerUpdateActions();
                 expect(mockScope.otherEditActions).toEqual(["a", "b", "c"]);
             });

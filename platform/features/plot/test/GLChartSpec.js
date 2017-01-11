@@ -25,14 +25,14 @@
  */
 define(
     ["../src/GLChart"],
-    function (GLChart) {
+    (GLChart) => {
 
-        describe("A WebGL chart", function () {
-            var mockCanvas,
+        describe("A WebGL chart", () => {
+            let mockCanvas,
                 mockGL,
                 glChart;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockCanvas = jasmine.createSpyObj("canvas", ["getContext"]);
                 mockGL = jasmine.createSpyObj(
                     "gl",
@@ -68,7 +68,7 @@ define(
 
                 // Echo back names for uniform locations, so we can
                 // test which of these are set for certain operations.
-                mockGL.getUniformLocation.andCallFake(function (a, name) {
+                mockGL.getUniformLocation.andCallFake( (a, name) => {
                     return name;
                 });
 
@@ -77,19 +77,19 @@ define(
                 glChart = new GLChart(mockCanvas);
             });
 
-            it("allows the canvas to be cleared", function () {
+            it("allows the canvas to be cleared", () => {
                 glChart.clear();
                 expect(mockGL.clear).toHaveBeenCalled();
             });
 
-            it("does not construct if WebGL is unavailable", function () {
+            it("does not construct if WebGL is unavailable", () => {
                 mockCanvas.getContext.andReturn(undefined);
-                expect(function () {
+                expect(() => {
                     return new GLChart(mockCanvas);
                 }).toThrow();
             });
 
-            it("allows dimensions to be set", function () {
+            it("allows dimensions to be set", () => {
                 glChart.setDimensions([120, 120], [0, 10]);
                 expect(mockGL.uniform2fv)
                     .toHaveBeenCalledWith("uDimensions", [120, 120]);
@@ -97,8 +97,8 @@ define(
                     .toHaveBeenCalledWith("uOrigin", [0, 10]);
             });
 
-            it("allows lines to be drawn", function () {
-                var testBuffer = [0, 1, 3, 8],
+            it("allows lines to be drawn", () => {
+                let testBuffer = [0, 1, 3, 8],
                     testColor = [0.25, 0.33, 0.66, 1.0],
                     testPoints = 2;
                 glChart.drawLine(testBuffer, testColor, testPoints);
@@ -113,8 +113,8 @@ define(
                     .toHaveBeenCalledWith("LINE_STRIP", 0, testPoints);
             });
 
-            it("allows squares to be drawn", function () {
-                var testMin = [0, 1],
+            it("allows squares to be drawn", () => {
+                let testMin = [0, 1],
                     testMax = [10, 10],
                     testColor = [0.25, 0.33, 0.66, 1.0];
 
@@ -126,7 +126,7 @@ define(
                     .toHaveBeenCalledWith("TRIANGLE_FAN", 0, 4);
             });
 
-            it("uses buffer sizes reported by WebGL", function () {
+            it("uses buffer sizes reported by WebGL", () => {
                 // Make sure that GLChart uses the GL buffer size, which may
                 // differ from what canvas requested. WTD-852
                 mockCanvas.width = 300;

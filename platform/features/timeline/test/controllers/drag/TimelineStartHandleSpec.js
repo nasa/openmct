@@ -22,15 +22,15 @@
 
 define(
     ['../../../src/controllers/drag/TimelineStartHandle', '../../../src/TimelineConstants'],
-    function (TimelineStartHandle, TimelineConstants) {
+    (TimelineStartHandle, TimelineConstants) => {
 
-        describe("A Timeline start drag handle", function () {
-            var mockDragHandler,
+        describe("A Timeline start drag handle", () => {
+            let mockDragHandler,
                 mockSnapHandler,
                 mockZoomController,
                 handle;
 
-            beforeEach(function () {
+            beforeEach(() => {
                 mockDragHandler = jasmine.createSpyObj(
                     'dragHandler',
                     ['start', 'persist']
@@ -47,16 +47,16 @@ define(
                 mockDragHandler.start.andReturn(12321);
 
                 // Echo back the value from snapper for most tests
-                mockSnapHandler.snap.andCallFake(function (ts) {
+                mockSnapHandler.snap.andCallFake( (ts) => {
                     return ts;
                 });
 
                 // Double pixels to get millis, for test purposes
-                mockZoomController.toMillis.andCallFake(function (px) {
+                mockZoomController.toMillis.andCallFake( (px) => {
                     return px * 2;
                 });
 
-                mockZoomController.toPixels.andCallFake(function (ms) {
+                mockZoomController.toPixels.andCallFake( (ms) => {
                     return ms / 2;
                 });
 
@@ -67,7 +67,7 @@ define(
                 );
             });
 
-            it("provides a style for templates", function () {
+            it("provides a style for templates", () => {
                 expect(handle.style(mockZoomController)).toEqual({
                     // Left should be adjusted by zoom controller
                     left: (12321 / 2) + 'px',
@@ -76,7 +76,7 @@ define(
                 });
             });
 
-            it("forwards drags to the drag handler", function () {
+            it("forwards drags to the drag handler", () => {
                 handle.begin();
                 handle.drag(100, mockZoomController);
                 // Should have been interpreted as a +200 ms change
@@ -86,7 +86,7 @@ define(
                 );
             });
 
-            it("snaps drags to other end points", function () {
+            it("snaps drags to other end points", () => {
                 mockSnapHandler.snap.andReturn(42);
                 handle.begin();
                 handle.drag(-10, mockZoomController);
@@ -97,7 +97,7 @@ define(
                 );
             });
 
-            it("persists when a move is complete", function () {
+            it("persists when a move is complete", () => {
                 // Simulate normal drag cycle
                 handle.begin();
                 handle.drag(100, mockZoomController);

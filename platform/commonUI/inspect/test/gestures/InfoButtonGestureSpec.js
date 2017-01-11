@@ -22,10 +22,10 @@
 
 define(
     ['../../src/gestures/InfoButtonGesture'],
-    function (InfoButtonGesture) {
+    (InfoButtonGesture) => {
 
-        describe("The info button gesture", function () {
-            var mockTimeout,
+        describe("The info button gesture", () => {
+            let mockTimeout,
                 mockDocument,
                 mockBody,
                 mockAgentService,
@@ -41,7 +41,7 @@ define(
                 fireGesture,
                 fireDismissGesture;
 
-            beforeEach(function () {
+            beforeEach( () => {
                 mockTimeout = jasmine.createSpy('$timeout');
                 mockDocument = jasmine.createSpyObj('$document', ['find']);
                 mockBody = jasmine.createSpyObj('body', ['on', 'off', 'scope', 'css', 'unbind']);
@@ -69,7 +69,7 @@ define(
                 mockHide = jasmine.createSpy('hide');
 
                 mockDomainObject.getModel.andReturn({ name: "Test Object" });
-                mockDomainObject.useCapability.andCallFake(function (c) {
+                mockDomainObject.useCapability.andCallFake( (c) => {
                     return (c === 'metadata') ? testMetadata : undefined;
                 });
                 mockElement.scope.andReturn(mockScope);
@@ -86,7 +86,7 @@ define(
                 fireGesture =  mockElement.on.mostRecentCall.args[1];
             });
 
-            it("expect click on the representation", function () {
+            it("expect click on the representation", () => {
                 // Fires a click call on element and then
                 // expects the click to have happened
                 fireGesture(mockEvent);
@@ -96,7 +96,7 @@ define(
                 );
             });
 
-            it("expect click then dismiss on the representation", function () {
+            it("expect click then dismiss on the representation", () => {
                 // Fire the click and then expect the click
                 fireGesture(mockEvent);
                 expect(mockElement.on).toHaveBeenCalledWith(
@@ -126,7 +126,7 @@ define(
                 );
             });
 
-            it("detaches a callback for info bubble events when destroyed", function () {
+            it("detaches a callback for info bubble events when destroyed", () => {
                 expect(mockElement.off).not.toHaveBeenCalled();
 
                 gesture.destroy();
@@ -138,7 +138,7 @@ define(
             });
 
             // https://github.com/nasa/openmct/issues/948
-            it("does not try to access scope", function () {
+            it("does not try to access scope", () => {
                 expect(mockElement.scope).not.toHaveBeenCalled();
             });
 
