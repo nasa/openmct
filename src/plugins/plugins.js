@@ -41,12 +41,28 @@ define([
 
     plugins.CouchDB = function (url) {
         return function (openmct) {
+
             openmct.legacyRegistry.enable(bundleMap.couchDB);
         };
     };
 
     plugins.ElasticSearch = function (url) {
         return function (openmct) {
+            var bundleName = "config/elastic";
+
+            openmct.legacyRegistry.register(bundleName, {
+                "extensions": {
+                    "constants": [
+                        {
+                            "key": "ELASTIC_ROOT",
+                            "value": url,
+                            "priority": "mandatory"
+                        }
+                    ]
+                }
+            });
+
+            openmct.legacyRegistry.enable(bundleName);
             openmct.legacyRegistry.enable(bundleMap.elasticsearch);
         };
     };
