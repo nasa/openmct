@@ -23,7 +23,7 @@
 define([
     'lodash'
 ], function (_) {
-    return _({
+    var bundleMap = {
         couchDB: 'platform/persistence/couch',
         elasticsearch: 'platform/persistence/elastic',
         espresso: 'platform/commonUI/themes/espresso',
@@ -31,9 +31,25 @@ define([
         myItems: 'platform/features/my-items',
         snow: 'platform/commonUI/themes/snow',
         utcTimeSystem: 'platform/features/conductor/utcTimeSystem'
-    }).map(pluginName, bundleName) {
+    };
+
+    var plugins = _(bundleMap).map(pluginName, bundleName) {
         return function (openmct) {
             openmct.legacyRegistry.enable(bundleName);
         };
     };
+
+    plugins.CouchDB = function (url) {
+        return function (openmct) {
+            openmct.legacyRegistry.enable(bundleMap.couchDB);
+        };
+    };
+
+    plugins.ElasticSearch = function (url) {
+        return function (openmct) {
+            openmct.legacyRegistry.enable(bundleMap.elasticsearch);
+        };
+    };
+
+    return plugins;
 });
