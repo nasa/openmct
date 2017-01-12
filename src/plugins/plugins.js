@@ -21,13 +21,19 @@
  *****************************************************************************/
 
 define([
-], function () {
-    return {
-        localStorage: function (openmct) {
-            openmct.legacyRegistry.enable('platform/persistence/local');
-        },
-        myItems: function (openmct) {
-            openmct.legacyRegistry.enable('platform/features/my-items');
-        }
+    'lodash'
+], function (_) {
+    return _({
+        couchDB: 'platform/persistence/couch',
+        elasticsearch: 'platform/persistence/elastic',
+        espresso: 'platform/commonUI/themes/espresso',
+        localStorage: 'platform/persistence/local',
+        myItems: 'platform/features/my-items',
+        snow: 'platform/commonUI/themes/snow',
+        utcTimeSystem: 'platform/features/conductor/utcTimeSystem'
+    }).map(pluginName, bundleName) {
+        return function (openmct) {
+            openmct.legacyRegistry.enable(bundleName);
+        };
     };
 });
