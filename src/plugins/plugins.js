@@ -33,7 +33,7 @@ define([
         utcTimeSystem: 'platform/features/conductor/utcTimeSystem'
     };
 
-    var plugins = _(bundleMap).map(pluginName, bundleName) {
+    var plugins = _(bundleMap).map(function (pluginName, bundleName) {
         return function (openmct) {
             openmct.legacyRegistry.enable(bundleName);
         };
