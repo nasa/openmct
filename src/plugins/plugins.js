@@ -37,7 +37,7 @@ define([
         return function (openmct) {
             openmct.legacyRegistry.enable(bundleName);
         };
-    };
+    });
 
     plugins.CouchDB = function (url) {
         return function (openmct) {
