@@ -269,12 +269,27 @@ The plugin will be invoked to configure Open MCT before it is started.
 
 Open MCT is packaged along with a few general-purpose plugins:
 
+* `openmct.plugins.CouchDB` is an adapter for using CouchDB for persistence
+  of user-created objects. This is a constructor that takes the URL for the
+  CouchDB database as a parameter, e.g.
+  `openmct.install(new openmct.plugins.CouchDB('http://localhost:5984/openmct'))`
+* `openmct.plugins.Elasticsearch` is an adapter for using Elasticsearch for
+  persistence of user-created objects. This is a
+  constructor that takes the URL for the Elasticsearch instance as a
+  parameter, e.g.
+  `openmct.install(new openmct.plugins.CouchDB('http://localhost:9200'))`.
+  Domain objects will be indexed at `/mct/domain_object`.
+* `openmct.plugins.espresso` and `openmct.plugins.snow` are two different
+  themes (dark and light) available for Open MCT. Note that at least one
+  of these themes must be installed for Open MCT to appear correctly.
 * `openmct.plugins.localStorage` provides persistence of user-created
   objects in browser-local storage. This is particularly useful in
   development environments.
 * `openmct.plugins.myItems` adds a top-level folder named "My Items"
   when the application is first started, providing a place for a
   user to store created items.
+* `openmct.plugins.utcTimeSystem` provides support for using the time
+  conductor with UTC time.
 
 Generally, you will want to either install these plugins, or install
 different plugins that provide persistence and an initial folder
