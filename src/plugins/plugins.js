@@ -47,7 +47,7 @@ define([
                     "extensions": {
                         "constants": [
                             {
-                                "key": "COUCH_PATH",
+                                "key": "COUCHDB_PATH",
                                 "value": url,
                                 "priority": "mandatory"
                             }
