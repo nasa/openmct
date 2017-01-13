@@ -61,7 +61,7 @@ define([
         };
     };
 
-    plugins.ElasticSearch = function (url) {
+    plugins.Elasticsearch = function (url) {
         return function (openmct) {
             if (url) {
                 var bundleName = "config/elastic";
