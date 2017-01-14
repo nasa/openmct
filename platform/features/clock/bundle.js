@@ -28,6 +28,7 @@ define([
     "./src/controllers/RefreshingController",
     "./src/actions/StartTimerAction",
     "./src/actions/RestartTimerAction",
+    "./src/actions/StopTimerAction",
     "text!./res/templates/clock.html",
     "text!./res/templates/timer.html",
     'legacyRegistry'
@@ -39,6 +40,7 @@ define([
     RefreshingController,
     StartTimerAction,
     RestartTimerAction,
+    StopTimerAction,
     clockTemplate,
     timerTemplate,
     legacyRegistry
@@ -148,6 +150,17 @@ define([
                     "category": "contextual",
                     "name": "Restart at 0",
                     "cssclass": "icon-refresh",
+                    "priority": "preferred"
+                },
+                {
+                    "key": "timer.stop",
+                    "implementation": StopTimerAction,
+                    "depends": [
+                        "now"
+                    ],
+                    "category": "contextual",
+                    "name": "Stop",
+                    "cssclass": "icon-box",
                     "priority": "preferred"
                 }
             ],

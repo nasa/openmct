@@ -107,6 +107,7 @@ $glyph-icon-timeline: '\e1126';
 $glyph-icon-timer: '\e1127';
 $glyph-icon-topic: '\e1128';
 $glyph-icon-box-with-dashed-lines: '\e1129';
+$glyph-icon-stop: '\e1130';
 
 /************************** 16 PX CLASSES */
 
@@ -210,6 +211,7 @@ $glyph-icon-box-with-dashed-lines: '\e1129';
 .icon-timer {  @include glyph($glyph-icon-timer); }
 .icon-topic {  @include glyph($glyph-icon-topic); }
 .icon-box-with-dashed-lines {  @include glyph($glyph-icon-box-with-dashed-lines); }
+.icon-stop {  @include glyph($glyph-icon-stop); }
 
 /************************** 12 PX CLASSES */
 
