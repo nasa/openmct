@@ -64,10 +64,14 @@ define(
                 model.timestamp = undefined;
             }
 
-            return domainObject.useCapability('mutation', setTimestamp);
+            function setPaused(model) {
+                model.paused = false;
+            }
+
+            return domainObject.useCapability('mutation', setTimestamp) &&
+                domainObject.useCapability('mutation', setPaused);
         };
 
         return StopTimerAction;
-
     }
 );

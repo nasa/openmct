@@ -38,24 +38,41 @@ define(
          *        time (typically wrapping `Date.now`)
          * @param {ActionContext} context the context for this action
          */
-        function StartTimerAction(now, context) {
+        function PauseTimerAction(now, context) {
             AbstractTimerAction.apply(this, [now, context]);
         }
 
-        StartTimerAction.prototype =
+        PauseTimerAction.prototype =
             Object.create(AbstractTimerAction.prototype);
 
-        StartTimerAction.appliesTo = function (context) {
+        PauseTimerAction.appliesTo = function (context) {
             var model =
                 (context.domainObject && context.domainObject.getModel()) ||
                 {};
 
+
             // We show this variant for timers which do not yet have
             // a target time.
             return model.type === 'timer' &&
-                    model.timestamp === undefined;
+                model.timestamp !== undefined && !model.paused;
         };
 
-        return StartTimerAction;
+        PauseTimerAction.prototype.perform = function () {
+            var domainObject = this.domainObject,
+                now = this.now;
+
+            function setPaused(model) {
+                model.paused = true;
+            }
+
+            function setPausedTime(model) {
+                model.pausedTime = now();
+            }
+
+            return domainObject.useCapability('mutation', setPaused) &&
+                domainObject.useCapability('mutation', setPausedTime);
+        };
+
+        return PauseTimerAction;
     }
 );

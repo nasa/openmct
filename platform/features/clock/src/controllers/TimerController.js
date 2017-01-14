@@ -74,7 +74,15 @@ define(
                     formatKey = model.timerFormat,
                     actionCapability = domainObject.getCapability('action'),
                     actionKey = (timestamp === undefined) ?
-                            'timer.start' : 'timer.restart';
+                        'timer.start' : 'timer.restart';
+
+                self.paused = model.paused;
+                self.pausedTime = model.pausedTime;
+
+                //if paused on startup show last known position
+                if (self.paused && !lastTimestamp){
+                    lastTimestamp = self.pausedTime;
+                }
 
                 updateFormat(formatKey);
                 updateTimestamp(timestamp);
@@ -98,8 +106,11 @@ define(
             function tick() {
                 var lastSign = self.signValue,
                     lastText = self.textValue;
-                lastTimestamp = now();
-                update();
+
+                if (!self.paused) {
+                    lastTimestamp = now();
+                    update();
+                }
                 // We're running in an animation frame, not in a digest cycle.
                 // We need to trigger a digest cycle if our displayable data
                 // changes.

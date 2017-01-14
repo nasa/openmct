@@ -53,7 +53,12 @@ define(
                 model.timestamp = now();
             }
 
-            return domainObject.useCapability('mutation', setTimestamp);
+            function setPaused(model) {
+                model.paused = false;
+            }
+
+            return domainObject.useCapability('mutation', setTimestamp) &&
+                domainObject.useCapability('mutation', setPaused);
         };
 
         return AbstractTimerAction;

@@ -29,6 +29,8 @@ define([
     "./src/actions/StartTimerAction",
     "./src/actions/RestartTimerAction",
     "./src/actions/StopTimerAction",
+    "./src/actions/PauseTimerAction",
+    "./src/actions/ResumeTimerAction",
     "text!./res/templates/clock.html",
     "text!./res/templates/timer.html",
     'legacyRegistry'
@@ -41,6 +43,8 @@ define([
     StartTimerAction,
     RestartTimerAction,
     StopTimerAction,
+    PauseTimerAction,
+    ResumeTimerAction,
     clockTemplate,
     timerTemplate,
     legacyRegistry
@@ -153,6 +157,28 @@ define([
                     "priority": "preferred"
                 },
                 {
+                    "key": "timer.pause",
+                    "implementation": PauseTimerAction,
+                    "depends": [
+                        "now"
+                    ],
+                    "category": "contextual",
+                    "name": "Pause",
+                    "cssclass": "icon-pause",
+                    "priority": "preferred"
+                },
+                {
+                    "key": "timer.resume",
+                    "implementation": ResumeTimerAction,
+                    "depends": [
+                        "now"
+                    ],
+                    "category": "contextual",
+                    "name": "Resume",
+                    "cssclass": "icon-play",
+                    "priority": "preferred"
+                },
+                {
                     "key": "timer.stop",
                     "implementation": StopTimerAction,
                     "depends": [
@@ -251,6 +277,16 @@ define([
                                     "name": "hh:mm:ss"
                                 }
                             ]
+                        },
+                        {
+                            "key": "paused",
+                            "control": "boolean",
+                            "name": "PauseCheck"
+                        },
+                        {
+                            "key": "pausedTime",
+                            "control": "long",
+                            "name": "TimeOfPause"
                         }
                     ],
                     "model": {
