@@ -40,12 +40,12 @@ define(
          *        time (typically wrapping `Date.now`)
          * @param {ActionContext} context the context for this action
          */
-        function AbstractStartTimerAction(now, context) {
+        function AbstractTimerAction(now, context) {
             this.domainObject = context.domainObject;
             this.now = now;
         }
 
-        AbstractStartTimerAction.prototype.perform = function () {
+        AbstractTimerAction.prototype.perform = function () {
             var domainObject = this.domainObject,
                 now = this.now;
 
@@ -56,6 +56,6 @@ define(
             return domainObject.useCapability('mutation', setTimestamp);
         };
 
-        return AbstractStartTimerAction;
+        return AbstractTimerAction;
     }
 );

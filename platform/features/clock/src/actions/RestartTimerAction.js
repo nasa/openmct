@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['./AbstractStartTimerAction'],
-    function (AbstractStartTimerAction) {
+    ['./AbstractTimerAction'],
+    function (AbstractTimerAction) {
 
         /**
          * Implements the "Restart at 0" action.
@@ -39,11 +39,11 @@ define(
          * @param {ActionContext} context the context for this action
          */
         function RestartTimerAction(now, context) {
-            AbstractStartTimerAction.apply(this, [now, context]);
+            AbstractTimerAction.apply(this, [now, context]);
         }
 
         RestartTimerAction.prototype =
-            Object.create(AbstractStartTimerAction.prototype);
+            Object.create(AbstractTimerAction.prototype);
 
         RestartTimerAction.appliesTo = function (context) {
             var model =
