@@ -163,8 +163,6 @@ define(
                 }
             }.bind(this));
 
-            console.log('constructed');
-
             $scope.$on('$destroy', function() {
                 this.scrollable.off('scroll', this.onScroll);
                 this.destroyConductorListeners();
@@ -193,15 +191,7 @@ define(
          * @private
          */
         MCTTableController.prototype.scrollToBottom = function () {
-            var self = this;
-
-            //Use timeout to defer execution until next digest when any
-            // pending UI changes have completed, eg. a new row in the table.
-            if (this.$scope.autoScroll) {
-                this.digest(function () {
-                    self.scrollable[0].scrollTop = self.scrollable[0].scrollHeight;
-                });
-            }
+            this.scrollable[0].scrollTop = this.scrollable[0].scrollHeight;
         };
 
         /**
@@ -219,8 +209,12 @@ define(
 
                 //Resize the columns , then update the rows visible in the table
                 this.resize([this.$scope.sizingRow, row])
-                    .then(this.setVisibleRows.bind(this))
-                    .then(this.scrollToBottom.bind(this));
+                    .then(this.setVisibleRows)
+                    .then(function () {
+                        if (this.$scope.autoScroll) {
+                            this.scrollToBottom();
+                        }
+                    }.bind(this));
 
                 var toi = this.conductor.timeOfInterest();
                 if (toi !== -1) {
@@ -250,16 +244,24 @@ define(
          * @private
          */
         MCTTableController.prototype.onScroll = function (event) {
-            //If user scrolls away from bottom, disable auto-scroll.
-            // Auto-scroll will be re-enabled if user scrolls to bottom again.
-            if (this.scrollable[0].scrollTop <
-                (this.scrollable[0].scrollHeight - this.scrollable[0].offsetHeight)) {
-                this.$scope.autoScroll = false;
-            } else {
-                this.$scope.autoScroll = true;
-            }
-            this.setVisibleRows();
-            this.$scope.$digest();
+                if (!this.scrolling) {
+                    this.scrolling = true;
+
+                    requestAnimationFrame(function () {
+                        this.setVisibleRows();
+                        this.digest();
+
+                        // If user scrolls away from bottom, disable auto-scroll.
+                        // Auto-scroll will be re-enabled if user scrolls to bottom again.
+                        if (this.scrollable[0].scrollTop <
+                            (this.scrollable[0].scrollHeight - this.scrollable[0].offsetHeight) - 20) {
+                            this.$scope.autoScroll = false;
+                        } else {
+                            this.$scope.autoScroll = true;
+                        }
+                        this.scrolling = false;
+                    }.bind(this));
+                }
         };
 
         /**
@@ -338,7 +340,7 @@ define(
                     this.$scope.visibleRows[this.$scope.visibleRows.length - 1]
                         .rowIndex === end) {
 
-                    return; // don't update if no changes are required.
+                    return Promise.resolve(); // don't update if no changes are required.
                 }
             }
             //Set visible rows from display rows, based on calculated offset.
@@ -351,6 +353,7 @@ define(
                         contents: row
                     };
                 });
+            return this.digest();
         };
 
         /**
@@ -566,25 +569,25 @@ define(
             return largestRow;
         };
 
-        MCTTableController.prototype.digest = function (callback) {
+        // Will effectively cap digests at 60Hz
+        // Also turns digest into a promise allowing code to force digest, then
+        // schedule something to happen afterwards
+        MCTTableController.prototype.digest = function () {
             var scope = this.$scope;
-            var callbacks = this.callbacks;
+            var self = this;
             var requestAnimationFrame = this.$window.requestAnimationFrame;
 
-            var promise = callbacks[callback];
-
-            if (!promise){
-                promise = new Promise(function (resolve) {
+            if (!this.digestPromise) {
+                this.digestPromise = new Promise(function (resolve) {
                     requestAnimationFrame(function() {
                         scope.$digest();
-                        delete callbacks[callback];
-                        resolve(callback && callback());
+                        delete self.digestPromise;
+                        resolve();
                     });
                 });
-                callbacks[callback] = promise;
             }
 
-            return promise;
+            return this.digestPromise;
         };
 
         /**
@@ -598,7 +601,7 @@ define(
          */
         MCTTableController.prototype.resize = function (rows) {
             this.$scope.sizingRow = this.buildLargestRow(rows);
-            return this.digest(this.setElementSizes);
+            return this.digest().then(this.setElementSizes);
         };
 
         /**
@@ -631,7 +634,6 @@ define(
                 .then(this.setVisibleRows)
                 //Timeout following setVisibleRows to allow digest to
                 // perform DOM changes, otherwise scrollTo won't work.
-                .then(this.digest)
                 .then(function () {
                     //If TOI specified, scroll to it
                     var timeOfInterest = this.conductor.timeOfInterest();
@@ -732,7 +734,9 @@ define(
          */
         MCTTableController.prototype.changeBounds = function (bounds) {
             this.setTimeOfInterestRow(this.conductor.timeOfInterest());
-            this.scrollToRow(this.$scope.toiRowIndex);
+            if (this.$scope.toiRowIndex !== -1) {
+                this.scrollToRow(this.$scope.toiRowIndex);
+            }
         };
 
         /**

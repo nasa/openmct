@@ -5,7 +5,7 @@
         Export
     </a>
 </div>
-<div class="l-view-section scrolling" style="overflow: auto;">
+<div class="l-view-section scrolling" style="overflow: auto;" mct-resize="resize()">
     <table class="sizing-table">
         <tbody>
             <tr>
@@ -32,7 +32,8 @@
                         enableSort ? 'sortable' : '',
                         sortColumn === header ? 'sort' : '',
                         sortDirection || ''
-                    ].join(' ')">
+                    ].join(' ')"
+                    ng-click="toggleSort(header)">
                     {{ header }}
                 </th>
             </tr>
@@ -58,7 +59,8 @@
                 </td>
             </tr>
             <tr ng-repeat-end
-                ng-style="{ top: visibleRow.offsetY + 'px' }">
+                ng-style="{ top: visibleRow.offsetY + 'px' }"
+                ng-click="table.onRowClick($event, visibleRow.rowIndex) ">
                 <td ng-repeat="header in displayHeaders"
                     ng-style=" {
                         width: columnWidths[$index] + 'px',
