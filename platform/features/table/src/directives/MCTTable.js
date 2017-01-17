@@ -94,6 +94,7 @@ define(
                 scope: {
                     headers: "=",
                     rows: "=",
+                    formatCell: "=?",
                     enableFilter: "=?",
                     enableSort: "=?",
                     autoScroll: "=?",

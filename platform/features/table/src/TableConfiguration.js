@@ -66,7 +66,8 @@ define(
                             return {
                                 cssClass: alarm && alarm.cssClass,
                                 text: formatter ? formatter.format(telemetryDatum[metadatum.key])
-                                    : telemetryDatum[metadatum.key]
+                                    : telemetryDatum[metadatum.key],
+                                value: telemetryDatum[metadatum.key]
                             }
                         }
                     });

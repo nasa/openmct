@@ -35,7 +35,7 @@ define(
                 'changeTimeSystem',
                 'scrollToBottom',
                 'addRow',
-                'removeRow',
+                'removeRows',
                 'onScroll',
                 'firstVisible',
                 'lastVisible',
@@ -126,7 +126,7 @@ define(
              * Listen for rows added individually (eg. for real-time tables)
              */
             $scope.$on('add:row', this.addRow);
-            $scope.$on('remove:row', this.removeRow);
+            $scope.$on('remove:rows', this.removeRows);
 
             /**
              * Populated from the default-sort attribute on MctTable
@@ -229,39 +229,47 @@ define(
          * `remove:row` broadcast event.
          * @private
          */
-        MCTTableController.prototype.removeRow = function (event, rowIndex) {
-            var row = this.$scope.rows[rowIndex],
-            // Do a sequential search here. Only way of finding row is by
-            // object equality, so array is in effect unsorted.
+        MCTTableController.prototype.removeRows = function (event, rows) {
+            var indexInDisplayRows;
+            rows.forEach(function (row){
+                // Do a sequential search here. Only way of finding row is by
+                // object equality, so array is in effect unsorted.
                 indexInDisplayRows = this.$scope.displayRows.indexOf(row);
-            if (indexInDisplayRows !== -1) {
-                this.$scope.displayRows.splice(indexInDisplayRows, 1);
-                this.setVisibleRows();
-            }
+                if (indexInDisplayRows !== -1) {
+                    this.$scope.displayRows.splice(indexInDisplayRows, 1);
+                }
+            }, this);
+
+            this.$scope.sizingRow = this.buildLargestRow([this.$scope.sizingRow].concat(rows));
+
+            this.setElementSizes();
+            this.setVisibleRows()
+                .then(function () {
+                    if (this.$scope.autoScroll) {
+                        this.scrollToBottom();
+                    }
+                }.bind(this));
+
         };
 
         /**
          * @private
          */
         MCTTableController.prototype.onScroll = function (event) {
-                if (!this.scrolling) {
-                    this.scrolling = true;
+            requestAnimationFrame(function () {
+                this.setVisibleRows();
+                this.digest();
 
-                    requestAnimationFrame(function () {
-                        this.setVisibleRows();
-                        this.digest();
-
-                        // If user scrolls away from bottom, disable auto-scroll.
-                        // Auto-scroll will be re-enabled if user scrolls to bottom again.
-                        if (this.scrollable[0].scrollTop <
-                            (this.scrollable[0].scrollHeight - this.scrollable[0].offsetHeight) - 20) {
-                            this.$scope.autoScroll = false;
-                        } else {
-                            this.$scope.autoScroll = true;
-                        }
-                        this.scrolling = false;
-                    }.bind(this));
+                // If user scrolls away from bottom, disable auto-scroll.
+                // Auto-scroll will be re-enabled if user scrolls to bottom again.
+                if (this.scrollable[0].scrollTop <
+                    (this.scrollable[0].scrollHeight - this.scrollable[0].offsetHeight) - 20) {
+                    this.$scope.autoScroll = false;
+                } else {
+                    this.$scope.autoScroll = true;
                 }
+                this.scrolling = false;
+            }.bind(this));
         };
 
         /**
@@ -339,13 +347,19 @@ define(
                     this.$scope.visibleRows[0].rowIndex === start &&
                     this.$scope.visibleRows[this.$scope.visibleRows.length - 1]
                         .rowIndex === end) {
-
-                    return Promise.resolve(); // don't update if no changes are required.
+                    return this.digest();
+                    //return Promise.resolve(); // don't update if no changes are required.
                 }
             }
             //Set visible rows from display rows, based on calculated offset.
             this.$scope.visibleRows = this.$scope.displayRows.slice(start, end)
                 .map(function (row, i) {
+/*                    var formattedRow = JSON.parse(JSON.stringify(row));
+                    if (self.$scope.formatCell) {
+                        Object.keys(formattedRow).forEach(function (header) {
+                            formattedRow[header].text = self.$scope.formatCell(header, row[header].text);
+                        });
+                    } */
                     return {
                         rowIndex: start + i,
                         offsetY: ((start + i) * self.$scope.rowHeight) +

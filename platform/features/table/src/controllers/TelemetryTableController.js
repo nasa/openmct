@@ -27,10 +27,11 @@
 define(
     [
         '../TableConfiguration',
-        '../../../../../src/api/objects/object-utils'
+        '../../../../../src/api/objects/object-utils',
+        '../TelemetryCollection'
 
     ],
-    function (TableConfiguration, objectUtils) {
+    function (TableConfiguration, objectUtils, TelemetryCollection) {
 
         /**
          * The TableController is responsible for getting data onto the page
@@ -62,6 +63,7 @@ define(
                 openmct);
             this.lastBounds = this.openmct.conductor.bounds();
             this.requestTime = 0;
+            this.telemetry = new TelemetryCollection();
 
             /*
              * Create a new format object from legacy object, and replace it
@@ -136,18 +138,8 @@ define(
             this.openmct.conductor.on('bounds', this.changeBounds);
         };
 
-        TelemetryTableController.prototype.tick = function (bounds) {
-            // Can't do ticking until we change how data is handled
-            // Pass raw values to table, with format function
-
-            /*if (this.$scope.defaultSort) {
-             this.$scope.rows.filter(function (row){
-             return row[]
-             })
-             }*/
-        };
-
         TelemetryTableController.prototype.changeBounds = function (bounds) {
+            //console.log('bounds.end: ' + bounds.end);
             var follow = this.openmct.conductor.follow();
             var isTick = follow &&
                 bounds.start !== this.lastBounds.start &&
@@ -157,10 +149,16 @@ define(
                 (bounds.start !== this.lastBounds.start ||
                 bounds.end !== this.lastBounds.end);
 
+            var discarded = this.telemetry.bounds(bounds);
+
+            if (discarded.length > 0){
+                this.$scope.$broadcast('remove:rows', discarded);
+            }
+
             if (isTick){
                 // Treat it as a realtime tick
                 // Drop old data that falls outside of bounds
-                this.tick(bounds);
+                //this.tick(bounds);
             } else if (isDeltaChange){
                 // No idea...
                 // Historical query for bounds, then tick on
@@ -214,10 +212,12 @@ define(
                 var allColumns = telemetryApi.commonValuesForHints(metadatas, []);
 
                 this.table.populateColumns(allColumns);
-
                 this.timeColumns = telemetryApi.commonValuesForHints(metadatas, ['x']).map(function (metadatum) {
                     return metadatum.name;
                 });
+
+                // For now, use first time field for time conductor
+                this.telemetry.sort(this.timeColumns[0] + '.value');
 
                 this.filterColumns();
 
@@ -241,12 +241,13 @@ define(
             var rowData = [];
             var processedObjects = 0;
             var requestTime = this.lastRequestTime = Date.now();
+            var telemetryCollection = this.telemetry;
 
             return new Promise(function (resolve, reject){
-                function finishProcessing(tableRows){
-                    scope.rows = tableRows.concat(scope.rows);
+                function finishProcessing(){
+                    scope.rows = telemetryCollection.telemetry;
                     scope.loading = false;
-                    resolve(tableRows);
+                    resolve(scope.rows);
                 }
 
                 function processData(historicalData, index, limitEvaluator){
@@ -254,13 +255,14 @@ define(
                         processedObjects++;
 
                         if (processedObjects === objects.length) {
-                            finishProcessing(rowData);
+                            finishProcessing();
                         }
                     } else {
-                        rowData = rowData.concat(
-                            historicalData.slice(index, index + this.batchSize).map(
-                                this.table.getRowValues.bind(this.table, limitEvaluator))
-                        );
+                        historicalData.slice(index, index + this.batchSize)
+                            .forEach(function (datum) {
+                                telemetryCollection.add(this.table.getRowValues(
+                                    limitEvaluator, datum));
+                            }.bind(this));
                         this.timeoutHandle = this.$timeout(processData.bind(
                             this,
                             historicalData,
@@ -305,8 +307,12 @@ define(
          */
         TelemetryTableController.prototype.subscribeToNewData = function (objects) {
             var telemetryApi = this.openmct.telemetry;
+            var telemetryCollection = this.telemetry;
             //Set table max length to avoid unbounded growth.
-            var maxRows = 100000;
+            //var maxRows = 100000;
+            var maxRows = Number.MAX_VALUE;
+            var limitEvaluator;
+            var added = false;
 
             this.subscriptions.forEach(function (subscription) {
                 subscription();
@@ -314,15 +320,15 @@ define(
             this.subscriptions = [];
 
             function newData(domainObject, datum) {
-                this.$scope.rows.push(this.table.getRowValues(
-                    telemetryApi.limitEvaluator(domainObject), datum));
+                limitEvaluator = telemetryApi.limitEvaluator(domainObject);
+                added = telemetryCollection.add(this.table.getRowValues(limitEvaluator, datum));
 
                 //Inform table that a new row has been added
                 if (this.$scope.rows.length > maxRows) {
-                    this.$scope.$broadcast('remove:row', 0);
+                    this.$scope.$broadcast('remove:rows', this.$scope.rows[0]);
                     this.$scope.rows.shift();
                 }
-                if (!this.$scope.loading) {
+                if (!this.$scope.loading && added) {
                     this.$scope.$broadcast('add:row',
                         this.$scope.rows.length - 1);
                 }
