@@ -21,13 +21,67 @@
  *****************************************************************************/
 
 define([
-], function () {
-    return {
-        localStorage: function (openmct) {
-            openmct.legacyRegistry.enable('platform/persistence/local');
-        },
-        myItems: function (openmct) {
-            openmct.legacyRegistry.enable('platform/features/my-items');
-        }
+    'lodash'
+], function (_) {
+    var bundleMap = {
+        couchDB: 'platform/persistence/couch',
+        elasticsearch: 'platform/persistence/elastic',
+        espresso: 'platform/commonUI/themes/espresso',
+        localStorage: 'platform/persistence/local',
+        myItems: 'platform/features/my-items',
+        snow: 'platform/commonUI/themes/snow',
+        utcTimeSystem: 'platform/features/conductor/utcTimeSystem'
     };
+
+    var plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
+        return function (openmct) {
+            openmct.legacyRegistry.enable(bundleName);
+        };
+    });
+
+    plugins.CouchDB = function (url) {
+        return function (openmct) {
+            if (url) {
+                var bundleName = "config/couch";
+                openmct.legacyRegistry.register(bundleName, {
+                    "extensions": {
+                        "constants": [
+                            {
+                                "key": "COUCHDB_PATH",
+                                "value": url,
+                                "priority": "mandatory"
+                            }
+                        ]
+                    }
+                });
+                openmct.legacyRegistry.enable(bundleName);
+            }
+
+            openmct.legacyRegistry.enable(bundleMap.couchDB);
+        };
+    };
+
+    plugins.Elasticsearch = function (url) {
+        return function (openmct) {
+            if (url) {
+                var bundleName = "config/elastic";
+                openmct.legacyRegistry.register(bundleName, {
+                    "extensions": {
+                        "constants": [
+                            {
+                                "key": "ELASTIC_ROOT",
+                                "value": url,
+                                "priority": "mandatory"
+                            }
+                        ]
+                    }
+                });
+                openmct.legacyRegistry.enable(bundleName);
+            }
+
+            openmct.legacyRegistry.enable(bundleMap.elasticsearch);
+        };
+    };
+
+    return plugins;
 });

@@ -32,12 +32,13 @@
             [
                 'example/imagery',
                 'example/eventGenerator',
-                'example/generator',
-                'platform/features/my-items',
-                'platform/persistence/local'
+                'example/generator'
             ].forEach(
                 openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
             );
+            openmct.install(openmct.plugins.myItems);
+            openmct.install(openmct.plugins.localStorage);
+            openmct.install(openmct.plugins.espresso);
             openmct.start();
         });
     </script>
