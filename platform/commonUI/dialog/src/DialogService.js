@@ -64,7 +64,8 @@ define(
             // input is asynchronous.
             var deferred = this.$q.defer(),
                 self = this,
-                overlay;
+                overlay,
+                handleEscKeydown;
 
             // Confirm function; this will be passed in to the
             // overlay-dialog template and associated with a
@@ -84,11 +85,11 @@ define(
                 self.dismissOverlay(overlay);
             }
 
-            function handleEscKeydown(event){
-              if (event.keyCode === 27) {
-                cancel();
-              }
-            }
+            handleEscKeydown = function (event) {
+                if (event.keyCode === 27) {
+                    cancel();
+                }
+            };
 
             // Add confirm/cancel callbacks
             model.confirm = confirm;
