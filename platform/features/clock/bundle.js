@@ -30,7 +30,6 @@ define([
     "./src/actions/RestartTimerAction",
     "./src/actions/StopTimerAction",
     "./src/actions/PauseTimerAction",
-    "./src/actions/ResumeTimerAction",
     "text!./res/templates/clock.html",
     "text!./res/templates/timer.html",
     'legacyRegistry'
@@ -44,7 +43,6 @@ define([
     RestartTimerAction,
     StopTimerAction,
     PauseTimerAction,
-    ResumeTimerAction,
     clockTemplate,
     timerTemplate,
     legacyRegistry
@@ -146,17 +144,6 @@ define([
                     "priority": "preferred"
                 },
                 {
-                    "key": "timer.restart",
-                    "implementation": RestartTimerAction,
-                    "depends": [
-                        "now"
-                    ],
-                    "category": "contextual",
-                    "name": "Restart at 0",
-                    "cssclass": "icon-refresh",
-                    "priority": "preferred"
-                },
-                {
                     "key": "timer.pause",
                     "implementation": PauseTimerAction,
                     "depends": [
@@ -168,14 +155,14 @@ define([
                     "priority": "preferred"
                 },
                 {
-                    "key": "timer.resume",
-                    "implementation": ResumeTimerAction,
+                    "key": "timer.restart",
+                    "implementation": RestartTimerAction,
                     "depends": [
                         "now"
                     ],
                     "category": "contextual",
-                    "name": "Resume",
-                    "cssclass": "icon-play",
+                    "name": "Restart at 0",
+                    "cssclass": "icon-refresh",
                     "priority": "preferred"
                 },
                 {
@@ -277,16 +264,6 @@ define([
                                     "name": "hh:mm:ss"
                                 }
                             ]
-                        },
-                        {
-                            "key": "paused",
-                            "control": "boolean",
-                            "name": "PauseCheck"
-                        },
-                        {
-                            "key": "pausedTime",
-                            "control": "long",
-                            "name": "TimeOfPause"
                         }
                     ],
                     "model": {

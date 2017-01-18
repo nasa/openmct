@@ -34,13 +34,13 @@ define(
                 mockDomainObject,
                 mockActionCapability,
                 mockStart,
-                mockRestart,
+                mockPause,
                 testModel,
                 controller;
 
             function invokeWatch(expr, value) {
                 mockScope.$watch.calls.forEach(function (call) {
-                    if (call.args[0] ===  expr) {
+                    if (call.args[0] === expr) {
                         call.args[1](value);
                     }
                 });
@@ -67,8 +67,8 @@ define(
                     'start',
                     ['getMetadata', 'perform']
                 );
-                mockRestart = jasmine.createSpyObj(
-                    'restart',
+                mockPause = jasmine.createSpyObj(
+                    'pause',
                     ['getMetadata', 'perform']
                 );
                 mockNow = jasmine.createSpy('now');
@@ -82,11 +82,11 @@ define(
                 mockActionCapability.getActions.andCallFake(function (k) {
                     return [{
                         'timer.start': mockStart,
-                        'timer.restart': mockRestart
+                        'timer.pause': mockPause
                     }[k]];
                 });
-                mockStart.getMetadata.andReturn({ cssclass: "icon-play", name: "Start" });
-                mockRestart.getMetadata.andReturn({ cssclass: "icon-refresh", name: "Restart" });
+                mockStart.getMetadata.andReturn({cssclass: "icon-play", name: "Start"});
+                mockPause.getMetadata.andReturn({cssclass: "icon-pause", name: "Pause"});
                 mockScope.domainObject = mockDomainObject;
 
                 testModel = {};
@@ -144,18 +144,18 @@ define(
                 expect(controller.text()).toEqual("0D 00:00:00");
             });
 
-            it("shows cssclass & name for the applicable start/restart action", function () {
+            it("shows cssclass & name for the applicable start/pause action", function () {
                 invokeWatch('domainObject', mockDomainObject);
                 expect(controller.buttonCssClass()).toEqual("icon-play");
                 expect(controller.buttonText()).toEqual("Start");
 
                 testModel.timestamp = 12321;
                 invokeWatch('model.modified', 1);
-                expect(controller.buttonCssClass()).toEqual("icon-refresh");
-                expect(controller.buttonText()).toEqual("Restart");
+                expect(controller.buttonCssClass()).toEqual("icon-pause");
+                expect(controller.buttonText()).toEqual("Pause");
             });
 
-            it("performs correct start/restart action on click", function () {
+            it("performs correct start/pause action on click", function () {
                 invokeWatch('domainObject', mockDomainObject);
                 expect(mockStart.perform).not.toHaveBeenCalled();
                 controller.clickButton();
@@ -163,9 +163,9 @@ define(
 
                 testModel.timestamp = 12321;
                 invokeWatch('model.modified', 1);
-                expect(mockRestart.perform).not.toHaveBeenCalled();
+                expect(mockPause.perform).not.toHaveBeenCalled();
                 controller.clickButton();
-                expect(mockRestart.perform).toHaveBeenCalled();
+                expect(mockPause.perform).toHaveBeenCalled();
             });
 
             it("stops requesting animation frames when destroyed", function () {

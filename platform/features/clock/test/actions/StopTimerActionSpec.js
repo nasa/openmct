@@ -33,10 +33,10 @@ define(
 
             function asPromise(value) {
                 return (value || {}).then ? value : {
-                    then: function (callback) {
-                        return asPromise(callback(value));
-                    }
-                };
+                        then: function (callback) {
+                            return asPromise(callback(value));
+                        }
+                    };
             }
 
             beforeEach(function () {
@@ -57,7 +57,7 @@ define(
                 });
 
                 testModel = {};
-                testContext = { domainObject: mockDomainObject };
+                testContext = {domainObject: mockDomainObject};
 
                 action = new StopTimerAction(mockNow, testContext);
             });
@@ -68,19 +68,36 @@ define(
                 expect(testModel.timestamp).toEqual(12000);
             });
 
-            it("applies only to timers without a target time", function () {
-                testModel.type = 'timer';
-                testModel.timestamp = 12000;
-                expect(StopTimerAction.appliesTo(testContext)).toBeTruthy();
+            it("applies only to timers in a non-stopped state", function () {
+                //in a stopped state
+                testStates(testModel, 'timer', undefined, undefined, false);
 
-                testModel.type = 'timer';
-                testModel.timestamp = undefined;
-                expect(StopTimerAction.appliesTo(testContext)).toBeFalsy();
+                //in a paused state
+                testStates(testModel, 'timer', 'pause', undefined, true);
 
-                testModel.type = 'clock';
-                testModel.timestamp = 12000;
-                expect(StopTimerAction.appliesTo(testContext)).toBeFalsy();
+                //in a playing state
+                testStates(testModel, 'timer', 'play', undefined, true);
+
+                //not a timer
+                testStates(testModel, 'clock', 'pause', undefined, false);
             });
+
+            function testStates(testModel, type, timerState, timestamp, expected) {
+                testModel.type = type;
+                testModel.timerState = timerState;
+                testModel.timestamp = timestamp;
+
+                if (expected) {
+                    expect(StopTimerAction.appliesTo(testContext)).toBeTruthy()
+                } else {
+                    expect(StopTimerAction.appliesTo(testContext)).toBeFalsy()
+                }
+
+                //first test without time, this test with time
+                if (timestamp === undefined) {
+                    testStates(testModel, type, timerState, 12000, expected);
+                }
+            }
         });
     }
 );

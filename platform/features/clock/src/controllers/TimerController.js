@@ -42,6 +42,7 @@ define(
                 active = true,
                 relativeTimestamp,
                 lastTimestamp,
+                relativeTimerState,
                 self = this;
 
             function update() {
@@ -68,24 +69,34 @@ define(
                 relativeTimestamp = timestamp;
             }
 
+            function updateTimerState(timerState) {
+                relativeTimerState = timerState;
+            }
+
+            function isPaused() {
+                return relativeTimerState === 'pause';
+            }
+
             function updateObject(domainObject) {
                 var model = domainObject.getModel(),
                     timestamp = model.timestamp,
                     formatKey = model.timerFormat,
+                    timerState = model.timerState,
                     actionCapability = domainObject.getCapability('action'),
-                    actionKey = (timestamp === undefined) ?
-                        'timer.start' : 'timer.restart';
+                    actionKey = (timerState !== 'play') ?
+                        'timer.start' : 'timer.pause';
 
-                self.paused = model.paused;
+                self.timerState = model.timerState;
                 self.pausedTime = model.pausedTime;
-
-                //if paused on startup show last known position
-                if (self.paused && !lastTimestamp){
-                    lastTimestamp = self.pausedTime;
-                }
 
                 updateFormat(formatKey);
                 updateTimestamp(timestamp);
+                updateTimerState(timerState);
+
+                //if paused on startup show last known position
+                if (isPaused() && !lastTimestamp) {
+                    lastTimestamp = self.pausedTime;
+                }
 
                 self.relevantAction = actionCapability &&
                     actionCapability.getActions(actionKey)[0];
@@ -107,7 +118,7 @@ define(
                 var lastSign = self.signValue,
                     lastText = self.textValue;
 
-                if (!self.paused) {
+                if (!isPaused()) {
                     lastTimestamp = now();
                     update();
                 }
@@ -141,7 +152,7 @@ define(
 
         /**
          * Get the CSS class to display the right icon
-         * for the start/restart button.
+         * for the start/pause button.
          * @returns {string} cssclass to display
          */
         TimerController.prototype.buttonCssClass = function () {
@@ -150,7 +161,7 @@ define(
         };
 
         /**
-         * Get the text to show for the start/restart button
+         * Get the text to show for the start/pause button
          * (e.g. in a tooltip)
          * @returns {string} name of the action
          */
@@ -161,7 +172,7 @@ define(
 
 
         /**
-         * Perform the action associated with the start/restart button.
+         * Perform the action associated with the start/pause button.
          */
         TimerController.prototype.clickButton = function () {
             if (this.relevantAction) {

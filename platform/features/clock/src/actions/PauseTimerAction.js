@@ -25,10 +25,10 @@ define(
     function (AbstractTimerAction) {
 
         /**
-         * Implements the "Start" action for timers.
+         * Implements the "Pause" action for timers.
          *
-         * Sets the reference timestamp in a timer to the current
-         * time, such that it begins counting up.
+         * Sets the reference pausedTime in a timer to the current
+         * time, such that it stops counting up.
          *
          * @extends {platform/features/clock.AbstractTimerAction}
          * @implements {Action}
@@ -51,25 +51,26 @@ define(
                 {};
 
 
-            // We show this variant for timers which do not yet have
-            // a target time.
+            // We show this variant for timers which have
+            // a target time, or is in a playing state.
             return model.type === 'timer' &&
-                model.timestamp !== undefined && !model.paused;
+                (model.timestamp !== undefined ||
+                    model.timerState === 'play');
         };
 
         PauseTimerAction.prototype.perform = function () {
             var domainObject = this.domainObject,
                 now = this.now;
 
-            function setPaused(model) {
-                model.paused = true;
+            function setTimerState(model) {
+                model.timerState = 'pause';
             }
 
             function setPausedTime(model) {
                 model.pausedTime = now();
             }
 
-            return domainObject.useCapability('mutation', setPaused) &&
+            return domainObject.useCapability('mutation', setTimerState) &&
                 domainObject.useCapability('mutation', setPausedTime);
         };
 

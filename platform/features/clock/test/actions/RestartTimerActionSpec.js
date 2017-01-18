@@ -68,19 +68,36 @@ define(
                 expect(testModel.timestamp).toEqual(12000);
             });
 
-            it("applies only to timers with a target time", function () {
-                testModel.type = 'timer';
-                testModel.timestamp = 12000;
-                expect(RestartTimerAction.appliesTo(testContext)).toBeTruthy();
+            it("applies only to timers in a non-stopped state", function () {
+                //in a stopped state
+                testStates(testModel, 'timer', undefined, undefined, false);
 
-                testModel.type = 'timer';
-                testModel.timestamp = undefined;
-                expect(RestartTimerAction.appliesTo(testContext)).toBeFalsy();
+                //in a paused state
+                testStates(testModel, 'timer', 'pause', undefined, true);
 
-                testModel.type = 'clock';
-                testModel.timestamp = 12000;
-                expect(RestartTimerAction.appliesTo(testContext)).toBeFalsy();
+                //in a playing state
+                testStates(testModel, 'timer', 'play', undefined, true);
+
+                //not a timer
+                testStates(testModel, 'clock', 'pause', undefined, false);
             });
+
+            function testStates(testModel, type, timerState, timestamp, expected) {
+                testModel.type = type;
+                testModel.timerState = timerState;
+                testModel.timestamp = timestamp;
+
+                if (expected) {
+                    expect(RestartTimerAction.appliesTo(testContext)).toBeTruthy()
+                } else {
+                    expect(RestartTimerAction.appliesTo(testContext)).toBeFalsy()
+                }
+
+                //first test without time, this test with time
+                if (timestamp === undefined) {
+                    testStates(testModel, type, timerState, 12000, expected);
+                }
+            }
         });
     }
 );

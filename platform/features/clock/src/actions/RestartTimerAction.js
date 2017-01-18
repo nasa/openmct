@@ -53,7 +53,8 @@ define(
             // We show this variant for timers which already have
             // a target time.
             return model.type === 'timer' &&
-                    model.timestamp !== undefined;
+                (model.timestamp !== undefined ||
+                    model.timerState !== undefined);
         };
 
         return RestartTimerAction;

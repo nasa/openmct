@@ -57,7 +57,7 @@ define(
                 });
 
                 testModel = {};
-                testContext = { domainObject: mockDomainObject };
+                testContext = {domainObject: mockDomainObject};
 
                 action = new PauseTimerAction(mockNow, testContext);
             });
@@ -68,36 +68,36 @@ define(
                 expect(testModel.timestamp).toEqual(12000);
             });
 
-            it("applies only to timers without a target time", function () {
-                //Timer is on
-                testModel.type = 'timer';
-                testModel.timestamp = 12000;
+            it("applies only to timers in a playing state", function () {
+                //in a stopped state
+                testStates(testModel, 'timer', undefined, undefined, false);
 
-                testModel.paused = true;
-                expect(PauseTimerAction.appliesTo(testContext)).toBeFalsy();
+                //in a paused state
+                testStates(testModel, 'timer', 'pause', undefined, false);
 
-                testModel.paused = false;
-                expect(PauseTimerAction.appliesTo(testContext)).toBeTruthy();
+                //in a playing state
+                testStates(testModel, 'timer', 'play', undefined, true);
 
-                //Timer has not started
-                testModel.timestamp = undefined;
-
-                testModel.paused = true;
-                expect(PauseTimerAction.appliesTo(testContext)).toBeFalsy();
-
-                testModel.paused = false;
-                expect(PauseTimerAction.appliesTo(testContext)).toBeFalsy();
-
-                //Timer is actually a clock
-                testModel.type = 'clock';
-                testModel.timestamp = 12000;
-
-                testModel.paused = true;
-                expect(PauseTimerAction.appliesTo(testContext)).toBeFalsy();
-
-                testModel.paused = false;
-                expect(PauseTimerAction.appliesTo(testContext)).toBeFalsy();
+                //not a timer
+                testStates(testModel, 'clock', 'pause', undefined, false);
             });
+
+            function testStates(testModel, type, timerState, timestamp, expected) {
+                testModel.type = type;
+                testModel.timerState = timerState;
+                testModel.timestamp = timestamp;
+
+                if (expected) {
+                    expect(PauseTimerAction.appliesTo(testContext)).toBeTruthy()
+                } else {
+                    expect(PauseTimerAction.appliesTo(testContext)).toBeFalsy()
+                }
+
+                //first test without time, this test with time
+                if (timestamp === undefined) {
+                    testStates(testModel, type, timerState, 12000, expected);
+                }
+            }
         });
     }
 );

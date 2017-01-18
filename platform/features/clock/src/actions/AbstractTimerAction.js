@@ -50,15 +50,26 @@ define(
                 now = this.now;
 
             function setTimestamp(model) {
-                model.timestamp = now();
+                //if we are resuming
+                if (model.pausedTime) {
+                    var timeShift = now() - model.pausedTime;
+                    model.timestamp = model.timestamp + timeShift;
+                } else {
+                    model.timestamp = now();
+                }
             }
 
-            function setPaused(model) {
-                model.paused = false;
+            function setTimerState(model) {
+                model.timerState = 'play';
+            }
+
+            function setPausedTime(model) {
+                model.pausedTime = undefined;
             }
 
             return domainObject.useCapability('mutation', setTimestamp) &&
-                domainObject.useCapability('mutation', setPaused);
+                domainObject.useCapability('mutation', setTimerState) &&
+                domainObject.useCapability('mutation', setPausedTime);
         };
 
         return AbstractTimerAction;
