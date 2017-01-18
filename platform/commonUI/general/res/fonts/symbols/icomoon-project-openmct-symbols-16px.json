@@ -811,14 +811,6 @@
           "id": 29,
           "code": 921897,
           "tempChar": ""
-        },
-        {
-          "order": 121,
-          "prevSize": 24,
-          "name": "icon-stop",
-          "id": 89,
-          "code": 921637,
-          "tempChar": ""
         }
       ],
       "metadata": {
@@ -3091,31 +3083,6 @@
               {},
               {},
               {}
-            ]
-          }
-        },
-        {
-          "paths": [
-            "M0 0h24v24H0z"
-          ],
-          "grid": 16,
-          "tags": [
-            "icon-stop"
-          ],
-          "defaultCode": 114,
-          "id": 89,
-          "attrs": [
-            {
-              "fill": "rgb(0, 161, 75)"
-            }
-          ],
-          "isMulticolor": false,
-          "isMulticolor2": false,
-          "colorPermutations": {
-            "1161751207457516161751": [
-              {
-                "f": 1
-              }
             ]
           }
         }
