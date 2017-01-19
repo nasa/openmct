@@ -129,7 +129,7 @@ We will create this file in the directory tutorials/todo (we can hereafter refer
 to this plugin as tutorials/todo as well.) We will start with an "empty bundle", 
 one which exposes no extensions - which looks like:
 
-```diff
+```js
 define([
     'openmct'
 ], function (
@@ -154,7 +154,7 @@ The tutorials will be updated with the new bundle registration mechanism once it
 has been finalized. 
 
 #### Before
-```diff
+```html
 <!--
  Open MCT, Copyright (c) 2014-2016, United States Government
  as represented by the Administrator of the National Aeronautics and Space
@@ -219,7 +219,7 @@ __index.html__
 
 #### After
 
-```diff
+```html
 <!--
  Open MCT, Copyright (c) 2014-2016, United States Government
  as represented by the Administrator of the National Aeronautics and Space
@@ -305,7 +305,7 @@ In the case of our to-do list feature, the to-do list itself is the thing we'll
 want users to be able to create and edit. So, we will add that as a new type in 
 our bundle definition:
 
-```diff
+```js
 define([
     'openmct'
 ], function (
@@ -369,7 +369,7 @@ directory `tutorials/todo/res/templates` (`res` is, by default, the directory
 where bundle-related resources are kept, and `templates` is where HTML templates 
 are stored by convention.)
 
-```diff
+```html
 <div>
     <a href="">All</a>
     <a href="">Incomplete</a>
@@ -401,7 +401,7 @@ boolean `completed` flag.
 To expose this view in Open MCT, we need to declare it in our bundle 
 definition:
 
-```diff
+```js
 define([
     'openmct'
 ], function (
@@ -458,7 +458,7 @@ the user to create these yet. As a temporary workaround to test the view, we
 will specify an initial state for To-do List domain object models in the 
 definition of that type.
 
-```diff
+```js
 define([
     'openmct'
 ], function (
@@ -529,7 +529,7 @@ in the directory `tutorials/todo/src/controllers` (`src` is, by default, the
 directory where bundle-related source code is kept, and controllers is where 
 Angular controllers are stored by convention.)
 
-```diff
+```js
 define(function () {
     function TodoController($scope) {
         var showAll = true,
@@ -594,7 +594,7 @@ prior to our template being utilized.
 On its own, this controller merely exposes these functions; the next step is to 
 use them from our template:
 
-```diff
+```html
 +  <div ng-controller="TodoController">
         <div>
 +          <a ng-click="setVisibility(true)">All</a>
@@ -630,7 +630,7 @@ If we were to try to run at this point, we'd run into problems because the
 `TodoController` has not been registered with Angular. We need to first declare 
 it in our bundle definition, as an extension of category `controllers`:
 
-```diff
+```js
 define([
     'openmct',
 +    './src/controllers/TodoController'
@@ -724,7 +724,7 @@ An Editing user interface is typically handled in a tool bar associated with a
 view. The contents of this tool bar are defined declaratively in a view's 
 extension definition.
 
-```diff
+```js
 define([
     'openmct',
     './src/controllers/TodoController'
@@ -813,7 +813,7 @@ all the applicable controls, which means no controls at all.
 
 To support selection, we will need to make some changes to our controller:
 
-```diff
+```js
 define(function () {
 +    // Form to display when adding new tasks
 +    var NEW_TASK_FORM = {
@@ -928,7 +928,7 @@ Additionally, we need to make changes to our template to select specific tasks
 in response to some user gesture. Here, we will select tasks when a user clicks 
 the description.
 
-```diff
+```html
 <div ng-controller="TodoController">
     <div>
         <a ng-click="setVisibility(true)">All</a>
@@ -954,7 +954,7 @@ __tutorials/todo/res/templates/todo.html__
 Finally, the `TodoController` uses the `dialogService` now, so we need to 
 declare that dependency in its extension definition:
 
-```diff
+```js
 define([
     'openmct',
     './src/controllers/TodoController'
@@ -1058,7 +1058,7 @@ In this section, our goal is to:
 To support the first two, we'll need to expose some methods for checking these 
 states in the controller:
 
-```diff
+```js
 define(function () {
     // Form to display when adding new tasks
     var NEW_TASK_FORM = {
@@ -1175,7 +1175,7 @@ states visually, and to generally improve the appearance of our view. We add
 another file to the res directory of our bundle; this time, it is `css/todo.css` 
 (with the `css` directory again being a convention.)
 
-```diff
+```css
 .example-todo div.example-button-group {
     margin-top: 12px;
     margin-bottom: 12px;
@@ -1219,7 +1219,7 @@ To include this CSS file in our running instance of Open MCT, we need to
 declare it in our bundle definition, this time as an extension of category 
 `stylesheets`:
 
-```diff
+```js
 define([
     'openmct',
     './src/controllers/TodoController'
@@ -1299,7 +1299,7 @@ To-Do List's type above; now To-Do Lists will start off empty.
 
 Finally, let's utilize these changes from our view's template:
 
-```diff
+```html
 + <div ng-controller="TodoController" class="example-todo">
 +     <div class="example-button-group">
 +         <a ng-class="{ selected: checkVisibility(true) }"
@@ -1359,7 +1359,7 @@ We'll also be defining some custom styles, so we'll include that extension as
 well. We'll be creating this plugin in `tutorials/bargraph`, so our initial 
 bundle definition looks like:
 
-```diff
+```js
 define([
     'openmct'
 ], function (
@@ -1406,7 +1406,7 @@ For this tutorial, we'll assume that we've sketched out our template and CSS
 file ahead of time to describe the general look we want for the view. These 
 look like:
 
-```diff
+```html
 <div class="example-bargraph">
     <div class="example-tick-labels">
         <div class="example-tick-label" style="bottom: 0%">High</div>
@@ -1457,7 +1457,7 @@ bar corresponds to which telemetry point. Inline `style` attributes are used
 wherever dynamic positioning (handled by a script) is anticipated.
 The corresponding CSS file which styles and positions these elements:
 
-```diff
+```css
 .example-bargraph {
     position: absolute;
     top: 0;
@@ -1555,7 +1555,7 @@ Notably, we will not try to show telemetry data after this step.
 
 To support this, we will add a new controller which supports our Bar Graph view:
 
-```diff
+```js
 define(function () {
     function BarGraphController($scope, telemetryHandler) {
         var handle;
@@ -1607,7 +1607,7 @@ telemetry objects in view, as well as the width for each bar.
 
 We will also utilize this from our template:
 
-```diff
+```html
 + <div class="example-bargraph" ng-controller="BarGraphController">
     <div class="example-tick-labels">
 +       <div ng-repeat="value in [low, middle, high] track by $index"
@@ -1660,7 +1660,7 @@ Finally, we expose our controller from our bundle definition. Note that the
 depends declaration includes both `$scope` as well as the `telemetryHandler` 
 service we made use of.
 
-```diff
+```js
 define([
     'openmct',
     './src/controllers/BarGraphController'
@@ -1715,7 +1715,7 @@ First, let's add expose some more functionality from our controller. To make it
 simple, we'll expose the top and bottom for a bar graph for a given 
 telemetry-providing domain object, as percentages.
 
-```diff
+```js
 define(function () {
     function BarGraphController($scope, telemetryHandler) {
         var handle;
@@ -1767,7 +1767,7 @@ decide this.
 
 Next, we utilize this functionality from the template:
 
-```diff
+```html
 <div class="example-bargraph" ng-controller="BarGraphController">
     <div class="example-tick-labels">
         <div ng-repeat="value in [low, middle, high] track by $index"
@@ -1826,7 +1826,7 @@ when we return to our view later, those changes will be persisted.
 
 First, let's add a tool bar for changing these three values in Edit mode:
 
-```diff
+```js
 define([
     'openmct',
     './src/controllers/BarGraphController'
@@ -1900,7 +1900,7 @@ a view proxy to work from. We will add this to our controller, and additionally
 will start reading/writing those properties to the view's `configuration` 
 object.
 
-```diff
+```js
 define(function () {
     function BarGraphController($scope, telemetryHandler) {
         var handle;
@@ -2023,7 +2023,7 @@ For purposes of this tutorial, a simple node server is provided to stand
 in place of this existing telemetry system. It generates real-time data 
 and exposes it over a WebSocket connection.
 
-```diff
+```js
 /*global require,process,console*/
 
 var CONFIG = {
@@ -2205,7 +2205,7 @@ used by the server. It uses a custom format and, for purposes of example,
 contains three "subsystems" containing a mix of numeric and string-based 
 telemetry.
 
-```diff
+```json
 {
     "name": "Example Spacecraft",
     "identifier": "sc",
@@ -2432,7 +2432,7 @@ server. Our first step will be to add a service that will handle interactions
 with the server; this will not be used by Open MCT directly, but will be 
 used by subsequent components we add.
 
-```diff
+```js
 /*global define,WebSocket*/
 
 define(
@@ -2487,7 +2487,7 @@ subsystems. This means that we need to convert the data from the dictionary
 into domain object models, and expose these to Open MCT via a 
 `modelService`.
 
-```diff
+```js
 /*global define*/
 
 define(
@@ -2621,7 +2621,7 @@ This allows our telemetry dictionary to be expressed as domain object models
 fix this, we will need another script which will add these subsystems to the 
 root-level object we added in Step 1.
 
-```diff
+```js
 /*global define*/
 
 define(
@@ -2686,7 +2686,7 @@ Finally, we wire in these changes by modifying our plugin's `bundle.js` to
 provide metadata about how these pieces interact (both with each other, and 
 with the platform):
 
-```diff
+```js
 define([
     'openmct',
 +   './src/ExampleTelemetryServerAdapter',
@@ -2834,7 +2834,7 @@ will do so for the server's historical telemetry.
 Our first step will be to add a method to our server adapter which allows us to 
 send history requests to the server:
 
-```diff
+```js
 /*global define,WebSocket*/
 
 define(
@@ -2893,7 +2893,7 @@ identifier, the pending promise is resolved.
 This `history` method will be used by a `telemetryService` provider which we 
 will implement:
 
-```diff
+```js
 /*global define*/
 
 define(
@@ -2979,7 +2979,7 @@ Finally, note that we also have a `subscribe` method, to satisfy the interface o
 
 This script uses an `ExampleTelemetrySeries` class, which looks like:
 
-```diff
+```js
 /*global define*/
 
 define(
@@ -3011,7 +3011,7 @@ it with the interface expected by the platform (the methods shown.)
 
 Finally, we expose this `telemetryService` provider declaratively:
 
-```diff
+```js
 define([
     'openmct',
     './src/ExampleTelemetryServerAdapter',
@@ -3126,7 +3126,7 @@ Finally, we want to utilize the server's ability to subscribe to telemetry
 from Open MCT. To do this, first we want to expose some new methods for 
 this from our server adapter:
 
-```diff
+```js
 /*global define,WebSocket*/
 
 define(
@@ -3199,7 +3199,7 @@ with these subscriptions.
 
 We then need only to utilize these methods from our `telemetryService`:
 
-```diff
+```js
 /*global define*/
 
 define(
