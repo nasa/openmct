@@ -62,10 +62,7 @@ define(
                   "$document",
                   ["find"]
                 );
-                mockBody = angular.element(document.createElement('body'));
-                spyOn(mockBody, 'on').andCallThrough();
-                spyOn(mockBody, 'off').andCallThrough();
-
+                mockBody = jasmine.createSpyObj('body', ['on', 'off']);
                 mockDocument.find.andReturn(mockBody);
 
                 mockDeferred.promise = "mock promise";
@@ -144,35 +141,33 @@ define(
             });
 
             it("adds a keydown event listener to the body", function () {
-              dialogService.getUserInput({}, {});
-              expect(mockDocument.find).toHaveBeenCalledWith("body");
-              expect(mockBody.on).toHaveBeenCalledWith("keydown", jasmine.any(Function));
+                dialogService.getUserInput({}, {});
+                expect(mockDocument.find).toHaveBeenCalledWith("body");
+                expect(mockBody.on).toHaveBeenCalledWith("keydown", jasmine.any(Function));
             });
 
             it("destroys the event listener when the dialog is cancelled", function () {
-              dialogService.getUserInput({}, {});
-              mockOverlayService.createOverlay.mostRecentCall.args[1].cancel();
-              expect(mockBody.off).toHaveBeenCalledWith("keydown", jasmine.any(Function));
+                dialogService.getUserInput({}, {});
+                mockOverlayService.createOverlay.mostRecentCall.args[1].cancel();
+                expect(mockBody.off).toHaveBeenCalledWith("keydown", jasmine.any(Function));
             });
 
             it("cancels the dialog when an escape keydown event is triggered", function () {
-              dialogService.getUserInput({}, {});
-              mockBody.triggerHandler({
-                  type: 'keydown',
-                  keyCode: 27
-              });
-              expect(mockDeferred.reject).toHaveBeenCalled();
-              expect(mockDeferred.resolve).not.toHaveBeenCalled();
+                dialogService.getUserInput({}, {});
+                mockBody.on.mostRecentCall.args[1]({
+                    keyCode: 27
+                });
+                expect(mockDeferred.reject).toHaveBeenCalled();
+                expect(mockDeferred.resolve).not.toHaveBeenCalled();
             });
 
             it("ignores non escape keydown events", function () {
-              dialogService.getUserInput({}, {});
-              mockBody.triggerHandler({
-                  type: 'keydown',
-                  keyCode: 13
-              });
-              expect(mockDeferred.reject).not.toHaveBeenCalled();
-              expect(mockDeferred.resolve).not.toHaveBeenCalled();
+                dialogService.getUserInput({}, {});
+                mockBody.on.mostRecentCall.args[1]({
+                    keyCode: 13
+                });
+                expect(mockDeferred.reject).not.toHaveBeenCalled();
+                expect(mockDeferred.resolve).not.toHaveBeenCalled();
             });
 
             describe("the blocking message dialog", function () {
