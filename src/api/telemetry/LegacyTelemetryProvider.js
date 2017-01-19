@@ -45,6 +45,9 @@ define([
     };
 
     function createDatum(domainObject, metadata, legacySeries, i) {
+        if (legacySeries.getDatum) {
+            return legacySeries.getDatum(i);
+        }
         var datum = {};
 
         metadata.domains.reduce(function (d, domain) {
