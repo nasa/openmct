@@ -32,7 +32,7 @@ define(
         html2canvas,
         saveAs
     ) {
-        var self = this;
+        var self = null;
 
         /**
          * The export image service will export any HTML node to
@@ -44,6 +44,7 @@ define(
          * @constructor
          */
         function ExportImageService($q, $timeout, $log, EXPORT_IMAGE_TIMEOUT, injHtml2Canvas, injSaveAs, injFileReader) {
+            self = this;
             self.$q = $q;
             self.$timeout = $timeout;
             self.$log = $log;

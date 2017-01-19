@@ -23,6 +23,7 @@
 
 requirejs.config({
     "paths": {
+        "browser-polyfill": "bower_components/babel-polyfill/browser-polyfill", // ES6 browser polyfill, must be included before any other loads
         "legacyRegistry": "src/legacyRegistry",
         "angular": "bower_components/angular/angular.min",
         "angular-route": "bower_components/angular-route/angular-route.min",
