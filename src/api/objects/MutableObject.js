@@ -21,11 +21,9 @@
  *****************************************************************************/
 
 define([
-    'lodash',
-    './objectEventEmitter'
+    'lodash'
 ], function (
-    _,
-    objectEventEmitter
+    _
 ) {
     var ANY_OBJECT_EVENT = "mutation";
 
@@ -36,7 +34,8 @@ define([
      * @param object
      * @interface MutableObject
      */
-    function MutableObject(object) {
+    function MutableObject(eventEmitter, object) {
+        this.eventEmitter = eventEmitter;
         this.object = object;
         this.unlisteners = [];
     }
@@ -61,8 +60,11 @@ define([
      */
     MutableObject.prototype.on = function (path, callback) {
         var fullPath = qualifiedEventName(this.object, path);
-        objectEventEmitter.on(fullPath, callback);
-        this.unlisteners.push(objectEventEmitter.off.bind(objectEventEmitter, fullPath, callback));
+        var eventOff =
+            this.eventEmitter.off.bind(this.eventEmitter, fullPath, callback);
+
+        this.eventEmitter.on(fullPath, callback);
+        this.unlisteners.push(eventOff);
     };
 
     /**
@@ -78,12 +80,12 @@ define([
         _.set(this.object, 'modified', Date.now());
 
         //Emit event specific to property
-        objectEventEmitter.emit(qualifiedEventName(this.object, path), value);
+        this.eventEmitter.emit(qualifiedEventName(this.object, path), value);
         //Emit wildcare event
-        objectEventEmitter.emit(qualifiedEventName(this.object, '*'), this.object);
+        this.eventEmitter.emit(qualifiedEventName(this.object, '*'), this.object);
 
         //Emit a general "any object" event
-        objectEventEmitter.emit(ANY_OBJECT_EVENT, this.object);
+        this.eventEmitter.emit(ANY_OBJECT_EVENT, this.object);
     };
 
     return MutableObject;
