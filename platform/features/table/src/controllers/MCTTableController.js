@@ -18,7 +18,7 @@ define(
             this.$scope = $scope;
             this.element = $(element[0]);
             this.$window = $window;
-            this.maxDisplayRows = 50;
+            this.maxDisplayRows = 100;
 
             this.scrollable = this.element.find('.l-view-section.scrolling').first();
             this.resultsHeader = this.element.find('.mct-table>thead').first();
