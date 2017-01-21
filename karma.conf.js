@@ -54,7 +54,8 @@ module.exports = function(config) {
         // https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
             'src/**/src/**/!(*Spec).js': [ 'coverage' ],
-            'platform/**/src/**/!(*Spec).js': [ 'coverage' ]
+            'platform/**/src/**/!(*Spec).js': [ 'coverage' ],
+            'src/BundleRegistry.js': ['babel']
         },
 
         // Test results reporter to use

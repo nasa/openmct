@@ -70,10 +70,12 @@ var gulp = require('gulp'),
     };
 
 gulp.task('scripts', function () {
+    var babel = require('gulp-babel');
     var requirejsOptimize = require('gulp-requirejs-optimize');
     var replace = require('gulp-replace-task');
     return gulp.src(paths.main)
         .pipe(sourcemaps.init())
+        .pipe(babel())
         .pipe(requirejsOptimize(options.requirejsOptimize))
         .pipe(sourcemaps.write('.'))
         .pipe(replace(options.replace))
