@@ -79,7 +79,9 @@ define(
                 'getHistoricalData',
                 'subscribeToNewData',
                 'changeBounds',
-                'setScroll'
+                'setScroll',
+                'addRowsToTable',
+                'removeRowsFromTable',
             ]);
 
             this.getData();
@@ -87,6 +89,9 @@ define(
 
             this.openmct.conductor.on('follow', this.setScroll);
             this.setScroll(this.openmct.conductor.follow());
+
+            this.telemetry.on('added', this.addRowsToTable);
+            this.telemetry.on('discarded', this.removeRowsFromTable);
 
             this.$scope.$on("$destroy", this.destroy);
         }
@@ -102,16 +107,19 @@ define(
          */
         TelemetryTableController.prototype.sortByTimeSystem = function (timeSystem) {
             var scope = this.$scope;
+            var sortColumn = undefined;
             scope.defaultSort = undefined;
+
             if (timeSystem) {
                 this.table.columns.forEach(function (column) {
                     if (column.metadata.key === timeSystem.metadata.key) {
-                        scope.defaultSort = column.getTitle();
+                        sortColumn = column;
                     }
                 });
-                this.$scope.rows = _.sortBy(this.$scope.rows, function (row) {
-                    return row[this.$scope.defaultSort];
-                });
+                if (sortColumn) {
+                    scope.defaultSort = sortColumn.getTitle();
+                    this.telemetry.sort(sortColumn.getTitle() + '.value');
+                }
             }
         };
 
@@ -138,31 +146,23 @@ define(
             this.openmct.conductor.on('bounds', this.changeBounds);
         };
 
+        TelemetryTableController.prototype.addRowsToTable = function (rows) {
+            this.$scope.$broadcast('add:rows', rows);
+        };
+
+        TelemetryTableController.prototype.removeRowsFromTable = function (rows) {
+            this.$scope.$broadcast('remove:rows', rows);
+        };
+
         TelemetryTableController.prototype.changeBounds = function (bounds) {
             //console.log('bounds.end: ' + bounds.end);
             var follow = this.openmct.conductor.follow();
             var isTick = follow &&
                 bounds.start !== this.lastBounds.start &&
                 bounds.end !== this.lastBounds.end;
-            var isDeltaChange = follow &&
-                !isTick &&
-                (bounds.start !== this.lastBounds.start ||
-                bounds.end !== this.lastBounds.end);
-
-            var discarded = this.telemetry.bounds(bounds);
-
-            if (discarded.length > 0){
-                this.$scope.$broadcast('remove:rows', discarded);
-            }
 
             if (isTick){
-                // Treat it as a realtime tick
-                // Drop old data that falls outside of bounds
-                //this.tick(bounds);
-            } else if (isDeltaChange){
-                // No idea...
-                // Historical query for bounds, then tick on
-                this.getData();
+                this.telemetry.bounds(bounds);
             } else {
                 // Is fixed bounds change
                 this.getData();
@@ -212,12 +212,11 @@ define(
                 var allColumns = telemetryApi.commonValuesForHints(metadatas, []);
 
                 this.table.populateColumns(allColumns);
-                this.timeColumns = telemetryApi.commonValuesForHints(metadatas, ['x']).map(function (metadatum) {
+
+                var domainColumns = telemetryApi.commonValuesForHints(metadatas, ['x']);
+                this.timeColumns = domainColumns.map(function (metadatum) {
                     return metadatum.name;
                 });
-
-                // For now, use first time field for time conductor
-                this.telemetry.sort(this.timeColumns[0] + '.value');
 
                 this.filterColumns();
 
@@ -225,6 +224,11 @@ define(
                 if (timeSystem) {
                     this.sortByTimeSystem(timeSystem);
                 }
+                if (!this.telemetry.sortColumn && domainColumns.length > 0) {
+                    this.telemetry.sort(domainColumns[0].name + '.value');
+                }
+
+
             }
             return objects;
         };
@@ -245,6 +249,7 @@ define(
 
             return new Promise(function (resolve, reject){
                 function finishProcessing(){
+                    telemetryCollection.addAll(rowData);
                     scope.rows = telemetryCollection.telemetry;
                     scope.loading = false;
                     resolve(scope.rows);
@@ -258,11 +263,9 @@ define(
                             finishProcessing();
                         }
                     } else {
-                        historicalData.slice(index, index + this.batchSize)
-                            .forEach(function (datum) {
-                                telemetryCollection.add(this.table.getRowValues(
-                                    limitEvaluator, datum));
-                            }.bind(this));
+                        rowData = rowData.concat(historicalData.slice(index, index + this.batchSize)
+                            .map(this.table.getRowValues.bind(this.table, limitEvaluator)));
+
                         this.timeoutHandle = this.$timeout(processData.bind(
                             this,
                             historicalData,
@@ -299,6 +302,7 @@ define(
                 }
             }.bind(this));
         };
+
 
         /**
          * @private
@@ -348,6 +352,9 @@ define(
             var scope = this.$scope;
             var newObject = this.newObject;
 
+            this.telemetry.clear();
+            this.telemetry.bounds(this.openmct.conductor.bounds());
+
             this.$scope.loading = true;
 
             function error(e) {
@@ -384,7 +391,7 @@ define(
             getDomainObjects()
                 .then(filterForTelemetry)
                 .then(this.loadColumns)
-                .then(this.subscribeToNewData)
+                //.then(this.subscribeToNewData)
                 .then(this.getHistoricalData)
                 .catch(error)
         };

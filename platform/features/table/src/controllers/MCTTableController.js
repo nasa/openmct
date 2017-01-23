@@ -31,32 +31,32 @@ define(
 
             //Bind all class functions to 'this'
             _.bindAll(this, [
-                'destroyConductorListeners',
-                'changeTimeSystem',
-                'scrollToBottom',
-                'addRow',
-                'removeRows',
-                'onScroll',
-                'firstVisible',
-                'lastVisible',
-                'setVisibleRows',
-                'setHeaders',
-                'setElementSizes',
+                'addRows',
                 'binarySearch',
-                'insertSorted',
-                'sortComparator',
-                'sortRows',
                 'buildLargestRow',
-                'resize',
-                'filterAndSort',
-                'setRows',
-                'filterRows',
-                'scrollToRow',
-                'setTimeOfInterestRow',
-                'changeTimeOfInterest',
                 'changeBounds',
+                'changeTimeOfInterest',
+                'changeTimeSystem',
+                'destroyConductorListeners',
+                'digest',
+                'filterAndSort',
+                'filterRows',
+                'firstVisible',
+                'insertSorted',
+                'lastVisible',
                 'onRowClick',
-                'digest'
+                'onScroll',
+                'removeRows',
+                'resize',
+                'scrollToBottom',
+                'scrollToRow',
+                'setElementSizes',
+                'setHeaders',
+                'setRows',
+                'setTimeOfInterestRow',
+                'setVisibleRows',
+                'sortComparator',
+                'sortRows'
             ]);
 
             this.scrollable.on('scroll', this.onScroll);
@@ -125,7 +125,7 @@ define(
             /*
              * Listen for rows added individually (eg. for real-time tables)
              */
-            $scope.$on('add:row', this.addRow);
+            $scope.$on('add:rows', this.addRows);
             $scope.$on('remove:rows', this.removeRows);
 
             /**
@@ -199,16 +199,13 @@ define(
          * `add:row` broadcast event.
          * @private
          */
-        MCTTableController.prototype.addRow = function (event, rowIndex) {
-            var row = this.$scope.rows[rowIndex];
-
+        MCTTableController.prototype.addRows = function (event, rows) {
             //Does the row pass the current filter?
-            if (this.filterRows([row]).length === 1) {
-                //Insert the row into the correct position in the array
-                this.insertSorted(this.$scope.displayRows, row);
+            if (this.filterRows(rows).length > 0) {
+                rows.forEach(this.insertSorted.bind(this, this.$scope.displayRows));
 
                 //Resize the columns , then update the rows visible in the table
-                this.resize([this.$scope.sizingRow, row])
+                this.resize([this.$scope.sizingRow].concat(rows))
                     .then(this.setVisibleRows)
                     .then(function () {
                         if (this.$scope.autoScroll) {
@@ -220,7 +217,6 @@ define(
                 if (toi !== -1) {
                     this.setTimeOfInterestRow(toi);
                 }
-
             }
         };
 

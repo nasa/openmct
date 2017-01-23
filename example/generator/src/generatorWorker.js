@@ -52,6 +52,7 @@
     function onSubscribe(message) {
         var data = message.data;
 
+        // Keep
         var start = Date.now();
         var step = 1000 / data.dataRateInHz;
         var nextStep = start - (start % step) + step;

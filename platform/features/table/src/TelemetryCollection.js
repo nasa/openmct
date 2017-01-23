@@ -23,24 +23,23 @@
 define(
     [
         'lodash',
-        'eventEmitter'
+        'EventEmitter'
     ],
-    function (_, eventEmitter) {
+    function (_, EventEmitter) {
         function TelemetryCollection() {
-            eventEmitter.call(this, arguments);
+            EventEmitter.call(this, arguments);
             this.telemetry = [];
-            this.forwardBuffer = [];
+            this.highBuffer = [];
             this.sortField = undefined;
             this.lastBounds = {};
-            this.lastStartIndex = 0;
-            this.lastEndIndex = 0;
 
             _.bindAll(this,[
+                'addOne',
                 'iteratee'
             ]);
         }
 
-        TelemetryCollection.prototype = Object.create(eventEmitter.prototype);
+        TelemetryCollection.prototype = Object.create(EventEmitter.prototype);
 
         TelemetryCollection.prototype.iteratee = function (element) {
             return _.get(element, this.sortField);
@@ -53,7 +52,7 @@ define(
          * collection is cleared and repopulated.
          * @param bounds
          */
-        TelemetryCollection.prototype.tick = function (bounds) {
+        TelemetryCollection.prototype.bounds = function (bounds) {
             var startChanged = this.lastBounds.start !== bounds.start;
             var endChanged = this.lastBounds.end !== bounds.end;
             var startIndex = 0;
@@ -65,71 +64,106 @@ define(
                 var testValue = _.set({}, this.sortField, bounds.start);
                 // Calculate the new index of the first element within the bounds
                 startIndex = _.sortedIndex(this.telemetry, testValue, this.sortField);
-                discarded = this.telemetry.slice(this.lastStartIndex, startIndex + 1);
+                discarded = this.telemetry.splice(0, startIndex);
             }
             if (endChanged) {
                 var testValue = _.set({}, this.sortField, bounds.end);
                 // Calculate the new index of the last element in bounds
-                endIndex = _.sortedLastIndex(this.telemetry, testValue, this.sortField);
-                added = this.telemetry.slice(this.lastEndIndex, endIndex + 1);
+                endIndex = _.sortedLastIndex(this.highBuffer, testValue, this.sortField);
+                added = this.highBuffer.splice(0, endIndex);
+                this.telemetry = this.telemetry.concat(added);
             }
 
-            if (discarded.length > 0){
+            if (discarded && discarded.length > 0){
                 this.emit('discarded', discarded);
             }
-            if (added.length > 0){
+            if (added && added.length > 0) {
                 this.emit('added', added);
             }
             this.lastBounds = bounds;
         };
 
-        /*collection.on('added');
-        collection.on('discarded');*/
-
         TelemetryCollection.prototype.inBounds = function (element) {
             var noBoundsDefined = !this.lastBounds || (!this.lastBounds.start && !this.lastBounds.end);
-            var withinBounds = _.get(element, this.sortField) >= this.lastBounds.start &&
+            var withinBounds =
+                _.get(element, this.sortField) >= this.lastBounds.start &&
                 _.get(element, this.sortField) <= this.lastBounds.end;
 
             return noBoundsDefined || withinBounds;
         };
 
-        //Todo: addAll for initial historical data
-        TelemetryCollection.prototype.add = function (element) {
-            // Going to check for duplicates. Bound the search problem to
-            // elements around the given time. Use sortedIndex because it
-            // employs a binary search which is O(log n). Can use binary search
-            // based on time stamp because the array is guaranteed ordered due
-            // to sorted insertion.
-
+        /**
+         * @private
+         * @param element
+         */
+        TelemetryCollection.prototype.addOne = function (element) {
             var isDuplicate = false;
-            var startIx = _.sortedIndex(this.telemetry, element, this.sortField);
+            var boundsDefined = this.lastBounds && (this.lastBounds.start && this.lastBounds.end);
+            var array;
 
-            if (startIx !== this.telemetry.length) {
-                var endIx = _.sortedLastIndex(this.telemetry, element, this.sortField);
+            // Insert into either in-bounds array, or the out of bounds high buffer.
+            // Data in the high buffer will be re-evaluated for possible insertion on next tick
 
-                // Create an array of potential dupes, based on having the
-                // same time stamp
-                var potentialDupes = this.telemetry.slice(startIx, endIx + 1);
-                // Search potential dupes for exact dupe
-                isDuplicate = _.findIndex(potentialDupes, _.isEqual.bind(undefined, element)) > -1;
+            if (boundsDefined) {
+                var boundsHigh = _.get(element, this.sortField) > this.lastBounds.end;
+                var boundsLow = _.get(element, this.sortField) < this.lastBounds.start;
+
+                if (!boundsHigh && !boundsLow) {
+                    array = this.telemetry;
+                } else if (boundsHigh) {
+                    array = this.highBuffer;
+                }
+            } else {
+                array = this.highBuffer;
             }
 
-            if (!isDuplicate) {
-                this.telemetry.splice(startIx, 0, element);
+            // If out of bounds low, disregard data
+            if (!boundsLow) {
+                // Going to check for duplicates. Bound the search problem to
+                // elements around the given time. Use sortedIndex because it
+                // employs a binary search which is O(log n). Can use binary search
+                // based on time stamp because the array is guaranteed ordered due
+                // to sorted insertion.
 
-                if (this.inBounds(element)) {
-                    // If new element is within bounds, then the index within the
-                    // master of the last element in bounds has just increased by one.
-                    this.lastEndIndex++;
-                    //If the new element is within bounds, add it immediately
-                    this.emit('added', [element]);
+                var startIx = _.sortedIndex(array, element, this.sortField);
+
+                if (startIx !== array.length) {
+                    var endIx = _.sortedLastIndex(array, element, this.sortField);
+
+                    // Create an array of potential dupes, based on having the
+                    // same time stamp
+                    var potentialDupes = array.slice(startIx, endIx + 1);
+                    // Search potential dupes for exact dupe
+                    isDuplicate = _.findIndex(potentialDupes, _.isEqual.bind(undefined, element)) > -1;
                 }
+
+                if (!isDuplicate) {
+                    array.splice(startIx, 0, element);
+
+                    //Return true if it was added and in bounds
+                    return array === this.telemetry;
+                }
+            }
+            return false;
+        };
+
+        TelemetryCollection.prototype.addAll = function (elements) {
+            var added = elements.filter(this.addOne);
+            this.emit('added', added);
+        };
+
+        //Todo: addAll for initial historical data
+        TelemetryCollection.prototype.add = function (element) {
+            if (this.addOne(element)){
+                this.emit('added', [element]);
+                return true;
+            } else {
+                return false;
             }
         };
 
         TelemetryCollection.prototype.clear = function () {
-            this.telemetry = undefined;
+            this.telemetry = [];
         };
 
         TelemetryCollection.prototype.sort = function (sortField){
