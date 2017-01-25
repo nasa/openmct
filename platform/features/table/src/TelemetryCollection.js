@@ -84,7 +84,7 @@ define(
         };
 
         TelemetryCollection.prototype.inBounds = function (element) {
-            var noBoundsDefined = !this.lastBounds || (!this.lastBounds.start && !this.lastBounds.end);
+            var noBoundsDefined = !this.lastBounds || (this.lastBounds.start === undefined && this.lastBounds.end === undefined);
             var withinBounds =
                 _.get(element, this.sortField) >= this.lastBounds.start &&
                 _.get(element, this.sortField) <= this.lastBounds.end;
@@ -114,7 +114,7 @@ define(
                     array = this.highBuffer;
                 }
             } else {
-                array = this.highBuffer;
+                array = this.telemetry;
             }
 
             // If out of bounds low, disregard data

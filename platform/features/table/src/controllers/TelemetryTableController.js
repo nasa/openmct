@@ -391,7 +391,7 @@ define(
             getDomainObjects()
                 .then(filterForTelemetry)
                 .then(this.loadColumns)
-                //.then(this.subscribeToNewData)
+                .then(this.subscribeToNewData)
                 .then(this.getHistoricalData)
                 .catch(error)
         };
