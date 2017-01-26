@@ -73,7 +73,7 @@ define(
             }
 
             function updateTimerState(timerState) {
-                relativeTimerState = timerState;
+                self.timerState = relativeTimerState = timerState;
             }
 
             function updateActions(actionCapability, actionKey) {
