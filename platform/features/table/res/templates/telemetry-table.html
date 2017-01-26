@@ -1,6 +1,5 @@
 <div ng-controller="TelemetryTableController as tableController"
      ng-class="{'loading': loading}">
-    Request time: {{tableController.lastRequestTime | date : 'HH:mm:ss:sss'}}
     <mct-table
         headers="headers"
         rows="rows"

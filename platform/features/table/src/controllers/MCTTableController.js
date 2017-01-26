@@ -1,7 +1,10 @@
 
 define(
-    ['zepto'],
-    function ($) {
+    [
+        'zepto',
+        'lodash'
+    ],
+    function ($, _) {
 
         /**
          * A controller for the MCTTable directive. Populates scope with
@@ -134,7 +137,7 @@ define(
              */
             $scope.$watch('defaultSort', function (newColumn, oldColumn) {
                 if (newColumn !== oldColumn) {
-                    $scope.toggleSort(newColumn)
+                    $scope.toggleSort(newColumn);
                 }
             });
 
@@ -163,7 +166,7 @@ define(
                 }
             }.bind(this));
 
-            $scope.$on('$destroy', function() {
+            $scope.$on('$destroy', function () {
                 this.scrollable.off('scroll', this.onScroll);
                 this.destroyConductorListeners();
 
@@ -172,7 +175,7 @@ define(
                 delete this.$scope;
 
             }.bind(this));
-        };
+        }
 
         MCTTableController.prototype.destroyConductorListeners = function () {
             this.conductor.off('timeSystem', this.changeTimeSystem);
@@ -227,7 +230,7 @@ define(
          */
         MCTTableController.prototype.removeRows = function (event, rows) {
             var indexInDisplayRows;
-            rows.forEach(function (row){
+            rows.forEach(function (row) {
                 // Do a sequential search here. Only way of finding row is by
                 // object equality, so array is in effect unsorted.
                 indexInDisplayRows = this.$scope.displayRows.indexOf(row);
@@ -252,7 +255,7 @@ define(
          * @private
          */
         MCTTableController.prototype.onScroll = function (event) {
-            requestAnimationFrame(function () {
+            this.$window.requestAnimationFrame(function () {
                 this.setVisibleRows();
                 this.digest();
 
@@ -344,18 +347,11 @@ define(
                     this.$scope.visibleRows[this.$scope.visibleRows.length - 1]
                         .rowIndex === end) {
                     return this.digest();
-                    //return Promise.resolve(); // don't update if no changes are required.
                 }
             }
             //Set visible rows from display rows, based on calculated offset.
             this.$scope.visibleRows = this.$scope.displayRows.slice(start, end)
                 .map(function (row, i) {
-/*                    var formattedRow = JSON.parse(JSON.stringify(row));
-                    if (self.$scope.formatCell) {
-                        Object.keys(formattedRow).forEach(function (header) {
-                            formattedRow[header].text = self.$scope.formatCell(header, row[header].text);
-                        });
-                    } */
                     return {
                         rowIndex: start + i,
                         offsetY: ((start + i) * self.$scope.rowHeight) +
@@ -585,19 +581,20 @@ define(
         MCTTableController.prototype.digest = function () {
             var scope = this.$scope;
             var self = this;
-            var requestAnimationFrame = this.$window.requestAnimationFrame;
+            var raf = this.$window.requestAnimationFrame;
+            var promise = this.digestPromise;
 
-            if (!this.digestPromise) {
-                this.digestPromise = new Promise(function (resolve) {
-                    requestAnimationFrame(function() {
+            if (!promise) {
+                self.digestPromise = promise = new Promise(function (resolve) {
+                    raf(function () {
                         scope.$digest();
-                        delete self.digestPromise;
+                        self.digestPromise = undefined;
                         resolve();
                     });
                 });
             }
 
-            return this.digestPromise;
+            return promise;
         };
 
         /**
@@ -640,8 +637,10 @@ define(
             }
 
             this.$scope.displayRows = this.filterAndSort(newRows || []);
-            this.resize(newRows)
-                .then(this.setVisibleRows)
+            return this.resize(newRows)
+                .then(function (rows) {
+                    return this.setVisibleRows(rows);
+                }.bind(this))
                 //Timeout following setVisibleRows to allow digest to
                 // perform DOM changes, otherwise scrollTo won't work.
                 .then(function () {
@@ -692,6 +691,7 @@ define(
         };
 
         /**
+         * Scroll the view to a given row index
          * @param displayRowIndex {number} The index in the displayed rows
          * to scroll to.
          */

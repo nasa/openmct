@@ -22,8 +22,7 @@
 
 define([
     "./src/UTCTimeSystem",
-    'legacyRegistry',
-    'openmct'
+    "legacyRegistry"
 ], function (
     UTCTimeSystem,
     legacyRegistry

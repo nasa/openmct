@@ -52,23 +52,28 @@ define(
                 metadata.forEach(function (metadatum) {
                     var formatter = telemetryApi.getValueFormatter(metadatum);
 
-                    self.addColumn({
-                        metadata: metadatum,
+                    self.columns.push({
+                        getKey: function () {
+                            return metadatum.key;
+                        },
                         getTitle: function () {
                             return metadatum.name;
                         },
-                        getValue: function(telemetryDatum, limitEvaluator) {
+                        getValue: function (telemetryDatum, limitEvaluator) {
                             var isValueColumn = !!(metadatum.hints.y || metadatum.hints.range);
                             var alarm = isValueColumn &&
                                         limitEvaluator &&
                                         limitEvaluator.evaluate(telemetryDatum, metadatum);
-
-                            return {
-                                cssClass: alarm && alarm.cssClass,
+                            var value = {
                                 text: formatter ? formatter.format(telemetryDatum[metadatum.key])
                                     : telemetryDatum[metadatum.key],
                                 value: telemetryDatum[metadatum.key]
+                            };
+
+                            if (alarm) {
+                                value.cssClass = alarm.cssClass;
                             }
+                            return value;
                         }
                     });
                 });
@@ -77,35 +82,12 @@ define(
         };
 
         /**
-         * Add a column definition to this Table
-         * @param {RangeColumn | DomainColumn | NameColumn} column
-         * @param {Number} [index] Where the column should appear (will be
-         * affected by column filtering)
-         */
-        TableConfiguration.prototype.addColumn = function (column, index) {
-            if (typeof index === 'undefined') {
-                this.columns.push(column);
-            } else {
-                this.columns.splice(index, 0, column);
-            }
-        };
-
-        /**
-         * @private
-         * @param column
-         * @returns {*|string}
-         */
-        TableConfiguration.prototype.getColumnTitle = function (column) {
-            return column.getTitle();
-        };
-
-        /**
          * Get a simple list of column titles
          * @returns {Array} The titles of the columns
          */
         TableConfiguration.prototype.getHeaders = function () {
             return this.columns.map(function (column, i) {
-                return column.getTitle()|| 'Column ' + (i + 1);
+                return column.getTitle() || 'Column ' + (i + 1);
             });
         };
 
@@ -118,16 +100,15 @@ define(
          * title, and the value is the formatted value from the provided datum.
          */
         TableConfiguration.prototype.getRowValues = function (limitEvaluator, datum) {
-            var self = this;
             return this.columns.reduce(function (rowObject, column, i) {
-                var columnTitle = self.getColumnTitle(column) || 'Column ' + (i + 1),
+                var columnTitle = column.getTitle() || 'Column ' + (i + 1),
                     columnValue = column.getValue(datum, limitEvaluator);
 
                 if (columnValue !== undefined && columnValue.text === undefined) {
                     columnValue.text = '';
                 }
                 // Don't replace something with nothing.
-                // This occurs when there are multiple columns with the
+                // This occurs when there are multiple columns with the same
                 // column title
                 if (rowObject[columnTitle] === undefined ||
                     rowObject[columnTitle].text === undefined ||
