@@ -21,10 +21,10 @@
  *****************************************************************************/
 
 define(
-    ["../../src/actions/StartTimerAction"],
-    function (StartTimerAction) {
+    ["../../src/actions/StopTimerAction"],
+    function (StopTimerAction) {
 
-        describe("A timer's start action", function () {
+        describe("A timer's stop action", function () {
             var mockNow,
                 mockDomainObject,
                 testModel,
@@ -59,13 +59,13 @@ define(
                 testModel = {};
                 testContext = {domainObject: mockDomainObject};
 
-                action = new StartTimerAction(mockNow, testContext);
+                action = new StopTimerAction(mockNow, testContext);
             });
 
             it("updates the model with a timestamp", function () {
                 mockNow.andReturn(12000);
                 action.perform();
-                expect(testModel.timestamp).toEqual(12000);
+                expect(testModel.timestamp).toEqual(undefined);
             });
 
             it("updates the model with a pausedTime", function () {
@@ -75,20 +75,20 @@ define(
             });
 
             it("updates the model with a timerState", function () {
-                testModel.timerState = undefined;
+                testModel.timerState = 'started';
                 action.perform();
-                expect(testModel.timerState).toEqual('started');
+                expect(testModel.timerState).toEqual('stopped');
             });
 
-            it("applies only to timers not in a playing state", function () {
+            it("applies only to timers in a non-stopped state", function () {
                 //in a stopped state
-                testState('timer', 'stopped', undefined, true);
+                testState('timer', 'stopped', undefined, false);
 
                 //in a paused state
                 testState('timer', 'paused', 12000, true);
 
                 //in a playing state
-                testState('timer', 'started', 12000, false);
+                testState('timer', 'started', 12000, true);
 
                 //not a timer
                 testState('clock', 'paused', 12000, false);
@@ -100,9 +100,9 @@ define(
                 testModel.timestamp = timestamp;
 
                 if (expected) {
-                    expect(StartTimerAction.appliesTo(testContext)).toBeTruthy()
+                    expect(StopTimerAction.appliesTo(testContext)).toBeTruthy()
                 } else {
-                    expect(StartTimerAction.appliesTo(testContext)).toBeFalsy()
+                    expect(StopTimerAction.appliesTo(testContext)).toBeFalsy()
                 }
             }
         });
