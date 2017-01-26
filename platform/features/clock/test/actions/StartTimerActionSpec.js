@@ -39,6 +39,18 @@ define(
                     };
             }
 
+            function testState(type, timerState, timestamp, expected) {
+                testModel.type = type;
+                testModel.timerState = timerState;
+                testModel.timestamp = timestamp;
+
+                if (expected) {
+                    expect(StartTimerAction.appliesTo(testContext)).toBeTruthy();
+                } else {
+                    expect(StartTimerAction.appliesTo(testContext)).toBeFalsy();
+                }
+            }
+
             beforeEach(function () {
                 mockNow = jasmine.createSpy('now');
                 mockDomainObject = jasmine.createSpyObj(
@@ -93,18 +105,6 @@ define(
                 //not a timer
                 testState('clock', 'paused', 12000, false);
             });
-
-            function testState(type, timerState, timestamp, expected) {
-                testModel.type = type;
-                testModel.timerState = timerState;
-                testModel.timestamp = timestamp;
-
-                if (expected) {
-                    expect(StartTimerAction.appliesTo(testContext)).toBeTruthy()
-                } else {
-                    expect(StartTimerAction.appliesTo(testContext)).toBeFalsy()
-                }
-            }
         });
     }
 );
