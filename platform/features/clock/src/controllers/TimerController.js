@@ -54,13 +54,10 @@ define(
                         timeDelta >= 1000 ? "+" : "";
                     self.signCssClass = timeDelta < 0 ? "icon-minus" :
                         timeDelta >= 1000 ? "icon-plus" : "";
-                    self.stateCssClass = relativeTimerState === "play" ? "icon-play" :
-                        relativeTimerState === "pause" ? "icon-pause" : "icon-box";
                 } else {
                     self.textValue = "";
                     self.signValue = "";
                     self.signCssClass = "";
-                    self.stateCssClass = "icon-box";
                 }
             }
 
@@ -248,15 +245,6 @@ define(
          */
         TimerController.prototype.signClass = function () {
             return this.signCssClass;
-        };
-
-        /**
-         * Get the symbol (play, pause or stop) of the current timer state, as
-         * a CSS class.
-         * @returns {string} symbol of the current timer state
-         */
-        TimerController.prototype.stateClass = function () {
-            return this.stateCssClass;
         };
 
         /**
