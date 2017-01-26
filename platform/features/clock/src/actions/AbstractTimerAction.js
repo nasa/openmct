@@ -30,9 +30,6 @@ define(
          * Sets the reference timestamp in a timer to the current
          * time, such that it begins counting up.
          *
-         * Both "Start" and "Restart" share this implementation, but
-         * control their visibility with different `appliesTo` behavior.
-         *
          * @implements {Action}
          * @memberof platform/features/clock
          * @constructor
@@ -60,7 +57,7 @@ define(
             }
 
             function setTimerState(model) {
-                model.timerState = 'play';
+                model.timerState = 'started';
             }
 
             function setPausedTime(model) {

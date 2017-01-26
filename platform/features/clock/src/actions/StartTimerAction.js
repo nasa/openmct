@@ -53,8 +53,7 @@ define(
             // We show this variant for timers which do not yet have
             // a target time.
             return model.type === 'timer' &&
-                (model.timestamp === undefined ||
-                    model.timerState !== 'play');
+                    model.timerState !== 'started';
         };
 
         return StartTimerAction;

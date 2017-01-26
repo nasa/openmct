@@ -22,8 +22,12 @@
 <div class="l-time-display l-digital l-timer s-timer" ng-controller="TimerController as timer">
 	<div class="l-elem-wrapper l-flex-row">
 		<a ng-click="timer.clickButton()"
-			title="{{timer.buttonText()}}"
-			class="flex-elem s-icon-button {{timer.buttonCssClass()}}"></a>
+		   title="{{timer.buttonText()}}"
+		   class="flex-elem control s-icon-button {{timer.buttonCssClass()}}"></a>
+		<a ng-click="timer.clickStopButton()"
+			title="{{timer.stopButtonText()}}"
+			class="{{!timer.stopButtonCssClass() || 'flex-elem control s-icon-button'}} {{timer.stopButtonCssClass()}}"></a>
+	    <span class="flex-elem l-value {{timer.stateClass()}}"></span>
 	    <span class="flex-elem l-value {{timer.signClass()}}">
 	        <span class="value"
 		        ng-class="{ active:timer.text() }">{{timer.text() || "--:--:--"}}

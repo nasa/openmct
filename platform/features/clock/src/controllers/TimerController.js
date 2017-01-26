@@ -54,10 +54,13 @@ define(
                         timeDelta >= 1000 ? "+" : "";
                     self.signCssClass = timeDelta < 0 ? "icon-minus" :
                         timeDelta >= 1000 ? "icon-plus" : "";
+                    self.stateCssClass = relativeTimerState === "play" ? "icon-play" :
+                        relativeTimerState === "pause" ? "icon-pause" : "icon-box";
                 } else {
                     self.textValue = "";
                     self.signValue = "";
                     self.signCssClass = "";
+                    self.stateCssClass = "icon-box";
                 }
             }
 
@@ -73,33 +76,46 @@ define(
                 relativeTimerState = timerState;
             }
 
+            function updateActions(actionCapability, actionKey) {
+                self.relevantAction = actionCapability &&
+                    actionCapability.getActions(actionKey)[0];
+
+                self.stopAction = relativeTimerState !== 'stopped' ?
+                    actionCapability && actionCapability.getActions('timer.stop')[0] : undefined;
+
+            }
+
             function isPaused() {
-                return relativeTimerState === 'pause';
+                return relativeTimerState === 'paused';
+            }
+
+            function handleLegacyTimer(model) {
+                if (model.timerState === undefined) {
+                    model.timerState = model.timestamp === undefined ?
+                        'stopped' : 'started';
+                }
             }
 
             function updateObject(domainObject) {
-                var model = domainObject.getModel(),
-                    timestamp = model.timestamp,
+                var model = domainObject.getModel();
+                handleLegacyTimer(model);
+
+                var timestamp = model.timestamp,
                     formatKey = model.timerFormat,
                     timerState = model.timerState,
                     actionCapability = domainObject.getCapability('action'),
-                    actionKey = (timerState !== 'play') ?
+                    actionKey = (timerState !== 'started') ?
                         'timer.start' : 'timer.pause';
-
-                self.timerState = model.timerState;
-                self.pausedTime = model.pausedTime;
 
                 updateFormat(formatKey);
                 updateTimestamp(timestamp);
                 updateTimerState(timerState);
+                updateActions(actionCapability, actionKey);
 
                 //if paused on startup show last known position
                 if (isPaused() && !lastTimestamp) {
-                    lastTimestamp = self.pausedTime;
+                    lastTimestamp = model.pausedTime;
                 }
-
-                self.relevantAction = actionCapability &&
-                    actionCapability.getActions(actionKey)[0];
 
                 update();
             }
@@ -122,6 +138,11 @@ define(
                     lastTimestamp = now();
                     update();
                 }
+
+                if (relativeTimerState === undefined) {
+                    handleModification();
+                }
+
                 // We're running in an animation frame, not in a digest cycle.
                 // We need to trigger a digest cycle if our displayable data
                 // changes.
@@ -157,7 +178,7 @@ define(
          */
         TimerController.prototype.buttonCssClass = function () {
             return this.relevantAction ?
-                    this.relevantAction.getMetadata().cssclass : "";
+                this.relevantAction.getMetadata().cssclass : "";
         };
 
         /**
@@ -167,7 +188,7 @@ define(
          */
         TimerController.prototype.buttonText = function () {
             return this.relevantAction ?
-                    this.relevantAction.getMetadata().name : "";
+                this.relevantAction.getMetadata().name : "";
         };
 
 
@@ -177,6 +198,36 @@ define(
         TimerController.prototype.clickButton = function () {
             if (this.relevantAction) {
                 this.relevantAction.perform();
+                this.updateObject(this.$scope.domainObject);
+            }
+        };
+
+        /**
+         * Get the CSS class to display the stop button
+         * @returns {string} cssclass to display
+         */
+        TimerController.prototype.stopButtonCssClass = function () {
+            return this.stopAction ?
+                this.stopAction.getMetadata().cssclass : '';
+        };
+
+        /**
+         * Get the text to show the stop button
+         * (e.g. in a tooltip)
+         * @returns {string} name of the action
+         */
+        TimerController.prototype.stopButtonText = function () {
+            return this.stopAction ?
+                this.stopAction.getMetadata().name : '';
+        };
+
+
+        /**
+         * Perform the action associated with the stop button.
+         */
+        TimerController.prototype.clickStopButton = function () {
+            if (this.stopAction) {
+                this.stopAction.perform();
                 this.updateObject(this.$scope.domainObject);
             }
         };
@@ -197,6 +248,15 @@ define(
          */
         TimerController.prototype.signClass = function () {
             return this.signCssClass;
+        };
+
+        /**
+         * Get the symbol (play, pause or stop) of the current timer state, as
+         * a CSS class.
+         * @returns {string} symbol of the current timer state
+         */
+        TimerController.prototype.stateClass = function () {
+            return this.stateCssClass;
         };
 
         /**

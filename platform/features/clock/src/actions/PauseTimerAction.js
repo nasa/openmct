@@ -54,8 +54,7 @@ define(
             // We show this variant for timers which have
             // a target time, or is in a playing state.
             return model.type === 'timer' &&
-                (model.timestamp !== undefined ||
-                    model.timerState === 'play');
+                    model.timerState === 'started';
         };
 
         PauseTimerAction.prototype.perform = function () {
@@ -63,7 +62,7 @@ define(
                 now = this.now;
 
             function setTimerState(model) {
-                model.timerState = 'pause';
+                model.timerState = 'paused';
             }
 
             function setPausedTime(model) {

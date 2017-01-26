@@ -50,14 +50,32 @@ define(
                 (context.domainObject && context.domainObject.getModel()) ||
                 {};
 
-            // We show this variant for timers which already have
-            // a target time.
+            // We show this variant for timers which already have a target time.
             return model.type === 'timer' &&
-                (model.timestamp !== undefined ||
-                    model.timerState !== undefined);
+                model.timerState !== 'stopped';
+        };
+
+        RestartTimerAction.prototype.perform = function () {
+            var domainObject = this.domainObject,
+                now = this.now;
+
+            function setTimestamp(model) {
+                model.timestamp = now();
+            }
+
+            function setTimerState(model) {
+                model.timerState = 'started';
+            }
+
+            function setPausedTime(model) {
+                model.pausedTime = undefined;
+            }
+
+            return domainObject.useCapability('mutation', setTimestamp) &&
+                domainObject.useCapability('mutation', setTimerState) &&
+                domainObject.useCapability('mutation', setPausedTime);
         };
 
         return RestartTimerAction;
-
     }
 );

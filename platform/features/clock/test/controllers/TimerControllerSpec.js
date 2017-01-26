@@ -35,6 +35,7 @@ define(
                 mockActionCapability,
                 mockStart,
                 mockPause,
+                mockStop,
                 testModel,
                 controller;
 
@@ -68,7 +69,11 @@ define(
                     ['getMetadata', 'perform']
                 );
                 mockPause = jasmine.createSpyObj(
-                    'pause',
+                    'paused',
+                    ['getMetadata', 'perform']
+                );
+                mockStop = jasmine.createSpyObj(
+                    'stopped',
                     ['getMetadata', 'perform']
                 );
                 mockNow = jasmine.createSpy('now');
@@ -82,11 +87,13 @@ define(
                 mockActionCapability.getActions.andCallFake(function (k) {
                     return [{
                         'timer.start': mockStart,
-                        'timer.pause': mockPause
+                        'timer.pause': mockPause,
+                        'timer.stop': mockStop
                     }[k]];
                 });
                 mockStart.getMetadata.andReturn({cssclass: "icon-play", name: "Start"});
                 mockPause.getMetadata.andReturn({cssclass: "icon-pause", name: "Pause"});
+                mockStop.getMetadata.andReturn({cssclass: "icon-box", name: "Stop"});
                 mockScope.domainObject = mockDomainObject;
 
                 testModel = {};
@@ -120,6 +127,7 @@ define(
                 mockWindow.requestAnimationFrame.mostRecentCall.args[0]();
                 expect(controller.sign()).toEqual("");
                 expect(controller.text()).toEqual("");
+                expect(controller.stopButtonText()).toEqual("");
             });
 
             it("formats time to display relative to target", function () {
@@ -150,22 +158,43 @@ define(
                 expect(controller.buttonText()).toEqual("Start");
 
                 testModel.timestamp = 12321;
+                testModel.timerState = 'started';
                 invokeWatch('model.modified', 1);
                 expect(controller.buttonCssClass()).toEqual("icon-pause");
                 expect(controller.buttonText()).toEqual("Pause");
             });
 
-            it("performs correct start/pause action on click", function () {
+            it("shows cssclass & name for the stop action", function () {
+                invokeWatch('domainObject', mockDomainObject);
+                expect(controller.stopButtonCssClass()).toEqual("");
+                expect(controller.stopButtonText()).toEqual("");
+
+                testModel.timestamp = 12321;
+                testModel.timerState = 'started';
+                invokeWatch('model.modified', 1);
+                expect(controller.stopButtonCssClass()).toEqual("icon-box");
+                expect(controller.stopButtonText()).toEqual("Stop");
+            });
+
+            it("performs correct start/pause/stop action on click", function () {
+                //test start
                 invokeWatch('domainObject', mockDomainObject);
                 expect(mockStart.perform).not.toHaveBeenCalled();
                 controller.clickButton();
                 expect(mockStart.perform).toHaveBeenCalled();
 
+                //test pause
                 testModel.timestamp = 12321;
+                testModel.timerState = 'started';
                 invokeWatch('model.modified', 1);
                 expect(mockPause.perform).not.toHaveBeenCalled();
                 controller.clickButton();
                 expect(mockPause.perform).toHaveBeenCalled();
+
+                //test stop
+                expect(mockStop.perform).not.toHaveBeenCalled();
+                controller.clickStopButton();
+                expect(mockStop.perform).toHaveBeenCalled();
             });
 
             it("stops requesting animation frames when destroyed", function () {

@@ -68,21 +68,33 @@ define(
                 expect(testModel.timestamp).toEqual(12000);
             });
 
-            it("applies only to timers not in a playing state", function () {
-                //in a stopped state
-                testStates(testModel, 'timer', undefined, undefined, true);
-
-                //in a paused state
-                testStates(testModel, 'timer', 'pause', undefined, true);
-
-                //in a playing state
-                testStates(testModel, 'timer', 'play', undefined, false);
-
-                //not a timer
-                testStates(testModel, 'clock', 'pause', undefined, false);
+            it("updates the model with a pausedTime", function () {
+                testModel.pausedTime = 12000;
+                action.perform();
+                expect(testModel.pausedTime).toEqual(undefined);
             });
 
-            function testStates(testModel, type, timerState, timestamp, expected) {
+            it("updates the model with a timerState", function () {
+                testModel.timerState = undefined;
+                action.perform();
+                expect(testModel.timerState).toEqual('started');
+            });
+
+            it("applies only to timers not in a playing state", function () {
+                //in a stopped state
+                testState('timer', 'stopped', undefined, true);
+
+                //in a paused state
+                testState('timer', 'paused', 12000, true);
+
+                //in a playing state
+                testState('timer', 'started', 12000, false);
+
+                //not a timer
+                testState('clock', 'paused', 12000, false);
+            });
+
+            function testState(type, timerState, timestamp, expected) {
                 testModel.type = type;
                 testModel.timerState = timerState;
                 testModel.timestamp = timestamp;
@@ -91,11 +103,6 @@ define(
                     expect(StartTimerAction.appliesTo(testContext)).toBeTruthy()
                 } else {
                     expect(StartTimerAction.appliesTo(testContext)).toBeFalsy()
-                }
-
-                //first test without time, this test with time
-                if (timestamp === undefined) {
-                    testStates(testModel, type, timerState, 12000, expected);
                 }
             }
         });

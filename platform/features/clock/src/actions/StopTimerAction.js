@@ -54,8 +54,7 @@ define(
             // We show this variant for timers which do not yet have
             // a target time.
             return model.type === 'timer' &&
-                (model.timestamp !== undefined ||
-                    model.timerState !== undefined);
+                    model.timerState !== 'stopped';
         };
 
         StopTimerAction.prototype.perform = function () {
@@ -66,7 +65,7 @@ define(
             }
 
             function setTimerState(model) {
-                model.timerState = undefined;
+                model.timerState = 'stopped';
             }
 
             function setPausedTime(model) {
