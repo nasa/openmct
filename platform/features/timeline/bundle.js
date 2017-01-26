@@ -38,6 +38,7 @@ define([
     "./src/directives/MCTSwimlaneDrop",
     "./src/directives/MCTSwimlaneDrag",
     "./src/services/ObjectLoader",
+    "./src/chart/MCTTimelineChart",
     "text!./res/templates/values.html",
     "text!./res/templates/timeline.html",
     "text!./res/templates/activity-gantt.html",
@@ -67,6 +68,7 @@ define([
     MCTSwimlaneDrop,
     MCTSwimlaneDrag,
     ObjectLoader,
+    MCTTimelineChart,
     valuesTemplate,
     timelineTemplate,
     activityGanttTemplate,
@@ -555,6 +557,14 @@ define([
                     "implementation": MCTSwimlaneDrag,
                     "depends": [
                         "dndService"
+                    ]
+                },
+                {
+                    "key": "mctTimelineChart",
+                    "implementation": MCTTimelineChart,
+                    "depends": [
+                        "$interval",
+                        "$log"
                     ]
                 }
             ],
