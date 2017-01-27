@@ -19,70 +19,58 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-// General About dialog styling
-// Depends on styles loaded via /platform/commonUI/general/res/sass/startup-base.scss
-.l-about {
-	&.abs {
-		overflow: auto;
-	}
-	$contentH: 200px;
-	.l-splash {
-		position: relative;
-		height: 45%;
-	}
-	.l-content {
-		position: relative;
-		margin-top: $interiorMarginLg;
-	}
-}
+@import "bourbon";
+@import "../../../../platform/commonUI/general/res/sass/constants";
 
-.s-about {
-	line-height: 120%;
-
-	a {
-		color: $colorAboutLink;
-	}
+.l-style-guide {
+    font-size: 0.9em;
+    text-align: justify;
+    margin: auto 10%;
 
     h1, h2, h3 {
-        color: pullForward($colorBodyFg, 20%);
-        margin-bottom: 1em;
+
     }
 
-    h1 {
-        font-size: 2.25em;
+    .doc-title {
+        color: rgba(#fff, 0.3);
+        text-transform: uppercase;
     }
 
-    h2 {
-        border-top: 1px solid $colorInteriorBorder;
-        font-size: 1.5em;
+    .l-section {
+        border-top: 1px solid rgba(#999, 0.3);
         margin-top: 2em;
         padding-top: 1em;
-    }
 
-    h3 {
-        margin-top: 2em;
-    }
+        .cols {
+            @include display(flex);
+            @include flex-direction(row);
 
-	.s-description,
-	.s-button {
-		line-height: 2em;
-	}
-	.l-licenses-software {
-		.l-license-software {
-			border-top: 1px solid $colorInteriorBorder;
-			padding: 0.5em 0;
-			&:first-child {
-				border-top: none;
-			}
-			em {
-				color: pushBack($colorBodyFg, 20%);
-			}
-			h3 {
-				font-size: 1.25em;
-			}
-			.s-license-text {
-				font-size: 0.9em;
-			}
-		}
-	}
+            .col {
+                @include flex(1 1 auto);
+                &:not(:last-child) { margin-right: $interiorMargin * 4; }
+                min-width: 300px;
+                img { width: 100%; }
+            }
+
+            &.cols1-1 {
+                // 2 cols, equal width
+                .col {
+                    width: 50%;
+                }
+            }
+
+            &.cols1-2 {
+                // 3 cols, first is 1/3 of the width
+                .col:first-child { width: 33%; }
+                .col:last-child { width: 66%;  }
+            }
+
+            &.cols2-1 {
+                // 3 cols, first is 2/3 of the width
+                .col:first-child { width: 66%; }
+                .col:last-child { width: 33%;  }
+            }
+        }
+    }
 }
+

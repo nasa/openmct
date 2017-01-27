@@ -19,24 +19,34 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-// Styles for extended text copy
+/*global define*/
 
-.abs.l-standalone {
-	$d: 20%;
-	padding: $d/4 $d;
-}
+define(
+    [],
+    function () {
+        "use strict";
 
-.s-text {
-	font-size: 0.8em;
-	ol, ul {
-		list-style: square;
-		margin-left: 1.5em;
-		li {
+        function ExampleStyleGuideModelProvider($q) {
+            var pages = {};
 
-		}
-	}
+            // Add pages
+            pages['intro'] = {
+                name: "Intro",
+                type: "styleguide.intro"
+            };
 
-	h1, h2, h3 {
-        font-weight: 200 !important;
+            pages['controls'] = {
+                name: "Controls",
+                type: "styleguide.controls"
+            };
+
+            return {
+                getModels: function () {
+                    return $q.when(pages);
+                }
+            };
+        }
+
+        return ExampleStyleGuideModelProvider
     }
-}
+);

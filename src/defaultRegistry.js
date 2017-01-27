@@ -44,6 +44,7 @@ define([
     '../example/policy/bundle',
     '../example/profiling/bundle',
     '../example/scratchpad/bundle',
+    '../example/styleguide/bundle',
     '../example/taxonomy/bundle',
     '../example/worker/bundle',
     '../example/localTimeSystem/bundle',
