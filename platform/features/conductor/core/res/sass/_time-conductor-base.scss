@@ -351,13 +351,13 @@
             $grabTicksYOffset: (($r1H - $grabTicksH) / 2) - 2px;
             @include cursorGrab();
             &:hover {
-                $c0: rgba($colorBodyFg, 0.05);
+                $c0: rgba($colorBodyFg, 0.1);
                 $c2: transparent; // Bg
                 @include background-image(linear-gradient(
                     $c0 70%, $c2 100%
                 ));
                 svg {
-                    $c1: rgba($colorBodyFg, 0.15); // Line
+                    $c1: rgba($colorBodyFg, 0.2); // Line
                     $angle: 90deg;
                     @include background-image(linear-gradient($angle,
                         $c1 1px, $c2 1px,
