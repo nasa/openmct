@@ -886,6 +886,17 @@ openmct.install(openmct.plugins.CouchDB('http://localhost:9200'))
   when the application is first started, providing a place for a
   user to store created items.
 * `openmct.plugins.UTCTimeSystem` provides a default time system for Open MCT.
+* `openmct.plugins.URLIndicatorPlugin({
+    url: 'http://google.com',
+    icon: 'check',
+    interval: 10000,
+    label: 'Google'
+  })` adds an indicator which shows the
+  availability of a URL with the following options: 
+   - `url` : URL to indicate the status of
+   - `icon`: Icon to show in the status bar, defaults to `database`
+   - `interval`: Interval between checking the connection, defaults to `10000`
+   - `label` Name showing up as text in the status bar, defaults to url
 
 Generally, you will want to either install these plugins, or install
 different plugins that provide persistence and an initial folder
