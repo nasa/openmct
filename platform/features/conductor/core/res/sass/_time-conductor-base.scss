@@ -346,27 +346,27 @@
             content: $i;
         }
         .l-axis-holder {
-            $grabTicksH: 8px;
-            $grabTicksXSpace: 3px;
-            $grabTicksYOffset: (($r1H - $grabTicksH) / 2) - 2px;
+            $c0: rgba($colorBodyFg, 0.1);
+            $c2: transparent;
+            $grabTicksH: 3px;
+            $grabTicksXSpace: 4px;
+            $grabTicksYOffset: 0;
             @include cursorGrab();
+            svg {
+                $c1: rgba($colorBodyFg, 0.2);
+                $angle: 90deg;
+                @include background-image(linear-gradient($angle,
+                    $c1 1px, $c2 1px,
+                    $c2 100%
+                ));
+                background-position: center $grabTicksYOffset;
+                background-repeat: repeat-x;
+                background-size: $grabTicksXSpace $grabTicksH;
+            }
             &:hover {
-                $c0: rgba($colorBodyFg, 0.1);
-                $c2: transparent; // Bg
                 @include background-image(linear-gradient(
                     $c0 70%, $c2 100%
                 ));
-                svg {
-                    $c1: rgba($colorBodyFg, 0.2); // Line
-                    $angle: 90deg;
-                    @include background-image(linear-gradient($angle,
-                        $c1 1px, $c2 1px,
-                        $c2 100%
-                    ));
-                    background-position: center $grabTicksYOffset;
-                    background-repeat: repeat-x;
-                    background-size: $grabTicksXSpace $grabTicksH;
-                }
             }
         }
     }
