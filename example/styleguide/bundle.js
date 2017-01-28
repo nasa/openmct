@@ -73,8 +73,12 @@ define([
             ],
             "stylesheets": [
                 {
-                    "stylesheetUrl": "css/style-guide.css",
-                    "priority": "mandatory"
+                    "stylesheetUrl": "css/style-guide-espresso.css",
+                    "theme": "espresso"
+                },
+                {
+                    "stylesheetUrl": "css/time-conductor-snow.css",
+                    "theme": "snow"
                 }
             ]
         }

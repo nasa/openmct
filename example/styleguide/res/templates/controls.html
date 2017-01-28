@@ -19,7 +19,59 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="l-about s-about s-text">
-    <h1>Open MCT Style Guide: Controls</h1>
-    <p>This will be the Style Guide Controls page.</p>
+<div class="l-style-guide s-text">
+    <p class="doc-title">Open MCT Style Guide: Controls</p>
+    <h1>Controls</h1>
+    <div class="l-section">
+        <p>Intro about controls</p>
+    </div>
+
+    <div class="l-section">
+        <h2>Standard Buttons</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>Use a standard button in locations where there's sufficient room and you must make it clear that the element is an interactive button element. Buttons can be displayed with only an icon, only text, or with icon and text combined.</p>
+                <p>Use an icon whenever possible to aid the user's recognition and recall. If text is to be included, it must be within a <code>span</code> with class <code>title-label</code>.</p>
+            </div>
+            <div class="col">
+                <h3>Markup</h3>
+                <pre>
+&lt;a class="s-button icon-pencil"&gt;&lt;/a&gt;
+&lt;a class="s-button"&gt;Edit&lt;/a&gt;
+&lt;a class="s-button icon-pencil"&gt;
+    &lt;span class="title-label"&gt;Edit&lt;/span&gt;
+&lt;/a&gt;</pre>
+                <h3>Examples</h3>
+                <a class="s-button icon-pencil"></a>
+                <a class="s-button">Edit</a>
+                <a class="s-button icon-pencil">
+                    <span class="title-label">Edit</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>Button Sets</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>Notes about button sets</p>
+            </div>
+            <div class="col">
+                <h3>Markup</h3>
+                <pre>
+&lt;span class="l-btn-set"&gt;
+    &lt;a class="s-button icon-magnify"&gt;&lt;/a&gt;
+    &lt;a class="s-button icon-magnify-in"&gt;&lt;/a&gt;
+    &lt;a class="s-button icon-magnify-out"&gt;&lt;/a&gt;
+&lt;/span&gt;</pre>
+                <h3>Example</h3>
+                <span class="l-btn-set">
+                    <a class="s-button icon-magnify"></a>
+                    <a class="s-button icon-magnify-in"></a>
+                    <a class="s-button icon-magnify-out"></a>
+                </span>
+            </div>
+        </div>
+    </div>
 </div>

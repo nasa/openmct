@@ -19,16 +19,44 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@import "bourbon";
-@import "../../../../platform/commonUI/general/res/sass/constants";
-
 .l-style-guide {
     font-size: 0.9em;
     text-align: justify;
     margin: auto 10%;
 
-    h1, h2, h3 {
+    h1, h2 {
+        color: pullForward($colorBodyFg, 20%);
+    }
 
+    h2 {
+        font-size: 1.25em;
+    }
+
+
+    h3 {
+        //border-bottom: 1px solid $colorInteriorBorder;
+        font-size: 0.9em;
+        margin: $interiorMargin 0;
+        &:not(first-child) { margin-top: $interiorMargin * 2; }
+        text-transform: uppercase;
+    }
+
+    code,
+    pre {
+        background-color: pushBack($colorBodyBg, 20%);
+        display: inline-block;
+        font-size: 0.8em;
+    }
+
+    code {
+        border-radius: $controlCr;
+        padding: 1px $interiorMargin;
+    }
+
+    pre {
+        border-radius: $interiorMargin;
+        margin: 0;
+        padding: $interiorMargin $interiorMarginLg;
     }
 
     .doc-title {
@@ -47,7 +75,12 @@
 
             .col {
                 @include flex(1 1 auto);
-                &:not(:last-child) { margin-right: $interiorMargin * 4; }
+                &:not(:last-child) {
+                    $v: $interiorMargin * 4;
+                    border-right: 1px solid $colorInteriorBorder;
+                    margin-right: $v;
+                    padding-right: $v;
+                }
                 min-width: 300px;
                 img { width: 100%; }
             }
