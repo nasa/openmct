@@ -340,8 +340,7 @@ Going through the properties we've defined:
 domain objects of this type.
 * The `name` of "To-Do List" is the human-readable name for this type, and will 
 be shown to users.
-* The `glyph` refers to a special character in Open MCT's custom font set; 
-this will be used as an icon.
+* The `cssclass` describes the icon that will be shown for each To-Do List.
 * The `description` is also human-readable, and will be used whenever a longer 
 explanation of what this type is should be shown.
 * Finally, the `features` property describes some special features of objects of 
@@ -446,7 +445,7 @@ the domain object type, but could have chosen any unique name.
 domain objects of that type. This means that we'll see this view for To-do Lists 
 that we create, but not for other domain objects (such as Folders.)
 
-* The `glyph` and `name` properties describe the icon and human-readable name 
+* The `cssclass` and `name` properties describe the icon and human-readable name 
 for this view to display in the UI where needed (if multiple views are available 
 for To-do Lists, the user will be able to choose one.)
 
