@@ -92,6 +92,7 @@ $colorFormLines: rgba(#fff, 0.1);
 $colorFormSectionHeader: rgba(#fff, 0.1);
 $colorInputBg: rgba(#000, 0.1);
 $colorInputFg: pullForward($colorBodyFg, 20%);
+$colorInputPlaceholder: pushBack($colorBodyFg, 20%);
 $colorFormText: rgba(#fff, 0.5);
 $colorInputIcon: pushBack($colorBodyFg, 15%);
 $colorFieldHint: pullForward($colorBodyFg, 20%);

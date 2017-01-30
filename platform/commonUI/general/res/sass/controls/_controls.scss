@@ -216,16 +216,25 @@ label.form-control.checkbox {
 input[type="text"],
 input[type="search"] {
     @include nice-input();
+    @include placeholder {
+        color: rgba($colorInputFg, 0.4);
+        font-style: italic;
+    }
     &.numeric {
         text-align: right;
     }
 }
 
-.l-input-lg input[type="text"] {  width: 100% !important; }
-.l-input-med input[type="text"] { width: 200px !important; }
-.l-input-sm input[type="text"] {  width: 50px !important; }
-.l-textarea-sm textarea { position: relative; height: 50px; }
-.l-numeric input[type="text"] { text-align: right; }
+.l-input-lg input[type="text"],
+input[type="text"].lg {  width: 100% !important; }
+.l-input-med input[type="text"],
+input[type="text"].med { width: 200px !important; }
+.l-input-sm input[type="text"],
+input[type="text"].sm {  width: 50px !important; }
+.l-textarea-sm textarea,
+textarea.sm { position: relative; height: 50px; }
+.l-numeric input[type="text"],
+input[type="text"].numeric { text-align: right; }
 
 .input-labeled {
     // Used in toolbar
