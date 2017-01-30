@@ -36,15 +36,15 @@ Building and running Open MCT in your local dev environment is very easy. Be sur
 
 1. Clone the source code
 
- `git clone https://github.com/nasa/openmct.git`
+ `$ git clone https://github.com/nasa/openmct.git`
 
 2. Install development dependencies
 
- `npm install`
+ `$ cd openmct && npm install`
 
 3. Run a local development server
 
- `npm start`
+ `openmct$ npm start`
 
 Open MCT is now running, and can be accessed by pointing a web browser at [http://localhost:8080/](http://localhost:8080/)
 
