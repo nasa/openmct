@@ -37,7 +37,7 @@
         //border-bottom: 1px solid $colorInteriorBorder;
         font-size: 0.9em;
         margin: $interiorMargin 0;
-        &:not(first-child) { margin-top: $interiorMargin * 2; }
+        &:not(:first-child) { margin-top: $interiorMarginLg * 2; }
         text-transform: uppercase;
     }
 
@@ -45,7 +45,7 @@
     pre {
         background-color: pushBack($colorBodyBg, 20%);
         display: inline-block;
-        font-size: 0.8em;
+        font-size: 0.8rem;
     }
 
     code {
@@ -55,8 +55,11 @@
 
     pre {
         border-radius: $interiorMargin;
+        display: block;
         margin: 0;
+        overflow: auto;
         padding: $interiorMargin $interiorMarginLg;
+        white-space: pre;
     }
 
     .doc-title {
