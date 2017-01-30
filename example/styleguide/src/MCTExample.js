@@ -11,7 +11,9 @@ define([
 
             $transclude(function (clone) {
                 exampleEl.append(clone);
-                codeEl.text(exampleEl.html());
+                codeEl.text(exampleEl.html()
+                    .replace(/ class="ng-scope"/g, "")
+                    .replace(/ ng-scope"/g, '"'));
             });
         }
 
