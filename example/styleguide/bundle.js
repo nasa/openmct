@@ -1,8 +1,10 @@
 define([
     "./src/ExampleStyleGuideModelProvider",
+    "./src/MCTExample",
     'legacyRegistry'
 ], function (
     ExampleStyleGuideModelProvider,
+    MCTExample,
     legacyRegistry
 ) {
     legacyRegistry.register("example/styleguide", {
@@ -59,6 +61,12 @@ define([
                             "controls"
                         ]
                     }
+                }
+            ],
+            "directives": [
+                {
+                    "key": "mctExample",
+                    "implementation": MCTExample
                 }
             ],
             "components": [
