@@ -31,7 +31,7 @@
         <div class="cols cols1-1">
             <div class="col">
                 <p>Use a standard button in locations where there's sufficient room and you must make it clear that the element is an interactive button element. Buttons can be displayed with only an icon, only text, or with icon and text combined.</p>
-                <p>Use an icon whenever possible to aid the user's recognition and recall. If text is to be included, it must be within a <code>span</code> with class <code>title-label</code>.</p>
+                <p>Use an icon whenever possible to aid the user's recognition and recall. If both and icon and text are to be used, the text must be within a <code>span</code> with class <code>.title-label</code>.</p>
             </div>
             <div class="col">
                 <h3>Markup</h3>
@@ -52,10 +52,29 @@
     </div>
 
     <div class="l-section">
+        <h2>&quot;Major&quot; Buttons</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>Major buttons allow emphasis to be placed on a button. Use this on a single button when the user has a small number of choices, and one choice is a normal default. Just add <code>.major</code> to any element that uses <code>.s-button</code>.</p>
+            </div>
+            <div class="col">
+                <h3>Markup</h3>
+                <pre>
+&lt;a class="s-button major"&gt;Ok&lt;/a&gt;
+&lt;a class="s-button"&gt;Cancel&lt;/a&gt;</pre>
+                <h3>Example</h3>
+                <a class="s-button major">Ok</a>
+                <a class="s-button">Cancel</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="l-section">
         <h2>Button Sets</h2>
         <div class="cols cols1-1">
             <div class="col">
-                <p>Notes about button sets</p>
+                <p>Use button sets to connect buttons that have related purpose or functionality. Buttons in a set round the outer corners of only the first and last buttons, any other buttons in the middle simply get division spacers.</p>
+                <p>To use, simply wrap two or more <code>.s-button</code> elements within <code>.l-btn-set</code>.</p>
             </div>
             <div class="col">
                 <h3>Markup</h3>
