@@ -122,9 +122,12 @@ define(
              */
             self.getDatum = function (telemetryObject, index) {
                 function makeNewDatum(series) {
-                    return series ?
-                        subscription.makeDatum(telemetryObject, series, index) :
-                        undefined;
+                    if (series) {
+                        if (series.getDatum) {
+                            return series.getDatum(index);
+                        }
+                        return subscription.makeDatum(telemetryObject, series, index);
+                    }
                 }
 
                 return typeof index !== 'number' ?

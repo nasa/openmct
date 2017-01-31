@@ -26,25 +26,54 @@ define([
 ], function (angular, TreeView) {
     function MCTTree(gestureService) {
         function link(scope, element) {
-            var treeView = new TreeView(gestureService),
-                unobserve = treeView.observe(function (domainObject) {
-                    if (scope.mctModel !== domainObject) {
-                        scope.mctModel = domainObject;
-                        scope.$apply();
-                    }
-                });
+            if (!scope.allowSelection) {
+                scope.allowSelection = function () {
+                    return true;
+                };
+            }
+            if (!scope.onSelection) {
+                scope.onSelection = function () {};
+            }
+            var currentSelection = scope.selectedObject;
+            var treeView = new TreeView(gestureService);
+
+            function setSelection(domainObject, event) {
+                if (currentSelection === domainObject) {
+                    return;
+                }
+                if (!scope.allowSelection(domainObject)) {
+                    treeView.value(currentSelection);
+                    return;
+                }
+                currentSelection = domainObject;
+                scope.onSelection(domainObject);
+                scope.selectedObject = domainObject;
+                if (event && event instanceof MouseEvent) {
+                    scope.$apply();
+                }
+            }
+
+            var unobserve = treeView.observe(setSelection);
 
             element.append(angular.element(treeView.elements()));
 
-            scope.$watch('mctModel', treeView.value.bind(treeView));
-            scope.$watch('mctObject', treeView.model.bind(treeView));
+            scope.$watch('selectedObject', function (object) {
+                currentSelection = object;
+                treeView.value(object);
+            });
+            scope.$watch('rootObject', treeView.model.bind(treeView));
             scope.$on('$destroy', unobserve);
         }
 
         return {
             restrict: "E",
             link: link,
-            scope: { mctObject: "=", mctModel: "=" }
+            scope: {
+                rootObject: "=",
+                selectedObject: "=",
+                onSelection: "=?",
+                allowSelection: "=?"
+            }
         };
     }
 

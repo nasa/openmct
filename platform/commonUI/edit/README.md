@@ -2,25 +2,6 @@ Contains sources and resources associated with Edit mode.
 
 # Extensions
 
-## Directives
-
-This bundle introduces the `mct-before-unload` directive, primarily for
-internal use (to prompt the user to confirm navigation away from unsaved
-changes in Edit mode.)
-
-The `mct-before-unload` directive is used as an attribute whose value is
-an Angular expression that is evaluated when navigation changes (either
-via browser-level changes, such as the refresh button, or changes to
-the Angular route, which happens when hitting the back button in Edit
-mode.) The result of this evaluation, when truthy, is shown in a browser
-dialog to allow the user to confirm navigation. When falsy, no prompt is
-shown, allowing these dialogs to be shown conditionally. (For instance, in
-Edit mode, prompts are only shown if user-initiated changes have
-occurred.)
-
-This directive may be attached to any element; its behavior will be enforced
-so long as that element remains within the DOM.
-
 # Toolbars
 
 Views may specify the contents of a toolbar through a `toolbar`

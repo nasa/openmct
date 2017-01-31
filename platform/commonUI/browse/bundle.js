@@ -41,7 +41,6 @@ define([
     "text!./res/templates/items/items.html",
     "text!./res/templates/browse/object-properties.html",
     "text!./res/templates/browse/inspector-region.html",
-    "text!./res/templates/view-object.html",
     'legacyRegistry'
 ], function (
     BrowseController,
@@ -64,7 +63,6 @@ define([
     itemsTemplate,
     objectPropertiesTemplate,
     inspectorRegionTemplate,
-    viewObjectTemplate,
     legacyRegistry
 ) {
 
@@ -72,14 +70,13 @@ define([
         "extensions": {
             "routes": [
                 {
-                    "when": "/browse/:ids*",
+                    "when": "/browse/:ids*?",
                     "template": browseTemplate,
                     "reloadOnSearch": false
                 },
                 {
                     "when": "",
-                    "template": browseTemplate,
-                    "reloadOnSearch": false
+                    "redirectTo": "/browse/"
                 }
             ],
             "constants": [
@@ -143,10 +140,6 @@ define([
             ],
             "representations": [
                 {
-                    "key": "view-object",
-                    "template": viewObjectTemplate
-                },
-                {
                     "key": "browse-object",
                     "template": browseObjectTemplate,
                     "gestures": [
@@ -205,7 +198,10 @@ define([
             "services": [
                 {
                     "key": "navigationService",
-                    "implementation": NavigationService
+                    "implementation": NavigationService,
+                    "depends": [
+                        "$window"
+                    ]
                 }
             ],
             "actions": [
@@ -213,10 +209,7 @@ define([
                     "key": "navigate",
                     "implementation": NavigateAction,
                     "depends": [
-                        "navigationService",
-                        "$q",
-                        "policyService",
-                        "$window"
+                        "navigationService"
                     ]
                 },
                 {

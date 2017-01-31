@@ -20,103 +20,70 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    ["../../src/representers/EditRepresenter"],
-    function (EditRepresenter) {
+define([
+    '../../src/representers/EditRepresenter'
+], function (
+    EditRepresenter
+) {
+    describe('EditRepresenter', function () {
+        var $log,
+            $scope,
+            representer;
 
-        describe("The Edit mode representer", function () {
-            var mockQ,
-                mockLog,
-                mockScope,
-                testRepresentation,
-                mockDomainObject,
-                mockStatusCapability,
-                mockEditorCapability,
-                mockCapabilities,
-                representer;
 
-            function mockPromise(value) {
-                return {
-                    then: function (callback) {
-                        return mockPromise(callback(value));
-                    }
-                };
-            }
+        beforeEach(function () {
+            $log = jasmine.createSpyObj('$log', ['debug']);
+            $scope = {};
+            representer = new EditRepresenter($log, $scope);
+        });
+
+        it('injects a commit function in scope', function () {
+            expect($scope.commit).toEqual(jasmine.any(Function));
+        });
+
+        describe('representation', function () {
+            var domainObject,
+                representation;
 
             beforeEach(function () {
-                mockQ = { when: mockPromise };
-                mockLog = jasmine.createSpyObj("$log", ["info", "debug"]);
-                mockScope = jasmine.createSpyObj("$scope", ["$watch", "$on"]);
-                testRepresentation = { key: "test" };
-                mockDomainObject = jasmine.createSpyObj("domainObject", [
-                    "getId",
-                    "getModel",
-                    "getCapability",
-                    "useCapability",
-                    "hasCapability"
+                domainObject = jasmine.createSpyObj('domainObject', [
+                    'getId',
+                    'getModel',
+                    'useCapability'
                 ]);
-                mockStatusCapability =
-                    jasmine.createSpyObj("statusCapability", ["listen"]);
-                mockEditorCapability =
-                    jasmine.createSpyObj("editorCapability", ["isEditContextRoot"]);
 
-                mockCapabilities = {
-                    'status': mockStatusCapability,
-                    'editor': mockEditorCapability
+                domainObject.getId.andReturn('anId');
+                domainObject.getModel.andReturn({name: 'anObject'});
+
+                representation = {
+                    key: 'someRepresentation'
                 };
-
-                mockDomainObject.getModel.andReturn({});
-                mockDomainObject.hasCapability.andReturn(true);
-                mockDomainObject.useCapability.andReturn(true);
-                mockDomainObject.getCapability.andCallFake(function (capability) {
-                    return mockCapabilities[capability];
-                });
-
-                representer = new EditRepresenter(mockQ, mockLog, mockScope);
-                representer.represent(testRepresentation, mockDomainObject);
+                $scope.model = {name: 'anotherName'};
+                $scope.configuration = {some: 'config'};
+                representer.represent(representation, domainObject);
             });
 
-            it("provides a commit method in scope", function () {
-                expect(mockScope.commit).toEqual(jasmine.any(Function));
+            it('logs a message when commiting', function () {
+                $scope.commit('Test Message');
+                expect($log.debug)
+                    .toHaveBeenCalledWith('Committing  anObject (anId): Test Message');
             });
 
-            it("Sets edit view template on edit mode", function () {
-                mockStatusCapability.listen.mostRecentCall.args[0](['editing']);
-                mockEditorCapability.isEditContextRoot.andReturn(true);
-                expect(mockScope.viewObjectTemplate).toEqual('edit-object');
+            it('mutates the object when committing', function () {
+                $scope.commit('Test Message');
+
+                expect(domainObject.useCapability)
+                    .toHaveBeenCalledWith('mutation', jasmine.any(Function));
+
+                var mutateValue = domainObject.useCapability.calls[0].args[1]();
+
+                expect(mutateValue.configuration.someRepresentation)
+                    .toEqual({some: 'config'});
+                expect(mutateValue.name).toEqual('anotherName');
             });
-
-            it("Cleans up listeners on scope destroy", function () {
-                representer.listenHandle = jasmine.createSpy('listen');
-                mockScope.$on.mostRecentCall.args[1]();
-                expect(representer.listenHandle).toHaveBeenCalled();
-            });
-
-            it("mutates upon observed changes", function () {
-                mockScope.model = { someKey: "some value" };
-                mockScope.configuration = { someConfiguration: "something" };
-
-                mockScope.commit("Some message");
-
-                // Should have mutated the object...
-                expect(mockDomainObject.useCapability).toHaveBeenCalledWith(
-                    "mutation",
-                    jasmine.any(Function)
-                );
-
-                // Finally, check that the provided mutation function
-                // includes both model and configuration
-                expect(
-                    mockDomainObject.useCapability.mostRecentCall.args[1]()
-                ).toEqual({
-                    someKey: "some value",
-                    configuration: {
-                        test: { someConfiguration: "something" }
-                    }
-                });
-            });
-
 
         });
-    }
-);
+
+
+    });
+});

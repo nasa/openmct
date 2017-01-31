@@ -33,10 +33,12 @@ define(
          */
         function SaveAction(
             dialogService,
+            notificationService,
             context
         ) {
             this.domainObject = (context || {}).domainObject;
             this.dialogService = dialogService;
+            this.notificationService = notificationService;
         }
 
         /**
@@ -47,7 +49,8 @@ define(
          * @memberof platform/commonUI/edit.SaveAction#
          */
         SaveAction.prototype.perform = function () {
-            var domainObject = this.domainObject,
+            var self = this,
+                domainObject = this.domainObject,
                 dialog = new SaveInProgressDialog(this.dialogService);
 
             // Invoke any save behavior introduced by the editor capability;
@@ -58,15 +61,21 @@ define(
                 return domainObject.getCapability("editor").save();
             }
 
-            function hideBlockingDialog() {
+            function onSuccess() {
                 dialog.hide();
+                self.notificationService.info("Save Succeeded");
+            }
+
+            function onFailure() {
+                dialog.hide();
+                self.notificationService.error("Save Failed");
             }
 
             dialog.show();
 
             return doSave()
-                .then(hideBlockingDialog)
-                .catch(hideBlockingDialog);
+                .then(onSuccess)
+                .catch(onFailure);
         };
 
         /**

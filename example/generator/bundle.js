@@ -92,7 +92,10 @@ define([
                     "features": "creation",
                     "model": {
                         "telemetry": {
-                            "period": 10
+                            "period": 10,
+                            "amplitude": 1,
+                            "offset": 0,
+                            "dataRateInHz": 1
                         }
                     },
                     "telemetry": {
@@ -133,6 +136,42 @@ define([
                             "property": [
                                 "telemetry",
                                 "period"
+                            ],
+                            "pattern": "^\\d*(\\.\\d*)?$"
+                        },
+                        {
+                            "name": "Amplitude",
+                            "control": "textfield",
+                            "cssclass": "l-input-sm l-numeric",
+                            "key": "amplitude",
+                            "required": true,
+                            "property": [
+                                "telemetry",
+                                "amplitude"
+                            ],
+                            "pattern": "^\\d*(\\.\\d*)?$"
+                        },
+                        {
+                            "name": "Offset",
+                            "control": "textfield",
+                            "cssclass": "l-input-sm l-numeric",
+                            "key": "offset",
+                            "required": true,
+                            "property": [
+                                "telemetry",
+                                "offset"
+                            ],
+                            "pattern": "^\\d*(\\.\\d*)?$"
+                        },
+                        {
+                            "name": "Data Rate (hz)",
+                            "control": "textfield",
+                            "cssclass": "l-input-sm l-numeric",
+                            "key": "dataRateInHz",
+                            "required": true,
+                            "property": [
+                                "telemetry",
+                                "dataRateInHz"
                             ],
                             "pattern": "^\\d*(\\.\\d*)?$"
                         }

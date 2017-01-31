@@ -35,11 +35,15 @@ define(
          * @memberof platform/commonUI/dialog
          * @constructor
          */
-        function DialogService(overlayService, $q, $log) {
+        function DialogService(overlayService, $q, $log, $document) {
             this.overlayService = overlayService;
             this.$q = $q;
             this.$log = $log;
             this.activeOverlay = undefined;
+
+            this.findBody = function () {
+                return $document.find('body');
+            };
         }
 
         /**
@@ -60,7 +64,8 @@ define(
             // input is asynchronous.
             var deferred = this.$q.defer(),
                 self = this,
-                overlay;
+                overlay,
+                handleEscKeydown;
 
             // Confirm function; this will be passed in to the
             // overlay-dialog template and associated with a
@@ -76,12 +81,21 @@ define(
             // Cancel or X button click
             function cancel() {
                 deferred.reject();
+                self.findBody().off('keydown', handleEscKeydown);
                 self.dismissOverlay(overlay);
             }
+
+            handleEscKeydown = function (event) {
+                if (event.keyCode === 27) {
+                    cancel();
+                }
+            };
 
             // Add confirm/cancel callbacks
             model.confirm = confirm;
             model.cancel = cancel;
+
+            this.findBody().on('keydown', handleEscKeydown);
 
             if (this.canShowDialog(model)) {
                 // Add the overlay using the OverlayService, which

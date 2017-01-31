@@ -23,145 +23,74 @@
 /**
  * MCTRepresentationSpec. Created by vwoeltje on 11/6/14.
  */
-define(
-    ["../../src/navigation/NavigateAction"],
-    function (NavigateAction) {
+define([
+    "../../src/navigation/NavigateAction"
+], function (
+    NavigateAction
+) {
 
-        describe("The navigate action", function () {
-            var mockNavigationService,
-                mockQ,
-                mockDomainObject,
-                mockPolicyService,
-                mockNavigatedObject,
-                mockWindow,
-                capabilities,
-                action;
+    describe("The navigate action", function () {
+        var mockNavigationService,
+            mockDomainObject,
+            action;
 
-            function mockPromise(value) {
-                return {
-                    then: function (callback) {
-                        return mockPromise(callback(value));
-                    }
-                };
-            }
 
-            beforeEach(function () {
-                capabilities = {};
-
-                mockQ = { when: mockPromise };
-                mockNavigatedObject = jasmine.createSpyObj(
-                    "domainObject",
-                    [
-                        "getId",
-                        "getModel",
-                        "hasCapability",
-                        "getCapability"
-                    ]
-                );
-
-                capabilities.editor = jasmine.createSpyObj("editorCapability", [
-                    "isEditContextRoot",
-                    "finish"
-                ]);
-
-                mockNavigatedObject.getCapability.andCallFake(function (capability) {
-                    return capabilities[capability];
-                });
-                mockNavigatedObject.hasCapability.andReturn(false);
-
-                mockNavigationService = jasmine.createSpyObj(
-                    "navigationService",
-                    [
-                        "setNavigation",
-                        "getNavigation"
-                    ]
-                );
-                mockNavigationService.getNavigation.andReturn(mockNavigatedObject);
-
-                mockDomainObject = jasmine.createSpyObj(
-                    "domainObject",
-                    [
-                        "getId",
-                        "getModel"
-                    ]
-                );
-
-                mockPolicyService = jasmine.createSpyObj("policyService",
-                    [
-                        "allow"
-                    ]);
-                mockWindow = jasmine.createSpyObj("$window",
-                    [
-                        "confirm"
-                    ]);
-
-                action = new NavigateAction(
-                    mockNavigationService,
-                    mockQ,
-                    mockPolicyService,
-                    mockWindow,
-                    { domainObject: mockDomainObject }
-                );
+        function waitForCall() {
+            var called = false;
+            waitsFor(function () {
+                return called;
             });
+            return function () {
+                called = true;
+            };
+        }
 
-            it("invokes the policy service to determine if navigation" +
-                " allowed", function () {
-                action.perform();
-                expect(mockPolicyService.allow)
-                    .toHaveBeenCalledWith("navigation", jasmine.any(Object), jasmine.any(Object), jasmine.any(Function));
-            });
+        beforeEach(function () {
+            mockNavigationService = jasmine.createSpyObj(
+                "navigationService",
+                [
+                    "shouldNavigate",
+                    "setNavigation"
+                ]
+            );
 
-            it("prompts user if policy rejection", function () {
-                action.perform();
-                expect(mockPolicyService.allow).toHaveBeenCalled();
-                mockPolicyService.allow.mostRecentCall.args[3]();
-                expect(mockWindow.confirm).toHaveBeenCalled();
-            });
+            mockDomainObject = {};
 
-            describe("shows a prompt", function () {
-                beforeEach(function () {
-                    // Ensure the allow callback is called synchronously
-                    mockPolicyService.allow.andCallFake(function () {
-                        return arguments[3]();
-                    });
-                });
-                it("does not navigate on prompt rejection", function () {
-                    mockWindow.confirm.andReturn(false);
-                    action.perform();
-                    expect(mockNavigationService.setNavigation)
-                        .not.toHaveBeenCalled();
-                });
-
-                it("does navigate on prompt acceptance", function () {
-                    mockWindow.confirm.andReturn(true);
-                    action.perform();
-                    expect(mockNavigationService.setNavigation)
-                        .toHaveBeenCalled();
-                });
-            });
-
-            describe("in edit mode", function () {
-                beforeEach(function () {
-                    mockNavigatedObject.hasCapability.andCallFake(function (capability) {
-                        return capability === "editor";
-                    });
-                    capabilities.editor.isEditContextRoot.andReturn(true);
-                });
-
-                it("finishes editing if in edit mode", function () {
-                    action.perform();
-                    expect(capabilities.editor.finish)
-                        .toHaveBeenCalled();
-                });
-            });
-
-            it("is only applicable when a domain object is in context", function () {
-                expect(NavigateAction.appliesTo({})).toBeFalsy();
-                expect(NavigateAction.appliesTo({
-                    domainObject: mockDomainObject
-                })).toBeTruthy();
-            });
-
+            action = new NavigateAction(
+                mockNavigationService,
+                { domainObject: mockDomainObject }
+            );
         });
-    }
-);
+
+        it("sets navigation if it is allowed", function () {
+            mockNavigationService.shouldNavigate.andReturn(true);
+            action.perform()
+                .then(waitForCall());
+            runs(function () {
+                expect(mockNavigationService.setNavigation)
+                    .toHaveBeenCalledWith(mockDomainObject, true);
+            });
+        });
+
+        it("does not set navigation if it is not allowed", function () {
+            mockNavigationService.shouldNavigate.andReturn(false);
+            var onSuccess = jasmine.createSpy('onSuccess');
+            action.perform()
+                .then(onSuccess, waitForCall());
+            runs(function () {
+                expect(onSuccess).not.toHaveBeenCalled();
+                expect(mockNavigationService.setNavigation)
+                    .not
+                    .toHaveBeenCalledWith(mockDomainObject);
+            });
+        });
+
+        it("is only applicable when a domain object is in context", function () {
+            expect(NavigateAction.appliesTo({})).toBeFalsy();
+            expect(NavigateAction.appliesTo({
+                domainObject: mockDomainObject
+            })).toBeTruthy();
+        });
+
+    });
+});

@@ -64,11 +64,11 @@ define(
                 attachStatusListener(domainObject);
             }
 
-            var navigationListener = navigationService.addListener(attachStatusListener);
+            navigationService.addListener(attachStatusListener);
 
             $scope.$on("$destroy", function () {
                 statusListener();
-                navigationListener();
+                navigationService.removeListener(attachStatusListener);
             });
         }
 

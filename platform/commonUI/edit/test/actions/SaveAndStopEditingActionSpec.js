@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/actions/SaveAndStopEditingAction"],
@@ -35,6 +36,7 @@ define(
                 mockEditorCapability,
                 actionContext,
                 dialogService,
+                notificationService,
                 mockActionCapability,
                 capabilities = {},
                 action;
@@ -79,6 +81,11 @@ define(
                     ["showBlockingMessage"]
                 );
 
+                notificationService = jasmine.createSpyObj(
+                    "notificationService",
+                    ["info", "error"]
+                );
+
                 mockDomainObject.hasCapability.andReturn(true);
                 mockDomainObject.getCapability.andCallFake(function (capability) {
                     return capabilities[capability];
@@ -87,7 +94,7 @@ define(
                 mockEditorCapability.save.andReturn(mockPromise(true));
                 mockEditorCapability.isEditContextRoot.andReturn(true);
 
-                action = new SaveAndStopEditingAction(dialogService, actionContext);
+                action = new SaveAndStopEditingAction(dialogService, notificationService, actionContext);
             });
 
 

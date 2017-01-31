@@ -25,7 +25,6 @@ define([
     "./src/controllers/EditPanesController",
     "./src/controllers/ElementsController",
     "./src/controllers/EditObjectController",
-    "./src/directives/MCTBeforeUnload",
     "./src/actions/EditAndComposeAction",
     "./src/actions/EditAction",
     "./src/actions/PropertiesAction",
@@ -37,7 +36,6 @@ define([
     "./src/policies/EditActionPolicy",
     "./src/policies/EditableLinkPolicy",
     "./src/policies/EditableMovePolicy",
-    "./src/policies/EditNavigationPolicy",
     "./src/policies/EditContextualActionPolicy",
     "./src/representers/EditRepresenter",
     "./src/representers/EditToolbarRepresenter",
@@ -65,7 +63,6 @@ define([
     EditPanesController,
     ElementsController,
     EditObjectController,
-    MCTBeforeUnload,
     EditAndComposeAction,
     EditAction,
     PropertiesAction,
@@ -77,7 +74,6 @@ define([
     EditActionPolicy,
     EditableLinkPolicy,
     EditableMovePolicy,
-    EditNavigationPolicy,
     EditContextualActionPolicy,
     EditRepresenter,
     EditToolbarRepresenter,
@@ -132,7 +128,7 @@ define([
                     "depends": [
                         "$scope",
                         "$location",
-                        "policyService"
+                        "navigationService"
                     ]
                 },
                 {
@@ -150,15 +146,6 @@ define([
                         "$timeout",
                         "objectService",
                         "typeService"
-                    ]
-                }
-            ],
-            "directives": [
-                {
-                    "key": "mctBeforeUnload",
-                    "implementation": MCTBeforeUnload,
-                    "depends": [
-                        "$window"
                     ]
                 }
             ],
@@ -212,7 +199,8 @@ define([
                     "cssclass": "icon-save labeled",
                     "description": "Save changes made to these objects.",
                     "depends": [
-                        "dialogService"
+                        "dialogService",
+                        "notificationService"
                     ]
                 },
                 {
@@ -223,7 +211,8 @@ define([
                     "cssclass": "icon-save labeled",
                     "description": "Save changes made to these objects.",
                     "depends": [
-                        "dialogService"
+                        "dialogService",
+                        "notificationService"
                     ]
                 },
                 {
@@ -237,7 +226,8 @@ define([
                         "$injector",
                         "policyService",
                         "dialogService",
-                        "copyService"
+                        "copyService",
+                        "notificationService"
                     ],
                     "priority": "mandatory"
                 },
@@ -270,11 +260,6 @@ define([
                 {
                     "category": "action",
                     "implementation": EditableLinkPolicy
-                },
-                {
-                    "category": "navigation",
-                    "message": "Continuing will cause the loss of any unsaved changes.",
-                    "implementation": EditNavigationPolicy
                 },
                 {
                     "implementation": CreationPolicy,
@@ -390,7 +375,6 @@ define([
                 {
                     "implementation": EditRepresenter,
                     "depends": [
-                        "$q",
                         "$log"
                     ]
                 },

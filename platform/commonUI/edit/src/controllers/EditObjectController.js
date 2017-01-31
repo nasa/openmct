@@ -28,18 +28,49 @@ define(
     [],
     function () {
 
+        function isDirty(domainObject) {
+            var navigatedObject = domainObject,
+                editorCapability = navigatedObject &&
+                    navigatedObject.getCapability("editor");
+
+            return editorCapability &&
+                editorCapability.isEditContextRoot() &&
+                editorCapability.dirty();
+        }
+
+        function cancelEditing(domainObject) {
+            var navigatedObject = domainObject,
+                editorCapability = navigatedObject &&
+                    navigatedObject.getCapability("editor");
+
+            return editorCapability &&
+                editorCapability.finish();
+        }
+
         /**
          * Controller which is responsible for populating the scope for
          * Edit mode
          * @memberof platform/commonUI/edit
          * @constructor
          */
-        function EditObjectController($scope, $location, policyService) {
+        function EditObjectController($scope, $location, navigationService) {
             this.scope = $scope;
-            this.policyService = policyService;
+            var domainObject = $scope.domainObject;
 
-            var navigatedObject;
-            function setViewForDomainObject(domainObject) {
+            var removeCheck = navigationService
+                .checkBeforeNavigation(function () {
+                    if (isDirty(domainObject)) {
+                        return "Continuing will cause the loss of any unsaved changes.";
+                    }
+                    return false;
+                });
+
+            $scope.$on('$destroy', function () {
+                removeCheck();
+                cancelEditing(domainObject);
+            });
+
+            function setViewForDomainObject() {
 
                 var locationViewKey = $location.search().view;
 
@@ -54,33 +85,14 @@ define(
                     ((domainObject && domainObject.useCapability('view')) || [])
                         .forEach(selectViewIfMatching);
                 }
-                navigatedObject = domainObject;
             }
 
-            $scope.$watch('domainObject', setViewForDomainObject);
+            setViewForDomainObject();
 
             $scope.doAction = function (action) {
                 return $scope[action] && $scope[action]();
             };
         }
-
-        /**
-         * Get the warning to show if the user attempts to navigate
-         * away from Edit mode while unsaved changes are present.
-         * @returns {string} the warning to show, or undefined if
-         *          there are no unsaved changes
-         */
-        EditObjectController.prototype.getUnloadWarning = function () {
-            var navigatedObject = this.scope.domainObject,
-                policyMessage;
-
-            this.policyService.allow("navigation", navigatedObject, undefined, function (message) {
-                policyMessage = message;
-            });
-
-            return policyMessage;
-
-        };
 
         return EditObjectController;
     }

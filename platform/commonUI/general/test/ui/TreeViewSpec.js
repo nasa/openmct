@@ -289,8 +289,9 @@ define([
             });
 
             it("notifies listeners when value is changed", function () {
-                treeView.value(mockDomainObject);
-                expect(mockCallback).toHaveBeenCalledWith(mockDomainObject);
+                treeView.value(mockDomainObject, {some: event});
+                expect(mockCallback)
+                    .toHaveBeenCalledWith(mockDomainObject, {some: event});
             });
 
             it("does not notify listeners when deactivated", function () {

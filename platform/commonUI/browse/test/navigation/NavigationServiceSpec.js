@@ -28,10 +28,12 @@ define(
     function (NavigationService) {
 
         describe("The navigation service", function () {
-            var navigationService;
+            var $window,
+                navigationService;
 
             beforeEach(function () {
-                navigationService = new NavigationService();
+                $window = jasmine.createSpyObj('$window', ['confirm']);
+                navigationService = new NavigationService($window);
             });
 
             it("stores navigation state", function () {

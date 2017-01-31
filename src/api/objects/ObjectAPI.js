@@ -25,13 +25,15 @@ define([
     './object-utils',
     './MutableObject',
     './RootRegistry',
-    './RootObjectProvider'
+    './RootObjectProvider',
+    'EventEmitter'
 ], function (
     _,
     utils,
     MutableObject,
     RootRegistry,
-    RootObjectProvider
+    RootObjectProvider,
+    EventEmitter
 ) {
 
 
@@ -42,6 +44,7 @@ define([
      */
 
     function ObjectAPI() {
+        this.eventEmitter = new EventEmitter();
         this.providers = {};
         this.rootRegistry = new RootRegistry();
         this.rootProvider = new RootObjectProvider(this.rootRegistry);
@@ -175,7 +178,9 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.mutate = function (domainObject, path, value) {
-        return new MutableObject(domainObject).set(path, value);
+        var mutableObject =
+            new MutableObject(this.eventEmitter, domainObject);
+        return mutableObject.set(path, value);
     };
 
     /**
@@ -188,7 +193,8 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.observe = function (domainObject, path, callback) {
-        var mutableObject = new MutableObject(domainObject);
+        var mutableObject =
+            new MutableObject(this.eventEmitter, domainObject);
         mutableObject.on(path, callback);
         return mutableObject.stopListening.bind(mutableObject);
     };

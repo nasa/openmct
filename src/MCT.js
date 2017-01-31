@@ -25,18 +25,18 @@ define([
     'legacyRegistry',
     'uuid',
     './api/api',
-    'text!./adapter/templates/edit-object-replacement.html',
     './selection/Selection',
     './api/objects/object-utils',
+    './plugins/plugins',
     './ui/ViewRegistry'
 ], function (
     EventEmitter,
     legacyRegistry,
     uuid,
     api,
-    editObjectTemplate,
     Selection,
     objectUtils,
+    plugins,
     ViewRegistry
 ) {
     /**
@@ -192,7 +192,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name telemetry
          */
-        this.telemetry = new api.TelemetryAPI();
+        this.telemetry = new api.TelemetryAPI(this);
 
         this.TimeConductor = this.conductor; // compatibility for prototype
         this.on('navigation', this.selection.clear.bind(this.selection));
@@ -279,6 +279,8 @@ define([
     MCT.prototype.install = function (plugin) {
         plugin(this);
     };
+
+    MCT.prototype.plugins = plugins;
 
     return MCT;
 });
