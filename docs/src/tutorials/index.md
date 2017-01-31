@@ -341,7 +341,7 @@ domain objects of this type.
 * The `name` of "To-Do List" is the human-readable name for this type, and will 
 be shown to users.
 * The `cssclass` maps to an icon that will be shown for each To-Do List. The icons 
-are defined in our [custom open MCT icon set](platform/commonUI/general/res/sass/_glyphs.scss). 
+are defined in our [custom open MCT icon set](https://github.com/nasa/openmct/blob/master/platform/commonUI/general/res/sass/_glyphs.scss). 
 A complete list of available icons will be provided in the future.
 * The `description` is also human-readable, and will be used whenever a longer 
 explanation of what this type is should be shown.
