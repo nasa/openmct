@@ -66,7 +66,7 @@ body, html {
     color: $colorBodyFg;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 100%;
-    font-weight: 200;
+    font-weight: normal;
     height: 100%;
     width: 100%;
 }
@@ -76,7 +76,9 @@ em {
 }
 
 input, textarea {
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
 }
 
 input[type="text"],
@@ -86,12 +88,14 @@ input[type="search"] {
 }
 
 h1, h2, h3 {
+    letter-spacing: 0.04em;
     margin: 0;
 }
 
 h1 {
     font-size: 1.7em;
     font-weight: normal !important;
+    letter-spacing: 0.04em;
     line-height: 120%;
     margin-bottom: 20px;
     margin-top: 0;
