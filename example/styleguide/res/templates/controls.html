@@ -33,9 +33,9 @@
                 <p>Use a standard button in locations where there's sufficient room and you must make it clear that the element is an interactive button element. Buttons can be displayed with only an icon, only text, or with icon and text combined.</p>
                 <p>Use an icon whenever possible to aid the user's recognition and recall. If both and icon and text are to be used, the text must be within a <code>span</code> with class <code>.title-label</code>.</p>
             </div>
-<mct-example><a class="s-button icon-pencil"></a>
-<a class="s-button">Edit</a>
-<a class="s-button icon-pencil">
+<mct-example><a class="s-button icon-pencil" title="Edit"></a>
+<a class="s-button" title="Edit">Edit</a>
+<a class="s-button icon-pencil" title="Edit">
     <span class="title-label">Edit</span>
 </a>
 </mct-example>
@@ -69,6 +69,16 @@
 </mct-example>
             </div>
     </div>
+
+    <div class="l-section">
+        <h2>Icon-only Buttons</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>When a button is presented within another control it may be advantageous to avoid visual clutter by using an icon-only button. These type of controls present an icon without the &quot;base&quot; of standard buttons. Icon-only buttons should only be used in a context where they are clearly an interactive element and not an object-type identifier, and should not be used with text.</p>
+            </div>
+<mct-example><a class="s-icon-button icon-pencil" title="Edit"></a>
+            </mct-example>
+        </div>
 
     <div class="l-section">
         <h2>Checkboxes</h2>
@@ -133,30 +143,6 @@
         <option value="Skynet">Skynet</option>
     </select>
 </div>
-</mct-example>
-        </div>
-    </div>
-
-    <div class="l-section">
-        <h2>Text Inputs</h2>
-        <div class="cols cols1-1">
-            <div class="col">
-                <p>Text inputs have a consistent look-and-feel across the application. The input's <code>placeholder</code> is styled to appear visually different from an entered value.</p>
-                <p>A variety of size styles are available: <code>.lg</code>, <code>.med</code> and <code>.sm</code>. Numeric inputs that benefit from right-alignment can be styled by adding <code>.numeric</code>.</p>
-            </div>
-<mct-example><input type="text" />
-<br /><br />
-<input type="text" placeholder="Enter a value" />
-<br /><br />
-<input type="text" value="A previously entered value" />
-<br /><br />
-<input type="text" class="numeric" value="Numeric" />
-<br /><br />
-<input type="text" class="lg" value="A large input" />
-<br /><br />
-<input type="text" class="med" value="A medium input" />
-<br /><br />
-<input type="text" class="sm" value="Small" />
 </mct-example>
         </div>
     </div>

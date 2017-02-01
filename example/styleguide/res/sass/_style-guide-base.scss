@@ -32,12 +32,12 @@
         font-size: 1.25em;
     }
 
-
     h3 {
-        //border-bottom: 1px solid $colorInteriorBorder;
         font-size: 0.9em;
         margin: $interiorMargin 0;
-        &:not(:first-child) { margin-top: $interiorMarginLg * 2; }
+        &:not(:first-child) {
+            margin-top: $interiorMarginLg * 2;
+        }
         text-transform: uppercase;
     }
 
@@ -85,7 +85,9 @@
                     padding-right: $v;
                 }
                 min-width: 300px;
-                img { width: 100%; }
+                img {
+                    width: 100%;
+                }
             }
 
             &.cols1-1 {
@@ -97,14 +99,48 @@
 
             &.cols1-2 {
                 // 3 cols, first is 1/3 of the width
-                .col:first-child { width: 33%; }
-                .col:last-child { width: 66%;  }
+                .col:first-child {
+                    width: 33%;
+                }
+                .col:last-child {
+                    width: 66%;
+                }
             }
 
             &.cols2-1 {
                 // 3 cols, first is 2/3 of the width
-                .col:first-child { width: 66%; }
-                .col:last-child { width: 33%;  }
+                .col:first-child {
+                    width: 66%;
+                }
+                .col:last-child {
+                    width: 33%;
+                }
+            }
+        }
+    }
+
+    // Example grid of glyphs
+    .items-holder.grid {
+        .item.glyph-item {
+            $d: 200px;
+            margin-bottom: 50px;
+            margin-right: 10px;
+            height: $d;
+            width: $d;
+            text-align: left;
+            .glyph {
+                //@include test();
+                color: pullForward($colorBodyFg, 30%);
+                font-size: 5em;
+                margin: $interiorMarginLg 0;
+                text-align: center;
+            }
+
+            table.details td.label {
+                color: pushBack($colorBodyFg, 10%);
+                text-transform: uppercase;
+                white-space: nowrap;
+                //width: 33%;
             }
         }
     }

@@ -13,36 +13,16 @@ define([
         "extensions":
         {
             "types": [
-                {
-                    "key": "styleguide.intro",
-                    "name": "Introduction",
-                    "cssclass": "icon-page",
-                    "description": "Introduction and overview to the style guide."
-                },
-                {
-                    "key": "styleguide.controls",
-                    "name": "Controls",
-                    "cssclass": "icon-page",
-                    "description": "Open MCT Controls"
-                }
+                { "key": "styleguide.intro", "name": "Introduction", "cssclass": "icon-page", "description": "Introduction and overview to the style guide" },
+                { "key": "styleguide.controls", "name": "Controls", "cssclass": "icon-page", "description": "Buttons, selects, menus, etc." },
+                { "key": "styleguide.input", "name": "Text Inputs", "cssclass": "icon-page", "description": "Various text inputs" },
+                { "key": "styleguide.glyphs", "name": "Glyphs", "cssclass": "icon-page", "description": "Glyphs overview" }
             ],
             "views": [
-                {
-                    "key": "styleguide.intro",
-                    "type": "styleguide.intro",
-                    "cssclass": "icon-page",
-                    "name": "Introduction",
-                    "templateUrl": "templates/intro.html",
-                    "editable": false
-                },
-                {
-                    "key": "styleguide.controls",
-                    "type": "styleguide.controls",
-                    "cssclass": "icon-page",
-                    "name": "Controls",
-                    "templateUrl": "templates/controls.html",
-                    "editable": false
-                }
+                { "key": "styleguide.intro", "type": "styleguide.intro", "name": "Introduction", "cssclass": "icon-page", "templateUrl": "templates/intro.html", "editable": false },
+                { "key": "styleguide.controls", "type": "styleguide.controls", "name": "Controls", "cssclass": "icon-page", "templateUrl": "templates/controls.html", "editable": false },
+                { "key": "styleguide.input", "type": "styleguide.input", "name": "Text Inputs", "cssclass": "icon-page", "templateUrl": "templates/input.html", "editable": false },
+                { "key": "styleguide.glyphs", "type": "styleguide.glyphs", "name": "Glyphs", "cssclass": "icon-page", "templateUrl": "templates/glyphs.html", "editable": false }
             ],
             "roots": [
                 {
@@ -58,7 +38,9 @@ define([
                         "name": "Style Guide",
                         "composition": [
                             "intro",
-                            "controls"
+                            "controls",
+                            "input",
+                            "glyphs"
                         ]
                     }
                 }

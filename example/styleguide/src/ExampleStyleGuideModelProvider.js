@@ -30,15 +30,10 @@ define(
             var pages = {};
 
             // Add pages
-            pages['intro'] = {
-                name: "Intro",
-                type: "styleguide.intro"
-            };
-
-            pages['controls'] = {
-                name: "Controls",
-                type: "styleguide.controls"
-            };
+            pages['intro'] = { name: "Introduction", type: "styleguide.intro" };
+            pages['controls'] = { name: "Controls", type: "styleguide.controls" };
+            pages['input'] = { name: "Text Inputs", type: "styleguide.input" };
+            pages['glyphs'] = { name: "Glyphs", type: "styleguide.glyphs" };
 
             return {
                 getModels: function () {
