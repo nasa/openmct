@@ -36,6 +36,7 @@ define([
                     "model": {
                         "type": "folder",
                         "name": "Style Guide",
+                        "location": "ROOT",
                         "composition": [
                             "intro",
                             "controls",
