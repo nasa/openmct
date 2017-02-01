@@ -41,24 +41,32 @@
         text-transform: uppercase;
     }
 
+    .w-markup {
+        //Wrap markup example "pre" element
+        background-color: $colorCode;
+        border-radius: $interiorMargin;
+        display: block;
+        padding: $interiorMargin $interiorMarginLg;
+        position: relative;
+    }
+
     code,
     pre {
-        background-color: pushBack($colorBodyBg, 20%);
-        display: inline-block;
         font-size: 0.8rem;
     }
 
     code {
+        background-color: $colorCode;
         border-radius: $controlCr;
+        display: inline-block;
         padding: 1px $interiorMargin;
     }
 
     pre {
-        border-radius: $interiorMargin;
         display: block;
         margin: 0;
         overflow: auto;
-        padding: $interiorMargin $interiorMarginLg;
+        padding-bottom: $interiorMarginLg;
         white-space: pre;
     }
 
@@ -129,8 +137,7 @@
             width: $d;
             text-align: left;
             .glyph {
-                //@include test();
-                color: pullForward($colorBodyFg, 30%);
+                color: $colorGlyphExample;
                 font-size: 5em;
                 margin: $interiorMarginLg 0;
                 text-align: center;
@@ -140,7 +147,6 @@
                 color: pushBack($colorBodyFg, 10%);
                 text-transform: uppercase;
                 white-space: nowrap;
-                //width: 33%;
             }
         }
     }

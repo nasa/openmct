@@ -67,7 +67,7 @@ define([
                     "theme": "espresso"
                 },
                 {
-                    "stylesheetUrl": "css/time-conductor-snow.css",
+                    "stylesheetUrl": "css/style-guide-snow.css",
                     "theme": "snow"
                 }
             ]

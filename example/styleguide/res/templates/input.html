@@ -31,21 +31,19 @@
         <div class="cols cols1-1">
             <div class="col">
                 <p>Text inputs have a consistent look-and-feel across the application. The input's <code>placeholder</code> is styled to appear visually different from an entered value.</p>
-                <p>A variety of size styles are available: <code>.lg</code>, <code>.med</code> and <code>.sm</code>. Numeric inputs that benefit from right-alignment can be styled by adding <code>.numeric</code>.</p>
+                <p>A variety of size styles are available: <code>.lg</code>, <code>.med</code> and <code>.sm</code>. <code>.lg</code> text inputs dynamically scale their width to 100% of their container's width. Numeric inputs that benefit from right-alignment can be styled by adding <code>.numeric</code>.</p>
             </div>
-<mct-example><input type="text" />
+<mct-example><input type="text" placeholder="Enter a value" />
 <br /><br />
-<input type="text" placeholder="Enter a value" />
+<input type="text" placeholder="Enter a value" value="An entered value" />
 <br /><br />
-<input type="text" placeholder="Enter a value" value="A previously entered value" />
-<br /><br />
-<input type="text" placeholder="Enter a value" class="numeric" value="Numeric" />
-<br /><br />
-<input type="text" placeholder="Enter a value" class="lg" value="A large input" />
+<input type="text" placeholder="Enter a value" class="sm" value="Small" />
 <br /><br />
 <input type="text" placeholder="Enter a value" class="med" value="A medium input" />
 <br /><br />
-<input type="text" placeholder="Enter a value" class="sm" value="Small" />
+<input type="text" placeholder="Enter a value" class="lg" value="A large input" />
+<br /><br />
+<input type="text" placeholder="Enter a value" class="sm numeric" value="10.9" />
 </mct-example>
         </div>
     </div>
@@ -62,14 +60,14 @@
 </div>
 <br />
 <div style="position: relative; height: 100px">
-    <textarea placeholder="Enter a value">A previously entered value</textarea>
+    <textarea placeholder="Enter a value">An entered value</textarea>
 </div>
 <br /><br />
-<textarea placeholder="Enter a value" class="sm">A sm textarea</textarea>
+<textarea placeholder="Enter a value" class="sm">A small textarea</textarea>
 <br /><br />
-<textarea placeholder="Enter a value" class="med">A med textarea</textarea>
+<textarea placeholder="Enter a value" class="med">A medium textarea</textarea>
 <br /><br />
-<textarea placeholder="Enter a value" class="lg">A lg textarea</textarea>
+<textarea placeholder="Enter a value" class="lg">A large textarea</textarea>
 </mct-example>
         </div>
     </div>

@@ -6,7 +6,7 @@ define([
 
     function MCTExample() {
         function link($scope, $element, $attrs, controller, $transclude) {
-            var codeEl = $element.find('code');
+            var codeEl = $element.find('pre');
             var exampleEl = $element.find('div');
 
             $transclude(function (clone) {
