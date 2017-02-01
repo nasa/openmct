@@ -212,14 +212,20 @@ label.form-control.checkbox {
     }
 }
 
-/******************************************************** INPUTS */
+/******************************************************** PLACEHOLDERS */
 input[type="text"],
-input[type="search"] {
-    @include nice-input();
+input[type="search"],
+textarea {
     @include placeholder {
         color: rgba($colorInputFg, 0.4);
         font-style: italic;
     }
+}
+
+/******************************************************** INPUTS */
+input[type="text"],
+input[type="search"] {
+    @include nice-input();
     &.numeric {
         text-align: right;
     }
@@ -231,10 +237,15 @@ input[type="text"].lg {  width: 100% !important; }
 input[type="text"].med { width: 200px !important; }
 .l-input-sm input[type="text"],
 input[type="text"].sm {  width: 50px !important; }
-.l-textarea-sm textarea,
-textarea.sm { position: relative; height: 50px; }
 .l-numeric input[type="text"],
 input[type="text"].numeric { text-align: right; }
+
+.l-textarea-sm textarea,
+textarea.sm { position: relative; height: 50px; }
+.l-textarea-med textarea,
+textarea.med { position: relative; height: 150px; }
+.l-textarea-lg textarea,
+textarea.lg { position: relative; height: 300px; }
 
 .input-labeled {
     // Used in toolbar
