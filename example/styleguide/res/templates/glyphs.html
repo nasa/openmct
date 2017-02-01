@@ -127,17 +127,31 @@
     <p class="doc-title">Open MCT Style Guide: Glyphs</p>
     <h1>Glyphs</h1>
     <div class="l-section">
-        <p>Intro about glyphs.</p>
+        <p>Symbolic glyphs are used extensively in Open MCT to call attention to interactive elements, identify objects, and aid in visual recall. Glyphs are made available in a custom symbols font, and have associated CSS classes for their usage. Using a font in this way (versus using images or sprites) has advantages in that each symbol is in effect a scalable vector that can be sized up or down as needed. Color can also quite easily be applied via CSS.</p>
+        <p>New glyphs can be added if needed. Take care to observe the following guidelines:
+        <ul>
+            <li>Symbols should be created at 512 pixels high, and no more than 512 pixels wide. This size is based on a &quot;crisp&quot; 16px approach.</li>
+            <li>In general, the symbol should occupy most of a square area as possible; avoid symbol aspect ratios that are squat or tall.</li>
+            <li>For consistency and legibility, symbols are designed as mostly solid shapes. Avoid using thin lines or fine detail that will be lost when the icon is sized down. In general, no stroke should be less than 32 pixels.</li>
+            <li>Symbols should be legible down to a minimum of 12 x 12 pixels.</li>
+
+        </ul>
+        </p>
     </div>
 
     <div class="l-section">
         <h2>How to Use Glyphs</h2>
         <div class="cols cols1-1">
             <div class="col">
-                <p>The best utilization of glyphs is to just include their class in the button or other element you want to use them in.</p>
+                <p>The easiest way to use a glyph is to include its CSS class in element. The CSS adds a psuedo <code>:before</code> HTML element to whatever element it's attached to that makes proper use of the symbols font.</p>
+                <p>Alternately, you can use the <code>.ui-symbol</code> class in an object that contains encoded HTML entities. This method is only recommended if you cannot use the aforementioned CSS class approach for some reason.</p>
             </div>
             <mct-example><a class="s-button icon-gear" title="Settings"></a>
-            </mct-example>
+<br /><br />
+<a class="s-icon-button icon-gear" title="Settings"></a>
+<br /><br />
+<div class="ui-symbol">&#xe901 &#xe914 &#xe922</div>
+</mct-example>
         </div>
     </div>
 
