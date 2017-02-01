@@ -24,6 +24,10 @@
     text-align: justify;
     margin: auto 10%;
 
+    a.link {
+        color: $colorKey;
+    }
+
     h1, h2 {
         color: pullForward($colorBodyFg, 20%);
     }
@@ -130,11 +134,10 @@
     // Example grid of glyphs
     .items-holder.grid {
         .item.glyph-item {
-            $d: 200px;
             margin-bottom: 50px;
             margin-right: 10px;
-            height: $d;
-            width: $d;
+            height: 200px;
+            width: 225px;
             text-align: left;
             .glyph {
                 color: $colorGlyphExample;
@@ -143,10 +146,13 @@
                 text-align: center;
             }
 
-            table.details td.label {
-                color: pushBack($colorBodyFg, 10%);
-                text-transform: uppercase;
-                white-space: nowrap;
+            table.details td {
+                font-size: inherit;
+                &.label {
+                    color: pushBack($colorBodyFg, 10%);
+                    text-transform: uppercase;
+                    white-space: nowrap;
+                }
             }
         }
     }
