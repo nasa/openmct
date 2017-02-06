@@ -39,4 +39,11 @@
 	h1, h2, h3 {
         font-weight: 200 !important;
     }
+
+    table {
+        td { font-size: inherit; }
+        tr.header {
+            background-color: rgba($colorBodyFg, 0.2);
+        }
+    }
 }

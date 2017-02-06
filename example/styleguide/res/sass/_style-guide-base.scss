@@ -75,6 +75,10 @@
         white-space: pre;
     }
 
+    table, ul {
+        margin-bottom: $interiorMarginLg;
+    }
+
     .doc-title {
         color: rgba(#fff, 0.3);
         text-transform: uppercase;
