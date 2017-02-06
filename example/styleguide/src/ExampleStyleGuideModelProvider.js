@@ -30,10 +30,12 @@ define(
             var pages = {};
 
             // Add pages
-            pages['intro'] = { name: "Introduction", type: "styleguide.intro", location: "styleguide:folder" };
-            pages['controls'] = { name: "Controls", type: "styleguide.controls", location: "styleguide:folder" };
-            pages['input'] = { name: "Text Inputs", type: "styleguide.input", location: "styleguide:folder" };
-            pages['glyphs'] = { name: "Glyphs", type: "styleguide.glyphs", location: "styleguide:folder" };
+            pages['intro'] = { name: "Introduction", type: "styleguide.intro", location: "styleguide:home" };
+            pages['standards'] = { name: "Standards", type: "styleguide.standards", location: "styleguide:home" };
+            pages['controls'] = { name: "Controls", type: "styleguide.controls", location: "styleguide:ui-elements" };
+            pages['input'] = { name: "Text Inputs", type: "styleguide.input", location: "styleguide:ui-elements" };
+            pages['menus'] = { name: "Menus", type: "styleguide.menus", location: "styleguide:ui-elements" };
+            pages['glyphs'] = { name: "Glyphs", type: "styleguide.glyphs", location: "styleguide:home" };
 
             return {
                 getModels: function () {

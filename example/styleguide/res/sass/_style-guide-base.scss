@@ -50,7 +50,7 @@
         background-color: $colorCode;
         border-radius: $interiorMargin;
         display: block;
-        padding: $interiorMargin $interiorMarginLg;
+        padding: $interiorMarginLg $interiorMarginLg;
         position: relative;
     }
 
@@ -69,6 +69,7 @@
     pre {
         display: block;
         margin: 0;
+        max-height: 300px;
         overflow: auto;
         padding-bottom: $interiorMarginLg;
         white-space: pre;
