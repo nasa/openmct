@@ -64,7 +64,16 @@ requirejs.config({
         "uuid": "bower_components/node-uuid/uuid",
         "zepto": "bower_components/zepto/zepto.min",
         "lodash": "bower_components/lodash/lodash",
-        "d3": "bower_components/d3/d3.min"
+        "d3-selection": "node_modules/d3-selection/build/d3-selection.min",
+        "d3-scale": "node_modules/d3-scale/build/d3-scale.min",
+        "d3-axis": "node_modules/d3-axis/build/d3-axis.min",
+        "d3-array": "node_modules/d3-array/build/d3-array.min",
+        "d3-collection": "node_modules/d3-collection/build/d3-collection.min",
+        "d3-color": "node_modules/d3-color/build/d3-color.min",
+        "d3-format": "node_modules/d3-format/build/d3-format.min",
+        "d3-interpolate": "node_modules/d3-interpolate/build/d3-interpolate.min",
+        "d3-time": "node_modules/d3-time/build/d3-time.min",
+        "d3-time-format": "node_modules/d3-time-format/build/d3-time-format.min"
     },
 
     "shim": {
@@ -89,8 +98,15 @@ requirejs.config({
         "lodash": {
             "exports": "lodash"
         },
-        "d3": {
-            "exports": "d3"
+        "d3-selection": {
+            "exports": "d3-selection"
+        },
+        "d3-scale": {
+            "deps": ["d3-array", "d3-collection", "d3-color", "d3-format", "d3-interpolate", "d3-time", "d3-time-format"],
+            "exports": "d3-scale"
+        },
+        "d3-axis": {
+            "exports": "d3-axis"
         }
     },
 
