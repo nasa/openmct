@@ -32,3 +32,6 @@ $colorCode: rgba(black, 0.1);
 $colorGlyphExample: darken($colorBodyBg, 30%);
 
 @import "style-guide-base";
+
+div.themed.snow { display: block; }
+span.themed.snow { display: inline; }

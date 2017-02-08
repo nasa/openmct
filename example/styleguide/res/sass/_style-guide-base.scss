@@ -79,6 +79,10 @@
         margin-bottom: $interiorMarginLg;
     }
 
+    .themed {
+        display: none; // Each themed styleguide file will set this to block.
+    }
+
     .doc-title {
         color: rgba(#fff, 0.3);
         text-transform: uppercase;
@@ -138,11 +142,11 @@
 
     // Example grid of glyphs
     .items-holder.grid {
-        .item.glyph-item {
+        .item.glyph-item,
+        .item.swatch-item {
             margin-bottom: 50px;
             margin-right: 10px;
-            height: 200px;
-            width: 225px;
+            position: relative;
             text-align: left;
             .glyph {
                 color: $colorGlyphExample;
@@ -158,6 +162,35 @@
                     text-transform: uppercase;
                     white-space: nowrap;
                 }
+            }
+        }
+
+        .item.glyph-item {
+            width: 225px;
+            height: 200px;
+        }
+
+        .item.swatch-item {
+            $h: 150px;
+            $d: 75px;
+            width: 200px;
+            height: $h;
+            .glyph {
+                text-shadow: 0px 1px 10px rgba(black, 0.3);
+            }
+
+            .h-swatch {
+                position: relative;
+                height: $d + $interiorMarginLg;
+            }
+
+            .swatch {
+                height: $d; width: $d;
+                border: 1px solid $colorInteriorBorder;
+                border-radius: 100%;
+                position: absolute;
+                left: 50%;
+                @include transform(translateX(-50%));
             }
         }
     }

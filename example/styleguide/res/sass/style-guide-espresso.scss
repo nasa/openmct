@@ -32,3 +32,6 @@ $colorCode: rgba(black, 0.2);
 $colorGlyphExample: #fff;
 
 @import "style-guide-base";
+
+div.themed.espresso { display: block; }
+span.themed.espresso { display: inline; }
