@@ -34,7 +34,7 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function LocatorController($scope, $timeout, objectService, typeService) {
+        function LocatorController($scope, $timeout, objectService, typeService, policyService) {
             // Populate values needed by the locator control. These are:
             // * rootObject: The top-level object, since we want to show
             //               the full tree
@@ -85,15 +85,15 @@ define(
                     );
                 }
 
-                $scope.canCreateNewFolder = ($scope.treeModel.selectedObject.model.type === "folder");
+                $scope.canCreateNewFolder = policyService.allow(
+                    "composition", 
+                    typeService.getType($scope.treeModel.selectedObject.model.type), 
+                    typeService.getType('folder'));
             }
 
             function createNewFolder(name, parent) {
-                var folderType = typeService.listTypes().filter(function (type) {
-                    return type.typeDef.key === "folder";
-                })[0];
-                
-                var newModel = folderType.getInitialModel(),
+                var folderType = typeService.getType('folder'),
+                    newModel = folderType.getInitialModel(),
                     newObject,
                     editorCapability;
 

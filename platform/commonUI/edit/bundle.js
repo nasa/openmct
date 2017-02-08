@@ -145,7 +145,8 @@ define([
                         "$scope",
                         "$timeout",
                         "objectService",
-                        "typeService"
+                        "typeService",
+                        "policyService"
                     ]
                 }
             ],
