@@ -240,6 +240,8 @@ define(
         TelemetryTableController.prototype.loadColumns = function (objects) {
             var telemetryApi = this.openmct.telemetry;
 
+            this.$scope.headers = [];
+
             if (objects.length > 0) {
                 var metadatas = objects.map(telemetryApi.getMetadata.bind(telemetryApi));
                 var allColumns = telemetryApi.commonValuesForHints(metadatas, []);
@@ -437,8 +439,6 @@ define(
                     return Promise.resolve(objects);
                 }
             }
-
-            scope.headers = [];
             scope.rows = [];
 
             return getDomainObjects()

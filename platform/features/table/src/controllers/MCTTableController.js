@@ -122,7 +122,11 @@ define(
             $scope.$watchCollection('filters', function () {
                 self.setRows($scope.rows);
             });
-            $scope.$watch('headers', this.setHeaders);
+            $scope.$watch('headers', function (newHeaders, oldHeaders) {
+                if (newHeaders !== oldHeaders) {
+                    this.setHeaders(newHeaders);
+                }
+            }.bind(this));
             $scope.$watch('rows', this.setRows);
 
             /*
