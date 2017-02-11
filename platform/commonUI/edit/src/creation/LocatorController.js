@@ -89,46 +89,6 @@ define(
                     typeService.getType('folder'));
             }
 
-            function createNewFolder(name, parent) {
-                var folderType = typeService.getType('folder'),
-                    newModel = folderType.getInitialModel(),
-                    editorCapability;
-
-                newModel.type = folderType.getKey();
-                newModel.location = parent.getId();
-                newModel.name = name;
-
-                // Freezing so as to not allow interaction
-                // while the new folder is being created.
-                freezeDialog();
-                return instantiateAndPersistNewFolder(newModel, parent).then(function (newFolder) {
-                    scrollToItem(newFolder);
-                    unfreezeDialog();
-                });
-            }
-
-            function instantiateAndPersistNewFolder(newModel, parent) {
-                var newObject = parent.useCapability('instantiation', newModel);
-                return newObject.getCapability('persistence').persist().then(function () {
-                    parent.getCapability('composition').add(newObject);
-                }).then(function () {
-                    parent.getCapability('persistence').persist();
-                    return newObject;
-                });
-            }
-
-            function freezeDialog() {
-                console.log("Freezing placeholder.");
-            }
-
-            function unfreezeDialog() {
-                console.log("Unfreezing placeholder.");
-            }
-
-            function scrollToItem(treeItem) {
-                $scope.treeModel.selectedObject = treeItem;
-            }
-
             $scope.newFolderFormData = {};
             $scope.newFolderCreationTriggered = false;
 
@@ -140,17 +100,56 @@ define(
                 $scope.newFolderCreationTriggered = false;
             };
 
+            function createNewFolder(name, parent) {
+                var folderType = typeService.getType('folder'),
+                    newModel = folderType.getInitialModel(),
+                    editorCapability;
+
+                newModel.type = folderType.getKey();
+                newModel.location = parent.getId();
+                newModel.name = name;
+
+                return instantiateAndPersistNewFolder(newModel, parent);
+            }
+
+            function instantiateAndPersistNewFolder(newModel, parent) {
+                var newObject = parent.useCapability('instantiation', newModel);
+                return newObject.getCapability('persistence').persist()
+                    .then(function () {
+                        parent.getCapability('composition').add(newObject);
+                    })
+                    .then(function () {
+                        parent.getCapability('persistence').persist();
+                        return newObject;
+                    });
+            }
+
             $scope.newFolderCreateButtonClickHandler = function () {
                 if ($scope.canCreateNewFolder) {
+                    freezeDialog();
                     createNewFolder($scope.newFolderFormData.name, $scope.treeModel.selectedObject)
-                    .then(function () {
-                        $scope.newFolderFormData = {};
-                        $scope.newFolderCreationTriggered = false;
-                    });
+                    .then(function (newFolder) {
+                        $scope.treeModel.selectedObject = newFolder;
+                    })
+                    .then(unfreezeDialog)
+                    .then(clearNewFolderForm);
                 } else {
                     console.error("Attempted to create a new folder without being able to.");
                 }
             };
+
+            function freezeDialog() {
+                console.log("Freezing placeholder.");
+            }
+
+            function unfreezeDialog() {
+                console.log("Unfreezing placeholder.");
+            }
+
+            function clearNewFolderForm() {
+                $scope.newFolderFormData = {};
+                $scope.newFolderCreationTriggered = false;
+            }
 
             // Initial state for the tree's model
             $scope.treeModel = { selectedObject: $scope.ngModel[$scope.field] };
