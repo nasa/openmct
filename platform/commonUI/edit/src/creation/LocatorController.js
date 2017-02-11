@@ -101,7 +101,7 @@ define(
                 // Freezing so as to not allow interaction
                 // while the new folder is being created.
                 freezeDialog();
-                instantiateAndPersistNewFolder(newModel, parent).then(function (newFolder) {
+                return instantiateAndPersistNewFolder(newModel, parent).then(function (newFolder) {
                     scrollToItem(newFolder);
                     unfreezeDialog();
                 });
@@ -126,7 +126,7 @@ define(
             }
 
             function scrollToItem(treeItem) {
-                console.log("Scrolling placeholder.");
+                $scope.treeModel.selectedObject = treeItem;
             }
 
             $scope.newFolderFormData = {};
@@ -142,7 +142,11 @@ define(
 
             $scope.newFolderCreateButtonClickHandler = function () {
                 if ($scope.canCreateNewFolder) {
-                    createNewFolder($scope.newFolderFormData.name, $scope.treeModel.selectedObject);
+                    createNewFolder($scope.newFolderFormData.name, $scope.treeModel.selectedObject)
+                    .then(function () {
+                        $scope.newFolderFormData = {};
+                        $scope.newFolderCreationTriggered = false;
+                    });
                 } else {
                     console.error("Attempted to create a new folder without being able to.");
                 }
