@@ -144,7 +144,6 @@ define([
                     "depends": [
                         "$scope",
                         "$timeout",
-                        "$q",
                         "objectService",
                         "typeService",
                         "policyService"

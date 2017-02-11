@@ -32,7 +32,7 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function LocatorController($scope, $timeout, $q, objectService, typeService, policyService) {
+        function LocatorController($scope, $timeout, objectService, typeService, policyService) {
             // Populate values needed by the locator control. These are:
             // * rootObject: The top-level object, since we want to show
             //               the full tree
