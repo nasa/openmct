@@ -22,10 +22,8 @@
 /*global console*/
 
 define(
-    [
-        '../creation/CreateAction'
-    ],
-    function (CreateAction) {
+    [],
+    function () {
 
         /**
          * Controller for the "locator" control, which provides the
@@ -34,7 +32,7 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function LocatorController($scope, $timeout, objectService, typeService, policyService) {
+        function LocatorController($scope, $timeout, $q, objectService, typeService, policyService) {
             // Populate values needed by the locator control. These are:
             // * rootObject: The top-level object, since we want to show
             //               the full tree
@@ -94,17 +92,45 @@ define(
             function createNewFolder(name, parent) {
                 var folderType = typeService.getType('folder'),
                     newModel = folderType.getInitialModel(),
-                    newObject,
                     editorCapability;
 
                 newModel.type = folderType.getKey();
                 newModel.location = parent.getId();
-                newObject = parent.useCapability('instantiation', newModel);
-                // Fill in the name property then save.
+                newModel.name = name;
+
+                // Freezing so as to not allow interaction
+                // while the new folder is being created.
+                freezeDialog();
+                instantiateAndPersistNewFolder(newModel, parent).then(function (newFolder) {
+                    scrollToItem(newFolder);
+                    unfreezeDialog();
+                });
             }
 
+            function instantiateAndPersistNewFolder(newModel, parent) {
+                var newObject = parent.useCapability('instantiation', newModel);
+                return newObject.getCapability('persistence').persist().then(function () {
+                    parent.getCapability('composition').add(newObject);
+                }).then(function () {
+                    parent.getCapability('persistence').persist();
+                    return newObject;
+                });
+            }
+
+            function freezeDialog() {
+                console.log("Freezing placeholder.");
+            }
+
+            function unfreezeDialog() {
+                console.log("Unfreezing placeholder.");
+            }
+
+            function scrollToItem(treeItem) {
+                console.log("Scrolling placeholder.");
+            }
+
+            $scope.newFolderFormData = {};
             $scope.newFolderCreationTriggered = false;
-            $scope.newFolderName = "Unnamed Folder";
 
             $scope.newFolderButtonClickHandler = function () {
                 $scope.newFolderCreationTriggered = true;
@@ -116,7 +142,7 @@ define(
 
             $scope.newFolderCreateButtonClickHandler = function () {
                 if ($scope.canCreateNewFolder) {
-                    createNewFolder($scope.newFolderName, $scope.treeModel.selectedObject);
+                    createNewFolder($scope.newFolderFormData.name, $scope.treeModel.selectedObject);
                 } else {
                     console.error("Attempted to create a new folder without being able to.");
                 }
