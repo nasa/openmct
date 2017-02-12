@@ -34,6 +34,8 @@ define(
                 mockRootObject,
                 mockContext,
                 mockObjectService,
+                mockTypeService,
+                mockPolicyService,
                 getObjectsPromise,
                 controller;
 
@@ -45,7 +47,7 @@ define(
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    ["getCapability"]
+                    ["getCapability", "model"]
                 );
                 mockRootObject = jasmine.createSpyObj(
                     "rootObject",
@@ -59,25 +61,37 @@ define(
                     "objectService",
                     ["getObjects"]
                 );
+                mockTypeService = jasmine.createSpyObj(
+                    "typeService",
+                    ["getType"]
+                );
+                mockPolicyService = jasmine.createSpyObj(
+                    "policyService",
+                    ["allow"]
+                );
                 getObjectsPromise = jasmine.createSpyObj(
                     "promise",
                     ["then"]
                 );
 
                 mockDomainObject.getCapability.andReturn(mockContext);
+                mockDomainObject.model.andReturn({ type: undefined });
                 mockContext.getRoot.andReturn(mockRootObject);
+
                 mockObjectService.getObjects.andReturn(getObjectsPromise);
+                mockTypeService.getType.andReturn({});
+                mockPolicyService.allow.andReturn(false);
 
                 mockScope.ngModel = {};
                 mockScope.field = "someField";
 
-                controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
+                controller = new LocatorController(mockScope, mockTimeout, mockObjectService, mockTypeService, mockPolicyService);
             });
             describe("when context is available", function () {
 
                 beforeEach(function () {
                         mockContext.getRoot.andReturn(mockRootObject);
-                        controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
+                        controller = new LocatorController(mockScope, mockTimeout, mockObjectService, mockTypeService, mockPolicyService);
                     });
 
                 it("adds a treeModel to scope", function () {
@@ -145,7 +159,7 @@ define(
                     getObjectsPromise.then.andCallFake(function (callback) {
                         callback({'ROOT': defaultRoot});
                     });
-                    controller = new LocatorController(mockScope, mockTimeout, mockObjectService);
+                    controller = new LocatorController(mockScope, mockTimeout, mockObjectService, mockTypeService, mockPolicyService);
                 });
 
                 it("provides a default context where none is available", function () {

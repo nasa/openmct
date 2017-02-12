@@ -83,10 +83,12 @@ define(
                     );
                 }
 
-                $scope.canCreateNewFolder = policyService.allow(
-                    "composition", 
-                    typeService.getType($scope.treeModel.selectedObject.model.type), 
-                    typeService.getType('folder'));
+                $scope.canCreateNewFolder = $scope.treeModel.selectedObject 
+                    ? policyService.allow(
+                        "composition", 
+                        typeService.getType($scope.treeModel.selectedObject.model.type), 
+                        typeService.getType('folder'))
+                    : false;
             }
 
             $scope.newFolderFormData = {};
