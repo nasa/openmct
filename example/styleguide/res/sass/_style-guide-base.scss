@@ -187,7 +187,7 @@
             .swatch {
                 height: $d; width: $d;
                 border: 1px solid $colorInteriorBorder;
-                border-radius: 100%;
+                border-radius: 15%;
                 position: absolute;
                 left: 50%;
                 @include transform(translateX(-50%));
