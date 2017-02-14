@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <div ng-controller="BrowseObjectController" class="abs l-flex-col">
-    <div class="holder flex-elem l-flex-row object-browse-bar ">
+    <div class="holder flex-elem l-flex-row object-browse-bar t-primary">
         <div class="items-select left flex-elem l-flex-row grows">
             <mct-representation key="'back-arrow'"
                                 mct-object="domainObject"
@@ -31,16 +31,18 @@
             </mct-representation>
         </div>
         <div class="btn-bar right l-flex-row flex-elem flex-justify-end flex-fixed">
-            <mct-representation key="'switcher'"
-                                mct-object="domainObject"
-                                ng-model="representation">
-            </mct-representation>
-            <!-- Temporarily, on mobile, the action buttons are hidden-->
-            <mct-representation key="'action-group'"
-                                mct-object="domainObject"
-                                parameters="{ category: 'view-control' }"
-                                class="mobile-hide">
-            </mct-representation>
+            <span class="l-object-action-buttons">
+                <mct-representation key="'switcher'"
+                                    mct-object="domainObject"
+                                    ng-model="representation">
+                </mct-representation>
+                <!-- Temporarily, on mobile, the action buttons are hidden-->
+                <mct-representation key="'action-group'"
+                                    mct-object="domainObject"
+                                    parameters="{ category: 'view-control' }"
+                                    class="mobile-hide l-object-action-buttons">
+                </mct-representation>
+            </span>
         </div>
     </div>
     <div class="holder l-flex-col flex-elem grows l-object-wrapper l-controls-visible l-time-controller-visible">

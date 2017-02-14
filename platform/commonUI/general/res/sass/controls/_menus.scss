@@ -249,7 +249,7 @@
 .context-menu-holder,
 .menu-holder {
 	position: absolute;
-	z-index: 70;
+	z-index: 120;
 	.context-menu-wrapper {
 		position: absolute;
 		height: 100%;
@@ -273,7 +273,7 @@
 
 .btn-bar.right .menu,
 .menus-to-left .menu {
-        z-index: 79;
+    z-index: 79;
 	left: auto;
 	right: 0;
 	width: auto;

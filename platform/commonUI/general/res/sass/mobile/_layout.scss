@@ -92,7 +92,7 @@ body.mobile {
     }
 
     .object-browse-bar {
-        margin-left: 45px;
+        &.t-primary { margin-left: 45px; }
         .context-available {
             opacity: 1 !important;
         }

@@ -19,44 +19,40 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+@mixin labelValidate($sym, $c) {
+    > .label {
+        @include glyphAfter($sym);
+        &:after {
+            color: $c;
+            margin-left: $interiorMargin;
+        }
+    }
+}
+
+
 mct-form.validates {
     .form-row.validates {
         > .label {
             padding-right: $reqSymbolM; // Keep room for validation element
-            &:before {
-                position: absolute;
-                right: $interiorMargin;
+            &:after {
                 font-size: $reqSymbolFontSize;
-                height: 100%;
-                line-height: 200%;
-
             }
         }
         &.invalid,
-        &.invalid.req {
-            > .label {
-                @extend .icon-x;
-                &:before {
-                    color: $colorFormInvalid;
-                }
-            }
-        }
+        &.invalid.req { @include labelValidate($glyph-icon-x, $colorFormInvalid); }
+
         &.valid,
-        &.valid.req {
-            > .label {
-                @extend .icon-check;
-                &:before {
-                    color: $colorFormValid;
-                }
-            }
-        }
-        &.req {
-            > .label {
-                @extend .icon-asterisk;
-                &:before {
-                    color: $colorFormRequired;
-                }
-            }
-        }
+        &.valid.req { @include labelValidate($glyph-icon-check, $colorFormValid); }
+
+        &.req { @include labelValidate($glyph-icon-asterisk, $colorFormRequired); }
+    }
+}
+
+body.desktop .form-row.validates > .label {
+    &:after {
+        position: absolute;
+        right: $interiorMargin;
+        height: 100%;
+        line-height: 200%;
     }
 }

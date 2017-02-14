@@ -17,6 +17,7 @@ $hoverRatioPercent: 10%;
 $basicCr: 3px;
 $controlCr: 2px;
 $smallCr: 2px;
+$overlayCr: 11px;
 
 // Buttons and Controls
 $colorBtnBg: pullForward($colorBodyBg, $contrastRatioPercent);
@@ -146,6 +147,7 @@ $colorOvrFg: pullForward($colorBodyFg, 30%);
 $colorOvrBtnBg: pullForward($colorOvrBg, 20%);
 $colorOvrBtnFg: #fff;
 $colorFieldHintOverlay: pullForward($colorOvrBg, 30%);
+$durLargeViewExpand: 250ms;
 
 // Items
 $colorItemBg: lighten($colorBodyBg, 5%);

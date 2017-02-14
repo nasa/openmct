@@ -136,14 +136,6 @@
     .mini-tab-icon.toggle-pane {
         z-index: 5;
     }
-    &.items {
-        .object-browse-bar {
-            .left.abs,
-            .right.abs {
-                top: auto;
-            }
-        }
-    }
 }
 
 body.desktop .pane .mini-tab-icon.toggle-pane {
@@ -250,10 +242,9 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
     vertical-align: top;
 }
 
-.object-browse-bar,
-.top-bar {
-    .view-switcher {
-        margin-right: $interiorMarginLg * 2;
+.object-browse-bar {
+    .l-object-action-buttons {
+        margin-left: $interiorMarginLg; // Kick the view switcher and other elements away
     }
 }
 
@@ -265,7 +256,6 @@ body.desktop .pane .mini-tab-icon.toggle-pane {
     white-space: nowrap;
 
     .left {
-        padding-right: $interiorMarginLg;
         .l-back {
             margin-right: $interiorMarginLg;
             &.s-status-editing { display: none; }
@@ -348,7 +338,7 @@ body.desktop {
     .pane:not(.resizing) {
         @include trans-prop-nice-resize-w(250ms);
     }
-    .pane.primary-pane .object-browse-bar {
+    .pane.primary-pane > .object-browse-bar {
         min-width: 200px; // Needed for nice display when primary pane is constrained severely via splitters
     }
 }

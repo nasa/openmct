@@ -311,6 +311,24 @@ body.desktop .t-message-single {
     }
 }
 
+@include phonePortrait {
+    .t-message-single {
+        .l-message {
+            @include flex-direction(column);
+            .message-contents { margin-left: 0; }
+        }
+        .type-icon.message-type {
+            margin-bottom: $interiorMarginLg;
+            width: 100%;
+            text-align: center;
+        }
+
+        .bottom-bar {
+            text-align: center !important;
+        }
+    }
+}
+
 // Messages in list
 .t-message-list {
     @include messageBlock(32px);
