@@ -51,7 +51,8 @@ define(
         RangeColumn.prototype.getValue = function (domainObject, datum) {
             var range = this.rangeMetadata.key,
                 limit = domainObject.getCapability('limit'),
-                value = isNaN(datum[range]) ? datum[range] : parseFloat(datum[range]),
+                value = isNaN(datum[range]) || typeof datum[range] === 'boolean' ?
+                    datum[range] : parseFloat(datum[range]),
                 alarm = limit && limit.evaluate(datum, range);
 
             return {

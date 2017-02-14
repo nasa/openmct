@@ -1,0 +1,636 @@
+{
+  "name": "Kerbal Spacecraft",
+  "identifier": "sc",
+  "subsystems": [
+    {
+      "name": "Flight",
+      "identifier": "flight_plotables",
+      "measurements": [
+        {
+          "name": "f.throttle",
+          "identifier": "f.throttle",
+          "units": "%",
+          "type": "float"
+        },
+        {
+          "name": "v.rcsValue",
+          "identifier": "v.rcsValue",
+          "units": "None",
+          "type": "boolean"
+        },
+        {
+          "name": "v.sasValue",
+          "identifier": "v.sasValue",
+          "units": "None",
+          "type": "boolean"
+        },
+        {
+          "name": "v.lightValue",
+          "identifier": "v.lightValue",
+          "units": "None",
+          "type": "boolean"
+        },
+        {
+          "name": "v.brakeValue",
+          "identifier": "v.brakeValue",
+          "units": "None",
+          "type": "boolean"
+        },
+        {
+          "name": "v.gearValue",
+          "identifier": "v.gearValue",
+          "units": "None",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "name": "Target",
+      "identifier": "target_plotables",
+      "measurements": [
+        {
+          "name": "tar.o.sma",
+          "identifier": "tar.o.sma",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "tar.o.lan",
+          "identifier": "tar.o.lan",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "tar.o.maae",
+          "identifier": "tar.o.maae",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "tar.name",
+          "identifier": "tar.name",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "tar.type",
+          "identifier": "tar.type",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "tar.distance",
+          "identifier": "tar.distance",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "tar.o.velocity",
+          "identifier": "tar.o.velocity",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "tar.o.PeA",
+          "identifier": "tar.o.PeA",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "tar.o.ApA",
+          "identifier": "tar.o.ApA",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "tar.o.timeToAp",
+          "identifier": "tar.o.timeToAp",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "tar.o.timeToPe",
+          "identifier": "tar.o.timeToPe",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "tar.o.inclination",
+          "identifier": "tar.o.inclination",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "tar.o.eccentricity",
+          "identifier": "tar.o.eccentricity",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "tar.o.period",
+          "identifier": "tar.o.period",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "tar.o.relativeVelocity",
+          "identifier": "tar.o.relativeVelocity",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "tar.o.orbitingBody",
+          "identifier": "tar.o.orbitingBody",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "tar.o.argumentOfPeriapsis",
+          "identifier": "tar.o.argumentOfPeriapsis",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "tar.o.timeToTransition1",
+          "identifier": "tar.o.timeToTransition1",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "tar.o.timeToTransition2",
+          "identifier": "tar.o.timeToTransition2",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "tar.o.timeOfPeriapsisPassage",
+          "identifier": "tar.o.timeOfPeriapsisPassage",
+          "units": "None",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "Docking",
+      "identifier": "docking_plotables",
+      "measurements": [
+        {
+          "name": "dock.ax",
+          "identifier": "dock.ax",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "dock.ay",
+          "identifier": "dock.ay",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "dock.az",
+          "identifier": "dock.az",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "dock.x",
+          "identifier": "dock.x",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "dock.y",
+          "identifier": "dock.y",
+          "units": "None",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "Navball",
+      "identifier": "navball_plotables",
+      "measurements": [
+        {
+          "name": "n.heading",
+          "identifier": "n.heading",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "n.pitch",
+          "identifier": "n.pitch",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "n.roll",
+          "identifier": "n.roll",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "n.rawheading",
+          "identifier": "n.rawheading",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "n.rawpitch",
+          "identifier": "n.rawpitch",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "n.rawroll",
+          "identifier": "n.rawroll",
+          "units": "None",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "Vessel",
+      "identifier": "vessel_plotables",
+      "measurements": [
+        {
+          "name": "v.altitude",
+          "identifier": "v.altitude",
+          "units": "meters",
+          "type": "float"
+        },
+        {
+          "name": "v.heightFromTerrain",
+          "identifier": "v.heightFromTerrain",
+          "units": "meters",
+          "type": "float"
+        },
+        {
+          "name": "v.terrainHeight",
+          "identifier": "v.terrainHeight",
+          "units": "meters",
+          "type": "float"
+        },
+        {
+          "name": "v.missionTime",
+          "identifier": "v.missionTime",
+          "units": "seconds",
+          "type": "float"
+        },
+        {
+          "name": "v.surfaceVelocity",
+          "identifier": "v.surfaceVelocity",
+          "units": "m/s",
+          "type": "float"
+        },
+        {
+          "name": "v.surfaceVelocityx",
+          "identifier": "v.surfaceVelocityx",
+          "units": "m/s",
+          "type": "float"
+        },
+        {
+          "name": "v.surfaceVelocityy",
+          "identifier": "v.surfaceVelocityy",
+          "units": "m/s",
+          "type": "float"
+        },
+        {
+          "name": "v.surfaceVelocityz",
+          "identifier": "v.surfaceVelocityz",
+          "units": "m/s",
+          "type": "float"
+        },
+        {
+          "name": "v.angularVelocity",
+          "identifier": "v.angularVelocity",
+          "units": "m/s",
+          "type": "float"
+        },
+        {
+          "name": "v.orbitalVelocity",
+          "identifier": "v.orbitalVelocity",
+          "units": "m/s",
+          "type": "float"
+        },
+        {
+          "name": "v.surfaceSpeed",
+          "identifier": "v.surfaceSpeed",
+          "units": "m/s",
+          "type": "float"
+        },
+        {
+          "name": "v.verticalSpeed",
+          "identifier": "v.verticalSpeed",
+          "units": "m/s",
+          "type": "float"
+        },
+        {
+          "name": "v.geeForce",
+          "identifier": "v.geeForce",
+          "units": "G",
+          "type": "float"
+        },
+        {
+          "name": "v.atmosphericDensity",
+          "identifier": "v.atmosphericDensity",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "v.long",
+          "identifier": "v.long",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "v.lat",
+          "identifier": "v.lat",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "v.dynamicPressure",
+          "identifier": "v.dynamicPressure",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "v.name",
+          "identifier": "v.name",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "v.body",
+          "identifier": "v.body",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "v.angleToPrograde",
+          "identifier": "v.angleToPrograde",
+          "units": "degrees",
+          "type": "float"
+        }
+      ]
+    },
+    {
+      "name": "Orbit",
+      "identifier": "orbit_plotables",
+      "measurements": [
+        {
+          "name": "o.relativeVelocity",
+          "identifier": "o.relativeVelocity",
+          "units": "m/s",
+          "type": "float"
+        },
+        {
+          "name": "o.PeA",
+          "identifier": "o.PeA",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "o.ApA",
+          "identifier": "o.ApA",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "o.timeToAp",
+          "identifier": "o.timeToAp",
+          "units": "seconds",
+          "type": "float"
+        },
+        {
+          "name": "o.timeToPe",
+          "identifier": "o.timeToPe",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "o.inclination",
+          "identifier": "o.inclination",
+          "units": "seconds",
+          "type": "float"
+        },
+        {
+          "name": "o.eccentricity",
+          "identifier": "o.eccentricity",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "o.epoch",
+          "identifier": "o.epoch",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "o.period",
+          "identifier": "o.period",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "o.argumentOfPeriapsis",
+          "identifier": "o.argumentOfPeriapsis",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "o.timeToTransition1",
+          "identifier": "o.timeToTransition1",
+          "units": "seconds",
+          "type": "float"
+        },
+        {
+          "name": "o.timeToTransition2",
+          "identifier": "o.timeToTransition2",
+          "units": "seconds",
+          "type": "float"
+        },
+        {
+          "name": "o.sma",
+          "identifier": "o.sma",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "o.lan",
+          "identifier": "o.lan",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "o.maae",
+          "identifier": "o.maae",
+          "units": "None",
+          "type": "string"
+        },
+        {
+          "name": "o.timeOfPeriapsisPassage",
+          "identifier": "o.timeOfPeriapsisPassage",
+          "units": "seconds",
+          "type": "float"
+        },
+        {
+          "name": "o.trueAnomaly",
+          "identifier": "o.trueAnomaly",
+          "units": "None",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "Sensor",
+      "identifier": "sensor_plotables",
+      "measurements": [
+        {
+          "name": "s.sensor.temp",
+          "identifier": "s.sensor.temp",
+          "units": "centigrade",
+          "type": "float"
+        },
+        {
+          "name": "s.sensor.pres",
+          "identifier": "s.sensor.pres",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "s.sensor.grav",
+          "identifier": "s.sensor.grav",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "s.sensor.acc",
+          "identifier": "s.sensor.acc",
+          "units": "None",
+          "type": "float"
+        }
+      ]
+    },
+    {
+      "name": "Time Warp",
+      "identifier": "time_warp_plotables",
+      "measurements": [
+        {
+          "name": "t.universalTime",
+          "identifier": "t.universalTime",
+          "units": "seconds",
+          "type": "float"
+        }
+      ]
+    },
+    {
+      "name": "Resource",
+      "identifier": "resource_plotables",
+      "measurements": [
+        {
+          "name": "r.resourceMax[ElectricCharge]",
+          "identifier": "r.resourceMax[ElectricCharge]",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "r.resourceCurrent[ElectricCharge]",
+          "identifier": "r.resourceCurrent[ElectricCharge]",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "r.resource[ElectricCharge]",
+          "identifier": "r.resource[ElectricCharge]",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "r.resourceMax[LiquidFuel]",
+          "identifier": "r.resourceMax[LiquidFuel]",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "r.resourceCurrent[LiquidFuel]",
+          "identifier": "r.resourceCurrent[LiquidFuel]",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "r.resource[LiquidFuel]",
+          "identifier": "r.resource[LiquidFuel]",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "r.resourceMax[Oxidizer]",
+          "identifier": "r.resourceMax[Oxidizer]",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "r.resourceCurrent[Oxidizer]",
+          "identifier": "r.resourceCurrent[Oxidizer]",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "r.resource[Oxidizer]",
+          "identifier": "r.resource[Oxidizer]",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "r.resourceCurrent[MonoPropellant]",
+          "identifier": "r.resourceCurrent[MonoPropellant]",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "r.resource[MonoPropellant]",
+          "identifier": "r.resource[MonoPropellant]",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "r.resourceMax[XenonGas]",
+          "identifier": "r.resourceMax[XenonGas]",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "r.resourceCurrent[XenonGas]",
+          "identifier": "r.resourceCurrent[XenonGas]",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "r.resource[XenonGas]",
+          "identifier": "r.resource[XenonGas]",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "r.resourceMax[IntakeAir]",
+          "identifier": "r.resourceMax[IntakeAir]",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "r.resourceCurrent[IntakeAir]",
+          "identifier": "r.resourceCurrent[IntakeAir]",
+          "units": "None",
+          "type": "float"
+        },
+        {
+          "name": "r.resource[IntakeAir",
+          "identifier": "r.resource[IntakeAir",
+          "units": "None",
+          "type": "float"
+        }
+      ]
+    }
+  ]
+}
