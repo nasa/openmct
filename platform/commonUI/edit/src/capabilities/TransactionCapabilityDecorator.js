@@ -48,9 +48,10 @@ define(
          * Decorate PersistenceCapability to queue persistence calls when a
          * transaction is in progress.
          */
-        TransactionCapabilityDecorator.prototype.getCapabilities = function (model) {
+        TransactionCapabilityDecorator.prototype.getCapabilities = function () {
             var self = this,
-                capabilities = this.capabilityService.getCapabilities(model),
+                capabilities = this.capabilityService.getCapabilities
+                    .apply(this.capabilityService, arguments),
                 persistenceCapability = capabilities.persistence;
 
             capabilities.persistence = function (domainObject) {
