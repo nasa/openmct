@@ -38,12 +38,12 @@ define([
         /**
          * Some metadata, which will be used to identify the time system in
          * the UI
-         * @type {{key: string, name: string, cssclass: string}}
+         * @type {{key: string, name: string, cssClass: string}}
          */
         this.metadata = {
             'key': 'utc',
             'name': 'UTC',
-            'cssclass': 'icon-clock'
+            'cssClass': 'icon-clock'
         };
 
         this.fmts = ['utc'];

@@ -28,7 +28,7 @@ define(
         describe("The Edit Action controller", function () {
             var mockSaveActionMetadata = {
                 name: "mocked-save-action",
-                cssclass: "mocked-save-action-css"
+                cssClass: "mocked-save-action-css"
             };
 
             function fakeGetActions(actionContext) {
@@ -86,7 +86,7 @@ define(
                 expect(menuOptions[1].key).toEqual(mockScope.saveActions[1]);
                 menuOptions.forEach(function (option) {
                     expect(option.name).toEqual(mockSaveActionMetadata.name);
-                    expect(option.cssclass).toEqual(mockSaveActionMetadata.cssclass);
+                    expect(option.cssClass).toEqual(mockSaveActionMetadata.cssClass);
                 });
             });
 

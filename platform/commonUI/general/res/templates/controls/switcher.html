@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <span ng-controller="ViewSwitcherController">
-    <div class="view-switcher menu-element s-menu-button {{ngModel.selected.cssclass}}"
+    <div class="view-switcher menu-element s-menu-button {{ngModel.selected.cssClass}}"
 	    ng-if="view.length > 1"
 	    ng-controller="ClickAwayController as toggle">
 
@@ -33,7 +33,7 @@
             <ul>
                 <li ng-repeat="option in view"
                     ng-click="ngModel.selected = option; toggle.setState(false)"
-                    class="{{option.cssclass}}">
+                    class="{{option.cssClass}}">
                     {{option.name}}
                 </li>
             </ul>

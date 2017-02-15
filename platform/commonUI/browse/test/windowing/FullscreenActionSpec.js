@@ -51,7 +51,7 @@ define(
             });
 
             it("provides displayable metadata", function () {
-                expect(action.getMetadata().cssclass).toBeDefined();
+                expect(action.getMetadata().cssClass).toBeDefined();
             });
 
         });
