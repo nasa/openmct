@@ -61,8 +61,8 @@ define(
          * @param bundleList
          * @returns {*}
          */
-        FrameworkInitializer.prototype.runApplication = function (bundleList) {
-            return this.loader.loadBundles(bundleList)
+        FrameworkInitializer.prototype.runApplication = function () {
+            return this.loader.loadBundles([])
                 .then(bind(this.resolver.resolveBundles, this.resolver))
                 .then(bind(this.registrar.registerExtensions, this.registrar))
                 .then(bind(this.bootstrapper.bootstrap, this.bootstrapper));
