@@ -54,7 +54,7 @@ define(function () {
     Type.prototype.toLegacyDefinition = function () {
         var def = {};
         def.name = this.definition.label;
-        def.cssclass = this.definition.cssclass;
+        def.cssClass = this.definition.cssClass;
         def.description = this.definition.description;
         def.properties = this.definition.form;
 

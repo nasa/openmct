@@ -163,7 +163,7 @@ define([
                     ],
                     "description": "Edit",
                     "category": "view-control",
-                    "cssclass": "major icon-pencil"
+                    "cssClass": "major icon-pencil"
                 },
                 {
                     "key": "properties",
@@ -172,7 +172,7 @@ define([
                         "view-control"
                     ],
                     "implementation": PropertiesAction,
-                    "cssclass": "major icon-pencil",
+                    "cssClass": "major icon-pencil",
                     "name": "Edit Properties...",
                     "description": "Edit properties of this object.",
                     "depends": [
@@ -183,7 +183,7 @@ define([
                     "key": "remove",
                     "category": "contextual",
                     "implementation": RemoveAction,
-                    "cssclass": "icon-trash",
+                    "cssClass": "icon-trash",
                     "name": "Remove",
                     "description": "Remove this object from its containing object.",
                     "depends": [
@@ -195,7 +195,7 @@ define([
                     "category": "save",
                     "implementation": SaveAndStopEditingAction,
                     "name": "Save and Finish Editing",
-                    "cssclass": "icon-save labeled",
+                    "cssClass": "icon-save labeled",
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "dialogService",
@@ -207,7 +207,7 @@ define([
                     "category": "save",
                     "implementation": SaveAction,
                     "name": "Save and Continue Editing",
-                    "cssclass": "icon-save labeled",
+                    "cssClass": "icon-save labeled",
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "dialogService",
@@ -219,7 +219,7 @@ define([
                     "category": "save",
                     "implementation": SaveAsAction,
                     "name": "Save As...",
-                    "cssclass": "icon-save labeled",
+                    "cssClass": "icon-save labeled",
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "$injector",
@@ -237,7 +237,7 @@ define([
                     // Because we use the name as label for edit buttons and mct-control buttons need
                     // the label to be set to undefined in order to not apply the labeled CSS rule.
                     "name": undefined,
-                    "cssclass": "icon-x no-label",
+                    "cssClass": "icon-x no-label",
                     "description": "Discard changes made to these objects.",
                     "depends": []
                 }

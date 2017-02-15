@@ -121,7 +121,7 @@
                            ng-show="plot.isZoomed()"
                            title="Reset pan/zoom">
                         </a>
-                        <div class="menu-element s-menu-button menus-to-left {{plot.getMode().cssclass}}"
+                        <div class="menu-element s-menu-button menus-to-left {{plot.getMode().cssClass}}"
                              ng-if="plot.getModeOptions().length > 1"
                              ng-controller="ClickAwayController as toggle">
                             <span class="l-click-area" ng-click="toggle.toggle()"></span>
@@ -130,7 +130,7 @@
                                 <ul>
                                     <li ng-repeat="option in plot.getModeOptions()"
                                         ng-click="plot.setMode(option); toggle.setState(false)"
-                                        class="{{option.cssclass}}">
+                                        class="{{option.cssClass}}">
                                         {{option.name}}
                                     </li>
                                 </ul>

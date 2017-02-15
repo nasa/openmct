@@ -91,7 +91,7 @@ define(
             if (includeLocation) {
                 sections.push({
                     name: 'Location',
-                    cssclass: "grows",
+                    cssClass: "grows",
                     rows: [{
                         name: "Save In",
                         control: "locator",

@@ -30,18 +30,18 @@ define(
                 testTypeDefinitions = [
                     {
                         key: 'basic',
-                        cssclass: "icon-magnify-in",
+                        cssClass: "icon-magnify-in",
                         name: "Basic Type"
                     },
                     {
                         key: 'multi1',
-                        cssclass: "icon-trash",
+                        cssClass: "icon-trash",
                         description: "Multi1 Description",
                         capabilities: ['a1', 'b1']
                     },
                     {
                         key: 'multi2',
-                        cssclass: "icon-magnify-out",
+                        cssClass: "icon-magnify-out",
                         capabilities: ['a2', 'b2', 'c2']
                     },
                     {

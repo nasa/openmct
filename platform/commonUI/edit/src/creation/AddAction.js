@@ -51,7 +51,7 @@ define(
         function AddAction(type, parent, context, $q, dialogService, policyService) {
             this.metadata = {
                 key: 'add',
-                cssclass: type.getCssClass(),
+                cssClass: type.getCssClass(),
                 name: type.getName(),
                 type: type.getKey(),
                 description: type.getDescription(),
