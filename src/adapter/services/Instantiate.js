@@ -37,7 +37,7 @@ define(
                 id = id || identifierService.generate();
                 var old_id = model.id;
                 model.id = id;
-                var capabilities = capabilityService.getCapabilities(model);
+                var capabilities = capabilityService.getCapabilities(model, id);
                 model.id = old_id;
                 cacheService.put(id, model);
                 return new DomainObjectImpl(id, model, capabilities);

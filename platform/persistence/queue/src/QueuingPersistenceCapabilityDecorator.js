@@ -50,7 +50,7 @@ define(
             this.capabilityService = capabilityService;
         }
 
-        QueuingPersistenceCapabilityDecorator.prototype.getCapabilities = function (model) {
+        QueuingPersistenceCapabilityDecorator.prototype.getCapabilities = function (model, id) {
             var capabilityService = this.capabilityService,
                 persistenceQueue = this.persistenceQueue;
 
@@ -76,7 +76,7 @@ define(
             }
 
             return decoratePersistence(
-                capabilityService.getCapabilities(model)
+                capabilityService.getCapabilities(model, id)
             );
         };
 
