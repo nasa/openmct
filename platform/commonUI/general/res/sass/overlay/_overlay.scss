@@ -132,6 +132,8 @@
     .select {
         box-shadow: $shdwBtnsOverlay;
     }
+
+    .t-btn-view-large { display: none; }
 }
 
 .t-dialog-sm .overlay > .holder {

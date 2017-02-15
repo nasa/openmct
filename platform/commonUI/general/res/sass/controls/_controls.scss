@@ -631,7 +631,8 @@ textarea {
     }
 }
 
-.view-switcher {
+.view-switcher,
+.t-btn-view-large {
     @include trans-prop-nice-fade($controlFadeMs);
 }
 

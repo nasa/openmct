@@ -53,14 +53,12 @@ define([
                 closeButton.addEventListener('click', toggleOverlay);
                 document.body.appendChild(span);
                 layoutContainer.removeChild(frame);
-                overlayContainer.appendChild(frame)
-                $element.text('Return to Layout');
+                overlayContainer.appendChild(frame);
             }
 
             function closeOverlay() {
                 overlayContainer.removeChild(frame);
                 layoutContainer.appendChild(frame);
-                $element.text('View Large');
                 document.body.removeChild(span);
                 closeButton.removeEventListener('click', toggleOverlay);
                 closeButton = undefined;
