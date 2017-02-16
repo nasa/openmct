@@ -146,6 +146,10 @@ define([
             utils.toOldFormat(domainObject),
             utils.makeKeyString(domainObject.identifier));
         var limitEvaluator = oldObject.getCapability("limit");
+        
+        if (!limitEvaluator) {
+            return;
+        }
 
         return {
             evaluate: function (datum, property) {

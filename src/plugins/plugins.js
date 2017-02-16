@@ -38,6 +38,22 @@ define([
             openmct.legacyRegistry.enable(bundleName);
         };
     });
+    
+    plugins.Conductor = function (options) {
+        if (!options) {
+            options = {mode: 'fixed'};
+        }
+        
+        return function (openmct) {
+            openmct.legacyExtension('constants', {
+                key: 'DEFAULT_TIMECONDUCTOR_MODE',
+                value: options.mode,
+                priority: 'mandatory'
+            });
+            openmct.legacyRegistry.enable('platform/features/conductor/core');
+            openmct.legacyRegistry.enable('platform/features/conductor/compatibility');
+        };
+    };
 
     plugins.CouchDB = function (url) {
         return function (openmct) {

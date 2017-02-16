@@ -40,7 +40,16 @@ define(
          * @memberof platform.features.conductor
          * @constructor
          */
-        function TimeConductorController($scope, $window, $location, openmct, conductorViewService, timeSystems, formatService) {
+        function TimeConductorController(
+            $scope, 
+            $window, 
+            $location, 
+            openmct, 
+            conductorViewService, 
+            timeSystems, 
+            formatService,
+            DEFAULT_MODE
+        ) {
 
             var self = this;
 
@@ -59,6 +68,7 @@ define(
             this.modes = conductorViewService.availableModes();
             this.validation = new TimeConductorValidation(this.conductor);
             this.formatService = formatService;
+            this.DEFAULT_MODE = DEFAULT_MODE;
 
             // Construct the provided time system definitions
             this.timeSystems = timeSystems.map(function (timeSystemConstructor) {
@@ -139,7 +149,7 @@ define(
             //Set mode from url if changed
             if (searchParams[SEARCH.MODE] === undefined ||
                 searchParams[SEARCH.MODE] !== this.$scope.modeModel.selectedKey) {
-                this.setMode(searchParams[SEARCH.MODE] || "fixed");
+                this.setMode(searchParams[SEARCH.MODE] || this.DEFAULT_MODE);
             }
 
             if (searchParams[SEARCH.TIME_SYSTEM] &&

@@ -166,13 +166,13 @@ define(
 
                 // Aggregators need other services to aggregate, otherwise they
                 // do nothing.
-                if (!latest[service]) {
-                    return warn(
-                        aggregator,
-                        "aggregator",
-                        "No services to aggregate for"
-                    );
-                }
+                // if (!latest[service]) {
+                //     return warn(
+                //         aggregator,
+                //         "aggregator",
+                //         "No services to aggregate for"
+                //     );
+                // }
 
                 dependencies = dependencies.concat([providerSetName]);
                 latest[service] = name;
