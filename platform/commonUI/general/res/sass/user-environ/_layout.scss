@@ -338,7 +338,7 @@ body.desktop {
     .pane:not(.resizing) {
         @include trans-prop-nice-resize-w(250ms);
     }
-    .pane.primary-pane .object-browse-bar {
+    .pane.primary-pane > .object-browse-bar {
         min-width: 200px; // Needed for nice display when primary pane is constrained severely via splitters
     }
 }
