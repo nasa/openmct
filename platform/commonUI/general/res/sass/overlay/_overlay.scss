@@ -21,11 +21,16 @@
  *****************************************************************************/
 
 .overlay {
-    font-size: 90%;
     &.delayEntry100ms {
         @include keyframes(fadeInFromNone) {
-            0% { display: none; opacity: 0; }
-            100% { display: block; opacity: 1; }
+            0% {
+                display: none;
+                opacity: 0;
+            }
+            100% {
+                display: block;
+                opacity: 1;
+            }
         }
         @include animation-delay($delayEntryMs);
         @include animation(fadeInFromNone $durEntryMs ease-in);
@@ -43,17 +48,13 @@
         left: auto;
         z-index: 100;
     }
+
     > .holder {
-        @include containerSubtle($colorOvrBg, $colorOvrFg);
-        border-radius: $basicCr * 3;
-        color: $colorOvrFg;
         top: 50%;
         right: auto;
         bottom: auto;
         left: 50%;
         @include transform(translateX(-50%) translateY(-50%));
-        height: 70%;
-        width: 50%;
         min-height: 300px;
         min-width: 600px;
         z-index: 101;
@@ -65,75 +66,103 @@
             left: $m;
         }
     }
-    .title {
-        @include ellipsize();
-        font-size: 1.2em;
-        line-height: 120%;
-        margin-bottom: $interiorMargin;
-    }
+}
 
-    .hint, .field-hints { color: $colorFieldHintOverlay !important;  }
-
-    .abs.top-bar {
-        height: $ovrTopBarH;
-    }
-
-    .abs.editor,
-    .abs.message-body {
-        top: $ovrTopBarH + $interiorMarginLg;
-        bottom: $ovrFooterH + $interiorMarginLg;
-        left: 0;
-        right: 0;
-        overflow: auto;
-        .field.l-input-med {
-            input[type='text'] {
-                width: 100%;
-            }
-        }
-    }
-
-    .bottom-bar {
-        text-align: right;
+.overlay {
+    &.l-dialog {
         .s-button {
-            $bg: $colorOvrBtnBg;
             &:not(.major) {
-                @include btnSubtle($bg, pullForward($bg, 10%), $colorOvrBtnFg, $colorOvrBtnFg);
-            }
-            font-size: 95%;
-            height: $ovrFooterH;
-            line-height: $ovrFooterH;
-            margin-left: $interiorMargin;
-            padding: 0 $interiorMargin * 3;
-            &:first-child {
-                margin-left: 0;
+                @include btnSubtle($bg: $colorOvrBtnBg, $bgHov: pullForward($colorOvrBtnBg, 10%), $fg: $colorOvrBtnFg, $fgHov: $colorOvrBtnFg, $ic: $colorOvrBtnFg, $icHov: $colorOvrBtnFg);
             }
         }
 
+        > .holder {
+            @include containerSubtle($colorOvrBg, $colorOvrFg);
+            border-radius: $basicCr * 2;
+            //color: $colorOvrFg;
+            height: 70%;
+            width: 50%;
+        }
+
+        .title {
+            @include ellipsize();
+            font-size: 1.2em;
+            line-height: 120%;
+            margin-bottom: $interiorMargin;
+        }
+
+        .hint, .field-hints {
+            color: $colorFieldHintOverlay !important;
+        }
+
+        .abs.top-bar {
+            height: $ovrTopBarH;
+        }
+
+        .abs.bottom-bar {
+            top: auto;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            overflow: visible;
+            height: $ovrFooterH;
+        }
+
+        .abs.editor,
+        .abs.message-body {
+            top: $ovrTopBarH + $interiorMarginLg;
+            bottom: $ovrFooterH + $interiorMarginLg;
+            left: 0;
+            right: 0;
+            overflow: auto;
+            .field.l-input-med {
+                input[type='text'] {
+                    width: 100%;
+                }
+            }
+        }
+
+        .bottom-bar {
+            text-align: right;
+            .s-button {
+                font-size: 95%;
+                height: $ovrFooterH;
+                line-height: $ovrFooterH;
+                margin-left: $interiorMargin;
+                padding: 0 $interiorMargin * 3;
+                &:first-child {
+                    margin-left: 0;
+                }
+            }
+        }
+
+        .l-progress-bar {
+            $h: $progressBarHOverlay;
+            display: block;
+            height: $h;
+            line-height: $h;
+            margin: .5em 0;
+            width: 100%;
+        }
+
+        .select {
+            box-shadow: $shdwBtnsOverlay;
+        }
     }
 
-    .abs.bottom-bar {
-        top: auto;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        overflow: visible;
-        height: $ovrFooterH;
-    }
+    &.l-large-view {
+        > .holder {
+            background: $colorBodyBg;
+            border-radius: $basicCr * 2;
+            //color: $colorBodyFg; // Main body styles should cover this
+            height: 90%;
+            width: 90%;
 
-    .l-progress-bar {
-        $h: $progressBarHOverlay;
-        display: block;
-        height: $h;
-        line-height: $h;
-        margin: .5em 0;
-        width: 100%;
+            .t-btn-view-large {
+                display: none;
+            }
+        }
     }
-
-    .select {
-        box-shadow: $shdwBtnsOverlay;
-    }
-
-    .t-btn-view-large { display: none; }
 }
 
 .t-dialog-sm .overlay > .holder {

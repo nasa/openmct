@@ -30,7 +30,7 @@
             border-color: lighten($bc, 10%);
         }
     }
-    .object-top-bar {
+    .object-browse-bar {
         font-size: 0.75em;
         height: $ohH;
         line-height: $ohH;
@@ -75,7 +75,7 @@
     }
 }
 
-body.desktop .frame.frame-template {
+body.desktop .frame {
     // Hide local controls initially and show it them on hover when they're in an element that's in a frame context
     // Frame template is used because we need to target the lowest nested frame
     .view-switcher,
@@ -83,9 +83,14 @@ body.desktop .frame.frame-template {
         opacity: 0;
         pointer-events: none;
     }
-    &:hover .view-switcher,
-    &:hover .t-btn-view-large {
-        opacity: 1;
-        pointer-events: inherit;
+
+    // Target the first descendant so that we only show the elements in the outermost container.
+    // Handles the case where we have layouts in layouts.
+    &:hover > .object-browse-bar {
+        .view-switcher,
+        .t-btn-view-large {
+            opacity: 1;
+            pointer-events: inherit;
+        }
     }
 }
