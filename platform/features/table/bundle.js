@@ -62,7 +62,7 @@ define([
                 {
                     "key": "table",
                     "name": "Telemetry Table",
-                    "cssclass": "icon-tabular-realtime",
+                    "cssClass": "icon-tabular-realtime",
                     "description": "A table of values over a given time period. The table will be automatically updated with new values as they become available",
                     "priority": 861,
                     "features": "creation",
@@ -100,7 +100,7 @@ define([
                 {
                     "name": "Telemetry Table",
                     "key": "table",
-                    "cssclass": "icon-tabular-realtime",
+                    "cssClass": "icon-tabular-realtime",
                     "template": telemetryTableTemplate,
                     "needs": [
                         "telemetry"
