@@ -45,6 +45,10 @@ define([
             utils.makeKeyString(domainObject.identifier)).hasCapability("telemetry");
     };
 
+    LegacyTelemetryProvider.prototype.supportsRequest =
+        LegacyTelemetryProvider.prototype.supportsSubscribe =
+        LegacyTelemetryProvider.prototype.canProvideTelemetry;
+
     function createDatum(domainObject, metadata, legacySeries, i) {
         var datum;
 
@@ -153,8 +157,10 @@ define([
     return function (openmct, instantiate) {
         // Push onto the start of the default providers array so that it's
         // always the last resort
-        openmct.telemetry.defaultProviders.unshift(
-            new LegacyTelemetryProvider(openmct, instantiate));
+        var provider = new LegacyTelemetryProvider(openmct, instantiate);
+        openmct.telemetry.legacyProvider = provider;
+        openmct.telemetry.requestProviders.push(provider);
+        openmct.telemetry.subscriptionProviders.push(provider);
     };
 
 });

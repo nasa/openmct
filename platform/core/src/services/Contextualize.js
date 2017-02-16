@@ -44,16 +44,16 @@ define(
                 var model = parentObject && parentObject.getModel(),
                     composition = (model || {}).composition || [];
                 if (composition.indexOf(id) === -1) {
-                    $log.warn([
-                        "Attempted to contextualize",
-                        id,
-                        "in",
-                        parentObject && parentObject.getId(),
-                        "but that object does not contain",
-                        id,
-                        "in its composition.",
-                        "Unexpected behavior may follow."
-                    ].join(" "));
+                    // $log.warn([
+                    //     "Attempted to contextualize",
+                    //     id,
+                    //     "in",
+                    //     parentObject && parentObject.getId(),
+                    //     "but that object does not contain",
+                    //     id,
+                    //     "in its composition.",
+                    //     "Unexpected behavior may follow."
+                    // ].join(" "));
                 }
             }
 

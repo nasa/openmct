@@ -49,7 +49,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat-start="visibleRow in visibleRows track by visibleRow.rowIndex"
+            <tr ng-repeat-start="visibleRow in visibleRows track by $index"
                 ng-if="visibleRow.rowIndex === toiRowIndex"
                 ng-style="{ top: visibleRow.offsetY + 'px' }"
                 class="l-toi-tablerow">
