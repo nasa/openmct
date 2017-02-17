@@ -39,7 +39,7 @@ define(
                 candidate &&
                 context &&
                 candidate.instanceOf('layout') &&
-                context.instanceOf('folder');
+                context.getCapability('type').instanceOf('folder');
             return !isFolderInLayout;
         };
 

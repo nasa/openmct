@@ -74,34 +74,6 @@ define([
      * @memberof module:openmct.TelemetryAPI~TelemetryFormatter#
      */
 
-
-
-
-    // format map is a placeholder until we figure out format service.
-    var FORMAT_MAP = {
-        generic: function (range) {
-            return function (datum) {
-                return datum[range.key];
-            };
-        },
-        enum: function (range) {
-            var enumMap = _.indexBy(range.enumerations, 'value');
-            return function (datum) {
-                try {
-                    return enumMap[datum[range.valueKey]].text;
-                } catch (e) {
-                    return datum[range.valueKey];
-                }
-            };
-        }
-    };
-
-    FORMAT_MAP.number =
-        FORMAT_MAP.float =
-        FORMAT_MAP.integer =
-        FORMAT_MAP.ascii =
-        FORMAT_MAP.generic;
-
     /**
      * Describes a property which would be found in a datum of telemetry
      * associated with a particular domain object.

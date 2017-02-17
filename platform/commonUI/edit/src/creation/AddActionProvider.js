@@ -66,9 +66,7 @@ define(
             }
 
             // Introduce one create action per type
-            return this.typeService.listTypes().filter(function (type) {
-                return self.policyService.allow("creation", type) && self.policyService.allow("composition", destination.getCapability('type'), type);
-            }).map(function (type) {
+            ['timeline', 'activity'].map(function (type) {
                 return new AddAction(
                     type,
                     destination,

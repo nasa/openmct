@@ -56,7 +56,7 @@ define(
          */
         CreateWizard.prototype.getFormStructure = function (includeLocation) {
             var sections = [],
-                type = this.type,
+                domainObject = this.domainObject,
                 policyService = this.policyService;
 
             function validateLocation(locatingObject) {
@@ -65,7 +65,7 @@ define(
                 return locatingType && policyService.allow(
                     "composition",
                     locatingType,
-                    type
+                    domainObject
                 );
             }
 
