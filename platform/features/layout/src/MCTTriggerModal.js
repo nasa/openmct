@@ -49,8 +49,6 @@ define([
             function openOverlay() {
                 // Remove frame classes from being applied in a non-frame context
                 $(frame).removeClass('frame frame-template');
-                overlay = document.createElement('span');
-                overlay.innerHTML = OVERLAY_TEMPLATE;
                 overlayContainer = overlay.querySelector('.abs.contents');
                 closeButton = overlay.querySelector('a.close');
                 closeButton.addEventListener('click', toggleOverlay);
@@ -74,9 +72,16 @@ define([
                 overlay = undefined;
             }
 
+            function initOpenOverlay() {
+                overlay = document.createElement('span');
+                overlay.innerHTML = OVERLAY_TEMPLATE;
+                // Give expand anim time to run before populating
+                setTimeout(openOverlay(), 5000);
+            }
+
             function toggleOverlay() {
                 if (!isOpen) {
-                    openOverlay();
+                    initOpenOverlay();
                     isOpen = true;
                 } else {
                     closeOverlay();

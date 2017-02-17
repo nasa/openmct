@@ -152,11 +152,15 @@
 
     &.l-large-view {
         > .holder {
+            @include keyframes(overlayIn) {
+                from { opacity: 0; width: 1%; height: 1%; }
+                to { opacity: 1; width: 90%; height: 90%; }
+            }
+            @include animToParams(overlayIn, $dur: 1s, $delay: 0);
             background: $colorBodyBg;
             border-radius: $basicCr * 2;
-            //color: $colorBodyFg; // Main body styles should cover this
-            height: 90%;
-            width: 90%;
+            //height: 90%;
+            //width: 90%;
 
             .t-btn-view-large {
                 display: none;
