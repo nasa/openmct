@@ -70,9 +70,9 @@ define([
                         "$location",
                         "openmct",
                         "timeConductorViewService",
-                        "timeSystems[]",
                         "formatService",
-                        "DEFAULT_TIMECONDUCTOR_MODE"
+                        "DEFAULT_TIMECONDUCTOR_MODE",
+                        "SHOW_TIMECONDUCTOR",
                     ]
                 },
                 {
@@ -154,7 +154,7 @@ define([
             "constants": [
                 {
                     "key": "DEFAULT_TIMECONDUCTOR_MODE",
-                    "value": "fixed",
+                    "value": "realtime",
                     "priority": "fallback"
                 }
             ],

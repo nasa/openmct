@@ -45,10 +45,10 @@ define(
             $window, 
             $location, 
             openmct, 
-            conductorViewService, 
-            timeSystems, 
+            conductorViewService,
             formatService,
-            DEFAULT_MODE
+            DEFAULT_MODE,
+            SHOW_TIMECONDUCTOR
         ) {
 
             var self = this;
@@ -71,9 +71,7 @@ define(
             this.DEFAULT_MODE = DEFAULT_MODE;
 
             // Construct the provided time system definitions
-            this.timeSystems = timeSystems.map(function (timeSystemConstructor) {
-                return timeSystemConstructor();
-            });
+            this.timeSystems = conductorViewService.systems;
 
             this.initializeScope();
             var searchParams = JSON.parse(JSON.stringify(this.$location.search()));
@@ -104,6 +102,8 @@ define(
             //Respond to any subsequent conductor changes
             this.conductor.on('bounds', this.changeBounds);
             this.conductor.on('timeSystem', this.changeTimeSystem);
+
+            this.$scope.showTimeConductor = SHOW_TIMECONDUCTOR;
         }
 
         /**

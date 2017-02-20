@@ -39,6 +39,14 @@
             openmct.install(openmct.plugins.myItems);
             openmct.install(openmct.plugins.localStorage);
             openmct.install(openmct.plugins.espresso);
+
+            openmct.install(openmct.plugins.UTCTimeSystem());
+            openmct.install(openmct.plugins.Conductor({
+                defaultTimeSystem: 'utc',
+                defaultTimespan: 30 * 60 * 1000,
+                showConductor: false
+            }));
+
             openmct.start();
         });
     </script>
