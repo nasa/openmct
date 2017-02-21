@@ -22,10 +22,12 @@
 
 define([
     'lodash',
-    '../../platform/features/conductor/utcTimeSystem/src/UTCTimeSystem'
+    '../../platform/features/conductor/utcTimeSystem/src/UTCTimeSystem',
+    './generator/plugin'
 ], function (
     _,
-    UTCTimeSystem
+    UTCTimeSystem,
+    GeneratorPlugin
 ) {
     var bundleMap = {
         couchDB: 'platform/persistence/couch',
@@ -134,6 +136,10 @@ define([
 
             openmct.legacyRegistry.enable(bundleMap.elasticsearch);
         };
+    };
+
+    plugins.Generator = function () {
+        return GeneratorPlugin;
     };
 
     return plugins;
