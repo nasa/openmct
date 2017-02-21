@@ -2261,10 +2261,7 @@ The platform understands the following policy categories (specifiable as the
 
 * `action`: Determines whether or not a given action is allowable. The candidate 
 argument here is an Action; the context is its action context object.
-* `composition`: Determines whether or not domain objects of a given type are 
-allowed to contain domain objects of another type. The candidate argument here 
-is the container's `Type`; the context argument is the `Type` of the object to be 
-contained.
+* `composition`: Determines whether or not domain objects of a given type (first argument, `parentType`) can contain a given object (second argument, `child`).
 * `view`: Determines whether or not a view is applicable for a domain object. 
 The candidate argument is the view's extension definition; the context argument 
 is the `DomainObject` to be viewed.
