@@ -50,8 +50,7 @@ var gulp = require('gulp'),
                 endFile: "src/end.frag"
             },
             mainConfigFile: paths.main,
-            wrapShim: true,
-            optimize: process.env.NODE_ENV === 'development' ? 'none' : 'uglify'
+            wrapShim: true
         },
         karma: {
             configFile: path.resolve(__dirname, 'karma.conf.js'),
@@ -69,6 +68,11 @@ var gulp = require('gulp'),
             }
         }
     };
+
+if (process.env.NODE_ENV === 'development') {
+    options.requirejsOptimize.optimize = 'none';
+}
+
 
 gulp.task('scripts', function () {
     var requirejsOptimize = require('gulp-requirejs-optimize');
