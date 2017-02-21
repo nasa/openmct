@@ -79,6 +79,7 @@ define([
                     "key": "telemetry",
                     "implementation": TelemetryCapability,
                     "depends": [
+                        "openmct",
                         "$injector",
                         "$q",
                         "$log"

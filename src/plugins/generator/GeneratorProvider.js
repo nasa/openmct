@@ -41,6 +41,10 @@ define([
         return domainObject.type === 'generator';
     };
 
+    GeneratorProvider.prototype.supportsRequest =
+        GeneratorProvider.prototype.supportsSubscribe =
+            GeneratorProvider.prototype.canProvideTelemetry;
+
     GeneratorProvider.prototype.makeWorkerRequest = function (domainObject, request) {
         var props = [
             'amplitude',
