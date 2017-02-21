@@ -187,7 +187,9 @@ define(
             });
 
             //Synchronize column configuration with model
-            if (configChanged(configuration, defaultConfig)) {
+            if (this.domainObject.hasCapability('editor') &&
+                this.domainObject.getCapability('editor').isEditContextRoot() &&
+                configChanged(configuration, defaultConfig)) {
                 this.saveColumnConfiguration(configuration);
             }
 

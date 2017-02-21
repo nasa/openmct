@@ -35,10 +35,18 @@ define(
 
             beforeEach(function () {
                 mockDomainObject = jasmine.createSpyObj('domainObject',
-                    ['getModel', 'useCapability', 'getCapability']
+                    ['getModel', 'useCapability', 'getCapability', 'hasCapability']
                 );
                 mockModel = {};
                 mockDomainObject.getModel.andReturn(mockModel);
+                mockDomainObject.getCapability.andCallFake(function (name) {
+                    return name === 'editor' && {
+                        isEditContextRoot: function () {
+                            return true;
+                        }
+                    };
+                });
+
                 mockTelemetryFormatter = jasmine.createSpyObj('telemetryFormatter',
                     [
                         'formatDomainValue',
