@@ -39,9 +39,7 @@ define(
         }
 
         CompositionPolicy.prototype.allow = function (parentType, child) {
-            var childType = child.getCapability('type');
-            var childTypeKey = childType.getKey();
-            var parentDef = parent.getDefinition();
+            var parentDef = parentType.getDefinition();
 
             // A parent without containment rules can contain anything.
             if (!parentDef.contains) {
@@ -53,7 +51,7 @@ define(
             return parentDef.contains.some(function (c) {
                 // Simple containment rules are supported typeKeys.
                 if (typeof c === 'string') {
-                    return c === childTypeKey;
+                    return c === child.getCapability('type').getKey();
                 }
                 // More complicated rules require context to have all specified
                 // capabilities.

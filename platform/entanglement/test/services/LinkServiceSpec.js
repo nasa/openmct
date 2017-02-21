@@ -114,7 +114,7 @@ define(
                         expect(mockPolicyService.allow).toHaveBeenCalledWith(
                             "composition",
                             parentCandidate.capabilities.type,
-                            object.capabilities.type
+                            object
                         );
                     });
 

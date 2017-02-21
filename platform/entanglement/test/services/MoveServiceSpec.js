@@ -124,7 +124,7 @@ define(
                         expect(policyService.allow).toHaveBeenCalledWith(
                             "composition",
                             parentCandidate.capabilities.type,
-                            object.capabilities.type
+                            object
                         );
                     });
 
