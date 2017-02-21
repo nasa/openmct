@@ -105,7 +105,6 @@ define([
         this.valueMetadatas = this.valueMetadatas.map(applyReasonableDefaults);
     }
 
-
     /**
      * Get value metadata for a single key.
      */

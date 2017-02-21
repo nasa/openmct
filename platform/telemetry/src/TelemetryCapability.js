@@ -24,8 +24,12 @@
  * Module defining TelemetryCapability. Created by vwoeltje on 11/12/14.
  */
 define(
-    [],
-    function () {
+    [
+        '../../../src/api/objects/object-utils'
+    ],
+    function (
+        objectUtils
+    ) {
 
         var ZERO = function () {
             return 0;
@@ -103,7 +107,7 @@ define(
          * @implements {Capability}
          * @constructor
          */
-        function TelemetryCapability($injector, $q, $log, domainObject) {
+        function TelemetryCapability(openmct, $injector, $q, $log, domainObject) {
             // We could depend on telemetryService directly, but
             // there isn't a platform implementation of this.
             this.initializeTelemetryService = function () {
@@ -118,7 +122,7 @@ define(
                 }
             };
 
-
+            this.openmct = openmct;
             this.$q = $q;
             this.$log = $log;
             this.domainObject = domainObject;
@@ -160,6 +164,20 @@ define(
         };
 
 
+        function asSeries(telemetry, defaultDomain, defaultRange) {
+            return {
+                getRangeValue: function (index, range) {
+                    return telemetry[index][range || defaultRange];
+                },
+                getDomainValue: function (index, domain) {
+                    return telemetry[index][domain || defaultDomain];
+                },
+                getPointCount: function () {
+                    return telemetry.length;
+                }
+            }
+        }
+
         /**
          * Request telemetry data for this specific domain object.
          * @param {TelemetryRequest} [request] parameters for this
@@ -169,11 +187,21 @@ define(
          */
         TelemetryCapability.prototype.requestData = function requestTelemetry(request) {
             // Bring in any defaults from the object model
-            var fullRequest = this.buildRequest(request || {}),
-                source = fullRequest.source,
-                key = fullRequest.key,
-                telemetryService = this.telemetryService ||
-                    this.initializeTelemetryService(); // Lazy initialization
+            var fullRequest = this.buildRequest(request || {});
+            var source = fullRequest.source;
+            var key = fullRequest.key;
+            var telemetryService = this.telemetryService ||
+                this.initializeTelemetryService(); // Lazy initialization
+
+            var domainObject = objectUtils.toNewFormat(this.domainObject.getModel(), this.domainObject.getId());
+            var telemetryAPI = this.openmct.telemetry;
+
+            var metadata = telemetryAPI.getMetadata(domainObject);
+            var defaultDomain = (metadata.valuesForHints(['domain'])[0] || {}).key;
+            var defaultRange = (metadata.valuesForHints(['range'])[0] || {}).key;
+
+            var isLegacyProvider = telemetryAPI.findRequestProvider(domainObject)
+                    === telemetryAPI.legacyProvider;
 
             // Pull out the relevant field from the larger,
             // structured response.
@@ -187,11 +215,18 @@ define(
                 return telemetryService.requestTelemetry([fullRequest]);
             }
 
-            // If a telemetryService is not available,
-            // getTelemetryService() should reject, and this should
-            // bubble through subsequent then calls.
-            return telemetryService &&
-                requestTelemetryFromService().then(getRelevantResponse);
+            // TODO: Adapt request / options?
+            if (isLegacyProvider) {
+                // If a telemetryService is not available,
+                // getTelemetryService() should reject, and this should
+                // bubble through subsequent then calls.
+                return telemetryService &&
+                    requestTelemetryFromService().then(getRelevantResponse);
+            } else {
+                return telemetryAPI.request(domainObject, fullRequest).then(function (telemetry) {
+                    return asSeries(telemetry, defaultDomain, defaultRange);
+                });
+            }
         };
 
         /**
@@ -217,12 +252,26 @@ define(
          *        subscription request
          */
         TelemetryCapability.prototype.subscribe = function subscribe(callback, request) {
-            var fullRequest = this.buildRequest(request || {}),
-                telemetryService = this.telemetryService ||
-                    this.initializeTelemetryService(); // Lazy initialization
+            var fullRequest = this.buildRequest(request || {});
+            var telemetryService = this.telemetryService ||
+                this.initializeTelemetryService(); // Lazy initialization
+
+            var domainObject = objectUtils.toNewFormat(this.domainObject.getModel(), this.domainObject.getId());
+            var telemetryAPI = this.openmct.telemetry;
+
+            var metadata = telemetryAPI.getMetadata(domainObject);
+            var defaultDomain = (metadata.valuesForHints(['domain'])[0] || {}).key;
+            var defaultRange = (metadata.valuesForHints(['range'])[0] || {}).key;
+
+            var isLegacyProvider = telemetryAPI.findRequestProvider(domainObject)
+                === telemetryAPI.legacyProvider;
+
+            function update(telemetry) {
+                callback(asSeries([telemetry], defaultDomain, defaultRange));
+            }
 
             // Unpack the relevant telemetry series
-            function update(telemetries) {
+            function updateLegacy(telemetries) {
                 var source = fullRequest.source,
                     key = fullRequest.key,
                     result = ((telemetries || {})[source] || {})[key];
@@ -231,8 +280,13 @@ define(
                 }
             }
 
-            return telemetryService &&
-                telemetryService.subscribe(update, [fullRequest]);
+            // Avoid a loop here...
+            if (isLegacyProvider) {
+                return telemetryService &&
+                    telemetryService.subscribe(updateLegacy, [fullRequest]);
+            } else {
+                return telemetryAPI.subscribe(domainObject, update, fullRequest);
+            }
         };
 
         /**
