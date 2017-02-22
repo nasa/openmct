@@ -226,7 +226,7 @@ define([
                         "$window"
                     ],
                     "group": "windowing",
-                    "cssclass": "icon-new-window",
+                    "cssClass": "icon-new-window",
                     "priority": "preferred"
                 },
                 {
@@ -241,7 +241,7 @@ define([
                 {
                     "key": "items",
                     "name": "Items",
-                    "cssclass": "icon-thumbs-strip",
+                    "cssClass": "icon-thumbs-strip",
                     "description": "Grid of available items",
                     "template": itemsTemplate,
                     "uses": [

@@ -36,7 +36,7 @@ define([
                 {
                     "key": "example.page",
                     "name": "Web Page",
-                    "cssclass": "icon-page",
+                    "cssClass": "icon-page",
                     "description": "Embed a web page or web-based image in a resizeable window component. Can be added to Display Layouts. Note that the URL being embedded must allow iframing.",
                     "priority": 50,
                     "features": [
@@ -49,7 +49,7 @@ define([
                             "control": "textfield",
                             "pattern": "^(ftp|https?)\\:\\/\\/\\w+(\\.\\w+)*(\\:\\d+)?(\\/\\S*)*$",
                             "required": true,
-                            "cssclass": "l-input-lg"
+                            "cssClass": "l-input-lg"
                         }
                     ]
                 }

@@ -60,7 +60,7 @@ define(
             this.availModes = {
                 'fixed': {
                     key: 'fixed',
-                    cssclass: 'icon-calendar',
+                    cssClass: 'icon-calendar',
                     label: 'Fixed',
                     name: 'Fixed Timespan Mode',
                     description: 'Query and explore data that falls between two fixed datetimes.'
@@ -81,7 +81,7 @@ define(
             if (timeSystemsForMode('realtime').length > 0) {
                 var realtimeMode = {
                     key: 'realtime',
-                    cssclass: 'icon-clock',
+                    cssClass: 'icon-clock',
                     label: 'Real-time',
                     name: 'Real-time Mode',
                     description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will automatically advance themselves based on a UTC clock.'
@@ -93,7 +93,7 @@ define(
             if (timeSystemsForMode('lad').length > 0) {
                 var ladMode = {
                     key: 'lad',
-                    cssclass: 'icon-database',
+                    cssClass: 'icon-database',
                     label: 'LAD',
                     name: 'LAD Mode',
                     description: 'Latest Available Data mode monitors real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'

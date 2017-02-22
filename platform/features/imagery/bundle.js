@@ -41,7 +41,7 @@ define([
                 {
                     "name": "Imagery",
                     "key": "imagery",
-                    "cssclass": "icon-image",
+                    "cssClass": "icon-image",
                     "template": imageryTemplate,
                     "priority": "preferred",
                     "needs": [

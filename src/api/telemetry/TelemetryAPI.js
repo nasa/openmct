@@ -53,7 +53,7 @@ define([
      * A violation of limits defined for a telemetry property.
      * @typedef LimitViolation
      * @memberof {module:openmct.TelemetryAPI~}
-     * @property {string} cssclass the class (or space-separated classes) to
+     * @property {string} cssClass the class (or space-separated classes) to
      *           apply to display elements for values which violate this limit
      * @property {string} name the human-readable name for the limit violation
      */

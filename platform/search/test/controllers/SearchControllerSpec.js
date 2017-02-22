@@ -69,7 +69,7 @@ define([
             );
             mockSearchService.query.andReturn(mockPromise);
 
-            mockTypes = [{key: 'mock.type', name: 'Mock Type', cssclass: 'icon-object-unknown'}];
+            mockTypes = [{key: 'mock.type', name: 'Mock Type', cssClass: 'icon-object-unknown'}];
 
             mockSearchResult = jasmine.createSpyObj(
                 'searchResult',

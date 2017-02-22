@@ -25,7 +25,7 @@
             <li ng-repeat="menuAction in menuActions"
                 ng-click="menuAction.perform()"
                 title="{{menuAction.getMetadata().description}}"
-                class="{{menuAction.getMetadata().cssclass}}">
+                class="{{menuAction.getMetadata().cssClass}}">
                 {{menuAction.getMetadata().name}}
             </li>
         </ul>

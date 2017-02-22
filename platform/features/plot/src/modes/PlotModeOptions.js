@@ -27,13 +27,13 @@ define(
         var STACKED = {
                 key: "stacked",
                 name: "Stacked",
-                cssclass: "icon-plot-stacked",
+                cssClass: "icon-plot-stacked",
                 Constructor: PlotStackMode
             },
             OVERLAID = {
                 key: "overlaid",
                 name: "Overlaid",
-                cssclass: "icon-plot-overlay",
+                cssClass: "icon-plot-overlay",
                 Constructor: PlotOverlayMode
             };
 
@@ -115,7 +115,7 @@ define(
 
         /**
          * Get all mode options available for each plot. Each
-         * mode contains a `name` and `cssclass` field suitable
+         * mode contains a `name` and `cssClass` field suitable
          * for display in a template.
          * @return {Array} the available modes
          */

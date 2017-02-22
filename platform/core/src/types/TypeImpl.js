@@ -56,12 +56,12 @@ define(
          * @method Type#getDescription
          */
         /**
-         * Get the cssclass associated with this type. cssclass is a
+         * Get the cssClass associated with this type. cssClass is a
          * string which will appear as an icon (when
          * displayed in an appropriate font) which visually
          * distinguish types from one another.
          *
-         * @returns {string} the cssclass for this type
+         * @returns {string} the cssClass for this type
          * @method Type#getCssClass
          */
         /**
@@ -145,7 +145,7 @@ define(
         };
 
         TypeImpl.prototype.getCssClass = function () {
-            return this.typeDef.cssclass;
+            return this.typeDef.cssClass;
         };
 
         TypeImpl.prototype.getProperties = function () {

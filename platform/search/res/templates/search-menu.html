@@ -40,7 +40,7 @@
             </li>
 
             <!-- The filter options, by type -->
-            <li class="search-menu-item {{ type.cssclass }}"
+            <li class="search-menu-item {{ type.cssClass }}"
                 ng-repeat="type in ngModel.types"
                 ng-click="ngModel.checked[type.key] = !ngModel.checked[type.key]; controller.updateOptions()">
 
