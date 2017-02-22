@@ -263,7 +263,7 @@ define(
             var defaultDomain = (metadata.valuesForHints(['domain'])[0] || {}).key;
             var defaultRange = (metadata.valuesForHints(['range'])[0] || {}).key;
 
-            var isLegacyProvider = telemetryAPI.findRequestProvider(domainObject) ===
+            var isLegacyProvider = telemetryAPI.findSubscriptionProvider(domainObject) ===
                 telemetryAPI.legacyProvider;
 
             function update(telemetry) {

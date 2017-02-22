@@ -245,7 +245,6 @@ define(['./TimeConductorController'], function (TimeConductorController) {
             var ts1Metadata;
             var ts2Metadata;
             var ts3Metadata;
-            var mockTimeSystemConstructors;
 
             beforeEach(function () {
                 mode = "realtime";
