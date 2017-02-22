@@ -40,7 +40,16 @@ define(
          * @memberof platform.features.conductor
          * @constructor
          */
-        function TimeConductorController($scope, $window, $location, openmct, conductorViewService, timeSystems, formatService) {
+        function TimeConductorController(
+            $scope,
+            $window,
+            $location,
+            openmct,
+            conductorViewService,
+            formatService,
+            DEFAULT_MODE,
+            SHOW_TIMECONDUCTOR
+        ) {
 
             var self = this;
 
@@ -60,10 +69,14 @@ define(
             this.validation = new TimeConductorValidation(this.conductor);
             this.formatService = formatService;
 
+            //Check if the default mode defined is actually available
+            if (this.modes[DEFAULT_MODE] === undefined) {
+                DEFAULT_MODE = 'fixed';
+            }
+            this.DEFAULT_MODE = DEFAULT_MODE;
+
             // Construct the provided time system definitions
-            this.timeSystems = timeSystems.map(function (timeSystemConstructor) {
-                return timeSystemConstructor();
-            });
+            this.timeSystems = conductorViewService.systems;
 
             this.initializeScope();
             var searchParams = JSON.parse(JSON.stringify(this.$location.search()));
@@ -94,6 +107,8 @@ define(
             //Respond to any subsequent conductor changes
             this.conductor.on('bounds', this.changeBounds);
             this.conductor.on('timeSystem', this.changeTimeSystem);
+
+            this.$scope.showTimeConductor = SHOW_TIMECONDUCTOR;
         }
 
         /**
@@ -139,7 +154,7 @@ define(
             //Set mode from url if changed
             if (searchParams[SEARCH.MODE] === undefined ||
                 searchParams[SEARCH.MODE] !== this.$scope.modeModel.selectedKey) {
-                this.setMode(searchParams[SEARCH.MODE] || "fixed");
+                this.setMode(searchParams[SEARCH.MODE] || this.DEFAULT_MODE);
             }
 
             if (searchParams[SEARCH.TIME_SYSTEM] &&

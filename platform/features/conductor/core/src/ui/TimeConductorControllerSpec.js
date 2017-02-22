@@ -130,8 +130,10 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                     mockLocation,
                     {conductor: mockTimeConductor},
                     mockConductorViewService,
-                    mockTimeSystems,
-                    mockFormatService
+                    mockFormatService,
+                    'fixed',
+                    true
+
                 );
 
                 tsListener = getListener(mockTimeConductor.on, "timeSystem");
@@ -244,7 +246,6 @@ define(['./TimeConductorController'], function (TimeConductorController) {
             var ts1Metadata;
             var ts2Metadata;
             var ts3Metadata;
-            var mockTimeSystemConstructors;
 
             beforeEach(function () {
                 mode = "realtime";
@@ -276,11 +277,7 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                 ];
 
                 //Wrap in mock constructors
-                mockTimeSystemConstructors = mockTimeSystems.map(function (mockTimeSystem) {
-                    return function () {
-                        return mockTimeSystem;
-                    };
-                });
+                mockConductorViewService.systems = mockTimeSystems;
 
                 controller = new TimeConductorController(
                     mockScope,
@@ -288,8 +285,9 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                     mockLocation,
                     {conductor: mockTimeConductor},
                     mockConductorViewService,
-                    mockTimeSystemConstructors,
-                    mockFormatService
+                    mockFormatService,
+                    "fixed",
+                    true
                 );
             });
 
@@ -434,12 +432,7 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                     }
                 };
 
-                mockTimeSystems.push(function () {
-                    return timeSystem;
-                });
-                mockTimeSystems.push(function () {
-                    return otherTimeSystem;
-                });
+                mockConductorViewService.systems = [timeSystem, otherTimeSystem];
 
                 urlBounds = {
                     start: 100,
@@ -467,8 +460,9 @@ define(['./TimeConductorController'], function (TimeConductorController) {
                     mockLocation,
                     {conductor: mockTimeConductor},
                     mockConductorViewService,
-                    mockTimeSystems,
-                    mockFormatService
+                    mockFormatService,
+                    "fixed",
+                    true
                 );
 
                 spyOn(controller, "setMode");
