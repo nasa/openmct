@@ -21,41 +21,28 @@
  *****************************************************************************/
 
 define(
-    ["../../src/actions/StartTimerAction"],
-    function (StartTimerAction) {
+    ["../../src/actions/AbstractTimerAction"],
+    function (AbstractTimerAction) {
 
-        describe("A timer's start action", function () {
+        describe("A timer's start/restart action", function () {
             var mockNow,
                 mockDomainObject,
                 testModel,
-                testContext,
                 action;
 
             function asPromise(value) {
                 return (value || {}).then ? value : {
-                        then: function (callback) {
-                            return asPromise(callback(value));
-                        }
-                    };
-            }
-
-            function testState(type, timerState, timestamp, expected) {
-                testModel.type = type;
-                testModel.timerState = timerState;
-                testModel.timestamp = timestamp;
-
-                if (expected) {
-                    expect(StartTimerAction.appliesTo(testContext)).toBeTruthy();
-                } else {
-                    expect(StartTimerAction.appliesTo(testContext)).toBeFalsy();
-                }
+                    then: function (callback) {
+                        return asPromise(callback(value));
+                    }
+                };
             }
 
             beforeEach(function () {
                 mockNow = jasmine.createSpy('now');
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    ['getCapability', 'useCapability', 'getModel']
+                    ['getCapability', 'useCapability']
                 );
 
                 mockDomainObject.useCapability.andCallFake(function (c, v) {
@@ -64,14 +51,12 @@ define(
                         return asPromise(true);
                     }
                 });
-                mockDomainObject.getModel.andCallFake(function () {
-                    return testModel;
-                });
 
                 testModel = {};
-                testContext = {domainObject: mockDomainObject};
 
-                action = new StartTimerAction(mockNow, testContext);
+                action = new AbstractTimerAction(mockNow, {
+                    domainObject: mockDomainObject
+                });
             });
 
             it("updates the model with a timestamp", function () {
@@ -80,30 +65,10 @@ define(
                 expect(testModel.timestamp).toEqual(12000);
             });
 
-            it("updates the model with a pausedTime", function () {
-                testModel.pausedTime = 12000;
+            it("does not truncate milliseconds", function () {
+                mockNow.andReturn(42321);
                 action.perform();
-                expect(testModel.pausedTime).toEqual(undefined);
-            });
-
-            it("updates the model with a timerState", function () {
-                testModel.timerState = undefined;
-                action.perform();
-                expect(testModel.timerState).toEqual('started');
-            });
-
-            it("applies only to timers not in a playing state", function () {
-                //in a stopped state
-                testState('timer', 'stopped', undefined, true);
-
-                //in a paused state
-                testState('timer', 'paused', 12000, true);
-
-                //in a playing state
-                testState('timer', 'started', 12000, false);
-
-                //not a timer
-                testState('clock', 'paused', 12000, false);
+                expect(testModel.timestamp).toEqual(42321);
             });
         });
     }
