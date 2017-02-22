@@ -176,8 +176,9 @@ define([
      * @private
      */
     TelemetryAPI.prototype.findSubscriptionProvider = function (domainObject) {
+        var args = Array.prototype.slice.apply(arguments);
         function supportsDomainObject(provider) {
-            return provider.supportsSubscribe(domainObject);
+            return provider.supportsSubscribe.apply(provider, args);
         }
 
         return this.subscriptionProviders.filter(supportsDomainObject)[0];
@@ -187,8 +188,9 @@ define([
      * @private
      */
     TelemetryAPI.prototype.findRequestProvider = function (domainObject, options) {
+        var args = Array.prototype.slice.apply(arguments);
         function supportsDomainObject(provider) {
-            return provider.supportsRequest(domainObject);
+            return provider.supportsRequest.apply(provider, args);
         }
 
         return this.requestProviders.filter(supportsDomainObject)[0];
