@@ -54,8 +54,7 @@ define(
         AddActionProvider.prototype.getActions = function (actionContext) {
             var context = actionContext || {},
                 key = context.key,
-                destination = context.domainObject,
-                self = this;
+                destination = context.domainObject;
 
             // We only provide Add actions, and we need a
             // domain object to serve as the container for the
@@ -66,18 +65,16 @@ define(
             }
 
             // Introduce one create action per type
-            return this.typeService.listTypes().filter(function (type) {
-                return self.policyService.allow("creation", type) && self.policyService.allow("composition", destination.getCapability('type'), type);
-            }).map(function (type) {
+            return ['timeline', 'activity'].map(function (type) {
                 return new AddAction(
-                    type,
+                    this.typeService.getType(type),
                     destination,
                     context,
-                    self.$q,
-                    self.dialogService,
-                    self.policyService
+                    this.$q,
+                    this.dialogService,
+                    this.policyService
                 );
-            });
+            }, this);
         };
 
         return AddActionProvider;

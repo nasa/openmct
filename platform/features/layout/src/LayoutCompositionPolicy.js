@@ -34,13 +34,14 @@ define(
         function LayoutCompositionPolicy() {
         }
 
-        LayoutCompositionPolicy.prototype.allow = function (candidate, context) {
-            var isFolderInLayout =
-                candidate &&
-                context &&
-                candidate.instanceOf('layout') &&
-                context.instanceOf('folder');
-            return !isFolderInLayout;
+        LayoutCompositionPolicy.prototype.allow = function (parentType, child) {
+            if (parentType.instanceOf('layout') &&
+                child.getCapability('type').instanceOf('folder')) {
+
+                return false;
+            }
+
+            return true;
         };
 
         return LayoutCompositionPolicy;
