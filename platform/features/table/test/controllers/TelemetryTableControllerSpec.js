@@ -66,7 +66,8 @@ define(
                 mockDomainObject = jasmine.createSpyObj("domainObject", [
                     "getModel",
                     "getId",
-                    "useCapability"
+                    "useCapability",
+                    "hasCapability"
                 ]);
                 mockDomainObject.getModel.andReturn({});
                 mockDomainObject.getId.andReturn("mockId");
