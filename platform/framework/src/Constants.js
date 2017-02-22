@@ -25,7 +25,6 @@
  */
 define({
     MODULE_NAME: "OpenMCTWeb",
-    BUNDLE_LISTING_FILE: "bundles.json",
     BUNDLE_FILE: "bundle.json",
     SEPARATOR: "/",
     EXTENSION_SUFFIX: "[]",
