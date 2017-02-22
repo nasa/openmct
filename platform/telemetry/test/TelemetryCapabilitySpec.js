@@ -32,7 +32,9 @@ define(
                 mockTelemetryService,
                 mockReject,
                 mockUnsubscribe,
-                telemetry;
+                telemetry,
+                mockAPI,
+                legacyTelemetryProvider;
 
 
             function mockPromise(value) {
@@ -79,7 +81,26 @@ define(
                 // Bubble up...
                 mockReject.then.andReturn(mockReject);
 
+                legacyTelemetryProvider = {};
+
+                mockAPI = {
+                    telemetry: {
+                        getMetadata: function () {
+                            return {
+                                valuesForHints: function () {
+                                    return [];
+                                }
+                            };
+                        },
+                        findRequestProvider: function () {
+                            return legacyTelemetryProvider;
+                        },
+                        legacyProvider: legacyTelemetryProvider
+                    }
+                };
+
                 telemetry = new TelemetryCapability(
+                    mockAPI,
                     mockInjector,
                     mockQ,
                     mockLog,
