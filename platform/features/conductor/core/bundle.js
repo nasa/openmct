@@ -72,7 +72,7 @@ define([
                         "timeConductorViewService",
                         "formatService",
                         "DEFAULT_TIMECONDUCTOR_MODE",
-                        "SHOW_TIMECONDUCTOR",
+                        "SHOW_TIMECONDUCTOR"
                     ]
                 },
                 {

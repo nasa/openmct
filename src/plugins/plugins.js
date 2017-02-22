@@ -23,7 +23,7 @@
 define([
     'lodash',
     '../../platform/features/conductor/utcTimeSystem/src/UTCTimeSystem',
-    './generator/plugin'
+    '../../example/generator/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -50,14 +50,32 @@ define([
                 "implementation": UTCTimeSystem,
                 "depends": ["$timeout"]
             });
-        }
+        };
     };
 
     plugins.Conductor = function (options) {
         if (!options) {
             options = {};
         }
-        
+
+        function applyDefaults(openmct, timeConductorViewService) {
+            var defaults = {};
+            var timeSystem = timeConductorViewService.systems.find(function (ts) {
+                return ts.metadata.key === options.defaultTimeSystem;
+            });
+            if (timeSystem !== undefined) {
+                defaults = timeSystem.defaults();
+
+                if (options.defaultTimespan !== undefined) {
+                    defaults.deltas.start = options.defaultTimespan;
+                    defaults.bounds.start = defaults.bounds.end - options.defaultTimespan;
+                    timeSystem.defaults(defaults);
+                }
+
+                openmct.conductor.timeSystem(timeSystem, defaults.bounds);
+            }
+        }
+
         return function (openmct) {
             openmct.legacyExtension('constants', {
                 key: 'DEFAULT_TIMECONDUCTOR_MODE',
@@ -71,21 +89,8 @@ define([
             });
             if (options.defaultTimeSystem !== undefined || options.defaultTimespan !== undefined) {
                 openmct.legacyExtension('runs', {
-                    implementation: function (openmct, $timeout, timeConductorViewService) {
-                        var timeSystem = timeConductorViewService.systems.find(function (ts) {
-                            return ts.metadata.key === options.defaultTimeSystem;
-                        });
-                        if (options.defaultTimespan !== undefined && timeSystem !== undefined) {
-                            var defaults = timeSystem.defaults();
-                            defaults.deltas.start = options.defaultTimespan;
-                            defaults.bounds.start = defaults.bounds.end - options.defaultTimespan;
-                            timeSystem.defaults(defaults);
-                        }
-                        if (timeSystem!== undefined) {
-                            openmct.conductor.timeSystem(timeSystem, defaults.bounds);
-                        }
-                    },
-                    depends: ["openmct", "$timeout", "timeConductorViewService"]
+                    implementation: applyDefaults,
+                    depends: ["openmct", "timeConductorViewService"]
                 });
             }
 

@@ -41,10 +41,10 @@ define(
          * @constructor
          */
         function TimeConductorController(
-            $scope, 
-            $window, 
-            $location, 
-            openmct, 
+            $scope,
+            $window,
+            $location,
+            openmct,
             conductorViewService,
             formatService,
             DEFAULT_MODE,

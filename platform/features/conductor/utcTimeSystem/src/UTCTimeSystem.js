@@ -66,7 +66,7 @@ define([
     };
 
     UTCTimeSystem.prototype.defaults = function (defaults) {
-        if (arguments.length > 0){
+        if (arguments.length > 0) {
             this.defaultValues = defaults;
         }
 
@@ -81,7 +81,7 @@ define([
                 deltas: {start: FIFTEEN_MINUTES, end: 0},
                 bounds: {start: now - FIFTEEN_MINUTES, end: now},
                 zoom: {min: FIFTY_YEARS, max: ONE_MINUTE}
-            }
+            };
         }
         return this.defaultValues;
     };
