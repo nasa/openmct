@@ -24,18 +24,20 @@ define([
     'lodash'
 ], function (_) {
     var bundleMap = {
-        couchDB: 'platform/persistence/couch',
-        elasticsearch: 'platform/persistence/elastic',
-        espresso: 'platform/commonUI/themes/espresso',
-        localStorage: 'platform/persistence/local',
-        myItems: 'platform/features/my-items',
-        snow: 'platform/commonUI/themes/snow',
-        utcTimeSystem: 'platform/features/conductor/utcTimeSystem'
+        CouchDB: 'platform/persistence/couch',
+        Elasticsearch: 'platform/persistence/elastic',
+        Espresso: 'platform/commonUI/themes/espresso',
+        LocalStorage: 'platform/persistence/local',
+        MyItems: 'platform/features/my-items',
+        Snow: 'platform/commonUI/themes/snow',
+        UTCTimeSystem: 'platform/features/conductor/utcTimeSystem'
     };
 
     var plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
-        return function (openmct) {
-            openmct.legacyRegistry.enable(bundleName);
+        return function pluginConstructor() {
+            return function (openmct) {
+                openmct.legacyRegistry.enable(bundleName);
+            };
         };
     });
 
@@ -57,7 +59,7 @@ define([
                 openmct.legacyRegistry.enable(bundleName);
             }
 
-            openmct.legacyRegistry.enable(bundleMap.couchDB);
+            openmct.legacyRegistry.enable(bundleMap.CouchDB);
         };
     };
 
@@ -79,7 +81,7 @@ define([
                 openmct.legacyRegistry.enable(bundleName);
             }
 
-            openmct.legacyRegistry.enable(bundleMap.elasticsearch);
+            openmct.legacyRegistry.enable(bundleMap.Elasticsearch);
         };
     };
 
