@@ -23,7 +23,7 @@
 define([
     'lodash',
     '../../platform/features/conductor/utcTimeSystem/src/UTCTimeSystem',
-    './generator/plugin'
+    '../../example/generator/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -50,7 +50,7 @@ define([
                 "implementation": UTCTimeSystem,
                 "depends": ["$timeout"]
             });
-        }
+        };
     };
 
     plugins.CouchDB = function (url) {
@@ -95,6 +95,10 @@ define([
 
             openmct.legacyRegistry.enable(bundleMap.elasticsearch);
         };
+    };
+
+    plugins.Generator = function () {
+        return GeneratorPlugin;
     };
 
     return plugins;

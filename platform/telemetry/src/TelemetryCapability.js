@@ -175,7 +175,7 @@ define(
                 getPointCount: function () {
                     return telemetry.length;
                 }
-            }
+            };
         }
 
         /**
@@ -200,8 +200,8 @@ define(
             var defaultDomain = (metadata.valuesForHints(['domain'])[0] || {}).key;
             var defaultRange = (metadata.valuesForHints(['range'])[0] || {}).key;
 
-            var isLegacyProvider = telemetryAPI.findRequestProvider(domainObject)
-                    === telemetryAPI.legacyProvider;
+            var isLegacyProvider = telemetryAPI.findRequestProvider(domainObject) ===
+                telemetryAPI.legacyProvider;
 
             // Pull out the relevant field from the larger,
             // structured response.
@@ -263,8 +263,8 @@ define(
             var defaultDomain = (metadata.valuesForHints(['domain'])[0] || {}).key;
             var defaultRange = (metadata.valuesForHints(['range'])[0] || {}).key;
 
-            var isLegacyProvider = telemetryAPI.findRequestProvider(domainObject)
-                === telemetryAPI.legacyProvider;
+            var isLegacyProvider = telemetryAPI.findRequestProvider(domainObject) ===
+                telemetryAPI.legacyProvider;
 
             function update(telemetry) {
                 callback(asSeries([telemetry], defaultDomain, defaultRange));
