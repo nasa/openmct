@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ["../../src/actions/AbstractStartTimerAction"],
-    function (AbstractStartTimerAction) {
+    ["../../src/actions/AbstractTimerAction"],
+    function (AbstractTimerAction) {
 
         describe("A timer's start/restart action", function () {
             var mockNow,
@@ -54,7 +54,7 @@ define(
 
                 testModel = {};
 
-                action = new AbstractStartTimerAction(mockNow, {
+                action = new AbstractTimerAction(mockNow, {
                     domainObject: mockDomainObject
                 });
             });

@@ -21,18 +21,16 @@
  *****************************************************************************/
 
 define(
-    [],
-    function () {
+    ['./AbstractTimerAction'],
+    function (AbstractTimerAction) {
 
         /**
-         * Implements the "Start" and "Restart" action for timers.
+         * Implements the "Pause" action for timers.
          *
-         * Sets the reference timestamp in a timer to the current
-         * time, such that it begins counting up.
+         * Sets the reference pausedTime in a timer to the current
+         * time, such that it stops counting up.
          *
-         * Both "Start" and "Restart" share this implementation, but
-         * control their visibility with different `appliesTo` behavior.
-         *
+         * @extends {platform/features/clock.AbstractTimerAction}
          * @implements {Action}
          * @memberof platform/features/clock
          * @constructor
@@ -40,22 +38,41 @@ define(
          *        time (typically wrapping `Date.now`)
          * @param {ActionContext} context the context for this action
          */
-        function AbstractStartTimerAction(now, context) {
-            this.domainObject = context.domainObject;
-            this.now = now;
+        function PauseTimerAction(now, context) {
+            AbstractTimerAction.apply(this, [now, context]);
         }
 
-        AbstractStartTimerAction.prototype.perform = function () {
+        PauseTimerAction.prototype =
+            Object.create(AbstractTimerAction.prototype);
+
+        PauseTimerAction.appliesTo = function (context) {
+            var model =
+                (context.domainObject && context.domainObject.getModel()) ||
+                {};
+
+
+            // We show this variant for timers which have
+            // a target time, or is in a playing state.
+            return model.type === 'timer' &&
+                    model.timerState === 'started';
+        };
+
+        PauseTimerAction.prototype.perform = function () {
             var domainObject = this.domainObject,
                 now = this.now;
 
-            function setTimestamp(model) {
-                model.timestamp = now();
+            function setTimerState(model) {
+                model.timerState = 'paused';
             }
 
-            return domainObject.useCapability('mutation', setTimestamp);
+            function setPausedTime(model) {
+                model.pausedTime = now();
+            }
+
+            return domainObject.useCapability('mutation', setTimerState) &&
+                domainObject.useCapability('mutation', setPausedTime);
         };
 
-        return AbstractStartTimerAction;
+        return PauseTimerAction;
     }
 );

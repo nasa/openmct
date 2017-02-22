@@ -21,16 +21,15 @@
  *****************************************************************************/
 
 define(
-    ['./AbstractTimerAction'],
-    function (AbstractTimerAction) {
+    [],
+    function () {
 
         /**
-         * Implements the "Restart at 0" action.
+         * Implements the "Start" and "Restart" action for timers.
          *
-         * Behaves the same as (and delegates functionality to)
-         * the "Start" action.
+         * Sets the reference timestamp in a timer to the current
+         * time, such that it begins counting up.
          *
-         * @extends {platform/features/clock.AbstractTimerAction}
          * @implements {Action}
          * @memberof platform/features/clock
          * @constructor
@@ -38,29 +37,23 @@ define(
          *        time (typically wrapping `Date.now`)
          * @param {ActionContext} context the context for this action
          */
-        function RestartTimerAction(now, context) {
-            AbstractTimerAction.apply(this, [now, context]);
+        function AbstractTimerAction(now, context) {
+            this.domainObject = context.domainObject;
+            this.now = now;
         }
 
-        RestartTimerAction.prototype =
-            Object.create(AbstractTimerAction.prototype);
-
-        RestartTimerAction.appliesTo = function (context) {
-            var model =
-                (context.domainObject && context.domainObject.getModel()) ||
-                {};
-
-            // We show this variant for timers which already have a target time.
-            return model.type === 'timer' &&
-                model.timerState !== 'stopped';
-        };
-
-        RestartTimerAction.prototype.perform = function () {
+        AbstractTimerAction.prototype.perform = function () {
             var domainObject = this.domainObject,
                 now = this.now;
 
             function setTimestamp(model) {
-                model.timestamp = now();
+                //if we are resuming
+                if (model.pausedTime) {
+                    var timeShift = now() - model.pausedTime;
+                    model.timestamp = model.timestamp + timeShift;
+                } else {
+                    model.timestamp = now();
+                }
             }
 
             function setTimerState(model) {
@@ -76,6 +69,6 @@ define(
                 domainObject.useCapability('mutation', setPausedTime);
         };
 
-        return RestartTimerAction;
+        return AbstractTimerAction;
     }
 );
