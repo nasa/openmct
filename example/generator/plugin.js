@@ -74,7 +74,7 @@ define([
                 openmct.legacyExtension(type, extension)
             })
         });
-        openmct.types.register("generator", {
+        openmct.types.addType("generator", {
             label: "Sine Wave Generator",
             description: "For development use. Generates example streaming telemetry data using a simple sine wave algorithm.",
             cssClass: "icon-telemetry",

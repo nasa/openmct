@@ -118,7 +118,7 @@ define(
                 formModel = this.createModel(formValue);
 
             formModel.location = parent.getId();
-            this.domainObject.useCapability("mutation", function (model) {
+            this.domainObject.useCapability("mutation", function () {
                 return formModel;
             });
             return this.domainObject;
