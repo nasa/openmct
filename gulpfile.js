@@ -69,6 +69,11 @@ var gulp = require('gulp'),
         }
     };
 
+if (process.env.NODE_ENV === 'development') {
+    options.requirejsOptimize.optimize = 'none';
+}
+
+
 gulp.task('scripts', function () {
     var requirejsOptimize = require('gulp-requirejs-optimize');
     var replace = require('gulp-replace-task');
