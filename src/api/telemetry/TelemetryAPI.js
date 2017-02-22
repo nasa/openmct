@@ -74,34 +74,6 @@ define([
      * @memberof module:openmct.TelemetryAPI~TelemetryFormatter#
      */
 
-
-
-
-    // format map is a placeholder until we figure out format service.
-    var FORMAT_MAP = {
-        generic: function (range) {
-            return function (datum) {
-                return datum[range.key];
-            };
-        },
-        enum: function (range) {
-            var enumMap = _.indexBy(range.enumerations, 'value');
-            return function (datum) {
-                try {
-                    return enumMap[datum[range.valueKey]].text;
-                } catch (e) {
-                    return datum[range.valueKey];
-                }
-            };
-        }
-    };
-
-    FORMAT_MAP.number =
-        FORMAT_MAP.float =
-        FORMAT_MAP.integer =
-        FORMAT_MAP.ascii =
-        FORMAT_MAP.generic;
-
     /**
      * Describes a property which would be found in a datum of telemetry
      * associated with a particular domain object.
@@ -161,8 +133,8 @@ define([
      */
     function TelemetryAPI(MCT) {
         this.MCT = MCT;
-        this.providersByStrategy = {};
-        this.defaultProviders = [];
+        this.requestProviders = [];
+        this.subscriptionProviders = [];
         this.metadataCache = new WeakMap();
         this.formatMapCache = new WeakMap();
         this.valueFormatterCache = new WeakMap();
@@ -179,9 +151,8 @@ define([
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
     TelemetryAPI.prototype.canProvideTelemetry = function (domainObject) {
-        return this.defaultProviders.some(function (provider) {
-            return provider.canProvideTelemetry(domainObject);
-        });
+        return !!this.findSubscriptionProvider(domainObject) ||
+               !!this.findRequestProvider(domainObject);
     };
 
     /**
@@ -191,39 +162,38 @@ define([
      * @memberof module:openmct.TelemetryAPI#
      * @param {module:openmct.TelemetryAPI~TelemetryProvider} provider the new
      *        telemetry provider
-     * @param {string} [strategy] the request strategy supported by
-     *        this provider. If omitted, this will be used as a
-     *        default provider (when no strategy is requested or no
-     *        matching strategy is found.)
      */
-    TelemetryAPI.prototype.addProvider = function (provider, strategy) {
-        if (!strategy) {
-            this.defaultProviders.push(provider);
-        } else {
-            this.providersByStrategy[strategy] =
-                this.providersByStrategy[strategy] || [];
-            this.providersByStrategy[strategy].push(provider);
+    TelemetryAPI.prototype.addProvider = function (provider) {
+        if (provider.supportsRequest) {
+            this.requestProviders.unshift(provider);
+        }
+        if (provider.supportsSubscribe) {
+            this.subscriptionProviders.unshift(provider);
         }
     };
 
     /**
      * @private
      */
-    TelemetryAPI.prototype.findProvider = function (domainObject, strategy) {
+    TelemetryAPI.prototype.findSubscriptionProvider = function (domainObject) {
+        var args = Array.prototype.slice.apply(arguments);
         function supportsDomainObject(provider) {
-            return provider.canProvideTelemetry(domainObject);
+            return provider.supportsSubscribe.apply(provider, args);
         }
 
-        if (strategy) {
-            var eligibleProviders =
-                (this.providersByStrategy[strategy] || [])
-                    .filter(supportsDomainObject);
-            if (eligibleProviders.length > 0) {
-                return eligibleProviders[0];
-            }
+        return this.subscriptionProviders.filter(supportsDomainObject)[0];
+    };
+
+    /**
+     * @private
+     */
+    TelemetryAPI.prototype.findRequestProvider = function (domainObject, options) {
+        var args = Array.prototype.slice.apply(arguments);
+        function supportsDomainObject(provider) {
+            return provider.supportsRequest.apply(provider, args);
         }
 
-        return this.defaultProviders.filter(supportsDomainObject)[0];
+        return this.requestProviders.filter(supportsDomainObject)[0];
     };
 
     /**
@@ -242,10 +212,29 @@ define([
      *          telemetry data
      */
     TelemetryAPI.prototype.request = function (domainObject, options) {
-        var provider = this.findProvider(domainObject, options.strategy);
-        return provider ?
-            provider.request(domainObject, options) :
-            Promise.reject([]);
+        var provider = this.findRequestProvider.apply(this, arguments);
+        return provider.request.apply(provider, arguments);
+    };
+
+    /**
+     * Subscribe to realtime telemetry for a specific domain object.
+     * The callback will be called whenever data is received from a
+     * realtime provider.
+     *
+     * @method subscribe
+     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
+     * @param {module:openmct.DomainObject} domainObject the object
+     *        which has associated telemetry
+     * @param {Function} callback the callback to invoke with new data, as
+     *        it becomes available
+     * @param {module:openmct.TelemetryAPI~TelemetryRequest} options
+     *        options for this request
+     * @returns {Function} a function which may be called to terminate
+     *          the subscription
+     */
+    TelemetryAPI.prototype.subscribe = function (domainObject, callback, options) {
+        var provider = this.findSubscriptionProvider.apply(this, arguments);
+        return provider.subscribe.apply(provider, arguments);
     };
 
     /**
@@ -328,53 +317,6 @@ define([
     };
 
     /**
-     * Subscribe to realtime telemetry for a specific domain object.
-     * The callback will be called whenever data is received from a
-     * realtime provider.
-     *
-     * @method subscribe
-     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
-     * @param {module:openmct.DomainObject} domainObject the object
-     *        which has associated telemetry
-     * @param {Function} callback the callback to invoke with new data, as
-     *        it becomes available
-     * @param {module:openmct.TelemetryAPI~TelemetryRequest} options
-     *        options for this request
-     * @returns {Function} a function which may be called to terminate
-     *          the subscription
-     */
-
-    /**
-     * Get a list of all telemetry properties defined for this
-     * domain object.
-     *
-     * @param {module:openmct.DomainObject} domainObject the domain
-     *        object for which to request telemetry
-     * @returns {module:openmct.TelemetryAPI~TelemetryProperty[]}
-     *          telemetry metadata
-     * @method properties
-     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
-     */
-
-    /**
-     * Telemetry formatters help you format telemetry values for
-     * display. Under the covers, they use telemetry metadata to
-     * interpret your telemetry data, and then they use the format API
-     * to format that data for display.
-     *
-     * This method is optional.
-     * If a provider does not implement this method, it is presumed
-     * that all telemetry associated with this domain object can
-     * be formatted correctly by string coercion.
-     *
-     * @param {module:openmct.DomainObject} domainObject the domain
-     *        object for which to format telemetry
-     * @returns {module:openmct.TelemetryAPI~TelemetryFormatter}
-     * @method formatter
-     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
-     */
-
-    /**
      * Get a limit evaluator for this domain object.
      * Limit Evaluators help you evaluate limit and alarm status of individual telemetry datums for display purposes without having to interact directly with the Limit API.
      *
@@ -388,19 +330,9 @@ define([
      * @method limitEvaluator
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
-    _.forEach({
-        subscribe: undefined,
-        properties: [],
-        formatter: undefined,
-        limitEvaluator: undefined
-    }, function (defaultValue, method) {
-        TelemetryAPI.prototype[method] = function (domainObject) {
-            var provider = this.findProvider(domainObject);
-            return provider ?
-                provider[method].apply(provider, arguments) :
-                defaultValue;
-        };
-    });
+    TelemetryAPI.prototype.limitEvaluator = function () {
+        return this.legacyProvider.limitEvaluator.apply(this.legacyProvider, arguments);
+    };
 
     return TelemetryAPI;
 });
