@@ -33,7 +33,7 @@ define([
             mockContext,
             mockActionCapability,
             mockEditor,
-            testParentModel,
+            testParentComposition,
             testId,
             mockThrottledFns;
 
@@ -41,7 +41,6 @@ define([
             testId = 'some-identifier';
 
             mockThrottledFns = [];
-            testParentModel = {};
 
             mockTopic = jasmine.createSpy('topic');
             mockThrottle = jasmine.createSpy('throttle');
@@ -55,14 +54,12 @@ define([
             mockDomainObject = jasmine.createSpyObj('domainObject', [
                 'getId',
                 'getCapability',
-                'getModel',
                 'hasCapability'
             ]);
             mockParentObject = jasmine.createSpyObj('domainObject', [
                 'getId',
                 'getCapability',
-                'getModel',
-                'hasCapability'
+                'useCapability'
             ]);
             mockContext = jasmine.createSpyObj('context', ['getParent']);
             mockActionCapability = jasmine.createSpyObj('action', ['perform']);
@@ -75,9 +72,7 @@ define([
                 mockThrottledFns.push(mockThrottledFn);
                 return mockThrottledFn;
             });
-            mockTopic.andCallFake(function (k) {
-                return k === 'mutation' && mockMutationTopic;
-            });
+            mockTopic.andReturn(mockMutationTopic);
             mockDomainObject.getId.andReturn(testId);
             mockDomainObject.getCapability.andCallFake(function (c) {
                 return {
@@ -88,12 +83,13 @@ define([
             mockDomainObject.hasCapability.andCallFake(function (c) {
                 return !!mockDomainObject.getCapability(c);
             });
-            mockParentObject.getModel.andReturn(testParentModel);
             mockParentObject.getCapability.andCallFake(function (c) {
                 return {
                     action: mockActionCapability
                 }[c];
             });
+            testParentComposition = [];
+            mockParentObject.useCapability.andReturn(Promise.resolve(testParentComposition));
             mockContext.getParent.andReturn(mockParentObject);
             mockNavigationService.getNavigation.andReturn(mockDomainObject);
             mockEditor.isEditContextRoot.andReturn(false);
@@ -126,7 +122,9 @@ define([
             var prefix = isOrphan ? "" : "non-";
             describe("for " + prefix + "orphan objects", function () {
                 beforeEach(function () {
-                    testParentModel.composition = isOrphan ? [] : [testId];
+                    if (!isOrphan) {
+                        testParentComposition.push(mockDomainObject);
+                    }
                 });
 
                 [false, true].forEach(function (isEditRoot) {
@@ -136,13 +134,31 @@ define([
                     function itNavigatesAsExpected() {
                         if (isOrphan && !isEditRoot) {
                             it("navigates to the parent", function () {
-                                expect(mockActionCapability.perform)
-                                    .toHaveBeenCalledWith('navigate');
+                                var done = false;
+                                waitsFor(function () {
+                                    return done;
+                                });
+                                setTimeout(function () {
+                                    done = true;
+                                }, 5);
+                                runs(function () {
+                                    expect(mockActionCapability.perform)
+                                        .toHaveBeenCalledWith('navigate');
+                                });
                             });
                         } else {
                             it("does nothing", function () {
-                                expect(mockActionCapability.perform)
-                                    .not.toHaveBeenCalled();
+                                var done = false;
+                                waitsFor(function () {
+                                    return done;
+                                });
+                                setTimeout(function () {
+                                    done = true;
+                                }, 5);
+                                runs(function () {
+                                    expect(mockActionCapability.perform)
+                                        .not.toHaveBeenCalled();
+                                });
                             });
                         }
                     }
@@ -157,7 +173,6 @@ define([
                                 mockNavigationService.addListener.mostRecentCall
                                     .args[0](mockDomainObject);
                             });
-
                             itNavigatesAsExpected();
                         });
 
