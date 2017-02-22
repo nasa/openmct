@@ -77,13 +77,13 @@ define(
          *
          * @constructor
          */
-        function MCTTable($timeout) {
+        function MCTTable() {
             return {
                 restrict: "E",
                 template: TableTemplate,
                 controller: [
                     '$scope',
-                    '$timeout',
+                    '$window',
                     '$element',
                     'exportService',
                     'formatService',
@@ -94,6 +94,7 @@ define(
                 scope: {
                     headers: "=",
                     rows: "=",
+                    formatCell: "=?",
                     enableFilter: "=?",
                     enableSort: "=?",
                     autoScroll: "=?",
@@ -104,7 +105,7 @@ define(
                     timeColumns: "=?",
                     // Indicate a column to sort on. Allows control of sort
                     // via configuration (eg. for default sort column).
-                    sortColumn: "=?"
+                    defaultSort: "=?"
                 }
             };
         }

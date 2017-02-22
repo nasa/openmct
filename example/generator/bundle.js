@@ -75,8 +75,7 @@ define([
                         },
                         {
                             "key": "delta",
-                            "name": "Delta",
-                            "format": "example.delta"
+                            "name": "Delta"
                         }
                     ],
                     "priority": -1
@@ -103,11 +102,13 @@ define([
                         "domains": [
                             {
                                 "key": "utc",
-                                "name": "Time"
+                                "name": "Time",
+                                "format": "utc"
                             },
                             {
                                 "key": "yesterday",
-                                "name": "Yesterday"
+                                "name": "Yesterday",
+                                "format": "utc"
                             },
                             {
                                 "key": "delta",

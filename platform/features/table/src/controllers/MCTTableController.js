@@ -1,7 +1,10 @@
 
 define(
-    ['zepto'],
-    function ($) {
+    [
+        'zepto',
+        'lodash'
+    ],
+    function ($, _) {
 
         /**
          * A controller for the MCTTable directive. Populates scope with
@@ -12,13 +15,13 @@ define(
          * @param element
          * @constructor
          */
-        function MCTTableController($scope, $timeout, element, exportService, formatService, openmct) {
+        function MCTTableController($scope, $window, element, exportService, formatService, openmct) {
             var self = this;
 
             this.$scope = $scope;
             this.element = $(element[0]);
-            this.$timeout = $timeout;
-            this.maxDisplayRows = 50;
+            this.$window = $window;
+            this.maxDisplayRows = 100;
 
             this.scrollable = this.element.find('.l-view-section.scrolling').first();
             this.resultsHeader = this.element.find('.mct-table>thead').first();
@@ -27,15 +30,39 @@ define(
             this.conductor = openmct.conductor;
             this.toiFormatter = undefined;
             this.formatService = formatService;
+            this.callbacks = {};
 
             //Bind all class functions to 'this'
-            Object.keys(MCTTableController.prototype).filter(function (key) {
-                return typeof MCTTableController.prototype[key] === 'function';
-            }).forEach(function (key) {
-                this[key] = MCTTableController.prototype[key].bind(this);
-            }.bind(this));
+            _.bindAll(this, [
+                'addRows',
+                'binarySearch',
+                'buildLargestRow',
+                'changeBounds',
+                'changeTimeOfInterest',
+                'changeTimeSystem',
+                'destroyConductorListeners',
+                'digest',
+                'filterAndSort',
+                'filterRows',
+                'firstVisible',
+                'insertSorted',
+                'lastVisible',
+                'onRowClick',
+                'onScroll',
+                'removeRows',
+                'resize',
+                'scrollToBottom',
+                'scrollToRow',
+                'setElementSizes',
+                'setHeaders',
+                'setRows',
+                'setTimeOfInterestRow',
+                'setVisibleRows',
+                'sortComparator',
+                'sortRows'
+            ]);
 
-            this.scrollable.on('scroll', this.onScroll.bind(this));
+            this.scrollable.on('scroll', this.onScroll);
 
             $scope.visibleRows = [];
 
@@ -86,7 +113,7 @@ define(
                     $scope.sortDirection = 'asc';
                 }
                 self.setRows($scope.rows);
-                self.setTimeOfInterest(self.conductor.timeOfInterest());
+                self.setTimeOfInterestRow(self.conductor.timeOfInterest());
             };
 
             /*
@@ -95,20 +122,28 @@ define(
             $scope.$watchCollection('filters', function () {
                 self.setRows($scope.rows);
             });
-            $scope.$watch('headers', this.setHeaders);
+            $scope.$watch('headers', function (newHeaders, oldHeaders) {
+                if (newHeaders !== oldHeaders) {
+                    this.setHeaders(newHeaders);
+                }
+            }.bind(this));
             $scope.$watch('rows', this.setRows);
 
             /*
              * Listen for rows added individually (eg. for real-time tables)
              */
-            $scope.$on('add:row', this.addRow);
-            $scope.$on('remove:row', this.removeRow);
+            $scope.$on('add:rows', this.addRows);
+            $scope.$on('remove:rows', this.removeRows);
 
             /**
              * Populated from the default-sort attribute on MctTable
              * directive tag.
              */
-            $scope.$watch('sortColumn', $scope.toggleSort);
+            $scope.$watch('defaultSort', function (newColumn, oldColumn) {
+                if (newColumn !== oldColumn) {
+                    $scope.toggleSort(newColumn);
+                }
+            });
 
             /*
              * Listen for resize events to trigger recalculation of table width
@@ -125,7 +160,7 @@ define(
                     this.destroyConductorListeners();
 
                     this.conductor.on('timeSystem', this.changeTimeSystem);
-                    this.conductor.on('timeOfInterest', this.setTimeOfInterest);
+                    this.conductor.on('timeOfInterest', this.changeTimeOfInterest);
                     this.conductor.on('bounds', this.changeBounds);
 
                     // If time system defined, set initially
@@ -135,12 +170,20 @@ define(
                 }
             }.bind(this));
 
-            $scope.$on('$destroy', this.destroyConductorListeners);
+            $scope.$on('$destroy', function () {
+                this.scrollable.off('scroll', this.onScroll);
+                this.destroyConductorListeners();
+
+                // In case for some reason this controller instance lingers around,
+                // destroy scope as it can be extremely large for large tables.
+                delete this.$scope;
+
+            }.bind(this));
         }
 
         MCTTableController.prototype.destroyConductorListeners = function () {
             this.conductor.off('timeSystem', this.changeTimeSystem);
-            this.conductor.off('timeOfInterest', this.setTimeOfInterest);
+            this.conductor.off('timeOfInterest', this.changeTimeOfInterest);
             this.conductor.off('bounds', this.changeBounds);
         };
 
@@ -155,15 +198,7 @@ define(
          * @private
          */
         MCTTableController.prototype.scrollToBottom = function () {
-            var self = this;
-
-            //Use timeout to defer execution until next digest when any
-            // pending UI changes have completed, eg. a new row in the table.
-            if (this.$scope.autoScroll) {
-                this.$timeout(function () {
-                    self.scrollable[0].scrollTop = self.scrollable[0].scrollHeight;
-                });
-            }
+            this.scrollable[0].scrollTop = this.scrollable[0].scrollHeight;
         };
 
         /**
@@ -171,18 +206,24 @@ define(
          * `add:row` broadcast event.
          * @private
          */
-        MCTTableController.prototype.addRow = function (event, rowIndex) {
-            var row = this.$scope.rows[rowIndex];
-
+        MCTTableController.prototype.addRows = function (event, rows) {
             //Does the row pass the current filter?
-            if (this.filterRows([row]).length === 1) {
-                //Insert the row into the correct position in the array
-                this.insertSorted(this.$scope.displayRows, row);
+            if (this.filterRows(rows).length > 0) {
+                rows.forEach(this.insertSorted.bind(this, this.$scope.displayRows));
 
                 //Resize the columns , then update the rows visible in the table
-                this.resize([this.$scope.sizingRow, row])
-                    .then(this.setVisibleRows.bind(this))
-                    .then(this.scrollToBottom.bind(this));
+                this.resize([this.$scope.sizingRow].concat(rows))
+                    .then(this.setVisibleRows)
+                    .then(function () {
+                        if (this.$scope.autoScroll) {
+                            this.scrollToBottom();
+                        }
+                    }.bind(this));
+
+                var toi = this.conductor.timeOfInterest();
+                if (toi !== -1) {
+                    this.setTimeOfInterestRow(toi);
+                }
             }
         };
 
@@ -191,31 +232,47 @@ define(
          * `remove:row` broadcast event.
          * @private
          */
-        MCTTableController.prototype.removeRow = function (event, rowIndex) {
-            var row = this.$scope.rows[rowIndex],
+        MCTTableController.prototype.removeRows = function (event, rows) {
+            var indexInDisplayRows;
+            rows.forEach(function (row) {
                 // Do a sequential search here. Only way of finding row is by
                 // object equality, so array is in effect unsorted.
                 indexInDisplayRows = this.$scope.displayRows.indexOf(row);
-            if (indexInDisplayRows !== -1) {
-                this.$scope.displayRows.splice(indexInDisplayRows, 1);
-                this.setVisibleRows();
-            }
+                if (indexInDisplayRows !== -1) {
+                    this.$scope.displayRows.splice(indexInDisplayRows, 1);
+                }
+            }, this);
+
+            this.$scope.sizingRow = this.buildLargestRow([this.$scope.sizingRow].concat(rows));
+
+            this.setElementSizes();
+            this.setVisibleRows()
+                .then(function () {
+                    if (this.$scope.autoScroll) {
+                        this.scrollToBottom();
+                    }
+                }.bind(this));
+
         };
 
         /**
          * @private
          */
         MCTTableController.prototype.onScroll = function (event) {
-            //If user scrolls away from bottom, disable auto-scroll.
-            // Auto-scroll will be re-enabled if user scrolls to bottom again.
-            if (this.scrollable[0].scrollTop <
-                (this.scrollable[0].scrollHeight - this.scrollable[0].offsetHeight)) {
-                this.$scope.autoScroll = false;
-            } else {
-                this.$scope.autoScroll = true;
-            }
-            this.setVisibleRows();
-            this.$scope.$digest();
+            this.$window.requestAnimationFrame(function () {
+                this.setVisibleRows();
+                this.digest();
+
+                // If user scrolls away from bottom, disable auto-scroll.
+                // Auto-scroll will be re-enabled if user scrolls to bottom again.
+                if (this.scrollable[0].scrollTop <
+                    (this.scrollable[0].scrollHeight - this.scrollable[0].offsetHeight) - 20) {
+                    this.$scope.autoScroll = false;
+                } else {
+                    this.$scope.autoScroll = true;
+                }
+                this.scrolling = false;
+            }.bind(this));
         };
 
         /**
@@ -293,8 +350,7 @@ define(
                     this.$scope.visibleRows[0].rowIndex === start &&
                     this.$scope.visibleRows[this.$scope.visibleRows.length - 1]
                         .rowIndex === end) {
-
-                    return; // don't update if no changes are required.
+                    return this.digest();
                 }
             }
             //Set visible rows from display rows, based on calculated offset.
@@ -307,6 +363,7 @@ define(
                         contents: row
                     };
                 });
+            return this.digest();
         };
 
         /**
@@ -522,6 +579,28 @@ define(
             return largestRow;
         };
 
+        // Will effectively cap digests at 60Hz
+        // Also turns digest into a promise allowing code to force digest, then
+        // schedule something to happen afterwards
+        MCTTableController.prototype.digest = function () {
+            var scope = this.$scope;
+            var self = this;
+            var raf = this.$window.requestAnimationFrame;
+            var promise = this.digestPromise;
+
+            if (!promise) {
+                self.digestPromise = promise = new Promise(function (resolve) {
+                    raf(function () {
+                        scope.$digest();
+                        self.digestPromise = undefined;
+                        resolve();
+                    });
+                });
+            }
+
+            return promise;
+        };
+
         /**
          * Calculates the widest row in the table, and if necessary, resizes
          * the table accordingly
@@ -533,7 +612,7 @@ define(
          */
         MCTTableController.prototype.resize = function (rows) {
             this.$scope.sizingRow = this.buildLargestRow(rows);
-            return this.$timeout(this.setElementSizes.bind(this));
+            return this.digest().then(this.setElementSizes);
         };
 
         /**
@@ -562,19 +641,20 @@ define(
             }
 
             this.$scope.displayRows = this.filterAndSort(newRows || []);
-            this.resize(newRows)
-                .then(this.setVisibleRows)
+            return this.resize(newRows)
+                .then(function (rows) {
+                    return this.setVisibleRows(rows);
+                }.bind(this))
                 //Timeout following setVisibleRows to allow digest to
                 // perform DOM changes, otherwise scrollTo won't work.
-                .then(this.$timeout)
                 .then(function () {
                     //If TOI specified, scroll to it
                     var timeOfInterest = this.conductor.timeOfInterest();
                     if (timeOfInterest) {
-                        this.setTimeOfInterest(timeOfInterest);
+                        this.setTimeOfInterestRow(timeOfInterest);
+                        this.scrollToRow(this.$scope.toiRowIndex);
                     }
                 }.bind(this));
-
         };
 
         /**
@@ -615,6 +695,7 @@ define(
         };
 
         /**
+         * Scroll the view to a given row index
          * @param displayRowIndex {number} The index in the displayed rows
          * to scroll to.
          */
@@ -635,7 +716,7 @@ define(
          * Update rows with new data.  If filtering is enabled, rows
          * will be sorted before display.
          */
-        MCTTableController.prototype.setTimeOfInterest = function (newTOI) {
+        MCTTableController.prototype.setTimeOfInterestRow = function (newTOI) {
             var isSortedByTime =
                 this.$scope.timeColumns &&
                 this.$scope.timeColumns.indexOf(this.$scope.sortColumn) !== -1;
@@ -652,9 +733,13 @@ define(
 
                 if (rowIndex > 0 && rowIndex < this.$scope.displayRows.length) {
                     this.$scope.toiRowIndex = rowIndex;
-                    this.scrollToRow(this.$scope.toiRowIndex);
                 }
             }
+        };
+
+        MCTTableController.prototype.changeTimeOfInterest = function (newTOI) {
+            this.setTimeOfInterestRow(newTOI);
+            this.scrollToRow(this.$scope.toiRowIndex);
         };
 
         /**
@@ -662,7 +747,10 @@ define(
          * @param bounds
          */
         MCTTableController.prototype.changeBounds = function (bounds) {
-            this.setTimeOfInterest(this.conductor.timeOfInterest());
+            this.setTimeOfInterestRow(this.conductor.timeOfInterest());
+            if (this.$scope.toiRowIndex !== -1) {
+                this.scrollToRow(this.$scope.toiRowIndex);
+            }
         };
 
         /**

@@ -22,25 +22,21 @@
 
 define([
     "./src/directives/MCTTable",
-    "./src/controllers/RealtimeTableController",
-    "./src/controllers/HistoricalTableController",
+    "./src/controllers/TelemetryTableController",
     "./src/controllers/TableOptionsController",
     '../../commonUI/regions/src/Region',
     '../../commonUI/browse/src/InspectorRegion',
     "text!./res/templates/table-options-edit.html",
-    "text!./res/templates/rt-table.html",
-    "text!./res/templates/historical-table.html",
+    "text!./res/templates/telemetry-table.html",
     "legacyRegistry"
 ], function (
     MCTTable,
-    RealtimeTableController,
-    HistoricalTableController,
+    TelemetryTableController,
     TableOptionsController,
     Region,
     InspectorRegion,
     tableOptionsEditTemplate,
-    rtTableTemplate,
-    historicalTableTemplate,
+    telemetryTableTemplate,
     legacyRegistry
 ) {
     /**
@@ -65,9 +61,9 @@ define([
             "types": [
                 {
                     "key": "table",
-                    "name": "Historical Telemetry Table",
-                    "cssClass": "icon-tabular",
-                    "description": "A static table of all values over time for all included telemetry elements. Rows are timestamped data values for each telemetry element; columns are data fields. The number of rows is based on the range of your query. New incoming data must be manually re-queried for.",
+                    "name": "Telemetry Table",
+                    "cssClass": "icon-tabular-realtime",
+                    "description": "A table of values over a given time period. The table will be automatically updated with new values as they become available",
                     "priority": 861,
                     "features": "creation",
                     "delegates": [
@@ -85,42 +81,13 @@ define([
                     "views": [
                         "table"
                     ]
-                },
-                {
-                    "key": "rttable",
-                    "name": "Real-time Telemetry Table",
-                    "cssClass": "icon-tabular-realtime",
-                    "description": "A scrolling table of latest values for all included telemetry elements. Rows are timestamped data values for each telemetry element; columns are data fields. New incoming data is automatically added to the view.",
-                    "priority": 860,
-                    "features": "creation",
-                    "delegates": [
-                        "telemetry"
-                    ],
-                    "inspector": tableInspector,
-                    "contains": [
-                        {
-                            "has": "telemetry"
-                        }
-                    ],
-                    "model": {
-                        "composition": []
-                    },
-                    "views": [
-                        "rt-table",
-                        "scrolling-table"
-                    ]
                 }
             ],
             "controllers": [
                 {
-                    "key": "HistoricalTableController",
-                    "implementation": HistoricalTableController,
-                    "depends": ["$scope", "telemetryHandler", "telemetryFormatter", "$timeout", "openmct"]
-                },
-                {
-                    "key": "RealtimeTableController",
-                    "implementation": RealtimeTableController,
-                    "depends": ["$scope", "telemetryHandler", "telemetryFormatter", "openmct"]
+                    "key": "TelemetryTableController",
+                    "implementation": TelemetryTableController,
+                    "depends": ["$scope", "$timeout", "openmct"]
                 },
                 {
                     "key": "TableOptionsController",
@@ -131,21 +98,10 @@ define([
             ],
             "views": [
                 {
-                    "name": "Historical Table",
+                    "name": "Telemetry Table",
                     "key": "table",
-                    "template": historicalTableTemplate,
-                    "cssClass": "icon-tabular",
-                    "needs": [
-                        "telemetry"
-                    ],
-                    "delegation": true,
-                    "editable": false
-                },
-                {
-                    "name": "Real-time Table",
-                    "key": "rt-table",
                     "cssClass": "icon-tabular-realtime",
-                    "template": rtTableTemplate,
+                    "template": telemetryTableTemplate,
                     "needs": [
                         "telemetry"
                     ],

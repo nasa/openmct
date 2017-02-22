@@ -21,12 +21,8 @@
  *****************************************************************************/
 
 define(
-    [
-        './DomainColumn',
-        './RangeColumn',
-        './NameColumn'
-    ],
-    function (DomainColumn, RangeColumn, NameColumn) {
+    [],
+    function () {
 
         /**
          * Class that manages table metadata, state, and contents.
@@ -34,10 +30,10 @@ define(
          * @param domainObject
          * @constructor
          */
-        function TableConfiguration(domainObject, telemetryFormatter) {
+        function TableConfiguration(domainObject, openmct) {
             this.domainObject = domainObject;
             this.columns = [];
-            this.telemetryFormatter = telemetryFormatter;
+            this.openmct = openmct;
         }
 
         /**
@@ -47,51 +43,42 @@ define(
          */
         TableConfiguration.prototype.populateColumns = function (metadata) {
             var self = this;
+            var telemetryApi = this.openmct.telemetry;
 
             this.columns = [];
 
             if (metadata) {
 
                 metadata.forEach(function (metadatum) {
-                    //Push domains first
-                    (metadatum.domains || []).forEach(function (domainMetadata) {
-                        self.addColumn(new DomainColumn(domainMetadata,
-                            self.telemetryFormatter));
-                    });
-                    (metadatum.ranges || []).forEach(function (rangeMetadata) {
-                        self.addColumn(new RangeColumn(rangeMetadata,
-                            self.telemetryFormatter));
+                    var formatter = telemetryApi.getValueFormatter(metadatum);
+
+                    self.columns.push({
+                        getKey: function () {
+                            return metadatum.key;
+                        },
+                        getTitle: function () {
+                            return metadatum.name;
+                        },
+                        getValue: function (telemetryDatum, limitEvaluator) {
+                            var isValueColumn = !!(metadatum.hints.y || metadatum.hints.range);
+                            var alarm = isValueColumn &&
+                                        limitEvaluator &&
+                                        limitEvaluator.evaluate(telemetryDatum, metadatum);
+                            var value = {
+                                text: formatter ? formatter.format(telemetryDatum[metadatum.key])
+                                    : telemetryDatum[metadatum.key],
+                                value: telemetryDatum[metadatum.key]
+                            };
+
+                            if (alarm) {
+                                value.cssClass = alarm.cssClass;
+                            }
+                            return value;
+                        }
                     });
                 });
-
-                if (this.columns.length > 0) {
-                    self.addColumn(new NameColumn(), 0);
-                }
             }
             return this;
-        };
-
-        /**
-         * Add a column definition to this Table
-         * @param {RangeColumn | DomainColumn | NameColumn} column
-         * @param {Number} [index] Where the column should appear (will be
-         * affected by column filtering)
-         */
-        TableConfiguration.prototype.addColumn = function (column, index) {
-            if (typeof index === 'undefined') {
-                this.columns.push(column);
-            } else {
-                this.columns.splice(index, 0, column);
-            }
-        };
-
-        /**
-         * @private
-         * @param column
-         * @returns {*|string}
-         */
-        TableConfiguration.prototype.getColumnTitle = function (column) {
-            return column.getTitle();
         };
 
         /**
@@ -99,9 +86,8 @@ define(
          * @returns {Array} The titles of the columns
          */
         TableConfiguration.prototype.getHeaders = function () {
-            var self = this;
             return this.columns.map(function (column, i) {
-                return self.getColumnTitle(column) || 'Column ' + (i + 1);
+                return column.getTitle() || 'Column ' + (i + 1);
             });
         };
 
@@ -113,17 +99,16 @@ define(
          * @returns {Object} Key value pairs where the key is the column
          * title, and the value is the formatted value from the provided datum.
          */
-        TableConfiguration.prototype.getRowValues = function (telemetryObject, datum) {
-            var self = this;
+        TableConfiguration.prototype.getRowValues = function (limitEvaluator, datum) {
             return this.columns.reduce(function (rowObject, column, i) {
-                var columnTitle = self.getColumnTitle(column) || 'Column ' + (i + 1),
-                    columnValue = column.getValue(telemetryObject, datum);
+                var columnTitle = column.getTitle() || 'Column ' + (i + 1),
+                    columnValue = column.getValue(datum, limitEvaluator);
 
                 if (columnValue !== undefined && columnValue.text === undefined) {
                     columnValue.text = '';
                 }
                 // Don't replace something with nothing.
-                // This occurs when there are multiple columns with the
+                // This occurs when there are multiple columns with the same
                 // column title
                 if (rowObject[columnTitle] === undefined ||
                     rowObject[columnTitle].text === undefined ||

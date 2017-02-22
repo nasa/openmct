@@ -22,13 +22,14 @@
 
 define(
     [
-        "../src/TableConfiguration",
-        "../src/DomainColumn"
+        "../src/TableConfiguration"
     ],
-    function (Table, DomainColumn) {
+    function (Table) {
 
         describe("A table", function () {
             var mockDomainObject,
+                mockAPI,
+                mockTelemetryAPI,
                 mockTelemetryFormatter,
                 table,
                 mockModel;
@@ -49,90 +50,63 @@ define(
 
                 mockTelemetryFormatter = jasmine.createSpyObj('telemetryFormatter',
                     [
-                        'formatDomainValue',
-                        'formatRangeValue'
+                        'format'
                     ]);
-                mockTelemetryFormatter.formatDomainValue.andCallFake(function (valueIn) {
-                    return valueIn;
-                });
-                mockTelemetryFormatter.formatRangeValue.andCallFake(function (valueIn) {
+                mockTelemetryFormatter.format.andCallFake(function (valueIn) {
                     return valueIn;
                 });
 
-                table = new Table(mockDomainObject, mockTelemetryFormatter);
-            });
+                mockTelemetryAPI = jasmine.createSpyObj('telemetryAPI', [
+                    'getValueFormatter'
+                ]);
+                mockAPI = {
+                    telemetry: mockTelemetryAPI
+                };
+                mockTelemetryAPI.getValueFormatter.andReturn(mockTelemetryFormatter);
 
-            it("Add column with no index adds new column to the end", function () {
-                var firstColumn = {title: 'First Column'},
-                    secondColumn = {title: 'Second Column'},
-                    thirdColumn = {title: 'Third Column'};
-
-                table.addColumn(firstColumn);
-                table.addColumn(secondColumn);
-                table.addColumn(thirdColumn);
-
-                expect(table.columns).toBeDefined();
-                expect(table.columns.length).toBe(3);
-                expect(table.columns[0]).toBe(firstColumn);
-                expect(table.columns[1]).toBe(secondColumn);
-                expect(table.columns[2]).toBe(thirdColumn);
-            });
-
-            it("Add column with index adds new column at the specified" +
-                " position", function () {
-                var firstColumn = {title: 'First Column'},
-                    secondColumn = {title: 'Second Column'},
-                    thirdColumn = {title: 'Third Column'};
-
-                table.addColumn(firstColumn);
-                table.addColumn(thirdColumn);
-                table.addColumn(secondColumn, 1);
-
-                expect(table.columns).toBeDefined();
-                expect(table.columns.length).toBe(3);
-                expect(table.columns[0]).toBe(firstColumn);
-                expect(table.columns[1]).toBe(secondColumn);
-                expect(table.columns[2]).toBe(thirdColumn);
+                table = new Table(mockDomainObject, mockAPI);
             });
 
             describe("Building columns from telemetry metadata", function () {
-                var metadata = [{
-                    ranges: [
-                        {
-                            name: 'Range 1',
-                            key: 'range1'
-                        },
-                        {
-                            name: 'Range 2',
-                            key: 'range2'
+                var metadata = [
+                    {
+                        name: 'Range 1',
+                        key: 'range1',
+                        hints: {
+                            y: 1
                         }
-                    ],
-                    domains: [
-                        {
-                            name: 'Domain 1',
-                            key: 'domain1',
-                            format: 'utc'
-                        },
-                        {
-                            name: 'Domain 2',
-                            key: 'domain2',
-                            format: 'utc'
+                    },
+                    {
+                        name: 'Range 2',
+                        key: 'range2',
+                        hints: {
+                            y: 2
                         }
-                    ]
-                }];
+                    },
+                    {
+                        name: 'Domain 1',
+                        key: 'domain1',
+                        format: 'utc',
+                        hints: {
+                            x: 1
+                        }
+                    },
+                    {
+                        name: 'Domain 2',
+                        key: 'domain2',
+                        format: 'utc',
+                        hints: {
+                            x: 2
+                        }
+                    }
+                ];
 
                 beforeEach(function () {
                     table.populateColumns(metadata);
                 });
 
                 it("populates columns", function () {
-                    expect(table.columns.length).toBe(5);
-                });
-
-                it("Build columns populates columns with domains to the left", function () {
-                    expect(table.columns[1] instanceof DomainColumn).toBeTruthy();
-                    expect(table.columns[2] instanceof DomainColumn).toBeTruthy();
-                    expect(table.columns[3] instanceof DomainColumn).toBeFalsy();
+                    expect(table.columns.length).toBe(4);
                 });
 
                 it("Produces headers for each column based on title", function () {
@@ -141,7 +115,7 @@ define(
 
                     spyOn(firstColumn, 'getTitle');
                     headers = table.getHeaders();
-                    expect(headers.length).toBe(5);
+                    expect(headers.length).toBe(4);
                     expect(firstColumn.getTitle).toHaveBeenCalled();
                 });
 
@@ -178,23 +152,33 @@ define(
 
                     beforeEach(function () {
                         datum = {
-                            'range1': 'range 1 value',
-                            'range2': 'range 2 value',
+                            'range1': 10,
+                            'range2': 20,
                             'domain1': 0,
                             'domain2': 1
                         };
-                        rowValues = table.getRowValues(mockDomainObject, datum);
+                        var limitEvaluator = {
+                            evaluate: function () {
+                                return {
+                                    "cssClass": "alarm-class"
+                                };
+                            }
+                        };
+                        rowValues = table.getRowValues(limitEvaluator, datum);
                     });
 
                     it("Returns a value for every column", function () {
                         expect(rowValues['Range 1'].text).toBeDefined();
-                        expect(rowValues['Range 1'].text).toEqual('range 1' +
-                            ' value');
+                        expect(rowValues['Range 1'].text).toEqual(10);
                     });
 
-                    it("Uses the telemetry formatter to appropriately format" +
+                    it("Applies appropriate css class if limit violated.", function () {
+                        expect(rowValues['Range 1'].cssClass).toEqual("alarm-class");
+                    });
+
+                    it("Uses telemetry formatter to appropriately format" +
                         " telemetry values", function () {
-                        expect(mockTelemetryFormatter.formatRangeValue).toHaveBeenCalled();
+                        expect(mockTelemetryFormatter.format).toHaveBeenCalled();
                     });
                 });
             });

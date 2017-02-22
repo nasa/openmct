@@ -49,7 +49,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat-start="visibleRow in visibleRows track by visibleRow.rowIndex"
+            <tr ng-repeat-start="visibleRow in visibleRows track by $index"
                 ng-if="visibleRow.rowIndex === toiRowIndex"
                 ng-style="{ top: visibleRow.offsetY + 'px' }"
                 class="l-toi-tablerow">
@@ -60,9 +60,9 @@
             </tr>
             <tr ng-repeat-end
                 ng-style="{ top: visibleRow.offsetY + 'px' }"
-                ng-click="table.onRowClick($event, visibleRow.rowIndex) ">
+                ng-click="table.onRowClick($event, visibleRow.rowIndex)">
                 <td ng-repeat="header in displayHeaders"
-                    ng-style=" {
+                    ng-style="{
                         width: columnWidths[$index] + 'px',
                         'max-width': columnWidths[$index] + 'px',
                     }"
