@@ -91,7 +91,6 @@ define(
                     : false;
             }
 
-            $scope.newFolderFormData = {};
             $scope.newFolderCreationTriggered = false;
 
             $scope.newFolderButtonClickHandler = function () {
@@ -126,13 +125,13 @@ define(
                     });
             }
 
+            $scope.newFolderFormData = {};
+
             $scope.newFolderCreateButtonClickHandler = function () {
                 if ($scope.canCreateNewFolder) {
                     freezeDialog();
                     createNewFolder($scope.newFolderFormData.name, $scope.treeModel.selectedObject)
-                    .then(function (newFolder) {
-                        $scope.treeModel.selectedObject = newFolder;
-                    })
+                    .then(selectAndScrollToNewFolder)
                     .then(unfreezeDialog)
                     .then(clearNewFolderForm);
                 } else {
@@ -146,6 +145,10 @@ define(
 
             function unfreezeDialog() {
                 console.log("Unfreezing placeholder.");
+            }
+
+            function selectAndScrollToNewFolder(newFolder) {
+                $scope.treeModel.selectedObject = newFolder;
             }
 
             function clearNewFolderForm() {

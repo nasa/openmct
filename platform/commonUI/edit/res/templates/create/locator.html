@@ -27,45 +27,47 @@
         </mct-representation>
     </div>
 
-    <!-- The button that triggers new folder creation. -->
-    <div ng-if="!newFolderCreationTriggered">
-        <mct-control key="'button'"
-                     ng-class="{ disabled: !canCreateNewFolder }"
-                     structure="{
-                        text: 'New Folder',
-                        click: newFolderButtonClickHandler,
-                        cssclass: 'icon-folder-new'
-                     }">
-        </mct-control>
-    </div>
+    <div id="locatorNewFolderControls" style="margin-top: 13px">
+        <!-- The button that triggers new folder creation. -->
+        <div ng-if="!newFolderCreationTriggered">
+            <mct-control key="'button'"
+                        ng-class="{ disabled: !canCreateNewFolder }"
+                        structure="{
+                            text: 'New Folder',
+                            click: newFolderButtonClickHandler,
+                            cssclass: 'icon-folder-new'
+                        }">
+            </mct-control>
+        </div>
 
-    <!-- User inputs for the new folder's properties. -->
-    <div ng-if="newFolderCreationTriggered">
-        <span class='form-control shell'>
-            <span class='field control'>
-                <input type="text"
-                       ng-model="newFolderFormData.name">
+        <!-- User inputs for the new folder's properties. -->
+        <div ng-if="newFolderCreationTriggered">
+            <span class='form-control shell'>
+                <span class='field control'>
+                    <input type="text"
+                        ng-model="newFolderFormData.name">
+                </span>
             </span>
-        </span>
 
-        <!--
-         Extra check to see if we must disable the button
-         to cover the case where the user starts a new folder
-         creation but then navigates to a non-folder in the tree.
-        -->
-        <mct-control key="'button'"
-                     ng-class="{ disabled: !canCreateNewFolder }"
-                     structure="{
-                        text: 'Create',
-                        click: newFolderCreateButtonClickHandler
-                     }">
-        </mct-control>
+            <!--
+            Extra check to see if we must disable the button
+            to cover the case where the user starts a new folder
+            creation but then navigates to a non-folder in the tree.
+            -->
+            <mct-control key="'button'"
+                        ng-class="{ disabled: !canCreateNewFolder }"
+                        structure="{
+                            text: 'Create',
+                            click: newFolderCreateButtonClickHandler
+                        }">
+            </mct-control>
 
-        <mct-control key="'button'"
-                     structure="{
-                        cssclass: 'icon-x',
-                        click: newFolderCancelButtonClickHandler
-                     }">
-        </mct-control>
+            <mct-control key="'button'"
+                        structure="{
+                            cssclass: 'icon-x',
+                            click: newFolderCancelButtonClickHandler
+                        }">
+            </mct-control>
+        </div>
     </div>
 </div>
