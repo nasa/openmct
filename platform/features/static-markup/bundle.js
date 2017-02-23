@@ -36,7 +36,7 @@ define([
                 {
                     "key": "static.markup",
                     "name": "Static Markup",
-                    "cssclass": "icon-pencil",
+                    "cssClass": "icon-pencil",
                     "description": "Static markup sandbox",
                     "features": [
                         "creation"

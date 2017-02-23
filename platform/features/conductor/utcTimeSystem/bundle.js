@@ -22,7 +22,7 @@
 
 define([
     "./src/UTCTimeSystem",
-    'legacyRegistry'
+    "legacyRegistry"
 ], function (
     UTCTimeSystem,
     legacyRegistry
@@ -34,7 +34,23 @@ define([
                     "implementation": UTCTimeSystem,
                     "depends": ["$timeout"]
                 }
+            ],
+            "runs": [
+                {
+                    "implementation": function (openmct, $timeout) {
+                        // Temporary shim to initialize the time conductor to
+                        // something
+                        if (!openmct.conductor.timeSystem()) {
+                            var utcTimeSystem = new UTCTimeSystem($timeout);
+
+                            openmct.conductor.timeSystem(utcTimeSystem, utcTimeSystem.defaults().bounds);
+                        }
+                    },
+                    "depends": ["openmct", "$timeout"],
+                    "priority": "fallback"
+                }
             ]
         }
     });
+
 });

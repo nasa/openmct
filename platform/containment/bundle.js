@@ -40,9 +40,6 @@ define([
                 {
                     "category": "composition",
                     "implementation": CompositionPolicy,
-                    "depends": [
-                        "$injector"
-                    ],
                     "message": "Objects of this type cannot contain objects of that type."
                 },
                 {

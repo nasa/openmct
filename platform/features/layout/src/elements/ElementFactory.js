@@ -55,7 +55,7 @@ define(
                                     key: "url",
                                     control: "textfield",
                                     name: "Image URL",
-                                    "cssclass": "l-input-lg",
+                                    "cssClass": "l-input-lg",
                                     required: true
                                 }
                             ]

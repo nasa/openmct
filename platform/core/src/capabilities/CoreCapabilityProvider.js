@@ -53,10 +53,10 @@ define(
          */
         function CoreCapabilityProvider(capabilities, $log) {
             // Filter by invoking the capability's appliesTo method
-            function filterCapabilities(model) {
+            function filterCapabilities(model, id) {
                 return capabilities.filter(function (capability) {
                     return capability.appliesTo ?
-                            capability.appliesTo(model) :
+                            capability.appliesTo(model, id) :
                             true;
                 });
             }
@@ -75,8 +75,8 @@ define(
                 return result;
             }
 
-            function getCapabilities(model) {
-                return packageCapabilities(filterCapabilities(model));
+            function getCapabilities(model, id) {
+                return packageCapabilities(filterCapabilities(model, id));
             }
 
             return {

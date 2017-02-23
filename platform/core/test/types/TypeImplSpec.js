@@ -33,7 +33,7 @@ define(
                     key: 'test-type',
                     name: 'Test Type',
                     description: 'A type, for testing',
-                    cssclass: 'icon-telemetry-panel',
+                    cssClass: 'icon-telemetry-panel',
                     inherits: ['test-parent-1', 'test-parent-2'],
                     features: ['test-feature-1'],
                     properties: [{}],

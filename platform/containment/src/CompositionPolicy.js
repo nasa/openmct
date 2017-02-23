@@ -26,8 +26,8 @@
  * @namespace platform/containment
  */
 define(
-    ['./ContainmentTable'],
-    function (ContainmentTable) {
+    [],
+    function () {
 
         /**
          * Defines composition policy as driven by type metadata.
@@ -35,21 +35,33 @@ define(
          * @memberof platform/containment
          * @implements {Policy.<Type, Type>}
          */
-        function CompositionPolicy($injector) {
-            // We're really just wrapping the containment table and rephrasing
-            // it as a policy decision.
-            var table;
-
-            this.getTable = function () {
-                return (table = table || new ContainmentTable(
-                    $injector.get('typeService'),
-                    $injector.get('capabilityService')
-                ));
-            };
+        function CompositionPolicy() {
         }
 
-        CompositionPolicy.prototype.allow = function (candidate, context) {
-            return this.getTable().canContain(candidate, context);
+        CompositionPolicy.prototype.allow = function (parentType, child) {
+            var parentDef = parentType.getDefinition();
+
+            // A parent without containment rules can contain anything.
+            if (!parentDef.contains) {
+                return true;
+            }
+
+            // If any containment rule matches context type, the candidate
+            // can contain this type.
+            return parentDef.contains.some(function (c) {
+                // Simple containment rules are supported typeKeys.
+                if (typeof c === 'string') {
+                    return c === child.getCapability('type').getKey();
+                }
+                // More complicated rules require context to have all specified
+                // capabilities.
+                if (!Array.isArray(c.has)) {
+                    c.has = [c.has];
+                }
+                return c.has.every(function (capability) {
+                    return child.hasCapability(capability);
+                });
+            });
         };
 
         return CompositionPolicy;

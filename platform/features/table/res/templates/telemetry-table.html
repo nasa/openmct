@@ -1,12 +1,14 @@
-<div ng-controller="HistoricalTableController as tableController"
+<div ng-controller="TelemetryTableController as tableController"
      ng-class="{'loading': loading}">
     <mct-table
         headers="headers"
-        time-columns="tableController.timeColumns"
         rows="rows"
+        time-columns="tableController.timeColumns"
+        format-cell="formatCell"
         enableFilter="true"
         enableSort="true"
-        sort-column="defaultSort"
+        auto-scroll="autoScroll"
+        default-sort="defaultSort"
         class="tabular-holder has-control-bar">
     </mct-table>
 </div>

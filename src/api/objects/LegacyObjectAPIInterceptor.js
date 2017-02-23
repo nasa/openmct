@@ -43,7 +43,7 @@ define([
         var handleLegacyMutation;
 
         var handleMutation = function (newStyleObject) {
-            var keyString = utils.makeKeyString(newStyleObject.key);
+            var keyString = utils.makeKeyString(newStyleObject.identifier);
             var oldStyleObject = this.instantiate(utils.toOldFormat(newStyleObject), keyString);
 
             // Don't trigger self

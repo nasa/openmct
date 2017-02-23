@@ -30,7 +30,7 @@ define(['./Type'], function (Type) {
      *           the model for new domain objects of this type
      * @property {boolean} [creatable] true if users should be allowed to
      *           create this type (default: false)
-     * @property {string} [cssclass] the CSS class to apply for icons
+     * @property {string} [cssClass] the CSS class to apply for icons
      */
 
     /**

@@ -25,7 +25,7 @@ define([
     '../../core/src/timeSystems/LocalClock'
 ], function (TimeSystem, LocalClock) {
     var FIFTEEN_MINUTES = 15 * 60 * 1000,
-        DEFAULT_PERIOD = 1000;
+        DEFAULT_PERIOD = 100;
 
     /**
      * This time system supports UTC dates and provides a ticking clock source.
@@ -38,12 +38,12 @@ define([
         /**
          * Some metadata, which will be used to identify the time system in
          * the UI
-         * @type {{key: string, name: string, cssclass: string}}
+         * @type {{key: string, name: string, cssClass: string}}
          */
         this.metadata = {
             'key': 'utc',
             'name': 'UTC',
-            'cssclass': 'icon-clock'
+            'cssClass': 'icon-clock'
         };
 
         this.fmts = ['utc'];

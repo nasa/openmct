@@ -75,8 +75,7 @@ define([
                         },
                         {
                             "key": "delta",
-                            "name": "Delta",
-                            "format": "example.delta"
+                            "name": "Delta"
                         }
                     ],
                     "priority": -1
@@ -86,7 +85,7 @@ define([
                 {
                     "key": "generator",
                     "name": "Sine Wave Generator",
-                    "cssclass": "icon-telemetry",
+                    "cssClass": "icon-telemetry",
                     "description": "For development use. Generates example streaming telemetry data using a simple sine wave algorithm.",
                     "priority": 10,
                     "features": "creation",
@@ -103,11 +102,13 @@ define([
                         "domains": [
                             {
                                 "key": "utc",
-                                "name": "Time"
+                                "name": "Time",
+                                "format": "utc"
                             },
                             {
                                 "key": "yesterday",
-                                "name": "Yesterday"
+                                "name": "Yesterday",
+                                "format": "utc"
                             },
                             {
                                 "key": "delta",
@@ -130,7 +131,7 @@ define([
                         {
                             "name": "Period",
                             "control": "textfield",
-                            "cssclass": "l-input-sm l-numeric",
+                            "cssClass": "l-input-sm l-numeric",
                             "key": "period",
                             "required": true,
                             "property": [
@@ -142,7 +143,7 @@ define([
                         {
                             "name": "Amplitude",
                             "control": "textfield",
-                            "cssclass": "l-input-sm l-numeric",
+                            "cssClass": "l-input-sm l-numeric",
                             "key": "amplitude",
                             "required": true,
                             "property": [
@@ -154,7 +155,7 @@ define([
                         {
                             "name": "Offset",
                             "control": "textfield",
-                            "cssclass": "l-input-sm l-numeric",
+                            "cssClass": "l-input-sm l-numeric",
                             "key": "offset",
                             "required": true,
                             "property": [
@@ -166,7 +167,7 @@ define([
                         {
                             "name": "Data Rate (hz)",
                             "control": "textfield",
-                            "cssclass": "l-input-sm l-numeric",
+                            "cssClass": "l-input-sm l-numeric",
                             "key": "dataRateInHz",
                             "required": true,
                             "property": [

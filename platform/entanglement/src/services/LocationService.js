@@ -58,7 +58,7 @@ define(
                         sections: [
                             {
                                 name: 'Location',
-                                cssclass: "grows",
+                                cssClass: "grows",
                                 rows: [
                                     {
                                         name: label,

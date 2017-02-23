@@ -46,7 +46,7 @@ define(
                 );
                 testStructure = {
                     name: "A Test",
-                    cssclass: "icon-T",
+                    cssClass: "icon-T",
                     description: "Test description",
                     control: "dialog-button",
                     title: "Test title",
@@ -83,7 +83,7 @@ define(
                 mockScope.$watch.mostRecentCall.args[1](testStructure);
 
                 buttonStructure = controller.getButtonStructure();
-                expect(buttonStructure.cssclass).toEqual(testStructure.cssclass);
+                expect(buttonStructure.cssClass).toEqual(testStructure.cssClass);
                 expect(buttonStructure.description).toEqual(testStructure.description);
                 expect(buttonStructure.name).toEqual(testStructure.name);
                 expect(buttonStructure.click).toEqual(jasmine.any(Function));
