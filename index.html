@@ -28,17 +28,25 @@
     <script src="bower_components/requirejs/require.js">
     </script>
     <script>
-        require(['openmct'], function (openmct) {
+        require(['openmct'], function (openmct, generatorPlugin) {
             [
                 'example/imagery',
-                'example/eventGenerator',
-                'example/generator'
+                'example/eventGenerator'
             ].forEach(
                 openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
             );
             openmct.install(openmct.plugins.myItems);
             openmct.install(openmct.plugins.localStorage);
             openmct.install(openmct.plugins.espresso);
+
+            openmct.install(openmct.plugins.Generator());
+            openmct.install(openmct.plugins.UTCTimeSystem());
+            openmct.install(openmct.plugins.Conductor({
+                defaultTimeSystem: 'utc',
+                defaultTimespan: 30 * 60 * 1000,
+                showConductor: true
+            }));
+
             openmct.start();
         });
     </script>

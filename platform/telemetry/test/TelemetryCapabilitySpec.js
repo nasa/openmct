@@ -32,8 +32,9 @@ define(
                 mockTelemetryService,
                 mockReject,
                 mockUnsubscribe,
-                telemetry;
-
+                telemetry,
+                mockTelemetryAPI,
+                mockAPI;
 
             function mockPromise(value) {
                 return {
@@ -41,6 +42,9 @@ define(
                         return mockPromise(callback(value));
                     }
                 };
+            }
+
+            function noop() {
             }
 
             beforeEach(function () {
@@ -79,7 +83,25 @@ define(
                 // Bubble up...
                 mockReject.then.andReturn(mockReject);
 
+                mockTelemetryAPI = jasmine.createSpyObj("telemetryAPI", [
+                    "getMetadata",
+                    "subscribe",
+                    "request",
+                    "findRequestProvider",
+                    "findSubscriptionProvider"
+                ]);
+                mockTelemetryAPI.getMetadata.andReturn({
+                    valuesForHints: function () {
+                        return [];
+                    }
+                });
+
+                mockAPI = {
+                    telemetry: mockTelemetryAPI
+                };
+
                 telemetry = new TelemetryCapability(
+                    mockAPI,
                     mockInjector,
                     mockQ,
                     mockLog,
@@ -113,7 +135,6 @@ define(
                         key: "testKey", // from model
                         start: 42 // from argument
                     }]);
-
             });
 
             it("provides an empty series when telemetry is missing", function () {
@@ -159,6 +180,57 @@ define(
                 telemetry.requestData();
 
                 expect(mockLog.warn).toHaveBeenCalled();
+            });
+
+            it("if a new style telemetry source is available, use it", function () {
+                var mockProvider = {};
+                mockTelemetryAPI.findSubscriptionProvider.andReturn(mockProvider);
+                telemetry.subscribe(noop, {});
+                expect(mockTelemetryService.subscribe).not.toHaveBeenCalled();
+                expect(mockTelemetryAPI.subscribe).toHaveBeenCalled();
+            });
+
+            it("if a new style telemetry source is not available, revert to old API", function () {
+                mockTelemetryAPI.findSubscriptionProvider.andReturn(undefined);
+                telemetry.subscribe(noop, {});
+                expect(mockTelemetryAPI.subscribe).not.toHaveBeenCalled();
+                expect(mockTelemetryService.subscribe).toHaveBeenCalled();
+            });
+
+            it("Wraps telemetry returned from the new API as a telemetry series", function () {
+                var returnedTelemetry;
+                var mockTelemetry = [{
+                    prop1: "val1",
+                    prop2: "val2",
+                    prop3: "val3"
+                },
+                {
+                    prop1: "val4",
+                    prop2: "val5",
+                    prop3: "val6"
+                }];
+                var mockProvider = {};
+                var dunzo = false;
+
+                mockTelemetryAPI.findRequestProvider.andReturn(mockProvider);
+                mockTelemetryAPI.request.andReturn(Promise.resolve(mockTelemetry));
+
+                telemetry.requestData({}).then(function (data) {
+                    returnedTelemetry = data;
+                    dunzo = true;
+                });
+
+                waitsFor(function () {
+                    return dunzo;
+                });
+
+                runs(function () {
+                    expect(returnedTelemetry.getPointCount).toBeDefined();
+                    expect(returnedTelemetry.getDomainValue).toBeDefined();
+                    expect(returnedTelemetry.getRangeValue).toBeDefined();
+                    expect(returnedTelemetry.getPointCount()).toBe(2);
+                });
+
             });
 
             it("allows subscriptions to updates", function () {

@@ -1,8 +1,7 @@
 <!-- Parent holder for time conductor. follow-mode | fixed-mode -->
 <div ng-controller="TimeConductorController as tcController"
     class="holder grows flex-elem l-flex-row l-time-conductor {{modeModel.selectedKey}}-mode {{timeSystemModel.selected.metadata.key}}-time-system"
-        ng-class="{'status-panning': tcController.panning}">
-
+        ng-class="{'status-panning': tcController.panning}" ng-show="showTimeConductor">
     <div class="flex-elem holder time-conductor-icon">
         <div class="hand-little"></div>
         <div class="hand-big"></div>
