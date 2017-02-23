@@ -91,6 +91,13 @@ define(
                     : false;
             }
 
+            $scope.folderNamePattern = typeService.getType('folder').getProperties().filter(
+                function (prop) {
+                    return prop.propertyDefinition.key === "name";
+                }
+            )[0].propertyDefinition.pattern;
+
+            $scope.newFolderFormData = {};
             $scope.newFolderCreationTriggered = false;
 
             $scope.newFolderButtonClickHandler = function () {
@@ -125,27 +132,15 @@ define(
                     });
             }
 
-            $scope.newFolderFormData = {};
-
             $scope.newFolderCreateButtonClickHandler = function () {
                 if ($scope.canCreateNewFolder) {
-                    freezeDialog();
                     createNewFolder($scope.newFolderFormData.name, $scope.treeModel.selectedObject)
                     .then(selectAndScrollToNewFolder)
-                    .then(unfreezeDialog)
                     .then(clearNewFolderForm);
                 } else {
                     console.error("Attempted to create a new folder without being able to.");
                 }
             };
-
-            function freezeDialog() {
-                console.log("Freezing placeholder.");
-            }
-
-            function unfreezeDialog() {
-                console.log("Unfreezing placeholder.");
-            }
 
             function selectAndScrollToNewFolder(newFolder) {
                 $scope.treeModel.selectedObject = newFolder;
