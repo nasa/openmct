@@ -40,44 +40,34 @@
             </mct-control>
         </div>
 
-        <ng-form class="validates"
-                 ng-class="{
-                    req: locator.newFolderCreationTriggered,
-                    valid: newFolderForm.$dirty && newFolderForm.$valid,
-                    invalid: newFolderForm.$dirty && !newFolderForm.$valid
-                 }"
-                 name="newFolderForm"
-                 ng-if="newFolderCreationTriggered">
+        <div ng-if="newFolderCreationTriggered">
+            <span class='form-control shell'>
+                <span class='field control'>
+                    <input type="text"
+                        ng-model="newFolderFormData.name"
+                        name="newFolderTextField">
+                </span>
+            </span>
 
-                    <span class='form-control shell'>
-                        <span class='field control'>
-                            <input type="text"
-                                ng-required="true"
-                                ng-model="newFolderFormData.name"
-                                ng-pattern="getRegExp(folderNamePattern)"
-                                name="newFolderTextField">
-                        </span>
-                    </span>
+            <!--
+            Extra check to see if we must disable the button
+            to cover the case where the user starts a new folder
+            creation but then navigates to a non-folder in the tree.
+            -->
+            <mct-control key="'button'"
+                        ng-class="{ disabled: !canCreateNewFolder || !newFolderNameIsValid() }"
+                        structure="{
+                            text: 'Create',
+                            click: newFolderCreateButtonClickHandler
+                        }">
+            </mct-control>
 
-                    <!--
-                    Extra check to see if we must disable the button
-                    to cover the case where the user starts a new folder
-                    creation but then navigates to a non-folder in the tree.
-                    -->
-                    <mct-control key="'button'"
-                                ng-class="{ disabled: !canCreateNewFolder || !newFolderForm.$valid }"
-                                structure="{
-                                    text: 'Create',
-                                    click: newFolderCreateButtonClickHandler
-                                }">
-                    </mct-control>
-
-                    <mct-control key="'button'"
-                                structure="{
-                                    cssClass: 'icon-x',
-                                    click: newFolderCancelButtonClickHandler
-                                }">
-                    </mct-control>
-       </ng-form>
+            <mct-control key="'button'"
+                        structure="{
+                            cssClass: 'icon-x',
+                            click: newFolderCancelButtonClickHandler
+                        }">
+            </mct-control>
+        </div>
    </div>
 </div>

@@ -91,11 +91,15 @@ define(
                     : false;
             }
 
-            $scope.folderNamePattern = typeService.getType('folder').getProperties().filter(
-                function (prop) {
-                    return prop.propertyDefinition.key === "name";
-                }
-            )[0].propertyDefinition.pattern;
+            function getRawFolderNamePattern() {
+                return typeService.getType('folder').getProperties().filter(
+                    function (prop) {
+                        return prop.propertyDefinition.key === "name";
+                    }
+                )[0].propertyDefinition.pattern;
+            }
+
+            $scope.folderNamePattern = new RegExp(getRawFolderNamePattern());
 
             $scope.newFolderFormData = {};
             $scope.newFolderCreationTriggered = false;
@@ -106,6 +110,12 @@ define(
 
             $scope.newFolderCancelButtonClickHandler = function () {
                 $scope.newFolderCreationTriggered = false;
+            };
+
+            $scope.newFolderNameIsValid = function () {
+                return $scope.newFolderFormData &&
+                    $scope.newFolderFormData.name &&
+                    $scope.folderNamePattern.test($scope.newFolderFormData.name);
             };
 
             function createNewFolder(name, parent) {
