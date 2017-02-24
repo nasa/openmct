@@ -55,6 +55,59 @@ define([
         };
     };
 
+    var conductorInstalled = false;
+
+    plugins.Conductor = function (options) {
+        if (!options) {
+            options = {};
+        }
+
+        function applyDefaults(openmct, timeConductorViewService) {
+            var defaults = {};
+            var timeSystem = timeConductorViewService.systems.find(function (ts) {
+                return ts.metadata.key === options.defaultTimeSystem;
+            });
+            if (timeSystem !== undefined) {
+                defaults = timeSystem.defaults();
+
+                if (options.defaultTimespan !== undefined) {
+                    defaults.deltas.start = options.defaultTimespan;
+                    defaults.bounds.start = defaults.bounds.end - options.defaultTimespan;
+                    timeSystem.defaults(defaults);
+                }
+
+                openmct.conductor.timeSystem(timeSystem, defaults.bounds);
+            }
+        }
+
+        return function (openmct) {
+            openmct.legacyExtension('constants', {
+                key: 'DEFAULT_TIMECONDUCTOR_MODE',
+                value: options.showConductor ? 'fixed' : 'realtime',
+                priority: conductorInstalled ? 'mandatory' : 'fallback'
+            });
+            if (options.showConductor !== undefined) {
+                openmct.legacyExtension('constants', {
+                    key: 'SHOW_TIMECONDUCTOR',
+                    value: options.showConductor,
+                    priority: conductorInstalled ? 'mandatory' : 'fallback'
+                });
+            }
+            if (options.defaultTimeSystem !== undefined || options.defaultTimespan !== undefined) {
+                openmct.legacyExtension('runs', {
+                    implementation: applyDefaults,
+                    depends: ["openmct", "timeConductorViewService"]
+                });
+            }
+
+            if (!conductorInstalled) {
+                openmct.legacyRegistry.enable('platform/features/conductor/core');
+                openmct.legacyRegistry.enable('platform/features/conductor/compatibility');
+            }
+            conductorInstalled = true;
+        };
+    };
+
     plugins.CouchDB = function (url) {
         return function (openmct) {
             if (url) {
