@@ -21,16 +21,21 @@
  *****************************************************************************/
 
 define([
-    'lodash'
-], function (_) {
+    'lodash',
+    '../../platform/features/conductor/utcTimeSystem/src/UTCTimeSystem',
+    '../../example/generator/plugin'
+], function (
+    _,
+    UTCTimeSystem,
+    GeneratorPlugin
+) {
     var bundleMap = {
         CouchDB: 'platform/persistence/couch',
         Elasticsearch: 'platform/persistence/elastic',
         Espresso: 'platform/commonUI/themes/espresso',
         LocalStorage: 'platform/persistence/local',
         MyItems: 'platform/features/my-items',
-        Snow: 'platform/commonUI/themes/snow',
-        UTCTimeSystem: 'platform/features/conductor/utcTimeSystem'
+        Snow: 'platform/commonUI/themes/snow'
     };
 
     var plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
@@ -40,6 +45,15 @@ define([
             };
         };
     });
+
+    plugins.UTCTimeSystem = function () {
+        return function (openmct) {
+            openmct.legacyExtension("timeSystems", {
+                "implementation": UTCTimeSystem,
+                "depends": ["$timeout"]
+            });
+        };
+    };
 
     plugins.CouchDB = function (url) {
         return function (openmct) {
@@ -83,6 +97,10 @@ define([
 
             openmct.legacyRegistry.enable(bundleMap.Elasticsearch);
         };
+    };
+
+    plugins.Generator = function () {
+        return GeneratorPlugin;
     };
 
     return plugins;

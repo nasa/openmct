@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
+/*global define*/
 
 define({
     START_TIME: Date.now() - 24 * 60 * 60 * 1000 // Now minus a day.

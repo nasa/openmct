@@ -31,14 +31,14 @@
         require(['openmct'], function (openmct) {
             [
                 'example/imagery',
-                'example/eventGenerator',
-                'example/generator'
+                'example/eventGenerator'
             ].forEach(
                 openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
             );
             openmct.install(openmct.plugins.MyItems());
             openmct.install(openmct.plugins.LocalStorage());
             openmct.install(openmct.plugins.Espresso());
+            openmct.install(openmct.plugins.Generator());
             openmct.start();
         });
     </script>
