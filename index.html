@@ -25,7 +25,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title></title>
+    <script src="openmct-tutorial/lib/http.js">
+    </script>
     <script src="bower_components/requirejs/require.js">
+    </script>
+    <script src="openmct-tutorial/dictionary-plugin.js">
+    </script>
+    <script src="openmct-tutorial/realtime-telemetry-plugin.js">
+    </script>
+    <script src="openmct-tutorial/historical-telemetry-plugin.js">
     </script>
     <script>
         require(['openmct'], function (openmct) {
@@ -40,6 +48,9 @@
             openmct.install(openmct.plugins.Espresso());
             openmct.install(openmct.plugins.Generator());
             openmct.install(openmct.plugins.UTCTimeSystem());
+            openmct.install(DictionaryPlugin());
+            openmct.install(RealtimeTelemetryPlugin());
+            openmct.install(HistoricalTelemetryPlugin());
             openmct.start();
         });
     </script>
