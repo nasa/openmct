@@ -97,7 +97,15 @@ define(
                 });
 
                 mockAPI = {
-                    telemetry: mockTelemetryAPI
+                    telemetry: mockTelemetryAPI,
+                    conductor: {
+                        bounds: function () {
+                            return {
+                                start: 0,
+                                end: 1
+                            };
+                        }
+                    }
                 };
 
                 telemetry = new TelemetryCapability(
@@ -150,7 +158,9 @@ define(
                 expect(telemetry.getMetadata()).toEqual({
                     id: "testId", // from domain object
                     source: "testSource",
-                    key: "testKey"
+                    key: "testKey",
+                    start: 0,
+                    end: 1
                 });
             });
 
@@ -164,7 +174,9 @@ define(
                 expect(telemetry.getMetadata()).toEqual({
                     id: "testId", // from domain object
                     source: "testSource", // from model
-                    key: "testId" // from domain object
+                    key: "testId", // from domain object
+                    start: 0,
+                    end: 1
                 });
             });
 
@@ -243,7 +255,9 @@ define(
                     [{
                         id: "testId", // from domain object
                         source: "testSource",
-                        key: "testKey"
+                        key: "testKey",
+                        start: 0,
+                        end: 1
                     }]
                 );
 

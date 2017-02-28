@@ -139,7 +139,8 @@ define(
                 type = domainObject.getCapability("type"),
                 typeRequest = (type && type.getDefinition().telemetry) || {},
                 modelTelemetry = domainObject.getModel().telemetry,
-                fullRequest = Object.create(typeRequest);
+                fullRequest = Object.create(typeRequest),
+                bounds;
 
             // Add properties from the telemetry field of this
             // specific domain object.
@@ -158,6 +159,12 @@ define(
             }
             if (!fullRequest.key) {
                 fullRequest.key = domainObject.getId();
+            }
+
+            if (request.start === undefined && request.end === undefined) {
+                bounds = this.openmct.conductor.bounds();
+                fullRequest.start = bounds.start;
+                fullRequest.end = bounds.end;
             }
 
             return fullRequest;
