@@ -89,7 +89,10 @@ define(
                                 canvas.toBlob(defer.resolve, "image/jpeg");
                                 break;
                         }
-                    }
+                    },
+                    // Undefined makes background transparent
+                    // See: http://html2canvas.hertzen.com/documentation.html#available-options
+                    background: undefined
                 });
             } catch (e) {
                 defer.reject(e);
