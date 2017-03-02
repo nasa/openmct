@@ -72,7 +72,7 @@ define(
              * Create a new format object from legacy object, and replace it
              * when it changes
              */
-            this.newObject = objectUtils.toNewFormat($scope.domainObject.getModel(),
+            this.domainObject = objectUtils.toNewFormat($scope.domainObject.getModel(),
                 $scope.domainObject.getId());
 
             _.bindAll(this, [
@@ -144,9 +144,9 @@ define(
                 this.unobserveObject();
             }
 
-            this.unobserveObject = this.openmct.objects.observe(this.newObject, "*",
+            this.unobserveObject = this.openmct.objects.observe(this.domainObject, "*",
                     function (domainObject) {
-                        this.newObject = domainObject;
+                        this.domainObject = domainObject;
                         this.getData();
                     }.bind(this)
                 );
@@ -400,16 +400,49 @@ define(
         };
 
         /**
+         * Return an array of telemetry objects in this view that should be
+         * subscribed to.
+         * @private
+         * @returns {Promise<Array>} a promise that resolves with an array of
+         * telemetry objects in this view.
+         */
+        TelemetryTableController.prototype.getTelemetryObjects = function () {
+            var telemetryApi = this.openmct.telemetry;
+            var compositionApi = this.openmct.composition;
+
+            function filterForTelemetry(objects) {
+                return objects.filter(telemetryApi.canProvideTelemetry.bind(telemetryApi));
+            }
+
+            /*
+             * If parent object is a telemetry object, subscribe to it. Do not
+             * test composees.
+             */
+            if (telemetryApi.canProvideTelemetry(this.domainObject)) {
+                return Promise.resolve([this.domainObject]);
+            } else {
+                /*
+                 * If parent object is not a telemetry object, subscribe to all
+                 * composees that are telemetry producing objects.
+                 */
+                var composition = compositionApi.get(this.domainObject);
+
+                if (composition) {
+                    return composition
+                        .load()
+                        .then(filterForTelemetry);
+                }
+            }
+        };
+
+        /**
          * Request historical data, and subscribe to for real-time data.
          * @private
          * @returns {Promise} A promise that is resolved once subscription is
          * established, and historical telemetry is received and processed.
          */
         TelemetryTableController.prototype.getData = function () {
-            var telemetryApi = this.openmct.telemetry;
-            var compositionApi = this.openmct.composition;
             var scope = this.$scope;
-            var newObject = this.newObject;
 
             this.telemetry.clear();
             this.telemetry.bounds(this.openmct.conductor.bounds());
@@ -421,28 +454,9 @@ define(
                 console.error(e.stack);
             }
 
-            function filterForTelemetry(objects) {
-                return objects.filter(telemetryApi.canProvideTelemetry.bind(telemetryApi));
-            }
-
-            function getDomainObjects() {
-                var objects = [newObject];
-                var composition = compositionApi.get(newObject);
-
-                if (composition) {
-                    return composition
-                        .load()
-                        .then(function (children) {
-                            return objects.concat(children);
-                        });
-                } else {
-                    return Promise.resolve(objects);
-                }
-            }
             scope.rows = [];
 
-            return getDomainObjects()
-                .then(filterForTelemetry)
+            return this.getTelemetryObjects()
                 .then(this.loadColumns)
                 .then(this.subscribeToNewData)
                 .then(this.getHistoricalData)
