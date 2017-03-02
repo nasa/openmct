@@ -364,11 +364,8 @@ define(
             var telemetryApi = this.openmct.telemetry;
             var telemetryCollection = this.telemetry;
             //Set table max length to avoid unbounded growth.
-            //var maxRows = 100000;
-            var maxRows = Number.MAX_VALUE;
             var limitEvaluator;
             var added = false;
-            var scope = this.$scope;
             var table = this.table;
 
             this.subscriptions.forEach(function (subscription) {
@@ -379,16 +376,6 @@ define(
             function newData(domainObject, datum) {
                 limitEvaluator = telemetryApi.limitEvaluator(domainObject);
                 added = telemetryCollection.add([table.getRowValues(limitEvaluator, datum)]);
-
-                //Inform table that a new row has been added
-                if (scope.rows.length > maxRows) {
-                    scope.$broadcast('remove:rows', scope.rows[0]);
-                    scope.rows.shift();
-                }
-                if (!scope.loading && added) {
-                    scope.$broadcast('add:row',
-                        scope.rows.length - 1);
-                }
             }
 
             objects.forEach(function (object) {

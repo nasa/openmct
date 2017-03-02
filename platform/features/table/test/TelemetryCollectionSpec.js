@@ -141,6 +141,27 @@ define(
                         expect(collection.telemetry[11]).toBe(addedObjectB);
                     }
                 );
+                it("maintains insertion order in the case of duplicate time stamps",
+                    function () {
+                        var addedObjectA = {
+                            timestamp: 10000,
+                            value: {
+                                integer: 10,
+                                text: integerTextMap[10]
+                            }
+                        };
+                        var addedObjectB = {
+                            timestamp: 10000,
+                            value: {
+                                integer: 11,
+                                text: integerTextMap[11]
+                            }
+                        };
+                        collection.add([addedObjectA, addedObjectB]);
+
+                        expect(collection.telemetry[11]).toBe(addedObjectB);
+                    }
+                );
             });
 
             describe("buffers telemetry", function () {
