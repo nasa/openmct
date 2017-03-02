@@ -50,9 +50,33 @@ define(['EventEmitter'], function (EventEmitter) {
 
         //Default to fixed mode
         this.followMode = false;
+
+        this.timeSystems = {};
+        this.tickSources = {};
     }
 
     TimeConductor.prototype = Object.create(EventEmitter.prototype);
+
+    TimeConductor.prototype.addTimeSystem = function (timeSystem) {
+        this.timeSystems[timeSystem.key] = timeSystem;
+    };
+
+    TimeConductor.prototype.addTickSource = function (tickSource) {
+        this.tickSources[tickSource.key] = tickSource;
+    };
+
+    TimeConductor.prototype.tickSource = function (key) {
+        if (arguments.length === 1) {
+            if (this.activeTickSource !== undefined) {
+                this.activeTickSource.stop();
+            }
+
+            this.activeTickSource = this.tickSources[key];
+            this.activeTickSource.start();
+            this.emit('tickSource', key);
+        }
+        return this.activeTickSource;
+    };
 
     /**
      * Validate the given bounds. This can be used for pre-validation of
