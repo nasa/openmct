@@ -459,14 +459,14 @@ define(
 
                         beforeEach(function () {
                             row4 = {
-                                'col1': {'text': 'row5 col1'},
+                                'col1': {'text': 'row4 col1'},
                                 'col2': {'text': 'xyz'},
-                                'col3': {'text': 'row5 col3'}
+                                'col3': {'text': 'row4 col3'}
                             };
                             row5 = {
-                                'col1': {'text': 'row6 col1'},
+                                'col1': {'text': 'row5 col1'},
                                 'col2': {'text': 'aaa'},
-                                'col3': {'text': 'row6 col3'}
+                                'col3': {'text': 'row5 col3'}
                             };
                             row6 = {
                                 'col1': {'text': 'row6 col1'},
@@ -488,6 +488,71 @@ define(
                             //Added a duplicate row
                             expect(mockScope.displayRows[2].col2.text).toEqual('ggg');
                             expect(mockScope.displayRows[3].col2.text).toEqual('ggg');
+                        });
+
+                        it('Inserts duplicate values for sort column in order received when sorted descending', function () {
+                            mockScope.sortColumn = 'col2';
+                            mockScope.sortDirection = 'desc';
+
+                            mockScope.displayRows = controller.sortRows(testRows.slice(0));
+
+                            var row6b = {
+                                'col1': {'text': 'row6b col1'},
+                                'col2': {'text': 'ggg'},
+                                'col3': {'text': 'row6b col3'}
+                            };
+                            var row6c = {
+                                'col1': {'text': 'row6c col1'},
+                                'col2': {'text': 'ggg'},
+                                'col3': {'text': 'row6c col3'}
+                            };
+
+                            controller.addRows(undefined, [row4, row5]);
+                            controller.addRows(undefined, [row6, row6b, row6c]);
+                            expect(mockScope.displayRows[0].col2.text).toEqual('xyz');
+                            expect(mockScope.displayRows[7].col2.text).toEqual('aaa');
+
+                            // Added duplicate rows
+                            expect(mockScope.displayRows[2].col2.text).toEqual('ggg');
+                            expect(mockScope.displayRows[3].col2.text).toEqual('ggg');
+                            expect(mockScope.displayRows[4].col2.text).toEqual('ggg');
+
+                            // Check that original order is maintained with dupes
+                            expect(mockScope.displayRows[2].col3.text).toEqual('row6c col3');
+                            expect(mockScope.displayRows[3].col3.text).toEqual('row6b col3');
+                            expect(mockScope.displayRows[4].col3.text).toEqual('row6 col3');
+                        });
+
+                        it('Inserts duplicate values for sort column in order received when sorted ascending', function () {
+                            mockScope.sortColumn = 'col2';
+                            mockScope.sortDirection = 'asc';
+
+                            mockScope.displayRows = controller.sortRows(testRows.slice(0));
+
+                            var row6b = {
+                                'col1': {'text': 'row6b col1'},
+                                'col2': {'text': 'ggg'},
+                                'col3': {'text': 'row6b col3'}
+                            };
+                            var row6c = {
+                                'col1': {'text': 'row6c col1'},
+                                'col2': {'text': 'ggg'},
+                                'col3': {'text': 'row6c col3'}
+                            };
+
+                            controller.addRows(undefined, [row4, row5, row6]);
+                            controller.addRows(undefined, [row6b, row6c]);
+                            expect(mockScope.displayRows[0].col2.text).toEqual('aaa');
+                            expect(mockScope.displayRows[7].col2.text).toEqual('xyz');
+
+                            // Added duplicate rows
+                            expect(mockScope.displayRows[3].col2.text).toEqual('ggg');
+                            expect(mockScope.displayRows[4].col2.text).toEqual('ggg');
+                            expect(mockScope.displayRows[5].col2.text).toEqual('ggg');
+                            // Check that original order is maintained with dupes
+                            expect(mockScope.displayRows[3].col3.text).toEqual('row6 col3');
+                            expect(mockScope.displayRows[4].col3.text).toEqual('row6b col3');
+                            expect(mockScope.displayRows[5].col3.text).toEqual('row6c col3');
                         });
 
                         it('Adds new rows at the correct sort position when' +

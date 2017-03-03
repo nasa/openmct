@@ -113,22 +113,6 @@ define(
         };
 
         /**
-         * Determines is a given telemetry datum is within the bounds currently
-         * defined for this telemetry collection.
-         * @private
-         * @param datum
-         * @returns {boolean}
-         */
-        TelemetryCollection.prototype.inBounds = function (datum) {
-            var noBoundsDefined = !this.lastBounds || (this.lastBounds.start === undefined && this.lastBounds.end === undefined);
-            var withinBounds =
-                _.get(datum, this.sortField) >= this.lastBounds.start &&
-                _.get(datum, this.sortField) <= this.lastBounds.end;
-
-            return noBoundsDefined || withinBounds;
-        };
-
-        /**
          * Adds an individual item to the collection. Used internally only
          * @private
          * @param item
@@ -173,9 +157,10 @@ define(
                 // based on time stamp because the array is guaranteed ordered due
                 // to sorted insertion.
                 var startIx = _.sortedIndex(array, item, this.sortField);
+                var endIx;
 
                 if (startIx !== array.length) {
-                    var endIx = _.sortedLastIndex(array, item, this.sortField);
+                    endIx = _.sortedLastIndex(array, item, this.sortField);
 
                     // Create an array of potential dupes, based on having the
                     // same time stamp
@@ -185,7 +170,7 @@ define(
                 }
 
                 if (!isDuplicate) {
-                    array.splice(startIx, 0, item);
+                    array.splice(endIx || startIx, 0, item);
 
                     //Return true if it was added and in bounds
                     return array === this.telemetry;
