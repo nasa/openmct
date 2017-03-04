@@ -1124,7 +1124,7 @@ app.config(['actionRegistryProvider', function (arp) {
 ### Detriments
 
 * Slightly increases dependency on Angular; other dependency injectors
-  may not offer comparable ways to specificy dependencies non-globally.
+  may not offer comparable ways to specify dependencies non-globally.
 * Not clear (or will take effort to make clear) which dependencies are
   available for which extensions. Could be mitigated by standardizing
   descriptions of context across actions and views, but that may offer

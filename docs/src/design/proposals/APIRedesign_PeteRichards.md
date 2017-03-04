@@ -145,7 +145,7 @@ Then, if we're using imperative methods for extending the application we can use
 <script>
 // can configure from object
 var myApp = new OpenMCTWeb({
-  persitence: {
+  persistence: {
     providers: [
       {
         type: 'elastic',
