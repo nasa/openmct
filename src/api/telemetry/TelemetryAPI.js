@@ -343,9 +343,9 @@ define([
      * Register a new formatter
      * @param {Format} formatter
      */
-    TelemetryAPI.prototype.addFormatter = function (formatter) {
+    TelemetryAPI.prototype.addFormat = function (format) {
         var formatService = getFormatService.call(this);
-        formatService.formatMap[formatter.key] = formatter;
+        formatService.formatMap[format.key] = format;
     };
 
     return TelemetryAPI;
