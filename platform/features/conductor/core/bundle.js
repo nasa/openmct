@@ -50,16 +50,6 @@ define([
 
     legacyRegistry.register("platform/features/conductor/core", {
         "extensions": {
-            "services": [
-                {
-                    "key": "timeConductorViewService",
-                    "implementation": TimeConductorViewService,
-                    "depends": [
-                        "openmct",
-                        "timeSystems[]"
-                    ]
-                }
-            ],
             "controllers": [
                 {
                     "key": "TimeConductorController",
@@ -69,10 +59,8 @@ define([
                         "$window",
                         "$location",
                         "openmct",
-                        "timeConductorViewService",
-                        "formatService",
-                        "DEFAULT_TIMECONDUCTOR_MODE",
-                        "SHOW_TIMECONDUCTOR"
+                        "timeConductorService",
+                        "formatService"
                     ]
                 },
                 {

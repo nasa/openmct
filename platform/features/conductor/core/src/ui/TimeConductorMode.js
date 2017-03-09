@@ -154,25 +154,6 @@ define(
         };
 
         /**
-         * @private
-         * @param {number} time some value that is valid in the current TimeSystem
-         */
-        TimeConductorMode.prototype.tick = function (time) {
-            var deltas = this.deltas();
-            var startTime = time;
-            var endTime = time;
-
-            if (deltas) {
-                startTime = time - deltas.start;
-                endTime = time + deltas.end;
-            }
-            this.conductor.bounds({
-                start: startTime,
-                end: endTime
-            });
-        };
-
-        /**
          * Get or set the current value for the deltas used by this time system.
          * On change, the new deltas will be used to calculate and set the
          * bounds on the time conductor.

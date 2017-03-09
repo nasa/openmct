@@ -56,48 +56,66 @@ define([
      * the threshold required.
      * @private
      */
-    function getScaledFormat (d) {
-        var m = moment.utc(d);
+    function getScaledFormat(d) {
+        var momentified = moment.utc(d);
         /**
          * Uses logic from d3 Time-Scales, v3 of the API. See
          * https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Scales.md
          *
          * Licensed
          */
-        return [
-            [".SSS", function(m) { return m.milliseconds(); }],
-            [":ss", function(m) { return m.seconds(); }],
-            ["hh:mma", function(m) { return m.minutes(); }],
-            ["hha", function(m) { return m.hours(); }],
-            ["ddd DD", function(m) {
-                return m.days() &&
-                    m.date() != 1;
+        var format = [
+            [".SSS", function (m) {
+                return m.milliseconds();
             }],
-            ["MMM DD", function(m) { return m.date() != 1; }],
-            ["MMMM", function(m) {
+            [":ss", function (m) {
+                return m.seconds();
+            }],
+            ["HH:mm", function (m) {
+                return m.minutes();
+            }],
+            ["HH", function (m) {
+                return m.hours();
+            }],
+            ["ddd DD", function (m) {
+                return m.days() &&
+                    m.date() !== 1;
+            }],
+            ["MMM DD", function (m) {
+                return m.date() !== 1;
+            }],
+            ["MMMM", function (m) {
                 return m.month();
             }],
-            ["YYYY", function() { return true; }]
-        ].filter(function (row){
-            return row[1](m);
-        })[0][0];
-    };
+            ["YYYY", function () {
+                return true;
+            }]
+        ].filter(function (row) {
+                return row[1](momentified);
+            })[0][0];
 
-    /**
-     *
-     * @param value
-     * @param {Scale} [scale] Optionally provides context to the
-     * format request, allowing for scale-appropriate formatting.
-     * @returns {string} the formatted date
-     */
-    LocalTimeFormat.prototype.format = function (value, scale) {
-        if (scale !== undefined){
-            var scaledFormat = getScaledFormat(value, scale);
-            if (scaledFormat) {
-                return moment.utc(value).format(scaledFormat);
-            }
+        if (format !== undefined) {
+            return moment(value).format(scaledFormat);
         }
-        return moment(value).format(DATE_FORMAT);
+    }
+    /**
+     * @param {number} value The value to format.
+     * @param {number} [minValue] Contextual information for scaled formatting used in linear scales such as conductor
+     * and plot axes. Specifies the smallest number on the scale.
+     * @param {number} [maxValue] Contextual information for scaled formatting used in linear scales such as conductor
+     * and plot axes. Specifies the largest number on the scale
+     * @param {number} [count] Contextual information for scaled formatting used in linear scales such as conductor
+     * and plot axes. The number of labels on the scale.
+     * @returns {string} the formatted date(s). If multiple values were requested, then an array of
+     * formatted values will be returned. Where a value could not be formatted, `undefined` will be returned at its position
+     * in the array.
+     */
+    UTCTimeFormat.prototype.format = function (value, minValue, maxValue, count) {
+        if (arguments.length > 1) {
+            return values.map(getScaledFormat);
+        } else {
+            return moment(value).format(DATE_FORMAT);
+        }
     };
 
     LocalTimeFormat.prototype.parse = function (text) {

@@ -45,10 +45,8 @@ define(
             $window,
             $location,
             openmct,
-            conductorViewService,
-            formatService,
-            DEFAULT_MODE,
-            SHOW_TIMECONDUCTOR
+            conductorService,
+            formatService
         ) {
 
             var self = this;
@@ -63,20 +61,14 @@ define(
             this.$scope = $scope;
             this.$window = $window;
             this.$location = $location;
-            this.conductorViewService = conductorViewService;
+            this.conductorService = conductorService;
             this.conductor = openmct.conductor;
-            this.modes = conductorViewService.availableModes();
+            this.modes = conductorService.availableModes();
             this.validation = new TimeConductorValidation(this.conductor);
             this.formatService = formatService;
 
-            //Check if the default mode defined is actually available
-            if (this.modes[DEFAULT_MODE] === undefined) {
-                DEFAULT_MODE = 'fixed';
-            }
-            this.DEFAULT_MODE = DEFAULT_MODE;
-
             // Construct the provided time system definitions
-            this.timeSystems = conductorViewService.systems;
+            this.sourceModel.sources = conductorService.availableTickSources();
 
             this.initializeScope();
             var searchParams = JSON.parse(JSON.stringify(this.$location.search()));
@@ -89,7 +81,7 @@ define(
                 this.changeTimeSystem(this.conductor.timeSystem());
             }
 
-            var deltas = this.conductorViewService.deltas();
+            var deltas = this.conductorService.deltas();
             if (deltas) {
                 this.setFormFromDeltas(deltas);
             }
@@ -107,8 +99,6 @@ define(
             //Respond to any subsequent conductor changes
             this.conductor.on('bounds', this.changeBounds);
             this.conductor.on('timeSystem', this.changeTimeSystem);
-
-            this.$scope.showTimeConductor = SHOW_TIMECONDUCTOR;
         }
 
         /**
@@ -138,14 +128,14 @@ define(
             //Represents the various modes, and the currently selected mode
             //in the view
             this.$scope.modeModel = {
-                options: this.conductorViewService.availableModes()
+                options: this.conductorService.availableModes()
             };
 
             // Watch scope for selection of mode or time system by user
             this.$scope.$watch('modeModel.selectedKey', this.setMode);
 
-            this.conductorViewService.on('pan', this.onPan);
-            this.conductorViewService.on('pan-stop', this.onPanStop);
+            this.conductorService.on('pan', this.onPan);
+            this.conductorService.on('pan-stop', this.onPanStop);
 
             this.$scope.$on('$destroy', this.destroy);
         };
@@ -158,7 +148,7 @@ define(
             }
 
             if (searchParams[SEARCH.TIME_SYSTEM] &&
-                searchParams[SEARCH.TIME_SYSTEM] !== this.conductor.timeSystem().metadata.key) {
+                searchParams[SEARCH.TIME_SYSTEM] !== this.conductor.timeSystem().key) {
                 //Will select the specified time system on the conductor
                 this.selectTimeSystemByKey(searchParams[SEARCH.TIME_SYSTEM]);
             }
@@ -198,8 +188,8 @@ define(
             this.conductor.off('bounds', this.changeBounds);
             this.conductor.off('timeSystem', this.changeTimeSystem);
 
-            this.conductorViewService.off('pan', this.onPan);
-            this.conductorViewService.off('pan-stop', this.onPanStop);
+            this.conductorService.off('pan', this.onPan);
+            this.conductorService.off('pan-stop', this.onPanStop);
         };
 
         /**
@@ -211,7 +201,7 @@ define(
             //If a zoom or pan is currently in progress, do not override form values.
             if (!this.zooming && !this.panning) {
                 this.setFormFromBounds(bounds);
-                if (this.conductorViewService.mode() === 'fixed') {
+                if (this.conductorService.mode() === 'fixed') {
                     //Set bounds in URL on change
                     this.setParam(SEARCH.START_BOUND, bounds.start);
                     this.setParam(SEARCH.END_BOUND, bounds.end);
@@ -242,21 +232,6 @@ define(
                     }.bind(this));
                 }
             }
-        };
-
-        /**
-         * On mode change, populate form based on time systems available
-         * from the selected mode.
-         * @param mode
-         */
-        TimeConductorController.prototype.setFormFromMode = function (mode) {
-            this.$scope.modeModel.selectedKey = mode;
-            //Synchronize scope with time system on mode
-            this.$scope.timeSystemModel.options =
-                this.conductorViewService.availableTimeSystems()
-                .map(function (t) {
-                    return t.metadata;
-                });
         };
 
         /**
@@ -308,44 +283,11 @@ define(
             };
             if (this.validation.validateStartDelta(deltas.start) && this.validation.validateEndDelta(deltas.end)) {
                 //Sychronize deltas between form and mode
-                this.conductorViewService.deltas(deltas);
+                this.conductorService.deltas(deltas);
 
                 //Set Deltas in URL on change
                 this.setParam(SEARCH.START_DELTA, deltas.start);
                 this.setParam(SEARCH.END_DELTA, deltas.end);
-            }
-        };
-
-        /**
-         * Change the selected Time Conductor mode. This will call destroy
-         * and initialization functions on the relevant modes, setting
-         * default values for bound and deltas in the form.
-         *
-         * @private
-         * @param newModeKey
-         * @param oldModeKey
-         */
-        TimeConductorController.prototype.setMode = function (newModeKey, oldModeKey) {
-            //Set mode in URL on change
-            this.setParam(SEARCH.MODE, newModeKey);
-
-            if (newModeKey !== oldModeKey) {
-                this.conductorViewService.mode(newModeKey);
-                this.setFormFromMode(newModeKey);
-
-                if (newModeKey === "fixed") {
-                    this.setParam(SEARCH.START_DELTA, undefined);
-                    this.setParam(SEARCH.END_DELTA, undefined);
-                } else {
-                    this.setParam(SEARCH.START_BOUND, undefined);
-                    this.setParam(SEARCH.END_BOUND, undefined);
-
-                    var deltas = this.conductorViewService.deltas();
-                    if (deltas) {
-                        this.setParam(SEARCH.START_DELTA, deltas.start);
-                        this.setParam(SEARCH.END_DELTA, deltas.end);
-                    }
-                }
             }
         };
 
@@ -432,7 +374,7 @@ define(
             var zoomDefaults = this.conductor.timeSystem().defaults().zoom;
             var timeSpan = Math.pow((1 - sliderValue), 4) * (zoomDefaults.min - zoomDefaults.max);
 
-            var zoom = this.conductorViewService.zoom(timeSpan);
+            var zoom = this.conductorService.zoom(timeSpan);
 
             this.$scope.boundsModel.start = zoom.bounds.start;
             this.$scope.boundsModel.end = zoom.bounds.end;
@@ -457,7 +399,7 @@ define(
             this.setDeltas(this.$scope.boundsModel);
             this.zooming = false;
 
-            this.conductorViewService.emit('zoom-stop');
+            this.conductorService.emit('zoom-stop');
         };
 
         /**

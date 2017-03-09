@@ -137,7 +137,7 @@ define(
         ConductorAxisController.prototype.changeTimeSystem = function (timeSystem) {
             this.timeSystem = timeSystem;
 
-            var key = timeSystem.formats()[0];
+            var key = timeSystem.format;
             if (key !== undefined) {
                 var format = this.formatService.getFormat(key);
                 var bounds = this.conductor.bounds();
@@ -158,10 +158,7 @@ define(
                     if (tickValue instanceof Date) {
                         tickValue = tickValue.getTime();
                     }
-                    return format.format(tickValue, {
-                        min: bounds.start,
-                        max: bounds.end
-                    });
+                    return format.format(tickValue, bounds.start, bounds.end);
                 });
                 this.axisElement.call(this.xAxis);
             }

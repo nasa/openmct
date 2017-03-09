@@ -19,14 +19,13 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<span ng-controller="ClickAwayController as modeController">
+<span ng-controller="ClickAwayController as sourceController">
     <div class="s-menu-button"
-         ng-click="modeController.toggle()">
-		<span class="title-label">{{ngModel.options[ngModel.selectedKey]
-            .label}}</span>
+         ng-click="sourceController.toggle()">
+        <span class="title-label">{{ngModel.sources[ngModel.selectedSource].name}}</span>
     </div>
     <div class="menu super-menu mini mode-selector-menu"
-         ng-show="modeController.isActive()">
+         ng-show="sourceController.isActive()">
         <mct-include key="'mode-menu'"
                      ng-model="ngModel">
         </mct-include>

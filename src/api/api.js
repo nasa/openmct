@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([
-    './TimeConductor',
+    './conductor/TimeConductor',
     './objects/ObjectAPI',
     './composition/CompositionAPI',
     './types/TypeRegistry',
