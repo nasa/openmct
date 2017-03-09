@@ -83,7 +83,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name conductor
          */
-        this.conductor = new api.TimeConductor();
+        this.time = new api.Time();
 
         /**
          * An interface for interacting with the composition of domain objects.
