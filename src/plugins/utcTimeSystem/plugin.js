@@ -1,5 +1,5 @@
 define([
-    './utcTimeFormat',
+    './UTCTimeFormat',
     './LocalClock'
 ], function (
     UtcTimeFormat,

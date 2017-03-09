@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 define([
-    "./src/ui/TimeConductorViewService",
     "./src/ui/TimeConductorController",
     "./src/ui/ConductorAxisController",
     "./src/ui/ConductorTOIController",
@@ -34,7 +33,6 @@ define([
     "text!./res/templates/time-of-interest.html",
     "legacyRegistry"
 ], function (
-    TimeConductorViewService,
     TimeConductorController,
     ConductorAxisController,
     ConductorTOIController,
@@ -69,7 +67,7 @@ define([
                     "depends": [
                         "$scope",
                         "openmct",
-                        "timeConductorViewService",
+                        "timeConductorService",
                         "formatService"
                     ]
                 },

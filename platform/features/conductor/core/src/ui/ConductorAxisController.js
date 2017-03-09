@@ -207,7 +207,7 @@ define(
          * Initiate panning via a click + drag gesture on the time conductor
          * scale. Panning triggers a "pan" event
          * @param {number} delta the offset from the original click event
-         * @see TimeConductorViewService#
+         * @see TimeConductorService
          * @fires platform.features.conductor.ConductorAxisController~pan
          */
         ConductorAxisController.prototype.pan = function (delta) {

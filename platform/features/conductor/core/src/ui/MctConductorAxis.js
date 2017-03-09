@@ -32,7 +32,7 @@ define(['./ConductorAxisController'], function (ConductorAxisController) {
             controller: [
                 'openmct',
                 'formatService',
-                'timeConductorViewService',
+                'timeConductorService',
                 '$scope',
                 '$element',
                 ConductorAxisController

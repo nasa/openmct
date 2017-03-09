@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./TimeConductorViewService'], function (TimeConductorViewService) {
+define(['./TimeConductorService'], function (TimeConductorService) {
     describe("The Time Conductor view service", function () {
         var mockTimeConductor;
         var basicTimeSystem;

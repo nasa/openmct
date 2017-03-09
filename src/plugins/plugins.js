@@ -22,7 +22,7 @@
 
 define([
     'lodash',
-    'utcTimeSystem/plugin',
+    './utcTimeSystem/plugin',
     '../../example/generator/plugin'
 ], function (
     _,
@@ -53,13 +53,11 @@ define([
             options = {};
         }
 
-        function applyDefaults(timeConductorService) {
-            timeConductorService.menuOptions(options.menuOptions);
-        }
-
         return function (openmct) {
             openmct.legacyExtension('runs', {
-                implementation: applyDefaults,
+                implementation: function applyDefaults(timeConductorService) {
+                    timeConductorService.menuOptions(options.menuOptions);
+                },
                 depends: ["timeConductorService"]
             });
         };
