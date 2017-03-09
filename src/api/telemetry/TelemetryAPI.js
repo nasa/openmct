@@ -138,6 +138,7 @@ define([
         this.metadataCache = new WeakMap();
         this.formatMapCache = new WeakMap();
         this.valueFormatterCache = new WeakMap();
+        this.formatMap = {};
     }
 
     /**
@@ -339,13 +340,16 @@ define([
         return this.legacyProvider.limitEvaluator.apply(this.legacyProvider, arguments);
     };
 
+    TelemetryAPI.prototype.getFormat = function (formatKey) {
+        return this.formatMap[formatKey];
+    };
+
     /**
      * Register a new formatter
      * @param {Format} formatter
      */
     TelemetryAPI.prototype.addFormat = function (format) {
-        var formatService = getFormatService.call(this);
-        formatService.formatMap[format.key] = format;
+        this.formatMap[format.key] = format;
     };
 
     return TelemetryAPI;
