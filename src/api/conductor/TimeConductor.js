@@ -65,19 +65,6 @@ define(['EventEmitter'], function (EventEmitter) {
         this.tickSources[tickSource.key] = tickSource;
     };
 
-    TimeConductor.prototype.tickSource = function (key) {
-        if (arguments.length === 1) {
-            if (this.activeTickSource !== undefined) {
-                this.activeTickSource.stop();
-            }
-
-            this.activeTickSource = this.tickSources[key];
-            this.activeTickSource.start();
-            this.emit('tickSource', key);
-        }
-        return this.activeTickSource;
-    };
-
     /**
      * Validate the given bounds. This can be used for pre-validation of
      * bounds, for example by views validating user inputs.
@@ -97,32 +84,6 @@ define(['EventEmitter'], function (EventEmitter) {
             return "Specified start date exceeds end bound";
         }
         return true;
-    };
-
-    /**
-     * Get or set the follow mode of the time conductor. In follow mode the
-     * time conductor ticks, regularly updating the bounds from a timing
-     * source appropriate to the selected time system and mode of the time
-     * conductor.
-     * @fires module:openmct.TimeConductor~follow
-     * @param {boolean} followMode
-     * @returns {boolean}
-     * @memberof module:openmct.TimeConductor#
-     * @method follow
-     */
-    TimeConductor.prototype.follow = function (followMode) {
-        if (arguments.length > 0) {
-            this.followMode = followMode;
-            /**
-             * The TimeConductor has toggled into or out of follow mode.
-             * @event follow
-             * @memberof module:openmct.TimeConductor~
-             * @property {boolean} followMode true if follow mode is
-             *           enabled, otherwise false.
-             */
-            this.emit('follow', this.followMode);
-        }
-        return this.followMode;
     };
 
     /**
