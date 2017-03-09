@@ -40,12 +40,7 @@ define(
 
             EventEmitter.call(this);
 
-            this.systems = timeSystems.map(function (timeSystemConstructor) {
-                return timeSystemConstructor();
-            });
-
             this.conductor = openmct.conductor;
-            this.currentMode = undefined;
 
         }
 

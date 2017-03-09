@@ -42,6 +42,7 @@ define([
                     "type": "provider",
                     "implementation": FormatProvider,
                     "depends": [
+                        "openmct",
                         "formats[]"
                     ]
                 }

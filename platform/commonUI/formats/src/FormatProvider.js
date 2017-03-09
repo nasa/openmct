@@ -89,22 +89,21 @@ define([
      * @param {Array.<function(new : Format)>} format constructors,
      *        from the `formats` extension category.
      */
-    function FormatProvider(formats) {
-        var formatMap = {};
+    function FormatProvider(openmct, formats) {
+        this.telemetryAPI = openmct.telemetry;
 
         function addToMap(Format) {
             var key = Format.key;
-            if (key && !formatMap[key]) {
-                formatMap[key] = new Format();
+            if (key && !openmct.telemetry.getFormat(key)) {
+                openmct.telemetry.addFormat(new Format());
             }
         }
 
         formats.forEach(addToMap);
-        this.formatMap = formatMap;
     }
 
     FormatProvider.prototype.getFormat = function (key) {
-        var format = this.formatMap[key];
+        var format = this.telemetryAPI.getFormat(key);
         if (!format) {
             throw new Error("FormatProvider: No format found for " + key);
         }
