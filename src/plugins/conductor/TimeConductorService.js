@@ -74,8 +74,8 @@ define(
             }
         };
 
-        TimeConductorService.prototype.menuOptions = function (options) {
-            this.options = options;
+        TimeConductorService.prototype.configuration = function (config) {
+            this.config = config;
         };
 
         TimeConductorService.prototype.activeTickSource = function (key) {
@@ -136,7 +136,7 @@ define(
         TimeConductorService.prototype.availableTickSources = function () {
             var timeAPI = this.timeAPI;
             //Return all tick sources
-            return _.uniq(this.options.map(function (option) {
+            return _.uniq(this.config.map(function (option) {
                 return option.tickSource && timeAPI.tickSources(option.tickSource);
             }.bind(this)));
         };
