@@ -118,6 +118,7 @@ define([
         'platform/features/imagery',
         'platform/features/layout',
         'platform/features/pages',
+        'platform/features/plot',
         'platform/features/timeline',
         'platform/features/table',
         'platform/forms',
