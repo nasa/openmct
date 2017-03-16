@@ -13,22 +13,22 @@ define([
         "extensions":
         {
             "types": [
-                { "key": "styleguide.intro", "name": "Introduction", "cssclass": "icon-page", "description": "Introduction and overview to the style guide" },
-                { "key": "styleguide.standards", "name": "Standards", "cssclass": "icon-page", "description": "" },
-                { "key": "styleguide.colors", "name": "Colors", "cssclass": "icon-page", "description": "" },
-                { "key": "styleguide.glyphs", "name": "Glyphs", "cssclass": "icon-page", "description": "Glyphs overview" },
-                { "key": "styleguide.controls", "name": "Controls", "cssclass": "icon-page", "description": "Buttons, selects, HTML controls" },
-                { "key": "styleguide.input", "name": "Text Inputs", "cssclass": "icon-page", "description": "Various text inputs" },
-                { "key": "styleguide.menus", "name": "Menus", "cssclass": "icon-page", "description": "Context menus, dropdowns" }
+                { "key": "styleguide.intro", "name": "Introduction", "cssClass": "icon-page", "description": "Introduction and overview to the style guide" },
+                { "key": "styleguide.standards", "name": "Standards", "cssClass": "icon-page", "description": "" },
+                { "key": "styleguide.colors", "name": "Colors", "cssClass": "icon-page", "description": "" },
+                { "key": "styleguide.glyphs", "name": "Glyphs", "cssClass": "icon-page", "description": "Glyphs overview" },
+                { "key": "styleguide.controls", "name": "Controls", "cssClass": "icon-page", "description": "Buttons, selects, HTML controls" },
+                { "key": "styleguide.input", "name": "Text Inputs", "cssClass": "icon-page", "description": "Various text inputs" },
+                { "key": "styleguide.menus", "name": "Menus", "cssClass": "icon-page", "description": "Context menus, dropdowns" }
             ],
             "views": [
-                { "key": "styleguide.intro", "type": "styleguide.intro", "name": "Introduction", "cssclass": "icon-page", "templateUrl": "templates/intro.html", "editable": false },
-                { "key": "styleguide.standards", "type": "styleguide.standards", "name": "Standards", "cssclass": "icon-page", "templateUrl": "templates/standards.html", "editable": false },
-                { "key": "styleguide.colors", "type": "styleguide.colors", "name": "Colors", "cssclass": "icon-page", "templateUrl": "templates/colors.html", "editable": false },
-                { "key": "styleguide.glyphs", "type": "styleguide.glyphs", "name": "Glyphs", "cssclass": "icon-page", "templateUrl": "templates/glyphs.html", "editable": false },
-                { "key": "styleguide.controls", "type": "styleguide.controls", "name": "Controls", "cssclass": "icon-page", "templateUrl": "templates/controls.html", "editable": false },
-                { "key": "styleguide.input", "type": "styleguide.input", "name": "Text Inputs", "cssclass": "icon-page", "templateUrl": "templates/input.html", "editable": false },
-                { "key": "styleguide.menus", "type": "styleguide.menus", "name": "Menus", "cssclass": "icon-page", "templateUrl": "templates/menus.html", "editable": false }
+                { "key": "styleguide.intro", "type": "styleguide.intro", "templateUrl": "templates/intro.html", "editable": false },
+                { "key": "styleguide.standards", "type": "styleguide.standards", "templateUrl": "templates/standards.html", "editable": false },
+                { "key": "styleguide.colors", "type": "styleguide.colors", "templateUrl": "templates/colors.html", "editable": false },
+                { "key": "styleguide.glyphs", "type": "styleguide.glyphs", "templateUrl": "templates/glyphs.html", "editable": false },
+                { "key": "styleguide.controls", "type": "styleguide.controls", "templateUrl": "templates/controls.html", "editable": false },
+                { "key": "styleguide.input", "type": "styleguide.input", "templateUrl": "templates/input.html", "editable": false },
+                { "key": "styleguide.menus", "type": "styleguide.menus", "templateUrl": "templates/menus.html", "editable": false }
             ],
             "roots": [
                 {
