@@ -175,7 +175,7 @@ define(
                 expect(mockPolicyService.allow).toHaveBeenCalledWith(
                     'composition',
                     mockOtherType,
-                    mockType
+                    mockDomainObject
                 );
             });
 

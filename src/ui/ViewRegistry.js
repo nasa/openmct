@@ -143,7 +143,7 @@ define([], function () {
      * @property {string} key a machine-readable name for this view
      * @property {string} [description] a longer-form description (typically
      *           a single sentence or short paragraph) of this kind of view
-     * @property {string} cssclass the CSS class to apply to labels for this
+     * @property {string} cssClass the CSS class to apply to labels for this
      *           view (to add icons, for instance)
      */
 

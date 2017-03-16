@@ -39,20 +39,12 @@ define(
             var controller,
                 mockScope,
                 watches,
-                mockTimeout,
+                mockWindow,
                 mockElement,
                 mockExportService,
                 mockConductor,
                 mockFormatService,
                 mockFormat;
-
-            function promise(value) {
-                return {
-                    then: function (callback) {
-                        return promise(callback(value));
-                    }
-                };
-            }
 
             function getCallback(target, event) {
                 return target.calls.filter(function (call) {
@@ -66,7 +58,8 @@ define(
                 mockScope = jasmine.createSpyObj('scope', [
                    '$watch',
                    '$on',
-                   '$watchCollection'
+                   '$watchCollection',
+                   '$digest'
                 ]);
                 mockScope.$watchCollection.andCallFake(function (event, callback) {
                     watches[event] = callback;
@@ -86,8 +79,11 @@ define(
                 ]);
 
                 mockScope.displayHeaders = true;
-                mockTimeout = jasmine.createSpy('$timeout');
-                mockTimeout.andReturn(promise(undefined));
+                mockWindow = jasmine.createSpyObj('$window', ['requestAnimationFrame']);
+                mockWindow.requestAnimationFrame.andCallFake(function (f) {
+                    return f();
+                });
+
                 mockFormat = jasmine.createSpyObj('formatter', [
                     'parse',
                     'format'
@@ -99,7 +95,7 @@ define(
 
                 controller = new MCTTableController(
                     mockScope,
-                    mockTimeout,
+                    mockWindow,
                     mockElement,
                     mockExportService,
                     mockFormatService,
@@ -114,12 +110,12 @@ define(
                 expect(mockScope.$watch).toHaveBeenCalledWith('rows', jasmine.any(Function));
             });
 
-            it('destroys listeners on destruction', function () {
-                expect(mockScope.$on).toHaveBeenCalledWith('$destroy', controller.destroyConductorListeners);
+            it('unregisters listeners on destruction', function () {
+                expect(mockScope.$on).toHaveBeenCalledWith('$destroy', jasmine.any(Function));
                 getCallback(mockScope.$on, '$destroy')();
 
                 expect(mockConductor.off).toHaveBeenCalledWith('timeSystem', controller.changeTimeSystem);
-                expect(mockConductor.off).toHaveBeenCalledWith('timeOfInterest', controller.setTimeOfInterest);
+                expect(mockConductor.off).toHaveBeenCalledWith('timeOfInterest', controller.changeTimeOfInterest);
                 expect(mockConductor.off).toHaveBeenCalledWith('bounds', controller.changeBounds);
             });
 
@@ -233,9 +229,20 @@ define(
 
                         //Mock setting the rows on scope
                         var rowsCallback = getCallback(mockScope.$watch, 'rows');
-                        rowsCallback(rowsAsc);
+                        var setRowsPromise = rowsCallback(rowsAsc);
+                        var promiseResolved = false;
+                        setRowsPromise.then(function () {
+                            promiseResolved = true;
+                        });
 
-                        expect(mockScope.toiRowIndex).toBe(2);
+                        waitsFor(function () {
+                            return promiseResolved;
+                        }, "promise to resolve", 100);
+
+                        runs(function () {
+                            expect(mockScope.toiRowIndex).toBe(2);
+                        });
+
                     });
 
                 });
@@ -287,7 +294,7 @@ define(
                 });
 
                 it('Supports adding rows individually', function () {
-                    var addRowFunc = getCallback(mockScope.$on, 'add:row'),
+                    var addRowFunc = getCallback(mockScope.$on, 'add:rows'),
                         row4 = {
                             'col1': {'text': 'row3 col1'},
                             'col2': {'text': 'ghi'},
@@ -296,15 +303,15 @@ define(
                     controller.setRows(testRows);
                     expect(mockScope.displayRows.length).toBe(3);
                     testRows.push(row4);
-                    addRowFunc(undefined, 3);
+                    addRowFunc(undefined, [row4]);
                     expect(mockScope.displayRows.length).toBe(4);
                 });
 
                 it('Supports removing rows individually', function () {
-                    var removeRowFunc = getCallback(mockScope.$on, 'remove:row');
+                    var removeRowFunc = getCallback(mockScope.$on, 'remove:rows');
                     controller.setRows(testRows);
                     expect(mockScope.displayRows.length).toBe(3);
-                    removeRowFunc(undefined, 2);
+                    removeRowFunc(undefined, [testRows[2]]);
                     expect(mockScope.displayRows.length).toBe(2);
                     expect(controller.setVisibleRows).toHaveBeenCalled();
                 });
@@ -366,7 +373,7 @@ define(
                     it('Allows sort column to be changed externally by ' +
                        'setting or changing sortBy attribute', function () {
                         mockScope.displayRows = testRows;
-                        var sortByCB = getCallback(mockScope.$watch, 'sortColumn');
+                        var sortByCB = getCallback(mockScope.$watch, 'defaultSort');
                         sortByCB('col2');
 
                         expect(mockScope.sortDirection).toEqual('asc');
@@ -381,10 +388,21 @@ define(
                     it('updates visible rows in scope', function () {
                         var oldRows;
                         mockScope.rows = testRows;
-                        controller.setRows(testRows);
+                        var setRowsPromise = controller.setRows(testRows);
+                        var promiseResolved = false;
+                        setRowsPromise.then(function () {
+                            promiseResolved = true;
+                        });
                         oldRows = mockScope.visibleRows;
                         mockScope.toggleSort('col2');
-                        expect(mockScope.visibleRows).not.toEqual(oldRows);
+
+                        waitsFor(function () {
+                            return promiseResolved;
+                        }, "promise to resolve", 100);
+
+                        runs(function () {
+                            expect(mockScope.visibleRows).not.toEqual(oldRows);
+                        });
                     });
 
                     it('correctly sorts rows of differing types', function () {
@@ -441,14 +459,14 @@ define(
 
                         beforeEach(function () {
                             row4 = {
-                                'col1': {'text': 'row5 col1'},
+                                'col1': {'text': 'row4 col1'},
                                 'col2': {'text': 'xyz'},
-                                'col3': {'text': 'row5 col3'}
+                                'col3': {'text': 'row4 col3'}
                             };
                             row5 = {
-                                'col1': {'text': 'row6 col1'},
+                                'col1': {'text': 'row5 col1'},
                                 'col2': {'text': 'aaa'},
-                                'col3': {'text': 'row6 col3'}
+                                'col3': {'text': 'row5 col3'}
                             };
                             row6 = {
                                 'col1': {'text': 'row6 col1'},
@@ -464,23 +482,77 @@ define(
 
                             mockScope.displayRows = controller.sortRows(testRows.slice(0));
 
-                            mockScope.rows.push(row4);
-                            controller.addRow(undefined, mockScope.rows.length - 1);
+                            controller.addRows(undefined, [row4, row5, row6, row6]);
                             expect(mockScope.displayRows[0].col2.text).toEqual('xyz');
-
-                            mockScope.rows.push(row5);
-                            controller.addRow(undefined, mockScope.rows.length - 1);
-                            expect(mockScope.displayRows[4].col2.text).toEqual('aaa');
-
-                            mockScope.rows.push(row6);
-                            controller.addRow(undefined, mockScope.rows.length - 1);
-                            expect(mockScope.displayRows[2].col2.text).toEqual('ggg');
-
-                            //Add a duplicate row
-                            mockScope.rows.push(row6);
-                            controller.addRow(undefined, mockScope.rows.length - 1);
+                            expect(mockScope.displayRows[6].col2.text).toEqual('aaa');
+                            //Added a duplicate row
                             expect(mockScope.displayRows[2].col2.text).toEqual('ggg');
                             expect(mockScope.displayRows[3].col2.text).toEqual('ggg');
+                        });
+
+                        it('Inserts duplicate values for sort column in order received when sorted descending', function () {
+                            mockScope.sortColumn = 'col2';
+                            mockScope.sortDirection = 'desc';
+
+                            mockScope.displayRows = controller.sortRows(testRows.slice(0));
+
+                            var row6b = {
+                                'col1': {'text': 'row6b col1'},
+                                'col2': {'text': 'ggg'},
+                                'col3': {'text': 'row6b col3'}
+                            };
+                            var row6c = {
+                                'col1': {'text': 'row6c col1'},
+                                'col2': {'text': 'ggg'},
+                                'col3': {'text': 'row6c col3'}
+                            };
+
+                            controller.addRows(undefined, [row4, row5]);
+                            controller.addRows(undefined, [row6, row6b, row6c]);
+                            expect(mockScope.displayRows[0].col2.text).toEqual('xyz');
+                            expect(mockScope.displayRows[7].col2.text).toEqual('aaa');
+
+                            // Added duplicate rows
+                            expect(mockScope.displayRows[2].col2.text).toEqual('ggg');
+                            expect(mockScope.displayRows[3].col2.text).toEqual('ggg');
+                            expect(mockScope.displayRows[4].col2.text).toEqual('ggg');
+
+                            // Check that original order is maintained with dupes
+                            expect(mockScope.displayRows[2].col3.text).toEqual('row6c col3');
+                            expect(mockScope.displayRows[3].col3.text).toEqual('row6b col3');
+                            expect(mockScope.displayRows[4].col3.text).toEqual('row6 col3');
+                        });
+
+                        it('Inserts duplicate values for sort column in order received when sorted ascending', function () {
+                            mockScope.sortColumn = 'col2';
+                            mockScope.sortDirection = 'asc';
+
+                            mockScope.displayRows = controller.sortRows(testRows.slice(0));
+
+                            var row6b = {
+                                'col1': {'text': 'row6b col1'},
+                                'col2': {'text': 'ggg'},
+                                'col3': {'text': 'row6b col3'}
+                            };
+                            var row6c = {
+                                'col1': {'text': 'row6c col1'},
+                                'col2': {'text': 'ggg'},
+                                'col3': {'text': 'row6c col3'}
+                            };
+
+                            controller.addRows(undefined, [row4, row5, row6]);
+                            controller.addRows(undefined, [row6b, row6c]);
+                            expect(mockScope.displayRows[0].col2.text).toEqual('aaa');
+                            expect(mockScope.displayRows[7].col2.text).toEqual('xyz');
+
+                            // Added duplicate rows
+                            expect(mockScope.displayRows[3].col2.text).toEqual('ggg');
+                            expect(mockScope.displayRows[4].col2.text).toEqual('ggg');
+                            expect(mockScope.displayRows[5].col2.text).toEqual('ggg');
+                            // Check that original order is maintained with dupes
+                            expect(mockScope.displayRows[3].col3.text).toEqual('row6 col3');
+                            expect(mockScope.displayRows[4].col3.text).toEqual('row6b col3');
+                            expect(mockScope.displayRows[5].col3.text).toEqual('row6c col3');
                         });
 
                         it('Adds new rows at the correct sort position when' +
@@ -493,13 +565,11 @@ define(
                             mockScope.displayRows = controller.sortRows(testRows.slice(0));
                             mockScope.displayRows = controller.filterRows(testRows);
 
-                            mockScope.rows.push(row5);
-                            controller.addRow(undefined, mockScope.rows.length - 1);
+                            controller.addRows(undefined, [row5]);
                             expect(mockScope.displayRows.length).toBe(2);
                             expect(mockScope.displayRows[1].col2.text).toEqual('aaa');
 
-                            mockScope.rows.push(row6);
-                            controller.addRow(undefined, mockScope.rows.length - 1);
+                            controller.addRows(undefined, [row6]);
                             expect(mockScope.displayRows.length).toBe(2);
                             //Row was not added because does not match filter
                         });
@@ -512,12 +582,10 @@ define(
 
                             mockScope.displayRows = testRows.slice(0);
 
-                            mockScope.rows.push(row5);
-                            controller.addRow(undefined, mockScope.rows.length - 1);
+                            controller.addRows(undefined, [row5]);
                             expect(mockScope.displayRows[3].col2.text).toEqual('aaa');
 
-                            mockScope.rows.push(row6);
-                            controller.addRow(undefined, mockScope.rows.length - 1);
+                            controller.addRows(undefined, [row6]);
                             expect(mockScope.displayRows[4].col2.text).toEqual('ggg');
                         });
 
@@ -535,8 +603,7 @@ define(
 
                             mockScope.displayRows = testRows.slice(0);
 
-                            mockScope.rows.push(row7);
-                            controller.addRow(undefined, mockScope.rows.length - 1);
+                            controller.addRows(undefined, [row7]);
                             expect(controller.$scope.sizingRow.col2).toEqual({text: 'some longer string'});
                         });
 

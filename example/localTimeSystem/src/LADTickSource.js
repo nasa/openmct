@@ -31,7 +31,7 @@ define(['../../../platform/features/conductor/core/src/timeSystems/LocalClock'],
         this.metadata = {
             key: 'test-lad',
             mode: 'lad',
-            cssclass: 'icon-clock',
+            cssClass: 'icon-clock',
             label: 'Latest Available Data',
             name: 'Latest available data',
             description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will automatically advance themselves based on a UTC clock.'

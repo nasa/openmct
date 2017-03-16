@@ -31,9 +31,7 @@ define(
             var mockTypeService,
                 mockDialogService,
                 mockPolicyService,
-                mockCreationPolicy,
-                mockCompositionPolicy,
-                mockPolicyMap = {},
+                mockTypeMap,
                 mockTypes,
                 mockDomainObject,
                 mockQ,
@@ -55,49 +53,33 @@ define(
                 );
                 mockType.hasFeature.andReturn(true);
                 mockType.getName.andReturn(name);
+                mockType.getKey.andReturn(name);
                 return mockType;
             }
 
             beforeEach(function () {
                 mockTypeService = jasmine.createSpyObj(
                     "typeService",
-                    ["listTypes"]
+                    ["getType"]
                 );
-                mockDialogService = jasmine.createSpyObj(
-                    "dialogService",
-                    ["getUserInput"]
-                );
-                mockPolicyService = jasmine.createSpyObj(
-                    "policyService",
-                    ["allow"]
-                );
+                mockDialogService = {};
+                mockPolicyService = {};
+                mockDomainObject = {};
 
-                mockDomainObject = jasmine.createSpyObj(
-                    "domainObject",
-                    ["getCapability"]
-                );
-
-                //Mocking getCapability because AddActionProvider uses the
-                // type capability of the destination object.
-                mockDomainObject.getCapability.andReturn({});
-
-                mockTypes = ["A", "B", "C"].map(createMockType);
+                mockTypes = [
+                    "timeline",
+                    "activity",
+                    "other"
+                ].map(createMockType);
+                mockTypeMap = {};
 
                 mockTypes.forEach(function (type) {
-                    mockPolicyMap[type.getName()] = true;
+                    mockTypeMap[type.getKey()] = type;
                 });
 
-                mockCreationPolicy = function (type) {
-                    return mockPolicyMap[type.getName()];
-                };
-
-                mockCompositionPolicy = function () {
-                    return true;
-                };
-
-                mockPolicyService.allow.andReturn(true);
-
-                mockTypeService.listTypes.andReturn(mockTypes);
+                mockTypeService.getType.andCallFake(function (key) {
+                    return mockTypeMap[key];
+                });
 
                 provider = new AddActionProvider(
                     mockQ,
@@ -107,29 +89,16 @@ define(
                 );
             });
 
-            it("checks for creatability", function () {
-                provider.getActions({
+            it("provides actions for timeline and activity", function () {
+                var actions = provider.getActions({
                     key: "add",
                     domainObject: mockDomainObject
                 });
+                expect(actions.length).toBe(2);
+                expect(actions[0].metadata.type).toBe('timeline');
+                expect(actions[1].metadata.type).toBe('activity');
+
                 // Make sure it was creation which was used to check
-                expect(mockPolicyService.allow)
-                    .toHaveBeenCalledWith("creation", mockTypes[0]);
-            });
-
-            it("checks for composability of type", function () {
-                provider.getActions({
-                    key: "add",
-                    domainObject: mockDomainObject
-                });
-
-                expect(mockPolicyService.allow).toHaveBeenCalledWith(
-                    "composition",
-                    jasmine.any(Object),
-                    jasmine.any(Object)
-                );
-
-                expect(mockDomainObject.getCapability).toHaveBeenCalledWith('type');
             });
         });
     }

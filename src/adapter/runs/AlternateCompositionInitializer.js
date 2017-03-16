@@ -21,13 +21,18 @@
  *****************************************************************************/
 
 define([
-    '../capabilities/AlternateCompositionCapability'
-], function (AlternateCompositionCapability) {
+    '../capabilities/AlternateCompositionCapability',
+    '../../api/objects/object-utils'
+], function (
+    AlternateCompositionCapability,
+    objectUtils
+) {
     // Present to work around the need for openmct to be used
     // from AlternateCompositionCapability.appliesTo, even though it
     // cannot be injected.
     function AlternateCompositionInitializer(openmct) {
-        AlternateCompositionCapability.appliesTo = function (model) {
+        AlternateCompositionCapability.appliesTo = function (model, id) {
+            model = objectUtils.toNewFormat(model, id || '');
             return !!openmct.composition.get(model);
         };
     }

@@ -41,7 +41,7 @@ define(
                 return {
                     key: action,
                     name: action.getMetadata().name,
-                    cssclass: action.getMetadata().cssclass
+                    cssClass: action.getMetadata().cssClass
                 };
             }
 

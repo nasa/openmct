@@ -43,24 +43,24 @@ define([], function () {
             return context.getParent();
         }
 
-        function isOrphan(domainObject) {
-            var parent = getParent(domainObject),
-                composition = parent.getModel().composition,
-                id = domainObject.getId();
-            return !composition || (composition.indexOf(id) === -1);
-        }
-
-        function navigateToParent(domainObject) {
+        function preventOrphanNavigation(domainObject) {
             var parent = getParent(domainObject);
-            return parent.getCapability('action').perform('navigate');
+            parent.useCapability('composition')
+                .then(function (composees) {
+                    var isOrphan = composees.every(function (c) {
+                        return c.getId() !== domainObject.getId();
+                    });
+                    if (isOrphan) {
+                        parent.getCapability('action').perform('navigate');
+                    }
+                });
         }
 
         function checkNavigation() {
             var navigatedObject = navigationService.getNavigation();
-            if (navigatedObject.hasCapability('context') &&
-                isOrphan(navigatedObject)) {
+            if (navigatedObject.hasCapability('context')) {
                 if (!navigatedObject.getCapability('editor').isEditContextRoot()) {
-                    navigateToParent(navigatedObject);
+                    preventOrphanNavigation(navigatedObject);
                 }
             }
         }

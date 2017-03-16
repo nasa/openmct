@@ -47,7 +47,7 @@ define(
         function CreateAction(type, parent, context) {
             this.metadata = {
                 key: 'create',
-                cssclass: type.getCssClass(),
+                cssClass: type.getCssClass(),
                 name: type.getName(),
                 type: type.getKey(),
                 description: type.getDescription(),

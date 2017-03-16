@@ -24,60 +24,94 @@ define(
     ["../src/CompositionPolicy"],
     function (CompositionPolicy) {
         describe("Composition policy", function () {
-            var mockInjector,
-                mockTypeService,
-                mockCapabilityService,
-                mockTypes,
+            var typeA,
+                typeB,
+                typeC,
+                mockChildObject,
                 policy;
 
             beforeEach(function () {
-                mockInjector = jasmine.createSpyObj('$injector', ['get']);
-                mockTypeService = jasmine.createSpyObj(
-                    'typeService',
-                    ['listTypes']
+                typeA = jasmine.createSpyObj(
+                    'type A-- the particular kind',
+                    ['getKey', 'getDefinition']
                 );
-                mockCapabilityService = jasmine.createSpyObj(
-                    'capabilityService',
-                    ['getCapabilities']
-                );
-                // Both types can only contain b, let's say
-                mockTypes = ['a', 'b'].map(function (type) {
-                    var mockType = jasmine.createSpyObj(
-                        'type-' + type,
-                        ['getKey', 'getDefinition', 'getInitialModel']
-                    );
-                    mockType.getKey.andReturn(type);
-                    mockType.getDefinition.andReturn({
-                        contains: ['b']
-                    });
-                    mockType.getInitialModel.andReturn({});
-                    return mockType;
+                typeA.getKey.andReturn('a');
+                typeA.getDefinition.andReturn({
+                    contains: ['a']
                 });
 
-                mockInjector.get.andCallFake(function (name) {
-                    return {
-                        typeService: mockTypeService,
-                        capabilityService: mockCapabilityService
-                    }[name];
+
+                typeB = jasmine.createSpyObj(
+                    'type B-- anything goes',
+                    ['getKey', 'getDefinition']
+                );
+                typeB.getKey.andReturn('b');
+                typeB.getDefinition.andReturn({
+                    contains: ['a', 'b']
                 });
 
-                mockTypeService.listTypes.andReturn(mockTypes);
-                mockCapabilityService.getCapabilities.andReturn({});
+                typeC = jasmine.createSpyObj(
+                    'type C-- distinguishing and interested in telemetry',
+                    ['getKey', 'getDefinition']
+                );
+                typeC.getKey.andReturn('c');
+                typeC.getDefinition.andReturn({
+                    contains: [{has: 'telemetry'}]
+                });
 
-                policy = new CompositionPolicy(mockInjector);
+                mockChildObject = jasmine.createSpyObj(
+                    'childObject',
+                    ['getCapability', 'hasCapability']
+                );
+
+                policy = new CompositionPolicy();
             });
 
-            // Test basic composition policy here; test more closely at
-            // the unit level in ContainmentTable for 'has' support, et al
-            it("enforces containment rules defined by types", function () {
-                expect(policy.allow(mockTypes[0], mockTypes[1]))
-                    .toBeTruthy();
-                expect(policy.allow(mockTypes[1], mockTypes[1]))
-                    .toBeTruthy();
-                expect(policy.allow(mockTypes[1], mockTypes[0]))
-                    .toBeFalsy();
-                expect(policy.allow(mockTypes[0], mockTypes[0]))
-                    .toBeFalsy();
+            describe('enforces simple containment rules', function () {
+
+                it('allows when type matches', function () {
+                    mockChildObject.getCapability.andReturn(typeA);
+                    expect(policy.allow(typeA, mockChildObject))
+                        .toBeTruthy();
+
+                    expect(policy.allow(typeB, mockChildObject))
+                        .toBeTruthy();
+
+                    mockChildObject.getCapability.andReturn(typeB);
+                    expect(policy.allow(typeB, mockChildObject))
+                        .toBeTruthy();
+                });
+
+
+                it('disallows when type doesn\'t match', function () {
+
+                    mockChildObject.getCapability.andReturn(typeB);
+                    expect(policy.allow(typeA, mockChildObject))
+                        .toBeFalsy();
+
+                    mockChildObject.getCapability.andReturn(typeC);
+                    expect(policy.allow(typeA, mockChildObject))
+                        .toBeFalsy();
+                });
+
+            });
+
+            describe('enforces capability-based containment rules', function () {
+                it('allows when object has capability', function () {
+                    mockChildObject.hasCapability.andReturn(true);
+                    expect(policy.allow(typeC, mockChildObject))
+                        .toBeTruthy();
+                    expect(mockChildObject.hasCapability)
+                        .toHaveBeenCalledWith('telemetry');
+                });
+
+                it('skips when object doesn\'t have capability', function () {
+                    mockChildObject.hasCapability.andReturn(false);
+                    expect(policy.allow(typeC, mockChildObject))
+                        .toBeFalsy();
+                    expect(mockChildObject.hasCapability)
+                        .toHaveBeenCalledWith('telemetry');
+                });
             });
 
         });

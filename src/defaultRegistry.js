@@ -33,7 +33,6 @@ define([
     '../example/export/bundle',
     '../example/extensions/bundle',
     '../example/forms/bundle',
-    '../example/generator/bundle',
     '../example/identity/bundle',
     '../example/imagery/bundle',
     '../example/mobile/bundle',

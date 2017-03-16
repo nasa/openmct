@@ -38,14 +38,15 @@ define([
     }
 
     APICapabilityDecorator.prototype.getCapabilities = function (
-        model
+        model,
+        id
     ) {
-        var capabilities = this.capabilityService.getCapabilities(model);
+        var capabilities = this.capabilityService.getCapabilities(model, id);
         if (capabilities.mutation) {
             capabilities.mutation =
                 synchronizeMutationCapability(capabilities.mutation);
         }
-        if (AlternateCompositionCapability.appliesTo(model)) {
+        if (AlternateCompositionCapability.appliesTo(model, id)) {
             capabilities.composition = function (domainObject) {
                 return new AlternateCompositionCapability(this.$injector, domainObject);
             }.bind(this);

@@ -56,16 +56,16 @@ define(
          */
         CreateWizard.prototype.getFormStructure = function (includeLocation) {
             var sections = [],
-                type = this.type,
+                domainObject = this.domainObject,
                 policyService = this.policyService;
 
-            function validateLocation(locatingObject) {
-                var locatingType = locatingObject &&
-                    locatingObject.getCapability('type');
-                return locatingType && policyService.allow(
+            function validateLocation(parent) {
+                var parentType = parent &&
+                    parent.getCapability('type');
+                return parentType && policyService.allow(
                     "composition",
-                    locatingType,
-                    type
+                    parentType,
+                    domainObject
                 );
             }
 
@@ -91,7 +91,7 @@ define(
             if (includeLocation) {
                 sections.push({
                     name: 'Location',
-                    cssclass: "grows",
+                    cssClass: "grows",
                     rows: [{
                         name: "Save In",
                         control: "locator",

@@ -18,14 +18,14 @@
  licenses. See the Open Source Licenses file (LICENSES.md) included with
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
---> 
+-->
 
 <div class="search-result-item l-flex-row flex-elem grows"
      ng-class="{selected: ngModel.selectedObject.getId() === domainObject.getId()}">
     <mct-representation key="'label'"
                         mct-object="domainObject"
                         ng-model="ngModel"
-                        ng-click="ngModel.selectedObject = domainObject"
+                        ng-click="ngModel.allowSelection(domainObject) && ngModel.onSelection(domainObject)"
                         class="l-flex-row flex-elem grows">
     </mct-representation>
 </div>

@@ -32,17 +32,16 @@
             [
                 'example/imagery',
                 'example/eventGenerator',
-                'example/generator',
                 'example/msl',
                 'example/styleguide',
-                'platform/features/my-items',
-                'platform/persistence/local'
             ].forEach(
                 openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
             );
-            openmct.install(openmct.plugins.myItems);
-            openmct.install(openmct.plugins.localStorage);
-            openmct.install(openmct.plugins.espresso);
+            openmct.install(openmct.plugins.MyItems());
+            openmct.install(openmct.plugins.LocalStorage());
+            openmct.install(openmct.plugins.Espresso());
+            openmct.install(openmct.plugins.Generator());
+            openmct.install(openmct.plugins.UTCTimeSystem());
             openmct.start();
         });
     </script>
