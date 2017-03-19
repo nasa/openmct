@@ -29,9 +29,11 @@ define(
 
         /**
          * The EditNotesController prepares the edit-notes view for display
+         * and keeps the editNotesService updated with user input.
          * @constructor
          */
-        function EditNotesController($scope) {
+        function EditNotesController($scope, editNotesService) {
+            this.editNotesService = editNotesService;
             this.properties = $scope.domainObject.useCapability('metadata');
 
             function locateNotesValueInDomainObject(properties) {
@@ -44,7 +46,13 @@ define(
                 return notesValue;
             }
 
+            function sendNotesToController(value){
+                editNotesService.updateNotesFromController(value);
+            }
+
             $scope.notes = locateNotesValueInDomainObject(this.properties);
+
+            $scope.$watch('notes', sendNotesToController);
         }
 
         return EditNotesController;
