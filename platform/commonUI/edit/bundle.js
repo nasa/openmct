@@ -23,6 +23,7 @@
 define([
     "./src/controllers/EditActionController",
     "./src/controllers/EditPanesController",
+    "./src/controllers/EditNotesController",
     "./src/controllers/ElementsController",
     "./src/controllers/EditObjectController",
     "./src/actions/EditAndComposeAction",
@@ -41,6 +42,7 @@ define([
     "./src/representers/EditToolbarRepresenter",
     "./src/capabilities/EditorCapability",
     "./src/capabilities/TransactionCapabilityDecorator",
+    "./src/services/EditNotesService",
     "./src/services/TransactionManager",
     "./src/services/TransactionService",
     "./src/creation/CreateMenuController",
@@ -55,12 +57,14 @@ define([
     "text!./res/templates/library.html",
     "text!./res/templates/edit-object.html",
     "text!./res/templates/edit-action-buttons.html",
+    "text!./res/templates/edit-notes.html",
     "text!./res/templates/elements.html",
     "text!./res/templates/topbar-edit.html",
     'legacyRegistry'
 ], function (
     EditActionController,
     EditPanesController,
+    EditNotesController,
     ElementsController,
     EditObjectController,
     EditAndComposeAction,
@@ -79,6 +83,7 @@ define([
     EditToolbarRepresenter,
     EditorCapability,
     TransactionCapabilityDecorator,
+    EditNotesService,
     TransactionManager,
     TransactionService,
     CreateMenuController,
@@ -93,6 +98,7 @@ define([
     libraryTemplate,
     editObjectTemplate,
     editActionButtonsTemplate,
+    editNotesTemplate,
     elementsTemplate,
     topbarEditTemplate,
     legacyRegistry
@@ -113,6 +119,14 @@ define([
                     "implementation": EditPanesController,
                     "depends": [
                         "$scope"
+                    ]
+                },
+                {
+                    "key": "EditNotesController",
+                    "implementation": EditNotesController,
+                    "depends": [
+                        "$scope",
+                        "editNotesService"
                     ]
                 },
                 {
@@ -199,7 +213,8 @@ define([
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "dialogService",
-                        "notificationService"
+                        "notificationService",
+                        "editNotesService"
                     ]
                 },
                 {
@@ -211,7 +226,8 @@ define([
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "dialogService",
-                        "notificationService"
+                        "notificationService",
+                        "editNotesService"
                     ]
                 },
                 {
@@ -288,6 +304,10 @@ define([
                     "uses": [
                         "action"
                     ]
+                },
+                {
+                    "key": "edit-notes",
+                    "template": editNotesTemplate
                 },
                 {
                     "key": "edit-elements",
@@ -415,6 +435,10 @@ define([
                     "depends": [
                         "transactionService"
                     ]
+                },
+                {
+                    "key": "editNotesService",
+                    "implementation": EditNotesService
                 }
             ]
         }
