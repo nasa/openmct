@@ -76,17 +76,18 @@
                 &:not(.first) {
                     border-top: 1px solid $colorFormLines;
                 }
-                .form-row {
-                    @include align-items(center);
-                    border: none;
-                    padding: $interiorMarginSm 0;
-                    .label {
-                        min-width: 80px;
-                    }
-                    input[type='text'],
-                    input[type='search'] {
-                        width: 100%;
-                    }
+            }
+            .form-row {
+                @include align-items(center);
+                border: none !important;
+                margin-bottom: 0 !important;
+                padding: $interiorMarginSm 0;
+                .label {
+                    min-width: 80px;
+                }
+                input[type='text'],
+                input[type='search'] {
+                    width: 100%;
                 }
             }
         }
