@@ -34,6 +34,7 @@ define([
     "./src/actions/SaveAsAction",
     "./src/actions/CancelAction",
     "./src/policies/EditActionPolicy",
+    "./src/policies/EditPersistableObjectsPolicy",
     "./src/policies/EditableLinkPolicy",
     "./src/policies/EditableMovePolicy",
     "./src/policies/EditContextualActionPolicy",
@@ -72,6 +73,7 @@ define([
     SaveAsAction,
     CancelAction,
     EditActionPolicy,
+    EditPersistableObjectsPolicy,
     EditableLinkPolicy,
     EditableMovePolicy,
     EditContextualActionPolicy,
@@ -246,6 +248,11 @@ define([
                 {
                     "category": "action",
                     "implementation": EditActionPolicy
+                },
+                {
+                    "category": "action",
+                    "implementation": EditPersistableObjectsPolicy,
+                    "depends": ["openmct"]
                 },
                 {
                     "category": "action",
