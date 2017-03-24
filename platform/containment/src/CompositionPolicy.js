@@ -30,16 +30,16 @@ define(
     function () {
 
         /**
-         * Defines composition policy as driven by type metadata.
+         * Determines whether a given object can contain a candidate child object.
          * @constructor
          * @memberof platform/containment
-         * @implements {Policy.<Type, Type>}
+         * @implements {Policy.<DomainObjectImpl, DomainObjectImpl>}
          */
         function CompositionPolicy() {
         }
 
-        CompositionPolicy.prototype.allow = function (parentType, child) {
-            var parentDef = parentType.getDefinition();
+        CompositionPolicy.prototype.allow = function (parent, child) {
+            var parentDef = parent.getCapability('type').getDefinition();
 
             // A parent without containment rules can contain anything.
             if (!parentDef.contains) {

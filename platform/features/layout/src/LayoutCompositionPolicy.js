@@ -34,7 +34,8 @@ define(
         function LayoutCompositionPolicy() {
         }
 
-        LayoutCompositionPolicy.prototype.allow = function (parentType, child) {
+        LayoutCompositionPolicy.prototype.allow = function (parent, child) {
+            var parentType = parent.getCapability('type');
             if (parentType.instanceOf('layout') &&
                 child.getCapability('type').instanceOf('folder')) {
 
