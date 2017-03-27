@@ -31,10 +31,25 @@ define(
 
         var firstObservedTime = Date.now(),
             images = [
-                "http://www.nasa.gov/393811main_Palomar_ao_bouchez_10s_after_impact_4x3_946-710.png",
-                "http://www.nasa.gov/393821main_Palomar_ao_bouchez_15s_after_impact_4x3_946-710.png",
-                "http://www.nasa.gov/images/content/393801main_CfhtVeillet2_4x3_516-387.jpg",
-                "http://www.nasa.gov/images/content/392790main_1024_768_GeminiNorth_NightBeforeImpact_946-710.jpg"
+                "https://www.hq.nasa.gov/alsj/a16/AS16-117-18731.jpg",
+                "https://www.hq.nasa.gov/alsj/a16/AS16-117-18732.jpg",
+                "https://www.hq.nasa.gov/alsj/a16/AS16-117-18733.jpg",
+                "https://www.hq.nasa.gov/alsj/a16/AS16-117-18734.jpg",
+                "https://www.hq.nasa.gov/alsj/a16/AS16-117-18735.jpg",
+                "https://www.hq.nasa.gov/alsj/a16/AS16-117-18736.jpg",
+                "https://www.hq.nasa.gov/alsj/a16/AS16-117-18737.jpg",
+                "https://www.hq.nasa.gov/alsj/a16/AS16-117-18738.jpg",
+                "https://www.hq.nasa.gov/alsj/a16/AS16-117-18739.jpg",
+                "https://www.hq.nasa.gov/alsj/a16/AS16-117-18740.jpg",
+                "https://www.hq.nasa.gov/alsj/a16/AS16-117-18741.jpg",
+                "https://www.hq.nasa.gov/alsj/a16/AS16-117-18742.jpg",
+                "https://www.hq.nasa.gov/alsj/a16/AS16-117-18743.jpg",
+                "https://www.hq.nasa.gov/alsj/a16/AS16-117-18744.jpg",
+                "https://www.hq.nasa.gov/alsj/a16/AS16-117-18745.jpg",
+                "https://www.hq.nasa.gov/alsj/a16/AS16-117-18746.jpg",
+                "https://www.hq.nasa.gov/alsj/a16/AS16-117-18747.jpg",
+                "https://www.hq.nasa.gov/alsj/a16/AS16-117-18748.jpg"
+
             ].map(function (url, index) {
                 return {
                     timestamp: firstObservedTime + 1000 * index,
