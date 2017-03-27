@@ -148,13 +148,19 @@ define(
          */
         PersistenceCapability.prototype.refresh = function () {
             var domainObject = this.domainObject;
+            var $q = this.$q;
 
             // Update a domain object's model upon refresh
             function updateModel(model) {
-                var modified = model.modified;
-                return domainObject.useCapability("mutation", function () {
-                    return model;
-                }, modified);
+                if (model === undefined) {
+                    //Get failed, reject promise
+                    return $q.reject('Got empty object model');
+                } else {
+                    var modified = model.modified;
+                    return domainObject.useCapability("mutation", function () {
+                        return model;
+                    }, modified);
+                }
             }
 
             if (domainObject.getModel().persisted === undefined) {
