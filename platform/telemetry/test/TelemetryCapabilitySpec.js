@@ -97,7 +97,22 @@ define(
                 });
 
                 mockAPI = {
-                    telemetry: mockTelemetryAPI
+                    telemetry: mockTelemetryAPI,
+                    conductor: {
+                        bounds: function () {
+                            return {
+                                start: 0,
+                                end: 1
+                            };
+                        },
+                        timeSystem: function () {
+                            return {
+                                metadata: {
+                                    key: 'mockTimeSystem'
+                                }
+                            };
+                        }
+                    }
                 };
 
                 telemetry = new TelemetryCapability(
@@ -133,7 +148,8 @@ define(
                         id: "testId", // from domain object
                         source: "testSource", // from model
                         key: "testKey", // from model
-                        start: 42 // from argument
+                        start: 42, // from argument
+                        domain: 'mockTimeSystem'
                     }]);
             });
 
@@ -150,7 +166,10 @@ define(
                 expect(telemetry.getMetadata()).toEqual({
                     id: "testId", // from domain object
                     source: "testSource",
-                    key: "testKey"
+                    key: "testKey",
+                    start: 0,
+                    end: 1,
+                    domain: 'mockTimeSystem'
                 });
             });
 
@@ -164,7 +183,10 @@ define(
                 expect(telemetry.getMetadata()).toEqual({
                     id: "testId", // from domain object
                     source: "testSource", // from model
-                    key: "testId" // from domain object
+                    key: "testId", // from domain object
+                    start: 0,
+                    end: 1,
+                    domain: 'mockTimeSystem'
                 });
             });
 
@@ -243,7 +265,10 @@ define(
                     [{
                         id: "testId", // from domain object
                         source: "testSource",
-                        key: "testKey"
+                        key: "testKey",
+                        start: 0,
+                        end: 1,
+                        domain: 'mockTimeSystem'
                     }]
                 );
 
@@ -260,8 +285,28 @@ define(
                 expect(mockUnsubscribe).not.toHaveBeenCalled();
                 subscription(); // should be an unsubscribe function
                 expect(mockUnsubscribe).toHaveBeenCalled();
+            });
 
+            it("applies time conductor bounds if request bounds not defined", function () {
+                var fullRequest = telemetry.buildRequest({});
+                var mockBounds = mockAPI.conductor.bounds();
 
+                expect(fullRequest.start).toBe(mockBounds.start);
+                expect(fullRequest.end).toBe(mockBounds.end);
+
+                fullRequest = telemetry.buildRequest({start: 10, end: 20});
+
+                expect(fullRequest.start).toBe(10);
+                expect(fullRequest.end).toBe(20);
+            });
+
+            it("applies domain from time system if none defined", function () {
+                var fullRequest = telemetry.buildRequest({});
+                var mockTimeSystem = mockAPI.conductor.timeSystem();
+                expect(fullRequest.domain).toBe(mockTimeSystem.metadata.key);
+
+                fullRequest = telemetry.buildRequest({domain: 'someOtherDomain'});
+                expect(fullRequest.domain).toBe('someOtherDomain');
             });
         });
     }
