@@ -25,6 +25,7 @@ define(
     function (LayoutCompositionPolicy) {
         describe("Layout's composition policy", function () {
             var mockChild,
+                mockCandidateObj,
                 mockCandidate,
                 mockContext,
                 candidateType,
@@ -41,6 +42,11 @@ define(
                 mockContext =
                     jasmine.createSpyObj('contextType', ['instanceOf']);
 
+                mockCandidateObj = jasmine.createSpyObj('domainObj', [
+                    'getCapability'
+                ]);
+                mockCandidateObj.getCapability.andReturn(mockCandidate);
+
                 mockChild.getCapability.andReturn(mockContext);
 
                 mockCandidate.instanceOf.andCallFake(function (t) {
@@ -56,19 +62,19 @@ define(
             it("disallows folders in layouts", function () {
                 candidateType = 'layout';
                 contextType = 'folder';
-                expect(policy.allow(mockCandidate, mockChild)).toBe(false);
+                expect(policy.allow(mockCandidateObj, mockChild)).toBe(false);
             });
 
             it("does not disallow folders elsewhere", function () {
                 candidateType = 'nonlayout';
                 contextType = 'folder';
-                expect(policy.allow(mockCandidate, mockChild)).toBe(true);
+                expect(policy.allow(mockCandidateObj, mockChild)).toBe(true);
             });
 
             it("allows things other than folders in layouts", function () {
                 candidateType = 'layout';
                 contextType = 'nonfolder';
-                expect(policy.allow(mockCandidate, mockChild)).toBe(true);
+                expect(policy.allow(mockCandidateObj, mockChild)).toBe(true);
             });
 
         });

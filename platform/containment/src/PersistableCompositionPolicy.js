@@ -37,7 +37,6 @@ define(
          * Only allow changes to composition if the changes can be saved. This in
          * effect prevents selection of objects from the locator that do not
          * support persistence.
-         * 
          * @param parent
          * @param child
          * @returns {boolean}
