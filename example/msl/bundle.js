@@ -92,7 +92,7 @@ define([
                 {
                     "key":"rems.adapter",
                     "implementation": RemsTelemetryServerAdapter,
-                    "depends": ["$q", "$http", "$log", "REMS_WS_URL"]
+                    "depends": ["$http", "$log", "REMS_WS_URL"]
                 }
             ],
             "components": [
