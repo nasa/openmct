@@ -23,11 +23,13 @@
 define([
     'lodash',
     '../../platform/features/conductor/utcTimeSystem/src/UTCTimeSystem',
-    '../../example/generator/plugin'
+    '../../example/generator/plugin',
+    '../../platform/features/autoflow/plugin'
 ], function (
     _,
     UTCTimeSystem,
-    GeneratorPlugin
+    GeneratorPlugin,
+    AutoflowPlugin
 ) {
     var bundleMap = {
         CouchDB: 'platform/persistence/couch',
@@ -53,6 +55,10 @@ define([
                 "depends": ["$timeout"]
             });
         };
+    };
+
+    plugins.AutoflowView = function () {
+        return AutoflowPlugin;
     };
 
     var conductorInstalled = false;
