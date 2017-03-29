@@ -43,7 +43,7 @@ define(
                 elementProxiesById = {},
                 maxDomainValue = Number.POSITIVE_INFINITY;
             var subscriptions = [];
-            var limitEvaluators = new WeakMap();
+            var limitEvaluators = {};
 
             // Convert from element x/y/width/height to an
             // appropriate ng-style argument, to position elements.
@@ -115,16 +115,19 @@ define(
 
             // Update the displayed value for this object
             function updateValue(telemetryObject, datum) {
-                var limitEvaluator = limitEvaluators.get(telemetryObject);
-                if (limitEvaluator === null)
-                var limit = openmct.telemetry.limitEvaluator(telemetryObject);
+                var limitEvaluator = limitEvaluators[telemetryObject];
+                var timeSystem = openmct.conductor.timeSystem();
+                var metadata = openmct.telemetry.getMetadata(telemetryObject);
+                var domain = timeSystem && openmct.conductor.timeSystem().metadata.key;
+                var domainValue = timeSystem && datum[domain];
+                var rangeField =
+                var rangeValue =
 
-                if (telemetryObject &&
-                        (handle.getDomainValue(telemetryObject) < maxDomainValue)) {
+                if (timeSystem && domainValue < maxDomainValue) {
                     setDisplayedValue(
                         telemetryObject,
                         handle.getRangeValue(telemetryObject),
-                        limit && datum && limit.evaluate(datum)
+                        limitEvaluator && limitEvaluator.evaluate(datum)
                     );
                 }
             }
