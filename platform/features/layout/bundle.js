@@ -237,8 +237,7 @@ define([
                         "$scope",
                         "$q",
                         "dialogService",
-                        "telemetryHandler",
-                        "telemetryFormatter",
+                        "openmct",
                         "throttle"
                     ]
                 }

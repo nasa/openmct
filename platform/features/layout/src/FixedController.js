@@ -35,13 +35,15 @@ define(
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
-        function FixedController($scope, $q, dialogService, telemetryHandler, telemetryFormatter) {
+        function FixedController($scope, $q, dialogService, openmct) {
             var self = this,
                 handle,
                 names = {}, // Cache names by ID
                 values = {}, // Cache values by ID
                 elementProxiesById = {},
                 maxDomainValue = Number.POSITIVE_INFINITY;
+            var subscriptions = [];
+            var limitEvaluators = new WeakMap();
 
             // Convert from element x/y/width/height to an
             // appropriate ng-style argument, to position elements.
@@ -112,11 +114,10 @@ define(
             }
 
             // Update the displayed value for this object
-            function updateValue(telemetryObject) {
-                var limit = telemetryObject &&
-                        telemetryObject.getCapability('limit'),
-                    datum = telemetryObject &&
-                        handle.getDatum(telemetryObject);
+            function updateValue(telemetryObject, datum) {
+                var limitEvaluator = limitEvaluators.get(telemetryObject);
+                if (limitEvaluator === null)
+                var limit = openmct.telemetry.limitEvaluator(telemetryObject);
 
                 if (telemetryObject &&
                         (handle.getDomainValue(telemetryObject) < maxDomainValue)) {
@@ -197,35 +198,32 @@ define(
                         elementProxiesById[id].push(elementProxy);
                     }
                 });
-
-                // TODO: Ensure elements for all domain objects?
             }
 
-            // Free up subscription to telemetry
-            function releaseSubscription() {
-                if (handle) {
-                    handle.unsubscribe();
-                    handle = undefined;
-                }
+            function unsubscribe() {
+                subscriptions.forEach(function (unsubscribe) {
+                    unsubscribe();
+                })
+                subscriptions = [];
             }
 
             // Subscribe to telemetry updates for this domain object
             function subscribe(domainObject) {
-                // Release existing subscription (if any)
-                if (handle) {
-                    handle.unsubscribe();
+                var newObject = domainObject.getCapability('adapter');
+
+                if (subscriptions.length > 0) {
+                    unsubscribe();
                 }
 
-                // Make a new subscription
-                handle = domainObject && telemetryHandler.handle(
-                    domainObject,
-                    updateValues
-                );
-                // Request an initial historical telemetry value
-                handle.request(
-                    { size: 1 }, // Only need a single data point
-                    updateValueFromSeries
-                );
+                if (openmct.telemetry.canProvideTelemetry(newObject)){
+                    subscriptions = [openmct.telemetry.subscribe(newObject)];
+                } else {
+                    openmct.composition.get(newObject).load().then(function (composees) {
+                        subscriptions = composees.filter(openmct.telemetry.canProvideTelemetry).map(function(object) {
+                            return openmct.telemetry.subscribe(object, updateValue.bind(object));
+                        });
+                    });
+                }
             }
 
             // Handle changes in the object's composition
@@ -321,7 +319,7 @@ define(
             $scope.$watch("domainObject", subscribe);
 
             // Free up subscription on destroy
-            $scope.$on("$destroy", releaseSubscription);
+            $scope.$on("$destroy", unsubscribe);
 
             // Position panes where they are dropped
             $scope.$on("mctDrop", handleDrop);
