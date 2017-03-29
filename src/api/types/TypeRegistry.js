@@ -44,7 +44,7 @@ define(['./Type'], function (Type) {
     }
 
     /**
-     * Register a new type of view.
+     * Register a new object type.
      *
      * @param {string} typeKey a string identifier for this type
      * @param {module:openmct.Type} type the type to add
