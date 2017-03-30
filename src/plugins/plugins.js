@@ -57,9 +57,16 @@ define([
         };
     };
 
-    plugins.AutoflowView = function () {
-        return AutoflowPlugin;
-    };
+    /**
+     * A tabular view showing the latest values of multiple telemetry points at
+     * once. Formatted so that labels and values are aligned.
+     *
+     * @param {Object} [options] Optional settings to apply to the autoflow
+     * tabular view. Currently supports one option, 'type'.
+     * @param {string} [options.type] The key of an object type to apply this view
+     * to exclusively.
+     */
+    plugins.AutoflowView = AutoflowPlugin;
 
     var conductorInstalled = false;
 
