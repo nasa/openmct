@@ -84,7 +84,14 @@ define([
         }
 
         this.startLoading();
-        series.load({size: this.$element[0].offsetWidth})
+        var options = {
+            size: this.$element[0].offsetWidth,
+            domain: this.config.xAxis.get('key')
+        };
+
+        _.extend(options, this.timeConductor.bounds());
+
+        series.load(options)
             .then(this.stopLoading.bind(this));
     };
 
