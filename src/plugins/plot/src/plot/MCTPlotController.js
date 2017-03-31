@@ -149,11 +149,7 @@ define([
                 .filter(function (series) {
                     return series.data.length > 0;
                 }).map(function (series) {
-                    var seriesPoint = {};
-                    var sortKey = series.get('sortKey');
-                    var sortFormat = series.get('formats')[sortKey];
-                    seriesPoint[sortKey] = sortFormat.format(point);
-                    var closest = series.nearestPoint(seriesPoint);
+                    var closest = series.nearestPoint(point);
                     return {
                         series: series,
                         point: closest
