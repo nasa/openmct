@@ -89,8 +89,8 @@ define([
     };
 
     PlotController.prototype.removeSeries = function (plotSeries) {
+        plotSeries.destroy();
         this.stopListening(plotSeries.stats);
-
         // if (this.config.yAxis.get('autoscale')) {
         //     var newScale = this.config.series.map(function (series) {
         //         return series.stats.get(this.config.yAxis.get('key'));
@@ -388,6 +388,7 @@ define([
 
     PlotController.prototype.destroy = function () {
         configStore.remove(this.configId);
+        this.config.destroy();
         this.stopListening();
         if (this.removeMutationListener) {
             this.removeMutationListener();

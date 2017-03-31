@@ -87,5 +87,11 @@ define([
         this.emit('remove', model, index);
     };
 
+    Collection.prototype.destroy = function (model) {
+        this.forEach(function (m) {
+            m.destroy();
+        });
+    };
+
     return Collection;
 });

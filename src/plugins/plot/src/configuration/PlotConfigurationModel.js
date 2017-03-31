@@ -62,6 +62,12 @@ define([
             if (this.yAxis.get('range')) {
                 this.yAxis.set('range', this.yAxis.get('range'));
             }
+            this.listenTo(this, 'destroy', this.onDestroy, this);
+        },
+        onDestroy: function () {
+            this.xAxis.destroy();
+            this.yAxis.destroy();
+            this.series.destroy();
         },
         defaults: function () {
             return {
