@@ -23,10 +23,12 @@
 
 define([
     "./GeneratorProvider",
-    "./SinewaveLimitCapability"
+    "./SinewaveLimitCapability",
+    "./StateGeneratorProvider"
 ], function (
     GeneratorProvider,
-    SinewaveLimitCapability
+    SinewaveLimitCapability,
+    StateGeneratorProvider
 ) {
 
     var legacyExtensions = {
@@ -46,6 +48,75 @@ define([
                 openmct.legacyExtension(type, extension)
             })
         });
+
+        openmct.types.addType("example.state-generator", {
+            name: "State Generator",
+            description: "For development use.  Generates test enumerated telemetry by cycling through a given set of states",
+            cssClass: "icon-telemetry",
+            creatable: true,
+            form: [
+                {
+                    name: "State Duration (seconds)",
+                    control: "textfield",
+                    cssClass: "l-input-sm l-numeric",
+                    key: "duration",
+                    required: true,
+                    property: [
+                        "telemetry",
+                        "duration"
+                    ],
+                    pattern: "^\\d*(\\.\\d*)?$"
+                }
+            ],
+            initialize: function (object) {
+                object.telemetry = {
+                    duration: 5,
+                    values: [
+                        {
+                            key: "name",
+                            name: "Name"
+                        },
+                        {
+                            key: "utc",
+                            name: "Time",
+                            format: "utc",
+                            hints: {
+                                domain: 1
+                            }
+                        },
+                        {
+                            key: "state",
+                            source: "value",
+                            name: "State",
+                            format: "enum",
+                            enumerations: [
+                                {
+                                    value: 0,
+                                    string: "OFF"
+                                },
+                                {
+                                    value: 1,
+                                    string: "ON"
+                                }
+                            ],
+                            hints: {
+                                range: 1
+                            }
+                        },
+                        {
+                            key: "value",
+                            name: "Value",
+                            hints: {
+                                range: 2
+                            }
+                        }
+                    ]
+                }
+            }
+        });
+
+        openmct.telemetry.addProvider(new StateGeneratorProvider());
+
         openmct.types.addType("generator", {
             name: "Sine Wave Generator",
             description: "For development use. Generates example streaming telemetry data using a simple sine wave algorithm.",
@@ -99,6 +170,18 @@ define([
                         "dataRateInHz"
                     ],
                     pattern: "^\\d*(\\.\\d*)?$"
+                },
+                {
+                    name: "Phase (radians)",
+                    control: "textfield",
+                    cssClass: "l-input-sm l-numeric",
+                    key: "phase",
+                    required: true,
+                    property: [
+                        "telemetry",
+                        "phase"
+                    ],
+                    pattern: "^\\d*(\\.\\d*)?$"
                 }
             ],
             initialize: function (object) {
@@ -107,7 +190,12 @@ define([
                     amplitude: 1,
                     offset: 0,
                     dataRateInHz: 1,
+                    phase: 0,
                     values: [
+                        {
+                            key: "name",
+                            name: "Name"
+                        },
                         {
                             key: "utc",
                             name: "Time",
@@ -142,6 +230,7 @@ define([
                 };
             }
         });
+
         openmct.telemetry.addProvider(new GeneratorProvider());
     };
 

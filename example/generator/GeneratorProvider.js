@@ -30,7 +30,8 @@ define([
         amplitude: 1,
         period: 10,
         offset: 0,
-        dataRateInHz: 1
+        dataRateInHz: 1,
+        phase: 0
     };
 
     function GeneratorProvider() {
@@ -50,8 +51,11 @@ define([
             'amplitude',
             'period',
             'offset',
-            'dataRateInHz'
+            'dataRateInHz',
+            'phase',
         ];
+
+        request = request || {};
 
         var workerRequest = {};
 
@@ -67,7 +71,7 @@ define([
             }
             workerRequest[prop] = Number(workerRequest[prop]);
         });
-
+        workerRequest.name = domainObject.name;
         return workerRequest;
     };
 
