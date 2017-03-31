@@ -48,7 +48,6 @@ define([
 
         this.fmts = ['utc'];
         this.sources = [new LocalClock($timeout, DEFAULT_PERIOD)];
-        this.defaultValues = undefined;
     }
 
     UTCTimeSystem.prototype = Object.create(TimeSystem.prototype);
@@ -65,25 +64,18 @@ define([
         return this.sources;
     };
 
-    UTCTimeSystem.prototype.defaults = function (defaults) {
-        if (arguments.length > 0) {
-            this.defaultValues = defaults;
-        }
+    UTCTimeSystem.prototype.defaults = function () {
+        var now = Math.ceil(Date.now() / 1000) * 1000;
+        var ONE_MINUTE = 60 * 1 * 1000;
+        var FIFTY_YEARS = 50 * 365 * 24 * 60 * 60 * 1000;
 
-        if (this.defaultValues === undefined) {
-            var now = Math.ceil(Date.now() / 1000) * 1000;
-            var ONE_MINUTE = 60 * 1 * 1000;
-            var FIFTY_YEARS = 50 * 365 * 24 * 60 * 60 * 1000;
-
-            this.defaultValues = {
-                key: 'utc-default',
-                name: 'UTC time system defaults',
-                deltas: {start: FIFTEEN_MINUTES, end: 0},
-                bounds: {start: now - FIFTEEN_MINUTES, end: now},
-                zoom: {min: FIFTY_YEARS, max: ONE_MINUTE}
-            };
-        }
-        return this.defaultValues;
+        return {
+            key: 'utc-default',
+            name: 'UTC time system defaults',
+            deltas: {start: FIFTEEN_MINUTES, end: 0},
+            bounds: {start: now - FIFTEEN_MINUTES, end: now},
+            zoom: {min: FIFTY_YEARS, max: ONE_MINUTE}
+        };
     };
 
     return UTCTimeSystem;
