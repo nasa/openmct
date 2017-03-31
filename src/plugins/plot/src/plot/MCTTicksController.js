@@ -39,7 +39,11 @@ define([
             return 0;
         }
 
-        return Math.max(0, -(+exponential.slice(i + 1)));
+        var precision = Math.max(0, -(+exponential.slice(i + 1)));
+
+        if (precision > 20) precision = 20;
+
+        return precision;
     }
 
 
