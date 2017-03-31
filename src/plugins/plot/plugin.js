@@ -53,8 +53,15 @@ define([
     PlotTemplate
 ) {
 
+    var installed = false;
+
     function PlotPlugin() {
         return function install(openmct) {
+            if (installed) {
+                return;
+            }
+            installed = true;
+
             openmct.legacyRegistry.register("openmct/plot", {
                 "name": "Plot view for telemetry, reborn",
                 "extensions": {
