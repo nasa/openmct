@@ -264,18 +264,8 @@ define([
 
         this.updateYAxis();
 
-
         this.config.series.forEach(function (series) {
-            var yMetadata = series.get('metadata').value(newKey);
-            if (oldKey) {
-                if (yMetadata.type === 'enum') {
-                    series.set('interpolate', 'stepAfter');
-                } else {
-                    series.set('interpolate', 'linear');
-                }
-            }
-            series.trackStats(newKey);
-            series.untrackStats(oldKey);
+            series.set('yKey', newKey);
         });
 
     };
@@ -353,14 +343,15 @@ define([
     PlotController.prototype.addTelemetryObject = function (domainObject) {
         var index = this.config.series.size();
         var seriesConfig = this.getSeriesConfig(domainObject.identifier, index);
+        var metadata = this.openmct.telemetry.getMetadata(domainObject);
 
         var seriesModel = {
             domainObject: domainObject,
-            sortKey: this.timeConductor.timeSystem().metadata.key,
+            sortKey: this.config.xAxis.get('key'),
+            metadata: metadata,
+            formats: this.openmct.telemetry.getFormatMap(metadata),
             markers: true,
-            markerSize: 2.0,
-            interpolate: this.config.yAxis.get('key') === 'enum' ?
-                'stepAfter' : 'linear'
+            markerSize: 2.0
         };
 
         _.extend(seriesModel, seriesConfig);

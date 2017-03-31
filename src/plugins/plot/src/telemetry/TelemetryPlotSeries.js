@@ -15,13 +15,10 @@ define([
             this.on('destroy', this.onDestroy, this);
         },
 
-        defaults: function (model, publicAPI) {
-            var metadata = publicAPI.telemetry.getMetadata(model.domainObject);
+        defaults: function (model) {
             return {
                 markers: true,
                 name: model.domainObject.name,
-                formats: publicAPI.telemetry.getFormatMap(metadata),
-                metadata: metadata
             }
         },
 

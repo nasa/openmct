@@ -46,10 +46,13 @@ define([
             this.updateStat = this.updateStat.bind(this);
             this.updateStats = this.updateStats.bind(this);
             this.onSortKeyChange = this.onSortKeyChange.bind(this);
+            this.onYKeyChange = this.onYKeyChange.bind(this);
             this.on('change:sortKey', this.onSortKeyChange);
+            this.on('change:yKey', this.onYKeyChange);
 
             Model.apply(this, arguments);
             this.onSortKeyChange(this.get('sortKey'));
+            this.onYKeyChange(this.get('yKey'));
         },
         /**
          * Override this to implement default properties.
@@ -75,6 +78,18 @@ define([
         onSortKeyChange: function (sortKey) {
             var format = this.get('formats')[sortKey];
             this.getSortVal = format.parse.bind(format);
+        },
+        onYKeyChange: function (newKey, oldKey) {
+            if (newKey === oldKey) {
+                return;
+            }
+            this.trackStats(newKey);
+            this.untrackStats(oldKey);
+            if (this.get('metadata').value(newKey).format === 'enum') {
+                this.set('interpolate', 'stepAfter');
+            } else {
+                this.set('interpolate', 'linear');
+            }
         },
 
         /**
