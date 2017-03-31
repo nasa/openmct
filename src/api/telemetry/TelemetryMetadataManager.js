@@ -100,6 +100,18 @@ define([
             delete valueMetadata.hints.y;
         }
 
+        if (valueMetadata.format == 'enum') {
+            if (!valueMetadata.values) {
+                valueMetadata.values = _.pluck(valueMetadata.enumerations, 'value');
+            }
+            if (!valueMetadata.hasOwnProperty('max')) {
+                valueMetadata.max = _.max(valueMetadata.values) + 1;
+            }
+            if (!valueMetadata.hasOwnProperty('min')) {
+                valueMetadata.min = _.min(valueMetadata.values) - 1;
+            }
+        }
+
         if (!valueMetadata.hints.hasOwnProperty('priority')) {
             valueMetadata.hints.priority = index;
         }
