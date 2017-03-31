@@ -1,0 +1,162 @@
+<!--
+ Open MCT Web, Copyright (c) 2014-2015, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT Web includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<div ng-controller="PlotOptionsController"
+     class="flex-elem grows l-inspector-part" hide-element-pool>
+    <em class="t-inspector-part-header"
+        title="Display properties for this object">
+        Plot Options
+    </em>
+
+    <form class="form l-flex-col"
+          ng-show="!!config.series.models.length">
+
+        <span class="l-form-section l-flex-col flex-elem "></span>
+        <div class="section-header flex-elem">
+            Y-Axis
+        </div>
+        <span class="l-form-section l-flex-col flex-elem"></span>
+
+        <label>
+            Value
+            <select ng-model="form.yAxis.key">
+                <option ng-repeat="option in yAxisOptions"
+                        value="{{option.value}}"
+                        ng-selected="option.value == form.yAxis.key">
+                    {{option.name}}
+                </option>
+            </select>
+        </label>
+
+        <label>
+            Label
+            <input type="text" ng-model="form.yAxis.label"/>
+        </label>
+
+        <label ng-show="!(form.yAxis.key == 'enum')">
+            Autoscale
+            <input type="checkbox" ng-model="form.yAxis.autoscale"/>
+        </label>
+        <label ng-show="!(form.yAxis.key == 'enum') && form.yAxis.autoscale">
+            Autoscale Padding
+            <input type="text" ng-model="form.yAxis.autoscalePadding"/>
+        </label>
+        <label ng-show="!(form.yAxis.key == 'enum') && !form.yAxis.autoscale && validation['form.yAxis.range']">
+            ERROR: {{ validation['form.yAxis.range'] }}
+        </label>
+        <label ng-show="!(form.yAxis.key == 'enum') && !form.yAxis.autoscale">
+            Min
+            <input type="text" ng-model="form.yAxis.range.min"/>
+        </label>
+        <label ng-show="!(form.yAxis.key == 'enum') && !form.yAxis.autoscale">
+            Max
+            <input type="text" ng-model="form.yAxis.range.max"/>
+        </label>
+
+    </form>
+
+    <em class="t-inspector-part-header"
+        title="Display properties for this object">
+        Series Options
+    </em>
+
+
+    <ul class="first flex-elem grows vscroll">
+        <ul class="tree">
+            <li ng-repeat="series in config.series.models">
+                <span class="tree-item menus-to-left">
+                    <span
+                        class='ui-symbol view-control flex-elem has-children'
+                        ng-class="{ expanded: series.expanded }"
+                        ng-click="series.expanded = !series.expanded">
+                    </span>
+                    <mct-representation
+                        class="rep-object-label"
+                        key="'label'"
+                        mct-object="series.oldObject">
+                    </mct-representation>
+                </span>
+                <div class="l-flex-col"
+                      ng-class="{
+                          hidden: !series.expanded
+                      }"
+                      >
+
+                    <label>
+                        Line Style
+                        <select ng-model="form.series[$index].interpolate">
+                            <option value="none">None</option>
+                            <option value="linear">Linear interpolate</option>
+                            <option value="stepAfter">Step After</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        Show Markers
+                        <input type="checkbox" ng-model="form.series[$index].markers"/>
+                    </label>
+
+                    <label ng-show="form.series[$index].markers">
+                        Marker Size
+                        <input type="text" ng-model="form.series[$index].markerSize"/>
+                    </label>
+
+                    <div class="s-button s-menu-button menu-element t-color-palette"
+                         ng-show="form.series[$index].interpolate !== 'none' || form.series[$index].markers"
+                         ng-controller="ClickAwayController as toggle"
+                         ng-style="{
+                             'margin-bottom': $last && !!series.expanded ? '65px' : undefined
+                         }">
+
+                        <span class="l-click-area" ng-click="toggle.toggle()"></span>
+                        <span class="color-swatch"
+                              ng-style="{
+                                 background: series.get('color').asHexString()
+                              }">
+                        </span>
+                        <span class="title-label">
+                            Color
+                        </span>
+
+                        <div class="menu l-color-palette"
+                             ng-show="toggle.isActive()">
+
+                            <div
+                                 class="l-palette-row"
+                                 ng-repeat="group in config.palette.groups()">
+
+                                <div class="l-palette-item s-palette-item"
+                                     ng-repeat="color in group"
+                                     ng-class="{
+                                         'icon-check': series.get('color') === color
+                                     }"
+                                     ng-style="{ background: color.asHexString() }"
+                                     ng-click="setColor(series, color, config.series.models.indexOf(series))">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+               </div>
+            </li>
+        </ul>
+    </ul>
+
+</div>

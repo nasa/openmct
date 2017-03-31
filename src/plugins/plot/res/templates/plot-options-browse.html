@@ -1,0 +1,111 @@
+<!--
+ Open MCT Web, Copyright (c) 2014-2015, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT Web includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<div ng-controller="PlotOptionsController"
+     class="flex-elem grows l-inspector-part">
+     <ul class="flex-elem grows l-inspector-part">
+         <li>
+             <em class="t-inspector-part-header">Y Axis</em>
+             <div class="inspector-properties first">
+                 <div class="label">Range</div>
+                 <div class="value">{{ config.yAxis.get('key') }}</div>
+             </div>
+             <div class="inspector-properties">
+                 <div class="label">Autoscale</div>
+                 <div class="value">
+                    {{ config.yAxis.get('autoscale') ? "On" : "Off" }}
+                    {{ config.yAxis.get('autoscale') ? (config.yAxis.get('autoscalePadding') * 100) + "%" : ""}}
+                </div>
+             </div>
+             <div class="inspector-properties"
+                  ng-if="!form.yAxis.autoscale">
+                 <div class="label">Min</div>
+                 <div class="value">{{ config.yAxis.get('range').min }}</div>
+             </div>
+             <div class="inspector-properties"
+                  ng-if="!form.yAxis.autoscale">
+                 <div class="label">Max</div>
+                 <div class="value">{{ config.yAxis.get('range').max }}</div>
+             </div>
+         </li>
+         <li>
+             <em class="t-inspector-part-header">Plot Series</em>
+             <ul class="first flex-elem grows vscroll">
+                 <ul class="tree">
+                     <li ng-repeat="series in config.series.models">
+                         <span class="tree-item menus-to-left">
+                             <span
+                                 class='ui-symbol view-control flex-elem has-children'
+                                 ng-class="{ expanded: series.expanded }"
+                                 ng-click="series.expanded = !series.expanded">
+                             </span>
+                             <mct-representation
+                                 class="rep-object-label"
+                                 key="'label'"
+                                 mct-object="series.oldObject">
+                             </mct-representation>
+                         </span>
+                         <div class="l-flex-col"
+                               ng-class="{
+                                   hidden: !series.expanded
+                               }"
+                               >
+
+                             <div class="inspector-properties">
+                                 <div class="label">Line Style</div>
+                                 <div class="value">{{ {
+                                     'none': 'None',
+                                     'linear': 'Linear interpolation',
+                                     'stepAfter': 'Step After'
+                                 }[series.get('interpolate')] }}</div>
+                             </div>
+                             <div class="inspector-properties">
+                                 <div class="label">Markers</div>
+                                 <div class="value">
+                                     {{series.get('markers') ? "On, " + series.get('markerSize') + "px" : "Off"}}
+                                 </div>
+                             </div>
+
+                             <div class="inspector-properties">
+                                 <div class="label">Color</div>
+                                 <div class="value">
+                                     <span class="color-swatch"
+                                           ng-style="{
+                                              'background': series.get('color').asHexString(),
+                                              'display': 'inline-block',
+                                              'border': '1px solid rgba(255, 255, 255, 0.2)',
+                                              'height': '10px',
+                                              'width': '10px',
+                                              'vertical-align': 'middle',
+                                              'margin-left': '3px',
+                                              'margin-top': -'2px'
+                                           }">
+                                     </span>
+                                     {{series.get('color').asHexString()}}
+                                 </div>
+                             </div>
+                        </div>
+                     </li>
+                 </ul>
+             </ul>
+         </li>
+    </ul>
+</div>

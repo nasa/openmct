@@ -25,13 +25,15 @@ define([
     './utcTimeSystem/plugin',
     '../../example/generator/plugin',
     '../../platform/features/autoflow/plugin',
-    './timeConductor/plugin'
+    './timeConductor/plugin',
+    './plot/plugin'
 ], function (
     _,
     UTCTimeSystem,
     GeneratorPlugin,
     AutoflowPlugin,
-    TimeConductorPlugin
+    TimeConductorPlugin,
+    PlotPlugin
 ) {
     var bundleMap = {
         CouchDB: 'platform/persistence/couch',
@@ -112,6 +114,8 @@ define([
     plugins.Generator = function () {
         return GeneratorPlugin;
     };
+
+    plugins.Plot = PlotPlugin;
 
     return plugins;
 });

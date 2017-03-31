@@ -44,6 +44,7 @@
             openmct.install(openmct.plugins.Generator());
             openmct.install(openmct.plugins.UTCTimeSystem());
             openmct.time.timeSystem("utc", {start: Date.now() - THIRTY_MINUTES, end: Date.now()});
+            openmct.install(openmct.plugins.Plot());
             openmct.start();
         });
     </script>

@@ -1,0 +1,42 @@
+<span ng-controller="StackedPlotController as stackedPlot"
+      class="abs holder holder-plot has-control-bar"
+      ng-class="{
+          'loading': !!currentRequest.pending
+      }">
+
+      <div class="l-control-bar" ng-show="!stackedPlot.hideExportButtons">
+           <span class="l-btn-set">
+              <a class="s-button t-export labeled icon-download"
+                 ng-click="stackedPlot.exportPNG()"
+                 title="Export This View's Data as PNG">
+                  PNG
+              </a>
+              <a class="s-button t-export labeled"
+                 ng-click="stackedPlot.exportJPG()"
+                 title="Export This View's Data as JPG">
+                  JPG
+              </a>
+          </span>
+      </div>
+
+    <div class="gl-plot child-frame"
+        ng-style="{ height: 100 / telemetryObjects.length + '%'}"
+        ng-repeat="telemetryObject in telemetryObjects"
+        ng-class="{
+            's-status-timeconductor-unsynced': telemetryObject
+                .getCapability('status')
+                .get('timeconductor-unsynced')
+        }">
+
+        <div class="object-header"
+            style="top: 30px; left:50%; position: absolute; z-index:100;"
+            ng-if="telemetryObject
+                .getCapability('status')
+                .get('timeconductor-unsynced')">
+            <span class="t-object-alert t-alert-unsynced flex-elem holder"
+                title="This plot is not currently displaying the latest data.  Reset Pan/zoom to return to view latest data."></span>
+        </div>
+
+        <mct-overlay-plot domain-object="telemetryObject"></mct-overlay-plot>
+    </div>
+</span>
