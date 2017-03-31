@@ -60,10 +60,10 @@
             openmct.install(openmct.plugins.Conductor({
                 menuOptions: [
                     // Default 'fixed' configuration shows last 30 mins of data. May also provide specific bounds.
-                    {timeSystems: ['utc'], defaultOffsets: {start: 30 * ONE_MINUTE, end: 0}, zoomOutLimit: ONE_YEAR, zoomInLimit: ONE_MINUTE},
+                    {timeSystems: ['utc'], defaultDeltas: {start: 30 * ONE_MINUTE, end: 0}, zoomOutLimit: ONE_YEAR, zoomInLimit: ONE_MINUTE},
                     // Some tick source driven menu options
-                    {tickSource: 'localClock', timeSystems: ['utc'], defaultOffsets: {start: 15 * ONE_MINUTE, end: 0}, zoomOut: ONE_YEAR, zoomIn: ONE_MINUTE},
-                    {tickSource: 'latestAvailable', timeSystems: ['utc'], defaultOffsets: {start: 15 * 60 * 1000, end: 0}}
+                    {tickSource: 'localClock', timeSystems: ['utc'], defaultDeltas: {start: 15 * ONE_MINUTE, end: 0}, zoomOutLimit: ONE_YEAR, zoomInLimit: ONE_MINUTE},
+                    {tickSource: 'latestAvailable', timeSystems: ['utc'], defaultDeltas: {start: 15 * 60 * 1000, end: 0}}
                 ]
             }));
             openmct.start();
