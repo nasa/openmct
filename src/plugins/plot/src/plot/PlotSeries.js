@@ -89,13 +89,6 @@ define([
         value: function (point, key) {
             return this.get('formats')[key].parse(point);
         },
-        /**
-         * Destroy the series, removing all listeners and subscriptions.
-         */
-        destroy: function () {
-            this.emit('destroy');
-            this.removeAllListeners();
-        },
 
         /**
          * Reset plot series.

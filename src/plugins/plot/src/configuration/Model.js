@@ -39,6 +39,14 @@ define([
 
     };
 
+    /**
+     * Destroy the series, removing all listeners and subscriptions.
+     */
+    Model.prototype.destroy = function () {
+        this.emit('destroy');
+        this.removeAllListeners();
+    };
+
     Model.prototype.id = function () {
         return this.get(this.idAttr);
     };
