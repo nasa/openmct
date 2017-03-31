@@ -148,7 +148,9 @@ define([
         var limitEvaluator = oldObject.getCapability("limit");
 
         if (!limitEvaluator) {
-            return;
+            return {
+                evaluate: function () {}
+            };
         }
 
         return {

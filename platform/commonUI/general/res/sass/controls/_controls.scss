@@ -150,6 +150,26 @@
     }
 }
 
+/******************************************************** VIEW CONTROLS */
+// Expand/collapse > and v arrows, used in tree and plot legend
+// Moved this over from a tree-only context 5/18/17
+
+.view-control {
+    @extend .ui-symbol;
+    cursor: pointer;
+    height: 1em; width: 1em;
+    line-height: inherit;
+    &:before {
+        position: absolute;
+        @include trans-prop-nice(transform, 100ms);
+        content: $glyph-icon-arrow-right;
+        @include transform-origin(center);
+    }
+    &.expanded:before {
+        @include transform(rotate(90deg));
+    }
+}
+
 /******************************************************** CUSTOM CHECKBOXES */
 label.checkbox.custom,
 label.radio.custom {
