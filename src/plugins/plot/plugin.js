@@ -74,9 +74,6 @@ define([
                             "needs": [
                                 "telemetry"
                             ],
-                            "uses": [
-                                "composition"
-                            ],
                             "delegation": false,
                             "priority": "mandatory"
                         },
@@ -86,15 +83,7 @@ define([
                             "cssClass": "icon-plot-overlay",
                             "type": "telemetry.plot.overlay",
                             "template": PlotTemplate,
-                            "needs": [
-                                "telemetry",
-                                "composition"
-                            ],
-                            "uses": [
-                                "composition"
-                            ],
-                            "editable": true,
-                            "delegation": true
+                            "editable": true
                         },
                         {
                             "name": "Stacked Plot",
@@ -102,15 +91,7 @@ define([
                             "cssClass": "icon-plot-stacked",
                             "type": "telemetry.plot.stacked",
                             "template": StackedPlotTemplate,
-                            "needs": [
-                                "composition",
-                                "delegation"
-                            ],
-                            "uses": [
-                                "composition"
-                            ],
-                            "editable": true,
-                            "delegation": true
+                            "editable": true
                         }
                     ],
                     "directives": [
@@ -195,9 +176,6 @@ define([
                             "name": "Overlay Plot",
                             "cssClass": "icon-plot-overlay",
                             "description": "Combine multiple telemetry elements and view them together as a plot with common X and Y axes. Can be added to Display Layouts.",
-                            "delegates": [
-                                "telemetry"
-                            ],
                             "features": "creation",
                             "contains": [
                                 {
@@ -221,9 +199,6 @@ define([
                             "name": "Stacked Plot",
                             "cssClass": "icon-plot-stacked",
                             "description": "Combine multiple telemetry elements and view them together as a plot with a common X axis and individual Y axes. Can be added to Display Layouts.",
-                            "delegates": [
-                                "delegation"
-                            ],
                             "features": "creation",
                             "contains": [
                                 "telemetry.plot.overlay",
