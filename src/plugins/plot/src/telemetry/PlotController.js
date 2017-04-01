@@ -79,7 +79,6 @@ define([
             yKey = options[0].key;
             this.config.yAxis.set('key', yKey);
         } else {
-            series.trackStats(yKey);
             this.updateYAxis();
         }
 
@@ -98,17 +97,6 @@ define([
     PlotController.prototype.removeSeries = function (plotSeries) {
         plotSeries.destroy();
         this.stopListening(plotSeries.stats);
-        // if (this.config.yAxis.get('autoscale')) {
-        //     var newScale = this.config.series.map(function (series) {
-        //         return series.stats.get(this.config.yAxis.get('key'));
-        //     }, this).reduce(function (a, b) {
-        //         return {
-        //             min: a.min < b.min ? a.min : b.min,
-        //             max: a.max > b.max ? a.max : b.max
-        //         };
-        //     });
-        //     this.config.yAxis.set('range', newScale);
-        // }
     };
 
     PlotController.prototype.onSeriesStatChange = function (key, stats) {
@@ -348,6 +336,7 @@ define([
         var seriesModel = {
             domainObject: domainObject,
             sortKey: this.config.xAxis.get('key'),
+            yKey: this.config.yAxis.get('key'),
             metadata: metadata,
             formats: this.openmct.telemetry.getFormatMap(metadata),
             markers: true,
