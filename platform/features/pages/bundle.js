@@ -47,7 +47,6 @@ define([
                             "key": "url",
                             "name": "URL",
                             "control": "textfield",
-                            "pattern": "^(ftp|https?)\\:\\/\\/\\w+(\\.\\w+)*(\\:\\d+)?(\\/\\S*)*$",
                             "required": true,
                             "cssClass": "l-input-lg"
                         }
