@@ -26,13 +26,32 @@ define([
 ], function (MCT, plugins) {
     describe("MCT", function () {
         var openmct;
+        var mockPlugin;
+        var mockPlugin2;
 
         beforeEach(function () {
+            mockPlugin = jasmine.createSpy('plugin');
+            mockPlugin2 = jasmine.createSpy('plugin');
+
             openmct = new MCT();
+
+            openmct.install(mockPlugin);
+            openmct.install(mockPlugin2);
         });
 
         it("exposes plugins", function () {
             expect(openmct.plugins).toEqual(plugins);
+        });
+
+        describe("when started", function () {
+            beforeEach(function () {
+                openmct.start();
+            });
+
+            it("calls plugins for configuration", function () {
+                expect(mockPlugin).toHaveBeenCalledWith(openmct);
+                expect(mockPlugin2).toHaveBeenCalledWith(openmct);
+            });
         });
     });
 });
