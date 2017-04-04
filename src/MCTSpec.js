@@ -43,7 +43,7 @@ define([
             expect(openmct.plugins).toEqual(plugins);
         });
 
-        describe("when started", function () {
+        describe("start", function () {
             beforeEach(function () {
                 openmct.start();
             });
@@ -51,6 +51,26 @@ define([
             it("calls plugins for configuration", function () {
                 expect(mockPlugin).toHaveBeenCalledWith(openmct);
                 expect(mockPlugin2).toHaveBeenCalledWith(openmct);
+            });
+        });
+
+        describe("setAssetPath", function () {
+            var testAssetPath;
+
+            beforeEach(function () {
+                testAssetPath = "some/path";
+                openmct.legacyExtension = jasmine.createSpy('legacyExtension');
+                openmct.setAssetPath(testAssetPath);
+            });
+
+            it("internally configures the path for assets", function () {
+                expect(openmct.legacyExtension).toHaveBeenCalledWith(
+                    'constants',
+                    {
+                        key: "ASSETS_PATH",
+                        value: testAssetPath
+                    }
+                );
             });
         });
     });
