@@ -22,25 +22,44 @@
 
 define([
     './MCT',
-    './plugins/plugins'
-], function (MCT, plugins) {
+    './plugins/plugins',
+    'legacyRegistry'
+], function (MCT, plugins, legacyRegistry) {
     describe("MCT", function () {
         var openmct;
         var mockPlugin;
         var mockPlugin2;
+        var mockListener;
+        var oldBundles;
 
         beforeEach(function () {
             mockPlugin = jasmine.createSpy('plugin');
-            mockPlugin2 = jasmine.createSpy('plugin');
+            mockPlugin2 = jasmine.createSpy('plugin2');
+            mockListener = jasmine.createSpy('listener');
+            oldBundles = legacyRegistry.list();
 
             openmct = new MCT();
 
             openmct.install(mockPlugin);
             openmct.install(mockPlugin2);
+            openmct.on('start', mockListener);
+        });
+
+        // Clean up the dirty singleton.
+        afterEach(function () {
+            legacyRegistry.list().forEach(function (bundle) {
+                if (oldBundles.indexOf(bundle) === -1) {
+                    legacyRegistry.delete(bundle);
+                }
+            });
         });
 
         it("exposes plugins", function () {
             expect(openmct.plugins).toEqual(plugins);
+        });
+
+        it("does not issue a start event before started", function () {
+            expect(mockListener).not.toHaveBeenCalled();
         });
 
         describe("start", function () {
@@ -51,6 +70,10 @@ define([
             it("calls plugins for configuration", function () {
                 expect(mockPlugin).toHaveBeenCalledWith(openmct);
                 expect(mockPlugin2).toHaveBeenCalledWith(openmct);
+            });
+
+            it("emits a start event", function () {
+                expect(mockListener).toHaveBeenCalled();
             });
         });
 
