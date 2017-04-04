@@ -35,7 +35,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * @interface
      * @memberof module:openmct
      */
-    function TimeConductor() {
+    function TimeAPI() {
         EventEmitter.call(this);
 
         //The Time System
@@ -50,19 +50,30 @@ define(['EventEmitter'], function (EventEmitter) {
 
         //Default to fixed mode
         this.followMode = false;
+
+        this.timeSystems = {};
+        this.tickSources = {};
     }
 
-    TimeConductor.prototype = Object.create(EventEmitter.prototype);
+    TimeAPI.prototype = Object.create(EventEmitter.prototype);
+
+    TimeAPI.prototype.addTimeSystem = function (timeSystem) {
+        this.timeSystems[timeSystem.key] = timeSystem;
+    };
+
+    TimeAPI.prototype.addTickSource = function (tickSource) {
+        this.tickSources[tickSource.key] = tickSource;
+    };
 
     /**
      * Validate the given bounds. This can be used for pre-validation of
      * bounds, for example by views validating user inputs.
      * @param bounds The start and end time of the conductor.
      * @returns {string | true} A validation error, or true if valid
-     * @memberof module:openmct.TimeConductor#
+     * @memberof module:openmct.TimeAPI#
      * @method validateBounds
      */
-    TimeConductor.prototype.validateBounds = function (bounds) {
+    TimeAPI.prototype.validateBounds = function (bounds) {
         if ((bounds.start === undefined) ||
             (bounds.end === undefined) ||
             isNaN(bounds.start) ||
@@ -76,50 +87,24 @@ define(['EventEmitter'], function (EventEmitter) {
     };
 
     /**
-     * Get or set the follow mode of the time conductor. In follow mode the
-     * time conductor ticks, regularly updating the bounds from a timing
-     * source appropriate to the selected time system and mode of the time
-     * conductor.
-     * @fires module:openmct.TimeConductor~follow
-     * @param {boolean} followMode
-     * @returns {boolean}
-     * @memberof module:openmct.TimeConductor#
-     * @method follow
-     */
-    TimeConductor.prototype.follow = function (followMode) {
-        if (arguments.length > 0) {
-            this.followMode = followMode;
-            /**
-             * The TimeConductor has toggled into or out of follow mode.
-             * @event follow
-             * @memberof module:openmct.TimeConductor~
-             * @property {boolean} followMode true if follow mode is
-             *           enabled, otherwise false.
-             */
-            this.emit('follow', this.followMode);
-        }
-        return this.followMode;
-    };
-
-    /**
      * @typedef {Object} TimeConductorBounds
      * @property {number} start The start time displayed by the time conductor in ms since epoch. Epoch determined by current time system
      * @property {number} end The end time displayed by the time conductor in ms since epoch.
-     * @memberof module:openmct.TimeConductor~
+     * @memberof module:openmct.TimeAPI~
      */
 
     /**
      * Get or set the start and end time of the time conductor. Basic validation
      * of bounds is performed.
      *
-     * @param {module:openmct.TimeConductorBounds~TimeConductorBounds} newBounds
+     * @param {module:openmct.TimeAPI~TimeConductorBounds} newBounds
      * @throws {Error} Validation error
-     * @fires module:openmct.TimeConductor~bounds
-     * @returns {module:openmct.TimeConductorBounds~TimeConductorBounds}
-     * @memberof module:openmct.TimeConductor#
+     * @fires module:openmct.TimeAPI~bounds
+     * @returns {module:openmct.TimeAPI~TimeConductorBounds}
+     * @memberof module:openmct.TimeAPI#
      * @method bounds
      */
-    TimeConductor.prototype.bounds = function (newBounds) {
+    TimeAPI.prototype.bounds = function (newBounds) {
         if (arguments.length > 0) {
             var validationResult = this.validateBounds(newBounds);
             if (validationResult !== true) {
@@ -130,10 +115,12 @@ define(['EventEmitter'], function (EventEmitter) {
             /**
              * The start time, end time, or both have been updated.
              * @event bounds
-             * @memberof module:openmct.TimeConductor~
-             * @property {TimeConductorBounds} bounds
+             * @memberof module:openmct.TimeAPI~
+             * @property {TimeConductorBounds} bounds The newly updated bounds
+             * @property {boolean} [tick] `true` if the bounds update was due to
+             * a "tick" event (ie. was an automatic update), false otherwise.
              */
-            this.emit('bounds', this.boundsVal);
+            this.emit('bounds', this.boundsVal, false);
 
             // If a bounds change results in a TOI outside of the current
             // bounds, unset it
@@ -146,17 +133,17 @@ define(['EventEmitter'], function (EventEmitter) {
     };
 
     /**
-     * Get or set the time system of the TimeConductor. Time systems determine
+     * Get or set the time system of the TimeAPI. Time systems determine
      * units, epoch, and other aspects of time representation. When changing
      * the time system in use, new valid bounds must also be provided.
      * @param {TimeSystem} newTimeSystem
-     * @param {module:openmct.TimeConductor~TimeConductorBounds} bounds
-     * @fires module:openmct.TimeConductor~timeSystem
+     * @param {module:openmct.TimeAPI~TimeConductorBounds} bounds
+     * @fires module:openmct.TimeAPI~timeSystem
      * @returns {TimeSystem} The currently applied time system
-     * @memberof module:openmct.TimeConductor#
+     * @memberof module:openmct.TimeAPI#
      * @method timeSystem
      */
-    TimeConductor.prototype.timeSystem = function (newTimeSystem, bounds) {
+    TimeAPI.prototype.timeSystem = function (newTimeSystem, bounds) {
         if (arguments.length >= 2) {
             this.system = newTimeSystem;
             /**
@@ -164,7 +151,7 @@ define(['EventEmitter'], function (EventEmitter) {
              * conductor has changed. A change in Time System will always be
              * followed by a bounds event specifying new query bounds.
              *
-             * @event module:openmct.TimeConductor~timeSystem
+             * @event module:openmct.TimeAPI~timeSystem
              * @property {TimeSystem} The value of the currently applied
              * Time System
              * */
@@ -181,19 +168,19 @@ define(['EventEmitter'], function (EventEmitter) {
      * focus of the current view. It can be manipulated by the user from the
      * time conductor or from other views.The time of interest can
      * effectively be unset by assigning a value of 'undefined'.
-     * @fires module:openmct.TimeConductor~timeOfInterest
+     * @fires module:openmct.TimeAPI~timeOfInterest
      * @param newTOI
      * @returns {number} the current time of interest
-     * @memberof module:openmct.TimeConductor#
+     * @memberof module:openmct.TimeAPI#
      * @method timeOfInterest
      */
-    TimeConductor.prototype.timeOfInterest = function (newTOI) {
+    TimeAPI.prototype.timeOfInterest = function (newTOI) {
         if (arguments.length > 0) {
             this.toi = newTOI;
             /**
              * The Time of Interest has moved.
              * @event timeOfInterest
-             * @memberof module:openmct.TimeConductor~
+             * @memberof module:openmct.TimeAPI~
              * @property {number} Current time of interest
              */
             this.emit('timeOfInterest', this.toi);
@@ -201,5 +188,14 @@ define(['EventEmitter'], function (EventEmitter) {
         return this.toi;
     };
 
-    return TimeConductor;
+    /**
+     * Return the follow state of the Conductor.
+     * @returns {boolean} `true` if conductor is currently following a tick source.
+     * `false` otherwise.
+     */
+    TimeAPI.prototype.follow = function () {
+        return this.followMode;
+    };
+
+    return TimeAPI;
 });

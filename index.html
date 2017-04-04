@@ -28,7 +28,13 @@
     <script src="bower_components/requirejs/require.js">
     </script>
     <script>
-        require(['openmct'], function (openmct) {
+        require([
+            'openmct',
+            'src/plugins/conductor/plugin'
+        ], function (
+            openmct,
+            ConductorService
+        ) {
             [
                 'example/imagery',
                 'example/eventGenerator'
@@ -40,6 +46,26 @@
             openmct.install(openmct.plugins.Espresso());
             openmct.install(openmct.plugins.Generator());
             openmct.install(openmct.plugins.UTCTimeSystem());
+
+            /*
+                Will be installed by default...somehow
+             */
+            //openmct.install(ConductorService());
+
+            var ONE_MINUTE = 60 * 1000;
+            var ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
+
+            // Will also provide a default configuration based on enabled time
+            // systems and tick sources.
+            openmct.install(openmct.plugins.Conductor({
+                menuOptions: [
+                    // Default 'fixed' configuration shows last 30 mins of data. May also provide specific bounds.
+                    {timeSystems: ['utc'], defaultDeltas: {start: 30 * ONE_MINUTE, end: 0}, zoomOutLimit: ONE_YEAR, zoomInLimit: ONE_MINUTE},
+                    // Some tick source driven menu options
+                    {tickSource: 'localClock', timeSystems: ['utc'], defaultDeltas: {start: 15 * ONE_MINUTE, end: 0}, zoomOutLimit: ONE_YEAR, zoomInLimit: ONE_MINUTE},
+                    {tickSource: 'latestAvailable', timeSystems: ['utc'], defaultDeltas: {start: 15 * 60 * 1000, end: 0}}
+                ]
+            }));
             openmct.start();
         });
     </script>

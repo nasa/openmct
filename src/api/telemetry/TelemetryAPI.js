@@ -121,7 +121,7 @@ define([
      * @memberof module:openmct.TelemetryAPI~
      */
 
-
+    var cachedFormatService;
 
     /**
      * An interface for retrieving telemetry data associated with a domain
@@ -138,6 +138,7 @@ define([
         this.metadataCache = new WeakMap();
         this.formatMapCache = new WeakMap();
         this.valueFormatterCache = new WeakMap();
+        this.formatMap = {};
     }
 
     /**
@@ -281,6 +282,13 @@ define([
         return _.sortByAll(options, sortKeys);
     };
 
+    function getFormatService() {
+        if (cachedFormatService === undefined) {
+            cachedFormatService = this.MCT.$injector.get('formatService');
+        }
+        return cachedFormatService;
+    }
+
     /**
      * Get a value formatter for a given valueMetadata.
      *
@@ -288,12 +296,10 @@ define([
      */
     TelemetryAPI.prototype.getValueFormatter = function (valueMetadata) {
         if (!this.valueFormatterCache.has(valueMetadata)) {
-            if (!this.formatService) {
-                this.formatService = this.MCT.$injector.get('formatService');
-            }
+            var formatService = getFormatService.call(this);
             this.valueFormatterCache.set(
                 valueMetadata,
-                new TelemetryValueFormatter(valueMetadata, this.formatService)
+                new TelemetryValueFormatter(valueMetadata, formatService)
             );
         }
         return this.valueFormatterCache.get(valueMetadata);
@@ -332,6 +338,18 @@ define([
      */
     TelemetryAPI.prototype.limitEvaluator = function () {
         return this.legacyProvider.limitEvaluator.apply(this.legacyProvider, arguments);
+    };
+
+    TelemetryAPI.prototype.getFormat = function (formatKey) {
+        return this.formatMap[formatKey];
+    };
+
+    /**
+     * Register a new formatter
+     * @param {Format} formatter
+     */
+    TelemetryAPI.prototype.addFormat = function (format) {
+        this.formatMap[format.key] = format;
     };
 
     return TelemetryAPI;
