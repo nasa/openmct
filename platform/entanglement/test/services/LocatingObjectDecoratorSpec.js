@@ -23,13 +23,13 @@
 
 define(
     [
-        '../../src/services/LocatingObjectDecorator'
+        '../../src/services/LocatingObjectDecorator',
+        '../../../core/src/capabilities/ContextualDomainObject'
     ],
-    function (LocatingObjectDecorator) {
+    function (LocatingObjectDecorator, ContextualDomainObject) {
 
         describe("LocatingObjectDecorator", function () {
-            var mockContextualize,
-                mockQ,
+            var mockQ,
                 mockLog,
                 mockObjectService,
                 mockCallback,
@@ -57,20 +57,11 @@ define(
                 };
                 testObjects = {};
 
-                mockContextualize = jasmine.createSpy("contextualize");
                 mockQ = jasmine.createSpyObj("$q", ["when", "all"]);
                 mockLog =
                     jasmine.createSpyObj("$log", ["error", "warn", "info", "debug"]);
                 mockObjectService =
                     jasmine.createSpyObj("objectService", ["getObjects"]);
-
-                mockContextualize.andCallFake(function (domainObject, parentObject) {
-                    // Not really what contextualize does, but easy to test!
-                    return {
-                        testObject: domainObject,
-                        testParent: parentObject
-                    };
-                });
 
                 mockQ.when.andCallFake(testPromise);
                 mockQ.all.andCallFake(function (promises) {
@@ -97,28 +88,21 @@ define(
                 });
 
                 decorator = new LocatingObjectDecorator(
-                    mockContextualize,
                     mockQ,
                     mockLog,
                     mockObjectService
                 );
             });
 
-            it("contextualizes domain objects by location", function () {
+            it("contextualizes domain objects", function () {
                 decorator.getObjects(['b', 'c']).then(mockCallback);
-                expect(mockCallback).toHaveBeenCalledWith({
-                    b: {
-                        testObject: testObjects.b,
-                        testParent: testObjects.a
-                    },
-                    c: {
-                        testObject: testObjects.c,
-                        testParent: {
-                            testObject: testObjects.b,
-                            testParent: testObjects.a
-                        }
-                    }
-                });
+                expect(mockCallback).toHaveBeenCalled();
+
+                var callbackObj = mockCallback.mostRecentCall.args[0];
+                expect(testObjects.b.getCapability('context')).not.toBeDefined();
+                expect(testObjects.c.getCapability('context')).not.toBeDefined();
+                expect(callbackObj.b.getCapability('context')).toBeDefined();
+                expect(callbackObj.c.getCapability('context')).toBeDefined();
             });
 
             it("warns on cycle detection", function () {

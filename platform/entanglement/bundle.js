@@ -132,7 +132,6 @@ define([
                     "provides": "objectService",
                     "implementation": LocatingObjectDecorator,
                     "depends": [
-                        "contextualize",
                         "$q",
                         "$log"
                     ]

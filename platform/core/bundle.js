@@ -49,7 +49,6 @@ define([
     "./src/services/Now",
     "./src/services/Throttle",
     "./src/services/Topic",
-    "./src/services/Contextualize",
     "./src/services/Instantiate",
     'legacyRegistry'
 ], function (
@@ -81,7 +80,6 @@ define([
     Now,
     Throttle,
     Topic,
-    Contextualize,
     Instantiate,
     legacyRegistry
 ) {
@@ -284,8 +282,7 @@ define([
                     "key": "composition",
                     "implementation": CompositionCapability,
                     "depends": [
-                        "$injector",
-                        "contextualize"
+                        "$injector"
                     ]
                 },
                 {
@@ -376,13 +373,6 @@ define([
                 {
                     "key": "topic",
                     "implementation": Topic,
-                    "depends": [
-                        "$log"
-                    ]
-                },
-                {
-                    "key": "contextualize",
-                    "implementation": Contextualize,
                     "depends": [
                         "$log"
                     ]

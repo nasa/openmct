@@ -24,13 +24,13 @@
  * Module defining AlternateCompositionCapability. Created by vwoeltje on 11/7/14.
  */
 define([
-    '../../api/objects/object-utils'
-], function (objectUtils) {
+    '../../api/objects/object-utils',
+    '../../../platform/core/src/capabilities/ContextualDomainObject'
+], function (objectUtils, ContextualDomainObject) {
         function AlternateCompositionCapability($injector, domainObject) {
             this.domainObject = domainObject;
             this.getDependencies = function () {
                 this.instantiate = $injector.get("instantiate");
-                this.contextualize = $injector.get("contextualize");
                 this.getDependencies = undefined;
                 this.openmct = $injector.get("openmct");
             }.bind(this);
@@ -74,7 +74,7 @@ define([
             var keyString = objectUtils.makeKeyString(child.identifier);
             var oldModel = objectUtils.toOldFormat(child);
             var newDO = this.instantiate(oldModel, keyString);
-            return this.contextualize(newDO, this.domainObject);
+            return new ContextualDomainObject(newDO, this.domainObject);
 
         };
 
