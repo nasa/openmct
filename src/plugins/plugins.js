@@ -68,14 +68,6 @@ define([
                 return ts.metadata.key === options.defaultTimeSystem;
             });
             if (timeSystem !== undefined) {
-                defaults = timeSystem.defaults();
-
-                if (options.defaultTimespan !== undefined) {
-                    defaults.deltas.start = options.defaultTimespan;
-                    defaults.bounds.start = defaults.bounds.end - options.defaultTimespan;
-                    timeSystem.defaults(defaults);
-                }
-
                 openmct.conductor.timeSystem(timeSystem, defaults.bounds);
             }
         }
