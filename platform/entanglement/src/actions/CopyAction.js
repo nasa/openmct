@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['./AbstractComposeAction'],
-    function (AbstractComposeAction) {
+    ['./AbstractComposeAction', './CancelError'],
+    function (AbstractComposeAction, CancelError) {
 
         /**
          * The CopyAction is available from context menus and allows a user to
@@ -117,7 +117,8 @@ define(
             }
 
             function error(errorDetails) {
-                if (errorDetails && (errorDetails.message === "cancelled")) {
+                // No need to notify user of their own cancellation
+                if (errorDetails instanceof CancelError) {
                     return;
                 }
 
