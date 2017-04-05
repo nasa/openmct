@@ -51,7 +51,7 @@ define(
             }
             return this.policyService.allow(
                 "composition",
-                parentCandidate.getCapability('type'),
+                parentCandidate,
                 object
             );
         };

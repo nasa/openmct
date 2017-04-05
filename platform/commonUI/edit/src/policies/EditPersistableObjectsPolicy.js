@@ -21,31 +21,39 @@
  *****************************************************************************/
 
 define(
-    [],
-    function () {
+    ['../../../../../src/api/objects/object-utils'],
+    function (objectUtils) {
 
         /**
-         * Defines composition policy for Display Layout objects.
-         * They cannot contain folders.
+         * Policy that prevents editing of any object from a provider that does not
+         * support persistence (ie. the 'save' operation). Editing is prevented
+         * as a subsequent save would fail, causing the loss of a user's changes.
+         * @param openmct
          * @constructor
-         * @memberof platform/features/layout
-         * @implements {Policy.<View, DomainObject>}
          */
-        function LayoutCompositionPolicy() {
+        function EditPersistableObjectsPolicy(openmct) {
+            this.openmct = openmct;
         }
 
-        LayoutCompositionPolicy.prototype.allow = function (parent, child) {
-            var parentType = parent.getCapability('type');
-            if (parentType.instanceOf('layout') &&
-                child.getCapability('type').instanceOf('folder')) {
+        EditPersistableObjectsPolicy.prototype.allow = function (action, context) {
+            var identifier;
+            var provider;
+            var domainObject = context.domainObject;
+            var key = action.getMetadata().key;
+            var category = (context || {}).category;
 
-                return false;
+            // Use category to selectively block edit from the view. Edit action
+            // is also invoked during the create process which should be allowed,
+            // because it may be saved elsewhere
+            if ((key === 'edit' && category === 'view-control') || key === 'properties') {
+                identifier = objectUtils.parseKeyString(domainObject.getId());
+                provider = this.openmct.objects.getProvider(identifier);
+                return provider.save !== undefined;
             }
 
             return true;
         };
 
-        return LayoutCompositionPolicy;
+        return EditPersistableObjectsPolicy;
     }
 );
-

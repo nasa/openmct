@@ -26,44 +26,35 @@
  * @namespace platform/containment
  */
 define(
-    [],
-    function () {
+    ['../../../src/api/objects/object-utils'],
+    function (objectUtils) {
 
-        /**
-         * Determines whether a given object can contain a candidate child object.
-         * @constructor
-         * @memberof platform/containment
-         * @implements {Policy.<DomainObjectImpl, DomainObjectImpl>}
-         */
-        function CompositionPolicy() {
+        function PersistableCompositionPolicy(openmct) {
+            this.openmct = openmct;
         }
 
-        CompositionPolicy.prototype.allow = function (parent, child) {
-            var parentDef = parent.getCapability('type').getDefinition();
-
-            // A parent without containment rules can contain anything.
-            if (!parentDef.contains) {
-                return true;
+        /**
+         * Only allow changes to composition if the changes can be saved. This in
+         * effect prevents selection of objects from the locator that do not
+         * support persistence.
+         * @param parent
+         * @param child
+         * @returns {boolean}
+         */
+        PersistableCompositionPolicy.prototype.allow = function (parent) {
+            // If object is in edit mode, allow composition because it is
+            // part of object creation, and the object may be saved to another
+            // namespace that does support persistence. The EditPersistableObjectsPolicy
+            // prevents editing of objects that cannot be persisted, so we can assume that this
+            // is a new object.
+            if (!(parent.hasCapability('editor') && parent.getCapability('editor').isEditContextRoot())) {
+                var identifier = objectUtils.parseKeyString(parent.getId());
+                var provider = this.openmct.objects.getProvider(identifier);
+                return provider.save !== undefined;
             }
-
-            // If any containment rule matches context type, the candidate
-            // can contain this type.
-            return parentDef.contains.some(function (c) {
-                // Simple containment rules are supported typeKeys.
-                if (typeof c === 'string') {
-                    return c === child.getCapability('type').getKey();
-                }
-                // More complicated rules require context to have all specified
-                // capabilities.
-                if (!Array.isArray(c.has)) {
-                    c.has = [c.has];
-                }
-                return c.has.every(function (capability) {
-                    return child.hasCapability(capability);
-                });
-            });
+            return true;
         };
 
-        return CompositionPolicy;
+        return PersistableCompositionPolicy;
     }
 );

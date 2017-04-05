@@ -113,7 +113,7 @@ define(
                         validate();
                         expect(mockPolicyService.allow).toHaveBeenCalledWith(
                             "composition",
-                            parentCandidate.capabilities.type,
+                            parentCandidate,
                             object
                         );
                     });

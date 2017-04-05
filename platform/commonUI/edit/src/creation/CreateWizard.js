@@ -60,11 +60,9 @@ define(
                 policyService = this.policyService;
 
             function validateLocation(parent) {
-                var parentType = parent &&
-                    parent.getCapability('type');
-                return parentType && policyService.allow(
+                return parent && policyService.allow(
                     "composition",
-                    parentType,
+                    parent,
                     domainObject
                 );
             }
