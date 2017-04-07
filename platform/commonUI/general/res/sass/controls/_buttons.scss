@@ -22,8 +22,7 @@
 $baseRatio: 1.5;
 $pad: $interiorMargin * $baseRatio;
 
-.s-button,
-button {
+.s-button {
     @include user-select(none);
     @include btnSubtle($bg: $colorBtnBg, $bgHov: $colorBtnBgHov, $fg: $colorBtnFg, $ic: $colorBtnIcon);
     box-sizing: border-box;
