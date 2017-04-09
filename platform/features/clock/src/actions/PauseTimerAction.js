@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['./AbstractTimerAction'],
-    function (AbstractTimerAction) {
+    [],
+    function () {
 
         /**
          * Implements the "Pause" action for timers.
@@ -30,7 +30,6 @@ define(
          * Sets the reference pausedTime in a timer to the current
          * time, such that it stops counting up.
          *
-         * @extends {platform/features/clock.AbstractTimerAction}
          * @implements {Action}
          * @memberof platform/features/clock
          * @constructor
@@ -39,11 +38,9 @@ define(
          * @param {ActionContext} context the context for this action
          */
         function PauseTimerAction(now, context) {
-            AbstractTimerAction.apply(this, [now, context]);
+            this.domainObject = context.domainObject;
+            this.now = now;
         }
-
-        PauseTimerAction.prototype =
-            Object.create(AbstractTimerAction.prototype);
 
         PauseTimerAction.appliesTo = function (context) {
             var model =

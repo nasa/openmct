@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['./AbstractTimerAction'],
-    function (AbstractTimerAction) {
+    [],
+    function () {
 
         /**
          * Implements the "Start" action for timers.
@@ -30,7 +30,6 @@ define(
          * Sets the reference timestamp in a timer to the current
          * time, such that it begins counting up.
          *
-         * @extends {platform/features/clock.AbstractTimerAction}
          * @implements {Action}
          * @memberof platform/features/clock
          * @constructor
@@ -39,11 +38,9 @@ define(
          * @param {ActionContext} context the context for this action
          */
         function StartTimerAction(now, context) {
-            AbstractTimerAction.apply(this, [now, context]);
+            this.domainObject = context.domainObject;
+            this.now = now;
         }
-
-        StartTimerAction.prototype =
-            Object.create(AbstractTimerAction.prototype);
 
         StartTimerAction.appliesTo = function (context) {
             var model =
@@ -54,6 +51,33 @@ define(
             // a target time.
             return model.type === 'timer' &&
                     model.timerState !== 'started';
+        };
+
+        StartTimerAction.prototype.perform = function () {
+            var domainObject = this.domainObject,
+                now = this.now;
+
+            function setTimestamp(model) {
+                //if we are resuming
+                if (model.pausedTime) {
+                    var timeShift = now() - model.pausedTime;
+                    model.timestamp = model.timestamp + timeShift;
+                } else {
+                    model.timestamp = now();
+                }
+            }
+
+            function setTimerState(model) {
+                model.timerState = 'started';
+            }
+
+            function setPausedTime(model) {
+                model.pausedTime = undefined;
+            }
+
+            return domainObject.useCapability('mutation', setTimestamp) &&
+                domainObject.useCapability('mutation', setTimerState) &&
+                domainObject.useCapability('mutation', setPausedTime);
         };
 
         return StartTimerAction;

@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['./AbstractTimerAction'],
-    function (AbstractTimerAction) {
+    [],
+    function () {
 
         /**
          * Implements the "Stop" action for timers.
@@ -30,7 +30,6 @@ define(
          * Sets the reference timestamp in a timer undefined,
          * such that it is reset and makes no movements.
          *
-         * @extends {platform/features/clock.AbstractTimerAction}
          * @implements {Action}
          * @memberof platform/features/clock
          * @constructor
@@ -39,11 +38,9 @@ define(
          * @param {ActionContext} context the context for this action
          */
         function StopTimerAction(now, context) {
-            AbstractTimerAction.apply(this, [now, context]);
+            this.domainObject = context.domainObject;
+            this.now = now;
         }
-
-        StopTimerAction.prototype =
-            Object.create(AbstractTimerAction.prototype);
 
         StopTimerAction.appliesTo = function (context) {
             var model =

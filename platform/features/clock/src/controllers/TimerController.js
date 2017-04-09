@@ -52,12 +52,9 @@ define(
                     self.textValue = formatter(timeDelta);
                     self.signValue = timeDelta < 0 ? "-" :
                         timeDelta >= 1000 ? "+" : "";
-                    self.signCssClass = timeDelta < 0 ? "icon-minus" :
-                        timeDelta >= 1000 ? "icon-plus" : "";
                 } else {
                     self.textValue = "";
                     self.signValue = "";
-                    self.signCssClass = "";
                 }
             }
 
@@ -200,26 +197,6 @@ define(
         };
 
         /**
-         * Get the CSS class to display the stop button
-         * @returns {string} cssclass to display
-         */
-        TimerController.prototype.stopButtonCssClass = function () {
-            return this.stopAction ?
-                this.stopAction.getMetadata().cssclass : '';
-        };
-
-        /**
-         * Get the text to show the stop button
-         * (e.g. in a tooltip)
-         * @returns {string} name of the action
-         */
-        TimerController.prototype.stopButtonText = function () {
-            return this.stopAction ?
-                this.stopAction.getMetadata().name : '';
-        };
-
-
-        /**
          * Perform the action associated with the stop button.
          */
         TimerController.prototype.clickStopButton = function () {
@@ -236,15 +213,6 @@ define(
          */
         TimerController.prototype.sign = function () {
             return this.signValue;
-        };
-
-        /**
-         * Get the sign (+ or -) of the current timer value, as
-         * a CSS class.
-         * @returns {string} sign of the current timer value
-         */
-        TimerController.prototype.signClass = function () {
-            return this.signCssClass;
         };
 
         /**

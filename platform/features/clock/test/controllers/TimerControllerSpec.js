@@ -127,7 +127,6 @@ define(
                 mockWindow.requestAnimationFrame.mostRecentCall.args[0]();
                 expect(controller.sign()).toEqual("");
                 expect(controller.text()).toEqual("");
-                expect(controller.stopButtonText()).toEqual("");
             });
 
             it("formats time to display relative to target", function () {
@@ -162,18 +161,6 @@ define(
                 invokeWatch('model.modified', 1);
                 expect(controller.buttonCssClass()).toEqual("icon-pause");
                 expect(controller.buttonText()).toEqual("Pause");
-            });
-
-            it("shows cssclass & name for the stop action", function () {
-                invokeWatch('domainObject', mockDomainObject);
-                expect(controller.stopButtonCssClass()).toEqual("");
-                expect(controller.stopButtonText()).toEqual("");
-
-                testModel.timestamp = 12321;
-                testModel.timerState = 'started';
-                invokeWatch('model.modified', 1);
-                expect(controller.stopButtonCssClass()).toEqual("icon-box");
-                expect(controller.stopButtonText()).toEqual("Stop");
             });
 
             it("performs correct start/pause/stop action on click", function () {
