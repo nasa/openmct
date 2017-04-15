@@ -28,6 +28,8 @@
     <script src="bower_components/requirejs/require.js">
     </script>
     <script>
+        var THIRTY_MINUTES = 30 * 60 * 1000;
+
         require(['openmct'], function (openmct) {
             [
                 'example/imagery',
@@ -40,6 +42,7 @@
             openmct.install(openmct.plugins.Espresso());
             openmct.install(openmct.plugins.Generator());
             openmct.install(openmct.plugins.UTCTimeSystem());
+            openmct.time.timeSystem("utc", {start: Date.now() - THIRTY_MINUTES, end: Date.now()});
             openmct.start();
         });
     </script>

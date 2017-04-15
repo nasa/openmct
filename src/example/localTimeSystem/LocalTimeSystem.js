@@ -21,28 +21,33 @@
  *****************************************************************************/
 
 define([
-    "./src/LocalTimeSystem",
-    "./src/LocalTimeFormat",
-    'legacyRegistry'
-], function (
-    LocalTimeSystem,
-    LocalTimeFormat,
-    legacyRegistry
-) {
-    legacyRegistry.register("example/localTimeSystem", {
-        "extensions": {
-            "formats": [
-                {
-                    "key": "local-format",
-                    "implementation": LocalTimeFormat
-                }
-            ],
-            "timeSystems": [
-                {
-                    "implementation": LocalTimeSystem,
-                    "depends": ["$timeout"]
-                }
-            ]
-        }
-    });
+    '../../../src/plugins/utcTimeSystem/LocalClock',
+    './LADTickSource'
+], function (LocalClock, LADTickSource) {
+    var THIRTY_MINUTES = 30 * 60 * 1000,
+        DEFAULT_PERIOD = 1000;
+
+    /**
+     * This time system supports UTC dates and provides a ticking clock source.
+     * @implements TimeSystem
+     * @constructor
+     */
+    function LocalTimeSystem () {
+
+        /**
+         * Some metadata, which will be used to identify the time system in
+         * the UI
+         * @type {{key: string, name: string, glyph: string}}
+         */
+        this.key = 'local';
+        this.name = 'Local';
+        this.cssClass = 'icon-clock';
+
+        this.timeFormat = 'local-format';
+        this.durationFormat = 'duration';
+
+        this.isUTCBased = true;
+    }
+
+    return LocalTimeSystem;
 });

@@ -20,28 +20,19 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-    /**
-     * A tick source is an event generator such as a timing signal, or
-     * indicator of data availability, which can be used to advance the Time
-     * Conductor. Usage is simple, a listener registers a callback which is
-     * invoked when this source 'ticks'.
-     *
-     * @interface
-     * @constructor
-     */
-    function TickSource() {
-        this.listeners = [];
-    }
-
-    /**
-     * @param callback Function to be called when this tick source ticks.
-     * @returns an 'unlisten' function that will remove the callback from
-     * the registered listeners
-     */
-    TickSource.prototype.listen = function (callback) {
-        throw new Error('Not implemented');
+define([
+    "./UTCTimeSystem",
+    "./LocalClock"
+], function (
+    UTCTimeSystem,
+    LocalClock
+) {
+    var ONE_DAY = 24 * 60 * 60 * 1000;
+    return function () {
+        return function (openmct) {
+            var timeSystem = new UTCTimeSystem();
+            openmct.time.addTimeSystem(timeSystem);
+            openmct.time.addClock(new LocalClock(100));
+        }
     };
-
-    return TickSource;
 });

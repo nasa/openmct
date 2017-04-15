@@ -163,15 +163,15 @@ define(
             }
 
             if (request.start === undefined && request.end === undefined) {
-                bounds = this.openmct.conductor.bounds();
+                bounds = this.openmct.time.bounds();
                 fullRequest.start = bounds.start;
                 fullRequest.end = bounds.end;
             }
 
             if (request.domain === undefined) {
-                timeSystem = this.openmct.conductor.timeSystem();
+                timeSystem = this.openmct.time.timeSystem();
                 if (timeSystem !== undefined) {
-                    fullRequest.domain = timeSystem.metadata.key;
+                    fullRequest.domain = timeSystem.key;
                 }
             }
 

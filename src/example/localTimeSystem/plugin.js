@@ -21,20 +21,23 @@
  *****************************************************************************/
 
 define([
-    "./src/UTCTimeSystem",
-    "legacyRegistry"
+    "./LocalTimeSystem",
+    "./LocalTimeFormat",
+    "./LADTickSource"
 ], function (
-    UTCTimeSystem,
-    legacyRegistry
+    LocalTimeSystem,
+    LocalTimeFormat,
+    LADTickSource
 ) {
-    legacyRegistry.register("platform/features/conductor/utcTimeSystem", {
-        "extensions": {
-            "timeSystems": [
-                {
-                    "implementation": UTCTimeSystem,
-                    "depends": ["$timeout"]
-                }
-            ]
+    return function () {
+        return function (openmct) {
+            openmct.time.addTimeSystem(new LocalTimeSystem());
+            openmct.time.addClock(new LADTickSource());
+
+            openmct.legacyExtension('formats', {
+                key: 'local-format',
+                implementation: LocalTimeFormat
+            });
         }
-    });
+    };
 });

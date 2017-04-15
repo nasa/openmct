@@ -20,46 +20,53 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./TickSource'], function (TickSource) {
+define(['EventEmitter'], function (EventEmitter) {
     /**
      * @implements TickSource
      * @constructor
      */
-    function LocalClock($timeout, period) {
-        TickSource.call(this);
+    function LocalClock(period) {
+        EventEmitter.call(this);
 
-        this.metadata = {
-            key: 'local',
-            mode: 'realtime',
-            cssClass: 'icon-clock',
-            label: 'Real-time',
-            name: 'Real-time Mode',
-            description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will automatically advance themselves based on a UTC clock.'
-        };
+        /*
+        Metadata fields
+         */
+        this.key = 'local';
+        this.cssClass = 'icon-clock';
+        this.label = 'Local Clock';
+        this.name = 'Local Clock';
+        this.description = "Updates every second, providing UTC timestamps from " +
+            "user's local computer.";
 
         this.period = period;
-        this.$timeout = $timeout;
         this.timeoutHandle = undefined;
+        this.lastTick = Date.now();
     }
 
-    LocalClock.prototype = Object.create(TickSource.prototype);
+    LocalClock.prototype = Object.create(EventEmitter.prototype);
 
+    /**
+     * @private
+     */
     LocalClock.prototype.start = function () {
-        this.timeoutHandle = this.$timeout(this.tick.bind(this), this.period);
+        this.timeoutHandle = setTimeout(this.tick.bind(this), this.period);
     };
 
+    /**
+     * @private
+     */
     LocalClock.prototype.stop = function () {
         if (this.timeoutHandle) {
-            this.$timeout.cancel(this.timeoutHandle);
+            clearTimeout(this.timeoutHandle);
+            this.timeoutHandle = undefined;
         }
     };
 
     LocalClock.prototype.tick = function () {
         var now = Date.now();
-        this.listeners.forEach(function (listener) {
-            listener(now);
-        });
-        this.timeoutHandle = this.$timeout(this.tick.bind(this), this.period);
+        this.emit("tick", now);
+        this.lastTick = now;
+        this.timeoutHandle = setTimeout(this.tick.bind(this), this.period);
     };
 
     /**
@@ -69,20 +76,34 @@ define(['./TickSource'], function (TickSource) {
      * @param listener
      * @returns {function} a function for deregistering the provided listener
      */
-    LocalClock.prototype.listen = function (listener) {
-        var listeners = this.listeners;
-        listeners.push(listener);
+    LocalClock.prototype.on = function (event, listener) {
+        var result = EventEmitter.prototype.on.apply(this, arguments);
 
-        if (listeners.length === 1) {
+        if (this.listeners(event).length === 1) {
             this.start();
         }
+        return result;
+    };
 
-        return function () {
-            listeners.splice(listeners.indexOf(listener));
-            if (listeners.length === 0) {
-                this.stop();
-            }
-        }.bind(this);
+    /**
+     * Register a listener for the local clock. When it ticks, the local
+     * clock will provide the current local system time
+     *
+     * @param listener
+     * @returns {function} a function for deregistering the provided listener
+     */
+    LocalClock.prototype.off = function (event, listener) {
+        var result = EventEmitter.prototype.off.apply(this, arguments);
+
+        if (this.listeners(event).length === 0) {
+            this.stop();
+        }
+
+        return result;
+    };
+
+    LocalClock.prototype.currentValue = function () {
+        return this.lastTick;
     };
 
     return LocalClock;

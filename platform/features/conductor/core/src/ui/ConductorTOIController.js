@@ -30,7 +30,7 @@ define(
          * @memberof platform.features.conductor
          */
         function ConductorTOIController($scope, openmct, conductorViewService) {
-            this.conductor = openmct.conductor;
+            this.timeAPI = openmct.time;
             this.conductorViewService = conductorViewService;
 
             //Bind all class functions to 'this'
@@ -40,11 +40,11 @@ define(
                 this[key] = ConductorTOIController.prototype[key].bind(this);
             }.bind(this));
 
-            this.conductor.on('timeOfInterest', this.changeTimeOfInterest);
+            this.timeAPI.on('timeOfInterest', this.changeTimeOfInterest);
             this.conductorViewService.on('zoom', this.setOffsetFromZoom);
             this.conductorViewService.on('pan', this.setOffsetFromBounds);
 
-            var timeOfInterest = this.conductor.timeOfInterest();
+            var timeOfInterest = this.timeAPI.timeOfInterest();
             if (timeOfInterest) {
                 this.changeTimeOfInterest(timeOfInterest);
             }
@@ -56,7 +56,7 @@ define(
          * @private
          */
         ConductorTOIController.prototype.destroy = function () {
-            this.conductor.off('timeOfInterest', this.changeTimeOfInterest);
+            this.timeAPI.off('timeOfInterest', this.changeTimeOfInterest);
             this.conductorViewService.off('zoom', this.setOffsetFromZoom);
             this.conductorViewService.off('pan', this.setOffsetFromBounds);
         };
@@ -70,7 +70,7 @@ define(
          * @param {TimeConductorBounds} bounds
          */
         ConductorTOIController.prototype.setOffsetFromBounds = function (bounds) {
-            var toi = this.conductor.timeOfInterest();
+            var toi = this.timeAPI.timeOfInterest();
             if (toi !== undefined) {
                 var offset = toi - bounds.start;
                 var duration = bounds.end - bounds.start;
@@ -94,7 +94,7 @@ define(
          * @private
          */
         ConductorTOIController.prototype.changeTimeOfInterest = function () {
-            var bounds = this.conductor.bounds();
+            var bounds = this.timeAPI.bounds();
             if (bounds) {
                 this.setOffsetFromBounds(bounds);
             }
@@ -112,10 +112,10 @@ define(
                 var width = element.width();
                 var relativeX = e.pageX - element.offset().left;
                 var percX = relativeX / width;
-                var bounds = this.conductor.bounds();
+                var bounds = this.timeAPI.bounds();
                 var timeRange = bounds.end - bounds.start;
 
-                this.conductor.timeOfInterest(timeRange * percX + bounds.start);
+                this.timeAPI.timeOfInterest(timeRange * percX + bounds.start);
             }
         };
 

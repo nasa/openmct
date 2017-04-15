@@ -1,7 +1,7 @@
 <!-- Parent holder for time conductor. follow-mode | fixed-mode -->
 <div ng-controller="TimeConductorController as tcController"
-    class="holder grows flex-elem l-flex-row l-time-conductor {{modeModel.selectedKey}}-mode {{timeSystemModel.selected.metadata.key}}-time-system"
-        ng-class="{'status-panning': tcController.panning}" ng-show="showTimeConductor">
+    class="holder grows flex-elem l-flex-row l-time-conductor {{tcController.mode}}-mode {{timeSystemModel.selected.metadata.key}}-time-system"
+        ng-class="{'status-panning': tcController.panning}">
     <div class="flex-elem holder time-conductor-icon">
         <div class="hand-little"></div>
         <div class="hand-big"></div>
@@ -11,7 +11,7 @@
         <!-- Holds inputs and ticks -->
         <div class="l-time-conductor-inputs-and-ticks l-row-elem flex-elem no-margin">
             <form class="l-time-conductor-inputs-holder"
-                  ng-submit="tcController.setBounds(boundsModel)">
+                  ng-submit="tcController.setBoundsFromView(boundsModel)">
                 <span class="l-time-range-w start-w">
                     <span class="l-time-conductor-inputs">
                         <span class="l-time-range-input-w start-date">
@@ -22,22 +22,22 @@
                                              validate: tcController.validation.validateStart
                                          }"
                                          ng-model="boundsModel"
-                                         ng-blur="tcController.setBounds(boundsModel)"
+                                         ng-blur="tcController.setBoundsFromView(boundsModel)"
                                          field="'start'"
                                          class="time-range-input">
                             </mct-control>
                         </span>
                             <span class="l-time-range-input-w time-delta start-delta"
-                              ng-class="{'hide':(modeModel.selectedKey === 'fixed')}">
+                              ng-class="{'hide':(tcController.mode === 'fixed')}">
                                 -
                             <mct-control key="'datetime-field'"
                                          structure="{
-                                            format: timeSystemModel.deltaFormat,
-                                            validate: tcController.validation.validateStartDelta
+                                            format: timeSystemModel.durationFormat,
+                                            validate: tcController.validation.validateStartOffset
                                          }"
                                          ng-model="boundsModel"
-                                         ng-blur="tcController.setDeltas(boundsModel)"
-                                         field="'startDelta'"
+                                         ng-blur="tcController.setOffsetsFromView(boundsModel)"
+                                         field="'startOffset'"
                                          class="hrs-min-input">
                             </mct-control>
                         </span>
@@ -54,23 +54,23 @@
                                              validate: tcController.validation.validateEnd
                                          }"
                                          ng-model="boundsModel"
-                                         ng-blur="tcController.setBounds(boundsModel)"
-                                         ng-disabled="modeModel.selectedKey !== 'fixed'"
+                                         ng-blur="tcController.setBoundsFromView(boundsModel)"
+                                         ng-disabled="tcController.mode !== 'fixed'"
                                          field="'end'"
                                          class="time-range-input">
                             </mct-control>
                         </span>
                         <span class="l-time-range-input-w time-delta end-delta"
-                              ng-class="{'hide':(modeModel.selectedKey === 'fixed')}">
+                              ng-class="{'hide':(tcController.mode === 'fixed')}">
                                 +
                             <mct-control key="'datetime-field'"
                                          structure="{
-                                            format: timeSystemModel.deltaFormat,
-                                            validate: tcController.validation.validateEndDelta
+                                            format: timeSystemModel.durationFormat,
+                                            validate: tcController.validation.validateEndOffset
                                          }"
                                          ng-model="boundsModel"
-                                         ng-blur="tcController.setDeltas(boundsModel)"
-                                         field="'endDelta'"
+                                         ng-blur="tcController.setOffsetsFromView(boundsModel)"
+                                         field="'endOffset'"
                                          class="hrs-min-input">
                             </mct-control>
                         </span>
@@ -99,24 +99,23 @@
         <div class="l-time-conductor-controls l-row-elem l-flex-row flex-elem">
             <mct-include
                 key="'mode-selector'"
-                ng-model="modeModel"
+                ng-model="tcController.menu"
                 class="holder flex-elem menus-up mode-selector">
             </mct-include>
             <mct-control
                     key="'menu-button'"
                     class="holder flex-elem menus-up time-system"
                     structure="{
-                        text: timeSystemModel.selected.metadata.name,
-                        click: tcController.selectTimeSystemByKey,
-                        options: timeSystemModel.options
+                        text: timeSystemModel.selected.name,
+                        click: tcController.setTimeSystemFromView,
+                        options: tcController.timeSystemsForClocks[tcController.menu.selected.key]
                     }">
             </mct-control>
             <!-- Zoom control -->
-            <div ng-if="tcController.supportsZoom"
+            <div ng-if="tcController.zoom"
                  class="l-time-conductor-zoom-w grows flex-elem l-flex-row">
                 {{currentZoom}}
-                <span
-                        class="time-conductor-zoom-current-range flex-elem flex-fixed holder">{{timeUnits}}</span>
+                <span class="time-conductor-zoom-current-range flex-elem flex-fixed holder">{{timeUnits}}</span>
                 <input class="time-conductor-zoom flex-elem" type="range"
                        ng-model="tcController.currentZoom"
                        ng-mouseUp="tcController.onZoomStop(tcController.currentZoom)"

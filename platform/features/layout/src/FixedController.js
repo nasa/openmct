@@ -203,8 +203,8 @@ define(
             }
 
             // Trigger a new query for telemetry data
-            function updateDisplayBounds(bounds) {
-                if (!self.openmct.conductor.follow()) {
+            function updateDisplayBounds(bounds, isTick) {
+                if (!isTick) {
                     //Reset values
                     self.values = {};
                     refreshElements();
@@ -295,11 +295,11 @@ define(
             // Free up subscription on destroy
             $scope.$on("$destroy", function () {
                 self.unsubscribe();
-                self.openmct.conductor.off("bounds", updateDisplayBounds);
+                self.openmct.time.off("bounds", updateDisplayBounds);
             });
 
             // Respond to external bounds changes
-            this.openmct.conductor.on("bounds", updateDisplayBounds);
+            this.openmct.time.on("bounds", updateDisplayBounds);
         }
 
         /**
@@ -338,9 +338,11 @@ define(
          */
         FixedController.prototype.subscribeToObjects = function (objects) {
             var self = this;
+            var timeAPI = this.openmct.time;
+
             this.subscriptions = objects.map(function (object) {
                 return self.openmct.telemetry.subscribe(object, function (datum) {
-                    if (self.openmct.conductor.follow()) {
+                    if (timeAPI.clock() !== undefined) {
                         self.updateView(object, datum);
                     }
                 }, {});
@@ -378,7 +380,7 @@ define(
          * @returns {object[]} the provided objects for chaining.
          */
         FixedController.prototype.fetchHistoricalData = function (objects) {
-            var bounds = this.openmct.conductor.bounds();
+            var bounds = this.openmct.time.bounds();
             var self = this;
 
             objects.forEach(function (object) {

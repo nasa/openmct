@@ -37,14 +37,12 @@ define(
         function ConductorAxisController(openmct, formatService, conductorViewService, scope, element) {
             // Dependencies
             this.formatService = formatService;
-            this.conductor = openmct.conductor;
+            this.timeAPI = openmct.time;
             this.conductorViewService = conductorViewService;
 
             this.scope = scope;
-            this.initialized = false;
 
-            this.bounds = this.conductor.bounds();
-            this.timeSystem = this.conductor.timeSystem();
+            this.bounds = this.timeAPI.bounds();
 
             //Bind all class functions to 'this'
             Object.keys(ConductorAxisController.prototype).filter(function (key) {
@@ -60,8 +58,8 @@ define(
          * @private
          */
         ConductorAxisController.prototype.destroy = function () {
-            this.conductor.off('timeSystem', this.changeTimeSystem);
-            this.conductor.off('bounds', this.changeBounds);
+            this.timeAPI.off('timeSystem', this.changeTimeSystem);
+            this.timeAPI.off('bounds', this.changeBounds);
             this.conductorViewService.off("zoom", this.onZoom);
             this.conductorViewService.off("zoom-stop", this.onZoomStop);
         };
@@ -83,14 +81,14 @@ define(
             this.axisElement = vis.append("g")
                 .attr("transform", "translate(0," + (height - PADDING) + ")");
 
-            if (this.timeSystem !== undefined) {
-                this.changeTimeSystem(this.timeSystem);
+            if (this.timeAPI.timeSystem() !== undefined) {
+                this.changeTimeSystem(this.timeAPI.timeSystem());
                 this.setScale();
             }
 
             //Respond to changes in conductor
-            this.conductor.on("timeSystem", this.changeTimeSystem);
-            this.conductor.on("bounds", this.changeBounds);
+            this.timeAPI.on("timeSystem", this.changeTimeSystem);
+            this.timeAPI.on("bounds", this.changeBounds);
 
             this.scope.$on("$destroy", this.destroy);
 
@@ -113,10 +111,10 @@ define(
          */
         ConductorAxisController.prototype.setScale = function () {
             var width = this.target.offsetWidth;
-            var timeSystem = this.conductor.timeSystem();
+            var timeSystem = this.timeAPI.timeSystem();
             var bounds = this.bounds;
 
-            if (timeSystem.isUTCBased()) {
+            if (timeSystem.isUTCBased) {
                 this.xScale = this.xScale || d3Scale.scaleUtc();
                 this.xScale.domain([new Date(bounds.start), new Date(bounds.end)]);
             } else {
@@ -137,16 +135,14 @@ define(
          * @param timeSystem
          */
         ConductorAxisController.prototype.changeTimeSystem = function (timeSystem) {
-            this.timeSystem = timeSystem;
-
-            var key = timeSystem.formats()[0];
+            var key = timeSystem.timeFormat;
             if (key !== undefined) {
                 var format = this.formatService.getFormat(key);
-                var bounds = this.conductor.bounds();
+                var bounds = this.timeAPI.bounds();
 
                 //The D3 scale used depends on the type of time system as d3
                 // supports UTC out of the box.
-                if (timeSystem.isUTCBased()) {
+                if (timeSystem.isUTCBased) {
                     this.xScale = d3Scale.scaleUtc();
                 } else {
                     this.xScale = d3Scale.scaleLinear();
@@ -180,7 +176,7 @@ define(
         ConductorAxisController.prototype.panStop = function () {
             //resync view bounds with time conductor bounds
             this.conductorViewService.emit("pan-stop");
-            this.conductor.bounds(this.bounds);
+            this.timeAPI.bounds(this.bounds);
         };
 
         /**
@@ -216,9 +212,9 @@ define(
          * @fires platform.features.conductor.ConductorAxisController~pan
          */
         ConductorAxisController.prototype.pan = function (delta) {
-            if (!this.conductor.follow()) {
+            if (this.timeAPI.clock() === undefined) {
                 var deltaInMs = delta[0] * this.msPerPixel;
-                var bounds = this.conductor.bounds();
+                var bounds = this.timeAPI.bounds();
                 var start = Math.floor((bounds.start - deltaInMs) / 1000) * 1000;
                 var end = Math.floor((bounds.end - deltaInMs) / 1000) * 1000;
                 this.bounds = {

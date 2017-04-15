@@ -67,12 +67,10 @@ define([
                     "depends": [
                         "$scope",
                         "$window",
-                        "$location",
                         "openmct",
                         "timeConductorViewService",
                         "formatService",
-                        "DEFAULT_TIMECONDUCTOR_MODE",
-                        "SHOW_TIMECONDUCTOR"
+                        "CONDUCTOR_CONFIG"
                     ]
                 },
                 {
@@ -149,13 +147,6 @@ define([
                     "copyright": "Copyright 2010-2016 Mike Bostock",
                     "license": "BSD-3-Clause",
                     "link": "https://github.com/d3/d3/blob/master/LICENSE"
-                }
-            ],
-            "constants": [
-                {
-                    "key": "DEFAULT_TIMECONDUCTOR_MODE",
-                    "value": "realtime",
-                    "priority": "fallback"
                 }
             ],
             "formats": [

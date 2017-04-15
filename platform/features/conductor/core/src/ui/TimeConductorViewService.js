@@ -22,15 +22,14 @@
 
 define(
     [
-        'EventEmitter',
-        './TimeConductorMode'
+        'EventEmitter'
     ],
-    function (EventEmitter, TimeConductorMode) {
+    function (EventEmitter) {
 
         /**
          * A class representing the state of the time conductor view. This
          * exposes details of the UI that are not represented on the
-         * TimeConductor API itself such as modes and deltas.
+         * TimeConductor API itself such as modes and offsets.
          *
          * @memberof platform.features.conductor
          * @param conductor
@@ -41,167 +40,24 @@ define(
 
             EventEmitter.call(this);
 
-            this.systems = timeSystems.map(function (timeSystemConstructor) {
-                return timeSystemConstructor();
-            });
-
-            this.conductor = openmct.conductor;
-            this.currentMode = undefined;
-
-            /**
-             * @typedef {object} ModeMetadata
-             * @property {string} key A unique identifying key for this mode
-             * @property {string} cssClass The css class for the glyph
-             * representing this mode
-             * @property {string} label A short label for this mode
-             * @property {string} name A longer name for the mode
-             * @property {string} description A description of the mode
-             */
-            this.availModes = {
-                'fixed': {
-                    key: 'fixed',
-                    cssClass: 'icon-calendar',
-                    label: 'Fixed',
-                    name: 'Fixed Timespan Mode',
-                    description: 'Query and explore data that falls between two fixed datetimes.'
-                }
-            };
-
-            function hasTickSource(sourceType, timeSystem) {
-                return timeSystem.tickSources().some(function (tickSource) {
-                    return tickSource.metadata.mode === sourceType;
-                });
-            }
-
-            var timeSystemsForMode = function (sourceType) {
-                return this.systems.filter(hasTickSource.bind(this, sourceType));
-            }.bind(this);
-
-            //Only show 'real-time mode' if appropriate time systems available
-            if (timeSystemsForMode('realtime').length > 0) {
-                var realtimeMode = {
-                    key: 'realtime',
-                    cssClass: 'icon-clock',
-                    label: 'Real-time',
-                    name: 'Real-time Mode',
-                    description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will automatically advance themselves based on a UTC clock.'
-                };
-                this.availModes[realtimeMode.key] = realtimeMode;
-            }
-
-            //Only show 'LAD mode' if appropriate time systems available
-            if (timeSystemsForMode('lad').length > 0) {
-                var ladMode = {
-                    key: 'lad',
-                    cssClass: 'icon-database',
-                    label: 'LAD',
-                    name: 'LAD Mode',
-                    description: 'Latest Available Data mode monitors real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'
-                };
-                this.availModes[ladMode.key] = ladMode;
-            }
+            this.timeAPI = openmct.time;
         }
 
         TimeConductorViewService.prototype = Object.create(EventEmitter.prototype);
 
-        /**
-         * Getter/Setter for the Time Conductor Mode. Modes determine the
-         * behavior of the time conductor, especially with regards to the
-         * bounds and how they change with time.
-         *
-         * In fixed mode, the bounds do not change with time, but can be
-         * modified by the used
-         *
-         * In realtime mode, the bounds change with time. Bounds are not
-         * directly modifiable by the user, however deltas can be.
-         *
-         * In Latest Available Data (LAD) mode, the bounds are updated when
-         * data is received. As with realtime mode the
-         *
-         * @param {string} newModeKey One of 'fixed', 'realtime', or 'LAD'
-         * @returns {string} the current mode, one of 'fixed', 'realtime',
-         * or 'LAD'.
-         *
-         */
-        TimeConductorViewService.prototype.mode = function (newModeKey) {
-            function contains(timeSystems, ts) {
-                return timeSystems.filter(function (t) {
-                        return t.metadata.key === ts.metadata.key;
-                    }).length > 0;
+        TimeConductorViewService.prototype.calculateBoundsFromOffsets = function (offsets) {
+            var oldEnd = this.timeAPI.bounds().end;
+
+            if (offsets && offsets.end !== undefined) {
+                //Calculate the previous raw end value (without delta)
+                oldEnd = oldEnd - offsets.end;
             }
 
-            if (arguments.length === 1) {
-                var timeSystem = this.conductor.timeSystem();
-                var modes = this.availableModes();
-                var modeMetaData = modes[newModeKey];
-
-                if (this.currentMode) {
-                    this.currentMode.destroy();
-                }
-                this.currentMode = new TimeConductorMode(modeMetaData, this.conductor, this.systems);
-
-                // If no time system set on time conductor, or the currently selected time system is not available in
-                // the new mode, default to first available time system
-                if (!timeSystem || !contains(this.currentMode.availableTimeSystems(), timeSystem)) {
-                    timeSystem = this.currentMode.availableTimeSystems()[0];
-                    this.conductor.timeSystem(timeSystem, timeSystem.defaults().bounds);
-                }
-            }
-            return this.currentMode ? this.currentMode.metadata().key : undefined;
-        };
-
-        /**
-         * @typedef {object} TimeConductorDeltas
-         * @property {number} start Used to set the start bound of the
-         * TimeConductor on tick. A positive value that will be subtracted
-         * from the value provided by a tick source to determine the start
-         * bound.
-         * @property {number} end Used to set the end bound of the
-         * TimeConductor on tick. A positive value that will be added
-         * from the value provided by a tick source to determine the start
-         * bound.
-         */
-        /**
-         * Deltas define the offset from the latest time value provided by
-         * the current tick source. Deltas are only valid in realtime or LAD
-         * modes.
-         *
-         * Realtime mode:
-         *     - start: A time in ms before now which will be used to
-         *     determine the 'start' bound on tick
-         *     - end: A time in ms after now which will be used to determine
-         *     the 'end' bound on tick
-         *
-         * LAD mode:
-         *     - start: A time in ms before the timestamp of the last data
-         *     received which will be used to determine the 'start' bound on
-         *     tick
-         *     - end: A time in ms after the timestamp of the last data received
-         *     which will be used to determine the 'end' bound on tick
-         * @returns {TimeConductorDeltas} current value of the deltas
-         */
-        TimeConductorViewService.prototype.deltas = function () {
-            //Deltas stored on mode. Use .apply to preserve arguments
-            return this.currentMode.deltas.apply(this.currentMode, arguments);
-        };
-
-        /**
-         * Availability of modes depends on the time systems and tick
-         * sources available. For example, Latest Available Data mode will
-         * not be available if there are no time systems and tick sources
-         * that support LAD mode.
-         * @returns {ModeMetadata[]}
-         */
-        TimeConductorViewService.prototype.availableModes = function () {
-            return this.availModes;
-        };
-
-        /**
-         * Availability of time systems depends on the currently selected
-         * mode. Time systems and tick sources are mode dependent
-         */
-        TimeConductorViewService.prototype.availableTimeSystems = function () {
-            return this.currentMode.availableTimeSystems();
+            var bounds = {
+                start: oldEnd - offsets.start,
+                end: oldEnd + offsets.end
+            };
+            return bounds;
         };
 
         /**
@@ -219,7 +75,24 @@ define(
          * @see module:openmct.TimeConductor#bounds
          */
         TimeConductorViewService.prototype.zoom = function (timeSpan) {
-            var zoom = this.currentMode.calculateZoom(timeSpan);
+            var zoom = {};
+
+            // If a tick source is defined, then the concept of 'now' is
+            // important. Calculate zoom based on 'now'.
+            if (this.timeAPI.clock() !== undefined) {
+                zoom.offsets = {
+                    start: timeSpan,
+                    end: this.timeAPI.clockOffsets().end
+                };
+                zoom.bounds = this.calculateBoundsFromOffsets(zoom.offsets);
+            } else {
+                var bounds = this.timeAPI.bounds();
+                var center = bounds.start + ((bounds.end - bounds.start)) / 2;
+                bounds.start = center - timeSpan / 2;
+                bounds.end = center + timeSpan / 2;
+                zoom.bounds = bounds;
+            }
+
             this.emit("zoom", zoom);
             return zoom;
         };

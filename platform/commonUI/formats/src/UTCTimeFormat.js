@@ -96,45 +96,6 @@ define([
     }
 
     /**
-     * Returns a description of the current range of the time conductor's
-     * bounds.
-     * @param timeRange
-     * @returns {*}
-     */
-    UTCTimeFormat.prototype.timeUnits = function (timeRange) {
-        var momentified = moment.duration(timeRange);
-
-        return [
-            ["Decades", function (r) {
-                return r.years() > 15;
-            }],
-            ["Years", function (r) {
-                return r.years() > 1;
-            }],
-            ["Months", function (r) {
-                return r.years() === 1 || r.months() > 1;
-            }],
-            ["Days", function (r) {
-                return r.months() === 1 || r.days() > 1;
-            }],
-            ["Hours", function (r) {
-                return r.days() === 1 || r.hours() > 1;
-            }],
-            ["Minutes", function (r) {
-                return r.hours() === 1 || r.minutes() > 1;
-            }],
-            ["Seconds", function (r) {
-                return r.minutes() === 1 || r.seconds() > 1;
-            }],
-            ["Milliseconds", function (r) {
-                return true;
-            }]
-        ].filter(function (row) {
-            return row[1](momentified);
-        })[0][0];
-    };
-
-    /**
      *
      * @param value
      * @param {Scale} [scale] Optionally provides context to the

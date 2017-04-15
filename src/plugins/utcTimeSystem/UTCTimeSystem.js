@@ -20,63 +20,28 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    '../../core/src/timeSystems/TimeSystem',
-    '../../core/src/timeSystems/LocalClock'
-], function (TimeSystem, LocalClock) {
-    var FIFTEEN_MINUTES = 15 * 60 * 1000,
-        DEFAULT_PERIOD = 100;
-
+define([], function () {
     /**
      * This time system supports UTC dates and provides a ticking clock source.
      * @implements TimeSystem
      * @constructor
      */
-    function UTCTimeSystem($timeout) {
-        TimeSystem.call(this);
+    function UTCTimeSystem() {
 
         /**
          * Some metadata, which will be used to identify the time system in
          * the UI
          * @type {{key: string, name: string, cssClass: string}}
          */
-        this.metadata = {
-            'key': 'utc',
-            'name': 'UTC',
-            'cssClass': 'icon-clock'
-        };
+        this.key = 'utc';
+        this.name = 'UTC';
+        this.cssClass = 'icon-clock';
 
-        this.fmts = ['utc'];
-        this.sources = [new LocalClock($timeout, DEFAULT_PERIOD)];
+        this.timeFormat = 'utc';
+        this.durationFormat = 'duration';
+
+        this.isUTCBased = true;
     }
-
-    UTCTimeSystem.prototype = Object.create(TimeSystem.prototype);
-
-    UTCTimeSystem.prototype.formats = function () {
-        return this.fmts;
-    };
-
-    UTCTimeSystem.prototype.deltaFormat = function () {
-        return 'duration';
-    };
-
-    UTCTimeSystem.prototype.tickSources = function () {
-        return this.sources;
-    };
-
-    UTCTimeSystem.prototype.defaults = function () {
-        var now = Math.ceil(Date.now() / 1000) * 1000;
-        var ONE_MINUTE = 60 * 1 * 1000;
-        var FIFTY_YEARS = 50 * 365 * 24 * 60 * 60 * 1000;
-
-        return {
-            key: 'utc-default',
-            name: 'UTC time system defaults',
-            deltas: {start: FIFTEEN_MINUTES, end: 0},
-            bounds: {start: now - FIFTEEN_MINUTES, end: now},
-            zoom: {min: FIFTY_YEARS, max: ONE_MINUTE}
-        };
-    };
 
     return UTCTimeSystem;
 });
