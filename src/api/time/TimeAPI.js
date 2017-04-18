@@ -22,6 +22,8 @@
 
 define(['EventEmitter'], function (EventEmitter) {
 
+    var tick;
+
     /**
      * The public API for setting and querying time conductor state. The
      * time conductor is the means by which the temporal bounds of a view
@@ -48,26 +50,49 @@ define(['EventEmitter'], function (EventEmitter) {
             end: undefined
         };
 
-        this.timeSystems = {};
-        this.tickSources = {};
-        this.activeTickSource = undefined;
-        this.lastTick = undefined;
+        this.timeSystems = new Map();
+        this.clocks = new Map();
+        this.activeClock = undefined;
+        this.offsets = undefined;
 
-        [
-            'tick'
-        ].forEach(function (methodName) {
-            this[methodName] = this[methodName].bind(this);
-        }.bind(this))
+        /**
+         * Tick is not exposed via public API, even @privately to avoid misuse.
+         */
+
+        tick = function (timestamp) {
+            var newBounds = {
+                start: timestamp + this.offsets.start,
+                end: timestamp + this.offsets.end
+            };
+
+            this.boundsVal = newBounds;
+            this.emit('bounds', this.boundsVal, true);
+
+            // If a bounds change results in a TOI outside of the current
+            // bounds, unset it
+            if (this.toi < newBounds.start || this.toi > newBounds.end) {
+                this.timeOfInterest(undefined);
+            }
+        }.bind(this);
+
     }
 
     TimeAPI.prototype = Object.create(EventEmitter.prototype);
 
     TimeAPI.prototype.addTimeSystem = function (timeSystem) {
-        this.timeSystems[timeSystem.key] = timeSystem;
+        this.timeSystems.set(timeSystem.key, timeSystem);
     };
 
-    TimeAPI.prototype.addTickSource = function (tickSource) {
-        this.tickSources[tickSource.key] = tickSource;
+    TimeAPI.prototype.getTimeSystem = function (key) {
+        return this.timeSystems.get(key);
+    };
+
+    TimeAPI.prototype.addClock = function (clock) {
+        this.clocks.set(clock.key, clock);
+    };
+
+    TimeAPI.prototype.getClock = function (key) {
+        return this.clocks.get(key);
     };
 
     /**
@@ -150,7 +175,13 @@ define(['EventEmitter'], function (EventEmitter) {
      */
     TimeAPI.prototype.timeSystem = function (newTimeSystem, bounds) {
         if (arguments.length >= 2) {
-            this.system = newTimeSystem;
+            if (newTimeSystem === 'undefined') {
+                throw "Please provide a time system";
+            }
+            if (this.timeSystems.get(newTimeSystem) === undefined){
+                throw "Unknown time system " + newTimeSystem + ". Has it been registered with 'addTimeSystem'?";
+            }
+            this.system = this.timeSystems.get(newTimeSystem);
             /**
              * The time system used by the time
              * conductor has changed. A change in Time System will always be
@@ -160,12 +191,12 @@ define(['EventEmitter'], function (EventEmitter) {
              * @property {TimeSystem} The value of the currently applied
              * Time System
              * */
-            this.emit('timeSystem', this.system);
+            this.emit('timeSystem', this.system.key);
             this.bounds(bounds);
         } else if (arguments.length === 1) {
             throw new Error('Must set bounds when changing time system');
         }
-        return this.system;
+        return this.system && this.system.key;
     };
 
     /**
@@ -199,52 +230,54 @@ define(['EventEmitter'], function (EventEmitter) {
      * `false` otherwise.
      */
     TimeAPI.prototype.follow = function () {
-        return this.activeTickSource !== undefined;
-    };
-
-    TimeAPI.prototype.tick = function (timestamp) {
-        //What is lastTick the first time this is called?
-        //I think that tracking deltas is unavoidable here...
-        var delta = timestamp - this.lastTick;
-
-        var newBounds = {
-            start: this.boundsVal.start + delta,
-            end: this.boundsVal.end + delta
-        };
-
-        this.boundsVal = newBounds;
-        this.emit('bounds', true);
-    
-        // If a bounds change results in a TOI outside of the current
-        // bounds, unset it
-        if (this.toi < newBounds.start || this.toi > newBounds.end) {
-            this.timeOfInterest(undefined);
-        }
-        this.lastTick = timestamp;
+        return this.activeClock !== undefined;
     };
 
     /**
-     * Set the active tick source. Tick source will be immediately subscribed to
-     * and ticking will begin.
+     * Set the active clock. Tick source will be immediately subscribed to
+     * and ticking will begin. Offsets from 'now' must also be provided.
      * @param {string} key the key of the tick source to activate
+     * @param {ClockOffsets} offsets on each tick these will be used to calculate
+     * the start and end bounds. This maintains a sliding time window of a fixed
+     * width that automatically updates.
      */
-    TimeAPI.prototype.tickSource = function (key) {
-        if (arguments.length > 0) {
-            if (this.activeTickSource !== undefined) {
-                this.activeTickSource.off("tick", this.tick);
+    TimeAPI.prototype.clock = function (key, offsets) {
+        if (arguments.length === 2) {
+            if (!this.clocks.has(key)){
+                throw "Unknown clock '" + key + "'. Has it been registered with 'addClock'?";
+            }
+            if (this.activeClock !== undefined) {
+                this.activeClock.off("tick", tick);
             } else {
                 this.emit("follow", true);
             }
             if (key !== undefined) {
-                this.activeTickSource = this.tickSources.get(key);
-                this.activeTickSource.on("tick", this.tick);
+                this.activeClock = this.clocks.get(key);
+                this.offsets = offsets;
+                this.activeClock.on("tick", tick);
             } else {
-                this.activeTickSource = undefined;
+                this.activeClock = undefined;
                 this.emit("follow", false);
             }
+        } else if (arguments.length === 1){
+            throw "When setting clock, clock offsets must also be provided"
         }
 
-        return this.activeTickSource && this.activeTickSource.key;
+        return this.activeClock && this.activeClock.key;
+    };
+
+    TimeAPI.prototype.clockOffsets = function (offsets) {
+        if (arguments.length > 0) {
+            this.offsets = offsets;
+        }
+        return this.offsets;
+    };
+
+    TimeAPI.prototype.stopClock = function () {
+        if (this.activeClock) {
+            this.activeClock.off("tick", tick);
+            this.activeClock = undefined;
+        }
     };
 
     return TimeAPI;
