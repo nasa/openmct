@@ -35,6 +35,7 @@ module.exports = function(config) {
         // By default, files are also included in a script tag.
         files: [
             {pattern: 'bower_components/**/*.js', included: false},
+            {pattern: 'node_modules/d3-*/**/*.js', included: false},
             {pattern: 'src/**/*.js', included: false},
             {pattern: 'example/**/*.js', included: false},
             {pattern: 'example/**/*.json', included: false},

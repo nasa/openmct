@@ -23,11 +23,13 @@
 define([
     './ConductorAxisController',
     'zepto',
-    'd3'
+    'd3-selection',
+    'd3-scale'
 ], function (
     ConductorAxisController,
     $,
-    d3
+    d3Selection,
+    d3Scale
 ) {
     describe("The ConductorAxisController", function () {
         var controller,
@@ -84,8 +86,8 @@ define([
                 "emit"
             ]);
 
-            spyOn(d3, 'scaleUtc').andCallThrough();
-            spyOn(d3, 'scaleLinear').andCallThrough();
+            spyOn(d3Scale, 'scaleUtc').andCallThrough();
+            spyOn(d3Scale, 'scaleLinear').andCallThrough();
 
             element = $('<div style="width: 100px;"><div style="width: 100%;"></div></div>');
             $(document).find('body').append(element);
@@ -122,15 +124,15 @@ define([
                 mockTimeSystem.isUTCBased.andReturn(true);
                 controller.changeTimeSystem(mockTimeSystem);
 
-                expect(d3.scaleUtc).toHaveBeenCalled();
-                expect(d3.scaleLinear).not.toHaveBeenCalled();
+                expect(d3Scale.scaleUtc).toHaveBeenCalled();
+                expect(d3Scale.scaleLinear).not.toHaveBeenCalled();
             });
 
             it("uses a linear scale for non-UTC time systems", function () {
                 mockTimeSystem.isUTCBased.andReturn(false);
                 controller.changeTimeSystem(mockTimeSystem);
-                expect(d3.scaleLinear).toHaveBeenCalled();
-                expect(d3.scaleUtc).not.toHaveBeenCalled();
+                expect(d3Scale.scaleLinear).toHaveBeenCalled();
+                expect(d3Scale.scaleUtc).not.toHaveBeenCalled();
             });
 
             it("sets axis domain to time conductor bounds", function () {
