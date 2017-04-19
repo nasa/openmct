@@ -21,10 +21,9 @@
  *****************************************************************************/
 
 define([
-    '../../../platform/features/conductor/core/src/timeSystems/TimeSystem',
-    '../../../platform/features/conductor/core/src/timeSystems/LocalClock',
+    '../../../src/plugins/utcTimeSystem/LocalClock',
     './LADTickSource'
-], function (TimeSystem, LocalClock, LADTickSource) {
+], function (LocalClock, LADTickSource) {
     var THIRTY_MINUTES = 30 * 60 * 1000,
         DEFAULT_PERIOD = 1000;
 
@@ -34,24 +33,19 @@ define([
      * @constructor
      */
     function LocalTimeSystem ($timeout) {
-        TimeSystem.call(this);
 
         /**
          * Some metadata, which will be used to identify the time system in
          * the UI
          * @type {{key: string, name: string, glyph: string}}
          */
-        this.metadata = {
-            'key': 'local',
-            'name': 'Local',
-            'glyph': '\u0043'
-        };
+        this.key = 'local';
+        this.name = 'Local';
+        this.cssClass = '\u0043';
 
         this.fmts = ['local-format'];
         this.sources = [new LocalClock($timeout, DEFAULT_PERIOD), new LADTickSource($timeout, DEFAULT_PERIOD)];
     }
-
-    LocalTimeSystem.prototype = Object.create(TimeSystem.prototype);
 
     LocalTimeSystem.prototype.formats = function () {
         return this.fmts;
@@ -63,6 +57,10 @@ define([
 
     LocalTimeSystem.prototype.tickSources = function () {
         return this.sources;
+    };
+
+    LocalTimeSystem.prototype.isUTCBased = function () {
+        return true;
     };
 
     LocalTimeSystem.prototype.defaults = function (key) {

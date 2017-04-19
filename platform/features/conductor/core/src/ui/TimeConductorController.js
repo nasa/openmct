@@ -64,7 +64,7 @@ define(
             this.$window = $window;
             this.$location = $location;
             this.conductorViewService = conductorViewService;
-            this.conductor = openmct.conductor;
+            this.conductor = openmct.time;
             this.modes = conductorViewService.availableModes();
             this.validation = new TimeConductorValidation(this.conductor);
             this.formatService = formatService;
@@ -76,7 +76,7 @@ define(
             this.DEFAULT_MODE = DEFAULT_MODE;
 
             // Construct the provided time system definitions
-            this.timeSystems = conductorViewService.systems;
+            this.timeSystems = conductorViewService.availableTimeSystems();
 
             this.initializeScope();
             var searchParams = JSON.parse(JSON.stringify(this.$location.search()));
@@ -86,7 +86,7 @@ define(
             //Set the initial state of the UI from the conductor state
             var timeSystem = this.conductor.timeSystem();
             if (timeSystem) {
-                this.changeTimeSystem(this.conductor.timeSystem());
+                this.changeTimeSystem(timeSystem);
             }
 
             var deltas = this.conductorViewService.deltas();
@@ -158,7 +158,7 @@ define(
             }
 
             if (searchParams[SEARCH.TIME_SYSTEM] &&
-                searchParams[SEARCH.TIME_SYSTEM] !== this.conductor.timeSystem().metadata.key) {
+                searchParams[SEARCH.TIME_SYSTEM] !== this.conductor.timeSystem()) {
                 //Will select the specified time system on the conductor
                 this.selectTimeSystemByKey(searchParams[SEARCH.TIME_SYSTEM]);
             }
@@ -253,10 +253,7 @@ define(
             this.$scope.modeModel.selectedKey = mode;
             //Synchronize scope with time system on mode
             this.$scope.timeSystemModel.options =
-                this.conductorViewService.availableTimeSystems()
-                .map(function (t) {
-                    return t.metadata;
-                });
+                this.conductorViewService.availableTimeSystems();
         };
 
         /**
@@ -376,9 +373,11 @@ define(
          *
          * @param newTimeSystem
          */
-        TimeConductorController.prototype.changeTimeSystem = function (newTimeSystem) {
+        TimeConductorController.prototype.changeTimeSystem = function (key) {
+            var newTimeSystem = this.conductor.getTimeSystem(key);
+
             //Set time system in URL on change
-            this.setParam(SEARCH.TIME_SYSTEM, newTimeSystem.metadata.key);
+            this.setParam(SEARCH.TIME_SYSTEM, key);
 
             if (newTimeSystem && (newTimeSystem !== this.$scope.timeSystemModel.selected)) {
                 this.supportsZoom = !!(newTimeSystem.defaults() && newTimeSystem.defaults().zoom);
@@ -401,9 +400,9 @@ define(
          * @returns {number} a value between 0.01 and 0.99, in increments of .01
          */
         TimeConductorController.prototype.toSliderValue = function (timeSpan) {
-            var timeSystem = this.conductor.timeSystem();
+            var timeSystem = this.conductor.getTimeSystem(this.conductor.timeSystem());
             if (timeSystem) {
-                var zoomDefaults = this.conductor.timeSystem().defaults().zoom;
+                var zoomDefaults = timeSystem.defaults().zoom;
                 var perc = timeSpan / (zoomDefaults.min - zoomDefaults.max);
                 return 1 - Math.pow(perc, 1 / 4);
             }
@@ -415,8 +414,9 @@ define(
          * @param {TimeSpan} timeSpan
          */
         TimeConductorController.prototype.toTimeUnits = function (timeSpan) {
+            var timeSystem = this.conductor.getTimeSystem(this.conductor.timeSystem());
             if (this.conductor.timeSystem()) {
-                var timeFormat = this.formatService.getFormat(this.conductor.timeSystem().formats()[0]);
+                var timeFormat = this.formatService.getFormat(timeSystem.formats()[0]);
                 this.$scope.timeUnits = timeFormat.timeUnits && timeFormat.timeUnits(timeSpan);
             }
         };
@@ -429,7 +429,8 @@ define(
          * @param bounds
          */
         TimeConductorController.prototype.onZoom = function (sliderValue) {
-            var zoomDefaults = this.conductor.timeSystem().defaults().zoom;
+            var timeSystem = this.conductor.getTimeSystem(this.conductor.timeSystem());
+            var zoomDefaults = timeSystem.defaults().zoom;
             var timeSpan = Math.pow((1 - sliderValue), 4) * (zoomDefaults.min - zoomDefaults.max);
 
             var zoom = this.conductorViewService.zoom(timeSpan);

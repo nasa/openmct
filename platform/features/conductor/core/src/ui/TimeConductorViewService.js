@@ -41,11 +41,7 @@ define(
 
             EventEmitter.call(this);
 
-            this.systems = timeSystems.map(function (timeSystemConstructor) {
-                return timeSystemConstructor();
-            });
-
-            this.conductor = openmct.conductor;
+            this.conductor = openmct.time;
             this.currentMode = undefined;
 
             /**
@@ -67,39 +63,25 @@ define(
                 }
             };
 
-            function hasTickSource(sourceType, timeSystem) {
-                return timeSystem.tickSources().some(function (tickSource) {
-                    return tickSource.metadata.mode === sourceType;
-                });
-            }
-
-            var timeSystemsForMode = function (sourceType) {
-                return this.systems.filter(hasTickSource.bind(this, sourceType));
-            }.bind(this);
-
             //Only show 'real-time mode' if appropriate time systems available
-            if (timeSystemsForMode('realtime').length > 0) {
-                var realtimeMode = {
-                    key: 'realtime',
-                    cssClass: 'icon-clock',
-                    label: 'Real-time',
-                    name: 'Real-time Mode',
-                    description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will automatically advance themselves based on a UTC clock.'
-                };
-                this.availModes[realtimeMode.key] = realtimeMode;
-            }
+            var realtimeMode = {
+                key: 'realtime',
+                cssClass: 'icon-clock',
+                label: 'Real-time',
+                name: 'Real-time Mode',
+                description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will automatically advance themselves based on a UTC clock.'
+            };
+            this.availModes[realtimeMode.key] = realtimeMode;
 
             //Only show 'LAD mode' if appropriate time systems available
-            if (timeSystemsForMode('lad').length > 0) {
-                var ladMode = {
-                    key: 'lad',
-                    cssClass: 'icon-database',
-                    label: 'LAD',
-                    name: 'LAD Mode',
-                    description: 'Latest Available Data mode monitors real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'
-                };
-                this.availModes[ladMode.key] = ladMode;
-            }
+            var ladMode = {
+                key: 'lad',
+                cssClass: 'icon-database',
+                label: 'LAD',
+                name: 'LAD Mode',
+                description: 'Latest Available Data mode monitors real-time streaming data as it comes in. The Time Conductor and displays will only advance when data becomes available.'
+            };
+            this.availModes[ladMode.key] = ladMode;
         }
 
         TimeConductorViewService.prototype = Object.create(EventEmitter.prototype);
@@ -126,25 +108,25 @@ define(
         TimeConductorViewService.prototype.mode = function (newModeKey) {
             function contains(timeSystems, ts) {
                 return timeSystems.filter(function (t) {
-                        return t.metadata.key === ts.metadata.key;
+                        return t.key === ts.key;
                     }).length > 0;
             }
 
             if (arguments.length === 1) {
-                var timeSystem = this.conductor.timeSystem();
+                var timeSystem = this.conductor.getTimeSystem(this.conductor.timeSystem());
                 var modes = this.availableModes();
                 var modeMetaData = modes[newModeKey];
 
                 if (this.currentMode) {
                     this.currentMode.destroy();
                 }
-                this.currentMode = new TimeConductorMode(modeMetaData, this.conductor, this.systems);
+                this.currentMode = new TimeConductorMode(modeMetaData, this.conductor);
 
                 // If no time system set on time conductor, or the currently selected time system is not available in
                 // the new mode, default to first available time system
                 if (!timeSystem || !contains(this.currentMode.availableTimeSystems(), timeSystem)) {
                     timeSystem = this.currentMode.availableTimeSystems()[0];
-                    this.conductor.timeSystem(timeSystem, timeSystem.defaults().bounds);
+                    this.conductor.timeSystem(timeSystem.key, timeSystem.defaults().bounds);
                 }
             }
             return this.currentMode ? this.currentMode.metadata().key : undefined;
@@ -201,7 +183,7 @@ define(
          * mode. Time systems and tick sources are mode dependent
          */
         TimeConductorViewService.prototype.availableTimeSystems = function () {
-            return this.currentMode.availableTimeSystems();
+            return this.conductor.availableTimeSystems();
         };
 
         /**

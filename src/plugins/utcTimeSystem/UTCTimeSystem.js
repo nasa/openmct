@@ -21,27 +21,52 @@
  *****************************************************************************/
 
 define([], function () {
+    var FIFTEEN_MINUTES = 15 * 60 * 1000;
+
     /**
-     * A tick source is an event generator such as a timing signal, or
-     * indicator of data availability, which can be used to advance the Time
-     * Conductor. Usage is simple, a listener registers a callback which is
-     * invoked when this source 'ticks'.
-     *
-     * @interface
+     * This time system supports UTC dates and provides a ticking clock source.
+     * @implements TimeSystem
      * @constructor
      */
-    function TickSource() {
-        this.listeners = [];
+    function UTCTimeSystem() {
+
+        /**
+         * Some metadata, which will be used to identify the time system in
+         * the UI
+         * @type {{key: string, name: string, cssClass: string}}
+         */
+        this.key = 'utc';
+        this.name = 'UTC';
+        this.cssClass = 'icon-clock';
+
+        this.fmts = ['utc'];
     }
 
-    /**
-     * @param callback Function to be called when this tick source ticks.
-     * @returns an 'unlisten' function that will remove the callback from
-     * the registered listeners
-     */
-    TickSource.prototype.listen = function (callback) {
-        throw new Error('Not implemented');
+    UTCTimeSystem.prototype.formats = function () {
+        return this.fmts;
     };
 
-    return TickSource;
+    UTCTimeSystem.prototype.deltaFormat = function () {
+        return 'duration';
+    };
+
+    UTCTimeSystem.prototype.isUTCBased = function () {
+        return true;
+    };
+
+    UTCTimeSystem.prototype.defaults = function () {
+        var now = Math.ceil(Date.now() / 1000) * 1000;
+        var ONE_MINUTE = 60 * 1 * 1000;
+        var FIFTY_YEARS = 50 * 365 * 24 * 60 * 60 * 1000;
+
+        return {
+            key: 'utc-default',
+            name: 'UTC time system defaults',
+            deltas: {start: FIFTEEN_MINUTES, end: 0},
+            bounds: {start: now - FIFTEEN_MINUTES, end: now},
+            zoom: {min: FIFTY_YEARS, max: ONE_MINUTE}
+        };
+    };
+
+    return UTCTimeSystem;
 });

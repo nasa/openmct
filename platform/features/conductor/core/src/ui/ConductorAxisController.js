@@ -35,7 +35,7 @@ define(
         function ConductorAxisController(openmct, formatService, conductorViewService, scope, element) {
             // Dependencies
             this.formatService = formatService;
-            this.conductor = openmct.conductor;
+            this.conductor = openmct.time;
             this.conductorViewService = conductorViewService;
 
             this.scope = scope;
@@ -111,7 +111,7 @@ define(
          */
         ConductorAxisController.prototype.setScale = function () {
             var width = this.target.offsetWidth;
-            var timeSystem = this.conductor.timeSystem();
+            var timeSystem = this.conductor.getTimeSystem(this.conductor.timeSystem());
             var bounds = this.bounds;
 
             if (timeSystem.isUTCBased()) {
@@ -134,8 +134,10 @@ define(
          * When the time system changes, update the scale and formatter used for showing times.
          * @param timeSystem
          */
-        ConductorAxisController.prototype.changeTimeSystem = function (timeSystem) {
-            this.timeSystem = timeSystem;
+        ConductorAxisController.prototype.changeTimeSystem = function (key) {
+            var timeSystem = this.conductor.getTimeSystem(key);
+
+            this.timeSystem = key;
 
             var key = timeSystem.formats()[0];
             if (key !== undefined) {

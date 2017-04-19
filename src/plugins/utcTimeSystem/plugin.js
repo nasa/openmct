@@ -21,20 +21,16 @@
  *****************************************************************************/
 
 define([
-    "./src/UTCTimeSystem",
-    "legacyRegistry"
+    "./UTCTimeSystem",
+    "./LocalClock"
 ], function (
     UTCTimeSystem,
-    legacyRegistry
+    LocalClock
 ) {
-    legacyRegistry.register("platform/features/conductor/utcTimeSystem", {
-        "extensions": {
-            "timeSystems": [
-                {
-                    "implementation": UTCTimeSystem,
-                    "depends": ["$timeout"]
-                }
-            ]
+    return function () {
+        return function (openmct) {
+            openmct.time.addTimeSystem(new UTCTimeSystem());
+            openmct.time.addClock(new LocalClock());
         }
-    });
+    };
 });

@@ -76,7 +76,8 @@ define(
          * When time system is changed, update the formatter used to
          * display the current TOI label
          */
-        TimeOfInterestController.prototype.changeTimeSystem = function (timeSystem) {
+        TimeOfInterestController.prototype.changeTimeSystem = function (key) {
+            var timeSystem = this.conductor.getTimeSystem(key);
             this.format = this.formatService.getFormat(timeSystem.formats()[0]);
         };
 

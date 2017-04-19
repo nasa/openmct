@@ -22,7 +22,7 @@
 
 define([
     'lodash',
-    '../../platform/features/conductor/utcTimeSystem/src/UTCTimeSystem',
+    './utcTimeSystem/plugin',
     '../../example/generator/plugin',
     '../../platform/features/autoflow/plugin'
 ], function (
@@ -48,14 +48,7 @@ define([
         };
     });
 
-    plugins.UTCTimeSystem = function () {
-        return function (openmct) {
-            openmct.legacyExtension("timeSystems", {
-                "implementation": UTCTimeSystem,
-                "depends": ["$timeout"]
-            });
-        };
-    };
+    plugins.UTCTimeSystem = UTCTimeSystem;
 
     /**
      * A tabular view showing the latest values of multiple telemetry points at

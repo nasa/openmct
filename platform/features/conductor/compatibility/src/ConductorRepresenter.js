@@ -51,19 +51,21 @@ define(
         }
 
         ConductorRepresenter.prototype.boundsListener = function (bounds) {
+            var timeSystem = this.conductor.getTimeSystem(this.conductor.timeSystem());
             this.scope.$broadcast('telemetry:display:bounds', {
                 start: bounds.start,
                 end: bounds.end,
-                domain: this.conductor.timeSystem().metadata.key
+                domain: timeSystem.key
             }, this.conductor.follow());
         };
 
-        ConductorRepresenter.prototype.timeSystemListener = function (timeSystem) {
+        ConductorRepresenter.prototype.timeSystemListener = function (key) {
             var bounds = this.conductor.bounds();
+            var timeSystem = this.conductor.getTimeSystem(key);
             this.scope.$broadcast('telemetry:display:bounds', {
                 start: bounds.start,
                 end: bounds.end,
-                domain: timeSystem.metadata.key
+                domain: timeSystem.key
             }, this.conductor.follow());
         };
 

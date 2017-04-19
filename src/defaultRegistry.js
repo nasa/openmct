@@ -68,7 +68,6 @@ define([
     '../platform/features/fixed/bundle',
     '../platform/features/conductor/core/bundle',
     '../platform/features/conductor/compatibility/bundle',
-    '../platform/features/conductor/utcTimeSystem/bundle',
     '../platform/features/imagery/bundle',
     '../platform/features/layout/bundle',
     '../platform/features/my-items/bundle',

@@ -83,6 +83,10 @@ define(['EventEmitter'], function (EventEmitter) {
         this.timeSystems.set(timeSystem.key, timeSystem);
     };
 
+    TimeAPI.prototype.availableTimeSystems = function (key) {
+        return Array.from(this.timeSystems.values());
+    }
+
     TimeAPI.prototype.getTimeSystem = function (key) {
         return this.timeSystems.get(key);
     };
@@ -94,6 +98,10 @@ define(['EventEmitter'], function (EventEmitter) {
     TimeAPI.prototype.getClock = function (key) {
         return this.clocks.get(key);
     };
+
+    TimeAPI.prototype.availableClocks = function (key) {
+        return Array.from(this.availableClocks.values());
+    }
 
     /**
      * Validate the given bounds. This can be used for pre-validation of
@@ -269,7 +277,9 @@ define(['EventEmitter'], function (EventEmitter) {
     TimeAPI.prototype.clockOffsets = function (offsets) {
         if (arguments.length > 0) {
             this.offsets = offsets;
+            this.emit("clockOffsets", offsets);
         }
+        // TODO: Should setting clock offsets trigger a bounds event, or wait until next tick?
         return this.offsets;
     };
 
