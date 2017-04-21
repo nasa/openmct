@@ -161,6 +161,7 @@ define(
                         'otherType',
                         ['getKey']
                     ),
+
                     //Create a form structure with location
                     structure = wizard.getFormStructure(true),
                     sections = structure.sections,
@@ -174,8 +175,8 @@ define(
                 // can actually contain objects of this type
                 expect(mockPolicyService.allow).toHaveBeenCalledWith(
                     'composition',
-                    mockOtherType,
-                    mockType
+                    mockDomainObj,
+                    mockDomainObject
                 );
             });
 

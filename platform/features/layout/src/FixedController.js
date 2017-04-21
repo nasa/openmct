@@ -24,8 +24,7 @@ define(
     ['./FixedProxy', './elements/ElementProxies', './FixedDragHandle'],
     function (FixedProxy, ElementProxies, FixedDragHandle) {
 
-        var DEFAULT_DIMENSIONS = [2, 1],
-            DEFAULT_GRID_SIZE = [64, 16];
+        var DEFAULT_DIMENSIONS = [2, 1];
 
         /**
          * The FixedController is responsible for supporting the
@@ -132,7 +131,7 @@ define(
             // Update element positions when grid size changes
             function updateElementPositions(layoutGrid) {
                 // Update grid size from model
-                self.gridSize = layoutGrid || DEFAULT_GRID_SIZE;
+                self.gridSize = layoutGrid;
 
                 self.elementProxies.forEach(function (elementProxy) {
                     elementProxy.style = convertPosition(elementProxy);
@@ -293,7 +292,6 @@ define(
                 });
             }
 
-            this.gridSize = DEFAULT_GRID_SIZE;
             this.elementProxies = [];
             this.generateDragHandle = generateDragHandle;
             this.generateDragHandles = generateDragHandles;
@@ -310,14 +308,14 @@ define(
                 }
             }.bind(this));
 
+            // Detect changes to grid size
+            $scope.$watch("model.layoutGrid", updateElementPositions);
+
             // Refresh list of elements whenever model changes
             $scope.$watch("model.modified", refreshElements);
 
             // Position panes when the model field changes
             $scope.$watch("model.composition", updateComposition);
-
-            // Detect changes to grid size
-            $scope.$watch("model.layoutGrid", updateElementPositions);
 
             // Subscribe to telemetry when an object is available
             $scope.$watch("domainObject", subscribe);

@@ -22,7 +22,8 @@
 
 
 define(
-    function () {
+    ['../../../core/src/capabilities/ContextualDomainObject'],
+    function (ContextualDomainObject) {
 
         /**
          * Ensures that domain objects are loaded with a context capability
@@ -31,8 +32,7 @@ define(
          * @implements {ObjectService}
          * @memberof platform/entanglement
          */
-        function LocatingObjectDecorator(contextualize, $q, $log, objectService) {
-            this.contextualize = contextualize;
+        function LocatingObjectDecorator($q, $log, objectService) {
             this.$log = $log;
             this.objectService = objectService;
             this.$q = $q;
@@ -41,7 +41,6 @@ define(
         LocatingObjectDecorator.prototype.getObjects = function (ids) {
             var $q = this.$q,
                 $log = this.$log,
-                contextualize = this.contextualize,
                 objectService = this.objectService,
                 result = {};
 
@@ -76,7 +75,7 @@ define(
                     return loadObjectInContext(location, exclude)
                         .then(function (parent) {
                             // ...and then contextualize with it!
-                            return contextualize(domainObject, parent);
+                            return new ContextualDomainObject(domainObject, parent);
                         });
                 }
 

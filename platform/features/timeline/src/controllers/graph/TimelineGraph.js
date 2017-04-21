@@ -167,7 +167,7 @@ define(
                  */
                 setBounds: function (offset, duration) {
                     // We don't update in-place, because we need the change
-                    // to trigger a watch in mct-chart.
+                    // to trigger a watch in mct-timeline-chart.
                     drawingObject.origin = [offset, drawingObject.origin[1]];
                     drawingObject.dimensions = [duration, drawingObject.dimensions[1]];
                 },

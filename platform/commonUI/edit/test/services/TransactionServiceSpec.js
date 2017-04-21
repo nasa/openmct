@@ -57,8 +57,7 @@ define(
 
                 transactionService.startTransaction();
                 transactionService.addToTransaction(onCommit, onCancel);
-                expect(transactionService.onCommits.length).toBe(1);
-                expect(transactionService.onCancels.length).toBe(1);
+                expect(transactionService.size()).toBe(1);
             });
 
             it("size function returns size of commit and cancel queues", function () {
@@ -85,7 +84,7 @@ define(
                 });
 
                 it("commit calls all queued commit functions", function () {
-                    expect(transactionService.onCommits.length).toBe(3);
+                    expect(transactionService.size()).toBe(3);
                     transactionService.commit();
                     onCommits.forEach(function (spy) {
                         expect(spy).toHaveBeenCalled();
@@ -95,8 +94,8 @@ define(
                 it("commit resets active state and clears queues", function () {
                     transactionService.commit();
                     expect(transactionService.isActive()).toBe(false);
-                    expect(transactionService.onCommits.length).toBe(0);
-                    expect(transactionService.onCancels.length).toBe(0);
+                    expect(transactionService.size()).toBe(0);
+                    expect(transactionService.size()).toBe(0);
                 });
 
             });
@@ -116,7 +115,7 @@ define(
                 });
 
                 it("cancel calls all queued cancel functions", function () {
-                    expect(transactionService.onCancels.length).toBe(3);
+                    expect(transactionService.size()).toBe(3);
                     transactionService.cancel();
                     onCancels.forEach(function (spy) {
                         expect(spy).toHaveBeenCalled();
@@ -126,8 +125,7 @@ define(
                 it("cancel resets active state and clears queues", function () {
                     transactionService.cancel();
                     expect(transactionService.isActive()).toBe(false);
-                    expect(transactionService.onCommits.length).toBe(0);
-                    expect(transactionService.onCancels.length).toBe(0);
+                    expect(transactionService.size()).toBe(0);
                 });
 
             });

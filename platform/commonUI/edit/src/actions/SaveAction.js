@@ -25,67 +25,57 @@ define(
     function (SaveInProgressDialog) {
 
         /**
-         * The "Save" action; the action triggered by clicking Save from
-         * Edit Mode. Exits the editing user interface and invokes object
-         * capabilities to persist the changes that have been made.
+         * The "Save" action; it invokes object capabilities to persist
+         * the changes that have been made.
          * @constructor
          * @implements {Action}
          * @memberof platform/commonUI/edit
          */
         function SaveAction(
             dialogService,
+            notificationService,
             context
         ) {
             this.domainObject = (context || {}).domainObject;
             this.dialogService = dialogService;
+            this.notificationService = notificationService;
         }
 
         /**
-         * Save changes and conclude editing.
+         * Save changes.
          *
          * @returns {Promise} a promise that will be fulfilled when
          *          cancellation has completed
          * @memberof platform/commonUI/edit.SaveAction#
          */
         SaveAction.prototype.perform = function () {
-            var domainObject = this.domainObject,
+            var self = this,
+                domainObject = this.domainObject,
                 dialog = new SaveInProgressDialog(this.dialogService);
-
-            function resolveWith(object) {
-                return function () {
-                    return object;
-                };
-            }
 
             // Invoke any save behavior introduced by the editor capability;
             // this is introduced by EditableDomainObject which is
             // used to insulate underlying objects from changes made
             // during editing.
             function doSave() {
-                return domainObject.getCapability("editor").save()
-                    .then(resolveWith(domainObject));
+                return domainObject.getCapability("editor").save();
             }
 
-            // Discard the current root view (which will be the editing
-            // UI, which will have been pushed atop the Browse UI.)
-            function returnToBrowse(object) {
-                if (object) {
-                    object.getCapability("action").perform("navigate");
-                }
-                return object;
-            }
-
-            function hideBlockingDialog(object) {
+            function onSuccess() {
                 dialog.hide();
-                return object;
+                self.notificationService.info("Save Succeeded");
+            }
+
+            function onFailure() {
+                dialog.hide();
+                self.notificationService.error("Save Failed");
             }
 
             dialog.show();
 
             return doSave()
-                .then(hideBlockingDialog)
-                .then(returnToBrowse)
-                .catch(hideBlockingDialog);
+                .then(onSuccess)
+                .catch(onFailure);
         };
 
         /**

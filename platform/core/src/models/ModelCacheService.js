@@ -24,7 +24,7 @@ define([], function () {
 
     /**
      * Provides a cache for domain object models which exist in memory,
-     * but may or may not exist in backing persistene stores.
+     * but may or may not exist in backing persistence stores.
      * @constructor
      * @memberof platform/core
      */
@@ -75,6 +75,10 @@ define([], function () {
      */
     ModelCacheService.prototype.all = function () {
         return this.cache;
+    };
+
+    ModelCacheService.prototype.flush = function () {
+        this.cache = {};
     };
 
     return ModelCacheService;

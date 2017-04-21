@@ -35,11 +35,14 @@ module.exports = function(config) {
         // By default, files are also included in a script tag.
         files: [
             {pattern: 'bower_components/**/*.js', included: false},
+            {pattern: 'node_modules/d3-*/**/*.js', included: false},
             {pattern: 'src/**/*.js', included: false},
             {pattern: 'example/**/*.js', included: false},
+            {pattern: 'example/**/*.json', included: false},
             {pattern: 'platform/**/*.js', included: false},
             {pattern: 'warp/**/*.js', included: false},
             {pattern: 'platform/**/*.html', included: false},
+            {pattern: 'src/**/*.html', included: false},
             'test-main.js'
         ],
 
@@ -51,7 +54,7 @@ module.exports = function(config) {
         // Preprocess matching files before serving them to the browser.
         // https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'src/**/src/**/!(*Spec).js': [ 'coverage' ],
+            'src/**/!(*Spec).js': [ 'coverage' ],
             'platform/**/src/**/!(*Spec).js': [ 'coverage' ]
         },
 
@@ -74,7 +77,7 @@ module.exports = function(config) {
         // Specify browsers to run tests in.
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
-            'PhantomJS'
+            'Chrome'
         ],
 
         // Code coverage reporting.

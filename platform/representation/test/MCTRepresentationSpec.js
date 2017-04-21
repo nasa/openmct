@@ -36,7 +36,7 @@ define(
                 testViews,
                 testUrls,
                 mockRepresenters,
-                mockStatusCapability,
+                mockMutationCapability,
                 mockQ,
                 mockLinker,
                 mockLog,
@@ -119,7 +119,8 @@ define(
                 mockChangeTemplate = jasmine.createSpy('changeTemplate');
                 mockLog = jasmine.createSpyObj("$log", LOG_FUNCTIONS);
 
-                mockStatusCapability = jasmine.createSpyObj("statusCapability", ["listen"]);
+                mockMutationCapability =
+                    jasmine.createSpyObj("mutation", ["listen"]);
 
                 mockScope = jasmine.createSpyObj("scope", ["$watch", "$on"]);
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
@@ -132,7 +133,7 @@ define(
                 });
 
                 mockDomainObject.getCapability.andCallFake(function (c) {
-                    return c === 'status' && mockStatusCapability;
+                    return c === 'mutation' && mockMutationCapability;
                 });
 
                 mctRepresentation = new MCTRepresentation(
@@ -162,10 +163,6 @@ define(
                 );
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "domainObject",
-                    jasmine.any(Function)
-                );
-                expect(mockScope.$watch).toHaveBeenCalledWith(
-                    "domainObject.getModel().modified",
                     jasmine.any(Function)
                 );
             });
@@ -272,10 +269,16 @@ define(
                     );
 
                     mockDomainObject.getCapability.andCallFake(function (c) {
-                        return c === 'context' && mockContext;
+                        return {
+                            context: mockContext,
+                            mutation: mockMutationCapability
+                        }[c];
                     });
                     mockLink.getCapability.andCallFake(function (c) {
-                        return c === 'context' && mockContext2;
+                        return {
+                            context: mockContext2,
+                            mutation: mockMutationCapability
+                        }[c];
                     });
                     mockDomainObject.hasCapability.andCallFake(function (c) {
                         return c === 'context';
@@ -297,6 +300,11 @@ define(
                     mockScope.domainObject = mockDomainObject;
 
                     mockScope.$watch.calls[0].args[1]();
+                });
+
+                it("listens for mutation of that object", function () {
+                    expect(mockMutationCapability.listen)
+                        .toHaveBeenCalledWith(jasmine.any(Function));
                 });
 
                 it("detects subsequent changes among linked instances", function () {

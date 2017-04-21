@@ -129,13 +129,13 @@ We will create this file in the directory tutorials/todo (we can hereafter refer
 to this plugin as tutorials/todo as well.) We will start with an "empty bundle", 
 one which exposes no extensions - which looks like:
 
-```diff
+```js
 define([
-    'legacyRegistry'
+    'openmct'
 ], function (
-    legacyRegistry
+    openmct
 ) {
-    legacyRegistry.register("tutorials/todo", {
+    openmct.legacyRegistry.register("tutorials/todo", {
         "name": "To-do Plugin",
         "description": "Allows creating and editing to-do lists.",
         "extensions":
@@ -154,177 +154,135 @@ The tutorials will be updated with the new bundle registration mechanism once it
 has been finalized. 
 
 #### Before
-```diff
-requirejs.config({
-    "paths": {
-        "legacyRegistry": "src/legacyRegistry",
-        "angular": "bower_components/angular/angular.min",
-        "angular-route": "bower_components/angular-route/angular-route.min",
-        "csv": "bower_components/comma-separated-values/csv.min",
-        "es6-promise": "bower_components/es6-promise/promise.min",
-        "moment": "bower_components/moment/moment",
-        "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
-        "saveAs": "bower_components/FileSaver.js/FileSaver.min",
-        "screenfull": "bower_components/screenfull/dist/screenfull.min",
-        "text": "bower_components/text/text",
-        "uuid": "bower_components/node-uuid/uuid",
-        "zepto": "bower_components/zepto/zepto.min"
-    },
-    "shim": {
-        "angular": {
-            "exports": "angular"
-        },
-        "angular-route": {
-            "deps": [ "angular" ]
-        },
-        "moment-duration-format": {
-            "deps": [ "moment" ]
-        },
-        "screenfull": {
-            "exports": "screenfull"
-        },
-        "zepto": {
-            "exports": "Zepto"
-        }
-    }
-});
+```html
+<!--
+ Open MCT, Copyright (c) 2014-2016, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
 
-define([
-    './platform/framework/src/Main',
-    'legacyRegistry',
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
 
-    './platform/framework/bundle',
-    './platform/core/bundle',
-    './platform/representation/bundle',
-    './platform/commonUI/about/bundle',
-    './platform/commonUI/browse/bundle',
-    './platform/commonUI/edit/bundle',
-    './platform/commonUI/dialog/bundle',
-    './platform/commonUI/formats/bundle',
-    './platform/commonUI/general/bundle',
-    './platform/commonUI/inspect/bundle',
-    './platform/commonUI/mobile/bundle',
-    './platform/commonUI/themes/espresso/bundle',
-    './platform/commonUI/notification/bundle',
-    './platform/containment/bundle',
-    './platform/execution/bundle',
-    './platform/exporters/bundle',
-    './platform/telemetry/bundle',
-    './platform/features/clock/bundle',
-    './platform/features/imagery/bundle',
-    './platform/features/layout/bundle',
-    './platform/features/pages/bundle',
-    './platform/features/plot/bundle',
-    './platform/features/timeline/bundle',
-    './platform/features/table/bundle',
-    './platform/forms/bundle',
-    './platform/identity/bundle',
-    './platform/persistence/aggregator/bundle',
-    './platform/persistence/local/bundle',
-    './platform/persistence/queue/bundle',
-    './platform/policy/bundle',
-    './platform/entanglement/bundle',
-    './platform/search/bundle',
-    './platform/status/bundle',
-    './platform/commonUI/regions/bundle'
-], function (Main, legacyRegistry) {
-    return {
-        legacyRegistry: legacyRegistry,
-        run: function () {
-            return new Main().run(legacyRegistry);
-        }
-    };
-});
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script src="bower_components/requirejs/require.js">
+    </script>
+    <script>
+        require([
+            'openmct'
+        ], function (openmct) {
+            [
+                'example/imagery',
+                'example/eventGenerator',
+                'example/generator',
+                'platform/features/my-items',
+                'platform/persistence/local'
+            ].forEach(
+                openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
+            );
+            openmct.start();
+        });
+    </script>
+    <link rel="stylesheet" href="platform/commonUI/general/res/css/startup-base.css">
+    <link rel="stylesheet" href="platform/commonUI/general/res/css/openmct.css">
+    <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-16x16.png" sizes="16x16">
+    <link rel="shortcut icon" href="platform/commonUI/general/res/images/favicons/favicon.ico">
+</head>
+<body class="user-environ">
+    <div class="l-splash-holder s-splash-holder">
+        <div class="l-splash s-splash"></div>
+    </div>
+</body>
+</html>
+
 ```
-__main.js__
+__index.html__
 
 #### After
 
-```diff
-requirejs.config({
-    "paths": {
-        "legacyRegistry": "src/legacyRegistry",
-        "angular": "bower_components/angular/angular.min",
-        "angular-route": "bower_components/angular-route/angular-route.min",
-        "csv": "bower_components/comma-separated-values/csv.min",
-        "es6-promise": "bower_components/es6-promise/promise.min",
-        "moment": "bower_components/moment/moment",
-        "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
-        "saveAs": "bower_components/FileSaver.js/FileSaver.min",
-        "screenfull": "bower_components/screenfull/dist/screenfull.min",
-        "text": "bower_components/text/text",
-        "uuid": "bower_components/node-uuid/uuid",
-        "zepto": "bower_components/zepto/zepto.min"
-    },
-    "shim": {
-        "angular": {
-            "exports": "angular"
-        },
-        "angular-route": {
-            "deps": [ "angular" ]
-        },
-        "moment-duration-format": {
-            "deps": [ "moment" ]
-        },
-        "screenfull": {
-            "exports": "screenfull"
-        },
-        "zepto": {
-            "exports": "Zepto"
-        }
-    }
-});
+```html
+<!--
+ Open MCT, Copyright (c) 2014-2016, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
 
-define([
-    './platform/framework/src/Main',
-    'legacyRegistry',
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
 
-    './platform/framework/bundle',
-    './platform/core/bundle',
-    './platform/representation/bundle',
-    './platform/commonUI/about/bundle',
-    './platform/commonUI/browse/bundle',
-    './platform/commonUI/edit/bundle',
-    './platform/commonUI/dialog/bundle',
-    './platform/commonUI/formats/bundle',
-    './platform/commonUI/general/bundle',
-    './platform/commonUI/inspect/bundle',
-    './platform/commonUI/mobile/bundle',
-    './platform/commonUI/themes/espresso/bundle',
-    './platform/commonUI/notification/bundle',
-    './platform/containment/bundle',
-    './platform/execution/bundle',
-    './platform/exporters/bundle',
-    './platform/telemetry/bundle',
-    './platform/features/clock/bundle',
-    './platform/features/imagery/bundle',
-    './platform/features/layout/bundle',
-    './platform/features/pages/bundle',
-    './platform/features/plot/bundle',
-    './platform/features/timeline/bundle',
-    './platform/features/table/bundle',
-    './platform/forms/bundle',
-    './platform/identity/bundle',
-    './platform/persistence/aggregator/bundle',
-    './platform/persistence/local/bundle',
-    './platform/persistence/queue/bundle',
-    './platform/policy/bundle',
-    './platform/entanglement/bundle',
-    './platform/search/bundle',
-    './platform/status/bundle',
-    './platform/commonUI/regions/bundle',
-    
-+   './tutorials/todo/bundle'
-], function (Main, legacyRegistry) {
-    return {
-        legacyRegistry: legacyRegistry,
-        run: function () {
-            return new Main().run(legacyRegistry);
-        }
-    };
-});
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script src="bower_components/requirejs/require.js">
+    </script>
+    <script>
+        require([
+            'openmct',
++           'tutorials/todo/bundle'
+        ], function (openmct) {
+            [
+                'example/imagery',
+                'example/eventGenerator',
+                'example/generator',
+                'platform/features/my-items',
+                'platform/persistence/local',
++               'tutorials/todo'
+            ].forEach(
+                openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
+            );
+            openmct.start();
+        });
+    </script>
+    <link rel="stylesheet" href="platform/commonUI/general/res/css/startup-base.css">
+    <link rel="stylesheet" href="platform/commonUI/general/res/css/openmct.css">
+    <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-16x16.png" sizes="16x16">
+    <link rel="shortcut icon" href="platform/commonUI/general/res/images/favicons/favicon.ico">
+</head>
+<body class="user-environ">
+    <div class="l-splash-holder s-splash-holder">
+        <div class="l-splash s-splash"></div>
+    </div>
+</body>
+</html>
+
 ```    
-__main.js__
+__index.html__
 
 At this point, we can reload Open MCT. We haven't introduced any new 
 functionality, so we don't see anything different, but if we run with logging 
@@ -347,13 +305,13 @@ In the case of our to-do list feature, the to-do list itself is the thing we'll
 want users to be able to create and edit. So, we will add that as a new type in 
 our bundle definition:
 
-```diff
+```js
 define([
-    'legacyRegistry'
+    'openmct'
 ], function (
-    legacyRegistry
+    openmct
 ) {
-    legacyRegistry.register("tutorials/todo", {
+    openmct.legacyRegistry.register("tutorials/todo", {
         "name": "To-do Plugin",
         "description": "Allows creating and editing to-do lists.",
         "extensions":
@@ -362,7 +320,7 @@ define([
 +          {
 +              "key": "example.todo",
 +              "name": "To-Do List",
-+              "glyph": "2",
++              "cssClass": "icon-check",
 +              "description": "A list of things that need to be done.",
 +              "features": ["creation"]
 +          }
@@ -382,8 +340,9 @@ Going through the properties we've defined:
 domain objects of this type.
 * The `name` of "To-Do List" is the human-readable name for this type, and will 
 be shown to users.
-* The `glyph` refers to a special character in Open MCT's custom font set; 
-this will be used as an icon.
+* The `cssClass` maps to an icon that will be shown for each To-Do List. The icons 
+are defined in our [custom open MCT icon set](https://github.com/nasa/openmct/blob/master/platform/commonUI/general/res/sass/_glyphs.scss). 
+A complete list of available icons will be provided in the future.
 * The `description` is also human-readable, and will be used whenever a longer 
 explanation of what this type is should be shown.
 * Finally, the `features` property describes some special features of objects of 
@@ -411,7 +370,7 @@ directory `tutorials/todo/res/templates` (`res` is, by default, the directory
 where bundle-related resources are kept, and `templates` is where HTML templates 
 are stored by convention.)
 
-```diff
+```html
 <div>
     <a href="">All</a>
     <a href="">Incomplete</a>
@@ -443,13 +402,13 @@ boolean `completed` flag.
 To expose this view in Open MCT, we need to declare it in our bundle 
 definition:
 
-```diff
+```js
 define([
-    'legacyRegistry'
+    'openmct'
 ], function (
-    legacyRegistry
+    openmct
 ) {
-    legacyRegistry.register("tutorials/todo", {
+    openmct.legacyRegistry.register("tutorials/todo", {
     "name": "To-do Plugin",
     "description": "Allows creating and editing to-do lists.",
     "extensions": {
@@ -457,7 +416,7 @@ define([
             {
                 "key": "example.todo",
                 "name": "To-Do List",
-                "glyph": "2",
+                "cssClass": "icon-check",
                 "description": "A list of things that need to be done.",
                 "features": ["creation"]
             }
@@ -466,7 +425,7 @@ define([
 +           {
 +               "key": "example.todo",
 +               "type": "example.todo",
-+               "glyph": "2",
++               "cssClass": "icon-check",
 +               "name": "List",
 +               "templateUrl": "templates/todo.html",
 +               "editable": true
@@ -488,7 +447,7 @@ the domain object type, but could have chosen any unique name.
 domain objects of that type. This means that we'll see this view for To-do Lists 
 that we create, but not for other domain objects (such as Folders.)
 
-* The `glyph` and `name` properties describe the icon and human-readable name 
+* The `cssClass` and `name` properties describe the icon and human-readable name 
 for this view to display in the UI where needed (if multiple views are available 
 for To-do Lists, the user will be able to choose one.)
 
@@ -500,13 +459,13 @@ the user to create these yet. As a temporary workaround to test the view, we
 will specify an initial state for To-do List domain object models in the 
 definition of that type.
 
-```diff
+```js
 define([
-    'legacyRegistry'
+    'openmct'
 ], function (
-    legacyRegistry
+    openmct
 ) {
-    legacyRegistry.register("tutorials/todo", {
+    openmct.legacyRegistry.register("tutorials/todo", {
     "name": "To-do Plugin",
     "description": "Allows creating and editing to-do lists.",
     "extensions": {
@@ -514,7 +473,7 @@ define([
             {
                 "key": "example.todo",
                 "name": "To-Do List",
-                "glyph": "2",
+                "cssClass": "icon-check",
                 "description": "A list of things that need to be done.",
                 "features": ["creation"],
 +               "model": {
@@ -529,7 +488,7 @@ define([
             {
                 "key": "example.todo",
                 "type": "example.todo",
-                "glyph": "2",
+                "cssClass": "icon-check",
                 "name": "List",
                 "templateUrl": "templates/todo.html",
                 "editable": true
@@ -571,7 +530,7 @@ in the directory `tutorials/todo/src/controllers` (`src` is, by default, the
 directory where bundle-related source code is kept, and controllers is where 
 Angular controllers are stored by convention.)
 
-```diff
+```js
 define(function () {
     function TodoController($scope) {
         var showAll = true,
@@ -636,7 +595,7 @@ prior to our template being utilized.
 On its own, this controller merely exposes these functions; the next step is to 
 use them from our template:
 
-```diff
+```html
 +  <div ng-controller="TodoController">
         <div>
 +          <a ng-click="setVisibility(true)">All</a>
@@ -672,15 +631,15 @@ If we were to try to run at this point, we'd run into problems because the
 `TodoController` has not been registered with Angular. We need to first declare 
 it in our bundle definition, as an extension of category `controllers`:
 
-```diff
+```js
 define([
-    'legacyRegistry',
-    './src/controllers/TodoController'
+    'openmct',
++    './src/controllers/TodoController'
 ], function (
-    legacyRegistry,
-    TodoController
+    openmct,
++    TodoController
 ) {
-    legacyRegistry.register("tutorials/todo", {
+    openmct.legacyRegistry.register("tutorials/todo", {
     "name": "To-do Plugin",
     "description": "Allows creating and editing to-do lists.",
     "extensions": {
@@ -688,7 +647,7 @@ define([
             {
                 "key": "example.todo",
                 "name": "To-Do List",
-                "glyph": "2",
+                "cssClass": "icon-check",
                 "description": "A list of things that need to be done.",
                 "features": ["creation"],
                 "model": {
@@ -703,7 +662,7 @@ define([
             {
                 "key": "example.todo",
                 "type": "example.todo",
-                "glyph": "2",
+                "cssClass": "icon-check",
                 "name": "List",
                 "templateUrl": "templates/todo.html",
                 "editable": true
@@ -766,15 +725,15 @@ An Editing user interface is typically handled in a tool bar associated with a
 view. The contents of this tool bar are defined declaratively in a view's 
 extension definition.
 
-```diff
+```js
 define([
-    'legacyRegistry',
+    'openmct',
     './src/controllers/TodoController'
 ], function (
-    legacyRegistry,
+    openmct,
     TodoController
 ) {
-    legacyRegistry.register("tutorials/todo", {
+    openmct.legacyRegistry.register("tutorials/todo", {
     "name": "To-do Plugin",
     "description": "Allows creating and editing to-do lists.",
     "extensions": {
@@ -782,7 +741,7 @@ define([
             {
                 "key": "example.todo",
                 "name": "To-Do List",
-                "glyph": "2",
+                "cssClass": "icon-check",
                 "description": "A list of things that need to be done.",
                 "features": ["creation"],
                 "model": {
@@ -797,7 +756,7 @@ define([
             {
                 "key": "example.todo",
                 "type": "example.todo",
-                "glyph": "2",
+                "cssClass": "icon-check",
                 "name": "List",
                 "templateUrl": "templates/todo.html",
                 "editable": true,
@@ -807,7 +766,7 @@ define([
 +                           "items": [
 +                               {
 +                                   "text": "Add Task",
-+                                   "glyph": "+",
++                                   "cssClass": "icon-plus",
 +                                   "method": "addTask",
 +                                   "control": "button"
 +                               }
@@ -816,7 +775,7 @@ define([
 +                       {
 +                           "items": [
 +                               {
-+                                   "glyph": "Z",
++                                   "cssClass": "icon-trash",
 +                                   "method": "removeTask",
 +                                   "control": "button"
 +                               }
@@ -855,7 +814,7 @@ all the applicable controls, which means no controls at all.
 
 To support selection, we will need to make some changes to our controller:
 
-```diff
+```js
 define(function () {
 +    // Form to display when adding new tasks
 +    var NEW_TASK_FORM = {
@@ -970,7 +929,7 @@ Additionally, we need to make changes to our template to select specific tasks
 in response to some user gesture. Here, we will select tasks when a user clicks 
 the description.
 
-```diff
+```html
 <div ng-controller="TodoController">
     <div>
         <a ng-click="setVisibility(true)">All</a>
@@ -996,15 +955,15 @@ __tutorials/todo/res/templates/todo.html__
 Finally, the `TodoController` uses the `dialogService` now, so we need to 
 declare that dependency in its extension definition:
 
-```diff
+```js
 define([
-    'legacyRegistry',
+    'openmct',
     './src/controllers/TodoController'
 ], function (
-    legacyRegistry,
+    openmct,
     TodoController
 ) {
-    legacyRegistry.register("tutorials/todo", {
+    openmct.legacyRegistry.register("tutorials/todo", {
     "name": "To-do Plugin",
     "description": "Allows creating and editing to-do lists.",
     "extensions": {
@@ -1012,7 +971,7 @@ define([
             {
                 "key": "example.todo",
                 "name": "To-Do List",
-                "glyph": "2",
+                "cssClass": "icon-check",
                 "description": "A list of things that need to be done.",
                 "features": ["creation"],
                 "model": {
@@ -1027,7 +986,7 @@ define([
             {
                 "key": "example.todo",
                 "type": "example.todo",
-                "glyph": "2",
+                "cssClass": "icon-check",
                 "name": "List",
                 "templateUrl": "templates/todo.html",
                 "editable": true,
@@ -1037,7 +996,7 @@ define([
                             "items": [
                                 {
                                     "text": "Add Task",
-                                    "glyph": "+",
+                                    "cssClass": "icon-plus",
                                     "method": "addTask",
                                     "control": "button"
                                 }
@@ -1046,7 +1005,7 @@ define([
                         {
                             "items": [
                                 {
-                                    "glyph": "Z",
+                                    "cssClass": "icon-trash",
                                     "method": "removeTask",
                                     "control": "button"
                                 }
@@ -1100,7 +1059,7 @@ In this section, our goal is to:
 To support the first two, we'll need to expose some methods for checking these 
 states in the controller:
 
-```diff
+```js
 define(function () {
     // Form to display when adding new tasks
     var NEW_TASK_FORM = {
@@ -1217,7 +1176,7 @@ states visually, and to generally improve the appearance of our view. We add
 another file to the res directory of our bundle; this time, it is `css/todo.css` 
 (with the `css` directory again being a convention.)
 
-```diff
+```css
 .example-todo div.example-button-group {
     margin-top: 12px;
     margin-bottom: 12px;
@@ -1261,15 +1220,15 @@ To include this CSS file in our running instance of Open MCT, we need to
 declare it in our bundle definition, this time as an extension of category 
 `stylesheets`:
 
-```diff
+```js
 define([
-    'legacyRegistry',
+    'openmct',
     './src/controllers/TodoController'
 ], function (
-    legacyRegistry,
+    openmct,
     TodoController
 ) {
-    legacyRegistry.register("tutorials/todo", {
+    openmct.legacyRegistry.register("tutorials/todo", {
     "name": "To-do Plugin",
     "description": "Allows creating and editing to-do lists.",
     "extensions": {
@@ -1277,7 +1236,7 @@ define([
             {
                 "key": "example.todo",
                 "name": "To-Do List",
-                "glyph": "2",
+                "cssClass": "icon-check",
                 "description": "A list of things that need to be done.",
                 "features": ["creation"],
                 "model": {
@@ -1289,7 +1248,7 @@ define([
             {
                 "key": "example.todo",
                 "type": "example.todo",
-                "glyph": "2",
+                "cssClass": "icon-check",
                 "name": "List",
                 "templateUrl": "templates/todo.html",
                 "editable": true,
@@ -1299,7 +1258,7 @@ define([
                             "items": [
                                 {
                                     "text": "Add Task",
-                                    "glyph": "+",
+                                    "cssClass": "icon-plus",
                                     "method": "addTask",
                                     "control": "button"
                                 }
@@ -1308,7 +1267,7 @@ define([
                         {
                             "items": [
                                 {
-                                    "glyph": "Z",
+                                    "cssClass": "icon-trash",
                                     "method": "removeTask",
                                     "control": "button"
                                 }
@@ -1341,7 +1300,7 @@ To-Do List's type above; now To-Do Lists will start off empty.
 
 Finally, let's utilize these changes from our view's template:
 
-```diff
+```html
 + <div ng-controller="TodoController" class="example-todo">
 +     <div class="example-button-group">
 +         <a ng-class="{ selected: checkVisibility(true) }"
@@ -1401,13 +1360,13 @@ We'll also be defining some custom styles, so we'll include that extension as
 well. We'll be creating this plugin in `tutorials/bargraph`, so our initial 
 bundle definition looks like:
 
-```diff
+```js
 define([
-    'legacyRegistry'
+    'openmct'
 ], function (
-    legacyRegistry
+    openmct
 ) {
-    legacyRegistry.register("tutorials/bargraph", {
+    openmct.legacyRegistry.register("tutorials/bargraph", {
     "name": "Bar Graph",
     "description": "Provides the Bar Graph view of telemetry elements.",
     "extensions": {
@@ -1415,7 +1374,7 @@ define([
             {
                 "name": "Bar Graph",
                 "key": "example.bargraph",
-                "glyph": "H",
+                "cssClass": "icon-autoflow-tabular",
                 "templateUrl": "templates/bargraph.html",
                 "needs": [ "telemetry" ],
                 "delegation": true
@@ -1448,7 +1407,7 @@ For this tutorial, we'll assume that we've sketched out our template and CSS
 file ahead of time to describe the general look we want for the view. These 
 look like:
 
-```diff
+```html
 <div class="example-bargraph">
     <div class="example-tick-labels">
         <div class="example-tick-label" style="bottom: 0%">High</div>
@@ -1499,7 +1458,7 @@ bar corresponds to which telemetry point. Inline `style` attributes are used
 wherever dynamic positioning (handled by a script) is anticipated.
 The corresponding CSS file which styles and positions these elements:
 
-```diff
+```css
 .example-bargraph {
     position: absolute;
     top: 0;
@@ -1573,7 +1532,7 @@ The corresponding CSS file which styles and positions these elements:
 ```
 __tutorials/bargraph/res/css/bargraph.css__
 
-This is already enough that, if we add `"tutorials/bargraph"` to `main.js`, 
+This is already enough that, if we add `"tutorials/bargraph"` to `index.html`, 
 we should be able to run Open MCT and see our Bar Graph as an available view 
 for domain objects which provide telemetry (such as the example 
 _Sine Wave Generator_) as well as for _Telemetry Panel_ objects:
@@ -1597,7 +1556,7 @@ Notably, we will not try to show telemetry data after this step.
 
 To support this, we will add a new controller which supports our Bar Graph view:
 
-```diff
+```js
 define(function () {
     function BarGraphController($scope, telemetryHandler) {
         var handle;
@@ -1649,7 +1608,7 @@ telemetry objects in view, as well as the width for each bar.
 
 We will also utilize this from our template:
 
-```diff
+```html
 + <div class="example-bargraph" ng-controller="BarGraphController">
     <div class="example-tick-labels">
 +       <div ng-repeat="value in [low, middle, high] track by $index"
@@ -1702,15 +1661,15 @@ Finally, we expose our controller from our bundle definition. Note that the
 depends declaration includes both `$scope` as well as the `telemetryHandler` 
 service we made use of.
 
-```diff
+```js
 define([
-    'legacyRegistry',
+    'openmct',
     './src/controllers/BarGraphController'
 ], function (
-    legacyRegistry,
+    openmct,
     BarGraphController
 ) {
-    legacyRegistry.register("tutorials/bargraph", {
+    openmct.legacyRegistry.register("tutorials/bargraph", {
     "name": "Bar Graph",
     "description": "Provides the Bar Graph view of telemetry elements.",
     "extensions": {
@@ -1718,7 +1677,7 @@ define([
             {
                 "name": "Bar Graph",
                 "key": "example.bargraph",
-                "glyph": "H",
+                "cssClass": "icon-autoflow-tabular",
                 "templateUrl": "templates/bargraph.html",
                 "needs": [ "telemetry" ],
                 "delegation": true
@@ -1757,7 +1716,7 @@ First, let's add expose some more functionality from our controller. To make it
 simple, we'll expose the top and bottom for a bar graph for a given 
 telemetry-providing domain object, as percentages.
 
-```diff
+```js
 define(function () {
     function BarGraphController($scope, telemetryHandler) {
         var handle;
@@ -1809,7 +1768,7 @@ decide this.
 
 Next, we utilize this functionality from the template:
 
-```diff
+```html
 <div class="example-bargraph" ng-controller="BarGraphController">
     <div class="example-tick-labels">
         <div ng-repeat="value in [low, middle, high] track by $index"
@@ -1868,15 +1827,15 @@ when we return to our view later, those changes will be persisted.
 
 First, let's add a tool bar for changing these three values in Edit mode:
 
-```diff
+```js
 define([
-    'legacyRegistry',
+    'openmct',
     './src/controllers/BarGraphController'
 ], function (
-    legacyRegistry,
+    openmct,
     BarGraphController
 ) {
-    legacyRegistry.register("tutorials/bargraph", {
+    openmct.legacyRegistry.register("tutorials/bargraph", {
     "name": "Bar Graph",
     "description": "Provides the Bar Graph view of telemetry elements.",
     "extensions": {
@@ -1884,7 +1843,7 @@ define([
             {
                 "name": "Bar Graph",
                 "key": "example.bargraph",
-                "glyph": "H",
+                "cssClass": "icon-autoflow-tabular",
                 "templateUrl": "templates/bargraph.html",
                 "needs": [ "telemetry" ],
                 "delegation": true,
@@ -1942,7 +1901,7 @@ a view proxy to work from. We will add this to our controller, and additionally
 will start reading/writing those properties to the view's `configuration` 
 object.
 
-```diff
+```js
 define(function () {
     function BarGraphController($scope, telemetryHandler) {
         var handle;
@@ -2065,7 +2024,7 @@ For purposes of this tutorial, a simple node server is provided to stand
 in place of this existing telemetry system. It generates real-time data 
 and exposes it over a WebSocket connection.
 
-```diff
+```js
 /*global require,process,console*/
 
 var CONFIG = {
@@ -2247,7 +2206,7 @@ used by the server. It uses a custom format and, for purposes of example,
 contains three "subsystems" containing a mix of numeric and string-based 
 telemetry.
 
-```diff
+```json
 {
     "name": "Example Spacecraft",
     "identifier": "sc",
@@ -2350,27 +2309,33 @@ will retrieve from the server.)
 
 ```diff
 define([
-    'legacyRegistry'
+    'openmct'
 ], function (
-    legacyRegistry
+    openmct
 ) {
-    legacyRegistry.register("tutorials/telemetry", {
+    openmct.legacyRegistry.register("tutorials/telemetry", {
         "name": "Example Telemetry Adapter",
         "extensions": {
             "types": [
                 {
                     "name": "Spacecraft",
                     "key": "example.spacecraft",
-                    "glyph": "o"
+                    "cssClass": "icon-object"
                 }
             ],
             "roots": [
                 {
                     "id": "example:sc",
-                    "priority": "preferred",
+                    "priority": "preferred"
+                }
+            ],
+            "models": [
+                {
+                    "id": "example:sc",
                     "model": {
                         "type": "example.spacecraft",
                         "name": "My Spacecraft",
+                        "location": "ROOT",
                         "composition": []
                     }
                 }
@@ -2389,91 +2354,70 @@ preferred so that this shows up near the top, instead of below My Items.
 
 If we include this in our set of active bundles:
 
-```diff
-requirejs.config({
-    "paths": {
-        "legacyRegistry": "src/legacyRegistry",
-        "angular": "bower_components/angular/angular.min",
-        "angular-route": "bower_components/angular-route/angular-route.min",
-        "csv": "bower_components/comma-separated-values/csv.min",
-        "es6-promise": "bower_components/es6-promise/promise.min",
-        "moment": "bower_components/moment/moment",
-        "moment-duration-format": "bower_components/moment-duration-format/lib/moment-duration-format",
-        "saveAs": "bower_components/FileSaver.js/FileSaver.min",
-        "screenfull": "bower_components/screenfull/dist/screenfull.min",
-        "text": "bower_components/text/text",
-        "uuid": "bower_components/node-uuid/uuid",
-        "zepto": "bower_components/zepto/zepto.min"
-    },
-    "shim": {
-        "angular": {
-            "exports": "angular"
-        },
-        "angular-route": {
-            "deps": [ "angular" ]
-        },
-        "moment-duration-format": {
-            "deps": [ "moment" ]
-        },
-        "screenfull": {
-            "exports": "screenfull"
-        },
-        "zepto": {
-            "exports": "Zepto"
-        }
-    }
-});
+```html
+<!--
+ Open MCT, Copyright (c) 2014-2016, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
 
-define([
-    './platform/framework/src/Main',
-    'legacyRegistry',
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
 
-    './platform/framework/bundle',
-    './platform/core/bundle',
-    './platform/representation/bundle',
-    './platform/commonUI/about/bundle',
-    './platform/commonUI/browse/bundle',
-    './platform/commonUI/edit/bundle',
-    './platform/commonUI/dialog/bundle',
-    './platform/commonUI/formats/bundle',
-    './platform/commonUI/general/bundle',
-    './platform/commonUI/inspect/bundle',
-    './platform/commonUI/mobile/bundle',
-    './platform/commonUI/themes/espresso/bundle',
-    './platform/commonUI/notification/bundle',
-    './platform/containment/bundle',
-    './platform/execution/bundle',
-    './platform/exporters/bundle',
-    './platform/telemetry/bundle',
-    './platform/features/clock/bundle',
-    './platform/features/imagery/bundle',
-    './platform/features/layout/bundle',
-    './platform/features/pages/bundle',
-    './platform/features/plot/bundle',
-    './platform/features/timeline/bundle',
-    './platform/features/table/bundle',
-    './platform/forms/bundle',
-    './platform/identity/bundle',
-    './platform/persistence/aggregator/bundle',
-    './platform/persistence/local/bundle',
-    './platform/persistence/queue/bundle',
-    './platform/policy/bundle',
-    './platform/entanglement/bundle',
-    './platform/search/bundle',
-    './platform/status/bundle',
-    './platform/commonUI/regions/bundle',
-    
-+   './tutorials/telemetry/bundle'
-], function (Main, legacyRegistry) {
-    return {
-        legacyRegistry: legacyRegistry,
-        run: function () {
-            return new Main().run(legacyRegistry);
-        }
-    };
-});
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title></title>
+    <script src="bower_components/requirejs/require.js">
+    </script>
+    <script>
+        require([
+            'openmct',
+            './tutorials/telemetry/bundle'
+        ], function (openmct) {
+            [
+                'example/imagery',
+                'example/eventGenerator',
+                'example/generator',
+                'platform/features/my-items',
+                'platform/persistence/local',
+                'tutorials/telemetry'
+            ].forEach(
+                openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
+            );
+            openmct.start();
+        });
+    </script>
+    <link rel="stylesheet" href="platform/commonUI/general/res/css/startup-base.css">
+    <link rel="stylesheet" href="platform/commonUI/general/res/css/openmct.css">
+    <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="platform/commonUI/general/res/images/favicons/favicon-16x16.png" sizes="16x16">
+    <link rel="shortcut icon" href="platform/commonUI/general/res/images/favicons/favicon.ico">
+</head>
+<body class="user-environ">
+    <div class="l-splash-holder s-splash-holder">
+        <div class="l-splash s-splash"></div>
+    </div>
+</body>
+</html>
+
 ```
-__main.js__
+__index.html__
 
 ...we will be able to reload Open MCT and see that it is present:
 
@@ -2489,7 +2433,7 @@ server. Our first step will be to add a service that will handle interactions
 with the server; this will not be used by Open MCT directly, but will be 
 used by subsequent components we add.
 
-```diff
+```js
 /*global define,WebSocket*/
 
 define(
@@ -2544,7 +2488,7 @@ subsystems. This means that we need to convert the data from the dictionary
 into domain object models, and expose these to Open MCT via a 
 `modelService`.
 
-```diff
+```js
 /*global define*/
 
 define(
@@ -2678,7 +2622,7 @@ This allows our telemetry dictionary to be expressed as domain object models
 fix this, we will need another script which will add these subsystems to the 
 root-level object we added in Step 1.
 
-```diff
+```js
 /*global define*/
 
 define(
@@ -2743,37 +2687,37 @@ Finally, we wire in these changes by modifying our plugin's `bundle.js` to
 provide metadata about how these pieces interact (both with each other, and 
 with the platform):
 
-```diff
+```js
 define([
-    'legacyRegistry',
+    'openmct',
 +   './src/ExampleTelemetryServerAdapter',
 +   './src/ExampleTelemetryInitializer',
 +   './src/ExampleTelemetryModelProvider'
 ], function (
-    legacyRegistry,
+    openmct,
 +   ExampleTelemetryServerAdapter,
 +   ExampleTelemetryInitializer,
 +   ExampleTelemetryModelProvider
 ) {
-    legacyRegistry.register("tutorials/telemetry", {
+    openmct.legacyRegistry.register("tutorials/telemetry", {
     "name": "Example Telemetry Adapter",
     "extensions": {
         "types": [
             {
                 "name": "Spacecraft",
                 "key": "example.spacecraft",
-                "glyph": "o"
+                "cssClass": "icon-object"
             },
 +           {
 +               "name": "Subsystem",
 +               "key": "example.subsystem",
-+               "glyph": "o",
++               "cssClass": "icon-object",
 +               "model": { "composition": [] }
 +           },
 +           {
 +               "name": "Measurement",
 +               "key": "example.measurement",
-+               "glyph": "T",
++               "cssClass": "icon-telemetry",
 +               "model": { "telemetry": {} },
 +               "telemetry": {
 +                   "source": "example.source",
@@ -2790,9 +2734,15 @@ define([
             {
                 "id": "example:sc",
                 "priority": "preferred",
+            }
+        ],
+        "models": [
+            {
+                "id": "example:sc",
                 "model": {
                     "type": "example.spacecraft",
                     "name": "My Spacecraft",
+                    "location": "ROOT",
                     "composition": []
                 }
             }
@@ -2885,7 +2835,7 @@ will do so for the server's historical telemetry.
 Our first step will be to add a method to our server adapter which allows us to 
 send history requests to the server:
 
-```diff
+```js
 /*global define,WebSocket*/
 
 define(
@@ -2944,11 +2894,11 @@ identifier, the pending promise is resolved.
 This `history` method will be used by a `telemetryService` provider which we 
 will implement:
 
-```diff
+```js
 /*global define*/
 
 define(
-    ['./src/ExampleTelemetrySeries'],
+    ['./ExampleTelemetrySeries'],
     function (ExampleTelemetrySeries) {
         "use strict";
 
@@ -3030,7 +2980,7 @@ Finally, note that we also have a `subscribe` method, to satisfy the interface o
 
 This script uses an `ExampleTelemetrySeries` class, which looks like:
 
-```diff
+```js
 /*global define*/
 
 define(
@@ -3062,37 +3012,37 @@ it with the interface expected by the platform (the methods shown.)
 
 Finally, we expose this `telemetryService` provider declaratively:
 
-```diff
+```js
 define([
-    'legacyRegistry',
+    'openmct',
     './src/ExampleTelemetryServerAdapter',
     './src/ExampleTelemetryInitializer',
     './src/ExampleTelemetryModelProvider'
 ], function (
-    legacyRegistry,
+    openmct,
     ExampleTelemetryServerAdapter,
     ExampleTelemetryInitializer,
     ExampleTelemetryModelProvider
 ) {
-    legacyRegistry.register("tutorials/telemetry", {
+    openmct.legacyRegistry.register("tutorials/telemetry", {
     "name": "Example Telemetry Adapter",
     "extensions": {
         "types": [
             {
                 "name": "Spacecraft",
                 "key": "example.spacecraft",
-                "glyph": "o"
+                "cssClass": "icon-object"
             },
             {
                 "name": "Subsystem",
                 "key": "example.subsystem",
-                "glyph": "o",
+                "cssClass": "icon-object",
                 "model": { "composition": [] }
             },
             {
                 "name": "Measurement",
                 "key": "example.measurement",
-                "glyph": "T",
+                "cssClass": "icon-telemetry",
                 "model": { "telemetry": {} },
                 "telemetry": {
                     "source": "example.source",
@@ -3108,10 +3058,16 @@ define([
         "roots": [
             {
                 "id": "example:sc",
-                "priority": "preferred",
+                "priority": "preferred"
+            }
+        ],
+        "models": [
+            {
+                "id": "example:sc",
                 "model": {
                     "type": "example.spacecraft",
                     "name": "My Spacecraft",
+                    "location": "ROOT",
                     "composition": []
                 }
             }
@@ -3171,7 +3127,7 @@ Finally, we want to utilize the server's ability to subscribe to telemetry
 from Open MCT. To do this, first we want to expose some new methods for 
 this from our server adapter:
 
-```diff
+```js
 /*global define,WebSocket*/
 
 define(
@@ -3238,17 +3194,17 @@ define(
 __tutorials/telemetry/src/ExampleTelemetryServerAdapter.js__
 
 Here, we have added `subscribe` and `unsubscribe` methods which issue the 
-corresponding requests to the server. Seperately, we introduce the ability to 
+corresponding requests to the server. Separately, we introduce the ability to 
 listen for `data` messages as they come in: These will contain the data associated 
 with these subscriptions.
 
 We then need only to utilize these methods from our `telemetryService`:
 
-```diff
+```js
 /*global define*/
 
 define(
-    ['./src/ExampleTelemetrySeries'],
+    ['./ExampleTelemetrySeries'],
     function (ExampleTelemetrySeries) {
         "use strict";
 
@@ -3350,3 +3306,4 @@ server can handle this.)
 Running Open MCT again, we can still plot our historical telemetry - but 
 now we also see that it updates in real-time as more data comes in from the 
 server.
+ 

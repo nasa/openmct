@@ -58,7 +58,7 @@ define(
                 );
                 mockEditor = jasmine.createSpyObj(
                     "editorCapability",
-                    ["edit", "isEditContextRoot", "cancel"]
+                    ["edit", "isEditContextRoot"]
                 );
 
                 capabilities = {
@@ -96,13 +96,6 @@ define(
                 expect(EditAction.appliesTo(actionContext)).toBe(true);
                 mockEditor.isEditContextRoot.andReturn(true);
                 expect(EditAction.appliesTo(actionContext)).toBe(false);
-            });
-
-            it ("cancels editing when user navigates away", function () {
-                action.perform();
-                expect(mockNavigationService.addListener).toHaveBeenCalled();
-                mockNavigationService.addListener.mostRecentCall.args[0]();
-                expect(mockEditor.cancel).toHaveBeenCalled();
             });
 
             it ("invokes the Edit capability on the object", function () {

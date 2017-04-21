@@ -72,7 +72,7 @@ define(
                 expect(directive.restrict).toEqual("A");
             });
 
-            it("transcludes at the elmeent level", function () {
+            it("transcludes at the element level", function () {
                 expect(directive.transclude).toEqual('element');
             });
 

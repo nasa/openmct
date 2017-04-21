@@ -35,7 +35,10 @@ define(
                 mockDocument = [
                     jasmine.createSpyObj('document', ['createElement'])
                 ];
-                mockScope = jasmine.createSpyObj('scope', ['$watch']);
+                mockScope = jasmine.createSpyObj('scope', [
+                    '$watch',
+                    '$watchCollection'
+                ]);
                 mockElement = jasmine.createSpyObj('element', ['css']);
                 testImage = {};
 
@@ -52,46 +55,70 @@ define(
                 expect(directive.scope.mctBackgroundImage).toEqual("=");
             });
 
-            it("watches for changes to the URL", function () {
-                directive.link(mockScope, mockElement, {});
-                expect(mockScope.$watch).toHaveBeenCalledWith(
-                    'mctBackgroundImage',
-                    jasmine.any(Function)
-                );
-            });
+            describe("once linked", function () {
+                beforeEach(function () {
+                    directive.link(mockScope, mockElement, {});
+                });
 
-            it("updates images in-order, even when they load out-of-order", function () {
-                var firstOnload;
+                it("watches for changes to the URL", function () {
+                    expect(mockScope.$watch).toHaveBeenCalledWith(
+                        'mctBackgroundImage',
+                        jasmine.any(Function)
+                    );
+                });
 
-                directive.link(mockScope, mockElement);
+                it("updates images in-order, even when they load out-of-order", function () {
+                    var firstOnload;
 
-                mockScope.$watch.mostRecentCall.args[1]("some/url/0");
-                firstOnload = testImage.onload;
+                    mockScope.$watch.mostRecentCall.args[1]("some/url/0");
+                    firstOnload = testImage.onload;
 
-                mockScope.$watch.mostRecentCall.args[1]("some/url/1");
+                    mockScope.$watch.mostRecentCall.args[1]("some/url/1");
 
-                // Resolve in a different order
-                testImage.onload();
-                firstOnload();
+                    // Resolve in a different order
+                    testImage.onload();
+                    firstOnload();
 
-                // Should still have taken the more recent value
-                expect(mockElement.css.mostRecentCall.args).toEqual([
-                    "background-image",
-                    "url('some/url/1')"
-                ]);
-            });
+                    // Should still have taken the more recent value
+                    expect(mockElement.css.mostRecentCall.args).toEqual([
+                        "background-image",
+                        "url('some/url/1')"
+                    ]);
+                });
 
-            it("clears the background image when undefined is passed in", function () {
-                directive.link(mockScope, mockElement);
+                it("clears the background image when undefined is passed in", function () {
+                    mockScope.$watch.mostRecentCall.args[1]("some/url/0");
+                    testImage.onload();
+                    mockScope.$watch.mostRecentCall.args[1](undefined);
 
-                mockScope.$watch.mostRecentCall.args[1]("some/url/0");
-                testImage.onload();
-                mockScope.$watch.mostRecentCall.args[1](undefined);
+                    expect(mockElement.css.mostRecentCall.args).toEqual([
+                        "background-image",
+                        "none"
+                    ]);
+                });
 
-                expect(mockElement.css.mostRecentCall.args).toEqual([
-                    "background-image",
-                    "none"
-                ]);
+                it("updates filters on change", function () {
+                    var filters = { brightness: 123, contrast: 21 };
+                    mockScope.$watchCollection.calls.forEach(function (call) {
+                        if (call.args[0] === 'filters') {
+                            call.args[1](filters);
+                        }
+                    });
+                    expect(mockElement.css).toHaveBeenCalledWith(
+                        'filter',
+                        'brightness(123%) contrast(21%)'
+                    );
+                });
+
+                it("clears filters when none are present", function () {
+                    mockScope.$watchCollection.calls.forEach(function (call) {
+                        if (call.args[0] === 'filters') {
+                            call.args[1](undefined);
+                        }
+                    });
+                    expect(mockElement.css)
+                        .toHaveBeenCalledWith('filter', '');
+                });
             });
         });
     }

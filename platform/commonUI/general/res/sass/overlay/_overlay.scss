@@ -19,8 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
 .overlay {
     font-size: 90%;
+    &.delayEntry100ms {
+        @include keyframes(fadeInFromNone) {
+            0% { display: none; opacity: 0; }
+            100% { display: block; opacity: 1; }
+        }
+        @include animation-delay($delayEntryMs);
+        @include animation(fadeInFromNone $durEntryMs ease-in);
+    }
     .blocker {
         background: $colorOvrBlocker;
         z-index: 100;
@@ -46,9 +55,7 @@
         height: 70%;
         width: 50%;
         min-height: 300px;
-        max-height: 800px;
         min-width: 600px;
-        max-width: 1000px;
         z-index: 101;
         > .contents {
             $m: $overlayMargin;

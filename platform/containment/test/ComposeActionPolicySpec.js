@@ -78,8 +78,8 @@ define(
 
                 expect(mockPolicyService.allow).toHaveBeenCalledWith(
                     'composition',
-                    mockTypes[0],
-                    mockTypes[1]
+                    mockDomainObjects[0],
+                    mockDomainObjects[1]
                 );
             });
 

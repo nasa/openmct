@@ -35,11 +35,15 @@ define(
          * @memberof platform/commonUI/dialog
          * @constructor
          */
-        function DialogService(overlayService, $q, $log) {
+        function DialogService(overlayService, $q, $log, $document) {
             this.overlayService = overlayService;
             this.$q = $q;
             this.$log = $log;
             this.activeOverlay = undefined;
+
+            this.findBody = function () {
+                return $document.find('body');
+            };
         }
 
         /**
@@ -60,7 +64,8 @@ define(
             // input is asynchronous.
             var deferred = this.$q.defer(),
                 self = this,
-                overlay;
+                overlay,
+                handleEscKeydown;
 
             // Confirm function; this will be passed in to the
             // overlay-dialog template and associated with a
@@ -76,12 +81,21 @@ define(
             // Cancel or X button click
             function cancel() {
                 deferred.reject();
+                self.findBody().off('keydown', handleEscKeydown);
                 self.dismissOverlay(overlay);
             }
+
+            handleEscKeydown = function (event) {
+                if (event.keyCode === 27) {
+                    cancel();
+                }
+            };
 
             // Add confirm/cancel callbacks
             model.confirm = confirm;
             model.cancel = cancel;
+
+            this.findBody().on('keydown', handleEscKeydown);
 
             if (this.canShowDialog(model)) {
                 // Add the overlay using the OverlayService, which
@@ -187,7 +201,7 @@ define(
 
         /**
          * A description of the model options that may be passed to the
-         * showBlockingMessage method. Note that the DialogModel desribed
+         * showBlockingMessage method. Note that the DialogModel described
          * here is shared with the Notifications framework.
          * @see NotificationService
          *
@@ -200,6 +214,9 @@ define(
          * shown above a progress bar to indicate what's happening.
          * @property {number} progress a percentage value (1-100)
          * indicating the completion of the blocking task
+         * @property {boolean} delay adds a brief delay before loading
+         * the dialog. Useful for removing the dialog flicker when the
+         * conditions for displaying the dialog change rapidly.
          * @property {string} progressText the message to show below a
          * progress bar to indicate progress. For example, this might be
          * used to indicate time remaining, or items still to process.

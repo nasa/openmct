@@ -43,11 +43,6 @@ define(
         }
 
         ComposeActionPolicy.prototype.allowComposition = function (containerObject, selectedObject) {
-            // Get the object types involved in the compose action
-            var containerType = containerObject &&
-                    containerObject.getCapability('type'),
-                selectedType = selectedObject &&
-                    selectedObject.getCapability('type');
 
             // Get a reference to the policy service if needed...
             this.policyService = this.policyService || this.getPolicyService();
@@ -56,8 +51,8 @@ define(
             return containerObject.getId() !== selectedObject.getId() &&
                 this.policyService.allow(
                     'composition',
-                    containerType,
-                    selectedType
+                    containerObject,
+                    selectedObject
                 );
         };
 

@@ -36,6 +36,11 @@ define([
         "extensions": {
             "roots": [
                 {
+                    "id": "exampleTaxonomy"
+                }
+            ],
+            "models": [
+                {
                     "id": "exampleTaxonomy",
                     "model": {
                         "type": "folder",

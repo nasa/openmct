@@ -26,7 +26,7 @@ define(
 
         /**
          * Responsible for preparing data for display by
-         * `mct-chart` in a timeline's resource graph.
+         * `mct-timeline-chart` in a timeline's resource graph.
          * @constructor
          */
         function TimelineGraphRenderer() {
@@ -54,7 +54,7 @@ define(
                  * Convert an HTML color (in #-prefixed 6-digit hexadecimal)
                  * to an array of floating point values in a range of 0.0-1.0.
                  * An alpha element is included to facilitate display in an
-                 * `mct-chart` (which uses WebGL.)
+                 * `mct-timeline-chart` (which uses WebGL.)
                  * @param {string} the color
                  * @returns {number[]} the same color, in floating-point format
                  */

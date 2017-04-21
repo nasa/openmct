@@ -25,12 +25,14 @@ define([
     "./src/CompositionMutabilityPolicy",
     "./src/CompositionModelPolicy",
     "./src/ComposeActionPolicy",
+    "./src/PersistableCompositionPolicy",
     'legacyRegistry'
 ], function (
     CompositionPolicy,
     CompositionMutabilityPolicy,
     CompositionModelPolicy,
     ComposeActionPolicy,
+    PersistableCompositionPolicy,
     legacyRegistry
 ) {
 
@@ -40,9 +42,6 @@ define([
                 {
                     "category": "composition",
                     "implementation": CompositionPolicy,
-                    "depends": [
-                        "$injector"
-                    ],
                     "message": "Objects of this type cannot contain objects of that type."
                 },
                 {
@@ -62,6 +61,12 @@ define([
                         "$injector"
                     ],
                     "message": "Objects of this type cannot contain objects of that type."
+                },
+                {
+                    "category": "composition",
+                    "implementation": PersistableCompositionPolicy,
+                    "depends": ["openmct"],
+                    "message": "Change cannot be made to composition of non-persistable object"
                 }
             ]
         }

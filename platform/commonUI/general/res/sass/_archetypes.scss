@@ -108,6 +108,9 @@
         &.grows {
             @include flex(1 1 auto);
         }
+        &.contents-align-right {
+            text-align: right;
+        }
     }
     .flex-container {
         // Apply to wrapping elements, mct-includes, etc.

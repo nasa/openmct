@@ -40,19 +40,11 @@ define(
             var self = this,
                 editAction = this.domainObject.getCapability('action').getActions("edit")[0];
 
-            // Persist changes to the domain object
-            function doPersist() {
-                var persistence =
-                    self.domainObject.getCapability('persistence');
-                return persistence.persist();
-            }
-
             // Link these objects
             function doLink() {
                 var composition = self.domainObject &&
                         self.domainObject.getCapability('composition');
-                return composition && composition.add(self.selectedObject)
-                        .then(doPersist);
+                return composition && composition.add(self.selectedObject);
             }
 
             if (editAction) {

@@ -20,8 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <div class="abs l-flex-col" ng-controller="EditObjectController as EditObjectController">
-    <div mct-before-unload="EditObjectController.getUnloadWarning()"
-         class="holder flex-elem l-flex-row object-browse-bar ">
+    <div class="holder flex-elem l-flex-row object-browse-bar ">
         <div class="items-select left flex-elem l-flex-row grows">
             <mct-representation key="'back-arrow'"
                                 mct-object="domainObject"
@@ -66,4 +65,9 @@
             </mct-representation>
         </div><!--/ l-object-wrapper-inner -->
     </div>
+    <mct-representation mct-object="domainObject"
+                        key="'time-conductor'"
+                        class="abs holder flex-elem flex-fixed l-flex-row l-time-conductor-holder">
+    </mct-representation>
+
 </div>

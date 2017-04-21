@@ -47,7 +47,7 @@ define([
                 {
                     "name": "Plot",
                     "key": "plot",
-                    "cssclass": "icon-sine",
+                    "cssClass": "icon-sine",
                     "template": plotTemplate,
                     "needs": [
                         "telemetry"
@@ -77,7 +77,8 @@ define([
                         "telemetryFormatter",
                         "telemetryHandler",
                         "throttle",
-                        "PLOT_FIXED_DURATION"
+                        "PLOT_FIXED_DURATION",
+                        "openmct"
                     ]
                 },
                 {
@@ -146,16 +147,6 @@ define([
                     "copyright": "Copyright © 2012 Niklas von Hertzen.",
                     "license": "license-mit",
                     "link": "https://github.com/niklasvh/html2canvas/blob/master/LICENSE"
-                },
-                {
-                    "name": "jsPDF",
-                    "version": "1.2.61",
-                    "author": "James Hall",
-                    "description": "JavaScript HTML renderer",
-                    "website": "https://github.com/MrRio/jsPDF",
-                    "copyright": "Copyright © 2010-2016 James Hall",
-                    "license": "license-mit",
-                    "link": "https://github.com/MrRio/jsPDF/blob/master/MIT-LICENSE.txt"
                 }
             ]
         }

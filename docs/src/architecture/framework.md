@@ -131,7 +131,7 @@ Keeping that in mind, there are a few useful patterns supported by the
 framework that are useful to keep in mind.
 
 The specific service infrastructure provided by the platform is described
-in the [Platform Architecture](Platform.md).
+in the [Platform Architecture](platform.md).
 
 ## Extension Categories
 

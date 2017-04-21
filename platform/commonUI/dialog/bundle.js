@@ -53,7 +53,8 @@ define([
                     "depends": [
                         "overlayService",
                         "$q",
-                        "$log"
+                        "$log",
+                        "$document"
                     ]
                 },
                 {

@@ -37,7 +37,7 @@ define(
             // Equate creatability with mutability; that is, users
             // can only modify objects of types they can create, and
             // vice versa.
-            return candidate.hasFeature('creation');
+            return candidate.getCapability('type').hasFeature('creation');
         };
 
         return CompositionMutabilityPolicy;

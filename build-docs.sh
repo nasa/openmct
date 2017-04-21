@@ -24,7 +24,7 @@
 
 # Script to build and deploy docs.
 
-OUTPUT_DIRECTORY="target/docs"
+OUTPUT_DIRECTORY="dist/docs"
 # Docs, once built, are pushed to the private website repo
 REPOSITORY_URL="git@github.com:nasa/openmct-website.git"
 WEBSITE_DIRECTORY="website"
@@ -32,7 +32,7 @@ WEBSITE_DIRECTORY="website"
 BUILD_SHA=`git rev-parse HEAD`
 
 # A remote will be created for the git repository we are pushing to.
-# Don't worry, as this entire directory will get trashed inbetween builds.
+# Don't worry, as this entire directory will get trashed in between builds.
 REMOTE_NAME="documentation"
 WEBSITE_BRANCH="master"
 

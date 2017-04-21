@@ -42,14 +42,12 @@ define(
          * @param REMS_WS_URL The location of the REMS telemetry data.
          * @constructor
          */
-        function RemsTelemetryServerAdapter($q, $http, $log, REMS_WS_URL) {
+        function RemsTelemetryServerAdapter($http, $log, REMS_WS_URL) {
             this.localDataURI = module.uri.substring(0, module.uri.lastIndexOf('/') + 1) + LOCAL_DATA;
-            this.deferreds = {};
             this.REMS_WS_URL = REMS_WS_URL;
-            this.$q = $q;
             this.$http = $http;
             this.$log = $log;
-            this.cache = undefined;
+            this.promise = undefined;
         }
 
         /**
@@ -65,15 +63,10 @@ define(
          */
         RemsTelemetryServerAdapter.prototype.requestHistory = function(request) {
             var self = this,
-                id = request.key,
-                deferred = this.$q.defer();
+                id = request.key;
 
             function processResponse(response){
                 var data = [];
-                /*
-                 * Currently all data is returned for entire history of the mission. Cache response to avoid unnecessary re-queries.
-                 */
-                self.cache = response;
                 /*
                  * History data is organised by Sol. Iterate over sols...
                  */
@@ -110,17 +103,15 @@ define(
             }
 
             function packageAndResolve(results){
-                deferred.resolve({id: id, values: results});
+                return {id: id, values: results};
             }
 
 
-            this.$q.when(this.cache || this.$http.get(this.REMS_WS_URL))
+            return (this.promise = this.promise || this.$http.get(this.REMS_WS_URL))
                 .catch(fallbackToLocal)
                 .then(processResponse)
                 .then(filterResults)
                 .then(packageAndResolve);
-
-            return deferred.promise;
         };
 
         /**
@@ -132,7 +123,6 @@ define(
          * @returns {Promise | Array<RemsTelemetryValue>} that resolves with an Array of {@link RemsTelemetryValue} objects for the request data key.
          */
         RemsTelemetryServerAdapter.prototype.history = function(request) {
-            var id = request.key;
             return this.requestHistory(request);
         };
 

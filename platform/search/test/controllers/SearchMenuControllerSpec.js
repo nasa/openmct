@@ -39,8 +39,8 @@ define(
                 );
 
                 mockTypes = [
-                    {key: 'mock.type.1', name: 'Mock Type 1', cssclass: 'icon-layout'},
-                    {key: 'mock.type.2', name: 'Mock Type 2', cssclass: 'icon-telemetry'}
+                    {key: 'mock.type.1', name: 'Mock Type 1', cssClass: 'icon-layout'},
+                    {key: 'mock.type.2', name: 'Mock Type 2', cssClass: 'icon-telemetry'}
                 ];
 
                 mockScope.ngModel = {};
@@ -54,7 +54,7 @@ define(
                 controller = new SearchMenuController(mockScope, mockTypes);
             });
 
-            it("gets types on initiliztion", function () {
+            it("gets types on initialization", function () {
                 expect(mockScope.ngModel.types).toBeDefined();
             });
 

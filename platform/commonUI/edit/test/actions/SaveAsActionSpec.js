@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global describe,it,expect,beforeEach,jasmine*/
+/*global describe,it,expect,beforeEach,jasmine,runs,waitsFor,spyOn*/
 
 define(
     ["../../src/actions/SaveAsAction"],
@@ -27,13 +27,14 @@ define(
 
         describe("The Save As action", function () {
             var mockDomainObject,
+                mockClonedObject,
                 mockEditorCapability,
                 mockActionCapability,
                 mockObjectService,
                 mockDialogService,
                 mockCopyService,
+                mockNotificationService,
                 mockParent,
-                mockUrlService,
                 actionContext,
                 capabilities = {},
                 action;
@@ -58,7 +59,8 @@ define(
                     [
                         "getCapability",
                         "hasCapability",
-                        "getModel"
+                        "getModel",
+                        "getId"
                     ]
                 );
                 mockDomainObject.hasCapability.andReturn(true);
@@ -66,6 +68,15 @@ define(
                     return capabilities[capability];
                 });
                 mockDomainObject.getModel.andReturn({location: 'a', persisted: undefined});
+                mockDomainObject.getId.andReturn(0);
+
+                mockClonedObject = jasmine.createSpyObj(
+                    "clonedObject",
+                    [
+                        "getId"
+                    ]
+                );
+                mockClonedObject.getId.andReturn(1);
 
                 mockParent = jasmine.createSpyObj(
                     "parentObject",
@@ -78,10 +89,10 @@ define(
 
                 mockEditorCapability = jasmine.createSpyObj(
                     "editor",
-                    ["save", "cancel", "isEditContextRoot"]
+                    ["save", "finish", "isEditContextRoot"]
                 );
-                mockEditorCapability.cancel.andReturn(mockPromise(undefined));
                 mockEditorCapability.save.andReturn(mockPromise(true));
+                mockEditorCapability.finish.andReturn(mockPromise(true));
                 mockEditorCapability.isEditContextRoot.andReturn(true);
                 capabilities.editor = mockEditorCapability;
 
@@ -112,17 +123,27 @@ define(
                         "perform"
                     ]
                 );
+                mockCopyService.perform.andReturn(mockPromise(mockClonedObject));
 
-                mockUrlService = jasmine.createSpyObj(
-                    "urlService",
-                    ["urlForLocation"]
+                mockNotificationService = jasmine.createSpyObj(
+                    "notificationService",
+                    [
+                        "info",
+                        "error"
+                    ]
                 );
 
                 actionContext = {
                     domainObject: mockDomainObject
                 };
 
-                action = new SaveAsAction(undefined, undefined, mockDialogService, undefined, mockCopyService, actionContext);
+                action = new SaveAsAction(
+                    undefined,
+                    undefined,
+                    mockDialogService,
+                    mockCopyService,
+                    mockNotificationService,
+                    actionContext);
 
                 spyOn(action, "getObjectService");
                 action.getObjectService.andReturn(mockObjectService);
@@ -156,6 +177,28 @@ define(
                 expect(SaveAsAction.appliesTo(actionContext)).toBe(false);
             });
 
+            it("uses the editor capability to save the object", function () {
+                mockEditorCapability.save.andReturn(new Promise(function () {}));
+                runs(function () {
+                    action.perform();
+                });
+                waitsFor(function () {
+                    return mockEditorCapability.save.calls.length > 0;
+                }, "perform() should call EditorCapability.save");
+                runs(function () {
+                    expect(mockEditorCapability.finish).not.toHaveBeenCalled();
+                });
+            });
+
+            it("uses the editor capability to finish editing the object", function () {
+                runs(function () {
+                    action.perform();
+                });
+                waitsFor(function () {
+                    return mockEditorCapability.finish.calls.length > 0;
+                }, "perform() should call EditorCapability.finish");
+            });
+
             it("returns to browse after save", function () {
                 spyOn(action, "save");
                 action.save.andReturn(mockPromise(mockDomainObject));
@@ -170,7 +213,7 @@ define(
                 expect(mockDialogService.getUserInput).toHaveBeenCalled();
             });
 
-            describe("a blocking dialog", function () {
+            describe("in order to keep the user in the loop", function () {
                 var mockDialogHandle;
 
                 beforeEach(function () {
@@ -178,14 +221,14 @@ define(
                     mockDialogService.showBlockingMessage.andReturn(mockDialogHandle);
                 });
 
-                it("indicates that a save is taking place", function () {
+                it("shows a blocking dialog indicating that saving is in progress", function () {
                     mockEditorCapability.save.andReturn(new Promise(function () {}));
                     action.perform();
                     expect(mockDialogService.showBlockingMessage).toHaveBeenCalled();
                     expect(mockDialogHandle.dismiss).not.toHaveBeenCalled();
                 });
 
-                it("is hidden after saving", function () {
+                it("hides the blocking dialog after saving finishes", function () {
                     var mockCallback = jasmine.createSpy();
                     action.perform().then(mockCallback);
                     expect(mockDialogService.showBlockingMessage).toHaveBeenCalled();
@@ -194,6 +237,31 @@ define(
                     });
                     runs(function () {
                         expect(mockDialogHandle.dismiss).toHaveBeenCalled();
+                    });
+                });
+
+                it("notifies if saving succeeded", function () {
+                    var mockCallback = jasmine.createSpy();
+                    action.perform().then(mockCallback);
+                    waitsFor(function () {
+                        return mockCallback.calls.length > 0;
+                    });
+                    runs(function () {
+                        expect(mockNotificationService.info).toHaveBeenCalled();
+                        expect(mockNotificationService.error).not.toHaveBeenCalled();
+                    });
+                });
+
+                it("notifies if saving failed", function () {
+                    mockCopyService.perform.andReturn(Promise.reject("some failure reason"));
+                    var mockCallback = jasmine.createSpy();
+                    action.perform().then(mockCallback);
+                    waitsFor(function () {
+                        return mockCallback.calls.length > 0;
+                    });
+                    runs(function () {
+                        expect(mockNotificationService.error).toHaveBeenCalled();
+                        expect(mockNotificationService.info).not.toHaveBeenCalled();
                     });
                 });
             });

@@ -98,7 +98,7 @@ define([
 
         // Initialize the application
         $log.info("Initializing application.");
-        initializer.runApplication(Constants.BUNDLE_LISTING_FILE);
+        initializer.runApplication();
     };
 
     return FrameworkLayer;

@@ -66,6 +66,11 @@ define(
                 );
             }
 
+            $scope.filters = {
+                brightness: 100,
+                contrast: 100
+            };
+
             // Subscribe to telemetry when a domain object becomes available
             $scope.$watch('domainObject', subscribe);
 

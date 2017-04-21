@@ -82,7 +82,7 @@ define(
                 expect(mockGL.clear).toHaveBeenCalled();
             });
 
-            it("doees not construct if WebGL is unavailable", function () {
+            it("does not construct if WebGL is unavailable", function () {
                 mockCanvas.getContext.andReturn(undefined);
                 expect(function () {
                     return new GLChart(mockCanvas);

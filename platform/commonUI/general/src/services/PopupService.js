@@ -35,7 +35,7 @@ define(
         }
 
         /**
-         * Options controlling how the popup is displaed.
+         * Options controlling how the popup is displayed.
          *
          * @typedef PopupOptions
          * @memberof platform/commonUI/general

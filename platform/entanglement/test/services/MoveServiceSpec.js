@@ -123,8 +123,8 @@ define(
                         validate();
                         expect(policyService.allow).toHaveBeenCalledWith(
                             "composition",
-                            parentCandidate.capabilities.type,
-                            object.capabilities.type
+                            parentCandidate,
+                            object
                         );
                     });
 

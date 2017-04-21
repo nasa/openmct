@@ -63,7 +63,7 @@
                     <mct-split-pane class='l-object-and-inspector contents abs' anchor='right'>
                         <div class='split-pane-component t-object pane primary-pane left'>
                             <mct-representation mct-object="navigatedObject"
-                                                key="'view-object'"
+                                                key="navigatedObject.getCapability('status').get('editing') ? 'edit-object' : 'browse-object'"
                                                 class="abs holder holder-object">
                             </mct-representation>
                             <a class="mini-tab-icon anchor-right mobile-hide toggle-pane toggle-inspect flush-right"

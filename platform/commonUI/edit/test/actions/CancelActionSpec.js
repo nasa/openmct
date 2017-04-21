@@ -63,7 +63,7 @@ define(
 
                 capabilities.editor = jasmine.createSpyObj(
                     "editor",
-                    ["save", "cancel", "isEditContextRoot"]
+                    ["save", "finish", "isEditContextRoot"]
                 );
                 capabilities.action = jasmine.createSpyObj(
                     "actionCapability",
@@ -105,7 +105,7 @@ define(
                     return !!capabilities[name];
                 });
 
-                capabilities.editor.cancel.andReturn(mockPromise(true));
+                capabilities.editor.finish.andReturn(mockPromise(true));
 
                 action = new CancelAction(actionContext);
 
@@ -130,8 +130,8 @@ define(
                 capabilities.action.perform.andReturn(mockPromise(true));
                 action.perform();
 
-                // Should have called cancel
-                expect(capabilities.editor.cancel).toHaveBeenCalled();
+                // Should have called finish
+                expect(capabilities.editor.finish).toHaveBeenCalled();
 
                 // Definitely shouldn't call save!
                 expect(capabilities.editor.save).not.toHaveBeenCalled();

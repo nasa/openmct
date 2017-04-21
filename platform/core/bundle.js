@@ -24,7 +24,6 @@ define([
     "./src/objects/DomainObjectProvider",
     "./src/capabilities/CoreCapabilityProvider",
     "./src/models/StaticModelProvider",
-    "./src/models/RootModelProvider",
     "./src/models/ModelAggregator",
     "./src/models/ModelCacheService",
     "./src/models/PersistedModelProvider",
@@ -46,17 +45,16 @@ define([
     "./src/capabilities/MutationCapability",
     "./src/capabilities/DelegationCapability",
     "./src/capabilities/InstantiationCapability",
+    "./src/runs/TransactingMutationListener",
     "./src/services/Now",
     "./src/services/Throttle",
     "./src/services/Topic",
-    "./src/services/Contextualize",
     "./src/services/Instantiate",
     'legacyRegistry'
 ], function (
     DomainObjectProvider,
     CoreCapabilityProvider,
     StaticModelProvider,
-    RootModelProvider,
     ModelAggregator,
     ModelCacheService,
     PersistedModelProvider,
@@ -78,10 +76,10 @@ define([
     MutationCapability,
     DelegationCapability,
     InstantiationCapability,
+    TransactingMutationListener,
     Now,
     Throttle,
     Topic,
-    Contextualize,
     Instantiate,
     legacyRegistry
 ) {
@@ -146,16 +144,6 @@ define([
                     "implementation": StaticModelProvider,
                     "depends": [
                         "models[]",
-                        "$q",
-                        "$log"
-                    ]
-                },
-                {
-                    "provides": "modelService",
-                    "type": "provider",
-                    "implementation": RootModelProvider,
-                    "depends": [
-                        "roots[]",
                         "$q",
                         "$log"
                     ]
@@ -251,19 +239,27 @@ define([
                             "property": "name",
                             "pattern": "\\S+",
                             "required": true,
-                            "cssclass": "l-input-lg"
+                            "cssClass": "l-input-lg"
+                        },
+                        {
+                            "name": "Notes",
+                            "key": "notes",
+                            "property": "notes",
+                            "control": "textarea",
+                            "required": false,
+                            "cssClass": "l-textarea-sm"
                         }
                     ]
                 },
                 {
                     "key": "root",
                     "name": "Root",
-                    "cssclass": "icon-folder"
+                    "cssClass": "icon-folder"
                 },
                 {
                     "key": "folder",
                     "name": "Folder",
-                    "cssclass": "icon-folder",
+                    "cssClass": "icon-folder",
                     "features": "creation",
                     "description": "Create folders to organize other objects or links to objects.",
                     "priority": 1000,
@@ -274,11 +270,11 @@ define([
                 {
                     "key": "unknown",
                     "name": "Unknown Type",
-                    "cssclass": "icon-object-unknown"
+                    "cssClass": "icon-object-unknown"
                 },
                 {
                     "name": "Unknown Type",
-                    "cssclass": "icon-object-unknown"
+                    "cssClass": "icon-object-unknown"
                 }
             ],
             "capabilities": [
@@ -286,8 +282,7 @@ define([
                     "key": "composition",
                     "implementation": CompositionCapability,
                     "depends": [
-                        "$injector",
-                        "contextualize"
+                        "$injector"
                     ]
                 },
                 {
@@ -383,13 +378,6 @@ define([
                     ]
                 },
                 {
-                    "key": "contextualize",
-                    "implementation": Contextualize,
-                    "depends": [
-                        "$log"
-                    ]
-                },
-                {
                     "key": "instantiate",
                     "implementation": Instantiate,
                     "depends": [
@@ -399,14 +387,10 @@ define([
                     ]
                 }
             ],
-            "roots": [
+            "runs": [
                 {
-                    "id": "mine",
-                    "model": {
-                        "name": "My Items",
-                        "type": "folder",
-                        "composition": []
-                    }
+                    "implementation": TransactingMutationListener,
+                    "depends": ["topic", "transactionService", "cacheService"]
                 }
             ],
             "constants": [

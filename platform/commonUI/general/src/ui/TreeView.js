@@ -109,11 +109,11 @@ define([
         }.bind(this));
     };
 
-    TreeView.prototype.value = function (domainObject) {
+    TreeView.prototype.value = function (domainObject, event) {
         this.selectedObject = domainObject;
         this.updateNodeViewSelection();
         this.callbacks.forEach(function (callback) {
-            callback(domainObject);
+            callback(domainObject, event);
         });
     };
 

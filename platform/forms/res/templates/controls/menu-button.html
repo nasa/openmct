@@ -19,7 +19,7 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="s-menu-button menu-element {{ structure.cssclass }}"
+<div class="s-menu-button menu-element {{ structure.cssClass }}"
      ng-controller="ClickAwayController as toggle">
 
     <span class="l-click-area" ng-click="toggle.toggle()"></span>
@@ -31,7 +31,7 @@
         <ul>
             <li ng-click="structure.click(option.key); toggle.setState(false)"
                 ng-repeat="option in structure.options"
-                class="{{ option.cssclass }}">
+                class="{{ option.cssClass }}">
                     {{option.name}}
             </li>
         </ul>

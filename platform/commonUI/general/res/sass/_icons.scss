@@ -30,6 +30,7 @@
 
 .ui-symbol {
     font-family: 'symbolsfont';
+    -webkit-font-smoothing: antialiased;
 }
 
 .ui-symbol.icon {
@@ -70,10 +71,21 @@
     line-height: inherit;
     position: relative;
     &.l-icon-link {
-        .t-item-icon-glyph {
+        &:after {
+            color: $colorIconLink;
+            content: $glyph-icon-link;
+            height: auto; width: auto;
+            position: absolute;
+            left: 0; top: 0; right: 0; bottom: 20%;
+            @include transform-origin(bottom left);
+            @include transform(scale(0.3));
+            z-index: 2;
+        }
+
+/*        .t-item-icon-glyph {
             &:after {
                 color: $colorIconLink;
-                content: $glyph-icon-link;
+                content: '\e921'; //$glyph-icon-link;
                 height: auto; width: auto;
                 position: absolute;
                 left: 0; top: 0; right: 0; bottom: 20%;
@@ -81,6 +93,6 @@
                 @include transform(scale(0.3));
                 z-index: 2;
             }
-        }
+        }*/
     }
 }

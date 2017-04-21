@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    [],
-    function () {
+    ['./ContextualDomainObject'],
+    function (ContextualDomainObject) {
 
         /**
          * Implements the `instantiation` capability. This allows new domain
@@ -68,7 +68,9 @@ define(
             this.instantiateFn = this.instantiateFn ||
                 this.$injector.get("instantiate");
 
-            return this.instantiateFn(model, id);
+            var newObject = this.instantiateFn(model, id);
+
+            return new ContextualDomainObject(newObject, this.domainObject);
         };
 
         /**

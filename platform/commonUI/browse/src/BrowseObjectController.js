@@ -51,24 +51,16 @@ define(
             }
 
             function updateQueryParam(viewKey) {
-                var unlisten,
-                    priorRoute = $route.current;
-
-                if (viewKey) {
+                if (viewKey && $location.search().view !== viewKey) {
                     $location.search('view', viewKey);
-                    unlisten = $scope.$on('$locationChangeSuccess', function () {
-                        // Checks path to make sure /browse/ is at front
-                        // if so, change $route.current
-                        if ($location.path().indexOf("/browse/") === 0) {
-                            $route.current = priorRoute;
-                        }
-                        unlisten();
-                    });
                 }
             }
 
             $scope.$watch('domainObject', setViewForDomainObject);
             $scope.$watch('representation.selected.key', updateQueryParam);
+            $scope.$on('$locationChangeSuccess', function () {
+                setViewForDomainObject($scope.domainObject);
+            });
 
             $scope.doAction = function (action) {
                 return $scope[action] && $scope[action]();

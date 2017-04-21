@@ -68,7 +68,8 @@ define(
             telemetryFormatter,
             telemetryHandler,
             throttle,
-            PLOT_FIXED_DURATION
+            PLOT_FIXED_DURATION,
+            openmct
         ) {
             var self = this,
                 plotTelemetryFormatter =
@@ -81,6 +82,7 @@ define(
                 lastRange,
                 lastDomain,
                 handle;
+            var conductor = openmct.conductor;
 
             // Populate the scope with axis information (specifically, options
             // available for each axis.)
@@ -181,6 +183,18 @@ define(
                 }
             }
 
+            function changeTimeOfInterest(timeOfInterest) {
+                if (timeOfInterest !== undefined) {
+                    var bounds = conductor.bounds();
+                    var range = bounds.end - bounds.start;
+                    $scope.toiPerc = ((timeOfInterest - bounds.start) / range) * 100;
+                    $scope.toiPinned = true;
+                } else {
+                    $scope.toiPerc = undefined;
+                    $scope.toiPinned = false;
+                }
+            }
+
             // Create a new subscription; telemetrySubscriber gets
             // to do the meaningful work here.
             function subscribe(domainObject) {
@@ -193,6 +207,9 @@ define(
                     true // Lossless
                 );
                 replot();
+
+                changeTimeOfInterest(conductor.timeOfInterest());
+                conductor.on("timeOfInterest", changeTimeOfInterest);
             }
 
             // Release the current subscription (called when scope is destroyed)
@@ -201,6 +218,7 @@ define(
                     handle.unsubscribe();
                     handle = undefined;
                 }
+                conductor.off("timeOfInterest", changeTimeOfInterest);
             }
 
             function requery() {
@@ -229,13 +247,22 @@ define(
             }
 
             // Respond to a display bounds change (requery for data)
-            function changeDisplayBounds(event, bounds) {
-                var domainAxis = $scope.axes[0];
+            function changeDisplayBounds(event, bounds, follow) {
+                //'hack' for follow mode
+                if (follow === true) {
+                    setBasePanZoom(bounds);
+                } else {
+                    var domainAxis = $scope.axes[0];
 
-                domainAxis.chooseOption(bounds.domain);
-                updateDomainFormat();
-                setBasePanZoom(bounds);
-                requery();
+                    if (bounds.domain) {
+                        domainAxis.chooseOption(bounds.domain);
+                    }
+                    updateDomainFormat();
+                    setBasePanZoom(bounds);
+                    requery();
+                }
+                self.setUnsynchedStatus($scope.domainObject, follow && self.isZoomed());
+                changeTimeOfInterest(conductor.timeOfInterest());
             }
 
             this.modeOptions = new PlotModeOptions([], subPlotFactory);
@@ -257,6 +284,14 @@ define(
                 new PlotAxis("domains", [], AXIS_DEFAULTS[0]),
                 new PlotAxis("ranges", [], AXIS_DEFAULTS[1])
             ];
+
+            //Are some initialized bounds defined?
+            var bounds = conductor.bounds();
+            if (bounds &&
+                bounds.start !== undefined &&
+                bounds.end !== undefined) {
+                changeDisplayBounds(undefined, conductor.bounds(), conductor.follow());
+            }
 
             // Watch for changes to the selected axis
             $scope.$watch("axes[0].active.key", domainRequery);
@@ -317,7 +352,7 @@ define(
 
         /**
          * Get the current mode that is applicable to this plot. This
-         * will include key, name, and cssclass fields.
+         * will include key, name, and cssClass fields.
          */
         PlotController.prototype.getMode = function () {
             return this.modeOptions.getMode();
@@ -368,15 +403,10 @@ define(
             return this.pending;
         };
 
-        /**
-         * Export the plot to PDF
-         */
-        PlotController.prototype.exportPDF = function () {
-            var self = this;
-            self.hideExportButtons = true;
-            self.exportImageService.exportPDF(self.$element[0], "plot.pdf").finally(function () {
-                self.hideExportButtons = false;
-            });
+        PlotController.prototype.setUnsynchedStatus = function (domainObject, status) {
+            if (domainObject.hasCapability('status')) {
+                domainObject.getCapability('status').set('timeconductor-unsynced', status);
+            }
         };
 
         /**

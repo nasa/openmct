@@ -70,14 +70,13 @@ define([
         "extensions": {
             "routes": [
                 {
-                    "when": "/browse/:ids*",
+                    "when": "/browse/:ids*?",
                     "template": browseTemplate,
                     "reloadOnSearch": false
                 },
                 {
                     "when": "",
-                    "template": browseTemplate,
-                    "reloadOnSearch": false
+                    "redirectTo": "/browse/"
                 }
             ],
             "constants": [
@@ -141,10 +140,6 @@ define([
             ],
             "representations": [
                 {
-                    "key": "view-object",
-                    "templateUrl": "templates/view-object.html"
-                },
-                {
                     "key": "browse-object",
                     "template": browseObjectTemplate,
                     "gestures": [
@@ -203,7 +198,10 @@ define([
             "services": [
                 {
                     "key": "navigationService",
-                    "implementation": NavigationService
+                    "implementation": NavigationService,
+                    "depends": [
+                        "$window"
+                    ]
                 }
             ],
             "actions": [
@@ -211,10 +209,7 @@ define([
                     "key": "navigate",
                     "implementation": NavigateAction,
                     "depends": [
-                        "navigationService",
-                        "$q",
-                        "policyService",
-                        "$window"
+                        "navigationService"
                     ]
                 },
                 {
@@ -231,7 +226,7 @@ define([
                         "$window"
                     ],
                     "group": "windowing",
-                    "cssclass": "icon-new-window",
+                    "cssClass": "icon-new-window",
                     "priority": "preferred"
                 },
                 {
@@ -246,7 +241,7 @@ define([
                 {
                     "key": "items",
                     "name": "Items",
-                    "cssclass": "icon-thumbs-strip",
+                    "cssClass": "icon-thumbs-strip",
                     "description": "Grid of available items",
                     "template": itemsTemplate,
                     "uses": [

@@ -42,8 +42,8 @@ define([
             $injector,
             policyService,
             dialogService,
-            creationService,
             copyService,
+            notificationService,
             context
         ) {
             this.domainObject = (context || {}).domainObject;
@@ -52,8 +52,8 @@ define([
             };
             this.policyService = policyService;
             this.dialogService = dialogService;
-            this.creationService = creationService;
             this.copyService = copyService;
+            this.notificationService = notificationService;
         }
 
         /**
@@ -119,8 +119,10 @@ define([
 
                 return self.dialogService
                     .getUserInput(wizard.getFormStructure(true),
-                        wizard.getInitialFormValue()
-                    ).then(wizard.populateObjectFromInput.bind(wizard));
+                        wizard.getInitialFormValue())
+                    .then(wizard.populateObjectFromInput.bind(wizard), function (failureReason) {
+                        return Promise.reject("user canceled");
+                    });
             }
 
             function showBlockingDialog(object) {
@@ -166,13 +168,28 @@ define([
                     .then(resolveWith(object));
             }
 
-            function commitEditingAfterClone(clonedObject) {
+            function saveAfterClone(clonedObject) {
                 return domainObject.getCapability("editor").save()
                     .then(resolveWith(clonedObject));
             }
 
-            function onFailure() {
+            function finishEditing(clonedObject) {
+                return domainObject.getCapability("editor").finish()
+                    .then(function () {
+                        return fetchObject(clonedObject.getId());
+                    });
+            }
+
+            function onSuccess(object) {
+                self.notificationService.info("Save Succeeded");
+                return object;
+            }
+
+            function onFailure(reason) {
                 hideBlockingDialog();
+                if (reason !== "user canceled") {
+                    self.notificationService.error("Save Failed");
+                }
                 return false;
             }
 
@@ -182,8 +199,10 @@ define([
                 .then(getParent)
                 .then(cloneIntoParent)
                 .then(undirtyOriginals)
-                .then(commitEditingAfterClone)
+                .then(saveAfterClone)
+                .then(finishEditing)
                 .then(hideBlockingDialog)
+                .then(onSuccess)
                 .catch(onFailure);
         };
 

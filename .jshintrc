@@ -14,7 +14,8 @@
     "nonew": true,
     "predef": [
         "define",
-        "Promise"
+        "Promise",
+        "WeakMap"
     ],
     "shadow": "outer",
     "strict": "implied",

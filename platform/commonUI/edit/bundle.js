@@ -25,18 +25,18 @@ define([
     "./src/controllers/EditPanesController",
     "./src/controllers/ElementsController",
     "./src/controllers/EditObjectController",
-    "./src/directives/MCTBeforeUnload",
     "./src/actions/EditAndComposeAction",
     "./src/actions/EditAction",
     "./src/actions/PropertiesAction",
     "./src/actions/RemoveAction",
     "./src/actions/SaveAction",
+    "./src/actions/SaveAndStopEditingAction",
     "./src/actions/SaveAsAction",
     "./src/actions/CancelAction",
     "./src/policies/EditActionPolicy",
+    "./src/policies/EditPersistableObjectsPolicy",
     "./src/policies/EditableLinkPolicy",
     "./src/policies/EditableMovePolicy",
-    "./src/policies/EditNavigationPolicy",
     "./src/policies/EditContextualActionPolicy",
     "./src/representers/EditRepresenter",
     "./src/representers/EditToolbarRepresenter",
@@ -64,18 +64,18 @@ define([
     EditPanesController,
     ElementsController,
     EditObjectController,
-    MCTBeforeUnload,
     EditAndComposeAction,
     EditAction,
     PropertiesAction,
     RemoveAction,
     SaveAction,
+    SaveAndStopEditingAction,
     SaveAsAction,
     CancelAction,
     EditActionPolicy,
+    EditPersistableObjectsPolicy,
     EditableLinkPolicy,
     EditableMovePolicy,
-    EditNavigationPolicy,
     EditContextualActionPolicy,
     EditRepresenter,
     EditToolbarRepresenter,
@@ -130,7 +130,7 @@ define([
                     "depends": [
                         "$scope",
                         "$location",
-                        "policyService"
+                        "navigationService"
                     ]
                 },
                 {
@@ -150,15 +150,6 @@ define([
                     ]
                 }
             ],
-            "directives": [
-                {
-                    "key": "mctBeforeUnload",
-                    "implementation": MCTBeforeUnload,
-                    "depends": [
-                        "$window"
-                    ]
-                }
-            ],
             "actions": [
                 {
                     "key": "compose",
@@ -174,7 +165,7 @@ define([
                     ],
                     "description": "Edit",
                     "category": "view-control",
-                    "cssclass": "major icon-pencil"
+                    "cssClass": "major icon-pencil"
                 },
                 {
                     "key": "properties",
@@ -183,7 +174,7 @@ define([
                         "view-control"
                     ],
                     "implementation": PropertiesAction,
-                    "cssclass": "major icon-pencil",
+                    "cssClass": "major icon-pencil",
                     "name": "Edit Properties...",
                     "description": "Edit properties of this object.",
                     "depends": [
@@ -194,39 +185,50 @@ define([
                     "key": "remove",
                     "category": "contextual",
                     "implementation": RemoveAction,
-                    "cssclass": "icon-trash",
+                    "cssClass": "icon-trash",
                     "name": "Remove",
                     "description": "Remove this object from its containing object.",
                     "depends": [
-                        "$q",
                         "navigationService"
                     ]
                 },
                 {
-                    "key": "save",
-                    "category": "conclude-editing",
-                    "implementation": SaveAction,
-                    "name": "Save",
-                    "cssclass": "icon-save labeled",
+                    "key": "save-and-stop-editing",
+                    "category": "save",
+                    "implementation": SaveAndStopEditingAction,
+                    "name": "Save and Finish Editing",
+                    "cssClass": "icon-save labeled",
                     "description": "Save changes made to these objects.",
                     "depends": [
-                        "dialogService"
-                    ],
-                    "priority": "mandatory"
+                        "dialogService",
+                        "notificationService"
+                    ]
                 },
                 {
                     "key": "save",
-                    "category": "conclude-editing",
+                    "category": "save",
+                    "implementation": SaveAction,
+                    "name": "Save and Continue Editing",
+                    "cssClass": "icon-save labeled",
+                    "description": "Save changes made to these objects.",
+                    "depends": [
+                        "dialogService",
+                        "notificationService"
+                    ]
+                },
+                {
+                    "key": "save-as",
+                    "category": "save",
                     "implementation": SaveAsAction,
                     "name": "Save As...",
-                    "cssclass": "icon-save labeled",
+                    "cssClass": "icon-save labeled",
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "$injector",
                         "policyService",
                         "dialogService",
-                        "creationService",
-                        "copyService"
+                        "copyService",
+                        "notificationService"
                     ],
                     "priority": "mandatory"
                 },
@@ -234,8 +236,10 @@ define([
                     "key": "cancel",
                     "category": "conclude-editing",
                     "implementation": CancelAction,
-                    "name": "Cancel",
-                    "cssclass": "icon-x no-label",
+                    // Because we use the name as label for edit buttons and mct-control buttons need
+                    // the label to be set to undefined in order to not apply the labeled CSS rule.
+                    "name": undefined,
+                    "cssClass": "icon-x no-label",
                     "description": "Discard changes made to these objects.",
                     "depends": []
                 }
@@ -244,6 +248,11 @@ define([
                 {
                     "category": "action",
                     "implementation": EditActionPolicy
+                },
+                {
+                    "category": "action",
+                    "implementation": EditPersistableObjectsPolicy,
+                    "depends": ["openmct"]
                 },
                 {
                     "category": "action",
@@ -257,11 +266,6 @@ define([
                 {
                     "category": "action",
                     "implementation": EditableLinkPolicy
-                },
-                {
-                    "category": "navigation",
-                    "message": "Continuing will cause the loss of any unsaved changes.",
-                    "implementation": EditNavigationPolicy
                 },
                 {
                     "implementation": CreationPolicy,
@@ -335,7 +339,8 @@ define([
                     "implementation": TransactionService,
                     "depends": [
                         "$q",
-                        "$log"
+                        "$log",
+                        "cacheService"
                     ]
                 },
                 {
@@ -376,7 +381,6 @@ define([
                 {
                     "implementation": EditRepresenter,
                     "depends": [
-                        "$q",
                         "$log"
                     ]
                 },
