@@ -291,6 +291,7 @@ define(
                  */
                 function finishProcessing() {
                     telemetryCollection.add(rowData);
+                    telemetryCollection.dupeCheck = true;
                     scope.rows = telemetryCollection.telemetry;
                     scope.loading = false;
 
@@ -376,6 +377,7 @@ define(
             function newData(domainObject, datum) {
                 limitEvaluator = telemetryApi.limitEvaluator(domainObject);
                 added = telemetryCollection.add([table.getRowValues(limitEvaluator, datum)]);
+                this.telemetry.dupeCheck = true;
             }
 
             objects.forEach(function (object) {
