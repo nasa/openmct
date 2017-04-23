@@ -139,12 +139,12 @@ JavaScript sources in Open MCT should:
   * Classes should use camel case, first letter capitalized
     (e.g. SomeClassName.)
   * Methods, variables, fields, and function names should use camel case,
-    first letter lower-case (e.g. someVariableName.) Constants
-    (variables or fields which are meant to be declared and initialized
-    statically, and never changed) should use only capital letters, with
-    underscores between words (e.g. SOME_CONSTANT.)
-  * File name should be the name of the exported class, plus a .js extension
-    (e.g. SomeClassName.js)
+    first letter lower-case (e.g. someVariableName.) 
+  * Constants (variables or fields which are meant to be declared and 
+    initialized statically, and never changed) should use only capital 
+    letters, with underscores between words (e.g. SOME_CONSTANT.)
+  * File names should be the name of the exported class, plus a .js extension
+    (e.g. SomeClassName.js).
 * Avoid anonymous functions, except when functions are short (a few lines)
   and/or their inclusion makes sense within the flow of the code
   (e.g. as arguments to a forEach call.)
