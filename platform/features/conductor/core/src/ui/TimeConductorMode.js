@@ -31,13 +31,13 @@ define(
          * @memberof platform.features.conductor
          * @param {TimeConductorMetadata} metadata
          */
-        function TimeConductorMode(metadata, conductor) {
-            this.conductor = conductor;
+        function TimeConductorMode(metadata, timeAPI) {
+            this.timeAPI = timeAPI;
 
             this.mdata = metadata;
             this.changeTimeSystem = this.changeTimeSystem.bind(this);
 
-            var timeSystem = this.conductor.timeSystem();
+            var timeSystem = this.timeAPI.timeSystem();
 
             //Set the time system initially
             if (timeSystem) {
@@ -45,9 +45,9 @@ define(
             }
 
             //Listen for subsequent changes to time system
-            conductor.on('timeSystem', this.changeTimeSystem);
+            timeAPI.on('timeSystem', this.changeTimeSystem);
 
-            this.availableSystems = conductor.availableTimeSystems();
+            this.availableSystems = timeAPI.availableTimeSystems();
         }
 
         /**
@@ -56,7 +56,7 @@ define(
          * @returns {TimeSystem} the currently selected time system
          */
         TimeConductorMode.prototype.changeTimeSystem = function (key) {
-            var timeSystem = this.conductor.getTimeSystem(key);
+            var timeSystem = this.timeAPI.getTimeSystem(key);
             // On time system change, apply default deltas
             var defaults = timeSystem.defaults() || {
                     bounds: {
@@ -69,7 +69,7 @@ define(
                     }
                 };
 
-            this.conductor.bounds(defaults.bounds);
+            this.timeAPI.bounds(defaults.bounds);
             this.deltas(defaults.deltas);
         };
 
@@ -92,7 +92,7 @@ define(
          */
         TimeConductorMode.prototype.tickSource = function (tickSource) {
             if (arguments.length > 0) {
-                var timeSystem = this.conductor.getTimeSystem(this.conductor.timeSystem());
+                var timeSystem = this.timeAPI.getTimeSystem(this.timeAPI.timeSystem());
                 var defaults = timeSystem.defaults() || {
                         bounds: {
                             start: 0,
@@ -104,16 +104,16 @@ define(
                         }
                     };
 
-                this.conductor.tickSource(tickSource, defaults.deltas);
+                this.timeAPI.tickSource(tickSource, defaults.deltas);
             }
-            return this.conductor.tickSource();
+            return this.timeAPI.tickSource();
         };
 
         /**
          * @private
          */
         TimeConductorMode.prototype.destroy = function () {
-            this.conductor.off('timeSystem', this.changeTimeSystem);
+            this.timeAPI.off('timeSystem', this.changeTimeSystem);
         };
 
         /**
@@ -126,13 +126,13 @@ define(
         TimeConductorMode.prototype.deltas = function (deltas) {
             if (arguments.length !== 0) {
                 var bounds = this.calculateBoundsFromDeltas(deltas);
-                this.conductor.clockOffsets(deltas);
+                this.timeAPI.clockOffsets(deltas);
 
                 if (this.metadata().key !== 'fixed') {
-                    this.conductor.bounds(bounds);
+                    this.timeAPI.bounds(bounds);
                 }
             }
-            return this.conductor.clockOffsets();
+            return this.timeAPI.clockOffsets();
         };
 
         /**
@@ -140,8 +140,8 @@ define(
          * @returns {TimeConductorBounds}
          */
         TimeConductorMode.prototype.calculateBoundsFromDeltas = function (deltas) {
-            var oldEnd = this.conductor.bounds().end;
-            var offsets = this.conductor.clockOffsets();
+            var oldEnd = this.timeAPI.bounds().end;
+            var offsets = this.timeAPI.clockOffsets();
 
             if (offsets && offsets.end !== undefined) {
                 //Calculate the previous raw end value (without delta)
@@ -172,15 +172,15 @@ define(
 
             // If a tick source is defined, then the concept of 'now' is
             // important. Calculate zoom based on 'now'.
-            if (this.conductor.follow()) {
-                offsets = this.conductor.clockOffsets();
+            if (this.timeAPI.follow()) {
+                offsets = this.timeAPI.clockOffsets();
                 zoom.deltas = {
                     start: timeSpan,
                     end: offsets.end
                 };
                 zoom.bounds = this.calculateBoundsFromDeltas(zoom.deltas);
             } else {
-                var bounds = this.conductor.bounds();
+                var bounds = this.timeAPI.bounds();
                 var center = bounds.start + ((bounds.end - bounds.start)) / 2;
                 bounds.start = center - timeSpan / 2;
                 bounds.end = center + timeSpan / 2;

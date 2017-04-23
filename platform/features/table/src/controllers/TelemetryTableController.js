@@ -64,7 +64,7 @@ define(
             $scope.rows = [];
             this.table = new TableConfiguration($scope.domainObject,
                 openmct);
-            this.lastBounds = this.openmct.conductor.bounds();
+            this.lastBounds = this.openmct.time.bounds();
             this.lastRequestTime = 0;
             this.telemetry = new TelemetryCollection();
 
@@ -95,7 +95,7 @@ define(
                 this.registerChangeListeners();
             }.bind(this));
 
-            this.setScroll(this.openmct.conductor.follow());
+            this.setScroll(this.openmct.time.follow());
 
             this.$scope.$on("$destroy", this.destroy);
         }
@@ -122,7 +122,7 @@ define(
 
             if (timeSystem) {
                 this.table.columns.forEach(function (column) {
-                    if (column.getKey() === timeSystem.metadata.key) {
+                    if (column.getKey() === timeSystem) {
                         sortColumn = column;
                     }
                 });
@@ -151,9 +151,9 @@ define(
                     }.bind(this)
                 );
 
-            this.openmct.conductor.on('timeSystem', this.sortByTimeSystem);
-            this.openmct.conductor.on('bounds', this.changeBounds);
-            this.openmct.conductor.on('follow', this.setScroll);
+            this.openmct.time.on('timeSystem', this.sortByTimeSystem);
+            this.openmct.time.on('bounds', this.changeBounds);
+            this.openmct.time.on('follow', this.setScroll);
 
             this.telemetry.on('added', this.addRowsToTable);
             this.telemetry.on('discarded', this.removeRowsFromTable);
@@ -188,7 +188,7 @@ define(
          * @param {openmct.TimeConductorBounds~TimeConductorBounds} bounds
          */
         TelemetryTableController.prototype.changeBounds = function (bounds) {
-            var follow = this.openmct.conductor.follow();
+            var follow = this.openmct.time.follow();
             var isTick = follow &&
                 bounds.start !== this.lastBounds.start &&
                 bounds.end !== this.lastBounds.end;
@@ -207,9 +207,9 @@ define(
          */
         TelemetryTableController.prototype.destroy = function () {
 
-            this.openmct.conductor.off('timeSystem', this.sortByTimeSystem);
-            this.openmct.conductor.off('bounds', this.changeBounds);
-            this.openmct.conductor.off('follow', this.setScroll);
+            this.openmct.time.off('timeSystem', this.sortByTimeSystem);
+            this.openmct.time.off('bounds', this.changeBounds);
+            this.openmct.time.off('follow', this.setScroll);
 
             this.subscriptions.forEach(function (subscription) {
                 subscription();
@@ -260,7 +260,7 @@ define(
                 // if data matches selected time system
                 this.telemetry.sort(undefined);
 
-                var timeSystem = this.openmct.conductor.timeSystem();
+                var timeSystem = this.openmct.time.timeSystem();
                 if (timeSystem) {
                     this.sortByTimeSystem(timeSystem);
                 }
@@ -278,7 +278,7 @@ define(
         TelemetryTableController.prototype.getHistoricalData = function (objects) {
             var self = this;
             var openmct = this.openmct;
-            var bounds = openmct.conductor.bounds();
+            var bounds = openmct.time.bounds();
             var scope = this.$scope;
             var rowData = [];
             var processedObjects = 0;
@@ -432,7 +432,7 @@ define(
             var scope = this.$scope;
 
             this.telemetry.clear();
-            this.telemetry.bounds(this.openmct.conductor.bounds());
+            this.telemetry.bounds(this.openmct.time.bounds());
 
             this.$scope.loading = true;
 

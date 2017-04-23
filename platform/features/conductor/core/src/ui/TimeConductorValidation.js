@@ -29,9 +29,9 @@ define(
          * @param conductor
          * @constructor
          */
-        function TimeConductorValidation(conductor) {
+        function TimeConductorValidation(timeAPI) {
             var self = this;
-            this.conductor = conductor;
+            this.timeAPI = timeAPI;
 
             /*
              * Bind all class functions to 'this'
@@ -47,13 +47,13 @@ define(
          * Validation methods below are invoked directly from controls in the TimeConductor form
          */
         TimeConductorValidation.prototype.validateStart = function (start) {
-            var bounds = this.conductor.bounds();
-            return this.conductor.validateBounds({start: start, end: bounds.end}) === true;
+            var bounds = this.timeAPI.bounds();
+            return this.timeAPI.validateBounds({start: start, end: bounds.end}) === true;
         };
 
         TimeConductorValidation.prototype.validateEnd = function (end) {
-            var bounds = this.conductor.bounds();
-            return this.conductor.validateBounds({start: bounds.start, end: end}) === true;
+            var bounds = this.timeAPI.bounds();
+            return this.timeAPI.validateBounds({start: bounds.start, end: end}) === true;
         };
 
         TimeConductorValidation.prototype.validateStartDelta = function (startDelta) {

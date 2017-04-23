@@ -64,9 +64,9 @@ define(
             this.$window = $window;
             this.$location = $location;
             this.conductorViewService = conductorViewService;
-            this.conductor = openmct.time;
+            this.timeAPI = openmct.time;
             this.modes = conductorViewService.availableModes();
-            this.validation = new TimeConductorValidation(this.conductor);
+            this.validation = new TimeConductorValidation(this.timeAPI);
             this.formatService = formatService;
 
             //Check if the default mode defined is actually available
@@ -84,7 +84,7 @@ define(
             this.setStateFromSearchParams(searchParams);
 
             //Set the initial state of the UI from the conductor state
-            var timeSystem = this.conductor.timeSystem();
+            var timeSystem = this.timeAPI.timeSystem();
             if (timeSystem) {
                 this.changeTimeSystem(timeSystem);
             }
@@ -94,7 +94,7 @@ define(
                 this.setFormFromDeltas(deltas);
             }
 
-            var bounds = this.conductor.bounds();
+            var bounds = this.timeAPI.bounds();
             if (bounds && bounds.start !== undefined && bounds.end !== undefined) {
                 this.changeBounds(bounds);
             }
@@ -105,8 +105,8 @@ define(
             }.bind(this));
 
             //Respond to any subsequent conductor changes
-            this.conductor.on('bounds', this.changeBounds);
-            this.conductor.on('timeSystem', this.changeTimeSystem);
+            this.timeAPI.on('bounds', this.changeBounds);
+            this.timeAPI.on('timeSystem', this.changeTimeSystem);
 
             this.$scope.showTimeConductor = SHOW_TIMECONDUCTOR;
         }
@@ -129,7 +129,7 @@ define(
          */
         TimeConductorController.prototype.initializeScope = function () {
             //Set time Conductor bounds in the form
-            this.$scope.boundsModel = this.conductor.bounds();
+            this.$scope.boundsModel = this.timeAPI.bounds();
 
             //If conductor has a time system selected already, populate the
             //form from it
@@ -158,7 +158,7 @@ define(
             }
 
             if (searchParams[SEARCH.TIME_SYSTEM] &&
-                searchParams[SEARCH.TIME_SYSTEM] !== this.conductor.timeSystem()) {
+                searchParams[SEARCH.TIME_SYSTEM] !== this.timeAPI.timeSystem()) {
                 //Will select the specified time system on the conductor
                 this.selectTimeSystemByKey(searchParams[SEARCH.TIME_SYSTEM]);
             }
@@ -184,7 +184,7 @@ define(
                 !isNaN(searchParams[SEARCH.END_BOUND]);
 
             if (validBounds) {
-                this.conductor.bounds({
+                this.timeAPI.bounds({
                     start: parseInt(searchParams[SEARCH.START_BOUND]),
                     end: parseInt(searchParams[SEARCH.END_BOUND])
                 });
@@ -195,8 +195,8 @@ define(
          * @private
          */
         TimeConductorController.prototype.destroy = function () {
-            this.conductor.off('bounds', this.changeBounds);
-            this.conductor.off('timeSystem', this.changeTimeSystem);
+            this.timeAPI.off('bounds', this.changeBounds);
+            this.timeAPI.off('timeSystem', this.changeTimeSystem);
 
             this.conductorViewService.off('pan', this.onPan);
             this.conductorViewService.off('pan-stop', this.onPanStop);
@@ -286,7 +286,7 @@ define(
          * @param formModel
          */
         TimeConductorController.prototype.setBounds = function (boundsModel) {
-            this.conductor.bounds({
+            this.timeAPI.bounds({
                 start: boundsModel.start,
                 end: boundsModel.end
             });
@@ -361,7 +361,7 @@ define(
             })[0];
             if (selected) {
                 this.supportsZoom = !!(selected.defaults() && selected.defaults().zoom);
-                this.conductor.timeSystem(selected, selected.defaults().bounds);
+                this.timeAPI.timeSystem(selected, selected.defaults().bounds);
             }
         };
 
@@ -374,7 +374,7 @@ define(
          * @param newTimeSystem
          */
         TimeConductorController.prototype.changeTimeSystem = function (key) {
-            var newTimeSystem = this.conductor.getTimeSystem(key);
+            var newTimeSystem = this.timeAPI.getTimeSystem(key);
 
             //Set time system in URL on change
             this.setParam(SEARCH.TIME_SYSTEM, key);
@@ -400,7 +400,7 @@ define(
          * @returns {number} a value between 0.01 and 0.99, in increments of .01
          */
         TimeConductorController.prototype.toSliderValue = function (timeSpan) {
-            var timeSystem = this.conductor.getTimeSystem(this.conductor.timeSystem());
+            var timeSystem = this.timeAPI.getTimeSystem(this.timeAPI.timeSystem());
             if (timeSystem) {
                 var zoomDefaults = timeSystem.defaults().zoom;
                 var perc = timeSpan / (zoomDefaults.min - zoomDefaults.max);
@@ -414,8 +414,8 @@ define(
          * @param {TimeSpan} timeSpan
          */
         TimeConductorController.prototype.toTimeUnits = function (timeSpan) {
-            var timeSystem = this.conductor.getTimeSystem(this.conductor.timeSystem());
-            if (this.conductor.timeSystem()) {
+            var timeSystem = this.timeAPI.getTimeSystem(this.timeAPI.timeSystem());
+            if (this.timeAPI.timeSystem()) {
                 var timeFormat = this.formatService.getFormat(timeSystem.formats()[0]);
                 this.$scope.timeUnits = timeFormat.timeUnits && timeFormat.timeUnits(timeSpan);
             }
@@ -429,7 +429,7 @@ define(
          * @param bounds
          */
         TimeConductorController.prototype.onZoom = function (sliderValue) {
-            var timeSystem = this.conductor.getTimeSystem(this.conductor.timeSystem());
+            var timeSystem = this.timeAPI.getTimeSystem(this.timeAPI.timeSystem());
             var zoomDefaults = timeSystem.defaults().zoom;
             var timeSpan = Math.pow((1 - sliderValue), 4) * (zoomDefaults.min - zoomDefaults.max);
 

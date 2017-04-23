@@ -41,7 +41,7 @@ define(
 
             EventEmitter.call(this);
 
-            this.conductor = openmct.time;
+            this.timeAPI = openmct.time;
             this.currentMode = undefined;
 
             /**
@@ -113,20 +113,20 @@ define(
             }
 
             if (arguments.length === 1) {
-                var timeSystem = this.conductor.getTimeSystem(this.conductor.timeSystem());
+                var timeSystem = this.timeAPI.getTimeSystem(this.timeAPI.timeSystem());
                 var modes = this.availableModes();
                 var modeMetaData = modes[newModeKey];
 
                 if (this.currentMode) {
                     this.currentMode.destroy();
                 }
-                this.currentMode = new TimeConductorMode(modeMetaData, this.conductor);
+                this.currentMode = new TimeConductorMode(modeMetaData, this.timeAPI);
 
                 // If no time system set on time conductor, or the currently selected time system is not available in
                 // the new mode, default to first available time system
                 if (!timeSystem || !contains(this.currentMode.availableTimeSystems(), timeSystem)) {
                     timeSystem = this.currentMode.availableTimeSystems()[0];
-                    this.conductor.timeSystem(timeSystem.key, timeSystem.defaults().bounds);
+                    this.timeAPI.timeSystem(timeSystem.key, timeSystem.defaults().bounds);
                 }
             }
             return this.currentMode ? this.currentMode.metadata().key : undefined;
@@ -183,7 +183,7 @@ define(
          * mode. Time systems and tick sources are mode dependent
          */
         TimeConductorViewService.prototype.availableTimeSystems = function () {
-            return this.conductor.availableTimeSystems();
+            return this.timeAPI.availableTimeSystems();
         };
 
         /**

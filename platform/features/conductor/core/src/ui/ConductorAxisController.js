@@ -35,14 +35,14 @@ define(
         function ConductorAxisController(openmct, formatService, conductorViewService, scope, element) {
             // Dependencies
             this.formatService = formatService;
-            this.conductor = openmct.time;
+            this.timeAPI = openmct.time;
             this.conductorViewService = conductorViewService;
 
             this.scope = scope;
             this.initialized = false;
 
-            this.bounds = this.conductor.bounds();
-            this.timeSystem = this.conductor.timeSystem();
+            this.bounds = this.timeAPI.bounds();
+            this.timeSystem = this.timeAPI.timeSystem();
 
             //Bind all class functions to 'this'
             Object.keys(ConductorAxisController.prototype).filter(function (key) {
@@ -58,8 +58,8 @@ define(
          * @private
          */
         ConductorAxisController.prototype.destroy = function () {
-            this.conductor.off('timeSystem', this.changeTimeSystem);
-            this.conductor.off('bounds', this.changeBounds);
+            this.timeAPI.off('timeSystem', this.changeTimeSystem);
+            this.timeAPI.off('bounds', this.changeBounds);
             this.conductorViewService.off("zoom", this.onZoom);
             this.conductorViewService.off("zoom-stop", this.onZoomStop);
         };
@@ -87,8 +87,8 @@ define(
             }
 
             //Respond to changes in conductor
-            this.conductor.on("timeSystem", this.changeTimeSystem);
-            this.conductor.on("bounds", this.changeBounds);
+            this.timeAPI.on("timeSystem", this.changeTimeSystem);
+            this.timeAPI.on("bounds", this.changeBounds);
 
             this.scope.$on("$destroy", this.destroy);
 
@@ -111,7 +111,7 @@ define(
          */
         ConductorAxisController.prototype.setScale = function () {
             var width = this.target.offsetWidth;
-            var timeSystem = this.conductor.getTimeSystem(this.conductor.timeSystem());
+            var timeSystem = this.timeAPI.getTimeSystem(this.timeAPI.timeSystem());
             var bounds = this.bounds;
 
             if (timeSystem.isUTCBased()) {
@@ -135,14 +135,14 @@ define(
          * @param timeSystem
          */
         ConductorAxisController.prototype.changeTimeSystem = function (key) {
-            var timeSystem = this.conductor.getTimeSystem(key);
+            var timeSystem = this.timeAPI.getTimeSystem(key);
 
             this.timeSystem = key;
 
             var key = timeSystem.formats()[0];
             if (key !== undefined) {
                 var format = this.formatService.getFormat(key);
-                var bounds = this.conductor.bounds();
+                var bounds = this.timeAPI.bounds();
 
                 //The D3 scale used depends on the type of time system as d3
                 // supports UTC out of the box.
@@ -180,7 +180,7 @@ define(
         ConductorAxisController.prototype.panStop = function () {
             //resync view bounds with time conductor bounds
             this.conductorViewService.emit("pan-stop");
-            this.conductor.bounds(this.bounds);
+            this.timeAPI.bounds(this.bounds);
         };
 
         /**
@@ -216,9 +216,9 @@ define(
          * @fires platform.features.conductor.ConductorAxisController~pan
          */
         ConductorAxisController.prototype.pan = function (delta) {
-            if (!this.conductor.follow()) {
+            if (!this.timeAPI.follow()) {
                 var deltaInMs = delta[0] * this.msPerPixel;
-                var bounds = this.conductor.bounds();
+                var bounds = this.timeAPI.bounds();
                 var start = Math.floor((bounds.start - deltaInMs) / 1000) * 1000;
                 var end = Math.floor((bounds.end - deltaInMs) / 1000) * 1000;
                 this.bounds = {

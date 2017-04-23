@@ -74,7 +74,7 @@ define([
                 return ts.metadata.key === options.defaultTimeSystem;
             });
             if (timeSystem !== undefined) {
-                openmct.conductor.timeSystem(timeSystem, defaults.bounds);
+                openmct.time.timeSystem(timeSystem, defaults.bounds);
             }
         }
 
