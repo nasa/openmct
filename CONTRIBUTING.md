@@ -43,9 +43,9 @@ the check-in process. These roles are:
 
 Three basic types of branches may be included in the above repository:
 
-1. Master branch.
-2. Topic branches.
-3. Developer branches.
+1. Master branch
+2. Topic branches
+3. Developer branches
 
 Branches which do not fit into the above categories may be created and used
 during the course of development for various reasons, such as large-scale
@@ -107,7 +107,7 @@ back into the master branch is to file a Pull Request. The contributions
 should meet code, test, and commit message standards as described below,
 and the pull request should include a completed author checklist, also
 as described below. Pull requests may be assigned to specific team
-members when appropriate (e.g. to draw to a specific person's attention.)
+members when appropriate (e.g. to draw to a specific person's attention).
 
 Code review should take place using discussion features within the pull
 request. When the reviewer is satisfied, they should add a comment to
@@ -130,26 +130,26 @@ settings. This is verified by the command line build.
 JavaScript sources in Open MCT should:
 
 * Use four spaces for indentation. Tabs should not be used.
-* Include JSDoc for any exposed API (e.g. public methods, constructors.)
+* Include JSDoc for any exposed API (e.g. public methods, constructors).
 * Include non-JSDoc comments as-needed for explaining private variables,
   methods, or algorithms when they are non-obvious.
 * Define one public class per script, expressed as a constructor function
   returned from an AMD-style module.
 * Follow “Java-like” naming conventions. These includes:
   * Classes should use camel case, first letter capitalized
-    (e.g. SomeClassName.)
+    (e.g. SomeClassName).
   * Methods, variables, fields, and function names should use camel case,
-    first letter lower-case (e.g. someVariableName.) 
+    first letter lower-case (e.g. someVariableName).
   * Constants (variables or fields which are meant to be declared and 
     initialized statically, and never changed) should use only capital 
-    letters, with underscores between words (e.g. SOME_CONSTANT.)
+    letters, with underscores between words (e.g. SOME_CONSTANT).
   * File names should be the name of the exported class, plus a .js extension
     (e.g. SomeClassName.js).
 * Avoid anonymous functions, except when functions are short (a few lines)
   and/or their inclusion makes sense within the flow of the code
-  (e.g. as arguments to a forEach call.)
+  (e.g. as arguments to a forEach call).
 * Avoid deep nesting (especially of functions), except where necessary
-  (e.g. due to closure scope.)
+  (e.g. due to closure scope).
 * End with a single new-line character.
 * Expose public methods by declaring them on the class's prototype.
 * Within a given function's scope, do not mix declarations and imperative
@@ -234,7 +234,7 @@ Commit messages should:
 ￼￼￼￼￼  line of white space.
 * Contain a short (usually one word) reference to the feature or subsystem
   the commit effects, in square brackets, at the start of the subject line
-  (e.g. `[Documentation] Draft of check-in process`)
+  (e.g. `[Documentation] Draft of check-in process`).
 * Contain a reference to a relevant issue number in the body of the commit.
   * This is important for traceability; while branch names also provide this,
     you cannot tell from looking at a commit what branch it was authored on.
@@ -250,9 +250,9 @@ Commit messages should:
 Commit messages should not:
 
 * Exceed 54 characters in length on the subject line.
-* Exceed 72 characters in length in the body of the commit.
+* Exceed 72 characters in length in the body of the commit,
   * Except where necessary to maintain the structure of machine-readable or
-    machine-generated text (e.g. error messages)
+    machine-generated text (e.g. error messages).
 
 See [Contributing to a Project](http://git-scm.com/book/ch5-2.html) from
 Pro Git by Shawn Chacon and Ben Straub for a bit of the rationale behind
@@ -260,7 +260,7 @@ these standards.
 
 ## Issue Reporting
 
-Issues are tracked at https://github.com/nasa/openmct/issues
+Issues are tracked at https://github.com/nasa/openmct/issues.
 
 Issues should include:
 
@@ -284,7 +284,7 @@ Issue severity is categorized as follows (in ascending order):
 
 The following check lists should be completed and attached to pull requests
 when they are filed (author checklist) and when they are merged (reviewer
-checklist.)
+checklist).
 
 ### Author Checklist
 
