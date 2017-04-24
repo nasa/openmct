@@ -51,7 +51,7 @@ define(['./Type'], function (Type) {
      * @method addType
      * @memberof module:openmct.TypeRegistry#
      */
-    TypeRegistry.prototype.addType = function (typeKey, typeDef) {
+    TypeRegistry.prototype.register = function (typeKey, typeDef) {
         this.types[typeKey] = new Type(typeDef);
     };
 
