@@ -191,12 +191,13 @@ has been finalized.
             [
                 'example/imagery',
                 'example/eventGenerator',
-                'example/generator',
-                'platform/features/my-items',
-                'platform/persistence/local'
+                'example/generator'
             ].forEach(
                 openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
             );
+            openmct.install(openmct.plugins.myItems);
+            openmct.install(openmct.plugins.localStorage);
+            openmct.install(openmct.plugins.espresso);
             openmct.start();
         });
     </script>
@@ -213,6 +214,7 @@ has been finalized.
     </div>
 </body>
 </html>
+
 
 ```
 __index.html__
@@ -258,12 +260,13 @@ __index.html__
                 'example/imagery',
                 'example/eventGenerator',
                 'example/generator',
-                'platform/features/my-items',
-                'platform/persistence/local',
 +               'tutorials/todo'
             ].forEach(
                 openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
             );
+            openmct.install(openmct.plugins.myItems);
+            openmct.install(openmct.plugins.localStorage);
+            openmct.install(openmct.plugins.espresso);
             openmct.start();
         });
     </script>
@@ -280,7 +283,6 @@ __index.html__
     </div>
 </body>
 </html>
-
 ```    
 __index.html__
 
@@ -2393,12 +2395,13 @@ If we include this in our set of active bundles:
                 'example/imagery',
                 'example/eventGenerator',
                 'example/generator',
-                'platform/features/my-items',
-                'platform/persistence/local',
                 'tutorials/telemetry'
             ].forEach(
                 openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
             );
+            openmct.install(openmct.plugins.myItems);
+            openmct.install(openmct.plugins.localStorage);
+            openmct.install(openmct.plugins.espresso);
             openmct.start();
         });
     </script>
@@ -2415,6 +2418,7 @@ If we include this in our set of active bundles:
     </div>
 </body>
 </html>
+
 
 ```
 __index.html__
@@ -2619,69 +2623,65 @@ again later in Steps 3 and 4.
 
 This allows our telemetry dictionary to be expressed as domain object models 
 (and, in turn, as domain objects), but these objects still aren't reachable. To 
-fix this, we will need another script which will add these subsystems to the 
+fix this, we will need another script which will expose these subsystems from the 
 root-level object we added in Step 1.
 
 ```js
 /*global define*/
 
 define(
-    function () {
-        "use strict";
+    [
+        '../../../src/api/composition/DefaultCompositionProvider',
+        '../../../src/api/objects/object-utils'
+    ],
+    function (
+        DefaultCompositionProvider,
+        objectUtils
+    ) {
+        var TAXONOMY_SPACE = "example",
+            TAXONOMY_KEY = "sc",
+            SUBSYSTEM_SPACE = "example_tlm";
 
-        var TAXONOMY_ID = "example:sc",
-            PREFIX = "example_tlm:";
-
-        function ExampleTelemetryInitializer(adapter, objectService) {
-            // Generate a domain object identifier for a dictionary element
-            function makeId(element) {
-                return PREFIX + element.identifier;
-            }
-
-            // When the dictionary is available, add all subsystems
-            // to the composition of My Spacecraft
-            function initializeTaxonomy(dictionary) {
-                // Get the top-level container for dictionary objects
-                // from a group of domain objects.
-                function getTaxonomyObject(domainObjects) {
-                    return domainObjects[TAXONOMY_ID];
-                }
-
-                // Populate
-                function populateModel(taxonomyObject) {
-                    return taxonomyObject.useCapability(
-                        "mutation",
-                        function (model) {
-                            model.name =
-                                dictionary.name;
-                            model.composition =
-                                dictionary.subsystems.map(makeId);
-                        }
-                    );
-                }
-
-                // Look up My Spacecraft, and populate it accordingly.
-                objectService.getObjects([TAXONOMY_ID])
-                    .then(getTaxonomyObject)
-                    .then(populateModel);
-            }
-
-            adapter.dictionary().then(initializeTaxonomy);
+        function ExampleTelemetryCompositionProvider(openmct) {
+            this.openmct = openmct;
+            DefaultCompositionProvider.call(this, openmct);
         }
 
-        return ExampleTelemetryInitializer;
+        ExampleTelemetryCompositionProvider.prototype = Object.create(DefaultCompositionProvider.prototype);
+
+        ExampleTelemetryCompositionProvider.prototype.appliesTo = function (domainObject) {
+            return domainObject.identifier &&
+                domainObject.identifier.namespace === TAXONOMY_SPACE &&
+                domainObject.identifier.key === TAXONOMY_KEY;
+        };
+
+        ExampleTelemetryCompositionProvider.prototype.load = function (domainObject) {
+            var adapter = this.openmct.$injector.get('example.adapter');
+            function makeId(subsystem) {
+                return objectUtils.parseKeyString(SUBSYSTEM_SPACE + ":" + subsystem.identifier);
+            }
+            return adapter.dictionary().then(function (dictionary) {
+                return dictionary.subsystems.map(makeId);
+            });
+        };
+
+        return ExampleTelemetryCompositionProvider;
     }
 );
-```
-__tutorials/telemetry/src/ExampleTelemetryInitializer.js__
 
-At the conclusion of Step 1, the top-level My Spacecraft object was empty. This 
-script will wait for the dictionary to be loaded, then load My Spacecraft (by 
-its identifier), and "mutate" it. The `mutation` capability allows changes to be 
-made to a domain object's model. Here, we take this top-level object, update its 
-name to match what was in the dictionary, and set its `composition` to an array 
-of domain object identifiers for all subsystems contained in the dictionary 
-(using the same identifier prefix as before.)
+```
+__tutorials/telemetry/src/ExampleTelemetryCompositionProvider.js__
+
+At the conclusion of Step 1, the top-level My Spacecraft object was empty. Here 
+we define a composition provider that allows an object to provide a list of 
+its children asynchronously. The children are represented with an array of their 
+identifiers. 
+
+You may notice that the code snippet below, the method of registering a composition 
+provider is a little different to the other components defined in these tutorials. 
+The registration mechanism for Composition Providers reflects [changes to our API that are currently underway](https://github.com/nasa/openmct#new-api). 
+More details will be available about Composition Providers and other aspects of 
+our new API in the near future.
 
 Finally, we wire in these changes by modifying our plugin's `bundle.js` to 
 provide metadata about how these pieces interact (both with each other, and 
@@ -2691,12 +2691,12 @@ with the platform):
 define([
     'openmct',
 +   './src/ExampleTelemetryServerAdapter',
-+   './src/ExampleTelemetryInitializer',
++   './src/ExampleTelemetryCompositionProvider',
 +   './src/ExampleTelemetryModelProvider'
 ], function (
     openmct,
 +   ExampleTelemetryServerAdapter,
-+   ExampleTelemetryInitializer,
++   ExampleTelemetryCompositionProvider,
 +   ExampleTelemetryModelProvider
 ) {
     openmct.legacyRegistry.register("tutorials/telemetry", {
@@ -2761,12 +2761,6 @@ define([
 +               "value": "ws://localhost:8081"
 +           }
 +       ],
-+       "runs": [
-+           {
-+               "implementation": ExampleTelemetryInitializer,
-+               "depends": [ "example.adapter", "objectService" ]
-+           }
-+       ],
 +       "components": [
 +           {
 +               "provides": "modelService",
@@ -2777,6 +2771,7 @@ define([
 +       ]
         }
     });
++   openmct.composition.addProvider(new ExampleTelemetryCompositionProvider(openmct));
 });
 ```
 __tutorials/telemetry/bundle.js__
@@ -2802,16 +2797,15 @@ plugin.
 `example.server`. Setting `priority` to `fallback` means this constant will be 
 overridden if defined anywhere else, allowing configuration bundles to specify 
 different URLs for the WebSocket connection.
-* The initializer script is registered using the `runs` category of extension, 
-to ensure that this executes (and populates the contents of the top-level My 
-Spacecraft object) once Open MCT is started.
+* A Composition Provider is defined, which will expose the spacecraft's 
+subsystems and telemetry as objects in the tree.
     * This depends upon the `example.adapter` service we exposed above, as well 
     as Angular's `$q`; these services will be made available in the constructor 
     call.
 * Finally, the `modelService` provider which presents dictionary elements as 
 domain object models is exposed. Since `modelService` is a composite service, 
 this is registered under the extension category `components`.
-    * As with the initializer, this depends upon the `example.adapter` service 
+    * As with the composition provider, this depends upon the `example.adapter` service 
     we exposed above, as well as Angular's `$q`; these services will be made 
     available in the constructor call.
 
@@ -3016,12 +3010,12 @@ Finally, we expose this `telemetryService` provider declaratively:
 define([
     'openmct',
     './src/ExampleTelemetryServerAdapter',
-    './src/ExampleTelemetryInitializer',
+    './src/ExampleTelemetryCompositionProvider',
     './src/ExampleTelemetryModelProvider'
 ], function (
     openmct,
     ExampleTelemetryServerAdapter,
-    ExampleTelemetryInitializer,
+    ExampleTelemetryCompositionProvider,
     ExampleTelemetryModelProvider
 ) {
     openmct.legacyRegistry.register("tutorials/telemetry", {
@@ -3086,12 +3080,6 @@ define([
                 "value": "ws://localhost:8081"
             }
         ],
-        "runs": [
-            {
-                "implementation": "ExampleTelemetryInitializer.js",
-                "depends": [ "example.adapter", "objectService" ]
-            }
-        ],
         "components": [
             {
                 "provides": "modelService",
@@ -3108,6 +3096,7 @@ define([
         ]
         }
     });
+    openmct.composition.addProvider(new ExampleTelemetryCompositionProvider(openmct));
 });
 ```
 __tutorials/telemetry/bundle.js__
