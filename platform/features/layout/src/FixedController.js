@@ -21,8 +21,20 @@
  *****************************************************************************/
 
 define(
-    ['./FixedProxy', './elements/ElementProxies', './FixedDragHandle'],
-    function (FixedProxy, ElementProxies, FixedDragHandle) {
+    [
+        'lodash',
+        './FixedProxy',
+        './elements/ElementProxies',
+        './FixedDragHandle',
+        '../../../../src/api/objects/object-utils'
+    ],
+    function (
+        _,
+        FixedProxy,
+        ElementProxies,
+        FixedDragHandle,
+        objectUtils
+    ) {
 
         var DEFAULT_DIMENSIONS = [2, 1];
 
@@ -35,13 +47,30 @@ define(
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
-        function FixedController($scope, $q, dialogService, telemetryHandler, telemetryFormatter) {
-            var self = this,
-                handle,
-                names = {}, // Cache names by ID
-                values = {}, // Cache values by ID
-                elementProxiesById = {},
-                maxDomainValue = Number.POSITIVE_INFINITY;
+        function FixedController($scope, $q, dialogService, openmct) {
+            this.names = {}; // Cache names by ID
+            this.values = {}; // Cache values by ID
+            this.elementProxiesById = {};
+
+            this.telemetryObjects = [];
+            this.subscriptions = [];
+            this.openmct = openmct;
+            this.$scope = $scope;
+
+            this.gridSize = $scope.domainObject && $scope.domainObject.getModel().layoutGrid;
+
+            var self = this;
+            [
+                'digest',
+                'fetchHistoricalData',
+                'getTelemetry',
+                'setDisplayedValue',
+                'subscribeToObjects',
+                'unsubscribe',
+                'updateView'
+            ].forEach(function (name) {
+                self[name] = self[name].bind(self);
+            });
 
             // Convert from element x/y/width/height to an
             // appropriate ng-style argument, to position elements.
@@ -79,55 +108,6 @@ define(
                 return element.handles().map(generateDragHandle);
             }
 
-            // Update the value displayed in elements of this telemetry object
-            function setDisplayedValue(telemetryObject, value, alarm) {
-                var id = telemetryObject.getId();
-                (elementProxiesById[id] || []).forEach(function (element) {
-                    names[id] = telemetryObject.getModel().name;
-                    values[id] = telemetryFormatter.formatRangeValue(value);
-                    element.name = names[id];
-                    element.value = values[id];
-                    element.cssClass = alarm && alarm.cssClass;
-                });
-            }
-
-            // Update the displayed value for this object, from a specific
-            // telemetry series
-            function updateValueFromSeries(telemetryObject, telemetrySeries) {
-                var index = telemetrySeries.getPointCount() - 1,
-                    limit = telemetryObject &&
-                        telemetryObject.getCapability('limit'),
-                    datum = telemetryObject && handle.getDatum(
-                        telemetryObject,
-                        index
-                    );
-
-                if (index >= 0) {
-                    setDisplayedValue(
-                        telemetryObject,
-                        telemetrySeries.getRangeValue(index),
-                        limit && datum && limit.evaluate(datum)
-                    );
-                }
-            }
-
-            // Update the displayed value for this object
-            function updateValue(telemetryObject) {
-                var limit = telemetryObject &&
-                        telemetryObject.getCapability('limit'),
-                    datum = telemetryObject &&
-                        handle.getDatum(telemetryObject);
-
-                if (telemetryObject &&
-                        (handle.getDomainValue(telemetryObject) < maxDomainValue)) {
-                    setDisplayedValue(
-                        telemetryObject,
-                        handle.getRangeValue(telemetryObject),
-                        limit && datum && limit.evaluate(datum)
-                    );
-                }
-            }
-
             // Update element positions when grid size changes
             function updateElementPositions(layoutGrid) {
                 // Update grid size from model
@@ -136,13 +116,6 @@ define(
                 self.elementProxies.forEach(function (elementProxy) {
                     elementProxy.style = convertPosition(elementProxy);
                 });
-            }
-
-            // Update telemetry values based on new data available
-            function updateValues() {
-                if (handle) {
-                    handle.getTelemetryObjects().forEach(updateValue);
-                }
             }
 
             // Decorate an element for display
@@ -186,64 +159,57 @@ define(
 
                 // Finally, rebuild lists of elements by id to
                 // facilitate faster update when new telemetry comes in.
-                elementProxiesById = {};
+                self.elementProxiesById = {};
                 self.elementProxies.forEach(function (elementProxy) {
                     var id = elementProxy.id;
                     if (elementProxy.element.type === 'fixed.telemetry') {
                         // Provide it a cached name/value to avoid flashing
-                        elementProxy.name = names[id];
-                        elementProxy.value = values[id];
-                        elementProxiesById[id] = elementProxiesById[id] || [];
-                        elementProxiesById[id].push(elementProxy);
+                        elementProxy.name = self.names[id];
+                        elementProxy.value = self.values[id];
+                        self.elementProxiesById[id] = self.elementProxiesById[id] || [];
+                        self.elementProxiesById[id].push(elementProxy);
                     }
                 });
-
-                // TODO: Ensure elements for all domain objects?
             }
 
-            // Free up subscription to telemetry
-            function releaseSubscription() {
-                if (handle) {
-                    handle.unsubscribe();
-                    handle = undefined;
-                }
-            }
+            function removeObjects(ids) {
+                var configuration = self.$scope.configuration;
 
-            // Subscribe to telemetry updates for this domain object
-            function subscribe(domainObject) {
-                // Release existing subscription (if any)
-                if (handle) {
-                    handle.unsubscribe();
+                if (configuration &&
+                    configuration.elements) {
+                    configuration.elements = configuration.elements.filter(function (proxy) {
+                        return ids.indexOf(proxy.id) === -1;
+                    });
                 }
-
-                // Make a new subscription
-                handle = domainObject && telemetryHandler.handle(
-                    domainObject,
-                    updateValues
-                );
-                // Request an initial historical telemetry value
-                handle.request(
-                    { size: 1 }, // Only need a single data point
-                    updateValueFromSeries
-                );
+                self.getTelemetry($scope.domainObject);
+                refreshElements();
+                // Mark change as persistable
+                if (self.$scope.commit) {
+                    self.$scope.commit("Objects removed.");
+                }
             }
 
             // Handle changes in the object's composition
-            function updateComposition() {
-                // Populate panel positions
-                // TODO: Ensure defaults here
+            function updateComposition(composition, previousComposition) {
+                var removedIds = [];
                 // Resubscribe - objects in view have changed
-                subscribe($scope.domainObject);
+                if (composition !== previousComposition) {
+                    //remove any elements no longer in the composition
+                    removedIds = _.difference(previousComposition, composition);
+                    if (removedIds.length > 0) {
+                        removeObjects(removedIds);
+                    }
+                }
             }
 
             // Trigger a new query for telemetry data
-            function updateDisplayBounds(event, bounds) {
-                maxDomainValue = bounds.end;
-                if (handle) {
-                    handle.request(
-                        { size: 1 }, // Only need a single data point
-                        updateValueFromSeries
-                    );
+            function updateDisplayBounds(bounds) {
+                if (!self.openmct.conductor.follow()) {
+                    //Reset values
+                    self.values = {};
+                    refreshElements();
+                    //Fetch new data
+                    self.fetchHistoricalData(self.telemetryObjects);
                 }
             }
 
@@ -290,6 +256,9 @@ define(
                     width: DEFAULT_DIMENSIONS[0],
                     height: DEFAULT_DIMENSIONS[1]
                 });
+
+                //Re-initialize objects, and subscribe to new object
+                self.getTelemetry($scope.domainObject);
             }
 
             this.elementProxies = [];
@@ -311,24 +280,166 @@ define(
             // Detect changes to grid size
             $scope.$watch("model.layoutGrid", updateElementPositions);
 
-            // Refresh list of elements whenever model changes
-            $scope.$watch("model.modified", refreshElements);
+            // Position panes where they are dropped
+            $scope.$on("mctDrop", handleDrop);
 
             // Position panes when the model field changes
             $scope.$watch("model.composition", updateComposition);
 
+            // Refresh list of elements whenever model changes
+            $scope.$watch("model.modified", refreshElements);
+
             // Subscribe to telemetry when an object is available
-            $scope.$watch("domainObject", subscribe);
+            $scope.$watch("domainObject", this.getTelemetry);
 
             // Free up subscription on destroy
-            $scope.$on("$destroy", releaseSubscription);
-
-            // Position panes where they are dropped
-            $scope.$on("mctDrop", handleDrop);
+            $scope.$on("$destroy", function () {
+                self.unsubscribe();
+                self.openmct.conductor.off("bounds", updateDisplayBounds);
+            });
 
             // Respond to external bounds changes
-            $scope.$on("telemetry:display:bounds", updateDisplayBounds);
+            this.openmct.conductor.on("bounds", updateDisplayBounds);
         }
+
+        /**
+         * A rate-limited digest function. Caps digests at 60Hz
+         * @private
+         */
+        FixedController.prototype.digest = function () {
+            var self = this;
+
+            if (!this.digesting) {
+                this.digesting = true;
+                requestAnimationFrame(function () {
+                    self.$scope.$digest();
+                    self.digesting = false;
+                });
+            }
+        };
+
+        /**
+         * Unsubscribe all listeners
+         * @private
+         */
+        FixedController.prototype.unsubscribe = function () {
+            this.subscriptions.forEach(function (unsubscribeFunc) {
+                unsubscribeFunc();
+            });
+            this.subscriptions = [];
+            this.telemetryObjects = [];
+        };
+
+        /**
+         * Subscribe to all given domain objects
+         * @private
+         * @param {object[]} objects  Domain objects to subscribe to
+         * @returns {object[]} The provided objects, for chaining.
+         */
+        FixedController.prototype.subscribeToObjects = function (objects) {
+            var self = this;
+            this.subscriptions = objects.map(function (object) {
+                return self.openmct.telemetry.subscribe(object, function (datum) {
+                    if (self.openmct.conductor.follow()) {
+                        self.updateView(object, datum);
+                    }
+                }, {});
+            });
+            return objects;
+        };
+
+        /**
+         * Print the values from the given datum against the provided object in the view.
+         * @private
+         * @param {object} telemetryObject The domain object associated with the given telemetry data
+         * @param {object} datum The telemetry datum containing the values to print
+         */
+        FixedController.prototype.updateView = function (telemetryObject, datum) {
+            var metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+            var rangeMetadata = metadata.valuesForHints(['range'])[0];
+            var rangeKey = rangeMetadata.source || rangeMetadata.key;
+            var valueMetadata = metadata.value(rangeKey);
+            var limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
+            var formatter = this.openmct.telemetry.getValueFormatter(valueMetadata);
+            var value = datum[valueMetadata.key];
+            var alarm = limitEvaluator && limitEvaluator.evaluate(datum, rangeKey);
+
+            this.setDisplayedValue(
+                telemetryObject,
+                formatter.format(value),
+                alarm && alarm.cssClass
+            );
+            this.digest();
+        };
+
+        /**
+         * Request the last historical data point for the given domain objects
+         * @param {object[]} objects
+         * @returns {object[]} the provided objects for chaining.
+         */
+        FixedController.prototype.fetchHistoricalData = function (objects) {
+            var bounds = this.openmct.conductor.bounds();
+            var self = this;
+
+            objects.forEach(function (object) {
+                self.openmct.telemetry.request(object, {start: bounds.start, end: bounds.end, size: 1})
+                    .then(function (data) {
+                        self.updateView(object, data[data.length - 1]);
+                    });
+            });
+            return objects;
+        };
+
+
+        /**
+         * Print a value to the onscreen element associated with a given telemetry object.
+         * @private
+         * @param {object} telemetryObject The telemetry object associated with the value
+         * @param {string | number} value The value to print to screen
+         * @param {string} [cssClass] an optional CSS class to apply to the onscreen element.
+         */
+        FixedController.prototype.setDisplayedValue = function (telemetryObject, value, cssClass) {
+            var id = objectUtils.makeKeyString(telemetryObject.identifier);
+            var self = this;
+
+            (self.elementProxiesById[id] || []).forEach(function (element) {
+                self.names[id] = telemetryObject.name;
+                self.values[id] = value;
+                element.name = self.names[id];
+                element.value = self.values[id];
+                element.cssClass = cssClass;
+            });
+        };
+
+        FixedController.prototype.getTelemetry = function (domainObject) {
+            var newObject = domainObject.useCapability('adapter');
+            var self = this;
+
+            if (this.subscriptions.length > 0) {
+                this.unsubscribe();
+            }
+
+            function filterForTelemetryObjects(objects) {
+                return objects.filter(function (object) {
+                    return self.openmct.telemetry.canProvideTelemetry(object);
+                });
+            }
+
+            function initializeDisplay(objects) {
+                self.telemetryObjects = objects;
+                objects.forEach(function (object) {
+                    // Initialize values
+                    self.setDisplayedValue(object, "");
+                });
+                return objects;
+            }
+
+            return this.openmct.composition.get(newObject).load()
+                .then(filterForTelemetryObjects)
+                .then(initializeDisplay)
+                .then(this.fetchHistoricalData)
+                .then(this.subscribeToObjects);
+        };
 
         /**
          * Get the size of the grid, in pixels. The returned array
