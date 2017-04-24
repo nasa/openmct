@@ -117,6 +117,10 @@ define(
             }
 
             function error(errorDetails) {
+                if (errorDetails && (errorDetails.message === "cancelled")) {
+                    return;
+                }
+
                 var errorDialog,
                     errorMessage = {
                     title: "Error copying objects.",

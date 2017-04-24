@@ -141,6 +141,8 @@ define(
                 currentParent
             ).then(function (newParentObj) {
                 return composeService.perform(object, newParentObj);
+            }, function () {
+                return Promise.reject({ message: "cancelled" });
             });
         };
 

@@ -180,9 +180,9 @@ define(
                             );
                     });
 
-                    it("waits for location from user", function () {
+                    it("waits for location and handles cancellation by user", function () {
                         expect(locationServicePromise.then)
-                            .toHaveBeenCalledWith(jasmine.any(Function));
+                            .toHaveBeenCalledWith(jasmine.any(Function), jasmine.any(Function));
                     });
 
                     it("copies object to selected location", function () {
