@@ -55,7 +55,7 @@ Documentation is available on the [Open MCT website](https://nasa.github.io/open
 ### Examples
 
 The clearest examples for developing Open MCT plugins are in the
-[tutorials](https://nasa.github.io/openmct/docs/tutorials/) provided in
+[tutorials](https://github.com/nasa/openmct-tutorial) provided in
 our documentation.
 
 For a practical example of a telemetry adapter, see David Hudson's
