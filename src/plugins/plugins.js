@@ -61,48 +61,25 @@ define([
      */
     plugins.AutoflowView = AutoflowPlugin;
 
-    var conductorInstalled = false;
-
-    plugins.Conductor = function (options) {
-        if (!options) {
-            options = {};
+    plugins.Conductor = function (config) {
+        /*
+        {
+            // Default 'fixed' configuration shows last 30 mins of data. May also provide specific bounds.
+            {timeSystems: ['utc'], defaultDeltas: {start: 30 * ONE_MINUTE, end: 0}, zoomOutLimit: ONE_YEAR, zoomInLimit: ONE_MINUTE},
+            // Some tick source driven menu options
+            {clock: 'localClock', timeSystems: ['utc'], defaultDeltas: {start: 15 * ONE_MINUTE, end: 0}, zoomOutLimit: ONE_YEAR, zoomInLimit: ONE_MINUTE},
+            {clock: 'latestAvailable', timeSystems: ['utc'], defaultDeltas: {start: 15 * 60 * 1000, end: 0}}
         }
-
-        function applyDefaults(openmct, timeConductorViewService) {
-            var defaults = {};
-            var timeSystem = timeConductorViewService.systems.find(function (ts) {
-                return ts.metadata.key === options.defaultTimeSystem;
-            });
-            if (timeSystem !== undefined) {
-                openmct.time.timeSystem(timeSystem, defaults.bounds);
-            }
-        }
-
+        */
         return function (openmct) {
             openmct.legacyExtension('constants', {
-                key: 'DEFAULT_TIMECONDUCTOR_MODE',
-                value: options.showConductor ? 'fixed' : 'realtime',
-                priority: conductorInstalled ? 'mandatory' : 'fallback'
+                key: 'CONDUCTOR_CONFIG',
+                value: config,
+                priority: 'mandatory'
             });
-            if (options.showConductor !== undefined) {
-                openmct.legacyExtension('constants', {
-                    key: 'SHOW_TIMECONDUCTOR',
-                    value: options.showConductor,
-                    priority: conductorInstalled ? 'mandatory' : 'fallback'
-                });
-            }
-            if (options.defaultTimeSystem !== undefined || options.defaultTimespan !== undefined) {
-                openmct.legacyExtension('runs', {
-                    implementation: applyDefaults,
-                    depends: ["openmct", "timeConductorViewService"]
-                });
-            }
 
-            if (!conductorInstalled) {
-                openmct.legacyRegistry.enable('platform/features/conductor/core');
-                openmct.legacyRegistry.enable('platform/features/conductor/compatibility');
-            }
-            conductorInstalled = true;
+            openmct.legacyRegistry.enable('platform/features/conductor/core');
+            openmct.legacyRegistry.enable('platform/features/conductor/compatibility');
         };
     };
 

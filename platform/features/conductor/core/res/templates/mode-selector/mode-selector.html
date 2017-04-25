@@ -22,8 +22,7 @@
 <span ng-controller="ClickAwayController as modeController">
     <div class="s-menu-button"
          ng-click="modeController.toggle()">
-		<span class="title-label">{{ngModel.options[ngModel.selectedKey]
-            .label}}</span>
+		<span class="title-label">{{ngModel.selected.name}}</span>
     </div>
     <div class="menu super-menu mini mode-selector-menu"
          ng-show="modeController.isActive()">
