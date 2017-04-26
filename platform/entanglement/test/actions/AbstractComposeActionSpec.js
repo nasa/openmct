@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -157,9 +157,9 @@ define(
                             );
                     });
 
-                    it("waits for location from user", function () {
+                    it("waits for location and handles cancellation by user", function () {
                         expect(locationServicePromise.then)
-                            .toHaveBeenCalledWith(jasmine.any(Function));
+                            .toHaveBeenCalledWith(jasmine.any(Function), jasmine.any(Function));
                     });
 
                     it("copies object to selected location", function () {

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -75,6 +75,7 @@ define(
             // If collection is not sorted by a time field, we cannot respond to
             // bounds events
             if (this.sortField === undefined) {
+                this.lastBounds = bounds;
                 return;
             }
 
@@ -94,7 +95,7 @@ define(
 
             if (discarded && discarded.length > 0) {
                 /**
-                 * A `discarded` event is thrown when telemetry data fall out of
+                 * A `discarded` event is emitted when telemetry data fall out of
                  * bounds due to a bounds change event
                  * @type {object[]} discarded the telemetry data
                  * discarded as a result of the bounds change
@@ -103,7 +104,7 @@ define(
             }
             if (added && added.length > 0) {
                 /**
-                 * An `added` event is thrown when a bounds change results in
+                 * An `added` event is emitted when a bounds change results in
                  * received telemetry falling within the new bounds.
                  * @type {object[]} added the telemetry data that is now within bounds
                  */
@@ -194,11 +195,14 @@ define(
          */
         TelemetryCollection.prototype.clear = function () {
             this.telemetry = [];
+            this.highBuffer = [];
         };
 
         /**
          * Sorts the telemetry collection based on the provided sort field
-         * specifier.
+         * specifier. Subsequent inserts are sorted to maintain specified sport
+         * order.
+         *
          * @example
          * // First build some mock telemetry for the purpose of an example
          * let now = Date.now();

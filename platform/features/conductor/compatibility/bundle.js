@@ -21,11 +21,9 @@
  *****************************************************************************/
 
 define([
-    "./src/ConductorTelemetryDecorator",
     "./src/ConductorRepresenter",
     'legacyRegistry'
 ], function (
-    ConductorTelemetryDecorator,
     ConductorRepresenter,
     legacyRegistry
 ) {
@@ -35,16 +33,6 @@ define([
             "representers": [
                 {
                     "implementation": ConductorRepresenter,
-                    "depends": [
-                        "openmct"
-                    ]
-                }
-            ],
-            "components": [
-                {
-                    "type": "decorator",
-                    "provides": "telemetryService",
-                    "implementation": ConductorTelemetryDecorator,
                     "depends": [
                         "openmct"
                     ]

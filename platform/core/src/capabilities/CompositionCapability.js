@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,7 +24,8 @@
  * Module defining CompositionCapability. Created by vwoeltje on 11/7/14.
  */
 define(
-    function () {
+    ['./ContextualDomainObject'],
+    function (ContextualDomainObject) {
 
         /**
          * Composition capability. A domain object's composition is the set of
@@ -38,13 +39,12 @@ define(
          * @constructor
          * @implements {Capability}
          */
-        function CompositionCapability($injector, contextualize, domainObject) {
+        function CompositionCapability($injector, domainObject) {
             // Get a reference to the object service from $injector
             this.injectObjectService = function () {
                 this.objectService = $injector.get("objectService");
             };
 
-            this.contextualize = contextualize;
             this.domainObject = domainObject;
         }
 
@@ -115,7 +115,6 @@ define(
         CompositionCapability.prototype.invoke = function () {
             var domainObject = this.domainObject,
                 model = domainObject.getModel(),
-                contextualize = this.contextualize,
                 ids;
 
             // Then filter out non-existent objects,
@@ -125,7 +124,7 @@ define(
                 return ids.filter(function (id) {
                     return objects[id];
                 }).map(function (id) {
-                    return contextualize(objects[id], domainObject);
+                    return new ContextualDomainObject(objects[id], domainObject);
                 });
             }
 

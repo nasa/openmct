@@ -1,0 +1,26 @@
+<div class="items-holder abs contents autoflow obj-value-format"
+     ng-controller="AutoflowTabularController as autoflow">
+    <div class="abs l-flex-row holder t-autoflow-header l-autoflow-header">
+        <mct-include key="'input-filter'"
+                     ng-model="autoflow.filter"
+                     class="flex-elem">
+        </mct-include>
+        <div class="flex-elem grows t-last-update" title="Last Update">{{autoflow.updated()}}</div>
+        <a title="Change column width"
+            class="s-button flex-elem icon-arrows-right-left change-column-width"
+            ng-click="autoflow.increaseColumnWidth()"></a>
+    </div>
+    <div class="abs t-autoflow-items l-autoflow-items"
+         mct-resize="autoflow.setBounds(bounds)"
+         mct-resize-interval="50">
+        <mct-autoflow-table values="autoflow.rangeValues()"
+                            objects="autoflow.getTelemetryObjects()"
+                            rows="autoflow.getRows()"
+                            classes="autoflow.classes()"
+                            updated="autoflow.updated()"
+                            column-width="autoflow.columnWidth()"
+                            counter="autoflow.counter()"
+                            >
+        </mct-autoflow-table>
+    </div>
+</div>

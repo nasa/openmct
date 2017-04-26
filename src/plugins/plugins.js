@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,11 +23,13 @@
 define([
     'lodash',
     '../../platform/features/conductor/utcTimeSystem/src/UTCTimeSystem',
-    '../../example/generator/plugin'
+    '../../example/generator/plugin',
+    '../../platform/features/autoflow/plugin'
 ], function (
     _,
     UTCTimeSystem,
-    GeneratorPlugin
+    GeneratorPlugin,
+    AutoflowPlugin
 ) {
     var bundleMap = {
         CouchDB: 'platform/persistence/couch',
@@ -55,6 +57,17 @@ define([
         };
     };
 
+    /**
+     * A tabular view showing the latest values of multiple telemetry points at
+     * once. Formatted so that labels and values are aligned.
+     *
+     * @param {Object} [options] Optional settings to apply to the autoflow
+     * tabular view. Currently supports one option, 'type'.
+     * @param {string} [options.type] The key of an object type to apply this view
+     * to exclusively.
+     */
+    plugins.AutoflowView = AutoflowPlugin;
+
     var conductorInstalled = false;
 
     plugins.Conductor = function (options) {
@@ -68,14 +81,6 @@ define([
                 return ts.metadata.key === options.defaultTimeSystem;
             });
             if (timeSystem !== undefined) {
-                defaults = timeSystem.defaults();
-
-                if (options.defaultTimespan !== undefined) {
-                    defaults.deltas.start = options.defaultTimespan;
-                    defaults.bounds.start = defaults.bounds.end - options.defaultTimespan;
-                    timeSystem.defaults(defaults);
-                }
-
                 openmct.conductor.timeSystem(timeSystem, defaults.bounds);
             }
         }
