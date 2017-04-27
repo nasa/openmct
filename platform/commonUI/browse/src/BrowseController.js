@@ -113,11 +113,22 @@ define(
                 $location.path('/browse/' + currentIds);
             }
 
+            function getLastChildIfRoot(object) {
+                if (object.getId() !== 'ROOT') {
+                    return object;
+                }
+                return object.useCapability('composition')
+                    .then(function (composees) {
+                        return composees[composees.length - 1];
+                    });
+            }
+
             function navigateToPath(path) {
                 return getObject('ROOT')
                     .then(function (root) {
                         return findViaComposition(root, path);
                     })
+                    .then(getLastChildIfRoot)
                     .then(function (object) {
                         navigationService.setNavigation(object);
                     });
@@ -147,10 +158,14 @@ define(
             // navigate to the path ourselves, which results in it being
             // properly set.
             $scope.$on('$routeChangeStart', function (event, route) {
-                if (route.$$route === $route.current.$$route &&
-                    route.pathParams.ids !== $route.current.pathParams.ids) {
-                    event.preventDefault();
-                    navigateToPath(route.pathParams.ids.split('/'));
+                if (route.$$route === $route.current.$$route) {
+                    if (route.pathParams.ids &&
+                        route.pathParams.ids !== $route.current.pathParams.ids) {
+                        event.preventDefault();
+                        navigateToPath(route.pathParams.ids.split('/'));
+                    } else {
+                        navigateToPath([]);
+                    }
                 }
             });
 
