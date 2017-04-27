@@ -101,7 +101,21 @@ define(
                 ]);
                 mockTelemetryAPI.commonValuesForHints.andReturn([]);
                 mockTelemetryAPI.request.andReturn(Promise.resolve([]));
-
+                mockTelemetryAPI.getValueFormatter.andCallFake(function (metadata) {
+                    var formatter = jasmine.createSpyObj(
+                        'telemetryFormatter:' + metadata.key,
+                        [
+                            'format',
+                            'parse'
+                        ]
+                    );
+                    var getter = function (datum) {
+                        return datum[metadata.key];
+                    };
+                    formatter.format.andCallFake(getter);
+                    formatter.parse.andCallFake(getter);
+                    return formatter;
+                });
 
                 mockTelemetryAPI.canProvideTelemetry.andReturn(false);
 
