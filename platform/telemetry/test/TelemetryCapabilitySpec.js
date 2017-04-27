@@ -92,7 +92,7 @@ define(
                 ]);
                 mockTelemetryAPI.getMetadata.andReturn({
                     valuesForHints: function () {
-                        return [];
+                        return [{}];
                     }
                 });
 
