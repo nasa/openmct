@@ -212,8 +212,8 @@ define(
             var telemetryAPI = this.openmct.telemetry;
 
             var metadata = telemetryAPI.getMetadata(domainObject);
-            var defaultDomain = (metadata.valuesForHints(['domain'])[0] || {}).key;
-            var defaultRange = (metadata.valuesForHints(['range'])[0] || {}).key;
+            var defaultDomain = metadata.valuesForHints(['x'])[0].source;
+            var defaultRange = metadata.valuesForHints(['y'])[0].source;
 
             var isLegacyProvider = telemetryAPI.findRequestProvider(domainObject) ===
                 telemetryAPI.legacyProvider;
@@ -274,8 +274,8 @@ define(
             var telemetryAPI = this.openmct.telemetry;
 
             var metadata = telemetryAPI.getMetadata(domainObject);
-            var defaultDomain = (metadata.valuesForHints(['domain'])[0] || {}).key;
-            var defaultRange = (metadata.valuesForHints(['range'])[0] || {}).key;
+            var defaultDomain = metadata.valuesForHints(['x'])[0].source;
+            var defaultRange = metadata.valuesForHints(['y'])[0].source;
 
             var isLegacyProvider = telemetryAPI.findSubscriptionProvider(domainObject) ===
                 telemetryAPI.legacyProvider;
