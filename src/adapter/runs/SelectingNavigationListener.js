@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -14,28 +14,21 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT includes source code licensed under additional open source
+ * Open MCT Web includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
 define([], function () {
-    function AdaptedViewController($scope, openmct) {
-        function refresh(legacyObject) {
-            if (!legacyObject) {
-                $scope.view = undefined;
-                return;
-            }
-
+    function SelectingNavigationListener(navigationService, openmct) {
+        var selection = openmct.selection;
+        navigationService.addListener(function (legacyObject) {
             var domainObject = legacyObject.useCapability('adapter');
-            var context = { item: domainObject };
-            var providers = openmct.mainViews.get(context);
-            $scope.view = providers[0] && providers[0].view(context);
-        }
-
-        $scope.$watch('domainObject', refresh);
+            selection.clear();
+            selection.add({ item: domainObject });
+        });
     }
 
-    return AdaptedViewController;
+    return SelectingNavigationListener;
 });

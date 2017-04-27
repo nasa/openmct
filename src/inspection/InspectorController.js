@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,22 +20,34 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-    function AdaptedViewController($scope, openmct) {
-        function refresh(legacyObject) {
-            if (!legacyObject) {
-                $scope.view = undefined;
-                return;
-            }
-
-            var domainObject = legacyObject.useCapability('adapter');
-            var context = { item: domainObject };
-            var providers = openmct.mainViews.get(context);
-            $scope.view = providers[0] && providers[0].view(context);
-        }
-
-        $scope.$watch('domainObject', refresh);
+define(['./InspectorView'], function (InspectorView) {
+    function InspectorController(selection, region, registry) {
+        this.selection = selection;
+        this.region = region;
+        this.registry = registry;
+        this.active = false;
+        this.onChange = this.onChange.bind(this);
     }
 
-    return AdaptedViewController;
+    InspectorController.prototype.onChange = function (context) {
+        var view = new InspectorView(this.registry, context)
+        this.region.show(view);
+    };
+
+    InspectorController.prototype.activate = function () {
+        if (!this.active) {
+            this.selection.on('change', this.onChange);
+            this.active = true;
+        }
+
+    };
+
+    InspectorController.prototype.deactivate = function () {
+        if (this.active) {
+            this.selection.off('change', this.onChange);
+            this.active = false;
+        }
+    };
+
+    return InspectorController;
 });

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,22 +20,36 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-    function AdaptedViewController($scope, openmct) {
-        function refresh(legacyObject) {
-            if (!legacyObject) {
-                $scope.view = undefined;
-                return;
-            }
+define([
+    'text!./inspector-panel.html',
+    'zepto',
+    'lodash'
+], function (inspectorTemplate, $, _) {
+    var TEMPLATE = _.template(inspectorTemplate);
 
-            var domainObject = legacyObject.useCapability('adapter');
-            var context = { item: domainObject };
-            var providers = openmct.mainViews.get(context);
-            $scope.view = providers[0] && providers[0].view(context);
-        }
-
-        $scope.$watch('domainObject', refresh);
+    function InspectorPanelView(provider, context) {
+        this.provider = provider;
+        this.context = context;
     }
 
-    return AdaptedViewController;
+    InspectorPanelView.prototype.show = function (element) {
+        var html = TEMPLATE(this.provider.metadata(this.context));
+        var $elements = $(html);
+        var innerRegion = $elements.find('.inner-region')[0];
+
+        $(element).append($elements);
+
+        this.destroy();
+        this.view = this.provider.view(this.context);
+        this.view.show(innerRegion);
+    };
+
+    InspectorPanelView.prototype.destroy = function () {
+        if (this.view) {
+            this.view.destroy();
+            this.view = undefined;
+        }
+    };
+
+    return InspectorPanelView;
 });

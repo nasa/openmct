@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,22 +20,36 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-    function AdaptedViewController($scope, openmct) {
-        function refresh(legacyObject) {
-            if (!legacyObject) {
-                $scope.view = undefined;
-                return;
-            }
-
-            var domainObject = legacyObject.useCapability('adapter');
-            var context = { item: domainObject };
-            var providers = openmct.mainViews.get(context);
-            $scope.view = providers[0] && providers[0].view(context);
-        }
-
-        $scope.$watch('domainObject', refresh);
+define(['zepto', './InspectorPanelView'], function ($, InspectorPanelView) {
+    function InspectorView(registry, context) {
+        this.registry = registry;
+        this.context = context;
+        this.views = [];
     }
 
-    return AdaptedViewController;
+    InspectorView.prototype.show = function (element) {
+        var providers = this.registry.get(this.context);
+        var $ul = $('<ul></ul>');
+
+        this.destroy();
+
+        this.views = providers.map(function (provider) {
+            return new InspectorPanelView(provider, this.context);
+        }.bind(this));
+
+        $(element).append($ul);
+
+        this.views.foreEach(function (view) {
+            view.show($ul[0]);
+        });
+    };
+
+    InspectorView.prototype.destroy = function () {
+        this.views.forEach(function (view) {
+            view.destroy();
+        });
+        this.views = [];
+    };
+
+    return InspectorView;
 });
