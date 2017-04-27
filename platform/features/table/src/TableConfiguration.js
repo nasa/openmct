@@ -65,9 +65,8 @@ define(
                                         limitEvaluator &&
                                         limitEvaluator.evaluate(telemetryDatum, metadatum);
                             var value = {
-                                text: formatter ? formatter.format(telemetryDatum[metadatum.key])
-                                    : telemetryDatum[metadatum.key],
-                                value: telemetryDatum[metadatum.key]
+                                text: formatter.format(telemetryDatum),
+                                value: formatter.parse(telemetryDatum)
                             };
 
                             if (alarm) {
