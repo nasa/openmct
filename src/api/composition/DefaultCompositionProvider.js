@@ -218,6 +218,8 @@ define([
             };
         }
 
+        listeners.composition = newComposition.map(objectUtils.parseKeyString);
+
         added.forEach(function (addedChild) {
             listeners.add.forEach(notify(addedChild));
         });
@@ -226,7 +228,7 @@ define([
             listeners.remove.forEach(notify(removedChild));
         });
 
-        listeners.composition = newComposition.map(objectUtils.parseKeyString);
+
     };
 
     return DefaultCompositionProvider;
