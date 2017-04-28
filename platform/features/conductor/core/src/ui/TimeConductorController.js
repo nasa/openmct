@@ -144,13 +144,13 @@ define(
 
 
         TimeConductorController.prototype.getClock = function (key) {
-            return this.timeAPI.allClocks().filter(function (clock) {
+            return this.timeAPI.getAllClocks().filter(function (clock) {
                 return clock.key === key;
             })[0];
         };
 
         TimeConductorController.prototype.getTimeSystem = function (key) {
-            return this.timeAPI.allTimeSystems().filter(function (timeSystem) {
+            return this.timeAPI.getAllTimeSystems().filter(function (timeSystem) {
                 return timeSystem.key === key;
             })[0];
         };

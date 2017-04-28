@@ -83,7 +83,7 @@ define(['EventEmitter'], function (EventEmitter) {
         this.timeSystems.set(timeSystem.key, timeSystem);
     };
 
-    TimeAPI.prototype.allTimeSystems = function () {
+    TimeAPI.prototype.getAllTimeSystems = function () {
         return Array.from(this.timeSystems.values());
     };
 
@@ -91,7 +91,7 @@ define(['EventEmitter'], function (EventEmitter) {
         this.clocks.set(clock.key, clock);
     };
 
-    TimeAPI.prototype.allClocks = function () {
+    TimeAPI.prototype.getAllClocks = function () {
         return Array.from(this.clocks.values());
     };
 

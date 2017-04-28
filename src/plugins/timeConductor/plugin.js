@@ -34,7 +34,7 @@ define([], function () {
         return function (openmct) {
 
             function getTimeSystem(key) {
-                return openmct.time.allTimeSystems().filter(function (timeSystem) {
+                return openmct.time.getAllTimeSystems().filter(function (timeSystem) {
                     return timeSystem.key === key;
                 })[0];
             }
@@ -68,7 +68,7 @@ define([], function () {
                 }
 
                 var configForTimeSystem = config.menuOptions.filter(function (menuOption) {
-                    return menuOption.timeSystem === (timeSystem && timeSystem.key) && menuOption.clock === (clock && clock.key);
+                    return menuOption.timeSystem === timeSystem.key && menuOption.clock === (clock && clock.key);
                 })[0];
 
                 if (configForTimeSystem !== undefined) {
