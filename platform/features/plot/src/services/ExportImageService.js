@@ -76,7 +76,6 @@ define(
             }, self.EXPORT_IMAGE_TIMEOUT);
 
             try {
-                debugger;
                 element.style.backgroundColor = 'white';
                 
                 self.html2canvas(element, {
