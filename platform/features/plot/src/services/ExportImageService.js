@@ -76,6 +76,7 @@ define(
             }, self.EXPORT_IMAGE_TIMEOUT);
 
             try {
+                debugger;
                 element.style.backgroundColor = 'white';
                 
                 self.html2canvas(element, {
@@ -83,12 +84,14 @@ define(
                         switch (type.toLowerCase()) {
                             case "png":
                                 canvas.toBlob(defer.resolve, "image/png");
+                                element.style.backgroundColor = '';
                                 break;
 
                             default:
                             case "jpg":
                             case "jpeg":
                                 canvas.toBlob(defer.resolve, "image/jpeg");
+                                element.style.backgroundColor = '';                                
                                 break;
                         }
                     }
