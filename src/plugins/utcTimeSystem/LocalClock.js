@@ -22,7 +22,10 @@
 
 define(['EventEmitter'], function (EventEmitter) {
     /**
-     * @implements TickSource
+     * A {@link openmct.TimeAPI.Clock} that updates the temporal bounds of the
+     * application based on UTC time values provided by a ticking local clock,
+     * with the periodicity specified.
+     * @param {number} period The periodicity with which the clock should tick
      * @constructor
      */
     function LocalClock(period) {
@@ -33,7 +36,6 @@ define(['EventEmitter'], function (EventEmitter) {
          */
         this.key = 'local';
         this.cssClass = 'icon-clock';
-        this.label = 'Local Clock';
         this.name = 'Local Clock';
         this.description = "Updates every second, providing UTC timestamps from " +
             "user's local computer.";
@@ -62,6 +64,9 @@ define(['EventEmitter'], function (EventEmitter) {
         }
     };
 
+    /**
+     * @private
+     */
     LocalClock.prototype.tick = function () {
         var now = Date.now();
         this.emit("tick", now);
@@ -102,6 +107,9 @@ define(['EventEmitter'], function (EventEmitter) {
         return result;
     };
 
+    /**
+     * @returns {number} The last value provided for a clock tick
+     */
     LocalClock.prototype.currentValue = function () {
         return this.lastTick;
     };

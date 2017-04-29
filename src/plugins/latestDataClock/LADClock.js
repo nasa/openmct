@@ -20,34 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    '../../../src/plugins/utcTimeSystem/LocalClock',
-    './LADTickSource'
-], function (LocalClock, LADTickSource) {
-    var THIRTY_MINUTES = 30 * 60 * 1000,
-        DEFAULT_PERIOD = 1000;
-
+define(['../../../src/plugins/utcTimeSystem/LocalClock'], function (LocalClock) {
     /**
-     * This time system supports UTC dates and provides a ticking clock source.
-     * @implements TimeSystem
+     * A {@link Clock} that mocks a "latest available data" type tick source.
+     * This is for testing purposes only, and behaves identically to a local clock.
+     * It DOES NOT tick on receipt of data.
      * @constructor
      */
-    function LocalTimeSystem () {
+    function LADClock (period) {
+        LocalClock.call(this, period);
 
-        /**
-         * Some metadata, which will be used to identify the time system in
-         * the UI
-         * @type {{key: string, name: string, glyph: string}}
-         */
-        this.key = 'local';
-        this.name = 'Local';
-        this.cssClass = 'icon-clock';
-
-        this.timeFormat = 'local-format';
-        this.durationFormat = 'duration';
-
-        this.isUTCBased = true;
+        this.key = 'test-lad';
+        this.mode = 'lad';
+        this.cssClass = 'icon-database';
+        this.name = 'Latest available data';
+        this.description = "Updates when when new data is available";
     }
+    LADClock.prototype = Object.create(LocalClock.prototype);
 
-    return LocalTimeSystem;
+    return LADClock;
 });

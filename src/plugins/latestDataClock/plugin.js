@@ -20,22 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['../../../src/plugins/utcTimeSystem/LocalClock'], function (LocalClock) {
-    /**
-     * @implements TickSource
-     * @constructor
-     */
-    function LADTickSource (period) {
-        LocalClock.call(this, period);
-
-        this.key = 'test-lad';
-        this.mode = 'lad';
-        this.cssClass = 'icon-database';
-        this.label = 'Latest Available Data';
-        this.name = 'Latest available data';
-        this.description = "Updates when when new data is available";
-    }
-    LADTickSource.prototype = Object.create(LocalClock.prototype);
-
-    return LADTickSource;
+define([
+    "./LADClock"
+], function (
+    LADClock
+) {
+    return function () {
+        return function (openmct) {
+            openmct.time.addClock(new LADClock());
+        }
+    };
 });

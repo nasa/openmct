@@ -20,24 +20,29 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    "./LocalTimeSystem",
-    "./LocalTimeFormat",
-    "./LADTickSource"
-], function (
-    LocalTimeSystem,
-    LocalTimeFormat,
-    LADTickSource
-) {
-    return function () {
-        return function (openmct) {
-            openmct.time.addTimeSystem(new LocalTimeSystem());
-            openmct.time.addClock(new LADTickSource());
+define([], function () {
 
-            openmct.legacyExtension('formats', {
-                key: 'local-format',
-                implementation: LocalTimeFormat
-            });
-        }
-    };
+    /**
+     * This time system supports UTC dates and provides a ticking clock source.
+     * @implements TimeSystem
+     * @constructor
+     */
+    function LocalTimeSystem () {
+
+        /**
+         * Some metadata, which will be used to identify the time system in
+         * the UI
+         * @type {{key: string, name: string, glyph: string}}
+         */
+        this.key = 'local';
+        this.name = 'Local';
+        this.cssClass = 'icon-clock';
+
+        this.timeFormat = 'local-format';
+        this.durationFormat = 'duration';
+
+        this.isUTCBased = true;
+    }
+
+    return LocalTimeSystem;
 });

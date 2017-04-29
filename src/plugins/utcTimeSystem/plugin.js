@@ -27,7 +27,10 @@ define([
     UTCTimeSystem,
     LocalClock
 ) {
-    var ONE_DAY = 24 * 60 * 60 * 1000;
+    /**
+     * Install a time system that supports UTC times. It also installs a local
+     * clock source that ticks every 100ms, providing UTC times.
+     */
     return function () {
         return function (openmct) {
             var timeSystem = new UTCTimeSystem();

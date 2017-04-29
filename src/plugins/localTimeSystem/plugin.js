@@ -20,25 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-    /**
-     * This time system supports UTC dates.
-     * @implements TimeSystem
-     * @constructor
-     */
-    function UTCTimeSystem() {
+define([
+    "./LocalTimeSystem",
+    "./LocalTimeFormat"
+], function (
+    LocalTimeSystem,
+    LocalTimeFormat
+) {
+    return function () {
+        return function (openmct) {
+            openmct.time.addTimeSystem(new LocalTimeSystem());
 
-        /**
-         * Metadata used to identify the time system in
-         * the UI
-         */
-        this.key = 'utc';
-        this.name = 'UTC';
-        this.cssClass = 'icon-clock';
-        this.timeFormat = 'utc';
-        this.durationFormat = 'duration';
-        this.isUTCBased = true;
-    }
-
-    return UTCTimeSystem;
+            openmct.legacyExtension('formats', {
+                key: 'local-format',
+                implementation: LocalTimeFormat
+            });
+        }
+    };
 });

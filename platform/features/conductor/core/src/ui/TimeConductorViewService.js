@@ -27,16 +27,20 @@ define(
     function (EventEmitter) {
 
         /**
-         * A class representing the state of the time conductor view. This
-         * exposes details of the UI that are not represented on the
-         * TimeConductor API itself such as modes and offsets.
+         * The TimeConductorViewService acts as an event bus between different
+         * elements of the Time Conductor UI. Zooming and panning occur via this
+         * service, as they are specific behaviour of the UI, and not general
+         * functions of the time API.
+         *
+         * Synchronization of conductor state between the Time API and the URL
+         * also occurs from the conductor view service, whose lifecycle persists
+         * between view changes.
          *
          * @memberof platform.features.conductor
          * @param conductor
-         * @param timeSystems
          * @constructor
          */
-        function TimeConductorViewService(openmct, timeSystems) {
+        function TimeConductorViewService(openmct) {
 
             EventEmitter.call(this);
 
@@ -44,21 +48,6 @@ define(
         }
 
         TimeConductorViewService.prototype = Object.create(EventEmitter.prototype);
-
-        TimeConductorViewService.prototype.calculateBoundsFromOffsets = function (offsets) {
-            var oldEnd = this.timeAPI.bounds().end;
-
-            if (offsets && offsets.end !== undefined) {
-                //Calculate the previous raw end value (without delta)
-                oldEnd = oldEnd - offsets.end;
-            }
-
-            var bounds = {
-                start: oldEnd - offsets.start,
-                end: oldEnd + offsets.end
-            };
-            return bounds;
-        };
 
         /**
          * An event to indicate that zooming is taking place
@@ -81,10 +70,16 @@ define(
             // important. Calculate zoom based on 'now'.
             if (this.timeAPI.clock() !== undefined) {
                 zoom.offsets = {
-                    start: timeSpan,
+                    start: -timeSpan,
                     end: this.timeAPI.clockOffsets().end
                 };
-                zoom.bounds = this.calculateBoundsFromOffsets(zoom.offsets);
+
+                var currentVal = this.timeAPI.clock().currentValue();
+
+                zoom.bounds = {
+                    start: currentVal + zoom.offsets.start,
+                    end: currentVal + zoom.offsets.end
+                };
             } else {
                 var bounds = this.timeAPI.bounds();
                 var center = bounds.start + ((bounds.end - bounds.start)) / 2;
