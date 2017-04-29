@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,7 +21,9 @@
  *****************************************************************************/
 
 define(
-    function () {
+    ['./CancelError'],
+    function (CancelError) {
+        var CANCEL_MESSAGE = "User cancelled location selection.";
 
         /**
          * Common interface exposed by services which support move, copy,
@@ -141,7 +143,9 @@ define(
                 currentParent
             ).then(function (newParentObj) {
                 return composeService.perform(object, newParentObj);
-            });
+            }, function () {
+                return Promise.reject(new CancelError(CANCEL_MESSAGE));
+            }.bind(this));
         };
 
         AbstractComposeAction.appliesTo = function (context) {

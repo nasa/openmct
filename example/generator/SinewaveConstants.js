@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,34 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global define*/
 
-/**
- * Module defining NameColumn. Created by vwoeltje on 11/18/14.
- */
-define(
-    [],
-    function () {
-
-        /**
-         * A column which will report the name of the domain object
-         * which exposed specific telemetry values.
-         *
-         * @memberof platform/features/table
-         * @constructor
-         */
-        function NameColumn() {
-        }
-
-        NameColumn.prototype.getTitle = function () {
-            return "Name";
-        };
-
-        NameColumn.prototype.getValue = function (domainObject) {
-            return {
-                text: domainObject.getModel().name
-            };
-        };
-
-        return NameColumn;
-    }
-);
+define({
+    START_TIME: Date.now() - 24 * 60 * 60 * 1000 // Now minus a day.
+});

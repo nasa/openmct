@@ -22,9 +22,11 @@
 
 define(
     [
-        "d3"
+        "d3-selection",
+        "d3-scale",
+        "d3-axis"
     ],
-    function (d3) {
+    function (d3Selection, d3Scale, d3Axis) {
         var PADDING = 1;
 
         /**
@@ -70,12 +72,12 @@ define(
         ConductorAxisController.prototype.initialize = function (element) {
             this.target = element[0].firstChild;
             var height = this.target.offsetHeight;
-            var vis = d3.select(this.target)
+            var vis = d3Selection.select(this.target)
                 .append("svg:svg")
                 .attr("width", "100%")
                 .attr("height", height);
 
-            this.xAxis = d3.axisTop();
+            this.xAxis = d3Axis.axisTop();
 
             // draw x axis with labels and move to the bottom of the chart area
             this.axisElement = vis.append("g")
@@ -115,10 +117,10 @@ define(
             var bounds = this.bounds;
 
             if (timeSystem.isUTCBased()) {
-                this.xScale = this.xScale || d3.scaleUtc();
+                this.xScale = this.xScale || d3Scale.scaleUtc();
                 this.xScale.domain([new Date(bounds.start), new Date(bounds.end)]);
             } else {
-                this.xScale = this.xScale || d3.scaleLinear();
+                this.xScale = this.xScale || d3Scale.scaleLinear();
                 this.xScale.domain([bounds.start, bounds.end]);
             }
 
@@ -145,9 +147,9 @@ define(
                 //The D3 scale used depends on the type of time system as d3
                 // supports UTC out of the box.
                 if (timeSystem.isUTCBased()) {
-                    this.xScale = d3.scaleUtc();
+                    this.xScale = d3Scale.scaleUtc();
                 } else {
-                    this.xScale = d3.scaleLinear();
+                    this.xScale = d3Scale.scaleLinear();
                 }
 
                 this.xAxis.scale(this.xScale);

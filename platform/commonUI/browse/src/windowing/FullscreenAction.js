@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -46,12 +46,12 @@ define(
         };
 
         FullscreenAction.prototype.getMetadata = function () {
-            // We override getMetadata, because the icon cssclass and
+            // We override getMetadata, because the icon cssClass and
             // description need to be determined at run-time
             // based on whether or not we are currently
             // full screen.
             var metadata = Object.create(FullscreenAction);
-            metadata.cssclass = screenfull.isFullscreen ? "icon-fullscreen-expand" : "icon-fullscreen-collapse";
+            metadata.cssClass = screenfull.isFullscreen ? "icon-fullscreen-expand" : "icon-fullscreen-collapse";
             metadata.description = screenfull.isFullscreen ?
                 EXIT_FULLSCREEN : ENTER_FULLSCREEN;
             metadata.group = "windowing";

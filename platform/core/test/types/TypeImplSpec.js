@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -33,7 +33,7 @@ define(
                     key: 'test-type',
                     name: 'Test Type',
                     description: 'A type, for testing',
-                    cssclass: 'icon-telemetry-panel',
+                    cssClass: 'icon-telemetry-panel',
                     inherits: ['test-parent-1', 'test-parent-2'],
                     features: ['test-feature-1'],
                     properties: [{}],

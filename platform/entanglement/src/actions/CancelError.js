@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,37 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/**
- * MergeModelsSpec. Created by vwoeltje on 11/6/14.
- */
-define(
-    ["../src/NameColumn"],
-    function (NameColumn) {
-
-        describe("A name column", function () {
-            var mockDomainObject,
-                column;
-
-            beforeEach(function () {
-                mockDomainObject = jasmine.createSpyObj(
-                    "domainObject",
-                    ["getModel"]
-                );
-                mockDomainObject.getModel.andReturn({
-                    name: "Test object name"
-                });
-                column = new NameColumn();
-            });
-
-            it("reports a column header", function () {
-                expect(column.getTitle()).toEqual("Name");
-            });
-
-            it("looks up name from an object's model", function () {
-                expect(column.getValue(mockDomainObject).text)
-                    .toEqual("Test object name");
-            });
-
-        });
+define(function () {
+    function CancelError() {
+        Error.apply(this, arguments);
+        this.name = CancelError;
     }
-);
+
+    CancelError.prototype = Object.create(Error.prototype);
+
+    return CancelError;
+});

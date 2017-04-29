@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -32,6 +32,7 @@ define(
                 mockPersistence,
                 mockDomainObject,
                 testModel,
+                testId,
                 decorator;
 
             beforeEach(function () {
@@ -41,6 +42,7 @@ define(
                     ['getCapabilities']
                 );
                 testModel = { someKey: "some value" };
+                testId = 'someId';
                 mockPersistence = jasmine.createSpyObj(
                     'persistence',
                     ['persist', 'refresh']
@@ -67,9 +69,9 @@ define(
             // QueuingPersistenceCapability itself, which has its own tests.
 
             it("delegates to its wrapped service", function () {
-                decorator.getCapabilities(testModel);
+                decorator.getCapabilities(testModel, testId);
                 expect(mockCapabilityService.getCapabilities)
-                    .toHaveBeenCalledWith(testModel);
+                    .toHaveBeenCalledWith(testModel, testId);
             });
 
             it("wraps its persistence capability's constructor", function () {

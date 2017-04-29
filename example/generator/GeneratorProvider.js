@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -40,6 +40,10 @@ define([
     GeneratorProvider.prototype.canProvideTelemetry = function (domainObject) {
         return domainObject.type === 'generator';
     };
+
+    GeneratorProvider.prototype.supportsRequest =
+        GeneratorProvider.prototype.supportsSubscribe =
+            GeneratorProvider.prototype.canProvideTelemetry;
 
     GeneratorProvider.prototype.makeWorkerRequest = function (domainObject, request) {
         var props = [

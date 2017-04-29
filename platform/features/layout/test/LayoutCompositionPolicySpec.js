@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,17 +24,30 @@ define(
     ["../src/LayoutCompositionPolicy"],
     function (LayoutCompositionPolicy) {
         describe("Layout's composition policy", function () {
-            var mockCandidate,
+            var mockChild,
+                mockCandidateObj,
+                mockCandidate,
                 mockContext,
                 candidateType,
                 contextType,
                 policy;
 
             beforeEach(function () {
+                mockChild = jasmine.createSpyObj(
+                    'childObject',
+                    ['getCapability']
+                );
                 mockCandidate =
                     jasmine.createSpyObj('candidateType', ['instanceOf']);
                 mockContext =
                     jasmine.createSpyObj('contextType', ['instanceOf']);
+
+                mockCandidateObj = jasmine.createSpyObj('domainObj', [
+                    'getCapability'
+                ]);
+                mockCandidateObj.getCapability.andReturn(mockCandidate);
+
+                mockChild.getCapability.andReturn(mockContext);
 
                 mockCandidate.instanceOf.andCallFake(function (t) {
                     return t === candidateType;
@@ -49,19 +62,19 @@ define(
             it("disallows folders in layouts", function () {
                 candidateType = 'layout';
                 contextType = 'folder';
-                expect(policy.allow(mockCandidate, mockContext)).toBe(false);
+                expect(policy.allow(mockCandidateObj, mockChild)).toBe(false);
             });
 
             it("does not disallow folders elsewhere", function () {
                 candidateType = 'nonlayout';
                 contextType = 'folder';
-                expect(policy.allow(mockCandidate, mockContext)).toBe(true);
+                expect(policy.allow(mockCandidateObj, mockChild)).toBe(true);
             });
 
             it("allows things other than folders in layouts", function () {
                 candidateType = 'layout';
                 contextType = 'nonfolder';
-                expect(policy.allow(mockCandidate, mockContext)).toBe(true);
+                expect(policy.allow(mockCandidateObj, mockChild)).toBe(true);
             });
 
         });

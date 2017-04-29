@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -61,8 +61,8 @@ define(
          * @param bundleList
          * @returns {*}
          */
-        FrameworkInitializer.prototype.runApplication = function (bundleList) {
-            return this.loader.loadBundles(bundleList)
+        FrameworkInitializer.prototype.runApplication = function () {
+            return this.loader.loadBundles([])
                 .then(bind(this.resolver.resolveBundles, this.resolver))
                 .then(bind(this.registrar.registerExtensions, this.registrar))
                 .then(bind(this.bootstrapper.bootstrap, this.bootstrapper));

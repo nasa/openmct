@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,12 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
+/*global define*/
 
 define(
     ['./SinewaveConstants', 'moment'],
     function (SinewaveConstants, moment) {
-        "use strict";
 
         var START_TIME = SinewaveConstants.START_TIME,
             FORMAT_REGEX = /^-?\d+:\d+:\d+$/,

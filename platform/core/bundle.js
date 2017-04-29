@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -49,7 +49,6 @@ define([
     "./src/services/Now",
     "./src/services/Throttle",
     "./src/services/Topic",
-    "./src/services/Contextualize",
     "./src/services/Instantiate",
     'legacyRegistry'
 ], function (
@@ -81,7 +80,6 @@ define([
     Now,
     Throttle,
     Topic,
-    Contextualize,
     Instantiate,
     legacyRegistry
 ) {
@@ -241,7 +239,7 @@ define([
                             "property": "name",
                             "pattern": "\\S+",
                             "required": true,
-                            "cssclass": "l-input-lg"
+                            "cssClass": "l-input-lg"
                         },
                         {
                             "name": "Notes",
@@ -249,19 +247,19 @@ define([
                             "property": "notes",
                             "control": "textarea",
                             "required": false,
-                            "cssclass": "l-textarea-sm"
+                            "cssClass": "l-textarea-sm"
                         }
                     ]
                 },
                 {
                     "key": "root",
                     "name": "Root",
-                    "cssclass": "icon-folder"
+                    "cssClass": "icon-folder"
                 },
                 {
                     "key": "folder",
                     "name": "Folder",
-                    "cssclass": "icon-folder",
+                    "cssClass": "icon-folder",
                     "features": "creation",
                     "description": "Create folders to organize other objects or links to objects.",
                     "priority": 1000,
@@ -272,11 +270,11 @@ define([
                 {
                     "key": "unknown",
                     "name": "Unknown Type",
-                    "cssclass": "icon-object-unknown"
+                    "cssClass": "icon-object-unknown"
                 },
                 {
                     "name": "Unknown Type",
-                    "cssclass": "icon-object-unknown"
+                    "cssClass": "icon-object-unknown"
                 }
             ],
             "capabilities": [
@@ -284,8 +282,7 @@ define([
                     "key": "composition",
                     "implementation": CompositionCapability,
                     "depends": [
-                        "$injector",
-                        "contextualize"
+                        "$injector"
                     ]
                 },
                 {
@@ -376,13 +373,6 @@ define([
                 {
                     "key": "topic",
                     "implementation": Topic,
-                    "depends": [
-                        "$log"
-                    ]
-                },
-                {
-                    "key": "contextualize",
-                    "implementation": Contextualize,
                     "depends": [
                         "$log"
                     ]

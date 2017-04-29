@@ -14,8 +14,9 @@ define(
         }
 
         CompositionModelPolicy.prototype.allow = function (candidate) {
+            var candidateType = candidate.getCapability('type');
             return Array.isArray(
-                (candidate.getInitialModel() || {}).composition
+                (candidateType.getInitialModel() || {}).composition
             );
         };
 

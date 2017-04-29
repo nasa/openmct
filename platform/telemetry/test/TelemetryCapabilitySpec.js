@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -32,8 +32,9 @@ define(
                 mockTelemetryService,
                 mockReject,
                 mockUnsubscribe,
-                telemetry;
-
+                telemetry,
+                mockTelemetryAPI,
+                mockAPI;
 
             function mockPromise(value) {
                 return {
@@ -41,6 +42,9 @@ define(
                         return mockPromise(callback(value));
                     }
                 };
+            }
+
+            function noop() {
             }
 
             beforeEach(function () {
@@ -79,7 +83,40 @@ define(
                 // Bubble up...
                 mockReject.then.andReturn(mockReject);
 
+                mockTelemetryAPI = jasmine.createSpyObj("telemetryAPI", [
+                    "getMetadata",
+                    "subscribe",
+                    "request",
+                    "findRequestProvider",
+                    "findSubscriptionProvider"
+                ]);
+                mockTelemetryAPI.getMetadata.andReturn({
+                    valuesForHints: function () {
+                        return [{}];
+                    }
+                });
+
+                mockAPI = {
+                    telemetry: mockTelemetryAPI,
+                    conductor: {
+                        bounds: function () {
+                            return {
+                                start: 0,
+                                end: 1
+                            };
+                        },
+                        timeSystem: function () {
+                            return {
+                                metadata: {
+                                    key: 'mockTimeSystem'
+                                }
+                            };
+                        }
+                    }
+                };
+
                 telemetry = new TelemetryCapability(
+                    mockAPI,
                     mockInjector,
                     mockQ,
                     mockLog,
@@ -111,9 +148,9 @@ define(
                         id: "testId", // from domain object
                         source: "testSource", // from model
                         key: "testKey", // from model
-                        start: 42 // from argument
+                        start: 42, // from argument
+                        domain: 'mockTimeSystem'
                     }]);
-
             });
 
             it("provides an empty series when telemetry is missing", function () {
@@ -129,7 +166,10 @@ define(
                 expect(telemetry.getMetadata()).toEqual({
                     id: "testId", // from domain object
                     source: "testSource",
-                    key: "testKey"
+                    key: "testKey",
+                    start: 0,
+                    end: 1,
+                    domain: 'mockTimeSystem'
                 });
             });
 
@@ -143,7 +183,10 @@ define(
                 expect(telemetry.getMetadata()).toEqual({
                     id: "testId", // from domain object
                     source: "testSource", // from model
-                    key: "testId" // from domain object
+                    key: "testId", // from domain object
+                    start: 0,
+                    end: 1,
+                    domain: 'mockTimeSystem'
                 });
             });
 
@@ -161,6 +204,57 @@ define(
                 expect(mockLog.warn).toHaveBeenCalled();
             });
 
+            it("if a new style telemetry source is available, use it", function () {
+                var mockProvider = {};
+                mockTelemetryAPI.findSubscriptionProvider.andReturn(mockProvider);
+                telemetry.subscribe(noop, {});
+                expect(mockTelemetryService.subscribe).not.toHaveBeenCalled();
+                expect(mockTelemetryAPI.subscribe).toHaveBeenCalled();
+            });
+
+            it("if a new style telemetry source is not available, revert to old API", function () {
+                mockTelemetryAPI.findSubscriptionProvider.andReturn(undefined);
+                telemetry.subscribe(noop, {});
+                expect(mockTelemetryAPI.subscribe).not.toHaveBeenCalled();
+                expect(mockTelemetryService.subscribe).toHaveBeenCalled();
+            });
+
+            it("Wraps telemetry returned from the new API as a telemetry series", function () {
+                var returnedTelemetry;
+                var mockTelemetry = [{
+                    prop1: "val1",
+                    prop2: "val2",
+                    prop3: "val3"
+                },
+                {
+                    prop1: "val4",
+                    prop2: "val5",
+                    prop3: "val6"
+                }];
+                var mockProvider = {};
+                var dunzo = false;
+
+                mockTelemetryAPI.findRequestProvider.andReturn(mockProvider);
+                mockTelemetryAPI.request.andReturn(Promise.resolve(mockTelemetry));
+
+                telemetry.requestData({}).then(function (data) {
+                    returnedTelemetry = data;
+                    dunzo = true;
+                });
+
+                waitsFor(function () {
+                    return dunzo;
+                });
+
+                runs(function () {
+                    expect(returnedTelemetry.getPointCount).toBeDefined();
+                    expect(returnedTelemetry.getDomainValue).toBeDefined();
+                    expect(returnedTelemetry.getRangeValue).toBeDefined();
+                    expect(returnedTelemetry.getPointCount()).toBe(2);
+                });
+
+            });
+
             it("allows subscriptions to updates", function () {
                 var mockCallback = jasmine.createSpy("callback"),
                     subscription = telemetry.subscribe(mockCallback);
@@ -171,7 +265,10 @@ define(
                     [{
                         id: "testId", // from domain object
                         source: "testSource",
-                        key: "testKey"
+                        key: "testKey",
+                        start: 0,
+                        end: 1,
+                        domain: 'mockTimeSystem'
                     }]
                 );
 
@@ -188,8 +285,28 @@ define(
                 expect(mockUnsubscribe).not.toHaveBeenCalled();
                 subscription(); // should be an unsubscribe function
                 expect(mockUnsubscribe).toHaveBeenCalled();
+            });
 
+            it("applies time conductor bounds if request bounds not defined", function () {
+                var fullRequest = telemetry.buildRequest({});
+                var mockBounds = mockAPI.conductor.bounds();
 
+                expect(fullRequest.start).toBe(mockBounds.start);
+                expect(fullRequest.end).toBe(mockBounds.end);
+
+                fullRequest = telemetry.buildRequest({start: 10, end: 20});
+
+                expect(fullRequest.start).toBe(10);
+                expect(fullRequest.end).toBe(20);
+            });
+
+            it("applies domain from time system if none defined", function () {
+                var fullRequest = telemetry.buildRequest({});
+                var mockTimeSystem = mockAPI.conductor.timeSystem();
+                expect(fullRequest.domain).toBe(mockTimeSystem.metadata.key);
+
+                fullRequest = telemetry.buildRequest({domain: 'someOtherDomain'});
+                expect(fullRequest.domain).toBe('someOtherDomain');
             });
         });
     }

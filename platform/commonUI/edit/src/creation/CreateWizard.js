@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -56,16 +56,14 @@ define(
          */
         CreateWizard.prototype.getFormStructure = function (includeLocation) {
             var sections = [],
-                type = this.type,
+                domainObject = this.domainObject,
                 policyService = this.policyService;
 
-            function validateLocation(locatingObject) {
-                var locatingType = locatingObject &&
-                    locatingObject.getCapability('type');
-                return locatingType && policyService.allow(
+            function validateLocation(parent) {
+                return parent && policyService.allow(
                     "composition",
-                    locatingType,
-                    type
+                    parent,
+                    domainObject
                 );
             }
 
@@ -91,7 +89,7 @@ define(
             if (includeLocation) {
                 sections.push({
                     name: 'Location',
-                    cssclass: "grows",
+                    cssClass: "grows",
                     rows: [{
                         name: "Save In",
                         control: "locator",

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -50,7 +50,7 @@ define(
             this.capabilityService = capabilityService;
         }
 
-        QueuingPersistenceCapabilityDecorator.prototype.getCapabilities = function (model) {
+        QueuingPersistenceCapabilityDecorator.prototype.getCapabilities = function (model, id) {
             var capabilityService = this.capabilityService,
                 persistenceQueue = this.persistenceQueue;
 
@@ -76,7 +76,7 @@ define(
             }
 
             return decoratePersistence(
-                capabilityService.getCapabilities(model)
+                capabilityService.getCapabilities(model, id)
             );
         };
 

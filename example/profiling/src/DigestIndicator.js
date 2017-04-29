@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -63,7 +63,7 @@ define(
                  * Get the CSS class that defines the icon
                  * to display in this indicator. This will appear
                  * as a dataflow icon.
-                 * @returns {string} the cssclass of the dataflow icon
+                 * @returns {string} the cssClass of the dataflow icon
                  */
                 getCssClass: function () {
                     return "icon-connectivity";

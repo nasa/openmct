@@ -131,11 +131,11 @@ define(
         /**
          * Get the CSS class to display the right icon
          * for the start/restart button.
-         * @returns {string} cssclass to display
+         * @returns {string} cssClass to display
          */
         TimerController.prototype.buttonCssClass = function () {
             return this.relevantAction ?
-                    this.relevantAction.getMetadata().cssclass : "";
+                    this.relevantAction.getMetadata().cssClass : "";
         };
 
         /**

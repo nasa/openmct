@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    ['./AbstractComposeAction'],
-    function (AbstractComposeAction) {
+    ['./AbstractComposeAction', './CancelError'],
+    function (AbstractComposeAction, CancelError) {
 
         /**
          * The CopyAction is available from context menus and allows a user to
@@ -117,6 +117,11 @@ define(
             }
 
             function error(errorDetails) {
+                // No need to notify user of their own cancellation
+                if (errorDetails instanceof CancelError) {
+                    return;
+                }
+
                 var errorDialog,
                     errorMessage = {
                     title: "Error copying objects.",
