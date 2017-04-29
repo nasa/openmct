@@ -76,6 +76,8 @@ define(
             }, self.EXPORT_IMAGE_TIMEOUT);
 
             try {
+                element.style.backgroundColor = 'white';
+                
                 self.html2canvas(element, {
                     onrendered: function (canvas) {
                         switch (type.toLowerCase()) {
@@ -89,10 +91,7 @@ define(
                                 canvas.toBlob(defer.resolve, "image/jpeg");
                                 break;
                         }
-                    },
-                    // Undefined makes background transparent
-                    // See: http://html2canvas.hertzen.com/documentation.html#available-options
-                    background: undefined
+                    }
                 });
             } catch (e) {
                 defer.reject(e);
