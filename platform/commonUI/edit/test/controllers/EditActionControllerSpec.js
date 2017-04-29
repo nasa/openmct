@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,7 +28,7 @@ define(
         describe("The Edit Action controller", function () {
             var mockSaveActionMetadata = {
                 name: "mocked-save-action",
-                cssclass: "mocked-save-action-css"
+                cssClass: "mocked-save-action-css"
             };
 
             function fakeGetActions(actionContext) {
@@ -86,7 +86,7 @@ define(
                 expect(menuOptions[1].key).toEqual(mockScope.saveActions[1]);
                 menuOptions.forEach(function (option) {
                     expect(option.name).toEqual(mockSaveActionMetadata.name);
-                    expect(option.cssclass).toEqual(mockSaveActionMetadata.cssclass);
+                    expect(option.cssClass).toEqual(mockSaveActionMetadata.cssClass);
                 });
             });
 

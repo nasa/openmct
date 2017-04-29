@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,6 +28,18 @@ define([
 
     // TODO: needs reference to formatService;
     function TelemetryValueFormatter(valueMetadata, formatService) {
+        var numberFormatter = {
+            parse: function (x) {
+                return Number(x);
+            },
+            format: function (x) {
+                return x;
+            },
+            validate: function (x) {
+                return true;
+            }
+        };
+
         this.valueMetadata = valueMetadata;
         this.parseCache = new WeakMap();
         this.formatCache = new WeakMap();
@@ -36,17 +48,7 @@ define([
                 .getFormat(valueMetadata.format, valueMetadata);
         } catch (e) {
             // TODO: Better formatting
-            this.formatter = {
-                parse: function (x) {
-                    return Number(x);
-                },
-                format: function (x) {
-                    return x;
-                },
-                validate: function (x) {
-                    return true;
-                }
-            };
+            this.formatter = numberFormatter;
         }
 
         if (valueMetadata.type === 'enum') {

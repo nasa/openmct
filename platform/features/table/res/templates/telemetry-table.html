@@ -1,0 +1,14 @@
+<div ng-controller="TelemetryTableController as tableController"
+     ng-class="{'loading': loading}">
+    <mct-table
+        headers="headers"
+        rows="rows"
+        time-columns="tableController.timeColumns"
+        format-cell="formatCell"
+        enableFilter="true"
+        enableSort="true"
+        auto-scroll="autoScroll"
+        default-sort="defaultSort"
+        class="tabular-holder has-control-bar">
+    </mct-table>
+</div>

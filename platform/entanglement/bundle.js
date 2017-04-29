@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -66,7 +66,7 @@ define([
                     "key": "move",
                     "name": "Move",
                     "description": "Move object to another location.",
-                    "cssclass": "icon-move",
+                    "cssClass": "icon-move",
                     "category": "contextual",
                     "implementation": MoveAction,
                     "depends": [
@@ -79,7 +79,7 @@ define([
                     "key": "copy",
                     "name": "Duplicate",
                     "description": "Duplicate object to another location.",
-                    "cssclass": "icon-duplicate",
+                    "cssClass": "icon-duplicate",
                     "category": "contextual",
                     "implementation": CopyAction,
                     "depends": [
@@ -95,7 +95,7 @@ define([
                     "key": "link",
                     "name": "Create Link",
                     "description": "Create Link to object in another location.",
-                    "cssclass": "icon-link",
+                    "cssClass": "icon-link",
                     "category": "contextual",
                     "implementation": LinkAction,
                     "depends": [
@@ -108,7 +108,7 @@ define([
                     "key": "follow",
                     "name": "Go To Original",
                     "description": "Go to the original, un-linked instance of this object.",
-                    "cssclass": "",
+                    "cssClass": "",
                     "category": "contextual",
                     "implementation": GoToOriginalAction
                 },
@@ -116,7 +116,7 @@ define([
                     "key": "locate",
                     "name": "Set Primary Location",
                     "description": "Set a domain object's primary location.",
-                    "cssclass": "",
+                    "cssClass": "",
                     "category": "contextual",
                     "implementation": SetPrimaryLocationAction
                 }
@@ -132,7 +132,6 @@ define([
                     "provides": "objectService",
                     "implementation": LocatingObjectDecorator,
                     "depends": [
-                        "contextualize",
                         "$q",
                         "$log"
                     ]

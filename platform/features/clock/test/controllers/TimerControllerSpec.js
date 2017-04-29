@@ -91,6 +91,7 @@ define(
                         'timer.stop': mockStop
                     }[k]];
                 });
+
                 mockStart.getMetadata.andReturn({cssclass: "icon-play", name: "Start"});
                 mockPause.getMetadata.andReturn({cssclass: "icon-pause", name: "Pause"});
                 mockStop.getMetadata.andReturn({cssclass: "icon-box", name: "Stop"});

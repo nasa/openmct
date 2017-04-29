@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,60 +24,108 @@ define(
     ["../src/CompositionPolicy"],
     function (CompositionPolicy) {
         describe("Composition policy", function () {
-            var mockInjector,
-                mockTypeService,
-                mockCapabilityService,
-                mockTypes,
+            var mockParentObject,
+                typeA,
+                typeB,
+                typeC,
+                mockChildObject,
                 policy;
 
             beforeEach(function () {
-                mockInjector = jasmine.createSpyObj('$injector', ['get']);
-                mockTypeService = jasmine.createSpyObj(
-                    'typeService',
-                    ['listTypes']
+                mockParentObject = jasmine.createSpyObj('domainObject', [
+                    'getCapability'
+                ]);
+
+                typeA = jasmine.createSpyObj(
+                    'type A-- the particular kind',
+                    ['getKey', 'getDefinition']
                 );
-                mockCapabilityService = jasmine.createSpyObj(
-                    'capabilityService',
-                    ['getCapabilities']
-                );
-                // Both types can only contain b, let's say
-                mockTypes = ['a', 'b'].map(function (type) {
-                    var mockType = jasmine.createSpyObj(
-                        'type-' + type,
-                        ['getKey', 'getDefinition', 'getInitialModel']
-                    );
-                    mockType.getKey.andReturn(type);
-                    mockType.getDefinition.andReturn({
-                        contains: ['b']
-                    });
-                    mockType.getInitialModel.andReturn({});
-                    return mockType;
+                typeA.getKey.andReturn('a');
+                typeA.getDefinition.andReturn({
+                    contains: ['a']
                 });
 
-                mockInjector.get.andCallFake(function (name) {
-                    return {
-                        typeService: mockTypeService,
-                        capabilityService: mockCapabilityService
-                    }[name];
+
+                typeB = jasmine.createSpyObj(
+                    'type B-- anything goes',
+                    ['getKey', 'getDefinition']
+                );
+                typeB.getKey.andReturn('b');
+                typeB.getDefinition.andReturn({
+                    contains: ['a', 'b']
                 });
 
-                mockTypeService.listTypes.andReturn(mockTypes);
-                mockCapabilityService.getCapabilities.andReturn({});
+                typeC = jasmine.createSpyObj(
+                    'type C-- distinguishing and interested in telemetry',
+                    ['getKey', 'getDefinition']
+                );
+                typeC.getKey.andReturn('c');
+                typeC.getDefinition.andReturn({
+                    contains: [{has: 'telemetry'}]
+                });
 
-                policy = new CompositionPolicy(mockInjector);
+                mockChildObject = jasmine.createSpyObj(
+                    'childObject',
+                    ['getCapability', 'hasCapability']
+                );
+
+                policy = new CompositionPolicy();
             });
 
-            // Test basic composition policy here; test more closely at
-            // the unit level in ContainmentTable for 'has' support, et al
-            it("enforces containment rules defined by types", function () {
-                expect(policy.allow(mockTypes[0], mockTypes[1]))
-                    .toBeTruthy();
-                expect(policy.allow(mockTypes[1], mockTypes[1]))
-                    .toBeTruthy();
-                expect(policy.allow(mockTypes[1], mockTypes[0]))
-                    .toBeFalsy();
-                expect(policy.allow(mockTypes[0], mockTypes[0]))
-                    .toBeFalsy();
+            describe('enforces simple containment rules', function () {
+
+                it('allows when type matches', function () {
+                    mockParentObject.getCapability.andReturn(typeA);
+
+                    mockChildObject.getCapability.andReturn(typeA);
+                    expect(policy.allow(mockParentObject, mockChildObject))
+                        .toBeTruthy();
+
+                    mockParentObject.getCapability.andReturn(typeB);
+                    expect(policy.allow(mockParentObject, mockChildObject))
+                        .toBeTruthy();
+
+                    mockChildObject.getCapability.andReturn(typeB);
+                    expect(policy.allow(mockParentObject, mockChildObject))
+                        .toBeTruthy();
+                });
+
+
+                it('disallows when type doesn\'t match', function () {
+
+                    mockParentObject.getCapability.andReturn(typeA);
+                    mockChildObject.getCapability.andReturn(typeB);
+                    expect(policy.allow(mockParentObject, mockChildObject))
+                        .toBeFalsy();
+
+                    mockChildObject.getCapability.andReturn(typeC);
+                    expect(policy.allow(mockParentObject, mockChildObject))
+                        .toBeFalsy();
+                });
+
+            });
+
+            describe('enforces capability-based containment rules', function () {
+                it('allows when object has capability', function () {
+                    mockParentObject.getCapability.andReturn(typeC);
+
+                    mockChildObject.hasCapability.andReturn(true);
+                    expect(policy.allow(mockParentObject, mockChildObject))
+                        .toBeTruthy();
+                    expect(mockChildObject.hasCapability)
+                        .toHaveBeenCalledWith('telemetry');
+                });
+
+                it('skips when object doesn\'t have capability', function () {
+                    mockChildObject.hasCapability.andReturn(false);
+
+                    mockParentObject.getCapability.andReturn(typeC);
+
+                    expect(policy.allow(mockParentObject, mockChildObject))
+                        .toBeFalsy();
+                    expect(mockChildObject.hasCapability)
+                        .toHaveBeenCalledWith('telemetry');
+                });
             });
 
         });

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -43,7 +43,7 @@ define([
         var handleLegacyMutation;
 
         var handleMutation = function (newStyleObject) {
-            var keyString = utils.makeKeyString(newStyleObject.key);
+            var keyString = utils.makeKeyString(newStyleObject.identifier);
             var oldStyleObject = this.instantiate(utils.toOldFormat(newStyleObject), keyString);
 
             // Don't trigger self

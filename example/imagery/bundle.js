@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -49,7 +49,7 @@ define([
                 {
                     "key": "imagery",
                     "name": "Example Imagery",
-                    "cssclass": "icon-image",
+                    "cssClass": "icon-image",
                     "features": "creation",
                     "description": "For development use. Creates example imagery data that mimics a live imagery stream.",
                     "priority": 10,

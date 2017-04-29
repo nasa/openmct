@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -41,7 +41,6 @@ define(
         describe("The composition capability", function () {
             var mockDomainObject,
                 mockInjector,
-                mockContextualize,
                 mockObjectService,
                 composition;
 
@@ -72,19 +71,11 @@ define(
                         return (name === "objectService") && mockObjectService;
                     }
                 };
-                mockContextualize = jasmine.createSpy('contextualize');
-
-                // Provide a minimal (e.g. no error-checking) implementation
-                // of contextualize for simplicity
-                mockContextualize.andCallFake(function (domainObject, parentObject) {
-                    return new ContextualDomainObject(domainObject, parentObject);
-                });
 
                 mockObjectService.getObjects.andReturn(mockPromise([]));
 
                 composition = new CompositionCapability(
                     mockInjector,
-                    mockContextualize,
                     mockDomainObject
                 );
             });

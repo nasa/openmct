@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -81,7 +81,7 @@ define([
                 {
                     "key": "plot",
                     "name": "Example Telemetry Plot",
-                    "cssclass": "icon-telemetry-panel",
+                    "cssClass": "icon-telemetry-panel",
                     "description": "For development use. A plot for displaying telemetry.",
                     "priority": 10,
                     "delegates": [
@@ -129,7 +129,7 @@ define([
                         {
                             "name": "Period",
                             "control": "textfield",
-                            "cssclass": "l-input-sm l-numeric",
+                            "cssClass": "l-input-sm l-numeric",
                             "key": "period",
                             "required": true,
                             "property": [

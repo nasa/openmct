@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -53,10 +53,10 @@ define(
          */
         function CoreCapabilityProvider(capabilities, $log) {
             // Filter by invoking the capability's appliesTo method
-            function filterCapabilities(model) {
+            function filterCapabilities(model, id) {
                 return capabilities.filter(function (capability) {
                     return capability.appliesTo ?
-                            capability.appliesTo(model) :
+                            capability.appliesTo(model, id) :
                             true;
                 });
             }
@@ -75,8 +75,8 @@ define(
                 return result;
             }
 
-            function getCapabilities(model) {
-                return packageCapabilities(filterCapabilities(model));
+            function getCapabilities(model, id) {
+                return packageCapabilities(filterCapabilities(model, id));
             }
 
             return {

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -46,7 +46,7 @@ define(
                 );
                 testStructure = {
                     name: "A Test",
-                    cssclass: "icon-T",
+                    cssClass: "icon-T",
                     description: "Test description",
                     control: "dialog-button",
                     title: "Test title",
@@ -83,7 +83,7 @@ define(
                 mockScope.$watch.mostRecentCall.args[1](testStructure);
 
                 buttonStructure = controller.getButtonStructure();
-                expect(buttonStructure.cssclass).toEqual(testStructure.cssclass);
+                expect(buttonStructure.cssClass).toEqual(testStructure.cssClass);
                 expect(buttonStructure.description).toEqual(testStructure.description);
                 expect(buttonStructure.name).toEqual(testStructure.name);
                 expect(buttonStructure.click).toEqual(jasmine.any(Function));

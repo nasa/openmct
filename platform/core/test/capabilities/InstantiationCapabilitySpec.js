@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,7 +28,6 @@ define(
             var mockInjector,
                 mockIdentifierService,
                 mockInstantiate,
-                mockContextualize,
                 mockIdentifier,
                 mockNow,
                 mockDomainObject,
@@ -37,7 +36,6 @@ define(
             beforeEach(function () {
                 mockInjector = jasmine.createSpyObj("$injector", ["get"]);
                 mockInstantiate = jasmine.createSpy("instantiate");
-                mockContextualize = jasmine.createSpy("contextualize");
                 mockIdentifierService = jasmine.createSpyObj(
                     'identifierService',
                     ['parse', 'generate']
@@ -53,8 +51,7 @@ define(
 
                 mockInjector.get.andCallFake(function (key) {
                     return {
-                        'instantiate': mockInstantiate,
-                        'contextualize': mockContextualize
+                        'instantiate': mockInstantiate
                     }[key];
                 });
                 mockIdentifierService.parse.andReturn(mockIdentifier);
@@ -85,18 +82,12 @@ define(
                     'hasCapability'
                 ]), testModel = { someKey: "some value" };
                 mockInstantiate.andReturn(mockDomainObj);
-                mockContextualize.andCallFake(function (x) {
-                    return x;
-                });
-                expect(instantiation.instantiate(testModel))
-                    .toBe(mockDomainObj);
+                instantiation.instantiate(testModel);
                 expect(mockInstantiate)
                     .toHaveBeenCalledWith({
                         someKey: "some value",
                         modified: mockNow()
                     }, jasmine.any(String));
-                expect(mockContextualize)
-                    .toHaveBeenCalledWith(mockDomainObj, mockDomainObject);
             });
 
         });

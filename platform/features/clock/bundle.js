@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -140,7 +140,7 @@ define([
                     ],
                     "category": "contextual",
                     "name": "Start",
-                    "cssclass": "icon-play",
+                    "cssClass": "icon-play",
                     "priority": "preferred"
                 },
                 {
@@ -162,7 +162,7 @@ define([
                     ],
                     "category": "contextual",
                     "name": "Restart at 0",
-                    "cssclass": "icon-refresh",
+                    "cssClass": "icon-refresh",
                     "priority": "preferred"
                 },
                 {
@@ -181,7 +181,7 @@ define([
                 {
                     "key": "clock",
                     "name": "Clock",
-                    "cssclass": "icon-clock",
+                    "cssClass": "icon-clock",
                     "description": "A UTC-based clock that supports a variety of display formats. Clocks can be added to Display Layouts.",
                     "priority": 101,
                     "features": [
@@ -209,7 +209,7 @@ define([
                                             "name": "hh:mm:ss"
                                         }
                                     ],
-                                    "cssclass": "l-inline"
+                                    "cssClass": "l-inline"
                                 },
                                 {
                                     "control": "select",
@@ -223,7 +223,7 @@ define([
                                             "name": "24hr"
                                         }
                                     ],
-                                    "cssclass": "l-inline"
+                                    "cssClass": "l-inline"
                                 }
                             ]
                         }
@@ -238,7 +238,7 @@ define([
                 {
                     "key": "timer",
                     "name": "Timer",
-                    "cssclass": "icon-timer",
+                    "cssClass": "icon-timer",
                     "description": "A timer that counts up or down to a datetime. Timers can be started, stopped and reset whenever needed, and support a variety of display formats. Each Timer displays the same value to all users. Timers can be added to Display Layouts.",
                     "priority": 100,
                     "features": [

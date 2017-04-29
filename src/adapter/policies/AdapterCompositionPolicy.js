@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,15 +26,12 @@ define([], function () {
     }
 
     AdapterCompositionPolicy.prototype.allow = function (
-        containerType,
-        childType
+        parent,
+        child
     ) {
-        var containerObject = containerType.getInitialModel();
-        var childObject = childType.getInitialModel();
-
         return this.openmct.composition.checkPolicy(
-            containerObject,
-            childObject
+            parent,
+            child
         );
     };
 

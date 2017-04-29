@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,23 +21,97 @@
  *****************************************************************************/
 
 define([
-    'lodash'
-], function (_) {
+    'lodash',
+    '../../platform/features/conductor/utcTimeSystem/src/UTCTimeSystem',
+    '../../example/generator/plugin',
+    '../../platform/features/autoflow/plugin'
+], function (
+    _,
+    UTCTimeSystem,
+    GeneratorPlugin,
+    AutoflowPlugin
+) {
     var bundleMap = {
-        couchDB: 'platform/persistence/couch',
-        elasticsearch: 'platform/persistence/elastic',
-        espresso: 'platform/commonUI/themes/espresso',
-        localStorage: 'platform/persistence/local',
-        myItems: 'platform/features/my-items',
-        snow: 'platform/commonUI/themes/snow',
-        utcTimeSystem: 'platform/features/conductor/utcTimeSystem'
+        CouchDB: 'platform/persistence/couch',
+        Elasticsearch: 'platform/persistence/elastic',
+        Espresso: 'platform/commonUI/themes/espresso',
+        LocalStorage: 'platform/persistence/local',
+        MyItems: 'platform/features/my-items',
+        Snow: 'platform/commonUI/themes/snow'
     };
 
     var plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
-        return function (openmct) {
-            openmct.legacyRegistry.enable(bundleName);
+        return function pluginConstructor() {
+            return function (openmct) {
+                openmct.legacyRegistry.enable(bundleName);
+            };
         };
     });
+
+    plugins.UTCTimeSystem = function () {
+        return function (openmct) {
+            openmct.legacyExtension("timeSystems", {
+                "implementation": UTCTimeSystem,
+                "depends": ["$timeout"]
+            });
+        };
+    };
+
+    /**
+     * A tabular view showing the latest values of multiple telemetry points at
+     * once. Formatted so that labels and values are aligned.
+     *
+     * @param {Object} [options] Optional settings to apply to the autoflow
+     * tabular view. Currently supports one option, 'type'.
+     * @param {string} [options.type] The key of an object type to apply this view
+     * to exclusively.
+     */
+    plugins.AutoflowView = AutoflowPlugin;
+
+    var conductorInstalled = false;
+
+    plugins.Conductor = function (options) {
+        if (!options) {
+            options = {};
+        }
+
+        function applyDefaults(openmct, timeConductorViewService) {
+            var defaults = {};
+            var timeSystem = timeConductorViewService.systems.find(function (ts) {
+                return ts.metadata.key === options.defaultTimeSystem;
+            });
+            if (timeSystem !== undefined) {
+                openmct.conductor.timeSystem(timeSystem, defaults.bounds);
+            }
+        }
+
+        return function (openmct) {
+            openmct.legacyExtension('constants', {
+                key: 'DEFAULT_TIMECONDUCTOR_MODE',
+                value: options.showConductor ? 'fixed' : 'realtime',
+                priority: conductorInstalled ? 'mandatory' : 'fallback'
+            });
+            if (options.showConductor !== undefined) {
+                openmct.legacyExtension('constants', {
+                    key: 'SHOW_TIMECONDUCTOR',
+                    value: options.showConductor,
+                    priority: conductorInstalled ? 'mandatory' : 'fallback'
+                });
+            }
+            if (options.defaultTimeSystem !== undefined || options.defaultTimespan !== undefined) {
+                openmct.legacyExtension('runs', {
+                    implementation: applyDefaults,
+                    depends: ["openmct", "timeConductorViewService"]
+                });
+            }
+
+            if (!conductorInstalled) {
+                openmct.legacyRegistry.enable('platform/features/conductor/core');
+                openmct.legacyRegistry.enable('platform/features/conductor/compatibility');
+            }
+            conductorInstalled = true;
+        };
+    };
 
     plugins.CouchDB = function (url) {
         return function (openmct) {
@@ -57,7 +131,7 @@ define([
                 openmct.legacyRegistry.enable(bundleName);
             }
 
-            openmct.legacyRegistry.enable(bundleMap.couchDB);
+            openmct.legacyRegistry.enable(bundleMap.CouchDB);
         };
     };
 
@@ -79,8 +153,12 @@ define([
                 openmct.legacyRegistry.enable(bundleName);
             }
 
-            openmct.legacyRegistry.enable(bundleMap.elasticsearch);
+            openmct.legacyRegistry.enable(bundleMap.Elasticsearch);
         };
+    };
+
+    plugins.Generator = function () {
+        return GeneratorPlugin;
     };
 
     return plugins;

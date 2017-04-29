@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,18 +25,24 @@ define(
     function (CompositionMutabilityPolicy) {
 
         describe("The composition mutability policy", function () {
-            var mockType,
+            var mockObject,
+                mockType,
                 policy;
 
             beforeEach(function () {
                 mockType = jasmine.createSpyObj('type', ['hasFeature']);
+                mockObject = {
+                    getCapability: function () {
+                        return mockType;
+                    }
+                };
                 policy = new CompositionMutabilityPolicy();
             });
 
             it("only allows composition for types which can be created/modified", function () {
-                expect(policy.allow(mockType)).toBeFalsy();
+                expect(policy.allow(mockObject)).toBeFalsy();
                 mockType.hasFeature.andReturn(true);
-                expect(policy.allow(mockType)).toBeTruthy();
+                expect(policy.allow(mockObject)).toBeTruthy();
                 expect(mockType.hasFeature).toHaveBeenCalledWith('creation');
             });
         });

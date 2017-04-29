@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -30,7 +30,7 @@ define(['./Type'], function (Type) {
      *           the model for new domain objects of this type
      * @property {boolean} [creatable] true if users should be allowed to
      *           create this type (default: false)
-     * @property {string} [cssclass] the CSS class to apply for icons
+     * @property {string} [cssClass] the CSS class to apply for icons
      */
 
     /**
@@ -44,7 +44,7 @@ define(['./Type'], function (Type) {
     }
 
     /**
-     * Register a new type of view.
+     * Register a new object type.
      *
      * @param {string} typeKey a string identifier for this type
      * @param {module:openmct.Type} type the type to add

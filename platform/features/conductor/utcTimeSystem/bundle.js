@@ -22,7 +22,7 @@
 
 define([
     "./src/UTCTimeSystem",
-    'legacyRegistry'
+    "legacyRegistry"
 ], function (
     UTCTimeSystem,
     legacyRegistry

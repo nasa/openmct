@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -63,7 +63,7 @@ define(
 
                 // Prepare the structure for the button itself
                 self.buttonStructure = {};
-                self.buttonStructure.cssclass = structure.cssclass;
+                self.buttonStructure.cssClass = structure.cssClass;
                 self.buttonStructure.name = structure.name;
                 self.buttonStructure.description = structure.description;
                 self.buttonStructure.click = showDialog;

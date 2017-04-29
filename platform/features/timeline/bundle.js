@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -38,6 +38,7 @@ define([
     "./src/directives/MCTSwimlaneDrop",
     "./src/directives/MCTSwimlaneDrag",
     "./src/services/ObjectLoader",
+    "./src/chart/MCTTimelineChart",
     "text!./res/templates/values.html",
     "text!./res/templates/timeline.html",
     "text!./res/templates/activity-gantt.html",
@@ -67,6 +68,7 @@ define([
     MCTSwimlaneDrop,
     MCTSwimlaneDrag,
     ObjectLoader,
+    MCTTimelineChart,
     valuesTemplate,
     timelineTemplate,
     activityGanttTemplate,
@@ -151,7 +153,7 @@ define([
                 {
                     "key": "timeline",
                     "name": "Timeline",
-                    "cssclass": "icon-timeline",
+                    "cssClass": "icon-timeline",
                     "description": "A time-oriented container that lets you enclose and organize other Timelines and Activities. The Timeline view provides both tabular and Gantt views as well as resource utilization graphing of Activities.",
                     "priority": 502,
                     "features": [
@@ -204,7 +206,7 @@ define([
                 {
                     "key": "activity",
                     "name": "Activity",
-                    "cssclass": "icon-activity",
+                    "cssClass": "icon-activity",
                     "features": [
                         "creation"
                     ],
@@ -250,7 +252,7 @@ define([
                 {
                     "key": "mode",
                     "name": "Activity Mode",
-                    "cssclass": "icon-activity-mode",
+                    "cssClass": "icon-activity-mode",
                     "features": [
                         "creation"
                     ],
@@ -290,7 +292,7 @@ define([
                 {
                     "key": "values",
                     "name": "Values",
-                    "cssclass": "icon-activity-mode",
+                    "cssClass": "icon-activity-mode",
                     "template": valuesTemplate,
                     "type": "mode",
                     "uses": [
@@ -301,7 +303,7 @@ define([
                 {
                     "key": "timeline",
                     "name": "Timeline",
-                    "cssclass": "icon-timeline",
+                    "cssClass": "icon-timeline",
                     "type": "timeline",
                     "description": "A time-oriented container that lets you enclose and organize other Timelines and Activities. The Timeline view provides both tabular and Gantt views as well as resource utilization graphing of Activities.",
                     "template": timelineTemplate,
@@ -317,12 +319,12 @@ define([
                                         "options": [
                                             {
                                                 "name": "Timeline",
-                                                "cssclass": "icon-timeline",
+                                                "cssClass": "icon-timeline",
                                                 "key": "timeline"
                                             },
                                             {
                                                 "name": "Activity",
-                                                "cssclass": "icon-activity",
+                                                "cssClass": "icon-activity",
                                                 "key": "activity"
                                             }
                                         ]
@@ -332,13 +334,13 @@ define([
                             {
                                 "items": [
                                     {
-                                        "cssclass": "icon-plot-resource",
+                                        "cssClass": "icon-plot-resource",
                                         "description": "Graph Resource Utilization",
                                         "control": "button",
                                         "method": "toggleGraph"
                                     },
                                     {
-                                        "cssclass": "icon-activity-mode",
+                                        "cssClass": "icon-activity-mode",
                                         "control": "dialog-button",
                                         "description": "Apply Activity Modes...",
                                         "title": "Apply Activity Modes",
@@ -351,7 +353,7 @@ define([
                                         "property": "modes"
                                     },
                                     {
-                                        "cssclass": "icon-chain-links",
+                                        "cssClass": "icon-chain-links",
                                         "description": "Edit Activity Link",
                                         "title": "Activity Link",
                                         "control": "dialog-button",
@@ -359,12 +361,12 @@ define([
                                             "control": "textfield",
                                             "name": "Link",
                                             "pattern": "^(ftp|https?)\\:\\/\\/\\w+(\\.\\w+)*(\\:\\d+)?(\\/\\S*)*$",
-                                            "cssclass": "l-input-lg"
+                                            "cssClass": "l-input-lg"
                                         },
                                         "property": "link"
                                     },
                                     {
-                                        "cssclass": "icon-gear",
+                                        "cssClass": "icon-gear",
                                         "description": "Edit Properties...",
                                         "control": "button",
                                         "method": "properties"
@@ -377,7 +379,7 @@ define([
                                         "method": "remove",
                                         "description": "Remove Item",
                                         "control": "button",
-                                        "cssclass": "icon-trash"
+                                        "cssClass": "icon-trash"
                                     }
                                 ]
                             }
@@ -555,6 +557,14 @@ define([
                     "implementation": MCTSwimlaneDrag,
                     "depends": [
                         "dndService"
+                    ]
+                },
+                {
+                    "key": "mctTimelineChart",
+                    "implementation": MCTTimelineChart,
+                    "depends": [
+                        "$interval",
+                        "$log"
                     ]
                 }
             ],

@@ -15,7 +15,8 @@
     "predef": [
         "define",
         "Promise",
-        "WeakMap"
+        "WeakMap",
+        "Map"
     ],
     "shadow": "outer",
     "strict": "implied",

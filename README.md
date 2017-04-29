@@ -1,6 +1,6 @@
 # Open MCT [![license](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
-Open MCT is a next-generation mission control framework for visualization of data on desktop and mobile devices. It is developed at NASA's Ames Research Center, and is being used by NASA for data analysis of spacecraft missions, as well as planning and operation of experimental rover systems. As a generalizable and open source framework, Open MCT could be used as the basis for building applications for planning, operation, and analysis of any systems producing telemetry data.
+Open MCT (Open Mission Control Technologies) is a next-generation mission control framework for visualization of data on desktop and mobile devices. It is developed at NASA's Ames Research Center, and is being used by NASA for data analysis of spacecraft missions, as well as planning and operation of experimental rover systems. As a generalizable and open source framework, Open MCT could be used as the basis for building applications for planning, operation, and analysis of any systems producing telemetry data.
 
 Please visit our [Official Site](https://nasa.github.io/openmct/) and [Getting Started Guide](https://nasa.github.io/openmct/getting-started/)
 
@@ -55,7 +55,7 @@ Documentation is available on the [Open MCT website](https://nasa.github.io/open
 ### Examples
 
 The clearest examples for developing Open MCT plugins are in the
-[tutorials](https://nasa.github.io/openmct/docs/tutorials/) provided in
+[tutorials](https://github.com/nasa/openmct-tutorial) provided in
 our documentation.
 
 For a practical example of a telemetry adapter, see David Hudson's

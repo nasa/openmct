@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -58,7 +58,7 @@ define(
          * @property {string} key machine-readable identifier for this action
          * @property {string} name human-readable name for this action
          * @property {string} description human-readable description
-         * @property {string} cssclass CSS class for icon
+         * @property {string} cssClass CSS class for icon
          * @property {ActionContext} context the context in which the action
          *           will be performed.
          */

@@ -31,7 +31,7 @@ define(['./TickSource'], function (TickSource) {
         this.metadata = {
             key: 'local',
             mode: 'realtime',
-            cssclass: 'icon-clock',
+            cssClass: 'icon-clock',
             label: 'Real-time',
             name: 'Real-time Mode',
             description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will automatically advance themselves based on a UTC clock.'

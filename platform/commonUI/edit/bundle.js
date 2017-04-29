@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -34,6 +34,7 @@ define([
     "./src/actions/SaveAsAction",
     "./src/actions/CancelAction",
     "./src/policies/EditActionPolicy",
+    "./src/policies/EditPersistableObjectsPolicy",
     "./src/policies/EditableLinkPolicy",
     "./src/policies/EditableMovePolicy",
     "./src/policies/EditContextualActionPolicy",
@@ -72,6 +73,7 @@ define([
     SaveAsAction,
     CancelAction,
     EditActionPolicy,
+    EditPersistableObjectsPolicy,
     EditableLinkPolicy,
     EditableMovePolicy,
     EditContextualActionPolicy,
@@ -163,7 +165,7 @@ define([
                     ],
                     "description": "Edit",
                     "category": "view-control",
-                    "cssclass": "major icon-pencil"
+                    "cssClass": "major icon-pencil"
                 },
                 {
                     "key": "properties",
@@ -172,7 +174,7 @@ define([
                         "view-control"
                     ],
                     "implementation": PropertiesAction,
-                    "cssclass": "major icon-pencil",
+                    "cssClass": "major icon-pencil",
                     "name": "Edit Properties...",
                     "description": "Edit properties of this object.",
                     "depends": [
@@ -183,7 +185,7 @@ define([
                     "key": "remove",
                     "category": "contextual",
                     "implementation": RemoveAction,
-                    "cssclass": "icon-trash",
+                    "cssClass": "icon-trash",
                     "name": "Remove",
                     "description": "Remove this object from its containing object.",
                     "depends": [
@@ -195,7 +197,7 @@ define([
                     "category": "save",
                     "implementation": SaveAndStopEditingAction,
                     "name": "Save and Finish Editing",
-                    "cssclass": "icon-save labeled",
+                    "cssClass": "icon-save labeled",
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "dialogService",
@@ -207,7 +209,7 @@ define([
                     "category": "save",
                     "implementation": SaveAction,
                     "name": "Save and Continue Editing",
-                    "cssclass": "icon-save labeled",
+                    "cssClass": "icon-save labeled",
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "dialogService",
@@ -219,7 +221,7 @@ define([
                     "category": "save",
                     "implementation": SaveAsAction,
                     "name": "Save As...",
-                    "cssclass": "icon-save labeled",
+                    "cssClass": "icon-save labeled",
                     "description": "Save changes made to these objects.",
                     "depends": [
                         "$injector",
@@ -237,7 +239,7 @@ define([
                     // Because we use the name as label for edit buttons and mct-control buttons need
                     // the label to be set to undefined in order to not apply the labeled CSS rule.
                     "name": undefined,
-                    "cssclass": "icon-x no-label",
+                    "cssClass": "icon-x no-label",
                     "description": "Discard changes made to these objects.",
                     "depends": []
                 }
@@ -246,6 +248,11 @@ define([
                 {
                     "category": "action",
                     "implementation": EditActionPolicy
+                },
+                {
+                    "category": "action",
+                    "implementation": EditPersistableObjectsPolicy,
+                    "depends": ["openmct"]
                 },
                 {
                     "category": "action",

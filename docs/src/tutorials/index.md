@@ -156,7 +156,7 @@ has been finalized.
 #### Before
 ```html
 <!--
- Open MCT, Copyright (c) 2014-2016, United States Government
+ Open MCT, Copyright (c) 2014-2017, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -221,7 +221,7 @@ __index.html__
 
 ```html
 <!--
- Open MCT, Copyright (c) 2014-2016, United States Government
+ Open MCT, Copyright (c) 2014-2017, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -320,7 +320,7 @@ define([
 +          {
 +              "key": "example.todo",
 +              "name": "To-Do List",
-+              "cssclass": "icon-check",
++              "cssClass": "icon-check",
 +              "description": "A list of things that need to be done.",
 +              "features": ["creation"]
 +          }
@@ -340,8 +340,9 @@ Going through the properties we've defined:
 domain objects of this type.
 * The `name` of "To-Do List" is the human-readable name for this type, and will 
 be shown to users.
-* The `glyph` refers to a special character in Open MCT's custom font set; 
-this will be used as an icon.
+* The `cssClass` maps to an icon that will be shown for each To-Do List. The icons 
+are defined in our [custom open MCT icon set](https://github.com/nasa/openmct/blob/master/platform/commonUI/general/res/sass/_glyphs.scss). 
+A complete list of available icons will be provided in the future.
 * The `description` is also human-readable, and will be used whenever a longer 
 explanation of what this type is should be shown.
 * Finally, the `features` property describes some special features of objects of 
@@ -415,7 +416,7 @@ define([
             {
                 "key": "example.todo",
                 "name": "To-Do List",
-                "cssclass": "icon-check",
+                "cssClass": "icon-check",
                 "description": "A list of things that need to be done.",
                 "features": ["creation"]
             }
@@ -424,7 +425,7 @@ define([
 +           {
 +               "key": "example.todo",
 +               "type": "example.todo",
-+               "cssclass": "icon-check",
++               "cssClass": "icon-check",
 +               "name": "List",
 +               "templateUrl": "templates/todo.html",
 +               "editable": true
@@ -446,7 +447,7 @@ the domain object type, but could have chosen any unique name.
 domain objects of that type. This means that we'll see this view for To-do Lists 
 that we create, but not for other domain objects (such as Folders.)
 
-* The `glyph` and `name` properties describe the icon and human-readable name 
+* The `cssClass` and `name` properties describe the icon and human-readable name 
 for this view to display in the UI where needed (if multiple views are available 
 for To-do Lists, the user will be able to choose one.)
 
@@ -472,7 +473,7 @@ define([
             {
                 "key": "example.todo",
                 "name": "To-Do List",
-                "cssclass": "icon-check",
+                "cssClass": "icon-check",
                 "description": "A list of things that need to be done.",
                 "features": ["creation"],
 +               "model": {
@@ -487,7 +488,7 @@ define([
             {
                 "key": "example.todo",
                 "type": "example.todo",
-                "cssclass": "icon-check",
+                "cssClass": "icon-check",
                 "name": "List",
                 "templateUrl": "templates/todo.html",
                 "editable": true
@@ -646,7 +647,7 @@ define([
             {
                 "key": "example.todo",
                 "name": "To-Do List",
-                "cssclass": "icon-check",
+                "cssClass": "icon-check",
                 "description": "A list of things that need to be done.",
                 "features": ["creation"],
                 "model": {
@@ -661,7 +662,7 @@ define([
             {
                 "key": "example.todo",
                 "type": "example.todo",
-                "cssclass": "icon-check",
+                "cssClass": "icon-check",
                 "name": "List",
                 "templateUrl": "templates/todo.html",
                 "editable": true
@@ -740,7 +741,7 @@ define([
             {
                 "key": "example.todo",
                 "name": "To-Do List",
-                "cssclass": "icon-check",
+                "cssClass": "icon-check",
                 "description": "A list of things that need to be done.",
                 "features": ["creation"],
                 "model": {
@@ -755,7 +756,7 @@ define([
             {
                 "key": "example.todo",
                 "type": "example.todo",
-                "cssclass": "icon-check",
+                "cssClass": "icon-check",
                 "name": "List",
                 "templateUrl": "templates/todo.html",
                 "editable": true,
@@ -765,7 +766,7 @@ define([
 +                           "items": [
 +                               {
 +                                   "text": "Add Task",
-+                                   "cssclass": "icon-plus",
++                                   "cssClass": "icon-plus",
 +                                   "method": "addTask",
 +                                   "control": "button"
 +                               }
@@ -774,7 +775,7 @@ define([
 +                       {
 +                           "items": [
 +                               {
-+                                   "cssclass": "icon-trash",
++                                   "cssClass": "icon-trash",
 +                                   "method": "removeTask",
 +                                   "control": "button"
 +                               }
@@ -970,7 +971,7 @@ define([
             {
                 "key": "example.todo",
                 "name": "To-Do List",
-                "cssclass": "icon-check",
+                "cssClass": "icon-check",
                 "description": "A list of things that need to be done.",
                 "features": ["creation"],
                 "model": {
@@ -985,7 +986,7 @@ define([
             {
                 "key": "example.todo",
                 "type": "example.todo",
-                "cssclass": "icon-check",
+                "cssClass": "icon-check",
                 "name": "List",
                 "templateUrl": "templates/todo.html",
                 "editable": true,
@@ -995,7 +996,7 @@ define([
                             "items": [
                                 {
                                     "text": "Add Task",
-                                    "cssclass": "icon-plus",
+                                    "cssClass": "icon-plus",
                                     "method": "addTask",
                                     "control": "button"
                                 }
@@ -1004,7 +1005,7 @@ define([
                         {
                             "items": [
                                 {
-                                    "cssclass": "icon-trash",
+                                    "cssClass": "icon-trash",
                                     "method": "removeTask",
                                     "control": "button"
                                 }
@@ -1235,7 +1236,7 @@ define([
             {
                 "key": "example.todo",
                 "name": "To-Do List",
-                "cssclass": "icon-check",
+                "cssClass": "icon-check",
                 "description": "A list of things that need to be done.",
                 "features": ["creation"],
                 "model": {
@@ -1247,7 +1248,7 @@ define([
             {
                 "key": "example.todo",
                 "type": "example.todo",
-                "cssclass": "icon-check",
+                "cssClass": "icon-check",
                 "name": "List",
                 "templateUrl": "templates/todo.html",
                 "editable": true,
@@ -1257,7 +1258,7 @@ define([
                             "items": [
                                 {
                                     "text": "Add Task",
-                                    "cssclass": "icon-plus",
+                                    "cssClass": "icon-plus",
                                     "method": "addTask",
                                     "control": "button"
                                 }
@@ -1266,7 +1267,7 @@ define([
                         {
                             "items": [
                                 {
-                                    "cssclass": "icon-trash",
+                                    "cssClass": "icon-trash",
                                     "method": "removeTask",
                                     "control": "button"
                                 }
@@ -1373,7 +1374,7 @@ define([
             {
                 "name": "Bar Graph",
                 "key": "example.bargraph",
-                "cssclass": "icon-autoflow-tabular",
+                "cssClass": "icon-autoflow-tabular",
                 "templateUrl": "templates/bargraph.html",
                 "needs": [ "telemetry" ],
                 "delegation": true
@@ -1676,7 +1677,7 @@ define([
             {
                 "name": "Bar Graph",
                 "key": "example.bargraph",
-                "cssclass": "icon-autoflow-tabular",
+                "cssClass": "icon-autoflow-tabular",
                 "templateUrl": "templates/bargraph.html",
                 "needs": [ "telemetry" ],
                 "delegation": true
@@ -1842,7 +1843,7 @@ define([
             {
                 "name": "Bar Graph",
                 "key": "example.bargraph",
-                "cssclass": "icon-autoflow-tabular",
+                "cssClass": "icon-autoflow-tabular",
                 "templateUrl": "templates/bargraph.html",
                 "needs": [ "telemetry" ],
                 "delegation": true,
@@ -2319,7 +2320,7 @@ define([
                 {
                     "name": "Spacecraft",
                     "key": "example.spacecraft",
-                    "cssclass": "icon-object"
+                    "cssClass": "icon-object"
                 }
             ],
             "roots": [
@@ -2355,7 +2356,7 @@ If we include this in our set of active bundles:
 
 ```html
 <!--
- Open MCT, Copyright (c) 2014-2016, United States Government
+ Open MCT, Copyright (c) 2014-2017, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -2705,18 +2706,18 @@ define([
             {
                 "name": "Spacecraft",
                 "key": "example.spacecraft",
-                "cssclass": "icon-object"
+                "cssClass": "icon-object"
             },
 +           {
 +               "name": "Subsystem",
 +               "key": "example.subsystem",
-+               "cssclass": "icon-object",
++               "cssClass": "icon-object",
 +               "model": { "composition": [] }
 +           },
 +           {
 +               "name": "Measurement",
 +               "key": "example.measurement",
-+               "cssclass": "icon-telemetry",
++               "cssClass": "icon-telemetry",
 +               "model": { "telemetry": {} },
 +               "telemetry": {
 +                   "source": "example.source",
@@ -3030,18 +3031,18 @@ define([
             {
                 "name": "Spacecraft",
                 "key": "example.spacecraft",
-                "cssclass": "icon-object"
+                "cssClass": "icon-object"
             },
             {
                 "name": "Subsystem",
                 "key": "example.subsystem",
-                "cssclass": "icon-object",
+                "cssClass": "icon-object",
                 "model": { "composition": [] }
             },
             {
                 "name": "Measurement",
                 "key": "example.measurement",
-                "cssclass": "icon-telemetry",
+                "cssClass": "icon-telemetry",
                 "model": { "telemetry": {} },
                 "telemetry": {
                     "source": "example.source",
