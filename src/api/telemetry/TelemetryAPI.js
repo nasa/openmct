@@ -317,6 +317,17 @@ define([
     };
 
     /**
+     * Register a new telemetry data formatter.
+     * @param {Format} format the
+     */
+    TelemetryAPI.prototype.addFormat = function (format) {
+        this.MCT.legacyExtension('formats', {
+            key: format.key,
+            implementation: function () { return format }
+        });
+    };
+
+    /**
      * Get a limit evaluator for this domain object.
      * Limit Evaluators help you evaluate limit and alarm status of individual telemetry datums for display purposes without having to interact directly with the Limit API.
      *

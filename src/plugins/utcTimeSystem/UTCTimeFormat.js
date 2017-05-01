@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2016, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -49,6 +49,7 @@ define([
      * @memberof platform/commonUI/formats
      */
     function UTCTimeFormat() {
+        this.key = "utc";
     }
 
     /**
@@ -64,7 +65,7 @@ define([
          *
          * Licensed
          */
-        return [
+        var format = [
             [".SSS", function (m) {
                 return m.milliseconds();
             }],
@@ -91,25 +92,32 @@ define([
                 return true;
             }]
         ].filter(function (row) {
-            return row[1](momentified);
-        })[0][0];
+                return row[1](momentified);
+            })[0][0];
+
+        if (format !== undefined) {
+            return moment.utc(d).format(format);
+        }
     }
 
     /**
-     *
-     * @param value
-     * @param {Scale} [scale] Optionally provides context to the
-     * format request, allowing for scale-appropriate formatting.
-     * @returns {string} the formatted date
+     * @param {number} value The value to format.
+     * @param {number} [minValue] Contextual information for scaled formatting used in linear scales such as conductor
+     * and plot axes. Specifies the smallest number on the scale.
+     * @param {number} [maxValue] Contextual information for scaled formatting used in linear scales such as conductor
+     * and plot axes. Specifies the largest number on the scale
+     * @param {number} [count] Contextual information for scaled formatting used in linear scales such as conductor
+     * and plot axes. The number of labels on the scale.
+     * @returns {string} the formatted date(s). If multiple values were requested, then an array of
+     * formatted values will be returned. Where a value could not be formatted, `undefined` will be returned at its position
+     * in the array.
      */
-    UTCTimeFormat.prototype.format = function (value, scale) {
-        if (scale !== undefined) {
-            var scaledFormat = getScaledFormat(value, scale);
-            if (scaledFormat) {
-                return moment.utc(value).format(scaledFormat);
-            }
+    UTCTimeFormat.prototype.format = function (value, minValue, maxValue, count) {
+        if (arguments.length > 1) {
+            return getScaledFormat(value);
+        } else {
+            return moment.utc(value).format(DATE_FORMAT) + "Z";
         }
-        return moment.utc(value).format(DATE_FORMAT) + "Z";
     };
 
     UTCTimeFormat.prototype.parse = function (text) {

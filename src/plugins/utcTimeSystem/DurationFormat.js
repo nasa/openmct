@@ -44,6 +44,7 @@ define([
      * @memberof platform/commonUI/formats
      */
     function DurationFormat() {
+        this.key = "duration"
     }
 
     DurationFormat.prototype.format = function (value) {

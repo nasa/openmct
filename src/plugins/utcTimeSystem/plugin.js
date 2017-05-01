@@ -22,10 +22,14 @@
 
 define([
     "./UTCTimeSystem",
-    "./LocalClock"
+    "./LocalClock",
+    "./UTCTimeFormat",
+    "./DurationFormat",
 ], function (
     UTCTimeSystem,
-    LocalClock
+    LocalClock,
+    UTCTimeFormat,
+    DurationFormat
 ) {
     /**
      * Install a time system that supports UTC times. It also installs a local
@@ -36,6 +40,13 @@ define([
             var timeSystem = new UTCTimeSystem();
             openmct.time.addTimeSystem(timeSystem);
             openmct.time.addClock(new LocalClock(100));
+            openmct.telemetry.addFormat(new UTCTimeFormat());
+            openmct.telemetry.addFormat(new DurationFormat());
+
+            openmct.legacyExtension("constants", {
+                "key": "DEFAULT_TIME_FORMAT",
+                "value": "utc"
+            });
         }
     };
 });
