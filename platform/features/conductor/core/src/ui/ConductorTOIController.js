@@ -29,9 +29,8 @@ define(
          * TOI indicator based on the current value of the TOI, and the width of the TOI conductor.
          * @memberof platform.features.conductor
          */
-        function ConductorTOIController($scope, openmct, conductorViewService) {
+        function ConductorTOIController($scope, openmct) {
             this.timeAPI = openmct.time;
-            this.conductorViewService = conductorViewService;
 
             //Bind all class functions to 'this'
             Object.keys(ConductorTOIController.prototype).filter(function (key) {

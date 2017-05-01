@@ -21,12 +21,12 @@
  *****************************************************************************/
 
 define([
-    "./src/ui/TimeConductorViewService",
     "./src/ui/TimeConductorController",
     "./src/ui/ConductorAxisController",
     "./src/ui/ConductorTOIController",
+    "./src/ui/ConductorTOIDirective",
     "./src/ui/TimeOfInterestController",
-    "./src/ui/MctConductorAxis",
+    "./src/ui/ConductorAxisDirective",
     "./src/ui/NumberFormat",
     "text!./res/templates/time-conductor.html",
     "text!./res/templates/mode-selector/mode-selector.html",
@@ -34,12 +34,12 @@ define([
     "text!./res/templates/time-of-interest.html",
     "legacyRegistry"
 ], function (
-    TimeConductorViewService,
     TimeConductorController,
     ConductorAxisController,
     ConductorTOIController,
+    ConductorTOIDirective,
     TimeOfInterestController,
-    MCTConductorAxis,
+    ConductorAxisDirective,
     NumberFormat,
     timeConductorTemplate,
     modeSelectorTemplate,
@@ -50,16 +50,6 @@ define([
 
     legacyRegistry.register("platform/features/conductor/core", {
         "extensions": {
-            "services": [
-                {
-                    "key": "timeConductorViewService",
-                    "implementation": TimeConductorViewService,
-                    "depends": [
-                        "openmct",
-                        "timeSystems[]"
-                    ]
-                }
-            ],
             "controllers": [
                 {
                     "key": "TimeConductorController",
@@ -68,7 +58,6 @@ define([
                         "$scope",
                         "$window",
                         "openmct",
-                        "timeConductorViewService",
                         "formatService",
                         "CONDUCTOR_CONFIG"
                     ]
@@ -79,7 +68,6 @@ define([
                     "depends": [
                         "$scope",
                         "openmct",
-                        "timeConductorViewService",
                         "formatService"
                     ]
                 },
@@ -95,12 +83,16 @@ define([
             ],
             "directives": [
                 {
-                    "key": "mctConductorAxis",
-                    "implementation": MCTConductorAxis,
+                    "key": "conductorAxis",
+                    "implementation": ConductorAxisDirective,
                     "depends": [
                         "openmct",
                         "formatService"
                     ]
+                },
+                {
+                    "key": "conductorTOI",
+                    "implementation": ConductorTOIDirective
                 }
             ],
             "stylesheets": [

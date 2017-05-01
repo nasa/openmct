@@ -1,6 +1,6 @@
 <!-- Parent holder for time conductor. follow-mode | fixed-mode -->
 <div ng-controller="TimeConductorController as tcController"
-    class="holder grows flex-elem l-flex-row l-time-conductor {{tcController.mode}}-mode {{timeSystemModel.selected.metadata.key}}-time-system"
+    class="holder grows flex-elem l-flex-row l-time-conductor {{tcController.isFixed ? 'fixed-mode' : 'realtime-mode'}} {{timeSystemModel.selected.metadata.key}}-time-system"
         ng-class="{'status-panning': tcController.panning}">
     <div class="flex-elem holder time-conductor-icon">
         <div class="hand-little"></div>
@@ -28,7 +28,7 @@
                             </mct-control>
                         </span>
                             <span class="l-time-range-input-w time-delta start-delta"
-                              ng-class="{'hide':(tcController.mode === 'fixed')}">
+                              ng-class="{'hide':tcController.isFixed}">
                                 -
                             <mct-control key="'datetime-field'"
                                          structure="{
@@ -55,13 +55,13 @@
                                          }"
                                          ng-model="boundsModel"
                                          ng-blur="tcController.setBoundsFromView(boundsModel)"
-                                         ng-disabled="tcController.mode !== 'fixed'"
+                                         ng-disabled="!tcController.isFixed"
                                          field="'end'"
                                          class="time-range-input">
                             </mct-control>
                         </span>
                         <span class="l-time-range-input-w time-delta end-delta"
-                              ng-class="{'hide':(tcController.mode === 'fixed')}">
+                              ng-class="{'hide': tcController.isFixed}">
                                 +
                             <mct-control key="'datetime-field'"
                                          structure="{
@@ -79,21 +79,11 @@
 
                 <input type="submit" class="hidden">
             </form>
-            <mct-conductor-axis></mct-conductor-axis>
+            <conductor-axis view-service="tcController.conductorViewService"></conductor-axis>
         </div>
 
         <!-- Holds data visualization, time of interest -->
-        <div class="l-data-visualization-holder l-row-elem flex-elem"
-             ng-controller="ConductorTOIController as toi">
-            <a class="l-page-button s-icon-button icon-pointer-left"></a>
-            <div class="l-data-visualization" ng-click="toi.setTOIFromPosition($event)">
-                <mct-include key="'time-of-interest'"
-                             class="l-toi-holder show-val"
-                             ng-class="{ pinned: toi.pinned, 'val-to-left': toi.left > 80 }"
-                             ng-style="{'left': toi.left + '%'}"></mct-include>
-            </div>
-            <a class="l-page-button align-right s-icon-button icon-pointer-right"></a>
-        </div>
+        <conductor-toi  view-service="tcController.conductorViewService"></conductor-toi>
 
         <!-- Holds time system and session selectors, and zoom control -->
         <div class="l-time-conductor-controls l-row-elem l-flex-row flex-elem">

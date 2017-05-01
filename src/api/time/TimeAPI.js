@@ -22,8 +22,6 @@
 
 define(['EventEmitter'], function (EventEmitter) {
 
-    var tick;
-
     /**
      * The public API for setting and querying the temporal state of the
      * application. The concept of time is integral to Open MCT, and at least
@@ -61,24 +59,7 @@ define(['EventEmitter'], function (EventEmitter) {
         this.activeClock = undefined;
         this.offsets = undefined;
 
-        /**
-         * Tick is private to avoid misuse.
-         */
-        tick = function (timestamp) {
-            var newBounds = {
-                start: timestamp + this.offsets.start,
-                end: timestamp + this.offsets.end
-            };
-
-            this.boundsVal = newBounds;
-            this.emit('bounds', this.boundsVal, true);
-
-            // If a bounds change results in a TOI outside of the current
-            // bounds, unset it
-            if (this.toi < newBounds.start || this.toi > newBounds.end) {
-                this.timeOfInterest(undefined);
-            }
-        }.bind(this);
+        this.tick = this.tick.bind(this);
 
     }
 
@@ -194,10 +175,8 @@ define(['EventEmitter'], function (EventEmitter) {
             isNaN(offsets.end)
         ) {
             return "Start and end offsets must be specified as integer values";
-        } else if (offsets.start >= 0) {
-            return "Specified start offset must less than 0";
-        } else if (offsets.end < 0) {
-            return "Specified end offset must greater than or equal to 0";
+        } else if (offsets.start >= offsets.end) {
+            return "Specified start offset must be < end offset";
         }
         return true;
     };
@@ -331,6 +310,28 @@ define(['EventEmitter'], function (EventEmitter) {
     };
 
     /**
+     * Update bounds based on provided time and current offsets
+     * @private
+     * @param {number} timestamp A time from which boudns will be calculated
+     * using current offsets.
+     */
+    TimeAPI.prototype.tick = function (timestamp) {
+        var newBounds = {
+            start: timestamp + this.offsets.start,
+            end: timestamp + this.offsets.end
+        };
+
+        this.boundsVal = newBounds;
+        this.emit('bounds', this.boundsVal, true);
+
+        // If a bounds change results in a TOI outside of the current
+        // bounds, unset it
+        if (this.toi < newBounds.start || this.toi > newBounds.end) {
+            this.timeOfInterest(undefined);
+        }
+    };
+
+    /**
      * Set the active clock. Tick source will be immediately subscribed to
      * and ticking will begin. Offsets from 'now' must also be provided. A clock
      * can be unset by calling {@link stopClock}.
@@ -360,14 +361,14 @@ define(['EventEmitter'], function (EventEmitter) {
 
             var previousClock = this.activeClock;
             if (previousClock !== undefined) {
-                previousClock.off("tick", tick);
+                previousClock.off("tick", this.tick);
             }
 
             this.activeClock = clock;
 
             if (this.activeClock !== undefined) {
                 this.offsets = offsets;
-                this.activeClock.on("tick", tick);
+                this.activeClock.on("tick", this.tick);
             }
 
             /**

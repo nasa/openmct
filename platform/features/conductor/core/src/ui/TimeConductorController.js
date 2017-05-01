@@ -24,9 +24,14 @@
 define(
     [
         'moment',
-        './TimeConductorValidation'
+        './TimeConductorValidation',
+        './TimeConductorViewService'
     ],
-    function (moment, TimeConductorValidation) {
+    function (
+        moment,
+        TimeConductorValidation,
+        TimeConductorViewService
+    ) {
 
         var timeUnitsMegastructure = [
             ["Decades", function (r) {
@@ -67,7 +72,6 @@ define(
             $scope,
             $window,
             openmct,
-            conductorViewService,
             formatService,
             config
         ) {
@@ -89,8 +93,8 @@ define(
 
             this.$scope = $scope;
             this.$window = $window;
-            this.conductorViewService = conductorViewService;
             this.timeAPI = openmct.time;
+            this.conductorViewService = new TimeConductorViewService(openmct);
             this.validation = new TimeConductorValidation(this.timeAPI);
             this.formatService = formatService;
             this.config = config;
@@ -99,18 +103,18 @@ define(
             this.$scope.timeSystemModel = {};
             this.$scope.boundsModel = {};
 
-            this.mode = this.timeAPI.clock() === undefined ? 'fixed' : 'realtime';
+            this.timeSystems = this.timeAPI.getAllTimeSystems().reduce(function (map, timeSystem) {
+                map[timeSystem.key] = timeSystem;
+                return map;
+            }, {});
+
+            this.isFixed = this.timeAPI.clock() === undefined;
 
             var options = this.optionsFromConfig(config);
             this.menu = {
                 selected: undefined,
                 options: options
             };
-
-            // Construct the provided time system definitions
-            this.timeSystems = config.menuOptions.map(function (menuOption) {
-                return this.getTimeSystem(menuOption.timeSystem);
-            }.bind(this));
 
             //Set the initial state of the UI from the conductor state
             var timeSystem = this.timeAPI.timeSystem();
@@ -224,7 +228,7 @@ define(
                 var clock = this.getClock(menuOption.clock);
                 var clockKey = menuOption.clock || 'fixed';
 
-                var timeSystem = this.getTimeSystem(menuOption.timeSystem);
+                var timeSystem = this.timeSystems[menuOption.timeSystem];
                 if (timeSystem !== undefined) {
                     if (clock !== undefined) {
                         // Use an associative array to built a set of unique
@@ -400,7 +404,7 @@ define(
                 }
             }
 
-            this.mode = clock === undefined ? 'fixed' : 'realtime';
+            this.isFixed = clock === undefined;
 
             if (clock !== undefined) {
                 this.setViewFromOffsets(this.timeAPI.clockOffsets());
@@ -423,7 +427,7 @@ define(
          */
         TimeConductorController.prototype.setTimeSystemFromView = function (key) {
             var clock = this.menu.selected.clock;
-            var timeSystem = this.getTimeSystem(key);
+            var timeSystem = this.timeSystems[key];
             var config = this.getConfig(timeSystem, clock);
             var bounds;
 
@@ -445,7 +449,12 @@ define(
                 this.timeAPI.timeSystem(timeSystem, bounds);
                 var configOffsets = config.clockOffsets;
                 var apiOffsets = this.timeAPI.clockOffsets();
-                if (configOffsets.start !== apiOffsets.start || configOffsets.end !== apiOffsets.end) {
+
+                //Checking if a clock is actually set on the Time API before
+                // trying to set offsets.
+                if (this.timeAPI.clock() !== undefined &&
+                    (configOffsets.start !== apiOffsets.start ||
+                    configOffsets.end !== apiOffsets.end)) {
                     this.timeAPI.clockOffsets(configOffsets);
                 }
             }

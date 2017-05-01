@@ -21,23 +21,25 @@
  *****************************************************************************/
 
 define(['./ConductorAxisController'], function (ConductorAxisController) {
-    function MctConductorAxis() {
+    function ConductorAxisDirective() {
         /**
          * The mct-conductor-axis renders a horizontal axis with regular
          * labelled 'ticks'. It requires 'start' and 'end' integer values to
          * be specified as attributes.
          */
-
         return {
             controller: [
                 'openmct',
                 'formatService',
-                'timeConductorViewService',
                 '$scope',
                 '$element',
                 ConductorAxisController
             ],
             controllerAs: 'axis',
+            scope: {
+                viewService: "="
+            },
+            bindToController: true,
 
             restrict: 'E',
             priority: 1000,
@@ -50,5 +52,5 @@ define(['./ConductorAxisController'], function (ConductorAxisController) {
         };
     }
 
-    return MctConductorAxis;
+    return ConductorAxisDirective;
 });

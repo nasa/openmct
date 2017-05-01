@@ -34,11 +34,10 @@ define(
          * Used by the mct-conductor-axis directive
          * @constructor
          */
-        function ConductorAxisController(openmct, formatService, conductorViewService, scope, element) {
+        function ConductorAxisController(openmct, formatService, scope, element) {
             // Dependencies
             this.formatService = formatService;
             this.timeAPI = openmct.time;
-            this.conductorViewService = conductorViewService;
 
             this.scope = scope;
 
@@ -60,8 +59,8 @@ define(
         ConductorAxisController.prototype.destroy = function () {
             this.timeAPI.off('timeSystem', this.changeTimeSystem);
             this.timeAPI.off('bounds', this.changeBounds);
-            this.conductorViewService.off("zoom", this.onZoom);
-            this.conductorViewService.off("zoom-stop", this.onZoomStop);
+            this.viewService.off("zoom", this.onZoom);
+            this.viewService.off("zoom-stop", this.onZoomStop);
         };
 
         /**
@@ -92,8 +91,8 @@ define(
 
             this.scope.$on("$destroy", this.destroy);
 
-            this.conductorViewService.on("zoom", this.onZoom);
-            this.conductorViewService.on("zoom-stop", this.onZoomStop);
+            this.viewService.on("zoom", this.onZoom);
+            this.viewService.on("zoom-stop", this.onZoomStop);
         };
 
         /**
@@ -175,7 +174,7 @@ define(
          */
         ConductorAxisController.prototype.panStop = function () {
             //resync view bounds with time conductor bounds
-            this.conductorViewService.emit("pan-stop");
+            this.viewService.emit("pan-stop");
             this.timeAPI.bounds(this.bounds);
         };
 
@@ -222,7 +221,7 @@ define(
                     end: end
                 };
                 this.setScale();
-                this.conductorViewService.emit("pan", this.bounds);
+                this.viewService.emit("pan", this.bounds);
             }
         };
 
