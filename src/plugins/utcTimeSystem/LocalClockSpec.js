@@ -29,22 +29,16 @@ define(["./LocalClock"], function (LocalClock) {
         beforeEach(function () {
             mockTimeout = jasmine.createSpy("timeout");
             mockTimeout.andReturn(timeoutHandle);
-            mockTimeout.cancel = jasmine.createSpy("cancel");
 
-            clock = new LocalClock(mockTimeout, 0);
+            clock = new LocalClock(0);
             clock.start();
         });
 
         it("calls listeners on tick with current time", function () {
             var mockListener = jasmine.createSpy("listener");
-            clock.listen(mockListener);
+            clock.on('tick', mockListener);
             clock.tick();
             expect(mockListener).toHaveBeenCalledWith(jasmine.any(Number));
-        });
-
-        it("stops ticking when stop is called", function () {
-            clock.stop();
-            expect(mockTimeout.cancel).toHaveBeenCalledWith(timeoutHandle);
         });
     });
 });

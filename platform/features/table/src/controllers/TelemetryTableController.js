@@ -85,7 +85,7 @@ define(
                 'getHistoricalData',
                 'subscribeToNewData',
                 'changeBounds',
-                'setScroll',
+                'setClock',
                 'addRowsToTable',
                 'removeRowsFromTable'
             ]);
@@ -98,7 +98,7 @@ define(
                 this.registerChangeListeners();
             }.bind(this));
 
-            this.setScroll(this.openmct.time.clock() !== undefined);
+            this.setClock(this.openmct.time.clock());
 
             this.$scope.$on("$destroy", this.destroy);
         }
@@ -107,8 +107,8 @@ define(
          * @private
          * @param {boolean} scroll
          */
-        TelemetryTableController.prototype.setScroll = function (scroll) {
-            this.$scope.autoScroll = scroll;
+        TelemetryTableController.prototype.setClock = function (clock) {
+            this.$scope.autoScroll = clock !== undefined;
         };
 
         /**
@@ -156,7 +156,7 @@ define(
 
             this.openmct.time.on('timeSystem', this.sortByTimeSystem);
             this.openmct.time.on('bounds', this.changeBounds);
-            this.openmct.time.on('follow', this.setScroll);
+            this.openmct.time.on('clock', this.setClock);
 
             this.telemetry.on('added', this.addRowsToTable);
             this.telemetry.on('discarded', this.removeRowsFromTable);
@@ -207,7 +207,7 @@ define(
 
             this.openmct.time.off('timeSystem', this.sortByTimeSystem);
             this.openmct.time.off('bounds', this.changeBounds);
-            this.openmct.time.off('follow', this.setScroll);
+            this.openmct.time.off('clock', this.setClock);
 
             this.subscriptions.forEach(function (subscription) {
                 subscription();

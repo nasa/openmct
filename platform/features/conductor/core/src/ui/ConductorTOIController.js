@@ -40,8 +40,8 @@ define(
             }.bind(this));
 
             this.timeAPI.on('timeOfInterest', this.changeTimeOfInterest);
-            this.conductorViewService.on('zoom', this.setOffsetFromZoom);
-            this.conductorViewService.on('pan', this.setOffsetFromBounds);
+            this.viewService.on('zoom', this.setOffsetFromZoom);
+            this.viewService.on('pan', this.setOffsetFromBounds);
 
             var timeOfInterest = this.timeAPI.timeOfInterest();
             if (timeOfInterest) {
@@ -56,8 +56,8 @@ define(
          */
         ConductorTOIController.prototype.destroy = function () {
             this.timeAPI.off('timeOfInterest', this.changeTimeOfInterest);
-            this.conductorViewService.off('zoom', this.setOffsetFromZoom);
-            this.conductorViewService.off('pan', this.setOffsetFromBounds);
+            this.viewService.off('zoom', this.setOffsetFromZoom);
+            this.viewService.off('pan', this.setOffsetFromBounds);
         };
 
         /**

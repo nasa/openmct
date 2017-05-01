@@ -27,8 +27,7 @@ define(['./TimeAPI'], function (TimeAPI) {
             timeSystem,
             bounds,
             eventListener,
-            toi,
-            follow;
+            toi;
 
         beforeEach(function () {
             api = new TimeAPI();
@@ -37,7 +36,6 @@ define(['./TimeAPI'], function (TimeAPI) {
             bounds = {start: 0, end: 0};
             eventListener = jasmine.createSpy("eventListener");
             toi = 111;
-            follow = true;
         });
 
         it("Supports setting and querying of time of interest", function () {
@@ -67,11 +65,11 @@ define(['./TimeAPI'], function (TimeAPI) {
 
         it("Allows setting of previously registered time system with bounds", function () {
             api.addTimeSystem(timeSystem);
-            expect(api.timeSystem()).not.toBe(timeSystemKey);
+            expect(api.timeSystem()).not.toBe(timeSystem);
             expect(function () {
-                api.timeSystem(timeSystemKey, bounds);
+                api.timeSystem(timeSystem, bounds);
             }).not.toThrow();
-            expect(api.timeSystem()).toBe(timeSystemKey);
+            expect(api.timeSystem()).toBe(timeSystem);
         });
 
         it("Disallows setting of time system without bounds", function () {
@@ -88,7 +86,7 @@ define(['./TimeAPI'], function (TimeAPI) {
             expect(eventListener).not.toHaveBeenCalled();
             api.on("timeSystem", eventListener);
             api.timeSystem(timeSystemKey, bounds);
-            expect(eventListener).toHaveBeenCalledWith(timeSystemKey);
+            expect(eventListener).toHaveBeenCalledWith(timeSystem);
         });
 
         it("Emits an event when time of interest changes", function () {
@@ -169,25 +167,17 @@ define(['./TimeAPI'], function (TimeAPI) {
                 expect(mockTickSource.off).toHaveBeenCalledWith("tick", jasmine.any(Function));
             });
 
-            it("Follow correctly reflects whether the conductor is following a " +
-                "tick source", function () {
-                expect(api.follow()).toBe(false);
+            it("Allows the active clock to be set and unset", function () {
+                expect(api.clock()).toBeUndefined();
                 api.clock("mts", mockOffsets);
-                expect(api.follow()).toBe(true);
+                expect(api.clock()).toBeDefined();
                 api.stopClock();
-                expect(api.follow()).toBe(false);
-            });
-
-            it("emits an event when follow mode changes", function () {
-                var callback = jasmine.createSpy("followCallback");
-                expect(api.follow()).toBe(false);
-
-                api.on("follow", callback);
+                expect(api.clock()).toBeUndefined();
             });
 
         });
 
-        it("on tick, observes deltas, and indicates tick in bounds callback", function () {
+        it("on tick, observes offsets, and indicates tick in bounds callback", function () {
             var mockTickSource = jasmine.createSpyObj("clock", [
                 "on",
                 "off"

@@ -30,17 +30,19 @@ define(['./UTCTimeSystem'], function (UTCTimeSystem) {
             timeSystem = new UTCTimeSystem(mockTimeout);
         });
 
-        it("defines at least one format", function () {
-            expect(timeSystem.formats().length).toBeGreaterThan(0);
+        it("Uses the UTC time format", function () {
+            expect(timeSystem.timeFormat).toBe('utc');
         });
 
-        it("defines a tick source", function () {
-            var tickSources = timeSystem.tickSources();
-            expect(tickSources.length).toBeGreaterThan(0);
+        it("is UTC based", function () {
+            expect(timeSystem.isUTCBased).toBe(true);
         });
 
-        it("defines some defaults", function () {
-            expect(timeSystem.defaults()).toBeDefined();
+        it("defines expected metadata", function () {
+            expect(timeSystem.key).toBeDefined();
+            expect(timeSystem.name).toBeDefined();
+            expect(timeSystem.cssClass).toBeDefined();
+            expect(timeSystem.durationFormat).toBeDefined();
         });
     });
 });
