@@ -352,6 +352,9 @@ request object with a start and end time is included below:
 }
 ```
 
+
+### Telemetry Formats
+
 ### Telemetry Data
 
 Telemetry data is provided to Open MCT by _[Telemetry Providers](#telemetry-providers)_
@@ -390,10 +393,380 @@ openmct.telemetry.addProvider({
 })
 ```
 
+## Time API 
+Telemetry requests and the data visible in views is typically constrained by 
+temporal bounds, and the Time API provides a way to centrally manage these bounds.
+
+The Time API exposes a number of methods for querying and setting the temporal 
+state of the application, and emits events to inform listeners when the state changes.
+
+Because the data displayed tends to be time domain data, Open MCT must always 
+have at least one time system installed and activated. When you download Open MCT,
+it will be pre-configured to use the UTC time system, which is installed and 
+activated, along with other default plugins, in `index.html`. Installing and 
+activating a time system is simple, and is covered 
+[in the next section](#defining-and-registering-time-systems). 
+
+### Time Systems and Bounds
+#### Defining and Registering Time Systems
+A Time System gives meaning to the time values returned from the Time API. Absent 
+a time system, time bounds are simply numbers. Time Systems are simply objects that
+provide some information about the current time reference frame. An example of 
+defining and registering a new time system is given below.
+
+``` javascript
+openmct.time.addTimeSystem({
+    key: 'utc',
+    name: 'UTC Time',
+    cssClass = 'icon-clock',
+    timeFormat = 'utc',
+    durationFormat = 'duration',
+    isUTCBased = true
+});
+```
+
+The example above defines a new utc based time system. In fact, this time system 
+is configured and activated by default from `index.html` in the default 
+installation of Open MCT if you download the source from GitHub. some details of 
+each of the required properties is provided below.
+
+* `key`: A `string` that uniquely identifies this time system.
+* `name`: A `string` providing a brief human readable label. If the [Time Conductor]() 
+plugin is enabled, this name will identify the time system in a dropdown menu.
+* `cssClass`: A class name `string` that will be applied to the time system when 
+it appears in the UI. This will be used to represent the time system with an icon. 
+There are a number of built-in icon classes [available in Open MCT](https://github.com/nasa/openmct/blob/master/platform/commonUI/general/res/sass/_glyphs.scss), 
+or a custom class can be used here. 
+* `timeFormat`: A `string` corresponding to the key of a registered 
+[telemetry time format](#Telemetry-Formats). The format will be used for 
+displaying discrete timestamps from telemetry streams when this time system is 
+activated. If the [UTCTimeSystem](#included-plugins) is enabled, then the `utc` 
+format can be used if this is a utc-based time system
+* `durationFormat`: A `string` corresponding to the key of a registered 
+[telemetry time format](#Telemetry-Formats). The format will be used for 
+displaying time ranges, for example 00:15:00 might be used to represent a time 
+period of fifteen minutes. These are used by the Time Conductor plugin to specify
+relative time offsets. If the [UTCTimeSystem](#included-plugins) is enabled, 
+then the `duration` format can be used if this is a utc-based time system
+* `isUTCBased`: A `boolean` that defines whether this time system represents 
+numbers in UTC terrestrial time. 
+
+#### Getting and Setting the Active Time System
+
+Once registered, a time system can be activated using via a key, or an instance 
+of the time system itself.
+
+```javascript
+openmct.time.timeSystem('utc');
+```
+
+A time system can be immediately activated upon registration: 
+
+```javascript
+var utcTimeSystem = {
+    key: 'utc',
+    name: 'UTC Time',
+    cssClass = 'icon-clock',
+    timeFormat = 'utc',
+    durationFormat = 'duration',
+    isUTCBased = true
+};
+openmct.time.addTimeSystem(utcTimeSystem);
+openmct.time.timeSystem(utcTimeSystem);
+```
+
+Setting the active time system will trigger a [time system event](#time-events). 
+
+### Time Bounds
+
+The TimeAPI provides a getter/setter for querying and setting time bounds. Time 
+bounds are simply an object with a single `start` and a single `end` attribute.
+
+* `start`: A `number` representing a moment in time in the active [Time System](#defining-and-registering-time-systems). 
+This will be used as the beginning of the time period displayed by time-responsive
+telemetry views.
+* `end`: A `number` representing a moment in time in the active [Time System](#defining-and-registering-time-systems).
+This will be used as the end of the time period displayed by time-responsive
+telemetry views.
+
+If invoked with bounds, it will set the new time bounds system-wide. If invoked 
+without any parameters, it will return the current application-wide time bounds. 
+
+``` javascript
+const ONE_HOUR = 60 * 60 * 1000;
+let now = Date.now();
+openmct.time.bounds({start: now - ONE_HOUR, now);
+```
+
+To respond to bounds change events, simply register a callback against the `bounds`
+event. For more information on the bounds event, please see the section on [Time Events](#time-events).
+
+## Clocks
+
+The Time API can be set to follow a clock source which will cause the bounds
+to be updated automatically whenever the clock source "ticks". A clock is simply
+an object that supports registration of listeners and periodically invokes its 
+listeners with a number. Open MCT supports registration of new clock sources that 
+tick on almost anything. A tick occurs when the clock invokes callback functions 
+registered by its listeners with a new time value.
+
+An example of a clock source is the [LocalClock](https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/LocalClock.js) 
+which emits the current time in UTC every 100ms. Clocks can tick on anything. For 
+example, a clock could be defined to provide the timestamp of any new data 
+received via a telemetry subscription. This would have the effect of advancing 
+the bounds of views automatically whenever data is received. A clock could also 
+be defined to tick on some remote timing source.
+
+The values provided by clocks are simple `number`s, which are interpreted in the
+context of the active [Time System](#defining-and-registering-time-systems).
+
+### Defining and registering clocks
+A clock is an object that defines certain required metadata and functions:
+
+* `key`: A `string` uniquely identifying this clock. This can be used later to 
+reference the clock in places such as the [Time Conductor configuration](#time-conductor-configuration)
+* `cssClass`: A `string` identifying a CSS class to apply to this clock when it's 
+displayed in the UI. This will be used to represent the time system with an icon. 
+There are a number of built-in icon classes [available in Open MCT](https://github.com/nasa/openmct/blob/master/platform/commonUI/general/res/sass/_glyphs.scss), 
+or a custom class can be used here. 
+* `name`: A `string` providing a human-readable identifier for the clock source. 
+This will be displayed in the clock selector menu in the Time Conductor UI 
+component, if active. 
+* `description`: An __optional__ `string` providing a longer description of the 
+clock. The description will be visible in the clock selection menu in the Time 
+Conductor plugin.
+* `on`: A `function` supporting registration of a new callback that will be 
+invoked when the clock next ticks. It will be invoked with two arguments:
+    * `eventName`: A `string` specifying the event to listen on. For now, clocks 
+    support one event - `tick`.
+    * `callback`: A `function` that will be invoked when this clock ticks. The 
+    function should be invoked with one parameter - a `number` representing a valid
+    time in the current time system.
+* `off`: A `function` that allows deregistration of a tick listener. It accepts 
+the same arguments as `on`.
+* `currentValue`: A `function` that returns a `number` representing a point in 
+time in the active time system. It should be the last value provided by a tick, 
+or some default value if no ticking has yet occurred.
+
+A new clock can be registered using the `addClock` function exposed by the Time 
+API:
+
+```javascript
+var someClock = {
+    key: 'someClock',
+    cssClass: 'icon-clock',
+    name: 'Some clock',
+    description: "Presumably does something useful"
+    on: function (event, callback) {
+        // Some function that registers listeners, and updates them on a tick
+    },
+    off: function (event, callback) {
+        // Some function that unregisters listeners.
+    },
+    currentValue: function () {
+        // A function that returns the last ticked value for the clock
+    }
+}
+
+openmct.time.addClock(someClock);
+```
+
+An example clock implementation is provided in the form of the [LocalClock](https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/LocalClock.js)
+
+#### Getting and setting active clock
+
+Once registered a clock can be activated by calling the `clock` function on the 
+Time API passing in the key or instance of a registered clock. Only one clock 
+may be active at once, so activating a clock will deactivate any currently 
+active clock. Setting the clock will also trigger a 'clock' event.
+
+```
+openmct.time.clock(someClock);
+```
+
+Upon being set, a clock's `on` function will be immediately called to subscribe
+to `tick` events.
+
+The currently active clock (if any) can be retrieved by calling the same 
+function without any arguments.
+
+#### Stopping an active clock
+
+The `stopClock` method can be used to stop an active clock, and to clear it. It 
+will stop the clock from ticking, and the effect of setting the active clock to 
+`undefined`.
+
+``` javascript
+openmct.time.stopClock();
+```
+
+#### Clock Offsets
+
+When a clock is active, the time bounds of the application will be updated 
+automatically each time the clock `ticks`. The bounds are calculated based on 
+the current value provided by the active clock (via its `tick` event, and its 
+`currentValue()` method). 
+
+Unlike bounds, which represent absolute time values, clock offsets represent
+relative time spans. Offsets are defined as an object with two properties:
+
+* `start`: A `number` that must be < 0, and is used to calculate the start bounds 
+on each clock tick. The start offset will be calculated relative to the value 
+provided by a clock's tick callback, or its `currentValue` function.
+* `end`: A `number` that must be >=0, and is used to calculate the end bounds on
+each clock tick.
+
+The `clockOffsets` function can be used to get or set clock offsets. For example, 
+to show the last fifteen minutes in a ms-based time system: 
+
+```javascript
+var FIFTEEN_MINUTES = 15 * 60 * 1000;
+
+openmct.time.clockOffsets({
+    start: - FIFTEEN_MINUTES,
+    end: 0
+})
+```
+
+Setting the clock offsets will trigger an immediate bounds change, as new bounds
+will be calculated based on the `currentValue()` of the active clock. Clock 
+offsets are only relevant when a clock source is active.
+
+## Time Events
+The time API supports the registration of listeners that will be invoked when the 
+application's temporal state changes. Events listeners can be registered using 
+the `on` function. They can be deregistered using the `off` function. The arguments
+accepted by the `on` and `off` functions are:
+* `event`: A `string` name for the event to listen to. Event names correspond to
+the property you're interested in. A [full list of time events](#list-of-time-events) 
+is provided later.
+
+As an example, code to listen to bounds change events might look like:
+
+``` javascript
+openmct.time.on('bounds', function callback (bounds) {
+    // Do something with new bounds
+});
+```
+
+#### List of Time Events
+The events supported by the Time API are:
+
+* `bounds`: Listen for changes to current bounds. The callback will be invoked 
+with two arguments:
+    * `bounds`: A [bounds](#getting-and-setting-bounds) bounds object representing 
+    a new time period bound by the specified start and send times.
+    * `tick`: A `boolean` indicating whether or not this bounds change is due to a 
+    "tick" from a [clock source](#automatically-updating-bounds-from-a-clock-source).
+    This information can be useful when determining a strategy for fetching telemetry 
+    data in response to a bounds change event. For example, if the bounds change was 
+    automatic, and is due to a tick then it's unlikely that you would need to perform
+    a historical data query. It should be sufficient to just show any new telemetry 
+    received via subscription since the last tick, and optionally to discard any 
+    older data that now falls outside of the currently set bounds. If `tick` is false,
+    then the bounds change was not due to a tick, and a query for historical data 
+    may be necessary.
+* `timeSystem`: Listen for changes to the active [time system](#defining-and-registering-time-systems).
+The callback will be invoked with a single argument, the newly active time system.
+    * `timeSystem`: The newly active [time system](#defining-and-registering-time-systems) object.
+* `clock`: Listen for changes to the active clock. When invoked, the callback 
+will be provided with the new clock.
+    * `clock`: The newly active [clock](#clocks), or `undefined` if an active clock
+    has been deactivated.
+* `clockOffsets`: Listen for changes to active clock offsets. When invoked the 
+callback will be provided with the new clock offsets.
+    * `clockOffsets`: A [clock offsets](#clock-offsets) object.
+
+
+## The Time Conductor
+The Time Conductor provides a user interface for managing time bounds in Open MCT.
+It allows a user to select from configured time systems and clocks, and to set bounds
+and clock offsets.
+
+If activated, the time conductor must be provided with configuration options, 
+detailed below.
+
+#### Time Conductor Configuration
+The time conductor is configured by specifying some options available to the user
+from the menus in the time conductor. These will determine the clocks available 
+from the conductor, the time systems available for each clock, and some default
+bounds and clock offsets for each combination of clock and time system. By default,
+the conductor always supports a `fixed` mode where no clock is active. 
+Fixed mode configuration is specified by not specifying a `clock` in the provided
+configuration.
+
+Configuration is provided as an `array` of menu options. Each entry of the 
+array is an object with some properties specifying configuration. The configuration
+options specified depend on whether or not it is for an active clock mode.
+
+__Configuration for Fixed Time Mode (no active clock)__
+
+* `timeSystem`: A `string`, the key for the time system that this configuration 
+relates to.
+* `bounds`: A [`Time Bounds`](#time-bounds) object. These bounds will be applied when the 
+user selects the time system specified in the previous `timeSystem` property.
+* `zoomOutLimit`: An __optional__ `number` representing the maximum span of 
+time that can be represented by the conductor. If a `zoomOutLimit` is provided, 
+then a `zoomInLimit` must also be provided. If provided, the zoom slider will
+automatically become available in the Time Conductor UI.
+* `zoomInLimit`: An __optional__ `number` representing the maximum span of 
+time that can be represented by the conductor. If a `zoomInLimit` is provided, 
+then a `zoomOutLimit` must also be provided. If provided, the zoom slider will
+automatically become available in the Time Conductor UI.
+
+__Configuration for Active Clock__
+
+* `clock`: A `string`, the `key` of the clock that this configuration applies to. 
+* `timeSystem`: A `string`, the key for the time system that this configuration 
+relates to. Separate configuration must be provided for each time system that you 
+wish to be available to users when they select the specified clock.
+* `clockOffsets`: A [`clockOffsets`](#clock-offsets) object that will be 
+automatically applied when the combination of clock and time system specified in 
+this configuration is selected.
+
+#### Example conductor configuration
+An example time conductor configuration is provided below. It sets up some 
+default options for the [UTCTimeSystem]() and [LocalTimeSystem](), in both fixed 
+mode, and for the [LocalClock](https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/LocalClock.js) 
+source. In this configutation, the local clock supports both the UTCTimeSystem 
+and LocalTimeSystem. Configuration for fixed bounds mode is specified by omitting 
+a clock key.
+
+``` javascript
+openmct.install(openmct.plugins.Conductor({
+    menuOptions: [
+        // 'Fixed' bounds mode configuation for the UTCTimeSystem
+        {
+            timeSystem: 'utc',
+            bounds: {start: Date.now() - 30 * ONE_MINUTE, end: Date.now()},
+            zoomOutLimit: ONE_YEAR,
+            zoomInLimit: ONE_MINUTE
+        },
+        // Configuration for the LocalClock in the UTC time system
+        {
+            clock: 'local',
+            timeSystem: 'utc',
+            clockOffsets: {start: - 30 * ONE_MINUTE, end: 0},
+            zoomOutLimit: ONE_YEAR,
+            zoomInLimit: ONE_MINUTE
+        },
+        //Configuration for the LocaLClock in the Local time system
+        {
+            clock: 'local',
+            timeSystem: 'local',
+            clockOffsets: {start: - 15 * ONE_MINUTE, end: 0}
+        }
+    ]
+}));
+```
+
 ## Included Plugins
 
 Open MCT is packaged along with a few general-purpose plugins:
 
+* `openmct.plugins.Conductor` provides a user interface for working with time
+within the application. If activated, configuration must be provided. This is 
+detailed in the section on [Time Conductor Configuration](#time-conductor-configuration).
 * `openmct.plugins.CouchDB` is an adapter for using CouchDB for persistence
   of user-created objects. This is a constructor that takes the URL for the
   CouchDB database as a parameter, e.g.
