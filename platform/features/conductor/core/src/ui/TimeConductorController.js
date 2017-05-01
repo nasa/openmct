@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/* global console*/
 
 define(
     [
@@ -107,7 +108,7 @@ define(
             };
 
             // Construct the provided time system definitions
-            this.timeSystems = config.menuOptions.map(function (menuOption){
+            this.timeSystems = config.menuOptions.map(function (menuOption) {
                 return this.getTimeSystem(menuOption.timeSystem);
             }.bind(this));
 
@@ -175,7 +176,7 @@ define(
          * @param newOption
          * @param oldOption
          */
-        TimeConductorController.prototype.selectMenuOption = function (newOption, oldOption){
+        TimeConductorController.prototype.selectMenuOption = function (newOption, oldOption) {
             if (newOption !== oldOption) {
                 var config = this.getConfig(this.timeAPI.timeSystem(), newOption.clock);
 
@@ -235,7 +236,7 @@ define(
                     timeSystemsForClocks[clockKey] = timeSystemsForClocks[clockKey] || [];
                     timeSystemsForClocks[clockKey].push(timeSystem);
                 } else if (menuOption.clock !== undefined) {
-                    console.log('Unknown clock "' + clockKey + '", has it been registered?');
+                    console.error('Unknown clock "' + clockKey + '", has it been registered?');
                 }
             }.bind(this));
 
@@ -378,26 +379,24 @@ define(
             this.menu.selected = menuOption;
 
             //Try to find currently selected time system in time systems for clock
-            var selectedTimeSystem = timeSystems.filter(function (timeSystem){
+            var selectedTimeSystem = timeSystems.filter(function (timeSystem) {
                 return timeSystem.key === this.$scope.timeSystemModel.selected.key;
             }.bind(this))[0];
 
             var config = this.getConfig(selectedTimeSystem, clock);
 
-            if (selectedTimeSystem === undefined){
+            if (selectedTimeSystem === undefined) {
                 selectedTimeSystem = timeSystems[0];
                 config = this.getConfig(selectedTimeSystem, clock);
 
                 if (clock === undefined) {
-                    var bounds = config.bounds;
-                    this.timeAPI.timeSystem(selectedTimeSystem, bounds);
+                    this.timeAPI.timeSystem(selectedTimeSystem, config.bounds);
                 } else {
                     //When time system changes, some start bounds need to be provided
-                    var bounds = {
+                    this.timeAPI.timeSystem(selectedTimeSystem, {
                         start: clock.currentValue() + config.clockOffsets.start,
                         end: clock.currentValue() + config.clockOffsets.end
-                    };
-                    this.timeAPI.timeSystem(selectedTimeSystem, bounds);
+                    });
                 }
             }
 

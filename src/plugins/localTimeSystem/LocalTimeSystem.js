@@ -27,7 +27,7 @@ define([], function () {
      * @implements TimeSystem
      * @constructor
      */
-    function LocalTimeSystem () {
+    function LocalTimeSystem() {
 
         /**
          * Some metadata, which will be used to identify the time system in

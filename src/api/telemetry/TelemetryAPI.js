@@ -323,7 +323,9 @@ define([
     TelemetryAPI.prototype.addFormat = function (format) {
         this.MCT.legacyExtension('formats', {
             key: format.key,
-            implementation: function () { return format }
+            implementation: function () {
+                return format;
+            }
         });
     };
 

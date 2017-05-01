@@ -68,7 +68,7 @@ define(['./TimeAPI'], function (TimeAPI) {
         it("Allows setting of previously registered time system with bounds", function () {
             api.addTimeSystem(timeSystem);
             expect(api.timeSystem()).not.toBe(timeSystemKey);
-            expect(function() {
+            expect(function () {
                 api.timeSystem(timeSystemKey, bounds);
             }).not.toThrow();
             expect(api.timeSystem()).toBe(timeSystemKey);
@@ -78,7 +78,7 @@ define(['./TimeAPI'], function (TimeAPI) {
             api.addTimeSystem(timeSystem);
             expect(api.timeSystem()).not.toBe(timeSystemKey);
             expect(function () {
-                api.timeSystem(timeSystemKey)
+                api.timeSystem(timeSystemKey);
             }).toThrow();
             expect(api.timeSystem()).not.toBe(timeSystemKey);
         });
@@ -130,7 +130,7 @@ define(['./TimeAPI'], function (TimeAPI) {
                 "off",
                 "currentValue"
             ]);
-            mockTickSource.key = 'mockTickSource'
+            mockTickSource.key = 'mockTickSource';
         });
 
         describe(" when enabling a tick source", function () {
@@ -139,7 +139,7 @@ define(['./TimeAPI'], function (TimeAPI) {
             var mockOffsets = {
                 start: 0,
                 end: 0
-            }
+            };
 
             beforeEach(function () {
                 mockTickSource = jasmine.createSpyObj("clock", [
@@ -205,7 +205,7 @@ define(['./TimeAPI'], function (TimeAPI) {
 
             api.on("bounds", boundsCallback);
 
-            tickCallback = mockTickSource.on.mostRecentCall.args[1]
+            tickCallback = mockTickSource.on.mostRecentCall.args[1];
             tickCallback(1000);
             expect(boundsCallback).toHaveBeenCalledWith({
                 start: 900,

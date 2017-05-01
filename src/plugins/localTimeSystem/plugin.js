@@ -35,6 +35,6 @@ define([
                 key: 'local-format',
                 implementation: LocalTimeFormat
             });
-        }
+        };
     };
 });

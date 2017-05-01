@@ -27,7 +27,7 @@ define(['../../../src/plugins/utcTimeSystem/LocalClock'], function (LocalClock) 
      * It DOES NOT tick on receipt of data.
      * @constructor
      */
-    function LADClock (period) {
+    function LADClock(period) {
         LocalClock.call(this, period);
 
         this.key = 'test-lad';

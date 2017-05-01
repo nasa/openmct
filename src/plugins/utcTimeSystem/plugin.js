@@ -24,7 +24,7 @@ define([
     "./UTCTimeSystem",
     "./LocalClock",
     "./UTCTimeFormat",
-    "./DurationFormat",
+    "./DurationFormat"
 ], function (
     UTCTimeSystem,
     LocalClock,
@@ -47,6 +47,6 @@ define([
                 "key": "DEFAULT_TIME_FORMAT",
                 "value": "utc"
             });
-        }
+        };
     };
 });

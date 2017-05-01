@@ -81,13 +81,13 @@ define([], function () {
                         bounds = {
                             start: clock.currentValue() + clockOffsets.start,
                             end: clock.currentValue() + clockOffsets.end
-                        }
+                        };
                     }
                     openmct.time.timeSystem(timeSystem, bounds);
                 } else {
                     throw 'Invalid time conductor configuration. Please define defaults for time system "' + timeSystem.key + '"';
                 }
             });
-        }
-    }
+        };
+    };
 });

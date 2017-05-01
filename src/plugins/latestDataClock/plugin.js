@@ -28,6 +28,6 @@ define([
     return function () {
         return function (openmct) {
             openmct.time.addClock(new LADClock());
-        }
+        };
     };
 });

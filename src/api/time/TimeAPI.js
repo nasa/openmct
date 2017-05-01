@@ -267,20 +267,20 @@ define(['EventEmitter'], function (EventEmitter) {
                 throw "Please provide a time system";
             }
 
-            if (typeof timeSystemOrKey === 'string'){
+            if (typeof timeSystemOrKey === 'string') {
                 timeSystem = this.timeSystems.get(timeSystemOrKey);
 
-                if (timeSystem === undefined){
+                if (timeSystem === undefined) {
                     throw "Unknown time system " + timeSystemOrKey + ". Has it been registered with 'addTimeSystem'?";
                 }
-            } else if (typeof timeSystemOrKey === 'object'){
+            } else if (typeof timeSystemOrKey === 'object') {
                 timeSystem = timeSystemOrKey;
 
-                if (!this.timeSystems.has(timeSystem.key)){
+                if (!this.timeSystems.has(timeSystem.key)) {
                     throw "Unknown time system " + timeSystem.key + ". Has it been registered with 'addTimeSystem'?";
                 }
             } else {
-                throw "Attempt to set invalid time system in Time API. Please provide a previously registered time system object or key"
+                throw "Attempt to set invalid time system in Time API. Please provide a previously registered time system object or key";
             }
 
             this.system = timeSystem;
@@ -353,7 +353,7 @@ define(['EventEmitter'], function (EventEmitter) {
                 }
             } else if (typeof keyOrClock === 'object') {
                 clock = keyOrClock;
-                if (!clocks.has(clock.key)){
+                if (!this.clocks.has(clock.key)) {
                     throw "Unknown clock '" + keyOrClock.key + "'. Has it been registered with 'addClock'?";
                 }
             }
@@ -379,8 +379,8 @@ define(['EventEmitter'], function (EventEmitter) {
              */
             this.emit("clock", this.activeClock);
 
-        } else if (arguments.length === 1){
-            throw "When setting the clock, clock offsets must also be provided"
+        } else if (arguments.length === 1) {
+            throw "When setting the clock, clock offsets must also be provided";
         }
 
         return this.activeClock;
