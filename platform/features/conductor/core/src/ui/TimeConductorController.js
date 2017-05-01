@@ -160,18 +160,6 @@ define(
         };
 
         /**
-         * Given a key for a time system, retrieve the time system object.
-         * @private
-         * @param key
-         * @returns {TimeSystem}
-         */
-        TimeConductorController.prototype.getTimeSystem = function (key) {
-            return this.timeAPI.getAllTimeSystems().filter(function (timeSystem) {
-                return timeSystem.key === key;
-            })[0];
-        };
-
-        /**
          * Activate the selected menu option. Menu options correspond to clocks.
          * A distinction is made to avoid confusion between the menu options and
          * their metadata, and actual {@link Clock} objects.
