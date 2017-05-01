@@ -91,7 +91,7 @@ define([
                     ]
                 },
                 {
-                    "key": "conductorTOI",
+                    "key": "conductorToi",
                     "implementation": ConductorTOIDirective
                 }
             ],
