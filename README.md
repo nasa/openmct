@@ -100,6 +100,10 @@ instance (e.g. by starting an HTTP server in that directory), including:
 
 Additional `gulp` tasks are defined in [the gulpfile](gulpfile.js).
 
+Or you can deploy to Heroku for free with one click:
+
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+
 ## Bundles
 
 A bundle is a group of software components (including source code, declared
