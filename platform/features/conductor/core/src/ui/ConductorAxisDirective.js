@@ -20,29 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    "./src/LocalTimeSystem",
-    "./src/LocalTimeFormat",
-    'legacyRegistry'
-], function (
-    LocalTimeSystem,
-    LocalTimeFormat,
-    legacyRegistry
-) {
-    legacyRegistry.register("example/localTimeSystem", {
-        "extensions": {
-            "formats": [
-                {
-                    "key": "local-format",
-                    "implementation": LocalTimeFormat
-                }
+define(['./ConductorAxisController'], function (ConductorAxisController) {
+    function ConductorAxisDirective() {
+        /**
+         * The mct-conductor-axis renders a horizontal axis with regular
+         * labelled 'ticks'. It requires 'start' and 'end' integer values to
+         * be specified as attributes.
+         */
+        return {
+            controller: [
+                'openmct',
+                'formatService',
+                '$scope',
+                '$element',
+                ConductorAxisController
             ],
-            "timeSystems": [
-                {
-                    "implementation": LocalTimeSystem,
-                    "depends": ["$timeout"]
-                }
-            ]
-        }
-    });
+            controllerAs: 'axis',
+            scope: {
+                viewService: "="
+            },
+            bindToController: true,
+
+            restrict: 'E',
+            priority: 1000,
+
+            template: '<div class="l-axis-holder" ' +
+            '    mct-drag-down="axis.panStart()"' +
+            '    mct-drag-up="axis.panStop(delta)"' +
+            '    mct-drag="axis.pan(delta)"' +
+            '    mct-resize="axis.resize()"></div>'
+        };
+    }
+
+    return ConductorAxisDirective;
 });

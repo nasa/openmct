@@ -140,7 +140,7 @@ define(
                     mockHandler,
                     mockThrottle,
                     undefined,
-                    {conductor: mockConductor}
+                    {time: mockConductor}
                 );
             });
 

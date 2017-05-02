@@ -20,35 +20,44 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./ConductorAxisController'], function (ConductorAxisController) {
-    function MctConductorAxis() {
+define(['./ConductorTOIController'], function (ConductorTOIController) {
+    /**
+     * A directive that encapsulates the TOI specific behavior of the Time Conductor UI.
+     * @constructor
+     */
+    function ConductorTOIDirective() {
         /**
          * The mct-conductor-axis renders a horizontal axis with regular
          * labelled 'ticks'. It requires 'start' and 'end' integer values to
          * be specified as attributes.
          */
-
         return {
             controller: [
-                'openmct',
-                'formatService',
-                'timeConductorViewService',
                 '$scope',
-                '$element',
-                ConductorAxisController
+                'openmct',
+                ConductorTOIController
             ],
-            controllerAs: 'axis',
+            controllerAs: 'toi',
+            scope: {
+                viewService: "="
+            },
+            bindToController: true,
 
             restrict: 'E',
             priority: 1000,
 
-            template: '<div class="l-axis-holder" ' +
-            '    mct-drag-down="axis.panStart()"' +
-            '    mct-drag-up="axis.panStop(delta)"' +
-            '    mct-drag="axis.pan(delta)"' +
-            '    mct-resize="axis.resize()"></div>'
+            template:
+                '<div class="l-data-visualization-holder l-row-elem flex-elem">' +
+                '   <a class="l-page-button s-icon-button icon-pointer-left"></a>' +
+                '   <div class="l-data-visualization" ng-click="toi.setTOIFromPosition($event)">' +
+                '       <mct-include key="\'time-of-interest\'" class="l-toi-holder show-val" ' +
+                '       ng-class="{ pinned: toi.pinned, \'val-to-left\': toi.left > 80 }" ' +
+                '       ng-style="{\'left\': toi.left + \'%\'}"></mct-include>' +
+                '   </div>' +
+                '   <a class="l-page-button align-right s-icon-button icon-pointer-right"></a>' +
+                '</div>'
         };
     }
 
-    return MctConductorAxis;
+    return ConductorTOIDirective;
 });

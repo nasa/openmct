@@ -20,27 +20,29 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./UTCTimeSystem'], function (UTCTimeSystem) {
-    describe("The UTCTimeSystem class", function () {
-        var timeSystem,
-            mockTimeout;
+define([], function () {
 
-        beforeEach(function () {
-            mockTimeout = jasmine.createSpy("timeout");
-            timeSystem = new UTCTimeSystem(mockTimeout);
-        });
+    /**
+     * This time system supports UTC dates and provides a ticking clock source.
+     * @implements TimeSystem
+     * @constructor
+     */
+    function LocalTimeSystem() {
 
-        it("defines at least one format", function () {
-            expect(timeSystem.formats().length).toBeGreaterThan(0);
-        });
+        /**
+         * Some metadata, which will be used to identify the time system in
+         * the UI
+         * @type {{key: string, name: string, glyph: string}}
+         */
+        this.key = 'local';
+        this.name = 'Local';
+        this.cssClass = 'icon-clock';
 
-        it("defines a tick source", function () {
-            var tickSources = timeSystem.tickSources();
-            expect(tickSources.length).toBeGreaterThan(0);
-        });
+        this.timeFormat = 'local-format';
+        this.durationFormat = 'duration';
 
-        it("defines some defaults", function () {
-            expect(timeSystem.defaults()).toBeDefined();
-        });
-    });
+        this.isUTCBased = true;
+    }
+
+    return LocalTimeSystem;
 });

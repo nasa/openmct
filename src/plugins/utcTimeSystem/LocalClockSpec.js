@@ -20,21 +20,25 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    "./src/UTCTimeSystem",
-    "legacyRegistry"
-], function (
-    UTCTimeSystem,
-    legacyRegistry
-) {
-    legacyRegistry.register("platform/features/conductor/utcTimeSystem", {
-        "extensions": {
-            "timeSystems": [
-                {
-                    "implementation": UTCTimeSystem,
-                    "depends": ["$timeout"]
-                }
-            ]
-        }
+define(["./LocalClock"], function (LocalClock) {
+    describe("The LocalClock class", function () {
+        var clock,
+            mockTimeout,
+            timeoutHandle = {};
+
+        beforeEach(function () {
+            mockTimeout = jasmine.createSpy("timeout");
+            mockTimeout.andReturn(timeoutHandle);
+
+            clock = new LocalClock(0);
+            clock.start();
+        });
+
+        it("calls listeners on tick with current time", function () {
+            var mockListener = jasmine.createSpy("listener");
+            clock.on('tick', mockListener);
+            clock.tick();
+            expect(mockListener).toHaveBeenCalledWith(jasmine.any(Number));
+        });
     });
 });

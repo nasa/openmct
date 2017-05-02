@@ -82,7 +82,7 @@ define(
                 lastRange,
                 lastDomain,
                 handle;
-            var conductor = openmct.conductor;
+            var timeAPI = openmct.time;
 
             // Populate the scope with axis information (specifically, options
             // available for each axis.)
@@ -185,7 +185,7 @@ define(
 
             function changeTimeOfInterest(timeOfInterest) {
                 if (timeOfInterest !== undefined) {
-                    var bounds = conductor.bounds();
+                    var bounds = timeAPI.bounds();
                     var range = bounds.end - bounds.start;
                     $scope.toiPerc = ((timeOfInterest - bounds.start) / range) * 100;
                     $scope.toiPinned = true;
@@ -208,8 +208,8 @@ define(
                 );
                 replot();
 
-                changeTimeOfInterest(conductor.timeOfInterest());
-                conductor.on("timeOfInterest", changeTimeOfInterest);
+                changeTimeOfInterest(timeAPI.timeOfInterest());
+                timeAPI.on("timeOfInterest", changeTimeOfInterest);
             }
 
             // Release the current subscription (called when scope is destroyed)
@@ -218,7 +218,7 @@ define(
                     handle.unsubscribe();
                     handle = undefined;
                 }
-                conductor.off("timeOfInterest", changeTimeOfInterest);
+                timeAPI.off("timeOfInterest", changeTimeOfInterest);
             }
 
             function requery() {
@@ -262,7 +262,7 @@ define(
                     requery();
                 }
                 self.setUnsynchedStatus($scope.domainObject, follow && self.isZoomed());
-                changeTimeOfInterest(conductor.timeOfInterest());
+                changeTimeOfInterest(timeAPI.timeOfInterest());
             }
 
             this.modeOptions = new PlotModeOptions([], subPlotFactory);
@@ -286,11 +286,11 @@ define(
             ];
 
             //Are some initialized bounds defined?
-            var bounds = conductor.bounds();
+            var bounds = timeAPI.bounds();
             if (bounds &&
                 bounds.start !== undefined &&
                 bounds.end !== undefined) {
-                changeDisplayBounds(undefined, conductor.bounds(), conductor.follow());
+                changeDisplayBounds(undefined, timeAPI.bounds(), timeAPI.clock() !== undefined);
             }
 
             // Watch for changes to the selected axis

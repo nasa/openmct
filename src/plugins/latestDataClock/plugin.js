@@ -20,31 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(["./LocalClock"], function (LocalClock) {
-    describe("The LocalClock class", function () {
-        var clock,
-            mockTimeout,
-            timeoutHandle = {};
-
-        beforeEach(function () {
-            mockTimeout = jasmine.createSpy("timeout");
-            mockTimeout.andReturn(timeoutHandle);
-            mockTimeout.cancel = jasmine.createSpy("cancel");
-
-            clock = new LocalClock(mockTimeout, 0);
-            clock.start();
-        });
-
-        it("calls listeners on tick with current time", function () {
-            var mockListener = jasmine.createSpy("listener");
-            clock.listen(mockListener);
-            clock.tick();
-            expect(mockListener).toHaveBeenCalledWith(jasmine.any(Number));
-        });
-
-        it("stops ticking when stop is called", function () {
-            clock.stop();
-            expect(mockTimeout.cancel).toHaveBeenCalledWith(timeoutHandle);
-        });
-    });
+define([
+    "./LADClock"
+], function (
+    LADClock
+) {
+    return function () {
+        return function (openmct) {
+            openmct.time.addClock(new LADClock());
+        };
+    };
 });

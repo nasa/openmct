@@ -20,24 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['../../../platform/features/conductor/core/src/timeSystems/LocalClock'], function (LocalClock) {
-    /**
-     * @implements TickSource
-     * @constructor
-     */
-    function LADTickSource ($timeout, period) {
-        LocalClock.call(this, $timeout, period);
+define([
+    "./LocalTimeSystem",
+    "./LocalTimeFormat"
+], function (
+    LocalTimeSystem,
+    LocalTimeFormat
+) {
+    return function () {
+        return function (openmct) {
+            openmct.time.addTimeSystem(new LocalTimeSystem());
 
-        this.metadata = {
-            key: 'test-lad',
-            mode: 'lad',
-            cssClass: 'icon-clock',
-            label: 'Latest Available Data',
-            name: 'Latest available data',
-            description: 'Monitor real-time streaming data as it comes in. The Time Conductor and displays will automatically advance themselves based on a UTC clock.'
+            openmct.legacyExtension('formats', {
+                key: 'local-format',
+                implementation: LocalTimeFormat
+            });
         };
-    }
-    LADTickSource.prototype = Object.create(LocalClock.prototype);
-
-    return LADTickSource;
+    };
 });

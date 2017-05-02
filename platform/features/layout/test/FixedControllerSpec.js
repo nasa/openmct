@@ -122,7 +122,7 @@ define(
                     'off',
                     'bounds',
                     'timeSystem',
-                    'follow'
+                    'clock'
                 ]);
                 mockConductor.bounds.andReturn({});
                 mockTimeSystem = {
@@ -187,7 +187,7 @@ define(
                 );
 
                 mockOpenMCT = {
-                    conductor: mockConductor,
+                    time: mockConductor,
                     telemetry: mockTelemetryAPI,
                     composition: mockCompositionAPI
                 };
@@ -383,12 +383,12 @@ define(
                         key: '12345'
                     }
                 };
+                mockConductor.clock.andReturn({});
                 controller.elementProxiesById = {};
                 controller.elementProxiesById['12345'] = [testElement];
                 controller.elementProxies = [testElement];
 
                 controller.subscribeToObjects([telemetryObject]);
-                mockConductor.follow.andReturn(true);
                 mockTelemetryAPI.subscribe.mostRecentCall.args[1](mockTelemetry);
 
                 waitsFor(function () {
@@ -597,7 +597,7 @@ define(
                 });
 
                 it("requests only a single point", function () {
-                    mockConductor.follow.andReturn(false);
+                    mockConductor.clock.andReturn(undefined);
                     boundsChangeCallback(testBounds);
                     expect(mockTelemetryAPI.request.calls.length).toBe(2);
 
@@ -607,8 +607,7 @@ define(
                 });
 
                 it("Does not fetch historical data on tick", function () {
-                    mockConductor.follow.andReturn(true);
-                    boundsChangeCallback(testBounds);
+                    boundsChangeCallback(testBounds, true);
                     expect(mockTelemetryAPI.request.calls.length).toBe(0);
                 });
             });

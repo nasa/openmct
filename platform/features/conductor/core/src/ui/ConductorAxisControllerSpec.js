@@ -72,7 +72,7 @@ define([
                 "bounds",
                 "on",
                 "off",
-                "follow"
+                "clock"
             ]);
             mockConductor.bounds.andReturn(mockBounds);
 
@@ -91,20 +91,18 @@ define([
 
             element = $('<div style="width: 100px;"><div style="width: 100%;"></div></div>');
             $(document).find('body').append(element);
-            controller = new ConductorAxisController({conductor: mockConductor}, mockFormatService, mockConductorViewService, mockScope, element);
+            ConductorAxisController.prototype.viewService = mockConductorViewService;
+            controller = new ConductorAxisController({time: mockConductor}, mockFormatService, mockScope, element);
 
-            mockTimeSystem = jasmine.createSpyObj("timeSystem", [
-                "formats",
-                "isUTCBased"
-            ]);
+            mockTimeSystem = {};
             mockFormat = jasmine.createSpyObj("format", [
                 "format"
             ]);
 
-            mockTimeSystem.formats.andReturn(["mockFormat"]);
+            mockTimeSystem.timeFormat = "mockFormat";
             mockFormatService.getFormat.andReturn(mockFormat);
             mockConductor.timeSystem.andReturn(mockTimeSystem);
-            mockTimeSystem.isUTCBased.andReturn(false);
+            mockTimeSystem.isUTCBased = false;
         });
 
         it("listens for changes to time system and bounds", function () {
@@ -121,7 +119,7 @@ define([
 
         describe("when the time system changes", function () {
             it("uses a UTC scale for UTC time systems", function () {
-                mockTimeSystem.isUTCBased.andReturn(true);
+                mockTimeSystem.isUTCBased = true;
                 controller.changeTimeSystem(mockTimeSystem);
 
                 expect(d3Scale.scaleUtc).toHaveBeenCalled();
@@ -129,14 +127,14 @@ define([
             });
 
             it("uses a linear scale for non-UTC time systems", function () {
-                mockTimeSystem.isUTCBased.andReturn(false);
+                mockTimeSystem.isUTCBased = false;
                 controller.changeTimeSystem(mockTimeSystem);
                 expect(d3Scale.scaleLinear).toHaveBeenCalled();
                 expect(d3Scale.scaleUtc).not.toHaveBeenCalled();
             });
 
             it("sets axis domain to time conductor bounds", function () {
-                mockTimeSystem.isUTCBased.andReturn(false);
+                mockTimeSystem.isUTCBased = false;
                 controller.setScale();
                 expect(controller.xScale.domain()).toEqual([mockBounds.start, mockBounds.end]);
             });

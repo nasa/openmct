@@ -99,7 +99,7 @@ define(
                     mockElement,
                     mockExportService,
                     mockFormatService,
-                    {conductor: mockConductor}
+                    {time: mockConductor}
                 );
                 spyOn(controller, 'setVisibleRows').andCallThrough();
             });

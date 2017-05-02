@@ -22,8 +22,8 @@
 <div class="contents">
     <div class="pane left menu-items">
         <ul>
-            <li ng-repeat="(key, metadata) in ngModel.options"
-                ng-click="ngModel.selectedKey=key">
+            <li ng-repeat="metadata in ngModel.options"
+                ng-click="ngModel.selected = metadata">
                 <a ng-mouseover="ngModel.activeMetadata = metadata"
                    ng-mouseleave="ngModel.activeMetadata = undefined"
                    class="menu-item-a {{metadata.cssClass}}">
@@ -33,8 +33,7 @@
         </ul>
     </div>
     <div class="pane right menu-item-description">
-        <div
-                class="desc-area ui-symbol icon type-icon {{ngModel.activeMetadata.cssClass}}"></div>
+        <div class="desc-area ui-symbol icon type-icon {{ngModel.activeMetadata.cssClass}}"></div>
         <div class="desc-area title">
             {{ngModel.activeMetadata.name}}
         </div>

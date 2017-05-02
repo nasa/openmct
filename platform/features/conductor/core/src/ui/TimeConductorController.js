@@ -19,221 +19,255 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/* global console*/
 
 define(
     [
-        './TimeConductorValidation'
+        'moment',
+        './TimeConductorValidation',
+        './TimeConductorViewService'
     ],
-    function (TimeConductorValidation) {
-        var SEARCH = {
-            MODE: 'tc.mode',
-            TIME_SYSTEM: 'tc.timeSystem',
-            START_BOUND: 'tc.startBound',
-            END_BOUND: 'tc.endBound',
-            START_DELTA: 'tc.startDelta',
-            END_DELTA: 'tc.endDelta'
-        };
+    function (
+        moment,
+        TimeConductorValidation,
+        TimeConductorViewService
+    ) {
+
+        var timeUnitsMegastructure = [
+            ["Decades", function (r) {
+                return r.years() > 15;
+            }],
+            ["Years", function (r) {
+                return r.years() > 1;
+            }],
+            ["Months", function (r) {
+                return r.years() === 1 || r.months() > 1;
+            }],
+            ["Days", function (r) {
+                return r.months() === 1 || r.days() > 1;
+            }],
+            ["Hours", function (r) {
+                return r.days() === 1 || r.hours() > 1;
+            }],
+            ["Minutes", function (r) {
+                return r.hours() === 1 || r.minutes() > 1;
+            }],
+            ["Seconds", function (r) {
+                return r.minutes() === 1 || r.seconds() > 1;
+            }],
+            ["Milliseconds", function (r) {
+                return true;
+            }]
+        ];
 
         /**
-         * Controller for the Time Conductor UI element. The Time Conductor includes form fields for specifying time
-         * bounds and relative time deltas for queries, as well as controls for selection mode, time systems, and zooming.
+         * Controller for the Time Conductor UI element. The Time Conductor
+         * includes form fields for specifying time bounds and relative time
+         * offsets for queries, as well as controls for selection mode,
+         * time systems, and zooming.
          * @memberof platform.features.conductor
          * @constructor
          */
         function TimeConductorController(
             $scope,
             $window,
-            $location,
             openmct,
-            conductorViewService,
             formatService,
-            DEFAULT_MODE,
-            SHOW_TIMECONDUCTOR
+            config
         ) {
 
-            var self = this;
-
-            //Bind all class functions to 'this'
-            Object.keys(TimeConductorController.prototype).filter(function (key) {
-                return typeof TimeConductorController.prototype[key] === 'function';
-            }).forEach(function (key) {
-                self[key] = self[key].bind(self);
-            });
+            //Bind functions that are used as callbacks to 'this'.
+            [
+                "selectMenuOption",
+                "onPan",
+                "onPanStop",
+                "setViewFromBounds",
+                "setViewFromClock",
+                "setViewFromOffsets",
+                "setViewFromTimeSystem",
+                "setTimeSystemFromView",
+                "destroy"
+            ].forEach(function (name) {
+                this[name] = this[name].bind(this);
+            }.bind(this));
 
             this.$scope = $scope;
             this.$window = $window;
-            this.$location = $location;
-            this.conductorViewService = conductorViewService;
-            this.conductor = openmct.conductor;
-            this.modes = conductorViewService.availableModes();
-            this.validation = new TimeConductorValidation(this.conductor);
+            this.timeAPI = openmct.time;
+            this.conductorViewService = new TimeConductorViewService(openmct);
+            this.validation = new TimeConductorValidation(this.timeAPI);
             this.formatService = formatService;
-
-            //Check if the default mode defined is actually available
-            if (this.modes[DEFAULT_MODE] === undefined) {
-                DEFAULT_MODE = 'fixed';
-            }
-            this.DEFAULT_MODE = DEFAULT_MODE;
-
-            // Construct the provided time system definitions
-            this.timeSystems = conductorViewService.systems;
-
-            this.initializeScope();
-            var searchParams = JSON.parse(JSON.stringify(this.$location.search()));
-            //Set bounds, time systems, deltas, on conductor from URL
-            this.setStateFromSearchParams(searchParams);
-
-            //Set the initial state of the UI from the conductor state
-            var timeSystem = this.conductor.timeSystem();
-            if (timeSystem) {
-                this.changeTimeSystem(this.conductor.timeSystem());
-            }
-
-            var deltas = this.conductorViewService.deltas();
-            if (deltas) {
-                this.setFormFromDeltas(deltas);
-            }
-
-            var bounds = this.conductor.bounds();
-            if (bounds && bounds.start !== undefined && bounds.end !== undefined) {
-                this.changeBounds(bounds);
-            }
-
-            //Listen for changes to URL and update state if necessary
-            this.$scope.$on('$routeUpdate', function () {
-                this.setStateFromSearchParams(this.$location.search());
-            }.bind(this));
-
-            //Respond to any subsequent conductor changes
-            this.conductor.on('bounds', this.changeBounds);
-            this.conductor.on('timeSystem', this.changeTimeSystem);
-
-            this.$scope.showTimeConductor = SHOW_TIMECONDUCTOR;
-        }
-
-        /**
-         * Used as a url search param setter in place of $location.search(...)
-         *
-         * Invokes $location.search(...) but prevents an Angular route
-         * change from occurring as a consequence which will cause
-         * controllers to reload and strangeness to ensue.
-         *
-         * @private
-         */
-        TimeConductorController.prototype.setParam = function (name, value) {
-            this.$location.search(name, value);
-        };
-
-        /**
-         * @private
-         */
-        TimeConductorController.prototype.initializeScope = function () {
-            //Set time Conductor bounds in the form
-            this.$scope.boundsModel = this.conductor.bounds();
-
-            //If conductor has a time system selected already, populate the
-            //form from it
+            this.config = config;
+            this.clocksForTimeSystem = {};
+            this.timeSystemsForClocks = {};
             this.$scope.timeSystemModel = {};
+            this.$scope.boundsModel = {};
 
-            //Represents the various modes, and the currently selected mode
-            //in the view
-            this.$scope.modeModel = {
-                options: this.conductorViewService.availableModes()
+            this.timeSystems = this.timeAPI.getAllTimeSystems().reduce(function (map, timeSystem) {
+                map[timeSystem.key] = timeSystem;
+                return map;
+            }, {});
+
+            this.isFixed = this.timeAPI.clock() === undefined;
+
+            var options = this.optionsFromConfig(config);
+            this.menu = {
+                selected: undefined,
+                options: options
             };
 
-            // Watch scope for selection of mode or time system by user
-            this.$scope.$watch('modeModel.selectedKey', this.setMode);
+            //Set the initial state of the UI from the conductor state
+            var timeSystem = this.timeAPI.timeSystem();
+            if (timeSystem) {
+                this.setViewFromTimeSystem(timeSystem);
+            }
+
+            this.setViewFromClock(this.timeAPI.clock());
+
+            var offsets = this.timeAPI.clockOffsets();
+            if (offsets) {
+                this.setViewFromOffsets(offsets);
+            }
+
+            var bounds = this.timeAPI.bounds();
+            if (bounds && bounds.start !== undefined && bounds.end !== undefined) {
+                this.setViewFromBounds(bounds);
+            }
+
+            this.$scope.$watch("tcController.menu.selected", this.selectMenuOption);
 
             this.conductorViewService.on('pan', this.onPan);
             this.conductorViewService.on('pan-stop', this.onPanStop);
 
+            //Respond to any subsequent conductor changes
+            this.timeAPI.on('bounds', this.setViewFromBounds);
+            this.timeAPI.on('timeSystem', this.setViewFromTimeSystem);
+            this.timeAPI.on('clock', this.setViewFromClock);
+            this.timeAPI.on('clockOffsets', this.setViewFromOffsets);
             this.$scope.$on('$destroy', this.destroy);
-        };
+        }
 
-        TimeConductorController.prototype.setStateFromSearchParams = function (searchParams) {
-            //Set mode from url if changed
-            if (searchParams[SEARCH.MODE] === undefined ||
-                searchParams[SEARCH.MODE] !== this.$scope.modeModel.selectedKey) {
-                this.setMode(searchParams[SEARCH.MODE] || this.DEFAULT_MODE);
-            }
-
-            if (searchParams[SEARCH.TIME_SYSTEM] &&
-                searchParams[SEARCH.TIME_SYSTEM] !== this.conductor.timeSystem().metadata.key) {
-                //Will select the specified time system on the conductor
-                this.selectTimeSystemByKey(searchParams[SEARCH.TIME_SYSTEM]);
-            }
-
-            var validDeltas = searchParams[SEARCH.MODE] !== 'fixed' &&
-                searchParams[SEARCH.START_DELTA] &&
-                searchParams[SEARCH.END_DELTA] &&
-                !isNaN(searchParams[SEARCH.START_DELTA]) &&
-                !isNaN(searchParams[SEARCH.END_DELTA]);
-
-            if (validDeltas) {
-                //Sets deltas from some form model
-                this.setDeltas({
-                    startDelta: parseInt(searchParams[SEARCH.START_DELTA]),
-                    endDelta: parseInt(searchParams[SEARCH.END_DELTA])
-                });
-            }
-
-            var validBounds = searchParams[SEARCH.MODE] === 'fixed' &&
-                searchParams[SEARCH.START_BOUND] &&
-                searchParams[SEARCH.END_BOUND] &&
-                !isNaN(searchParams[SEARCH.START_BOUND]) &&
-                !isNaN(searchParams[SEARCH.END_BOUND]);
-
-            if (validBounds) {
-                this.conductor.bounds({
-                    start: parseInt(searchParams[SEARCH.START_BOUND]),
-                    end: parseInt(searchParams[SEARCH.END_BOUND])
-                });
-            }
+        /**
+         * Given a key for a clock, retrieve the clock object.
+         * @private
+         * @param key
+         * @returns {Clock}
+         */
+        TimeConductorController.prototype.getClock = function (key) {
+            return this.timeAPI.getAllClocks().filter(function (clock) {
+                return clock.key === key;
+            })[0];
         };
 
         /**
+         * Activate the selected menu option. Menu options correspond to clocks.
+         * A distinction is made to avoid confusion between the menu options and
+         * their metadata, and actual {@link Clock} objects.
+         *
          * @private
+         * @param newOption
+         * @param oldOption
          */
-        TimeConductorController.prototype.destroy = function () {
-            this.conductor.off('bounds', this.changeBounds);
-            this.conductor.off('timeSystem', this.changeTimeSystem);
+        TimeConductorController.prototype.selectMenuOption = function (newOption, oldOption) {
+            if (newOption !== oldOption) {
+                var config = this.getConfig(this.timeAPI.timeSystem(), newOption.clock);
 
-            this.conductorViewService.off('pan', this.onPan);
-            this.conductorViewService.off('pan-stop', this.onPanStop);
-        };
+                /*
+                 * If there is no configuration defined for the selected clock
+                 * and time system default to the first time system that
+                 * configuration is available for.
+                 */
+                if (config === undefined) {
+                    var timeSystem = this.timeSystemsForClocks[newOption.key][0];
+                    this.$scope.timeSystemModel.selected = timeSystem;
+                    this.setTimeSystemFromView(timeSystem.key);
+                    config = this.getConfig(timeSystem, newOption.clock);
+                }
 
-        /**
-         * When the conductor bounds change, set the bounds in the form.
-         * @private
-         * @param {TimeConductorBounds} bounds
-         */
-        TimeConductorController.prototype.changeBounds = function (bounds) {
-            //If a zoom or pan is currently in progress, do not override form values.
-            if (!this.zooming && !this.panning) {
-                this.setFormFromBounds(bounds);
-                if (this.conductorViewService.mode() === 'fixed') {
-                    //Set bounds in URL on change
-                    this.setParam(SEARCH.START_BOUND, bounds.start);
-                    this.setParam(SEARCH.END_BOUND, bounds.end);
+                if (newOption.key === 'fixed') {
+                    this.timeAPI.stopClock();
+                } else {
+                    this.timeAPI.clock(newOption.key, config.clockOffsets);
                 }
             }
         };
 
         /**
-         * Called when the bounds change in the time conductor. Synchronizes
-         * the bounds values in the time conductor with those in the form
-         * @param {TimeConductorBounds}
+         * From the provided configuration, build the available menu options.
+         * @private
+         * @param config
+         * @returns {*[]}
          */
-        TimeConductorController.prototype.setFormFromBounds = function (bounds) {
+        TimeConductorController.prototype.optionsFromConfig = function (config) {
+            /*
+             * "Fixed Mode" is always the first available option.
+             */
+            var options = [{
+                key: 'fixed',
+                name: 'Fixed Timespan Mode',
+                description: 'Query and explore data that falls between two fixed datetimes',
+                cssClass: 'icon-calendar'
+            }];
+            var clocks = {};
+            var clocksForTimeSystem = this.clocksForTimeSystem;
+            var timeSystemsForClocks = this.timeSystemsForClocks;
+
+            (config.menuOptions || []).forEach(function (menuOption) {
+                var clock = this.getClock(menuOption.clock);
+                var clockKey = menuOption.clock || 'fixed';
+
+                var timeSystem = this.timeSystems[menuOption.timeSystem];
+                if (timeSystem !== undefined) {
+                    if (clock !== undefined) {
+                        // Use an associative array to built a set of unique
+                        // clocks
+                        clocks[clock.key] = clock;
+                        clocksForTimeSystem[timeSystem.key] = clocksForTimeSystem[timeSystem.key] || [];
+                        clocksForTimeSystem[timeSystem.key].push(clock);
+                    }
+                    timeSystemsForClocks[clockKey] = timeSystemsForClocks[clockKey] || [];
+                    timeSystemsForClocks[clockKey].push(timeSystem);
+                } else if (menuOption.clock !== undefined) {
+                    console.error('Unknown clock "' + clockKey + '", has it been registered?');
+                }
+            }.bind(this));
+
+            /*
+             * Populate the clocks menu with metadata from the available clocks
+             */
+            Object.values(clocks).forEach(function (clock) {
+                options.push({
+                    key: clock.key,
+                    name: clock.name,
+                    description: "Monitor streaming data in real-time. The Time " +
+                    "Conductor and displays will automatically advance themselves based on this clock. " + clock.description,
+                    cssClass: clock.cssClass || 'icon-clock',
+                    clock: clock
+                });
+            }.bind(this));
+
+            return options;
+        };
+
+        /**
+         * When bounds change, set UI values from the new bounds.
+         * @param {TimeBounds} bounds the bounds
+         */
+        TimeConductorController.prototype.setViewFromBounds = function (bounds) {
             if (!this.zooming && !this.panning) {
                 this.$scope.boundsModel.start = bounds.start;
                 this.$scope.boundsModel.end = bounds.end;
 
-                if (this.supportsZoom) {
-                    this.currentZoom = this.toSliderValue(bounds.end - bounds.start);
+                if (this.supportsZoom()) {
+                    var config = this.getConfig(this.timeAPI.timeSystem(), this.timeAPI.clock());
+                    this.currentZoom = this.toSliderValue(bounds.end - bounds.start, config.zoomOutLimit, config.zoomInLimit);
                     this.toTimeUnits(bounds.end - bounds.start);
                 }
 
+                /*
+                    Ensure that a digest occurs, capped at the browser's refresh
+                    rate.
+                 */
                 if (!this.pendingUpdate) {
                     this.pendingUpdate = true;
                     this.$window.requestAnimationFrame(function () {
@@ -245,108 +279,129 @@ define(
         };
 
         /**
-         * On mode change, populate form based on time systems available
-         * from the selected mode.
-         * @param mode
+         * Retrieve any configuration defined for the provided time system and
+         * clock
+         * @private
+         * @param timeSystem
+         * @param clock
+         * @returns {object} The Time Conductor configuration corresponding to
+         * the provided combination of time system and clock
          */
-        TimeConductorController.prototype.setFormFromMode = function (mode) {
-            this.$scope.modeModel.selectedKey = mode;
-            //Synchronize scope with time system on mode
-            this.$scope.timeSystemModel.options =
-                this.conductorViewService.availableTimeSystems()
-                .map(function (t) {
-                    return t.metadata;
+        TimeConductorController.prototype.getConfig = function (timeSystem, clock) {
+            var clockKey = clock && clock.key;
+            var timeSystemKey = timeSystem && timeSystem.key;
+
+            var option = this.config.menuOptions.filter(function (menuOption) {
+                return menuOption.timeSystem === timeSystemKey && menuOption.clock === clockKey;
+            })[0];
+            return option;
+        };
+
+        /**
+         * When the clock offsets change, update the values in the UI
+         * @param {ClockOffsets} offsets
+         * @private
+         */
+        TimeConductorController.prototype.setViewFromOffsets = function (offsets) {
+            this.$scope.boundsModel.startOffset = Math.abs(offsets.start);
+            this.$scope.boundsModel.endOffset = offsets.end;
+        };
+
+        /**
+         * When form values for bounds change, update the bounds in the Time API
+         * to trigger an application-wide bounds change.
+         * @param {object} boundsModel
+         */
+        TimeConductorController.prototype.setBoundsFromView = function (boundsModel) {
+            var bounds = this.timeAPI.bounds();
+            if (boundsModel.start !== bounds.start || boundsModel.end !== bounds.end) {
+                this.timeAPI.bounds({
+                    start: boundsModel.start,
+                    end: boundsModel.end
                 });
-        };
-
-        /**
-         * When the deltas change, update the values in the UI
-         * @private
-         */
-        TimeConductorController.prototype.setFormFromDeltas = function (deltas) {
-            this.$scope.boundsModel.startDelta = deltas.start;
-            this.$scope.boundsModel.endDelta = deltas.end;
-        };
-
-        /**
-         * Initialize the form when time system changes.
-         * @param {TimeSystem} timeSystem
-         */
-        TimeConductorController.prototype.setFormFromTimeSystem = function (timeSystem) {
-            var timeSystemModel = this.$scope.timeSystemModel;
-            timeSystemModel.selected = timeSystem;
-            timeSystemModel.format = timeSystem.formats()[0];
-            timeSystemModel.deltaFormat = timeSystem.deltaFormat();
-
-            if (this.supportsZoom) {
-                timeSystemModel.minZoom = timeSystem.defaults().zoom.min;
-                timeSystemModel.maxZoom = timeSystem.defaults().zoom.max;
             }
         };
 
         /**
-         * Called when form values are changed.
-         * @param formModel
+         * When form values for bounds change, update the bounds in the Time API
+         * to trigger an application-wide bounds change.
+         * @param {object} formModel
          */
-        TimeConductorController.prototype.setBounds = function (boundsModel) {
-            this.conductor.bounds({
-                start: boundsModel.start,
-                end: boundsModel.end
-            });
-        };
+        TimeConductorController.prototype.setOffsetsFromView = function (boundsModel) {
+            if (this.validation.validateStartOffset(boundsModel.startOffset) && this.validation.validateEndOffset(boundsModel.endOffset)) {
+                var offsets = {
+                    start: 0 - boundsModel.startOffset,
+                    end: boundsModel.endOffset
+                };
+                var existingOffsets = this.timeAPI.clockOffsets();
 
-        /**
-         * Called when the delta values in the form change. Validates and
-         * sets the new deltas on the Mode.
-         * @param boundsModel
-         * @see TimeConductorMode
-         */
-        TimeConductorController.prototype.setDeltas = function (boundsFormModel) {
-            var deltas = {
-                start: boundsFormModel.startDelta,
-                end: boundsFormModel.endDelta
-            };
-            if (this.validation.validateStartDelta(deltas.start) && this.validation.validateEndDelta(deltas.end)) {
-                //Sychronize deltas between form and mode
-                this.conductorViewService.deltas(deltas);
-
-                //Set Deltas in URL on change
-                this.setParam(SEARCH.START_DELTA, deltas.start);
-                this.setParam(SEARCH.END_DELTA, deltas.end);
-            }
-        };
-
-        /**
-         * Change the selected Time Conductor mode. This will call destroy
-         * and initialization functions on the relevant modes, setting
-         * default values for bound and deltas in the form.
-         *
-         * @private
-         * @param newModeKey
-         * @param oldModeKey
-         */
-        TimeConductorController.prototype.setMode = function (newModeKey, oldModeKey) {
-            //Set mode in URL on change
-            this.setParam(SEARCH.MODE, newModeKey);
-
-            if (newModeKey !== oldModeKey) {
-                this.conductorViewService.mode(newModeKey);
-                this.setFormFromMode(newModeKey);
-
-                if (newModeKey === "fixed") {
-                    this.setParam(SEARCH.START_DELTA, undefined);
-                    this.setParam(SEARCH.END_DELTA, undefined);
-                } else {
-                    this.setParam(SEARCH.START_BOUND, undefined);
-                    this.setParam(SEARCH.END_BOUND, undefined);
-
-                    var deltas = this.conductorViewService.deltas();
-                    if (deltas) {
-                        this.setParam(SEARCH.START_DELTA, deltas.start);
-                        this.setParam(SEARCH.END_DELTA, deltas.end);
-                    }
+                if (offsets.start !== existingOffsets.start || offsets.end !== existingOffsets.end) {
+                    //Sychronize offsets between form and time API
+                    this.timeAPI.clockOffsets(offsets);
                 }
             }
+        };
+
+        /**
+         * @private
+         * @returns {boolean}
+         */
+        TimeConductorController.prototype.supportsZoom = function () {
+            var config = this.getConfig(this.timeAPI.timeSystem(), this.timeAPI.clock());
+            return config && (config.zoomInLimit !== undefined && config.zoomOutLimit !== undefined);
+        };
+
+        /**
+         * Update the UI state to reflect a change in clock. Provided conductor
+         * configuration will be checked for compatibility between the new clock
+         * and the currently selected time system. If configuration is not available,
+         * an attempt will be made to default to a time system that is compatible
+         * with the new clock
+         *
+         * @private
+         * @param {Clock} clock
+         */
+        TimeConductorController.prototype.setViewFromClock = function (clock) {
+            var newClockKey = clock && clock.key;
+            var timeSystems = this.timeSystemsForClocks[newClockKey || 'fixed'];
+            var menuOption = this.menu.options.filter(function (option) {
+                return option.key === (newClockKey || 'fixed');
+            })[0];
+
+            this.menu.selected = menuOption;
+
+            //Try to find currently selected time system in time systems for clock
+            var selectedTimeSystem = timeSystems.filter(function (timeSystem) {
+                return timeSystem.key === this.$scope.timeSystemModel.selected.key;
+            }.bind(this))[0];
+
+            var config = this.getConfig(selectedTimeSystem, clock);
+
+            if (selectedTimeSystem === undefined) {
+                selectedTimeSystem = timeSystems[0];
+                config = this.getConfig(selectedTimeSystem, clock);
+
+                if (clock === undefined) {
+                    this.timeAPI.timeSystem(selectedTimeSystem, config.bounds);
+                } else {
+                    //When time system changes, some start bounds need to be provided
+                    this.timeAPI.timeSystem(selectedTimeSystem, {
+                        start: clock.currentValue() + config.clockOffsets.start,
+                        end: clock.currentValue() + config.clockOffsets.end
+                    });
+                }
+            }
+
+            this.isFixed = clock === undefined;
+
+            if (clock !== undefined) {
+                this.setViewFromOffsets(this.timeAPI.clockOffsets());
+            } else {
+                this.setViewFromBounds(this.timeAPI.bounds());
+            }
+
+            this.zoom = this.supportsZoom();
+            this.$scope.timeSystemModel.options = timeSystems;
         };
 
         /**
@@ -358,13 +413,38 @@ define(
          * @param key
          * @see TimeConductorController#setTimeSystem
          */
-        TimeConductorController.prototype.selectTimeSystemByKey = function (key) {
-            var selected = this.timeSystems.filter(function (timeSystem) {
-                return timeSystem.metadata.key === key;
-            })[0];
-            if (selected) {
-                this.supportsZoom = !!(selected.defaults() && selected.defaults().zoom);
-                this.conductor.timeSystem(selected, selected.defaults().bounds);
+        TimeConductorController.prototype.setTimeSystemFromView = function (key) {
+            var clock = this.menu.selected.clock;
+            var timeSystem = this.timeSystems[key];
+            var config = this.getConfig(timeSystem, clock);
+            var bounds;
+
+            this.$scope.timeSystemModel.selected = timeSystem;
+
+            /**
+             * Time systems require default bounds to be specified when they
+             * are set
+             */
+            if (clock === undefined) {
+                bounds = config.bounds;
+                this.timeAPI.timeSystem(timeSystem, bounds);
+            } else {
+                bounds = {
+                    start: clock.currentValue() + config.clockOffsets.start,
+                    end: clock.currentValue() + config.clockOffsets.end
+                };
+                //Has time system change resulted in offsets change (based on config)?
+                this.timeAPI.timeSystem(timeSystem, bounds);
+                var configOffsets = config.clockOffsets;
+                var apiOffsets = this.timeAPI.clockOffsets();
+
+                //Checking if a clock is actually set on the Time API before
+                // trying to set offsets.
+                if (this.timeAPI.clock() !== undefined &&
+                    (configOffsets.start !== apiOffsets.start ||
+                    configOffsets.end !== apiOffsets.end)) {
+                    this.timeAPI.clockOffsets(configOffsets);
+                }
             }
         };
 
@@ -372,41 +452,39 @@ define(
          * Handles time system change from time conductor
          *
          * Sets the selected time system. Will populate form with the default
-         * bounds and deltas defined in the selected time system.
+         * bounds and offsets defined in the selected time system.
          *
          * @param newTimeSystem
          */
-        TimeConductorController.prototype.changeTimeSystem = function (newTimeSystem) {
-            //Set time system in URL on change
-            this.setParam(SEARCH.TIME_SYSTEM, newTimeSystem.metadata.key);
+        TimeConductorController.prototype.setViewFromTimeSystem = function (timeSystem) {
+            var oldKey = (this.$scope.timeSystemModel.selected || {}).key;
+            var timeSystemModel = this.$scope.timeSystemModel;
 
-            if (newTimeSystem && (newTimeSystem !== this.$scope.timeSystemModel.selected)) {
-                this.supportsZoom = !!(newTimeSystem.defaults() && newTimeSystem.defaults().zoom);
-                this.setFormFromTimeSystem(newTimeSystem);
+            if (timeSystem && (timeSystem.key !== oldKey)) {
+                var config = this.getConfig(timeSystem, this.timeAPI.clock());
 
-                if (newTimeSystem.defaults()) {
-                    var deltas = newTimeSystem.defaults().deltas || {start: 0, end: 0};
-                    var bounds = newTimeSystem.defaults().bounds || {start: 0, end: 0};
+                timeSystemModel.selected = timeSystem;
+                timeSystemModel.format = timeSystem.timeFormat;
+                timeSystemModel.durationFormat = timeSystem.durationFormat;
 
-                    this.setFormFromDeltas(deltas);
-                    this.setFormFromBounds(bounds);
+                if (this.supportsZoom()) {
+                    timeSystemModel.minZoom = config.zoomOutLimit;
+                    timeSystemModel.maxZoom = config.zoomInLimit;
                 }
             }
+            this.zoom = this.supportsZoom();
         };
 
         /**
          * Takes a time span and calculates a slider increment value, used
          * to set the horizontal offset of the slider.
+         * @private
          * @param {number} timeSpan a duration of time, in ms
          * @returns {number} a value between 0.01 and 0.99, in increments of .01
          */
-        TimeConductorController.prototype.toSliderValue = function (timeSpan) {
-            var timeSystem = this.conductor.timeSystem();
-            if (timeSystem) {
-                var zoomDefaults = this.conductor.timeSystem().defaults().zoom;
-                var perc = timeSpan / (zoomDefaults.min - zoomDefaults.max);
-                return 1 - Math.pow(perc, 1 / 4);
-            }
+        TimeConductorController.prototype.toSliderValue = function (timeSpan, zoomOutLimit, zoomInLimit) {
+            var perc = timeSpan / (zoomOutLimit - zoomInLimit);
+            return 1 - Math.pow(perc, 1 / 4);
         };
 
         /**
@@ -415,9 +493,13 @@ define(
          * @param {TimeSpan} timeSpan
          */
         TimeConductorController.prototype.toTimeUnits = function (timeSpan) {
-            if (this.conductor.timeSystem()) {
-                var timeFormat = this.formatService.getFormat(this.conductor.timeSystem().formats()[0]);
-                this.$scope.timeUnits = timeFormat.timeUnits && timeFormat.timeUnits(timeSpan);
+            var timeSystem = this.timeAPI.timeSystem();
+            if (timeSystem && timeSystem.isUTCBased) {
+                var momentified = moment.duration(timeSpan);
+
+                this.$scope.timeUnits = timeUnitsMegastructure.filter(function (row) {
+                    return row[1](momentified);
+                })[0][0];
             }
         };
 
@@ -429,17 +511,18 @@ define(
          * @param bounds
          */
         TimeConductorController.prototype.onZoom = function (sliderValue) {
-            var zoomDefaults = this.conductor.timeSystem().defaults().zoom;
-            var timeSpan = Math.pow((1 - sliderValue), 4) * (zoomDefaults.min - zoomDefaults.max);
+            var config = this.getConfig(this.timeAPI.timeSystem(), this.timeAPI.clock());
+            var timeSpan = Math.pow((1 - sliderValue), 4) * (config.zoomOutLimit - config.zoomInLimit);
 
             var zoom = this.conductorViewService.zoom(timeSpan);
+            this.zooming = true;
 
             this.$scope.boundsModel.start = zoom.bounds.start;
             this.$scope.boundsModel.end = zoom.bounds.end;
             this.toTimeUnits(zoom.bounds.end - zoom.bounds.start);
 
-            if (zoom.deltas) {
-                this.setFormFromDeltas(zoom.deltas);
+            if (zoom.offsets) {
+                this.setViewFromOffsets(zoom.offsets);
             }
         };
 
@@ -453,10 +536,12 @@ define(
          * @fires platform.features.conductor.TimeConductorController~zoomStop
          */
         TimeConductorController.prototype.onZoomStop = function () {
-            this.setBounds(this.$scope.boundsModel);
-            this.setDeltas(this.$scope.boundsModel);
-            this.zooming = false;
+            if (this.timeAPI.clock() !== undefined) {
+                this.setOffsetsFromView(this.$scope.boundsModel);
+            }
+            this.setBoundsFromView(this.$scope.boundsModel);
 
+            this.zooming = false;
             this.conductorViewService.emit('zoom-stop');
         };
 
@@ -479,6 +564,20 @@ define(
          */
         TimeConductorController.prototype.onPanStop = function () {
             this.panning = false;
+        };
+
+        /**
+         * @private
+         */
+        TimeConductorController.prototype.destroy = function () {
+            this.timeAPI.off('bounds', this.setViewFromBounds);
+            this.timeAPI.off('timeSystem', this.setViewFromTimeSystem);
+            this.timeAPI.off('clock', this.setViewFromClock);
+            this.timeAPI.off('follow', this.setFollow);
+            this.timeAPI.off('clockOffsets', this.setViewFromOffsets);
+
+            this.conductorViewService.off('pan', this.onPan);
+            this.conductorViewService.off('pan-stop', this.onPanStop);
         };
 
         return TimeConductorController;

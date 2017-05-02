@@ -20,28 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+define(['../../../src/plugins/utcTimeSystem/LocalClock'], function (LocalClock) {
     /**
-     * A tick source is an event generator such as a timing signal, or
-     * indicator of data availability, which can be used to advance the Time
-     * Conductor. Usage is simple, a listener registers a callback which is
-     * invoked when this source 'ticks'.
-     *
-     * @interface
+     * A {@link Clock} that mocks a "latest available data" type tick source.
+     * This is for testing purposes only, and behaves identically to a local clock.
+     * It DOES NOT tick on receipt of data.
      * @constructor
      */
-    function TickSource() {
-        this.listeners = [];
+    function LADClock(period) {
+        LocalClock.call(this, period);
+
+        this.key = 'test-lad';
+        this.mode = 'lad';
+        this.cssClass = 'icon-database';
+        this.name = 'Latest available data';
+        this.description = "Updates when when new data is available";
     }
+    LADClock.prototype = Object.create(LocalClock.prototype);
 
-    /**
-     * @param callback Function to be called when this tick source ticks.
-     * @returns an 'unlisten' function that will remove the callback from
-     * the registered listeners
-     */
-    TickSource.prototype.listen = function (callback) {
-        throw new Error('Not implemented');
-    };
-
-    return TickSource;
+    return LADClock;
 });

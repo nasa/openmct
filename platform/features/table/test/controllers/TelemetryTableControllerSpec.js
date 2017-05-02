@@ -55,13 +55,13 @@ define(
                 };
                 mockConductor = jasmine.createSpyObj("conductor", [
                     "bounds",
-                    "follow",
+                    "clock",
                     "on",
                     "off",
                     "timeSystem"
                 ]);
                 mockConductor.bounds.andReturn(mockBounds);
-                mockConductor.follow.andReturn(false);
+                mockConductor.clock.andReturn(undefined);
 
                 mockDomainObject = jasmine.createSpyObj("domainObject", [
                     "getModel",
@@ -124,7 +124,7 @@ define(
                 mockTimeout.cancel = jasmine.createSpy("cancel");
 
                 mockAPI = {
-                    conductor: mockConductor,
+                    time: mockConductor,
                     objects: mockObjectAPI,
                     telemetry: mockTelemetryAPI,
                     composition: mockCompositionAPI
@@ -145,21 +145,21 @@ define(
                 it('conductor changes', function () {
                     expect(mockConductor.on).toHaveBeenCalledWith("timeSystem", jasmine.any(Function));
                     expect(mockConductor.on).toHaveBeenCalledWith("bounds", jasmine.any(Function));
-                    expect(mockConductor.on).toHaveBeenCalledWith("follow", jasmine.any(Function));
+                    expect(mockConductor.on).toHaveBeenCalledWith("clock", jasmine.any(Function));
                 });
             });
 
             describe('deregisters all listeners on scope destruction', function () {
                 var timeSystemListener,
                     boundsListener,
-                    followListener;
+                    clockListener;
 
                 beforeEach(function () {
                     controller.registerChangeListeners();
 
                     timeSystemListener = getCallback(mockConductor.on, "timeSystem");
                     boundsListener = getCallback(mockConductor.on, "bounds");
-                    followListener = getCallback(mockConductor.on, "follow");
+                    clockListener = getCallback(mockConductor.on, "clock");
 
                     var destroy = getCallback(mockScope.$on, "$destroy");
                     destroy();
@@ -171,7 +171,7 @@ define(
                 it('conductor changes', function () {
                     expect(mockConductor.off).toHaveBeenCalledWith("timeSystem", timeSystemListener);
                     expect(mockConductor.off).toHaveBeenCalledWith("bounds", boundsListener);
-                    expect(mockConductor.off).toHaveBeenCalledWith("follow", followListener);
+                    expect(mockConductor.off).toHaveBeenCalledWith("clock", clockListener);
                 });
             });
 
@@ -321,12 +321,12 @@ define(
             it('When in real-time mode, enables auto-scroll', function () {
                 controller.registerChangeListeners();
 
-                var followCallback = getCallback(mockConductor.on, "follow");
+                var clockCallback = getCallback(mockConductor.on, "clock");
                 //Confirm pre-condition
                 expect(mockScope.autoScroll).toBeFalsy();
 
-                //Mock setting the conductor to 'follow' mode
-                followCallback(true);
+                //Mock setting the a clock in the Time API
+                clockCallback({});
                 expect(mockScope.autoScroll).toBe(true);
             });
 
@@ -357,9 +357,7 @@ define(
                     }];
 
                     mockTimeSystem = {
-                        metadata: {
-                            key: "column1"
-                        }
+                        key: "column1"
                     };
 
                     mockTelemetryAPI.commonValuesForHints.andCallFake(function (metadata, hints) {

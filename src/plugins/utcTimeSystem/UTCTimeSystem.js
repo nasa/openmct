@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,36 +14,31 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open MCT includes source code licensed under additional open source
+ * Open MCT Web includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './time/TimeAPI',
-    './objects/ObjectAPI',
-    './composition/CompositionAPI',
-    './types/TypeRegistry',
-    './ui/Dialog',
-    './ui/GestureAPI',
-    './telemetry/TelemetryAPI'
-], function (
-    TimeAPI,
-    ObjectAPI,
-    CompositionAPI,
-    TypeRegistry,
-    Dialog,
-    GestureAPI,
-    TelemetryAPI
-) {
-    return {
-        TimeAPI: TimeAPI,
-        ObjectAPI: ObjectAPI,
-        CompositionAPI: CompositionAPI,
-        Dialog: Dialog,
-        TypeRegistry: TypeRegistry,
-        GestureAPI: GestureAPI,
-        TelemetryAPI: TelemetryAPI
-    };
+define([], function () {
+    /**
+     * This time system supports UTC dates.
+     * @implements TimeSystem
+     * @constructor
+     */
+    function UTCTimeSystem() {
+
+        /**
+         * Metadata used to identify the time system in
+         * the UI
+         */
+        this.key = 'utc';
+        this.name = 'UTC';
+        this.cssClass = 'icon-clock';
+        this.timeFormat = 'utc';
+        this.durationFormat = 'duration';
+        this.isUTCBased = true;
+    }
+
+    return UTCTimeSystem;
 });
