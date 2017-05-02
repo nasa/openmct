@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,31 +19,19 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-// Styles for extended text copy
+@import "bourbon";
+@import "../../../../platform/commonUI/general/res/sass/constants";
+@import "../../../../platform/commonUI/general/res/sass/mixins";
+@import "../../../../platform/commonUI/themes/snow/res/sass/constants";
+@import "../../../../platform/commonUI/themes/snow/res/sass/mixins";
+@import "../../../../platform/commonUI/general/res/sass/glyphs";
+@import "../../../../platform/commonUI/general/res/sass/icons";
 
-.abs.l-standalone {
-	$d: 20%;
-	padding: $d/4 $d;
-}
+// Thematic constants
+$colorCode: rgba(black, 0.1);
+$colorGlyphExample: darken($colorBodyBg, 30%);
 
-.s-text {
-	font-size: 0.8em;
-	ol, ul {
-		list-style: square;
-		margin-left: 1.5em;
-		li {
+@import "style-guide-base";
 
-		}
-	}
-
-	h1, h2, h3 {
-        font-weight: 200 !important;
-    }
-
-    table {
-        td { font-size: inherit; }
-        tr.header {
-            background-color: rgba($colorBodyFg, 0.2);
-        }
-    }
-}
+div.themed.snow { display: block; }
+span.themed.snow { display: inline; }

@@ -1,0 +1,84 @@
+<!--
+ Open MCT, Copyright (c) 2014-2016, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<div ng-init="colors = [
+{ 'category': 'Interface', 'description': 'Colors used in the application envelope, buttons and controls.', 'items': [{ 'name': 'Body Background', 'constant': '$colorBodyBg', 'valEspresso': '#333', 'valSnow': '#fcfcfc' },
+{ 'name': 'Body Foreground', 'constant': '$colorBodyFg', 'valEspresso': '#999', 'valSnow': '#666' },
+{ 'name': 'Key Color Background', 'constant': '$colorKey', 'valEspresso': '#0099cc', 'valSnow': '#0099cc' },
+{ 'name': 'Key Color Foreground', 'constant': '$colorKeyFg', 'valEspresso': '#fff', 'valSnow': '#fff' },
+{ 'name': 'Paused Color Background', 'constant': '$colorPausedBg', 'valEspresso': '#c56f01', 'valSnow': '#ff9900' },
+{ 'name': 'Paused Color Foreground', 'constant': '$colorPausedFg', 'valEspresso': '#fff', 'valSnow': '#fff' }]},
+{ 'category': 'Forms', 'description': 'Colors in forms, mainly to articulate validation status.', 'items': [{ 'name': 'Valid Entry', 'constant': '$colorFormValid', 'valEspresso': '#33cc33', 'valSnow': '#33cc33' },
+{ 'name': 'Errorenous Entry', 'constant': '$colorFormError', 'valEspresso': '#990000', 'valSnow': '#990000' },
+{ 'name': 'Invalid Entry', 'constant': '$colorFormInvalid', 'valEspresso': '#ff3300', 'valSnow': '#ff2200' }]},
+{ 'category': 'Application Status', 'description': 'Colors related to the status of application objects, such as a successful connection to a service.', 'items': [{ 'name': 'Alert Color', 'constant': '$colorAlert', 'valEspresso': '#ff3c00', 'valSnow': '#ff3c00' },
+{ 'name': 'Status Color Foreground', 'constant': '$colorStatusFg', 'valEspresso': '#ccc', 'valSnow': '#fff' },
+{ 'name': 'Default Status Color', 'constant': '$colorStatusDefault', 'valEspresso': '#ccc', 'valSnow': '#ccc' },
+{ 'name': 'Status: Informational Color', 'constant': '$colorStatusInfo', 'valEspresso': '#62ba72', 'valSnow': '#60ba7b' },
+{ 'name': 'Status: Alert Color', 'constant': '$colorStatusAlert', 'valEspresso': '#ffa66d', 'valSnow': '#ffb66c' },
+{ 'name': 'Status: Error Color', 'constant': '$colorStatusError', 'valEspresso': '#d4585c', 'valSnow': '#c96b68' }]},
+{ 'category': 'Telemetry Status', 'description': 'Telemetry status colors used to indicate limit violations and alarm states. Note that these colors should be reserved exclusively for this usage.', 'items': [{ 'name': 'Yellow Limit Color Background', 'constant': '$colorLimitYellowBg', 'valEspresso': 'rgba(255,170,0,0.3)', 'valSnow': 'rgba(255,170,0,0.3)' },
+{ 'name': 'Yellow Limit Color Icon', 'constant': '$colorLimitYellowIc', 'valEspresso': '#ffaa00', 'valSnow': '#ffaa00' },
+{ 'name': 'Red Limit Color Background', 'constant': '$colorLimitRedBg', 'valEspresso': 'rgba(255,0,0,0.3)', 'valSnow': 'rgba(255,0,0,0.3)' },
+{ 'name': 'Red Limit Color Icon', 'constant': '$colorLimitRedIc', 'valEspresso': 'red', 'valSnow': 'red' }]}
+]"></div>
+
+
+
+<div class="l-style-guide s-text">
+    <p class="doc-title">Open MCT Style Guide</p>
+    <h1>Colors</h1>
+
+    <div class="l-section">
+        <h2>Overview</h2>
+        <p>In mission operations, color is used to convey meaning. Alerts, warnings and status conditions are by convention communicated with colors in the green, yellow and red families. Colors must also be reserved for use in plots. As a result, Open MCT uses color selectively and sparingly. Follow these guidelines:</p>
+        <ul>
+            <li>Don't use red, orange, yellow or green colors in any element that isn't conveying some kind of status information.</li>
+            <li>Each theme has a key color (typically blue-ish) that should be used to emphasize interactive elements and important UI controls.</li>
+            <li>Within each theme values are used to push elements back or bring them forward, lowering or raising them in visual importance.
+                <span class="themed espresso">In this theme, Espresso, lighter colors are placed on a dark background. The lighter a color is, the more it comes toward the observer and is raised in importance.</span>
+                <span class="themed snow">In this theme, Snow, darker colors are placed on a light background. The darker a color is, the more it comes toward the observer and is raised in importance.</span>
+            </li>
+            <li>For consistency, use a theme's pre-defined status colors.</li>
+        </ul>
+    </div>
+
+    <div class="l-section" ng-repeat="colorSet in colors">
+        <h2>{{ colorSet.category }}</h2>
+        <p>{{ colorSet.description }}</p>
+        <div class="items-holder grid">
+            <div class="item swatch-item" ng-repeat="color in colorSet.items">
+                <div class="h-swatch">
+                    <div class="swatch themed espresso" style="background-color: {{ color.valEspresso }}"></div>
+                    <div class="swatch themed snow" style="background-color: {{ color.valSnow }}"></div>
+                </div>
+                <table class="details">
+                    <tr><td class="label">Name</td><td class="value">{{color.name}}</td></tr>
+                    <tr><td class="label">SASS</td><td class="value">{{color.constant}}</td></tr>
+                    <tr><td class="label">Value</td><td class="value">
+                        <span class="themed espresso">{{color.valEspresso}}</span>
+                        <span class="themed snow">{{color.valSnow}}</span>
+                    </td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

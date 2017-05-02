@@ -42,6 +42,27 @@
 	a {
 		color: $colorAboutLink;
 	}
+
+    h1, h2, h3 {
+        color: pullForward($colorBodyFg, 20%);
+        margin-bottom: 1em;
+    }
+
+    h1 {
+        font-size: 2.25em;
+    }
+
+    h2 {
+        border-top: 1px solid $colorInteriorBorder;
+        font-size: 1.5em;
+        margin-top: 2em;
+        padding-top: 1em;
+    }
+
+    h3 {
+        margin-top: 2em;
+    }
+
 	.s-description,
 	.s-button {
 		line-height: 2em;
