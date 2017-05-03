@@ -43,18 +43,14 @@ define([
 
         $scope.pending = 0;
 
-        this.timeConductor = openmct.conductor;
-
         this.listenTo($scope, 'user:viewport:change:end', this.onUserViewportChangeEnd, this);
         this.listenTo($scope, 'user:viewport:change:start', this.onUserViewportChangeStart, this);
         this.listenTo($scope, '$destroy', this.destroy, this);
-        this.listenTo(this.timeConductor, 'bounds', this.updateDisplayBounds, this);
-        this.listenTo(this.timeConductor, 'timeSystem', this.onTimeSystemChange, this);
-        this.synchronized(true);
+        this.listenTo(this.openmct.time, 'bounds', this.updateDisplayBounds, this);
+        this.listenTo(this.openmct.time, 'timeSystem', this.onTimeSystemChange, this);
 
         this.initialize($scope.domainObject);
-        this.followTimeConductor(openmct.conductor);
-        window.plot = this;
+        this.followTimeConductor();
     }
 
     eventHelpers.extend(PlotController.prototype);
@@ -88,7 +84,7 @@ define([
             domain: this.config.xAxis.get('key')
         };
 
-        _.extend(options, this.timeConductor.bounds());
+        _.extend(options, this.openmct.time.bounds());
 
         series.load(options)
             .then(this.stopLoading.bind(this));
@@ -138,20 +134,20 @@ define([
         this.configId = domainObject.getId();
         this.config = configStore.get(this.configId);
         if (!this.config) {
-            var bounds = this.timeConductor.bounds();
-            var timeSystem = this.timeConductor.timeSystem();
-            var format = this.formatService.getFormat(timeSystem.formats()[0]);
+            var bounds = this.openmct.time.bounds();
+            var timeSystem = this.openmct.time.timeSystem();
+            var format = this.formatService.getFormat(timeSystem.timeFormat);
             var model = domainObject.getModel();
 
             this.config = new PlotConfigurationModel({
                 xAxis: {
-                    key: timeSystem.metadata.key,
+                    key: timeSystem.key,
                     range: {
                         min: bounds.start,
                         max: bounds.end,
                     },
                     format: format.format.bind(format),
-                    label: timeSystem.metadata.key
+                    label: timeSystem.name
                 },
                 yAxis: _.get(model, 'configuration.yAxis', {}),
                 domainObject: model
@@ -295,9 +291,6 @@ define([
     };
 
     PlotController.prototype.watchTelemetryContainer = function (domainObject) {
-        // _.each(domainObject.configuration.yAxis, function (v, k) {
-        //     this.config.yAxis.set(k, v);
-        // }, this);
         this.config.set('domainObject', domainObject);
         this.domainObject = domainObject;
         this.removeMutationListener = this.openmct.objects.observe(domainObject, '*', function (domainObject) {
@@ -361,16 +354,15 @@ define([
         this.updateYAxis();
     };
 
-    PlotController.prototype.followTimeConductor = function (timeConductor) {
-        this.timeConductor = timeConductor;
-        this.listenTo(this.timeConductor, 'bounds', this.updateDisplayBounds, this);
-        this.listenTo(this.timeConductor, 'timeSystem', this.onTimeSystemChange, this);
+    PlotController.prototype.followTimeConductor = function () {
+        this.listenTo(this.openmct.time, 'bounds', this.updateDisplayBounds, this);
+        this.listenTo(this.openmct.time, 'timeSystem', this.onTimeSystemChange, this);
         this.synchronized(true);
     };
 
     PlotController.prototype.onTimeSystemChange = function (timeSystem) {
         // TODO: reset all series, reload.
-        this.config.xAxis.set('key', timeSystem.metadata.key);
+        this.config.xAxis.set('key', timeSystem.key);
     };
 
     PlotController.prototype.destroy = function () {
@@ -400,7 +392,7 @@ define([
     /**
      * Update display bounds when receiving events from time conductor.
      */
-    PlotController.prototype.updateDisplayBounds = function (bounds) {
+    PlotController.prototype.updateDisplayBounds = function (bounds, isTick) {
         var newRange = {
             min: bounds.start,
             max: bounds.end
@@ -409,20 +401,11 @@ define([
         if (_.isEqual(newRange, oldRange)) {
             return;
         }
-        if (this.timeConductor.follow() && !this.synchronized()) {
+        if (isTick && !this.synchronized()) {
             return;
         }
-        if (!this.synchronized()) {
-            this.config.yAxis.set('displayRange', this.config.yAxis.get('range'));
-        }
-        this.config.xAxis.set('range', newRange);
-        if (!this.timeConductor.follow()) {
-            this.loadMoreData(newRange, true);
-            return;
-        }
-        if ((oldRange.max === newRange.max && oldRange.min > newRange.min) ||
-            (oldRange.min === newRange.min && oldRange.max < newRange.max)) {
-            // Time range expanded, load more data.
+        this.config.yAxis.set('displayRange', this.config.yAxis.get('range'));
+        if (!isTick) {
             this.loadMoreData(newRange, true);
         } else {
             // TODO: drop any data that is more than 2x (max-min) before min.
@@ -440,7 +423,7 @@ define([
     PlotController.prototype.synchronized = function (value) {
         if (typeof value !== 'undefined') {
             this._synchronized = value;
-            var isUnsynced = !value && this.timeConductor.follow();
+            var isUnsynced = !value && this.openmct.time.clock();
             if (this.$scope.domainObject.getCapability('status')) {
                 this.$scope.domainObject.getCapability('status')
                     .set('timeconductor-unsynced', isUnsynced);
