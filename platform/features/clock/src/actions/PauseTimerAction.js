@@ -58,16 +58,12 @@ define(
             var domainObject = this.domainObject,
                 now = this.now;
 
-            function setTimerState(model) {
+            function updateModel(model) {
                 model.timerState = 'paused';
-            }
-
-            function setPausedTime(model) {
                 model.pausedTime = now();
             }
 
-            return domainObject.useCapability('mutation', setTimerState) &&
-                domainObject.useCapability('mutation', setPausedTime);
+            return domainObject.useCapability('mutation', updateModel);
         };
 
         return PauseTimerAction;

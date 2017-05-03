@@ -57,7 +57,7 @@ define(
             var domainObject = this.domainObject,
                 now = this.now;
 
-            function setTimestamp(model) {
+            function updateModel(model) {
                 //if we are resuming
                 if (model.pausedTime) {
                     var timeShift = now() - model.pausedTime;
@@ -65,19 +65,11 @@ define(
                 } else {
                     model.timestamp = now();
                 }
-            }
-
-            function setTimerState(model) {
                 model.timerState = 'started';
-            }
-
-            function setPausedTime(model) {
                 model.pausedTime = undefined;
             }
 
-            return domainObject.useCapability('mutation', setTimestamp) &&
-                domainObject.useCapability('mutation', setTimerState) &&
-                domainObject.useCapability('mutation', setPausedTime);
+            return domainObject.useCapability('mutation', updateModel);
         };
 
         return StartTimerAction;

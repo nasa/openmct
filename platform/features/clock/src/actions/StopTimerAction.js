@@ -57,21 +57,13 @@ define(
         StopTimerAction.prototype.perform = function () {
             var domainObject = this.domainObject;
 
-            function setTimestamp(model) {
+            function updateModel(model) {
                 model.timestamp = undefined;
-            }
-
-            function setTimerState(model) {
                 model.timerState = 'stopped';
-            }
-
-            function setPausedTime(model) {
                 model.pausedTime = undefined;
             }
 
-            return domainObject.useCapability('mutation', setTimestamp) &&
-                domainObject.useCapability('mutation', setTimerState) &&
-                domainObject.useCapability('mutation', setPausedTime);
+            return domainObject.useCapability('mutation', updateModel);
         };
 
         return StopTimerAction;
