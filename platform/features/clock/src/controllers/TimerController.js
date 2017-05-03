@@ -172,7 +172,7 @@ define(
          */
         TimerController.prototype.buttonCssClass = function () {
             return this.relevantAction ?
-                this.relevantAction.getMetadata().cssclass : "";
+                this.relevantAction.getMetadata().cssClass : "";
         };
 
         /**

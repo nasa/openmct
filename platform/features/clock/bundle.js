@@ -151,7 +151,7 @@ define([
                     ],
                     "category": "contextual",
                     "name": "Pause",
-                    "cssclass": "icon-pause",
+                    "cssClass": "icon-pause",
                     "priority": "preferred"
                 },
                 {
@@ -173,7 +173,7 @@ define([
                     ],
                     "category": "contextual",
                     "name": "Stop",
-                    "cssclass": "icon-box",
+                    "cssClass": "icon-box",
                     "priority": "preferred"
                 }
             ],

@@ -92,9 +92,9 @@ define(
                     }[k]];
                 });
 
-                mockStart.getMetadata.andReturn({cssclass: "icon-play", name: "Start"});
-                mockPause.getMetadata.andReturn({cssclass: "icon-pause", name: "Pause"});
-                mockStop.getMetadata.andReturn({cssclass: "icon-box", name: "Stop"});
+                mockStart.getMetadata.andReturn({cssClass: "icon-play", name: "Start"});
+                mockPause.getMetadata.andReturn({cssClass: "icon-pause", name: "Pause"});
+                mockStop.getMetadata.andReturn({cssClass: "icon-box", name: "Stop"});
                 mockScope.domainObject = mockDomainObject;
 
                 testModel = {};
@@ -152,7 +152,7 @@ define(
                 expect(controller.text()).toEqual("0D 00:00:00");
             });
 
-            it("shows cssclass & name for the applicable start/pause action", function () {
+            it("shows cssClass & name for the applicable start/pause action", function () {
                 invokeWatch('domainObject', mockDomainObject);
                 expect(controller.buttonCssClass()).toEqual("icon-play");
                 expect(controller.buttonText()).toEqual("Start");
