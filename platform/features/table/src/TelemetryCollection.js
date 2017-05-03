@@ -72,6 +72,8 @@ define(
             var added;
             var testValue;
 
+            this.lastBounds = bounds;
+
             // If collection is not sorted by a time field, we cannot respond to
             // bounds events
             if (this.sortField === undefined) {
@@ -110,7 +112,6 @@ define(
                  */
                 this.emit('added', added);
             }
-            this.lastBounds = bounds;
         };
 
         /**

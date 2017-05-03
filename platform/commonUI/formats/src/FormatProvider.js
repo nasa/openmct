@@ -30,17 +30,21 @@ define([
      * An object used to convert between numeric values and text values,
      * typically used to display these values to the user and to convert
      * user input to a numeric format, particularly for time formats.
-     * @interface {Format}
+     * @interface Format
      */
-
     /**
      * Parse text (typically user input) to a numeric value.
      * Behavior is undefined when the text cannot be parsed;
      * `validate` should be called first if the text may be invalid.
-     * @method parse
+     * @method Format#parse
      * @memberof Format#
      * @param {string} text the text to parse
      * @returns {number} the parsed numeric value
+     */
+
+    /**
+     * @property {string} key A unique identifier for this formatter.
+     * @memberof Format#
      */
 
     /**
@@ -58,10 +62,12 @@ define([
      * @method format
      * @memberof Format#
      * @param {number} value the numeric value to format
-     * @param {number} [threshold]  Optionally provides context to the
-     * format request, allowing for scale-appropriate formatting. This value
-     * should be the minimum unit to be represented by this format, in ms. For
-     * example, to display seconds, a threshold of 1 * 1000 should be provided.
+     * @param {number} [minValue] Contextual information for scaled formatting used in linear scales such as conductor
+     * and plot axes. Specifies the smallest number on the scale.
+     * @param {number} [maxValue] Contextual information for scaled formatting used in linear scales such as conductor
+     * and plot axes. Specifies the largest number on the scale
+     * @param {number} [count] Contextual information for scaled formatting used in linear scales such as conductor
+     * and plot axes. The number of labels on the scale.
      * @returns {string} the text representation of the value
      */
 

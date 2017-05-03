@@ -47,7 +47,7 @@ define([
                 "on",
                 "off"
             ]);
-            mockAPI = {conductor: mockConductor};
+            mockAPI = {time: mockConductor};
 
             mockConductorViewService = jasmine.createSpyObj("conductorViewService", [
                 "on",
@@ -57,8 +57,8 @@ define([
             mockScope = jasmine.createSpyObj("openMCT", [
                 "$on"
             ]);
-
-            conductorTOIController = new ConductorTOIController(mockScope, mockAPI, mockConductorViewService);
+            ConductorTOIController.prototype.viewService = mockConductorViewService;
+            conductorTOIController = new ConductorTOIController(mockScope, mockAPI);
         });
 
         it("listens to changes in the time of interest on the conductor", function () {

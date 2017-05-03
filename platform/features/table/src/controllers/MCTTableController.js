@@ -27,7 +27,7 @@ define(
             this.resultsHeader = this.element.find('.mct-table>thead').first();
             this.sizingTableBody = this.element.find('.sizing-table>tbody').first();
             this.$scope.sizingRow = {};
-            this.conductor = openmct.conductor;
+            this.timeApi = openmct.time;
             this.toiFormatter = undefined;
             this.formatService = formatService;
             this.callbacks = {};
@@ -65,6 +65,7 @@ define(
             this.scrollable.on('scroll', this.onScroll);
 
             $scope.visibleRows = [];
+            $scope.displayRows = [];
 
             /**
              * Set default values for optional parameters on a given scope
@@ -113,7 +114,7 @@ define(
                     $scope.sortDirection = 'asc';
                 }
                 self.setRows($scope.rows);
-                self.setTimeOfInterestRow(self.conductor.timeOfInterest());
+                self.setTimeOfInterestRow(self.timeApi.timeOfInterest());
             };
 
             /*
@@ -159,13 +160,13 @@ define(
                 if (timeColumns) {
                     this.destroyConductorListeners();
 
-                    this.conductor.on('timeSystem', this.changeTimeSystem);
-                    this.conductor.on('timeOfInterest', this.changeTimeOfInterest);
-                    this.conductor.on('bounds', this.changeBounds);
+                    this.timeApi.on('timeSystem', this.changeTimeSystem);
+                    this.timeApi.on('timeOfInterest', this.changeTimeOfInterest);
+                    this.timeApi.on('bounds', this.changeBounds);
 
                     // If time system defined, set initially
-                    if (this.conductor.timeSystem()) {
-                        this.changeTimeSystem(this.conductor.timeSystem());
+                    if (this.timeApi.timeSystem() !== undefined) {
+                        this.changeTimeSystem(this.timeApi.timeSystem());
                     }
                 }
             }.bind(this));
@@ -182,13 +183,13 @@ define(
         }
 
         MCTTableController.prototype.destroyConductorListeners = function () {
-            this.conductor.off('timeSystem', this.changeTimeSystem);
-            this.conductor.off('timeOfInterest', this.changeTimeOfInterest);
-            this.conductor.off('bounds', this.changeBounds);
+            this.timeApi.off('timeSystem', this.changeTimeSystem);
+            this.timeApi.off('timeOfInterest', this.changeTimeOfInterest);
+            this.timeApi.off('bounds', this.changeBounds);
         };
 
-        MCTTableController.prototype.changeTimeSystem = function () {
-            var format = this.conductor.timeSystem().formats()[0];
+        MCTTableController.prototype.changeTimeSystem = function (timeSystem) {
+            var format = timeSystem.timeFormat;
             this.toiFormatter = this.formatService.getFormat(format);
         };
 
@@ -220,7 +221,7 @@ define(
                         }
                     }.bind(this));
 
-                var toi = this.conductor.timeOfInterest();
+                var toi = this.timeApi.timeOfInterest();
                 if (toi !== -1) {
                     this.setTimeOfInterestRow(toi);
                 }
@@ -681,7 +682,7 @@ define(
                 // perform DOM changes, otherwise scrollTo won't work.
                 .then(function () {
                     //If TOI specified, scroll to it
-                    var timeOfInterest = this.conductor.timeOfInterest();
+                    var timeOfInterest = this.timeApi.timeOfInterest();
                     if (timeOfInterest) {
                         this.setTimeOfInterestRow(timeOfInterest);
                         this.scrollToRow(this.$scope.toiRowIndex);
@@ -779,7 +780,7 @@ define(
          * @param bounds
          */
         MCTTableController.prototype.changeBounds = function (bounds) {
-            this.setTimeOfInterestRow(this.conductor.timeOfInterest());
+            this.setTimeOfInterestRow(this.timeApi.timeOfInterest());
             if (this.$scope.toiRowIndex !== -1) {
                 this.scrollToRow(this.$scope.toiRowIndex);
             }
@@ -794,7 +795,7 @@ define(
                 if (selectedTime &&
                     this.toiFormatter.validate(selectedTime) &&
                     event.altKey) {
-                    this.conductor.timeOfInterest(this.toiFormatter.parse(selectedTime));
+                    this.timeApi.timeOfInterest(this.toiFormatter.parse(selectedTime));
                 }
             }
         };

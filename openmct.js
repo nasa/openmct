@@ -100,11 +100,5 @@ define([
         return new Main().run(defaultRegistry);
     });
 
-    // For now, install conductor by default
-    openmct.install(openmct.plugins.Conductor({
-        showConductor: false
-    }));
-
-
     return openmct;
 });

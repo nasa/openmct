@@ -41,7 +41,7 @@ define(
             scope,
             element
         ) {
-            this.conductor = openmct.conductor;
+            this.timeAPI = openmct.time;
             this.scope = scope;
             this.element = element;
 
@@ -51,24 +51,25 @@ define(
         }
 
         ConductorRepresenter.prototype.boundsListener = function (bounds) {
+            var timeSystem = this.timeAPI.timeSystem();
             this.scope.$broadcast('telemetry:display:bounds', {
                 start: bounds.start,
                 end: bounds.end,
-                domain: this.conductor.timeSystem().metadata.key
-            }, this.conductor.follow());
+                domain: timeSystem.key
+            }, this.timeAPI.clock() !== undefined);
         };
 
         ConductorRepresenter.prototype.timeSystemListener = function (timeSystem) {
-            var bounds = this.conductor.bounds();
+            var bounds = this.timeAPI.bounds();
             this.scope.$broadcast('telemetry:display:bounds', {
                 start: bounds.start,
                 end: bounds.end,
-                domain: timeSystem.metadata.key
-            }, this.conductor.follow());
+                domain: timeSystem.key
+            }, this.timeAPI.clock() !== undefined);
         };
 
         ConductorRepresenter.prototype.followListener = function () {
-            this.boundsListener(this.conductor.bounds());
+            this.boundsListener(this.timeAPI.bounds());
         };
 
         // Handle a specific representation of a specific domain object
@@ -76,16 +77,16 @@ define(
             if (representation.key === 'browse-object') {
                 this.destroy();
 
-                this.conductor.on("bounds", this.boundsListener);
-                this.conductor.on("timeSystem", this.timeSystemListener);
-                this.conductor.on("follow", this.followListener);
+                this.timeAPI.on("bounds", this.boundsListener);
+                this.timeAPI.on("timeSystem", this.timeSystemListener);
+                this.timeAPI.on("follow", this.followListener);
             }
         };
 
         ConductorRepresenter.prototype.destroy = function destroy() {
-            this.conductor.off("bounds", this.boundsListener);
-            this.conductor.off("timeSystem", this.timeSystemListener);
-            this.conductor.off("follow", this.followListener);
+            this.timeAPI.off("bounds", this.boundsListener);
+            this.timeAPI.off("timeSystem", this.timeSystemListener);
+            this.timeAPI.off("follow", this.followListener);
         };
 
         return ConductorRepresenter;

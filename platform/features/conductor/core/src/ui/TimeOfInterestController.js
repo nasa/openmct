@@ -31,7 +31,7 @@ define(
          * @constructor
          */
         function TimeOfInterestController($scope, openmct, formatService) {
-            this.conductor = openmct.conductor;
+            this.timeAPI = openmct.time;
             this.formatService = formatService;
             this.format = undefined;
             this.toiText = undefined;
@@ -44,11 +44,11 @@ define(
                 this[key] = TimeOfInterestController.prototype[key].bind(this);
             }.bind(this));
 
-            this.conductor.on('timeOfInterest', this.changeTimeOfInterest);
-            this.conductor.on('timeSystem', this.changeTimeSystem);
-            if (this.conductor.timeSystem()) {
-                this.changeTimeSystem(this.conductor.timeSystem());
-                var toi = this.conductor.timeOfInterest();
+            this.timeAPI.on('timeOfInterest', this.changeTimeOfInterest);
+            this.timeAPI.on('timeSystem', this.changeTimeSystem);
+            if (this.timeAPI.timeSystem() !== undefined) {
+                this.changeTimeSystem(this.timeAPI.timeSystem());
+                var toi = this.timeAPI.timeOfInterest();
                 if (toi) {
                     this.changeTimeOfInterest(toi);
                 }
@@ -77,15 +77,15 @@ define(
          * display the current TOI label
          */
         TimeOfInterestController.prototype.changeTimeSystem = function (timeSystem) {
-            this.format = this.formatService.getFormat(timeSystem.formats()[0]);
+            this.format = this.formatService.getFormat(timeSystem.timeFormat);
         };
 
         /**
          * @private
          */
         TimeOfInterestController.prototype.destroy = function () {
-            this.conductor.off('timeOfInterest', this.changeTimeOfInterest);
-            this.conductor.off('timeSystem', this.changeTimeSystem);
+            this.timeAPI.off('timeOfInterest', this.changeTimeOfInterest);
+            this.timeAPI.off('timeSystem', this.changeTimeSystem);
         };
 
         /**
@@ -93,7 +93,7 @@ define(
          * Time Conductor
          */
         TimeOfInterestController.prototype.dismiss = function () {
-            this.conductor.timeOfInterest(undefined);
+            this.timeAPI.timeOfInterest(undefined);
         };
 
         /**
@@ -101,7 +101,7 @@ define(
          * the TOI displayed in views.
          */
         TimeOfInterestController.prototype.resync = function () {
-            this.conductor.timeOfInterest(this.conductor.timeOfInterest());
+            this.timeAPI.timeOfInterest(this.timeAPI.timeOfInterest());
         };
 
         return TimeOfInterestController;

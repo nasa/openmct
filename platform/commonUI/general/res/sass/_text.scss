@@ -37,20 +37,13 @@
 	}
 
 	h1, h2, h3 {
-		color: pullForward($colorBodyFg, 20%);
-		font-weight: normal !important;
-		margin-bottom: 1em;
-	}
+        font-weight: 200 !important;
+    }
 
-	h2 {
-		border-top: 1px solid $colorInteriorBorder;
-		font-size: 1.5em;
-		margin-top: 2em;
-		padding-top: 1em;
-	}
-
-	h3 {
-		margin-top: 2em;
-	}
-
+    table {
+        td { font-size: inherit; }
+        tr.header {
+            background-color: rgba($colorBodyFg, 0.2);
+        }
+    }
 }

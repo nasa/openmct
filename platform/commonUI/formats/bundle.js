@@ -22,13 +22,9 @@
 
 define([
     "./src/FormatProvider",
-    "./src/UTCTimeFormat",
-    "./src/DurationFormat",
     'legacyRegistry'
 ], function (
     FormatProvider,
-    UTCTimeFormat,
-    DurationFormat,
     legacyRegistry
 ) {
 
@@ -44,22 +40,6 @@ define([
                     "depends": [
                         "formats[]"
                     ]
-                }
-            ],
-            "formats": [
-                {
-                    "key": "utc",
-                    "implementation": UTCTimeFormat
-                },
-                {
-                    "key": "duration",
-                    "implementation": DurationFormat
-                }
-            ],
-            "constants": [
-                {
-                    "key": "DEFAULT_TIME_FORMAT",
-                    "value": "utc"
                 }
             ],
             "licenses": [

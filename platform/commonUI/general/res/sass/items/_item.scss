@@ -26,20 +26,20 @@
 		top: 0;
 	}
     .item {
+        $d: $ueBrowseGridItemLg;
+        $iconMargin: 40px;
+        $iconD: ($d - ($iconMargin * 2)) * 0.85;
+        box-sizing: border-box;
+        float: left;
+        height: $d;
+        width: $d;
+        margin-bottom: $interiorMarginSm;
+        margin-right: $interiorMarginSm;
+        position: relative;
         &.grid-item {
-            $d: $ueBrowseGridItemLg;
-            $iconMargin: 40px;
-            $iconD: ($d - ($iconMargin * 2)) * 0.85;
             $transTime: 200ms;
             @include btnSubtle($bg: $colorItemBg, $bgHov: $colorItemBgHov, $fg: $colorItemFg, $fgHov: pullForward($colorItemFg, $hoverRatioPercent), $ic: $colorItemIc);
-            box-sizing: border-box;
             cursor: pointer;
-            float: left;
-            height: $d;
-            width: $d;
-            margin-bottom: $interiorMarginSm;
-            margin-right: $interiorMarginSm;
-            position: relative;
             &:hover .item-main {
 	            .item-type {
 		            color: lighten($colorKey, 10%);
@@ -51,7 +51,7 @@
                     opacity: 1;
 	            }
             }
-	        .contents {
+	        .abs.contents {
                 $m: $interiorMarginLg;
 		        top: $m; right: $m; bottom: $m; left: $m;
 	        }

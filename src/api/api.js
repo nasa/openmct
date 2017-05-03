@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([
-    './TimeConductor',
+    './time/TimeAPI',
     './objects/ObjectAPI',
     './composition/CompositionAPI',
     './types/TypeRegistry',
@@ -29,7 +29,7 @@ define([
     './ui/GestureAPI',
     './telemetry/TelemetryAPI'
 ], function (
-    TimeConductor,
+    TimeAPI,
     ObjectAPI,
     CompositionAPI,
     TypeRegistry,
@@ -38,7 +38,7 @@ define([
     TelemetryAPI
 ) {
     return {
-        TimeConductor: TimeConductor,
+        TimeAPI: TimeAPI,
         ObjectAPI: ObjectAPI,
         CompositionAPI: CompositionAPI,
         Dialog: Dialog,

@@ -31,6 +31,7 @@ define([], function () {
      * @memberof platform/commonUI/formats
      */
     function NumberFormat() {
+        this.key = 'number';
     }
 
     NumberFormat.prototype.format = function (value) {
