@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -163,15 +163,15 @@ define(
             }
 
             if (request.start === undefined && request.end === undefined) {
-                bounds = this.openmct.conductor.bounds();
+                bounds = this.openmct.time.bounds();
                 fullRequest.start = bounds.start;
                 fullRequest.end = bounds.end;
             }
 
             if (request.domain === undefined) {
-                timeSystem = this.openmct.conductor.timeSystem();
+                timeSystem = this.openmct.time.timeSystem();
                 if (timeSystem !== undefined) {
-                    fullRequest.domain = timeSystem.metadata.key;
+                    fullRequest.domain = timeSystem.key;
                 }
             }
 
@@ -212,8 +212,8 @@ define(
             var telemetryAPI = this.openmct.telemetry;
 
             var metadata = telemetryAPI.getMetadata(domainObject);
-            var defaultDomain = (metadata.valuesForHints(['domain'])[0] || {}).key;
-            var defaultRange = (metadata.valuesForHints(['range'])[0] || {}).key;
+            var defaultDomain = metadata.valuesForHints(['x'])[0].source;
+            var defaultRange = metadata.valuesForHints(['y'])[0].source;
 
             var isLegacyProvider = telemetryAPI.findRequestProvider(domainObject) ===
                 telemetryAPI.legacyProvider;
@@ -274,8 +274,8 @@ define(
             var telemetryAPI = this.openmct.telemetry;
 
             var metadata = telemetryAPI.getMetadata(domainObject);
-            var defaultDomain = (metadata.valuesForHints(['domain'])[0] || {}).key;
-            var defaultRange = (metadata.valuesForHints(['range'])[0] || {}).key;
+            var defaultDomain = metadata.valuesForHints(['x'])[0].source;
+            var defaultRange = metadata.valuesForHints(['y'])[0].source;
 
             var isLegacyProvider = telemetryAPI.findSubscriptionProvider(domainObject) ===
                 telemetryAPI.legacyProvider;

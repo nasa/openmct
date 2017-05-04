@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -35,7 +35,9 @@ module.exports = function(config) {
         // By default, files are also included in a script tag.
         files: [
             {pattern: 'bower_components/**/*.js', included: false},
+            {pattern: 'node_modules/d3-*/**/*.js', included: false},
             {pattern: 'src/**/*.js', included: false},
+            {pattern: 'example/**/*.html', included: false},
             {pattern: 'example/**/*.js', included: false},
             {pattern: 'example/**/*.json', included: false},
             {pattern: 'platform/**/*.js', included: false},

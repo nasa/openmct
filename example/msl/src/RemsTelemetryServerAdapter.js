@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -48,6 +48,13 @@ define(
             this.$http = $http;
             this.$log = $log;
             this.promise = undefined;
+
+            this.dataTransforms = {
+                //Convert from pascals to millibars
+                'pressure': function pascalsToMillibars(pascals) {
+                    return pascals / 100;
+                }
+            };
         }
 
         /**
@@ -65,6 +72,8 @@ define(
             var self = this,
                 id = request.key;
 
+            var dataTransforms = this.dataTransforms;
+
             function processResponse(response){
                 var data = [];
                 /*
@@ -75,13 +84,14 @@ define(
                      * Check that valid data exists
                      */
                     if (!isNaN(solData[id])) {
+                        var dataTransform = dataTransforms[id];
                         /*
                          * Append each data point to the array of values
                          * for this data point property (min. temp, etc).
                          */
                         data.unshift({
                             date: Date.parse(solData[TERRESTRIAL_DATE]),
-                            value: solData[id]
+                            value: dataTransform ? dataTransform(solData[id]) : solData[id]
                         });
                     }
                 });

@@ -1,0 +1,163 @@
+<!--
+ Open MCT, Copyright (c) 2014-2016, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<div class="l-style-guide s-text">
+    <p class="doc-title">Open MCT Style Guide</p>
+    <h1>Controls</h1>
+
+    <div class="l-section">
+        <h2>Standard Buttons</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>Use a standard button in locations where there's sufficient room and you must make it clear that the element is an interactive button element. Buttons can be displayed with only an icon, only text, or with icon and text combined.</p>
+                <p>Use an icon whenever possible to aid the user's recognition and recall. If both and icon and text are to be used, the text must be within a <code>span</code> with class <code>.title-label</code>.</p>
+            </div>
+<mct-example><a class="s-button icon-pencil" title="Edit"></a>
+<a class="s-button" title="Edit">Edit</a>
+<a class="s-button icon-pencil" title="Edit">
+    <span class="title-label">Edit</span>
+</a>
+</mct-example>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>&quot;Major&quot; Buttons</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>Major buttons allow emphasis to be placed on a button. Use this on a single button when the user has a small number of choices, and one choice is a normal default. Just add <code>.major</code> to any element that uses <code>.s-button</code>.</p>
+            </div>
+<mct-example><a class="s-button major">Ok</a>
+<a class="s-button">Cancel</a>
+</mct-example>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>Button Sets</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>Use button sets to connect buttons that have related purpose or functionality. Buttons in a set round the outer corners of only the first and last buttons, any other buttons in the middle simply get division spacers.</p>
+                <p>To use, simply wrap two or more <code>.s-button</code> elements within <code>.l-btn-set</code>.</p>
+            </div>
+<mct-example><span class="l-btn-set">
+    <a class="s-button icon-magnify"></a>
+    <a class="s-button icon-magnify-in"></a>
+    <a class="s-button icon-magnify-out"></a>
+</span>
+</mct-example>
+            </div>
+    </div>
+
+    <div class="l-section">
+        <h2>Icon-only Buttons</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>When a button is presented within another control it may be advantageous to avoid visual clutter by using an icon-only button. These type of controls present an icon without the &quot;base&quot; of standard buttons. Icon-only buttons should only be used in a context where they are clearly an interactive element and not an object-type identifier, and should not be used with text.</p>
+            </div>
+<mct-example><a class="s-icon-button icon-pencil" title="Edit"></a>
+            </mct-example>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>Checkboxes</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>Checkboxes use a combination of minimal additional markup with CSS to present a custom and common look-and-feel across platforms.</p>
+                <p>The basic structure is a <code>label</code> with a checkbox-type input and an <code>em</code> element inside. The <code>em</code> is needed as the holder of the custom element; the input itself is hidden. Putting everything inside the <code>label</code> allows the label itself to act as a clickable element.</p>
+            </div>
+<mct-example><label class="checkbox custom no-text">
+    <input type="checkbox" />
+    <em></em>
+</label>
+<br />
+<label class="checkbox custom no-text">
+    <input type="checkbox" checked />
+    <em></em>
+</label>
+<br />
+<label class="checkbox custom">Labeled checkbox
+    <input type="checkbox" />
+    <em></em>
+</label></mct-example>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>Radio Buttons</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>Radio buttons use the same technique as checkboxes above.</p>
+            </div>
+<mct-example><label class="radio custom">Red
+    <input name="Alarm Status" type="radio" />
+    <em></em>
+</label>
+<br />
+<label class="radio custom">Orange
+    <input name="Alarm Status" type="radio" checked />
+    <em></em>
+</label>
+<br />
+<label class="radio custom">Yellow
+    <input name="Alarm Status" type="radio" />
+    <em></em>
+</label>
+</mct-example>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>Selects</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>Similar to checkboxes and radio buttons, selects use a combination of minimal additional markup with CSS to present a custom and common look-and-feel across platforms. The <code>select</code> element is wrapped by another element, such as a <code>div</code>, which acts as the main display element for the styling. The <code>select</code> provides the click and select functionality, while having all of its native look-and-feel suppressed.</p>
+            </div>
+<mct-example><div class="select">
+    <select>
+        <option value="" selected="selected">- Select One -</option>
+        <option value="Colussus">Colussus</option>
+        <option value="HAL 9000">HAL 9000</option>
+        <option value="Mother">Mother</option>
+        <option value="Skynet">Skynet</option>
+    </select>
+</div>
+</mct-example>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>Local Controls</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>Local controls are typically buttons and selects that provide local control to an individual element. Typically, these controls are hidden in order to not block data display until the user hovers their cursor over an element, when the controls are displayed using a transition fade. Mousing out of the element fades the controls from view.</p>
+            </div>
+            <mct-example><div class="plot-display-area" style="height: 100px; padding: 10px; position: relative;">Hover over me
+    <div class="l-local-controls gl-plot-local-controls t-plot-display-controls">
+        <a class="s-button icon-arrow-left" title="Restore previous pan/zoom"></a>
+        <a class="s-button icon-arrows-out" title="Reset pan/zoom"></a>
+    </div>
+</div></mct-example>
+        </div>
+    </div>
+
+</div>

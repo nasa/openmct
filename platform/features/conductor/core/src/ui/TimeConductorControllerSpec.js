@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define(['./TimeConductorController'], function (TimeConductorController) {
-    describe("The time conductor controller", function () {
+    xdescribe("The time conductor controller", function () {
         var mockScope;
         var mockWindow;
         var mockTimeConductor;

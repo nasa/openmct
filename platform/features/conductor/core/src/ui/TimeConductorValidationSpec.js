@@ -55,19 +55,19 @@ define(['./TimeConductorValidation'], function (TimeConductorValidation) {
             });
         });
 
-        it("Validates that start delta is valid number > 0", function () {
-            expect(timeConductorValidation.validateStartDelta(-1)).toBe(false);
-            expect(timeConductorValidation.validateStartDelta("abc")).toBe(false);
-            expect(timeConductorValidation.validateStartDelta("1")).toBe(true);
-            expect(timeConductorValidation.validateStartDelta(1)).toBe(true);
+        it("Validates that start Offset is valid number > 0", function () {
+            expect(timeConductorValidation.validateStartOffset(-1)).toBe(false);
+            expect(timeConductorValidation.validateStartOffset("abc")).toBe(false);
+            expect(timeConductorValidation.validateStartOffset("1")).toBe(true);
+            expect(timeConductorValidation.validateStartOffset(1)).toBe(true);
         });
 
-        it("Validates that end delta is valid number >= 0", function () {
-            expect(timeConductorValidation.validateEndDelta(-1)).toBe(false);
-            expect(timeConductorValidation.validateEndDelta("abc")).toBe(false);
-            expect(timeConductorValidation.validateEndDelta("1")).toBe(true);
-            expect(timeConductorValidation.validateEndDelta(0)).toBe(true);
-            expect(timeConductorValidation.validateEndDelta(1)).toBe(true);
+        it("Validates that end Offset is valid number >= 0", function () {
+            expect(timeConductorValidation.validateEndOffset(-1)).toBe(false);
+            expect(timeConductorValidation.validateEndOffset("abc")).toBe(false);
+            expect(timeConductorValidation.validateEndOffset("1")).toBe(true);
+            expect(timeConductorValidation.validateEndOffset(0)).toBe(true);
+            expect(timeConductorValidation.validateEndOffset(1)).toBe(true);
         });
     });
 });

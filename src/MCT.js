@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -83,7 +83,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name conductor
          */
-        this.conductor = new api.TimeConductor();
+        this.time = new api.TimeAPI();
 
         /**
          * An interface for interacting with the composition of domain objects.

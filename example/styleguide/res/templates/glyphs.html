@@ -1,0 +1,205 @@
+<!--
+ Open MCT, Copyright (c) 2014-2016, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<div ng-init="general= [{ 'meaning': 'Pay attention', 'cssClass': 'icon-alert-rect', 'cssContent': 'e900', 'htmlEntity': '&amp;#xe900' },
+{ 'meaning': 'Warning', 'cssClass': 'icon-alert-triangle', 'cssContent': 'e901', 'htmlEntity': '&amp;#xe901' },
+{ 'meaning': 'Invoke menu', 'cssClass': 'icon-arrow-down', 'cssContent': 'e902', 'htmlEntity': '&amp;#xe902' },
+{ 'meaning': 'General usage arrow pointing left', 'cssClass': 'icon-arrow-left', 'cssContent': 'e903', 'htmlEntity': '&amp;#xe903' },
+{ 'meaning': 'General usage arrow pointing right', 'cssClass': 'icon-arrow-right', 'cssContent': 'e904', 'htmlEntity': '&amp;#xe904' },
+{ 'meaning': 'Upper limit, red', 'cssClass': 'icon-arrow-double-up', 'cssContent': 'e905', 'htmlEntity': '&amp;#xe905' },
+{ 'meaning': 'Upper limit, yellow', 'cssClass': 'icon-arrow-tall-up', 'cssContent': 'e906', 'htmlEntity': '&amp;#xe906' },
+{ 'meaning': 'Lower limit, yellow', 'cssClass': 'icon-arrow-tall-down', 'cssContent': 'e907', 'htmlEntity': '&amp;#xe907' },
+{ 'meaning': 'Lower limit, red', 'cssClass': 'icon-arrow-double-down', 'cssContent': 'e908', 'htmlEntity': '&amp;#xe908' },
+{ 'meaning': 'General usage arrow pointing up', 'cssClass': 'icon-arrow-up', 'cssContent': 'e909', 'htmlEntity': '&amp;#xe909' },
+{ 'meaning': 'Required form element', 'cssClass': 'icon-asterisk', 'cssContent': 'e910', 'htmlEntity': '&amp;#xe910' },
+{ 'meaning': 'Alert', 'cssClass': 'icon-bell', 'cssContent': 'e911', 'htmlEntity': '&amp;#xe911' },
+{ 'meaning': 'General usage box symbol', 'cssClass': 'icon-box', 'cssContent': 'e912', 'htmlEntity': '&amp;#xe912' },
+{ 'meaning': 'Click on or into', 'cssClass': 'icon-box-with-arrow', 'cssContent': 'e913', 'htmlEntity': '&amp;#xe913' },
+{ 'meaning': 'General usage checkmark, used in checkboxes; complete', 'cssClass': 'icon-check', 'cssContent': 'e914', 'htmlEntity': '&amp;#xe914' },
+{ 'meaning': 'Connected', 'cssClass': 'icon-connectivity', 'cssContent': 'e915', 'htmlEntity': '&amp;#xe915' },
+{ 'meaning': 'Status: DB connected', 'cssClass': 'icon-database-in-brackets', 'cssContent': 'e916', 'htmlEntity': '&amp;#xe916' },
+{ 'meaning': 'View or make visible', 'cssClass': 'icon-eye-open', 'cssContent': 'e917', 'htmlEntity': '&amp;#xe917' },
+{ 'meaning': 'Settings, properties', 'cssClass': 'icon-gear', 'cssContent': 'e918', 'htmlEntity': '&amp;#xe918' },
+{ 'meaning': 'Process, progress, time', 'cssClass': 'icon-hourglass', 'cssContent': 'e919', 'htmlEntity': '&amp;#xe919' },
+{ 'meaning': 'Info', 'cssClass': 'icon-info', 'cssContent': 'e920', 'htmlEntity': '&amp;#xe920' },
+{ 'meaning': 'Link (alias)', 'cssClass': 'icon-link', 'cssContent': 'e921', 'htmlEntity': '&amp;#xe921' },
+{ 'meaning': 'Locked', 'cssClass': 'icon-lock', 'cssContent': 'e922', 'htmlEntity': '&amp;#xe922' },
+{ 'meaning': 'General usage minus symbol; used in timer object', 'cssClass': 'icon-minus', 'cssContent': 'e923', 'htmlEntity': '&amp;#xe923' },
+{ 'meaning': 'An item that is shared', 'cssClass': 'icon-people', 'cssContent': 'e924', 'htmlEntity': '&amp;#xe924' },
+{ 'meaning': 'User profile or belonging to an individual', 'cssClass': 'icon-person', 'cssContent': 'e925', 'htmlEntity': '&amp;#xe925' },
+{ 'meaning': 'General usage plus symbol; used in timer object', 'cssClass': 'icon-plus', 'cssContent': 'e926', 'htmlEntity': '&amp;#xe926' },
+{ 'meaning': 'Delete', 'cssClass': 'icon-trash', 'cssContent': 'e927', 'htmlEntity': '&amp;#xe927' },
+{ 'meaning': 'Close, remove', 'cssClass': 'icon-x', 'cssContent': 'e928', 'htmlEntity': '&amp;#xe928' },
+{ 'meaning': 'Enclosing, inclusive; used in Time Conductor', 'cssClass': 'icon-brackets', 'cssContent': 'e929', 'htmlEntity': '&amp;#xe929' }
+]; controls= [{ 'meaning': 'Reset zoom/pam', 'cssClass': 'icon-arrows-out', 'cssContent': 'e1000', 'htmlEntity': '&amp;#xe1000' },
+{ 'meaning': 'Expand vertically', 'cssClass': 'icon-arrows-right-left', 'cssContent': 'e1001', 'htmlEntity': '&amp;#xe1001' },
+{ 'meaning': 'View scrolling', 'cssClass': 'icon-arrows-up-down', 'cssContent': 'e1002', 'htmlEntity': '&amp;#xe1002' },
+{ 'meaning': 'Bullet; used in radio buttons', 'cssClass': 'icon-bullet', 'cssContent': 'e1004', 'htmlEntity': '&amp;#xe1004' },
+{ 'meaning': 'Invoke datetime picker', 'cssClass': 'icon-calendar', 'cssContent': 'e1005', 'htmlEntity': '&amp;#xe1005' },
+{ 'meaning': 'Web link', 'cssClass': 'icon-chain-links', 'cssContent': 'e1006', 'htmlEntity': '&amp;#xe1006' },
+{ 'meaning': 'Collapse left', 'cssClass': 'icon-collapse-pane-left', 'cssContent': 'e1007', 'htmlEntity': '&amp;#xe1007' },
+{ 'meaning': 'Collapse right', 'cssClass': 'icon-collapse-pane-right', 'cssContent': 'e1008', 'htmlEntity': '&amp;#xe1008' },
+{ 'meaning': 'Download', 'cssClass': 'icon-download', 'cssContent': 'e1009', 'htmlEntity': '&amp;#xe1009' },
+{ 'meaning': 'Copy/Duplicate', 'cssClass': 'icon-duplicate', 'cssContent': 'e1010', 'htmlEntity': '&amp;#xe1010' },
+{ 'meaning': 'New folder', 'cssClass': 'icon-folder-new', 'cssContent': 'e1011', 'htmlEntity': '&amp;#xe1011' },
+{ 'meaning': 'Exit fullscreen mode', 'cssClass': 'icon-fullscreen-collapse', 'cssContent': 'e1012', 'htmlEntity': '&amp;#xe1012' },
+{ 'meaning': 'Display fullscreen', 'cssClass': 'icon-fullscreen-expand', 'cssContent': 'e1013', 'htmlEntity': '&amp;#xe1013' },
+{ 'meaning': 'Layer order', 'cssClass': 'icon-layers', 'cssContent': 'e1014', 'htmlEntity': '&amp;#xe1014' },
+{ 'meaning': 'Line color', 'cssClass': 'icon-line-horz', 'cssContent': 'e1015', 'htmlEntity': '&amp;#xe1015' },
+{ 'meaning': 'Search', 'cssClass': 'icon-magnify', 'cssContent': 'e1016', 'htmlEntity': '&amp;#xe1016' },
+{ 'meaning': 'Zoom in', 'cssClass': 'icon-magnify-in', 'cssContent': 'e1017', 'htmlEntity': '&amp;#xe1017' },
+{ 'meaning': 'Zoom out', 'cssClass': 'icon-magnify-out', 'cssContent': 'e1018', 'htmlEntity': '&amp;#xe1018' },
+{ 'meaning': 'Menu', 'cssClass': 'icon-menu-hamburger', 'cssContent': 'e1019', 'htmlEntity': '&amp;#xe1019' },
+{ 'meaning': 'Move', 'cssClass': 'icon-move', 'cssContent': 'e1020', 'htmlEntity': '&amp;#xe1020' },
+{ 'meaning': 'Open in new window', 'cssClass': 'icon-new-window', 'cssContent': 'e1021', 'htmlEntity': '&amp;#xe1021' },
+{ 'meaning': 'Fill', 'cssClass': 'icon-paint-bucket', 'cssContent': 'e1022', 'htmlEntity': '&amp;#xe1022' },
+{ 'meaning': 'Pause real-time streaming', 'cssClass': 'icon-pause', 'cssContent': 'e1023', 'htmlEntity': '&amp;#xe1023' },
+{ 'meaning': 'Edit', 'cssClass': 'icon-pencil', 'cssContent': 'e1024', 'htmlEntity': '&amp;#xe1024' },
+{ 'meaning': 'Stop pause, resume real-time streaming', 'cssClass': 'icon-play', 'cssContent': 'e1025', 'htmlEntity': '&amp;#xe1025' },
+{ 'meaning': 'Plot resources', 'cssClass': 'icon-plot-resource', 'cssContent': 'e1026', 'htmlEntity': '&amp;#xe1026' },
+{ 'meaning': 'Previous', 'cssClass': 'icon-pointer-left', 'cssContent': 'e1027', 'htmlEntity': '&amp;#xe1027' },
+{ 'meaning': 'Next, navigate to', 'cssClass': 'icon-pointer-right', 'cssContent': 'e1028', 'htmlEntity': '&amp;#xe1028' },
+{ 'meaning': 'Refresh', 'cssClass': 'icon-refresh', 'cssContent': 'e1029', 'htmlEntity': '&amp;#xe1029' },
+{ 'meaning': 'Save', 'cssClass': 'icon-save', 'cssContent': 'e1030', 'htmlEntity': '&amp;#xe1030' },
+{ 'meaning': 'View plot', 'cssClass': 'icon-sine', 'cssContent': 'e1031', 'htmlEntity': '&amp;#xe1031' },
+{ 'meaning': 'Text color', 'cssClass': 'icon-T', 'cssContent': 'e1032', 'htmlEntity': '&amp;#xe1032' },
+{ 'meaning': 'Image thumbs strip; view items grid', 'cssClass': 'icon-thumbs-strip', 'cssContent': 'e1033', 'htmlEntity': '&amp;#xe1033' },
+{ 'meaning': 'Two part item, both parts', 'cssClass': 'icon-two-parts-both', 'cssContent': 'e1034', 'htmlEntity': '&amp;#xe1034' },
+{ 'meaning': 'Two part item, one only', 'cssClass': 'icon-two-parts-one-only', 'cssContent': 'e1035', 'htmlEntity': '&amp;#xe1035' },
+{ 'meaning': 'Clear', 'cssClass': 'icon-x-in-circle', 'cssContent': 'e1038', 'htmlEntity': '&amp;#xe1038' },
+{ 'meaning': 'Brightness', 'cssClass': 'icon-brightness', 'cssContent': 'e1039', 'htmlEntity': '&amp;#xe1039' },
+{ 'meaning': 'Contrast', 'cssClass': 'icon-contrast', 'cssContent': 'e1040', 'htmlEntity': '&amp;#xe1040' },
+{ 'meaning': 'Expand', 'cssClass': 'icon-expand', 'cssContent': 'e1041', 'htmlEntity': '&amp;#xe1041' }
+]; objects= [{ 'meaning': 'Activity', 'cssClass': 'icon-activity', 'cssContent': 'e1100', 'htmlEntity': '&amp;#xe1100' },
+{ 'meaning': 'Activity Mode', 'cssClass': 'icon-activity-mode', 'cssContent': 'e1101', 'htmlEntity': '&amp;#xe1101' },
+{ 'meaning': 'Auto-flow Tabular view', 'cssClass': 'icon-autoflow-tabular', 'cssContent': 'e1102', 'htmlEntity': '&amp;#xe1102' },
+{ 'meaning': 'Clock object type', 'cssClass': 'icon-clock', 'cssContent': 'e1103', 'htmlEntity': '&amp;#xe1103' },
+{ 'meaning': 'Database', 'cssClass': 'icon-database', 'cssContent': 'e1104', 'htmlEntity': '&amp;#xe1104' },
+{ 'meaning': 'Data query', 'cssClass': 'icon-database-query', 'cssContent': 'e1105', 'htmlEntity': '&amp;#xe1105' },
+{ 'meaning': 'Data Set domain object', 'cssClass': 'icon-dataset', 'cssContent': 'e1106', 'htmlEntity': '&amp;#xe1106' },
+{ 'meaning': 'Datatable, channel table', 'cssClass': 'icon-datatable', 'cssContent': 'e1107', 'htmlEntity': '&amp;#xe1107' },
+{ 'meaning': 'Dictionary', 'cssClass': 'icon-dictionary', 'cssContent': 'e1108', 'htmlEntity': '&amp;#xe1108' },
+{ 'meaning': 'Folder', 'cssClass': 'icon-folder', 'cssContent': 'e1109', 'htmlEntity': '&amp;#xe1109' },
+{ 'meaning': 'Imagery', 'cssClass': 'icon-image', 'cssContent': 'e1110', 'htmlEntity': '&amp;#xe1110' },
+{ 'meaning': 'Display Layout', 'cssClass': 'icon-layout', 'cssContent': 'e1111', 'htmlEntity': '&amp;#xe1111' },
+{ 'meaning': 'Generic Object', 'cssClass': 'icon-object', 'cssContent': 'e1112', 'htmlEntity': '&amp;#xe1112' },
+{ 'meaning': 'Unknown object type', 'cssClass': 'icon-object-unknown', 'cssContent': 'e1113', 'htmlEntity': '&amp;#xe1113' },
+{ 'meaning': 'Packet domain object', 'cssClass': 'icon-packet', 'cssContent': 'e1114', 'htmlEntity': '&amp;#xe1114' },
+{ 'meaning': 'Page', 'cssClass': 'icon-page', 'cssContent': 'e1115', 'htmlEntity': '&amp;#xe1115' },
+{ 'meaning': 'Overlay plot', 'cssClass': 'icon-plot-overlay', 'cssContent': 'e1116', 'htmlEntity': '&amp;#xe1116' },
+{ 'meaning': 'Stacked plot', 'cssClass': 'icon-plot-stacked', 'cssContent': 'e1117', 'htmlEntity': '&amp;#xe1117' },
+{ 'meaning': 'Session object', 'cssClass': 'icon-session', 'cssContent': 'e1118', 'htmlEntity': '&amp;#xe1118' },
+{ 'meaning': 'Table', 'cssClass': 'icon-tabular', 'cssContent': 'e1119', 'htmlEntity': '&amp;#xe1119' },
+{ 'meaning': 'Latest available data object', 'cssClass': 'icon-tabular-lad', 'cssContent': 'e1120', 'htmlEntity': '&amp;#xe1120' },
+{ 'meaning': 'Latest available data set', 'cssClass': 'icon-tabular-lad-set', 'cssContent': 'e1121', 'htmlEntity': '&amp;#xe1121' },
+{ 'meaning': 'Real-time table view', 'cssClass': 'icon-tabular-realtime', 'cssContent': 'e1122', 'htmlEntity': '&amp;#xe1122' },
+{ 'meaning': 'Real-time scrolling table', 'cssClass': 'icon-tabular-scrolling', 'cssContent': 'e1123', 'htmlEntity': '&amp;#xe1123' },
+{ 'meaning': 'Telemetry element', 'cssClass': 'icon-telemetry', 'cssContent': 'e1124', 'htmlEntity': '&amp;#xe1124' },
+{ 'meaning': 'Telemetry Panel object', 'cssClass': 'icon-telemetry-panel', 'cssContent': 'e1125', 'htmlEntity': '&amp;#xe1125' },
+{ 'meaning': 'Timeline object', 'cssClass': 'icon-timeline', 'cssContent': 'e1126', 'htmlEntity': '&amp;#xe1126' },
+{ 'meaning': 'Timer object', 'cssClass': 'icon-timer', 'cssContent': 'e1127', 'htmlEntity': '&amp;#xe1127' },
+{ 'meaning': 'Data Topic', 'cssClass': 'icon-topic', 'cssContent': 'e1128', 'htmlEntity': '&amp;#xe1128' },
+{ 'meaning': 'Fixed Position object', 'cssClass': 'icon-box-with-dashed-lines', 'cssContent': 'e1129', 'htmlEntity': '&amp;#xe1129' }
+];
+"></div>
+
+<div class="l-style-guide s-text">
+    <p class="doc-title">Open MCT Style Guide</p>
+    <h1>Glyphs</h1>
+    <div class="l-section">
+        <p>Symbolic glyphs are used extensively in Open MCT to call attention to interactive elements, identify objects, and aid in visual recall. Glyphs are made available in a custom symbols font, and have associated CSS classes for their usage. Using a font in this way (versus using images or sprites) has advantages in that each symbol is in effect a scalable vector that can be sized up or down as needed. Color can also quite easily be applied via CSS.</p>
+        <p>New glyphs can be added if needed. Take care to observe the following guidelines:
+        <ul>
+        <li>Symbols should be created at 512 pixels high, and no more than 512 pixels wide. This size is based on a &quot;crisp&quot; 16px approach. Find out more about <a class="link" target="_blank" href="http://asimpleframe.com/writing/custom-icon-font-tutorial-icomoon">crisp symbol fonts</a>.</li>
+            <li>In general, the symbol should occupy most of a square area as possible; avoid symbol aspect ratios that are squat or tall.</li>
+            <li>For consistency and legibility, symbols are designed as mostly solid shapes. Avoid using thin lines or fine detail that will be lost when the icon is sized down. In general, no stroke should be less than 32 pixels.</li>
+            <li>Symbols should be legible down to a minimum of 12 x 12 pixels.</li>
+
+        </ul>
+        </p>
+    </div>
+
+    <div class="l-section">
+        <h2>How to Use Glyphs</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>The easiest way to use a glyph is to include its CSS class in element. The CSS adds a psuedo <code>:before</code> HTML element to whatever element it's attached to that makes proper use of the symbols font.</p>
+                <p>Alternately, you can use the <code>.ui-symbol</code> class in an object that contains encoded HTML entities. This method is only recommended if you cannot use the aforementioned CSS class approach for some reason.</p>
+            </div>
+            <mct-example><a class="s-button icon-gear" title="Settings"></a>
+<br /><br />
+<a class="s-icon-button icon-gear" title="Settings"></a>
+<br /><br />
+<div class="ui-symbol">&#xe901 &#xe914 &#xe922</div>
+</mct-example>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>General User Interface Glyphs</h2>
+        <p>Glyphs suitable for denoting general user interface verbs and nouns.</p>
+        <div class="items-holder grid">
+            <div class="item glyph-item" ng-repeat="glyph in general">
+                <div class="glyph" ng-class="glyph.cssClass"></div>
+                <table class="details">
+                    <tr><td class="label">Meaning</td><td class="value">{{glyph.meaning}}</td></tr>
+                    <tr><td class="label">Class</td><td class="value">.{{glyph.cssClass}}</td></tr>
+                    <tr><td class="label">CSS Content</td><td class="value">\{{glyph.cssContent}}</td></tr>
+                    <tr><td class="label">HTML Entity</td><td class="value">{{glyph.htmlEntity}}</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>Control Glyphs</h2>
+        <p>Glyphs created for use in various controls.</p>
+        <div class="items-holder grid">
+            <div class="item glyph-item" ng-repeat="glyph in controls">
+                <div class="glyph" ng-class="glyph.cssClass"></div>
+                <table class="details">
+                    <tr><td class="label">Meaning</td><td class="value">{{glyph.meaning}}</td></tr>
+                    <tr><td class="label">Class</td><td class="value">.{{glyph.cssClass}}</td></tr>
+                    <tr><td class="label">CSS Content</td><td class="value">\{{glyph.cssContent}}</td></tr>
+                    <tr><td class="label">HTML Entity</td><td class="value">{{glyph.htmlEntity}}</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>Object Type Glyphs</h2>
+        <p>These glyphs are reserved exclusively to denote types of objects in the application. Only use them if you are referring to a pre-existing object type.</p>
+        <div class="items-holder grid">
+            <div class="item glyph-item" ng-repeat="glyph in objects">
+                <div class="glyph" ng-class="glyph.cssClass"></div>
+                <table class="details">
+                    <tr><td class="label">Meaning</td><td class="value">{{glyph.meaning}}</td></tr>
+                    <tr><td class="label">Class</td><td class="value">.{{glyph.cssClass}}</td></tr>
+                    <tr><td class="label">CSS Content</td><td class="value">\{{glyph.cssContent}}</td></tr>
+                    <tr><td class="label">HTML Entity</td><td class="value">{{glyph.htmlEntity}}</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+

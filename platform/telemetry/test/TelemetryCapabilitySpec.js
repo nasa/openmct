@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2017, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -92,13 +92,13 @@ define(
                 ]);
                 mockTelemetryAPI.getMetadata.andReturn({
                     valuesForHints: function () {
-                        return [];
+                        return [{}];
                     }
                 });
 
                 mockAPI = {
                     telemetry: mockTelemetryAPI,
-                    conductor: {
+                    time: {
                         bounds: function () {
                             return {
                                 start: 0,
@@ -107,9 +107,7 @@ define(
                         },
                         timeSystem: function () {
                             return {
-                                metadata: {
-                                    key: 'mockTimeSystem'
-                                }
+                                key: 'mockTimeSystem'
                             };
                         }
                     }
@@ -289,7 +287,7 @@ define(
 
             it("applies time conductor bounds if request bounds not defined", function () {
                 var fullRequest = telemetry.buildRequest({});
-                var mockBounds = mockAPI.conductor.bounds();
+                var mockBounds = mockAPI.time.bounds();
 
                 expect(fullRequest.start).toBe(mockBounds.start);
                 expect(fullRequest.end).toBe(mockBounds.end);
@@ -302,8 +300,8 @@ define(
 
             it("applies domain from time system if none defined", function () {
                 var fullRequest = telemetry.buildRequest({});
-                var mockTimeSystem = mockAPI.conductor.timeSystem();
-                expect(fullRequest.domain).toBe(mockTimeSystem.metadata.key);
+                var mockTimeSystem = mockAPI.time.timeSystem();
+                expect(fullRequest.domain).toBe(mockTimeSystem.key);
 
                 fullRequest = telemetry.buildRequest({domain: 'someOtherDomain'});
                 expect(fullRequest.domain).toBe('someOtherDomain');
