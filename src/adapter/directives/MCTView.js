@@ -23,11 +23,9 @@
 define([
     'angular',
     './Region',
-    '../../api/objects/object-utils'
 ], function (
     angular,
-    Region,
-    objectUtils
+    Region
 ) {
     function MCTView() {
         return {

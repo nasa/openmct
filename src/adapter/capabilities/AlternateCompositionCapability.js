@@ -96,7 +96,7 @@ define([
                 }.bind(this));
         };
 
-        AlternateCompositionCapability.appliesTo = function (model) {
+        AlternateCompositionCapability.appliesTo = function () {
             // Will get replaced by a runs exception to properly
             // bind to running openmct instance
             return false;
