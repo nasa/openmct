@@ -38,7 +38,6 @@ define([
         metadata.domains.forEach(function (domain, index) {
             var valueMetadata = _.clone(domain);
             valueMetadata.hints = {
-                x: index + 1,
                 domain: index + 1
             };
             valueMetadatas.push(valueMetadata);
@@ -47,7 +46,6 @@ define([
         metadata.ranges.forEach(function (range, index) {
             var valueMetadata = _.clone(range);
             valueMetadata.hints = {
-                y: index,
                 range: index,
                 priority: index + metadata.domains.length + 1
             };
