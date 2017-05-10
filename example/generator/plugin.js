@@ -135,31 +135,44 @@ define([
                     amplitude: 1,
                     offset: 0,
                     dataRateInHz: 1,
-                    domains: [
+                    values: [
                         {
                             key: "utc",
                             name: "Time",
-                            format: "utc"
+                            format: "utc",
+                            hints: {
+                                domain: 1
+                            }
                         },
                         {
                             key: "yesterday",
                             name: "Yesterday",
-                            format: "utc"
+                            format: "utc",
+                            hints: {
+                                domain: 2
+                            }
                         },
                         {
                             key: "delta",
                             name: "Delta",
-                            format: "example.delta"
-                        }
-                    ],
-                    ranges: [
+                            format: "example.delta",
+                            hints: {
+                                domain: 3
+                            }
+                        },
                         {
                             key: "sin",
-                            name: "Sine"
+                            name: "Sine",
+                            hints: {
+                                range: 1
+                            }
                         },
                         {
                             key: "cos",
-                            name: "Cosine"
+                            name: "Cosine",
+                            hints: {
+                                range: 2
+                            }
                         }
                     ]
                 };
