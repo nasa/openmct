@@ -23,12 +23,10 @@
 
 define([
     "./GeneratorProvider",
-    "./SinewaveLimitCapability",
-    "./SinewaveDeltaFormat"
+    "./SinewaveLimitCapability"
 ], function (
     GeneratorProvider,
-    SinewaveLimitCapability,
-    SinewaveDeltaFormat
+    SinewaveLimitCapability
 ) {
 
     var legacyExtensions = {
@@ -37,34 +35,8 @@ define([
                 "key": "limit",
                 "implementation": SinewaveLimitCapability
             }
-        ],
-        "formats": [
-            {
-                "key": "example.delta",
-                "implementation": SinewaveDeltaFormat
-            }
-        ],
-        "constants": [
-            {
-                "key": "TIME_CONDUCTOR_DOMAINS",
-                "value": [
-                    {
-                        "key": "time",
-                        "name": "Time"
-                    },
-                    {
-                        "key": "yesterday",
-                        "name": "Yesterday"
-                    },
-                    {
-                        "key": "delta",
-                        "name": "Delta"
-                    }
-                ],
-                "priority": -1
-            }
         ]
-    }
+    };
 
     return function(openmct){
         //Register legacy extensions for things not yet supported by the new API
@@ -135,31 +107,36 @@ define([
                     amplitude: 1,
                     offset: 0,
                     dataRateInHz: 1,
-                    domains: [
+                    values: [
                         {
                             key: "utc",
                             name: "Time",
-                            format: "utc"
+                            format: "utc",
+                            hints: {
+                                domain: 1
+                            }
                         },
                         {
                             key: "yesterday",
                             name: "Yesterday",
-                            format: "utc"
+                            format: "utc",
+                            hints: {
+                                domain: 2
+                            }
                         },
                         {
-                            key: "delta",
-                            name: "Delta",
-                            format: "example.delta"
-                        }
-                    ],
-                    ranges: [
-                        {
                             key: "sin",
-                            name: "Sine"
+                            name: "Sine",
+                            hints: {
+                                range: 1
+                            }
                         },
                         {
                             key: "cos",
-                            name: "Cosine"
+                            name: "Cosine",
+                            hints: {
+                                range: 2
+                            }
                         }
                     ]
                 };

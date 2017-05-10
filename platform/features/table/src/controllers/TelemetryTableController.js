@@ -246,7 +246,7 @@ define(
 
                 this.table.populateColumns(allColumns);
 
-                var domainColumns = telemetryApi.commonValuesForHints(metadatas, ['x']);
+                var domainColumns = telemetryApi.commonValuesForHints(metadatas, ['domain']);
                 this.timeColumns = domainColumns.map(function (metadatum) {
                     return metadatum.name;
                 });

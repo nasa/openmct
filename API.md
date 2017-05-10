@@ -3,42 +3,45 @@
 ## Scope and purpose of this document
 
 This document is intended to serve as a reference for developing an application 
-based on Open MCT. It will provide details of the API functions necessary to extend the 
-Open MCT platform meet common use cases such as integrating with a telemetry source. 
+based on Open MCT. It will provide details of the API functions necessary to 
+extend the Open MCT platform meet common use cases such as integrating with a telemetry source. 
 
 The best place to start is with the [Open MCT Tutorials](https://github.com/nasa/openmct-tutorial). 
-These will walk you through the process of getting up and running with Open MCT, 
-as well as addressing some common developer use cases.
+These will walk you through the process of getting up and running with Open 
+MCT, as well as addressing some common developer use cases.
 
 ## Building From Source 
 
 The latest version of Open MCT is available from [our GitHub repository](https://github.com/nasa/openmct). 
-If you have `git`, and `node` installed, you can build Open MCT with the commands 
-```
+If you have `git`, and `node` installed, you can build Open MCT with the
+commands 
+
+```bash
 git clone https://github.com/nasa/openmct.git
 cd openmct
 npm install
 ```
 
-These commands will fetch the Open MCT source from our GitHub repository, and build 
-a minified version that can be included in your application. The output of the 
-build process is placed in a `dist` folder under the openmct source directory, 
-which can be copied out to another location as needed. The contents of this 
-folder will include a minified javascript file named `openmct.js` as well as 
-assets such as html, css, and images necessary for the UI. 
+These commands will fetch the Open MCT source from our GitHub repository, and 
+build a minified version that can be included in your application. The output 
+of the build process is placed in a `dist` folder under the openmct source 
+directory, which can be copied out to another location as needed. The contents 
+of this folder will include a minified javascript file named `openmct.js` as 
+well as assets such as html, css, and images necessary for the UI. 
 
 ## Starting an Open MCT application
 
-To start a minimally functional Open MCT application, it is necessary to include 
-the Open MCT distributable, enable some basic plugins, and bootstrap the application. 
-The tutorials walk through the process of getting Open MCT up and running from scratch,
-but provided below is a minimal HTML template that includes Open MCT, installs 
-some basic plugins, and bootstraps the application. It assumes that Open MCT is 
-installed under an `openmct` subdirectory, as described in [Building From Source](#building-from-source). 
+To start a minimally functional Open MCT application, it is necessary to 
+include the Open MCT distributable, enable some basic plugins, and bootstrap 
+the application. The tutorials walk through the process of getting Open MCT up 
+and running from scratch, but provided below is a minimal HTML template that 
+includes Open MCT, installs some basic plugins, and bootstraps the application. 
+It assumes that Open MCT is installed under an `openmct` subdirectory, as 
+described in [Building From Source](#building-from-source). 
 
 This approach includes openmct using a simple script tag, resulting in a global 
-variable named `openmct`. This `openmct` object is used subsequently to make API 
-calls. 
+variable named `openmct`. This `openmct` object is used subsequently to make 
+API calls. 
 
 Open MCT is packaged as a UMD (Universal Module Definition) module, so common 
 script loaders are also supported.
@@ -63,18 +66,19 @@ script loaders are also supported.
 </html>
 ```
 
-The Open MCT library included above requires certain assets such as html templates, 
-images, and css. If you installed Open MCT from GitHub as described in the section 
-on [Building from Source](#building-from-source) then these assets will have been 
-downloaded along with the Open MCT javascript library. You can specify the 
-location of these assets by calling `openmct.setAssetPath()`. Typically this will 
-be the same location as the `openmct.js` library is included from.
+The Open MCT library included above requires certain assets such as html 
+templates, images, and css. If you installed Open MCT from GitHub as described 
+in the section on [Building from Source](#building-from-source) then these
+assets will have been downloaded along with the Open MCT javascript library. 
+You can specify the location of these assets by calling `openmct.setAssetPath()`. 
+Typically this will be the same location as the `openmct.js` library is 
+included from.
 
-There are some plugins bundled with the application that provide UI, persistence, 
-and other default configuration which are necessary to be able to do anything with 
-the application initially. Any of these plugins can, in principle, be replaced with a custom 
-plugin. The included plugins are documented in the [Included Plugins](#included-plugins) 
-section.  
+There are some plugins bundled with the application that provide UI, 
+persistence, and other default configuration which are necessary to be able to 
+do anything with the application initially. Any of these plugins can, in 
+principle, be replaced with a custom plugin. The included plugins are 
+documented in the [Included Plugins](#included-plugins) section.  
 
 ## Plugins
 
@@ -87,25 +91,28 @@ openmct.install(function install(openmctAPI) {
 });
 ```
 
-New plugins are installed in Open MCT by calling `openmct.install`, and providing 
-a plugin installation function. This function will be invoked on application 
-startup with one parameter - the openmct API object. A common approach used in 
-the Open MCT codebase is to define a plugin as a function that returns this 
-installation function. This allows configuration to be specified when the plugin is included.
+New plugins are installed in Open MCT by calling `openmct.install`, and
+providing a plugin installation function. This function will be invoked on 
+application startup with one parameter - the openmct API object. A common 
+approach used in the Open MCT codebase is to define a plugin as a function that 
+returns this installation function. This allows configuration to be specified 
+when the plugin is included.
 
 eg.
+
 ```javascript
 openmct.install(openmct.plugins.Elasticsearch("http://localhost:8002/openmct"));
 ```
+
 This approach can be seen in all of the [plugins provided with Open MCT](https://github.com/nasa/openmct/blob/master/src/plugins/plugins.js).
 
 ## Domain Objects and Identifiers
 
-_Domain Objects_ are the basic entities that represent domain knowledge in Open MCT.
-The temperature sensor on a solar panel, an overlay plot comparing 
-the results of all temperature sensors, the command dictionary for a spacecraft,
-the individual commands in that dictionary, the "My Items" folder:
-All of these things are domain objects.
+_Domain Objects_ are the basic entities that represent domain knowledge in Open 
+MCT.  The temperature sensor on a solar panel, an overlay plot comparing the 
+results of all temperature sensors, the command dictionary for a spacecraft, 
+the individual commands in that dictionary, the "My Items" folder: All of these 
+things are domain objects.
 
 A _Domain Object_ is simply a javascript object with some standard attributes.  
 An example of a _Domain Object_ is the "My Items" object which is a folder in 
@@ -128,19 +135,21 @@ looks like this:
 ### Object Attributes
 
 The main attributes to note are the `identifier`, and `type` attributes.
-* `identifier`: A composite key that provides a universally unique identifier for 
-this object. The `namespace` and `key` are used to identify the object. The `key` 
-must be unique within the namespace. 
+
+* `identifier`: A composite key that provides a universally unique identifier 
+  for this object. The `namespace` and `key` are used to identify the object.
+  The `key` must be unique within the namespace. 
 * `type`: All objects in Open MCT have a type. Types allow you to form an 
-ontology of knowledge and provide an abstraction for grouping, visualizing, and 
-interpreting data. Details on how to define a new object type are provided below. 
+  ontology of knowledge and provide an abstraction for grouping, visualizing, 
+  and interpreting data. Details on how to define a new object type are 
+  provided below. 
 
 Open MCT uses a number of builtin types. Typically you are going to want to 
-define your own if extending Open MCT.
+define your own when extending Open MCT.
 
 ### Domain Object Types
 
-Custom types may be registered via the `addType` function on the opencmt Type 
+Custom types may be registered via the `addType` function on the Open MCT Type 
 registry.
 
 eg.
@@ -284,101 +293,155 @@ var domainObject = {
 };
 ```
 
-## Telemetry Providers
+## Telemetry API
 
-When connecting to a new telemetry source, you will need to register a new
-_Telemetry Provider_. A _Telemetry Provider_ retrieves telemetry data from some telemetry 
-source, and exposes them in a way that can be used by Open MCT. A telemetry 
-provider typically can support a one off __request__ for a batch of telemetry data, 
-or it can provide the ability to __subscribe__ to receive new telemetry data when 
-it becomes available, or both.
+The Open MCT telemetry API provides two main sets of interfaces-- one for integrating telemetry data into Open MCT, and another for developing Open MCT visualization plugins utilizing telemetry API.  
 
-```javascript
-openmct.telemetry.addProvider({
-    supportsRequest: function (domainObject) {
-        //...
-    },
-    supportsSubscribe: function (domainObject) {
-        //...
-    },
-    request: function (domainObject, options) {    
-        //...
-    },
-    subscribe: function (domainObject, callback, options) {
-        //...
-    }
-})
-```
+The APIs for visualization plugins are still a work in progress and docs may change at any time.  However, the APIs for integrating telemetry metadata into Open MCT are stable and documentation is included below.
 
-A telemetry provider is an object with the following functions defined:
+### Integrating Telemetry Sources
 
-* `supportsRequest`: An __optional__ `function` that accepts a 
-[Domain Object](#domain-objects-and-identifiers) and returns a `boolean` value
-indicating whether or not this provider supports telemetry requests for the 
-given object. If this returns `true` then a `request` function must be defined. 
-* `supportsSubscribe`: An __optional__ `function` that accepts a 
-[Domain Object](#domain-objects-and-identifiers) and returns a `boolean` value 
-indicating whether or not this provider supports telemetry subscriptions. If this 
-returns `true` then a `subscribe` function must also be defined. As with `request`, 
-the return value will typically be conditional, and based on attributes of 
-`domainObject` such as its identifier.
-* `request`: A `function` that returns a `Promise` that will resolve with an `Array` 
-of telemetry in a single query. This function accepts as arguments a 
-[Domain Object](#domain-objects-and-identifiers) and an object containing some 
-[request options](#telemetry-requests). 
-* `subscribe`:  A `function` that accepts a [Domain Object](#domain-objects-and-identifiers),
-a callback `function`, and a [telemetry request](#telemetry-requests). The 
-callback is invoked whenever telemetry is available, and 
-
-
-The implementations for `request` and `subscribe` can vary depending on the
-nature of the endpoint which will provide telemetry. In the example above,
-it is assumed that `myAdapter` contains the implementation details
-(such as HTTP requests, WebSocket connections, etc.) associated with some telemetry
-source.
+There are two main tasks for integrating telemetry sources-- describing telemetry objects with relevant metadata, and then providing telemetry data for those objects.  You'll use an [Object Provider](#object-providers) to provide objects with the necessary [Telemetry Metadata](#telemetry-metadata), and then register a [Telemetry Provider](#telemetry-providers) to retrieve telemetry data for those objects.
 
 For a step-by-step guide to building a telemetry adapter, please see the 
-[Open MCT Tutorials](https://github.com/larkin/openmct-tutorial).
+[Open MCT Tutorials](https://github.com/nasa/openmct-tutorial).
 
-### Telemetry Requests
-Telemetry requests support time bounded queries. A call to a _Telemetry Provider_'s 
-`request` function will include an `options` argument. These are simply javascript
-objects with attributes for the request parameters. An example of a telemetry 
-request object with a start and end time is included below:
-```javascript
+#### Telemetry Metadata
+
+A telemetry object is a domain object with a telemetry property.  To take an example from the tutorial, here is the telemetry object for the "fuel" measurement of the spacecraft:
+
+```json
 {
-    start: 1487981997240,
-    end: 1487982897240
+    "identifier": {
+        "namespace": "example.taxonomy",
+        "key": "prop.fuel"
+    },
+    "name": "Fuel",
+    "type": "example.telemetry",
+    "telemetry": {
+        "values": [
+            {
+                "key": "value",
+                "name": "Value",
+                "units": "kilograms",
+                "format": "float",
+                "min": 0,
+                "max": 100,
+                "hints": {
+                    "range": 1
+                }
+            },
+            {
+                "key": "utc",
+                "source": "timestamp",
+                "name": "Timestamp",
+                "format": "utc",
+                "hints": {
+                    "domain": 1
+                }
+            }
+        ]
+    }
 }
 ```
 
+The most important part of the telemetry metadata is the `values` property-- this describes the attributes of telemetry datums (objects) that a telemetry provider returns.  These descriptions must be provided for telemetry views to work properly.
 
-### Telemetry Formats
+##### Values
+
+`telemetry.values` is an array of value description objects, which have the following fields:
+
+attribute      | type   | flags    | notes
+---            |  ---   |  ---     | ---
+`key`          | string | required | unique identifier for this field.  
+`hints`        | object | required | Hints allow views to intelligently select relevant attributes for display, and are required for most views to function.  See section on "Value Hints" below.
+`name`         | string | optional | a human readible label for this field.  If omitted, defaults to `key`.
+`source`       | string | optional | identifies the property of a datum where this value is stored.  If omitted, defaults to `key`.
+`format`       | string | optional | a specific format identifier, mapping to a formatter.  If omitted, uses a default formatter.  For enumerations, use `enum`.  For timestamps, use `utc` if you are using utc dates, otherwise use a key mapping to your custom date format.  
+`units`        | string | optional | the units of this value, e.g. `km`, `seconds`, `parsecs`
+`min`          | number | optional | the minimum possible value of this measurement.  Will be used by plots, gauges, etc to automatically set a min value.
+`max`          | number | optional | the maximum possible value of this measurement.  Will be used by plots, gauges, etc to automatically set a max value.
+`enumerations` | array  | optional | for objects where `format` is `"enum"`, this array tracks all possible enumerations of the value.  Each entry in this array is an object, with a `value` property that is the numerical value of the enumeration, and a `string` property that is the text value of the enumeration.  ex: `{"value": 0, "string": "OFF"}`.  If you use an enumerations array, `min` and `max` will be set automatically for you.
+
+
+###### Value Hints
+
+Each telemetry value description has an object defining hints.  Keys in this this object represent the hint itself, and the value represents the weight of that hint.  A lower weight means the hint has a higher priority.  For example, multiple values could be hinted for use as the y axis of a plot (raw, engineering), but the highest priority would be the default choice.  Likewise, a table will use hints to determine the default order of columns.
+
+Known hints:
+
+* `domain`: Indicates that the value represents the "input" of a datum. Values with a `domain` hint will be used for the x-axis of a plot, and tables will render columns for these values first.
+* `range`: Indicates that the value is the "output" of a datum.  Values with a `range` hint will be used as the y-axis on a plot, and tables will render columns for these values after the `domain` values.
+
+##### The Time Conductor and Telemetry 
+
+Open MCT provides a number of ways to pivot through data and link data via time.  The Time Conductor helps synchronize multiple views around the same time.
+
+In order for the time conductor to work, there will always be an active "time system".  All telemetry metadata *must* have a telemetry value with a `key` that matches the `key` of the active time system.  You can use the `source` attribute on the value metadata to remap this to a different field in the telemetry datum-- especially useful if you are working with disparate datasources that have different field mappings.
+
+
+#### Telemetry Providers
+
+Telemetry providers are responsible for providing historical and real time telemetry data for telemetry objects.  Each telemetry provider determines which objects it can provide telemetry for, and then must implement methods to provide telemetry for those objects.
+
+A telemetry provider is a javascript object with up to four methods:
+
+* `supportsSubscribe(domainObject, callback, options)` optional.  Must be implemented to provide realtime telemetry.  Should return `true` if the provider supports subscriptions for the given domain object (and request options).
+* `subscribe(domainObject, callback, options)` required if `supportsSubscribe` is implemented.  Establish a subscription for realtime data for the given domain object.  Should invoke `callback` with a single telemetry datum every time data is received.  Must return an unsubscribe function.  Multiple views can subscribe to the same telemetry object, so it should always return a new unsubscribe function.
+* `supportsRequest(domainObject, options)` optional.  Must be implemented to provide historical telemetry.  Should return `true` if the provider supports historical requests for the given domain object.
+* `request(domainObject, options)` required if `supportsRequest` is implemented.  Must return a promise for an array of telemetry datums that fulfills the request.  The `options` argument will include a `start`, `end`, and `domain` attribute representing the query bounds.  For more request properties, see Request Properties below.
+
+Telemetry providers are registered by calling `openmct.telemetry.addProvider(provider)`, e.g.
+
+```javascript
+openmct.telemetry.addProvider({
+    supportsRequest: function (domainObject, options) { /*...*/ },
+    request: function (domainObject, options) { /*...*/ },
+    supportsSubscribe: function (domainObject, callback, options) { /*...*/ },
+    subscribe: function (domainObject, callback, options) { /*...*/ }
+})
+```
+
+#### Telemetry Requests
+
+Telemetry requests support time bounded queries. A call to a _Telemetry Provider_'s `request` function will include an `options` argument. These are simply javascript objects with attributes for the request parameters. An example of a telemetry request object with a start and end time is included below:
+```javascript
+{
+    start: 1487981997240,
+    end: 1487982897240,
+    domain: 'utc'
+}
+```
+
+#### Telemetry Formats
 
 Telemetry format objects define how to interpret and display telemetry data. 
 They have a simple structure:
 
 * `key`: A `string` that uniquely identifies this formatter.
-* `format`: A `function` that takes a raw telemetry value, and returns a human-readable
-`string` representation of that value. It has one required argument, and three 
-optional arguments that provide context and can be used for returning scaled 
-representations of a value. An example of this is representing time values in a 
-scale such as the time conductor scale. There are multiple ways of representing 
-a point in time, and by providing a minimum scale value, maximum scale value, 
-and a count, it's possible to provide more useful representations of time given 
-the provided limitations.  
+* `format`: A `function` that takes a raw telemetry value, and returns a 
+  human-readable `string` representation of that value. It has one required 
+  argument, and three optional arguments that provide context and can be used 
+  for returning scaled representations of a value. An example of this is 
+  representing time values in a scale such as the time conductor scale. There 
+  are multiple ways of representing a point in time, and by providing a minimum
+  scale value, maximum scale value, and a count, it's possible to provide more
+  useful representations of time given the provided limitations.  
     * `value`: The raw telemetry value in its native type.
-    * `minValue`: An __optional__ argument specifying the minimum displayed value.
-    * `maxValue`: An __optional__ argument specifying the maximum displayed value.
-    * `count`: An __optional__ argument specifying the number of displayed values.
-* `parse`: A `function` that takes a `string` representation of a telemetry value,
-and returns the value in its native type. It accepts one argument:
+    * `minValue`: An __optional__ argument specifying the minimum displayed 
+      value.
+    * `maxValue`: An __optional__ argument specifying the maximum displayed 
+      value.
+    * `count`: An __optional__ argument specifying the number of displayed 
+      values.
+* `parse`: A `function` that takes a `string` representation of a telemetry 
+  value, and returns the value in its native type. It accepts one argument:
     * `text`: A `string` representation of a telemetry value.
 * `validate`: A `function` that takes a `string` representation of a telemetry 
-value, and returns a `boolean` value indicating whether the provided string can be 
-parsed.
+  value, and returns a `boolean` value indicating whether the provided string
+  can be parsed.
 
-#### Registering Formats
+##### Registering Formats
 
 Formats are registered with the Telemetry API using the `addFormat` function. eg.
 
@@ -397,70 +460,57 @@ openmct.telemetry.addFormat({
 });
 ```
 
-#### Examples of Formats in Use
-* The [NumberFormat](https://github.com/nasa/openmct/blob/time-api-redo/platform/features/conductor/core/src/ui/NumberFormat.js)  
-provides an example of a simple format available by default 
-in OpenMCT.
+##### Examples of Formats in Use
+
+* The [NumberFormat](https://github.com/nasa/openmct/blob/time-api-redo/platform/features/conductor/core/src/ui/NumberFormat.js)
+  provides an example of a simple format available by default in OpenMCT.
 * The [UTCTimeFormat](https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/UTCTimeFormat.js) 
-is a more complex implementation of a format that uses the optional context 
-arguments in `format` to provide scale-appropriate values. 
+  is a more complex implementation of a format that uses the optional context 
+  arguments in `format` to provide scale-appropriate values. 
 
-### Telemetry Data
+#### Telemetry Data
 
-Telemetry data is provided to Open MCT by _[Telemetry Providers](#telemetry-providers)_
-in the form of javascript objects. A collection of telemetry values (for example, 
-retrieved in response to a `request`) is represented by an `Array` of javascript 
-objects. These telemetry javascript objects are simply key value pairs.
+A single telemetry point is considered a Datum, and is represented by a standard
+javascript object.  Realtime subscriptions (obtained via __subscribe__) will 
+invoke the supplied callback once for each telemetry datum recieved.  Telemetry
+requests (obtained via __request__) will return a promise for an array of 
+telemetry datums.
 
-Typically a telemetry datum will have some timestamp associated with it. This 
-time stamp should have a key that corresponds to some time system supported by 
-Open MCT. If the `UTCTimeSystem` plugin is installed, then the key `utc` can be used.
-   
-An example of a telemetry provider request function that returns a collection of
-mock telemtry data is below:
+##### Telemetry Datums
 
-```javascript
-openmct.telemetry.addProvider({
-    supportsRequest: function (domainObject) {
-        return true
-    },
-    request: function (domainObject, options) {    
-        return Promise.resolve([
-            {
-                'utc': Date.now() - 2000,
-                'value': 1,
-            },
-            {
-                'utc': Date.now() - 1000,
-                'value': 2,
-            },
-            {
-                'utc': Date.now(),
-                'value': 3,
-            }
-        ]);
-    }
-})
+A telemetry datum is a simple javascript object, e.g.:
+
+```json
+{
+    "timestamp": 1491267051538,
+    "value": 77,
+    "id": "prop.fuel"
+}
 ```
 
-## Time API 
-Open MCT provides API for managing the temporal state of the application. Central 
-to this is the concept of "time bounds". Views in Open MCT will typically show 
-telemetry data for some prescribed date range, and the Time API provides a way 
-to centrally manage these bounds.
+The key-value pairs of this object are described by the telemetry metadata of
+a domain object, as discussed in the [Telemetry Metadata](#telemetry-metadata)
+section.
+
+## Time API
+
+Open MCT provides API for managing the temporal state of the application.
+Central to this is the concept of "time bounds". Views in Open MCT will 
+typically show telemetry data for some prescribed date range, and the Time API 
+provides a way to centrally manage these bounds.
 
 The Time API exposes a number of methods for querying and setting the temporal 
 state of the application, and emits events to inform listeners when the state changes.
 
 Because the data displayed tends to be time domain data, Open MCT must always 
-have at least one time system installed and activated. When you download Open MCT,
-it will be pre-configured to use the UTC time system, which is installed and 
-activated, along with other default plugins, in `index.html`. Installing and 
-activating a time system is simple, and is covered 
+have at least one time system installed and activated. When you download Open
+MCT, it will be pre-configured to use the UTC time system, which is installed and activated, along with other default plugins, in `index.html`. Installing and activating a time system is simple, and is covered 
 [in the next section](#defining-and-registering-time-systems). 
 
 ### Time Systems and Bounds
+
 #### Defining and Registering Time Systems
+
 The time bounds of an Open MCT application are defined as numbers, and a Time 
 System gives meaning and context to these numbers so that they can be correctly 
 interpreted. Time Systems are javscript objects that provide some information 
@@ -574,6 +624,7 @@ The values provided by clocks are simple `number`s, which are interpreted in the
 context of the active [Time System](#defining-and-registering-time-systems).
 
 ### Defining and registering clocks
+
 A clock is an object that defines certain required metadata and functions:
 
 * `key`: A `string` uniquely identifying this clock. This can be used later to 
@@ -685,6 +736,7 @@ new bounds will be calculated based on the `currentValue()` of the active clock.
 Clock offsets are only relevant when a clock source is active.
 
 ## Time Events
+
 The time API supports the registration of listeners that will be invoked when the 
 application's temporal state changes. Events listeners can be registered using 
 the `on` function. They can be deregistered using the `off` function. The arguments
@@ -703,6 +755,7 @@ openmct.time.on('bounds', function callback (newBounds, tick) {
 ```
 
 #### List of Time Events
+
 The events supported by the Time API are:
 
 * `bounds`: Listen for changes to current bounds. The callback will be invoked 
@@ -733,6 +786,7 @@ callback will be provided with the new clock offsets.
 
 
 ## The Time Conductor
+
 The Time Conductor provides a user interface for managing time bounds in Open MCT.
 It allows a user to select from configured time systems and clocks, and to set bounds
 and clock offsets.
@@ -741,6 +795,7 @@ If activated, the time conductor must be provided with configuration options,
 detailed below.
 
 #### Time Conductor Configuration
+
 The time conductor is configured by specifying the options that will be 
 available to the user from the menus in the time conductor. These will determine 
 the clocks available from the conductor, the time systems available for each 
@@ -781,6 +836,7 @@ automatically applied when the combination of clock and time system specified in
 this configuration is selected from the UI.
 
 #### Example conductor configuration
+
 An example time conductor configuration is provided below. It sets up some 
 default options for the [UTCTimeSystem](https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/UTCTimeSystem.js) 
 and [LocalTimeSystem](https://github.com/nasa/openmct/blob/master/src/plugins/localTimeSystem/LocalTimeSystem.js), 

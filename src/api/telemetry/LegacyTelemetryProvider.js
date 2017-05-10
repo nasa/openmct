@@ -56,11 +56,11 @@ define([
             datum = legacySeries.getDatum(i);
         } else {
             datum = {};
-            metadata.valuesForHints(['x']).forEach(function (metadatum) {
+            metadata.valuesForHints(['domain']).forEach(function (metadatum) {
                 datum[metadatum.key] = legacySeries.getDomainValue(i, metadatum.key);
             });
 
-            metadata.valuesForHints(['y']).forEach(function (metadatum) {
+            metadata.valuesForHints(['range']).forEach(function (metadatum) {
                 datum[metadatum.key] = legacySeries.getRangeValue(i, metadatum.key);
             });
         }

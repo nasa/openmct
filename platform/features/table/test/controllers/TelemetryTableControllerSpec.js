@@ -361,7 +361,7 @@ define(
                     };
 
                     mockTelemetryAPI.commonValuesForHints.andCallFake(function (metadata, hints) {
-                        if (_.eq(hints, ["x"])) {
+                        if (_.eq(hints, ["domain"])) {
                             return domainMetadata;
                         } else if (_.eq(hints, [])) {
                             return allMetadata;
