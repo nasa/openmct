@@ -155,7 +155,7 @@ registry.
 eg.
 ```javascript
 openmct.types.addType('my-type', {
-    label: "My Type",
+    name: "My Type",
     description: "This is a type that I added!",
     creatable: true
 });
@@ -166,7 +166,7 @@ The `addType` function accepts two arguments:
 for an object.
 * An object type specification. An object type definition supports the following 
 attributes      
-    * `label`: a `string` naming this object type
+    * `name`: a `string` naming this object type
     * `description`: a `string` specifying a longer-form description of this type
     * `initialize`: a `function` which initializes the model for new domain objects 
     of this type. This can be used for setting default values on an object when 
