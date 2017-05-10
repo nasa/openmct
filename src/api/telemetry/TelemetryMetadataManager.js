@@ -78,7 +78,7 @@ define([
 
         if (valueMetadata.hints.hasOwnProperty('x')) {
             console.warn(
-                'DEPRECIATION WARNING: `x` hints should be replaced with ' +
+                'DEPRECATION WARNING: `x` hints should be replaced with ' +
                 '`domain` hints moving forward.  ' +
                 'https://github.com/nasa/openmct/issues/1546'
             );
@@ -90,7 +90,7 @@ define([
 
         if (valueMetadata.hints.hasOwnProperty('y')) {
             console.warn(
-                'DEPRECIATION WARNING: `y` hints should be replaced with ' +
+                'DEPRECATION WARNING: `y` hints should be replaced with ' +
                 '`range` hints moving forward.  ' +
                 'https://github.com/nasa/openmct/issues/1546'
             );
