@@ -23,12 +23,10 @@
 
 define([
     "./GeneratorProvider",
-    "./SinewaveLimitCapability",
-    "./SinewaveDeltaFormat"
+    "./SinewaveLimitCapability"
 ], function (
     GeneratorProvider,
-    SinewaveLimitCapability,
-    SinewaveDeltaFormat
+    SinewaveLimitCapability
 ) {
 
     var legacyExtensions = {
@@ -36,12 +34,6 @@ define([
             {
                 "key": "limit",
                 "implementation": SinewaveLimitCapability
-            }
-        ],
-        "formats": [
-            {
-                "key": "example.delta",
-                "implementation": SinewaveDeltaFormat
             }
         ],
         "constants": [
@@ -150,14 +142,6 @@ define([
                             format: "utc",
                             hints: {
                                 domain: 2
-                            }
-                        },
-                        {
-                            key: "delta",
-                            name: "Delta",
-                            format: "example.delta",
-                            hints: {
-                                domain: 3
                             }
                         },
                         {

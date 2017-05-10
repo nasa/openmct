@@ -64,7 +64,6 @@
                     data: {
                         utc: nextStep,
                         yesterday: nextStep - 60*60*24*1000,
-                        delta: 60*60*24*1000,
                         sin: sin(nextStep, data.period, data.amplitude, data.offset),
                         cos: cos(nextStep, data.period, data.amplitude, data.offset)
                     }
@@ -108,7 +107,6 @@
             data.push({
                 utc: nextStep,
                 yesterday: nextStep - 60*60*24*1000,
-                delta: 60*60*24*1000,
                 sin: sin(nextStep, period, amplitude, offset),
                 cos: cos(nextStep, period, amplitude, offset)
             });
