@@ -63,10 +63,10 @@ define(['./Type'], function (Type) {
      * @private
      */
     TypeRegistry.prototype.standardizeType = function (typeDef) {
-        if (typeDef.label) {
+        if (typeDef.hasOwnProperty('label')) {
             console.warn(
-                'DEPRECIATION WARNING typeDef: ' + typeDef.label + '.  ' +
-                '`label` is depreciated in type definitions.  Please use ' +
+                'DEPRECATION WARNING typeDef: ' + typeDef.label + '.  ' +
+                '`label` is deprecated in type definitions.  Please use ' +
                 '`name` instead.  This will cause errors in a future version ' +
                 'of Open MCT.  For more information, see ' +
                 'https://github.com/nasa/openmct/issues/1568');
