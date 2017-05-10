@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+/*global console*/
 
 define([
     'lodash'
@@ -75,6 +75,30 @@ define([
     function applyReasonableDefaults(valueMetadata, index) {
         valueMetadata.source = valueMetadata.source || valueMetadata.key;
         valueMetadata.hints = valueMetadata.hints || {};
+
+        if (valueMetadata.hints.hasOwnProperty('x')) {
+            console.warn(
+                'DEPRECIATION WARNING: `x` hints should be replaced with ' +
+                '`domain` hints moving forward.  ' +
+                'https://github.com/nasa/openmct/issues/1546'
+            );
+            if (!valueMetadata.hints.hasOwnProperty('domain')) {
+                valueMetadata.hints.domain = valueMetadata.hints.x;
+            }
+            delete valueMetadata.hints.x;
+        }
+
+        if (valueMetadata.hints.hasOwnProperty('y')) {
+            console.warn(
+                'DEPRECIATION WARNING: `y` hints should be replaced with ' +
+                '`range` hints moving forward.  ' +
+                'https://github.com/nasa/openmct/issues/1546'
+            );
+            if (!valueMetadata.hints.hasOwnProperty('range')) {
+                valueMetadata.hints.range = valueMetadata.hints.y;
+            }
+            delete valueMetadata.hints.y;
+        }
 
         if (!valueMetadata.hints.hasOwnProperty('priority')) {
             valueMetadata.hints.priority = index;
