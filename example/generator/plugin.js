@@ -35,28 +35,8 @@ define([
                 "key": "limit",
                 "implementation": SinewaveLimitCapability
             }
-        ],
-        "constants": [
-            {
-                "key": "TIME_CONDUCTOR_DOMAINS",
-                "value": [
-                    {
-                        "key": "time",
-                        "name": "Time"
-                    },
-                    {
-                        "key": "yesterday",
-                        "name": "Yesterday"
-                    },
-                    {
-                        "key": "delta",
-                        "name": "Delta"
-                    }
-                ],
-                "priority": -1
-            }
         ]
-    }
+    };
 
     return function(openmct){
         //Register legacy extensions for things not yet supported by the new API
