@@ -197,6 +197,21 @@ define([
     };
 
     /**
+     * @private
+     */
+    TelemetryAPI.prototype.standardizeRequestOptions = function (options) {
+        if (!options.hasOwnProperty('start')) {
+            options.start = this.MCT.time.bounds().start;
+        }
+        if (!options.hasOwnProperty('end')) {
+            options.end = this.MCT.time.bounds().end;
+        }
+        if (!options.hasOwnProperty('domain')) {
+            options.domain = this.MCT.time.timeSystem().key;
+        }
+    };
+
+    /**
      * Request historical telemetry for a domain object.
      * The `options` argument allows you to specify filters
      * (start, end, etc.), sort order, and strategies for retrieving
@@ -212,6 +227,7 @@ define([
      *          telemetry data
      */
     TelemetryAPI.prototype.request = function (domainObject, options) {
+        this.standardizeRequestOptions(options);
         var provider = this.findRequestProvider.apply(this, arguments);
         return provider.request.apply(provider, arguments);
     };
