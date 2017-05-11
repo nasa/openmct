@@ -22,15 +22,19 @@
 
 define([
     "./src/FormatProvider",
+    "./src/UTCTimeFormat",
+    "./src/DurationFormat",
     'legacyRegistry'
 ], function (
     FormatProvider,
+    UTCTimeFormat,
+    DurationFormat,
     legacyRegistry
 ) {
 
     legacyRegistry.register("platform/commonUI/formats", {
-        "name": "Time services bundle",
-        "description": "Defines interfaces and provides default implementations for handling different time systems.",
+        "name": "Format Registry",
+        "description": "Provides a registry for formats, which allow parsing and formatting of values.",
         "extensions": {
             "components": [
                 {
@@ -40,6 +44,22 @@ define([
                     "depends": [
                         "formats[]"
                     ]
+                }
+            ],
+            "formats": [
+                {
+                    "key": "utc",
+                    "implementation": UTCTimeFormat
+                },
+                {
+                    "key": "duration",
+                    "implementation": DurationFormat
+                }
+            ],
+            "constants": [
+                {
+                    "key": "DEFAULT_TIME_FORMAT",
+                    "value": "utc"
                 }
             ],
             "licenses": [
