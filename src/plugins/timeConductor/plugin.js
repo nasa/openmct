@@ -26,7 +26,7 @@ define([], function () {
 
         function validateConfiguration() {
             if (config === undefined || config.menuOptions === undefined || config.menuOptions.length === 0) {
-                return "Please provide some configuration for the time conductor. https://github.com/nasa/openmct/blob/master/API.md#time-conductor";
+                return "Please provide some configuration for the time conductor. https://github.com/nasa/openmct/blob/master/API.md#the-time-conductor";
             }
             return undefined;
         }
