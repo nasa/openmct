@@ -435,8 +435,7 @@ They have a simple structure:
     * `count`: An __optional__ argument specifying the number of displayed 
       values.
 * `parse`: A `function` that takes a `string` representation of a telemetry 
-  value, and returns the value in its native type. It accepts one argument:
-    * `text`: A `string` representation of a telemetry value.
+  value, and returns the value in its native type. **Note** parse might receive an already-parsed value.  This function should be idempotent.
 * `validate`: A `function` that takes a `string` representation of a telemetry 
   value, and returns a `boolean` value indicating whether the provided string
   can be parsed.
@@ -459,14 +458,6 @@ openmct.telemetry.addFormat({
     }
 });
 ```
-
-##### Examples of Formats in Use
-
-* The [NumberFormat](https://github.com/nasa/openmct/blob/time-api-redo/platform/features/conductor/core/src/ui/NumberFormat.js)
-  provides an example of a simple format available by default in OpenMCT.
-* The [UTCTimeFormat](https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/UTCTimeFormat.js) 
-  is a more complex implementation of a format that uses the optional context 
-  arguments in `format` to provide scale-appropriate values. 
 
 #### Telemetry Data
 

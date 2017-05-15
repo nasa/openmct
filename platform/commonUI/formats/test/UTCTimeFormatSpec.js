@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([
-    "./UTCTimeFormat",
+    "../src/UTCTimeFormat",
     "moment"
 ], function (
     UTCTimeFormat,
