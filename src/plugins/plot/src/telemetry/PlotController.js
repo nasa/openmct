@@ -66,7 +66,8 @@ define([
                 return series.get('metadata');
             });
 
-            var options = this.openmct.telemetry.commonValuesForHints(metadatas, ['y']);
+            var options = this.openmct.telemetry
+                .commonValuesForHints(metadatas, ['range']);
             if (!options.length) {
                 // TODO: gracefully handle case where we can't plot two things
                 // together?

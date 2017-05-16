@@ -60,7 +60,8 @@ define([
                 return s.get('metadata');
             });
 
-            var options = this.openmct.telemetry.commonValuesForHints(metadatas, ['y']);
+            var options = this.openmct.telemetry
+                .commonValuesForHints(metadatas, ['range']);
             this.$scope.yAxisOptions = options.map(function (o) {
                 return {
                     name: o.key,
