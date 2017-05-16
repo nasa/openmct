@@ -547,29 +547,24 @@ numbers in UTC terrestrial time.
 
 #### Getting and Setting the Active Time System
 
-Once registered, a time system can be activated using a key, or an instance of 
-the time system itself.
+Once registered, a time system can be activated by calling `timeSystem` with
+the timeSystem `key` or an instance of the time system.  If you are not using a
+[clock](#clocks), you must also specify valid [bounds](#time-bounds) for the
+timeSystem.
 
 ```javascript
-openmct.time.timeSystem('utc');
+openmct.time.timeSystem('utc', bounds);
 ```
 
-A time system can be immediately activated upon registration: 
+A time system can be immediately activated after registration: 
 
 ```javascript
-var utcTimeSystem = {
-    key: 'utc',
-    name: 'UTC Time',
-    cssClass = 'icon-clock',
-    timeFormat = 'utc',
-    durationFormat = 'duration',
-    isUTCBased = true
-};
 openmct.time.addTimeSystem(utcTimeSystem);
-openmct.time.timeSystem(utcTimeSystem);
+openmct.time.timeSystem(utcTimeSystem, bounds);
 ```
 
-Setting the active time system will trigger a [time system event](#time-events). 
+Setting the active time system will trigger a [`'timeSystem'`](#time-events) 
+event.  If you supplied bounds, a [`'bounds'`](#time-events) event will be triggered afterwards with your newly supplied bounds.
 
 ### Time Bounds
 
@@ -592,8 +587,8 @@ let now = Date.now();
 openmct.time.bounds({start: now - ONE_HOUR, now);
 ```
 
-To respond to bounds change events, simply register a callback against the `bounds`
-event. For more information on the bounds event, please see the section on [Time Events](#time-events).
+To respond to bounds change events, listen for the [`'bounds'`](#time-events)
+event.
 
 ## Clocks
 
@@ -673,14 +668,16 @@ An example clock implementation is provided in the form of the [LocalClock](http
 Once registered a clock can be activated by calling the `clock` function on the 
 Time API passing in the key or instance of a registered clock. Only one clock 
 may be active at once, so activating a clock will deactivate any currently 
-active clock. Setting the clock will also trigger a ['clock' event](#time-events).
+active clock. [`clockOffsets`](#clock-offsets) must be specified when changing a clock.
+
+Setting the clock triggers a [`'clock'`](#time-events) event, followed by a [`'clockOffsets'`](#time-events) event, and then a [`'bounds'`](#time-events) event as the offsets are applied to the clock's currentValue().
+
 
 ```
-openmct.time.clock(someClock);
+openmct.time.clock(someClock, clockOffsets);
 ```
 
-Upon being activated, a clock's `on` function will be immediately called to subscribe
-to `tick` events.
+Upon being activated, the time API will listen for tick events on the clock by calling `clock.on`.
 
 The currently active clock (if any) can be retrieved by calling the same 
 function without any arguments.
@@ -707,7 +704,7 @@ relative time spans. Offsets are defined as an object with two properties:
 * `start`: A `number` that must be < 0 and which is used to calculate the start 
 bounds on each clock tick. The start offset will be calculated relative to the 
 value provided by a clock's tick callback, or its `currentValue()` function.
-* `end`: A `number` that must be >=0 and which is used to calculate the end 
+* `end`: A `number` that must be >= 0 and which is used to calculate the end 
 bounds on each clock tick.
 
 The `clockOffsets` function can be used to get or set clock offsets. For example, 
@@ -728,16 +725,9 @@ Clock offsets are only relevant when a clock source is active.
 
 ## Time Events
 
-The time API supports the registration of listeners that will be invoked when the 
-application's temporal state changes. Events listeners can be registered using 
-the `on` function. They can be deregistered using the `off` function. The arguments
-accepted by the `on` and `off` functions are:
+The Time API is a standard event emitter; you can register callbacks for events using the `on` method and remove callbacks for events with the `off` method.
 
-* `event`: A `string` naming the event to subscribe to. Event names correspond to
-the property of the Time API you're interested in. A [full list of time events](#list-of-time-events) 
-is provided later.
-
-As an example, the code to listen to bounds change events looks like:
+For example:
 
 ``` javascript
 openmct.time.on('bounds', function callback (newBounds, tick) {
@@ -747,40 +737,38 @@ openmct.time.on('bounds', function callback (newBounds, tick) {
 
 #### List of Time Events
 
-The events supported by the Time API are:
+The events emitted by the Time API are:
 
-* `bounds`: Listen for changes to current bounds. The callback will be invoked 
-with two arguments:
-    * `bounds`: A [bounds](#getting-and-setting-bounds) bounds object representing 
-    a new time period bound by the specified start and send times.
-    * `tick`: A `boolean` indicating whether or not this bounds change is due to a 
-    "tick" from a [clock source](#clocks). This information can be useful when 
-    determining a strategy for fetching telemetry data in response to a bounds 
-    change event. For example, if the bounds change was automatic, and is due 
-    to a tick then it's unlikely that you would need to perform a historical 
-    data query. It should be sufficient to just show any new telemetry received 
-    via subscription since the last tick, and optionally to discard any older 
-    data that now falls outside of the currently set bounds. If `tick` is false,
-    then the bounds change was not due to an automatic tick, and a query for 
-    historical data may be necessary, depending on your data caching strategy, 
-    and how significantly the start bound has changed.
-* `timeSystem`: Listen for changes to the active [time system](#defining-and-registering-time-systems).
-The callback will be invoked with a single argument - the newly active time system.
-    * `timeSystem`: The newly active [time system](#defining-and-registering-time-systems) object.
-* `clock`: Listen for changes to the active clock. When invoked, the callback 
-will be provided with the new clock.
-    * `clock`: The newly active [clock](#clocks), or `undefined` if an active clock
-    has been deactivated.
-* `clockOffsets`: Listen for changes to active clock offsets. When invoked the 
-callback will be provided with the new clock offsets.
-    * `clockOffsets`: A [clock offsets](#clock-offsets) object.
+* `bounds`: emitted whenever the bounds change.  The callback will be invoked 
+  with two arguments:
+  * `bounds`: A [bounds](#getting-and-setting-bounds) bounds object
+    representing a new time period bound by the specified start and send times.
+  * `tick`: A `boolean` indicating whether or not this bounds change is due to
+    a "tick" from a [clock source](#clocks). This information can be useful 
+    when determining a strategy for fetching telemetry data in response to a 
+    bounds change event. For example, if the bounds change was automatic, and 
+    is due to a tick then it's unlikely that you would need to perform a 
+    historical data query. It should be sufficient to just show any new 
+    telemetry received via subscription since the last tick, and optionally to 
+    discard any older data that now falls outside of the currently set bounds. 
+    If `tick` is false,then the bounds change was not due to an automatic tick, 
+    and a query for historical data may be necessary, depending on your data 
+    caching strategy, and how significantly the start bound has changed.
+* `timeSystem`: emitted whenever the active time system changes.  The callback will be invoked with a single argument:
+  * `timeSystem`: The newly active [time system](#defining-and-registering-time-systems).
+* `clock`: emitted whenever the clock changes.  The callback will be invoked 
+  with a single argument:
+  * `clock`: The newly active [clock](#clocks), or `undefined` if an active 
+    clock has been deactivated.
+* `clockOffsets`: emitted whenever the active clock offsets change.  The 
+  callback will be invoked with a single argument:
+  * `clockOffsets`: The new [clock offsets](#clock-offsets).
 
 
 ## The Time Conductor
 
-The Time Conductor provides a user interface for managing time bounds in Open MCT.
-It allows a user to select from configured time systems and clocks, and to set bounds
-and clock offsets.
+The Time Conductor provides a user interface for managing time bounds in Open 
+MCT. It allows a user to select from configured time systems and clocks, and to set bounds and clock offsets.
 
 If activated, the time conductor must be provided with configuration options, 
 detailed below.
