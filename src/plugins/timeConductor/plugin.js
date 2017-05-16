@@ -22,27 +22,74 @@
 
 define([], function () {
 
+    function validateMenuOption(menuOption, index) {
+        if (menuOption.clock && !menuOption.clockOffsets) {
+            return "clock-based menuOption at index " + index + " is " +
+                "missing required property 'clockOffsets'.";
+        }
+        if (!menuOption.timeSystem) {
+            return "menuOption at index " + index + " is missing " +
+                "required property 'timeSystem'.";
+        }
+        if (!menuOption.bounds && !menuOption.clock) {
+            return "fixed-bounds menuOption at index " + index + " is " +
+                "missing required property 'bounds'";
+        }
+    }
+
+    function validateConfiguration(config) {
+        if (config === undefined ||
+            config.menuOptions === undefined ||
+            config.menuOptions.length === 0) {
+            return "You must specify one or more 'menuOptions'.";
+        }
+        if (config.menuOptions.some(validateMenuOption)) {
+            return config.menuOptions.map(validateMenuOption)
+                .filter(function (err) { return !!err; })
+                .join('\n');
+        }
+        return undefined;
+    }
+
+    function validateRuntimeConfiguration(config, openmct) {
+        var systems = openmct.time.getAllTimeSystems()
+            .reduce(function (m, ts) {
+                m[ts.key] = ts;
+                return m;
+            }, {});
+        var clocks = openmct.time.getAllClocks()
+            .reduce(function (m, c) {
+                m[c.key] = c;
+                return m;
+            }, {});
+
+        return config.menuOptions.map(function (menuOption, index) {
+                if (menuOption.timeSystem && !systems[menuOption.timeSystem]) {
+                    return "menuOption at index " + index + " specifies a " +
+                        "timeSystem that does not exist: " + menuOption.timeSystem;
+                }
+                if (menuOption.clock && !clocks[menuOption.clock]) {
+                return "menuOption at index " + index + " specifies a " +
+                    "clock that does not exist: " + menuOption.clock;
+                }
+            })
+            .filter(function (err) { return !!err; })
+            .join('\n');
+    }
+
+    function throwConfigErrorIfExists(error) {
+        if (error) {
+            throw new Error("Invalid Time Conductor Configuration: \n" +
+                error + '\n' +
+                "https://github.com/nasa/openmct/blob/master/API.md#the-time-conductor");
+        }
+    }
+
     return function (config) {
 
-        function validateConfiguration() {
-            if (config === undefined || config.menuOptions === undefined || config.menuOptions.length === 0) {
-                return "Please provide some configuration for the time conductor. https://github.com/nasa/openmct/blob/master/API.md#the-time-conductor";
-            }
-            return undefined;
-        }
+        throwConfigErrorIfExists(validateConfiguration(config));
 
         return function (openmct) {
-
-            function getTimeSystem(key) {
-                return openmct.time.getAllTimeSystems().filter(function (timeSystem) {
-                    return timeSystem.key === key;
-                })[0];
-            }
-
-            var validationError = validateConfiguration();
-            if (validationError) {
-                throw validationError;
-            }
 
             openmct.legacyExtension('constants', {
                 key: 'CONDUCTOR_CONFIG',
@@ -54,39 +101,24 @@ define([], function () {
             openmct.legacyRegistry.enable('platform/features/conductor/compatibility');
 
             openmct.on('start', function () {
+
+                throwConfigErrorIfExists(validateRuntimeConfiguration(config, openmct));
+
                 /*
-                 On app startup, default the conductor
+                 On app startup, default the conductor if not already set.
                  */
-                var timeSystem = openmct.time.timeSystem();
-                var clock = openmct.time.clock();
-
-                if (timeSystem === undefined) {
-                    timeSystem = getTimeSystem(config.menuOptions[0].timeSystem);
-                    if (timeSystem === undefined) {
-                        throw 'Please install and configure at least one time system';
-                    }
+                if (openmct.time.timeSystem() !== undefined) {
+                    return;
                 }
 
-                var configForTimeSystem = config.menuOptions.filter(function (menuOption) {
-                    return menuOption.timeSystem === timeSystem.key && menuOption.clock === (clock && clock.key);
-                })[0];
-
-                if (configForTimeSystem !== undefined) {
-                    var bounds;
-                    if (clock === undefined) {
-                        bounds = configForTimeSystem.bounds;
-                    } else {
-                        var clockOffsets = configForTimeSystem.clockOffsets;
-
-                        bounds = {
-                            start: clock.currentValue() + clockOffsets.start,
-                            end: clock.currentValue() + clockOffsets.end
-                        };
-                    }
-                    openmct.time.timeSystem(timeSystem, bounds);
+                var defaults = config.menuOptions[0];
+                if (defaults.clock) {
+                    openmct.time.clock(defaults.clock, defaults.clockOffsets);
+                    openmct.time.timeSystem(defaults.timeSystem, openmct.time.bounds());
                 } else {
-                    throw 'Invalid time conductor configuration. Please define defaults for time system "' + timeSystem.key + '"';
+                    openmct.time.timeSystem(defaults.timeSystem, defaults.bounds);
                 }
+
             });
         };
     };
