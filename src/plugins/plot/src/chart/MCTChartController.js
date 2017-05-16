@@ -43,12 +43,17 @@ function (
             _.bind(this.onDestroy, this)
         );
         this.draw = this.draw.bind(this);
+        this.scheduleDraw = this.scheduleDraw.bind(this);
         this.seriesElements = new WeakMap();
 
         this.listenTo(this.config.series, 'add', this.onSeriesAdd, this);
         this.listenTo(this.config.series, 'remove', this.onSeriesRemove, this);
         this.listenTo(this.config.yAxis, 'change:key', this.clearOffset, this);
         this.listenTo(this.config.xAxis, 'change:key', this.clearOffset, this);
+        this.listenTo(this.config.yAxis, 'change', this.scheduleDraw);
+        this.listenTo(this.config.xAxis, 'change', this.scheduleDraw);
+        this.$scope.$watch('highlights', this.scheduleDraw);
+        this.$scope.$watch('rectangles', this.scheduleDraw);
         this.config.series.forEach(this.onSeriesAdd, this);
         window.chart = this;
     }
@@ -59,12 +64,14 @@ function (
 
     MCTChartController.prototype.onSeriesAdd = function (series) {
         this.listenTo(series, 'reset', this.onSeriesReset, this);
-        this.listenTo(series, 'change:interpolate', this.changeinterpolate, this);
+        this.listenTo(series, 'change:interpolate', this.changeInterpolate, this);
         this.listenTo(series, 'change:markers', this.changeMarkers, this);
+        this.listenTo(series, 'change', this.scheduleDraw);
+        this.listenTo(series, 'add', this.scheduleDraw);
         this.makeChartElement(series);
     };
 
-    MCTChartController.prototype.changeinterpolate = function (mode, o, series) {
+    MCTChartController.prototype.changeInterpolate = function (mode, o, series) {
         if (mode === o) {
             return;
         }
@@ -103,6 +110,7 @@ function (
     MCTChartController.prototype.onSeriesRemove = function (series) {
         this.stopListening(series);
         this.removeChartElement(series);
+        this.scheduleDraw();
     };
 
     MCTChartController.prototype.onSeriesReset = function (series) {
@@ -239,11 +247,18 @@ function (
         return true;
     };
 
+    MCTChartController.prototype.scheduleDraw = function () {
+        if (!this.drawScheduled) {
+            requestAnimationFrame(this.draw);
+            this.drawScheduled = true;
+        }
+    };
+
     MCTChartController.prototype.draw = function () {
+        this.drawScheduled = false;
         if (this.isDestroyed) {
             return;
         }
-        requestAnimationFrame(this.draw);
         this.drawAPI.clear();
         if (this.canDraw()) {
             this.updateViewport();
