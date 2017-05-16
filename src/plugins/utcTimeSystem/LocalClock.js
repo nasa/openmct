@@ -81,7 +81,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * @param listener
      * @returns {function} a function for deregistering the provided listener
      */
-    LocalClock.prototype.on = function (event, listener) {
+    LocalClock.prototype.on = function (event) {
         var result = EventEmitter.prototype.on.apply(this, arguments);
 
         if (this.listeners(event).length === 1) {
@@ -97,7 +97,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * @param listener
      * @returns {function} a function for deregistering the provided listener
      */
-    LocalClock.prototype.off = function (event, listener) {
+    LocalClock.prototype.off = function (event) {
         var result = EventEmitter.prototype.off.apply(this, arguments);
 
         if (this.listeners(event).length === 0) {

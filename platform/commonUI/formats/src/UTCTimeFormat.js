@@ -112,7 +112,7 @@ define([
      * formatted values will be returned. Where a value could not be formatted, `undefined` will be returned at its position
      * in the array.
      */
-    UTCTimeFormat.prototype.format = function (value, minValue, maxValue, count) {
+    UTCTimeFormat.prototype.format = function (value) {
         if (arguments.length > 1) {
             return getScaledFormat(value);
         } else {

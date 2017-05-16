@@ -41,7 +41,7 @@ define([
 
                 if (providers.length > 0) {
                     action.dialogService = Object.create(action.dialogService);
-                    action.dialogService.getUserInput = function (form, value) {
+                    action.dialogService.getUserInput = function (form) {
                         return new mct.Dialog(
                             providers[0].view(context.domainObject),
                             form.title
