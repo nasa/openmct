@@ -23,7 +23,7 @@
 define([
     './TelemetryMetadataManager',
     './TelemetryValueFormatter',
-    'lodash',
+    'lodash'
 ], function (
     TelemetryMetadataManager,
     TelemetryValueFormatter,
