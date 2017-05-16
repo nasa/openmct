@@ -51,6 +51,7 @@ define([
 
         this.initialize($scope.domainObject);
         this.followTimeConductor();
+        window.plot = this;
     }
 
     eventHelpers.extend(PlotController.prototype);
