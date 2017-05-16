@@ -47,6 +47,25 @@
              </div>
          </li>
          <li>
+             <em class="t-inspector-part-header">Legend</em>
+             <div class="inspector-properties first">
+                 <div class="label">Position</div>
+                 <div class="value">{{ config.legend.get('position') }}</div>
+             </div>
+             <div class="inspector-properties">
+                 <div class="label">Expand by Default</div>
+                 <div class="value">{{ config.legend.get('expandByDefault') ? "Yes" : "No" }}</div>
+             </div>
+             <div class="inspector-properties">
+                 <div class="label">Show when collapsed:</div>
+                 <div class="value">{{ config.legend.get('valueToShowWhenCollapsed') }}</div>
+             </div>
+             <div class="inspector-properties">
+                 <div class="label">Visible when expanded:</div>
+                 <div class="value">{{ config.legend.get('valuesToShowWhenExpanded').join(', ') }}</div>
+             </div>
+         </li>
+         <li>
              <em class="t-inspector-part-header">Plot Series</em>
              <ul class="first flex-elem grows vscroll">
                  <ul class="tree">

@@ -152,10 +152,12 @@ define([
                     label: timeSystem.name
                 },
                 yAxis: _.get(model, 'configuration.yAxis', {}),
-                domainObject: model
+                domainObject: model,
+                legend: _.get(model, 'configuration.legend')
             });
             configStore.add(this.configId, this.config);
         }
+
         return this.config;
     };
 

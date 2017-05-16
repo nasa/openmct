@@ -1,42 +1,60 @@
-<!--TODO: Don't require plotcontroller here. -->
 <div class="gl-plot">
     <style>
         .gl-plot-tick.gl-plot-y-tick-label {
             overflow: visible;
         }
     </style>
-    <div class="gl-plot-legend">
-        <span class="plot-legend-item"
+    <div class="gl-plot-legend"
+         ng-style="{
+             height: legend.get('height')
+         }"
+         ng-if="legend.get('position') === 'top'">
+        <button ng-click="legend.set('expanded', !legend.get('expanded'));">
+            {{ legend.get('expanded') ? 'collapse' : 'expand' }}
+        </button>
+        <table class="expanded-legend" ng-show="legend.get('expanded')">
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td ng-repeat="value in legend.get('valuesToShowWhenExpanded')">
+                        {{ value }}
+                    </td>
+                </tr>
+            </thead>
+            <tr ng-repeat="series in series">
+                <td>{{ series.get('name') }}</td>
+                <td ng-repeat="value in legend.get('valuesToShowWhenExpanded')">
+                    {{ value === 'nearestValue' ?
+                        series.format(series.closest, yAxis.get('key')) :
+                        value === 'nearestTimestamp' ?
+                             series.closest && series.format(series.closest, xAxis.get('key')) :
+                             series.format(series.stats.get(yAxis.get('key'))[value], yAxis.get('key'));
+                    }}
+                </td>
+            </tr>
+        </table>
+        <span ng-show="!legend.get('expanded')"
+              class="plot-legend-item"
               ng-repeat="series in series track by $index">
             <span class="plot-color-swatch"
                   ng-style="{ 'background-color': series.get('color').asHexString() }">
             </span>
             <span class="title-label">{{ series.get('name') }}</span>
+            <span class="value">
+                {{ legend.get('valueToShowWhenCollapsed') === 'nearestValue' ?
+                    series.format(series.closest, yAxis.get('key')) :
+                    legend.get('valueToShowWhenCollapsed') === 'nearestTimestamp' ?
+                         series.closest && series.format(series.closest, xAxis.get('key')) :
+                         series.format(series.stats.get(yAxis.get('key'))[legend.get('valueToShowWhenCollapsed')], yAxis.get('key'));
+                }}
+            </span>
         </span>
-    </div>
-
-    <div class="gl-plot-coords"
-         ng-if="highlights.length"
-         ng-style="{
-             left: (tickWidth + 40) + 'px'
-         }">
-         <span ng-repeat="highlight in highlights">
-             <span ng-style="{
-                 'background-color': highlight.series.get('color').asHexString(),
-                 'display': 'inline-block',
-                 width: '8px',
-                 height: '8px'
-             }"></span>
-             {{ highlight.series.get('name') }}:
-             {{ highlight.series.format(highlight.point, xAxis.get('key')) }}
-             {{ highlight.series.format(highlight.point, yAxis.get('key')) }}
-             <br ng-if="!$last"/>
-         </span>
     </div>
 
     <div class="gl-plot-axis-area gl-plot-y"
          ng-style="{
-             width: (tickWidth + 30) + 'px'
+             width: (tickWidth + 30) + 'px',
+             top: legend.get('height')
          }">
 
         <div class="gl-plot-label gl-plot-y-label">
@@ -54,7 +72,11 @@
         </mct-ticks>
     </div>
 
-    <div class="gl-plot-wrapper-display-area-and-x-axis">
+    <div class="gl-plot-wrapper-display-area-and-x-axis"
+         ng-style="{
+             top: legend.get('height')
+         }"
+         >
 
         <div class="gl-plot-display-area"
              ng-style="{

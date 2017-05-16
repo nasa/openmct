@@ -17,6 +17,7 @@ define([
             this.series = new Collection(model.series);
             this.xAxis = new Model(model.xAxis);
             this.yAxis = new Model(model.yAxis);
+            this.legend = new Model(model.legend);
 
             this.palette = new color.ColorPalette();
 
@@ -43,7 +44,9 @@ define([
             });
 
             this.listenTo(this.series, 'add', this.onSeriesAdd, this);
+            this.listenTo(this.series, 'add', this.setLegendHeight, this);
             this.listenTo(this.series, 'remove', this.onSeriesRemove, this);
+            this.listenTo(this.series, 'remove', this.setLegendHeight, this);
 
             this.yAxis.on('change:autoscale', function (autoscale, oldValue, model) {
                 if (autoscale) {
@@ -63,6 +66,19 @@ define([
                 this.yAxis.set('range', this.yAxis.get('range'));
             }
             this.listenTo(this, 'destroy', this.onDestroy, this);
+            if (this.legend.get('expandByDefault')) {
+                this.legend.set('expanded', true);
+            }
+            this.listenTo(this.legend, 'change:expanded', this.setLegendHeight, this);
+            this.setLegendHeight();
+        },
+        setLegendHeight: function () {
+            var expanded = this.legend.get('expanded');
+            if (this.legend.get('position') !== 'top') {
+                this.legend.set('height', '0px');
+            } else {
+                this.legend.set('height', expanded ? (20 * (this.series.size() + 1) + 40) + 'px' : '21px');
+            }
         },
         onDestroy: function () {
             this.xAxis.destroy();
@@ -77,6 +93,12 @@ define([
                 },
                 yAxis: {
                     autoscalePadding: 0.1
+                },
+                legend: {
+                    position: 'top',
+                    expandByDefault: true,
+                    valueToShowWhenCollapsed: 'nearestValue',
+                    valuesToShowWhenExpanded: ['nearestTimestamp', 'nearestValue', 'min', 'max']
                 }
             };
         },

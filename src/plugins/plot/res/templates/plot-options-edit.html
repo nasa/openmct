@@ -71,6 +71,45 @@
             <input type="text" ng-model="form.yAxis.range.max"/>
         </label>
 
+        <span class="l-form-section l-flex-col flex-elem"></span>
+        <div class="section-header flex-elem">Legend</div>
+        <span class="l-form-section l-flex-col flex-elem"></span>
+
+        <label>
+            Position
+            <select ng-model="form.legend.position">
+                <option value="hidden">Hidden</option>
+                <option value="top">Top</option>
+                <option value="right">Right</option>
+            </select>
+        </label>
+
+        <label>
+            Expand by Default
+            <input type="checkbox" ng-model="form.legend.expandByDefault"/>
+        </label>
+
+        <label>
+            Show when collapsed:
+            <select ng-model="form.legend.valueToShowWhenCollapsed">
+                <option value="none">None</option>
+                <option value="nearestTimestamp">Nearest Timestamp</option>
+                <option value="nearestValue">Nearest Value</option>
+                <option value="min">Minimum</option>
+                <option value="max">Maximum</option>
+            </select>
+        </label>
+
+        <label>
+            Visible when expanded:
+            <select multiple ng-model="form.legend.valuesToShowWhenExpanded">
+                <option value="nearestTimestamp">Nearest Timestamp</option>
+                <option value="nearestValue">Nearest Value</option>
+                <option value="min">Minimum</option>
+                <option value="max">Maximum</option>
+            </select>
+        </label>
+
     </form>
 
     <em class="t-inspector-part-header"

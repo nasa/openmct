@@ -168,6 +168,11 @@ define([
             }
             return true;
         }, 'configuration.yAxis.range');
+
+        this.linkFields(config.legend, 'position', 'form.legend.position', undefined, undefined, 'configuration.legend.position');
+        this.linkFields(config.legend, 'expandByDefault', 'form.legend.expandByDefault', Boolean, undefined, 'configuration.legend.expandByDefault');
+        this.linkFields(config.legend, 'valueToShowWhenCollapsed', 'form.legend.valueToShowWhenCollapsed', undefined, undefined, 'configuration.legend.valueToShowWhenCollapsed');
+        this.linkFields(config.legend, 'valuesToShowWhenExpanded', 'form.legend.valuesToShowWhenExpanded', undefined, undefined, 'configuration.legend.valuesToShowWhenExpanded');
     };
 
     PlotOptionsController.prototype.addSeries = function (series, index) {

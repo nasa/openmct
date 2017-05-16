@@ -66,6 +66,7 @@ define([
         this.$scope.xAxis = this.config.xAxis;
         this.$scope.yAxis = this.config.yAxis;
         this.$scope.series = this.config.series.models;
+        this.$scope.legend = this.config.legend;
 
         this.$scope.$on('$destroy', this.stopWatching);
         this.$scope.$on('plot:tickWidth', this.onTickWidthChange);
@@ -144,15 +145,18 @@ define([
         this.$scope.$emit('plot:highlight:update', point);
         if (!point) {
             this.$scope.highlights = [];
+            this.$scope.series.map(function (series) {
+                delete series.closest;
+            });
         } else {
             this.$scope.highlights = this.$scope.series
                 .filter(function (series) {
                     return series.data.length > 0;
                 }).map(function (series) {
-                    var closest = series.nearestPoint(point);
+                    series.closest = series.nearestPoint(point);
                     return {
                         series: series,
-                        point: closest
+                        point: series.closest
                     };
                 }, this);
         }
