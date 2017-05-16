@@ -136,24 +136,33 @@ define(['./TimeAPI'], function (TimeAPI) {
             var anotherMockTickSource;
             var mockOffsets = {
                 start: 0,
-                end: 0
+                end: 1
             };
 
             beforeEach(function () {
                 mockTickSource = jasmine.createSpyObj("clock", [
                     "on",
-                    "off"
+                    "off",
+                    "currentValue"
                 ]);
+                mockTickSource.currentValue.andReturn(10);
                 mockTickSource.key = "mts";
 
                 anotherMockTickSource = jasmine.createSpyObj("clock", [
                     "on",
-                    "off"
+                    "off",
+                    "currentValue"
                 ]);
                 anotherMockTickSource.key = "amts";
+                anotherMockTickSource.currentValue.andReturn(10);
 
                 api.addClock(mockTickSource);
                 api.addClock(anotherMockTickSource);
+            });
+
+            it("sets bounds based on current value", function () {
+                api.clock("mts", mockOffsets);
+                expect(api.bounds()).toEqual({start: 10, end: 11});
             });
 
             it("a new tick listener is registered", function () {
@@ -180,8 +189,10 @@ define(['./TimeAPI'], function (TimeAPI) {
         it("on tick, observes offsets, and indicates tick in bounds callback", function () {
             var mockTickSource = jasmine.createSpyObj("clock", [
                 "on",
-                "off"
+                "off",
+                "currentValue"
             ]);
+            mockTickSource.currentValue.andReturn(100);
             var tickCallback;
             var boundsCallback = jasmine.createSpy("boundsCallback");
             var clockOffsets = {
