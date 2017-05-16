@@ -43,16 +43,10 @@
             openmct.install(openmct.plugins.Espresso());
             openmct.install(openmct.plugins.Generator());
             openmct.install(openmct.plugins.UTCTimeSystem());
-            // openmct.time.timeSystem("utc", {start: Date.now() - THIRTY_MINUTES, end: Date.now()});
-            openmct.install(openmct.plugins.Conductor({
-                menuOptions: [
-                    {
-                        timeSystem: 'utc',
-                        clock: 'local',
-                        clockOffsets: {start: -1 * 60 * 1000, end: 0}
-                    }
-                ]
-            }));
+
+            openmct.time.clock('local', {start: -15 * 60 * 1000, end: 0});
+            openmct.time.clockOffsets({start: -15 * 60 * 1000, end: 0});
+            openmct.time.timeSystem('utc', openmct.time.bounds());
             window.openmct = openmct;
             openmct.start();
         });
