@@ -24,10 +24,12 @@
 define([
     '../configuration/configStore',
     '../lib/eventHelpers',
+    '../../../../api/objects/object-utils',
     'lodash'
 ], function (
     configStore,
     eventHelpers,
+    objectUtils,
     _
 ) {
     "use strict";
@@ -178,16 +180,13 @@ define([
             throw new Error('Plot options does not support insert at index.');
         }
         var seriesObject = series.get('domainObject');
-        var seriesId = [
-            seriesObject.identifier.namespace,
-            seriesObject.identifier.key
-        ].join(':');
+        var seriesId = objectUtils.makeKeyString(seriesObject.identifier);
         var configPath = 'configuration.series[' + index + '].';
         var path = 'form.series[' + index + '].';
         this.$scope.domainObject.useCapability('composition')
             .then(function (children) {
                 children.forEach(function (child) {
-                    if (child.getId() == seriesId) {
+                    if (child.getId() === seriesId) {
                         series.oldObject = child;
                     }
                 });
