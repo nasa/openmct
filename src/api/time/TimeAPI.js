@@ -239,7 +239,13 @@ define(['EventEmitter'], function (EventEmitter) {
      * @method timeSystem
      */
     TimeAPI.prototype.timeSystem = function (timeSystemOrKey, bounds) {
-        if (arguments.length >= 2) {
+        if (arguments.length >= 1) {
+            if (arguments.length === 1 && !this.activeClock) {
+                throw new Error(
+                    "Must specify bounds when changing time system without " +
+                    "an active clock."
+                );
+            }
             var timeSystem;
 
             if (timeSystemOrKey === undefined) {
@@ -274,10 +280,10 @@ define(['EventEmitter'], function (EventEmitter) {
              * Time System
              * */
             this.emit('timeSystem', this.system);
-            this.bounds(bounds);
+            if (bounds) {
+                this.bounds(bounds);
+            }
 
-        } else if (arguments.length === 1) {
-            throw new Error('Must set bounds when changing time system');
         }
 
         return this.system;

@@ -25,6 +25,8 @@ define(['./TimeAPI'], function (TimeAPI) {
         var api,
             timeSystemKey,
             timeSystem,
+            clockKey,
+            clock,
             bounds,
             eventListener,
             toi;
@@ -33,7 +35,15 @@ define(['./TimeAPI'], function (TimeAPI) {
             api = new TimeAPI();
             timeSystemKey = "timeSystemKey";
             timeSystem = {key: timeSystemKey};
-            bounds = {start: 0, end: 0};
+            clockKey = "someClockKey";
+            clock = jasmine.createSpyObj("clock", [
+                "on",
+                "off",
+                "currentValue"
+            ]);
+            clock.currentValue.andReturn(100);
+            clock.key = clockKey;
+            bounds = {start: 0, end: 1};
             eventListener = jasmine.createSpy("eventListener");
             toi = 111;
         });
@@ -74,11 +84,23 @@ define(['./TimeAPI'], function (TimeAPI) {
 
         it("Disallows setting of time system without bounds", function () {
             api.addTimeSystem(timeSystem);
-            expect(api.timeSystem()).not.toBe(timeSystemKey);
+            expect(api.timeSystem()).not.toBe(timeSystem);
             expect(function () {
                 api.timeSystem(timeSystemKey);
             }).toThrow();
-            expect(api.timeSystem()).not.toBe(timeSystemKey);
+            expect(api.timeSystem()).not.toBe(timeSystem);
+        });
+
+        it("allows setting of timesystem without bounds with clock", function () {
+            api.addTimeSystem(timeSystem);
+            api.addClock(clock);
+            api.clock(clockKey, {start: 0, end: 1})
+            expect(api.timeSystem()).not.toBe(timeSystem);
+            expect(function () {
+                api.timeSystem(timeSystemKey);
+            }).not.toThrow();
+            expect(api.timeSystem()).toBe(timeSystem);
+
         });
 
         it("Emits an event when time system changes", function () {
