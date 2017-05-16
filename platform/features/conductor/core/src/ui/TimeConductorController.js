@@ -98,7 +98,6 @@ define(
             this.validation = new TimeConductorValidation(this.timeAPI);
             this.formatService = formatService;
             this.config = config;
-            this.clocksForTimeSystem = {};
             this.timeSystemsForClocks = {};
             this.$scope.timeSystemModel = {};
             this.$scope.boundsModel = {};
@@ -209,28 +208,17 @@ define(
                 cssClass: 'icon-calendar'
             }];
             var clocks = {};
-            var clocksForTimeSystem = this.clocksForTimeSystem;
             var timeSystemsForClocks = this.timeSystemsForClocks;
 
             (config.menuOptions || []).forEach(function (menuOption) {
-                var clock = this.getClock(menuOption.clock);
                 var clockKey = menuOption.clock || 'fixed';
 
                 var timeSystem = this.timeSystems[menuOption.timeSystem];
                 if (timeSystem !== undefined) {
-                    if (clock !== undefined) {
-                        // Use an associative array to built a set of unique
-                        // clocks
-                        clocks[clock.key] = clock;
-                        clocksForTimeSystem[timeSystem.key] = clocksForTimeSystem[timeSystem.key] || [];
-                        clocksForTimeSystem[timeSystem.key].push(clock);
-                    }
                     timeSystemsForClocks[clockKey] = timeSystemsForClocks[clockKey] || [];
                     timeSystemsForClocks[clockKey].push(timeSystem);
-                } else if (menuOption.clock !== undefined) {
-                    console.error('Unknown clock "' + clockKey + '", has it been registered?');
                 }
-            }.bind(this));
+            }, this);
 
             /*
              * Populate the clocks menu with metadata from the available clocks
