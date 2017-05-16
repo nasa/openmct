@@ -366,11 +366,6 @@ define(['EventEmitter'], function (EventEmitter) {
 
             this.activeClock = clock;
 
-            if (this.activeClock !== undefined) {
-                this.offsets = offsets;
-                this.activeClock.on("tick", this.tick);
-            }
-
             /**
              * The active clock has changed. Clock can be unset by calling {@link stopClock}
              * @event clock
@@ -379,6 +374,11 @@ define(['EventEmitter'], function (EventEmitter) {
              * if the system is no longer following a clock source
              */
             this.emit("clock", this.activeClock);
+
+            if (this.activeClock !== undefined) {
+                this.clockOffsets(offsets);
+                this.activeClock.on("tick", this.tick);
+            }
 
         } else if (arguments.length === 1) {
             throw "When setting the clock, clock offsets must also be provided";
