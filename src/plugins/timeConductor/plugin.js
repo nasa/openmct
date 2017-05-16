@@ -22,6 +22,10 @@
 
 define([], function () {
 
+    function isTruthy(a) {
+        return !!a;
+    }
+
     function validateMenuOption(menuOption, index) {
         if (menuOption.clock && !menuOption.clockOffsets) {
             return "clock-based menuOption at index " + index + " is " +
@@ -45,7 +49,7 @@ define([], function () {
         }
         if (config.menuOptions.some(validateMenuOption)) {
             return config.menuOptions.map(validateMenuOption)
-                .filter(function (err) { return !!err; })
+                .filter(isTruthy)
                 .join('\n');
         }
         return undefined;
@@ -69,11 +73,11 @@ define([], function () {
                         "timeSystem that does not exist: " + menuOption.timeSystem;
                 }
                 if (menuOption.clock && !clocks[menuOption.clock]) {
-                return "menuOption at index " + index + " specifies a " +
-                    "clock that does not exist: " + menuOption.clock;
+                    return "menuOption at index " + index + " specifies a " +
+                        "clock that does not exist: " + menuOption.clock;
                 }
             })
-            .filter(function (err) { return !!err; })
+            .filter(isTruthy)
             .join('\n');
     }
 
