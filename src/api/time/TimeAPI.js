@@ -239,7 +239,13 @@ define(['EventEmitter'], function (EventEmitter) {
      * @method timeSystem
      */
     TimeAPI.prototype.timeSystem = function (timeSystemOrKey, bounds) {
-        if (arguments.length >= 2) {
+        if (arguments.length >= 1) {
+            if (arguments.length === 1 && !this.activeClock) {
+                throw new Error(
+                    "Must specify bounds when changing time system without " +
+                    "an active clock."
+                );
+            }
             var timeSystem;
 
             if (timeSystemOrKey === undefined) {
@@ -274,10 +280,10 @@ define(['EventEmitter'], function (EventEmitter) {
              * Time System
              * */
             this.emit('timeSystem', this.system);
-            this.bounds(bounds);
+            if (bounds) {
+                this.bounds(bounds);
+            }
 
-        } else if (arguments.length === 1) {
-            throw new Error('Must set bounds when changing time system');
         }
 
         return this.system;
@@ -366,11 +372,6 @@ define(['EventEmitter'], function (EventEmitter) {
 
             this.activeClock = clock;
 
-            if (this.activeClock !== undefined) {
-                this.offsets = offsets;
-                this.activeClock.on("tick", this.tick);
-            }
-
             /**
              * The active clock has changed. Clock can be unset by calling {@link stopClock}
              * @event clock
@@ -379,6 +380,11 @@ define(['EventEmitter'], function (EventEmitter) {
              * if the system is no longer following a clock source
              */
             this.emit("clock", this.activeClock);
+
+            if (this.activeClock !== undefined) {
+                this.clockOffsets(offsets);
+                this.activeClock.on("tick", this.tick);
+            }
 
         } else if (arguments.length === 1) {
             throw "When setting the clock, clock offsets must also be provided";

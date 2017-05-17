@@ -43,7 +43,8 @@
             openmct.install(openmct.plugins.Espresso());
             openmct.install(openmct.plugins.Generator());
             openmct.install(openmct.plugins.UTCTimeSystem());
-            openmct.time.timeSystem("utc", {start: Date.now() - THIRTY_MINUTES, end: Date.now()});
+            openmct.time.clock('local', {start: -THIRTY_MINUTES, end: 0});
+            openmct.time.timeSystem('utc');
             openmct.start();
         });
     </script>

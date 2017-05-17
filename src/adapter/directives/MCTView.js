@@ -22,7 +22,7 @@
 
 define([
     'angular',
-    './Region',
+    './Region'
 ], function (
     angular,
     Region
