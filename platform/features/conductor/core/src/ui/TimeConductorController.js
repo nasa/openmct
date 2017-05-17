@@ -169,23 +169,20 @@ define(
         TimeConductorController.prototype.selectMenuOption = function (newOption, oldOption) {
             if (newOption !== oldOption) {
                 var config = this.getConfig(this.timeAPI.timeSystem(), newOption.clock);
-
-                /*
-                 * If there is no configuration defined for the selected clock
-                 * and time system default to the first time system that
-                 * configuration is available for.
-                 */
-                if (config === undefined) {
-                    var timeSystem = this.timeSystemsForClocks[newOption.key][0];
-                    this.$scope.timeSystemModel.selected = timeSystem;
-                    this.setTimeSystemFromView(timeSystem.key);
-                    config = this.getConfig(timeSystem, newOption.clock);
+                if (!config) {
+                    // Clock does not support this timeSystem, fallback to first
+                    // option provided for clock.
+                    config = this.config.menuOptions.filter(function (menuOption) {
+                        return menuOption.clock === (newOption.clock && newOption.clock.key);
+                    })[0];
                 }
 
-                if (newOption.key === 'fixed') {
-                    this.timeAPI.stopClock();
+                if (config.clock) {
+                    this.timeAPI.clock(config.clock, config.clockOffsets);
+                    this.timeAPI.timeSystem(config.timeSystem);
                 } else {
-                    this.timeAPI.clock(newOption.key, config.clockOffsets);
+                    this.timeAPI.stopClock();
+                    this.timeAPI.timeSystem(config.timeSystem, config.bounds);
                 }
             }
         };
@@ -211,6 +208,11 @@ define(
 
             (config.menuOptions || []).forEach(function (menuOption) {
                 var clockKey = menuOption.clock || 'fixed';
+                var clock = this.getClock(clockKey);
+
+                if (clock !== undefined) {
+                    clocks[clock.key] = clock;
+                }
 
                 var timeSystem = this.timeSystems[menuOption.timeSystem];
                 if (timeSystem !== undefined) {
@@ -349,10 +351,10 @@ define(
          * @param {Clock} clock
          */
         TimeConductorController.prototype.setViewFromClock = function (clock) {
-            var newClockKey = clock && clock.key;
-            var timeSystems = this.timeSystemsForClocks[newClockKey || 'fixed'];
+            var newClockKey = clock ? clock.key : 'fixed';
+            var timeSystems = this.timeSystemsForClocks[newClockKey];
             var menuOption = this.menu.options.filter(function (option) {
-                return option.key === (newClockKey || 'fixed');
+                return option.key === (newClockKey);
             })[0];
 
             this.menu.selected = menuOption;
@@ -381,9 +383,7 @@ define(
 
             this.isFixed = clock === undefined;
 
-            if (clock !== undefined) {
-                this.setViewFromOffsets(this.timeAPI.clockOffsets());
-            } else {
+            if (clock === undefined) {
                 this.setViewFromBounds(this.timeAPI.bounds());
             }
 
@@ -404,34 +404,14 @@ define(
             var clock = this.menu.selected.clock;
             var timeSystem = this.timeSystems[key];
             var config = this.getConfig(timeSystem, clock);
-            var bounds;
 
             this.$scope.timeSystemModel.selected = timeSystem;
 
-            /**
-             * Time systems require default bounds to be specified when they
-             * are set
-             */
             if (clock === undefined) {
-                bounds = config.bounds;
-                this.timeAPI.timeSystem(timeSystem, bounds);
+                this.timeAPI.timeSystem(timeSystem, config.bounds);
             } else {
-                bounds = {
-                    start: clock.currentValue() + config.clockOffsets.start,
-                    end: clock.currentValue() + config.clockOffsets.end
-                };
-                //Has time system change resulted in offsets change (based on config)?
-                this.timeAPI.timeSystem(timeSystem, bounds);
-                var configOffsets = config.clockOffsets;
-                var apiOffsets = this.timeAPI.clockOffsets();
-
-                //Checking if a clock is actually set on the Time API before
-                // trying to set offsets.
-                if (this.timeAPI.clock() !== undefined &&
-                    (configOffsets.start !== apiOffsets.start ||
-                    configOffsets.end !== apiOffsets.end)) {
-                    this.timeAPI.clockOffsets(configOffsets);
-                }
+                this.timeAPI.clock(clock, config.clockOffsets);
+                this.timeAPI.timeSystem(timeSystem);
             }
         };
 
