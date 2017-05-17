@@ -94,7 +94,7 @@ define(['./TimeAPI'], function (TimeAPI) {
         it("allows setting of timesystem without bounds with clock", function () {
             api.addTimeSystem(timeSystem);
             api.addClock(clock);
-            api.clock(clockKey, {start: 0, end: 1})
+            api.clock(clockKey, {start: 0, end: 1});
             expect(api.timeSystem()).not.toBe(timeSystem);
             expect(function () {
                 api.timeSystem(timeSystemKey);
