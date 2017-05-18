@@ -25,9 +25,11 @@
  * Module defining GenericSearchProvider. Created by shale on 07/16/2015.
  */
 define([
-
+    '../../../../src/api/objects/object-utils',
+    'lodash'
 ], function (
-
+    objectUtils,
+    _
 ) {
 
     /**
@@ -42,11 +44,12 @@ define([
      * @param {TopicService} topic the topic service.
      * @param {Array} ROOTS An array of object Ids to begin indexing.
      */
-    function GenericSearchProvider($q, $log, modelService, workerService, topic, ROOTS) {
+    function GenericSearchProvider($q, $log, modelService, workerService, topic, ROOTS, openmct) {
         var provider = this;
         this.$q = $q;
         this.$log = $log;
         this.modelService = modelService;
+        this.openmct = openmct;
 
         this.indexedIds = {};
         this.idsToIndex = [];
@@ -171,17 +174,29 @@ define([
     GenericSearchProvider.prototype.index = function (id, model) {
         var provider = this;
 
-        this.worker.postMessage({
-            request: 'index',
-            model: model,
-            id: id
-        });
-
-        if (Array.isArray(model.composition)) {
-            model.composition.forEach(function (idToIndex) {
-                provider.scheduleForIndexing(idToIndex);
+        if (id !== 'ROOT') {
+            this.worker.postMessage({
+                request: 'index',
+                model: model,
+                id: id
             });
         }
+
+        var domainObject = objectUtils.toNewFormat(model, id);
+        var composition = _.find(this.openmct.composition.registry, function (p) {
+            return p.appliesTo(domainObject);
+        });
+
+        if (!composition) {
+            return;
+        }
+
+        composition.load(domainObject)
+            .then(function (children) {
+                children.forEach(function (child) {
+                    provider.scheduleForIndexing(objectUtils.makeKeyString(child));
+                });
+            });
     };
 
     /**

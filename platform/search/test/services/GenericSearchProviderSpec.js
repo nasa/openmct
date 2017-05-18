@@ -39,6 +39,8 @@ define([
             topic,
             mutationTopic,
             ROOTS,
+            compositionProvider,
+            openmct,
             provider;
 
         beforeEach(function () {
@@ -77,6 +79,21 @@ define([
             ROOTS = [
                 'mine'
             ];
+            compositionProvider = jasmine.createSpyObj(
+                'compositionProvider',
+                ['load', 'appliesTo']
+            );
+            compositionProvider.load.andCallFake(function (domainObject) {
+                return Promise.resolve(domainObject.composition);
+            });
+            compositionProvider.appliesTo.andCallFake(function (domainObject) {
+                return !!domainObject.composition;
+            });
+            openmct = {
+                composition: {
+                    registry: [compositionProvider]
+                }
+            };
 
             spyOn(GenericSearchProvider.prototype, 'scheduleForIndexing');
 
@@ -86,7 +103,8 @@ define([
                 modelService,
                 workerService,
                 topic,
-                ROOTS
+                ROOTS,
+                openmct
             );
         });
 
@@ -208,13 +226,42 @@ define([
 
             it('schedules composed ids for indexing', function () {
                 var id = 'anId',
-                    model = {composition: ['abc', 'def']};
+                    model = {composition: ['abc', 'def']},
+                    calls = provider.scheduleForIndexing.calls.length;
 
                 provider.index(id, model);
-                expect(provider.scheduleForIndexing)
-                    .toHaveBeenCalledWith('abc');
-                expect(provider.scheduleForIndexing)
-                    .toHaveBeenCalledWith('def');
+
+                expect(compositionProvider.appliesTo).toHaveBeenCalledWith({
+                    identifier: {key: 'anId', namespace: ''},
+                    composition: [jasmine.any(Object), jasmine.any(Object)]
+                });
+
+                expect(compositionProvider.load).toHaveBeenCalledWith({
+                    identifier:  {key: 'anId', namespace: ''},
+                    composition: [jasmine.any(Object), jasmine.any(Object)]
+                });
+
+                waitsFor(function () {
+                    return provider.scheduleForIndexing.calls.length > calls;
+                });
+
+                runs(function () {
+                    expect(provider.scheduleForIndexing)
+                        .toHaveBeenCalledWith('abc');
+                    expect(provider.scheduleForIndexing)
+                        .toHaveBeenCalledWith('def');
+                });
+            });
+
+            it('does not index ROOT, but checks composition', function () {
+                var id = 'ROOT',
+                    model = {};
+
+                provider.index(id, model);
+                expect(worker.postMessage).not.toHaveBeenCalled();
+                expect(compositionProvider.appliesTo).toHaveBeenCalledWith({
+                    identifier: {key: 'ROOT', namespace: ''}
+                });
             });
         });
 
