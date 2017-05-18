@@ -406,6 +406,7 @@ define(
             var config = this.getConfig(timeSystem, clock);
 
             this.$scope.timeSystemModel.selected = timeSystem;
+            this.$scope.timeSystemModel.format = timeSystem.timeFormat;
 
             if (clock === undefined) {
                 this.timeAPI.timeSystem(timeSystem, config.bounds);
