@@ -137,20 +137,6 @@ naming convention is otherwise the same.)
 When `npm test` is run, test results will be written as HTML to
 `target/tests`. Code coverage information is written to `target/coverage`.
 
-
-### Functional Testing
-
-The tests described above are all at the unit-level; an additional
-test suite using [Protractor](https://angular.github.io/protractor/)
-is under development, in the `protractor` folder.
-
-To run:
-
-* Install protractor following the instructions above.
-* `cd protractor`
-* `npm install`
-* `npm run all`
-
 # Glossary
 
 Certain terms are used throughout Open MCT with consistent meanings
