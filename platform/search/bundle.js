@@ -100,7 +100,8 @@ define([
                         "modelService",
                         "workerService",
                         "topic",
-                        "GENERIC_SEARCH_ROOTS"
+                        "GENERIC_SEARCH_ROOTS",
+                        "openmct"
                     ]
                 },
                 {
