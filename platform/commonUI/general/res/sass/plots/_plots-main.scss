@@ -32,6 +32,41 @@
 	height: 100%;
     min-height: $plotMinH;
 
+    &.plot-legend-on-top,
+    &.plot-legend-on-bottom {
+        @extend .l-flex-col;
+    }
+
+    &.plot-legend-on-left,
+    &.plot-legend-on-right {
+        @extend .l-flex-row;
+        // If the legend is expanded, use flex-col instead so that the legend gets the width it needs.
+        &.plot-legend-expanded {
+            @extend .l-flex-col;
+        }
+
+        &:not(.plot-legend-expanded) {
+            .plot-wrapper-axis-and-display-area {
+                @include test(blue);
+            }
+        }
+    }
+
+    &.plot-legend-on-right:not(.plot-legend-expanded),
+    &.plot-legend-on-bottom {
+        .gl-plot-legend {
+            order: 2;
+        }
+        .plot-wrapper-axis-and-display-area {
+            order: 1;
+        }
+    }
+
+    .plot-wrapper-axis-and-display-area  {
+        margin-top: $interiorMargin; // Prevent the first tick label from getting clipped
+        position: relative;
+    }
+
     .gl-plot-wrapper-display-area-and-x-axis {
         // Holds the plot area and the X-axis only
         position: absolute;
@@ -63,7 +98,7 @@
 	.gl-plot-axis-area {
 		position: absolute;
 		&.gl-plot-y {
-			top: $plotLegendH + $interiorMargin;
+			top: nth($plotDisplayArea, 1);
 			right: auto;
 			bottom: nth($plotDisplayArea, 3);
 			left: 0;
@@ -159,14 +194,14 @@
 	}
 
 	.gl-plot-legend {
-		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: auto;
-		left: 0;
-		height: $plotLegendH;
-		overflow-x: hidden;
+		min-height: $plotLegendH;
+        max-height: 50%;
 		overflow-y: auto;
+        .plot-wrapper-expanded-legend {
+            table {
+                td:not(.plot-legend-header-name) { text-align: right; }
+            }
+        }
 	}
 
 	/****************************** Limits and Out-of-Bounds data */
@@ -245,14 +280,14 @@
 		span {
 			vertical-align: middle;
 		}
-		.plot-color-swatch,
-		.color-swatch {
-			border-radius: 2px;
-			display: inline-block;
-			height: $plotSwatchD;
-			width: $plotSwatchD;
-		}
 	}
+    .plot-color-swatch,
+    .color-swatch {
+        border-radius: 2px;
+        display: inline-block;
+        height: $plotSwatchD;
+        width: $plotSwatchD;
+    }
 }
 
 .gl-plot-legend {

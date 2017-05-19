@@ -1,38 +1,51 @@
-<div class="gl-plot">
+<div class="gl-plot plot-legend-on-{{legend.get('position')}}"
+    ng-class="{ 'plot-legend-expanded': legend.get('expanded') }">
     <style>
         .gl-plot-tick.gl-plot-y-tick-label {
             overflow: visible;
         }
     </style>
-    <div class="gl-plot-legend"
-         ng-style="{
-             height: legend.get('height')
-         }"
-         ng-if="legend.get('position') === 'top'">
-        <button ng-click="legend.set('expanded', !legend.get('expanded'));">
-            {{ legend.get('expanded') ? 'collapse' : 'expand' }}
-        </button>
-        <table class="expanded-legend" ng-show="legend.get('expanded')">
-            <thead>
-                <tr>
-                    <td>Name</td>
+
+    <div class="gl-plot-legend holder flex-elem l-flex-row">
+        <span
+            class='ui-symbol view-control flex-elem'
+            ng-class="{ expanded: legend.get('expanded') }"
+            ng-click="legend.set('expanded', !legend.get('expanded'));">
+        </span>
+
+        <!-- EXPANDED PLOT LEGEND -->
+        <div class="plot-wrapper-expanded-legend flex-elem grows" ng-show="legend.get('expanded')">
+            <table>
+                <thead>
+                    <tr>
+                        <th ng-style="{ width: 100/(legend.get('valuesToShowWhenExpanded').length + 1) + '%' }">Name</th>
+                        <th ng-repeat="value in legend.get('valuesToShowWhenExpanded')"
+                            ng-style="{ width: 100/(legend.get('valuesToShowWhenExpanded').length + 1) + '%' }">
+                            {{ value }}
+                        </th>
+                    </tr>
+                </thead>
+                <tr ng-repeat="series in series">
+                    <td class="plot-legend-header-name">
+
+                        <span class="plot-color-swatch"
+                              ng-style="{ 'background-color': series.get('color').asHexString() }">
+                        </span>
+
+                        {{ series.get('name') }}</td>
                     <td ng-repeat="value in legend.get('valuesToShowWhenExpanded')">
-                        {{ value }}
+                        {{ value === 'nearestValue' ?
+                            series.format(series.closest, yAxis.get('key')) :
+                            value === 'nearestTimestamp' ?
+                                 series.closest && series.format(series.closest, xAxis.get('key')) :
+                                 series.format(series.stats.get(yAxis.get('key'))[value], yAxis.get('key'));
+                        }}
                     </td>
                 </tr>
-            </thead>
-            <tr ng-repeat="series in series">
-                <td>{{ series.get('name') }}</td>
-                <td ng-repeat="value in legend.get('valuesToShowWhenExpanded')">
-                    {{ value === 'nearestValue' ?
-                        series.format(series.closest, yAxis.get('key')) :
-                        value === 'nearestTimestamp' ?
-                             series.closest && series.format(series.closest, xAxis.get('key')) :
-                             series.format(series.stats.get(yAxis.get('key'))[value], yAxis.get('key'));
-                    }}
-                </td>
-            </tr>
-        </table>
+            </table>
+        </div>
+
+        <!-- COLLAPSED PLOT LEGEND -->
         <span ng-show="!legend.get('expanded')"
               class="plot-legend-item"
               ng-repeat="series in series track by $index">
@@ -51,107 +64,103 @@
         </span>
     </div>
 
-    <div class="gl-plot-axis-area gl-plot-y"
-         ng-style="{
-             width: (tickWidth + 30) + 'px',
-             top: legend.get('height')
-         }">
-
-        <div class="gl-plot-label gl-plot-y-label">
-            {{ yAxis.get('label') }}
-        </div>
-
-        <mct-ticks axis="yAxis">
-            <div ng-repeat="tick in ticks track by tick.text"
-                 class="gl-plot-tick gl-plot-y-tick-label"
-                 ng-style="{ top: (100 * (max - tick.value) / interval) + '%' }"
-                 title="{{:: tick.fullText || tick.text }}"
-                 style="margin-top: -0.50em; direction: ltr;">
-                <span>{{:: tick.text}}</span>
-            </div>
-        </mct-ticks>
-    </div>
-
-    <div class="gl-plot-wrapper-display-area-and-x-axis"
-         ng-style="{
-             top: legend.get('height')
-         }"
-         >
-
-        <div class="gl-plot-display-area"
+    <div class="plot-wrapper-axis-and-display-area holder flex-elem grows" style="position: relative;">
+        <div class="gl-plot-axis-area gl-plot-y"
              ng-style="{
-                 left: (tickWidth - 30) + 'px'
+                 width: (tickWidth + 30) + 'px'
              }">
 
-            <mct-ticks axis="xAxis">
-                <div class="gl-plot-hash hash-v"
-                     ng-repeat="tick in ticks track by tick.value"
-                     ng-style="{
-                         right: (100 * (max - tick.value) / interval) + '%',
-                         height: '100%'
-                     }">
-                 </div>
-            </mct-ticks>
-
+            <div class="gl-plot-label gl-plot-y-label">
+                {{ yAxis.get('label') }}
+            </div>
 
             <mct-ticks axis="yAxis">
-                 <div class="gl-plot-hash hash-h"
-                      ng-repeat="tick in ticks track by tick.value"
-                      ng-style="{ bottom: (100 * (tick.value - min) / interval) + '%', width: '100%' }">
-                 </div>
+                <div ng-repeat="tick in ticks track by tick.text"
+                     class="gl-plot-tick gl-plot-y-tick-label"
+                     ng-style="{ top: (100 * (max - tick.value) / interval) + '%' }"
+                     title="{{:: tick.fullText || tick.text }}"
+                     style="margin-top: -0.50em; direction: ltr;">
+                    <span>{{:: tick.text}}</span>
+                </div>
             </mct-ticks>
+        </div>
+        <div class="gl-plot-wrapper-display-area-and-x-axis">
+
+            <div class="gl-plot-display-area"
+                 ng-style="{
+                     left: (tickWidth - 30) + 'px'
+                 }">
+
+                <mct-ticks axis="xAxis">
+                    <div class="gl-plot-hash hash-v"
+                         ng-repeat="tick in ticks track by tick.value"
+                         ng-style="{
+                             right: (100 * (max - tick.value) / interval) + '%',
+                             height: '100%'
+                         }">
+                     </div>
+                </mct-ticks>
 
 
-            <mct-chart config="config"
-                       series="series"
-                       rectangles="rectangles"
-                       highlights="highlights"
-                       the-x-axis="xAxis"
-                       the-y-axis="yAxis">
-            </mct-chart>
+                <mct-ticks axis="yAxis">
+                     <div class="gl-plot-hash hash-h"
+                          ng-repeat="tick in ticks track by tick.value"
+                          ng-style="{ bottom: (100 * (tick.value - min) / interval) + '%', width: '100%' }">
+                     </div>
+                </mct-ticks>
 
-            <div class="l-local-controls gl-plot-local-controls"
-                 ng-show="plotHistory.length"
-                 style="position: absolute; top: 8px; right: 8px;">
 
-                <a class="s-button icon-arrow-left"
-                   ng-click="plot.back()"
-                   title="Restore previous pan/zoom">
-                </a>
+                <mct-chart config="config"
+                           series="series"
+                           rectangles="rectangles"
+                           highlights="highlights"
+                           the-x-axis="xAxis"
+                           the-y-axis="yAxis">
+                </mct-chart>
 
-                <a class="s-button icon-arrows-out"
-                   ng-click="plot.clear()"
-                   title="Reset pan/zoom">
-                </a>
+                <div class="l-local-controls gl-plot-local-controls"
+                     ng-show="plotHistory.length"
+                     style="position: absolute; top: 8px; right: 8px;">
+
+                    <a class="s-button icon-arrow-left"
+                       ng-click="plot.back()"
+                       title="Restore previous pan/zoom">
+                    </a>
+
+                    <a class="s-button icon-arrows-out"
+                       ng-click="plot.clear()"
+                       title="Reset pan/zoom">
+                    </a>
+
+                </div>
+
+                <span class="t-wait-spinner loading" ng-show="plot.isRequestPending()">
+                </span>
 
             </div>
 
-            <span class="t-wait-spinner loading" ng-show="plot.isRequestPending()">
-            </span>
+            <div class="gl-plot-axis-area gl-plot-x"
+                 ng-style="{
+                     left: (tickWidth - 30) + 'px'
+                 }">
 
-        </div>
+                <mct-ticks axis="xAxis">
+                     <div ng-repeat="tick in ticks track by tick.text"
+                          class="gl-plot-tick gl-plot-x-tick-label"
+                          ng-style="{
+                              left: (100 * (tick.value - min) / interval) + '%'
+                          }"
+                          ng-title=":: tick.fullText || tick.text">
+                         {{:: tick.text | reverse}}
+                     </div>
+                </mct-ticks>
 
-        <div class="gl-plot-axis-area gl-plot-x"
-             ng-style="{
-                 left: (tickWidth - 30) + 'px'
-             }">
-
-            <mct-ticks axis="xAxis">
-                 <div ng-repeat="tick in ticks track by tick.text"
-                      class="gl-plot-tick gl-plot-x-tick-label"
-                      ng-style="{
-                          left: (100 * (tick.value - min) / interval) + '%'
-                      }"
-                      ng-title=":: tick.fullText || tick.text">
-                     {{:: tick.text | reverse}}
-                 </div>
-            </mct-ticks>
-
-            <div class="gl-plot-label gl-plot-x-label">
-                {{ xAxis.get('label') }}
+                <div class="gl-plot-label gl-plot-x-label">
+                    {{ xAxis.get('label') }}
+                </div>
             </div>
-        </div>
 
+        </div>
     </div>
 
 </div>
