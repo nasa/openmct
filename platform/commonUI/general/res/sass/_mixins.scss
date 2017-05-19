@@ -285,13 +285,14 @@
 
 @mixin containerBase($bg: $colorBodyBg, $fg: $colorBodyFg) {
 	background-color: $bg;
-	border-radius: $controlCr;
+	//border-radius: $controlCr;
 	box-sizing: border-box;
 	color: $fg;
 }
 
 @mixin btnBase($bg: $colorBtnBg, $bgHov: $colorBtnBgHov, $fg: $colorBtnFg, $fgHov: $colorBtnFgHov, $ic: $colorBtnIcon, $icHov: $colorBtnIconHov) {
 	@include user-select(none);
+    border-radius: $controlCr;
     color: $fg;
 	.icon,
     &:before {

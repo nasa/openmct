@@ -21,11 +21,16 @@
  *****************************************************************************/
 
 .overlay {
-    font-size: 90%;
     &.delayEntry100ms {
         @include keyframes(fadeInFromNone) {
-            0% { display: none; opacity: 0; }
-            100% { display: block; opacity: 1; }
+            0% {
+                display: none;
+                opacity: 0;
+            }
+            100% {
+                display: block;
+                opacity: 1;
+            }
         }
         @include animation-delay($delayEntryMs);
         @include animation(fadeInFromNone $durEntryMs ease-in);
@@ -35,29 +40,21 @@
         z-index: 100;
     }
     .close {
-        font-size: 0.8rem;
+        $d: $interiorMargin;
+        opacity: 0.3;
         position: absolute;
-        top: $interiorMarginLg;
-        right: $interiorMarginLg;
+        top: $d;
+        right: $d;
         bottom: auto;
         left: auto;
-        z-index: 100;
+        &:hover {
+            opacity: 0.6;
+        }
     }
-    > .holder {
-        @include containerSubtle($colorOvrBg, $colorOvrFg);
-        border-radius: $basicCr * 3;
-        color: $colorOvrFg;
-        top: 50%;
-        right: auto;
-        bottom: auto;
-        left: 50%;
-        @include transform(translateX(-50%) translateY(-50%));
-        height: 70%;
-        width: 50%;
-        min-height: 300px;
-        min-width: 600px;
-        z-index: 101;
-        > .contents {
+
+    > .abs.outer-holder {
+        z-index: 102;
+        > .abs.inner-holder {
             $m: $overlayMargin;
             top: $m;
             right: $m;
@@ -65,78 +62,176 @@
             left: $m;
         }
     }
-    .title {
-        @include ellipsize();
-        font-size: 1.2em;
-        line-height: 120%;
-        margin-bottom: $interiorMargin;
-    }
-
-    .hint, .field-hints { color: $colorFieldHintOverlay !important;  }
-
-    .abs.top-bar {
-        height: $ovrTopBarH;
-    }
-
-    .abs.editor,
-    .abs.message-body {
-        top: $ovrTopBarH + $interiorMarginLg;
-        bottom: $ovrFooterH + $interiorMarginLg;
-        left: 0;
-        right: 0;
-        overflow: auto;
-        .field.l-input-med {
-            input[type='text'] {
-                width: 100%;
-            }
-        }
-    }
 
     .bottom-bar {
         text-align: right;
         .s-button {
-            $bg: $colorOvrBtnBg;
-            &:not(.major) {
-                @include btnSubtle($bg, pullForward($bg, 10%), $colorOvrBtnFg, $colorOvrBtnFg);
-            }
             font-size: 95%;
             height: $ovrFooterH;
             line-height: $ovrFooterH;
-            margin-left: $interiorMargin;
+            margin-bottom: $interiorMarginSm;
             padding: 0 $interiorMargin * 3;
-            &:first-child {
-                margin-left: 0;
+            &:not(:last-child) {
+                margin-right: $interiorMargin;
+            }
+        }
+    }
+
+    // Dialog boxes, size constrained and centered in desktop/tablet
+    &.l-dialog {
+        .s-button {
+            &:not(.major) {
+                @include btnSubtle($bg: $colorOvrBtnBg, $bgHov: pullForward($colorOvrBtnBg, 10%), $fg: $colorOvrBtnFg, $fgHov: $colorOvrBtnFg, $ic: $colorOvrBtnFg, $icHov: $colorOvrBtnFg);
             }
         }
 
+        > .abs.outer-holder {
+            @include desktopandtablet {
+                $max: 1280px;
+                @include transform(translateX(-50%) translateY(-50%));
+                border-radius: $overlayCr;
+                top: 50%; right: auto; bottom: auto; left: 50%;
+                width: 70%; height: 70%;
+                min-width: 520px;
+                max-width: $max; max-height: $max;
+            }
+            @include phone {
+                overflow: auto;
+
+                .editor .form .form-row.l-flex-row  {
+                    // Display elements in a columnar view
+                    @include flex-direction(column);
+                    > .flex-elem {
+                        &:not(:first-child) {
+                            margin-top: $interiorMargin;
+                        }
+                        &.label {
+                            width: 100%;
+                        }
+                        &.controls {
+                            overflow: auto;
+                        }
+                    }
+
+                    &.validates > .label:before {
+                        position: relative;
+                        right: auto;
+                        line-height: inherit;
+                        margin-right: $interiorMargin;
+                    }
+                }
+            }
+
+            @include containerSubtle($colorOvrBg, $colorOvrFg);
+        }
+
+        .title {
+            @include ellipsize();
+            font-size: 1.2em;
+            line-height: 120%;
+            margin-bottom: $interiorMargin;
+        }
+
+        .hint, .field-hints {
+            color: $colorFieldHintOverlay !important;
+        }
+
+        .abs.top-bar {
+            height: $ovrTopBarH;
+        }
+
+        .abs.bottom-bar {
+            top: auto;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            overflow: visible;
+            height: $ovrFooterH;
+        }
+
+        .abs.editor,
+        .abs.message-body {
+            top: $ovrTopBarH + $interiorMarginLg;
+            bottom: $ovrFooterH + $interiorMarginLg;
+            left: 0;
+            right: 0;
+            overflow: auto;
+            .field.l-input-med {
+                input[type='text'] {
+                    width: 100%;
+                }
+            }
+        }
+
+        .l-progress-bar {
+            $h: $progressBarHOverlay;
+            display: block;
+            height: $h;
+            line-height: $h;
+            margin: .5em 0;
+            width: 100%;
+        }
+
+        .select {
+            box-shadow: $shdwBtnsOverlay;
+        }
     }
 
-    .abs.bottom-bar {
-        top: auto;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        overflow: visible;
-        height: $ovrFooterH;
-    }
+    // Large view overlays for mobile and desktop
+    &.l-large-view {
+        > .abs.outer-holder {
+            @include keyframes(overlayIn) {
+                from {
+                    opacity: 0;
+                    transform: scale(0, 0);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1.0, 1.0);
+                }
+            }
 
-    .l-progress-bar {
-        $h: $progressBarHOverlay;
-        display: block;
-        height: $h;
-        line-height: $h;
-        margin: .5em 0;
-        width: 100%;
-    }
+            @include animToParams(overlayIn, $dur: $durLargeViewExpand, $delay: 0);
+            background: $colorBodyBg;
 
-    .select {
-        box-shadow: $shdwBtnsOverlay;
+            .abs.inner-holder {
+                opacity: 0;
+                @include keyframes(contentsIn) {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @include animToParams(contentsIn, $dur: 50ms, $delay: $durLargeViewExpand * 1.25);
+            }
+
+            .t-btn-view-large {
+                display: none;
+            }
+            z-index: 101;
+        }
     }
 }
 
-.t-dialog-sm .overlay > .holder {
-    // Used for blocker and in-progress dialogs, modal alerts, etc.
-    $h: 225px;
-    min-height: $h;
-    height: $h;
+body.desktop {
+    .overlay {
+        > .abs.outer-holder {
+            border-radius: $overlayCr;
+        }
+
+        &.l-large-view {
+            > .abs.outer-holder {
+                width: 90%;
+                height: 90%;
+                top: 5%;
+                left: 5%;
+                @include boxShdwLarge();
+            }
+        }
+    }
+
+    .t-dialog-sm .overlay > .outer-holder {
+        // Used for blocker and in-progress dialogs, modal alerts, etc.
+        $h: 225px;
+        max-height: $h;
+        height: $h;
+    }
 }

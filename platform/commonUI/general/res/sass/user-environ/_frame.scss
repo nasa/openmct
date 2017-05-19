@@ -20,69 +20,77 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .frame {
-	$ohH: $btnFrameH;
-	$bc: $colorInteriorBorder;
-	&.child-frame.panel {
-		background: $colorBodyBg;
-		border: 1px solid $bc;
+    $ohH: $btnFrameH;
+    $bc: $colorInteriorBorder;
+    &.child-frame.panel {
+        background: $colorBodyBg;
+        border: 1px solid $bc;
         z-index: 0; // Needed to prevent child-frame controls from showing through when another child-frame is above
-		&:hover {
-			border-color: lighten($bc, 10%);
-		}
-	}
-	.object-top-bar {
-		font-size: 0.75em;
-		height: $ohH;
-		line-height: $ohH;
-        .left {
-            padding-right: $interiorMarginLg;
+        &:hover {
+            border-color: lighten($bc, 10%);
         }
-	}
-	>.object-holder.abs {
-		top: $ohH + $interiorMargin;
-	}
-	.contents {
-		$myM: $interiorMargin;
-		top: $myM;
-		right: $myM;
-		bottom: $myM;
-		left: $myM;
-	}
-	&.frame-template {
-		.s-button,
-		.s-menu-button {
-			height: $ohH;
-			line-height: $ohH;
-			padding: 0 $interiorMargin;
-			> span,
+    }
+    .object-browse-bar {
+        font-size: 0.75em;
+        height: $ohH;
+        line-height: $ohH;
+    }
+
+    > .object-holder.abs {
+        top: $ohH + $interiorMargin;
+    }
+    .contents {
+        $myM: $interiorMargin;
+        top: $myM;
+        right: $myM;
+        bottom: $myM;
+        left: $myM;
+    }
+    &.frame-template {
+        .s-button,
+        .s-menu-button {
+            height: $ohH;
+            line-height: $ohH;
+            padding: 0 $interiorMargin;
+            > span,
             &:before {
-				font-size: 0.65rem;
-			}
-		}
+                font-size: 0.65rem;
+            }
+        }
 
-		.s-menu-button:after {
-			font-size: 8px;
-		}
+        .s-menu-button:after {
+            font-size: 8px;
+        }
 
-		.view-switcher {
-			z-index: 10;
-		}
-	}
-	.view-switcher {
-		// Hide the name when the view switcher is in a frame context
-		.title-label {
-			display: none;
-		}
-	}
+        .view-switcher {
+            z-index: 10;
+        }
+    }
+    .view-switcher {
+        margin-left: $interiorMargin; // Kick other top bar elements away when I'm present.
+        // Hide the name when the view switcher is in a frame context
+        .title-label {
+            display: none;
+        }
+    }
 }
- body.desktop .frame.frame-template {
-     // Hide the view switcher by default when it's in an element that's in a frame context
-     // Frame template is used because we need to target the lowest nested frame
-     .view-switcher {
-         opacity: 0;
-     }
-     &:hover .view-switcher {
-         // Show the view switcher on frame hover
-         opacity: 1;
-     }
- }
+
+body.desktop .frame {
+    // Hide local controls initially and show it them on hover when they're in an element that's in a frame context
+    // Frame template is used because we need to target the lowest nested frame
+    .view-switcher,
+    .t-btn-view-large {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    // Target the first descendant so that we only show the elements in the outermost container.
+    // Handles the case where we have layouts in layouts.
+    &:hover > .object-browse-bar {
+        .view-switcher,
+        .t-btn-view-large {
+            opacity: 1;
+            pointer-events: inherit;
+        }
+    }
+}

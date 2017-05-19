@@ -24,6 +24,7 @@ define([
     "./src/LayoutController",
     "./src/FixedController",
     "./src/LayoutCompositionPolicy",
+    './src/MCTTriggerModal',
     "text!./res/templates/layout.html",
     "text!./res/templates/fixed.html",
     "text!./res/templates/frame.html",
@@ -37,6 +38,7 @@ define([
     LayoutController,
     FixedController,
     LayoutCompositionPolicy,
+    MCTTriggerModal,
     layoutTemplate,
     fixedTemplate,
     frameTemplate,
@@ -220,6 +222,15 @@ define([
                 {
                     "key": "frame",
                     "template": frameTemplate
+                }
+            ],
+            "directives": [
+                {
+                    "key": "mctTriggerModal",
+                    "implementation": MCTTriggerModal,
+                    "depends": [
+                        "$document"
+                    ]
                 }
             ],
             "controllers": [
