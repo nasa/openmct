@@ -1,4 +1,4 @@
-<div class="gl-plot plot-legend-on-{{legend.get('position')}}"
+<div class="gl-plot plot-legend-on-left x{{legend.get('position')}}"
     ng-class="{ 'plot-legend-expanded': legend.get('expanded') }">
     <style>
         .gl-plot-tick.gl-plot-y-tick-label {
@@ -6,12 +6,32 @@
         }
     </style>
 
-    <div class="gl-plot-legend holder flex-elem l-flex-row">
+    <div class="gl-plot-legend holder flex-elem l-flex-row"
+        ng-class="{ 'hover-on-plot': !!highlights.length }">
         <span
             class='ui-symbol view-control flex-elem'
             ng-class="{ expanded: legend.get('expanded') }"
             ng-click="legend.set('expanded', !legend.get('expanded'));">
         </span>
+
+        <!-- COLLAPSED PLOT LEGEND -->
+        <div class="plot-wrapper-collapsed-legend flex-elem grows" ng-show="!legend.get('expanded')">
+            <span class="plot-legend-item"
+                  ng-repeat="series in series track by $index">
+                <span class="plot-legend-item-elem plot-series-color-swatch"
+                      ng-style="{ 'background-color': series.get('color').asHexString() }">
+                </span>
+                <span class="plot-legend-item-elem plot-series-name">{{ series.get('name') }}</span>
+                <span class="plot-legend-item-elem plot-series-value">
+                    {{ legend.get('valueToShowWhenCollapsed') === 'nearestValue' ?
+                        series.format(series.closest, yAxis.get('key')) :
+                        legend.get('valueToShowWhenCollapsed') === 'nearestTimestamp' ?
+                             series.closest && series.format(series.closest, xAxis.get('key')) :
+                             series.format(series.stats.get(yAxis.get('key'))[legend.get('valueToShowWhenCollapsed')], yAxis.get('key'));
+                    }}
+                </span>
+            </span>
+        </div>
 
         <!-- EXPANDED PLOT LEGEND -->
         <div class="plot-wrapper-expanded-legend flex-elem grows" ng-show="legend.get('expanded')">
@@ -25,15 +45,14 @@
                         </th>
                     </tr>
                 </thead>
-                <tr ng-repeat="series in series">
+                <tr ng-repeat="series in series" class="plot-legend-item">
                     <td class="plot-legend-header-name">
-
-                        <span class="plot-color-swatch"
+                        <span class="plot-legend-item-elem plot-series-color-swatch"
                               ng-style="{ 'background-color': series.get('color').asHexString() }">
                         </span>
-
-                        {{ series.get('name') }}</td>
-                    <td ng-repeat="value in legend.get('valuesToShowWhenExpanded')">
+                        <span class="plot-legend-item-elem plot-series-name">{{ series.get('name') }}</span>
+                    </td>
+                    <td class="plot-legend-item-elem plot-series-value" ng-repeat="value in legend.get('valuesToShowWhenExpanded')">
                         {{ value === 'nearestValue' ?
                             series.format(series.closest, yAxis.get('key')) :
                             value === 'nearestTimestamp' ?
@@ -44,24 +63,6 @@
                 </tr>
             </table>
         </div>
-
-        <!-- COLLAPSED PLOT LEGEND -->
-        <span ng-show="!legend.get('expanded')"
-              class="plot-legend-item"
-              ng-repeat="series in series track by $index">
-            <span class="plot-color-swatch"
-                  ng-style="{ 'background-color': series.get('color').asHexString() }">
-            </span>
-            <span class="title-label">{{ series.get('name') }}</span>
-            <span class="value">
-                {{ legend.get('valueToShowWhenCollapsed') === 'nearestValue' ?
-                    series.format(series.closest, yAxis.get('key')) :
-                    legend.get('valueToShowWhenCollapsed') === 'nearestTimestamp' ?
-                         series.closest && series.format(series.closest, xAxis.get('key')) :
-                         series.format(series.stats.get(yAxis.get('key'))[legend.get('valueToShowWhenCollapsed')], yAxis.get('key'));
-                }}
-            </span>
-        </span>
     </div>
 
     <div class="plot-wrapper-axis-and-display-area holder flex-elem grows" style="position: relative;">

@@ -32,13 +32,108 @@
 	height: 100%;
     min-height: $plotMinH;
 
+
+    /********************************************* LEGEND */
+
+    .gl-plot-legend,
+    .legend {
+        .plot-legend-item,
+        .legend-item {
+        }
+        .plot-series-color-swatch,
+        .color-swatch {
+            //border-radius: 2px;
+            //display: inline-block;
+            //height: $plotSwatchD;
+            //width: $plotSwatchD;
+        }
+    }
+
+    .gl-plot-legend {
+        min-height: $plotLegendH;
+        max-height: 50%;
+        overflow-y: auto;
+
+        .plot-wrapper-expanded-legend {
+            table {
+                td:not(.plot-legend-header-name) { text-align: right; }
+            }
+        }
+
+        &.hover-on-plot {
+            // User is hovering over the plot to get a value at a point
+            .plot-legend-item-elem {
+                &.plot-series-value {
+                    @include test(green);
+                }
+            }
+        }
+    }
+
+    .plot-legend-item {
+        // General styles for legend items, both expanded and collapsed legend states
+        //@include test(red);
+        line-height: 1.5em;
+        padding: 0px $itemPadLR;
+
+        // General styles for both expanded and collapsed legend states
+        .plot-legend-item-elem {
+            //@include test();
+            &.plot-series-color-swatch {
+                border-radius: $smallCr;
+                border: 1px solid $colorBodyBg;
+                display: inline-block;
+                height: $plotSwatchD;
+                width: $plotSwatchD;
+            }
+
+            &.plot-series-name {
+                //border: 1px solid $colorBodyBg;
+                //height: $plotSwatchD + 1;
+                //width: $plotSwatchD + 1;
+            }
+
+            &.plot-series-value {
+                //border: 1px solid $colorBodyBg;
+                //height: $plotSwatchD + 1;
+                //width: $plotSwatchD + 1;
+            }
+        }
+    }
+
+    &:not(.plot-legend-expanded) {
+        // General styles for COLLAPSED legend. .plot-legend-item is a span of spans.
+        //Todos:
+        // Legend items should be display block, value should be block as well
+
+        .plot-legend-item {
+            display: inline-block;
+            margin-right: $interiorMarginLg;
+            margin-bottom: $interiorMarginSm;
+            .plot-legend-item-elem {
+                display: inline-block;
+                vertical-align: middle;
+            }
+        }
+    }
+
+    &.plot-legend-expanded {
+        // General styles for EXPANDED legend. .plot-legend-item is a table row.
+
+        .plot-legend-item {
+
+        }
+    }
+
     &.plot-legend-on-top,
     &.plot-legend-on-bottom {
+        // General styles when legend is on the top or bottom
         @extend .l-flex-col;
     }
 
     &.plot-legend-on-left,
     &.plot-legend-on-right {
+        // General styles when legend is on either side
         @extend .l-flex-row;
         // If the legend is expanded, use flex-col instead so that the legend gets the width it needs.
         &.plot-legend-expanded {
@@ -46,6 +141,10 @@
         }
 
         &:not(.plot-legend-expanded) {
+            .plot-legend-item {
+                @include test(orange);
+                display: block;
+            }
             .plot-wrapper-axis-and-display-area {
                 @include test(blue);
             }
@@ -62,6 +161,9 @@
         }
     }
 
+
+
+    /********************************************* AXIS AND DISPLAY AREA */
     .plot-wrapper-axis-and-display-area  {
         margin-top: $interiorMargin; // Prevent the first tick label from getting clipped
         position: relative;
@@ -193,17 +295,6 @@
 		}
 	}
 
-	.gl-plot-legend {
-		min-height: $plotLegendH;
-        max-height: 50%;
-		overflow-y: auto;
-        .plot-wrapper-expanded-legend {
-            table {
-                td:not(.plot-legend-header-name) { text-align: right; }
-            }
-        }
-	}
-
 	/****************************** Limits and Out-of-Bounds data */
 
 	.l-limit-bar,
@@ -268,39 +359,6 @@
     @if $colorPlotBg != none { background-color: $colorPlotBg; }
     cursor: crosshair;
     border: 1px solid $colorPlotAreaBorder;
-}
-
-.gl-plot-legend,
-.legend {
-	.plot-legend-item,
-	.legend-item {
-		display: inline-block;
-		margin-right: $interiorMarginLg;
-		margin-bottom: $interiorMarginSm;
-		span {
-			vertical-align: middle;
-		}
-	}
-    .plot-color-swatch,
-    .color-swatch {
-        border-radius: 2px;
-        display: inline-block;
-        height: $plotSwatchD;
-        width: $plotSwatchD;
-    }
-}
-
-.gl-plot-legend {
-	.plot-legend-item {
-		border-radius: $smallCr;
-		line-height: 1.5em;
-		padding: 0px $itemPadLR;
-		.plot-color-swatch {
-			border: 1px solid $colorBodyBg;
-			height: $plotSwatchD + 1;
-			width: $plotSwatchD + 1;
-		}
-	}
 }
 
 .tick {

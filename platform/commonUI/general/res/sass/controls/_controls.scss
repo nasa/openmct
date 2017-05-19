@@ -146,8 +146,8 @@
 .view-control {
     @include test();
     cursor: pointer;
-    height: 100%;
-    width: 1em;
+    //height: 100%;
+    height: 1em; width: 1em;
     line-height: inherit;
     &:before {
         position: absolute;
