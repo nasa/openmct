@@ -56,16 +56,14 @@
 
         .plot-wrapper-expanded-legend {
             table {
-                td:not(.plot-legend-header-name) { text-align: right; }
+                td:not(.plot-series-swatch-and-name) { text-align: right; }
             }
         }
 
         &.hover-on-plot {
             // User is hovering over the plot to get a value at a point
-            .plot-legend-item-elem {
-                &.plot-series-value {
-                    @include test(green);
-                }
+            .hover-value-enabled {
+                @include test($colorKey);
             }
         }
     }
@@ -76,51 +74,62 @@
         line-height: 1.5em;
         padding: 0px $itemPadLR;
 
-        // General styles for both expanded and collapsed legend states
-        .plot-legend-item-elem {
-            //@include test();
-            &.plot-series-color-swatch {
-                border-radius: $smallCr;
-                border: 1px solid $colorBodyBg;
-                display: inline-block;
-                height: $plotSwatchD;
-                width: $plotSwatchD;
-            }
+        .plot-series-swatch-and-name {
+            white-space: nowrap;
+        }
 
-            &.plot-series-name {
-                //border: 1px solid $colorBodyBg;
-                //height: $plotSwatchD + 1;
-                //width: $plotSwatchD + 1;
-            }
+        .plot-series-color-swatch {
+            border-radius: $smallCr;
+            border: 1px solid $colorBodyBg;
+            display: inline-block;
+            height: $plotSwatchD;
+            width: $plotSwatchD;
+        }
 
-            &.plot-series-value {
-                //border: 1px solid $colorBodyBg;
-                //height: $plotSwatchD + 1;
-                //width: $plotSwatchD + 1;
-            }
+        .plot-series-name {
+            //display: inline-block;
+            //@include ellipsize();
+            //border: 1px solid $colorBodyBg;
+            //height: $plotSwatchD + 1;
+            //width: $plotSwatchD + 1;
+        }
+
+        .plot-series-value {
+            display: inline-block;
+            @include ellipsize();
+            //border: 1px solid $colorBodyBg;
+            //height: $plotSwatchD + 1;
+            //width: $plotSwatchD + 1;
         }
     }
 
     &:not(.plot-legend-expanded) {
         // General styles for COLLAPSED legend. .plot-legend-item is a span of spans.
-        //Todos:
-        // Legend items should be display block, value should be block as well
-
         .plot-legend-item {
             display: inline-block;
             margin-right: $interiorMarginLg;
             margin-bottom: $interiorMarginSm;
-            .plot-legend-item-elem {
-                display: inline-block;
-                vertical-align: middle;
+            .plot-series-swatch-and-name {
+                @include ellipsize();
+                display: block;
+                //max-width: $legendCollapsedNameMaxW;
+            }
+
+            .plot-series-name {
+            }
+
+            .plot-series-value {
+                display: block;
+                //max-width: 100% - $legendCollapsedNameMaxW;
             }
         }
     }
 
     &.plot-legend-expanded {
-        // General styles for EXPANDED legend. .plot-legend-item is a table row.
+        // General styles for EXPANDED legend.
 
         .plot-legend-item {
+            // Is a <tr>
 
         }
     }
@@ -141,12 +150,15 @@
         }
 
         &:not(.plot-legend-expanded) {
+            .gl-plot-legend {
+                width: 25%;
+            }
             .plot-legend-item {
-                @include test(orange);
+                //@include test(orange);
                 display: block;
             }
             .plot-wrapper-axis-and-display-area {
-                @include test(blue);
+                //@include test(blue);
             }
         }
     }

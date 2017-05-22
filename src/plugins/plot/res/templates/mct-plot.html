@@ -18,11 +18,13 @@
         <div class="plot-wrapper-collapsed-legend flex-elem grows" ng-show="!legend.get('expanded')">
             <span class="plot-legend-item"
                   ng-repeat="series in series track by $index">
-                <span class="plot-legend-item-elem plot-series-color-swatch"
-                      ng-style="{ 'background-color': series.get('color').asHexString() }">
+                <span class="plot-series-swatch-and-name">
+                    <span class="plot-series-color-swatch"
+                          ng-style="{ 'background-color': series.get('color').asHexString() }">
+                    </span>
+                    <span class="plot-series-name">{{ series.get('name') }}</span>
                 </span>
-                <span class="plot-legend-item-elem plot-series-name">{{ series.get('name') }}</span>
-                <span class="plot-legend-item-elem plot-series-value">
+                <span class="plot-series-value hover-value-enabled">
                     {{ legend.get('valueToShowWhenCollapsed') === 'nearestValue' ?
                         series.format(series.closest, yAxis.get('key')) :
                         legend.get('valueToShowWhenCollapsed') === 'nearestTimestamp' ?
@@ -46,19 +48,21 @@
                     </tr>
                 </thead>
                 <tr ng-repeat="series in series" class="plot-legend-item">
-                    <td class="plot-legend-header-name">
-                        <span class="plot-legend-item-elem plot-series-color-swatch"
+                    <td class="plot-series-swatch-and-name">
+                        <span class="plot-series-color-swatch"
                               ng-style="{ 'background-color': series.get('color').asHexString() }">
                         </span>
-                        <span class="plot-legend-item-elem plot-series-name">{{ series.get('name') }}</span>
+                        <span class="plot-series-name">{{ series.get('name') }}</span>
                     </td>
-                    <td class="plot-legend-item-elem plot-series-value" ng-repeat="value in legend.get('valuesToShowWhenExpanded')">
-                        {{ value === 'nearestValue' ?
+                    <td ng-repeat="value in legend.get('valuesToShowWhenExpanded')">
+                        <span class="plot-series-value hover-value-enabled">
+                              {{ value === 'nearestValue' ?
                             series.format(series.closest, yAxis.get('key')) :
                             value === 'nearestTimestamp' ?
                                  series.closest && series.format(series.closest, xAxis.get('key')) :
                                  series.format(series.stats.get(yAxis.get('key'))[value], yAxis.get('key'));
                         }}
+                        </span>
                     </td>
                 </tr>
             </table>
