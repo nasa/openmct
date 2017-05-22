@@ -34,7 +34,6 @@ define([
     '../example/extensions/bundle',
     '../example/forms/bundle',
     '../example/identity/bundle',
-    '../example/imagery/bundle',
     '../example/mobile/bundle',
     '../example/msl/bundle',
     '../example/notifications/bundle',

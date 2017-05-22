@@ -32,7 +32,6 @@
 
         require(['openmct'], function (openmct) {
             [
-                'example/imagery',
                 'example/eventGenerator',
                 'example/styleguide'
             ].forEach(
@@ -42,6 +41,7 @@
             openmct.install(openmct.plugins.LocalStorage());
             openmct.install(openmct.plugins.Espresso());
             openmct.install(openmct.plugins.Generator());
+            openmct.install(openmct.plugins.ExampleImagery());
             openmct.install(openmct.plugins.UTCTimeSystem());
             openmct.time.clock('local', {start: -THIRTY_MINUTES, end: 0});
             openmct.time.timeSystem('utc');

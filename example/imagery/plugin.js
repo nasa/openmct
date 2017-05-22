@@ -19,18 +19,15 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
 
-/**
- * Module defining ImageTelemetry. Created by vwoeltje on 06/22/15.
- */
-define(
-    [],
-    function () {
-        "use strict";
+define([
 
-        var firstObservedTime = Date.now(),
-            images = [
+], function(
+
+) {
+    function ImageryPlugin() {
+
+        var IMAGE_SAMPLES = [
                 "https://www.hq.nasa.gov/alsj/a16/AS16-117-18731.jpg",
                 "https://www.hq.nasa.gov/alsj/a16/AS16-117-18732.jpg",
                 "https://www.hq.nasa.gov/alsj/a16/AS16-117-18733.jpg",
@@ -49,33 +46,65 @@ define(
                 "https://www.hq.nasa.gov/alsj/a16/AS16-117-18746.jpg",
                 "https://www.hq.nasa.gov/alsj/a16/AS16-117-18747.jpg",
                 "https://www.hq.nasa.gov/alsj/a16/AS16-117-18748.jpg"
+            ];
 
-            ].map(function (url, index) {
-                return {
-                    timestamp: firstObservedTime + 1000 * index,
-                    url: url
-                };
+        return function install(openmct) {
+            openmct.types.addType('example.imagery', {
+                key: 'example.imagery',
+                name: 'Example Imagery',
+                cssClass: 'icon-image',
+                description: 'For development use. Creates example imagery ' +
+                    'data that mimics a live imagery stream.',
+                creatable: true,
+                initialize: function (object) {
+                    object.telemetry = {
+                        values: [
+                            {
+                                name: 'Time',
+                                key: 'time',
+                                format: 'utc',
+                                hints: {
+                                    domain: 1
+                                }
+                            },
+                            {
+                                name: 'Image',
+                                key: 'url',
+                                format: 'image',
+                                hints: {}
+                            }
+                        ]
+                    }
+                }
             });
 
+            openmct.telemetry.addProvider({
+                supportsSubscribe: function (domainObject) {
+                    return domainObject.type === 'example.imagery';
+                },
+                subscribe: function (domainObject, callback) {
+                    var index = 0,
+                        end = IMAGE_SAMPLES.length,
+                        interval;
 
-        /**
-         *
-         * @constructor
-         */
-        function ImageTelemetry() {
-            return {
-                getPointCount: function () {
-                    return Math.floor((Date.now() - firstObservedTime) / 1000);
-                },
-                getDomainValue: function (i, domain) {
-                    return images[i % images.length].timestamp;
-                },
-                getRangeValue: function (i, range) {
-                    return images[i % images.length].url;
+                    interval = setInterval(function () {
+                        if (index >= end) {
+                            index = 0;
+                        }
+                        callback({
+                            time: Date.now(),
+                            url: IMAGE_SAMPLES[index]
+                        });
+                        index += 1;
+                    }, 1000);
+
+                    return function (interval) {
+                        clearInterval(interval);
+                    };
                 }
-            };
-        }
-
-        return ImageTelemetry;
+            });
+        };
     }
-);
+
+    return ImageryPlugin;
+});
