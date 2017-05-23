@@ -37,63 +37,66 @@ define(
          * @constructor
          * @memberof platform/features/imagery
          */
-        function ImageryController($scope, telemetryHandler) {
-            var self = this;
+        function ImageryController($scope, openmct) {
+            this.$scope = $scope;
+            this.openmct = openmct;
+            this.date = "";
+            this.time = "";
+            this.zone = "";
+            this.imageUrl = "";
 
-            function releaseSubscription() {
-                if (self.handle) {
-                    self.handle.unsubscribe();
-                    self.handle = undefined;
-                }
-            }
-
-            function updateValuesCallback() {
-                return self.updateValues();
-            }
-
-            // Create a new subscription; telemetrySubscriber gets
-            // to do the meaningful work here.
-            function subscribe(domainObject) {
-                releaseSubscription();
-                self.date = "";
-                self.time = "";
-                self.zone = "";
-                self.imageUrl = "";
-                self.handle = domainObject && telemetryHandler.handle(
-                    domainObject,
-                    updateValuesCallback,
-                    true // Lossless
-                );
-            }
-
-            $scope.filters = {
+            this.$scope.filters = {
                 brightness: 100,
                 contrast: 100
             };
 
+            this.subscribe = this.subscribe.bind(this);
+            this.stopListening = this.stopListening.bind(this);
+            this.updateValues = this.updateValues.bind(this);
+
             // Subscribe to telemetry when a domain object becomes available
-            $scope.$watch('domainObject', subscribe);
+            this.subscribe(this.$scope.domainObject);
 
             // Unsubscribe when the plot is destroyed
-            $scope.$on("$destroy", releaseSubscription);
+            this.$scope.$on("$destroy", this.stopListening);
+        }
+
+        ImageryController.prototype.subscribe = function (domainObject) {
+            this.date = "";
+            this.imageUrl = "";
+            this.openmct.objects.get(domainObject.getId())
+                .then(function (object) {
+                    this.domainObject = object;
+                    var metadata = this.openmct
+                        .telemetry
+                        .getMetadata(this.domainObject);
+                    var timeKey = this.openmct.time.timeSystem().key;
+                    this.timeFormat = this.openmct
+                        .telemetry
+                        .getValueFormatter(metadata.value(timeKey));
+                    this.imageFormat = this.openmct
+                        .telemetry
+                        .getValueFormatter(metadata.valuesForHints(['image'])[0]);
+                    this.unsubscribe = this.openmct.telemetry
+                        .subscribe(this.domainObject, this.updateValues);
+                }.bind(this));
+        };
+
+        ImageryController.prototype.stopListening = function () {
+            if (this.unsubscribe) {
+                this.unsubscribe();
+                delete this.unsubscribe;
+            }
         }
 
         // Update displayable values to reflect latest image telemetry
-        ImageryController.prototype.updateValues = function () {
-            var imageObject =
-                    this.handle && this.handle.getTelemetryObjects()[0],
-                timestamp,
-                m;
-            if (imageObject && !this.isPaused) {
-                timestamp = this.handle.getDomainValue(imageObject);
-                m = timestamp !== undefined ?
-                        moment.utc(timestamp) :
-                        undefined;
-                this.date = m ? m.format(DATE_FORMAT) : "";
-                this.time = m ? m.format(TIME_FORMAT) : "";
-                this.zone = m ? "UTC" : "";
-                this.imageUrl = this.handle.getRangeValue(imageObject);
+        ImageryController.prototype.updateValues = function (datum) {
+            if (this.isPaused) {
+                this.nextValue = datum;
+                return;
             }
+            this.time = this.timeFormat.format(datum);
+            this.image = this.imageFormat.format(datum);
         };
 
         /**
@@ -106,30 +109,11 @@ define(
         };
 
         /**
-         * Get the date portion (month, year) of the
-         * timestamp associated with the incoming image telemetry.
-         * @returns {string} the date
-         */
-        ImageryController.prototype.getDate = function () {
-            return this.date;
-        };
-
-        /**
-         * Get the time zone for the displayed time/date corresponding
-         * to the timestamp associated with the incoming image
-         * telemetry.
-         * @returns {string} the time
-         */
-        ImageryController.prototype.getZone = function () {
-            return this.zone;
-        };
-
-        /**
          * Get the URL of the image telemetry to display.
          * @returns {string} URL for telemetry image
          */
         ImageryController.prototype.getImageUrl = function () {
-            return this.imageUrl;
+            return this.image;
         };
 
         /**
@@ -141,8 +125,8 @@ define(
         ImageryController.prototype.paused = function (state) {
             if (arguments.length > 0 && state !== this.isPaused) {
                 this.isPaused = state;
-                // Switch to latest image
-                this.updateValues();
+                this.updateValues(this.nextValue);
+                delete this.nextValue;
             }
             return this.isPaused;
         };

@@ -25,48 +25,45 @@ define(
     function (ImageryController) {
 
         describe("The Imagery controller", function () {
-            var mockScope,
-                mockTelemetryHandler,
-                mockHandle,
-                mockDomainObject,
+            var $scope,
+                openmct,
+                oldDomainObject,
+                newDomainObject,
+                unsubscribe,
+                callback,
                 controller;
 
-            function invokeWatch(expr, value) {
-                mockScope.$watch.calls.forEach(function (call) {
-                    if (call.args[0] === expr) {
-                        call.args[1](value);
-                    }
-                });
-            }
-
             beforeEach(function () {
-                mockScope = jasmine.createSpyObj('$scope', ['$on', '$watch']);
-                mockTelemetryHandler = jasmine.createSpyObj(
-                    'telemetryHandler',
-                    ['handle']
-                );
-                mockHandle = jasmine.createSpyObj(
-                    'handle',
-                    [
-                        'getDomainValue',
-                        'getRangeValue',
-                        'getTelemetryObjects',
-                        'unsubscribe'
-                    ]
-                );
-                mockDomainObject = jasmine.createSpyObj(
+                $scope = jasmine.createSpyObj('$scope', ['$on', '$watch']);
+                oldDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    ['getId', 'getModel', 'getCapability']
+                    ['getId']
                 );
 
-                mockTelemetryHandler.handle.andReturn(mockHandle);
-                mockHandle.getTelemetryObjects.andReturn([mockDomainObject]);
+                oldDomainObject.getId.andReturn('testID');
+                openmct = {
+                    objects: jasmine.createSpyObj('objectAPI', [
+                        'get'
+                    ]),
+                    time: jasmine.createSpyObj('timeAPI', [
+                        'timeSystem'
+                    ]),
+                    telemetry: jasmine.createSpyObj('telemetryAPI', [
+                        'subscribe'
+                    ]);
+                };
+                unsubscribe = jasmine.createSpy('unsubscribe');
+                openmct.telemetry.subscribe.andReturn(unsubcribe);
+                openmct.time.timeSystem.andReturn({
+                    key: 'testKey'
+                });
+                openmct.objects.get.andReturn(Promise.resolve(newDomainObject));
 
                 controller = new ImageryController(
-                    mockScope,
-                    mockTelemetryHandler
+                    $scope,
+                    openmct
                 );
-                invokeWatch('domainObject', mockDomainObject);
+
             });
 
             it("unsubscribes when scope is destroyed", function () {

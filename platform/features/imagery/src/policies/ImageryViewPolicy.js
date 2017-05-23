@@ -20,8 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+define([
+    '../../../../../src/api/objects/object-utils'
+], function (
+    objectUtils
+) {
 
         /**
          * Policy preventing the Imagery view from being made available for
@@ -29,24 +32,24 @@ define(
          * @implements {Policy.<View, DomainObject>}
          * @constructor
          */
-        function ImageryViewPolicy() {
+        function ImageryViewPolicy(openmct) {
+            this.openmct = openmct;
         }
 
-        function hasImageTelemetry(domainObject) {
-            var telemetry = domainObject &&
-                    domainObject.getCapability('telemetry'),
-                metadata = telemetry ? telemetry.getMetadata() : {},
-                ranges = metadata.ranges || [];
+        ImageryViewPolicy.prototype.hasImageTelemetry = function (domainObject) {
+            var newDO = objectUtils.toNewFormat(
+                domainObject.getModel(),
+                domainObject.getId()
+            );
 
-            return ranges.some(function (range) {
-                return range.format === 'imageUrl' ||
-                    range.format === 'image';
-            });
-        }
+            var metadata = this.openmct.telemetry.getMetadata(newDO);
+            var values = metadata.valuesForHints(['image']);
+            return values.length >= 1;
+        };
 
         ImageryViewPolicy.prototype.allow = function (view, domainObject) {
             if (view.key === 'imagery') {
-                return hasImageTelemetry(domainObject);
+                return this.hasImageTelemetry(domainObject);
             }
 
             return true;

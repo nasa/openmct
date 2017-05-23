@@ -53,7 +53,10 @@ define([
             "policies": [
                 {
                     "category": "view",
-                    "implementation": ImageryViewPolicy
+                    "implementation": ImageryViewPolicy,
+                    "depends": [
+                        "openmct"
+                    ]
                 }
             ],
             "controllers": [
@@ -62,7 +65,7 @@ define([
                     "implementation": ImageryController,
                     "depends": [
                         "$scope",
-                        "telemetryHandler"
+                        "openmct"
                     ]
                 }
             ],

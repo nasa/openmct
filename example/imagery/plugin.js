@@ -61,7 +61,7 @@ define([
                         values: [
                             {
                                 name: 'Time',
-                                key: 'time',
+                                key: 'utc',
                                 format: 'utc',
                                 hints: {
                                     domain: 1
@@ -71,7 +71,9 @@ define([
                                 name: 'Image',
                                 key: 'url',
                                 format: 'image',
-                                hints: {}
+                                hints: {
+                                    image: 1
+                                }
                             }
                         ]
                     }
@@ -92,7 +94,7 @@ define([
                             index = 0;
                         }
                         callback({
-                            time: Date.now(),
+                            utc: Date.now(),
                             url: IMAGE_SAMPLES[index]
                         });
                         index += 1;
