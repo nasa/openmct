@@ -26,7 +26,7 @@
     visibility: hidden;
     position: absolute;
 
-    //Add some padding to allow for decorations such as limits indicator
+    /*Add some padding to allow for decorations such as limits indicator*/
     td {
         padding-right: 15px;
         padding-left: 10px;
@@ -37,6 +37,10 @@
     table-layout: fixed;
     thead {
         display: block;
+        position: fixed;
+        background-color: rgba(71,71,71, 1);
+        z-index: 1;
+        width: initial;
         tr {
             display: block;
             white-space: nowrap;
