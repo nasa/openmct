@@ -32,8 +32,11 @@
 	height: 100%;
     min-height: $plotMinH;
 
+    &.child-frame:not(:first-child) {
+        margin-top: $interiorMargin;
+    }
 
-    /********************************************* LEGEND */
+    /*********************************************************************** LEGEND */
 
     .gl-plot-legend,
     .legend {
@@ -54,24 +57,40 @@
         max-height: 50%;
         overflow-y: auto;
 
-        .plot-wrapper-expanded-legend {
-            table {
-                td:not(.plot-series-swatch-and-name) { text-align: right; }
+        .view-control {
+            font-size: 1em;
+            margin-right: $interiorMarginSm;
+        }
+
+        table {
+            table-layout: fixed;
+            tr {
+                display: table-row;
             }
+            th,
+            td {
+                @include ellipsize(); // Note: this won't work if table-layout uses anything other than fixed.
+                display: table-cell;
+                padding: 1px 3px; // Tighter than standard tabular padding
+            }
+            td:not(.plot-series-swatch-and-name) { text-align: right; }
         }
 
         &.hover-on-plot {
             // User is hovering over the plot to get a value at a point
             .hover-value-enabled {
                 @include test($colorKey);
+                &:before {
+                    @extend .cross;
+
+                }
             }
         }
     }
 
+    /***************** GENERAL STYLES, ALL STATES */
     .plot-legend-item {
         // General styles for legend items, both expanded and collapsed legend states
-        //@include test(red);
-
         .plot-series-swatch-and-name {
             white-space: nowrap;
         }
@@ -87,12 +106,20 @@
         .plot-series-value {
             display: inline-block;
             @include ellipsize();
+            padding: 1px 3px;
         }
     }
 
+    /***************** GENERAL STYLES, COLLAPSED */
     &:not(.plot-legend-expanded) {
-        // General styles for COLLAPSED legend. .plot-legend-item is a span of spans.
-        .plot-legend-item {
+        // .plot-legend-item is a span of spans.
+
+        &.plot-legend-on-top .gl-plot-legend { margin-bottom: $interiorMargin; }
+        &.plot-legend-on-bottom .gl-plot-legend { margin-top: $interiorMargin; }
+        &.plot-legend-on-right .gl-plot-legend { margin-left: $interiorMargin; }
+        &.plot-legend-on-left .gl-plot-legend { margin-right: $interiorMargin; }
+
+        span.plot-legend-item {
             display: inline-block;
             padding: 0px $itemPadLR;
             line-height: 1.5em;
@@ -103,36 +130,28 @@
                 display: block;
             }
 
-            .plot-series-name {
-            }
-
             .plot-series-value {
                 display: block;
-                //max-width: 100% - $legendCollapsedNameMaxW;
             }
         }
     }
 
+    /***************** GENERAL STYLES, EXPANDED */
     &.plot-legend-expanded {
-        // General styles for EXPANDED legend.
-        .plot-wrapper-expanded-legend table {
-            table-layout: fixed;
-            th,
-            td {
-                @include ellipsize(); // Note: this won't work if table-layout uses anything other than fixed.
-            }
-        }
+        .gl-plot-legend { margin-bottom: $interiorMargin; }
+        &.plot-legend-on-bottom .gl-plot-legend { margin-bottom: 0; margin-top: $interiorMargin; }
     }
 
+    /***************** TOP OR BOTTOM */
     &.plot-legend-on-top,
     &.plot-legend-on-bottom {
         // General styles when legend is on the top or bottom
         @extend .l-flex-col;
     }
 
+    /***************** EITHER SIDE */
     &.plot-legend-on-left,
     &.plot-legend-on-right {
-        // General styles when legend is on either side
         @extend .l-flex-row;
         // If the legend is expanded, use flex-col instead so that the legend gets the width it needs.
         &.plot-legend-expanded {
@@ -140,7 +159,9 @@
         }
 
         &:not(.plot-legend-expanded) {
+            // COLLAPSED, ON EITHER SIDE
             .gl-plot-legend {
+                max-height: inherit;
                 width: 25%;
             }
             .plot-legend-item {
@@ -153,6 +174,7 @@
         }
     }
 
+    /***************** ON BOTTOM OR RIGHT */
     &.plot-legend-on-right:not(.plot-legend-expanded),
     &.plot-legend-on-bottom {
         .gl-plot-legend {

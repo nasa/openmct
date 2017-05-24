@@ -114,6 +114,8 @@
                 <label>Label:</label>
                 <input class="control" type="text" ng-model="form.yAxis.label"/>
             </li>
+        </ul>
+        <ul ng-show="!(form.yAxis.key == 'enum')">
             <li class="section-header">Scaling</li>
             <li class="controls-first">
                 <label>Autoscale</label>
@@ -122,20 +124,22 @@
                 </span>
             </li>
             <li class="form-error"
-                ng-show="!(form.yAxis.key == 'enum') && !form.yAxis.autoscale && validation['form.yAxis.range']">{{ validation['form.yAxis.range'] }}</li>
-            <li ng-show="!(form.yAxis.key == 'enum') && !form.yAxis.autoscale">
+                ng-show="!(form.yAxis.key == 'enum') && !form.yAxis.autoscale && validation['form.yAxis.range']">
+                {{ validation['form.yAxis.range'] }}
+            </li>
+            <li ng-show="!form.yAxis.autoscale">
                 <label>Minimum:</label>
                 <span class="control">
                         <input class="sm" type="text" ng-model="form.yAxis.range.min"/>
                     </span>
             </li>
-            <li ng-show="!(form.yAxis.key == 'enum') && !form.yAxis.autoscale">
+            <li ng-show="!form.yAxis.autoscale">
                 <label>Maximum:</label>
                 <span class="control">
                         <input class="sm" type="text" ng-model="form.yAxis.range.max"/>
                     </span>
             </li>
-            <li>
+            <li ng-show="form.yAxis.autoscale">
                 <label>Padding:</label>
                 <span class="control">
                     <input class="sm" type="text" ng-model="form.yAxis.autoscalePadding"/>
@@ -175,8 +179,8 @@
                     <div class="select">
                         <select ng-model="form.legend.valueToShowWhenCollapsed">
                             <option value="none">None</option>
-                            <option value="nearestTimestamp">Timestamp</option>
-                            <option value="nearestValue">Value</option>
+                            <option value="nearestTimestamp">Nearest Timestamp</option>
+                            <option value="nearestValue">Nearest Value</option>
                             <option value="min">Minimum</option>
                             <option value="max">Maximum</option>
                         </select>

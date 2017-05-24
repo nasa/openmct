@@ -6,10 +6,9 @@
         }
     </style>
 
-    <div class="gl-plot-legend holder flex-elem l-flex-row"
+    <div class="gl-plot-legend flex-elem l-flex-row"
         ng-class="{ 'hover-on-plot': !!highlights.length }">
-        <span
-            class='ui-symbol view-control flex-elem'
+        <span class="view-control flex-elem"
             ng-class="{ expanded: legend.get('expanded') }"
             ng-click="legend.set('expanded', !legend.get('expanded'));">
         </span>
@@ -24,7 +23,8 @@
                     </span>
                     <span class="plot-series-name">{{ series.get('name') }}</span>
                 </span>
-                <span class="plot-series-value hover-value-enabled">
+                <span class="plot-series-value"
+                    ng-class="{ 'hover-value-enabled': legend.get('valueToShowWhenCollapsed').indexOf('nearest') != -1 }">
                     {{ legend.get('valueToShowWhenCollapsed') === 'nearestValue' ?
                         series.format(series.closest, yAxis.get('key')) :
                         legend.get('valueToShowWhenCollapsed') === 'nearestTimestamp' ?
@@ -41,9 +41,9 @@
                 <thead>
                     <tr>
                         <th ng-style="{ width: 100/(legend.get('valuesToShowWhenExpanded').length + 1) + '%' }">Name</th>
-                        <th ng-repeat="value in legend.get('valuesToShowWhenExpanded')"
+                        <th ng-repeat="name in legend.get('valuesToShowWhenExpanded')"
                             ng-style="{ width: 100/(legend.get('valuesToShowWhenExpanded').length + 1) + '%' }">
-                            {{ value }}
+                            {{ name }}
                         </th>
                     </tr>
                 </thead>
@@ -54,14 +54,15 @@
                         </span>
                         <span class="plot-series-name">{{ series.get('name') }}</span>
                     </td>
-                    <td ng-repeat="value in legend.get('valuesToShowWhenExpanded')"
+                    <td ng-repeat="name in legend.get('valuesToShowWhenExpanded')"
                         ng-style="{ width: 100/(legend.get('valuesToShowWhenExpanded').length + 1) + '%' }">
-                        <span class="plot-series-value hover-value-enabled">
-                              {{ value === 'nearestValue' ?
+                        <span class="plot-series-value"
+                            ng-class="{ 'hover-value-enabled': name.indexOf('nearest') != -1 }">
+                              {{ name === 'nearestValue' ?
                             series.format(series.closest, yAxis.get('key')) :
-                            value === 'nearestTimestamp' ?
+                            name === 'nearestTimestamp' ?
                                  series.closest && series.format(series.closest, xAxis.get('key')) :
-                                 series.format(series.stats.get(yAxis.get('key'))[value], yAxis.get('key'));
+                                 series.format(series.stats.get(yAxis.get('key'))[name], yAxis.get('key'));
                         }}
                         </span>
                     </td>
@@ -70,7 +71,7 @@
         </div>
     </div>
 
-    <div class="plot-wrapper-axis-and-display-area holder flex-elem grows" style="position: relative;">
+    <div class="plot-wrapper-axis-and-display-area flex-elem grows" style="position: relative;">
         <div class="gl-plot-axis-area gl-plot-y"
              ng-style="{
                  width: (tickWidth + 30) + 'px'
