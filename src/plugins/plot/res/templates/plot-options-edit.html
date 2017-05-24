@@ -20,104 +20,11 @@
  at runtime from the About dialog for additional information.
 -->
 <div ng-controller="PlotOptionsController"
-     class="flex-elem grows l-inspector-part" hide-element-pool>
-    <em class="t-inspector-part-header"
-        title="Display properties for this object">
-        Plot Options
-    </em>
-
-    <form class="form l-flex-col"
-          ng-show="!!config.series.models.length">
-
-        <span class="l-form-section l-flex-col flex-elem "></span>
-        <div class="section-header flex-elem">
-            Y-Axis
-        </div>
-        <span class="l-form-section l-flex-col flex-elem"></span>
-
-        <label>
-            Value
-            <select ng-model="form.yAxis.key">
-                <option ng-repeat="option in yAxisOptions"
-                        value="{{option.value}}"
-                        ng-selected="option.value == form.yAxis.key">
-                    {{option.name}}
-                </option>
-            </select>
-        </label>
-
-        <label>
-            Label
-            <input type="text" ng-model="form.yAxis.label"/>
-        </label>
-
-        <label ng-show="!(form.yAxis.key == 'enum')">
-            Autoscale
-            <input type="checkbox" ng-model="form.yAxis.autoscale"/>
-        </label>
-        <label ng-show="!(form.yAxis.key == 'enum') && form.yAxis.autoscale">
-            Autoscale Padding
-            <input type="text" ng-model="form.yAxis.autoscalePadding"/>
-        </label>
-        <label ng-show="!(form.yAxis.key == 'enum') && !form.yAxis.autoscale && validation['form.yAxis.range']">
-            ERROR: {{ validation['form.yAxis.range'] }}
-        </label>
-        <label ng-show="!(form.yAxis.key == 'enum') && !form.yAxis.autoscale">
-            Min
-            <input type="text" ng-model="form.yAxis.range.min"/>
-        </label>
-        <label ng-show="!(form.yAxis.key == 'enum') && !form.yAxis.autoscale">
-            Max
-            <input type="text" ng-model="form.yAxis.range.max"/>
-        </label>
-
-        <span class="l-form-section l-flex-col flex-elem"></span>
-        <div class="section-header flex-elem">Legend</div>
-        <span class="l-form-section l-flex-col flex-elem"></span>
-
-        <label>
-            Position
-            <select ng-model="form.legend.position">
-                <option value="hidden">Hidden</option>
-                <option value="top">Top</option>
-                <option value="right">Right</option>
-            </select>
-        </label>
-
-        <label>
-            Expand by Default
-            <input type="checkbox" ng-model="form.legend.expandByDefault"/>
-        </label>
-
-        <label>
-            Show when collapsed:
-            <select ng-model="form.legend.valueToShowWhenCollapsed">
-                <option value="none">None</option>
-                <option value="nearestTimestamp">Nearest Timestamp</option>
-                <option value="nearestValue">Nearest Value</option>
-                <option value="min">Minimum</option>
-                <option value="max">Maximum</option>
-            </select>
-        </label>
-
-        <label>
-            Visible when expanded:
-            <select multiple ng-model="form.legend.valuesToShowWhenExpanded">
-                <option value="nearestTimestamp">Nearest Timestamp</option>
-                <option value="nearestValue">Nearest Value</option>
-                <option value="min">Minimum</option>
-                <option value="max">Maximum</option>
-            </select>
-        </label>
-
-    </form>
-
+     class="flex-elem grows l-inspector-part">
     <em class="t-inspector-part-header"
         title="Display properties for this object">
         Series Options
     </em>
-
-
     <ul class="first flex-elem grows vscroll">
         <ul class="tree">
             <li ng-repeat="series in config.series.models">
@@ -133,69 +40,158 @@
                         mct-object="series.oldObject">
                     </mct-representation>
                 </span>
-                <div class="l-flex-col"
-                      ng-class="{
-                          hidden: !series.expanded
-                      }"
-                      >
-
-                    <label>
-                        Line Style
-                        <select ng-model="form.series[$index].interpolate">
-                            <option value="none">None</option>
-                            <option value="linear">Linear interpolate</option>
-                            <option value="stepAfter">Step After</option>
-                        </select>
-                    </label>
-
-                    <label>
-                        Show Markers
-                        <input type="checkbox" ng-model="form.series[$index].markers"/>
-                    </label>
-
-                    <label ng-show="form.series[$index].markers">
-                        Marker Size
-                        <input type="text" ng-model="form.series[$index].markerSize"/>
-                    </label>
-
-                    <div class="s-button s-menu-button menu-element t-color-palette"
-                         ng-show="form.series[$index].interpolate !== 'none' || form.series[$index].markers"
-                         ng-controller="ClickAwayController as toggle"
-                         ng-style="{
-                             'margin-bottom': $last && !!series.expanded ? '65px' : undefined
-                         }">
-
-                        <span class="l-click-area" ng-click="toggle.toggle()"></span>
-                        <span class="color-swatch"
-                              ng-style="{
-                                 background: series.get('color').asHexString()
-                              }">
-                        </span>
-                        <span class="title-label">
-                            Color
-                        </span>
-
-                        <div class="menu l-color-palette"
-                             ng-show="toggle.isActive()">
-
-                            <div
-                                 class="l-palette-row"
-                                 ng-repeat="group in config.palette.groups()">
-
-                                <div class="l-palette-item s-palette-item"
-                                     ng-repeat="color in group"
-                                     ng-class="{
-                                         'icon-check': series.get('color') === color
-                                     }"
-                                     ng-style="{ background: color.asHexString() }"
-                                     ng-click="setColor(series, color, config.series.models.indexOf(series))">
+                <div class="compact-form" ng-show="series.expanded">
+                    <ul>
+                        <li>
+                            <label>Line Style:</label>
+                            <span class="control">
+                                <div class="select">
+                                    <select ng-model="form.series[$index].interpolate">
+                                        <option value="none">None</option>
+                                        <option value="linear">Linear interpolate</option>
+                                        <option value="stepAfter">Step After</option>
+                                    </select>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-               </div>
+                            </span>
+                        </li>
+                        <li class="controls-first">
+                            <label>Show Markers</label>
+                            <span class="control"><input type="checkbox" ng-model="form.series[$index].markers"/></span>
+                        </li>
+                        <li ng-show="form.series[$index].markers">
+                            <label>Marker Size:</label>
+                            <span class="control"><input class="sm" type="text" ng-model="form.series[$index].markerSize"/></span>
+                        </li>
+                        <ul ng-controller="ClickAwayController as toggle" ng-show="form.series[$index].interpolate !== 'none' || form.series[$index].markers">
+                            <li>
+                                <label>Color:</label>
+                                <span class="control">
+                                <div class="s-menu-button" ng-click="toggle.toggle()">
+                                    <span class="color-swatch" ng-style="{ background: series.get('color').asHexString() }">
+                                    </span>
+                                </div>
+                            </span>
+                            </li>
+                            <li class="connects-to-previous l-inline-color-palette" ng-show="toggle.isActive()">
+                                <div class="l-palette-row" ng-repeat="group in config.palette.groups()">
+                                    <div class="l-palette-item s-palette-item"
+                                         ng-repeat="color in group"
+                                         xng-class="{ 'icon-check': series.get('color') === color }"
+                                         ng-style="{ background: color.asHexString() }"
+                                         ng-click="setColor(series, color, config.series.models.indexOf(series))">
+                                    </div>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </ul>
+                </div>
             </li>
         </ul>
     </ul>
+    <form class="compact-form"
+          ng-show="!!config.series.models.length">
+        <em class="t-inspector-part-header"
+            title="Options for plot axes display">
+            Y Axis
+        </em>
+        <ul>
+            <li>
+                <label>Value:</label>
+                <span class="control">
+                    <div class="select">
+                        <select ng-model="form.yAxis.key">
+                            <option ng-repeat="option in yAxisOptions"
+                                    value="{{option.value}}"
+                                    ng-selected="option.value == form.yAxis.key">
+                                {{option.name}}
+                            </option>
+                        </select>
+                    </div>
+                </span>
+            </li>
+            <li>
+                <label>Label:</label>
+                <input class="control" type="text" ng-model="form.yAxis.label"/>
+            </li>
+            <li class="section-header">Scaling</li>
+            <li class="controls-first">
+                <label>Autoscale</label>
+                <span class="control">
+                    <input type="checkbox" ng-model="form.yAxis.autoscale"/>
+                </span>
+            </li>
+            <li class="form-error"
+                ng-show="!(form.yAxis.key == 'enum') && !form.yAxis.autoscale && validation['form.yAxis.range']">{{ validation['form.yAxis.range'] }}</li>
+            <li ng-show="!(form.yAxis.key == 'enum') && !form.yAxis.autoscale">
+                <label>Minimum:</label>
+                <span class="control">
+                        <input class="sm" type="text" ng-model="form.yAxis.range.min"/>
+                    </span>
+            </li>
+            <li ng-show="!(form.yAxis.key == 'enum') && !form.yAxis.autoscale">
+                <label>Maximum:</label>
+                <span class="control">
+                        <input class="sm" type="text" ng-model="form.yAxis.range.max"/>
+                    </span>
+            </li>
+            <li>
+                <label>Padding:</label>
+                <span class="control">
+                    <input class="sm" type="text" ng-model="form.yAxis.autoscalePadding"/>
+                </span>
+            </li>
+        </ul>
 
+        <em class="t-inspector-part-header"
+            title="Options for legend display">
+            Legend
+        </em>
+
+        <ul>
+            <li>
+                <label>Position:</label>
+                <span class="control">
+                    <div class="select">
+                        <select ng-model="form.legend.position">
+                            <option value="hidden">Hidden</option>
+                            <option value="top">Top</option>
+                            <option value="right">Right</option>
+                            <option value="bottom">Bottom</option>
+                            <option value="left">Left</option>
+                        </select>
+                    </div>
+                </span>
+            </li>
+            <li class="controls-first">
+                <label>Expand by default</label>
+                <span class="control">
+                    <input type="checkbox" ng-model="form.legend.expandByDefault"/>
+                </span>
+            </li>
+            <li class="controls-under">
+                <label>Show when collapsed:</label>
+                <span class="control">
+                    <div class="select">
+                        <select ng-model="form.legend.valueToShowWhenCollapsed">
+                            <option value="none">None</option>
+                            <option value="nearestTimestamp">Timestamp</option>
+                            <option value="nearestValue">Value</option>
+                            <option value="min">Minimum</option>
+                            <option value="max">Maximum</option>
+                        </select>
+                    </div>
+                </span>
+            </li>
+            <li class="controls-under">
+                <ul>
+                    <li><label>Show when expanded:</label></li>
+                    <li class="controls-first"><label>Nearest Timestamp</label><span class="control"><input type="checkbox" value="nearestTimestamp" ng-model="form.legend.valuesToShowWhenExpanded"/></span></li>
+                    <li class="controls-first"><label>Nearest Value</label><span class="control"><input type="checkbox" value="nearestTimestamp" ng-model="form.legend.valuesToShowWhenExpanded"/></span></li>
+                    <li class="controls-first"><label>Minimum</label><span class="control"><input type="checkbox" value="nearestTimestamp" ng-model="form.legend.valuesToShowWhenExpanded"/></span></li>
+                    <li class="controls-first"><label>Maximum</label><span class="control"><input type="checkbox" value="nearestTimestamp" ng-model="form.legend.valuesToShowWhenExpanded"/></span></li>
+                </ul>
+            </li>
+        </ul>
+    </form>
 </div>

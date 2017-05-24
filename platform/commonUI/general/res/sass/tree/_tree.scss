@@ -23,7 +23,7 @@
 ul.tree {
     @include menuUlReset();
     @include user-select(none);
-    li {
+    > li {
         display: block;
         position: relative;
     }

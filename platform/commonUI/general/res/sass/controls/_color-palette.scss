@@ -19,11 +19,22 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
+.s-palette-item {
+    $colorSelectedColor: #fff;
+    @include txtShdwSubtle(0.8);
+    @include trans-prop-nice-fade(0.25s);
+    border: 1px solid transparent;
+    &:hover {
+        @include trans-prop-nice-fade(0);
+        border-color: $colorSelectedColor !important;
+    }
+}
+
 .l-color-palette {
 	$d: 16px;
 	$colorsPerRow: 10;
 	$m: 1;
-	$colorSelectedColor: #fff;
 
 	box-sizing: border-box;
 	padding: $interiorMargin !important;
@@ -35,10 +46,6 @@
 
 		.l-palette-item {
 			box-sizing: border-box;
-			@include txtShdwSubtle(0.8);
-			@include trans-prop-nice-fade(0.25s);
-			border: 1px solid transparent;
-			color: $colorSelectedColor;
 			display: block;
 			float: left;
 			height: $d; width: $d;
@@ -49,13 +56,6 @@
                 // Check mark for selected items
                 font-size: 0.8em;
             }
-		}
-
-		.s-palette-item {
-			&:hover {
-				@include trans-prop-nice-fade(0);
-				border-color: $colorSelectedColor !important;
-			}
 		}
 
 		.l-palette-item-label {
@@ -69,10 +69,21 @@
 			}
 		}
 	}
+}
 
-
-
-
-
-
+.l-inline-color-palette {
+    // Is an <li>
+    .l-palette-row {
+        @include display(flex);
+        width: 100%;
+        .l-palette-item {
+            @include display(flex);
+            @include flex(1 0 auto);
+            margin: 1px;
+            &:before {
+                content: '';
+                padding-top: 75%;
+            }
+        }
+    }
 }

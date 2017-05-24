@@ -21,7 +21,67 @@
 -->
 <div ng-controller="PlotOptionsController"
      class="flex-elem grows l-inspector-part">
-     <ul class="flex-elem grows l-inspector-part">
+     <ul class="flex-elem grows l-inspector-part"><li>
+         <em class="t-inspector-part-header">Plot Series</em>
+         <ul class="first flex-elem grows vscroll">
+             <ul class="tree">
+                 <li ng-repeat="series in config.series.models">
+                         <span class="tree-item menus-to-left">
+                             <span
+                                 class='ui-symbol view-control flex-elem has-children'
+                                 ng-class="{ expanded: series.expanded }"
+                                 ng-click="series.expanded = !series.expanded">
+                             </span>
+                             <mct-representation
+                                 class="rep-object-label"
+                                 key="'label'"
+                                 mct-object="series.oldObject">
+                             </mct-representation>
+                         </span>
+                     <div class="l-flex-col"
+                          ng-class="{
+                                   hidden: !series.expanded
+                               }"
+                     >
+
+                         <div class="inspector-properties">
+                             <div class="label">Line Style</div>
+                             <div class="value">{{ {
+                                 'none': 'None',
+                                 'linear': 'Linear interpolation',
+                                 'stepAfter': 'Step After'
+                                 }[series.get('interpolate')] }}</div>
+                         </div>
+                         <div class="inspector-properties">
+                             <div class="label">Markers</div>
+                             <div class="value">
+                                 {{series.get('markers') ? "On, " + series.get('markerSize') + "px" : "Off"}}
+                             </div>
+                         </div>
+
+                         <div class="inspector-properties">
+                             <div class="label">Color</div>
+                             <div class="value">
+                                     <span class="color-swatch"
+                                           ng-style="{
+                                              'background': series.get('color').asHexString(),
+                                              'display': 'inline-block',
+                                              'border': '1px solid rgba(255, 255, 255, 0.2)',
+                                              'height': '10px',
+                                              'width': '10px',
+                                              'vertical-align': 'middle',
+                                              'margin-left': '3px',
+                                              'margin-top': -'2px'
+                                           }">
+                                     </span>
+                                 {{series.get('color').asHexString()}}
+                             </div>
+                         </div>
+                     </div>
+                 </li>
+             </ul>
+         </ul>
+     </li>
          <li>
              <em class="t-inspector-part-header">Y Axis</em>
              <div class="inspector-properties first">
@@ -64,67 +124,6 @@
                  <div class="label">Visible when expanded:</div>
                  <div class="value">{{ config.legend.get('valuesToShowWhenExpanded').join(', ') }}</div>
              </div>
-         </li>
-         <li>
-             <em class="t-inspector-part-header">Plot Series</em>
-             <ul class="first flex-elem grows vscroll">
-                 <ul class="tree">
-                     <li ng-repeat="series in config.series.models">
-                         <span class="tree-item menus-to-left">
-                             <span
-                                 class='ui-symbol view-control flex-elem has-children'
-                                 ng-class="{ expanded: series.expanded }"
-                                 ng-click="series.expanded = !series.expanded">
-                             </span>
-                             <mct-representation
-                                 class="rep-object-label"
-                                 key="'label'"
-                                 mct-object="series.oldObject">
-                             </mct-representation>
-                         </span>
-                         <div class="l-flex-col"
-                               ng-class="{
-                                   hidden: !series.expanded
-                               }"
-                               >
-
-                             <div class="inspector-properties">
-                                 <div class="label">Line Style</div>
-                                 <div class="value">{{ {
-                                     'none': 'None',
-                                     'linear': 'Linear interpolation',
-                                     'stepAfter': 'Step After'
-                                 }[series.get('interpolate')] }}</div>
-                             </div>
-                             <div class="inspector-properties">
-                                 <div class="label">Markers</div>
-                                 <div class="value">
-                                     {{series.get('markers') ? "On, " + series.get('markerSize') + "px" : "Off"}}
-                                 </div>
-                             </div>
-
-                             <div class="inspector-properties">
-                                 <div class="label">Color</div>
-                                 <div class="value">
-                                     <span class="color-swatch"
-                                           ng-style="{
-                                              'background': series.get('color').asHexString(),
-                                              'display': 'inline-block',
-                                              'border': '1px solid rgba(255, 255, 255, 0.2)',
-                                              'height': '10px',
-                                              'width': '10px',
-                                              'vertical-align': 'middle',
-                                              'margin-left': '3px',
-                                              'margin-top': -'2px'
-                                           }">
-                                     </span>
-                                     {{series.get('color').asHexString()}}
-                                 </div>
-                             </div>
-                        </div>
-                     </li>
-                 </ul>
-             </ul>
          </li>
     </ul>
 </div>
