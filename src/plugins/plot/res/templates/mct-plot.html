@@ -57,7 +57,8 @@
                     <td ng-repeat="name in legend.get('valuesToShowWhenExpanded')"
                         ng-style="{ width: 100/(legend.get('valuesToShowWhenExpanded').length + 1) + '%' }">
                         <span class="plot-series-value"
-                            ng-class="{ 'hover-value-enabled': name.indexOf('nearest') != -1 }">
+                            ng-class="{ 'hover-value-enabled': name.indexOf('nearest') != -1 }"
+                            ng-style="{ 'background-color': series.get('color').asHexString() }">
                               {{ name === 'nearestValue' ?
                             series.format(series.closest, yAxis.get('key')) :
                             name === 'nearestTimestamp' ?

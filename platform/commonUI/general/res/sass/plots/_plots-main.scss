@@ -38,20 +38,6 @@
 
     /*********************************************************************** LEGEND */
 
-    .gl-plot-legend,
-    .legend {
-        .plot-legend-item,
-        .legend-item {
-        }
-        .plot-series-color-swatch,
-        .color-swatch {
-            //border-radius: 2px;
-            //display: inline-block;
-            //height: $plotSwatchD;
-            //width: $plotSwatchD;
-        }
-    }
-
     .gl-plot-legend {
         min-height: $plotLegendH;
         max-height: 50%;
@@ -79,10 +65,12 @@
         &.hover-on-plot {
             // User is hovering over the plot to get a value at a point
             .hover-value-enabled {
-                @include test($colorKey);
+                background-color: $legendHoverValueBg;
+                border-radius: $smallCr;
+                @extend .icon-crosshair-12px;
                 &:before {
-                    @extend .cross;
-
+                    font-size: 9px;
+                    opacity: 0.5;
                 }
             }
         }

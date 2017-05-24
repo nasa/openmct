@@ -37,6 +37,7 @@ $glyph-icon-plus: '\e926';
 $glyph-icon-trash: '\e927';
 $glyph-icon-x: '\e928';
 $glyph-icon-brackets: '\e929';
+$glyph-icon-crosshair: '\e930';
 $glyph-icon-arrows-out: '\e1000';
 $glyph-icon-arrows-right-left: '\e1001';
 $glyph-icon-arrows-up-down: '\e1002';
@@ -216,6 +217,7 @@ $glyph-icon-box-with-dashed-lines: '\e1129';
 /************************** 12 PX CLASSES */
 
 .icon-eye-open-12px {  @include glyph($glyph-icon-eye-open,'symbolsfont-12px'); }
+.icon-crosshair-12px {  @include glyph($glyph-icon-crosshair,'symbolsfont-12px'); }
 .icon-collapse-pane-left-12px {  @include glyph($glyph-icon-collapse-pane-left,'symbolsfont-12px'); }
 .icon-collapse-pane-right-12px {  @include glyph($glyph-icon-collapse-pane-right,'symbolsfont-12px'); }
 .icon-folder-12px {  @include glyph($glyph-icon-folder,'symbolsfont-12px'); }
