@@ -71,8 +71,6 @@
     .plot-legend-item {
         // General styles for legend items, both expanded and collapsed legend states
         //@include test(red);
-        line-height: 1.5em;
-        padding: 0px $itemPadLR;
 
         .plot-series-swatch-and-name {
             white-space: nowrap;
@@ -86,20 +84,9 @@
             width: $plotSwatchD;
         }
 
-        .plot-series-name {
-            //display: inline-block;
-            //@include ellipsize();
-            //border: 1px solid $colorBodyBg;
-            //height: $plotSwatchD + 1;
-            //width: $plotSwatchD + 1;
-        }
-
         .plot-series-value {
             display: inline-block;
             @include ellipsize();
-            //border: 1px solid $colorBodyBg;
-            //height: $plotSwatchD + 1;
-            //width: $plotSwatchD + 1;
         }
     }
 
@@ -107,12 +94,13 @@
         // General styles for COLLAPSED legend. .plot-legend-item is a span of spans.
         .plot-legend-item {
             display: inline-block;
+            padding: 0px $itemPadLR;
+            line-height: 1.5em;
             margin-right: $interiorMarginLg;
             margin-bottom: $interiorMarginSm;
             .plot-series-swatch-and-name {
                 @include ellipsize();
                 display: block;
-                //max-width: $legendCollapsedNameMaxW;
             }
 
             .plot-series-name {
@@ -127,10 +115,12 @@
 
     &.plot-legend-expanded {
         // General styles for EXPANDED legend.
-
-        .plot-legend-item {
-            // Is a <tr>
-
+        .plot-wrapper-expanded-legend table {
+            table-layout: fixed;
+            th,
+            td {
+                @include ellipsize(); // Note: this won't work if table-layout uses anything other than fixed.
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-<div class="gl-plot plot-legend-on-left x{{legend.get('position')}}"
+<div class="gl-plot plot-legend-on-{{legend.get('position')}}"
     ng-class="{ 'plot-legend-expanded': legend.get('expanded') }">
     <style>
         .gl-plot-tick.gl-plot-y-tick-label {
@@ -54,7 +54,8 @@
                         </span>
                         <span class="plot-series-name">{{ series.get('name') }}</span>
                     </td>
-                    <td ng-repeat="value in legend.get('valuesToShowWhenExpanded')">
+                    <td ng-repeat="value in legend.get('valuesToShowWhenExpanded')"
+                        ng-style="{ width: 100/(legend.get('valuesToShowWhenExpanded').length + 1) + '%' }">
                         <span class="plot-series-value hover-value-enabled">
                               {{ value === 'nearestValue' ?
                             series.format(series.closest, yAxis.get('key')) :
