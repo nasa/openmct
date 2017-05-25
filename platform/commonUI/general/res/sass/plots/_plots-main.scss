@@ -88,6 +88,7 @@
     .plot-legend-item {
         // General styles for legend items, both expanded and collapsed legend states
         .plot-series-swatch-and-name {
+            @include ellipsize();
             white-space: nowrap;
         }
 
@@ -116,18 +117,18 @@
         &.plot-legend-on-left .gl-plot-legend { margin-right: $interiorMargin; }
 
         span.plot-legend-item {
-            display: inline-block;
+            @include display(flex);
+            @include flex-wrap(wrap);
+            @include align-items(center);
             padding: 0px $itemPadLR;
             line-height: 1.5em;
-            margin-right: $interiorMarginLg;
-            margin-bottom: $interiorMarginSm;
-            .plot-series-swatch-and-name {
-                @include ellipsize();
-                display: block;
-            }
-
+            //margin-right: $interiorMarginLg;
+            //margin-bottom: $interiorMarginSm;
+            .plot-series-swatch-and-name,
             .plot-series-value {
-                display: block;
+                @include display(flex);
+                @include align-items(center);
+                min-width: 70px;
             }
         }
     }
@@ -143,6 +144,18 @@
     &.plot-legend-on-bottom {
         // General styles when legend is on the top or bottom
         @extend .l-flex-col;
+        &:not(.plot-legend-expanded) {
+            // COLLAPSED ON TOP OR BOTTOM
+            .plot-wrapper-collapsed-legend {
+                @include test(red, 0.1);
+                //@include justify-content(start);
+                //@include flex-direction(row);
+                .plot-legend-item {
+                    @include test(white, 0.1);
+                    display: inline-block;
+                }
+            }
+        }
     }
 
     /***************** EITHER SIDE */
@@ -163,6 +176,13 @@
             .plot-legend-item {
                 //@include test(orange);
                 display: block;
+                .plot-series-swatch-and-name {
+                    display: block;
+                }
+
+                .plot-series-value {
+                    display: block;
+                }
             }
             .plot-wrapper-axis-and-display-area {
                 //@include test(blue);
