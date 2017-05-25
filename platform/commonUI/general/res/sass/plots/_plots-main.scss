@@ -48,8 +48,8 @@
 
     .gl-plot-legend {
         min-height: $plotLegendH;
-        max-height: 50%;
-        overflow-y: auto;
+        //max-height: 70%; // Moved this to EXPANDED only
+        //overflow-y: auto; // Moved this to EXPANDED only
 
         .view-control {
             font-size: 1em;
@@ -87,10 +87,6 @@
     /***************** GENERAL STYLES, ALL STATES */
     .plot-legend-item {
         // General styles for legend items, both expanded and collapsed legend states
-        .plot-series-swatch-and-name {
-            
-        }
-
         .plot-series-color-swatch {
             border-radius: $smallCr;
             border: 1px solid $colorBodyBg;
@@ -137,8 +133,20 @@
 
     /***************** GENERAL STYLES, EXPANDED */
     &.plot-legend-expanded {
-        .gl-plot-legend { margin-bottom: $interiorMargin; }
-        &.plot-legend-on-bottom .gl-plot-legend { margin-bottom: 0; margin-top: $interiorMargin; }
+        .gl-plot-legend {
+            max-height: 70%;
+        }
+
+        .plot-wrapper-expanded-legend {
+            overflow-y: auto;
+        }
+
+        &.plot-legend-on-top .gl-plot-legend {
+            margin-bottom: $interiorMargin;
+        }
+        &.plot-legend-on-bottom .gl-plot-legend {
+            margin-top: $interiorMargin;
+        }
     }
 
     /***************** TOP OR BOTTOM */
@@ -151,6 +159,7 @@
             .plot-wrapper-collapsed-legend {
                 display: flex;
                 flex: 1 1 auto;
+                overflow: hidden;
             }
         }
     }
@@ -177,6 +186,7 @@
                 flex-flow: column nowrap;
                 min-width: 0;
                 flex: 1 1 auto;
+                overflow-y: auto;
             }
             .plot-legend-item {
                 margin-bottom: 1px;
