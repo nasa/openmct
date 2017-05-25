@@ -79,7 +79,7 @@
                 }
             }
             .form-row {
-                // To be replaced with .compact-form, see below.
+                // To be replaced with .inspector-config, see below.
                 @include align-items(center);
                 border: none !important;
                 margin-bottom: 0 !important;
@@ -207,12 +207,12 @@ mct-representation:not(.s-status-editing) .l-inspect {
 // Allow control-first, controls-below
 
 .l-inspect .tree ul li,
-.compact-form ul li {
+.inspector-config ul li {
     padding: 2px 0;
 }
 
 
-.compact-form {
+.inspector-config {
     $labelW: 40%;
     $minW: $labelW;
     ul {
@@ -295,7 +295,7 @@ mct-representation:not(.s-status-editing) .l-inspect {
     }
 }
 
-.tree .compact-form {
-    margin-left: $treeVCW + $interiorMargin;
+.tree .inspector-config {
+    margin-left: $treeVCW + $interiorMarginLg;
 }
 
