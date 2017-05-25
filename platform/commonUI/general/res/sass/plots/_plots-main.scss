@@ -88,8 +88,7 @@
     .plot-legend-item {
         // General styles for legend items, both expanded and collapsed legend states
         .plot-series-swatch-and-name {
-            @include ellipsize();
-            white-space: nowrap;
+            
         }
 
         .plot-series-color-swatch {
@@ -99,36 +98,40 @@
             height: $plotSwatchD;
             width: $plotSwatchD;
         }
+        .plot-series-name {
+            display: inline;
+        }
 
         .plot-series-value {
-            display: inline-block;
             @include ellipsize();
-            padding: 1px 3px;
         }
     }
 
     /***************** GENERAL STYLES, COLLAPSED */
     &:not(.plot-legend-expanded) {
         // .plot-legend-item is a span of spans.
-
         &.plot-legend-on-top .gl-plot-legend { margin-bottom: $interiorMargin; }
         &.plot-legend-on-bottom .gl-plot-legend { margin-top: $interiorMargin; }
         &.plot-legend-on-right .gl-plot-legend { margin-left: $interiorMargin; }
         &.plot-legend-on-left .gl-plot-legend { margin-right: $interiorMargin; }
 
-        span.plot-legend-item {
-            @include display(flex);
-            @include flex-wrap(wrap);
-            @include align-items(center);
-            padding: 0px $itemPadLR;
-            line-height: 1.5em;
-            //margin-right: $interiorMarginLg;
-            //margin-bottom: $interiorMarginSm;
+        .plot-legend-item {
+            display: flex;
+            align-items: center;
+            &:not(:first-child) {
+                margin-left: $interiorMarginLg;
+            }
             .plot-series-swatch-and-name,
             .plot-series-value {
-                @include display(flex);
-                @include align-items(center);
-                min-width: 70px;
+                @include ellipsize();
+                flex: 1 1 auto;
+            }
+
+            .plot-series-value {
+                margin-left: $interiorMarginSm;
+                padding: 0 $interiorMarginSm;
+                text-align: left;
+                width: 160px;
             }
         }
     }
@@ -147,12 +150,10 @@
         &:not(.plot-legend-expanded) {
             // COLLAPSED ON TOP OR BOTTOM
             .plot-wrapper-collapsed-legend {
-                @include test(red, 0.1);
-                //@include justify-content(start);
-                //@include flex-direction(row);
+                display: flex;
+                flex: 1 1 auto;
                 .plot-legend-item {
-                    @include test(white, 0.1);
-                    display: inline-block;
+
                 }
             }
         }
@@ -174,14 +175,9 @@
                 width: 25%;
             }
             .plot-legend-item {
-                //@include test(orange);
                 display: block;
-                .plot-series-swatch-and-name {
-                    display: block;
-                }
-
+                .plot-series-swatch-and-name,
                 .plot-series-value {
-                    display: block;
                 }
             }
             .plot-wrapper-axis-and-display-area {
@@ -200,8 +196,6 @@
             order: 1;
         }
     }
-
-
 
     /********************************************* AXIS AND DISPLAY AREA */
     .plot-wrapper-axis-and-display-area  {

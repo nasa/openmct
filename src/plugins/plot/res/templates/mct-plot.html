@@ -14,25 +14,28 @@
         </span>
 
         <!-- COLLAPSED PLOT LEGEND -->
-        <div class="plot-wrapper-collapsed-legend flex-elem grows" ng-show="!legend.get('expanded')">
-            <span class="plot-legend-item"
+        <div class="plot-wrapper-collapsed-legend"
+             ng-show="!legend.get('expanded')"">
+            <div class="plot-legend-item"
                   ng-repeat="series in series track by $index">
-                <span class="plot-series-swatch-and-name">
+                <div class="plot-series-swatch-and-name">
                     <span class="plot-series-color-swatch"
                           ng-style="{ 'background-color': series.get('color').asHexString() }">
                     </span>
                     <span class="plot-series-name">{{ series.get('name') }}</span>
-                </span>
-                <span class="plot-series-value"
-                    ng-class="{ 'hover-value-enabled': legend.get('valueToShowWhenCollapsed').indexOf('nearest') != -1 }">
+                </div>
+                <div class="plot-series-value"
+                    ng-class="{ 'hover-value-enabled': legend.get('valueToShowWhenCollapsed').indexOf('nearest') != -1 }"
+                    ng-show="!!highlights.length">
+                    <!--XXXXXX {{ series.get('name') }} XXXXXX-->
                     {{ legend.get('valueToShowWhenCollapsed') === 'nearestValue' ?
                         series.format(series.closest, yAxis.get('key')) :
                         legend.get('valueToShowWhenCollapsed') === 'nearestTimestamp' ?
                              series.closest && series.format(series.closest, xAxis.get('key')) :
                              series.format(series.stats.get(yAxis.get('key'))[legend.get('valueToShowWhenCollapsed')], yAxis.get('key'));
                     }}
-                </span>
-            </span>
+                </div>
+            </div>
         </div>
 
         <!-- EXPANDED PLOT LEGEND -->
