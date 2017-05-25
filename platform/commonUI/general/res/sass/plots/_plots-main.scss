@@ -20,8 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .abs.holder-plot {
-    // Fend off the scrollbar when less than min-height;
-    right: $interiorMargin;
+    right: $interiorMargin; // Fend off the scrollbar when less than min-height;
+    .t-object-alert.t-alert-unsynced {
+        display: none;
+    }
+}
+
+.t-plot-stacked .s-status-timeconductor-unsynced .holder-plot {
+    .t-object-alert.t-alert-unsynced {
+        display: block;
+    }
 }
 
 .gl-plot {
@@ -179,6 +187,12 @@
     .plot-wrapper-axis-and-display-area  {
         margin-top: $interiorMargin; // Prevent the first tick label from getting clipped
         position: relative;
+        .t-object-alert {
+            position: absolute;
+            display: block;
+            font-size: 1em;
+            top: $interiorMarginSm; left: $interiorMarginSm;
+        }
     }
 
     .gl-plot-wrapper-display-area-and-x-axis {
@@ -198,7 +212,6 @@
         }
 
         .gl-plot-axis-area.gl-plot-x {
-            //@include test(green);
             top: auto;
             right: 0;
             bottom: 0;

@@ -1,5 +1,5 @@
 <span ng-controller="StackedPlotController as stackedPlot"
-      class="abs holder holder-plot has-control-bar"
+      class="abs holder holder-plot has-control-bar t-plot-stacked"
       ng-class="{
           'loading': !!currentRequest.pending
       }">
@@ -27,16 +27,6 @@
                     .getCapability('status')
                     .get('timeconductor-unsynced')
             }">
-
-            <div class="object-header"
-                style="top: 30px; left:50%; position: absolute; z-index:100;"
-                ng-if="telemetryObject
-                    .getCapability('status')
-                    .get('timeconductor-unsynced')">
-                <span class="t-object-alert t-alert-unsynced flex-elem holder"
-                    title="This plot is not currently displaying the latest data.  Reset Pan/zoom to return to view latest data."></span>
-            </div>
-
             <mct-overlay-plot domain-object="telemetryObject"></mct-overlay-plot>
         </div>
     </div>

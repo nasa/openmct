@@ -71,7 +71,7 @@
         </div>
     </div>
 
-    <div class="plot-wrapper-axis-and-display-area flex-elem grows" style="position: relative;">
+    <div class="plot-wrapper-axis-and-display-area flex-elem grows">
         <div class="gl-plot-axis-area gl-plot-y"
              ng-style="{
                  width: (tickWidth + 30) + 'px'
@@ -91,13 +91,12 @@
                 </div>
             </mct-ticks>
         </div>
-        <div class="gl-plot-wrapper-display-area-and-x-axis">
-
-            <div class="gl-plot-display-area"
-                 ng-style="{
-                     left: (tickWidth - 30) + 'px'
+        <div class="gl-plot-wrapper-display-area-and-x-axis"
+             ng-style="{
+                     left: (tickWidth + 30) + 'px'
                  }">
-
+            <span class="t-object-alert t-alert-unsynced" title="This plot is not currently displaying the latest data. Reset Pan/zoom to return to view latest data."></span>
+            <div class="gl-plot-display-area">
                 <mct-ticks axis="xAxis">
                     <div class="gl-plot-hash hash-v"
                          ng-repeat="tick in ticks track by tick.value"
