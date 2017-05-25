@@ -149,10 +149,10 @@ define([
                 return 'Need range';
             }
             if (!range.min) {
-                return 'Must specify min';
+                return 'Must specify Minimum';
             }
             if (!range.max) {
-                return 'Must specify max';
+                return 'Must specify Maximum';
             }
             if (_.isNaN(Number(range.min))) {
                 return 'Minimum must be a number.';
@@ -161,7 +161,7 @@ define([
                 return 'Maximum must be a number.';
             }
             if (Number(range.min) > Number(range.max)) {
-                return 'Minimum must be less than maximum.';
+                return 'Minimum must be less than Maximum.';
             }
             if (config.yAxis.get('autoscale')) {
                 return false;

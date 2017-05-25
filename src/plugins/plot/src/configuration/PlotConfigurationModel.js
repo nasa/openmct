@@ -96,7 +96,7 @@ define([
                 },
                 legend: {
                     position: 'top',
-                    expandByDefault: true,
+                    expandByDefault: false,
                     valueToShowWhenCollapsed: 'nearestValue',
                     valuesToShowWhenExpanded: ['nearestTimestamp', 'nearestValue', 'min', 'max'],
                     niceValuesToShowWhenExpanded: ['Timestamp', 'Value', 'Min', 'Max']
