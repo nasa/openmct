@@ -155,12 +155,13 @@
         }
     }
 
-    /***************** COLLAPSED, EITHER SIDE */
+    /***************** EITHER SIDE */
     &.plot-legend-on-left,
     &.plot-legend-on-right {
         @extend .l-flex-row;
         // If the legend is expanded, use flex-col instead so that the legend gets the width it needs.
         &.plot-legend-expanded {
+            // EXPANDED, ON EITHER SIDE
             @extend .l-flex-col;
         }
 
@@ -170,9 +171,21 @@
                 max-height: inherit;
                 width: 25%;
             }
+
+            .plot-wrapper-collapsed-legend {
+                display: flex;
+                flex-flow: column nowrap;
+                min-width: 0;
+                flex: 1 1 auto;
+            }
             .plot-legend-item {
                 margin-bottom: 1px;
                 margin-left: 0;
+                .plot-series-swatch-and-name,
+                .plot-series-value {
+                    flex: 0 1 auto;
+                    max-width: 50%;
+                }
             }
         }
     }

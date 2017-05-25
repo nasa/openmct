@@ -27,12 +27,13 @@
                 </div>
 
 
-               <!-- <div class="plot-series-value"
+              <!-- <div class="plot-series-value"
                      ng-class="{ 'hover-value-enabled': legend.get('valueToShowWhenCollapsed').indexOf('nearest') != -1 }">
-                    XXXXXX {{ series.get('name') }} XXXXXX    -->
-                <div class="plot-series-value"
+                    XXXXXX {{ series.get('name') }} XXXXXX-->
+                 <div class="plot-series-value"
                      ng-class="{ 'hover-value-enabled': legend.get('valueToShowWhenCollapsed').indexOf('nearest') != -1 }"
                      ng-show="!!highlights.length">
+
                     {{ legend.get('valueToShowWhenCollapsed') === 'nearestValue' ?
                         series.format(series.closest, yAxis.get('key')) :
                         legend.get('valueToShowWhenCollapsed') === 'nearestTimestamp' ?
