@@ -155,7 +155,6 @@
                 max-height: inherit;
                 width: 25%;
             }
-
             .plot-wrapper-collapsed-legend {
                 display: flex;
                 flex-flow: column nowrap;
@@ -166,10 +165,12 @@
             .plot-legend-item {
                 margin-bottom: 1px;
                 margin-left: 0;
-                .plot-series-swatch-and-name,
+                .plot-series-swatch-and-name {
+                    flex: 1 1 auto;
+                    min-width: 20%;
+                }
                 .plot-series-value {
-                    flex: 0 1 auto;
-                    max-width: 50%;
+                    flex: 2 1 auto;
                 }
             }
         }
