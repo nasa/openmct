@@ -67,7 +67,6 @@
                 display: table-cell;
                 padding: 1px 3px; // Tighter than standard tabular padding
             }
-            td:not(.plot-series-swatch-and-name) { text-align: right; }
         }
 
         &.hover-on-plot {
@@ -152,14 +151,11 @@
             .plot-wrapper-collapsed-legend {
                 display: flex;
                 flex: 1 1 auto;
-                .plot-legend-item {
-
-                }
             }
         }
     }
 
-    /***************** EITHER SIDE */
+    /***************** COLLAPSED, EITHER SIDE */
     &.plot-legend-on-left,
     &.plot-legend-on-right {
         @extend .l-flex-row;
@@ -175,13 +171,8 @@
                 width: 25%;
             }
             .plot-legend-item {
-                display: block;
-                .plot-series-swatch-and-name,
-                .plot-series-value {
-                }
-            }
-            .plot-wrapper-axis-and-display-area {
-                //@include test(blue);
+                margin-bottom: 1px;
+                margin-left: 0;
             }
         }
     }
