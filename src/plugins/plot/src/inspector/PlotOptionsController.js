@@ -173,6 +173,7 @@ define([
         this.linkFields(config.legend, 'expandByDefault', 'form.legend.expandByDefault', Boolean, undefined, 'configuration.legend.expandByDefault');
         this.linkFields(config.legend, 'valueToShowWhenCollapsed', 'form.legend.valueToShowWhenCollapsed', undefined, undefined, 'configuration.legend.valueToShowWhenCollapsed');
         this.linkFields(config.legend, 'valuesToShowWhenExpanded', 'form.legend.valuesToShowWhenExpanded', undefined, undefined, 'configuration.legend.valuesToShowWhenExpanded');
+        this.linkFields(config.legend, 'niceValuesToShowWhenExpanded', 'form.legend.niceValuesToShowWhenExpanded', undefined, undefined, 'configuration.legend.niceValuesToShowWhenExpanded');
     };
 
     PlotOptionsController.prototype.addSeries = function (series, index) {

@@ -27,7 +27,7 @@
                 </div>
 
 
-              <!-- <div class="plot-series-value"
+<!--               <div class="plot-series-value"
                      ng-class="{ 'hover-value-enabled': legend.get('valueToShowWhenCollapsed').indexOf('nearest') != -1 }">
                     XXXXXX {{ series.get('name') }} XXXXXX-->
                  <div class="plot-series-value"
@@ -49,9 +49,8 @@
             <table>
                 <thead>
                     <tr>
-                        <th ng-style="{ width: 100/(legend.get('valuesToShowWhenExpanded').length + 1) + '%' }">Name</th>
-                        <th ng-repeat="name in legend.get('valuesToShowWhenExpanded')"
-                            ng-style="{ width: 100/(legend.get('valuesToShowWhenExpanded').length + 1) + '%' }">
+                        <th>Name</th>
+                        <th ng-repeat="name in legend.get('niceValuesToShowWhenExpanded')">
                             {{ name }}
                         </th>
                     </tr>
@@ -63,8 +62,7 @@
                         </span>
                         <span class="plot-series-name">{{ series.get('name') }}</span>
                     </td>
-                    <td ng-repeat="name in legend.get('valuesToShowWhenExpanded')"
-                        ng-style="{ width: 100/(legend.get('valuesToShowWhenExpanded').length + 1) + '%' }">
+                    <td ng-repeat="name in legend.get('valuesToShowWhenExpanded')">
                         <span class="plot-series-value"
                             ng-class="{ 'hover-value-enabled': name.indexOf('nearest') != -1 }">
                               {{ name === 'nearestValue' ?
