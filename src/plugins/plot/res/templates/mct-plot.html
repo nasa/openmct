@@ -1,5 +1,4 @@
-<div class="gl-plot plot-legend-on-{{legend.get('position')}}"
-    ng-class="{ 'plot-legend-expanded': legend.get('expanded') }">
+<div class="gl-plot plot-legend-on-{{legend.get('position')}} {{ legend.get('expanded')? 'plot-legend-expanded' : 'plot-legend-collapsed' }}">
     <style>
         .gl-plot-tick.gl-plot-y-tick-label {
             overflow: visible;
@@ -15,8 +14,7 @@
         </span>
 
         <!-- COLLAPSED PLOT LEGEND -->
-        <div class="plot-wrapper-collapsed-legend"
-             ng-show="!legend.get('expanded')">
+        <div class="plot-wrapper-collapsed-legend">
             <div class="plot-legend-item"
                   ng-repeat="series in series track by $index">
                 <div class="plot-series-swatch-and-name">
@@ -45,7 +43,7 @@
         </div>
 
         <!-- EXPANDED PLOT LEGEND -->
-        <div class="plot-wrapper-expanded-legend flex-elem grows" ng-show="legend.get('expanded')">
+        <div class="plot-wrapper-expanded-legend flex-elem grows">
             <table>
                 <thead>
                     <tr>

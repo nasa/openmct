@@ -48,8 +48,6 @@
 
     .gl-plot-legend {
         min-height: $plotLegendH;
-        //max-height: 70%; // Moved this to EXPANDED only
-        //overflow-y: auto; // Moved this to EXPANDED only
 
         .view-control {
             font-size: 1em;
@@ -84,6 +82,9 @@
         }
     }
 
+    &.plot-legend-collapsed .plot-wrapper-expanded-legend { display: none; }
+    &.plot-legend-expanded .plot-wrapper-collapsed-legend { display: none; }
+
     /***************** GENERAL STYLES, ALL STATES */
     .plot-legend-item {
         // General styles for legend items, both expanded and collapsed legend states
@@ -104,7 +105,7 @@
     }
 
     /***************** GENERAL STYLES, COLLAPSED */
-    &:not(.plot-legend-expanded) {
+    &.plot-legend-collapsed {
         // .plot-legend-item is a span of spans.
         &.plot-legend-on-top .gl-plot-legend { margin-bottom: $interiorMargin; }
         &.plot-legend-on-bottom .gl-plot-legend { margin-top: $interiorMargin; }
@@ -154,7 +155,7 @@
     &.plot-legend-on-bottom {
         // General styles when legend is on the top or bottom
         @extend .l-flex-col;
-        &:not(.plot-legend-expanded) {
+        &.plot-legend-collapsed {
             // COLLAPSED ON TOP OR BOTTOM
             .plot-wrapper-collapsed-legend {
                 display: flex;
@@ -174,7 +175,7 @@
             @extend .l-flex-col;
         }
 
-        &:not(.plot-legend-expanded) {
+        &.plot-legend-collapsed {
             // COLLAPSED, ON EITHER SIDE
             .gl-plot-legend {
                 max-height: inherit;
