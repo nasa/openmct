@@ -74,6 +74,7 @@
             .hover-value-enabled {
                 background-color: $legendHoverValueBg;
                 border-radius: $smallCr;
+                padding: 0 $interiorMarginSm;
                 @extend .icon-crosshair-12px;
                 &:before {
                     font-size: 9px;
@@ -128,9 +129,8 @@
 
             .plot-series-value {
                 margin-left: $interiorMarginSm;
-                padding: 0 $interiorMarginSm;
                 text-align: left;
-                width: 160px;
+                width: 170px;
             }
         }
     }
