@@ -26,11 +26,35 @@
     }
 }
 
-.t-plot-stacked .s-status-timeconductor-unsynced .holder-plot {
-    .t-object-alert.t-alert-unsynced {
-        display: block;
+/********************************************* STACKED PLOT LAYOUT */
+.t-plot-stacked {
+    .l-view-section {
+        //  Make this a flex container
+        display: flex;
+        flex-flow: column nowrap;
+        .gl-plot.child-frame {
+            mct-plot { 
+                display: flex; 
+                flex: 1 1 auto;
+                height: 100%;
+                position: relative;
+            }
+            flex: 1 1 auto;
+            &:not(:first-child) {
+                margin-top: $interiorMargin;
+            }
+        }
     }
+
+    .s-status-timeconductor-unsynced .holder-plot {
+        .t-object-alert.t-alert-unsynced {
+            display: block;
+        }
+    }
+
 }
+
+
 
 .gl-plot {
 	color: $colorPlotFg;
@@ -40,21 +64,15 @@
 	height: 100%;
     min-height: $plotMinH;
 
-    &.child-frame:not(:first-child) {
-        margin-top: $interiorMargin;
-    }
-
     /********************************************* AXIS AND DISPLAY AREA */
-    .plot-wrapper-axis-and-display-area  {
-        position: absolute;
-        top: $interiorMargin;  // Prevent the first tick label from getting clipped
-        right: 0; bottom: 0; left: 0;
-        display: flex;
+    .plot-wrapper-axis-and-display-area {
+        margin-top: $interiorMargin; // Keep the top tick label from getting clipped
+        position: relative;
         flex: 1 1 auto;
         .t-object-alert {
             position: absolute;
             display: block;
-            font-size: 1em;
+            font-size: 1.5em;
             top: $interiorMarginSm; left: $interiorMarginSm;
         }
     }

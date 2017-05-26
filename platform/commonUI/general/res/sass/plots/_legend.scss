@@ -170,11 +170,12 @@
                 margin-left: 0;
                 flex-wrap: wrap;
                 .plot-series-swatch-and-name {
-                    flex: 1 1 auto;
+                    flex: 0 1 auto;
                     min-width: 20%;
                 }
                 .plot-series-value {
-                    flex: 2 1 auto;
+                    flex: 0 1 auto;
+                    width: auto;
                 }
             }
         }

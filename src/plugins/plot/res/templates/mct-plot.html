@@ -1,5 +1,4 @@
-<div class="gl-plot plot-legend-{{legend.get('position')}}
-            {{ legend.get('expanded')? 'plot-legend-expanded' : 'plot-legend-collapsed' }}">
+<div class="gl-plot plot-legend-{{legend.get('position')}} {{legend.get('expanded')? 'plot-legend-expanded' : 'plot-legend-collapsed'}}">
     <div class="gl-plot-legend flex-elem l-flex-row"
          ng-class="{ 'hover-on-plot': !!highlights.length }"
          ng-show="legend.get('position') !== 'hidden'">
