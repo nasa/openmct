@@ -46,8 +46,11 @@
 
     /********************************************* AXIS AND DISPLAY AREA */
     .plot-wrapper-axis-and-display-area  {
-        margin-top: $interiorMargin; // Prevent the first tick label from getting clipped
-        position: relative;
+        position: absolute;
+        top: $interiorMargin;  // Prevent the first tick label from getting clipped
+        right: 0; bottom: 0; left: 0;
+        display: flex;
+        flex: 1 1 auto;
         .t-object-alert {
             position: absolute;
             display: block;

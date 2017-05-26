@@ -1,13 +1,8 @@
-<div class="gl-plot plot-legend-on-{{legend.get('position')}} {{ legend.get('expanded')? 'plot-legend-expanded' : 'plot-legend-collapsed' }}">
-    <style>
-        .gl-plot-tick.gl-plot-y-tick-label {
-            overflow: visible;
-        }
-    </style>
-
-
-    <!--<div class="gl-plot-legend flex-elem l-flex-row hover-on-plot">-->
-    <div class="gl-plot-legend flex-elem l-flex-row" ng-class="{ 'hover-on-plot': !!highlights.length }">
+<div class="gl-plot plot-legend-{{legend.get('position')}}
+            {{ legend.get('expanded')? 'plot-legend-expanded' : 'plot-legend-collapsed' }}">
+    <div class="gl-plot-legend flex-elem l-flex-row"
+         ng-class="{ 'hover-on-plot': !!highlights.length }"
+         ng-show="legend.get('position') !== 'hidden'">
         <span class="view-control flex-elem"
             ng-class="{ expanded: legend.get('expanded') }"
             ng-click="legend.set('expanded', !legend.get('expanded'));">
@@ -24,8 +19,7 @@
                     <span class="plot-series-name">{{ series.get('name') }}</span>
                 </div>
 
-
-<!--               <div class="plot-series-value"
+<!--               <div class="plot-series-value" title="FOR LAYOUT DEBUGGING ONLY"
                      ng-class="{ 'hover-value-enabled': legend.get('valueToShowWhenCollapsed').indexOf('nearest') != -1 }">
                     XXXXXX {{ series.get('name') }} XXXXXX-->
                  <div class="plot-series-value"

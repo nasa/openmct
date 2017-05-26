@@ -81,10 +81,10 @@
     /***************** GENERAL STYLES, COLLAPSED */
     &.plot-legend-collapsed {
         // .plot-legend-item is a span of spans.
-        &.plot-legend-on-top .gl-plot-legend { margin-bottom: $interiorMargin; }
-        &.plot-legend-on-bottom .gl-plot-legend { margin-top: $interiorMargin; }
-        &.plot-legend-on-right .gl-plot-legend { margin-left: $interiorMargin; }
-        &.plot-legend-on-left .gl-plot-legend { margin-right: $interiorMargin; }
+        &.plot-legend-top .gl-plot-legend { margin-bottom: $interiorMargin; }
+        &.plot-legend-bottom .gl-plot-legend { margin-top: $interiorMargin; }
+        &.plot-legend-right .gl-plot-legend { margin-left: $interiorMargin; }
+        &.plot-legend-left .gl-plot-legend { margin-right: $interiorMargin; }
 
         .plot-legend-item {
             display: flex;
@@ -116,17 +116,17 @@
             overflow-y: auto;
         }
 
-        &.plot-legend-on-top .gl-plot-legend {
+        &.plot-legend-top .gl-plot-legend {
             margin-bottom: $interiorMargin;
         }
-        &.plot-legend-on-bottom .gl-plot-legend {
+        &.plot-legend-bottom .gl-plot-legend {
             margin-top: $interiorMargin;
         }
     }
 
     /***************** TOP OR BOTTOM */
-    &.plot-legend-on-top,
-    &.plot-legend-on-bottom {
+    &.plot-legend-top,
+    &.plot-legend-bottom {
         // General styles when legend is on the top or bottom
         @extend .l-flex-col;
         &.plot-legend-collapsed {
@@ -140,8 +140,8 @@
     }
 
     /***************** EITHER SIDE */
-    &.plot-legend-on-left,
-    &.plot-legend-on-right {
+    &.plot-legend-left,
+    &.plot-legend-right {
         @extend .l-flex-row;
         // If the legend is expanded, use flex-col instead so that the legend gets the width it needs.
         &.plot-legend-expanded {
@@ -177,8 +177,8 @@
     }
 
     /***************** ON BOTTOM OR RIGHT */
-    &.plot-legend-on-right:not(.plot-legend-expanded),
-    &.plot-legend-on-bottom {
+    &.plot-legend-right:not(.plot-legend-expanded),
+    &.plot-legend-bottom {
         .gl-plot-legend {
             order: 2;
         }
