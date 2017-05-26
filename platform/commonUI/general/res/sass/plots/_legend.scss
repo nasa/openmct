@@ -98,8 +98,11 @@
                 flex: 1 1 auto;
             }
 
+            .plot-series-swatch-and-name {
+                margin-right: $interiorMarginSm;
+            }
+
             .plot-series-value {
-                margin-left: $interiorMarginSm;
                 text-align: left;
                 width: 170px;
             }
@@ -165,6 +168,7 @@
             .plot-legend-item {
                 margin-bottom: 1px;
                 margin-left: 0;
+                flex-wrap: wrap;
                 .plot-series-swatch-and-name {
                     flex: 1 1 auto;
                     min-width: 20%;
