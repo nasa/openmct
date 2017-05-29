@@ -31,7 +31,8 @@ define([], function () {
     ) {
         if (view.key === 'adapted-view') {
             var domainObject = legacyObject.useCapability('adapter');
-            return this.openmct.mainViews.get(domainObject).length > 0;
+            var context = { item: domainObject };
+            return this.openmct.mainViews.get(context).length > 0;
         }
         return true;
     };

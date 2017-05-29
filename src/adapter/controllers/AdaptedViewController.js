@@ -29,8 +29,9 @@ define([], function () {
             }
 
             var domainObject = legacyObject.useCapability('adapter');
-            var providers = openmct.mainViews.get(domainObject);
-            $scope.view = providers[0] && providers[0].view(domainObject);
+            var context = { item: domainObject };
+            var providers = openmct.mainViews.get(context);
+            $scope.view = providers[0] && providers[0].view(context);
         }
 
         $scope.$watch('domainObject', refresh);

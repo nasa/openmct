@@ -34,13 +34,14 @@ define([], function () {
 
     /**
      * @private for platform-internal use
-     * @param {*} item the object to be viewed
+     * @param {module:openmct.Context} context the view's context,
+     *        which includes the item being viewed
      * @returns {module:openmct.ViewProvider[]} any providers
      *          which can provide views of this object
      */
-    ViewRegistry.prototype.get = function (item) {
+    ViewRegistry.prototype.get = function (context) {
         return this.providers.filter(function (provider) {
-            return provider.canView(item);
+            return provider.canView(context);
         });
     };
 
@@ -105,8 +106,8 @@ define([], function () {
      *
      * @method canView
      * @memberof module:openmct.ViewProvider#
-     * @param {module:openmct.DomainObject} domainObject the domain object
-     *        to be viewed
+     * @param {module:openmct.Context} context the view's context,
+     *        which includes the item being viewed
      * @returns {boolean} true if this domain object can be viewed using
      *          this provider
      */
@@ -122,7 +123,8 @@ define([], function () {
      *
      * @method view
      * @memberof module:openmct.ViewProvider#
-     * @param {*} object the object to be viewed
+     * @param {module:openmct.Context} context the view's context,
+     *        which includes the item being viewed
      * @returns {module:openmct.View} a view of this domain object
      */
 
