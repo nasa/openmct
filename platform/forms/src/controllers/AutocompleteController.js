@@ -64,12 +64,11 @@ define(
 
             function fillInputWithString(string) {
                 $scope.hideOptions = true;
-                // Hard coded!!
-                $scope.ngModel[4] = string;
+                $scope.ngModel[$scope.field] = string;
             }
 
             function fillInputWithIndexedOption() {
-                $scope.ngModel[4] = $scope.filteredOptions[$scope.optionIndex].name;
+                $scope.ngModel[$scope.field] = $scope.filteredOptions[$scope.optionIndex].name;
             }
 
             $scope.keyDown = function($event) {
