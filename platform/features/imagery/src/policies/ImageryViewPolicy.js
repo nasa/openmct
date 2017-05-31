@@ -25,37 +25,35 @@ define([
 ], function (
     objectUtils
 ) {
+    /**
+     * Policy preventing the Imagery view from being made available for
+     * domain objects which do not have associated image telemetry.
+     * @implements {Policy.<View, DomainObject>}
+     * @constructor
+     */
+    function ImageryViewPolicy(openmct) {
+        this.openmct = openmct;
+    }
 
-        /**
-         * Policy preventing the Imagery view from being made available for
-         * domain objects which do not have associated image telemetry.
-         * @implements {Policy.<View, DomainObject>}
-         * @constructor
-         */
-        function ImageryViewPolicy(openmct) {
-            this.openmct = openmct;
+    ImageryViewPolicy.prototype.hasImageTelemetry = function (domainObject) {
+        var newDO = objectUtils.toNewFormat(
+            domainObject.getModel(),
+            domainObject.getId()
+        );
+
+        var metadata = this.openmct.telemetry.getMetadata(newDO);
+        var values = metadata.valuesForHints(['image']);
+        return values.length >= 1;
+    };
+
+    ImageryViewPolicy.prototype.allow = function (view, domainObject) {
+        if (view.key === 'imagery') {
+            return this.hasImageTelemetry(domainObject);
         }
 
-        ImageryViewPolicy.prototype.hasImageTelemetry = function (domainObject) {
-            var newDO = objectUtils.toNewFormat(
-                domainObject.getModel(),
-                domainObject.getId()
-            );
+        return true;
+    };
 
-            var metadata = this.openmct.telemetry.getMetadata(newDO);
-            var values = metadata.valuesForHints(['image']);
-            return values.length >= 1;
-        };
-
-        ImageryViewPolicy.prototype.allow = function (view, domainObject) {
-            if (view.key === 'imagery') {
-                return this.hasImageTelemetry(domainObject);
-            }
-
-            return true;
-        };
-
-        return ImageryViewPolicy;
-    }
-);
+    return ImageryViewPolicy;
+});
 
