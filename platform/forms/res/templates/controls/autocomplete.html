@@ -30,7 +30,8 @@
     <span class="icon-arrow-down"></span>
     <div class="autocompleteOptions"
          onload="hideOptions = false"
-         ng-hide="hideOptions">
+         ng-hide="hideOptions"
+         mct-click-elsewhere="hideOptions = true">
         <ul>  
             <li ng-repeat="opt in filteredOptions"
                 ng-click="fillInput(opt.name)"

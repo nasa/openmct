@@ -24,6 +24,7 @@ define([
     "./src/MCTForm",
     "./src/MCTToolbar",
     "./src/MCTControl",
+    "../commonUI/general/src/directives/MCTClickElsewhere",
     "./src/controllers/AutocompleteController",
     "./src/controllers/DateTimeController",
     "./src/controllers/CompositeController",
@@ -46,6 +47,7 @@ define([
     MCTForm,
     MCTToolbar,
     MCTControl,
+    MCTClickElsewhere,
     AutocompleteController,
     DateTimeController,
     CompositeController,
@@ -85,6 +87,13 @@ define([
                     "depends": [
                         "templateLinker",
                         "controls[]"
+                    ]
+                },
+                {
+                    "key": "mctClickElsewhere",
+                    "implementation": MCTClickElsewhere,
+                    "depends": [
+                        "$document"
                     ]
                 }
             ],
@@ -167,6 +176,13 @@ define([
                     "depends": [
                         "$scope",
                         "dialogService"
+                    ]
+                },
+                {
+                    "key": "mctClickElsewhere",
+                    "implementation": MCTClickElsewhere,
+                    "depends": [
+                        "$document"
                     ]
                 }
             ]
