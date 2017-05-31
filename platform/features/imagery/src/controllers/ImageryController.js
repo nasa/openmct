@@ -28,9 +28,6 @@ define(
     ['moment'],
     function (moment) {
 
-        var DATE_FORMAT = "YYYY-MM-DD",
-            TIME_FORMAT = "HH:mm:ss.SSS";
-
         /**
          * Controller for the "Imagery" view of a domain object which
          * provides image telemetry.
@@ -87,7 +84,7 @@ define(
                 this.unsubscribe();
                 delete this.unsubscribe;
             }
-        }
+        };
 
         // Update displayable values to reflect latest image telemetry
         ImageryController.prototype.updateValues = function (datum) {
