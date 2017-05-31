@@ -96,7 +96,7 @@ define(
                 return;
             }
             this.time = this.timeFormat.format(datum);
-            this.image = this.imageFormat.format(datum);
+            this.imageUrl = this.imageFormat.format(datum);
         };
 
         /**
@@ -113,7 +113,7 @@ define(
          * @returns {string} URL for telemetry image
          */
         ImageryController.prototype.getImageUrl = function () {
-            return this.image;
+            return this.imageUrl;
         };
 
         /**
