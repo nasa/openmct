@@ -30,7 +30,6 @@ define(
                 oldDomainObject,
                 newDomainObject,
                 unsubscribe,
-                callback,
                 controller;
 
             beforeEach(function () {
@@ -50,7 +49,7 @@ define(
                     ]),
                     telemetry: jasmine.createSpyObj('telemetryAPI', [
                         'subscribe'
-                    ]);
+                    ])
                 };
                 unsubscribe = jasmine.createSpy('unsubscribe');
                 openmct.telemetry.subscribe.andReturn(unsubcribe);
