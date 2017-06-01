@@ -30,6 +30,7 @@ define(
                 oldDomainObject,
                 newDomainObject,
                 unsubscribe,
+                callback,
                 controller;
 
             beforeEach(function () {
@@ -38,6 +39,7 @@ define(
                     'domainObject',
                     ['getId']
                 );
+                newDomainObject = { name: 'foo' };
 
                 oldDomainObject.getId.andReturn('testID');
                 openmct = {
@@ -52,10 +54,11 @@ define(
                     ])
                 };
                 unsubscribe = jasmine.createSpy('unsubscribe');
-                openmct.telemetry.subscribe.andReturn(unsubcribe);
+                openmct.telemetry.subscribe.andReturn(unsubscribe);
                 openmct.time.timeSystem.andReturn({
                     key: 'testKey'
                 });
+                $scope.domainObject = oldDomainObject;
                 openmct.objects.get.andReturn(Promise.resolve(newDomainObject));
 
                 controller = new ImageryController(
@@ -63,18 +66,33 @@ define(
                     openmct
                 );
 
+
+//                runs(function () {
+//                    callback =
+//                        openmct.telemetry.subscribe.mostRecentCall.args[1];
+//                });
+            });
+
+            it("subscribes to telemetry", function () {
+                waitsFor(function () {
+                    return !!(openmct.telemetry.subscribe.mostRecentCall);
+                });
+                expect(openmct.telemetry.subscribe).toHaveBeenCalledWith(
+                    newDomainObject,
+                    jasmine.any(Function)
+                );
             });
 
             it("unsubscribes when scope is destroyed", function () {
-                expect(mockHandle.unsubscribe).not.toHaveBeenCalled();
+                expect(unsubscribe).not.toHaveBeenCalled();
 
                 // Find the $destroy listener and call it
-                mockScope.$on.calls.forEach(function (call) {
+                $scope.$on.calls.forEach(function (call) {
                     if (call.args[0] === '$destroy') {
                         call.args[1]();
                     }
                 });
-                expect(mockHandle.unsubscribe).toHaveBeenCalled();
+                expect(unsubscribe).toHaveBeenCalled();
             });
 
             it("exposes the latest telemetry values", function () {
@@ -84,20 +102,15 @@ define(
                     nextTimestamp = 1434600259456, // 4:05.456
                     nextUrl = "some/other/url";
 
-                mockHandle.getDomainValue.andReturn(testTimestamp);
-                mockHandle.getRangeValue.andReturn(testUrl);
-
-                // Call the subscription listener
-                mockTelemetryHandler.handle.mostRecentCall.args[1]();
+                // Call back with telemetry data
+                callback({ timestamp: testTimestamp, value: testUrl });
 
                 expect(controller.getTime()).toEqual("04:04:18.123");
                 expect(controller.getDate()).toEqual("2015-06-18");
                 expect(controller.getZone()).toEqual("UTC");
                 expect(controller.getImageUrl()).toEqual(testUrl);
 
-                mockHandle.getDomainValue.andReturn(nextTimestamp);
-                mockHandle.getRangeValue.andReturn(nextUrl);
-                mockTelemetryHandler.handle.mostRecentCall.args[1]();
+                callback({ timestamp: nextTimestamp, value: nextUrl });
 
                 expect(controller.getTime()).toEqual("04:04:19.456");
                 expect(controller.getDate()).toEqual("2015-06-18");
@@ -112,14 +125,8 @@ define(
                     nextTimestamp = 1434600259456, // 4:05.456
                     nextUrl = "some/other/url";
 
-                // As above, but pause in between. Expect details
-                // not to change this time
-
-                mockHandle.getDomainValue.andReturn(testTimestamp);
-                mockHandle.getRangeValue.andReturn(testUrl);
-
-                // Call the subscription listener
-                mockTelemetryHandler.handle.mostRecentCall.args[1]();
+                // Call back with telemetry data
+                callback({ timestamp: testTimestamp, value: testUrl });
 
                 expect(controller.getTime()).toEqual("04:04:18.123");
                 expect(controller.getDate()).toEqual("2015-06-18");
@@ -130,9 +137,7 @@ define(
                 controller.paused(true); // Pause!
                 expect(controller.paused()).toBeTruthy();
 
-                mockHandle.getDomainValue.andReturn(nextTimestamp);
-                mockHandle.getRangeValue.andReturn(nextUrl);
-                mockTelemetryHandler.handle.mostRecentCall.args[1]();
+                callback({ timestamp: nextTimestamp, value: nextUrl });
 
                 expect(controller.getTime()).toEqual("04:04:18.123");
                 expect(controller.getDate()).toEqual("2015-06-18");
@@ -141,13 +146,7 @@ define(
             });
 
             it("initially shows an empty string for date/time", function () {
-                // Call the subscription listener while domain/range
-                // values are still undefined
-                mockHandle.getDomainValue.andReturn(undefined);
-                mockHandle.getRangeValue.andReturn(undefined);
-                mockTelemetryHandler.handle.mostRecentCall.args[1]();
-
-                // Should have empty strings for date/time/zone
+                // Do not invoke callback...
                 expect(controller.getTime()).toEqual("");
                 expect(controller.getDate()).toEqual("");
                 expect(controller.getZone()).toEqual("");
